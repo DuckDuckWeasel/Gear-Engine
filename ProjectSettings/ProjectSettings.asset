@@ -114,7 +114,6 @@ PlayerSettings:
   xboxEnableGuest: 0
   xboxEnablePIXSampling: 0
   metalFramebufferOnly: 0
-  metalUseMetalDisplayLink: 0
   xboxOneResolution: 0
   xboxOneSResolution: 0
   xboxOneXResolution: 3
@@ -778,10 +777,10 @@ PlayerSettings:
   captureStartupLogs: {}
   activeInputHandler: 2
   windowsGamepadBackendHint: 0
-  cloudProjectId: e5139a8c-6c7c-4507-ae77-76d3c4f427f4
+  cloudProjectId: 880157f3-362f-432a-9b9d-1b916794ba08
   framebufferDepthMemorylessMode: 0
   qualitySettingsNames: []
-  projectName: Scaffold
+  projectName: Gear Engine
   organizationId: matheuscohen
   cloudEnabled: 0
   legacyClampBlendShapeWeights: 0
