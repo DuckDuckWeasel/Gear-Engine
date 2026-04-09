@@ -67,6 +67,23 @@ namespace Game.GearEngine.Editor
                     prop.GetArrayElementAtIndex(1).objectReferenceValue = baseGear;
                 }
                 
+                GearConfig rockObs = AssetDatabase.LoadAssetAtPath<GearConfig>($"{folderPath}/ObstacleRockConfig.asset");
+                GearConfig speedGear = AssetDatabase.LoadAssetAtPath<GearConfig>($"{folderPath}/SpeedBuffGearConfig.asset");
+                GearConfig scoreGear = AssetDatabase.LoadAssetAtPath<GearConfig>($"{folderPath}/ScoreGearConfig.asset");
+                GearConfig baseLevel2 = AssetDatabase.LoadAssetAtPath<GearConfig>($"{folderPath}/BaseGearConfig_Level2.asset");
+                
+                var invProp = so.FindProperty("startingInventoryGears");
+                if (invProp != null)
+                {
+                    invProp.arraySize = 6;
+                    invProp.GetArrayElementAtIndex(0).objectReferenceValue = core != null ? core : baseGear;
+                    invProp.GetArrayElementAtIndex(1).objectReferenceValue = baseGear;
+                    invProp.GetArrayElementAtIndex(2).objectReferenceValue = baseLevel2 != null ? baseLevel2 : baseGear;
+                    invProp.GetArrayElementAtIndex(3).objectReferenceValue = speedGear != null ? speedGear : baseGear;
+                    invProp.GetArrayElementAtIndex(4).objectReferenceValue = rockObs != null ? rockObs : baseGear;
+                    invProp.GetArrayElementAtIndex(5).objectReferenceValue = scoreGear != null ? scoreGear : baseGear;
+                }
+
                 var slotProp = so.FindProperty("emptySlotPrefab");
                 if (slotProp != null && emptySlot != null)
                 {
@@ -79,7 +96,7 @@ namespace Game.GearEngine.Editor
             // Create Canvas and Event System for UI Testing
             GameObject eventSystemObj = new GameObject("EventSystem");
             eventSystemObj.AddComponent<UnityEngine.EventSystems.EventSystem>();
-            eventSystemObj.AddComponent<UnityEngine.EventSystems.StandaloneInputModule>();
+            eventSystemObj.AddComponent<UnityEngine.InputSystem.UI.InputSystemUIInputModule>();
 
             GameObject canvasObj = new GameObject("TestCanvas");
             Canvas testCanvas = canvasObj.AddComponent<Canvas>();
@@ -89,23 +106,92 @@ namespace Game.GearEngine.Editor
 
             // Setup Simulation View
             GameObject simViewObj = new GameObject("SimulationControlView");
-            simViewObj.transform.SetParent(canvasObj.transform, false);
+            var simRt = simViewObj.AddComponent<RectTransform>();
+            simRt.SetParent(canvasObj.transform, false);
+            simRt.anchorMin = new Vector2(0.5f, 1f);
+            simRt.anchorMax = new Vector2(0.5f, 1f);
+            simRt.pivot = new Vector2(0.5f, 1f);
+            simRt.anchoredPosition = new Vector2(0, -20f);
+            simRt.sizeDelta = new Vector2(250, 60);
+
+            // Button requires a target graphic to be clickable
+            var simImage = simViewObj.AddComponent<UnityEngine.UI.Image>();
+            simImage.color = new Color(0.2f, 0.2f, 0.2f, 0.9f);
+
             var simViewDef = simViewObj.AddComponent<Game.GearEngine.Presentation.SimulationControlView>();
             // Add a mock button
             var simBtn = simViewObj.AddComponent<UnityEngine.UI.Button>();
+            simBtn.targetGraphic = simImage;
+
             var simTxtObj = new GameObject("Text");
-            simTxtObj.transform.SetParent(simViewObj.transform, false);
+            var txtRt = simTxtObj.AddComponent<RectTransform>();
+            txtRt.SetParent(simRt, false);
+            txtRt.anchorMin = Vector2.zero;
+            txtRt.anchorMax = Vector2.one;
+            txtRt.sizeDelta = Vector2.zero;
+
             var simTxt = simTxtObj.AddComponent<TMPro.TextMeshProUGUI>();
             simTxt.text = "Toggle simulation";
+            simTxt.alignment = TMPro.TextAlignmentOptions.Center;
+            simTxt.color = Color.white;
             
-            // Note: Scaffold MVVM Binding requires hooking the raw Rect/Button. 
-            // In a real flow, a developer drags this into an inspector, this is just to guarantee the view is present in the scene.
+            // Assign references via SerializedObject to avoid manual drag-and-drop
+            var simSo = new SerializedObject(simViewDef);
+            var btnProp = simSo.FindProperty("toggleButton");
+            if (btnProp != null) btnProp.objectReferenceValue = simBtn;
+            var txtProp = simSo.FindProperty("buttonText");
+            if (txtProp != null) txtProp.objectReferenceValue = simTxt;
+            simSo.ApplyModifiedProperties();
+
+            // Setup Inventory View at the bottom
+            GameObject invViewObj = new GameObject("GearInventoryView");
+            var invRt = invViewObj.AddComponent<RectTransform>();
+            invRt.SetParent(canvasObj.transform, false);
+            invRt.anchorMin = new Vector2(0.5f, 0f);
+            invRt.anchorMax = new Vector2(0.5f, 0f);
+            invRt.pivot = new Vector2(0.5f, 0f);
+            invRt.anchoredPosition = new Vector2(0, 50f);
+            invRt.sizeDelta = new Vector2(800, 150f);
+
+            GameObject itemsContainerObj = new GameObject("ItemsContainer");
+            var itemsRt = itemsContainerObj.AddComponent<RectTransform>();
+            itemsRt.SetParent(invRt, false);
+            itemsRt.anchorMin = new Vector2(0, 0);
+            itemsRt.anchorMax = new Vector2(1, 1);
+            itemsRt.offsetMin = Vector2.zero;
+            itemsRt.offsetMax = Vector2.zero;
+            
+            var hlG = itemsContainerObj.AddComponent<UnityEngine.UI.HorizontalLayoutGroup>();
+            hlG.childAlignment = TextAnchor.MiddleCenter;
+            hlG.spacing = 15f;
+            hlG.childControlWidth = false;
+            hlG.childControlHeight = false;
+
+            var invViewDef = invViewObj.AddComponent<Game.GearEngine.Presentation.GearInventoryView>();
+            // Assign the itemsContainer to the View using reflection
+            var invSo = new SerializedObject(invViewDef);
+            var containerProp = invSo.FindProperty("itemsContainer");
+            if (containerProp != null)
+            {
+                containerProp.objectReferenceValue = itemsRt;
+            }
+            invSo.ApplyModifiedProperties();
 
             // Setup Board Collider to act as a hit target for DragHandler Raycasts 
             GameObject floorGrid = new GameObject("GridBoardCollider");
             var boxCol = floorGrid.AddComponent<BoxCollider>();
-            boxCol.size = new Vector3(50, 50, 0.5f);
+            if (boardConfig != null)
+            {
+                boxCol.size = new Vector3(boardConfig.GridWidth * boardConfig.Spacing + 1f, boardConfig.GridHeight * boardConfig.Spacing + 1f, 0.5f);
+            }
+            else
+            {
+                boxCol.size = new Vector3(50, 50, 0.5f);
+            }
             floorGrid.transform.position = new Vector3(0, 0, 0.5f);
+
+            // Attach BoardView which will process GearDroppedFromUIEvent
+            floorGrid.AddComponent<Game.GearEngine.Presentation.BoardView>();
             
             // Attach the shiny new TagComponent for the DragHandler Validations
             var tagComp = floorGrid.AddComponent<Game.GearEngine.Presentation.TagComponent>();

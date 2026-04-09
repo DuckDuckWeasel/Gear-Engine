@@ -16,6 +16,8 @@ namespace Game.GearEngine.Presentation
         private GameObject currentGhost;
         private Canvas mainCanvas;
 
+        public bool IsInteractable { get; set; } = true;
+
         /// <summary>
         /// Fires when the item is successfully dropped over a valid world collider matching the target tag.
         /// Payload is the world position of the intersection.
@@ -34,13 +36,33 @@ namespace Game.GearEngine.Presentation
 
         public void OnBeginDrag(PointerEventData eventData)
         {
-            if (ghostPrefab != null && mainCanvas != null)
+            if (!IsInteractable) return;
+
+            if (mainCanvas != null)
             {
-                currentGhost = Instantiate(ghostPrefab, mainCanvas.transform);
+                if (ghostPrefab != null)
+                {
+                    currentGhost = Instantiate(ghostPrefab, mainCanvas.transform);
+                }
+                else
+                {
+                    currentGhost = Instantiate(gameObject, mainCanvas.transform);
+                    
+                    var slotView = currentGhost.GetComponent("GearInventorySlotView");
+                    if (slotView != null) DestroyImmediate(slotView);
+
+                    var childDrag = currentGhost.GetComponent<DragHandler>();
+                    if (childDrag != null) DestroyImmediate(childDrag);
+                    
+                    // Note: This relies on the original object having roughly the right size/visuals.
+                }
+
                 currentGhost.transform.SetAsLastSibling(); // Render on top of everything
                 
                 // Disable raycast blocking on the ghost so we can click what's underneath it
-                var canvasGroup = currentGhost.AddComponent<CanvasGroup>();
+                var canvasGroup = currentGhost.GetComponent<CanvasGroup>();
+                if (canvasGroup == null) canvasGroup = currentGhost.AddComponent<CanvasGroup>();
+                
                 canvasGroup.blocksRaycasts = false;
                 canvasGroup.alpha = 0.6f;
             }
@@ -48,15 +70,32 @@ namespace Game.GearEngine.Presentation
 
         public void OnDrag(PointerEventData eventData)
         {
+            if (!IsInteractable) return;
+
             if (currentGhost != null)
             {
-                // Convert screen mouse to canvas position overlay
-                currentGhost.transform.position = Input.mousePosition;
+                if (mainCanvas != null)
+                {
+                    if (RectTransformUtility.ScreenPointToLocalPointInRectangle(
+                        (RectTransform)mainCanvas.transform,
+                        eventData.position,
+                        mainCanvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : mainCanvas.worldCamera,
+                        out Vector2 localPoint))
+                    {
+                        currentGhost.transform.localPosition = localPoint;
+                    }
+                }
+                else
+                {
+                    currentGhost.transform.position = Input.mousePosition;
+                }
             }
         }
 
         public void OnEndDrag(PointerEventData eventData)
         {
+            if (!IsInteractable) return;
+
             if (currentGhost != null)
             {
                 Destroy(currentGhost);
@@ -87,12 +126,6 @@ namespace Game.GearEngine.Presentation
                 else
                 {
                     Debug.Log($"<color=#ff5555>[DragHandler]</color> Drop missed! Raycast hit no colliders.");
-#if UNITY_EDITOR
-                    // Fallback hack for rapid headless testing if you forget to add colliders to the Board obj
-                    Debug.Log($"<color=#aaaaaa>[DragHandler(Editor-Hack)]</color> Forcing drop success on empty Z plane since there's no board collider.");
-                    Vector3 worldPosFallback = cam.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, Mathf.Abs(cam.transform.position.z)));
-                    OnValidDropWorldPos?.Invoke(worldPosFallback);
-#endif
                 }
             }
         }

@@ -19,8 +19,12 @@ namespace Game.GearEngine.Presentation
         private BoardConfigSO boardConfig;
         
         // Drag State
+        [SerializeField]
         private GearView draggedView;
         private Vector2Int originalGridPos;
+
+        [Header("Debug")]
+        public IGridManager GridState => gridManager;
 
         [Inject]
         public void Construct(IGridManager gridManager, EventController eventController, GearNodeFactory nodeFactory, GearViewFactory viewFactory, GearInventoryViewModel inventoryViewModel, BoardConfigSO boardConfig)
@@ -50,9 +54,10 @@ namespace Game.GearEngine.Presentation
             if (gridManager == null || gridManager.IsRunning) return;
 
             // Snap the generic 3D world position dropped by the generic UI Drag handler into Grid coords
-            int snapX = Mathf.RoundToInt(context.WorldPosition.x / 1.5f);
-            int snapY = Mathf.RoundToInt(context.WorldPosition.y / 1.5f);
-            Vector2Int targetDropPos = new Vector2Int(snapX, snapY);
+            Vector2Int targetDropPos = boardConfig != null 
+                ? boardConfig.GetGridPosition(context.WorldPosition) 
+                : new Vector2Int(Mathf.RoundToInt(context.WorldPosition.x / 1.5f), Mathf.RoundToInt(context.WorldPosition.y / 1.5f));
+
 
             // Is the slot mathematically empty?
             if (gridManager.GetNode(targetDropPos) == null)
@@ -61,8 +66,9 @@ namespace Game.GearEngine.Presentation
                 bool consumed = inventoryViewModel.ConsumeSpecificGear(context.GearData);
                 if (consumed)
                 {
-                    // Logic Spawn
-                    IGridNode newNode = nodeFactory.CreateBaseGear(targetDropPos, context.GearData);
+                    // Logic Spawn deferred fully to the Configured Engine Layer Factory
+                    IGridNode newNode = nodeFactory.CreateNode(targetDropPos, context.GearData);
+                    
                     gridManager.AddNode(newNode);
 
                     // Visual Spawn directly into the Board
@@ -81,7 +87,7 @@ namespace Game.GearEngine.Presentation
         {
             if (gridManager == null || mainCamera == null) return;
             
-            // Interaction is strictly forbidden while the simulation is actively spinning
+            // Cannot modify the board while the simulation is running
             if (gridManager.IsRunning) return;
 
             HandleBoardDragInteraction();
@@ -115,6 +121,7 @@ namespace Game.GearEngine.Presentation
                         if (view.TargetNode.IsInteractable)
                         {
                             draggedView = view;
+                            draggedView.IsBeingDragged = true;
                             originalGridPos = view.TargetNode.Position;
                             
                             // Unregister from grid mechanically while hovering
@@ -155,6 +162,7 @@ namespace Game.GearEngine.Presentation
                 }
 
                 // Drop the reference. GearView.Update() will naturally catch TargetNode.Position and violently lerp it back!
+                draggedView.IsBeingDragged = false;
                 draggedView = null; 
             }
         }

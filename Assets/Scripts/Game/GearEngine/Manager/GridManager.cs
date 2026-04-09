@@ -1,11 +1,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 using VContainer.Unity;
+using Sirenix.OdinInspector;
 
 namespace Game.GearEngine
 {
     public class GridManager : IGridManager, ITickable
     {
+        [ShowInInspector, ReadOnly]
         private Dictionary<Vector2Int, IGridNode> nodes = new Dictionary<Vector2Int, IGridNode>();
         
         public float GlobalSpeedModifier { get; set; } = 1.0f;

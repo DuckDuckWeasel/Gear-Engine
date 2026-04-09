@@ -18,14 +18,15 @@ namespace Game.GearEngine.Presentation
         public void Construct(IGridManager gridManager)
         {
             this.gridManager = gridManager;
+            if (this.gridManager != null)
+            {
+                IsRunning = this.gridManager.IsRunning;
+            }
         }
 
         protected override void Initialize()
         {
-            if (gridManager != null)
-            {
-                IsRunning = gridManager.IsRunning;
-            }
+            // Usually called by Scaffold Navigation, but we sync in Construct for DI.
         }
 
         public void ToggleSimulation()

@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 7609481632795626190}
   - component: {fileID: 2322845517375744016}
-  - component: {fileID: 5805784081478933498}
   m_Layer: 0
   m_Name: BaseGear2View
   m_TagString: Untagged
@@ -92,15 +91,3 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
---- !u!114 &5805784081478933498
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4444594598132281025}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f182ea04d241045a78e2e7b59a039878, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Game.GearEngine::Game.GearEngine.GearView

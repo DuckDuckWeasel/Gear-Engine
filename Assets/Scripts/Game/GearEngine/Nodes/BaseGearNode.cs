@@ -1,15 +1,20 @@
 using UnityEngine;
 using Scaffold.Events.Contracts;
 using System;
+using Sirenix.OdinInspector;
 
 namespace Game.GearEngine
 {
     public class BaseGearNode : NodeBase
     {
+        [SerializeField]
         private Action<DirectionalTriggerEvent> triggerAction;
+        [SerializeField]
         private bool hasExecutedThisTick;
-        private float maxDrivenSpeedThisTick = 0f;
+        [SerializeField]
+        private bool hasRotatedThisTick;
 
+        [ShowInInspector]
         public float CurrentCharge { get; private set; }
 
         public BaseGearNode(IGridManager grid, IEventBus eventBus)
@@ -22,18 +27,9 @@ namespace Game.GearEngine
         public override void NodeUpdate(float deltaTime, float speedModifier)
         {
             hasExecutedThisTick = false; // Reset threshold every tick
-
-            if (ConfigData == null || !IsActive) return;
-
-            // Apply driven rotation from the strongest neighbor driving us
-            if (Mathf.Abs(maxDrivenSpeedThisTick) > 0.01f)
-            {
-                CurrentRotation += maxDrivenSpeedThisTick * deltaTime;
-                if (CurrentRotation >= 360f) CurrentRotation -= 360f;
-            }
+            hasRotatedThisTick = false; // Reset mechanical trigger lock
             
-            // Reset for the upcoming/ongoing physics frame
-            maxDrivenSpeedThisTick = 0f;
+            if (ConfigData == null || !IsActive) return;
 
             float speed = ConfigData.BaseRotationSpeed;
             CurrentRotation += speed * speedModifier * deltaTime;
@@ -59,26 +55,40 @@ namespace Game.GearEngine
             }
         }
 
-        public void ApplyDrivenRotation(float deltaTime, float drivingSpeed)
-        {
-            // Only adopt the fastest driving speed we receive this frame
-            if (Mathf.Abs(drivingSpeed) > Mathf.Abs(maxDrivenSpeedThisTick))
-            {
-                maxDrivenSpeedThisTick = drivingSpeed;
-            }
-        }
-
         private void OnTriggerReceived(DirectionalTriggerEvent evt)
         {
             if (evt.TargetPosition != Position || ConfigData == null) return;
+            if (hasRotatedThisTick) return;
 
-            ApplyCharge(evt.ChargeOnTriggerAmount);
+            hasRotatedThisTick = true;
+
+            // Visual feedback chunk: jump by config degrees and let GearView lerp it smoothly!
+            // Inverse gear ratio mechanics -> + becomes -, - becomes +
+            float currentSign = -evt.SourceRotationSign;
+            CurrentRotation += ConfigData.TriggerSpinDegrees * currentSign;
+            
+            while (CurrentRotation >= 360f) CurrentRotation -= 360f;
+            while (CurrentRotation < 0f) CurrentRotation += 360f;
+
+            ApplyCharge(ConfigData.ChargeOnTriggerAmount);
             CheckAndExecute();
+
+            // Cascade mechanics to adjacent interlocking gears
+            Vector2Int[] dirs = ConfigData.TriggerPattern.GetDirections();
+
+            foreach (var dir in dirs)
+            {
+                var neighborPos = Position + dir;
+                if (grid.GetNode(neighborPos) is BaseGearNode)
+                {
+                    eventBus.Raise(new DirectionalTriggerEvent(neighborPos, 0f, currentSign));
+                }
+            }
         }
 
         private void CheckAndExecute()
         {
-            if (CurrentCharge >= ConfigData.MaxCharge)
+            if (CurrentCharge >= ConfigData.MaxCharge && ConfigData.MaxCharge > 0)
             {
                 if (hasExecutedThisTick)
                 {

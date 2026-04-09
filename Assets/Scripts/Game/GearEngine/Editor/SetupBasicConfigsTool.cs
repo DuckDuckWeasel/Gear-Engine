@@ -18,6 +18,12 @@ namespace Game.GearEngine.Editor
             if (!Directory.Exists(prefabPath)) Directory.CreateDirectory(prefabPath);
             AssetDatabase.Refresh();
 
+            Sprite baseSpr = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Game/GearEngine/Sprites/BaseGear.png");
+            Sprite coreSpr = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Game/GearEngine/Sprites/CoreGear.png");
+            Sprite rockSpr = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Game/GearEngine/Sprites/RockObstacle.png");
+            Sprite scoreSpr = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Game/GearEngine/Sprites/ScoreGear.png");
+            Sprite speedSpr = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Game/GearEngine/Sprites/SpeedGear.png");
+
             // 1. Create Default Tags
             TagSO gridBoardTag = ScriptableObject.CreateInstance<TagSO>();
             gridBoardTag.Description = "Valid 2D surface area for gears to be dropped onto.";
@@ -41,8 +47,10 @@ namespace Game.GearEngine.Editor
             SetPrivateData(coreGear, new GearConfigData
             {
                 Id = "core_gear_1",
+                Category = GearCategory.Core,
                 BaseRotationSpeed = 30f,
                 VisualPrefab = coreView,
+                UIIcon = coreSpr,
                 TriggerPattern = TriggerPattern.FourWay,
                 IsInteractable = true,
                 MaxCharge = 0f, // Core doesn't hold charge
@@ -59,6 +67,7 @@ namespace Game.GearEngine.Editor
                 Id = "base_gear_2",
                 BaseRotationSpeed = 0f, 
                 VisualPrefab = base2View,
+                UIIcon = baseSpr,
                 IsInteractable = true,
                 MaxCharge = 200f,
                 ChargeOverTimeAmount = 0f,
@@ -74,6 +83,7 @@ namespace Game.GearEngine.Editor
                 Id = "base_gear_1",
                 BaseRotationSpeed = 0f,
                 VisualPrefab = base1View,
+                UIIcon = baseSpr,
                 IsInteractable = true,
                 MaxCharge = 100f,
                 ChargeOverTimeAmount = 0f, 
@@ -101,6 +111,7 @@ namespace Game.GearEngine.Editor
                 Id = "obstacle_rock",
                 BaseRotationSpeed = 0f,
                 VisualPrefab = rockView,
+                UIIcon = rockSpr,
                 IsInteractable = false, 
                 MaxCharge = 30f,
                 ChargeOverTimeAmount = 0f,
@@ -116,6 +127,7 @@ namespace Game.GearEngine.Editor
                 Id = "score_gear",
                 BaseRotationSpeed = 0f,
                 VisualPrefab = scoreView,
+                UIIcon = scoreSpr,
                 IsInteractable = true,
                 MaxCharge = 100f,
                 ChargeOverTimeAmount = 0f,
@@ -131,6 +143,7 @@ namespace Game.GearEngine.Editor
                 Id = "speed_buff_gear",
                 BaseRotationSpeed = 0f,
                 VisualPrefab = speedView,
+                UIIcon = speedSpr,
                 IsInteractable = true,
                 MaxCharge = 0f, 
                 ChargeOverTimeAmount = 0f,
@@ -170,7 +183,16 @@ namespace Game.GearEngine.Editor
                 sr.color = tint;
             }
 
-            var view = tempGo.AddComponent<Game.GearEngine.GearView>();
+            if (name == "CoreGearView")
+            {
+                GameObject tipGo = new GameObject("TriggerTip");
+                tipGo.transform.SetParent(tempGo.transform);
+                tipGo.transform.localPosition = new Vector3(0, 0.45f, -0.1f);
+                var tipSr = tipGo.AddComponent<SpriteRenderer>();
+                tipSr.sprite = AssetDatabase.GetBuiltinExtraResource<Sprite>("UI/Skin/Knob.psd");
+                tipSr.color = Color.green;
+                tipGo.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
+            }
 
             GameObject savedPrefab = PrefabUtility.SaveAsPrefabAsset(tempGo, fullPath);
             Object.DestroyImmediate(tempGo);
@@ -192,6 +214,12 @@ namespace Game.GearEngine.Editor
                 var visualProp = dataProp.FindPropertyRelative("VisualPrefab");
                 if (visualProp != null) visualProp.objectReferenceValue = data.VisualPrefab;
 
+                var iconProp = dataProp.FindPropertyRelative("UIIcon");
+                if (iconProp != null) iconProp.objectReferenceValue = data.UIIcon;
+
+                var categoryProp = dataProp.FindPropertyRelative("Category");
+                if (categoryProp != null) categoryProp.enumValueIndex = (int)data.Category;
+
                 // Map the Enum cleanly to EnumIndex for SerializedProperties
                 int triggerIndex = data.TriggerPattern == TriggerPattern.FourWay ? 0 : 1;
                 dataProp.FindPropertyRelative("TriggerPattern").enumValueIndex = triggerIndex;
@@ -200,6 +228,15 @@ namespace Game.GearEngine.Editor
                 dataProp.FindPropertyRelative("MaxCharge").floatValue = data.MaxCharge;
                 dataProp.FindPropertyRelative("ChargeOverTimeAmount").floatValue = data.ChargeOverTimeAmount;
                 dataProp.FindPropertyRelative("ChargeOnTriggerAmount").floatValue = data.ChargeOnTriggerAmount;
+
+                var slowdownDurProp = dataProp.FindPropertyRelative("SnapSlowdownDuration");
+                if (slowdownDurProp != null) slowdownDurProp.floatValue = data.SnapSlowdownDuration;
+
+                var slowdownMultProp = dataProp.FindPropertyRelative("SnapSlowdownMultiplier");
+                if (slowdownMultProp != null) slowdownMultProp.floatValue = data.SnapSlowdownMultiplier;
+
+                var triggerSpinProp = dataProp.FindPropertyRelative("TriggerSpinDegrees");
+                if (triggerSpinProp != null) triggerSpinProp.floatValue = data.TriggerSpinDegrees;
             }
 
             // Set Next Level

@@ -3,5 +3,5 @@ using UnityEngine;
 
 namespace Game.GearEngine
 {
-    public record DirectionalTriggerEvent(Vector2Int TargetPosition, float ChargeOnTriggerAmount) : ContextEvent;
+    public record DirectionalTriggerEvent(Vector2Int TargetPosition, float ChargeOnTriggerAmount, float SourceRotationSign = 1f) : ContextEvent;
 }

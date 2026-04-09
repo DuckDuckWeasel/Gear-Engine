@@ -5,9 +5,12 @@ namespace Game.GearEngine
 {
     public class CoreGearNode : NodeBase
     {
+        [SerializeField]
         private float internalProgress = 0f;
-
+        [SerializeField]
         private float lastFiredRotation = 0f;
+        [SerializeField]
+        private float slowdownTimer = 0f;
 
         public CoreGearNode(IGridManager grid, IEventBus eventBus) : base(grid, eventBus) { }
 
@@ -15,14 +18,21 @@ namespace Game.GearEngine
         {
             if (ConfigData == null || !IsActive) return;
 
+            float currentSpeedMod = speedModifier;
+            if (slowdownTimer > 0)
+            {
+                currentSpeedMod *= ConfigData.SnapSlowdownMultiplier; // Config-driven stutter drag
+                slowdownTimer -= deltaTime;
+            }
+
             float speed = ConfigData.BaseRotationSpeed;
-            float rotationDelta = speed * LocalSpeedMultiplier * speedModifier * deltaTime;
+            float rotationDelta = speed * LocalSpeedMultiplier * currentSpeedMod * deltaTime;
             
             // Apply continuously for buttery smooth view rendering
             CurrentRotation += rotationDelta;
 
             // Fluid over-time charge to neighbors continues to happen based on time
-            ApplyOverTimeChargeToNeighbors(deltaTime, speed, speedModifier);
+            ApplyOverTimeChargeToNeighbors(deltaTime, speed, currentSpeedMod);
 
             CheckSnapAndTrigger();
         }
@@ -42,9 +52,16 @@ namespace Game.GearEngine
                 Vector2Int targetDir = GetDirectionForSegment(currentSegment);
                 Vector2Int targetPos = Position + targetDir;
                 
-                Debug.Log($"<color=#ffcc00>[CoreGearNode]</color> Smooth Tick! Logically crossed {lastFiredRotation}° -> Fired at {targetPos}");
+                IGridNode hitNode = grid.GetNode(targetPos);
+                if (hitNode != null)
+                {
+                    Debug.Log($"<color=#ffcc00>[CoreGearNode]</color> Smooth Tick! Logically crossed {lastFiredRotation}° -> Fired at {targetPos}");
 
-                eventBus.Raise(new DirectionalTriggerEvent(targetPos, ConfigData.ChargeOnTriggerAmount));
+                    float currentSign = Mathf.Sign(ConfigData.BaseRotationSpeed * LocalSpeedMultiplier);
+                    eventBus.Raise(new DirectionalTriggerEvent(targetPos, ConfigData.ChargeOnTriggerAmount, currentSign));
+                    
+                    slowdownTimer = ConfigData.SnapSlowdownDuration; // Config-driven stutter duration
+                }
             }
 
             // Loop reset safeguard
@@ -58,17 +75,16 @@ namespace Game.GearEngine
         private void ApplyOverTimeChargeToNeighbors(float deltaTime, float speed, float speedModifier)
         {
             float charge = ConfigData.ChargeOverTimeAmount * deltaTime;
-            if (charge <= 0) return;
 
             var dirs = GetTriggerDirections();
             foreach (var dir in dirs)
             {
                 if (grid.GetNode(Position + dir) is BaseGearNode neighbor)
                 {
-                    neighbor.ApplyCharge(charge);
-                    
-                    // Drive neighbor rotation seamlessly!
-                    neighbor.ApplyDrivenRotation(deltaTime, speed * LocalSpeedMultiplier * speedModifier);
+                    if (charge > 0)
+                    {
+                        neighbor.ApplyCharge(charge);
+                    }
                 }
             }
         }
@@ -77,15 +93,7 @@ namespace Game.GearEngine
 
         private Vector2Int[] GetTriggerDirections()
         {
-            if (ConfigData.TriggerPattern == TriggerPattern.EightWay)
-            {
-                return new[]
-                {
-                    Vector2Int.up, new Vector2Int(1, 1), Vector2Int.right, new Vector2Int(1, -1),
-                    Vector2Int.down, new Vector2Int(-1, -1), Vector2Int.left, new Vector2Int(-1, 1)
-                };
-            }
-            return new[] { Vector2Int.up, Vector2Int.right, Vector2Int.down, Vector2Int.left };
+            return ConfigData.TriggerPattern.GetDirections();
         }
 
         private Vector2Int GetDirectionForSegment(int segment)
@@ -99,12 +107,17 @@ namespace Game.GearEngine
         {
             if (ConfigData == null) return;
 
-            // Wait, what's closest orthogonal angle for CoreGear?
-            // CoreGear rotates tick-by-tick. Visually it's snapped.
-            // If it accumulated some internal progress, we just let it rot to 0 or leave it snapped.
-            // Let's give it a smooth snap toward 0 degree (starting position).
+            // Smoothly snap to closest 90-degree orthogonal rest state in the direction of rotation
+            float targetRotation;
+            if (LastRotationDelta > 0)
+                targetRotation = Mathf.Ceil(CurrentRotation / 90f) * 90f;
+            else if (LastRotationDelta < 0)
+                targetRotation = Mathf.Floor(CurrentRotation / 90f) * 90f;
+            else
+                targetRotation = Mathf.Round(CurrentRotation / 90f) * 90f;
+
             float smoothSpeed = 5f;
-            CurrentRotation = Mathf.LerpAngle(CurrentRotation, 0f, deltaTime * smoothSpeed);
+            CurrentRotation = Mathf.LerpAngle(CurrentRotation, targetRotation, deltaTime * smoothSpeed);
             internalProgress = 0f; // drain progress
         }
     }

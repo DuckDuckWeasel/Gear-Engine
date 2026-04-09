@@ -12,23 +12,22 @@ namespace Game.GearEngine
             this.resolver = resolver;
         }
 
-        public IGridNode CreateCoreGear(Vector2Int position, GearConfigData configData)
+        public IGridNode CreateNode(Vector2Int position, GearConfigData configData)
         {
-            var node = resolver.Resolve<CoreGearNode>();
-            node.Initialize(position, configData);
-            return node;
-        }
-
-        public IGridNode CreateBaseGear(Vector2Int position, GearConfigData configData)
-        {
-            var node = resolver.Resolve<BaseGearNode>();
-            node.Initialize(position, configData);
-            return node;
-        }
-
-        public IGridNode CreateAuraGear(Vector2Int position, GearConfigData configData)
-        {
-            var node = resolver.Resolve<AuraGearNode>();
+            IGridNode node = null;
+            switch (configData.Category)
+            {
+                case GearCategory.Core:
+                    node = resolver.Resolve<CoreGearNode>();
+                    break;
+                case GearCategory.Aura:
+                    node = resolver.Resolve<AuraGearNode>();
+                    break;
+                case GearCategory.Base:
+                default:
+                    node = resolver.Resolve<BaseGearNode>();
+                    break;
+            }
             node.Initialize(position, configData);
             return node;
         }

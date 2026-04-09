@@ -1,16 +1,24 @@
-using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Scaffold.MVVM;
-using Scaffold.MVVM.Contracts;
-using Scaffold.MVVM.Binding;
 using UnityEngine;
+using VContainer;
 
 namespace Game.GearEngine.Presentation
 {
     public partial class GearInventoryViewModel : ViewModel
     {
+        private IGridManager gridManager;
+
         [ObservableProperty]
         private GearInventoryModel inventoryModel = new GearInventoryModel();
+
+        [Inject]
+        public void Construct(IGridManager gridManager)
+        {
+            this.gridManager = gridManager;
+        }
+
+        public bool CanDrag => gridManager != null && !gridManager.IsRunning;
 
         protected override void Initialize()
         {

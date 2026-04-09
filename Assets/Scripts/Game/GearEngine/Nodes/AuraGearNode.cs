@@ -13,11 +13,7 @@ namespace Game.GearEngine
             float bonusCharge = ConfigData.ChargeOverTimeAmount * deltaTime;
             float speedBoostMultiplier = 1f + (ConfigData.ChargeOnTriggerAmount / 100f); // just reusing a field for boost %
 
-            var dirs = new[]
-            {
-                Vector2Int.up, new Vector2Int(1, 1), Vector2Int.right, new Vector2Int(1, -1),
-                Vector2Int.down, new Vector2Int(-1, -1), Vector2Int.left, new Vector2Int(-1, 1)
-            };
+            Vector2Int[] dirs = ConfigData.TriggerPattern.GetDirections();
 
             foreach (var dir in dirs)
             {

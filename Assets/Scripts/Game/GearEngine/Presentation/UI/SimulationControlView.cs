@@ -1,9 +1,8 @@
 using UnityEngine;
 using UnityEngine.UI;
 using Scaffold.MVVM;
-using Scaffold.MVVM.Contracts;
-using Scaffold.MVVM.Binding;
 using TMPro;
+using VContainer;
 
 namespace Game.GearEngine.Presentation
 {
@@ -11,6 +10,13 @@ namespace Game.GearEngine.Presentation
     {
         [SerializeField] private Button toggleButton;
         [SerializeField] private TextMeshProUGUI buttonText;
+
+        [Inject]
+        public void Construct(SimulationControlViewModel vm)
+        {
+            Bind(vm);
+        }
+
 
         protected override void OnBind()
         {

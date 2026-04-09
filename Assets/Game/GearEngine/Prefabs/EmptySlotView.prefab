@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 3067215487907053221}
   - component: {fileID: 260867612144173378}
-  - component: {fileID: 2809684346384822506}
   m_Layer: 0
   m_Name: EmptySlotView
   m_TagString: Untagged
@@ -92,15 +91,3 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
---- !u!114 &2809684346384822506
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 20453910656635915}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f182ea04d241045a78e2e7b59a039878, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Game.GearEngine::Game.GearEngine.GearView

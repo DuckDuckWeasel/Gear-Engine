@@ -8,14 +8,19 @@
         "Scaffold.MVVM.View",
         "Scaffold.MVVM.ViewModel",
         "Scaffold.Navigation",
-        "Unity.TextMeshPro"
+        "Unity.TextMeshPro",
+        "Unity.InputSystem"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": true,
     "precompiledReferences": [
-        "CommunityToolkit.Mvvm.dll"
+        "CommunityToolkit.Mvvm.dll",
+        "Sirenix.OdinInspector.Attributes.dll",
+        "Sirenix.Serialization.dll",
+        "Sirenix.Serialization.Config.dll",
+        "Sirenix.Utilities.dll"
     ],
     "autoReferenced": true,
     "defineConstraints": [],

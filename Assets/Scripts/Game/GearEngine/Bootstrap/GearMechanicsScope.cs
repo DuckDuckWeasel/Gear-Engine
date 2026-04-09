@@ -17,7 +17,7 @@ namespace Game.GearEngine
             {
                 builder.RegisterInstance(boardConfig);
             }
-            builder.Register<EventController>(Lifetime.Singleton).AsImplementedInterfaces();
+            builder.Register<EventController>(Lifetime.Singleton).AsImplementedInterfaces().AsSelf();
 
             builder.Register<GridManager>(Lifetime.Singleton).AsImplementedInterfaces().AsSelf();
 
@@ -39,6 +39,9 @@ namespace Game.GearEngine
             builder.Register<SimulationControlViewModel>(Lifetime.Singleton);
 
             builder.RegisterComponentInHierarchy<GearBootstrap>();
+            builder.RegisterComponentInHierarchy<GearInventoryView>();
+            builder.RegisterComponentInHierarchy<SimulationControlView>();
+            builder.RegisterComponentInHierarchy<BoardView>();
         }
     }
 }

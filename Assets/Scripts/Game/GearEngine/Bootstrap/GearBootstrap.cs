@@ -7,24 +7,48 @@ namespace Game.GearEngine
     {
         [SerializeField] private GearConfig[] gearConfigs;
         [SerializeField] private GameObject emptySlotPrefab;
+        
+        [Header("Initial Inventory")]
+        [Tooltip("The items that the player will start with in their UI inventory")]
+        [SerializeField] private GearConfig[] startingInventoryGears;
 
         private IGridManager grid;
         private GearNodeFactory nodeFactory;
         private GearViewFactory viewFactory;
         private BoardConfigSO boardConfig;
+        private Presentation.GearInventoryViewModel inventoryViewModel;
+        private Presentation.BoardView boardView;
 
         [Inject]
-        public void Construct(IGridManager grid, GearNodeFactory nodeFactory, GearViewFactory viewFactory, BoardConfigSO boardConfig)
+        public void Construct(IGridManager grid, GearNodeFactory nodeFactory, GearViewFactory viewFactory, BoardConfigSO boardConfig, Presentation.GearInventoryViewModel inventoryViewModel, Presentation.BoardView boardView)
         {
             this.grid = grid;
             this.nodeFactory = nodeFactory;
             this.viewFactory = viewFactory;
             this.boardConfig = boardConfig;
+            this.inventoryViewModel = inventoryViewModel;
+            this.boardView = boardView;
+        }
+
+        private void PopulateStartingInventory()
+        {
+            if (startingInventoryGears == null || startingInventoryGears.Length == 0) return;
+
+            foreach(var gearConfigSO in startingInventoryGears)
+            {
+                if (gearConfigSO != null)
+                {
+                    inventoryViewModel.AddGearToInventory(gearConfigSO.CreateRuntimeData());
+                }
+            }
+            Debug.Log($"<color=#ffff55>[GearBootstrap]</color> Populated Inventory with {startingInventoryGears.Length} Initial Gears!");
         }
 
         private void Start()
         {
             Debug.Log("[GearBootstrap] Initializing Gear Grid with Factories and SO-driven Abilities...");
+
+            PopulateStartingInventory();
 
             Transform gridRoot = CreateGridRoot();
             PopulateGrid(gridRoot);
@@ -34,6 +58,8 @@ namespace Game.GearEngine
 
         private Transform CreateGridRoot()
         {
+            if (boardView != null) return boardView.transform;
+
             var root = new GameObject("GearGridVisuals").transform;
             root.SetParent(transform);
             return root;
@@ -73,9 +99,7 @@ namespace Game.GearEngine
         {
             GearConfigData runtimeData = ResolveConfig(isCore);
 
-            IGridNode node = isCore 
-                ? nodeFactory.CreateCoreGear(pos, runtimeData) 
-                : nodeFactory.CreateBaseGear(pos, runtimeData);
+            IGridNode node = nodeFactory.CreateNode(pos, runtimeData);
 
             grid.AddNode(node);
             viewFactory.CreateView(node, runtimeData, parent);
@@ -88,6 +112,7 @@ namespace Game.GearEngine
                 return new GearConfigData
                 {
                     Id = isCore ? "core_default" : "base_default",
+                    Category = isCore ? GearCategory.Core : GearCategory.Base,
                     BaseRotationSpeed = isCore ? 90f : 45f,
                     TriggerPattern = TriggerPattern.EightWay,
                     MaxCharge = 100f,

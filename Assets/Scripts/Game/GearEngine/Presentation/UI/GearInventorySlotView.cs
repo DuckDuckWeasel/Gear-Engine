@@ -42,6 +42,14 @@ namespace Game.GearEngine.Presentation
             Debug.Log($"<color=#aaaaff>[GearInventorySlotView]</color> Drag & Drop confirmed valid tag overlap. Firing Event.");
         }
 
+        private void Update()
+        {
+            if (dragHandler != null && viewModel != null)
+            {
+                dragHandler.IsInteractable = viewModel.CanDrag;
+            }
+        }
+
         private void OnDestroy()
         {
             if (dragHandler != null)
