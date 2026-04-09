@@ -10,21 +10,22 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: faf34a39f5b75466d9fbf4f99fc70808, type: 3}
-  m_Name: BaseGearConfig_Level2
+  m_Name: CoreGearConfig
   m_EditorClassIdentifier: Game.GearEngine::Game.GearEngine.GearConfig
   data:
-    Id: base_gear_2
-    Category: 0
-    BaseRotationSpeed: 0
-    VisualPrefab: {fileID: 4444594598132281025, guid: d4ae7c8518bc94a9bb6a319c6a6902b6, type: 3}
-    UIIcon: {fileID: 21300000, guid: fcfe20b09c8874fe4bf0b85d06a0d441, type: 3}
+    Id: core_gear_1
+    Category: 1
+    BaseRotationSpeed: 70
+    VisualPrefab: {fileID: 697835619526280206, guid: b1d3f12d5b8c54349a34f49dd2ef4bf3, type: 3}
+    UIIcon: {fileID: 0}
+    UIScaleMultiplier: 115
     TriggerPattern: 4
     IsInteractable: 1
-    MaxCharge: 200
+    MaxCharge: 0
     ChargeOverTimeAmount: 0
-    ChargeOnTriggerAmount: 50
-    SnapSlowdownDuration: 1
-    SnapSlowdownMultiplier: 0.15
+    ChargeOnTriggerAmount: 0
+    SnapSlowdownDuration: 0.25
+    SnapSlowdownMultiplier: 0.1
     TriggerSpinDegrees: 45
     Abilities: []
   nextLevel: {fileID: 0}

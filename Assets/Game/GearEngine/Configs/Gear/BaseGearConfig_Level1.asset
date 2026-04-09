@@ -17,13 +17,14 @@ MonoBehaviour:
     Category: 0
     BaseRotationSpeed: 0
     VisualPrefab: {fileID: 6370815323567363965, guid: 16426345c7f1e4cfcbe7499d444b3f6d, type: 3}
-    UIIcon: {fileID: 21300000, guid: fcfe20b09c8874fe4bf0b85d06a0d441, type: 3}
+    UIIcon: {fileID: -1078806869439273028, guid: 78e190fb2677d49c98a2084be2b34dd5, type: 3}
+    UIScaleMultiplier: 115
     TriggerPattern: 4
     IsInteractable: 1
     MaxCharge: 100
     ChargeOverTimeAmount: 0
     ChargeOnTriggerAmount: 25
-    SnapSlowdownDuration: 1
+    SnapSlowdownDuration: 0.5
     SnapSlowdownMultiplier: 0.15
     TriggerSpinDegrees: 45
     Abilities: []

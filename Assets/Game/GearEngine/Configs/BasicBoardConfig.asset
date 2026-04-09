@@ -12,6 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7593c65573a10438b902c4779a2b3fee, type: 3}
   m_Name: BasicBoardConfig
   m_EditorClassIdentifier: Game.GearEngine::Game.GearEngine.BoardConfigSO
-  GridWidth: 5
+  GridWidth: 7
   GridHeight: 5
   Spacing: 0.75
+  MaxDragGrabDistance: 0.75
+  StaggeredRotationOffset: 22.5

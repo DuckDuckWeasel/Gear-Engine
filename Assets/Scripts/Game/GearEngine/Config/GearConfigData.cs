@@ -25,6 +25,7 @@ namespace Game.GearEngine
         public float BaseRotationSpeed;
         public GameObject VisualPrefab;
         public Sprite UIIcon;
+        public float UIScaleMultiplier = 115f; // Used to scale native visually into overlay canvases 
         public TriggerPattern TriggerPattern = TriggerPattern.FourWay;
         public bool IsInteractable = true;
         
@@ -34,7 +35,7 @@ namespace Game.GearEngine
         public float ChargeOnTriggerAmount = 25f; // Amount gained when hit by a trigger
 
         // Snap Feedback Mechanics
-        public float SnapSlowdownDuration = 1.0f;
+        public float SnapSlowdownDuration = 0.5f;
         public float SnapSlowdownMultiplier = 0.15f;
         public float TriggerSpinDegrees = 45f;
 
@@ -53,6 +54,7 @@ namespace Game.GearEngine
                 BaseRotationSpeed = BaseRotationSpeed,
                 VisualPrefab = VisualPrefab,
                 UIIcon = UIIcon,
+                UIScaleMultiplier = UIScaleMultiplier,
                 TriggerPattern = TriggerPattern,
                 IsInteractable = IsInteractable,
                 MaxCharge = MaxCharge,

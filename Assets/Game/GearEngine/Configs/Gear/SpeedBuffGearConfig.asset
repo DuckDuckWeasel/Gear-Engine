@@ -10,23 +10,24 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: faf34a39f5b75466d9fbf4f99fc70808, type: 3}
-  m_Name: ObstacleRockConfig
+  m_Name: SpeedBuffGearConfig
   m_EditorClassIdentifier: Game.GearEngine::Game.GearEngine.GearConfig
   data:
-    Id: obstacle_rock
+    Id: speed_buff_gear
     Category: 0
     BaseRotationSpeed: 0
-    VisualPrefab: {fileID: 522121566319413383, guid: 51970ee9abfae4f67869c8b3ceabc8e1, type: 3}
-    UIIcon: {fileID: 21300000, guid: 6972853be355d423980168af33d4d25b, type: 3}
+    VisualPrefab: {fileID: 8994168311140333348, guid: ebb38bb653ba849e198cb9b2cfa7687f, type: 3}
+    UIIcon: {fileID: -3201335710889687837, guid: 753bec22852b34aeda2e0e40d56cf429, type: 3}
+    UIScaleMultiplier: 115
     TriggerPattern: 4
-    IsInteractable: 0
-    MaxCharge: 30
+    IsInteractable: 1
+    MaxCharge: 100
     ChargeOverTimeAmount: 0
-    ChargeOnTriggerAmount: 10
-    SnapSlowdownDuration: 1
+    ChargeOnTriggerAmount: 25
+    SnapSlowdownDuration: 0.5
     SnapSlowdownMultiplier: 0.15
     TriggerSpinDegrees: 45
     Abilities: []
   nextLevel: {fileID: 0}
   abilities:
-  - {fileID: 11400000, guid: ffeef6717bd5e4cecb247511979f8f6b, type: 2}
+  - {fileID: 11400000, guid: 41e142f4a5fb64c4daf1e32c8d990026, type: 2}

@@ -37,6 +37,16 @@ namespace Game.GearEngine
             }
         }
 
+        public IGridNode ExtractNode(Vector2Int pos)
+        {
+            if (nodes.TryGetValue(pos, out var node))
+            {
+                nodes.Remove(pos);
+                return node;
+            }
+            return null;
+        }
+
         public IGridNode GetNode(Vector2Int pos)
         {
             nodes.TryGetValue(pos, out var node);

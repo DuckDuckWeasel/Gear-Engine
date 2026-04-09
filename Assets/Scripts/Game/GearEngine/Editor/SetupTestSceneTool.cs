@@ -18,6 +18,8 @@ namespace Game.GearEngine.Editor
             GameObject cameraObj = new GameObject("Main Camera");
             cameraObj.tag = "MainCamera";
             Camera cam = cameraObj.AddComponent<Camera>();
+            cam.orthographic = true;
+            cam.orthographicSize = 5f;
             cam.backgroundColor = new Color(0.1f, 0.1f, 0.15f);
             cam.clearFlags = CameraClearFlags.SolidColor;
             cameraObj.transform.position = new Vector3(0, 0, -10f);
@@ -41,8 +43,8 @@ namespace Game.GearEngine.Editor
             string folderPath = "Assets/Game/GearEngine/Configs";
             string prefabPath = "Assets/Game/GearEngine/Prefabs";
             
-            GearConfig core = AssetDatabase.LoadAssetAtPath<GearConfig>($"{folderPath}/CoreGearConfig.asset");
-            GearConfig baseGear = AssetDatabase.LoadAssetAtPath<GearConfig>($"{folderPath}/BaseGearConfig_Level1.asset");
+            GearConfig core = AssetDatabase.LoadAssetAtPath<GearConfig>($"{folderPath}/Gear/CoreGearConfig.asset");
+            GearConfig baseGear = AssetDatabase.LoadAssetAtPath<GearConfig>($"{folderPath}/Gear/BaseGearConfig_Level1.asset");
             GameObject emptySlot = AssetDatabase.LoadAssetAtPath<GameObject>($"{prefabPath}/EmptySlotView.prefab");
             BoardConfigSO boardConfig = AssetDatabase.LoadAssetAtPath<BoardConfigSO>($"{folderPath}/BasicBoardConfig.asset");
             
@@ -67,10 +69,10 @@ namespace Game.GearEngine.Editor
                     prop.GetArrayElementAtIndex(1).objectReferenceValue = baseGear;
                 }
                 
-                GearConfig rockObs = AssetDatabase.LoadAssetAtPath<GearConfig>($"{folderPath}/ObstacleRockConfig.asset");
-                GearConfig speedGear = AssetDatabase.LoadAssetAtPath<GearConfig>($"{folderPath}/SpeedBuffGearConfig.asset");
-                GearConfig scoreGear = AssetDatabase.LoadAssetAtPath<GearConfig>($"{folderPath}/ScoreGearConfig.asset");
-                GearConfig baseLevel2 = AssetDatabase.LoadAssetAtPath<GearConfig>($"{folderPath}/BaseGearConfig_Level2.asset");
+                GearConfig rockObs = AssetDatabase.LoadAssetAtPath<GearConfig>($"{folderPath}/Gear/ObstacleRockConfig.asset");
+                GearConfig speedGear = AssetDatabase.LoadAssetAtPath<GearConfig>($"{folderPath}/Gear/SpeedBuffGearConfig.asset");
+                GearConfig scoreGear = AssetDatabase.LoadAssetAtPath<GearConfig>($"{folderPath}/Gear/ScoreGearConfig.asset");
+                GearConfig baseLevel2 = AssetDatabase.LoadAssetAtPath<GearConfig>($"{folderPath}/Gear/BaseGearConfig_Level2.asset");
                 
                 var invProp = so.FindProperty("startingInventoryGears");
                 if (invProp != null)
@@ -100,7 +102,8 @@ namespace Game.GearEngine.Editor
 
             GameObject canvasObj = new GameObject("TestCanvas");
             Canvas testCanvas = canvasObj.AddComponent<Canvas>();
-            testCanvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            testCanvas.renderMode = RenderMode.ScreenSpaceCamera;
+            testCanvas.worldCamera = cam;
             canvasObj.AddComponent<UnityEngine.UI.CanvasScaler>();
             canvasObj.AddComponent<UnityEngine.UI.GraphicRaycaster>();
 
@@ -168,13 +171,21 @@ namespace Game.GearEngine.Editor
             hlG.childControlHeight = false;
 
             var invViewDef = invViewObj.AddComponent<Game.GearEngine.Presentation.GearInventoryView>();
-            // Assign the itemsContainer to the View using reflection
+            // Assign the itemsContainer and gridBoardTag to the View using reflection
             var invSo = new SerializedObject(invViewDef);
             var containerProp = invSo.FindProperty("itemsContainer");
             if (containerProp != null)
             {
                 containerProp.objectReferenceValue = itemsRt;
             }
+            
+            var gridBoardTagRef = AssetDatabase.LoadAssetAtPath<TagSO>($"{folderPath}/Tag/GridBoard_Tag.asset");
+            var tagProp = invSo.FindProperty("gridBoardTag");
+            if (tagProp != null && gridBoardTagRef != null)
+            {
+                tagProp.objectReferenceValue = gridBoardTagRef;
+            }
+
             invSo.ApplyModifiedProperties();
 
             // Setup Board Collider to act as a hit target for DragHandler Raycasts 
@@ -195,7 +206,7 @@ namespace Game.GearEngine.Editor
             
             // Attach the shiny new TagComponent for the DragHandler Validations
             var tagComp = floorGrid.AddComponent<Game.GearEngine.Presentation.TagComponent>();
-            TagSO gridBoardTag = AssetDatabase.LoadAssetAtPath<TagSO>($"{folderPath}/GridBoard_Tag.asset");
+            TagSO gridBoardTag = AssetDatabase.LoadAssetAtPath<TagSO>($"{folderPath}/Tag/GridBoard_Tag.asset");
             if (gridBoardTag != null)
             {
                 tagComp.AddTag(gridBoardTag); // Validates the generic drag drops!

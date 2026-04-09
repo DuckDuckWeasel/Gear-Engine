@@ -10,6 +10,7 @@ namespace Game.GearEngine.Presentation
     {
         // Drag in references in Unity Inspector
         [SerializeField] private RectTransform itemsContainer;
+        [SerializeField] private TagSO gridBoardTag;
         
         private IObjectResolver container;
 
@@ -96,32 +97,55 @@ namespace Game.GearEngine.Presentation
                     container.Inject(dragger); // Good practice to inject dragger too in case it needs it later
                 }
                 
-                // HACK: Reflection fallback config assignment since EventSystems are used
-                var tagObj = UnityEditor.AssetDatabase.LoadAssetAtPath<TagSO>("Assets/Game/GearEngine/Configs/GridBoard_Tag.asset");
-                var so = new UnityEditor.SerializedObject(dragger);
-                var acceptedTags = so.FindProperty("acceptedTargetTags");
-                acceptedTags.arraySize = 1;
-                acceptedTags.GetArrayElementAtIndex(0).objectReferenceValue = tagObj;
-                
-                var customSpr = gear.UIIcon;
-                if (customSpr != null)
+                if (gridBoardTag != null)
                 {
-                    so.FindProperty("ghostPrefab").objectReferenceValue = null; // Will fallback to itself
+                    dragger.AddAcceptedTag(gridBoardTag);
                 }
-                
-                so.ApplyModifiedProperties();
+                dragger.GhostScaleMultiplier = gear.UIScaleMultiplier; 
 
-                // Generate inner icon
-                GameObject iconObj = new GameObject("Icon");
-                iconObj.transform.SetParent(slotGroup.transform, false);
-                var iconRt = iconObj.AddComponent<RectTransform>();
-                iconRt.anchorMin = Vector2.zero;
-                iconRt.anchorMax = Vector2.one;
-                iconRt.sizeDelta = Vector2.zero;
-                var iconImg = iconObj.AddComponent<UnityEngine.UI.Image>();
-                
-                if (customSpr != null) iconImg.sprite = customSpr;
-                else iconImg.color = new Color(0.6f, 0.6f, 0.65f); // fallback color
+                // Generate inner visual purely from the VisualPrefab!
+                if (gear.VisualPrefab != null)
+                {
+                    GameObject visualObj = Instantiate(gear.VisualPrefab, slotGroup.transform);
+                    visualObj.name = "VisualInstance";
+                    visualObj.transform.localPosition = new Vector3(0, 0, -10f); // Float it above the background
+                    
+                    // Canvas Overlay scaling (1 world unit = 1 UI pixel). 
+                    // Use data-driven UIScaleMultiplier instead of hardcoded 85f overlay stretch
+                    visualObj.transform.localScale = new Vector3(gear.UIScaleMultiplier, gear.UIScaleMultiplier, gear.UIScaleMultiplier);
+
+                    // Ensure raw SpriteRenderers draw over the UI Canvas Background!
+                    var srs = visualObj.GetComponentsInChildren<SpriteRenderer>(true);
+                    foreach(var sr in srs)
+                    {
+                        sr.sortingOrder = 50; 
+                    }
+
+                    // --- Add the missing central type icon for the Inventory Visual ---
+                    if (gear.UIIcon != null)
+                    {
+                        GameObject iconObj = new GameObject("InventoryUIIcon");
+                        iconObj.transform.SetParent(visualObj.transform, false);
+                        iconObj.transform.localPosition = new Vector3(0, 0, -1f); // Float in front of the base sprite
+                        iconObj.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f); // Match the GearView relative scale
+
+                        SpriteRenderer iconRenderer = iconObj.AddComponent<SpriteRenderer>();
+                        iconRenderer.sprite = gear.UIIcon;
+                        iconRenderer.sortingOrder = 55; // Higher than the base sprite (50)
+
+                        Shader fillShader = Shader.Find("GearEngine/Sprites/SpriteFillGrayscale");
+                        if (fillShader != null)
+                        {
+                            Material mat = new Material(fillShader);
+                            // Set to 1f so it looks fully "lit" in the inventory instead of grayed out
+                            mat.SetFloat("_FillAmount", 1f); 
+                            iconRenderer.material = mat;
+                        }
+                    }
+
+                    // Feed the completely decorated visual instance back as the ghost blueprint to DragHandler!
+                    dragger.GhostPrefab = visualObj; 
+                }
 
                 slotView.Bind(gear, viewModel);
             }

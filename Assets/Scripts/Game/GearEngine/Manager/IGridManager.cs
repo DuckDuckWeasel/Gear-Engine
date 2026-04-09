@@ -9,6 +9,7 @@ namespace Game.GearEngine
         
         void AddNode(IGridNode node);
         void RemoveNode(Vector2Int pos);
+        IGridNode ExtractNode(Vector2Int pos);
         IGridNode GetNode(Vector2Int pos);
 
         bool IsRunning { get; }
