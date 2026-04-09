@@ -5,7 +5,7 @@ namespace Game.GearEngine
 {
     public abstract class NodeBase : IGridNode
     {
-        public Vector2Int Position { get; protected set; }
+        public Vector2Int Position { get; set; }
         public float CurrentRotation { get; protected set; }
         public GearConfigData ConfigData { get; private set; }
         public float LocalSpeedMultiplier { get; set; } = 1.0f;

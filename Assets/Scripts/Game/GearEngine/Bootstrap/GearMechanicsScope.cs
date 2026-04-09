@@ -2,7 +2,7 @@ using Scaffold.Events.Contracts;
 using Scaffold.Events;
 using VContainer;
 using VContainer.Unity;
-
+using Game.GearEngine.Presentation;
 namespace Game.GearEngine
 {
     public class GearMechanicsScope : LifetimeScope
@@ -25,6 +25,10 @@ namespace Game.GearEngine
 
             // Note: Abilities are no longer registered in DI. 
             // They are ScriptableObjects injected via GearConfig setups within Unity.
+
+            // Register UI ViewModels
+            builder.Register<GearInventoryViewModel>(Lifetime.Singleton);
+            builder.Register<SimulationControlViewModel>(Lifetime.Singleton);
 
             builder.RegisterComponentInHierarchy<GearBootstrap>();
         }
