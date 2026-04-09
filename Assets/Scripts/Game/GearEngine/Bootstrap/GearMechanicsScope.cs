@@ -1,14 +1,22 @@
-using Scaffold.Events.Contracts;
 using Scaffold.Events;
 using VContainer;
 using VContainer.Unity;
 using Game.GearEngine.Presentation;
+using UnityEngine;
+
 namespace Game.GearEngine
 {
     public class GearMechanicsScope : LifetimeScope
     {
+        [SerializeField] 
+        private BoardConfigSO boardConfig;
+
         protected override void Configure(IContainerBuilder builder)
         {
+            if (boardConfig != null)
+            {
+                builder.RegisterInstance(boardConfig);
+            }
             builder.Register<EventController>(Lifetime.Singleton).AsImplementedInterfaces();
 
             builder.Register<GridManager>(Lifetime.Singleton).AsImplementedInterfaces().AsSelf();

@@ -6,17 +6,20 @@ namespace Game.GearEngine
     public class GearBootstrap : MonoBehaviour
     {
         [SerializeField] private GearConfig[] gearConfigs;
+        [SerializeField] private GameObject emptySlotPrefab;
 
         private IGridManager grid;
         private GearNodeFactory nodeFactory;
         private GearViewFactory viewFactory;
+        private BoardConfigSO boardConfig;
 
         [Inject]
-        public void Construct(IGridManager grid, GearNodeFactory nodeFactory, GearViewFactory viewFactory)
+        public void Construct(IGridManager grid, GearNodeFactory nodeFactory, GearViewFactory viewFactory, BoardConfigSO boardConfig)
         {
             this.grid = grid;
             this.nodeFactory = nodeFactory;
             this.viewFactory = viewFactory;
+            this.boardConfig = boardConfig;
         }
 
         private void Start()
@@ -38,14 +41,30 @@ namespace Game.GearEngine
 
         private void PopulateGrid(Transform gridRoot)
         {
-            for (int x = 0; x < 3; x++)
+            for (int x = 0; x < boardConfig.GridWidth; x++)
             {
-                for (int y = 0; y < 3; y++)
+                for (int y = 0; y < boardConfig.GridHeight; y++)
                 {
                     var pos = new Vector2Int(x, y);
-                    bool isCore = (x == 1 && y == 1);
 
-                    SpawnGear(pos, isCore, gridRoot);
+                    // 1. Visually instantiate the background slot so players know they can drop here
+                    if (emptySlotPrefab != null)
+                    {
+                        var slotView = Object.Instantiate(emptySlotPrefab, gridRoot);
+                        slotView.transform.localPosition = boardConfig.GetWorldPosition(pos, 0.5f);
+                        slotView.name = $"EmptySlot_{x}_{y}";
+                    }
+
+                    // 2. We only logically spawn a mechanical gear exactly at the center!
+                    // The rest of the board is intentionally left mechanically hollow for Drag And Drop!
+                    int centerX = boardConfig.GridWidth / 2;
+                    int centerY = boardConfig.GridHeight / 2;
+                    bool isCore = (x == centerX && y == centerY);
+                    
+                    if (isCore)
+                    {
+                        SpawnGear(pos, isCore, gridRoot);
+                    }
                 }
             }
         }

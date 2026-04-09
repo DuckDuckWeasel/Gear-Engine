@@ -16,19 +16,21 @@ namespace Game.GearEngine.Presentation
         private GearNodeFactory nodeFactory;
         private GearViewFactory viewFactory;
         private GearInventoryViewModel inventoryViewModel;
+        private BoardConfigSO boardConfig;
         
         // Drag State
         private GearView draggedView;
         private Vector2Int originalGridPos;
 
         [Inject]
-        public void Construct(IGridManager gridManager, EventController eventController, GearNodeFactory nodeFactory, GearViewFactory viewFactory, GearInventoryViewModel inventoryViewModel)
+        public void Construct(IGridManager gridManager, EventController eventController, GearNodeFactory nodeFactory, GearViewFactory viewFactory, GearInventoryViewModel inventoryViewModel, BoardConfigSO boardConfig)
         {
             this.gridManager = gridManager;
             this.eventController = eventController;
             this.nodeFactory = nodeFactory;
             this.viewFactory = viewFactory;
             this.inventoryViewModel = inventoryViewModel;
+            this.boardConfig = boardConfig;
             mainCamera = Camera.main;
 
             // Subscribe to generic drops incoming from UI Inventory overlapping the Board Tag
@@ -134,10 +136,8 @@ namespace Game.GearEngine.Presentation
             // 3. Drop
             if (Input.GetMouseButtonUp(0) && draggedView != null)
             {
-                // Convert continuous world geometry into discrete integer geometry (spacing is 1.5 units)
-                int snapX = Mathf.RoundToInt(worldPos.x / 1.5f);
-                int snapY = Mathf.RoundToInt(worldPos.y / 1.5f);
-                Vector2Int targetDropPos = new Vector2Int(snapX, snapY);
+                // Convert continuous world geometry mapping through boardConfig
+                Vector2Int targetDropPos = boardConfig.GetGridPosition(worldPos);
 
                 if (gridManager.GetNode(targetDropPos) == null)
                 {

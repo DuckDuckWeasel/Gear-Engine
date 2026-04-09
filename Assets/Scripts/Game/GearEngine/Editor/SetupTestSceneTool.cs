@@ -39,16 +39,40 @@ namespace Game.GearEngine.Editor
             
             // Try to assign configs to the bootstrap directly
             string folderPath = "Assets/Game/GearEngine/Configs";
+            string prefabPath = "Assets/Game/GearEngine/Prefabs";
+            
             GearConfig core = AssetDatabase.LoadAssetAtPath<GearConfig>($"{folderPath}/CoreGearConfig.asset");
             GearConfig baseGear = AssetDatabase.LoadAssetAtPath<GearConfig>($"{folderPath}/BaseGearConfig_Level1.asset");
+            GameObject emptySlot = AssetDatabase.LoadAssetAtPath<GameObject>($"{prefabPath}/EmptySlotView.prefab");
+            BoardConfigSO boardConfig = AssetDatabase.LoadAssetAtPath<BoardConfigSO>($"{folderPath}/BasicBoardConfig.asset");
             
+            // Assign to scope
+            if (boardConfig != null)
+            {
+                var scopeSo = new SerializedObject(scope);
+                var boardConfigProp = scopeSo.FindProperty("boardConfig");
+                if (boardConfigProp != null) boardConfigProp.objectReferenceValue = boardConfig;
+                scopeSo.ApplyModifiedProperties();
+            }
+
             if (core != null && baseGear != null)
             {
                 var so = new SerializedObject(bootstrap);
-                var prop = so.FindProperty("initialGears");
-                prop.arraySize = 2;
-                prop.GetArrayElementAtIndex(0).objectReferenceValue = core;
-                prop.GetArrayElementAtIndex(1).objectReferenceValue = baseGear;
+                
+                var prop = so.FindProperty("gearConfigs");
+                if (prop != null)
+                {
+                    prop.arraySize = 2;
+                    prop.GetArrayElementAtIndex(0).objectReferenceValue = core;
+                    prop.GetArrayElementAtIndex(1).objectReferenceValue = baseGear;
+                }
+                
+                var slotProp = so.FindProperty("emptySlotPrefab");
+                if (slotProp != null && emptySlot != null)
+                {
+                    slotProp.objectReferenceValue = emptySlot;
+                }
+
                 so.ApplyModifiedProperties();
             }
 
@@ -79,7 +103,6 @@ namespace Game.GearEngine.Editor
 
             // Setup Board Collider to act as a hit target for DragHandler Raycasts 
             GameObject floorGrid = new GameObject("GridBoardCollider");
-            floorGrid.tag = "GridBoard"; // Standard mapping
             var boxCol = floorGrid.AddComponent<BoxCollider>();
             boxCol.size = new Vector3(50, 50, 0.5f);
             floorGrid.transform.position = new Vector3(0, 0, 0.5f);

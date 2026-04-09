@@ -7,6 +7,8 @@ namespace Game.GearEngine
     {
         private float internalProgress = 0f;
 
+        private float lastFiredRotation = 0f;
+
         public CoreGearNode(IGridManager grid, IEventBus eventBus) : base(grid, eventBus) { }
 
         public override void NodeUpdate(float deltaTime, float speedModifier)
@@ -14,12 +16,13 @@ namespace Game.GearEngine
             if (ConfigData == null || !IsActive) return;
 
             float speed = ConfigData.BaseRotationSpeed;
-            // Accumulate progress invisibly based on speed
-            float deltaProgress = speed * LocalSpeedMultiplier * speedModifier * deltaTime;
-            internalProgress += deltaProgress;
+            float rotationDelta = speed * LocalSpeedMultiplier * speedModifier * deltaTime;
+            
+            // Apply continuously for buttery smooth view rendering
+            CurrentRotation += rotationDelta;
 
             // Fluid over-time charge to neighbors continues to happen based on time
-            ApplyOverTimeChargeToNeighbors(deltaTime);
+            ApplyOverTimeChargeToNeighbors(deltaTime, speed, speedModifier);
 
             CheckSnapAndTrigger();
         }
@@ -28,30 +31,31 @@ namespace Game.GearEngine
         {
             float segmentAngle = ConfigData.TriggerPattern == TriggerPattern.EightWay ? 45f : 90f;
 
-            // When accumulation hits the threshold for the next step, SNAP rotation like a clock
-            while (internalProgress >= segmentAngle)
+            // Has our continuous smooth rotation crossed the mathematical threshold for the next segment?
+            while (CurrentRotation - lastFiredRotation >= segmentAngle)
             {
-                internalProgress -= segmentAngle;
+                lastFiredRotation += segmentAngle;
                 
-                CurrentRotation += segmentAngle;
-                if (CurrentRotation >= 360f)
-                {
-                    CurrentRotation -= 360f;
-                }
-
-                // Calculate which segment we just snapped to (0, 1, 2, 3...)
-                int currentSegment = Mathf.FloorToInt(CurrentRotation / segmentAngle);
+                // Calculate which segment we just snapped to logically
+                int currentSegment = Mathf.FloorToInt(lastFiredRotation / segmentAngle);
 
                 Vector2Int targetDir = GetDirectionForSegment(currentSegment);
                 Vector2Int targetPos = Position + targetDir;
                 
-                Debug.Log($"<color=#ffcc00>[CoreGearNode]</color> Tick! Snapped to {CurrentRotation}° -> Fired at {targetPos}");
+                Debug.Log($"<color=#ffcc00>[CoreGearNode]</color> Smooth Tick! Logically crossed {lastFiredRotation}° -> Fired at {targetPos}");
 
                 eventBus.Raise(new DirectionalTriggerEvent(targetPos, ConfigData.ChargeOnTriggerAmount));
             }
+
+            // Loop reset safeguard
+            if (CurrentRotation >= 360f && lastFiredRotation >= 360f)
+            {
+                CurrentRotation -= 360f;
+                lastFiredRotation -= 360f;
+            }
         }
 
-        private void ApplyOverTimeChargeToNeighbors(float deltaTime)
+        private void ApplyOverTimeChargeToNeighbors(float deltaTime, float speed, float speedModifier)
         {
             float charge = ConfigData.ChargeOverTimeAmount * deltaTime;
             if (charge <= 0) return;
@@ -62,6 +66,9 @@ namespace Game.GearEngine
                 if (grid.GetNode(Position + dir) is BaseGearNode neighbor)
                 {
                     neighbor.ApplyCharge(charge);
+                    
+                    // Drive neighbor rotation seamlessly!
+                    neighbor.ApplyDrivenRotation(deltaTime, speed * LocalSpeedMultiplier * speedModifier);
                 }
             }
         }

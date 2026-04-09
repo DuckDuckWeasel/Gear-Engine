@@ -15,7 +15,7 @@ MonoBehaviour:
   data:
     Id: obstacle_rock
     BaseRotationSpeed: 0
-    VisualPrefab: {fileID: 0}
+    VisualPrefab: {fileID: 522121566319413383, guid: 51970ee9abfae4f67869c8b3ceabc8e1, type: 3}
     TriggerPattern: 4
     IsInteractable: 0
     MaxCharge: 30

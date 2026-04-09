@@ -12,11 +12,11 @@ namespace Game.GearEngine.Editor
         public static void GenerateConfigs()
         {
             string folderPath = "Assets/Game/GearEngine/Configs";
-            if (!Directory.Exists(folderPath))
-            {
-                Directory.CreateDirectory(folderPath);
-                AssetDatabase.Refresh();
-            }
+            string prefabPath = "Assets/Game/GearEngine/Prefabs";
+            
+            if (!Directory.Exists(folderPath)) Directory.CreateDirectory(folderPath);
+            if (!Directory.Exists(prefabPath)) Directory.CreateDirectory(prefabPath);
+            AssetDatabase.Refresh();
 
             // 1. Create Default Tags
             TagSO gridBoardTag = ScriptableObject.CreateInstance<TagSO>();
@@ -27,12 +27,22 @@ namespace Game.GearEngine.Editor
             inventoryTag.Description = "Marks an item inside the inventory that can be picked up.";
             AssetDatabase.CreateAsset(inventoryTag, $"{folderPath}/Inventory_Tag.asset");
 
+            // 1.2 Create Board Config
+            BoardConfigSO boardConfig = ScriptableObject.CreateInstance<BoardConfigSO>();
+            AssetDatabase.CreateAsset(boardConfig, $"{folderPath}/BasicBoardConfig.asset");
+
+            // 1.5 Create Empty Slot Background View
+            GameObject emptySlot = CreatePrefabPrimitive("EmptySlotView", "", new Color(0.2f, 0.2f, 0.2f, 0.3f), prefabPath);
+            // We just generate the physical block prefab, no config file needed since it's just background visual!
+
             // 2. Create Core Gear
+            GameObject coreView = CreatePrefabPrimitive("CoreGearView", "CoreGear", new Color(1f, 0.8f, 0.1f), prefabPath);
             GearConfig coreGear = ScriptableObject.CreateInstance<GearConfig>();
             SetPrivateData(coreGear, new GearConfigData
             {
                 Id = "core_gear_1",
                 BaseRotationSpeed = 30f,
+                VisualPrefab = coreView,
                 TriggerPattern = TriggerPattern.FourWay,
                 IsInteractable = true,
                 MaxCharge = 0f, // Core doesn't hold charge
@@ -41,12 +51,14 @@ namespace Game.GearEngine.Editor
             }, null, null);
             AssetDatabase.CreateAsset(coreGear, $"{folderPath}/CoreGearConfig.asset");
 
-            // 2. Create Base Gear Level 2
+            // 3. Create Base Gear Level 2
+            GameObject base2View = CreatePrefabPrimitive("BaseGear2View", "BaseGear", new Color(0.8f, 0.8f, 0.9f), prefabPath);
             GearConfig baseGearLv2 = ScriptableObject.CreateInstance<GearConfig>();
             SetPrivateData(baseGearLv2, new GearConfigData
             {
                 Id = "base_gear_2",
-                BaseRotationSpeed = 0f, // Spin depends purely on triggers? Or maybe 0 since it's passive
+                BaseRotationSpeed = 0f, 
+                VisualPrefab = base2View,
                 IsInteractable = true,
                 MaxCharge = 200f,
                 ChargeOverTimeAmount = 0f,
@@ -54,16 +66,18 @@ namespace Game.GearEngine.Editor
             }, null, null);
             AssetDatabase.CreateAsset(baseGearLv2, $"{folderPath}/BaseGearConfig_Level2.asset");
 
-            // 3. Create Base Gear Level 1 (Links to Level 2)
+            // 4. Create Base Gear Level 1 (Links to Level 2)
+            GameObject base1View = CreatePrefabPrimitive("BaseGear1View", "BaseGear", new Color(0.6f, 0.6f, 0.65f), prefabPath);
             GearConfig baseGearLv1 = ScriptableObject.CreateInstance<GearConfig>();
             SetPrivateData(baseGearLv1, new GearConfigData
             {
                 Id = "base_gear_1",
                 BaseRotationSpeed = 0f,
+                VisualPrefab = base1View,
                 IsInteractable = true,
                 MaxCharge = 100f,
-                ChargeOverTimeAmount = 0f, // Doesn't gain passive time charge
-                ChargeOnTriggerAmount = 25f // Takes 4 triggers
+                ChargeOverTimeAmount = 0f, 
+                ChargeOnTriggerAmount = 25f 
             }, baseGearLv2, null);
             AssetDatabase.CreateAsset(baseGearLv1, $"{folderPath}/BaseGearConfig_Level1.asset");
 
@@ -79,12 +93,14 @@ namespace Game.GearEngine.Editor
             speedAbility.SpeedMultiplier = 2.0f;
             AssetDatabase.CreateAsset(speedAbility, $"{folderPath}/SpeedBoost_Ability.asset");
 
-            // 5. Create Obstacle Rock
+            // 6. Create Obstacle Rock
+            GameObject rockView = CreatePrefabPrimitive("RockObstacleView", "RockObstacle", new Color(0.4f, 0.4f, 0.35f), prefabPath);
             GearConfig rockObstacle = ScriptableObject.CreateInstance<GearConfig>();
             SetPrivateData(rockObstacle, new GearConfigData
             {
                 Id = "obstacle_rock",
                 BaseRotationSpeed = 0f,
+                VisualPrefab = rockView,
                 IsInteractable = false, 
                 MaxCharge = 30f,
                 ChargeOverTimeAmount = 0f,
@@ -92,12 +108,14 @@ namespace Game.GearEngine.Editor
             }, null, new List<GearAbilitySO> { destroyAbility });
             AssetDatabase.CreateAsset(rockObstacle, $"{folderPath}/ObstacleRockConfig.asset");
 
-            // 6. Create Score Gear
+            // 7. Create Score Gear
+            GameObject scoreView = CreatePrefabPrimitive("ScoreGearView", "ScoreGear", new Color(1f, 0.6f, 0.0f), prefabPath);
             GearConfig scoreGear = ScriptableObject.CreateInstance<GearConfig>();
             SetPrivateData(scoreGear, new GearConfigData
             {
                 Id = "score_gear",
                 BaseRotationSpeed = 0f,
+                VisualPrefab = scoreView,
                 IsInteractable = true,
                 MaxCharge = 100f,
                 ChargeOverTimeAmount = 0f,
@@ -105,14 +123,16 @@ namespace Game.GearEngine.Editor
             }, null, new List<GearAbilitySO> { scoreAbility });
             AssetDatabase.CreateAsset(scoreGear, $"{folderPath}/ScoreGearConfig.asset");
 
-            // 7. Create Speed Buff Gear
+            // 8. Create Speed Buff Gear
+            GameObject speedView = CreatePrefabPrimitive("SpeedGearView", "SpeedGear", new Color(0.1f, 0.9f, 0.2f), prefabPath);
             GearConfig speedGear = ScriptableObject.CreateInstance<GearConfig>();
             SetPrivateData(speedGear, new GearConfigData
             {
                 Id = "speed_buff_gear",
                 BaseRotationSpeed = 0f,
+                VisualPrefab = speedView,
                 IsInteractable = true,
-                MaxCharge = 0f, // Passive aura, doesn't need charge
+                MaxCharge = 0f, 
                 ChargeOverTimeAmount = 0f,
                 ChargeOnTriggerAmount = 0f
             }, null, new List<GearAbilitySO> { speedAbility });
@@ -122,6 +142,40 @@ namespace Game.GearEngine.Editor
             AssetDatabase.Refresh();
 
             Debug.Log($"<color=#33ff33>[GearEngine]</color> Basic Setup Configs successfully generated at {folderPath}!");
+        }
+
+        private static GameObject CreatePrefabPrimitive(string name, string spriteName, Color tint, string destinationDir)
+        {
+            string fullPath = $"{destinationDir}/{name}.prefab";
+
+            GameObject tempGo = new GameObject(name);
+            var sr = tempGo.AddComponent<SpriteRenderer>();
+            
+            // Try fetch HD custom sprite if available
+            Sprite customSprite = null;
+            if (!string.IsNullOrEmpty(spriteName))
+            {
+                customSprite = AssetDatabase.LoadAssetAtPath<Sprite>($"Assets/Game/GearEngine/Sprites/{spriteName}.png");
+            }
+
+            if (customSprite != null)
+            {
+                sr.sprite = customSprite;
+                sr.color = Color.white;
+            }
+            else
+            {
+                // Fallback to Unity editor knob/square primitive sprite mapping
+                sr.sprite = AssetDatabase.GetBuiltinExtraResource<Sprite>("UI/Skin/Knob.psd");
+                sr.color = tint;
+            }
+
+            var view = tempGo.AddComponent<Game.GearEngine.GearView>();
+
+            GameObject savedPrefab = PrefabUtility.SaveAsPrefabAsset(tempGo, fullPath);
+            Object.DestroyImmediate(tempGo);
+
+            return savedPrefab;
         }
 
         private static void SetPrivateData(GearConfig config, GearConfigData data, GearConfig nextLvl, List<GearAbilitySO> abilities)
@@ -134,7 +188,14 @@ namespace Game.GearEngine.Editor
             {
                 dataProp.FindPropertyRelative("Id").stringValue = data.Id;
                 dataProp.FindPropertyRelative("BaseRotationSpeed").floatValue = data.BaseRotationSpeed;
-                dataProp.FindPropertyRelative("TriggerPattern").enumValueIndex = (int)data.TriggerPattern;
+                
+                var visualProp = dataProp.FindPropertyRelative("VisualPrefab");
+                if (visualProp != null) visualProp.objectReferenceValue = data.VisualPrefab;
+
+                // Map the Enum cleanly to EnumIndex for SerializedProperties
+                int triggerIndex = data.TriggerPattern == TriggerPattern.FourWay ? 0 : 1;
+                dataProp.FindPropertyRelative("TriggerPattern").enumValueIndex = triggerIndex;
+
                 dataProp.FindPropertyRelative("IsInteractable").boolValue = data.IsInteractable;
                 dataProp.FindPropertyRelative("MaxCharge").floatValue = data.MaxCharge;
                 dataProp.FindPropertyRelative("ChargeOverTimeAmount").floatValue = data.ChargeOverTimeAmount;

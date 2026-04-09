@@ -15,7 +15,7 @@ MonoBehaviour:
   data:
     Id: core_gear_1
     BaseRotationSpeed: 30
-    VisualPrefab: {fileID: 0}
+    VisualPrefab: {fileID: 697835619526280206, guid: b1d3f12d5b8c54349a34f49dd2ef4bf3, type: 3}
     TriggerPattern: 4
     IsInteractable: 1
     MaxCharge: 0

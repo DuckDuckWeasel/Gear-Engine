@@ -6,12 +6,14 @@ namespace Game.GearEngine
     {
         private IGridNode targetNode;
         private Transform cachedVisual;
+        private BoardConfigSO boardConfig;
         
         public IGridNode TargetNode => targetNode;
 
-        public void Initialize(IGridNode node, GearConfigData configData)
+        public void Initialize(IGridNode node, GearConfigData configData, BoardConfigSO config)
         {
             targetNode = node;
+            boardConfig = config;
             SetupVisual(configData);
         }
 
@@ -42,12 +44,12 @@ namespace Game.GearEngine
 
         private void Update()
         {
-            if (targetNode == null) return;
+            if (targetNode == null || boardConfig == null) return;
 
             Transform target = cachedVisual != null ? cachedVisual : transform;
             
-            // Lerp towards the logical position smoothly (1.5f grid spacing)
-            Vector3 logicalWorldPos = new Vector3(targetNode.Position.x * 1.5f, targetNode.Position.y * 1.5f, 0);
+            // Lerp towards the logical position smoothly
+            Vector3 logicalWorldPos = boardConfig.GetWorldPosition(targetNode.Position);
             
             // If the view is manually dragged away, it will glide back when released.
             // Lerp smooth position

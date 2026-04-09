@@ -8,6 +8,7 @@ namespace Game.GearEngine
     {
         private Action<DirectionalTriggerEvent> triggerAction;
         private bool hasExecutedThisTick;
+        private float maxDrivenSpeedThisTick = 0f;
 
         public float CurrentCharge { get; private set; }
 
@@ -23,6 +24,16 @@ namespace Game.GearEngine
             hasExecutedThisTick = false; // Reset threshold every tick
 
             if (ConfigData == null || !IsActive) return;
+
+            // Apply driven rotation from the strongest neighbor driving us
+            if (Mathf.Abs(maxDrivenSpeedThisTick) > 0.01f)
+            {
+                CurrentRotation += maxDrivenSpeedThisTick * deltaTime;
+                if (CurrentRotation >= 360f) CurrentRotation -= 360f;
+            }
+            
+            // Reset for the upcoming/ongoing physics frame
+            maxDrivenSpeedThisTick = 0f;
 
             float speed = ConfigData.BaseRotationSpeed;
             CurrentRotation += speed * speedModifier * deltaTime;
@@ -45,6 +56,15 @@ namespace Game.GearEngine
                 {
                     CurrentCharge = ConfigData.MaxCharge;
                 }
+            }
+        }
+
+        public void ApplyDrivenRotation(float deltaTime, float drivingSpeed)
+        {
+            // Only adopt the fastest driving speed we receive this frame
+            if (Mathf.Abs(drivingSpeed) > Mathf.Abs(maxDrivenSpeedThisTick))
+            {
+                maxDrivenSpeedThisTick = drivingSpeed;
             }
         }
 
