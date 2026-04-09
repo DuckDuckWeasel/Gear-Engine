@@ -54,7 +54,7 @@ namespace Game.GearEngine
         public void RecalculateRotationOffset()
         {
             baseRotationOffset = 0f;
-            if (targetNode != null && boardConfig != null && (targetNode.Position.x + targetNode.Position.y) % 2 != 0)
+            if (targetNode != null && boardConfig != null && (targetNode.Position.x + targetNode.Position.y) % 2 == 0)
             {
                 baseRotationOffset = boardConfig.StaggeredRotationOffset;
             }
