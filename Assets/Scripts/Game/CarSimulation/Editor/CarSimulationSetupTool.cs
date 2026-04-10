@@ -15,7 +15,10 @@ namespace Game.CarSimulation.Editor
         private const string speedAssetPath = "Assets/Game/CarSimulation/Data/Speed.asset";
         private const string carDefinitionPath = "Assets/Game/CarSimulation/Data/CarDefinition.asset";
         private const string carPrefabPath = "Assets/Game/CarSimulation/Prefabs/Car.prefab";
+        private const string circleTrackDefinitionPath = "Assets/Game/CarSimulation/Data/Tracks/CircleTrack.asset";
+        private const string squareTrackDefinitionPath = "Assets/Game/CarSimulation/Data/Tracks/SquareTrack.asset";
         private const string scenePath = "Assets/Scenes/SplineTrack_TestScene.unity";
+        private const float squareTrackHalfExtent = 30f;
 
         [MenuItem(menuPath)]
         public static void SetupScene()
@@ -23,6 +26,7 @@ namespace Game.CarSimulation.Editor
             EnsureFolder("Assets/Game");
             EnsureFolder("Assets/Game/CarSimulation");
             EnsureFolder("Assets/Game/CarSimulation/Data");
+            EnsureFolder("Assets/Game/CarSimulation/Data/Tracks");
             EnsureFolder("Assets/Game/CarSimulation/Prefabs");
 
             var speed = CreateOrLoadSpeedAsset();
@@ -159,15 +163,83 @@ namespace Game.CarSimulation.Editor
 
         private static void WireScene(CarDefinition carDefinition)
         {
-            if (!TryGetCircleRaceSpline(out var container))
+            var scene = EditorSceneManager.OpenScene(scenePath, OpenSceneMode.Single);
+            if (!TryGetCircleRaceSpline(out var circleSpline))
             {
                 return;
             }
 
-            var scene = EditorSceneManager.OpenScene(scenePath, OpenSceneMode.Single);
-            BindLifetimeScope(carDefinition, container);
+            var circleTrackDef = CreateOrLoadCircleTrackDefinition(circleSpline);
+            CreateOrLoadSquareTrackDefinition();
+
+            var trackBehaviour = GetOrAddTrackUnderCircleRaceTrack();
+            BindLifetimeScope(carDefinition, circleTrackDef, trackBehaviour);
+
             EditorSceneManager.MarkSceneDirty(scene);
             EditorSceneManager.SaveScene(scene);
+        }
+
+        private static TrackDefinition CreateOrLoadCircleTrackDefinition(SplineContainer source)
+        {
+            var def = AssetDatabase.LoadAssetAtPath<TrackDefinition>(circleTrackDefinitionPath);
+            if (def == null)
+            {
+                def = ScriptableObject.CreateInstance<TrackDefinition>();
+                AssetDatabase.CreateAsset(def, circleTrackDefinitionPath);
+            }
+
+            CopySplineFromContainerToDefinition(source, def);
+            var so = new SerializedObject(def);
+            so.FindProperty("trackName").stringValue = "Circle";
+            so.ApplyModifiedPropertiesWithoutUndo();
+            EditorUtility.SetDirty(def);
+            return def;
+        }
+
+        private static void CreateOrLoadSquareTrackDefinition()
+        {
+            var def = AssetDatabase.LoadAssetAtPath<TrackDefinition>(squareTrackDefinitionPath);
+            if (def == null)
+            {
+                def = ScriptableObject.CreateInstance<TrackDefinition>();
+                AssetDatabase.CreateAsset(def, squareTrackDefinitionPath);
+            }
+
+            WriteClosedSquareSpline(def.Spline, squareTrackHalfExtent);
+            var so = new SerializedObject(def);
+            so.FindProperty("trackName").stringValue = "Square";
+            so.ApplyModifiedPropertiesWithoutUndo();
+            EditorUtility.SetDirty(def);
+        }
+
+        private static void CopySplineFromContainerToDefinition(SplineContainer container, TrackDefinition definition)
+        {
+            if (container == null || definition == null)
+            {
+                Debug.LogError("Car Simulation: Cannot copy spline — container or definition is null.");
+                return;
+            }
+
+            var source = container.Spline;
+            var dest = definition.Spline;
+            dest.Knots = source.Knots;
+            dest.Closed = source.Closed;
+            EditorUtility.SetDirty(definition);
+        }
+
+        private static void WriteClosedSquareSpline(Spline spline, float halfExtent)
+        {
+            var h = halfExtent;
+            spline.Knots = new[]
+            {
+                new BezierKnot(new Vector3(-h, 0, -h)),
+                new BezierKnot(new Vector3(-h, 0, h)),
+                new BezierKnot(new Vector3(h, 0, h)),
+                new BezierKnot(new Vector3(h, 0, -h)),
+            };
+            spline.Closed = true;
+            var range = new SplineRange(0, spline.Count);
+            spline.SetTangentMode(range, TangentMode.Linear);
         }
 
         private static bool TryGetCircleRaceSpline(out SplineContainer container)
@@ -190,6 +262,56 @@ namespace Game.CarSimulation.Editor
             return true;
         }
 
+        private static Track GetOrAddTrackUnderCircleRaceTrack()
+        {
+            if (!TryFindCircleRaceParent(out var parent))
+            {
+                return null;
+            }
+
+            var trackGo = GetOrCreateTrackChild(parent);
+            return EnsureTrackAndSplineContainer(trackGo);
+        }
+
+        private static bool TryFindCircleRaceParent(out GameObject parent)
+        {
+            parent = GameObject.Find("CircleRaceTrack");
+            if (parent != null)
+            {
+                return true;
+            }
+
+            Debug.LogError("Car Simulation: CircleRaceTrack not found while creating Track child.");
+            return false;
+        }
+
+        private static GameObject GetOrCreateTrackChild(GameObject parent)
+        {
+            var trackTransform = parent.transform.Find("Track");
+            if (trackTransform != null)
+            {
+                return trackTransform.gameObject;
+            }
+
+            var trackGo = new GameObject("Track");
+            trackGo.transform.SetParent(parent.transform, false);
+            trackGo.transform.localPosition = Vector3.zero;
+            trackGo.transform.localRotation = Quaternion.identity;
+            trackGo.transform.localScale = Vector3.one;
+            return trackGo;
+        }
+
+        private static Track EnsureTrackAndSplineContainer(GameObject trackGo)
+        {
+            var container = trackGo.GetComponent<SplineContainer>() ?? trackGo.AddComponent<SplineContainer>();
+            var track = trackGo.GetComponent<Track>() ?? trackGo.AddComponent<Track>();
+            var trackSo = new SerializedObject(track);
+            trackSo.FindProperty("splineContainer").objectReferenceValue = container;
+            trackSo.ApplyModifiedPropertiesWithoutUndo();
+            EditorUtility.SetDirty(track);
+            return track;
+        }
+
         private static CarTrackScope GetOrAddCarTrackScope()
         {
             const string scopeName = "CarTrack_LifetimeScope";
@@ -197,12 +319,19 @@ namespace Game.CarSimulation.Editor
             return scopeGo.GetComponent<CarTrackScope>() ?? scopeGo.AddComponent<CarTrackScope>();
         }
 
-        private static void BindLifetimeScope(CarDefinition carDefinition, SplineContainer container)
+        private static void BindLifetimeScope(CarDefinition carDefinition, TrackDefinition trackDefinition, Track track)
         {
+            if (track == null)
+            {
+                Debug.LogError("Car Simulation: Track component is null; cannot bind CarTrackScope.");
+                return;
+            }
+
             var scope = GetOrAddCarTrackScope();
             var scopeSo = new SerializedObject(scope);
             scopeSo.FindProperty("carDefinition").objectReferenceValue = carDefinition;
-            scopeSo.FindProperty("splineContainer").objectReferenceValue = container;
+            scopeSo.FindProperty("trackDefinition").objectReferenceValue = trackDefinition;
+            scopeSo.FindProperty("track").objectReferenceValue = track;
             scopeSo.ApplyModifiedPropertiesWithoutUndo();
             EditorUtility.SetDirty(scope);
         }

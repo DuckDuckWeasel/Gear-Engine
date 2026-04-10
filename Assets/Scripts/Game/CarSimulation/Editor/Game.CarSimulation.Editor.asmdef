@@ -5,7 +5,8 @@
         "Game.CarSimulation",
         "Scaffold.Entities",
         "Unity.Splines",
-        "VContainer"
+        "VContainer",
+        "Unity.Mathematics"
     ],
     "includePlatforms": [
         "Editor"
