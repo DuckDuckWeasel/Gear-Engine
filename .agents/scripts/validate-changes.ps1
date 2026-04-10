@@ -153,7 +153,7 @@ if ($SkipTests) {
             foreach ($line in $editModeOutput) { Write-Host $line }
             if ($editModeOutput | Where-Object { $_ -match "^Status:\s+Blocked\b" }) {
                 $editModeExitCode = 1
-            } elseif ($editModeOutput | Where-Object { $_ -match "^Failed:\s*[1-9]\d*" }) {
+            } elseif ($editModeOutput | Where-Object { $_ -match "Failed:\s+[1-9]\d*\s*$" }) {
                 $editModeExitCode = 2
             }
         } catch {
@@ -184,7 +184,7 @@ if ($SkipTests) {
             foreach ($line in $playModeOutput) { Write-Host $line }
             if ($playModeOutput | Where-Object { $_ -match "^Status:\s+Blocked\b" }) {
                 $playModeExitCode = 1
-            } elseif ($playModeOutput | Where-Object { $_ -match "^Failed:\s*[1-9]\d*" }) {
+            } elseif ($playModeOutput | Where-Object { $_ -match "Failed:\s+[1-9]\d*\s*$" }) {
                 $playModeExitCode = 2
             }
         } catch {

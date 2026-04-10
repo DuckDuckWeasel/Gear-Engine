@@ -12,6 +12,10 @@ Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
 
 $resolvedProjectPath = (Resolve-Path $ProjectPath).Path
+$agentsDir = Split-Path -Parent (Split-Path -Parent $PSCommandPath)
+$testingSuiteConfigScript = Join-Path $agentsDir (Join-Path "testing" "TestingSuite.Config.ps1")
+. $testingSuiteConfigScript
+$testingSuiteConfig = Get-TestingSuiteConfig -ProjectPath $resolvedProjectPath
 $analyzerTestsProjectPath = Join-Path $resolvedProjectPath "Analyzers/Scaffold/Scaffold.Analyzers.Tests/Scaffold.Analyzers.Tests.csproj"
 $mvvmAnalyzerTestsProjectPath = Join-Path $resolvedProjectPath "Generators/Scaffold.Mvvm.Analyzers.Tests/Scaffold.Mvvm.Analyzers.Tests.csproj"
 
@@ -191,6 +195,14 @@ if ($SkipMvvmAnalyzerTests.IsPresent) {
     Write-Output "NOTE:Skipping Scaffold.Mvvm.Analyzers.Tests (SkipMvvmAnalyzerTests). Run those tests on a machine where the analyzer DLL is not blocked by policy."
 }
 
+# Normalize to a real array so .Count is safe under Set-StrictMode when the pipeline yields $null or a single item.
+if ($null -eq $analyzerTestsProjects) {
+    $analyzerTestsProjects = @()
+}
+elseif ($analyzerTestsProjects -isnot [array]) {
+    $analyzerTestsProjects = @($analyzerTestsProjects)
+}
+
 if ($analyzerTestsProjects.Count -eq 0) {
     Write-Output ("NOTE:No analyzer test projects found (e.g. '{0}'). Analyzer unit tests skipped." -f $analyzerTestsProjectPath)
 }
@@ -322,6 +334,14 @@ $analyzerDiagnosticPattern = ": (warning|error) (SCA[0-9]+|SCM[0-9]+)"
 $scaffoldAnalyzerLines = $filteredBuildOutput |
     Where-Object { $_ -match $analyzerDiagnosticPattern } |
     Sort-Object -Unique
+
+$analyzerLineFilterSubstring = $testingSuiteConfig.AnalyzerIncludeOnlyLineContainsSubstring
+if (-not [string]::IsNullOrWhiteSpace($analyzerLineFilterSubstring)) {
+    $scaffoldAnalyzerLines = @(
+        $scaffoldAnalyzerLines |
+            Where-Object { $_ -like ('*' + $analyzerLineFilterSubstring + '*') }
+    )
+}
 
 $total = if ($null -eq $scaffoldAnalyzerLines) { 0 } elseif ($scaffoldAnalyzerLines -is [array]) { $scaffoldAnalyzerLines.Count } else { 1 }
 Write-Output "TOTAL:$total"

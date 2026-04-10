@@ -1,0 +1,21 @@
+{
+    "name": "Game.CarSimulation.Editor",
+    "rootNamespace": "Game.CarSimulation.Editor",
+    "references": [
+        "Game.CarSimulation",
+        "Scaffold.Entities",
+        "Unity.Splines",
+        "VContainer"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

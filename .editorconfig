@@ -96,6 +96,12 @@ dotnet_diagnostic.SCA3006.severity = none
 dotnet_diagnostic.SCA3005.severity = none
 dotnet_diagnostic.SCA3006.severity = none
 
+# Game modules under Scripts/Game — legacy Game.* namespaces (GearEngine, CarSimulation, …).
+[Assets/Scripts/Game/CarSimulation/**/*.cs]
+dotnet_diagnostic.SCA3005.severity = none
+dotnet_diagnostic.SCA3006.severity = none
+dotnet_diagnostic.SCA3003.severity = none
+
 # Third-party AAGen — vendor code; same path may compile in Tests or other projects (see Directory.Build.props for AAGen.Editor).
 [Assets/Packages/AAGen-0.3.0/**]
 dotnet_diagnostic.SCA1001.severity = none

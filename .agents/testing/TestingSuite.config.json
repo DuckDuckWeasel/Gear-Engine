@@ -3,10 +3,33 @@
   "coverage": {
     "defaultAssemblyFilters": "+Scaffold.*"
   },
+  "analyzerGate": {
+    "includeOnlyIfLineContainsSubstring": "Game.CarSimulation"
+  },
   "asmdefReferences": {
     "excludedAssemblyNames": [
+      "Scaffold.Addressables",
+      "Scaffold.Addressables.Container",
+      "Scaffold.CloudCode.Container",
+      "Scaffold.DirectPush",
+      "Scaffold.DirectPush.Container",
+      "Scaffold.Entities",
+      "Scaffold.Events",
+      "Scaffold.Events.Container",
+      "Scaffold.LiveOps",
+      "Scaffold.LiveOps.Container",
+      "Scaffold.LiveOps.DTO.dll",
+      "Scaffold.MVVM",
+      "Scaffold.MVVM.Model",
+      "Scaffold.MVVM.View",
+      "Scaffold.MVVM.ViewModel",
+      "Scaffold.Navigation",
+      "Scaffold.Navigation.Container",
+      "Scaffold.SceneFlow",
       "Scaffold.Schemas",
-      "Scaffold.LiveOps.DTO.dll"
+      "Scaffold.Scope",
+      "Scaffold.Types",
+      "Scaffold.Ugs.Container"
     ],
     "excludedGuidReferences": [
       "GUID:c72c3642ec330a340ad91bd6bf5d6bdc",

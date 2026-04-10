@@ -22,6 +22,7 @@ function Get-TestingSuiteConfig {
     $firstPartyAssemblyNamePatterns = @(
         "Scaffold.*"
     )
+    $analyzerIncludeOnlyLineContainsSubstring = $null
 
     if (Test-Path $configPath) {
         $json = Get-Content -LiteralPath $configPath -Raw -Encoding UTF8 | ConvertFrom-Json
@@ -40,6 +41,9 @@ function Get-TestingSuiteConfig {
                 $firstPartyAssemblyNamePatterns = @($ar.firstPartyAssemblyNamePatterns)
             }
         }
+        if ($json.analyzerGate -and $json.analyzerGate.includeOnlyIfLineContainsSubstring) {
+            $analyzerIncludeOnlyLineContainsSubstring = [string]$json.analyzerGate.includeOnlyIfLineContainsSubstring
+        }
     }
 
     return [pscustomobject]@{
@@ -47,5 +51,6 @@ function Get-TestingSuiteConfig {
         AsmdefExcludedAssemblyNames      = $excludedAssemblyNames
         AsmdefExcludedGuidReferences     = $excludedGuidReferences
         AsmdefFirstPartyAssemblyNamePatterns = $firstPartyAssemblyNamePatterns
+        AnalyzerIncludeOnlyLineContainsSubstring = $analyzerIncludeOnlyLineContainsSubstring
     }
 }

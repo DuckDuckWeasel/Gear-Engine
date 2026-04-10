@@ -1,0 +1,18 @@
+{
+    "name": "Game.CarSimulation",
+    "rootNamespace": "Game.CarSimulation",
+    "references": [
+        "Scaffold.Entities",
+        "VContainer",
+        "Unity.Splines"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
