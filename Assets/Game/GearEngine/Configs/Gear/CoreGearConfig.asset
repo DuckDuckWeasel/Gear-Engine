@@ -15,16 +15,17 @@ MonoBehaviour:
   data:
     Id: core_gear_1
     Category: 1
-    BaseRotationSpeed: 60
+    BaseRotationSpeed: 150
     VisualPrefab: {fileID: 697835619526280206, guid: b1d3f12d5b8c54349a34f49dd2ef4bf3, type: 3}
-    UIIcon: {fileID: 21300000, guid: 3bab18a3febcf4a9c89edd4c04f779c8, type: 3}
+    UIIcon: {fileID: 0}
+    UIScaleMultiplier: 115
     TriggerPattern: 4
     IsInteractable: 1
     MaxCharge: 0
     ChargeOverTimeAmount: 0
     ChargeOnTriggerAmount: 0
-    SnapSlowdownDuration: 1
-    SnapSlowdownMultiplier: 0.15
+    SnapSlowdownDuration: 0.15
+    SnapSlowdownMultiplier: 0.1
     TriggerSpinDegrees: 45
     Abilities: []
   nextLevel: {fileID: 0}

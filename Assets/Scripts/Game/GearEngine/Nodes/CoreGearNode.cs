@@ -6,8 +6,6 @@ namespace Game.GearEngine
     public class CoreGearNode : NodeBase
     {
         [SerializeField]
-        private float internalProgress = 0f;
-        [SerializeField]
         private float lastFiredRotation = 0f;
         [SerializeField]
         private float slowdownTimer = 0f;
@@ -76,7 +74,7 @@ namespace Game.GearEngine
         {
             float charge = ConfigData.ChargeOverTimeAmount * deltaTime;
 
-            var dirs = GetTriggerDirections();
+            var dirs = ConfigData.TriggerPattern.GetDirections();
             foreach (var dir in dirs)
             {
                 if (grid.GetNode(Position + dir) is BaseGearNode neighbor)
@@ -91,14 +89,9 @@ namespace Game.GearEngine
 
 
 
-        private Vector2Int[] GetTriggerDirections()
-        {
-            return ConfigData.TriggerPattern.GetDirections();
-        }
-
         private Vector2Int GetDirectionForSegment(int segment)
         {
-            var dirs = GetTriggerDirections();
+            var dirs = ConfigData.TriggerPattern.GetDirections();
             if (segment >= 0 && segment < dirs.Length) return dirs[segment];
             return Vector2Int.up;
         }
@@ -118,7 +111,6 @@ namespace Game.GearEngine
 
             float smoothSpeed = 5f;
             CurrentRotation = Mathf.LerpAngle(CurrentRotation, targetRotation, deltaTime * smoothSpeed);
-            internalProgress = 0f; // drain progress
         }
     }
 }

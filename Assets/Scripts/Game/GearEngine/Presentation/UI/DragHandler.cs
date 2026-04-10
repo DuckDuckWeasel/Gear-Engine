@@ -1,7 +1,6 @@
 using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.UI;
 
 namespace Game.GearEngine.Presentation
 {
@@ -13,16 +12,26 @@ namespace Game.GearEngine.Presentation
         [Tooltip("Visual prefab or sprite to show as a ghost while dragging.")]
         [SerializeField] private GameObject ghostPrefab;
 
+        public GameObject GhostPrefab { get => ghostPrefab; set => ghostPrefab = value; }
+
         private GameObject currentGhost;
         private Canvas mainCanvas;
 
         public bool IsInteractable { get; set; } = true;
+        public float GhostScaleMultiplier { get; set; } = 115f;
 
         /// <summary>
         /// Fires when the item is successfully dropped over a valid world collider matching the target tag.
         /// Payload is the world position of the intersection.
         /// </summary>
         public Action<Vector3> OnValidDropWorldPos;
+
+        public void AddAcceptedTag(TagSO tag)
+        {
+            if (tag == null) return;
+            if (acceptedTargetTags == null) acceptedTargetTags = new System.Collections.Generic.List<TagSO>();
+            if (!acceptedTargetTags.Contains(tag)) acceptedTargetTags.Add(tag);
+        }
 
         private void Start()
         {
@@ -43,6 +52,12 @@ namespace Game.GearEngine.Presentation
                 if (ghostPrefab != null)
                 {
                     currentGhost = Instantiate(ghostPrefab, mainCanvas.transform);
+                    
+                    // If it's a native GameObject (like a SpriteRenderer prefab), it needs UI scale and sorting layers over Canvas background
+                    if (currentGhost.GetComponent<RectTransform>() == null)
+                    {
+                        currentGhost.transform.localScale = new Vector3(GhostScaleMultiplier, GhostScaleMultiplier, GhostScaleMultiplier); 
+                    }
                 }
                 else
                 {

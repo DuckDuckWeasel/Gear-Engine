@@ -10,22 +10,24 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: faf34a39f5b75466d9fbf4f99fc70808, type: 3}
-  m_Name: BaseGearConfig_Level2
+  m_Name: ScoreGearConfig
   m_EditorClassIdentifier: Game.GearEngine::Game.GearEngine.GearConfig
   data:
-    Id: base_gear_2
+    Id: score_gear
     Category: 0
     BaseRotationSpeed: 0
-    VisualPrefab: {fileID: 4444594598132281025, guid: d4ae7c8518bc94a9bb6a319c6a6902b6, type: 3}
-    UIIcon: {fileID: 21300000, guid: fcfe20b09c8874fe4bf0b85d06a0d441, type: 3}
+    VisualPrefab: {fileID: 2949619139704920152, guid: 2d4c5c939f40c43e3bc8bd60757e0340, type: 3}
+    UIIcon: {fileID: -3338749442709606003, guid: 99e3de0c26942419f9aae22146e5f1c0, type: 3}
+    UIScaleMultiplier: 115
     TriggerPattern: 4
     IsInteractable: 1
-    MaxCharge: 200
+    MaxCharge: 100
     ChargeOverTimeAmount: 0
     ChargeOnTriggerAmount: 50
-    SnapSlowdownDuration: 1
+    SnapSlowdownDuration: 0.5
     SnapSlowdownMultiplier: 0.15
     TriggerSpinDegrees: 45
     Abilities: []
   nextLevel: {fileID: 0}
-  abilities: []
+  abilities:
+  - {fileID: 11400000, guid: f3eae640064d348a59b085ff08c45909, type: 2}

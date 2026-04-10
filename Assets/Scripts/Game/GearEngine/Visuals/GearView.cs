@@ -15,11 +15,15 @@ namespace Game.GearEngine
         public IGridNode TargetNode => targetNode;
         [ShowInInspector]
         public bool IsBeingDragged { get; set; } = false;
+        
+        private float baseRotationOffset = 0f;
 
         [SerializeField]
         private GameObject chargeVisualObj;
         [SerializeField]
         private Transform chargeFillTransform;
+        [SerializeField]
+        private SpriteRenderer chargeFillRenderer;
         [SerializeField]
         private float currentVisualFill = 0f;
 
@@ -40,8 +44,20 @@ namespace Game.GearEngine
         {
             targetNode = node;
             boardConfig = config;
+            
+            RecalculateRotationOffset();
+
             SetupVisual(configData);
             SetupChargeVisual(configData);
+        }
+
+        public void RecalculateRotationOffset()
+        {
+            baseRotationOffset = 0f;
+            if (targetNode != null && boardConfig != null && (targetNode.Position.x + targetNode.Position.y) % 2 == 0)
+            {
+                baseRotationOffset = boardConfig.StaggeredRotationOffset;
+            }
         }
 
         public void Reconfigure(GearConfigData configData)
@@ -73,6 +89,7 @@ namespace Game.GearEngine
                 Destroy(chargeVisualObj);
                 chargeVisualObj = null;
                 chargeFillTransform = null;
+                chargeFillRenderer = null;
             }
         }
 
@@ -83,27 +100,23 @@ namespace Game.GearEngine
                 InitSprites();
 
                 chargeVisualObj = new GameObject("ChargeVisual");
+                chargeFillTransform = chargeVisualObj.transform;
                 chargeVisualObj.transform.SetParent(transform, false);
                 chargeVisualObj.transform.localPosition = new Vector3(0, 0, -0.5f); // In front of gear
-                chargeVisualObj.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
+                chargeVisualObj.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
                 
-                GameObject bgObj = new GameObject("ChargeBackground");
-                bgObj.transform.SetParent(chargeVisualObj.transform, false);
-                SpriteRenderer bgRenderer = bgObj.AddComponent<SpriteRenderer>();
-                bgRenderer.sprite = squareSpriteCenter;
-                bgRenderer.color = new Color(0.2f, 0.2f, 0.2f, 0.8f);
-                bgRenderer.sortingOrder = 5;
+                chargeFillRenderer = chargeVisualObj.AddComponent<SpriteRenderer>();
+                chargeFillRenderer.sprite = configData.UIIcon != null ? configData.UIIcon : squareSpriteCenter;
+                chargeFillRenderer.color = new Color(0.2f, 0.8f, 1f, 0.9f); // Cyan fill
+                chargeFillRenderer.sortingOrder = 6;
 
-                GameObject fillObj = new GameObject("ChargeFill");
-                chargeFillTransform = fillObj.transform;
-                chargeFillTransform.SetParent(chargeVisualObj.transform, false);
-                chargeFillTransform.localPosition = new Vector3(0f, -0.5f, -0.01f); // bottom aligned
-                chargeFillTransform.localScale = new Vector3(1f, 0f, 1f);
-                
-                SpriteRenderer fillRenderer = fillObj.AddComponent<SpriteRenderer>();
-                fillRenderer.sprite = squareSpriteBottom;
-                fillRenderer.color = new Color(0.2f, 0.8f, 1f, 0.9f); // Cyan fill
-                fillRenderer.sortingOrder = 6;
+                Shader fillShader = Shader.Find("GearEngine/Sprites/SpriteFillGrayscale");
+                if (fillShader != null)
+                {
+                    Material mat = new Material(fillShader);
+                    mat.SetFloat("_FillAmount", 0f);
+                    chargeFillRenderer.material = mat;
+                }
 
                 currentVisualFill = 0f;
             }
@@ -114,27 +127,30 @@ namespace Game.GearEngine
             if (targetNode == null || boardConfig == null) return;
 
             Transform target = cachedVisual != null ? cachedVisual : transform;
-            
+
+            // Allow native unity transforms to safely lerp
             if (!IsBeingDragged)
             {
                 // Lerp towards the logical position smoothly
                 Vector3 logicalWorldPos = boardConfig.GetWorldPosition(targetNode.Position);
-                
-                // If the view is manually dragged away, it will glide back when released.
-                // Lerp smooth position
                 transform.localPosition = Vector3.Lerp(transform.localPosition, logicalWorldPos, Time.deltaTime * 20f);
             }
 
-            // Lerp smooth rotation
-            Quaternion targetRot = Quaternion.Euler(0, 0, -targetNode.CurrentRotation);
+            // Lerp smooth rotation including base stagger offset
+            // We flip the rotation because Unity 2D standard rotates counter-clockwise with positive Z
+            Quaternion targetRot = Quaternion.Euler(0, 0, (-targetNode.CurrentRotation) + baseRotationOffset);
             target.localRotation = Quaternion.Lerp(target.localRotation, targetRot, Time.deltaTime * 15f);
 
             // Update charge fill
-            if (chargeFillTransform != null && targetNode is BaseGearNode baseGear && baseGear.ConfigData != null && baseGear.ConfigData.MaxCharge > 0)
+            if (chargeFillRenderer != null && targetNode is BaseGearNode baseGear && baseGear.ConfigData != null && baseGear.ConfigData.MaxCharge > 0)
             {
                 float targetFill = baseGear.CurrentCharge / baseGear.ConfigData.MaxCharge;
                 currentVisualFill = Mathf.Lerp(currentVisualFill, targetFill, Time.deltaTime * 10f);
-                chargeFillTransform.localScale = new Vector3(1f, currentVisualFill, 1f);
+                
+                if (chargeFillRenderer.material != null)
+                {
+                    chargeFillRenderer.material.SetFloat("_FillAmount", currentVisualFill);
+                }
             }
         }
     }

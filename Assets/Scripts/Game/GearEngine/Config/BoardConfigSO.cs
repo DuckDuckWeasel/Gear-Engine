@@ -15,6 +15,13 @@ namespace Game.GearEngine
         [Min(0.1f)]
         public float Spacing = 0.75f;
 
+        [Header("Interaction Mechanics")]
+        [Min(0.1f)]
+        public float MaxDragGrabDistance = 0.75f;
+        
+        [Header("Visuals")]
+        public float StaggeredRotationOffset = 22.5f;
+
         public Vector3 GetWorldPosition(Vector2Int gridPos, float zOffset = 0f)
         {
             float offsetX = (GridWidth - 1) * Spacing / 2.0f;

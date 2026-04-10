@@ -10,23 +10,23 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: faf34a39f5b75466d9fbf4f99fc70808, type: 3}
-  m_Name: SpeedBuffGearConfig
+  m_Name: BaseGearConfig_Level2
   m_EditorClassIdentifier: Game.GearEngine::Game.GearEngine.GearConfig
   data:
-    Id: speed_buff_gear
+    Id: base_gear_2
     Category: 0
     BaseRotationSpeed: 0
-    VisualPrefab: {fileID: 8994168311140333348, guid: ebb38bb653ba849e198cb9b2cfa7687f, type: 3}
-    UIIcon: {fileID: 21300000, guid: 000b43721c4d44e40ae6cc8aea9619ab, type: 3}
+    VisualPrefab: {fileID: 4444594598132281025, guid: d4ae7c8518bc94a9bb6a319c6a6902b6, type: 3}
+    UIIcon: {fileID: 1124818141672353582, guid: 9b1842a1b3639426a87c3413c3d92a06, type: 3}
+    UIScaleMultiplier: 115
     TriggerPattern: 4
     IsInteractable: 1
-    MaxCharge: 0
+    MaxCharge: 200
     ChargeOverTimeAmount: 0
-    ChargeOnTriggerAmount: 0
-    SnapSlowdownDuration: 1
+    ChargeOnTriggerAmount: 50
+    SnapSlowdownDuration: 0.5
     SnapSlowdownMultiplier: 0.15
     TriggerSpinDegrees: 45
     Abilities: []
   nextLevel: {fileID: 0}
-  abilities:
-  - {fileID: 11400000, guid: 41e142f4a5fb64c4daf1e32c8d990026, type: 2}
+  abilities: []

@@ -6,14 +6,19 @@ The **Gear Engine** module is a highly-performant, event-driven Puzzle/Grid arch
 
 Instead of treating gears as physics objects, the system relies on a central spatial hash dictionary overseen by a `GridManager`.
 
-### 1. The Manager
-*   **`GridManager` (and `IGridManager`)**: The central heartbeat of the engine. It registers all active nodes in a dictionary (`Dictionary<Vector2Int, IGridNode>`). It exposes `Play()` and `Stop()` methods, cleanly updating the states. When requested to Stop, it enters a smooth "Wind-Down" loop that interpolates gears safely back to orthogonal rest positions (0, 90, 180, 270 degrees) without snapping abruptly.
+### 1. The Manager & Tick Mechanics
+*   **`GridManager` (and `IGridManager`)**: The central heartbeat of the engine. It registers all active nodes in a dictionary (`Dictionary<Vector2Int, IGridNode>`). It exposes `Play()` and `Stop()` methods.
+*   **Simulation Tick**: When the engine is running (`IsRunning`), the `GridManager` continuously updates every `IGridNode` over time (`DeltaTime`) in its main `Tick()` loop. 
+    *   **Pre-calculation Phase:** The tick resolves all active auras and modifiers first.
+    *   **Execution Phase:** All nodes calculate their progression (e.g., rotation physics, charge buildup) based on independent speeds.
+*   **Wind-Down**: When told to Stop, the engine halts standard ticking and enters a smooth "Wind-Down" loop that interpolates all gears back to stable orthogonal rest positions (0, 90, 180, 270 degrees) precisely, without abrupt visual snapping.
 
-### 2. The Nodes (`IGridNode`)
+### 2. Snap Collisions & The Nodes (`IGridNode`)
 All puzzle items on the board implement `IGridNode`. They follow `NodeBase`, which handles standard logic like tracking the `IsActive` state, rotation progress, and maintaining a `List<RuntimeAbility>` for temporary modifiers.
 
-*   **`CoreGearNode`**: The active engine/motor. It spins constantly, but visually snaps to cardinal directions (4-way or 8-way). When it "snaps", it fires a `DirectionalTriggerEvent` out to the board. 
-*   **`BaseGearNode` (Standard Gear)**: The passive receiver. It listens for `DirectionalTriggerEvent`s matching its spatial coordinate. It accumulates `CurrentCharge` continuously and upon triggers. When `MaxCharge` is reached, it fires all its configured abilities and resets. 
+*   **`CoreGearNode`**: The active continuous engine/motor. As it spins during the tick, it watches a subset of "Trigger Degrees" based on its pattern configuration.
+    *   **Snap Collision**: When the gear mechanically sweeps past an interactive degree threshold (e.g., passing 90°, 180°, 270°), the collision system registers a "mechanical snap/click". It calculates the exact neighboring cell coordinate facing that direction and fires a strict `DirectionalTriggerEvent` payload at that target.
+*   **`BaseGearNode` (Standard Gear)**: The passive receiver. It listens for `DirectionalTriggerEvent`s matching its spatial coordinate. It accumulates `CurrentCharge` continuously and upon receiving triggers. When `MaxCharge` is reached, it fires all its configured abilities and resets. 
     *   **Concurrency Shield:** To prevent race conditions from simultaneous engines (e.g., 2 CoreGears triggering the same node in a single frame), a strict 1-execution-per-tick limit (`hasExecutedThisTick`) is enforced. Excess charge correctly accumulates but execution execution is naturally deferred to the immediate next physical tick in the queue.
 *   **`AuraGearNode`**: The hazard/support gear. Instead of charging, it constantly emits effects (like `LocalSpeedMultiplier`) to neighboring cells during the pre-calculation phase of the Grid `Tick()`.
 
