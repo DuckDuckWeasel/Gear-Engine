@@ -103,20 +103,23 @@ namespace Game.CarSimulation
                 return;
             }
 
+            SyncVisualContainer(source);
+            splineExtrude.Rebuild();
+        }
+
+        private void SyncVisualContainer(Spline source)
+        {
             var visualContainer = splineExtrude.Container;
             if (visualContainer == null)
             {
                 splineExtrude.Container = splineContainer;
-            }
-            else
-            {
-                if (visualContainer != splineContainer)
-                {
-                    CopySplineIntoContainer(source, visualContainer);
-                }
+                return;
             }
 
-            splineExtrude.Rebuild();
+            if (visualContainer != splineContainer)
+            {
+                CopySplineIntoContainer(source, visualContainer);
+            }
         }
 
         private void CopySplineIntoContainer(Spline source, SplineContainer targetContainer)
