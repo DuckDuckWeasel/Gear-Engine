@@ -9,12 +9,14 @@ namespace Game.CarSimulation
     public sealed class Track : MonoBehaviour
     {
         [SerializeField] private SplineContainer splineContainer;
+    [SerializeField] private SplineExtrude splineExtrude;
 
         public SplineContainer SplineContainer => splineContainer;
 
         private void Awake()
         {
             EnsureSplineContainerReference();
+        EnsureSplineExtrudeReference();
         }
 
         public void Initialize(TrackDefinition data)
@@ -30,12 +32,14 @@ namespace Game.CarSimulation
         private void ExecuteInitialize(TrackDefinition data)
         {
             EnsureSplineContainerReference();
+        EnsureSplineExtrudeReference();
             if (!HasSplineContainerOrLog() || !HasSplineDataOrLog(data))
             {
                 return;
             }
 
-            CopySplineIntoContainer(data.Spline);
+            CopySplineIntoContainer(data.Spline, splineContainer);
+            RebuildVisualSplineExtrude(data.Spline);
         }
 
         private bool HasSplineContainerOrLog()
@@ -68,6 +72,20 @@ namespace Game.CarSimulation
             }
         }
 
+    private void EnsureSplineExtrudeReference()
+    {
+        if (splineExtrude != null)
+        {
+            return;
+        }
+
+        splineExtrude = GetComponent<SplineExtrude>();
+        if (splineExtrude == null)
+        {
+            splineExtrude = GetComponentInParent<SplineExtrude>();
+        }
+    }
+
         private void LogSplineContainerMissing()
         {
             Debug.LogError("[Track] SplineContainer is missing; cannot Initialize.");
@@ -78,9 +96,32 @@ namespace Game.CarSimulation
             Debug.LogError($"[Track] TrackDefinition '{definitionName}' has no spline knots.");
         }
 
-        private void CopySplineIntoContainer(Spline source)
+        private void RebuildVisualSplineExtrude(Spline source)
         {
-            var target = splineContainer.Spline;
+            if (splineExtrude == null)
+            {
+                return;
+            }
+
+            var visualContainer = splineExtrude.Container;
+            if (visualContainer == null)
+            {
+                splineExtrude.Container = splineContainer;
+            }
+            else
+            {
+                if (visualContainer != splineContainer)
+                {
+                    CopySplineIntoContainer(source, visualContainer);
+                }
+            }
+
+            splineExtrude.Rebuild();
+        }
+
+        private void CopySplineIntoContainer(Spline source, SplineContainer targetContainer)
+        {
+            var target = targetContainer.Spline;
             target.Knots = source.Knots;
             target.Closed = source.Closed;
         }
