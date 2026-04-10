@@ -1,0 +1,26 @@
+{
+    "name": "Game.Race",
+    "rootNamespace": "Game.Race",
+    "references": [
+        "Game.CarSimulation",
+        "Game.GearEngine",
+        "Scaffold.MVVM",
+        "Scaffold.MVVM.View",
+        "Scaffold.MVVM.ViewModel",
+        "Scaffold.Navigation",
+        "VContainer",
+        "Unity.TextMeshPro",
+        "UnityEngine.UI"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "CommunityToolkit.Mvvm.dll"
+    ],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

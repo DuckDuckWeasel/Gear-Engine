@@ -16,7 +16,10 @@ namespace Game.CarSimulation
             builder.RegisterInstance(carDefinition);
             builder.RegisterInstance(trackDefinition);
             builder.RegisterComponent(track);
-            builder.RegisterEntryPoint<CarTrackBootstrap>();
+            builder.RegisterEntryPoint<CarTrackBootstrap>()
+                .AsImplementedInterfaces()
+                .AsSelf();
+            builder.RegisterEntryPoint<CarAutoStartDriver>();
         }
     }
 }

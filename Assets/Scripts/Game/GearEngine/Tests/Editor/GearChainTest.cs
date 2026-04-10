@@ -7,6 +7,7 @@ namespace Game.GearEngine.Tests {
         public void TestChain() {
             var eventBus = new EventController();
             var grid = new GridManager();
+            grid.Play();
             var coreData = new GearConfigData { Id = "core", BaseRotationSpeed = 100f, TriggerPattern = TriggerPattern.FourWay };
             var core = new CoreGearNode(grid, eventBus); core.Initialize(new Vector2Int(0,0), coreData);
             

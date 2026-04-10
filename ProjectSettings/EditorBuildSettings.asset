@@ -6,6 +6,9 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 0
+    path: Assets/Scenes/RaceScene.unity
+    guid: d3365226b3552d1d71c03e21ef15e155
+  - enabled: 0
     path: Assets/Scripts/Addressables/Addressables Load.unity
     guid: d15723d1a47b4494295e1235cd0ca6ca
   - enabled: 0

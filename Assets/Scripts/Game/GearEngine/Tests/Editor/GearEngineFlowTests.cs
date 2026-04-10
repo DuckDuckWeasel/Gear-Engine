@@ -16,6 +16,7 @@ namespace Game.GearEngine.Tests
         {
             eventBus = new EventController();
             gridManager = new GridManager();
+            gridManager.Play();
         }
 
         [Test]
@@ -211,7 +212,6 @@ namespace Game.GearEngine.Tests
             coreGear.Initialize(Vector2Int.zero, coreData);
             gridManager.AddNode(coreGear);
 
-            gridManager.Play();
             gridManager.Tick(); 
             // Core ticks normally. (dt = roughly 0, but simulating).
             // Manually drive core rotation to something weird like 33 degrees.

@@ -11,7 +11,7 @@ namespace Game.GearEngine
         private Dictionary<Vector2Int, IGridNode> nodes = new Dictionary<Vector2Int, IGridNode>();
         
         public float GlobalSpeedModifier { get; set; } = 1.0f;
-        public bool IsRunning { get; private set; } = true;
+        public bool IsRunning { get; private set; }
 
         public void Play()
         {

@@ -12,4 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 65bb29ac87114da46bd521a7dad649a0, type: 3}
   m_Name: Navigation Settings
   m_EditorClassIdentifier: 
-  screens: []
+  screens:
+  - {fileID: 11400000, guid: c4d5e6f708192a3b4c5d6e7f8091a2b3, type: 2}
+  - {fileID: 11400000, guid: d5e6f708192a3b4c5d6e7f8091a2b3c4, type: 2}

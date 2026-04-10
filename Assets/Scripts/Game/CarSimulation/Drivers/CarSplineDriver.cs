@@ -21,6 +21,10 @@ namespace Game.CarSimulation
             splineAnimate.AnimationMethod = SplineAnimate.Method.Speed;
             splineAnimate.Easing = SplineAnimate.EasingMode.None;
             carEntity.Subscribe(speedAttribute, OnSpeedChanged);
+        }
+
+        public void StartDriving()
+        {
             splineAnimate.Play();
         }
 
