@@ -20,17 +20,17 @@ Running `powershell -NoProfile -ExecutionPolicy Bypass -File ".\.agents\scripts\
 
 ## Progress
 
-- [ ] Author ExecPlan at `Plans/FrustumFit/FrustumFit-ExecPlan.md`.
-- [ ] Milestone 1 — Core math types: `FrustumFillMode`, `FrustumFitAxes`, `FrustumBounds`, `FrustumFitMath`.
-- [ ] Milestone 2 — `FrustumFit` MonoBehaviour.
-- [ ] Milestone 3 — EditMode tests for `FrustumFitMath`.
-- [ ] Milestone 4 — Documentation (`Docs/FrustumFit.md`).
+- [x] Author ExecPlan at `Plans/FrustumFit/FrustumFit-ExecPlan.md`.
+- [x] Milestone 1 — Core math types: `FrustumFillMode`, `FrustumFitAxes`, `FrustumBounds`, `FrustumFitMath`.
+- [x] Milestone 2 — `FrustumFit` MonoBehaviour.
+- [x] Milestone 3 — EditMode tests for `FrustumFitMath`.
+- [x] Milestone 4 — Documentation (`Docs/FrustumFit.md`).
 
 ---
 
 ## Surprises & Discoveries
 
-*(Fill in as implementation progresses.)*
+- Pre-existing analyzer violations in `Assets/Scripts/Game/CarSimulation/Track/Track.cs` (SCA1007 `else if` without explicit braces, SCA2001 method out of order, SCA2003 method exceeded 15-line limit) blocked the quality gate. Fixed as part of this milestone cycle — `else if` rewritten as `else { if ... }`, `CopySplineIntoContainer` moved after its callers, and `RebuildVisualSplineExtrude` refactored by extracting `SyncVisualContainer`. Gate passed clean (`TOTAL:0`) after these fixes.
 
 ---
 
@@ -64,7 +64,8 @@ Running `powershell -NoProfile -ExecutionPolicy Bypass -File ".\.agents\scripts\
 
 ## Outcomes & Retrospective
 
-*(Fill in at completion.)*
+- **Achieved:** All five production types (`FrustumFillMode`, `FrustumFitAxes`, `FrustumBounds`, `FrustumFitMath`, `FrustumFit`) delivered under `Game.GearEngine.Presentation.World`. 12 EditMode test cases covering all fill modes, perspective/ortho bounds, parent lossyScale correction, and guard clauses. `Docs/FrustumFit.md` written. Quality gate passes clean (`TOTAL:0, BLOCKERS:0`).
+- **Gaps:** Unity EditMode test runner not executed (Unity editor holds the project lock during development); math tests confirmed correct by inspection against known formulae. Run `.agents/scripts/run-editmode-tests.ps1` when the editor is closed to verify all 12 tests pass.
 
 ---
 
@@ -325,3 +326,5 @@ Pseudocode — typical usage in a scene:
 ---
 
 *Revision note: Initial version authored from stakeholder request — frustum-relative responsive scaling for world-space objects, fill percentage + fill mode per object, pure math layer separated for testability, resize detection deferred.*
+
+*Revision note (2026-04-10): Implementation complete. All milestones landed. Pre-existing `Track.cs` analyzer violations fixed as a side-effect of the quality gate run. Gate passes clean.*
