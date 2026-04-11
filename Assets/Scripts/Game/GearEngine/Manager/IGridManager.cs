@@ -6,7 +6,9 @@ namespace Game.GearEngine
     public interface IGridManager
     {
         float GlobalSpeedModifier { get; set; }
-        
+
+        IEnumerable<IGridNode> GetAllNodes();
+
         void AddNode(IGridNode node);
         void RemoveNode(Vector2Int pos);
         IGridNode ExtractNode(Vector2Int pos);

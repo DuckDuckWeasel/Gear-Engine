@@ -2,7 +2,6 @@ using System.Collections.Specialized;
 using System.Linq;
 using UnityEngine;
 using Scaffold.MVVM;
-using VContainer;
 
 namespace Game.GearEngine.Presentation
 {
@@ -10,13 +9,6 @@ namespace Game.GearEngine.Presentation
     {
         [SerializeField] private RectTransform itemsContainer;
         [SerializeField] private TagSO gridBoardTag;
-
-        private IObjectResolver container;
-
-        public void SetObjectResolver(IObjectResolver resolver)
-        {
-            container = resolver;
-        }
 
         protected override void OnBind()
         {
@@ -88,12 +80,6 @@ namespace Game.GearEngine.Presentation
 
                 var dragger = slotGroup.AddComponent<DragHandler>();
                 var slotView = slotGroup.AddComponent<GearInventorySlotView>();
-
-                if (container != null)
-                {
-                    container.Inject(slotView);
-                    container.Inject(dragger);
-                }
 
                 if (gridBoardTag != null)
                 {

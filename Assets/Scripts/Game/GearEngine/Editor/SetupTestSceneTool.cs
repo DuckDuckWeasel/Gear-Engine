@@ -56,25 +56,23 @@ namespace Game.GearEngine.Editor
 
             GameObject gridRootObj = new GameObject("GearGrid_Root");
             gridRootObj.transform.SetParent(gearRootObj.transform, false);
-            GearBootstrap bootstrap = gridRootObj.AddComponent<GearBootstrap>();
 
-            if (core != null)
+            if (boardConfig != null && emptySlot != null)
             {
-                var so = new SerializedObject(bootstrap);
-                var initialProp = so.FindProperty("initialGear");
-                if (initialProp != null)
+                for (int x = 0; x < boardConfig.GridWidth; x++)
                 {
-                    initialProp.objectReferenceValue = core;
+                    for (int y = 0; y < boardConfig.GridHeight; y++)
+                    {
+                        var pos = new Vector2Int(x, y);
+                        GameObject slotView = Object.Instantiate(emptySlot, gridRootObj.transform);
+                        slotView.transform.localPosition = boardConfig.GetWorldPosition(pos, 0.5f);
+                        slotView.name = $"EmptySlot_{x}_{y}";
+                    }
                 }
-
-                var slotProp = so.FindProperty("emptySlotPrefab");
-                if (slotProp != null && emptySlot != null)
-                {
-                    slotProp.objectReferenceValue = emptySlot;
-                }
-
-                so.ApplyModifiedProperties();
             }
+
+            GearTestSceneBootstrap testBootstrap = gearRootObj.AddComponent<GearTestSceneBootstrap>();
+            SerializeGearEngineStartData(testBootstrap, boardConfig, core, loadout);
 
             GameObject eventSystemObj = new GameObject("EventSystem");
             eventSystemObj.AddComponent<UnityEngine.EventSystems.EventSystem>();
@@ -188,6 +186,15 @@ namespace Game.GearEngine.Editor
             floorGrid.transform.SetParent(gearRootObj.transform, false);
 
             var boardView = floorGrid.AddComponent<BoardView>();
+            var boardDragHandler = floorGrid.AddComponent<GearBoardDragHandler>();
+            var boardSo = new SerializedObject(boardView);
+            SerializedProperty dragHandlerProp = boardSo.FindProperty("dragHandler");
+            if (dragHandlerProp != null)
+            {
+                dragHandlerProp.objectReferenceValue = boardDragHandler;
+            }
+
+            boardSo.ApplyModifiedProperties();
 
             var tagComp = floorGrid.AddComponent<TagComponent>();
             TagSO gridBoardTag = AssetDatabase.LoadAssetAtPath<TagSO>($"{folderPath}/Tag/GridBoard_Tag.asset");
@@ -220,7 +227,7 @@ namespace Game.GearEngine.Editor
             NavigationSettings navigationSettings =
                 AssetDatabase.LoadAssetAtPath<NavigationSettings>(GearEngineNavigationAssetGenerator.NavigationSettingsPath);
 
-            ApplyGearMechanicsScopeReferences(scope, boardConfig, bootstrap, loadout, navigationSettings, gearRootObj.transform);
+            ApplyGearMechanicsScopeReferences(scope, boardConfig, testBootstrap, navigationSettings, gearRootObj.transform);
 
             string sceneDir = "Assets/Scenes";
             if (!System.IO.Directory.Exists(sceneDir))
@@ -236,8 +243,7 @@ namespace Game.GearEngine.Editor
         private static void ApplyGearMechanicsScopeReferences(
             GearMechanicsScope scope,
             BoardConfigSO boardConfig,
-            GearBootstrap bootstrap,
-            GearInventoryLoadoutSO loadout,
+            GearTestSceneBootstrap sceneBootstrap,
             NavigationSettings navigationSettings,
             Transform navigationViewHolder)
         {
@@ -248,16 +254,10 @@ namespace Game.GearEngine.Editor
                 bc.objectReferenceValue = boardConfig;
             }
 
-            var bs = instSo.FindProperty("bootstrap");
-            if (bs != null)
+            var sb = instSo.FindProperty("sceneBootstrap");
+            if (sb != null)
             {
-                bs.objectReferenceValue = bootstrap;
-            }
-
-            var lo = instSo.FindProperty("loadout");
-            if (lo != null)
-            {
-                lo.objectReferenceValue = loadout;
+                sb.objectReferenceValue = sceneBootstrap;
             }
 
             var ns = instSo.FindProperty("navigationSettings");
@@ -273,6 +273,58 @@ namespace Game.GearEngine.Editor
             }
 
             instSo.ApplyModifiedProperties();
+        }
+
+        private static void SerializeGearEngineStartData(
+            GearTestSceneBootstrap testBootstrap,
+            BoardConfigSO boardConfig,
+            GearConfig coreGear,
+            GearInventoryLoadoutSO loadout)
+        {
+            var tbSo = new SerializedObject(testBootstrap);
+            SerializedProperty startDataProp = tbSo.FindProperty("startData");
+            if (startDataProp == null)
+            {
+                tbSo.ApplyModifiedProperties();
+                return;
+            }
+
+            SerializedProperty boardLayoutProp = startDataProp.FindPropertyRelative("boardLayout");
+            SerializedProperty placementsProp = boardLayoutProp != null ? boardLayoutProp.FindPropertyRelative("placements") : null;
+
+            if (placementsProp != null && boardConfig != null && coreGear != null)
+            {
+                int centerX = boardConfig.GridWidth / 2;
+                int centerY = boardConfig.GridHeight / 2;
+                placementsProp.ClearArray();
+                placementsProp.arraySize = 1;
+                SerializedProperty p0 = placementsProp.GetArrayElementAtIndex(0);
+                SerializedProperty posProp = p0.FindPropertyRelative("position");
+                if (posProp != null)
+                {
+                    posProp.vector2IntValue = new Vector2Int(centerX, centerY);
+                }
+
+                SerializedProperty gearProp = p0.FindPropertyRelative("gearConfig");
+                if (gearProp != null)
+                {
+                    gearProp.objectReferenceValue = coreGear;
+                }
+            }
+
+            SerializedProperty invProp = startDataProp.FindPropertyRelative("inventoryGears");
+            if (invProp != null && loadout != null && loadout.StartingGears != null)
+            {
+                invProp.ClearArray();
+                int n = loadout.StartingGears.Count;
+                invProp.arraySize = n;
+                for (int i = 0; i < n; i++)
+                {
+                    invProp.GetArrayElementAtIndex(i).objectReferenceValue = loadout.StartingGears[i];
+                }
+            }
+
+            tbSo.ApplyModifiedProperties();
         }
     }
 }

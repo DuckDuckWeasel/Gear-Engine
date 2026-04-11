@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using NUnit.Framework;
 using UnityEngine;
 
@@ -13,6 +14,8 @@ namespace Game.GearEngine.Tests
             public float GlobalSpeedModifier { get; set; }
             public bool PlayCalled;
             public bool StopCalled;
+
+            public IEnumerable<IGridNode> GetAllNodes() => Array.Empty<IGridNode>();
 
             public void AddNode(IGridNode node)
             {
@@ -31,27 +34,11 @@ namespace Game.GearEngine.Tests
             public void Stop() => StopCalled = true;
         }
 
-        private sealed class StubSceneElement : IGearSceneElement
-        {
-            public void Initialize()
-            {
-            }
-
-            public void Enable()
-            {
-            }
-
-            public void Disable()
-            {
-            }
-        }
-
         [Test]
         public void Play_DelegatesToGridManager()
         {
             var grid = new StubGrid();
-            var scene = new StubSceneElement();
-            var service = new GearEngineService(grid, scene);
+            var service = new GearEngineService(grid);
 
             service.Play();
 
@@ -62,8 +49,7 @@ namespace Game.GearEngine.Tests
         public void Stop_DelegatesToGridManager()
         {
             var grid = new StubGrid();
-            var scene = new StubSceneElement();
-            var service = new GearEngineService(grid, scene);
+            var service = new GearEngineService(grid);
 
             service.Stop();
 
@@ -74,8 +60,7 @@ namespace Game.GearEngine.Tests
         public void IsRunning_ReflectsGridManagerState()
         {
             var grid = new StubGrid { IsRunning = true };
-            var scene = new StubSceneElement();
-            var service = new GearEngineService(grid, scene);
+            var service = new GearEngineService(grid);
 
             Assert.IsTrue(service.IsRunning);
         }
@@ -83,17 +68,7 @@ namespace Game.GearEngine.Tests
         [Test]
         public void Constructor_ThrowsWhenGridManagerNull()
         {
-            var scene = new StubSceneElement();
-
-            Assert.Throws<ArgumentNullException>(() => new GearEngineService(null, scene));
-        }
-
-        [Test]
-        public void Constructor_ThrowsWhenSceneElementNull()
-        {
-            var grid = new StubGrid();
-
-            Assert.Throws<ArgumentNullException>(() => new GearEngineService(grid, null));
+            Assert.Throws<ArgumentNullException>(() => new GearEngineService(null));
         }
     }
 }

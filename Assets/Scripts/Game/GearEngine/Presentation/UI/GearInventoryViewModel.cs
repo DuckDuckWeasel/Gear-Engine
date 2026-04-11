@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Game.GearEngine;
 using Scaffold.MVVM;
@@ -14,6 +16,8 @@ namespace Game.GearEngine.Presentation
 
         public bool CanDrag => engineService != null && !engineService.IsRunning;
 
+        public event Action<Vector3, GearConfigData> OnGearDraggedToBoard;
+
         public void Initialize(IGearEngineService engineService)
         {
             this.engineService = engineService;
@@ -21,6 +25,24 @@ namespace Game.GearEngine.Presentation
 
         protected override void Initialize()
         {
+        }
+
+        public void LoadInventory(IEnumerable<GearConfig> gearConfigs)
+        {
+            if (gearConfigs == null)
+            {
+                throw new ArgumentNullException(nameof(gearConfigs));
+            }
+
+            foreach (GearConfig config in gearConfigs)
+            {
+                if (config == null)
+                {
+                    continue;
+                }
+
+                AddGearToInventory(config.CreateRuntimeData());
+            }
         }
 
         public void AddGearToInventory(GearConfigData gear)
@@ -49,14 +71,31 @@ namespace Game.GearEngine.Presentation
             return success;
         }
 
-        public bool ConsumeSpecificGear(GearConfigData gearData)
+        public void ConsumeSpecificGear(GearConfigData gearData)
         {
             if (gearData == null)
             {
-                return false;
+                throw new ArgumentNullException(nameof(gearData));
             }
 
-            return InventoryModel.AvailableGears.Remove(gearData);
+            int index = FindGearIndex(gearData);
+            if (index < 0)
+            {
+                Debug.LogError("[GearInventoryViewModel] ConsumeSpecificGear: gear not found in inventory.");
+                return;
+            }
+
+            RemoveGearAt(index);
+        }
+
+        public void NotifyGearDropped(Vector3 worldPos, GearConfigData gearData)
+        {
+            if (gearData == null)
+            {
+                throw new ArgumentNullException(nameof(gearData));
+            }
+
+            OnGearDraggedToBoard?.Invoke(worldPos, gearData);
         }
 
         public void SelectGearLocal(GearConfigData gear)
@@ -65,6 +104,29 @@ namespace Game.GearEngine.Presentation
             {
                 InventoryModel.SelectedGear = gear;
                 Debug.Log($"<color=#aaaaff>[UI_ViewModel]</color> Player selected: {gear.Id}");
+            }
+        }
+
+        private int FindGearIndex(GearConfigData gearData)
+        {
+            for (int i = 0; i < InventoryModel.AvailableGears.Count; i++)
+            {
+                if (ReferenceEquals(InventoryModel.AvailableGears[i], gearData))
+                {
+                    return i;
+                }
+            }
+
+            return -1;
+        }
+
+        private void RemoveGearAt(int index)
+        {
+            GearConfigData removed = InventoryModel.AvailableGears[index];
+            InventoryModel.AvailableGears.RemoveAt(index);
+            if (ReferenceEquals(InventoryModel.SelectedGear, removed))
+            {
+                InventoryModel.SelectedGear = null;
             }
         }
     }

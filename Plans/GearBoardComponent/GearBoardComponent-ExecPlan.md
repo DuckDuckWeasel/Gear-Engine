@@ -75,14 +75,14 @@ can be called from a minimal scene with no `GearEngineView` parent.
 
 ## Progress
 
-- [ ] M1 — Add `GetAllNodes()` to `IGridManager` / `GridManager`
-- [ ] M2 — Trim `BoardViewModel`: remove view factory + inventory params; add `OnGearPlaced` / `OnGearRemoved` events
-- [ ] M3 — Refactor `BoardView` to standalone `MonoBehaviour`; own local `GearViewFactory`; react to events
-- [ ] M4 — Extract `GearBoardDragHandler` from `BoardView.Update()`
-- [ ] M5 — Introduce startup-state payloads; remove `GearViewFactory` from DI; reduce bootstrap to an optional thin launcher
-- [ ] M6 — Update `GearEngineViewModel`, inventory startup loading, navigation/host wiring, and `GearEngineView`
-- [ ] M7 — Tests, Docs, editor tool updates for startup hydration and optional bootstrap flow
-- [ ] Quality gate passes (`validate-changes.cmd`)
+- [x] M1 — Add `GetAllNodes()` to `IGridManager` / `GridManager`
+- [x] M2 — Trim `BoardViewModel`: remove view factory + inventory params; add `OnGearPlaced` / `OnGearRemoved` events
+- [x] M3 — Refactor `BoardView` to standalone `MonoBehaviour`; own local `GearViewFactory`; react to events
+- [x] M4 — Extract `GearBoardDragHandler` from `BoardView.Update()`
+- [x] M5 — Introduce startup-state payloads; remove `GearViewFactory` from DI; reduce bootstrap to an optional thin launcher
+- [x] M6 — Update `GearEngineViewModel`, inventory startup loading, navigation/host wiring, and `GearEngineView`
+- [x] M7 — Tests, Docs, editor tool updates for startup hydration and optional bootstrap flow
+- [x] Quality gate passes (`validate-changes.cmd`)
 
 ---
 
@@ -243,7 +243,9 @@ can be called from a minimal scene with no `GearEngineView` parent.
 
 ## Outcomes & Retrospective
 
-_(Fill in at completion: what shipped, what was deferred, lessons learned.)_
+Shipped: standalone `BoardView` with local `GearViewFactory`, `GearBoardDragHandler`, `GearEngineStartData` hydration, `GearTestSceneBootstrap` replacing `GearBootstrap` / `GearEngineNavigationEntry`, inventory bridging on `GearEngineView`, removal of `IGearSceneElement` and `GearDroppedFromUIEvent`. `Game.GearEngine.csproj` / `Game.GearEngine.Tests.csproj` were updated manually so `dotnet`/analyzer builds match deleted files until Unity regenerates projects.
+
+Deferred: none required for acceptance; existing scene YAML still references removed `GearBootstrap` until **GearEngine → Create Gear_Clean Scene** (or Step 2) is run to regenerate scenes.
 
 ---
 

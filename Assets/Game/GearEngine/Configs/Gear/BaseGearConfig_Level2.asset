@@ -17,7 +17,7 @@ MonoBehaviour:
     Category: 0
     BaseRotationSpeed: 0
     VisualPrefab: {fileID: 4444594598132281025, guid: d4ae7c8518bc94a9bb6a319c6a6902b6, type: 3}
-    UIIcon: {fileID: 1124818141672353582, guid: 9b1842a1b3639426a87c3413c3d92a06, type: 3}
+    UIIcon: {fileID: 21300000, guid: fcfe20b09c8874fe4bf0b85d06a0d441, type: 3}
     UIScaleMultiplier: 115
     TriggerPattern: 4
     IsInteractable: 1

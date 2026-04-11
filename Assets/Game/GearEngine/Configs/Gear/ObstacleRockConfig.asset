@@ -17,7 +17,7 @@ MonoBehaviour:
     Category: 0
     BaseRotationSpeed: 0
     VisualPrefab: {fileID: 522121566319413383, guid: 51970ee9abfae4f67869c8b3ceabc8e1, type: 3}
-    UIIcon: {fileID: -1078806869439273028, guid: 78e190fb2677d49c98a2084be2b34dd5, type: 3}
+    UIIcon: {fileID: 21300000, guid: 3b88397aedb7b457b964e28b2084ea41, type: 3}
     UIScaleMultiplier: 115
     TriggerPattern: 4
     IsInteractable: 0
@@ -29,4 +29,5 @@ MonoBehaviour:
     TriggerSpinDegrees: 45
     Abilities: []
   nextLevel: {fileID: 0}
-  abilities: []
+  abilities:
+  - {fileID: 11400000, guid: ffeef6717bd5e4cecb247511979f8f6b, type: 2}

@@ -1,56 +1,83 @@
 using System;
+using System.Collections.Generic;
 using Game.GearEngine;
-using Game.GearEngine.Events;
-using Scaffold.Events;
 using Scaffold.MVVM;
 using UnityEngine;
 
 namespace Game.GearEngine.Presentation
 {
-    public sealed class BoardViewModel : ViewModel, IDisposable
+    public sealed class BoardViewModel : ViewModel
     {
         private IGearEngineService engineService;
         private IGridManager gridManager;
         private GearNodeFactory nodeFactory;
-        private GearViewFactory viewFactory;
-        private GearInventoryViewModel inventoryViewModel;
         private BoardConfigSO boardConfig;
-        private EventController eventController;
 
         private Vector2Int pickupOriginalPos;
-        private Transform boardVisualRoot;
-        private bool eventSubscribed;
 
-        public void SetBoardVisualRoot(Transform root)
-        {
-            boardVisualRoot = root;
-        }
+        public event Action<IGridNode> OnGearPlaced;
+        public event Action<IGridNode> OnGearRemoved;
 
         public IGearEngineService EngineService => engineService;
 
         public BoardConfigSO BoardConfig => boardConfig;
 
-        public GearViewFactory GearViewFactory => viewFactory;
-
         public void Initialize(
             IGearEngineService engineService,
             IGridManager gridManager,
             GearNodeFactory nodeFactory,
-            GearViewFactory viewFactory,
-            GearInventoryViewModel inventory,
-            BoardConfigSO boardConfig,
-            EventController eventController)
+            BoardConfigSO boardConfig)
         {
             this.engineService = engineService ?? throw new ArgumentNullException(nameof(engineService));
             this.gridManager = gridManager ?? throw new ArgumentNullException(nameof(gridManager));
             this.nodeFactory = nodeFactory ?? throw new ArgumentNullException(nameof(nodeFactory));
-            this.viewFactory = viewFactory ?? throw new ArgumentNullException(nameof(viewFactory));
-            inventoryViewModel = inventory ?? throw new ArgumentNullException(nameof(inventory));
             this.boardConfig = boardConfig ?? throw new ArgumentNullException(nameof(boardConfig));
-            this.eventController = eventController ?? throw new ArgumentNullException(nameof(eventController));
+        }
 
-            this.eventController.AddListener<GearDroppedFromUIEvent>(HandleGearDroppedFromUI);
-            eventSubscribed = true;
+        public IGridNode GetNode(Vector2Int coord) => gridManager.GetNode(coord);
+
+        public IEnumerable<IGridNode> GetCurrentNodes() => gridManager.GetAllNodes();
+
+        public void LoadLayout(BoardLayoutData layout)
+        {
+            if (layout == null)
+            {
+                throw new ArgumentNullException(nameof(layout));
+            }
+
+            if (gridManager == null || nodeFactory == null || boardConfig == null)
+            {
+                throw new InvalidOperationException("BoardViewModel must be initialized before LoadLayout.");
+            }
+
+            foreach (BoardGearPlacementData placement in layout.Placements)
+            {
+                if (placement == null || placement.GearConfig == null)
+                {
+                    continue;
+                }
+
+                Vector2Int pos = placement.Position;
+                bool inBounds =
+                    pos.x >= 0 && pos.x < boardConfig.GridWidth &&
+                    pos.y >= 0 && pos.y < boardConfig.GridHeight;
+
+                if (!inBounds)
+                {
+                    Debug.LogError($"[BoardViewModel] Ignoring out-of-bounds starting gear at {pos}.");
+                    continue;
+                }
+
+                if (gridManager.GetNode(pos) != null)
+                {
+                    Debug.LogError($"[BoardViewModel] Duplicate starting gear at {pos}.");
+                    continue;
+                }
+
+                GearConfigData runtimeData = placement.GearConfig.CreateRuntimeData();
+                IGridNode node = nodeFactory.CreateNode(pos, runtimeData);
+                gridManager.AddNode(node);
+            }
         }
 
         public void OnGearPickedUp(IGridNode node, Vector2Int fromPos)
@@ -64,7 +91,7 @@ namespace Game.GearEngine.Presentation
             gridManager.ExtractNode(fromPos);
         }
 
-        public void OnGearDropped(IGridNode node, Vector2Int toPos, bool isOverUI)
+        public void OnGearDropped(IGridNode node, Vector2Int toPos)
         {
             if (node == null || engineService == null || gridManager == null || boardConfig == null)
             {
@@ -73,12 +100,6 @@ namespace Game.GearEngine.Presentation
 
             if (engineService.IsRunning)
             {
-                return;
-            }
-
-            if (isOverUI)
-            {
-                ReturnGearToInventoryFromBoard(node);
                 return;
             }
 
@@ -101,8 +122,8 @@ namespace Game.GearEngine.Presentation
                 return;
             }
 
-            var draggedData = ((NodeBase)node).ConfigData;
-            var occupantData = ((NodeBase)occupant).ConfigData;
+            GearConfigData draggedData = node.ConfigData;
+            GearConfigData occupantData = occupant.ConfigData;
 
             if (occupantData.Id == draggedData.Id && occupantData.NextLevelConfig != null)
             {
@@ -114,18 +135,92 @@ namespace Game.GearEngine.Presentation
             Debug.Log($"<color=#ffff33>[BoardViewModel]</color> Swapped positions! {toPos} <-> {pickupOriginalPos}");
         }
 
+        /// <summary>
+        /// Disposes the logical node after a board gear is dragged over UI (view is destroyed separately).
+        /// </summary>
+        public void HandleBoardGearReturnedOverUI(IGridNode node)
+        {
+            try
+            {
+                node?.Dispose();
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"[BoardViewModel] HandleBoardGearReturnedOverUI failed: {ex.Message}\n{ex.StackTrace}");
+            }
+        }
+
+        /// <summary>
+        /// Places or merges inventory gear onto the board. Does not modify inventory; the screen consumes on success.
+        /// </summary>
+        /// <returns>True if a node was placed or merged.</returns>
+        public bool HandleInventoryDrop(Vector3 worldPosition, GearConfigData gearData)
+        {
+            try
+            {
+                if (gearData == null)
+                {
+                    throw new ArgumentNullException(nameof(gearData));
+                }
+
+                if (gridManager == null || boardConfig == null || engineService == null || engineService.IsRunning)
+                {
+                    return false;
+                }
+
+                Vector2Int targetDropPos = boardConfig.GetGridPosition(worldPosition);
+                IGridNode occupant = gridManager.GetNode(targetDropPos);
+
+                if (occupant == null)
+                {
+                    IGridNode newNode = nodeFactory.CreateNode(targetDropPos, gearData);
+                    gridManager.AddNode(newNode);
+                    OnGearPlaced?.Invoke(newNode);
+                    return true;
+                }
+
+                GearConfigData occupantData = occupant.ConfigData;
+
+                if (occupantData.Id == gearData.Id && occupantData.NextLevelConfig != null)
+                {
+                    IGridNode removedOccupant = gridManager.ExtractNode(targetDropPos);
+                    if (removedOccupant != occupant)
+                    {
+                        Debug.LogError("[BoardViewModel] Grid state mismatch during UI merge.");
+                        return false;
+                    }
+
+                    OnGearRemoved?.Invoke(occupant);
+                    occupant.Dispose();
+
+                    GearConfigData upgradedData = occupantData.NextLevelConfig.CreateRuntimeData();
+                    IGridNode newNode = nodeFactory.CreateNode(targetDropPos, upgradedData);
+                    gridManager.AddNode(newNode);
+                    OnGearPlaced?.Invoke(newNode);
+                    Debug.Log($"<color=#ffaa55>[BoardViewModel]</color> MERGED UI {gearData.Id} into {upgradedData.Id} at {targetDropPos}!");
+                    return true;
+                }
+
+                Debug.LogWarning($"<color=#ff5555>[BoardViewModel]</color> UI Drop Cancelled! {gearData.Id} dropped on incompatible/occupied {occupantData.Id}.");
+                return false;
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"[BoardViewModel] HandleInventoryDrop failed: {ex.Message}\n{ex.StackTrace}");
+                return false;
+            }
+        }
+
         private void PlaceNodeAt(IGridNode node, Vector2Int toPos)
         {
             ((NodeBase)node).Position = toPos;
             gridManager.AddNode(node);
-            viewFactory.GetView(node)?.RecalculateRotationOffset();
         }
 
         private void SnapNodeBackToOriginal(IGridNode node)
         {
             ((NodeBase)node).Position = pickupOriginalPos;
             gridManager.AddNode(node);
-            viewFactory.GetView(node)?.RecalculateRotationOffset();
         }
 
         private void SwapBoardGears(IGridNode draggedNode, IGridNode occupantNode, Vector2Int targetDropPos)
@@ -134,21 +229,17 @@ namespace Game.GearEngine.Presentation
 
             ((NodeBase)draggedNode).Position = targetDropPos;
             gridManager.AddNode(draggedNode);
-            viewFactory.GetView(draggedNode)?.RecalculateRotationOffset();
 
             ((NodeBase)occupantNode).Position = pickupOriginalPos;
             gridManager.AddNode(occupantNode);
-
-            GearView occupantView = viewFactory.GetView(occupantNode);
-            occupantView?.RecalculateRotationOffset();
         }
 
         private void MergeBoardGearsAt(IGridNode draggedNode, IGridNode occupantNode, Vector2Int targetDropPos, GearConfigData occupantData)
         {
             gridManager.ExtractNode(targetDropPos);
 
-            DestroyGearViewForNode(draggedNode);
-            DestroyGearViewForNode(occupantNode);
+            OnGearRemoved?.Invoke(draggedNode);
+            OnGearRemoved?.Invoke(occupantNode);
 
             draggedNode.Dispose();
             occupantNode.Dispose();
@@ -156,140 +247,8 @@ namespace Game.GearEngine.Presentation
             GearConfigData upgradedData = occupantData.NextLevelConfig.CreateRuntimeData();
             IGridNode newNode = nodeFactory.CreateNode(targetDropPos, upgradedData);
             gridManager.AddNode(newNode);
-            Transform parent = boardVisualRoot != null ? boardVisualRoot : null;
-            if (parent == null)
-            {
-                Debug.LogError("[BoardViewModel] Board visual root is not set; cannot spawn merged gear view.");
-                return;
-            }
-
-            viewFactory.CreateView(newNode, upgradedData, parent);
+            OnGearPlaced?.Invoke(newNode);
             Debug.Log($"<color=#ffaa55>[BoardViewModel]</color> MERGED board gears into {upgradedData.Id} at {targetDropPos}!");
-        }
-
-        private void DestroyGearViewForNode(IGridNode node)
-        {
-            GearView view = viewFactory.GetView(node);
-            if (view != null)
-            {
-                viewFactory.UnregisterView(node);
-                DestroyViewGameObject(view.gameObject);
-            }
-        }
-
-        private void ReturnGearToInventoryFromBoard(IGridNode node)
-        {
-            GearConfigData draggedData = ((NodeBase)node).ConfigData;
-            inventoryViewModel.AddGearToInventory(draggedData);
-            GearView v = viewFactory.GetView(node);
-            if (v != null)
-            {
-                viewFactory.UnregisterView(node);
-                DestroyViewGameObject(v.gameObject);
-            }
-
-            node.Dispose();
-        }
-
-        private static void DestroyViewGameObject(GameObject go)
-        {
-            if (go == null)
-            {
-                return;
-            }
-
-#if UNITY_EDITOR
-            if (!Application.isPlaying)
-            {
-                UnityEngine.Object.DestroyImmediate(go);
-                return;
-            }
-#endif
-            UnityEngine.Object.Destroy(go);
-        }
-
-        private void HandleGearDroppedFromUI(GearDroppedFromUIEvent context)
-        {
-            try
-            {
-                if (gridManager == null || boardConfig == null || engineService == null || engineService.IsRunning)
-                {
-                    return;
-                }
-
-                Vector2Int targetDropPos = boardConfig.GetGridPosition(context.WorldPosition);
-
-                IGridNode occupant = gridManager.GetNode(targetDropPos);
-
-                if (occupant == null)
-                {
-                    bool consumed = inventoryViewModel.ConsumeSpecificGear(context.GearData);
-                    if (consumed)
-                    {
-                        IGridNode newNode = nodeFactory.CreateNode(targetDropPos, context.GearData);
-                        gridManager.AddNode(newNode);
-                        Transform parent = boardVisualRoot;
-                        if (parent == null)
-                        {
-                            Debug.LogError("[BoardViewModel] Board visual root is not set; cannot spawn gear from UI drop.");
-                            return;
-                        }
-
-                        viewFactory.CreateView(newNode, context.GearData, parent);
-                    }
-                }
-                else
-                {
-                    GearConfigData occupantData = ((NodeBase)occupant).ConfigData;
-
-                    if (occupantData.Id == context.GearData.Id && occupantData.NextLevelConfig != null)
-                    {
-                        bool consumed = inventoryViewModel.ConsumeSpecificGear(context.GearData);
-                        if (consumed)
-                        {
-                            IGridNode removedOccupant = gridManager.ExtractNode(targetDropPos);
-                            if (removedOccupant != occupant)
-                            {
-                                Debug.LogError("[BoardViewModel] Grid state mismatch during UI merge.");
-                                return;
-                            }
-
-                            DestroyGearViewForNode(occupant);
-                            occupant.Dispose();
-
-                            GearConfigData upgradedData = occupantData.NextLevelConfig.CreateRuntimeData();
-                            IGridNode newNode = nodeFactory.CreateNode(targetDropPos, upgradedData);
-                            gridManager.AddNode(newNode);
-                            Transform parent = boardVisualRoot;
-                            if (parent == null)
-                            {
-                                Debug.LogError("[BoardViewModel] Board visual root is not set; cannot spawn merged gear from UI.");
-                                return;
-                            }
-
-                            viewFactory.CreateView(newNode, upgradedData, parent);
-                            Debug.Log($"<color=#ffaa55>[BoardViewModel]</color> MERGED UI {context.GearData.Id} into {upgradedData.Id} at {targetDropPos}!");
-                        }
-                    }
-                    else
-                    {
-                        Debug.LogWarning($"<color=#ff5555>[BoardViewModel]</color> UI Drop Cancelled! {context.GearData.Id} dropped on incompatible/occupied {occupantData.Id}.");
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Debug.LogError($"[BoardViewModel] HandleGearDroppedFromUI failed: {ex.Message}\n{ex.StackTrace}");
-            }
-        }
-
-        public void Dispose()
-        {
-            if (eventController != null && eventSubscribed)
-            {
-                eventController.RemoveListener<GearDroppedFromUIEvent>(HandleGearDroppedFromUI);
-                eventSubscribed = false;
-            }
         }
     }
 }

@@ -5,24 +5,19 @@ namespace Game.GearEngine
 {
     public class GearViewFactory
     {
-        private readonly BoardConfigSO boardConfig;
         private readonly Dictionary<IGridNode, GearView> viewRegistry = new Dictionary<IGridNode, GearView>();
 
-        public GearViewFactory(BoardConfigSO boardConfig)
-        {
-            this.boardConfig = boardConfig;
-        }
-
-        public GearView CreateView(IGridNode node, GearConfigData configData, Transform parent)
+        public GearView CreateView(
+            IGridNode node,
+            GearConfigData configData,
+            Transform parent,
+            Vector3 localPosition)
         {
             GameObject viewObj = new GameObject($"{node.GetType().Name}_{node.Position}");
             viewObj.transform.SetParent(parent);
-
-            viewObj.transform.localPosition = boardConfig.GetWorldPosition(node.Position);
+            viewObj.transform.localPosition = localPosition;
 
             var view = viewObj.AddComponent<GearView>();
-
-            view.Initialize(node, configData, boardConfig, this);
 
             viewRegistry[node] = view;
 
@@ -54,4 +49,3 @@ namespace Game.GearEngine
         public IEnumerable<GearView> EnumerateGearViews() => viewRegistry.Values;
     }
 }
-

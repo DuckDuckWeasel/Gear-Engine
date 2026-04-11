@@ -53,6 +53,8 @@ namespace Game.GearEngine
             return node;
         }
 
+        public IEnumerable<IGridNode> GetAllNodes() => nodes.Values;
+
         public void Tick()
         {
             float dt = Time.deltaTime;

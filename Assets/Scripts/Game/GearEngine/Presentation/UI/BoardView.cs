@@ -1,120 +1,154 @@
+using System;
+using System.Collections.Generic;
 using Game.GearEngine;
-using Scaffold.MVVM;
 using UnityEngine;
-using UnityEngine.EventSystems;
 
 namespace Game.GearEngine.Presentation
 {
-    public class BoardView : ViewComponent<BoardViewModel>
+    public class BoardView : MonoBehaviour
     {
-        [SerializeField] private GearView draggedView;
-        private Vector2Int originalGridPos;
+        [SerializeField] private GearBoardDragHandler dragHandler;
 
-        private Camera mainCamera;
+        public event Action<GearConfigData, Vector3> OnGearDroppedOverUI;
 
-        protected override void OnBind()
+        private BoardViewModel viewModel;
+        private GearViewFactory localFactory;
+        private readonly Dictionary<IGridNode, GearView> viewsByNode = new Dictionary<IGridNode, GearView>();
+
+        public void Bind(BoardViewModel vm, bool interactable = false)
         {
-            mainCamera = Camera.main;
-            viewModel.SetBoardVisualRoot(transform);
+            Unbind();
+            viewModel = vm ?? throw new ArgumentNullException(nameof(vm));
+            localFactory = new GearViewFactory();
+
+            vm.OnGearPlaced += HandleGearPlaced;
+            vm.OnGearRemoved += HandleGearRemoved;
+
+            foreach (IGridNode node in vm.GetCurrentNodes())
+            {
+                SpawnView(node);
+            }
+
+            if (dragHandler != null)
+            {
+                dragHandler.enabled = interactable;
+            }
         }
 
-        private void OnDestroy()
+        public void Unbind()
         {
-            viewModel?.Dispose();
-        }
-
-        private void Update()
-        {
-            if (viewModel == null || mainCamera == null || viewModel.BoardConfig == null ||
-                viewModel.EngineService == null || viewModel.GearViewFactory == null)
+            if (viewModel == null)
             {
                 return;
             }
 
-            if (viewModel.EngineService.IsRunning)
+            viewModel.OnGearPlaced -= HandleGearPlaced;
+            viewModel.OnGearRemoved -= HandleGearRemoved;
+            DestroyAllViews();
+            localFactory = null;
+            viewModel = null;
+
+            if (dragHandler != null)
+            {
+                dragHandler.enabled = false;
+            }
+        }
+
+        internal void NotifyPickedUp(IGridNode node, Vector2Int coord)
+            => viewModel?.OnGearPickedUp(node, coord);
+
+        internal void NotifyDropped(IGridNode node, Vector2Int coord)
+            => viewModel?.OnGearDropped(node, coord);
+
+        internal void NotifyBoardGearDroppedOverUI(IGridNode node, GearConfigData config, Vector3 worldPos)
+        {
+            viewModel?.HandleBoardGearReturnedOverUI(node);
+            if (config != null)
+            {
+                OnGearDroppedOverUI?.Invoke(config, worldPos);
+            }
+        }
+
+        internal IEnumerable<GearView> GetViews() => viewsByNode.Values;
+
+        internal bool IsRunning() => viewModel?.EngineService?.IsRunning ?? false;
+
+        internal BoardConfigSO GetBoardConfig() => viewModel?.BoardConfig;
+
+        private void HandleGearPlaced(IGridNode node)
+        {
+            if (node == null)
             {
                 return;
             }
 
-            HandleBoardDragInteraction();
+            SpawnView(node);
         }
 
-        private bool IsPointerDown() => Input.GetMouseButtonDown(0) || (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began);
-        private bool IsPointerHeld() => Input.GetMouseButton(0) || (Input.touchCount > 0 && (Input.GetTouch(0).phase == TouchPhase.Moved || Input.GetTouch(0).phase == TouchPhase.Stationary));
-        private bool IsPointerUp() => Input.GetMouseButtonUp(0) || (Input.touchCount > 0 && (Input.GetTouch(0).phase == TouchPhase.Ended || Input.GetTouch(0).phase == TouchPhase.Canceled));
-        private Vector3 GetPointerPosition() => Input.touchCount > 0 ? (Vector3)Input.GetTouch(0).position : Input.mousePosition;
-
-        private void HandleBoardDragInteraction()
+        private void HandleGearRemoved(IGridNode node)
         {
-            BoardConfigSO boardConfig = viewModel.BoardConfig;
-            GearViewFactory gearViewFactory = viewModel.GearViewFactory;
-
-            Vector3 pointerPos = GetPointerPosition();
-            Vector3 mousePos = pointerPos;
-            mousePos.z = Mathf.Abs(mainCamera.transform.position.z);
-            Vector3 worldPos = mainCamera.ScreenToWorldPoint(mousePos);
-            worldPos.z = -1f;
-
-            if (IsPointerDown())
+            if (node == null)
             {
-                float closestDist = boardConfig.MaxDragGrabDistance;
-                GearView closestView = null;
-
-                foreach (var view in gearViewFactory.EnumerateGearViews())
-                {
-                    if (view == null || view.TargetNode == null || !view.TargetNode.IsInteractable)
-                    {
-                        continue;
-                    }
-
-                    Vector2 vPos = new Vector2(view.transform.position.x, view.transform.position.y);
-                    Vector2 wPos = new Vector2(worldPos.x, worldPos.y);
-
-                    float dist = Vector2.Distance(vPos, wPos);
-                    if (dist < closestDist)
-                    {
-                        closestDist = dist;
-                        closestView = view;
-                    }
-                }
-
-                if (closestView != null)
-                {
-                    draggedView = closestView;
-                    draggedView.IsBeingDragged = true;
-                    originalGridPos = closestView.TargetNode.Position;
-                    viewModel.OnGearPickedUp(closestView.TargetNode, originalGridPos);
-                    Debug.Log($"<color=#33ccff>[BoardView]</color> Picked up gear from {originalGridPos}");
-                }
+                return;
             }
 
-            if (IsPointerHeld() && draggedView != null)
+            if (!viewsByNode.TryGetValue(node, out GearView view))
             {
-                draggedView.transform.position = worldPos;
+                return;
             }
 
-            if (IsPointerUp() && draggedView != null)
-            {
-                bool overUI = false;
-                if (EventSystem.current != null)
-                {
-                    if (Input.touchCount > 0)
-                    {
-                        overUI = EventSystem.current.IsPointerOverGameObject(Input.GetTouch(0).fingerId);
-                    }
-                    else
-                    {
-                        overUI = EventSystem.current.IsPointerOverGameObject();
-                    }
-                }
-
-                IGridNode node = draggedView.TargetNode;
-                Vector2Int targetDropPos = boardConfig.GetGridPosition(worldPos);
-                viewModel.OnGearDropped(node, targetDropPos, overUI);
-
-                draggedView.IsBeingDragged = false;
-                draggedView = null;
-            }
+            viewsByNode.Remove(node);
+            DestroyViewGameObject(view.gameObject);
         }
+
+        private void SpawnView(IGridNode node)
+        {
+            if (node == null)
+            {
+                return;
+            }
+
+            if (viewsByNode.ContainsKey(node))
+            {
+                return;
+            }
+
+            Vector3 localPosition = viewModel.BoardConfig.GetWorldPosition(node.Position);
+            GearView view = localFactory.CreateView(node, node.ConfigData, transform, localPosition);
+            view.Initialize(node, node.ConfigData, viewModel.BoardConfig, localFactory);
+            viewsByNode[node] = view;
+        }
+
+        private void DestroyAllViews()
+        {
+            foreach (KeyValuePair<IGridNode, GearView> pair in viewsByNode)
+            {
+                if (pair.Value != null)
+                {
+                    DestroyViewGameObject(pair.Value.gameObject);
+                }
+            }
+
+            viewsByNode.Clear();
+        }
+
+        private static void DestroyViewGameObject(GameObject go)
+        {
+            if (go == null)
+            {
+                return;
+            }
+
+#if UNITY_EDITOR
+            if (!Application.isPlaying)
+            {
+                UnityEngine.Object.DestroyImmediate(go);
+                return;
+            }
+#endif
+            UnityEngine.Object.Destroy(go);
+        }
+
+        private void OnDestroy() => Unbind();
     }
 }

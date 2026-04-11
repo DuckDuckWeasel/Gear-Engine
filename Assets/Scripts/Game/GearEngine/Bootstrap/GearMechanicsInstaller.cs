@@ -11,17 +11,10 @@ namespace Game.GearEngine
     public sealed class GearMechanicsInstaller
     {
         private readonly BoardConfigSO boardConfig;
-        private readonly GearBootstrap bootstrap;
-        private readonly GearInventoryLoadoutSO loadout;
 
-        public GearMechanicsInstaller(
-            BoardConfigSO boardConfig,
-            GearBootstrap bootstrap,
-            GearInventoryLoadoutSO loadout)
+        public GearMechanicsInstaller(BoardConfigSO boardConfig)
         {
             this.boardConfig = boardConfig ?? throw new ArgumentNullException(nameof(boardConfig));
-            this.bootstrap = bootstrap ?? throw new ArgumentNullException(nameof(bootstrap));
-            this.loadout = loadout ?? throw new ArgumentNullException(nameof(loadout));
         }
 
         public void Install(IContainerBuilder builder)
@@ -32,9 +25,6 @@ namespace Game.GearEngine
             }
 
             builder.RegisterInstance(boardConfig);
-            builder.RegisterInstance(loadout);
-            // RegisterComponent runs injection on this scene MonoBehaviour; RegisterInstance does not.
-            builder.RegisterComponent(bootstrap).As<IGearSceneElement>().AsSelf();
 
             builder.Register<EventController>(Lifetime.Singleton).AsImplementedInterfaces().AsSelf();
             builder.Register<GridManager>(Lifetime.Singleton).AsImplementedInterfaces().AsSelf();
@@ -46,7 +36,6 @@ namespace Game.GearEngine
 
             builder.Register<GearMergeService>(Lifetime.Singleton);
             builder.Register<GearNodeFactory>(Lifetime.Singleton);
-            builder.Register<GearViewFactory>(Lifetime.Singleton);
         }
     }
 }

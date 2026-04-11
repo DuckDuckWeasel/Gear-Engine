@@ -19,24 +19,15 @@ namespace Game.GearEngine
 
         [Header("Gear mechanics")]
         [SerializeField] private BoardConfigSO boardConfig;
-        [SerializeField] private GearBootstrap bootstrap;
-        [SerializeField] private GearInventoryLoadoutSO loadout;
+
+        [Header("Optional test launcher")]
+        [SerializeField] private GearTestSceneBootstrap sceneBootstrap;
 
         protected override void Configure(IContainerBuilder builder)
         {
             if (boardConfig == null)
             {
                 throw new InvalidOperationException("GearMechanicsScope: assign boardConfig.");
-            }
-
-            if (bootstrap == null)
-            {
-                throw new InvalidOperationException("GearMechanicsScope: assign bootstrap (GearBootstrap on GearGrid_Root).");
-            }
-
-            if (loadout == null)
-            {
-                throw new InvalidOperationException("GearMechanicsScope: assign loadout.");
             }
 
             if (navigationSettings == null)
@@ -73,10 +64,13 @@ namespace Game.GearEngine
             builder.RegisterInstance(navigationSettings);
             new NavigationInstaller(navigationViewHolder).Install(builder);
 
-            var installer = new GearMechanicsInstaller(boardConfig, bootstrap, loadout);
+            var installer = new GearMechanicsInstaller(boardConfig);
             installer.Install(builder);
 
-            builder.UseEntryPoints(ep => ep.Add<GearEngineNavigationEntry>());
+            if (sceneBootstrap != null)
+            {
+                builder.RegisterComponent(sceneBootstrap);
+            }
         }
     }
 }
