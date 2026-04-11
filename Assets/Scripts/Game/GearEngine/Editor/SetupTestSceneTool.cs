@@ -1,6 +1,5 @@
 using UnityEditor;
 using UnityEngine;
-using VContainer.Unity;
 using UnityEditor.SceneManagement;
 using Game.GearEngine.Presentation;
 
@@ -11,10 +10,19 @@ namespace Game.GearEngine.Editor
         [MenuItem("GearEngine/Step 2: Generate VContainer Test Scene")]
         public static void GenerateScene()
         {
-            // Create a new empty scene
+            BuildGearComposableScene("Assets/Scenes/GearEngine_TestScene.unity", "TestCanvas");
+        }
+
+        [MenuItem("GearEngine/Create Gear_Clean Scene")]
+        public static void CreateGearCleanScene()
+        {
+            BuildGearComposableScene("Assets/Scenes/Gear_Clean.unity", "Canvas");
+        }
+
+        private static void BuildGearComposableScene(string scenePath, string canvasObjectName)
+        {
             var newScene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
 
-            // Add basic lighting and camera
             GameObject cameraObj = new GameObject("Main Camera");
             cameraObj.tag = "MainCamera";
             Camera cam = cameraObj.AddComponent<Camera>();
@@ -29,38 +37,28 @@ namespace Game.GearEngine.Editor
             light.type = LightType.Directional;
             lightObj.transform.rotation = Quaternion.Euler(50, -30, 0);
 
-            // Setup VContainer LifetimeScope / Installer
-            GameObject scopeObj = new GameObject("GearMechanics_LifetimeScope");
-            GearMechanicsScope scope = scopeObj.AddComponent<GearMechanicsScope>();
+            SetupBasicConfigsTool.GenerateConfigs();
 
-            // Setup Bootstrap
-            GearBootstrap bootstrap = scopeObj.AddComponent<GearBootstrap>();
-
-            // Setup the required List of Configs (mock) for the bootstrap
-            SetupBasicConfigsTool.GenerateConfigs(); // ensure configs exist
-            
-            // Try to assign configs to the bootstrap directly
             string folderPath = "Assets/Game/GearEngine/Configs";
             string prefabPath = "Assets/Game/GearEngine/Prefabs";
-            
+
             GearConfig core = AssetDatabase.LoadAssetAtPath<GearConfig>($"{folderPath}/Gear/CoreGearConfig.asset");
             GearConfig baseGear = AssetDatabase.LoadAssetAtPath<GearConfig>($"{folderPath}/Gear/BaseGearConfig_Level1.asset");
             GameObject emptySlot = AssetDatabase.LoadAssetAtPath<GameObject>($"{prefabPath}/EmptySlotView.prefab");
             BoardConfigSO boardConfig = AssetDatabase.LoadAssetAtPath<BoardConfigSO>($"{folderPath}/BasicBoardConfig.asset");
-            
-            // Assign to scope
-            if (boardConfig != null)
-            {
-                var scopeSo = new SerializedObject(scope);
-                var boardConfigProp = scopeSo.FindProperty("boardConfig");
-                if (boardConfigProp != null) boardConfigProp.objectReferenceValue = boardConfig;
-                scopeSo.ApplyModifiedProperties();
-            }
+
+            GameObject gearRootObj = new GameObject("GearEngine_Root");
+            gearRootObj.AddComponent<GearMechanicsScope>();
+            var installer = gearRootObj.AddComponent<GearMechanicsInstaller>();
+
+            GameObject gridRootObj = new GameObject("GearGrid_Root");
+            gridRootObj.transform.SetParent(gearRootObj.transform, false);
+            GearBootstrap bootstrap = gridRootObj.AddComponent<GearBootstrap>();
 
             if (core != null && baseGear != null)
             {
                 var so = new SerializedObject(bootstrap);
-                
+
                 var prop = so.FindProperty("gearConfigs");
                 if (prop != null)
                 {
@@ -68,12 +66,12 @@ namespace Game.GearEngine.Editor
                     prop.GetArrayElementAtIndex(0).objectReferenceValue = core;
                     prop.GetArrayElementAtIndex(1).objectReferenceValue = baseGear;
                 }
-                
+
                 GearConfig rockObs = AssetDatabase.LoadAssetAtPath<GearConfig>($"{folderPath}/Gear/ObstacleRockConfig.asset");
                 GearConfig speedGear = AssetDatabase.LoadAssetAtPath<GearConfig>($"{folderPath}/Gear/SpeedBuffGearConfig.asset");
                 GearConfig scoreGear = AssetDatabase.LoadAssetAtPath<GearConfig>($"{folderPath}/Gear/ScoreGearConfig.asset");
                 GearConfig baseLevel2 = AssetDatabase.LoadAssetAtPath<GearConfig>($"{folderPath}/Gear/BaseGearConfig_Level2.asset");
-                
+
                 var invProp = so.FindProperty("startingInventoryGears");
                 if (invProp != null)
                 {
@@ -95,19 +93,17 @@ namespace Game.GearEngine.Editor
                 so.ApplyModifiedProperties();
             }
 
-            // Create Canvas and Event System for UI Testing
             GameObject eventSystemObj = new GameObject("EventSystem");
             eventSystemObj.AddComponent<UnityEngine.EventSystems.EventSystem>();
             eventSystemObj.AddComponent<UnityEngine.InputSystem.UI.InputSystemUIInputModule>();
 
-            GameObject canvasObj = new GameObject("TestCanvas");
+            GameObject canvasObj = new GameObject(canvasObjectName);
             Canvas testCanvas = canvasObj.AddComponent<Canvas>();
             testCanvas.renderMode = RenderMode.ScreenSpaceCamera;
             testCanvas.worldCamera = cam;
             canvasObj.AddComponent<UnityEngine.UI.CanvasScaler>();
             canvasObj.AddComponent<UnityEngine.UI.GraphicRaycaster>();
 
-            // Setup Simulation View
             GameObject simViewObj = new GameObject("SimulationControlView");
             var simRt = simViewObj.AddComponent<RectTransform>();
             simRt.SetParent(canvasObj.transform, false);
@@ -117,12 +113,10 @@ namespace Game.GearEngine.Editor
             simRt.anchoredPosition = new Vector2(0, -20f);
             simRt.sizeDelta = new Vector2(250, 60);
 
-            // Button requires a target graphic to be clickable
             var simImage = simViewObj.AddComponent<UnityEngine.UI.Image>();
             simImage.color = new Color(0.2f, 0.2f, 0.2f, 0.9f);
 
-            var simViewDef = simViewObj.AddComponent<Game.GearEngine.Presentation.SimulationControlView>();
-            // Add a mock button
+            var simViewDef = simViewObj.AddComponent<SimulationControlView>();
             var simBtn = simViewObj.AddComponent<UnityEngine.UI.Button>();
             simBtn.targetGraphic = simImage;
 
@@ -137,16 +131,22 @@ namespace Game.GearEngine.Editor
             simTxt.text = "Toggle simulation";
             simTxt.alignment = TMPro.TextAlignmentOptions.Center;
             simTxt.color = Color.white;
-            
-            // Assign references via SerializedObject to avoid manual drag-and-drop
+
             var simSo = new SerializedObject(simViewDef);
             var btnProp = simSo.FindProperty("toggleButton");
-            if (btnProp != null) btnProp.objectReferenceValue = simBtn;
+            if (btnProp != null)
+            {
+                btnProp.objectReferenceValue = simBtn;
+            }
+
             var txtProp = simSo.FindProperty("buttonText");
-            if (txtProp != null) txtProp.objectReferenceValue = simTxt;
+            if (txtProp != null)
+            {
+                txtProp.objectReferenceValue = simTxt;
+            }
+
             simSo.ApplyModifiedProperties();
 
-            // Setup Inventory View at the bottom
             GameObject invViewObj = new GameObject("GearInventoryView");
             var invRt = invViewObj.AddComponent<RectTransform>();
             invRt.SetParent(canvasObj.transform, false);
@@ -163,22 +163,21 @@ namespace Game.GearEngine.Editor
             itemsRt.anchorMax = new Vector2(1, 1);
             itemsRt.offsetMin = Vector2.zero;
             itemsRt.offsetMax = Vector2.zero;
-            
+
             var hlG = itemsContainerObj.AddComponent<UnityEngine.UI.HorizontalLayoutGroup>();
             hlG.childAlignment = TextAnchor.MiddleCenter;
             hlG.spacing = 15f;
             hlG.childControlWidth = false;
             hlG.childControlHeight = false;
 
-            var invViewDef = invViewObj.AddComponent<Game.GearEngine.Presentation.GearInventoryView>();
-            // Assign the itemsContainer and gridBoardTag to the View using reflection
+            var invViewDef = invViewObj.AddComponent<GearInventoryView>();
             var invSo = new SerializedObject(invViewDef);
             var containerProp = invSo.FindProperty("itemsContainer");
             if (containerProp != null)
             {
                 containerProp.objectReferenceValue = itemsRt;
             }
-            
+
             var gridBoardTagRef = AssetDatabase.LoadAssetAtPath<TagSO>($"{folderPath}/Tag/GridBoard_Tag.asset");
             var tagProp = invSo.FindProperty("gridBoardTag");
             if (tagProp != null && gridBoardTagRef != null)
@@ -188,7 +187,6 @@ namespace Game.GearEngine.Editor
 
             invSo.ApplyModifiedProperties();
 
-            // Setup Board Collider to act as a hit target for DragHandler Raycasts 
             GameObject floorGrid = new GameObject("GridBoardCollider");
             var boxCol = floorGrid.AddComponent<BoxCollider>();
             if (boardConfig != null)
@@ -199,29 +197,71 @@ namespace Game.GearEngine.Editor
             {
                 boxCol.size = new Vector3(50, 50, 0.5f);
             }
+
             floorGrid.transform.position = new Vector3(0, 0, 0.5f);
 
-            // Attach BoardView which will process GearDroppedFromUIEvent
-            floorGrid.AddComponent<Game.GearEngine.Presentation.BoardView>();
-            
-            // Attach the shiny new TagComponent for the DragHandler Validations
-            var tagComp = floorGrid.AddComponent<Game.GearEngine.Presentation.TagComponent>();
+            var boardView = floorGrid.AddComponent<BoardView>();
+
+            var tagComp = floorGrid.AddComponent<TagComponent>();
             TagSO gridBoardTag = AssetDatabase.LoadAssetAtPath<TagSO>($"{folderPath}/Tag/GridBoard_Tag.asset");
             if (gridBoardTag != null)
             {
-                tagComp.AddTag(gridBoardTag); // Validates the generic drag drops!
+                tagComp.AddTag(gridBoardTag);
             }
 
-            // Save Scene
+            ApplyGearMechanicsInstallerReferences(installer, boardConfig, bootstrap, invViewDef, simViewDef, boardView);
+
             string sceneDir = "Assets/Scenes";
             if (!System.IO.Directory.Exists(sceneDir))
             {
                 System.IO.Directory.CreateDirectory(sceneDir);
             }
-            string scenePath = $"{sceneDir}/GearEngine_TestScene.unity";
+
             EditorSceneManager.SaveScene(newScene, scenePath);
 
-            Debug.Log($"<color=#33ff33>[GearEngine]</color> VContainer Test Scene generated and saved at: {scenePath}");
+            Debug.Log($"<color=#33ff33>[GearEngine]</color> Composable gear scene saved at: {scenePath}");
+        }
+
+        private static void ApplyGearMechanicsInstallerReferences(
+            GearMechanicsInstaller installer,
+            BoardConfigSO boardConfig,
+            GearBootstrap bootstrap,
+            GearInventoryView inventoryView,
+            SimulationControlView simulationControlView,
+            BoardView boardView)
+        {
+            var instSo = new SerializedObject(installer);
+            var bc = instSo.FindProperty("boardConfig");
+            if (bc != null)
+            {
+                bc.objectReferenceValue = boardConfig;
+            }
+
+            var bs = instSo.FindProperty("bootstrap");
+            if (bs != null)
+            {
+                bs.objectReferenceValue = bootstrap;
+            }
+
+            var inv = instSo.FindProperty("inventoryView");
+            if (inv != null)
+            {
+                inv.objectReferenceValue = inventoryView;
+            }
+
+            var sim = instSo.FindProperty("simControlView");
+            if (sim != null)
+            {
+                sim.objectReferenceValue = simulationControlView;
+            }
+
+            var bv = instSo.FindProperty("boardView");
+            if (bv != null)
+            {
+                bv.objectReferenceValue = boardView;
+            }
+
+            instSo.ApplyModifiedProperties();
         }
     }
 }

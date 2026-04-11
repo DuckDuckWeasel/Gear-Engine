@@ -17,17 +17,15 @@ namespace Game.GearEngine
         private GearViewFactory viewFactory;
         private BoardConfigSO boardConfig;
         private Presentation.GearInventoryViewModel inventoryViewModel;
-        private Presentation.BoardView boardView;
 
         [Inject]
-        public void Construct(IGridManager grid, GearNodeFactory nodeFactory, GearViewFactory viewFactory, BoardConfigSO boardConfig, Presentation.GearInventoryViewModel inventoryViewModel, Presentation.BoardView boardView)
+        public void Construct(IGridManager grid, GearNodeFactory nodeFactory, GearViewFactory viewFactory, BoardConfigSO boardConfig, Presentation.GearInventoryViewModel inventoryViewModel)
         {
             this.grid = grid;
             this.nodeFactory = nodeFactory;
             this.viewFactory = viewFactory;
             this.boardConfig = boardConfig;
             this.inventoryViewModel = inventoryViewModel;
-            this.boardView = boardView;
         }
 
         private void PopulateStartingInventory()
@@ -56,14 +54,7 @@ namespace Game.GearEngine
             Debug.Log("[GearBootstrap] Grid initialized. Ticking via GridManager.");
         }
 
-        private Transform CreateGridRoot()
-        {
-            if (boardView != null) return boardView.transform;
-
-            var root = new GameObject("GearGridVisuals").transform;
-            root.SetParent(transform);
-            return root;
-        }
+        private Transform CreateGridRoot() => transform;
 
         private void PopulateGrid(Transform gridRoot)
         {

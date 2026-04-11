@@ -1,47 +1,22 @@
-using Scaffold.Events;
+using System;
+using UnityEngine;
 using VContainer;
 using VContainer.Unity;
-using Game.GearEngine.Presentation;
-using UnityEngine;
 
 namespace Game.GearEngine
 {
     public class GearMechanicsScope : LifetimeScope
     {
-        [SerializeField] 
-        private BoardConfigSO boardConfig;
-
         protected override void Configure(IContainerBuilder builder)
         {
-            if (boardConfig != null)
+            var installer = GetComponent<GearMechanicsInstaller>();
+            if (installer == null)
             {
-                builder.RegisterInstance(boardConfig);
+                throw new InvalidOperationException(
+                    $"{nameof(GearMechanicsScope)} requires a {nameof(GearMechanicsInstaller)} on the same GameObject.");
             }
-            builder.Register<EventController>(Lifetime.Singleton).AsImplementedInterfaces().AsSelf();
 
-            builder.Register<GridManager>(Lifetime.Singleton).AsImplementedInterfaces().AsSelf();
-
-            // Register Nodes
-            builder.Register<CoreGearNode>(Lifetime.Transient);
-            builder.Register<BaseGearNode>(Lifetime.Transient);
-            builder.Register<AuraGearNode>(Lifetime.Transient);
-
-            // Register Factories and Services
-            builder.Register<GearMergeService>(Lifetime.Singleton);
-            builder.Register<GearNodeFactory>(Lifetime.Singleton);
-            builder.Register<GearViewFactory>(Lifetime.Singleton);
-
-            // Note: Abilities are no longer registered in DI. 
-            // They are ScriptableObjects injected via GearConfig setups within Unity.
-
-            // Register UI ViewModels
-            builder.Register<GearInventoryViewModel>(Lifetime.Singleton);
-            builder.Register<SimulationControlViewModel>(Lifetime.Singleton);
-
-            builder.RegisterComponentInHierarchy<GearBootstrap>();
-            builder.RegisterComponentInHierarchy<GearInventoryView>();
-            builder.RegisterComponentInHierarchy<SimulationControlView>();
-            builder.RegisterComponentInHierarchy<BoardView>();
+            installer.Install(builder);
         }
     }
 }

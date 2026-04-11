@@ -34,6 +34,29 @@ The engine separates action logic from the Node class. All abilities are configu
 
 ---
 
+## Composable scene setup (VContainer)
+
+Gear mechanics are wired for reuse inside larger scenes:
+
+* **`GearMechanicsInstaller`**: Holds `[SerializeField]` references to `GearBootstrap`, `GearInventoryView`, `SimulationControlView`, and `BoardView`, and registers all GearEngine services plus those components explicitly (no `RegisterComponentInHierarchy` scan).
+* **`GearMechanicsScope`**: Thin `LifetimeScope` that calls `GetComponent<GearMechanicsInstaller>().Install(builder)`.
+* **`GearBootstrap`**: Lives on a dedicated **`GearGrid_Root`** child GameObject; its `transform` is the parent for all grid visuals (slots and gear views).
+* **UI**: Inventory and simulation controls remain `View<TViewModel>` types; they can sit anywhere under a host `Canvas` as long as the installer references them.
+
+**Scenes**
+
+* [`Assets/Scenes/GearEngine_TestScene.unity`](../../../../Scenes/GearEngine_TestScene.unity) — full test layout (`TestCanvas`).
+* [`Assets/Scenes/Gear_Clean.unity`](../../../../Scenes/Gear_Clean.unity) — same composable wiring with root `Canvas` (for merging with other UI).
+
+**Editor menu**
+
+* **GearEngine → Step 2: Generate VContainer Test Scene** — regenerates `GearEngine_TestScene.unity`.
+* **GearEngine → Create Gear_Clean Scene** — overwrites `Gear_Clean.unity` with the composable hierarchy.
+
+To merge with another mechanic in one scene, add a parent `LifetimeScope` (or child scope) and either duplicate the `GearEngine_Root` subtree or call `GearMechanicsInstaller.Install` from that scope’s `Configure` after assigning the installer’s serialized references.
+
+---
+
 ## Test Suite (`GearEngineFlowTests.cs`)
 
 The engine boasts an extensive NUnit test suite simulating the architecture in headless isolation (without Unity components overhead). It ensures that mathematical bounds and business logic never break.
