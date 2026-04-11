@@ -3,7 +3,7 @@ using VContainer.Unity;
 
 namespace Game.CarSimulation
 {
-    public class CarTrackBootstrap : IInitializable, IRaceDriver
+    public class CarTrackBootstrap : IInitializable, RaceFlowContracts.IRaceDriver
     {
         private readonly CarFactory carFactory;
         private readonly CarDefinition carDefinition;

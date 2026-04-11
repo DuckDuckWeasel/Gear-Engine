@@ -2,15 +2,11 @@ using VContainer.Unity;
 
 namespace Game.CarSimulation
 {
-    /// <summary>
-    /// Optional entry point for test scenes: starts the car immediately after bootstrap init.
-    /// Race flow leaves the car idle until <see cref="IRaceDriver.StartDriving"/> is invoked.
-    /// </summary>
     public sealed class CarAutoStartDriver : IInitializable
     {
-        private readonly IRaceDriver raceDriver;
+        private readonly RaceFlowContracts.IRaceDriver raceDriver;
 
-        public CarAutoStartDriver(IRaceDriver raceDriver)
+        public CarAutoStartDriver(RaceFlowContracts.IRaceDriver raceDriver)
         {
             this.raceDriver = raceDriver;
         }

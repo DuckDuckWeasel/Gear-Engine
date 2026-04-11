@@ -1,28 +1,33 @@
-using System.Threading;
-using System.Threading.Tasks;
-using Game.Race.Navigation;
-using Scaffold.Navigation;
+using System;
+using Scaffold.Navigation.Contracts;
+using UnityEngine;
 using VContainer.Unity;
 
 namespace Game.Race
 {
-    /// <summary>
-    /// Opens the track-preview screen once the scene container is built.
-    /// </summary>
-    public sealed class RaceNavigationStartup : IAsyncStartable
+    public sealed class RaceNavigationStartup : IStartable
     {
-        private readonly INavigator navigator;
-        private readonly TrackPreviewViewConfigRef trackPreviewConfig;
+        private readonly INavigation navigation;
+        private readonly TrackPreviewViewModel trackPreview;
 
-        public RaceNavigationStartup(INavigator navigator, TrackPreviewViewConfigRef trackPreviewConfig)
+        public RaceNavigationStartup(INavigation navigation, TrackPreviewViewModel trackPreview)
         {
-            this.navigator = navigator;
-            this.trackPreviewConfig = trackPreviewConfig;
+            this.navigation = navigation;
+            this.trackPreview = trackPreview;
         }
 
-        public async Task StartAsync(CancellationToken cancellation)
+        public void Start()
         {
-            await navigator.OpenAsync(trackPreviewConfig.Config);
+            try
+            {
+                navigation.Open(trackPreview);
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError(
+                    $"[RaceNavigationStartup] Failed to open track preview: {ex.Message}\n{ex.StackTrace}");
+                throw;
+            }
         }
     }
 }

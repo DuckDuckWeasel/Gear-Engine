@@ -1,6 +1,7 @@
 using Game.CarSimulation;
 using Game.GearEngine;
 using Game.Race;
+using IRaceDriver = Game.CarSimulation.RaceFlowContracts.IRaceDriver;
 using NUnit.Framework;
 
 namespace Game.Race.Tests

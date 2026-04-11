@@ -7,8 +7,9 @@
         "Game.Race",
         "Game.CarSimulation",
         "Game.GearEngine",
-        "VContainer",
-        "Scaffold.Navigation"
+        "Scaffold.MVVM.ViewModel",
+        "Scaffold.Navigation",
+        "VContainer"
     ],
     "includePlatforms": [
         "Editor"
@@ -17,7 +18,8 @@
     "allowUnsafeCode": false,
     "overrideReferences": true,
     "precompiledReferences": [
-        "nunit.framework.dll"
+        "nunit.framework.dll",
+        "CommunityToolkit.Mvvm.dll"
     ],
     "autoReferenced": false,
     "defineConstraints": [

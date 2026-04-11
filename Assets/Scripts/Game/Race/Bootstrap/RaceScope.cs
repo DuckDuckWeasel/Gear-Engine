@@ -17,10 +17,6 @@ namespace Game.Race
         private NavigationSettings navigationSettings;
         [SerializeField]
         private Transform navigationViewHolder;
-        [SerializeField]
-        private ViewConfig trackPreviewViewConfig;
-        [SerializeField]
-        private ViewConfig raceViewConfig;
 
         [Header("Car Simulation")]
         [SerializeField]
@@ -42,9 +38,6 @@ namespace Game.Race
             }
 
             RaceNavigationInstaller.Install(builder, navigationSettings, navigationViewHolder);
-
-            builder.RegisterInstance(new TrackPreviewViewConfigRef(trackPreviewViewConfig));
-            builder.RegisterInstance(new RaceViewConfigRef(raceViewConfig));
 
             builder.Register<CarFactory>(Lifetime.Singleton);
             builder.RegisterInstance(carDefinition);

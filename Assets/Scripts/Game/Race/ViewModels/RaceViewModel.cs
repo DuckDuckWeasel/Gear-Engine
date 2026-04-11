@@ -1,6 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using Game.CarSimulation;
 using Game.GearEngine;
+using IRaceDriver = Game.CarSimulation.RaceFlowContracts.IRaceDriver;
 using Scaffold.MVVM;
 using VContainer;
 
@@ -23,7 +24,7 @@ namespace Game.Race
 
         public void StartRace()
         {
-            if (!canRace)
+            if (!CanRace)
             {
                 return;
             }

@@ -4,6 +4,7 @@
     "references": [
         "Game.CarSimulation",
         "Game.GearEngine",
+        "Scaffold.Events",
         "Scaffold.MVVM",
         "Scaffold.MVVM.View",
         "Scaffold.MVVM.ViewModel",

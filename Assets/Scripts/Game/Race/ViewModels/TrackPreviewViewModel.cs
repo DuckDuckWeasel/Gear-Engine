@@ -1,9 +1,8 @@
 using System;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Game.CarSimulation;
-using Game.Race.Navigation;
 using Scaffold.MVVM;
-using Scaffold.Navigation;
+using Scaffold.Navigation.Contracts;
 using UnityEngine;
 using VContainer;
 
@@ -14,22 +13,22 @@ namespace Game.Race
         [ObservableProperty]
         private string trackName;
 
-        private INavigator navigator;
-        private ViewConfig raceViewConfig;
+        private INavigation nav;
+        private RaceViewModel raceScreen;
 
         [Inject]
-        public void Construct(INavigator navigator, TrackDefinition trackDef, RaceViewConfigRef raceViewConfigRef)
+        public void Construct(INavigation navigation, TrackDefinition trackDef, RaceViewModel raceScreen)
         {
-            this.navigator = navigator;
-            raceViewConfig = raceViewConfigRef.Config;
+            nav = navigation;
+            this.raceScreen = raceScreen;
             TrackName = trackDef.TrackName;
         }
 
-        public async void NavigateToRace()
+        public void NavigateToRace()
         {
             try
             {
-                await navigator.OpenAsync(raceViewConfig);
+                nav.Open(raceScreen);
             }
             catch (Exception ex)
             {
