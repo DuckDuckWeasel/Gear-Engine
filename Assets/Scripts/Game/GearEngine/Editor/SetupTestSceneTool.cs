@@ -1,6 +1,7 @@
 using UnityEditor;
 using UnityEngine;
 using UnityEditor.SceneManagement;
+using Game.GearEngine;
 using Game.GearEngine.Presentation;
 
 namespace Game.GearEngine.Editor
@@ -46,42 +47,23 @@ namespace Game.GearEngine.Editor
             GearConfig baseGear = AssetDatabase.LoadAssetAtPath<GearConfig>($"{folderPath}/Gear/BaseGearConfig_Level1.asset");
             GameObject emptySlot = AssetDatabase.LoadAssetAtPath<GameObject>($"{prefabPath}/EmptySlotView.prefab");
             BoardConfigSO boardConfig = AssetDatabase.LoadAssetAtPath<BoardConfigSO>($"{folderPath}/BasicBoardConfig.asset");
+            GearInventoryLoadoutSO loadout = AssetDatabase.LoadAssetAtPath<GearInventoryLoadoutSO>($"{folderPath}/GearInventoryLoadout.asset");
 
             GameObject gearRootObj = new GameObject("GearEngine_Root");
-            gearRootObj.AddComponent<GearMechanicsScope>();
-            var installer = gearRootObj.AddComponent<GearMechanicsInstaller>();
+            var scope = gearRootObj.AddComponent<GearMechanicsScope>();
+            var sceneBootstrap = gearRootObj.AddComponent<GearEngineSceneBootstrap>();
 
             GameObject gridRootObj = new GameObject("GearGrid_Root");
             gridRootObj.transform.SetParent(gearRootObj.transform, false);
             GearBootstrap bootstrap = gridRootObj.AddComponent<GearBootstrap>();
 
-            if (core != null && baseGear != null)
+            if (core != null)
             {
                 var so = new SerializedObject(bootstrap);
-
-                var prop = so.FindProperty("gearConfigs");
-                if (prop != null)
+                var initialProp = so.FindProperty("initialGear");
+                if (initialProp != null)
                 {
-                    prop.arraySize = 2;
-                    prop.GetArrayElementAtIndex(0).objectReferenceValue = core;
-                    prop.GetArrayElementAtIndex(1).objectReferenceValue = baseGear;
-                }
-
-                GearConfig rockObs = AssetDatabase.LoadAssetAtPath<GearConfig>($"{folderPath}/Gear/ObstacleRockConfig.asset");
-                GearConfig speedGear = AssetDatabase.LoadAssetAtPath<GearConfig>($"{folderPath}/Gear/SpeedBuffGearConfig.asset");
-                GearConfig scoreGear = AssetDatabase.LoadAssetAtPath<GearConfig>($"{folderPath}/Gear/ScoreGearConfig.asset");
-                GearConfig baseLevel2 = AssetDatabase.LoadAssetAtPath<GearConfig>($"{folderPath}/Gear/BaseGearConfig_Level2.asset");
-
-                var invProp = so.FindProperty("startingInventoryGears");
-                if (invProp != null)
-                {
-                    invProp.arraySize = 6;
-                    invProp.GetArrayElementAtIndex(0).objectReferenceValue = core != null ? core : baseGear;
-                    invProp.GetArrayElementAtIndex(1).objectReferenceValue = baseGear;
-                    invProp.GetArrayElementAtIndex(2).objectReferenceValue = baseLevel2 != null ? baseLevel2 : baseGear;
-                    invProp.GetArrayElementAtIndex(3).objectReferenceValue = speedGear != null ? speedGear : baseGear;
-                    invProp.GetArrayElementAtIndex(4).objectReferenceValue = rockObs != null ? rockObs : baseGear;
-                    invProp.GetArrayElementAtIndex(5).objectReferenceValue = scoreGear != null ? scoreGear : baseGear;
+                    initialProp.objectReferenceValue = core;
                 }
 
                 var slotProp = so.FindProperty("emptySlotPrefab");
@@ -103,6 +85,9 @@ namespace Game.GearEngine.Editor
             testCanvas.worldCamera = cam;
             canvasObj.AddComponent<UnityEngine.UI.CanvasScaler>();
             canvasObj.AddComponent<UnityEngine.UI.GraphicRaycaster>();
+            canvasObj.transform.SetParent(gearRootObj.transform, false);
+
+            var gearEngineView = canvasObj.AddComponent<GearEngineView>();
 
             GameObject simViewObj = new GameObject("SimulationControlView");
             var simRt = simViewObj.AddComponent<RectTransform>();
@@ -199,6 +184,7 @@ namespace Game.GearEngine.Editor
             }
 
             floorGrid.transform.position = new Vector3(0, 0, 0.5f);
+            floorGrid.transform.SetParent(gearRootObj.transform, false);
 
             var boardView = floorGrid.AddComponent<BoardView>();
 
@@ -209,7 +195,37 @@ namespace Game.GearEngine.Editor
                 tagComp.AddTag(gridBoardTag);
             }
 
-            ApplyGearMechanicsInstallerReferences(installer, boardConfig, bootstrap, invViewDef, simViewDef, boardView);
+            var gearViewSo = new SerializedObject(gearEngineView);
+            var sc = gearViewSo.FindProperty("simControlView");
+            if (sc != null)
+            {
+                sc.objectReferenceValue = simViewDef;
+            }
+
+            var iv = gearViewSo.FindProperty("inventoryView");
+            if (iv != null)
+            {
+                iv.objectReferenceValue = invViewDef;
+            }
+
+            var bv = gearViewSo.FindProperty("boardView");
+            if (bv != null)
+            {
+                bv.objectReferenceValue = boardView;
+            }
+
+            gearViewSo.ApplyModifiedProperties();
+
+            var bootSo = new SerializedObject(sceneBootstrap);
+            var gvProp = bootSo.FindProperty("gearEngineView");
+            if (gvProp != null)
+            {
+                gvProp.objectReferenceValue = gearEngineView;
+            }
+
+            bootSo.ApplyModifiedProperties();
+
+            ApplyGearMechanicsScopeReferences(scope, boardConfig, bootstrap, loadout, sceneBootstrap);
 
             string sceneDir = "Assets/Scenes";
             if (!System.IO.Directory.Exists(sceneDir))
@@ -222,15 +238,14 @@ namespace Game.GearEngine.Editor
             Debug.Log($"<color=#33ff33>[GearEngine]</color> Composable gear scene saved at: {scenePath}");
         }
 
-        private static void ApplyGearMechanicsInstallerReferences(
-            GearMechanicsInstaller installer,
+        private static void ApplyGearMechanicsScopeReferences(
+            GearMechanicsScope scope,
             BoardConfigSO boardConfig,
             GearBootstrap bootstrap,
-            GearInventoryView inventoryView,
-            SimulationControlView simulationControlView,
-            BoardView boardView)
+            GearInventoryLoadoutSO loadout,
+            GearEngineSceneBootstrap presentationBootstrap)
         {
-            var instSo = new SerializedObject(installer);
+            var instSo = new SerializedObject(scope);
             var bc = instSo.FindProperty("boardConfig");
             if (bc != null)
             {
@@ -243,22 +258,16 @@ namespace Game.GearEngine.Editor
                 bs.objectReferenceValue = bootstrap;
             }
 
-            var inv = instSo.FindProperty("inventoryView");
-            if (inv != null)
+            var lo = instSo.FindProperty("loadout");
+            if (lo != null)
             {
-                inv.objectReferenceValue = inventoryView;
+                lo.objectReferenceValue = loadout;
             }
 
-            var sim = instSo.FindProperty("simControlView");
-            if (sim != null)
+            var pb = instSo.FindProperty("presentationBootstrap");
+            if (pb != null)
             {
-                sim.objectReferenceValue = simulationControlView;
-            }
-
-            var bv = instSo.FindProperty("boardView");
-            if (bv != null)
-            {
-                bv.objectReferenceValue = boardView;
+                pb.objectReferenceValue = presentationBootstrap;
             }
 
             instSo.ApplyModifiedProperties();

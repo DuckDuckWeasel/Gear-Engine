@@ -36,11 +36,12 @@ namespace Game.GearEngine.Tests
             var baseData = new GearConfigData
             {
                 Id = "base_1",
-                MaxCharge = 100f
+                MaxCharge = 100f,
+                ChargeOnTriggerAmount = 50f
             };
-            
+
             var baseGear = new BaseGearNode(gridManager, eventBus);
-            baseGear.Initialize(new Vector2Int(1, 0), baseData); 
+            baseGear.Initialize(new Vector2Int(1, 0), baseData);
 
             gridManager.AddNode(core);
             gridManager.AddNode(baseGear);
@@ -52,22 +53,19 @@ namespace Game.GearEngine.Tests
             });
 
             core.NodeUpdate(0.5f, 1f);
-            
-            // Core gear does not rotate fluently; it accumulates progress. Visually remains 0 until it hits 90 degrees.
-            Assert.AreEqual(0f, core.CurrentRotation, "Core gear should not rotate visually until it snaps at a multiple of 90 degrees.");
+
+            Assert.AreEqual(50f, core.CurrentRotation, "Core gear rotates continuously (100 deg/s * 0.5 s).");
             Assert.AreEqual(5f, baseGear.CurrentCharge, "Base gear should accumulate over-time charge from core.");
             Assert.IsFalse(gearRotatedFlag, "Base gear should not have fully triggered yet.");
 
-            // Act 2: Simulate another 0.5 seconds (Total 1 sec)
-            // Core speed 100 * 0.5 = 50 degrees. Total progress = 100 deg > 90. 
-            // Core snaps to 90 degrees and triggers neighbor at Vector2Int.right.
-            // Base gear gains 5 charge over time + 50 charge from trigger = 60 charge.
+            // Act 2: Another 0.5 s — core reaches 100°; at 90° a directional trigger fires to the neighbor.
             core.NodeUpdate(0.5f, 1f);
 
-            Assert.AreEqual(90f, core.CurrentRotation, "Core gear should snap to 90 degrees.");
-            Assert.AreEqual(60f, baseGear.CurrentCharge, "Base gear should accumulate 5 + 5 (over time) + 50 (trigger).");
+            Assert.AreEqual(100f, core.CurrentRotation, "Core gear accumulates rotation continuously.");
+            Assert.AreEqual(60f, baseGear.CurrentCharge, "Base gear should accumulate 5 + 5 (over time) + 50 (trigger from its ChargeOnTriggerAmount).");
             Assert.IsFalse(gearRotatedFlag, "Base gear is at 60/100, should not trigger full ability yet.");
 
+            baseGear.NodeUpdate(0.0001f, 1f);
             eventBus.Raise(new DirectionalTriggerEvent(new Vector2Int(1, 0), 50f));
 
             Assert.AreEqual(0f, baseGear.CurrentCharge);
@@ -133,7 +131,8 @@ namespace Game.GearEngine.Tests
             var baseData = new GearConfigData
             {
                 Id = "base_1",
-                MaxCharge = 100f
+                MaxCharge = 100f,
+                ChargeOverTimeAmount = 0f
             };
             var baseGear = new BaseGearNode(gridManager, eventBus);
             baseGear.Initialize(new Vector2Int(2, 1), baseData);
@@ -181,7 +180,8 @@ namespace Game.GearEngine.Tests
             var baseData = new GearConfigData
             {
                 Id = "base_1",
-                MaxCharge = 100f
+                MaxCharge = 100f,
+                ChargeOnTriggerAmount = 50f
             };
             baseData.Abilities.Add(testAbility);
 
@@ -192,10 +192,9 @@ namespace Game.GearEngine.Tests
             // Act 1: Give it 50 charge (half). Shouldn't execute.
             eventBus.Raise(new DirectionalTriggerEvent(new Vector2Int(0, 0), 50f));
             Assert.AreEqual(50f, baseGear.CurrentCharge, "Charge should be 50.");
-            
-            // Note: In an ideal full test suite, we'd mock the IScriptableObject or catch its Debug.Log
-            // to assert execution strictly. But for flow confirmation:
-            
+
+            baseGear.NodeUpdate(0.0001f, 1f);
+
             // Act 2: Give it 50 more charge. Should execute abilities and reset itself.
             eventBus.Raise(new DirectionalTriggerEvent(new Vector2Int(0, 0), 50f));
             
@@ -205,18 +204,15 @@ namespace Game.GearEngine.Tests
         [Test]
         public void Test_GridManager_Stop_Triggers_WindDown()
         {
-            float dt = 1f;
             var coreData = new GearConfigData { Id = "test_core", BaseRotationSpeed = 100f };
             var coreGear = new CoreGearNode(gridManager, eventBus);
             coreGear.Initialize(Vector2Int.zero, coreData);
             gridManager.AddNode(coreGear);
 
             gridManager.Play();
-            gridManager.Tick(); 
-            // Core ticks normally. (dt = roughly 0, but simulating).
-            // Manually drive core rotation to something weird like 33 degrees.
-            coreGear.NodeUpdate(0.33f, 1f); 
-            Assert.AreEqual(0f, coreGear.CurrentRotation, "Core rotation visually stays 0 until snap.");
+            // Avoid GridManager.Tick() here — it uses real Time.deltaTime and makes rotation non-deterministic in batch mode.
+            coreGear.NodeUpdate(0.33f, 1f);
+            Assert.AreEqual(33f, coreGear.CurrentRotation, 0.001f, "Core rotates continuously while the grid is running.");
 
             gridManager.Stop();
             // During Stop, WindDown is called. Since it lerps back to 0, if current rot is 10, it goes to 0.
@@ -280,11 +276,15 @@ namespace Game.GearEngine.Tests
             // Hit 1
             eventBus.Raise(new DirectionalTriggerEvent(new Vector2Int(0, 1), 10f));
             Assert.IsFalse(destroyedEventFired);
-            
+
+            stoneNode.NodeUpdate(0.0001f, 1f);
+
             // Hit 2
             eventBus.Raise(new DirectionalTriggerEvent(new Vector2Int(0, 1), 10f));
             Assert.IsFalse(destroyedEventFired);
-            
+
+            stoneNode.NodeUpdate(0.0001f, 1f);
+
             // Hit 3 (BREAKS!)
             eventBus.Raise(new DirectionalTriggerEvent(new Vector2Int(0, 1), 10f));
             Assert.IsTrue(destroyedEventFired, "DestroySelfAbility should fire GearDestroyedEvent upon reaching max charge.");

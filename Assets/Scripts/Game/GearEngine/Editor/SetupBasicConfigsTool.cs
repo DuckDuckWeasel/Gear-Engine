@@ -2,6 +2,7 @@ using UnityEditor;
 using UnityEngine;
 using System.Collections.Generic;
 using System.IO;
+using Game.GearEngine;
 using Game.GearEngine.Presentation;
 
 namespace Game.GearEngine.Editor
@@ -177,10 +178,90 @@ namespace Game.GearEngine.Editor
             }
             UpdateVisualsAndMeta(speedGear, speedView, speedSpr, null, new List<GearAbilitySO> { speedAbility });
 
+            GearConfig loadoutCore = AssetDatabase.LoadAssetAtPath<GearConfig>($"{folderPath}/Gear/CoreGearConfig.asset");
+            GearConfig loadoutBase1 = AssetDatabase.LoadAssetAtPath<GearConfig>($"{folderPath}/Gear/BaseGearConfig_Level1.asset");
+            GearConfig loadoutBase2 = AssetDatabase.LoadAssetAtPath<GearConfig>($"{folderPath}/Gear/BaseGearConfig_Level2.asset");
+            GearConfig loadoutSpeed = AssetDatabase.LoadAssetAtPath<GearConfig>($"{folderPath}/Gear/SpeedBuffGearConfig.asset");
+            GearConfig loadoutRock = AssetDatabase.LoadAssetAtPath<GearConfig>($"{folderPath}/Gear/ObstacleRockConfig.asset");
+            GearConfig loadoutScore = AssetDatabase.LoadAssetAtPath<GearConfig>($"{folderPath}/Gear/ScoreGearConfig.asset");
+
+            CreateOrUpdateDefaultInventoryLoadout(
+                folderPath,
+                loadoutCore,
+                loadoutBase1,
+                loadoutBase2,
+                loadoutSpeed,
+                loadoutRock,
+                loadoutScore);
+
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
 
             Debug.Log($"<color=#33ff33>[GearEngine]</color> Basic Setup Configs successfully generated and merged at {folderPath}!");
+        }
+
+        private static void CreateOrUpdateDefaultInventoryLoadout(
+            string folderPath,
+            GearConfig core,
+            GearConfig baseGear,
+            GearConfig baseLevel2,
+            GearConfig speedGear,
+            GearConfig rockObs,
+            GearConfig scoreGear)
+        {
+            string path = $"{folderPath}/GearInventoryLoadout.asset";
+            var loadout = AssetDatabase.LoadAssetAtPath<GearInventoryLoadoutSO>(path);
+            if (loadout == null)
+            {
+                loadout = ScriptableObject.CreateInstance<GearInventoryLoadoutSO>();
+                AssetDatabase.CreateAsset(loadout, path);
+            }
+
+            var gears = new List<GearConfig>();
+            if (core != null)
+            {
+                gears.Add(core);
+            }
+
+            if (baseGear != null)
+            {
+                gears.Add(baseGear);
+            }
+
+            if (baseLevel2 != null)
+            {
+                gears.Add(baseLevel2);
+            }
+
+            if (speedGear != null)
+            {
+                gears.Add(speedGear);
+            }
+
+            if (rockObs != null)
+            {
+                gears.Add(rockObs);
+            }
+
+            if (scoreGear != null)
+            {
+                gears.Add(scoreGear);
+            }
+
+            var so = new SerializedObject(loadout);
+            var prop = so.FindProperty("startingGears");
+            if (prop != null)
+            {
+                prop.ClearArray();
+                for (int i = 0; i < gears.Count; i++)
+                {
+                    prop.InsertArrayElementAtIndex(i);
+                    prop.GetArrayElementAtIndex(i).objectReferenceValue = gears[i];
+                }
+            }
+
+            so.ApplyModifiedProperties();
+            EditorUtility.SetDirty(loadout);
         }
 
         private static GearConfig GetOrCreateGearConfig(string path, out bool isNew)

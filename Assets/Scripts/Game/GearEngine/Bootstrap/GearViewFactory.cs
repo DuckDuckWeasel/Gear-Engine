@@ -1,10 +1,12 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Game.GearEngine
 {
     public class GearViewFactory
     {
-        private BoardConfigSO boardConfig;
+        private readonly BoardConfigSO boardConfig;
+        private readonly Dictionary<IGridNode, GearView> viewRegistry = new Dictionary<IGridNode, GearView>();
 
         public GearViewFactory(BoardConfigSO boardConfig)
         {
@@ -13,20 +15,43 @@ namespace Game.GearEngine
 
         public GearView CreateView(IGridNode node, GearConfigData configData, Transform parent)
         {
-            // The Root Node GameObject acts as a pure structural container and pivot.
-            // The Visual Prefab will be instantiated cleanly inside it by the GearView.Initialize() call.
             GameObject viewObj = new GameObject($"{node.GetType().Name}_{node.Position}");
             viewObj.transform.SetParent(parent);
-            
-            // Standardize local positioning using new centered grid constants
+
             viewObj.transform.localPosition = boardConfig.GetWorldPosition(node.Position);
 
-            // Fetch or attach the MVC logic binding component to this empty wrapper
             var view = viewObj.AddComponent<GearView>();
-            
-            view.Initialize(node, configData, boardConfig);
+
+            view.Initialize(node, configData, boardConfig, this);
+
+            viewRegistry[node] = view;
 
             return view;
         }
+
+        public GearView GetView(IGridNode node)
+        {
+            if (node == null)
+            {
+                return null;
+            }
+
+            viewRegistry.TryGetValue(node, out var view);
+            return view;
+        }
+
+        public void UnregisterView(IGridNode node)
+        {
+            if (node == null)
+            {
+                return;
+            }
+
+            viewRegistry.Remove(node);
+        }
+
+        /// <summary>Active gear views on the board (avoids <c>FindObjectsOfType</c> during drag targeting).</summary>
+        public IEnumerable<GearView> EnumerateGearViews() => viewRegistry.Values;
     }
 }
+

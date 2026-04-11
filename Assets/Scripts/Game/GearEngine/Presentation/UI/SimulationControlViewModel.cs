@@ -1,47 +1,46 @@
 using CommunityToolkit.Mvvm.ComponentModel;
+using Game.GearEngine;
 using Scaffold.MVVM;
-using Scaffold.MVVM.Contracts;
-using Scaffold.MVVM.Binding;
-using VContainer;
 using UnityEngine;
 
 namespace Game.GearEngine.Presentation
 {
     public partial class SimulationControlViewModel : ViewModel
     {
-        private IGridManager gridManager;
+        private IGearEngineService engineService;
 
         [ObservableProperty]
         private bool isRunning;
 
-        [Inject]
-        public void Construct(IGridManager gridManager)
+        public void Initialize(IGearEngineService engineService)
         {
-            this.gridManager = gridManager;
-            if (this.gridManager != null)
+            this.engineService = engineService;
+            if (this.engineService != null)
             {
-                IsRunning = this.gridManager.IsRunning;
+                IsRunning = this.engineService.IsRunning;
             }
         }
 
         protected override void Initialize()
         {
-            // Usually called by Scaffold Navigation, but we sync in Construct for DI.
         }
 
         public void ToggleSimulation()
         {
-            if (gridManager == null) return;
-
-            if (gridManager.IsRunning)
+            if (engineService == null)
             {
-                gridManager.Stop();
+                return;
+            }
+
+            if (engineService.IsRunning)
+            {
+                engineService.Stop();
                 IsRunning = false;
                 Debug.Log($"<color=#ffaa00>[UI_Simulation]</color> Engine Manually STOPPED.");
             }
             else
             {
-                gridManager.Play();
+                engineService.Play();
                 IsRunning = true;
                 Debug.Log($"<color=#55ff55>[UI_Simulation]</color> Engine Manually STARTED.");
             }

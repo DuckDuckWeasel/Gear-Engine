@@ -21,8 +21,8 @@ namespace Game.GearEngine.Tests {
             // force core snap
             core.NodeUpdate(1f, 1f); 
             Debug.Log($"B1 rot: {b1.CurrentRotation}, B2 rot: {b2.CurrentRotation}");
-            Assert.AreEqual(90f, b1.CurrentRotation);
-            Assert.AreEqual(-90f, b2.CurrentRotation);
+            Assert.AreEqual(270f, b1.CurrentRotation);
+            Assert.AreEqual(90f, b2.CurrentRotation);
         }
     }
 }

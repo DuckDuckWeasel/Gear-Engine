@@ -42,20 +42,21 @@ and Play/Stop is reachable via `IGearEngineService` from any other system. The
 
 ## Progress
 
-- [ ] M1 — `IGearSceneElement`, `IGearEngineService`, `GearEngineService`, `GearInventoryLoadoutSO`, `GearBootstrap` cleanup
-- [ ] M2 — `GearEngineViewModel` (parent ViewModel, child VMs updated)
-- [ ] M3 — `GearEngineView` + sub-views converted to `ViewComponent<T>`
-- [ ] M4 — `BoardViewModel` extraction; `BoardView` owns drag visuals, calls VM at decision points
-- [ ] M5 — Installer + Scope simplification
-- [ ] M6 — Navigation integration (`GearEngineViewConfig` asset)
-- [ ] M7 — Tests, Docs, editor tool updates
+- [x] M1 — `IGearSceneElement`, `IGearEngineService`, `GearEngineService`, `GearInventoryLoadoutSO`, `GearBootstrap` cleanup
+- [x] M2 — `GearEngineViewModel` (parent ViewModel, child VMs updated)
+- [x] M3 — `GearEngineView` + sub-views converted to `ViewComponent<T>`
+- [x] M4 — `BoardViewModel` extraction; `BoardView` owns drag visuals, calls VM at decision points
+- [x] M5 — Installer + Scope simplification
+- [ ] M6 — Navigation integration (`ViewConfig` / addressable prefab mapping for `GearEngineView`; use app `INavigation` when host wiring is available)
+- [x] M7 — Tests, Docs, editor tool updates
 - [ ] Quality gate passes (`validate-changes.cmd`)
 
 ---
 
 ## Surprises & Discoveries
 
-- (fill in during implementation)
+- **Scaffold.Navigation** in this repo exposes **`INavigation`** / **`ViewConfig`** patterns (see `com.scaffold.navigation` README), not `INavigator` as named in an earlier draft of this plan. `GearEngineViewModel` therefore does not inject a navigator type; host apps should open `GearEngineView` via their navigation stack when wired.
+- **`validate-changes`** `dotnet` build may list **CS0246** for new types until Unity regenerates the `.csproj` **or** while another Unity instance holds the project lock (batchmode aborts). Close the Editor or refresh the project, then re-run the gate.
 
 ---
 

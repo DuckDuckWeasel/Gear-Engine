@@ -3,56 +3,51 @@ using VContainer;
 
 namespace Game.GearEngine
 {
-    public class GearBootstrap : MonoBehaviour
+    public class GearBootstrap : MonoBehaviour, IGearSceneElement
     {
-        [SerializeField] private GearConfig[] gearConfigs;
+        [SerializeField] private GearConfig initialGear;
         [SerializeField] private GameObject emptySlotPrefab;
-        
-        [Header("Initial Inventory")]
-        [Tooltip("The items that the player will start with in their UI inventory")]
-        [SerializeField] private GearConfig[] startingInventoryGears;
 
         private IGridManager grid;
         private GearNodeFactory nodeFactory;
         private GearViewFactory viewFactory;
         private BoardConfigSO boardConfig;
-        private Presentation.GearInventoryViewModel inventoryViewModel;
+        private bool initialized;
 
         [Inject]
-        public void Construct(IGridManager grid, GearNodeFactory nodeFactory, GearViewFactory viewFactory, BoardConfigSO boardConfig, Presentation.GearInventoryViewModel inventoryViewModel)
+        public void Construct(IGridManager grid, GearNodeFactory nodeFactory, GearViewFactory viewFactory, BoardConfigSO boardConfig)
         {
             this.grid = grid;
             this.nodeFactory = nodeFactory;
             this.viewFactory = viewFactory;
             this.boardConfig = boardConfig;
-            this.inventoryViewModel = inventoryViewModel;
-        }
-
-        private void PopulateStartingInventory()
-        {
-            if (startingInventoryGears == null || startingInventoryGears.Length == 0) return;
-
-            foreach(var gearConfigSO in startingInventoryGears)
-            {
-                if (gearConfigSO != null)
-                {
-                    inventoryViewModel.AddGearToInventory(gearConfigSO.CreateRuntimeData());
-                }
-            }
-            Debug.Log($"<color=#ffff55>[GearBootstrap]</color> Populated Inventory with {startingInventoryGears.Length} Initial Gears!");
         }
 
         private void Start()
         {
-            Debug.Log("[GearBootstrap] Initializing Gear Grid with Factories and SO-driven Abilities...");
+            Initialize();
+        }
 
-            PopulateStartingInventory();
+        public void Initialize()
+        {
+            if (initialized)
+            {
+                return;
+            }
+
+            initialized = true;
+
+            Debug.Log("[GearBootstrap] Initializing Gear Grid with Factories and SO-driven Abilities...");
 
             Transform gridRoot = CreateGridRoot();
             PopulateGrid(gridRoot);
 
             Debug.Log("[GearBootstrap] Grid initialized. Ticking via GridManager.");
         }
+
+        public void Enable() => gameObject.SetActive(true);
+
+        public void Disable() => gameObject.SetActive(false);
 
         private Transform CreateGridRoot() => transform;
 
@@ -64,7 +59,6 @@ namespace Game.GearEngine
                 {
                     var pos = new Vector2Int(x, y);
 
-                    // 1. Visually instantiate the background slot so players know they can drop here
                     if (emptySlotPrefab != null)
                     {
                         var slotView = Object.Instantiate(emptySlotPrefab, gridRoot);
@@ -72,23 +66,21 @@ namespace Game.GearEngine
                         slotView.name = $"EmptySlot_{x}_{y}";
                     }
 
-                    // 2. We only logically spawn a mechanical gear exactly at the center!
-                    // The rest of the board is intentionally left mechanically hollow for Drag And Drop!
                     int centerX = boardConfig.GridWidth / 2;
                     int centerY = boardConfig.GridHeight / 2;
-                    bool isCore = (x == centerX && y == centerY);
-                    
-                    if (isCore)
+                    bool isCoreCell = x == centerX && y == centerY;
+
+                    if (isCoreCell)
                     {
-                        SpawnGear(pos, isCore, gridRoot);
+                        SpawnGear(pos, gridRoot);
                     }
                 }
             }
         }
 
-        private void SpawnGear(Vector2Int pos, bool isCore, Transform parent)
+        private void SpawnGear(Vector2Int pos, Transform parent)
         {
-            GearConfigData runtimeData = ResolveConfig(isCore);
+            GearConfigData runtimeData = ResolveConfig();
 
             IGridNode node = nodeFactory.CreateNode(pos, runtimeData);
 
@@ -96,24 +88,23 @@ namespace Game.GearEngine
             viewFactory.CreateView(node, runtimeData, parent);
         }
 
-        private GearConfigData ResolveConfig(bool isCore)
+        private GearConfigData ResolveConfig()
         {
-            if (gearConfigs == null || gearConfigs.Length == 0)
+            if (initialGear != null)
             {
-                return new GearConfigData
-                {
-                    Id = isCore ? "core_default" : "base_default",
-                    Category = isCore ? GearCategory.Core : GearCategory.Base,
-                    BaseRotationSpeed = isCore ? 90f : 45f,
-                    TriggerPattern = TriggerPattern.EightWay,
-                    MaxCharge = 100f,
-                    ChargeOverTimeAmount = 10f,
-                    ChargeOnTriggerAmount = 25f
-                };
+                return initialGear.CreateRuntimeData();
             }
 
-            int index = isCore ? 0 : Mathf.Min(1, gearConfigs.Length - 1);
-            return gearConfigs[index].CreateRuntimeData();
+            return new GearConfigData
+            {
+                Id = "core_default",
+                Category = GearCategory.Core,
+                BaseRotationSpeed = 90f,
+                TriggerPattern = TriggerPattern.EightWay,
+                MaxCharge = 100f,
+                ChargeOverTimeAmount = 10f,
+                ChargeOnTriggerAmount = 25f
+            };
         }
     }
 }

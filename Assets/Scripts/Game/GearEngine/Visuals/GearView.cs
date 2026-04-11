@@ -40,15 +40,26 @@ namespace Game.GearEngine
                 squareSpriteBottom = Sprite.Create(Texture2D.whiteTexture, new Rect(0, 0, 4, 4), new Vector2(0.5f, 0f), 4f);
         }
 
-        public void Initialize(IGridNode node, GearConfigData configData, BoardConfigSO config)
+        private GearViewFactory ownerFactory;
+
+        public void Initialize(IGridNode node, GearConfigData configData, BoardConfigSO config, GearViewFactory factory)
         {
             targetNode = node;
             boardConfig = config;
-            
+            ownerFactory = factory;
+
             RecalculateRotationOffset();
 
             SetupVisual(configData);
             SetupChargeVisual(configData);
+        }
+
+        private void OnDestroy()
+        {
+            if (ownerFactory != null && targetNode != null)
+            {
+                ownerFactory.UnregisterView(targetNode);
+            }
         }
 
         public void RecalculateRotationOffset()

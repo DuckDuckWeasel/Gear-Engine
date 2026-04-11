@@ -2,21 +2,13 @@ using UnityEngine;
 using UnityEngine.UI;
 using Scaffold.MVVM;
 using TMPro;
-using VContainer;
 
 namespace Game.GearEngine.Presentation
 {
-    public class SimulationControlView : View<SimulationControlViewModel>
+    public class SimulationControlView : ViewComponent<SimulationControlViewModel>
     {
         [SerializeField] private Button toggleButton;
         [SerializeField] private TextMeshProUGUI buttonText;
-
-        [Inject]
-        public void Construct(SimulationControlViewModel vm)
-        {
-            Bind(vm);
-        }
-
 
         protected override void OnBind()
         {
