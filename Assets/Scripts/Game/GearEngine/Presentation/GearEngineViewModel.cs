@@ -7,6 +7,7 @@ namespace Game.GearEngine.Presentation
 {
     public sealed class GearEngineViewModel : ViewModel
     {
+        [Inject] private IObjectResolver objectResolver;
         [Inject] private IGearEngineService engineService;
         [Inject] private IGridManager gridManager;
         [Inject] private GearNodeFactory nodeFactory;
@@ -15,20 +16,18 @@ namespace Game.GearEngine.Presentation
         [Inject] private EventController eventController;
         [Inject] private GearInventoryLoadoutSO loadout;
 
+        public IObjectResolver ObjectResolver => objectResolver;
+
         public SimulationControlViewModel SimControl { get; } = new SimulationControlViewModel();
         public GearInventoryViewModel Inventory { get; } = new GearInventoryViewModel();
         public BoardViewModel Board { get; } = new BoardViewModel();
 
-        private bool gearEngineInitialized;
-
-        public void InitializeGearEngine()
+        protected override void Initialize()
         {
-            if (gearEngineInitialized)
-            {
-                return;
-            }
-
-            gearEngineInitialized = true;
+            base.Initialize();
+            BindChildViewModel(SimControl);
+            BindChildViewModel(Inventory);
+            BindChildViewModel(Board);
 
             if (loadout?.StartingGears != null)
             {

@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEditor.SceneManagement;
 using Game.GearEngine;
 using Game.GearEngine.Presentation;
+using Scaffold.Navigation;
 
 namespace Game.GearEngine.Editor
 {
@@ -39,6 +40,7 @@ namespace Game.GearEngine.Editor
             lightObj.transform.rotation = Quaternion.Euler(50, -30, 0);
 
             SetupBasicConfigsTool.GenerateConfigs();
+            GearEngineNavigationAssetGenerator.Generate();
 
             string folderPath = "Assets/Game/GearEngine/Configs";
             string prefabPath = "Assets/Game/GearEngine/Prefabs";
@@ -51,7 +53,6 @@ namespace Game.GearEngine.Editor
 
             GameObject gearRootObj = new GameObject("GearEngine_Root");
             var scope = gearRootObj.AddComponent<GearMechanicsScope>();
-            var sceneBootstrap = gearRootObj.AddComponent<GearEngineSceneBootstrap>();
 
             GameObject gridRootObj = new GameObject("GearGrid_Root");
             gridRootObj.transform.SetParent(gearRootObj.transform, false);
@@ -216,16 +217,10 @@ namespace Game.GearEngine.Editor
 
             gearViewSo.ApplyModifiedProperties();
 
-            var bootSo = new SerializedObject(sceneBootstrap);
-            var gvProp = bootSo.FindProperty("gearEngineView");
-            if (gvProp != null)
-            {
-                gvProp.objectReferenceValue = gearEngineView;
-            }
+            NavigationSettings navigationSettings =
+                AssetDatabase.LoadAssetAtPath<NavigationSettings>(GearEngineNavigationAssetGenerator.NavigationSettingsPath);
 
-            bootSo.ApplyModifiedProperties();
-
-            ApplyGearMechanicsScopeReferences(scope, boardConfig, bootstrap, loadout, sceneBootstrap);
+            ApplyGearMechanicsScopeReferences(scope, boardConfig, bootstrap, loadout, navigationSettings, gearRootObj.transform);
 
             string sceneDir = "Assets/Scenes";
             if (!System.IO.Directory.Exists(sceneDir))
@@ -243,7 +238,8 @@ namespace Game.GearEngine.Editor
             BoardConfigSO boardConfig,
             GearBootstrap bootstrap,
             GearInventoryLoadoutSO loadout,
-            GearEngineSceneBootstrap presentationBootstrap)
+            NavigationSettings navigationSettings,
+            Transform navigationViewHolder)
         {
             var instSo = new SerializedObject(scope);
             var bc = instSo.FindProperty("boardConfig");
@@ -264,10 +260,16 @@ namespace Game.GearEngine.Editor
                 lo.objectReferenceValue = loadout;
             }
 
-            var pb = instSo.FindProperty("presentationBootstrap");
-            if (pb != null)
+            var ns = instSo.FindProperty("navigationSettings");
+            if (ns != null)
             {
-                pb.objectReferenceValue = presentationBootstrap;
+                ns.objectReferenceValue = navigationSettings;
+            }
+
+            var nh = instSo.FindProperty("navigationViewHolder");
+            if (nh != null)
+            {
+                nh.objectReferenceValue = navigationViewHolder;
             }
 
             instSo.ApplyModifiedProperties();

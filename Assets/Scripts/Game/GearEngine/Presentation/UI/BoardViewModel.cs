@@ -26,6 +26,12 @@ namespace Game.GearEngine.Presentation
             boardVisualRoot = root;
         }
 
+        public IGearEngineService EngineService => engineService;
+
+        public BoardConfigSO BoardConfig => boardConfig;
+
+        public GearViewFactory GearViewFactory => viewFactory;
+
         public void Initialize(
             IGearEngineService engineService,
             IGridManager gridManager,

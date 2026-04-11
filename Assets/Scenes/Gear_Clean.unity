@@ -282,7 +282,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 1604204339}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &752307993
 GameObject:
@@ -615,7 +615,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1604204339}
   - component: {fileID: 1604204338}
-  - component: {fileID: 1888888002}
   m_Layer: 0
   m_Name: GearEngine_Root
   m_TagString: Untagged
@@ -653,23 +652,11 @@ MonoBehaviour:
     TypeName: 
   autoRun: 1
   autoInjectGameObjects: []
+  navigationSettings: {fileID: 11400000, guid: 137da207fe7ec1345a5d209afdac17bd, type: 2}
+  navigationViewHolder: {fileID: 1604204339}
   boardConfig: {fileID: 11400000, guid: c8936b7a974414cf6aba78a5ac6be445, type: 2}
   bootstrap: {fileID: 1604204337}
   loadout: {fileID: 11400000, guid: 8c7d6e5f4a3b2c1d9e8f7a6b5c4d3e2f, type: 2}
-  presentationBootstrap: {fileID: 1888888002}
---- !u!114 &1888888002
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1604204336}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a1b2c3d4e5f6478980a1b2c3d4e5f607, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Game.GearEngine::Game.GearEngine.Presentation.GearEngineSceneBootstrap
-  gearEngineView: {fileID: 1888888001}
 --- !u!4 &1604204339
 Transform:
   m_ObjectHideFlags: 0
@@ -685,6 +672,7 @@ Transform:
   m_Children:
   - {fileID: 1600000001}
   - {fileID: 1700638599}
+  - {fileID: 559934212}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1700638595
@@ -1087,5 +1075,3 @@ SceneRoots:
   - {fileID: 1478780767}
   - {fileID: 1604204339}
   - {fileID: 1227294349}
-  - {fileID: 1700638599}
-  - {fileID: 559934212}

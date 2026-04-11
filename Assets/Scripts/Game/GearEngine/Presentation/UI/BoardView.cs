@@ -11,16 +11,6 @@ namespace Game.GearEngine.Presentation
         private Vector2Int originalGridPos;
 
         private Camera mainCamera;
-        private IGearEngineService engineService;
-        private BoardConfigSO boardConfig;
-        private GearViewFactory gearViewFactory;
-
-        public void SetPresentationDependencies(IGearEngineService engineService, BoardConfigSO boardConfig, GearViewFactory gearViewFactory)
-        {
-            this.engineService = engineService;
-            this.boardConfig = boardConfig;
-            this.gearViewFactory = gearViewFactory;
-        }
 
         protected override void OnBind()
         {
@@ -35,12 +25,13 @@ namespace Game.GearEngine.Presentation
 
         private void Update()
         {
-            if (viewModel == null || mainCamera == null || boardConfig == null || engineService == null || gearViewFactory == null)
+            if (viewModel == null || mainCamera == null || viewModel.BoardConfig == null ||
+                viewModel.EngineService == null || viewModel.GearViewFactory == null)
             {
                 return;
             }
 
-            if (engineService.IsRunning)
+            if (viewModel.EngineService.IsRunning)
             {
                 return;
             }
@@ -55,6 +46,9 @@ namespace Game.GearEngine.Presentation
 
         private void HandleBoardDragInteraction()
         {
+            BoardConfigSO boardConfig = viewModel.BoardConfig;
+            GearViewFactory gearViewFactory = viewModel.GearViewFactory;
+
             Vector3 pointerPos = GetPointerPosition();
             Vector3 mousePos = pointerPos;
             mousePos.z = Mathf.Abs(mainCamera.transform.position.z);

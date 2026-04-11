@@ -33,7 +33,8 @@ namespace Game.GearEngine
 
             builder.RegisterInstance(boardConfig);
             builder.RegisterInstance(loadout);
-            builder.RegisterInstance(bootstrap).As<IGearSceneElement>().AsSelf();
+            // RegisterComponent runs injection on this scene MonoBehaviour; RegisterInstance does not.
+            builder.RegisterComponent(bootstrap).As<IGearSceneElement>().AsSelf();
 
             builder.Register<EventController>(Lifetime.Singleton).AsImplementedInterfaces().AsSelf();
             builder.Register<GridManager>(Lifetime.Singleton).AsImplementedInterfaces().AsSelf();

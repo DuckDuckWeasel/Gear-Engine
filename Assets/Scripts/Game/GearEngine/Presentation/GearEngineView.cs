@@ -1,7 +1,5 @@
-using Game.GearEngine;
 using Scaffold.MVVM;
 using UnityEngine;
-using VContainer;
 
 namespace Game.GearEngine.Presentation
 {
@@ -11,17 +9,9 @@ namespace Game.GearEngine.Presentation
         [SerializeField] private GearInventoryView inventoryView;
         [SerializeField] private BoardView boardView;
 
-        [Inject] private IObjectResolver objectResolver;
-        [Inject] private IGearEngineService engineService;
-        [Inject] private BoardConfigSO boardConfig;
-        [Inject] private GearViewFactory gearViewFactory;
-
         protected override void OnBind()
         {
-            viewModel.InitializeGearEngine();
-
-            inventoryView.SetObjectResolver(objectResolver);
-            boardView.SetPresentationDependencies(engineService, boardConfig, gearViewFactory);
+            inventoryView.SetObjectResolver(viewModel.ObjectResolver);
 
             simControlView.Bind(viewModel.SimControl);
             inventoryView.Bind(viewModel.Inventory);
