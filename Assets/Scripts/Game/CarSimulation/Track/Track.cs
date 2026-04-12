@@ -9,14 +9,14 @@ namespace Game.CarSimulation
     public sealed class Track : MonoBehaviour
     {
         [SerializeField] private SplineContainer splineContainer;
-    [SerializeField] private SplineExtrude splineExtrude;
+        [SerializeField] private SplineExtrude splineExtrude;
 
         public SplineContainer SplineContainer => splineContainer;
 
         private void Awake()
         {
             EnsureSplineContainerReference();
-        EnsureSplineExtrudeReference();
+            EnsureSplineExtrudeReference();
         }
 
         public void Initialize(TrackDefinition data)
@@ -32,7 +32,7 @@ namespace Game.CarSimulation
         private void ExecuteInitialize(TrackDefinition data)
         {
             EnsureSplineContainerReference();
-        EnsureSplineExtrudeReference();
+            EnsureSplineExtrudeReference();
             if (!HasSplineContainerOrLog() || !HasSplineDataOrLog(data))
             {
                 return;
@@ -72,19 +72,19 @@ namespace Game.CarSimulation
             }
         }
 
-    private void EnsureSplineExtrudeReference()
-    {
-        if (splineExtrude != null)
+        private void EnsureSplineExtrudeReference()
         {
-            return;
-        }
+            if (splineExtrude != null)
+            {
+                return;
+            }
 
-        splineExtrude = GetComponent<SplineExtrude>();
-        if (splineExtrude == null)
-        {
-            splineExtrude = GetComponentInParent<SplineExtrude>();
+            splineExtrude = GetComponent<SplineExtrude>();
+            if (splineExtrude == null)
+            {
+                splineExtrude = GetComponentInParent<SplineExtrude>();
+            }
         }
-    }
 
         private void LogSplineContainerMissing()
         {
