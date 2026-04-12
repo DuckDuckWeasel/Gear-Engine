@@ -9,7 +9,7 @@ namespace Game.CarSimulation.Tests
     public sealed class TrackInitializationTests
     {
         [Test]
-        public void Initialize_CopiesKnotsFromTrackDefinitionOntoSplineContainer()
+        public void Bind_CopiesKnotsFromTrackDefinitionOntoSplineContainer()
         {
             var go = new GameObject("TrackTest");
             try
@@ -31,7 +31,8 @@ namespace Game.CarSimulation.Tests
                     };
                     source.Closed = false;
 
-                    track.Initialize(def);
+                    var viewModel = new TrackViewModel(def, car: null);
+                    track.Bind(viewModel);
 
                     var target = container.Spline;
                     Assert.That(target.Count, Is.EqualTo(2));
@@ -52,39 +53,25 @@ namespace Game.CarSimulation.Tests
         }
 
         [Test]
-        public void Initialize_ThrowsWhenTrackDefinitionIsNull()
+        public void TrackViewModel_ThrowsWhenTrackDefinitionIsNull()
         {
-            var go = new GameObject("TrackTestNullDef");
-            try
-            {
-                go.AddComponent<SplineContainer>();
-                var track = go.AddComponent<Track>();
-
-                Assert.Throws<System.ArgumentNullException>(() => track.Initialize(null));
-            }
-            finally
-            {
-                Object.DestroyImmediate(go);
-            }
+            Assert.Throws<System.ArgumentNullException>(() => new TrackViewModel(null, car: null));
         }
 
         [Test]
-        public void Initialize_UpdatesParentSplineExtrudeContainerSpline()
+        public void Bind_UpdatesSplineExtrudeOnSameGameObjectWithoutParentHierarchy()
         {
-            var root = new GameObject("TrackVisualRoot");
-            var trackGo = new GameObject("Track");
-            trackGo.transform.SetParent(root.transform, false);
-
+            var go = new GameObject("TrackSelfContained");
             try
             {
-                var rootContainer = root.AddComponent<SplineContainer>();
-                var splineExtrude = root.AddComponent<SplineExtrude>();
-                splineExtrude.Container = rootContainer;
+                var container = go.AddComponent<SplineContainer>();
+                var extrude = go.AddComponent<SplineExtrude>();
+                extrude.Container = container;
 
-                var trackContainer = trackGo.AddComponent<SplineContainer>();
-                var track = trackGo.AddComponent<Track>();
+                var track = go.AddComponent<Track>();
                 var trackSo = new UnityEditor.SerializedObject(track);
-                trackSo.FindProperty("splineContainer").objectReferenceValue = trackContainer;
+                trackSo.FindProperty("splineContainer").objectReferenceValue = container;
+                trackSo.FindProperty("splineExtrude").objectReferenceValue = extrude;
                 trackSo.ApplyModifiedPropertiesWithoutUndo();
 
                 var def = ScriptableObject.CreateInstance<TrackDefinition>();
@@ -99,11 +86,12 @@ namespace Game.CarSimulation.Tests
                     };
                     def.Spline.Closed = true;
 
-                    track.Initialize(def);
+                    var viewModel = new TrackViewModel(def, car: null);
+                    track.Bind(viewModel);
 
-                    Assert.That(splineExtrude.Container, Is.SameAs(rootContainer));
-                    Assert.That(rootContainer.Spline.Count, Is.EqualTo(4));
-                    Assert.That(rootContainer.Spline.Closed, Is.True);
+                    Assert.That(extrude.Container, Is.SameAs(container));
+                    Assert.That(container.Spline.Count, Is.EqualTo(4));
+                    Assert.That(container.Spline.Closed, Is.True);
                 }
                 finally
                 {
@@ -112,7 +100,7 @@ namespace Game.CarSimulation.Tests
             }
             finally
             {
-                Object.DestroyImmediate(root);
+                Object.DestroyImmediate(go);
             }
         }
     }

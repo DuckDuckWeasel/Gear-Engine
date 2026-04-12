@@ -1,15 +1,18 @@
 using System;
 using UnityEngine;
 using UnityEngine.Splines;
+using Scaffold.MVVM;
 
 namespace Game.CarSimulation
 {
     [DisallowMultipleComponent]
     [RequireComponent(typeof(SplineContainer))]
-    public sealed class Track : MonoBehaviour
+    public sealed class Track : ViewComponent<TrackViewModel>
     {
         [SerializeField] private SplineContainer splineContainer;
         [SerializeField] private SplineExtrude splineExtrude;
+
+        private CarView spawnedCarView;
 
         public SplineContainer SplineContainer => splineContainer;
 
@@ -19,7 +22,110 @@ namespace Game.CarSimulation
             EnsureSplineExtrudeReference();
         }
 
-        public void Initialize(TrackDefinition data)
+        protected override void OnBind()
+        {
+            if (viewModel == null)
+            {
+                return;
+            }
+
+            InitializeTrack(viewModel.Track);
+            Bind<bool, bool>(() => viewModel.IsRunning, OnSimulationStateChanged);
+            if (viewModel.Car != null)
+            {
+                SpawnCarView(viewModel.Car);
+            }
+        }
+
+        protected override void OnUnbind()
+        {
+            DestroyCarViewIfNeeded();
+            viewModel?.TearDown();
+            base.OnUnbind();
+        }
+
+        private void OnDestroy()
+        {
+            DestroyCarViewIfNeeded();
+        }
+
+        private void OnSimulationStateChanged(bool isRunning)
+        {
+            spawnedCarView?.OnRunningChanged(isRunning);
+        }
+
+        private void SpawnCarView(CarEntity car)
+        {
+            DestroyCarViewIfNeeded();
+            GameObject prefab = car.Definition.CarPrefab;
+            if (prefab == null)
+            {
+                LogMissingCarPrefab();
+                return;
+            }
+
+            InstantiateAndInitializeCarView(car, prefab);
+        }
+
+        private void LogMissingCarPrefab()
+        {
+            Debug.LogError("[Track] CarDefinition.CarPrefab is missing; cannot spawn CarView.");
+        }
+
+        private void InstantiateAndInitializeCarView(CarEntity car, GameObject prefab)
+        {
+            GameObject instance = Instantiate(prefab, transform);
+            if (!TryGetCarView(instance, out CarView view))
+            {
+                Destroy(instance);
+                return;
+            }
+
+            spawnedCarView = view;
+            FinalizeCarViewBinding(car, instance, view);
+        }
+
+        private void FinalizeCarViewBinding(CarEntity car, GameObject instance, CarView view)
+        {
+            if (viewModel == null)
+            {
+                CancelSpawnedCar(instance);
+                return;
+            }
+
+            view.Initialize(car, splineContainer, viewModel);
+        }
+
+        private bool TryGetCarView(GameObject instance, out CarView view)
+        {
+            view = instance.GetComponent<CarView>();
+            if (view != null)
+            {
+                return true;
+            }
+
+            Debug.LogError("[Track] Car prefab is missing CarView.");
+            return false;
+        }
+
+        private void CancelSpawnedCar(GameObject instance)
+        {
+            Destroy(instance);
+            spawnedCarView = null;
+        }
+
+        private void DestroyCarViewIfNeeded()
+        {
+            if (spawnedCarView == null)
+            {
+                return;
+            }
+
+            Destroy(spawnedCarView.gameObject);
+            spawnedCarView = null;
+        }
+
+        private void InitializeTrack(TrackDefinition data)
         {
             if (data == null)
             {
@@ -80,10 +186,6 @@ namespace Game.CarSimulation
             }
 
             splineExtrude = GetComponent<SplineExtrude>();
-            if (splineExtrude == null)
-            {
-                splineExtrude = GetComponentInParent<SplineExtrude>();
-            }
         }
 
         private void LogSplineContainerMissing()
@@ -109,7 +211,7 @@ namespace Game.CarSimulation
 
         private void SyncVisualContainer(Spline source)
         {
-            var visualContainer = splineExtrude.Container;
+            SplineContainer visualContainer = splineExtrude.Container;
             if (visualContainer == null)
             {
                 splineExtrude.Container = splineContainer;
@@ -124,7 +226,7 @@ namespace Game.CarSimulation
 
         private void CopySplineIntoContainer(Spline source, SplineContainer targetContainer)
         {
-            var target = targetContainer.Spline;
+            Spline target = targetContainer.Spline;
             target.Knots = source.Knots;
             target.Closed = source.Closed;
         }

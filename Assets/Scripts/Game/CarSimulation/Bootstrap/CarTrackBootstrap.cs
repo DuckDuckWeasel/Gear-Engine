@@ -1,27 +1,61 @@
+using System;
+using UnityEngine;
+using VContainer;
 using VContainer.Unity;
 
 namespace Game.CarSimulation
 {
-    public class CarTrackBootstrap : IInitializable
+    public sealed class CarTrackBootstrap : MonoBehaviour, IInitializable
     {
-        private readonly CarFactory carFactory;
-        private readonly CarDefinition carDefinition;
-        private readonly TrackDefinition trackDefinition;
-        private readonly Track track;
+        [SerializeField] private Track track;
+        [SerializeField] private TrackDefinition trackDefinition;
+        [SerializeField] private CarDefinition carDefinition;
 
-        public CarTrackBootstrap(CarFactory carFactory, CarDefinition carDefinition, TrackDefinition trackDefinition, Track track)
+        private ITrackSimulationService service;
+
+        [Inject]
+        public void Construct(ITrackSimulationService service)
         {
-            this.carFactory = carFactory;
-            this.carDefinition = carDefinition;
-            this.trackDefinition = trackDefinition;
-            this.track = track;
+            this.service = service ?? throw new ArgumentNullException(nameof(service));
         }
 
         public void Initialize()
         {
-            track.Initialize(trackDefinition);
-            var carEntity = carFactory.Create(carDefinition);
-            carEntity.GetComponent<CarSplineDriver>().Initialize(track.SplineContainer);
+            try
+            {
+                ValidateSerializedReferences();
+                RunStartupSequence();
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"[CarTrackBootstrap] Initialize failed: {ex.Message}\n{ex.StackTrace}");
+                throw;
+            }
+        }
+
+        private void ValidateSerializedReferences()
+        {
+            if (track == null)
+            {
+                throw new InvalidOperationException("[CarTrackBootstrap] Track reference is missing.");
+            }
+
+            if (trackDefinition == null)
+            {
+                throw new InvalidOperationException("[CarTrackBootstrap] TrackDefinition is missing.");
+            }
+
+            if (carDefinition == null)
+            {
+                throw new InvalidOperationException("[CarTrackBootstrap] CarDefinition is missing.");
+            }
+        }
+
+        private void RunStartupSequence()
+        {
+            service.CreateSimulation(carDefinition, trackDefinition);
+            track.Bind(service.TrackViewModel);
+            service.ToggleSimulation(true);
         }
     }
 }

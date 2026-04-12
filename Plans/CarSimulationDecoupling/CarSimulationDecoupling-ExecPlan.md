@@ -85,15 +85,15 @@ The intended mental model is:
 
 ## Progress
 
-- [ ] M1 — Lock current passing behavior and note failing regressions
-- [ ] M2 — Introduce runtime `CarEntity` and `TrackViewModel`; rename prefab host to `CarView`
-- [ ] M3 — Make `Track` self-sufficient and bindable
-- [ ] M4 — Refactor `CarView` / `CarSplineDriver` into explicit internal view infrastructure
-- [ ] M5 — Introduce `ITrackSimulationService` / `TrackSimulationService`
-- [ ] M6 — Extract `CarTrackInstaller` and slim `CarTrackScope`
-- [ ] M7 — Convert `CarTrackBootstrap` into a thin scene launcher
-- [ ] M8 — Update the test scene setup tool and hierarchy wiring
-- [ ] M9 — Add docs and finish validation
+- [x] M1 — Lock current passing behavior and note failing regressions
+- [x] M2 — Introduce runtime `CarEntity` and `TrackViewModel`; rename prefab host to `CarView`
+- [x] M3 — Make `Track` self-sufficient and bindable
+- [x] M4 — Refactor `CarView` / `CarSplineDriver` into explicit internal view infrastructure
+- [x] M5 — Introduce `ITrackSimulationService` / `TrackSimulationService`
+- [x] M6 — Extract `CarTrackInstaller` and slim `CarTrackScope`
+- [x] M7 — Convert `CarTrackBootstrap` into a thin scene launcher
+- [x] M8 — Update the test scene setup tool and hierarchy wiring
+- [x] M9 — Add docs and finish validation
 
 ---
 
@@ -332,7 +332,8 @@ The intended mental model is:
 
 ## Outcomes & Retrospective
 
-To be filled in as milestones land.
+- **Delivered:** Car Simulation now uses `CarTrackInstaller` for DI, a slim `CarTrackScope` (bootstrap reference only), `CarTrackBootstrap` as a scene `MonoBehaviour` + `IInitializable`, `ITrackSimulationService` with `CreateSimulation` / `ToggleSimulation` / `CompleteSimulation`, `TrackViewModel` + runtime `CarEntity` (`EntityInstanceFactory.CreateInstance`), `Track` as `ViewComponent<TrackViewModel>` with local `CarView` spawn from `CarDefinition.CarPrefab`, and internal `CarSplineDriver` with explicit `Bind` / `Play` / `Pause` (stop) lifecycle. `CarFactory` removed. Documentation: `Docs/CarSimulation.md`. Editor setup tool updated for flattened track host, bootstrap wiring, and `bag.entries` on `CarDefinition`. Quality gate: `.agents/scripts/validate-changes.cmd` clean (59 EditMode tests passed).
+- **Note:** `CarEntity` is implemented as a serializable wrapper around `EntityInstance<CarDefinition>` because `EntityInstance<T>` is sealed in Scaffold.Entities.
 
 ---
 

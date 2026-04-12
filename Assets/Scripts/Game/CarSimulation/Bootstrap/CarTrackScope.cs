@@ -4,19 +4,18 @@ using VContainer.Unity;
 
 namespace Game.CarSimulation
 {
-    public class CarTrackScope : LifetimeScope
+    public sealed class CarTrackScope : LifetimeScope
     {
-        [SerializeField] private CarDefinition carDefinition;
-        [SerializeField] private TrackDefinition trackDefinition;
-        [SerializeField] private Track track;
+        [SerializeField] private CarTrackBootstrap sceneBootstrap;
 
         protected override void Configure(IContainerBuilder builder)
         {
-            builder.Register<CarFactory>(Lifetime.Singleton);
-            builder.RegisterInstance(carDefinition);
-            builder.RegisterInstance(trackDefinition);
-            builder.RegisterComponent(track);
-            builder.RegisterEntryPoint<CarTrackBootstrap>();
+            new CarTrackInstaller().Install(builder);
+
+            if (sceneBootstrap != null)
+            {
+                builder.RegisterComponent(sceneBootstrap).AsImplementedInterfaces().AsSelf();
+            }
         }
     }
 }

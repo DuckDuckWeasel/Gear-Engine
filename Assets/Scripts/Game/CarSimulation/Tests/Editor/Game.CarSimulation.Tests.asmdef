@@ -5,6 +5,11 @@
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner",
         "Game.CarSimulation",
+        "Scaffold.Entities",
+        "Scaffold.MVVM",
+        "Scaffold.MVVM.View",
+        "Scaffold.MVVM.ViewModel",
+        "Scaffold.Navigation",
         "Unity.Splines",
         "Unity.Mathematics"
     ],
@@ -15,7 +20,8 @@
     "allowUnsafeCode": false,
     "overrideReferences": true,
     "precompiledReferences": [
-        "nunit.framework.dll"
+        "nunit.framework.dll",
+        "CommunityToolkit.Mvvm.dll"
     ],
     "autoReferenced": false,
     "defineConstraints": [

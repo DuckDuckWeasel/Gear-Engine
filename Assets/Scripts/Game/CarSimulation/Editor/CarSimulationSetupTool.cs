@@ -127,11 +127,17 @@ namespace Game.CarSimulation.Editor
 
         private static void WireCarDriver(GameObject go, SplineAnimate spline, AttributeSO speed)
         {
-            var driver = go.AddComponent<CarSplineDriver>();
+            var driver = go.GetComponent<CarSplineDriver>() ?? go.AddComponent<CarSplineDriver>();
+            var carView = go.GetComponent<CarView>() ?? go.AddComponent<CarView>();
             var driverSo = new SerializedObject(driver);
             driverSo.FindProperty("splineAnimate").objectReferenceValue = spline;
             driverSo.FindProperty("speedAttribute").objectReferenceValue = speed;
             driverSo.ApplyModifiedPropertiesWithoutUndo();
+            var carViewSo = new SerializedObject(carView);
+            carViewSo.FindProperty("splineDriver").objectReferenceValue = driver;
+            carViewSo.ApplyModifiedPropertiesWithoutUndo();
+            EditorUtility.SetDirty(driver);
+            EditorUtility.SetDirty(carView);
         }
 
         private static CarDefinition CreateOrLoadCarDefinition(AttributeSO speed, GameObject carPrefab)
@@ -154,9 +160,16 @@ namespace Game.CarSimulation.Editor
         private static void WriteCarDefinitionEntries(SerializedObject defSo, GameObject carPrefab, AttributeSO speed)
         {
             defSo.FindProperty("carPrefab").objectReferenceValue = carPrefab;
-            var entries = defSo.FindProperty("entries");
+            SerializedProperty bagProp = defSo.FindProperty("bag");
+            if (bagProp == null)
+            {
+                Debug.LogError("Car Simulation: CarDefinition has no serialized 'bag' field.");
+                return;
+            }
+
+            SerializedProperty entries = bagProp.FindPropertyRelative("entries");
             entries.arraySize = 1;
-            var e0 = entries.GetArrayElementAtIndex(0);
+            SerializedProperty e0 = entries.GetArrayElementAtIndex(0);
             e0.FindPropertyRelative("attribute").objectReferenceValue = speed;
             e0.FindPropertyRelative("baseValue").managedReferenceValue = new FloatAttributeValue { Value = 10f };
         }
@@ -172,7 +185,7 @@ namespace Game.CarSimulation.Editor
             var circleTrackDef = CreateOrLoadCircleTrackDefinition(circleSpline);
             CreateOrLoadSquareTrackDefinition();
 
-            var trackBehaviour = GetOrAddTrackUnderCircleRaceTrack();
+            Track trackBehaviour = GetOrAddTrackOnCircleRaceHost();
             BindLifetimeScope(carDefinition, circleTrackDef, trackBehaviour);
 
             EditorSceneManager.MarkSceneDirty(scene);
@@ -262,15 +275,20 @@ namespace Game.CarSimulation.Editor
             return true;
         }
 
-        private static Track GetOrAddTrackUnderCircleRaceTrack()
+        private static Track GetOrAddTrackOnCircleRaceHost()
         {
-            if (!TryFindCircleRaceParent(out var parent))
+            if (!TryFindCircleRaceParent(out GameObject parent))
             {
                 return null;
             }
 
-            var trackGo = GetOrCreateTrackChild(parent);
-            return EnsureTrackAndSplineContainer(trackGo);
+            Transform legacyChild = parent.transform.Find("Track");
+            if (legacyChild != null)
+            {
+                Object.DestroyImmediate(legacyChild.gameObject);
+            }
+
+            return EnsureTrackAndSplineContainer(parent);
         }
 
         private static bool TryFindCircleRaceParent(out GameObject parent)
@@ -283,22 +301,6 @@ namespace Game.CarSimulation.Editor
 
             Debug.LogError("Car Simulation: CircleRaceTrack not found while creating Track child.");
             return false;
-        }
-
-        private static GameObject GetOrCreateTrackChild(GameObject parent)
-        {
-            var trackTransform = parent.transform.Find("Track");
-            if (trackTransform != null)
-            {
-                return trackTransform.gameObject;
-            }
-
-            var trackGo = new GameObject("Track");
-            trackGo.transform.SetParent(parent.transform, false);
-            trackGo.transform.localPosition = Vector3.zero;
-            trackGo.transform.localRotation = Quaternion.identity;
-            trackGo.transform.localScale = Vector3.one;
-            return trackGo;
         }
 
         private static Track EnsureTrackAndSplineContainer(GameObject trackGo)
@@ -323,17 +325,45 @@ namespace Game.CarSimulation.Editor
         {
             if (track == null)
             {
-                Debug.LogError("Car Simulation: Track component is null; cannot bind CarTrackScope.");
+                Debug.LogError("Car Simulation: Track component is null; cannot bind CarTrackBootstrap.");
                 return;
             }
 
-            var scope = GetOrAddCarTrackScope();
-            var scopeSo = new SerializedObject(scope);
-            scopeSo.FindProperty("carDefinition").objectReferenceValue = carDefinition;
-            scopeSo.FindProperty("trackDefinition").objectReferenceValue = trackDefinition;
-            scopeSo.FindProperty("track").objectReferenceValue = track;
+            CarTrackBootstrap bootstrap = WireBootstrapSerializedFields(carDefinition, trackDefinition, track);
+            WireScopeToBootstrap(bootstrap);
+        }
+
+        private static CarTrackBootstrap WireBootstrapSerializedFields(CarDefinition carDefinition, TrackDefinition trackDefinition, Track track)
+        {
+            CarTrackBootstrap bootstrap = GetOrCreateCarTrackBootstrap();
+            SerializedObject bootstrapSo = new SerializedObject(bootstrap);
+            bootstrapSo.FindProperty("track").objectReferenceValue = track;
+            bootstrapSo.FindProperty("trackDefinition").objectReferenceValue = trackDefinition;
+            bootstrapSo.FindProperty("carDefinition").objectReferenceValue = carDefinition;
+            bootstrapSo.ApplyModifiedPropertiesWithoutUndo();
+            EditorUtility.SetDirty(bootstrap);
+            return bootstrap;
+        }
+
+        private static void WireScopeToBootstrap(CarTrackBootstrap bootstrap)
+        {
+            CarTrackScope scope = GetOrAddCarTrackScope();
+            SerializedObject scopeSo = new SerializedObject(scope);
+            scopeSo.FindProperty("sceneBootstrap").objectReferenceValue = bootstrap;
             scopeSo.ApplyModifiedPropertiesWithoutUndo();
             EditorUtility.SetDirty(scope);
+        }
+
+        private static CarTrackBootstrap GetOrCreateCarTrackBootstrap()
+        {
+            const string bootstrapName = "CarTrack_Bootstrap";
+            GameObject bootstrapGo = GameObject.Find(bootstrapName);
+            if (bootstrapGo == null)
+            {
+                bootstrapGo = new GameObject(bootstrapName);
+            }
+
+            return bootstrapGo.GetComponent<CarTrackBootstrap>() ?? bootstrapGo.AddComponent<CarTrackBootstrap>();
         }
     }
 }

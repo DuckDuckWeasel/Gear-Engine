@@ -4,6 +4,10 @@
     "references": [
         "Game.CarSimulation",
         "Scaffold.Entities",
+        "Scaffold.MVVM",
+        "Scaffold.MVVM.View",
+        "Scaffold.MVVM.ViewModel",
+        "Scaffold.Navigation",
         "Unity.Splines",
         "VContainer",
         "Unity.Mathematics"
