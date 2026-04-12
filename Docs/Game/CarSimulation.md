@@ -10,7 +10,7 @@ Runtime code lives in `Assets/Scripts/Game/CarSimulation/` (`Game.CarSimulation`
 
 ## Editor setup
 
-Menu **Game / Car Simulation / Setup Scene** refreshes track assets from `SplineTrack_TestScene`, ensures a `Track` child under `CircleRaceTrack`, and wires `CarTrack_LifetimeScope`.
+Menu **Game / Car Simulation / Setup Scene** refreshes track assets from `SplineTrack_TestScene`, expects a scene root **Track** (legacy name `CircleRaceTrack`) with **`Path`** (spline mesh) and runtime **Car** under the same root, and wires `CarTrack_LifetimeScope`.
 
 ## Tests
 

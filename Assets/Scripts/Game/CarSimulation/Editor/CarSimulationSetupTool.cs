@@ -285,21 +285,32 @@ namespace Game.CarSimulation.Editor
         private static bool TryGetCircleRaceSpline(out SplineContainer container)
         {
             container = null;
-            var track = GameObject.Find("CircleRaceTrack");
+            GameObject track = FindTrackGameObjectInScene();
             if (track == null)
             {
-                Debug.LogError("Car Simulation: CircleRaceTrack not found in scene.");
+                Debug.LogError("Car Simulation: Track root not found in scene (expected GameObject named Track or CircleRaceTrack).");
                 return false;
             }
 
             container = track.GetComponent<SplineContainer>();
             if (container == null)
             {
-                Debug.LogError("Car Simulation: SplineContainer missing on CircleRaceTrack.");
+                Debug.LogError("Car Simulation: SplineContainer missing on track root.");
                 return false;
             }
 
             return true;
+        }
+
+        private static GameObject FindTrackGameObjectInScene()
+        {
+            GameObject track = GameObject.Find("Track");
+            if (track != null)
+            {
+                return track;
+            }
+
+            return GameObject.Find("CircleRaceTrack");
         }
 
         private static Track GetOrAddTrackOnCircleRaceHost()
@@ -320,13 +331,13 @@ namespace Game.CarSimulation.Editor
 
         private static bool TryFindCircleRaceParent(out GameObject parent)
         {
-            parent = GameObject.Find("CircleRaceTrack");
+            parent = FindTrackGameObjectInScene();
             if (parent != null)
             {
                 return true;
             }
 
-            Debug.LogError("Car Simulation: CircleRaceTrack not found while creating Track child.");
+            Debug.LogError("Car Simulation: Track root not found while wiring Car Simulation (expected Track or CircleRaceTrack).");
             return false;
         }
 

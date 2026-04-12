@@ -9,6 +9,8 @@ namespace Game.CarSimulation
     [RequireComponent(typeof(SplineContainer))]
     public sealed class Track : ViewComponent<TrackViewModel>
     {
+        private const string pathChildName = "Path";
+
         [SerializeField] private SplineContainer splineContainer;
         [SerializeField] private SplineExtrude splineExtrude;
 
@@ -74,7 +76,8 @@ namespace Game.CarSimulation
 
         private void InstantiateAndInitializeCarView(CarEntity car, GameObject prefab)
         {
-            GameObject instance = Instantiate(prefab, transform);
+            GameObject instance = Instantiate(prefab);
+            PlaceCarUnderTrack(instance, prefab);
             if (!TryGetCarView(instance, out CarView view))
             {
                 Destroy(instance);
@@ -83,6 +86,16 @@ namespace Game.CarSimulation
 
             spawnedCarView = view;
             FinalizeCarViewBinding(car, instance, view);
+        }
+
+        private void PlaceCarUnderTrack(GameObject instance, GameObject prefabAssetRoot)
+        {
+            Transform prefabTransform = prefabAssetRoot.transform;
+            Transform instanceTransform = instance.transform;
+            instanceTransform.SetParent(transform, false);
+            instanceTransform.localPosition = prefabTransform.localPosition;
+            instanceTransform.localRotation = prefabTransform.localRotation;
+            instanceTransform.localScale = prefabTransform.localScale;
         }
 
         private void FinalizeCarViewBinding(CarEntity car, GameObject instance, CarView view)
@@ -185,7 +198,16 @@ namespace Game.CarSimulation
                 return;
             }
 
-            splineExtrude = GetComponent<SplineExtrude>();
+            Transform path = transform.Find(pathChildName);
+            if (path != null)
+            {
+                splineExtrude = path.GetComponent<SplineExtrude>();
+            }
+
+            if (splineExtrude == null)
+            {
+                splineExtrude = GetComponent<SplineExtrude>();
+            }
         }
 
         private void LogSplineContainerMissing()

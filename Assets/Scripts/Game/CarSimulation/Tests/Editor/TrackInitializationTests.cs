@@ -59,13 +59,15 @@ namespace Game.CarSimulation.Tests
         }
 
         [Test]
-        public void Bind_UpdatesSplineExtrudeOnSameGameObjectWithoutParentHierarchy()
+        public void Bind_UpdatesSplineExtrudeOnPathChild()
         {
             var go = new GameObject("TrackSelfContained");
             try
             {
                 var container = go.AddComponent<SplineContainer>();
-                var extrude = go.AddComponent<SplineExtrude>();
+                var pathGo = new GameObject("Path");
+                pathGo.transform.SetParent(go.transform, false);
+                var extrude = pathGo.AddComponent<SplineExtrude>();
                 extrude.Container = container;
 
                 var track = go.AddComponent<Track>();
