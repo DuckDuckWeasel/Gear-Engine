@@ -23,6 +23,7 @@ function Get-TestingSuiteConfig {
         "Scaffold.*"
     )
     $analyzerIncludeOnlyLineContainsSubstring = $null
+    $analyzerExcludeIfLineContainsSubstrings = @()
 
     if (Test-Path $configPath) {
         $json = Get-Content -LiteralPath $configPath -Raw -Encoding UTF8 | ConvertFrom-Json
@@ -41,8 +42,15 @@ function Get-TestingSuiteConfig {
                 $firstPartyAssemblyNamePatterns = @($ar.firstPartyAssemblyNamePatterns)
             }
         }
-        if ($json.analyzerGate -and $json.analyzerGate.includeOnlyIfLineContainsSubstring) {
-            $analyzerIncludeOnlyLineContainsSubstring = [string]$json.analyzerGate.includeOnlyIfLineContainsSubstring
+        if ($json.analyzerGate) {
+            $gate = $json.analyzerGate
+            $props = $gate | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name
+            if ($props -contains 'includeOnlyIfLineContainsSubstring') {
+                $analyzerIncludeOnlyLineContainsSubstring = [string]$gate.includeOnlyIfLineContainsSubstring
+            }
+            if ($props -contains 'excludeIfLineContainsSubstrings' -and $gate.excludeIfLineContainsSubstrings) {
+                $analyzerExcludeIfLineContainsSubstrings = @($gate.excludeIfLineContainsSubstrings)
+            }
         }
     }
 
@@ -52,5 +60,6 @@ function Get-TestingSuiteConfig {
         AsmdefExcludedGuidReferences     = $excludedGuidReferences
         AsmdefFirstPartyAssemblyNamePatterns = $firstPartyAssemblyNamePatterns
         AnalyzerIncludeOnlyLineContainsSubstring = $analyzerIncludeOnlyLineContainsSubstring
+        AnalyzerExcludeIfLineContainsSubstrings = $analyzerExcludeIfLineContainsSubstrings
     }
 }

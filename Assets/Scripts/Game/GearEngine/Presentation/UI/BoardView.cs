@@ -1,57 +1,72 @@
 using System;
 using System.Collections.Generic;
 using Game.GearEngine;
+using Scaffold.MVVM;
 using UnityEngine;
 
 namespace Game.GearEngine.Presentation
 {
-    public class BoardView : MonoBehaviour
+    [DisallowMultipleComponent]
+    public class BoardView : ViewComponent<BoardViewModel>
     {
         [SerializeField] private GearBoardDragHandler dragHandler;
 
-        public event Action<GearConfigData, Vector3> OnGearDroppedOverUI;
-
-        private BoardViewModel viewModel;
         private GearViewFactory localFactory;
         private readonly Dictionary<IGridNode, GearView> viewsByNode = new Dictionary<IGridNode, GearView>();
 
-        public void Bind(BoardViewModel vm, bool interactable = false)
+        private bool dragInteractable;
+
+        public event Action<GearConfigData, Vector3> OnGearDroppedOverUI;
+
+        /// <summary>
+        /// Binds the board view model and configures whether board drag is enabled for this binding.
+        /// </summary>
+        public void Bind(BoardViewModel vm, bool interactable)
         {
-            Unbind();
-            viewModel = vm ?? throw new ArgumentNullException(nameof(vm));
+            dragInteractable = interactable;
+            base.Bind(vm ?? throw new ArgumentNullException(nameof(vm)));
+        }
+
+        public new void Unbind()
+        {
+            base.Unbind();
+        }
+
+        protected override void OnBind()
+        {
             localFactory = new GearViewFactory();
 
-            vm.OnGearPlaced += HandleGearPlaced;
-            vm.OnGearRemoved += HandleGearRemoved;
+            viewModel.OnGearPlaced += HandleGearPlaced;
+            viewModel.OnGearRemoved += HandleGearRemoved;
 
-            foreach (IGridNode node in vm.GetCurrentNodes())
+            foreach (IGridNode node in viewModel.GetCurrentNodes())
             {
                 SpawnView(node);
             }
 
             if (dragHandler != null)
             {
-                dragHandler.enabled = interactable;
+                dragHandler.enabled = dragInteractable;
             }
         }
 
-        public void Unbind()
+        protected override void OnUnbind()
         {
-            if (viewModel == null)
+            if (viewModel != null)
             {
-                return;
+                viewModel.OnGearPlaced -= HandleGearPlaced;
+                viewModel.OnGearRemoved -= HandleGearRemoved;
             }
 
-            viewModel.OnGearPlaced -= HandleGearPlaced;
-            viewModel.OnGearRemoved -= HandleGearRemoved;
             DestroyAllViews();
             localFactory = null;
-            viewModel = null;
 
             if (dragHandler != null)
             {
                 dragHandler.enabled = false;
             }
+
+            base.OnUnbind();
         }
 
         internal void NotifyPickedUp(IGridNode node, Vector2Int coord)

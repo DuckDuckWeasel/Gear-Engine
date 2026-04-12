@@ -1,4 +1,5 @@
 using System;
+using Scaffold.Navigation.Contracts;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
@@ -7,16 +8,17 @@ namespace Game.CarSimulation
 {
     public sealed class CarTrackBootstrap : MonoBehaviour, IInitializable
     {
-        [SerializeField] private Track track;
         [SerializeField] private TrackDefinition trackDefinition;
         [SerializeField] private CarDefinition carDefinition;
 
         private ITrackSimulationService service;
+        private INavigation navigation;
 
         [Inject]
-        public void Construct(ITrackSimulationService service)
+        public void Construct(ITrackSimulationService service, INavigation navigation)
         {
             this.service = service ?? throw new ArgumentNullException(nameof(service));
+            this.navigation = navigation ?? throw new ArgumentNullException(nameof(navigation));
         }
 
         public void Initialize()
@@ -35,11 +37,6 @@ namespace Game.CarSimulation
 
         private void ValidateSerializedReferences()
         {
-            if (track == null)
-            {
-                throw new InvalidOperationException("[CarTrackBootstrap] Track reference is missing.");
-            }
-
             if (trackDefinition == null)
             {
                 throw new InvalidOperationException("[CarTrackBootstrap] TrackDefinition is missing.");
@@ -54,7 +51,7 @@ namespace Game.CarSimulation
         private void RunStartupSequence()
         {
             service.CreateSimulation(carDefinition, trackDefinition);
-            track.Bind(service.TrackViewModel);
+            navigation.Open(service.TrackViewModel);
             service.ToggleSimulation(true);
         }
     }

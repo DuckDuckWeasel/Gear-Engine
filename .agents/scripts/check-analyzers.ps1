@@ -343,6 +343,25 @@ if (-not [string]::IsNullOrWhiteSpace($analyzerLineFilterSubstring)) {
     )
 }
 
+$analyzerExcludeSubstrings = @($testingSuiteConfig.AnalyzerExcludeIfLineContainsSubstrings | Where-Object { -not [string]::IsNullOrWhiteSpace($_) })
+if ($analyzerExcludeSubstrings.Count -gt 0) {
+    $scaffoldAnalyzerLines = @(
+        $scaffoldAnalyzerLines |
+            Where-Object {
+                $normalizedLine = $_.Replace('\', '/')
+                $excluded = $false
+                foreach ($sub in $analyzerExcludeSubstrings) {
+                    $normalizedSub = $sub.Replace('\', '/')
+                    if ($normalizedLine -like ('*' + $normalizedSub + '*')) {
+                        $excluded = $true
+                        break
+                    }
+                }
+                -not $excluded
+            }
+    )
+}
+
 $total = if ($null -eq $scaffoldAnalyzerLines) { 0 } elseif ($scaffoldAnalyzerLines -is [array]) { $scaffoldAnalyzerLines.Count } else { 1 }
 Write-Output "TOTAL:$total"
 

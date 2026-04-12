@@ -18,6 +18,11 @@ namespace Game.CarSimulation
 
         public SplineContainer SplineContainer => splineContainer;
 
+        public new void Unbind()
+        {
+            base.Unbind();
+        }
+
         private void Awake()
         {
             EnsureSplineContainerReference();

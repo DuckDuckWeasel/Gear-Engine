@@ -2,11 +2,15 @@
     "name": "Game.CarSimulation",
     "rootNamespace": "Game.CarSimulation",
     "references": [
+        "Scaffold.Addressables",
+        "Scaffold.Addressables.Container",
         "Scaffold.Entities",
         "Scaffold.MVVM",
         "Scaffold.MVVM.View",
         "Scaffold.MVVM.ViewModel",
         "Scaffold.Navigation",
+        "Scaffold.Navigation.Container",
+        "Scaffold.Scope",
         "VContainer",
         "Unity.Splines"
     ],

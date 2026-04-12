@@ -8,6 +8,8 @@
         "Scaffold.MVVM.View",
         "Scaffold.MVVM.ViewModel",
         "Scaffold.Navigation",
+        "Scaffold.Schemas",
+        "Unity.Addressables.Editor",
         "Unity.Splines",
         "VContainer",
         "Unity.Mathematics"

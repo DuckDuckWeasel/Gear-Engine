@@ -148,7 +148,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 969476c66789c25459a99585025f16d1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Game.CarSimulation::Game.CarSimulation.CarTrackBootstrap
-  track: {fileID: 965027761}
   trackDefinition: {fileID: 11400000, guid: c1c1c1c1b2a3948576c5d4e3f2a1b0c9, type: 2}
   carDefinition: {fileID: 11400000, guid: b4e1eaf4e8dd58b418b4e6efc603f72e, type: 2}
 --- !u!4 &74913802
@@ -166,17 +165,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &965027761 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 1133858145817991951, guid: a6f20e9e09e7715449856810b9a31e98, type: 3}
-  m_PrefabInstance: {fileID: 7708722276038387310}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8e5b9c3d2eaf507b9c1d2e3f4a5b6c7d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Game.CarSimulation::Game.CarSimulation.Track
 --- !u!1 &1310897983
 GameObject:
   m_ObjectHideFlags: 0
@@ -347,6 +335,8 @@ MonoBehaviour:
     TypeName: 
   autoRun: 1
   autoInjectGameObjects: []
+  navigationSettings: {fileID: 11400000, guid: 137da207fe7ec1345a5d209afdac17bd, type: 2}
+  navigationViewHolder: {fileID: 1627110254}
   sceneBootstrap: {fileID: 74913801}
 --- !u!4 &1627110254
 Transform:

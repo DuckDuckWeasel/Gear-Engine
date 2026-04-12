@@ -4,7 +4,11 @@
     "defaultAssemblyFilters": "+Scaffold.*"
   },
   "analyzerGate": {
-    "includeOnlyIfLineContainsSubstring": "Game.CarSimulation"
+    "includeOnlyIfLineContainsSubstring": "",
+    "excludeIfLineContainsSubstrings": [
+      "Assets/Samples/",
+      "Assets/Plugins/"
+    ]
   },
   "asmdefReferences": {
     "excludedAssemblyNames": [

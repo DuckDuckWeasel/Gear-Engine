@@ -1,6 +1,7 @@
 using System.IO;
 using Game.CarSimulation;
 using Scaffold.Entities;
+using Scaffold.Navigation;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -212,8 +213,9 @@ namespace Game.CarSimulation.Editor
             var circleTrackDef = CreateOrLoadCircleTrackDefinition(circleSpline);
             CreateOrLoadSquareTrackDefinition();
 
-            Track trackBehaviour = GetOrAddTrackOnCircleRaceHost();
-            BindLifetimeScope(carDefinition, circleTrackDef, trackBehaviour);
+            CarSimulationNavigationAssetGenerator.Generate();
+            EnsureAuthoringSplineOnlyOnCircleRaceHost();
+            BindLifetimeScope(carDefinition, circleTrackDef);
 
             EditorSceneManager.MarkSceneDirty(scene);
             EditorSceneManager.SaveScene(scene);
@@ -313,11 +315,15 @@ namespace Game.CarSimulation.Editor
             return GameObject.Find("CircleRaceTrack");
         }
 
-        private static Track GetOrAddTrackOnCircleRaceHost()
+        /// <summary>
+        /// Keeps the scene spline for authoring <see cref="TrackDefinition"/> assets. The runtime <see cref="Track"/>
+        /// view is opened via navigation (see <see cref="CarSimulationNavigationAssetGenerator"/>).
+        /// </summary>
+        private static void EnsureAuthoringSplineOnlyOnCircleRaceHost()
         {
             if (!TryFindCircleRaceParent(out GameObject parent))
             {
-                return null;
+                return;
             }
 
             Transform legacyChild = parent.transform.Find("Track");
@@ -326,7 +332,16 @@ namespace Game.CarSimulation.Editor
                 Object.DestroyImmediate(legacyChild.gameObject);
             }
 
-            return EnsureTrackAndSplineContainer(parent);
+            if (parent.GetComponent<SplineContainer>() == null)
+            {
+                parent.AddComponent<SplineContainer>();
+            }
+
+            Track legacyTrack = parent.GetComponent<Track>();
+            if (legacyTrack != null)
+            {
+                Object.DestroyImmediate(legacyTrack);
+            }
         }
 
         private static bool TryFindCircleRaceParent(out GameObject parent)
@@ -341,17 +356,6 @@ namespace Game.CarSimulation.Editor
             return false;
         }
 
-        private static Track EnsureTrackAndSplineContainer(GameObject trackGo)
-        {
-            var container = trackGo.GetComponent<SplineContainer>() ?? trackGo.AddComponent<SplineContainer>();
-            var track = trackGo.GetComponent<Track>() ?? trackGo.AddComponent<Track>();
-            var trackSo = new SerializedObject(track);
-            trackSo.FindProperty("splineContainer").objectReferenceValue = container;
-            trackSo.ApplyModifiedPropertiesWithoutUndo();
-            EditorUtility.SetDirty(track);
-            return track;
-        }
-
         private static CarTrackScope GetOrAddCarTrackScope()
         {
             const string scopeName = "CarTrack_LifetimeScope";
@@ -359,23 +363,16 @@ namespace Game.CarSimulation.Editor
             return scopeGo.GetComponent<CarTrackScope>() ?? scopeGo.AddComponent<CarTrackScope>();
         }
 
-        private static void BindLifetimeScope(CarDefinition carDefinition, TrackDefinition trackDefinition, Track track)
+        private static void BindLifetimeScope(CarDefinition carDefinition, TrackDefinition trackDefinition)
         {
-            if (track == null)
-            {
-                Debug.LogError("Car Simulation: Track component is null; cannot bind CarTrackBootstrap.");
-                return;
-            }
-
-            CarTrackBootstrap bootstrap = WireBootstrapSerializedFields(carDefinition, trackDefinition, track);
-            WireScopeToBootstrap(bootstrap);
+            CarTrackBootstrap bootstrap = WireBootstrapSerializedFields(carDefinition, trackDefinition);
+            WireCarTrackScope(bootstrap);
         }
 
-        private static CarTrackBootstrap WireBootstrapSerializedFields(CarDefinition carDefinition, TrackDefinition trackDefinition, Track track)
+        private static CarTrackBootstrap WireBootstrapSerializedFields(CarDefinition carDefinition, TrackDefinition trackDefinition)
         {
             CarTrackBootstrap bootstrap = GetOrCreateCarTrackBootstrap();
             SerializedObject bootstrapSo = new SerializedObject(bootstrap);
-            bootstrapSo.FindProperty("track").objectReferenceValue = track;
             bootstrapSo.FindProperty("trackDefinition").objectReferenceValue = trackDefinition;
             bootstrapSo.FindProperty("carDefinition").objectReferenceValue = carDefinition;
             bootstrapSo.ApplyModifiedPropertiesWithoutUndo();
@@ -383,13 +380,43 @@ namespace Game.CarSimulation.Editor
             return bootstrap;
         }
 
-        private static void WireScopeToBootstrap(CarTrackBootstrap bootstrap)
+        private static void WireCarTrackScope(CarTrackBootstrap bootstrap)
         {
             CarTrackScope scope = GetOrAddCarTrackScope();
+            Transform holder = GetOrCreateNavigationViewHolder(scope.gameObject);
+
             SerializedObject scopeSo = new SerializedObject(scope);
             scopeSo.FindProperty("sceneBootstrap").objectReferenceValue = bootstrap;
+
+            var navSettings = AssetDatabase.LoadAssetAtPath<NavigationSettings>(
+                CarSimulationNavigationAssetGenerator.NavigationSettingsPath);
+            if (navSettings != null)
+            {
+                scopeSo.FindProperty("navigationSettings").objectReferenceValue = navSettings;
+            }
+            else
+            {
+                Debug.LogError(
+                    $"Car Simulation: Navigation Settings missing at {CarSimulationNavigationAssetGenerator.NavigationSettingsPath}.");
+            }
+
+            scopeSo.FindProperty("navigationViewHolder").objectReferenceValue = holder;
             scopeSo.ApplyModifiedPropertiesWithoutUndo();
             EditorUtility.SetDirty(scope);
+        }
+
+        private static Transform GetOrCreateNavigationViewHolder(GameObject scopeGo)
+        {
+            const string holderName = "NavigationViewHolder";
+            Transform existing = scopeGo.transform.Find(holderName);
+            if (existing != null)
+            {
+                return existing;
+            }
+
+            var holder = new GameObject(holderName);
+            holder.transform.SetParent(scopeGo.transform, false);
+            return holder.transform;
         }
 
         private static CarTrackBootstrap GetOrCreateCarTrackBootstrap()
