@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 808690069477040417}
   - component: {fileID: 8873298608154186486}
   - component: {fileID: 5334221029440222733}
+  - component: {fileID: 8451029384756102834}
   m_Layer: 0
   m_Name: Car
   m_TagString: Untagged
@@ -71,6 +72,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: Game.CarSimulation::Game.CarSimulation.CarSplineDriver
   splineAnimate: {fileID: 8873298608154186486}
   speedAttribute: {fileID: 11400000, guid: a99063be5b271b547adb25ed6084939b, type: 2}
+--- !u!114 &8451029384756102834
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2482284025406797222}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 593130be5f1f4824bb65bc81f09cc593, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.CarSimulation::Game.CarSimulation.CarView
+  splineDriver: {fileID: 5334221029440222733}
 --- !u!1 &4625068848465929795
 GameObject:
   m_ObjectHideFlags: 0

@@ -79,7 +79,8 @@ namespace Game.CarSimulation.Editor
             var existing = AssetDatabase.LoadAssetAtPath<GameObject>(carPrefabPath);
             if (existing != null)
             {
-                return existing;
+                EnsureCarPrefabDriverAndViewWired(speed);
+                return AssetDatabase.LoadAssetAtPath<GameObject>(carPrefabPath);
             }
 
             var go = GameObject.CreatePrimitive(PrimitiveType.Cube);
@@ -123,6 +124,32 @@ namespace Game.CarSimulation.Editor
             spline.Easing = SplineAnimate.EasingMode.None;
             spline.Loop = SplineAnimate.LoopMode.Loop;
             return spline;
+        }
+
+        private static void EnsureCarPrefabDriverAndViewWired(AttributeSO speed)
+        {
+            GameObject contents = PrefabUtility.LoadPrefabContents(carPrefabPath);
+            try
+            {
+                RepairCarPrefabContentsIfSplinePresent(contents, speed);
+            }
+            finally
+            {
+                PrefabUtility.UnloadPrefabContents(contents);
+            }
+        }
+
+        private static void RepairCarPrefabContentsIfSplinePresent(GameObject contents, AttributeSO speed)
+        {
+            var spline = contents.GetComponent<SplineAnimate>();
+            if (spline == null)
+            {
+                Debug.LogError("Car Simulation: Car prefab must have SplineAnimate on root; cannot repair wiring.");
+                return;
+            }
+
+            WireCarDriver(contents, spline, speed);
+            PrefabUtility.SaveAsPrefabAsset(contents, carPrefabPath);
         }
 
         private static void WireCarDriver(GameObject go, SplineAnimate spline, AttributeSO speed)

@@ -12,17 +12,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ccb89cab553aa7409956de487a36a40, type: 3}
   m_Name: CarDefinition
   m_EditorClassIdentifier: Game.CarSimulation::Game.CarSimulation.CarDefinition
-  entries:
-  - attribute: {fileID: 11400000, guid: a99063be5b271b547adb25ed6084939b, type: 2}
-    baseValue:
-      rid: 4306785076859895808
+  bag:
+    entries:
+    - attribute: {fileID: 11400000, guid: a99063be5b271b547adb25ed6084939b, type: 2}
+      baseValue:
+        rid: 4306785134842478841
   carPrefab: {fileID: 2482284025406797222, guid: 6f783d67944439c419e90723e4e9cbc3, type: 3}
   references:
     version: 2
     RefIds:
-    - rid: 4306785076859895808
+    - rid: 4306785134842478841
       type: {class: FloatAttributeValue, ns: Scaffold.Entities, asm: Scaffold.Entities}
       data:
-        value: 100
-        min: 0
-        max: 100
+        value: 50
+        min: -3.4028235e+38
+        max: 3.4028235e+38

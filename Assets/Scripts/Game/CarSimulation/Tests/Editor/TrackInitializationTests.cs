@@ -103,5 +103,17 @@ namespace Game.CarSimulation.Tests
                 Object.DestroyImmediate(go);
             }
         }
+
+        [Test]
+        public void CarPrefab_HasCarViewAndSplineDriverOnRoot()
+        {
+            const string path = "Assets/Game/CarSimulation/Prefabs/Car.prefab";
+            var prefab = UnityEditor.AssetDatabase.LoadAssetAtPath<GameObject>(path);
+            Assert.That(prefab, Is.Not.Null);
+            var carView = prefab.GetComponent<CarView>();
+            Assert.That(carView, Is.Not.Null);
+            var driver = prefab.GetComponent<CarSplineDriver>();
+            Assert.That(driver, Is.Not.Null);
+        }
     }
 }

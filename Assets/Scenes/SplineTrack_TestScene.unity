@@ -150,7 +150,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Game.CarSimulation::Game.CarSimulation.CarTrackBootstrap
   track: {fileID: 965027761}
   trackDefinition: {fileID: 11400000, guid: c1c1c1c1b2a3948576c5d4e3f2a1b0c9, type: 2}
-  carDefinition: {fileID: 0}
+  carDefinition: {fileID: 11400000, guid: b4e1eaf4e8dd58b418b4e6efc603f72e, type: 2}
 --- !u!4 &74913802
 Transform:
   m_ObjectHideFlags: 0
@@ -424,7 +424,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Game.CarSimulation::Game.CarSimulation.Track
   splineContainer: {fileID: 965027759}
-  splineExtrude: {fileID: 0}
+  splineExtrude: {fileID: 965027756}
 --- !u!1 &1310897983
 GameObject:
   m_ObjectHideFlags: 0
