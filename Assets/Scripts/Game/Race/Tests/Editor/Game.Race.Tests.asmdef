@@ -1,16 +1,15 @@
 {
-    "name": "Game.GearEngine.Tests",
-    "rootNamespace": "GearEngine.GearEngine.Tests",
+    "name": "Game.Race.Tests",
+    "rootNamespace": "GearEngine.Race.Tests",
     "references": [
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner",
+        "Game.Race",
+        "Game.CarSimulation",
         "Game.GearEngine",
-        "Scaffold.Events",
-        "Scaffold.Events.Container",
-        "Scaffold.MVVM.View",
+        "Scaffold.Entities",
         "Scaffold.MVVM.ViewModel",
-        "Scaffold.Navigation",
-        "VContainer"
+        "Scaffold.Navigation"
     ],
     "includePlatforms": [
         "Editor"

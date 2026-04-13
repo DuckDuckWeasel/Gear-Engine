@@ -1,5 +1,7 @@
 using System;
-using GearEngine.GearEngine.Presentation;
+using GearEngine.CarSimulation.Bootstrap;
+using GearEngine.GearEngine.Bootstrap;
+using GearEngine.GearEngine.Config;
 using Scaffold.Addressables.Container;
 using Scaffold.Events.Container;
 using Scaffold.Navigation;
@@ -10,13 +12,14 @@ using UnityEngine;
 using VContainer;
 using VContainer.Unity;
 
-namespace GearEngine.GearEngine.Bootstrap
+namespace GearEngine.Race.Bootstrap
 {
-    public class GearMechanicsScope : LifetimeScope
+    public sealed class RaceScope : LifetimeScope
     {
         [Header("Navigation")]
         [SerializeField]
         private NavigationSettings navigationSettings;
+
         [SerializeField]
         private Transform navigationViewHolder;
 
@@ -24,36 +27,59 @@ namespace GearEngine.GearEngine.Bootstrap
         [SerializeField]
         private BoardConfigSO boardConfig;
 
-        [Header("Optional test launcher")]
+        [Header("Bootstrap")]
         [SerializeField]
-        private GearTestSceneBootstrap sceneBootstrap;
+        private RaceBootstrap sceneBootstrap;
 
         protected override void Configure(IContainerBuilder builder)
         {
             ValidateScopeAssignments();
             BuildCrossLayerRegistration(builder);
             InstallAddressablesAndNavigation(builder);
-            InstallGearMechanics(builder);
+            new GearMechanicsInstaller(boardConfig).Install(builder);
+            new CarTrackInstaller().Install(builder);
             builder.RegisterComponent(sceneBootstrap).AsImplementedInterfaces().AsSelf();
         }
 
         private void ValidateScopeAssignments()
         {
+            RequireBoardConfig();
+            RequireNavigationSettings();
+            RequireNavigationViewHolder();
+            RequireSceneBootstrap();
+        }
+
+        private void RequireBoardConfig()
+        {
             if (boardConfig == null)
             {
-                throw new InvalidOperationException("GearMechanicsScope: assign boardConfig.");
+                throw new InvalidOperationException("[RaceScope] Assign boardConfig.");
             }
+        }
 
+        private void RequireNavigationSettings()
+        {
             if (navigationSettings == null)
             {
                 throw new InvalidOperationException(
-                    "GearMechanicsScope: assign navigationSettings (e.g. Assets/Data/Navigation/Navigation Settings.asset). Run GearEngine/Generate Navigation Assets if the Gear Engine view config is missing.");
+                    "[RaceScope] Assign navigationSettings (e.g. Assets/Data/Navigation/Navigation Settings.asset).");
             }
+        }
 
+        private void RequireNavigationViewHolder()
+        {
             if (navigationViewHolder == null)
             {
                 throw new InvalidOperationException(
-                    "GearMechanicsScope: assign navigationViewHolder to a transform that parents the GearEngineView (context view). Usually the GearEngine_Root transform.");
+                    "[RaceScope] Assign navigationViewHolder to the transform that parents the scene RaceView.");
+            }
+        }
+
+        private void RequireSceneBootstrap()
+        {
+            if (sceneBootstrap == null)
+            {
+                throw new InvalidOperationException("[RaceScope] Assign sceneBootstrap.");
             }
         }
 
@@ -73,7 +99,7 @@ namespace GearEngine.GearEngine.Bootstrap
                 }
                 catch (Exception ex)
                 {
-                    Debug.LogError($"[GearMechanicsScope] Cross-layer registration failed: {ex.Message}\n{ex.StackTrace}");
+                    Debug.LogError($"[RaceScope] Cross-layer registration failed: {ex.Message}\n{ex.StackTrace}");
                 }
             });
         }
@@ -84,12 +110,6 @@ namespace GearEngine.GearEngine.Bootstrap
             builder.RegisterInstance(navigationSettings);
             new NavigationInstaller(navigationViewHolder).Install(builder);
             new EventsInstaller().Install(builder);
-        }
-
-        private void InstallGearMechanics(IContainerBuilder builder)
-        {
-            var installer = new GearMechanicsInstaller(boardConfig);
-            installer.Install(builder);
         }
     }
 }

@@ -1,32 +1,29 @@
 {
-    "name": "Game.GearEngine",
-    "rootNamespace": "GearEngine.GearEngine",
+    "name": "Game.Race",
+    "rootNamespace": "GearEngine.Race",
     "references": [
+        "Game.GearEngine",
+        "Game.CarSimulation",
+        "Scaffold.Entities",
         "VContainer",
         "Scaffold.Addressables",
         "Scaffold.Addressables.Container",
-        "Scaffold.Events",
         "Scaffold.Events.Container",
         "Scaffold.MVVM",
         "Scaffold.MVVM.View",
         "Scaffold.MVVM.ViewModel",
         "Scaffold.Navigation",
         "Scaffold.Navigation.Container",
-        "Scaffold.Records",
         "Scaffold.Scope",
         "Unity.TextMeshPro",
-        "Unity.InputSystem"
+        "UnityEngine.UI"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": true,
     "precompiledReferences": [
-        "CommunityToolkit.Mvvm.dll",
-        "Sirenix.OdinInspector.Attributes.dll",
-        "Sirenix.Serialization.dll",
-        "Sirenix.Serialization.Config.dll",
-        "Sirenix.Utilities.dll"
+        "CommunityToolkit.Mvvm.dll"
     ],
     "autoReferenced": true,
     "defineConstraints": [],

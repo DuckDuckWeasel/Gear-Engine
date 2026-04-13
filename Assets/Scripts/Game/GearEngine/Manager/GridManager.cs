@@ -8,7 +8,7 @@ namespace GearEngine.GearEngine.Manager
     public class GridManager : IGridManager, ITickable
     {
         public float GlobalSpeedModifier { get; set; } = 1.0f;
-        public bool IsRunning { get; private set; } = true;
+        public bool IsRunning { get; private set; }
 
         [ShowInInspector, ReadOnly]
         private Dictionary<Vector2Int, IGridNode> nodes = new Dictionary<Vector2Int, IGridNode>();

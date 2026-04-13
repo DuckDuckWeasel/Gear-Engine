@@ -33,6 +33,12 @@ namespace GearEngine.GearEngine.Tests.Editor
         }
 
         [Test]
+        public void GridManager_Default_IsNotRunning()
+        {
+            Assert.IsFalse(new GridManager().IsRunning, "Simulation must start only after Play() (single entry point).");
+        }
+
+        [Test]
         public void Test_CoreGear_Rotates_And_Fires_Trigger_To_Neighbor()
         {
             var coreData = new GearConfigData

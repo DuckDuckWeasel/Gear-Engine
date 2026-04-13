@@ -1,7 +1,5 @@
 using System;
-using Scaffold.Events;
 using VContainer;
-using VContainer.Unity;
 
 namespace GearEngine.GearEngine.Bootstrap
 {
@@ -23,7 +21,6 @@ namespace GearEngine.GearEngine.Bootstrap
 
             builder.RegisterInstance(boardConfig);
 
-            builder.Register<EventController>(Lifetime.Singleton).AsImplementedInterfaces().AsSelf();
             builder.Register<GridManager>(Lifetime.Singleton).AsImplementedInterfaces().AsSelf();
             builder.Register<GearEngineService>(Lifetime.Singleton).As<IGearEngineService>();
 
