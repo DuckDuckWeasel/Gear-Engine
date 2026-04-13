@@ -15,16 +15,16 @@ MonoBehaviour:
   schemas:
     rid: 4306785109278982593
   asset:
-    m_AssetGUID: 5ca8a419e667f5543a9eb6bd0404bf34
+    m_AssetGUID: 92188c92e2caa3240ae6016fd22d425d
     m_SubObjectName: 
     m_SubObjectType: 
     m_SubObjectGUID: 
     m_EditorAssetChanged: 0
   viewType:
-    serializedType: '"Game.GearEngine.Presentation.GearEngineView, Game.GearEngine,
+    serializedType: '"Scaffold.GearEngine.Presentation.GearEngineView, Game.GearEngine,
       Version=0.0.0.0, Culture=neutral, PublicKeyToken=null"'
   controllerType:
-    serializedType: '"Game.GearEngine.Presentation.GearEngineViewModel, Game.GearEngine,
+    serializedType: '"Scaffold.GearEngine.Presentation.GearEngineViewModel, Game.GearEngine,
       Version=0.0.0.0, Culture=neutral, PublicKeyToken=null"'
   references:
     version: 2

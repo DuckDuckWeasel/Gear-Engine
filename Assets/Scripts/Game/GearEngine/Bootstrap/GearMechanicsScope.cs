@@ -67,10 +67,7 @@ namespace Scaffold.GearEngine.Bootstrap
             var installer = new GearMechanicsInstaller(boardConfig);
             installer.Install(builder);
 
-            if (sceneBootstrap != null)
-            {
-                builder.RegisterComponent(sceneBootstrap);
-            }
+            builder.RegisterComponent(sceneBootstrap).AsImplementedInterfaces().AsSelf();
         }
     }
 }

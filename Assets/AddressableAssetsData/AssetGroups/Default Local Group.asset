@@ -15,13 +15,13 @@ MonoBehaviour:
   m_GroupName: Default Local Group
   m_GUID: 0bdbf61a5d37c41ee95db94752ea759c
   m_SerializeEntries:
-  - m_GUID: 5ca8a419e667f5543a9eb6bd0404bf34
-    m_Address: Assets/Prefabs/Gear/GearEngineView_NavigationStub.prefab
+  - m_GUID: 6a4018fa1395fe74fa82a63a40a91772
+    m_Address: Assets/Prefabs/Tracks/Views/Track Test View.prefab
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 6a4018fa1395fe74fa82a63a40a91772
-    m_Address: Assets/Prefabs/Tracks/Views/Track Test View.prefab
+  - m_GUID: 92188c92e2caa3240ae6016fd22d425d
+    m_Address: Assets/Prefabs/Gear/GearEngine Test View.prefab
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
