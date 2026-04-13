@@ -26,7 +26,12 @@ MonoBehaviour:
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: ae9649b11d04d44e4835017c358d0574
-    m_Address: Assets/Game/GearEngine/Prefabs/GearEngineView_NavigationStub.prefab
+    m_Address: Assets/GearEngine/Gears/GearEngineView_NavigationStub.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e9f4a2b8c1d645e7a3b9c0d2e5f6a7b8
+    m_Address: Assets/GearEngine/Prefabs/Race/RaceNavigationStub.prefab
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
