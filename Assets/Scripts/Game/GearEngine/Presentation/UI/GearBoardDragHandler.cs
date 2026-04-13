@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-namespace Game.GearEngine.Presentation
+namespace Scaffold.GearEngine.Presentation.UI
 {
     [RequireComponent(typeof(BoardView))]
     internal sealed class GearBoardDragHandler : MonoBehaviour
@@ -172,7 +172,7 @@ namespace Game.GearEngine.Presentation
                 : EventSystem.current.IsPointerOverGameObject();
         }
 
-        private static void DestroyGO(GameObject go)
+        private void DestroyGO(GameObject go)
         {
             if (go == null)
             {

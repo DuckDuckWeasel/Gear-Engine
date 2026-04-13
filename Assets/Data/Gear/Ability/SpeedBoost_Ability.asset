@@ -11,5 +11,5 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 506a81b0cf12c4ea8b0548fabc51b1db, type: 3}
   m_Name: SpeedBoost_Ability
-  m_EditorClassIdentifier: Game.GearEngine::Game.GearEngine.SpeedBoostAbility
+  m_EditorClassIdentifier: Game.GearEngine::Scaffold.GearEngine.Abilities.SpeedBoostAbility
   SpeedMultiplier: 2

@@ -1,10 +1,10 @@
 using System.Linq;
-using Game.CarSimulation;
+using Scaffold.CarSimulation;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.Splines;
 
-namespace Game.CarSimulation.Tests
+namespace Scaffold.CarSimulation.Tests
 {
     public sealed class TrackInitializationTests
     {
@@ -31,7 +31,7 @@ namespace Game.CarSimulation.Tests
                     };
                     source.Closed = false;
 
-                    var viewModel = new TrackViewModel(def, car: null);
+                    var viewModel = new TrackViewModel(new TrackSimulation(def, car: null));
                     track.Bind(viewModel);
 
                     var target = container.Spline;
@@ -53,9 +53,9 @@ namespace Game.CarSimulation.Tests
         }
 
         [Test]
-        public void TrackViewModel_ThrowsWhenTrackDefinitionIsNull()
+        public void TrackViewModel_ThrowsWhenSimulationIsNull()
         {
-            Assert.Throws<System.ArgumentNullException>(() => new TrackViewModel(null, car: null));
+            Assert.Throws<System.ArgumentNullException>(() => new TrackViewModel(null));
         }
 
         [Test]
@@ -88,7 +88,7 @@ namespace Game.CarSimulation.Tests
                     };
                     def.Spline.Closed = true;
 
-                    var viewModel = new TrackViewModel(def, car: null);
+                    var viewModel = new TrackViewModel(new TrackSimulation(def, car: null));
                     track.Bind(viewModel);
 
                     Assert.That(extrude.Container, Is.SameAs(container));

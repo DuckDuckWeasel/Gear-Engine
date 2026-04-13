@@ -1,5 +1,19 @@
+global using Scaffold.GearEngine;
+global using Scaffold.GearEngine.Abilities;
+global using Scaffold.GearEngine.Bootstrap;
+global using Scaffold.GearEngine.Config;
+global using Scaffold.GearEngine.Events;
+global using Scaffold.GearEngine.Manager;
+global using Scaffold.GearEngine.Merge;
+global using Scaffold.GearEngine.Nodes;
+global using Scaffold.GearEngine.Visuals;
+global using Scaffold.GearEngine.Presentation;
+global using Scaffold.GearEngine.Presentation.UI;
+global using Scaffold.GearEngine.Presentation.UI.Tags;
+global using Scaffold.GearEngine.Presentation.World;
+
 using System.IO;
-using Game.GearEngine.Presentation;
+using Scaffold.GearEngine.Presentation;
 using Scaffold.Navigation;
 using UnityEditor;
 using UnityEditor.AddressableAssets;
@@ -7,7 +21,7 @@ using UnityEditor.AddressableAssets.Settings;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Game.GearEngine.Editor
+namespace Scaffold.GearEngine.Editor
 {
     /// <summary>
     /// Creates the navigation stub prefab, <see cref="ViewConfig"/>, and registers it on <c>Assets/Data/Navigation/Navigation Settings.asset</c>.

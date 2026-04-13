@@ -1,4 +1,4 @@
-namespace Game.GearEngine
+namespace Scaffold.GearEngine
 {
     public interface IGearEngineService
     {

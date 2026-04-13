@@ -2,7 +2,7 @@ using System;
 using Scaffold.MVVM;
 using UnityEngine;
 
-namespace Game.GearEngine.Presentation
+namespace Scaffold.GearEngine.Presentation
 {
     public class GearEngineView : View<GearEngineViewModel>
     {

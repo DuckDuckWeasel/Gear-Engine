@@ -1,4 +1,9 @@
 <Project>
+  <!-- Unity-generated csproj defaults to LangVersion 9; GearEngine uses file-scoped namespaces aligned to folder paths and global usings. -->
+  <PropertyGroup Condition="'$(MSBuildProjectName)' == 'Game.GearEngine' or '$(MSBuildProjectName)' == 'Game.GearEngine.Editor' or '$(MSBuildProjectName)' == 'Game.GearEngine.Tests'">
+    <LangVersion>11</LangVersion>
+  </PropertyGroup>
+
   <!-- Third-party AAGen (Assets/Packages/AAGen-0.3.0): do not run Scaffold analyzers on vendor code. -->
   <ItemGroup Condition="'$(MSBuildProjectName)' != 'Scaffold.Analyzers' and '$(MSBuildProjectName)' != 'Scaffold.Analyzers.Tests' and '$(MSBuildProjectName)' != 'Scaffold.Mvvm.Analyzers' and '$(MSBuildProjectName)' != 'Scaffold.Mvvm.Analyzers.Tests' and '$(MSBuildProjectName)' != 'AAGen.Editor'">
     <Analyzer Include="$(MSBuildThisFileDirectory)Analyzers/Output/Scaffold.Analyzers.dll"

@@ -2,7 +2,7 @@ using UnityEngine;
 using Scaffold.Events.Contracts;
 using VContainer;
 
-namespace Game.GearEngine
+namespace Scaffold.GearEngine.Abilities
 {
     [CreateAssetMenu(menuName = "GearEngine/Abilities/Destroy Self")]
     public class DestroySelfAbility : GearAbilitySO

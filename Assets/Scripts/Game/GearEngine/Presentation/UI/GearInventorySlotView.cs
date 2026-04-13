@@ -1,18 +1,19 @@
 using UnityEngine;
 
-namespace Game.GearEngine.Presentation
+namespace Scaffold.GearEngine.Presentation.UI
 {
     [RequireComponent(typeof(DragHandler))]
     public class GearInventorySlotView : MonoBehaviour
     {
         private GearInventoryViewModel viewModel;
         private DragHandler dragHandler;
+        private GearConfigData boundGearData;
 
-        public GearConfigData BoundGearData { get; private set; }
+        public GearConfigData BoundGearData => boundGearData;
 
         public void Bind(GearConfigData config, GearInventoryViewModel vm)
         {
-            BoundGearData = config;
+            boundGearData = config;
             viewModel = vm;
 
             dragHandler = GetComponent<DragHandler>();

@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.Splines;
 using Scaffold.MVVM;
 
-namespace Game.CarSimulation
+namespace Scaffold.CarSimulation
 {
     [DisallowMultipleComponent]
     [RequireComponent(typeof(SplineContainer))]
@@ -37,11 +37,13 @@ namespace Game.CarSimulation
             }
 
             InitializeTrack(viewModel.Track);
-            Bind<bool, bool>(() => viewModel.IsRunning, OnSimulationStateChanged);
+            Bind<SimulationLifecycleState, SimulationLifecycleState>(() => viewModel.State, SyncSpawnedCarPlayback);
             if (viewModel.Car != null)
             {
                 SpawnCarView(viewModel.Car);
             }
+
+            SyncSpawnedCarPlayback(viewModel.State);
         }
 
         protected override void OnUnbind()
@@ -56,9 +58,14 @@ namespace Game.CarSimulation
             DestroyCarViewIfNeeded();
         }
 
-        private void OnSimulationStateChanged(bool isRunning)
+        private void SyncSpawnedCarPlayback(SimulationLifecycleState state)
         {
-            spawnedCarView?.OnRunningChanged(isRunning);
+            if (spawnedCarView == null || viewModel == null)
+            {
+                return;
+            }
+
+            spawnedCarView.OnRunningChanged(state);
         }
 
         private void SpawnCarView(CarEntity car)
@@ -112,6 +119,7 @@ namespace Game.CarSimulation
             }
 
             view.Initialize(car, splineContainer, viewModel);
+            SyncSpawnedCarPlayback(viewModel.State);
         }
 
         private bool TryGetCarView(GameObject instance, out CarView view)

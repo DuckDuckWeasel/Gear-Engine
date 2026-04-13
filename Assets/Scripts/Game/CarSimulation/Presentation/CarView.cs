@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using UnityEngine.Splines;
 
-namespace Game.CarSimulation
+namespace Scaffold.CarSimulation
 {
     public sealed class CarView : MonoBehaviour
     {
@@ -13,20 +13,16 @@ namespace Game.CarSimulation
             GuardInitializeArguments(car, splineContainer, trackViewModel);
             CarSplineDriver driver = ResolveSplineDriver();
             driver.Bind(car, splineContainer);
-            if (trackViewModel.IsRunning)
-            {
-                driver.Play();
-            }
         }
 
-        internal void OnRunningChanged(bool isRunning)
+        internal void OnRunningChanged(SimulationLifecycleState state)
         {
             if (splineDriver == null)
             {
                 return;
             }
 
-            if (isRunning)
+            if (state is SimulationLifecycleState.Running)
             {
                 splineDriver.Play();
             }

@@ -1,6 +1,6 @@
 {
     "name": "Game.GearEngine.Tests",
-    "rootNamespace": "Game.GearEngine.Tests",
+    "rootNamespace": "Scaffold.GearEngine.Tests",
     "references": [
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner",
@@ -8,6 +8,7 @@
         "Scaffold.Events",
         "Scaffold.MVVM.View",
         "Scaffold.MVVM.ViewModel",
+        "Scaffold.Navigation",
         "VContainer"
     ],
     "includePlatforms": [

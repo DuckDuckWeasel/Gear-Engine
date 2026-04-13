@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Game.GearEngine
+namespace Scaffold.GearEngine.Config
 {
     [CreateAssetMenu(menuName = "GearEngine/Inventory Loadout", fileName = "GearInventoryLoadout")]
     public sealed class GearInventoryLoadoutSO : ScriptableObject

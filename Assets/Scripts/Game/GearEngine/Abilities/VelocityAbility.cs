@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Game.GearEngine
+namespace Scaffold.GearEngine.Abilities
 {
     [CreateAssetMenu(fileName = "VelocityAbility", menuName = "GearEngine/Abilities/Velocity")]
     public class VelocityAbility : GearAbilitySO

@@ -11,7 +11,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7593c65573a10438b902c4779a2b3fee, type: 3}
   m_Name: BasicBoardConfig
-  m_EditorClassIdentifier: Game.GearEngine::Game.GearEngine.BoardConfigSO
+  m_EditorClassIdentifier: Game.GearEngine::Scaffold.GearEngine.Config.BoardConfigSO
   GridWidth: 7
   GridHeight: 5
   Spacing: 0.75

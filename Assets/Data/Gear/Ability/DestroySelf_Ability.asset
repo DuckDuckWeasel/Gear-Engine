@@ -11,4 +11,4 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e586fd1ced8fa4d44b938757a23f1d67, type: 3}
   m_Name: DestroySelf_Ability
-  m_EditorClassIdentifier: Game.GearEngine::Game.GearEngine.DestroySelfAbility
+  m_EditorClassIdentifier: Game.GearEngine::Scaffold.GearEngine.Abilities.DestroySelfAbility

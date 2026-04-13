@@ -1,7 +1,7 @@
 using Scaffold.Entities;
 using UnityEngine;
 
-namespace Game.CarSimulation
+namespace Scaffold.CarSimulation
 {
     [CreateAssetMenu(menuName = "Game/Car/Car Definition", fileName = "CarDefinition")]
     public sealed class CarDefinition : EntityDefinition

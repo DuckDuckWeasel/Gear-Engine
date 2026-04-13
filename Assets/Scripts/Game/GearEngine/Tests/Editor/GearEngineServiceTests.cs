@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using NUnit.Framework;
 using UnityEngine;
 
-namespace Game.GearEngine.Tests
+namespace Scaffold.GearEngine.Tests.Editor
 {
     [TestFixture]
     public class GearEngineServiceTests

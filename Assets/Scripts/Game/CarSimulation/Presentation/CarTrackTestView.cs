@@ -1,11 +1,9 @@
 using Scaffold.MVVM;
 using UnityEngine;
 
-namespace Game.CarSimulation
+namespace Scaffold.CarSimulation
 {
-    /// <summary>
-    /// A sample view for the spline track test scene: hosts <see cref="Track"/> as a reusable ViewComponent.
-    /// </summary>
+    /// <summary>Sample view for the spline track test scene: hosts <see cref="Track"/> as a reusable ViewComponent.</summary>
     public sealed class CarTrackTestView : View<TrackViewModel>
     {
         [SerializeField] private Track track;
@@ -19,6 +17,7 @@ namespace Game.CarSimulation
             }
 
             track.Bind(viewModel);
+            viewModel.Toggle(true);
         }
 
         protected override void OnUnbind()

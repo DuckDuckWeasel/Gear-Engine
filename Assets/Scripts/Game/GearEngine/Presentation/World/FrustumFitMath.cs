@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace Game.GearEngine.Presentation.World
+namespace Scaffold.GearEngine.Presentation.World
 {
     /// <summary>
     /// Pure-math helpers for the FrustumFit system. No MonoBehaviour, no Unity lifecycle.

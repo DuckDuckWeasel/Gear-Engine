@@ -1,11 +1,9 @@
 using System;
 
-namespace Game.GearEngine
+namespace Scaffold.GearEngine
 {
     public sealed class GearEngineService : IGearEngineService
     {
-        private readonly IGridManager gridManager;
-
         public GearEngineService(IGridManager gridManager)
         {
             this.gridManager = gridManager ?? throw new ArgumentNullException(nameof(gridManager));
@@ -13,8 +11,16 @@ namespace Game.GearEngine
 
         public bool IsRunning => gridManager.IsRunning;
 
-        public void Play() => gridManager.Play();
+        public void Play()
+        {
+            gridManager.Play();
+        }
 
-        public void Stop() => gridManager.Stop();
+        public void Stop()
+        {
+            gridManager.Stop();
+        }
+
+        private readonly IGridManager gridManager;
     }
 }

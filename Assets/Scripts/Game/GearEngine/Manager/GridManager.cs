@@ -3,7 +3,7 @@ using UnityEngine;
 using VContainer.Unity;
 using Sirenix.OdinInspector;
 
-namespace Game.GearEngine
+namespace Scaffold.GearEngine.Manager
 {
     public class GridManager : IGridManager, ITickable
     {

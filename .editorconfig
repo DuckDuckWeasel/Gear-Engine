@@ -34,8 +34,8 @@ dotnet_diagnostic.SCA2004.severity = warning   # Restrict static methods in non-
 # --- Category 3 (organization): SCA3005–SCA3006, SCA3002–SCA3003 ---
 dotnet_diagnostic.SCA3005.severity = warning   # Namespace first segment must be allowed (root + allowed_roots)
 dotnet_diagnostic.SCA3006.severity = warning   # Full namespace must match folder-derived path under content roots
-scaffold.SCA3005.root = Scaffold
-scaffold.SCA3005.allowed_roots = GameModule;GameModuleDTO;CleanupProject
+scaffold.SCA3005.root = GearEngine
+scaffold.SCA3005.allowed_roots = GameModule;GameModuleDTO;Scaffold
 scaffold.SCA3006.content_roots = Assets/Scripts;LiveOps/Project
 dotnet_diagnostic.SCA3002.severity = warning   # Extra types: own file if shared/public, else place after primary type
 dotnet_diagnostic.SCA3003.severity = warning   # Class member order
@@ -95,34 +95,3 @@ dotnet_diagnostic.SCA3006.severity = none
 # LiveOps level module keeps assembly identity Madbox.Level (distinct from Madbox.Levels); lives under Meta/Levels for discoverability.
 dotnet_diagnostic.SCA3005.severity = none
 dotnet_diagnostic.SCA3006.severity = none
-
-# Game modules under Scripts/Game — legacy Game.* namespaces (GearEngine, CarSimulation, …).
-[Assets/Scripts/Game/CarSimulation/**/*.cs]
-dotnet_diagnostic.SCA3005.severity = none
-dotnet_diagnostic.SCA3006.severity = none
-dotnet_diagnostic.SCA3003.severity = none
-
-# Third-party AAGen — vendor code; same path may compile in Tests or other projects (see Directory.Build.props for AAGen.Editor).
-[Assets/Packages/AAGen-0.3.0/**]
-dotnet_diagnostic.SCA1001.severity = none
-dotnet_diagnostic.SCA1002.severity = none
-dotnet_diagnostic.SCA1003.severity = none
-dotnet_diagnostic.SCA1004.severity = none
-dotnet_diagnostic.SCA1005.severity = none
-dotnet_diagnostic.SCA1006.severity = none
-dotnet_diagnostic.SCA1007.severity = none
-dotnet_diagnostic.SCA2001.severity = none
-dotnet_diagnostic.SCA2002.severity = none
-dotnet_diagnostic.SCA2003.severity = none
-dotnet_diagnostic.SCA2004.severity = none
-dotnet_diagnostic.SCA3002.severity = none
-dotnet_diagnostic.SCA3003.severity = none
-dotnet_diagnostic.SCA3005.severity = none
-dotnet_diagnostic.SCA3006.severity = none
-dotnet_diagnostic.SCA6001.severity = none
-dotnet_diagnostic.SCA6002.severity = none
-dotnet_diagnostic.SCA8001.severity = none
-dotnet_diagnostic.SCA8002.severity = none
-dotnet_diagnostic.SCM001.severity = none
-dotnet_diagnostic.SCM002.severity = none
-dotnet_diagnostic.SCM003.severity = none

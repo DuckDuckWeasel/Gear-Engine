@@ -1,6 +1,6 @@
 using VContainer;
 
-namespace Game.CarSimulation
+namespace Scaffold.CarSimulation
 {
     public sealed class CarTrackInstaller
     {
@@ -11,7 +11,7 @@ namespace Game.CarSimulation
                 throw new System.ArgumentNullException(nameof(builder));
             }
 
-            builder.Register<ITrackSimulationService, TrackSimulationService>(Lifetime.Singleton);
+            builder.Register<TrackSimulationFactory>(Lifetime.Singleton);
         }
     }
 }

@@ -2,7 +2,7 @@ using System;
 using Scaffold.Entities;
 using UnityEngine;
 
-namespace Game.CarSimulation
+namespace Scaffold.CarSimulation
 {
     [Serializable]
     public sealed class CarEntity

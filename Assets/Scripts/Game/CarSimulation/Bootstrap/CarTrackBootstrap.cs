@@ -4,29 +4,23 @@ using UnityEngine;
 using VContainer;
 using VContainer.Unity;
 
-namespace Game.CarSimulation
+namespace Scaffold.CarSimulation
 {
     public sealed class CarTrackBootstrap : MonoBehaviour, IInitializable
     {
         [SerializeField] private TrackDefinition trackDefinition;
         [SerializeField] private CarDefinition carDefinition;
 
-        private ITrackSimulationService service;
-        private INavigation navigation;
-
-        [Inject]
-        public void Construct(ITrackSimulationService service, INavigation navigation)
-        {
-            this.service = service ?? throw new ArgumentNullException(nameof(service));
-            this.navigation = navigation ?? throw new ArgumentNullException(nameof(navigation));
-        }
+        [Inject] private TrackSimulationFactory factory;
+        [Inject] private INavigation navigation;
 
         public void Initialize()
         {
             try
             {
                 ValidateSerializedReferences();
-                RunStartupSequence();
+                TrackSimulation simulation = factory.Create(carDefinition, trackDefinition);
+                navigation.Open(new TrackViewModel(simulation));
             }
             catch (Exception ex)
             {
@@ -46,13 +40,6 @@ namespace Game.CarSimulation
             {
                 throw new InvalidOperationException("[CarTrackBootstrap] CarDefinition is missing.");
             }
-        }
-
-        private void RunStartupSequence()
-        {
-            service.CreateSimulation(carDefinition, trackDefinition);
-            navigation.Open(service.TrackViewModel);
-            service.ToggleSimulation(true);
         }
     }
 }

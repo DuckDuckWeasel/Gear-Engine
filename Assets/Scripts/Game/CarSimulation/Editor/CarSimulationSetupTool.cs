@@ -1,5 +1,5 @@
 using System.IO;
-using Game.CarSimulation;
+using Scaffold.CarSimulation;
 using Scaffold.Entities;
 using Scaffold.Navigation;
 using UnityEditor;
@@ -8,7 +8,7 @@ using UnityEngine;
 using UnityEngine.Splines;
 using Object = UnityEngine.Object;
 
-namespace Game.CarSimulation.Editor
+namespace Scaffold.CarSimulation.Editor
 {
     public static class CarSimulationSetupTool
     {
@@ -315,10 +315,7 @@ namespace Game.CarSimulation.Editor
             return GameObject.Find("CircleRaceTrack");
         }
 
-        /// <summary>
-        /// Keeps the scene spline for authoring <see cref="TrackDefinition"/> assets. The runtime <see cref="Track"/>
-        /// view is opened via navigation (see <see cref="CarSimulationNavigationAssetGenerator"/>).
-        /// </summary>
+        /// <summary>Sample: Keeps the scene spline for authoring <see cref="TrackDefinition"/>; runtime <see cref="Track"/> opens via navigation.</summary>
         private static void EnsureAuthoringSplineOnlyOnCircleRaceHost()
         {
             if (!TryFindCircleRaceParent(out GameObject parent))
@@ -326,17 +323,30 @@ namespace Game.CarSimulation.Editor
                 return;
             }
 
+            DestroyLegacyTrackChild(parent);
+            EnsureSplineContainerOnParent(parent);
+            RemoveLegacyTrackComponent(parent);
+        }
+
+        private static void DestroyLegacyTrackChild(GameObject parent)
+        {
             Transform legacyChild = parent.transform.Find("Track");
             if (legacyChild != null)
             {
                 Object.DestroyImmediate(legacyChild.gameObject);
             }
+        }
 
+        private static void EnsureSplineContainerOnParent(GameObject parent)
+        {
             if (parent.GetComponent<SplineContainer>() == null)
             {
                 parent.AddComponent<SplineContainer>();
             }
+        }
 
+        private static void RemoveLegacyTrackComponent(GameObject parent)
+        {
             Track legacyTrack = parent.GetComponent<Track>();
             if (legacyTrack != null)
             {
@@ -384,25 +394,24 @@ namespace Game.CarSimulation.Editor
         {
             CarTrackScope scope = GetOrAddCarTrackScope();
             Transform holder = GetOrCreateNavigationViewHolder(scope.gameObject);
-
             SerializedObject scopeSo = new SerializedObject(scope);
             scopeSo.FindProperty("sceneBootstrap").objectReferenceValue = bootstrap;
-
-            var navSettings = AssetDatabase.LoadAssetAtPath<NavigationSettings>(
-                CarSimulationNavigationAssetGenerator.NavigationSettingsPath);
-            if (navSettings != null)
-            {
-                scopeSo.FindProperty("navigationSettings").objectReferenceValue = navSettings;
-            }
-            else
-            {
-                Debug.LogError(
-                    $"Car Simulation: Navigation Settings missing at {CarSimulationNavigationAssetGenerator.NavigationSettingsPath}.");
-            }
-
+            AssignNavigationSettingsToScope(scopeSo);
             scopeSo.FindProperty("navigationViewHolder").objectReferenceValue = holder;
             scopeSo.ApplyModifiedPropertiesWithoutUndo();
             EditorUtility.SetDirty(scope);
+        }
+
+        private static void AssignNavigationSettingsToScope(SerializedObject scopeSo)
+        {
+            var navSettings = AssetDatabase.LoadAssetAtPath<NavigationSettings>(CarSimulationNavigationAssetGenerator.NavigationSettingsPath);
+            if (navSettings != null)
+            {
+                scopeSo.FindProperty("navigationSettings").objectReferenceValue = navSettings;
+                return;
+            }
+
+            Debug.LogError($"Car Simulation: Navigation Settings missing at {CarSimulationNavigationAssetGenerator.NavigationSettingsPath}.");
         }
 
         private static Transform GetOrCreateNavigationViewHolder(GameObject scopeGo)

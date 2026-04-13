@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace Game.GearEngine.Presentation.World
+namespace Scaffold.GearEngine.Presentation.World
 {
     /// <summary>
     /// Scales a world-space GameObject so it occupies a configured fraction of
@@ -124,7 +124,7 @@ namespace Game.GearEngine.Presentation.World
 
         // --- Private helpers -------------------------------------------------
 
-        private static Vector2 ExtractAxesPair(Vector3 v, FrustumFitAxes axes)
+        private Vector2 ExtractAxesPair(Vector3 v, FrustumFitAxes axes)
         {
             return axes switch
             {

@@ -11,7 +11,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: faf34a39f5b75466d9fbf4f99fc70808, type: 3}
   m_Name: SpeedBuffGearConfig
-  m_EditorClassIdentifier: Game.GearEngine::Game.GearEngine.GearConfig
+  m_EditorClassIdentifier: Game.GearEngine::Scaffold.GearEngine.Config.GearConfig
   data:
     Id: speed_buff_gear
     Category: 0

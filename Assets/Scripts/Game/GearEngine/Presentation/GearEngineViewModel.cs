@@ -1,9 +1,9 @@
 using System;
-using Game.GearEngine;
+using Scaffold.GearEngine;
 using Scaffold.MVVM;
 using VContainer;
 
-namespace Game.GearEngine.Presentation
+namespace Scaffold.GearEngine.Presentation
 {
     public sealed class GearEngineViewModel : ViewModel
     {

@@ -3,7 +3,7 @@ using Scaffold.Events;
 using VContainer;
 using VContainer.Unity;
 
-namespace Game.GearEngine
+namespace Scaffold.GearEngine.Bootstrap
 {
     /// <summary>
     /// Registers GearEngine services and scene-resident instances. No views or view models.

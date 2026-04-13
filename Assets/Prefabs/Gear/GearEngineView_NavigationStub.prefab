@@ -47,7 +47,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fb47ea7d310fe4a7280e426a23f91be7, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Game.GearEngine::Game.GearEngine.Presentation.SimulationControlView
+  m_EditorClassIdentifier: Game.GearEngine::Scaffold.GearEngine.Presentation.UI.SimulationControlView
   toggleButton: {fileID: 0}
   buttonText: {fileID: 0}
 --- !u!1 &2756896095443748545
@@ -98,7 +98,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7d513bc507ea442789dedcb9ea884e65, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Game.GearEngine::Game.GearEngine.Presentation.GearInventoryView
+  m_EditorClassIdentifier: Game.GearEngine::Scaffold.GearEngine.Presentation.UI.GearInventoryView
   itemsContainer: {fileID: 3224704520035674575}
   gridBoardTag: {fileID: 0}
 --- !u!1 &4351867064351572508
@@ -183,7 +183,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 28cae4dad4cae425dbf7c1a06cd4e3ea, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Game.GearEngine::Game.GearEngine.Presentation.BoardView
+  m_EditorClassIdentifier: Game.GearEngine::Scaffold.GearEngine.Presentation.UI.BoardView
   draggedView: {fileID: 0}
 --- !u!1 &7987670826649421502
 GameObject:
@@ -301,7 +301,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a1b2c3d4e5f6478980a1b2c3d4e5f606, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Game.GearEngine::Game.GearEngine.Presentation.GearEngineView
+  m_EditorClassIdentifier: Game.GearEngine::Scaffold.GearEngine.Presentation.GearEngineView
   type: 0
   simControlView: {fileID: 9060516978104247446}
   inventoryView: {fileID: 8992578647848103924}

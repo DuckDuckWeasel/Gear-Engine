@@ -1,7 +1,7 @@
 using UnityEngine;
 using VContainer;
 
-namespace Game.GearEngine
+namespace Scaffold.GearEngine.Bootstrap
 {
     public class GearNodeFactory
     {

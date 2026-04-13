@@ -1,4 +1,4 @@
-namespace Game.GearEngine.Presentation.World
+namespace Scaffold.GearEngine.Presentation.World
 {
     /// <summary>
     /// Selects which two local-space axes of the target object map to

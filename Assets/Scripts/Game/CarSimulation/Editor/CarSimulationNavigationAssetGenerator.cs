@@ -6,11 +6,9 @@ using UnityEditor.AddressableAssets.Settings;
 using UnityEngine;
 using UnityEngine.Splines;
 
-namespace Game.CarSimulation.Editor
+namespace Scaffold.CarSimulation.Editor
 {
-    /// <summary>
-    /// Creates the navigation stub prefab, <see cref="ViewConfig"/>, and registers it on <c>Assets/Data/Navigation/Navigation Settings.asset</c>.
-    /// </summary>
+    /// <summary>Sample: Creates the navigation stub prefab, <see cref="ViewConfig"/>, and registers it on Navigation Settings.</summary>
     public static class CarSimulationNavigationAssetGenerator
     {
         public const string StubPrefabPath = "Assets/Game/CarSimulation/Prefabs/CarTrackView_NavigationStub.prefab";
@@ -22,20 +20,25 @@ namespace Game.CarSimulation.Editor
         {
             try
             {
-                EnsurePrefabFolder();
-                EnsureConfigsFolder();
-                EnsureStubPrefab();
-                EnsureStubIsAddressable();
-                ViewConfig viewConfig = EnsureViewConfig();
-                RegisterViewConfigOnNavigationSettings(viewConfig);
-                AssetDatabase.SaveAssets();
-                AssetDatabase.Refresh();
-                Debug.Log($"<color=#33ff33>[CarSimulation]</color> Navigation assets ready. ViewConfig: {ViewConfigPath}");
+                RunNavigationPipeline();
             }
             catch (System.Exception ex)
             {
                 Debug.LogError($"[CarSimulationNavigationAssetGenerator] {ex.Message}\n{ex.StackTrace}");
             }
+        }
+
+        private static void RunNavigationPipeline()
+        {
+            EnsurePrefabFolder();
+            EnsureConfigsFolder();
+            EnsureStubPrefab();
+            EnsureStubIsAddressable();
+            ViewConfig viewConfig = EnsureViewConfig();
+            RegisterViewConfigOnNavigationSettings(viewConfig);
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+            Debug.Log($"<color=#33ff33>[CarSimulation]</color> Navigation assets ready. ViewConfig: {ViewConfigPath}");
         }
 
         private static void EnsurePrefabFolder()
@@ -58,24 +61,34 @@ namespace Game.CarSimulation.Editor
 
         private static void EnsureStubPrefab()
         {
+            if (File.Exists(StubPrefabPath) && StubPrefabHasCarTrackView())
+            {
+                return;
+            }
+
             if (File.Exists(StubPrefabPath))
             {
-                GameObject contents = PrefabUtility.LoadPrefabContents(StubPrefabPath);
-                try
-                {
-                    if (contents.GetComponentInChildren<CarTrackTestView>(true) != null)
-                    {
-                        return;
-                    }
-                }
-                finally
-                {
-                    PrefabUtility.UnloadPrefabContents(contents);
-                }
-
                 AssetDatabase.DeleteAsset(StubPrefabPath);
             }
 
+            BuildAndSaveStubPrefab();
+        }
+
+        private static bool StubPrefabHasCarTrackView()
+        {
+            GameObject contents = PrefabUtility.LoadPrefabContents(StubPrefabPath);
+            try
+            {
+                return contents.GetComponentInChildren<CarTrackTestView>(true) != null;
+            }
+            finally
+            {
+                PrefabUtility.UnloadPrefabContents(contents);
+            }
+        }
+
+        private static void BuildAndSaveStubPrefab()
+        {
             var root = new GameObject("CarTrackViewStub");
             root.AddComponent<CarTrackTestView>();
 
@@ -86,60 +99,98 @@ namespace Game.CarSimulation.Editor
 
             var pathGo = new GameObject("Path");
             pathGo.transform.SetParent(trackGo.transform, false);
-            var extrude = pathGo.AddComponent<SplineExtrude>();
+            pathGo.AddComponent<SplineExtrude>();
 
+            WireTrackSerializedFields(track, container, pathGo.GetComponent<SplineExtrude>());
+            WireShellTrackReference(root, track);
+
+            PrefabUtility.SaveAsPrefabAsset(root, StubPrefabPath);
+            Object.DestroyImmediate(root);
+        }
+
+        private static void WireTrackSerializedFields(Track track, SplineContainer container, SplineExtrude extrude)
+        {
             var trackSo = new SerializedObject(track);
             trackSo.FindProperty("splineContainer").objectReferenceValue = container;
             trackSo.FindProperty("splineExtrude").objectReferenceValue = extrude;
             trackSo.ApplyModifiedPropertiesWithoutUndo();
+        }
 
+        private static void WireShellTrackReference(GameObject root, Track track)
+        {
             var shellSo = new SerializedObject(root.GetComponent<CarTrackTestView>());
             shellSo.FindProperty("track").objectReferenceValue = track;
             shellSo.ApplyModifiedPropertiesWithoutUndo();
-
-            PrefabUtility.SaveAsPrefabAsset(root, StubPrefabPath);
-            Object.DestroyImmediate(root);
         }
 
         private static void EnsureStubIsAddressable()
         {
             try
             {
-                AddressableAssetSettings settings = AddressableAssetSettingsDefaultObject.Settings;
-                if (settings == null)
-                {
-                    Debug.LogWarning(
-                        "[CarSimulationNavigationAssetGenerator] AddressableAssetSettings not found. " +
-                        "Open Window > Asset Management > Addressables > Groups, then run this menu again.");
-                    return;
-                }
-
-                string guid = AssetDatabase.AssetPathToGUID(StubPrefabPath);
-                if (string.IsNullOrEmpty(guid))
-                {
-                    Debug.LogWarning($"[CarSimulationNavigationAssetGenerator] Stub prefab has no GUID yet ({StubPrefabPath}).");
-                    return;
-                }
-
-                AddressableAssetEntry existing = settings.FindAssetEntry(guid);
-                if (existing != null)
-                {
-                    return;
-                }
-
-                AddressableAssetEntry entry = settings.CreateOrMoveEntry(guid, settings.DefaultGroup);
-                if (entry == null)
-                {
-                    Debug.LogError("[CarSimulationNavigationAssetGenerator] CreateOrMoveEntry returned null for navigation stub.");
-                    return;
-                }
-
-                entry.address = StubPrefabPath;
+                TryRegisterStubAsAddressable();
             }
             catch (System.Exception ex)
             {
                 Debug.LogError($"[CarSimulationNavigationAssetGenerator] Addressable registration failed: {ex.Message}\n{ex.StackTrace}");
             }
+        }
+
+        private static void TryRegisterStubAsAddressable()
+        {
+            if (!TryGetAddressableSettings(out AddressableAssetSettings settings))
+            {
+                return;
+            }
+
+            if (!TryGetStubPrefabGuid(out string guid))
+            {
+                return;
+            }
+
+            EnsureStubAddressableEntry(settings, guid);
+        }
+
+        private static bool TryGetAddressableSettings(out AddressableAssetSettings settings)
+        {
+            settings = AddressableAssetSettingsDefaultObject.Settings;
+            if (settings != null)
+            {
+                return true;
+            }
+
+            Debug.LogWarning(
+                "[CarSimulationNavigationAssetGenerator] AddressableAssetSettings not found. " +
+                "Open Window > Asset Management > Addressables > Groups, then run this menu again.");
+            return false;
+        }
+
+        private static bool TryGetStubPrefabGuid(out string guid)
+        {
+            guid = AssetDatabase.AssetPathToGUID(StubPrefabPath);
+            if (!string.IsNullOrEmpty(guid))
+            {
+                return true;
+            }
+
+            Debug.LogWarning($"[CarSimulationNavigationAssetGenerator] Stub prefab has no GUID yet ({StubPrefabPath}).");
+            return false;
+        }
+
+        private static void EnsureStubAddressableEntry(AddressableAssetSettings settings, string guid)
+        {
+            if (settings.FindAssetEntry(guid) != null)
+            {
+                return;
+            }
+
+            AddressableAssetEntry entry = settings.CreateOrMoveEntry(guid, settings.DefaultGroup);
+            if (entry == null)
+            {
+                Debug.LogError("[CarSimulationNavigationAssetGenerator] CreateOrMoveEntry returned null for navigation stub.");
+                return;
+            }
+
+            entry.address = StubPrefabPath;
         }
 
         private static ViewConfig EnsureViewConfig()
@@ -161,12 +212,25 @@ namespace Game.CarSimulation.Editor
 
         private static void AssignStubAssetReference(ViewConfig viewConfig)
         {
+            string guid = RequireStubGuid();
+            ApplyStubGuidToSerializedViewConfig(viewConfig, guid);
+            viewConfig.SetType(typeof(CarTrackTestView));
+            EditorUtility.SetDirty(viewConfig);
+        }
+
+        private static string RequireStubGuid()
+        {
             string guid = AssetDatabase.AssetPathToGUID(StubPrefabPath);
             if (string.IsNullOrEmpty(guid))
             {
                 throw new System.InvalidOperationException($"Stub prefab not found at {StubPrefabPath}.");
             }
 
+            return guid;
+        }
+
+        private static void ApplyStubGuidToSerializedViewConfig(ViewConfig viewConfig, string guid)
+        {
             var so = new SerializedObject(viewConfig);
             SerializedProperty assetProp = so.FindProperty("asset") ?? so.FindProperty("viewAsset");
             if (assetProp == null)
@@ -181,8 +245,6 @@ namespace Game.CarSimulation.Editor
             }
 
             so.ApplyModifiedPropertiesWithoutUndo();
-            viewConfig.SetType(typeof(CarTrackTestView));
-            EditorUtility.SetDirty(viewConfig);
         }
 
         private static void RegisterViewConfigOnNavigationSettings(ViewConfig viewConfig)
@@ -194,28 +256,50 @@ namespace Game.CarSimulation.Editor
                 return;
             }
 
+            if (TryAppendScreenIfMissing(settings, viewConfig))
+            {
+                EditorUtility.SetDirty(settings);
+            }
+        }
+
+        private static bool TryAppendScreenIfMissing(NavigationSettings settings, ViewConfig viewConfig)
+        {
             var so = new SerializedObject(settings);
             SerializedProperty screens = so.FindProperty("screens");
             if (screens == null)
             {
-                return;
+                return false;
             }
 
-            for (int i = 0; i < screens.arraySize; i++)
+            return SyncScreensProperty(so, screens, viewConfig);
+        }
+
+        private static bool SyncScreensProperty(SerializedObject so, SerializedProperty screens, ViewConfig viewConfig)
+        {
+            if (ArrayContainsReference(screens, viewConfig))
             {
-                if (screens.GetArrayElementAtIndex(i).objectReferenceValue == viewConfig)
-                {
-                    so.ApplyModifiedPropertiesWithoutUndo();
-                    EditorUtility.SetDirty(settings);
-                    return;
-                }
+                so.ApplyModifiedPropertiesWithoutUndo();
+                return true;
             }
 
             int idx = screens.arraySize;
             screens.InsertArrayElementAtIndex(idx);
             screens.GetArrayElementAtIndex(idx).objectReferenceValue = viewConfig;
             so.ApplyModifiedPropertiesWithoutUndo();
-            EditorUtility.SetDirty(settings);
+            return true;
+        }
+
+        private static bool ArrayContainsReference(SerializedProperty screens, UnityEngine.Object reference)
+        {
+            for (int i = 0; i < screens.arraySize; i++)
+            {
+                if (screens.GetArrayElementAtIndex(i).objectReferenceValue == reference)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 }

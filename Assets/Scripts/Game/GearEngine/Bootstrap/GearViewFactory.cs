@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Game.GearEngine
+namespace Scaffold.GearEngine.Bootstrap
 {
     public class GearViewFactory
     {

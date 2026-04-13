@@ -1,7 +1,7 @@
 using UnityEngine;
 using Scaffold.Events.Contracts;
 
-namespace Game.GearEngine
+namespace Scaffold.GearEngine.Nodes
 {
     public class CoreGearNode : NodeBase
     {

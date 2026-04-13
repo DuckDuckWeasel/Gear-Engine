@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
-using Game.GearEngine;
+using Scaffold.GearEngine;
 using Scaffold.MVVM;
 using UnityEngine;
 
-namespace Game.GearEngine.Presentation
+namespace Scaffold.GearEngine.Presentation.UI
 {
     [DisallowMultipleComponent]
     public class BoardView : ViewComponent<BoardViewModel>
@@ -147,7 +147,7 @@ namespace Game.GearEngine.Presentation
             viewsByNode.Clear();
         }
 
-        private static void DestroyViewGameObject(GameObject go)
+        private void DestroyViewGameObject(GameObject go)
         {
             if (go == null)
             {

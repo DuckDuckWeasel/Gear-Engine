@@ -1,12 +1,12 @@
-using Game.GearEngine;
-using Game.GearEngine.Presentation;
+using Scaffold.GearEngine;
+using Scaffold.GearEngine.Presentation;
 using NUnit.Framework;
 using Scaffold.Events;
 using Scaffold.Events.Contracts;
 using UnityEngine;
 using VContainer;
 
-namespace Game.GearEngine.Tests
+namespace Scaffold.GearEngine.Tests.Editor
 {
     [TestFixture]
     public class GearEngineViewTests

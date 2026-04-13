@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Game.GearEngine
+namespace Scaffold.GearEngine.Abilities
 {
     [CreateAssetMenu(fileName = "CurveDriftAbility", menuName = "GearEngine/Abilities/CurveDrift")]
     public class CurveDriftAbility : GearAbilitySO

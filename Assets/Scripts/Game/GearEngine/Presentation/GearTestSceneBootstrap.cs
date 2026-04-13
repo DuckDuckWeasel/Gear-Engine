@@ -1,12 +1,13 @@
 using System;
-using Game.GearEngine;
+using Scaffold.GearEngine;
 using Scaffold.Navigation.Contracts;
 using UnityEngine;
 using VContainer;
+using VContainer.Unity;
 
-namespace Game.GearEngine.Presentation
+namespace Scaffold.GearEngine.Presentation
 {
-    public sealed class GearTestSceneBootstrap : MonoBehaviour
+    public sealed class GearTestSceneBootstrap : MonoBehaviour, IInitializable
     {
         [SerializeField] private GearEngineStartData startData;
 
@@ -18,7 +19,7 @@ namespace Game.GearEngine.Presentation
             this.navigation = navigation ?? throw new ArgumentNullException(nameof(navigation));
         }
 
-        private void Start()
+        public void Initialize()
         {
             try
             {

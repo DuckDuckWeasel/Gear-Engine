@@ -11,5 +11,5 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dce6cdc604a694475b126427187859bb, type: 3}
   m_Name: Inventory_Tag
-  m_EditorClassIdentifier: Game.GearEngine::Game.GearEngine.Presentation.TagSO
+  m_EditorClassIdentifier: Game.GearEngine::Scaffold.GearEngine.Presentation.UI.Tags.TagSO
   Description: Marks an item inside the inventory that can be picked up.

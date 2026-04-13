@@ -1,6 +1,6 @@
 {
     "name": "Game.CarSimulation",
-    "rootNamespace": "Game.CarSimulation",
+    "rootNamespace": "Scaffold.CarSimulation",
     "references": [
         "Scaffold.Addressables",
         "Scaffold.Addressables.Container",
@@ -12,7 +12,8 @@
         "Scaffold.Navigation.Container",
         "Scaffold.Scope",
         "VContainer",
-        "Unity.Splines"
+        "Unity.Splines",
+        "Scaffold.Events.Container"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

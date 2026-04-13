@@ -14,7 +14,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
   m_GroupName: Default Local Group
   m_GUID: 0bdbf61a5d37c41ee95db94752ea759c
-  m_SerializeEntries: []
+  m_SerializeEntries:
+  - m_GUID: 5ca8a419e667f5543a9eb6bd0404bf34
+    m_Address: Assets/Prefabs/Gear/GearEngineView_NavigationStub.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6a4018fa1395fe74fa82a63a40a91772
+    m_Address: Assets/Prefabs/Tracks/Views/Track Test View.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: fbb208bb5aa7a441d95f8c927490d368, type: 2}
   m_SchemaSet:

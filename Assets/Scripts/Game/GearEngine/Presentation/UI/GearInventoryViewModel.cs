@@ -1,11 +1,11 @@
 using System;
 using System.Collections.Generic;
 using CommunityToolkit.Mvvm.ComponentModel;
-using Game.GearEngine;
+using Scaffold.GearEngine;
 using Scaffold.MVVM;
 using UnityEngine;
 
-namespace Game.GearEngine.Presentation
+namespace Scaffold.GearEngine.Presentation.UI
 {
     public partial class GearInventoryViewModel : ViewModel
     {

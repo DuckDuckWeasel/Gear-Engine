@@ -3,7 +3,7 @@ using System.Linq;
 using UnityEngine;
 using Scaffold.MVVM;
 
-namespace Game.GearEngine.Presentation
+namespace Scaffold.GearEngine.Presentation.UI
 {
     public class GearInventoryView : ViewComponent<GearInventoryViewModel>
     {

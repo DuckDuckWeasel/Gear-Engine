@@ -1,7 +1,7 @@
 using Sirenix.OdinInspector;
 using UnityEngine;
 
-namespace Game.GearEngine
+namespace Scaffold.GearEngine.Visuals
 {
     public class GearView : SerializedMonoBehaviour
     {

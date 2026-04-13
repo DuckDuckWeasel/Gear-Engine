@@ -1,6 +1,6 @@
 {
     "name": "Game.GearEngine",
-    "rootNamespace": "Game.GearEngine",
+    "rootNamespace": "Scaffold.GearEngine",
     "references": [
         "VContainer",
         "Scaffold.Addressables",

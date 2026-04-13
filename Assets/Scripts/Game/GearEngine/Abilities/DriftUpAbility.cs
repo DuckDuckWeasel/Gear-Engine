@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Game.GearEngine
+namespace Scaffold.GearEngine.Abilities
 {
     [CreateAssetMenu(fileName = "DriftUpAbility", menuName = "GearEngine/Abilities/DriftUp")]
     public class DriftUpAbility : GearAbilitySO

@@ -1,7 +1,7 @@
 using UnityEngine;
 using System;
 
-namespace Game.GearEngine
+namespace Scaffold.GearEngine.Nodes
 {
     public interface IGridNode : IDisposable
     {
