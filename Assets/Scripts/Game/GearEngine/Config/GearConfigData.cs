@@ -1,22 +1,10 @@
 using System;
 using System.Collections.Generic;
+using GearEngine.GearEngine.Abilities;
 using UnityEngine;
 
-namespace Game.GearEngine
+namespace GearEngine.GearEngine.Config
 {
-    public enum TriggerPattern
-    {
-        FourWay = 4,   // Cardinal directions (every 90 deg)
-        EightWay = 8   // Cardial + Diagonals (every 45 deg)
-    }
-
-    public enum GearCategory
-    {
-        Base,
-        Core,
-        Aura
-    }
-
     [Serializable]
     public class GearConfigData
     {
@@ -25,12 +13,12 @@ namespace Game.GearEngine
         public float BaseRotationSpeed;
         public GameObject VisualPrefab;
         public Sprite UIIcon;
-        public float UIScaleMultiplier = 115f; // Used to scale native visually into overlay canvases 
+        public float UIScaleMultiplier = 115f; // Used to scale native visually into overlay canvases
         public TriggerPattern TriggerPattern = TriggerPattern.FourWay;
         public bool IsInteractable = true;
         public bool IsMovable = true;
         public bool IsReturnable = true;
-        
+
         // Progression Mechanics
         public float MaxCharge = 100f;
         public float ChargeOverTimeAmount = 10f; // Amount gained per second from CoreGear

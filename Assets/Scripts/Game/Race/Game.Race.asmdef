@@ -8,6 +8,7 @@
         "VContainer",
         "Scaffold.Addressables",
         "Scaffold.Addressables.Container",
+        "Scaffold.Events",
         "Scaffold.Events.Container",
         "Scaffold.MVVM",
         "Scaffold.MVVM.View",

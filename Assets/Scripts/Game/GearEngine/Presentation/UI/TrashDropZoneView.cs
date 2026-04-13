@@ -1,10 +1,11 @@
 using System;
+using GearEngine.GearEngine.Config;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using TMPro;
 
-namespace Game.GearEngine.Presentation
+namespace GearEngine.GearEngine.Presentation.UI
 {
     /// <summary>
     /// Trash drop zone anchored to the top-right of the overlay Canvas.

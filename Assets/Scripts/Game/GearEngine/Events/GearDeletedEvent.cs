@@ -1,7 +1,7 @@
 using Scaffold.Events.Contracts;
 using UnityEngine;
 
-namespace Game.GearEngine
+namespace GearEngine.GearEngine.Events
 {
     public record GearDeletedEvent(Vector2Int Position, int RewardAmount) : ContextEvent;
 }

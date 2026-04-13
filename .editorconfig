@@ -15,7 +15,7 @@ root = true
 # Set to "error" to make a rule block compilation.
 
 # Repo-wide analyzer scope (SCA + SCM). See Docs/Analyzers/Analyzers.md → Configuration.
-scaffold.global.ignored_assembly_name_contains = Tests;Samples;Examples
+scaffold.global.ignored_assembly_name_contains = Tests,Samples,Examples,Editor
 scaffold.global.ignored_paths = Assets/Samples
 # scaffold.global.ignore_infrastructure_assemblies = true
 
@@ -41,8 +41,8 @@ dotnet_diagnostic.SCA2004.severity = warning   # Restrict static methods in non-
 dotnet_diagnostic.SCA3005.severity = warning   # Namespace first segment must be allowed (root + allowed_roots)
 dotnet_diagnostic.SCA3006.severity = warning   # Full namespace must match folder-derived path under content roots
 scaffold.SCA3005.root = GearEngine
-scaffold.SCA3005.allowed_roots = GameModule;GameModuleDTO;Scaffold
-scaffold.SCA3006.content_roots = Assets/Scripts;LiveOps/Project
+scaffold.SCA3005.allowed_roots = GameModule,GameModuleDTO,Scaffold
+scaffold.SCA3006.content_roots = Assets/Scripts,LiveOps/Project
 dotnet_diagnostic.SCA3002.severity = warning   # Extra types: own file if shared/public, else place after primary type
 dotnet_diagnostic.SCA3003.severity = warning   # Class member order
 

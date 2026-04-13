@@ -1,7 +1,7 @@
-using Game.GearEngine.Presentation;
+using GearEngine.GearEngine.Presentation.UI.Tags;
 using UnityEngine;
 
-namespace Game.GearEngine
+namespace GearEngine.GearEngine.Config
 {
     public enum TrashZoneAlignment
     {

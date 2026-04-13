@@ -1,11 +1,16 @@
 using System;
 using System.Collections.Generic;
-using Game.GearEngine;
+using GearEngine.GearEngine;
+using GearEngine.GearEngine.Bootstrap;
+using GearEngine.GearEngine.Config;
+using GearEngine.GearEngine.Events;
+using GearEngine.GearEngine.Manager;
+using GearEngine.GearEngine.Nodes;
 using Scaffold.Events.Contracts;
 using Scaffold.MVVM;
 using UnityEngine;
 
-namespace Game.GearEngine.Presentation
+namespace GearEngine.GearEngine.Presentation.UI
 {
     public sealed class BoardViewModel : ViewModel
     {

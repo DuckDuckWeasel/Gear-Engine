@@ -1,9 +1,11 @@
 using System.Collections.Specialized;
 using System.Linq;
+using GearEngine.GearEngine.Config;
+using GearEngine.GearEngine.Presentation.UI.Tags;
 using UnityEngine;
 using Scaffold.MVVM;
 
-namespace Game.GearEngine.Presentation
+namespace GearEngine.GearEngine.Presentation.UI
 {
     public class GearInventoryView : ViewComponent<GearInventoryViewModel>
     {

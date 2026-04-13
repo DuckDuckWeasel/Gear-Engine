@@ -90,17 +90,11 @@ namespace GearEngine.GearEngine.Bootstrap
 
         private void InstallGearMechanics(IContainerBuilder builder)
         {
-            var installer = new GearMechanicsInstaller(boardConfig);
-            installer.Install(builder);
-
+            new GearMechanicsInstaller(boardConfig).Install(builder);
+            builder.RegisterComponent(sceneBootstrap).AsImplementedInterfaces().AsSelf();
             if (featureToggle != null)
             {
                 builder.RegisterInstance(featureToggle);
-            }
-
-            if (sceneBootstrap != null)
-            {
-                builder.RegisterComponent(sceneBootstrap).AsImplementedInterfaces().AsSelf();
             }
         }
     }

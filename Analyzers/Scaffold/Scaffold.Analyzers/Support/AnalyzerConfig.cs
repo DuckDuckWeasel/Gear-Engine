@@ -99,7 +99,9 @@ namespace Scaffold.Analyzers
         }
 
         /// <summary>
-        /// Semicolon- or newline-separated tokens (trimmed); empty entries skipped.
+        /// Comma-, semicolon-, or newline-separated tokens (trimmed); empty entries skipped.
+        /// Use commas in <c>.editorconfig</c> for multi-token values: Roslyn's EditorConfig parser treats
+        /// unescaped <c>;</c> as the start of an end-of-line comment, so <c>key = a;b</c> is stored as <c>a</c> only.
         /// </summary>
         internal static List<string> ParseSemicolonList(string? raw)
         {
@@ -110,7 +112,7 @@ namespace Scaffold.Analyzers
 
             var text = raw!;
             return text
-                .Split(new[] { ';', '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries)
+                .Split(new[] { ',', ';', '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries)
                 .Select(s => s.Trim())
                 .Where(s => s.Length > 0)
                 .ToList();

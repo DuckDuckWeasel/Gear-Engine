@@ -2,10 +2,11 @@ using UnityEditor;
 using UnityEngine;
 using System.Collections.Generic;
 using System.IO;
-using Game.GearEngine;
-using Game.GearEngine.Presentation;
+using GearEngine.GearEngine.Abilities;
+using GearEngine.GearEngine.Config;
+using GearEngine.GearEngine.Presentation.UI.Tags;
 
-namespace Game.GearEngine.Editor
+namespace GearEngine.GearEngine.Editor
 {
     public static class SetupBasicConfigsTool
     {

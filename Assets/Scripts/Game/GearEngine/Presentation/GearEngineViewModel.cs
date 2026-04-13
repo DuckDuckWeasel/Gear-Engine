@@ -1,10 +1,12 @@
 using System;
-using Game.GearEngine;
+using GearEngine.GearEngine;
+using GearEngine.GearEngine.Bootstrap;
+using GearEngine.GearEngine.Config;
 using Scaffold.Events.Contracts;
 using Scaffold.MVVM;
 using VContainer;
 
-namespace Game.GearEngine.Presentation
+namespace GearEngine.GearEngine.Presentation
 {
     public sealed class GearEngineViewModel : ViewModel
     {

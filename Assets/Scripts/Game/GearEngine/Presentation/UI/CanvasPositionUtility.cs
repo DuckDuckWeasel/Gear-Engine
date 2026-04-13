@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Game.GearEngine.Presentation
+namespace GearEngine.GearEngine.Presentation.UI
 {
     /// <summary>
     /// Reusable utility for positioning canvas-space UI elements relative to world-space anchors.

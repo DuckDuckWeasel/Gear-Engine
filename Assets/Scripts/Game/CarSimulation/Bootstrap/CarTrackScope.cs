@@ -23,9 +23,9 @@ namespace GearEngine.CarSimulation.Bootstrap
         protected override void Configure(IContainerBuilder builder)
         {
             RegisterCrossLayer(builder);
-            InstallCarTrackNavigation(builder);
+            InstallInfra(builder);
             new CarTrackInstaller().Install(builder);
-            RegisterOptionalBootstrap(builder);
+            builder.RegisterComponent(sceneBootstrap).AsImplementedInterfaces().AsSelf();
         }
 
         private void RegisterCrossLayer(IContainerBuilder builder)
@@ -50,17 +50,12 @@ namespace GearEngine.CarSimulation.Bootstrap
             }
         }
 
-        private void InstallCarTrackNavigation(IContainerBuilder builder)
+        private void InstallInfra(IContainerBuilder builder)
         {
-            new AddressablesInstaller().Install(builder);
             builder.RegisterInstance(navigationSettings);
+            new AddressablesInstaller().Install(builder);
             new NavigationInstaller(navigationViewHolder).Install(builder);
             new EventsInstaller().Install(builder);
-        }
-
-        private void RegisterOptionalBootstrap(IContainerBuilder builder)
-        {
-            builder.RegisterComponent(sceneBootstrap).AsImplementedInterfaces().AsSelf();
         }
     }
 }

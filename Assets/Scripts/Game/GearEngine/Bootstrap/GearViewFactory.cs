@@ -1,4 +1,7 @@
 using System.Collections.Generic;
+using GearEngine.GearEngine.Config;
+using GearEngine.GearEngine.Nodes;
+using GearEngine.GearEngine.Visuals;
 using UnityEngine;
 
 namespace GearEngine.GearEngine.Bootstrap

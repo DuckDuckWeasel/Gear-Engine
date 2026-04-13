@@ -1,8 +1,9 @@
 using System;
+using GearEngine.GearEngine.Presentation.UI.Tags;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-namespace Game.GearEngine.Presentation
+namespace GearEngine.GearEngine.Presentation.UI
 {
     public class DragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
     {

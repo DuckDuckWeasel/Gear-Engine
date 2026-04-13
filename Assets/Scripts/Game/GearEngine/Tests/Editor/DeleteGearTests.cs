@@ -1,6 +1,11 @@
 using System.Collections.Generic;
-using Game.GearEngine;
-using Game.GearEngine.Presentation;
+using GearEngine.GearEngine;
+using GearEngine.GearEngine.Bootstrap;
+using GearEngine.GearEngine.Config;
+using GearEngine.GearEngine.Events;
+using GearEngine.GearEngine.Manager;
+using GearEngine.GearEngine.Nodes;
+using GearEngine.GearEngine.Presentation.UI;
 using NUnit.Framework;
 using Scaffold.Events;
 using Scaffold.Events.Contracts;
@@ -8,7 +13,7 @@ using UnityEngine;
 using UnityEngine.TestTools;
 using VContainer;
 
-namespace Game.GearEngine.Tests
+namespace GearEngine.GearEngine.Tests.Editor
 {
     [TestFixture]
     public class DeleteGearTests

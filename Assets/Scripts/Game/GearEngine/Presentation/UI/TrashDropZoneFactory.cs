@@ -1,8 +1,9 @@
+using GearEngine.GearEngine.Presentation.UI.Tags;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-namespace Game.GearEngine.Presentation
+namespace GearEngine.GearEngine.Presentation.UI
 {
     /// <summary>
     /// Factory responsible for building the TrashDropZone UI hierarchy programmatically.

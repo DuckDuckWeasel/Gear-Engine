@@ -1,8 +1,11 @@
 using System;
-using Game.GearEngine.Presentation;
+using GearEngine.GearEngine.Config;
+using GearEngine.GearEngine.Nodes;
+using GearEngine.GearEngine.Presentation.UI;
+using GearEngine.GearEngine.Presentation.UI.Tags;
 using UnityEngine;
 
-namespace Game.GearEngine.Presentation
+namespace GearEngine.GearEngine.Presentation
 {
     /// <summary>
     /// Mediator that encapsulates all trash/scrap deletion coordination.

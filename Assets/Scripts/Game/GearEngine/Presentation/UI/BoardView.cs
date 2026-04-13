@@ -1,9 +1,12 @@
 using System;
 using System.Collections.Generic;
-using Game.GearEngine;
+using GearEngine.GearEngine.Bootstrap;
+using GearEngine.GearEngine.Config;
+using GearEngine.GearEngine.Nodes;
+using GearEngine.GearEngine.Visuals;
 using UnityEngine;
 
-namespace Game.GearEngine.Presentation
+namespace GearEngine.GearEngine.Presentation.UI
 {
     public class BoardView : MonoBehaviour
     {
