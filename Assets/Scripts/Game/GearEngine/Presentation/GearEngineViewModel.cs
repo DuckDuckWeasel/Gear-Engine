@@ -1,5 +1,6 @@
 using System;
 using Game.GearEngine;
+using Scaffold.Events.Contracts;
 using Scaffold.MVVM;
 using VContainer;
 
@@ -13,6 +14,10 @@ namespace Game.GearEngine.Presentation
         [Inject] private IGridManager gridManager;
         [Inject] private GearNodeFactory nodeFactory;
         [Inject] private BoardConfigSO boardConfig;
+        [Inject] private IEventBus eventBus;
+        [Inject] private GearEngineFeatureToggleSO featureToggle;
+
+        public GearEngineFeatureToggleSO FeatureToggle => featureToggle;
 
         public SimulationControlViewModel SimControl { get; } = new SimulationControlViewModel();
         public GearInventoryViewModel Inventory { get; } = new GearInventoryViewModel();
@@ -39,7 +44,7 @@ namespace Game.GearEngine.Presentation
                 Inventory.LoadInventory(startData.InventoryGears);
             }
 
-            Board.Initialize(engineService, gridManager, nodeFactory, boardConfig);
+            Board.Initialize(engineService, gridManager, nodeFactory, boardConfig, eventBus, featureToggle);
 
             if (startData.BoardLayout != null)
             {

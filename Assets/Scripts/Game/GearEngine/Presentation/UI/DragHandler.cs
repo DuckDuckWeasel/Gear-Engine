@@ -26,6 +26,12 @@ namespace Game.GearEngine.Presentation
         /// </summary>
         public Action<Vector3> OnValidDropWorldPos;
 
+        /// <summary>Fires when dragging begins.</summary>
+        public Action OnDragBegin;
+
+        /// <summary>Fires when dragging ends (regardless of outcome).</summary>
+        public Action OnDragEnd;
+
         public void AddAcceptedTag(TagSO tag)
         {
             if (tag == null) return;
@@ -46,6 +52,8 @@ namespace Game.GearEngine.Presentation
         public void OnBeginDrag(PointerEventData eventData)
         {
             if (!IsInteractable) return;
+
+            OnDragBegin?.Invoke();
 
             if (mainCanvas != null)
             {
@@ -91,11 +99,7 @@ namespace Game.GearEngine.Presentation
             {
                 if (mainCanvas != null)
                 {
-                    if (RectTransformUtility.ScreenPointToLocalPointInRectangle(
-                        (RectTransform)mainCanvas.transform,
-                        eventData.position,
-                        mainCanvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : mainCanvas.worldCamera,
-                        out Vector2 localPoint))
+                    if (CanvasPositionUtility.ScreenToCanvasLocal(mainCanvas, eventData.position, out Vector2 localPoint))
                     {
                         currentGhost.transform.localPosition = localPoint;
                     }
@@ -104,6 +108,15 @@ namespace Game.GearEngine.Presentation
                 {
                     currentGhost.transform.position = Input.mousePosition;
                 }
+            }
+        }
+
+        public void ForceGhostCleanup()
+        {
+            if (currentGhost != null)
+            {
+                Destroy(currentGhost);
+                currentGhost = null;
             }
         }
 
@@ -116,12 +129,21 @@ namespace Game.GearEngine.Presentation
                 Destroy(currentGhost);
             }
 
+            OnDragEnd?.Invoke();
+
             // Raycast into the 3D/2D world to find the TargetTag
             Camera cam = Camera.main;
             if (cam != null)
             {
                 Ray ray = cam.ScreenPointToRay(Input.mousePosition);
                 
+                // Block 3D drops if we landed on a UI element (e.g. the Trash Zone)
+                if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
+                {
+                    Debug.Log($"<color=#aaaaaa>[DragHandler]</color> Drop landed on UI element (not a 3D collider). Ignoring 3D drop.");
+                    return;
+                }
+
                 // We use standard 3D Physics (Raycast) since Test Scene uses 3D camera & colliders
                 if (Physics.Raycast(ray, out RaycastHit hit))
                 {

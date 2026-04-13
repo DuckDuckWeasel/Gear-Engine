@@ -10,6 +10,9 @@ namespace Game.GearEngine.Presentation
         [SerializeField] private RectTransform itemsContainer;
         [SerializeField] private TagSO gridBoardTag;
 
+        public event System.Action<GearConfigData> OnInventoryDragStarted;
+        public event System.Action OnInventoryDragEnded;
+
         protected override void OnBind()
         {
             if (viewModel.InventoryModel.AvailableGears != null)
@@ -126,6 +129,11 @@ namespace Game.GearEngine.Presentation
                 }
 
                 slotView.Bind(gear, viewModel);
+
+                // Wire drag lifecycle for trash zone visibility
+                GearConfigData capturedGear = gear;
+                dragger.OnDragBegin += () => OnInventoryDragStarted?.Invoke(capturedGear);
+                dragger.OnDragEnd += () => OnInventoryDragEnded?.Invoke();
             }
         }
 

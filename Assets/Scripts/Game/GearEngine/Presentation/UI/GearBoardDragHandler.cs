@@ -6,11 +6,16 @@ namespace Game.GearEngine.Presentation
     [RequireComponent(typeof(BoardView))]
     internal sealed class GearBoardDragHandler : MonoBehaviour
     {
+        [Tooltip("Tag identifying the trash zone drop target.")]
+        [SerializeField] private TagSO trashZoneTag;
+
         private BoardView boardView;
         private Camera mainCamera;
-
         private GearView draggedView;
         private Vector2Int originalGridPos;
+
+        /// <summary>Config data of the gear currently being dragged (null when idle).</summary>
+        internal GearConfigData DraggedGearData { get; private set; }
 
         private void Awake()
         {
@@ -68,6 +73,12 @@ namespace Game.GearEngine.Presentation
                     continue;
                 }
 
+                // Gears marked as not movable cannot be picked up or swapped
+                if (view.TargetNode.ConfigData != null && !view.TargetNode.ConfigData.IsMovable)
+                {
+                    continue;
+                }
+
                 float dist = Vector2.Distance(
                     new Vector2(view.transform.position.x, view.transform.position.y),
                     new Vector2(worldPos.x, worldPos.y));
@@ -87,6 +98,7 @@ namespace Game.GearEngine.Presentation
             draggedView = closest;
             draggedView.IsBeingDragged = true;
             originalGridPos = closest.TargetNode.Position;
+            DraggedGearData = closest.TargetNode.ConfigData;
             boardView.NotifyPickedUp(closest.TargetNode, originalGridPos);
         }
 
@@ -109,11 +121,52 @@ namespace Game.GearEngine.Presentation
 
             if (overUI)
             {
+                if (EventSystem.current != null)
+                {
+                    PointerEventData ped = new PointerEventData(EventSystem.current) { position = GetPointerPosition() };
+                    var results = new System.Collections.Generic.List<RaycastResult>();
+                    EventSystem.current.RaycastAll(ped, results);
+                    
+                    foreach (var result in results)
+                    {
+                        bool isTrash = result.gameObject.GetComponentInParent<TrashDropZoneView>() != null;
+                        if (!isTrash && trashZoneTag != null)
+                        {
+                            var tc = result.gameObject.GetComponentInParent<TagComponent>();
+                            isTrash = tc != null && tc.HasTag(trashZoneTag);
+                        }
+
+                        if (isTrash)
+                        {
+                            IGridNode returnNode = draggedView.TargetNode;
+                            Debug.Log($"<color=#ff9900>[GearBoardDragHandler]</color> Gear '{returnNode?.ConfigData?.Id}' dropped on trash zone. Forwarding to BoardView.");
+                            draggedView.IsBeingDragged = false;
+                            draggedView = null;
+                            DraggedGearData = null;
+                            boardView.NotifyTrashDrop(returnNode);
+                            return;
+                        }
+                    }
+                }
                 IGridNode node = draggedView.TargetNode;
                 GearConfigData droppedConfig = node?.ConfigData;
+
+                // Check if this gear is allowed to return to inventory
+                if (droppedConfig != null && !droppedConfig.IsReturnable)
+                {
+                    Debug.Log($"<color=#ff9900>[GearBoardDragHandler]</color> Gear '{droppedConfig.Id}' is not returnable. Snapping back.");
+                    boardView.NotifyDropped(draggedView.TargetNode, originalGridPos);
+                    draggedView.IsBeingDragged = false;
+                    draggedView = null;
+                    DraggedGearData = null;
+                    return;
+                }
+
+                Debug.Log($"<color=#ff9900>[GearBoardDragHandler]</color> Gear '{droppedConfig?.Id}' dropped over UI (not trash). Returning to inventory.");
                 draggedView.IsBeingDragged = false;
                 DestroyGO(draggedView.gameObject);
                 draggedView = null;
+                DraggedGearData = null;
                 boardView.NotifyBoardGearDroppedOverUI(node, droppedConfig, worldPos);
                 return;
             }
@@ -127,9 +180,22 @@ namespace Game.GearEngine.Presentation
             }
 
             Vector2Int targetPos = cfg.GetGridPosition(worldPos);
+
+            // Reject drops outside valid grid bounds — snap back
+            if (targetPos.x < 0 || targetPos.x >= cfg.GridWidth
+                || targetPos.y < 0 || targetPos.y >= cfg.GridHeight)
+            {
+                boardView.NotifyDropped(draggedView.TargetNode, originalGridPos);
+                draggedView.IsBeingDragged = false;
+                draggedView = null;
+                DraggedGearData = null;
+                return;
+            }
+
             boardView.NotifyDropped(draggedView.TargetNode, targetPos);
             draggedView.IsBeingDragged = false;
             draggedView = null;
+            DraggedGearData = null;
         }
 
         private bool IsPointerDown()

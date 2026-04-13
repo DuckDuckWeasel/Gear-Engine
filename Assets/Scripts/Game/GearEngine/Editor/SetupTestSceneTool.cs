@@ -50,6 +50,7 @@ namespace Game.GearEngine.Editor
             GameObject emptySlot = AssetDatabase.LoadAssetAtPath<GameObject>($"{prefabPath}/EmptySlotView.prefab");
             BoardConfigSO boardConfig = AssetDatabase.LoadAssetAtPath<BoardConfigSO>($"{folderPath}/BasicBoardConfig.asset");
             GearInventoryLoadoutSO loadout = AssetDatabase.LoadAssetAtPath<GearInventoryLoadoutSO>($"{folderPath}/GearInventoryLoadout.asset");
+            GearEngineFeatureToggleSO featureToggle = AssetDatabase.LoadAssetAtPath<GearEngineFeatureToggleSO>($"{folderPath}/GearEngineFeatureToggle.asset");
 
             GameObject gearRootObj = new GameObject("GearEngine_Root");
             var scope = gearRootObj.AddComponent<GearMechanicsScope>();
@@ -196,6 +197,20 @@ namespace Game.GearEngine.Editor
 
             boardSo.ApplyModifiedProperties();
 
+            // Wire trash zone tag to drag handler for tag-based discovery
+            TagSO trashZoneTagRef = AssetDatabase.LoadAssetAtPath<TagSO>($"{folderPath}/Tag/TrashZone_Tag.asset");
+            if (trashZoneTagRef != null)
+            {
+                var dragSo = new SerializedObject(boardDragHandler);
+                var trashTagProp = dragSo.FindProperty("trashZoneTag");
+                if (trashTagProp != null)
+                {
+                    trashTagProp.objectReferenceValue = trashZoneTagRef;
+                }
+
+                dragSo.ApplyModifiedProperties();
+            }
+
             var tagComp = floorGrid.AddComponent<TagComponent>();
             TagSO gridBoardTag = AssetDatabase.LoadAssetAtPath<TagSO>($"{folderPath}/Tag/GridBoard_Tag.asset");
             if (gridBoardTag != null)
@@ -227,7 +242,7 @@ namespace Game.GearEngine.Editor
             NavigationSettings navigationSettings =
                 AssetDatabase.LoadAssetAtPath<NavigationSettings>(GearEngineNavigationAssetGenerator.NavigationSettingsPath);
 
-            ApplyGearMechanicsScopeReferences(scope, boardConfig, testBootstrap, navigationSettings, gearRootObj.transform);
+            ApplyGearMechanicsScopeReferences(scope, boardConfig, testBootstrap, navigationSettings, gearRootObj.transform, featureToggle);
 
             string sceneDir = "Assets/Scenes";
             if (!System.IO.Directory.Exists(sceneDir))
@@ -245,7 +260,8 @@ namespace Game.GearEngine.Editor
             BoardConfigSO boardConfig,
             GearTestSceneBootstrap sceneBootstrap,
             NavigationSettings navigationSettings,
-            Transform navigationViewHolder)
+            Transform navigationViewHolder,
+            GearEngineFeatureToggleSO featureToggle)
         {
             var instSo = new SerializedObject(scope);
             var bc = instSo.FindProperty("boardConfig");
@@ -270,6 +286,12 @@ namespace Game.GearEngine.Editor
             if (nh != null)
             {
                 nh.objectReferenceValue = navigationViewHolder;
+            }
+
+            var ft = instSo.FindProperty("featureToggle");
+            if (ft != null && featureToggle != null)
+            {
+                ft.objectReferenceValue = featureToggle;
             }
 
             instSo.ApplyModifiedProperties();

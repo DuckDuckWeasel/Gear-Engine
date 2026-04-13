@@ -10,6 +10,9 @@ namespace Game.GearEngine.Presentation
         [SerializeField] private GearBoardDragHandler dragHandler;
 
         public event Action<GearConfigData, Vector3> OnGearDroppedOverUI;
+        public event Action<GearConfigData> OnDragStarted;
+        public event Action OnDragEnded;
+        public event Action<IGridNode> OnTrashDropRequested;
 
         private BoardViewModel viewModel;
         private GearViewFactory localFactory;
@@ -23,6 +26,8 @@ namespace Game.GearEngine.Presentation
 
             vm.OnGearPlaced += HandleGearPlaced;
             vm.OnGearRemoved += HandleGearRemoved;
+            vm.OnBoardDragStarted += HandleDragStarted;
+            vm.OnBoardDragEnded += HandleDragEnded;
 
             foreach (IGridNode node in vm.GetCurrentNodes())
             {
@@ -44,6 +49,8 @@ namespace Game.GearEngine.Presentation
 
             viewModel.OnGearPlaced -= HandleGearPlaced;
             viewModel.OnGearRemoved -= HandleGearRemoved;
+            viewModel.OnBoardDragStarted -= HandleDragStarted;
+            viewModel.OnBoardDragEnded -= HandleDragEnded;
             DestroyAllViews();
             localFactory = null;
             viewModel = null;
@@ -68,6 +75,14 @@ namespace Game.GearEngine.Presentation
                 OnGearDroppedOverUI?.Invoke(config, worldPos);
             }
         }
+
+        internal void NotifyTrashDrop(IGridNode node)
+        {
+            OnTrashDropRequested?.Invoke(node);
+        }
+
+        private void HandleDragStarted(GearConfigData data) => OnDragStarted?.Invoke(data);
+        private void HandleDragEnded() => OnDragEnded?.Invoke();
 
         internal IEnumerable<GearView> GetViews() => viewsByNode.Values;
 
@@ -94,9 +109,11 @@ namespace Game.GearEngine.Presentation
 
             if (!viewsByNode.TryGetValue(node, out GearView view))
             {
+                Debug.Log($"<color=#ff9900>[BoardView]</color> HandleGearRemoved: no view found for node '{node.ConfigData?.Id}' at {node.Position}.");
                 return;
             }
 
+            Debug.Log($"<color=#ff5555>[BoardView]</color> Destroying GearView for '{node.ConfigData?.Id}' at {node.Position}.");
             viewsByNode.Remove(node);
             DestroyViewGameObject(view.gameObject);
         }

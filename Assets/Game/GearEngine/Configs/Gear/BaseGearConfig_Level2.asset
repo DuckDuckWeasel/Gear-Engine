@@ -1,0 +1,36 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: faf34a39f5b75466d9fbf4f99fc70808, type: 3}
+  m_Name: BaseGearConfig_Level2
+  m_EditorClassIdentifier: Game.GearEngine::Game.GearEngine.GearConfig
+  data:
+    Id: base_gear_2
+    Category: 0
+    BaseRotationSpeed: 0
+    VisualPrefab: {fileID: 6434151397830737512, guid: 7339de2506ee540c29766e4ee0855c2c, type: 3}
+    UIIcon: {fileID: 1124818141672353582, guid: 9b1842a1b3639426a87c3413c3d92a06, type: 3}
+    UIScaleMultiplier: 115
+    TriggerPattern: 4
+    IsInteractable: 1
+    IsMovable: 1
+    IsReturnable: 1
+    MaxCharge: 200
+    ChargeOverTimeAmount: 0
+    ChargeOnTriggerAmount: 50
+    SnapSlowdownDuration: 0.5
+    SnapSlowdownMultiplier: 0.15
+    TriggerSpinDegrees: 45
+    IsDeletable: 1
+    DeleteRewardAmount: 75
+    Abilities: []
+  nextLevel: {fileID: 0}
+  abilities: []

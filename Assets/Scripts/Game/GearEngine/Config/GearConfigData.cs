@@ -28,6 +28,8 @@ namespace Game.GearEngine
         public float UIScaleMultiplier = 115f; // Used to scale native visually into overlay canvases 
         public TriggerPattern TriggerPattern = TriggerPattern.FourWay;
         public bool IsInteractable = true;
+        public bool IsMovable = true;
+        public bool IsReturnable = true;
         
         // Progression Mechanics
         public float MaxCharge = 100f;
@@ -38,6 +40,10 @@ namespace Game.GearEngine
         public float SnapSlowdownDuration = 0.5f;
         public float SnapSlowdownMultiplier = 0.15f;
         public float TriggerSpinDegrees = 45f;
+
+        // Delete / Scrap Mechanics (opt-in)
+        public bool IsDeletable = false;
+        public int DeleteRewardAmount = 0;
 
         // Abilities configured specifically for this gear
         public List<GearAbilitySO> Abilities = new List<GearAbilitySO>();
@@ -57,12 +63,16 @@ namespace Game.GearEngine
                 UIScaleMultiplier = UIScaleMultiplier,
                 TriggerPattern = TriggerPattern,
                 IsInteractable = IsInteractable,
+                IsMovable = IsMovable,
+                IsReturnable = IsReturnable,
                 MaxCharge = MaxCharge,
                 ChargeOverTimeAmount = ChargeOverTimeAmount,
                 ChargeOnTriggerAmount = ChargeOnTriggerAmount,
                 SnapSlowdownDuration = SnapSlowdownDuration,
                 SnapSlowdownMultiplier = SnapSlowdownMultiplier,
                 TriggerSpinDegrees = TriggerSpinDegrees,
+                IsDeletable = IsDeletable,
+                DeleteRewardAmount = DeleteRewardAmount,
                 NextLevelConfig = nextLevelConfig,
                 Abilities = new List<GearAbilitySO>(abilities ?? new List<GearAbilitySO>())
             };

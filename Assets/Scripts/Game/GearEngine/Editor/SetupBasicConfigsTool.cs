@@ -23,13 +23,15 @@ namespace Game.GearEngine.Editor
             if (!Directory.Exists(prefabPath)) Directory.CreateDirectory(prefabPath);
             AssetDatabase.Refresh();
 
-            Sprite baseSpr = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Game/GearEngine/Sprites/BaseGear.png");
-            Sprite coreSpr = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Game/GearEngine/Sprites/CoreGear.png");
-            Sprite fallbackSpr = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Game/GearEngine/Sprites/FallbackGear.png");
+            // Prefab sprites (board visuals)
+            Sprite baseSpr = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Art/Sprites/BaseGear.png");
+            Sprite coreSpr = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Art/Sprites/CoreGear.png");
 
-            Sprite rockSpr = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Game/GearEngine/Sprites/RockObstacle.png") ?? fallbackSpr;
-            Sprite scoreSpr = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Game/GearEngine/Sprites/ScoreGear.png") ?? fallbackSpr;
-            Sprite speedSpr = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Game/GearEngine/Sprites/SpeedGear.png") ?? fallbackSpr;
+            // UIIcon sprites (inventory icons) — each gear has its own distinct icon
+            Sprite iconNumber1 = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Art/Sprites/Number1.png");
+            Sprite iconNumber2 = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Art/Sprites/Number2.png");
+            Sprite iconCoin = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Art/Sprites/Coin.png");
+            Sprite iconArrowUp = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Art/Sprites/ArrowUp.png");
 
             // 1. Create Default Tags
             TagSO gridBoardTag = ScriptableObject.CreateInstance<TagSO>();
@@ -40,11 +42,79 @@ namespace Game.GearEngine.Editor
             inventoryTag.Description = "Marks an item inside the inventory that can be picked up.";
             AssetDatabase.CreateAsset(inventoryTag, $"{folderPath}/Tag/Inventory_Tag.asset");
 
+            TagSO trashZoneTag = ScriptableObject.CreateInstance<TagSO>();
+            trashZoneTag.Description = "Marks the trash drop zone for gear deletion.";
+            AssetDatabase.CreateAsset(trashZoneTag, $"{folderPath}/Tag/TrashZone_Tag.asset");
+
             // 1.2 Create Board Config
             BoardConfigSO boardConfig = ScriptableObject.CreateInstance<BoardConfigSO>();
             boardConfig.GridWidth = 7;
             boardConfig.GridHeight = 5;
+            boardConfig.Spacing = 0.75f;
+            boardConfig.MaxDragGrabDistance = 0.75f;
+            boardConfig.StaggeredRotationOffset = 22.5f;
             AssetDatabase.CreateAsset(boardConfig, $"{folderPath}/BasicBoardConfig.asset");
+
+            // 1.3 Create Feature Toggle
+            string togglePath = $"{folderPath}/GearEngineFeatureToggle.asset";
+            GearEngineFeatureToggleSO featureToggle = AssetDatabase.LoadAssetAtPath<GearEngineFeatureToggleSO>(togglePath);
+
+            // 1.4 Generate Trash Icon sprite as a project asset
+            string trashIconTexPath = "Assets/Art/Sprites/TrashIcon.png";
+            Sprite trashIconSprite = AssetDatabase.LoadAssetAtPath<Sprite>(trashIconTexPath);
+            if (trashIconSprite == null)
+            {
+                Texture2D trashTex = CreateTrashIconTexture();
+                byte[] pngBytes = trashTex.EncodeToPNG();
+                string absolutePath = System.IO.Path.Combine(
+                    System.IO.Directory.GetCurrentDirectory(), trashIconTexPath);
+                System.IO.File.WriteAllBytes(absolutePath, pngBytes);
+                Object.DestroyImmediate(trashTex);
+
+                AssetDatabase.ImportAsset(trashIconTexPath, ImportAssetOptions.ForceUpdate);
+
+                // Configure as sprite
+                TextureImporter importer = AssetImporter.GetAtPath(trashIconTexPath) as TextureImporter;
+                if (importer != null)
+                {
+                    importer.textureType = TextureImporterType.Sprite;
+                    importer.spritePixelsPerUnit = 64;
+                    importer.filterMode = FilterMode.Point;
+                    importer.SaveAndReimport();
+                }
+
+                trashIconSprite = AssetDatabase.LoadAssetAtPath<Sprite>(trashIconTexPath);
+            }
+
+            if (featureToggle == null)
+            {
+                featureToggle = ScriptableObject.CreateInstance<GearEngineFeatureToggleSO>();
+                featureToggle.EnableTrashDeletion = true;
+                featureToggle.TrashZoneTag = trashZoneTag;
+                featureToggle.TrashIcon = trashIconSprite;
+                AssetDatabase.CreateAsset(featureToggle, togglePath);
+            }
+            else
+            {
+                bool dirty = false;
+                if (featureToggle.TrashZoneTag == null)
+                {
+                    featureToggle.TrashZoneTag = trashZoneTag;
+                    dirty = true;
+                }
+
+                // Always update — a moved asset may leave a broken reference
+                if (trashIconSprite != null && featureToggle.TrashIcon != trashIconSprite)
+                {
+                    featureToggle.TrashIcon = trashIconSprite;
+                    dirty = true;
+                }
+
+                if (dirty)
+                {
+                    EditorUtility.SetDirty(featureToggle);
+                }
+            }
 
             // 1.5 Create Empty Slot Background View
             GameObject emptySlot = CreatePrefabPrimitive("EmptySlotView", "", new Color(0.2f, 0.2f, 0.2f, 0.3f), prefabPath);
@@ -63,14 +133,36 @@ namespace Game.GearEngine.Editor
                     BaseRotationSpeed = 70f,
                     TriggerPattern = TriggerPattern.FourWay,
                     IsInteractable = true,
+                    IsMovable = false,
+                    IsReturnable = false,
+                    UIScaleMultiplier = 115f,
                     MaxCharge = 0f, 
                     ChargeOverTimeAmount = 0f,
-                    ChargeOnTriggerAmount = 0f
+                    ChargeOnTriggerAmount = 0f,
+                    SnapSlowdownDuration = 0.5f,
+                    SnapSlowdownMultiplier = 0.15f,
+                    TriggerSpinDegrees = 45f,
+                    IsDeletable = false,
+                    DeleteRewardAmount = 0
                 }, null, null);
                 AssetDatabase.CreateAsset(coreGear, $"{folderPath}/Gear/CoreGearConfig.asset");
             }
-            UpdateVisualsAndMeta(coreGear, coreView, coreSpr, null, null);
+            // FORCE core gear constraints regardless of whether it already existed in the project
+            SerializedObject coreSo = new SerializedObject(coreGear);
+            SerializedProperty coreDataProp = coreSo.FindProperty("data");
+            if (coreDataProp != null)
+            {
+                coreDataProp.FindPropertyRelative("IsMovable").boolValue = false;
+                coreDataProp.FindPropertyRelative("IsReturnable").boolValue = false;
+                coreDataProp.FindPropertyRelative("IsDeletable").boolValue = false;
+                
+                // Clear out UIIcon to fix legacy cyan bug completely
+                var iconProp = coreDataProp.FindPropertyRelative("UIIcon");
+                if (iconProp != null) iconProp.objectReferenceValue = null;
+            }
+            coreSo.ApplyModifiedProperties();
 
+            UpdateVisualsAndMeta(coreGear, coreView, null, null, null);
             // 3. Create Base Gear Level 2
             GameObject base2View = CreatePrefabPrimitive("BaseGear2View", "BaseGear", new Color(0.8f, 0.8f, 0.9f), prefabPath);
             bool isBase2New;
@@ -82,16 +174,22 @@ namespace Game.GearEngine.Editor
                     Id = "base_gear_2",
                     BaseRotationSpeed = 0f, 
                     IsInteractable = true,
+                    UIScaleMultiplier = 115f,
                     MaxCharge = 200f,
                     ChargeOverTimeAmount = 0f,
-                    ChargeOnTriggerAmount = 50f
+                    ChargeOnTriggerAmount = 50f,
+                    SnapSlowdownDuration = 0.5f,
+                    SnapSlowdownMultiplier = 0.15f,
+                    TriggerSpinDegrees = 45f,
+                    IsDeletable = true,
+                    DeleteRewardAmount = 75
                 }, null, null);
                 AssetDatabase.CreateAsset(baseGearLv2, $"{folderPath}/Gear/BaseGearConfig_Level2.asset");
             }
-            UpdateVisualsAndMeta(baseGearLv2, base2View, baseSpr, null, null);
+            UpdateVisualsAndMeta(baseGearLv2, base2View, iconNumber2, null, null);
 
             // 4. Create Base Gear Level 1 (Links to Level 2)
-            GameObject base1View = CreatePrefabPrimitive("BaseGear1View", "BaseGear", new Color(0.6f, 0.6f, 0.65f), prefabPath);
+            GameObject base1View = CreatePrefabPrimitive("BaseGear1View", "BaseGear", new Color(0.8f, 0.8f, 0.9f), prefabPath);
             bool isBase1New;
             GearConfig baseGearLv1 = GetOrCreateGearConfig($"{folderPath}/Gear/BaseGearConfig_Level1.asset", out isBase1New);
             if (isBase1New)
@@ -101,13 +199,19 @@ namespace Game.GearEngine.Editor
                     Id = "base_gear_1",
                     BaseRotationSpeed = 0f,
                     IsInteractable = true,
+                    UIScaleMultiplier = 115f,
                     MaxCharge = 100f,
                     ChargeOverTimeAmount = 0f, 
-                    ChargeOnTriggerAmount = 25f 
+                    ChargeOnTriggerAmount = 25f,
+                    SnapSlowdownDuration = 0.5f,
+                    SnapSlowdownMultiplier = 0.15f,
+                    TriggerSpinDegrees = 45f,
+                    IsDeletable = true,
+                    DeleteRewardAmount = 25
                 }, baseGearLv2, null);
                 AssetDatabase.CreateAsset(baseGearLv1, $"{folderPath}/Gear/BaseGearConfig_Level1.asset");
             }
-            UpdateVisualsAndMeta(baseGearLv1, base1View, baseSpr, baseGearLv2, null);
+            UpdateVisualsAndMeta(baseGearLv1, base1View, iconNumber1, baseGearLv2, null);
 
             // 4. Create Abilities
             DestroySelfAbility destroyAbility = ScriptableObject.CreateInstance<DestroySelfAbility>();
@@ -122,7 +226,7 @@ namespace Game.GearEngine.Editor
             AssetDatabase.CreateAsset(speedAbility, $"{folderPath}/Ability/SpeedBoost_Ability.asset");
 
             // 6. Create Obstacle Rock
-            GameObject rockView = CreatePrefabPrimitive("RockObstacleView", "RockObstacle", new Color(0.4f, 0.4f, 0.35f), prefabPath);
+            GameObject rockView = CreatePrefabPrimitive("RockObstacleView", "BaseGear", new Color(0.4f, 0.4f, 0.35f), prefabPath);
             bool isRockNew;
             GearConfig rockObstacle = GetOrCreateGearConfig($"{folderPath}/Gear/ObstacleRockConfig.asset", out isRockNew);
             if (isRockNew)
@@ -132,16 +236,22 @@ namespace Game.GearEngine.Editor
                     Id = "obstacle_rock",
                     BaseRotationSpeed = 0f,
                     IsInteractable = false, 
+                    UIScaleMultiplier = 115f,
                     MaxCharge = 30f,
                     ChargeOverTimeAmount = 0f,
-                    ChargeOnTriggerAmount = 10f
+                    ChargeOnTriggerAmount = 10f,
+                    SnapSlowdownDuration = 0.5f,
+                    SnapSlowdownMultiplier = 0.15f,
+                    TriggerSpinDegrees = 45f,
+                    IsDeletable = false,
+                    DeleteRewardAmount = 0
                 }, null, new List<GearAbilitySO> { destroyAbility });
                 AssetDatabase.CreateAsset(rockObstacle, $"{folderPath}/Gear/ObstacleRockConfig.asset");
             }
-            UpdateVisualsAndMeta(rockObstacle, rockView, rockSpr, null, new List<GearAbilitySO> { destroyAbility });
+            UpdateVisualsAndMeta(rockObstacle, rockView, baseSpr, null, new List<GearAbilitySO> { destroyAbility });
 
             // 7. Create Score Gear
-            GameObject scoreView = CreatePrefabPrimitive("ScoreGearView", "ScoreGear", new Color(1f, 0.6f, 0.0f), prefabPath);
+            GameObject scoreView = CreatePrefabPrimitive("ScoreGearView", "BaseGear", new Color(0.1f, 0.9f, 0.2f), prefabPath);
             bool isScoreNew;
             GearConfig scoreGear = GetOrCreateGearConfig($"{folderPath}/Gear/ScoreGearConfig.asset", out isScoreNew);
             if (isScoreNew)
@@ -151,16 +261,22 @@ namespace Game.GearEngine.Editor
                     Id = "score_gear",
                     BaseRotationSpeed = 0f,
                     IsInteractable = true,
+                    UIScaleMultiplier = 115f,
                     MaxCharge = 100f,
                     ChargeOverTimeAmount = 0f,
-                    ChargeOnTriggerAmount = 50f
+                    ChargeOnTriggerAmount = 50f,
+                    SnapSlowdownDuration = 0.5f,
+                    SnapSlowdownMultiplier = 0.15f,
+                    TriggerSpinDegrees = 45f,
+                    IsDeletable = true,
+                    DeleteRewardAmount = 100
                 }, null, new List<GearAbilitySO> { scoreAbility });
                 AssetDatabase.CreateAsset(scoreGear, $"{folderPath}/Gear/ScoreGearConfig.asset");
             }
-            UpdateVisualsAndMeta(scoreGear, scoreView, scoreSpr, null, new List<GearAbilitySO> { scoreAbility });
+            UpdateVisualsAndMeta(scoreGear, scoreView, iconCoin, null, new List<GearAbilitySO> { scoreAbility });
 
             // 8. Create Speed Buff Gear
-            GameObject speedView = CreatePrefabPrimitive("SpeedGearView", "SpeedGear", new Color(0.1f, 0.9f, 0.2f), prefabPath);
+            GameObject speedView = CreatePrefabPrimitive("SpeedGearView", "BaseGear", new Color(0.1f, 0.9f, 0.2f), prefabPath);
             bool isSpeedNew;
             GearConfig speedGear = GetOrCreateGearConfig($"{folderPath}/Gear/SpeedBuffGearConfig.asset", out isSpeedNew);
             if (isSpeedNew)
@@ -170,13 +286,19 @@ namespace Game.GearEngine.Editor
                     Id = "speed_buff_gear",
                     BaseRotationSpeed = 0f,
                     IsInteractable = true,
+                    UIScaleMultiplier = 115f,
                     MaxCharge = 0f, 
                     ChargeOverTimeAmount = 0f,
-                    ChargeOnTriggerAmount = 0f
+                    ChargeOnTriggerAmount = 0f,
+                    SnapSlowdownDuration = 0.5f,
+                    SnapSlowdownMultiplier = 0.15f,
+                    TriggerSpinDegrees = 45f,
+                    IsDeletable = true,
+                    DeleteRewardAmount = 50
                 }, null, new List<GearAbilitySO> { speedAbility });
                 AssetDatabase.CreateAsset(speedGear, $"{folderPath}/Gear/SpeedBuffGearConfig.asset");
             }
-            UpdateVisualsAndMeta(speedGear, speedView, speedSpr, null, new List<GearAbilitySO> { speedAbility });
+            UpdateVisualsAndMeta(speedGear, speedView, iconArrowUp, null, new List<GearAbilitySO> { speedAbility });
 
             GearConfig loadoutCore = AssetDatabase.LoadAssetAtPath<GearConfig>($"{folderPath}/Gear/CoreGearConfig.asset");
             GearConfig loadoutBase1 = AssetDatabase.LoadAssetAtPath<GearConfig>($"{folderPath}/Gear/BaseGearConfig_Level1.asset");
@@ -287,8 +409,10 @@ namespace Game.GearEngine.Editor
                 var visualProp = dataProp.FindPropertyRelative("VisualPrefab");
                 if (visualProp != null) visualProp.objectReferenceValue = visual;
 
+                // Only overwrite icon if a valid sprite was provided — prevents
+                // nulling out manually assigned icons when a sprite fails to load.
                 var iconProp = dataProp.FindPropertyRelative("UIIcon");
-                if (iconProp != null) iconProp.objectReferenceValue = icon;
+                if (iconProp != null && icon != null) iconProp.objectReferenceValue = icon;
             }
 
             // Set Next Level
@@ -328,19 +452,19 @@ namespace Game.GearEngine.Editor
             Sprite customSprite = null;
             if (!string.IsNullOrEmpty(spriteName))
             {
-                customSprite = AssetDatabase.LoadAssetAtPath<Sprite>($"Assets/Game/GearEngine/Sprites/{spriteName}.png");
+                customSprite = AssetDatabase.LoadAssetAtPath<Sprite>($"Assets/Art/Sprites/{spriteName}.png");
             }
 
             if (customSprite == null && !string.IsNullOrEmpty(spriteName))
             {
-                // Extra safety: Try fallback if preferred sprite didn't exist
-                customSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Game/GearEngine/Sprites/FallbackGear.png");
+                // Fallback to BaseGear sprite if the preferred sprite didn't exist
+                customSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Art/Sprites/BaseGear.png");
             }
 
             if (customSprite != null)
             {
                 sr.sprite = customSprite;
-                sr.color = tint != Color.white ? tint : Color.white;
+                sr.color = tint;
             }
             else
             {
@@ -383,6 +507,9 @@ namespace Game.GearEngine.Editor
                 dataProp.FindPropertyRelative("ChargeOverTimeAmount").floatValue = data.ChargeOverTimeAmount;
                 dataProp.FindPropertyRelative("ChargeOnTriggerAmount").floatValue = data.ChargeOnTriggerAmount;
 
+                var uiScaleProp = dataProp.FindPropertyRelative("UIScaleMultiplier");
+                if (uiScaleProp != null) uiScaleProp.floatValue = data.UIScaleMultiplier;
+
                 var slowdownDurProp = dataProp.FindPropertyRelative("SnapSlowdownDuration");
                 if (slowdownDurProp != null) slowdownDurProp.floatValue = data.SnapSlowdownDuration;
 
@@ -391,6 +518,12 @@ namespace Game.GearEngine.Editor
 
                 var triggerSpinProp = dataProp.FindPropertyRelative("TriggerSpinDegrees");
                 if (triggerSpinProp != null) triggerSpinProp.floatValue = data.TriggerSpinDegrees;
+
+                var isDeletableProp = dataProp.FindPropertyRelative("IsDeletable");
+                if (isDeletableProp != null) isDeletableProp.boolValue = data.IsDeletable;
+
+                var deleteRewardProp = dataProp.FindPropertyRelative("DeleteRewardAmount");
+                if (deleteRewardProp != null) deleteRewardProp.intValue = data.DeleteRewardAmount;
             }
 
             // Set Next Level
@@ -412,6 +545,61 @@ namespace Game.GearEngine.Editor
             }
 
             so.ApplyModifiedProperties();
+        }
+
+        private static Texture2D CreateTrashIconTexture()
+        {
+            int size = 64;
+            Texture2D tex = new Texture2D(size, size, TextureFormat.RGBA32, false);
+            Color transparent = new Color(0, 0, 0, 0);
+            Color fill = new Color(0.9f, 0.3f, 0.3f, 1f);
+
+            Color[] pixels = new Color[size * size];
+            for (int i = 0; i < pixels.Length; i++) pixels[i] = transparent;
+
+            // Lid (top bar)
+            for (int x = 10; x < 54; x++)
+                for (int y = 50; y < 56; y++)
+                    pixels[y * size + x] = fill;
+
+            // Handle on lid
+            for (int x = 24; x < 40; x++)
+                for (int y = 56; y < 60; y++)
+                    pixels[y * size + x] = fill;
+
+            // Body (left wall)
+            for (int x = 14; x < 18; x++)
+                for (int y = 8; y < 50; y++)
+                    pixels[y * size + x] = fill;
+
+            // Body (right wall)
+            for (int x = 46; x < 50; x++)
+                for (int y = 8; y < 50; y++)
+                    pixels[y * size + x] = fill;
+
+            // Body (bottom)
+            for (int x = 14; x < 50; x++)
+                for (int y = 8; y < 12; y++)
+                    pixels[y * size + x] = fill;
+
+            // Vertical lines inside (ribs)
+            for (int x = 24; x < 26; x++)
+                for (int y = 14; y < 46; y++)
+                    pixels[y * size + x] = fill;
+
+            for (int x = 31; x < 33; x++)
+                for (int y = 14; y < 46; y++)
+                    pixels[y * size + x] = fill;
+
+            for (int x = 38; x < 40; x++)
+                for (int y = 14; y < 46; y++)
+                    pixels[y * size + x] = fill;
+
+            tex.SetPixels(pixels);
+            tex.Apply();
+            tex.filterMode = FilterMode.Point;
+
+            return tex;
         }
     }
 }

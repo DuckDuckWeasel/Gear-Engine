@@ -20,6 +20,9 @@ namespace Game.GearEngine
         [Header("Gear mechanics")]
         [SerializeField] private BoardConfigSO boardConfig;
 
+        [Header("Feature Toggles")]
+        [SerializeField] private GearEngineFeatureToggleSO featureToggle;
+
         [Header("Optional test launcher")]
         [SerializeField] private GearTestSceneBootstrap sceneBootstrap;
 
@@ -66,6 +69,11 @@ namespace Game.GearEngine
 
             var installer = new GearMechanicsInstaller(boardConfig);
             installer.Install(builder);
+
+            if (featureToggle != null)
+            {
+                builder.RegisterInstance(featureToggle);
+            }
 
             if (sceneBootstrap != null)
             {

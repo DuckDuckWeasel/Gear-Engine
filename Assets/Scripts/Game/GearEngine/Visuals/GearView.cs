@@ -106,21 +106,36 @@ namespace Game.GearEngine
 
         private void SetupChargeVisual(GearConfigData configData)
         {
-            if (targetNode is BaseGearNode baseGear && configData != null && configData.MaxCharge > 0)
+            if (configData == null)
             {
-                InitSprites();
+                return;
+            }
 
-                chargeVisualObj = new GameObject("ChargeVisual");
-                chargeFillTransform = chargeVisualObj.transform;
-                chargeVisualObj.transform.SetParent(transform, false);
-                chargeVisualObj.transform.localPosition = new Vector3(0, 0, -0.5f); // In front of gear
-                chargeVisualObj.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
-                
-                chargeFillRenderer = chargeVisualObj.AddComponent<SpriteRenderer>();
-                chargeFillRenderer.sprite = configData.UIIcon != null ? configData.UIIcon : squareSpriteCenter;
-                chargeFillRenderer.color = new Color(0.2f, 0.8f, 1f, 0.9f); // Cyan fill
-                chargeFillRenderer.sortingOrder = 6;
+            // Always display the UIIcon overlay if one is assigned
+            bool hasIcon = configData.UIIcon != null;
+            bool hasCharge = targetNode is BaseGearNode && configData.MaxCharge > 0;
 
+            if (!hasIcon && !hasCharge)
+            {
+                return;
+            }
+
+            InitSprites();
+
+            chargeVisualObj = new GameObject("ChargeVisual");
+            chargeFillTransform = chargeVisualObj.transform;
+            chargeVisualObj.transform.SetParent(transform, false);
+            chargeVisualObj.transform.localPosition = new Vector3(0, 0, -0.5f); // In front of gear
+            chargeVisualObj.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
+            
+            chargeFillRenderer = chargeVisualObj.AddComponent<SpriteRenderer>();
+            chargeFillRenderer.sprite = hasIcon ? configData.UIIcon : squareSpriteCenter;
+            chargeFillRenderer.color = hasIcon ? Color.white : new Color(0.2f, 0.8f, 1f, 0.9f); // Cyan fill for geometry fallback
+            chargeFillRenderer.sortingOrder = 6;
+
+            // Only apply fill shader when gear has a charge mechanic
+            if (hasCharge)
+            {
                 Shader fillShader = Shader.Find("GearEngine/Sprites/SpriteFillGrayscale");
                 if (fillShader != null)
                 {

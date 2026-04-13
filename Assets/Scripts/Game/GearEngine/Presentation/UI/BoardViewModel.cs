@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Game.GearEngine;
+using Scaffold.Events.Contracts;
 using Scaffold.MVVM;
 using UnityEngine;
 
@@ -12,11 +13,15 @@ namespace Game.GearEngine.Presentation
         private IGridManager gridManager;
         private GearNodeFactory nodeFactory;
         private BoardConfigSO boardConfig;
+        private IEventBus eventBus;
+        private GearEngineFeatureToggleSO featureToggle;
 
         private Vector2Int pickupOriginalPos;
 
         public event Action<IGridNode> OnGearPlaced;
         public event Action<IGridNode> OnGearRemoved;
+        public event Action<GearConfigData> OnBoardDragStarted;
+        public event Action OnBoardDragEnded;
 
         public IGearEngineService EngineService => engineService;
 
@@ -26,12 +31,16 @@ namespace Game.GearEngine.Presentation
             IGearEngineService engineService,
             IGridManager gridManager,
             GearNodeFactory nodeFactory,
-            BoardConfigSO boardConfig)
+            BoardConfigSO boardConfig,
+            IEventBus eventBus = null,
+            GearEngineFeatureToggleSO featureToggle = null)
         {
             this.engineService = engineService ?? throw new ArgumentNullException(nameof(engineService));
             this.gridManager = gridManager ?? throw new ArgumentNullException(nameof(gridManager));
             this.nodeFactory = nodeFactory ?? throw new ArgumentNullException(nameof(nodeFactory));
             this.boardConfig = boardConfig ?? throw new ArgumentNullException(nameof(boardConfig));
+            this.eventBus = eventBus;
+            this.featureToggle = featureToggle;
         }
 
         public IGridNode GetNode(Vector2Int coord) => gridManager.GetNode(coord);
@@ -89,9 +98,22 @@ namespace Game.GearEngine.Presentation
 
             pickupOriginalPos = fromPos;
             gridManager.ExtractNode(fromPos);
+            OnBoardDragStarted?.Invoke(node.ConfigData);
         }
 
         public void OnGearDropped(IGridNode node, Vector2Int toPos)
+        {
+            try
+            {
+                OnGearDroppedInternal(node, toPos);
+            }
+            finally
+            {
+                OnBoardDragEnded?.Invoke();
+            }
+        }
+
+        private void OnGearDroppedInternal(IGridNode node, Vector2Int toPos)
         {
             if (node == null || engineService == null || gridManager == null || boardConfig == null)
             {
@@ -125,6 +147,15 @@ namespace Game.GearEngine.Presentation
             GearConfigData draggedData = node.ConfigData;
             GearConfigData occupantData = occupant.ConfigData;
 
+            // Reject drop if either the occupant or the dragged gear cannot be moved
+            if ((occupantData != null && !occupantData.IsMovable) || 
+                (draggedData != null && !draggedData.IsMovable))
+            {
+                SnapNodeBackToOriginal(node);
+                Debug.Log($"<color=#ff5555>[BoardViewModel]</color> Cannot swap '{draggedData?.Id}' with '{occupantData?.Id}' at {toPos} — at least one gear is not movable. Snapped back.");
+                return;
+            }
+
             if (occupantData.Id == draggedData.Id && occupantData.NextLevelConfig != null)
             {
                 MergeBoardGearsAt(node, occupant, toPos, occupantData);
@@ -148,6 +179,99 @@ namespace Game.GearEngine.Presentation
             {
                 Debug.LogError($"[BoardViewModel] HandleBoardGearReturnedOverUI failed: {ex.Message}\n{ex.StackTrace}");
             }
+            finally
+            {
+                OnBoardDragEnded?.Invoke();
+            }
+        }
+
+        /// <summary>
+        /// Permanently removes a gear from the board and returns the reward amount.
+        /// Called after the player confirms deletion in the confirmation popup.
+        /// </summary>
+        /// <returns>True if the gear was successfully deleted.</returns>
+        public bool DeleteGear(IGridNode node)
+        {
+            try
+            {
+                if (node == null)
+                {
+                    throw new ArgumentNullException(nameof(node));
+                }
+
+                if (node.ConfigData == null || !node.ConfigData.IsDeletable)
+                {
+                    Debug.LogWarning($"[BoardViewModel] DeleteGear rejected: gear is not deletable.");
+                    return false;
+                }
+
+                if (featureToggle != null && !featureToggle.EnableTrashDeletion)
+                {
+                    Debug.LogWarning($"[BoardViewModel] DeleteGear rejected: trash deletion feature is disabled.");
+                    return false;
+                }
+
+                if (engineService != null && engineService.IsRunning)
+                {
+                    Debug.LogWarning($"[BoardViewModel] DeleteGear rejected: simulation is running.");
+                    return false;
+                }
+
+                Vector2Int pos = node.Position;
+                int reward = node.ConfigData.DeleteRewardAmount;
+
+                IGridNode extracted = gridManager.ExtractNode(pos);
+
+                // If it wasn't in the grid (because it's actively being dragged), 
+                // we fall back to the dragged node itself.
+                if (extracted == null)
+                {
+                    extracted = node;
+                }
+                else if (extracted != node)
+                {
+                    // Safey check: if another node somehow occupied this pos, put it back
+                    gridManager.AddNode(extracted);
+                    extracted = node;
+                }
+
+                OnGearRemoved?.Invoke(extracted);
+                extracted.Dispose();
+
+                eventBus?.Raise(new GearDeletedEvent(pos, reward));
+                Debug.Log($"<color=#ff5555>[BoardViewModel]</color> Gear at {pos} DELETED. Reward: {reward}");
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"[BoardViewModel] DeleteGear failed: {ex.Message}\n{ex.StackTrace}");
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Grants a scrap reward for deleting a gear directly from the inventory.
+        /// </summary>
+        public void GrantTrashReward(int rewardAmount)
+        {
+            if (rewardAmount > 0)
+            {
+                eventBus?.Raise(new GearDeletedEvent(Vector2Int.zero, rewardAmount));
+            }
+        }
+
+        /// <summary>
+        /// Snaps a gear back to its pickup position. Used when the player cancels deletion.
+        /// </summary>
+        public void SnapBackToOriginal(IGridNode node)
+        {
+            if (node == null)
+            {
+                return;
+            }
+
+            SnapNodeBackToOriginal(node);
+            OnBoardDragEnded?.Invoke();
         }
 
         /// <summary>
