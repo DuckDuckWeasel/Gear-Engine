@@ -2,16 +2,22 @@ root = true
 
 # Table of contents (file order)
 # 1. [*.cs] — active rules by category (SCA 1,2,3,6,8; then SCM)
-# 2. [*.cs] — disabled / archived rules (severity none + legacy keys)
-# 3. Path overrides — SCA3005 / SCA3006 (namespaces / layout)
-# 4. Path overrides — SCA2003 (hot-spot files)
-# 5. Path overrides — third-party AAGen (vendor package under Assets/Packages/AAGen-0.3.0)
+# 2. [*.cs] — optional scaffold.global.* (whole-folder / assembly analyzer skips)
+# 3. [*.cs] — disabled / archived rules (severity none + legacy keys)
+# 4. Path overrides — SCA3005 / SCA3006 (namespaces / layout)
+# 5. Path overrides — SCA2003 (hot-spot files)
+# 6. Path overrides — third-party AAGen (vendor package under Assets/Packages/AAGen-0.3.0)
 
 [*.cs]
 # Scaffold Analyzer Severity Configuration
 # Values: error | warning | suggestion | none
 # Set to "none" to disable a rule entirely.
 # Set to "error" to make a rule block compilation.
+
+# Repo-wide analyzer scope (SCA + SCM). See Docs/Analyzers/Analyzers.md → Configuration.
+scaffold.global.ignored_assembly_name_contains = Tests;Samples;Examples
+scaffold.global.ignored_paths = Assets/Samples
+# scaffold.global.ignore_infrastructure_assemblies = true
 
 # --- Category 1 (surface / style): SCA1001–SCA1007 ---
 dotnet_diagnostic.SCA1001.severity = warning   # No comments on methods

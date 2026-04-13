@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Scaffold.GearEngine.Manager
+namespace GearEngine.GearEngine.Manager
 {
     public interface IGridManager
     {

@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace Scaffold.CarSimulation
+namespace GearEngine.CarSimulation
 {
     public sealed class TrackSimulationFactory
     {

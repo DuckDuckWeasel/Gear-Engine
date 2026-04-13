@@ -1,7 +1,7 @@
 using NUnit.Framework;
 using UnityEngine;
 using Scaffold.Events;
-namespace Scaffold.GearEngine.Tests.Editor {
+namespace GearEngine.GearEngine.Tests.Editor {
     public class GearChainTest {
         [Test]
         public void TestChain() {

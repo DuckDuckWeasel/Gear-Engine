@@ -1,6 +1,6 @@
 {
     "name": "Game.CarSimulation",
-    "rootNamespace": "Scaffold.CarSimulation",
+    "rootNamespace": "GearEngine.CarSimulation",
     "references": [
         "Scaffold.Addressables",
         "Scaffold.Addressables.Container",

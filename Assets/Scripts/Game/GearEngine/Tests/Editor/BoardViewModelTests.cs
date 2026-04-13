@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
-using Scaffold.GearEngine;
-using Scaffold.GearEngine.Presentation;
+using GearEngine.GearEngine;
+using GearEngine.GearEngine.Presentation;
 using NUnit.Framework;
 using Scaffold.Events;
 using Scaffold.Events.Contracts;
@@ -9,7 +9,7 @@ using UnityEngine;
 using UnityEngine.TestTools;
 using VContainer;
 
-namespace Scaffold.GearEngine.Tests.Editor
+namespace GearEngine.GearEngine.Tests.Editor
 {
     [TestFixture]
     public class BoardViewModelTests

@@ -1,7 +1,7 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace Scaffold.GearEngine.Presentation.UI
+namespace GearEngine.GearEngine.Presentation.UI
 {
     public partial class GearInventoryModel : ObservableObject
     {

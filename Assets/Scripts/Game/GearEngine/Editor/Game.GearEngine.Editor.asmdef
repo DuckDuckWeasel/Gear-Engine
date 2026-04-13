@@ -1,6 +1,6 @@
 {
     "name": "Game.GearEngine.Editor",
-    "rootNamespace": "Scaffold.GearEngine.Editor",
+    "rootNamespace": "GearEngine.GearEngine.Editor",
     "references": [
         "Game.GearEngine",
         "VContainer",

@@ -42,7 +42,8 @@
       "GUID:760a4c7888534400e882b82c5b3fba06"
     ],
     "firstPartyAssemblyNamePatterns": [
-      "Scaffold.*"
+      "Scaffold.*",
+      "GearEngine.*"
     ]
   }
 }

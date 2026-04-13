@@ -3,7 +3,7 @@ using Scaffold.Entities;
 using UnityEngine;
 using UnityEngine.Splines;
 
-namespace Scaffold.CarSimulation
+namespace GearEngine.CarSimulation
 {
     internal sealed class CarSplineDriver : MonoBehaviour
     {

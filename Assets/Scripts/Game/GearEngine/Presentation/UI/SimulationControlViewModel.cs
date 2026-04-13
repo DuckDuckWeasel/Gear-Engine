@@ -1,9 +1,9 @@
 using CommunityToolkit.Mvvm.ComponentModel;
-using Scaffold.GearEngine;
+using GearEngine.GearEngine;
 using Scaffold.MVVM;
 using UnityEngine;
 
-namespace Scaffold.GearEngine.Presentation.UI
+namespace GearEngine.GearEngine.Presentation.UI
 {
     public partial class SimulationControlViewModel : ViewModel
     {

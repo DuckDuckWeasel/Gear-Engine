@@ -1,4 +1,4 @@
-namespace Scaffold.GearEngine.Presentation.World
+namespace GearEngine.GearEngine.Presentation.World
 {
     /// <summary>
     /// Determines how a world-space object is scaled to fill its configured

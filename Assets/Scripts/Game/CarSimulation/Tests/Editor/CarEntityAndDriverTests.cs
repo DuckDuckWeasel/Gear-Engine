@@ -1,10 +1,10 @@
-using Scaffold.CarSimulation;
+using GearEngine.CarSimulation;
 using NUnit.Framework;
 using Scaffold.Entities;
 using UnityEngine;
 using UnityEngine.Splines;
 
-namespace Scaffold.CarSimulation.Tests
+namespace GearEngine.CarSimulation.Tests
 {
     public sealed class CarEntityAndDriverTests
     {

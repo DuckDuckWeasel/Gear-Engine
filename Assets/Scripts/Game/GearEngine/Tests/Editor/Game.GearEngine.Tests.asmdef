@@ -1,6 +1,6 @@
 {
     "name": "Game.GearEngine.Tests",
-    "rootNamespace": "Scaffold.GearEngine.Tests",
+    "rootNamespace": "GearEngine.GearEngine.Tests",
     "references": [
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner",

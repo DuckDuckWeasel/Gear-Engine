@@ -1,4 +1,4 @@
-namespace Scaffold.GearEngine
+namespace GearEngine.GearEngine
 {
     public interface IGearEngineService
     {

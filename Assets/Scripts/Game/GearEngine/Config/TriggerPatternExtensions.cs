@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Scaffold.GearEngine.Config
+namespace GearEngine.GearEngine.Config
 {
     public static class TriggerPatternExtensions
     {

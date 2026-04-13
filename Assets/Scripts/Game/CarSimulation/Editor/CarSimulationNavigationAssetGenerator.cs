@@ -6,7 +6,7 @@ using UnityEditor.AddressableAssets.Settings;
 using UnityEngine;
 using UnityEngine.Splines;
 
-namespace Scaffold.CarSimulation.Editor
+namespace GearEngine.CarSimulation.Editor
 {
     /// <summary>Sample: Creates the navigation stub prefab, <see cref="ViewConfig"/>, and registers it on Navigation Settings.</summary>
     public static class CarSimulationNavigationAssetGenerator

@@ -1,9 +1,9 @@
 using System;
 using NUnit.Framework;
 using UnityEngine;
-using Scaffold.GearEngine.Presentation.World;
+using GearEngine.GearEngine.Presentation.World;
 
-namespace Scaffold.GearEngine.Tests.Editor
+namespace GearEngine.GearEngine.Tests.Editor
 {
     /// <summary>
     /// EditMode unit tests for FrustumFitMath and FrustumBounds.

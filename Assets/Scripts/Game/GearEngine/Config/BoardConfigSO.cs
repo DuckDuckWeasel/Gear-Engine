@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Scaffold.GearEngine.Config
+namespace GearEngine.GearEngine.Config
 {
     [CreateAssetMenu(fileName = "BoardConfig", menuName = "GearEngine/BoardConfig")]
     public class BoardConfigSO : ScriptableObject

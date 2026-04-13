@@ -1,4 +1,4 @@
-namespace Scaffold.GearEngine.Config
+namespace GearEngine.GearEngine.Config
 {
     public enum TriggerPattern
     {

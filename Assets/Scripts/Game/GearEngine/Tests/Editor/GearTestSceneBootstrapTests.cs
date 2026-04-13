@@ -1,9 +1,9 @@
 using NUnit.Framework;
-using Scaffold.GearEngine.Presentation;
+using GearEngine.GearEngine.Presentation;
 using Scaffold.Navigation.Contracts;
 using UnityEngine;
 
-namespace Scaffold.GearEngine.Tests.Editor
+namespace GearEngine.GearEngine.Tests.Editor
 {
     public sealed class GearTestSceneBootstrapTests
     {

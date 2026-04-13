@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Scaffold.GearEngine.Nodes
+namespace GearEngine.GearEngine.Nodes
 {
     public class AuraGearNode : NodeBase
     {

@@ -3,7 +3,7 @@ using Scaffold.Events;
 using VContainer;
 using VContainer.Unity;
 
-namespace Scaffold.GearEngine.Bootstrap
+namespace GearEngine.GearEngine.Bootstrap
 {
     public sealed class GearMechanicsInstaller
     {

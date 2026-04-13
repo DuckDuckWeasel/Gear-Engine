@@ -1,12 +1,12 @@
 using System.Reflection;
 using System.Text.RegularExpressions;
-using Scaffold.CarSimulation;
+using GearEngine.CarSimulation;
 using NUnit.Framework;
 using Scaffold.MVVM;
 using UnityEngine;
 using UnityEngine.TestTools;
 
-namespace Scaffold.CarSimulation.Tests
+namespace GearEngine.CarSimulation.Tests
 {
     public sealed class TrackSimulationTests
     {

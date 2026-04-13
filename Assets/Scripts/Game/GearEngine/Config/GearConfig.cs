@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Scaffold.GearEngine.Config
+namespace GearEngine.GearEngine.Config
 {
     [CreateAssetMenu(fileName = "GearConfig", menuName = "GearEngine/GearConfig")]
     public class GearConfig : ScriptableObject

@@ -1,5 +1,5 @@
 using System.IO;
-using Scaffold.CarSimulation;
+using GearEngine.CarSimulation;
 using Scaffold.Entities;
 using Scaffold.Navigation;
 using UnityEditor;
@@ -8,7 +8,7 @@ using UnityEngine;
 using UnityEngine.Splines;
 using Object = UnityEngine.Object;
 
-namespace Scaffold.CarSimulation.Editor
+namespace GearEngine.CarSimulation.Editor
 {
     public static class CarSimulationSetupTool
     {

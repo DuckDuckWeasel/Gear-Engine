@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
-using Scaffold.GearEngine;
+using GearEngine.GearEngine;
 using Scaffold.MVVM;
 using UnityEngine;
 
-namespace Scaffold.GearEngine.Presentation.UI
+namespace GearEngine.GearEngine.Presentation.UI
 {
     [DisallowMultipleComponent]
     public class BoardView : ViewComponent<BoardViewModel>

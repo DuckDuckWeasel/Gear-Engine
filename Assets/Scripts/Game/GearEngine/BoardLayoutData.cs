@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Scaffold.GearEngine
+namespace GearEngine.GearEngine
 {
     [Serializable]
     public sealed class BoardLayoutData

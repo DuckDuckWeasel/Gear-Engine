@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using UnityEngine.Splines;
 
-namespace Scaffold.CarSimulation
+namespace GearEngine.CarSimulation
 {
     public sealed class CarView : MonoBehaviour
     {

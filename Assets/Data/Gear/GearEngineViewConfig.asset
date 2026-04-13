@@ -21,10 +21,10 @@ MonoBehaviour:
     m_SubObjectGUID: 
     m_EditorAssetChanged: 0
   viewType:
-    serializedType: '"Scaffold.GearEngine.Presentation.GearEngineView, Game.GearEngine,
+    serializedType: '"GearEngine.GearEngine.Presentation.GearEngineView, Game.GearEngine,
       Version=0.0.0.0, Culture=neutral, PublicKeyToken=null"'
   controllerType:
-    serializedType: '"Scaffold.GearEngine.Presentation.GearEngineViewModel, Game.GearEngine,
+    serializedType: '"GearEngine.GearEngine.Presentation.GearEngineViewModel, Game.GearEngine,
       Version=0.0.0.0, Culture=neutral, PublicKeyToken=null"'
   references:
     version: 2

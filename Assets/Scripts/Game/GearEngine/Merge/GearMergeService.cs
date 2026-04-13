@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using Scaffold.Events.Contracts;
 using UnityEngine;
 
-namespace Scaffold.GearEngine.Merge
+namespace GearEngine.GearEngine.Merge
 {
     public class GearMergeService
     {

@@ -2,7 +2,7 @@ using NUnit.Framework;
 using UnityEngine;
 using VContainer;
 
-namespace Scaffold.GearEngine.Tests.Editor
+namespace GearEngine.GearEngine.Tests.Editor
 {
     [TestFixture]
     public class GearMechanicsInstallerTests

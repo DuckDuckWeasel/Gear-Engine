@@ -44,7 +44,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6b7f381700cc0d84597633cb25171249, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Game.CarSimulation::Game.CarSimulation.CarTrackTestView
+  m_EditorClassIdentifier: Game.CarSimulation::GearEngine.CarSimulation.Presentation.CarTrackTestView
   type: 0
   track: {fileID: 5897838199894544117}
 --- !u!1001 &6801861924152382970
@@ -115,4 +115,4 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8e5b9c3d2eaf507b9c1d2e3f4a5b6c7d, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Game.CarSimulation::Game.CarSimulation.Track
+  m_EditorClassIdentifier: Game.CarSimulation::GearEngine.CarSimulation.Track.Track

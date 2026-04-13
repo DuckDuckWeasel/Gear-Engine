@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Scaffold.GearEngine.Presentation.UI.Tags
+namespace GearEngine.GearEngine.Presentation.UI.Tags
 {
     [CreateAssetMenu(menuName = "GearEngine/Tags/TagSO", fileName = "NewTag")]
     public class TagSO : ScriptableObject

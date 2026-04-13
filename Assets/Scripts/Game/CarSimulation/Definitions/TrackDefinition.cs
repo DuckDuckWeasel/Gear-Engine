@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.Splines;
 
-namespace Scaffold.CarSimulation
+namespace GearEngine.CarSimulation
 {
     [CreateAssetMenu(menuName = "Game/Track/Track Definition", fileName = "TrackDefinition")]
     public sealed class TrackDefinition : ScriptableObject

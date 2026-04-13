@@ -3,7 +3,7 @@ using Scaffold.Events.Contracts;
 using System;
 using Sirenix.OdinInspector;
 
-namespace Scaffold.GearEngine.Nodes
+namespace GearEngine.GearEngine.Nodes
 {
     public class BaseGearNode : NodeBase
     {

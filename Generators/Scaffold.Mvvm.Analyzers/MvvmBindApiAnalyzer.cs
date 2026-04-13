@@ -39,6 +39,7 @@ namespace Scaffold.Mvvm.Analyzers
         private void AnalyzeNamedType(SymbolAnalysisContext context)
         {
             if (context.Symbol is not INamedTypeSymbol typeSymbol) return;
+            if (Scaffold.Analyzers.AnalyzerScopeGate.ShouldSkipSymbolAnalysis(context, typeSymbol)) return;
             if (!IsCandidateClass(typeSymbol)) return;
 
             var sourceLoc = typeSymbol.Locations.FirstOrDefault(l => l.SourceTree != null);
@@ -77,14 +78,9 @@ namespace Scaffold.Mvvm.Analyzers
             var filePath = sourceLocation.SourceTree?.FilePath ?? string.Empty;
             if (string.IsNullOrWhiteSpace(filePath)) return false;
 
-            if (Scaffold.Analyzers.ModuleConventions.IsExcludedThirdPartyVendorPath(filePath)) return false;
-
-            var normalizedPath = filePath.Replace('\\', '/');
-            if (normalizedPath.IndexOf("/Tests/", StringComparison.OrdinalIgnoreCase) >= 0) return false;
-            if (normalizedPath.IndexOf("/Samples/", StringComparison.OrdinalIgnoreCase) >= 0) return false;
-            if (normalizedPath.IndexOf("/obj/", StringComparison.OrdinalIgnoreCase) >= 0) return false;
-            if (normalizedPath.IndexOf("/bin/", StringComparison.OrdinalIgnoreCase) >= 0) return false;
-            if (normalizedPath.EndsWith(".g.cs", StringComparison.OrdinalIgnoreCase)) return false;
+            var normalizedPath = Scaffold.Analyzers.ScriptPathFilters.Normalize(filePath);
+            if (Scaffold.Analyzers.ScriptPathFilters.IsTestOrSamplePath(normalizedPath)) return false;
+            if (Scaffold.Analyzers.ScriptPathFilters.IsGeneratedSourceFilePattern(normalizedPath)) return false;
 
             return true;
         }

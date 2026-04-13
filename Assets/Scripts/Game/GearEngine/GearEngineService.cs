@@ -1,6 +1,6 @@
 using System;
 
-namespace Scaffold.GearEngine
+namespace GearEngine.GearEngine
 {
     public sealed class GearEngineService : IGearEngineService
     {

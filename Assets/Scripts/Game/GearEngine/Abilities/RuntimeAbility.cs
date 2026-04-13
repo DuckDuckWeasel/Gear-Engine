@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Scaffold.GearEngine.Abilities
+namespace GearEngine.GearEngine.Abilities
 {
     public class RuntimeAbility
     {

@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace Scaffold.GearEngine.Presentation.World
+namespace GearEngine.GearEngine.Presentation.World
 {
     /// <summary>
     /// Scales a world-space GameObject so it occupies a configured fraction of

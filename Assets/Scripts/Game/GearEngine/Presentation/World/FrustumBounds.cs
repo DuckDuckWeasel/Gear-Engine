@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace Scaffold.GearEngine.Presentation.World
+namespace GearEngine.GearEngine.Presentation.World
 {
     /// <summary>
     /// World-space width and height of the camera frustum at a given depth.

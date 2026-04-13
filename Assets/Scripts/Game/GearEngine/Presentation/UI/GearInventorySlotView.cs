@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Scaffold.GearEngine.Presentation.UI
+namespace GearEngine.GearEngine.Presentation.UI
 {
     [RequireComponent(typeof(DragHandler))]
     public class GearInventorySlotView : MonoBehaviour

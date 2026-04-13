@@ -1,7 +1,7 @@
 using Scaffold.MVVM;
 using UnityEngine;
 
-namespace Scaffold.CarSimulation
+namespace GearEngine.CarSimulation
 {
     /// <summary>Sample view for the spline track test scene: hosts <see cref="Track"/> as a reusable ViewComponent.</summary>
     public sealed class CarTrackTestView : View<TrackViewModel>

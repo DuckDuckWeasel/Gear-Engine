@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Scaffold.GearEngine.Presentation.UI.Tags
+namespace GearEngine.GearEngine.Presentation.UI.Tags
 {
     public class TagComponent : MonoBehaviour
     {

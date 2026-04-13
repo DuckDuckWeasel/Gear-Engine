@@ -1,6 +1,6 @@
 {
     "name": "Game.CarSimulation.Editor",
-    "rootNamespace": "Scaffold.CarSimulation.Editor",
+    "rootNamespace": "GearEngine.CarSimulation.Editor",
     "references": [
         "Game.CarSimulation",
         "Scaffold.Entities",

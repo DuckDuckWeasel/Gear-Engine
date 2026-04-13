@@ -1,6 +1,6 @@
 {
     "name": "Game.GearEngine",
-    "rootNamespace": "Scaffold.GearEngine",
+    "rootNamespace": "GearEngine.GearEngine",
     "references": [
         "VContainer",
         "Scaffold.Addressables",
@@ -11,6 +11,7 @@
         "Scaffold.MVVM.ViewModel",
         "Scaffold.Navigation",
         "Scaffold.Navigation.Container",
+        "Scaffold.Records",
         "Scaffold.Scope",
         "Unity.TextMeshPro",
         "Unity.InputSystem"

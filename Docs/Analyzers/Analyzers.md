@@ -159,8 +159,8 @@ All analyzer types use namespace **`Scaffold.Analyzers`** (folder name does not 
 
 ### `AnalyzerConfig` and shared helpers
 
-- **`AnalyzerConfig`** (`Support/AnalyzerConfig.cs`): reads `dotnet_diagnostic.{ID}.severity` and custom `scaffold.{ID}.*` keys; **`TryGetEffectiveDescriptor`** / **`ShouldSuppress`** / **`GetInt`** — use these at report sites so `.editorconfig` overrides apply.
-- **`ScriptPathFilters`**: single place for `Assets/Scripts` normalization, Tests/Samples skips, generated paths — **do not** copy-paste path checks in new rules.
+- **`AnalyzerConfig`** (`Support/AnalyzerConfig.cs`): reads `dotnet_diagnostic.{ID}.severity` and custom `scaffold.{ID}.*` keys; **`TryGetEffectiveDescriptor`** / **`ShouldSuppress`** / **`GetInt`** / **`MergeSemicolonOptions`** — use these at report sites so `.editorconfig` overrides apply. **`AnalyzerScopeGate`** in the same file applies **`scaffold.global.*`** skips for all Scaffold analyzers.
+- **`ScriptPathFilters`**: single place for `Assets/Scripts` normalization, Tests/Samples skips, generated paths, configured ignore roots — **do not** copy-paste path checks in new rules.
 - **`ModuleConventions`**: module roots, infrastructure assembly detection, related path helpers.
 
 ### Extended analyzer rules and release tracking
@@ -171,7 +171,7 @@ All analyzer types use namespace **`Scaffold.Analyzers`** (folder name does not 
 
 ### MVVM analyzer (`Scaffold.Mvvm.Analyzers`)
 
-The MVVM project **`Generators/Scaffold.Mvvm.Analyzers`** **links** shared sources from `Scaffold.Analyzers/Support/`: `AnalyzerConfig.cs`, `ModuleConventions.cs`, `ScriptPathFilters.cs`. If you add a new shared file under `Support/` and use it from linked MVVM code, **add the same `<Compile Include=... Link=...>`** entry to `Scaffold.Mvvm.Analyzers.csproj`.
+The MVVM project **`Generators/Scaffold.Mvvm.Analyzers`** **links** shared sources from `Scaffold.Analyzers/Support/`: `AnalyzerConfig.cs` (includes **`AnalyzerScopeGate`**), `ModuleConventions.cs`, `ScriptPathFilters.cs`. If you add a new shared file under `Support/` and use it from linked MVVM code, **add the same `<Compile Include=... Link=...>`** entry to `Scaffold.Mvvm.Analyzers.csproj`.
 
 ### Build output and integration
 
@@ -237,7 +237,17 @@ dotnet_diagnostic.SCA1001.severity = warning   # or: error | suggestion | none
 
 Custom integer/string keys use the **`scaffold.{DiagnosticId}.{key}`** pattern (examples: `scaffold.SCA2002.max_nesting_depth`, `scaffold.SCA2003.max_lines`, `scaffold.SCA3005.allowed_roots`, `scaffold.SCA3006.content_roots`, `scaffold.SCA6002.forbidden_types`, `scaffold.SCA8001.exempt_method_names`). **`none`** suppresses the rule.
 
-**`AnalyzerConfig`** caches overridden descriptors and exposes **`GetEffectiveDescriptor`**, **`ShouldSuppress`**, **`GetInt`**, and list parsing helpers.
+**Global analyzer scope (all SCA + SCM rules)** — optional repo-wide skips implemented by **`AnalyzerScopeGate`** in [`AnalyzerConfig.cs`](../../Analyzers/Scaffold/Scaffold.Analyzers/Support/AnalyzerConfig.cs):
+
+| Key | Purpose |
+|-----|---------|
+| **`scaffold.global.ignored_assembly_name_contains`** | Semicolon-separated substrings matched case-insensitively against the Roslyn compilation assembly name (for example `Tests;Samples;Examples` skips `Game.GearEngine.Tests` and `Unity.Splines.Examples`). |
+| **`scaffold.global.ignored_paths`** | Semicolon-separated path roots after normalization (forward slashes). A file is skipped when its path is under a root (for example `Assets/Samples` skips `.../Assets/Samples/...` but not `Assets/SamplesBackup`). Per-tree `.editorconfig` sections can add entries; values merge with global. |
+| **`scaffold.global.ignore_infrastructure_assemblies`** | When `true` / `1` / `yes`, skips assemblies matching **`ModuleConventions.IsInfrastructureAssembly`** (for example `*.Tests`, `*.Editor`, `*.Samples`). Off by default so editor-only assemblies remain analyzed unless you opt in. |
+
+These gates apply in addition to existing vendor exclusions (`ModuleConventions.IsExcludedThirdPartyVendorPath`) and rule-specific path predicates (for example **`ScriptPathFilters.IsUnityScriptPath`** for Unity-only rules). Prefer **`scaffold.global.*`** for whole segments (samples, optional test assemblies) instead of setting every diagnostic to **`none`**.
+
+**`AnalyzerConfig`** caches overridden descriptors and exposes **`GetEffectiveDescriptor`**, **`ShouldSuppress`**, **`GetInt`**, **`MergeSemicolonOptions`**, and list parsing helpers.
 
 Example **`[*.cs]`** block showing several overrides (trim to what you need):
 
@@ -272,7 +282,7 @@ Valid severities include `error`, `warning`, `suggestion`, `info`, `hidden`, `si
 1. **Choose ID** — Next free index in the correct **category** (see [Rule IDs and categories](#rule-ids-and-categories)). Implement under the matching **`Rules/CategoryNN-*/`** folder.
 2. **Implement** — `[DiagnosticAnalyzer(LanguageNames.CSharp)]`, `DiagnosticDescriptor`, register actions in **`Initialize`**. At each report site, use **`AnalyzerConfig.TryGetEffectiveDescriptor`** (or **`ShouldSuppress`** + **`GetEffectiveDescriptor`**) so **`dotnet_diagnostic.{ID}.severity`** and **`none`** work.
 3. **Messages** — Prefix with **`Error {ID}:`**; describe the fix (see [Diagnostic messages](#diagnostic-messages-authoring)).
-4. **Path filtering** — Use **`ScriptPathFilters`** / **`ModuleConventions`** where appropriate; do not duplicate `Assets/Scripts` checks.
+4. **Path filtering** — Call **`AnalyzerScopeGate.ShouldSkipSyntaxNodeAnalysis`** / **`ShouldSkipSymbolAnalysis`** (or equivalent) at analyzer entry, then use **`ScriptPathFilters`** / **`ModuleConventions`** for rule-specific scope; do not duplicate `Assets/Scripts` or vendor checks.
 5. **Tests** — Add tests under **`Scaffold.Analyzers.Tests/Tests/{same CategoryNN}/`**; add **`TestData`** snippets and/or **`Golden`** pair; register in **`ScaRuleGoldenTests`** if the rule is a stable one-diagnostic baseline.
 6. **Release tracking** — Add the ID to **`AnalyzerReleases.Unshipped.md`** (and **Shipped** when releasing).
 7. **Docs** — Add a **### SCAxxxx** section under [Rules reference](#rules-reference) in **this file**; add or update **`Plans/SCA-Analyzer-Revamp/SCAxxxx.md`** and **[SCA-Rule-Disposition.md](SCA-Rule-Disposition.md)**.

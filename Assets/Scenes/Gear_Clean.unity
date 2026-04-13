@@ -129,7 +129,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 28cae4dad4cae425dbf7c1a06cd4e3ea, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Game.GearEngine::Scaffold.GearEngine.Presentation.UI.BoardView
+  m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Presentation.UI.BoardView
 --- !u!224 &599648391 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 4535038348591010384, guid: 92188c92e2caa3240ae6016fd22d425d, type: 3}
@@ -243,7 +243,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 09db16d650f962147be1c55e31818886, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Game.GearEngine::Scaffold.GearEngine.Presentation.GearTestSceneBootstrap
+  m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Presentation.GearTestSceneBootstrap
   startData:
     boardLayout:
       placements:
@@ -267,7 +267,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 86d23fd69eaaa4f57b7010ec4d408e4b, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Game.GearEngine::Scaffold.GearEngine.Bootstrap.GearMechanicsScope
+  m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Bootstrap.GearMechanicsScope
   parentReference:
     TypeName: 
   autoRun: 1

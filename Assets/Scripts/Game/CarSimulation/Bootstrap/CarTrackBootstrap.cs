@@ -4,7 +4,7 @@ using UnityEngine;
 using VContainer;
 using VContainer.Unity;
 
-namespace Scaffold.CarSimulation
+namespace GearEngine.CarSimulation
 {
     public sealed class CarTrackBootstrap : MonoBehaviour, IInitializable
     {

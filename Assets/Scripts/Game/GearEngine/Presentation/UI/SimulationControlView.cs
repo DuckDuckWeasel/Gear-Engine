@@ -3,7 +3,7 @@ using UnityEngine.UI;
 using Scaffold.MVVM;
 using TMPro;
 
-namespace Scaffold.GearEngine.Presentation.UI
+namespace GearEngine.GearEngine.Presentation.UI
 {
     public class SimulationControlView : ViewComponent<SimulationControlViewModel>
     {

@@ -1,4 +1,4 @@
-namespace Scaffold.CarSimulation
+namespace GearEngine.CarSimulation
 {
     public enum SimulationLifecycleState
     {

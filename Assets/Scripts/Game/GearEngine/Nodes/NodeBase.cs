@@ -1,7 +1,7 @@
 using UnityEngine;
 using Scaffold.Events.Contracts;
 
-namespace Scaffold.GearEngine.Nodes
+namespace GearEngine.GearEngine.Nodes
 {
     public abstract class NodeBase : IGridNode
     {

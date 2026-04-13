@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Scaffold.GearEngine.Config
+namespace GearEngine.GearEngine.Config
 {
     [Serializable]
     public class GearConfigData

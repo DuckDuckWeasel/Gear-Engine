@@ -3,7 +3,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using Scaffold.MVVM;
 using Scaffold.MVVM.Binding;
 
-namespace Scaffold.CarSimulation
+namespace GearEngine.CarSimulation
 {
     public sealed partial class TrackViewModel : ViewModel
     {

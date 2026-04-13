@@ -1,11 +1,11 @@
 using System.Reflection;
-using Scaffold.CarSimulation;
+using GearEngine.CarSimulation;
 using NUnit.Framework;
 using Scaffold.Navigation.Contracts;
 using UnityEditor;
 using UnityEngine;
 
-namespace Scaffold.CarSimulation.Tests
+namespace GearEngine.CarSimulation.Tests
 {
     public sealed class CarTrackBootstrapTests
     {

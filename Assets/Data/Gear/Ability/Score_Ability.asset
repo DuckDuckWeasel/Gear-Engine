@@ -11,5 +11,5 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8fd13ecb1229444f2a1f39d4851bc559, type: 3}
   m_Name: Score_Ability
-  m_EditorClassIdentifier: Game.GearEngine::Scaffold.GearEngine.Abilities.ScoreAbility
+  m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Abilities.ScoreAbility
   ScoreAmount: 500

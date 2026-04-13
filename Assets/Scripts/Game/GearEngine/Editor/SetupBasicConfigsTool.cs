@@ -2,10 +2,10 @@ using UnityEditor;
 using UnityEngine;
 using System.Collections.Generic;
 using System.IO;
-using Scaffold.GearEngine;
-using Scaffold.GearEngine.Presentation;
+using GearEngine.GearEngine;
+using GearEngine.GearEngine.Presentation;
 
-namespace Scaffold.GearEngine.Editor
+namespace GearEngine.GearEngine.Editor
 {
     public static class SetupBasicConfigsTool
     {

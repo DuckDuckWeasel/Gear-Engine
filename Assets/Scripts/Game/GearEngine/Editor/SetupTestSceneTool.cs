@@ -1,11 +1,11 @@
 using UnityEditor;
 using UnityEngine;
 using UnityEditor.SceneManagement;
-using Scaffold.GearEngine;
-using Scaffold.GearEngine.Presentation;
+using GearEngine.GearEngine;
+using GearEngine.GearEngine.Presentation;
 using Scaffold.Navigation;
 
-namespace Scaffold.GearEngine.Editor
+namespace GearEngine.GearEngine.Editor
 {
     public static class SetupTestSceneTool
     {

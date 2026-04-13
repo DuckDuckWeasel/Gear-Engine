@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-namespace Scaffold.GearEngine.Presentation.UI
+namespace GearEngine.GearEngine.Presentation.UI
 {
     [RequireComponent(typeof(BoardView))]
     internal sealed class GearBoardDragHandler : MonoBehaviour

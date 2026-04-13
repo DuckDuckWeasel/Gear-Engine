@@ -3,7 +3,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using Scaffold.MVVM;
 using UnityEngine;
 
-namespace Scaffold.CarSimulation
+namespace GearEngine.CarSimulation
 {
     public sealed partial class TrackSimulation : ViewModel
     {

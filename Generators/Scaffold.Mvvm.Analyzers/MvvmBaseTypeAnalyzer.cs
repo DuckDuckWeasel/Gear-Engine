@@ -40,6 +40,8 @@ namespace Scaffold.Mvvm.Analyzers
         {
             if (context.Symbol is not INamedTypeSymbol typeSymbol) return;
 
+            if (Scaffold.Analyzers.AnalyzerScopeGate.ShouldSkipSymbolAnalysis(context, typeSymbol)) return;
+
             var sourceLoc = typeSymbol.Locations.FirstOrDefault(l => l.SourceTree != null);
             if (sourceLoc?.SourceTree == null) return;
             var options = context.Options.AnalyzerConfigOptionsProvider.GetOptions(sourceLoc.SourceTree);
@@ -78,14 +80,13 @@ namespace Scaffold.Mvvm.Analyzers
             var filePath = sourceLocation.SourceTree?.FilePath ?? string.Empty;
             if (string.IsNullOrWhiteSpace(filePath)) return false;
 
-            var normalizedPath = filePath.Replace('\\', '/');
+            var normalizedPath = Scaffold.Analyzers.ScriptPathFilters.Normalize(filePath);
             bool isMvvmFile =
                 normalizedPath.IndexOf(CoreMvvmPathSegment, StringComparison.OrdinalIgnoreCase) >= 0 ||
                 normalizedPath.IndexOf(InfraMvvmPathSegment, StringComparison.OrdinalIgnoreCase) >= 0;
             if (!isMvvmFile) return false;
 
-            if (normalizedPath.IndexOf("/Tests/", StringComparison.OrdinalIgnoreCase) >= 0) return false;
-            if (normalizedPath.IndexOf("/Samples/", StringComparison.OrdinalIgnoreCase) >= 0) return false;
+            if (Scaffold.Analyzers.ScriptPathFilters.IsTestOrSamplePath(normalizedPath)) return false;
 
             return true;
         }

@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.Splines;
 using Scaffold.MVVM;
 
-namespace Scaffold.CarSimulation
+namespace GearEngine.CarSimulation
 {
     [DisallowMultipleComponent]
     [RequireComponent(typeof(SplineContainer))]

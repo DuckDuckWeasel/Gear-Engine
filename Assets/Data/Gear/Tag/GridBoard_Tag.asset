@@ -11,5 +11,5 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dce6cdc604a694475b126427187859bb, type: 3}
   m_Name: GridBoard_Tag
-  m_EditorClassIdentifier: Game.GearEngine::Scaffold.GearEngine.Presentation.UI.Tags.TagSO
+  m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Presentation.UI.Tags.TagSO
   Description: Valid 2D surface area for gears to be dropped onto.

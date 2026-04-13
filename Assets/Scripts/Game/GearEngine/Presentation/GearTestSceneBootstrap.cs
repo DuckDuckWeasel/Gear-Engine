@@ -1,11 +1,11 @@
 using System;
-using Scaffold.GearEngine;
+using GearEngine.GearEngine;
 using Scaffold.Navigation.Contracts;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
 
-namespace Scaffold.GearEngine.Presentation
+namespace GearEngine.GearEngine.Presentation
 {
     public sealed class GearTestSceneBootstrap : MonoBehaviour, IInitializable
     {

@@ -11,7 +11,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8ccb89cab553aa7409956de487a36a40, type: 3}
   m_Name: CarDefinition
-  m_EditorClassIdentifier: Game.CarSimulation::Game.CarSimulation.CarDefinition
+  m_EditorClassIdentifier: Game.CarSimulation::GearEngine.CarSimulation.Definitions.CarDefinition
   bag:
     entries:
     - attribute: {fileID: 11400000, guid: a99063be5b271b547adb25ed6084939b, type: 2}

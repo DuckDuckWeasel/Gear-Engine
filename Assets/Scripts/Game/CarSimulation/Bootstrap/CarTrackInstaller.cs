@@ -1,6 +1,6 @@
 using VContainer;
 
-namespace Scaffold.CarSimulation
+namespace GearEngine.CarSimulation
 {
     public sealed class CarTrackInstaller
     {

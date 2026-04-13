@@ -1,5 +1,5 @@
 using System;
-using Scaffold.GearEngine.Presentation;
+using GearEngine.GearEngine.Presentation;
 using Scaffold.Addressables.Container;
 using Scaffold.Navigation;
 using Scaffold.Navigation.Container;
@@ -9,7 +9,7 @@ using UnityEngine;
 using VContainer;
 using VContainer.Unity;
 
-namespace Scaffold.GearEngine.Bootstrap
+namespace GearEngine.GearEngine.Bootstrap
 {
     public class GearMechanicsScope : LifetimeScope
     {

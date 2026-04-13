@@ -36,19 +36,19 @@ namespace Scaffold.Analyzers
             context.RegisterSyntaxNodeAction(AnalyzeIdentifierName, Microsoft.CodeAnalysis.CSharp.SyntaxKind.IdentifierName);
         }
 
-        private static void AnalyzeIdentifierName(SyntaxNodeAnalysisContext context)
+               private static void AnalyzeIdentifierName(SyntaxNodeAnalysisContext context)
         {
             if (context.Node is not IdentifierNameSyntax identifierName)
             {
                 return;
             }
 
-            if (IsGeneratedFile(context.Node.SyntaxTree.FilePath))
+            if (AnalyzerScopeGate.ShouldSkipSyntaxNodeAnalysis(context))
             {
                 return;
             }
 
-            if (ModuleConventions.IsExcludedThirdPartyVendorPath(context.Node.SyntaxTree.FilePath))
+            if (IsGeneratedFile(context.Node.SyntaxTree.FilePath))
             {
                 return;
             }

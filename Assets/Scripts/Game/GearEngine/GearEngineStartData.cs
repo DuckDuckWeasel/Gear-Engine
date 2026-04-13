@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using Scaffold.GearEngine.Config;
+using GearEngine.GearEngine.Config;
 
-namespace Scaffold.GearEngine
+namespace GearEngine.GearEngine
 {
     [Serializable]
     public sealed class GearEngineStartData
