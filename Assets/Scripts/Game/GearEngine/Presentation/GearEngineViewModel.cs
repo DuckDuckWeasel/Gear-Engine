@@ -1,28 +1,32 @@
 using System;
-using GearEngine.GearEngine;
-using GearEngine.GearEngine.Bootstrap;
+using Game.GearEngine;
+using Scaffold.Events.Contracts;
 using Scaffold.MVVM;
 using VContainer;
 
-namespace GearEngine.GearEngine.Presentation
+namespace Game.GearEngine.Presentation
 {
     public sealed class GearEngineViewModel : ViewModel
     {
-        public GearEngineViewModel(GearEngineStartData startData)
-        {
-            this.startData = startData ?? throw new ArgumentNullException(nameof(startData));
-        }
-
-        public SimulationControlViewModel SimControl { get; } = new SimulationControlViewModel();
-        public GearInventoryViewModel Inventory { get; } = new GearInventoryViewModel();
-        public BoardViewModel Board { get; } = new BoardViewModel();
-
         private readonly GearEngineStartData startData;
 
         [Inject] private IGearEngineService engineService;
         [Inject] private IGridManager gridManager;
         [Inject] private GearNodeFactory nodeFactory;
         [Inject] private BoardConfigSO boardConfig;
+        [Inject] private IEventBus eventBus;
+        [Inject] private GearEngineFeatureToggleSO featureToggle;
+
+        public GearEngineFeatureToggleSO FeatureToggle => featureToggle;
+
+        public SimulationControlViewModel SimControl { get; } = new SimulationControlViewModel();
+        public GearInventoryViewModel Inventory { get; } = new GearInventoryViewModel();
+        public BoardViewModel Board { get; } = new BoardViewModel();
+
+        public GearEngineViewModel(GearEngineStartData startData)
+        {
+            this.startData = startData ?? throw new ArgumentNullException(nameof(startData));
+        }
 
         protected override void Initialize()
         {
@@ -40,7 +44,7 @@ namespace GearEngine.GearEngine.Presentation
                 Inventory.LoadInventory(startData.InventoryGears);
             }
 
-            Board.Initialize(engineService, gridManager, nodeFactory, boardConfig);
+            Board.Initialize(engineService, gridManager, nodeFactory, boardConfig, eventBus, featureToggle);
 
             if (startData.BoardLayout != null)
             {

@@ -41,7 +41,10 @@ namespace GearEngine.GearEngine.Config
             float gridX = (worldPos.x + offsetX) / Spacing;
             float gridY = (worldPos.y + offsetY) / Spacing;
             
-            return new Vector2Int(Mathf.RoundToInt(gridX), Mathf.RoundToInt(gridY));
+            int x = Mathf.Clamp(Mathf.RoundToInt(gridX), 0, GridWidth - 1);
+            int y = Mathf.Clamp(Mathf.RoundToInt(gridY), 0, GridHeight - 1);
+            
+            return new Vector2Int(x, y);
         }
     }
 }

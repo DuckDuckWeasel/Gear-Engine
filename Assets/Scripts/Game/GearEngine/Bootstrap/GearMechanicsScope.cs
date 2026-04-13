@@ -24,6 +24,9 @@ namespace GearEngine.GearEngine.Bootstrap
         [SerializeField]
         private BoardConfigSO boardConfig;
 
+        [Header("Feature Toggles")]
+        [SerializeField] private GearEngineFeatureToggleSO featureToggle;
+
         [Header("Optional test launcher")]
         [SerializeField]
         private GearTestSceneBootstrap sceneBootstrap;
@@ -34,7 +37,6 @@ namespace GearEngine.GearEngine.Bootstrap
             BuildCrossLayerRegistration(builder);
             InstallAddressablesAndNavigation(builder);
             InstallGearMechanics(builder);
-            builder.RegisterComponent(sceneBootstrap).AsImplementedInterfaces().AsSelf();
         }
 
         private void ValidateScopeAssignments()
@@ -90,6 +92,16 @@ namespace GearEngine.GearEngine.Bootstrap
         {
             var installer = new GearMechanicsInstaller(boardConfig);
             installer.Install(builder);
+
+            if (featureToggle != null)
+            {
+                builder.RegisterInstance(featureToggle);
+            }
+
+            if (sceneBootstrap != null)
+            {
+                builder.RegisterComponent(sceneBootstrap).AsImplementedInterfaces().AsSelf();
+            }
         }
     }
 }
