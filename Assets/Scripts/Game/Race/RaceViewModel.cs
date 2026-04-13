@@ -25,6 +25,8 @@ namespace GearEngine.Race
 
         public TrackViewModel Track { get; private set; }
 
+        public bool IsRaceRunning => engineService?.IsRunning ?? false;
+
         private readonly RaceStartData startData;
 
         [Inject]
@@ -51,7 +53,7 @@ namespace GearEngine.Race
             SetupTrack();
         }
 
-        public void StartRace()
+        public void ToggleRace()
         {
             if (engineService == null || Track == null)
             {
@@ -60,11 +62,14 @@ namespace GearEngine.Race
 
             if (engineService.IsRunning)
             {
-                return;
+                engineService.Stop();
+                Track.Toggle(false);
             }
-
-            engineService.Play();
-            Track.Toggle(true);
+            else
+            {
+                engineService.Play();
+                Track.Toggle(true);
+            }
         }
 
         private void ValidateStartData()

@@ -6,7 +6,7 @@ Runtime code lives in `Assets/Scripts/Game/Race/` (`Game.Race` assembly). It com
 
 - **`RaceScope`** — `LifetimeScope` that installs gear mechanics (`GearMechanicsInstaller`), car track (`CarTrackInstaller`), Addressables, navigation, and events (same layering as `GearMechanicsScope` plus car track).
 - **`RaceBootstrap`** — On startup, calls `navigation.Open(new RaceViewModel(startData))` with serialized **`RaceStartData`** (track definition, car definition, optional `GearEngineStartData` for board layout).
-- **`RaceViewModel`** — Injects domain services, builds `BoardViewModel` and `TrackViewModel`, and exposes **`StartRace()`** (starts the gear engine and toggles the track simulation on).
+- **`RaceViewModel`** — Injects domain services, builds `BoardViewModel` and `TrackViewModel`, and exposes **`ToggleRace()`** (toggles the gear engine and track simulation on/off together).
 - **`RaceView`** — Binds **`BoardView`**, **`Track`**, and a **Race** UI button. Does not auto-start the simulation on bind (unlike `CarTrackTestView`).
 
 ## Navigation and scene layout

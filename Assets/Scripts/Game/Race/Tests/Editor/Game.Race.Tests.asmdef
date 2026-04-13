@@ -9,7 +9,8 @@
         "Game.GearEngine",
         "Scaffold.Entities",
         "Scaffold.MVVM.ViewModel",
-        "Scaffold.Navigation"
+        "Scaffold.Navigation",
+        "VContainer"
     ],
     "includePlatforms": [
         "Editor"

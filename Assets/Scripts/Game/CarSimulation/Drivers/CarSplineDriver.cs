@@ -46,6 +46,12 @@ namespace GearEngine.CarSimulation.Drivers
             splineAnimate.Container = splineContainer;
             splineAnimate.AnimationMethod = SplineAnimate.Method.Speed;
             splineAnimate.Easing = SplineAnimate.EasingMode.None;
+            SnapToSplineStart();
+        }
+
+        private void SnapToSplineStart()
+        {
+            splineAnimate.NormalizedTime = 0f;
         }
 
         public void Play()

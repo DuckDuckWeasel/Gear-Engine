@@ -1,4 +1,5 @@
 using System;
+using GearEngine.CarSimulation;
 using GearEngine.CarSimulation.Track;
 using GearEngine.GearEngine.Config;
 using GearEngine.Race;
@@ -24,13 +25,9 @@ namespace GearEngine.Race.Presentation
         [SerializeField]
         private Button raceButton;
 
-        [SerializeField]
-        private string raceButtonLabel = "Start";
-
         protected override void OnBind()
         {
             ValidateRaceViewHierarchy();
-            ApplyRaceButtonLabel();
             BindRaceChildViews();
             SubscribeRaceUi();
         }
@@ -40,20 +37,6 @@ namespace GearEngine.Race.Presentation
             UnsubscribeRaceUi();
             UnbindWorldAndBoard();
             base.OnUnbind();
-        }
-
-        private void ApplyRaceButtonLabel()
-        {
-            if (string.IsNullOrEmpty(raceButtonLabel))
-            {
-                return;
-            }
-
-            TextMeshProUGUI label = raceButton.GetComponentInChildren<TextMeshProUGUI>(true);
-            if (label != null)
-            {
-                label.text = raceButtonLabel;
-            }
         }
 
         private void BindRaceChildViews()
@@ -87,19 +70,31 @@ namespace GearEngine.Race.Presentation
         {
             try
             {
-                viewModel?.StartRace();
+                viewModel?.ToggleRace();
             }
             catch (Exception ex)
             {
-                Debug.LogError($"[RaceView] StartRace failed: {ex.Message}\n{ex.StackTrace}");
+                Debug.LogError($"[RaceView] ToggleRace failed: {ex.Message}\n{ex.StackTrace}");
             }
         }
 
         private void SubscribeRaceUi()
         {
+            Bind<SimulationLifecycleState, SimulationLifecycleState>(() => viewModel.Track.State, OnTrackStateChanged);
             boardView.OnGearDroppedOverUI += HandleGearDroppedOverUI;
             viewModel.Inventory.OnGearDraggedToBoard += HandleGearDraggedToBoard;
             raceButton.onClick.AddListener(OnRaceButtonClicked);
+        }
+
+        private void OnTrackStateChanged(SimulationLifecycleState state)
+        {
+            TextMeshProUGUI label = raceButton.GetComponentInChildren<TextMeshProUGUI>(true);
+            if (label == null)
+            {
+                return;
+            }
+
+            label.text = state == SimulationLifecycleState.Running ? "Stop" : "Start";
         }
 
         private void TryPlaceInventoryFromDrag(Vector3 worldPos, GearConfigData gearData)
