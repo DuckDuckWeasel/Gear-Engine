@@ -5,26 +5,37 @@ namespace GearEngine.GearEngine.Presentation.UI.Tags
 {
     public class TagComponent : MonoBehaviour
     {
+        public IReadOnlyList<TagSO> Tags => tags;
+
         [Tooltip("The conceptual tags assigned to this object.")]
         [SerializeField] private List<TagSO> tags = new List<TagSO>();
 
-        public IReadOnlyList<TagSO> Tags => tags;
+        public bool HasAnyTag(IEnumerable<TagSO> tagsToCheck)
+        {
+            if (tagsToCheck == null)
+            {
+                return false;
+            }
+
+            foreach (var t in tagsToCheck)
+            {
+                if (HasTag(t))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
 
         public bool HasTag(TagSO tagToCheck)
         {
-            if (tagToCheck == null) return false;
-            return tags.Contains(tagToCheck);
-        }
-
-        public bool HasAnyTag(IEnumerable<TagSO> tagsToCheck)
-        {
-            if (tagsToCheck == null) return false;
-            
-            foreach (var t in tagsToCheck)
+            if (tagToCheck == null)
             {
-                if (HasTag(t)) return true;
+                return false;
             }
-            return false;
+
+            return tags.Contains(tagToCheck);
         }
 
         public void AddTag(TagSO tagToAdd)

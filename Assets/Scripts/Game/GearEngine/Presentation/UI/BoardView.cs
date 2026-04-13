@@ -18,18 +18,11 @@ namespace GearEngine.GearEngine.Presentation.UI
 
         public event Action<GearConfigData, Vector3> OnGearDroppedOverUI;
 
-        /// <summary>
-        /// Binds the board view model and configures whether board drag is enabled for this binding.
-        /// </summary>
+        /// <summary>Sample: Binds the board view model and configures whether board drag is enabled for this binding.</summary>
         public void Bind(BoardViewModel vm, bool interactable)
         {
             dragInteractable = interactable;
             base.Bind(vm ?? throw new ArgumentNullException(nameof(vm)));
-        }
-
-        public new void Unbind()
-        {
-            base.Unbind();
         }
 
         protected override void OnBind()
@@ -70,10 +63,14 @@ namespace GearEngine.GearEngine.Presentation.UI
         }
 
         internal void NotifyPickedUp(IGridNode node, Vector2Int coord)
-            => viewModel?.OnGearPickedUp(node, coord);
+        {
+            viewModel?.OnGearPickedUp(node, coord);
+        }
 
         internal void NotifyDropped(IGridNode node, Vector2Int coord)
-            => viewModel?.OnGearDropped(node, coord);
+        {
+            viewModel?.OnGearDropped(node, coord);
+        }
 
         internal void NotifyBoardGearDroppedOverUI(IGridNode node, GearConfigData config, Vector3 worldPos)
         {
@@ -84,11 +81,20 @@ namespace GearEngine.GearEngine.Presentation.UI
             }
         }
 
-        internal IEnumerable<GearView> GetViews() => viewsByNode.Values;
+        internal IEnumerable<GearView> GetViews()
+        {
+            return viewsByNode.Values;
+        }
 
-        internal bool IsRunning() => viewModel?.EngineService?.IsRunning ?? false;
+        internal bool IsRunning()
+        {
+            return viewModel?.EngineService?.IsRunning ?? false;
+        }
 
-        internal BoardConfigSO GetBoardConfig() => viewModel?.BoardConfig;
+        internal BoardConfigSO GetBoardConfig()
+        {
+            return viewModel?.BoardConfig;
+        }
 
         private void HandleGearPlaced(IGridNode node)
         {
@@ -164,6 +170,14 @@ namespace GearEngine.GearEngine.Presentation.UI
             UnityEngine.Object.Destroy(go);
         }
 
-        private void OnDestroy() => Unbind();
+        private void OnDestroy()
+        {
+            Unbind();
+        }
+
+        public new void Unbind()
+        {
+            base.Unbind();
+        }
     }
 }

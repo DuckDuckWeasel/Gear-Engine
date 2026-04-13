@@ -1,9 +1,12 @@
 using System;
+using GearEngine.CarSimulation.Definitions;
+using GearEngine.CarSimulation.Entity;
+using GearEngine.CarSimulation.Presentation;
+using Scaffold.MVVM;
 using UnityEngine;
 using UnityEngine.Splines;
-using Scaffold.MVVM;
 
-namespace GearEngine.CarSimulation
+namespace GearEngine.CarSimulation.Track
 {
     [DisallowMultipleComponent]
     [RequireComponent(typeof(SplineContainer))]
@@ -11,12 +14,12 @@ namespace GearEngine.CarSimulation
     {
         private const string pathChildName = "Path";
 
+        public SplineContainer SplineContainer => splineContainer;
+
         [SerializeField] private SplineContainer splineContainer;
         [SerializeField] private SplineExtrude splineExtrude;
 
         private CarView spawnedCarView;
-
-        public SplineContainer SplineContainer => splineContainer;
 
         public new void Unbind()
         {
@@ -56,16 +59,6 @@ namespace GearEngine.CarSimulation
         private void OnDestroy()
         {
             DestroyCarViewIfNeeded();
-        }
-
-        private void SyncSpawnedCarPlayback(SimulationLifecycleState state)
-        {
-            if (spawnedCarView == null || viewModel == null)
-            {
-                return;
-            }
-
-            spawnedCarView.OnRunningChanged(state);
         }
 
         private void SpawnCarView(CarEntity car)
@@ -120,6 +113,16 @@ namespace GearEngine.CarSimulation
 
             view.Initialize(car, splineContainer, viewModel);
             SyncSpawnedCarPlayback(viewModel.State);
+        }
+
+        private void SyncSpawnedCarPlayback(SimulationLifecycleState state)
+        {
+            if (spawnedCarView == null || viewModel == null)
+            {
+                return;
+            }
+
+            spawnedCarView.OnRunningChanged(state);
         }
 
         private bool TryGetCarView(GameObject instance, out CarView view)

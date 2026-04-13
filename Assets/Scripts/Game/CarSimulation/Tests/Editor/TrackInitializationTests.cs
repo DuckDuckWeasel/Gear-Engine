@@ -1,5 +1,8 @@
 using System.Linq;
 using GearEngine.CarSimulation;
+using GearEngine.CarSimulation.Definitions;
+using GearEngine.CarSimulation.Presentation;
+using TrackViewComponent = GearEngine.CarSimulation.Track.Track;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.Splines;
@@ -15,7 +18,7 @@ namespace GearEngine.CarSimulation.Tests
             try
             {
                 var container = go.AddComponent<SplineContainer>();
-                var track = go.AddComponent<Track>();
+                var track = go.AddComponent<TrackViewComponent>();
                 var so = new UnityEditor.SerializedObject(track);
                 so.FindProperty("splineContainer").objectReferenceValue = container;
                 so.ApplyModifiedPropertiesWithoutUndo();
@@ -70,7 +73,7 @@ namespace GearEngine.CarSimulation.Tests
                 var extrude = pathGo.AddComponent<SplineExtrude>();
                 extrude.Container = container;
 
-                var track = go.AddComponent<Track>();
+                var track = go.AddComponent<TrackViewComponent>();
                 var trackSo = new UnityEditor.SerializedObject(track);
                 trackSo.FindProperty("splineContainer").objectReferenceValue = container;
                 trackSo.FindProperty("splineExtrude").objectReferenceValue = extrude;

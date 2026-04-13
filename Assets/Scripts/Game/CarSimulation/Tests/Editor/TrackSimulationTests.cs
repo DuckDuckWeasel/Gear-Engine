@@ -1,6 +1,7 @@
 using System.Reflection;
 using System.Text.RegularExpressions;
 using GearEngine.CarSimulation;
+using GearEngine.CarSimulation.Definitions;
 using NUnit.Framework;
 using Scaffold.MVVM;
 using UnityEngine;

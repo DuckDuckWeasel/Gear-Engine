@@ -1,5 +1,8 @@
 using System.Reflection;
 using GearEngine.CarSimulation;
+using GearEngine.CarSimulation.Bootstrap;
+using GearEngine.CarSimulation.Definitions;
+using GearEngine.CarSimulation.Presentation;
 using NUnit.Framework;
 using Scaffold.Navigation.Contracts;
 using UnityEditor;

@@ -1,14 +1,13 @@
 using System;
 using Scaffold.Entities;
 using UnityEngine;
+using GearEngine.CarSimulation.Definitions;
 
-namespace GearEngine.CarSimulation
+namespace GearEngine.CarSimulation.Entity
 {
     [Serializable]
     public sealed class CarEntity
     {
-        [SerializeField] private EntityInstance<CarDefinition> instance;
-
         private CarEntity(EntityInstance<CarDefinition> entityInstance)
         {
             instance = entityInstance ?? throw new ArgumentNullException(nameof(entityInstance));
@@ -17,6 +16,8 @@ namespace GearEngine.CarSimulation
         public EntityInstance<CarDefinition> Instance => instance;
 
         public CarDefinition Definition => instance.Definition;
+
+        [SerializeField] private EntityInstance<CarDefinition> instance;
 
         public static CarEntity Create(CarDefinition definition)
         {

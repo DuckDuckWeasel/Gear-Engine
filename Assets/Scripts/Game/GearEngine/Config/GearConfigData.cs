@@ -30,25 +30,35 @@ namespace GearEngine.GearEngine.Config
 
         public GearConfigData Clone(GearConfig nextLevelConfig, List<GearAbilitySO> abilities)
         {
-            return new GearConfigData
-            {
-                Id = Id,
-                Category = Category,
-                BaseRotationSpeed = BaseRotationSpeed,
-                VisualPrefab = VisualPrefab,
-                UIIcon = UIIcon,
-                UIScaleMultiplier = UIScaleMultiplier,
-                TriggerPattern = TriggerPattern,
-                IsInteractable = IsInteractable,
-                MaxCharge = MaxCharge,
-                ChargeOverTimeAmount = ChargeOverTimeAmount,
-                ChargeOnTriggerAmount = ChargeOnTriggerAmount,
-                SnapSlowdownDuration = SnapSlowdownDuration,
-                SnapSlowdownMultiplier = SnapSlowdownMultiplier,
-                TriggerSpinDegrees = TriggerSpinDegrees,
-                NextLevelConfig = nextLevelConfig,
-                Abilities = new List<GearAbilitySO>(abilities ?? new List<GearAbilitySO>()),
-            };
+            GearConfigData copy = CloneWithoutReferences();
+            copy.NextLevelConfig = nextLevelConfig;
+            copy.Abilities = new List<GearAbilitySO>(abilities ?? new List<GearAbilitySO>());
+            return copy;
+        }
+
+        private GearConfigData CloneWithoutReferences()
+        {
+            GearConfigData copy = new GearConfigData();
+            CopyScalarFieldsTo(copy);
+            return copy;
+        }
+
+        private void CopyScalarFieldsTo(GearConfigData target)
+        {
+            target.Id = Id;
+            target.Category = Category;
+            target.BaseRotationSpeed = BaseRotationSpeed;
+            target.VisualPrefab = VisualPrefab;
+            target.UIIcon = UIIcon;
+            target.UIScaleMultiplier = UIScaleMultiplier;
+            target.TriggerPattern = TriggerPattern;
+            target.IsInteractable = IsInteractable;
+            target.MaxCharge = MaxCharge;
+            target.ChargeOverTimeAmount = ChargeOverTimeAmount;
+            target.ChargeOnTriggerAmount = ChargeOnTriggerAmount;
+            target.SnapSlowdownDuration = SnapSlowdownDuration;
+            target.SnapSlowdownMultiplier = SnapSlowdownMultiplier;
+            target.TriggerSpinDegrees = TriggerSpinDegrees;
         }
     }
 }

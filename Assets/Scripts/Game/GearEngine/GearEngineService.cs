@@ -11,6 +11,8 @@ namespace GearEngine.GearEngine
 
         public bool IsRunning => gridManager.IsRunning;
 
+        private readonly IGridManager gridManager;
+
         public void Play()
         {
             gridManager.Play();
@@ -20,7 +22,5 @@ namespace GearEngine.GearEngine
         {
             gridManager.Stop();
         }
-
-        private readonly IGridManager gridManager;
     }
 }

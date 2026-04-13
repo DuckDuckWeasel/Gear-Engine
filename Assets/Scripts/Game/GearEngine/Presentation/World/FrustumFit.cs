@@ -1,120 +1,112 @@
 using System;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace GearEngine.GearEngine.Presentation.World
 {
-    /// <summary>
-    /// Scales a world-space GameObject so it occupies a configured fraction of
-    /// the camera frustum at a given depth. Drop onto any GameObject that has a
-    /// Renderer (or whose child has one — see _renderer field below).
-    ///
-    /// Call Apply() externally (e.g. on screen resize) or enable _applyEveryFrame
-    /// for continuous updates. Apply() is idempotent: calling it multiple times
-    /// with no state change produces the same localScale output.
-    /// </summary>
     public sealed class FrustumFit : MonoBehaviour
     {
         [Header("Camera")]
         [Tooltip("Camera used to measure the frustum. Defaults to Camera.main if left empty.")]
-        [SerializeField] private Camera _camera;
+        [FormerlySerializedAs("_camera")]
+        [SerializeField]
+        private Camera frustumCamera;
 
         [Tooltip("World-space distance from the camera at which frustum dimensions are sampled. " +
                  "Set this to the object's Z distance from the camera. " +
                  "Has no effect on orthographic cameras.")]
-        [SerializeField] private float _depth = 10f;
+        [FormerlySerializedAs("_depth")]
+        [SerializeField]
+        private float depth = 10f;
 
         [Header("Fill")]
         [Tooltip("Fraction of the frustum width the object should occupy. " +
                  "1 = full width, 0.5 = half width. Values > 1 intentionally overflow the screen.")]
-        [SerializeField, Range(0f, 2f)] private float _fillX = 1f;
+        [FormerlySerializedAs("_fillX")]
+        [SerializeField, Range(0f, 2f)]
+        private float fillX = 1f;
 
         [Tooltip("Fraction of the frustum height the object should occupy.")]
-        [SerializeField, Range(0f, 2f)] private float _fillY = 1f;
+        [FormerlySerializedAs("_fillY")]
+        [SerializeField, Range(0f, 2f)]
+        private float fillY = 1f;
 
         [Tooltip("How the object fills the configured target box.")]
-        [SerializeField] private FrustumFillMode _mode = FrustumFillMode.Fit;
+        [FormerlySerializedAs("_mode")]
+        [SerializeField]
+        private FrustumFillMode fillMode = FrustumFillMode.Fit;
 
         [Header("Axes")]
         [Tooltip("Which two local axes map to screen horizontal and vertical. " +
                  "XY = Quad/sprite (default). XZ = Unity Plane rotated to face camera. YZ = rare custom meshes.")]
-        [SerializeField] private FrustumFitAxes _axes = FrustumFitAxes.XY;
+        [FormerlySerializedAs("_axes")]
+        [SerializeField]
+        private FrustumFitAxes fitAxes = FrustumFitAxes.XY;
 
         [Header("Update Timing")]
         [Tooltip("Call Apply() automatically on Start.")]
-        [SerializeField] private bool _applyOnStart = true;
+        [FormerlySerializedAs("_applyOnStart")]
+        [SerializeField]
+        private bool applyOnStart = true;
 
         [Tooltip("Call Apply() every LateUpdate. Use only when the camera, window size, " +
                  "or fill settings change at runtime. Disable and call Apply() externally " +
                  "from a resize coordinator for better performance.")]
-        [SerializeField] private bool _applyEveryFrame = false;
+        [FormerlySerializedAs("_applyEveryFrame")]
+        [SerializeField]
+        private bool applyEveryFrame = false;
 
-        private Renderer _renderer;
+        private Renderer meshRenderer;
 
         private void Awake()
         {
-            _renderer = GetComponent<Renderer>();
+            meshRenderer = GetComponent<Renderer>();
+            WarnIfMissingRenderer();
+            ResolveFrustumCameraReference();
+        }
 
-            if (_renderer == null)
-                Debug.LogError($"[FrustumFit] No Renderer found on '{name}'. " +
-                               "Attach FrustumFit to the GameObject that owns the Renderer, " +
-                               "or move the Renderer to this GameObject.");
+        private void WarnIfMissingRenderer()
+        {
+            if (meshRenderer == null)
+            {
+                Debug.LogError($"[FrustumFit] No Renderer found on '{name}'. Attach FrustumFit to the GameObject that owns the Renderer, or move the Renderer to this GameObject.");
+            }
+        }
 
-            if (_camera == null)
-                _camera = Camera.main;
+        private void ResolveFrustumCameraReference()
+        {
+            if (frustumCamera == null)
+            {
+                frustumCamera = Camera.main;
+            }
 
-            if (_camera == null)
-                Debug.LogError($"[FrustumFit] No camera assigned and Camera.main is null on '{name}'. " +
-                               "Assign a camera in the Inspector.");
+            if (frustumCamera == null)
+            {
+                Debug.LogError($"[FrustumFit] No camera assigned and Camera.main is null on '{name}'. Assign a camera in the Inspector.");
+            }
         }
 
         private void Start()
         {
-            if (_applyOnStart)
+            if (applyOnStart)
+            {
                 Apply();
+            }
         }
 
         private void LateUpdate()
         {
-            if (_applyEveryFrame)
+            if (applyEveryFrame)
+            {
                 Apply();
+            }
         }
 
-        /// <summary>
-        /// Computes and applies the localScale required to fill the configured fraction
-        /// of the camera frustum. Safe to call at any time; does nothing if required
-        /// references are missing and logs an error instead.
-        /// </summary>
         public void Apply()
         {
             try
             {
-                if (_camera == null)
-                {
-                    Debug.LogError($"[FrustumFit] Cannot Apply — camera is null on '{name}'.");
-                    return;
-                }
-
-                if (_renderer == null)
-                {
-                    Debug.LogError($"[FrustumFit] Cannot Apply — Renderer is null on '{name}'.");
-                    return;
-                }
-
-                FrustumBounds bounds = FrustumFitMath.ComputeBounds(
-                    _camera.orthographic,
-                    _camera.orthographicSize,
-                    _camera.fieldOfView,
-                    _camera.aspect,
-                    _depth);
-
-                Vector3 boundsSize  = _renderer.localBounds.size;
-                Vector2 meshSize    = ExtractAxesPair(boundsSize, _axes);
-                Vector2 parentScale = GetParentLossyScalePair(_axes);
-
-                Vector2 localScale2D = FrustumFitMath.ComputeLocalScale(
-                    bounds, _fillX, _fillY, _mode, meshSize, parentScale);
-
-                ApplyLocalScalePair(localScale2D, _axes);
+                TryApplyFrustumScale();
             }
             catch (Exception ex)
             {
@@ -122,17 +114,46 @@ namespace GearEngine.GearEngine.Presentation.World
             }
         }
 
-        // --- Private helpers -------------------------------------------------
-
-        private Vector2 ExtractAxesPair(Vector3 v, FrustumFitAxes axes)
+        private void TryApplyFrustumScale()
         {
-            return axes switch
+            if (!HasCameraAndRendererForApply())
             {
-                FrustumFitAxes.XY => new Vector2(v.x, v.y),
-                FrustumFitAxes.XZ => new Vector2(v.x, v.z),
-                FrustumFitAxes.YZ => new Vector2(v.y, v.z),
-                _                 => throw new ArgumentOutOfRangeException(nameof(axes), axes, null),
-            };
+                return;
+            }
+
+            FrustumBounds bounds = ReadBoundsFromCamera();
+            ApplyScaleForBounds(bounds);
+        }
+
+        private bool HasCameraAndRendererForApply()
+        {
+            if (frustumCamera == null)
+            {
+                Debug.LogError($"[FrustumFit] Cannot Apply — camera is null on '{name}'.");
+                return false;
+            }
+
+            if (meshRenderer == null)
+            {
+                Debug.LogError($"[FrustumFit] Cannot Apply — Renderer is null on '{name}'.");
+                return false;
+            }
+
+            return true;
+        }
+
+        private FrustumBounds ReadBoundsFromCamera()
+        {
+            return FrustumFitMath.ComputeBounds(frustumCamera.orthographic, frustumCamera.orthographicSize, frustumCamera.fieldOfView, frustumCamera.aspect, depth);
+        }
+
+        private void ApplyScaleForBounds(FrustumBounds bounds)
+        {
+            Vector3 boundsSize = meshRenderer.localBounds.size;
+            Vector2 meshSize = ExtractAxesPair(boundsSize, fitAxes);
+            Vector2 parentScale = GetParentLossyScalePair(fitAxes);
+            Vector2 localScale2D = FrustumFitMath.ComputeLocalScale(bounds, fillX, fillY, fillMode, meshSize, parentScale);
+            WriteLocalScaleAxes(localScale2D, fitAxes);
         }
 
         private Vector2 GetParentLossyScalePair(FrustumFitAxes axes)
@@ -141,29 +162,76 @@ namespace GearEngine.GearEngine.Presentation.World
             return ExtractAxesPair(ps, axes);
         }
 
-        private void ApplyLocalScalePair(Vector2 scale2D, FrustumFitAxes axes)
+        private Vector2 ExtractAxesPair(Vector3 v, FrustumFitAxes axes)
+        {
+            return axes switch
+            {
+                FrustumFitAxes.XY => new Vector2(v.x, v.y),
+                FrustumFitAxes.XZ => new Vector2(v.x, v.z),
+                FrustumFitAxes.YZ => new Vector2(v.y, v.z),
+                _ => throw new ArgumentOutOfRangeException(nameof(axes), axes, null),
+            };
+        }
+
+        private void WriteLocalScaleAxes(Vector2 scale2D, FrustumFitAxes axes)
         {
             Vector3 ls = transform.localScale;
+            BuildLocalScaleComponents(ref ls, scale2D, axes);
+            transform.localScale = ls;
+        }
 
-            switch (axes)
+        private void BuildLocalScaleComponents(ref Vector3 ls, Vector2 scale2D, FrustumFitAxes axes)
+        {
+            if (!TryWriteAxisPairToLocalScale(ref ls, scale2D, axes))
             {
-                case FrustumFitAxes.XY:
-                    ls.x = scale2D.x;
-                    ls.y = scale2D.y;
-                    break;
-                case FrustumFitAxes.XZ:
-                    ls.x = scale2D.x;
-                    ls.z = scale2D.y;
-                    break;
-                case FrustumFitAxes.YZ:
-                    ls.y = scale2D.x;
-                    ls.z = scale2D.y;
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(axes), axes, null);
+                throw new ArgumentOutOfRangeException(nameof(axes), axes, null);
+            }
+        }
+
+        private bool TryWriteAxisPairToLocalScale(ref Vector3 ls, Vector2 scale2D, FrustumFitAxes axes)
+        {
+            if (axes == FrustumFitAxes.XY)
+            {
+                BuildXyLocalScale(ref ls, scale2D);
+                return true;
             }
 
-            transform.localScale = ls;
+            return TryWriteNonXyAxes(ref ls, scale2D, axes);
+        }
+
+        private void BuildXyLocalScale(ref Vector3 ls, Vector2 scale2D)
+        {
+            ls.x = scale2D.x;
+            ls.y = scale2D.y;
+        }
+
+        private bool TryWriteNonXyAxes(ref Vector3 ls, Vector2 scale2D, FrustumFitAxes axes)
+        {
+            if (axes == FrustumFitAxes.XZ)
+            {
+                BuildXzLocalScale(ref ls, scale2D);
+                return true;
+            }
+
+            if (axes == FrustumFitAxes.YZ)
+            {
+                BuildYzLocalScale(ref ls, scale2D);
+                return true;
+            }
+
+            return false;
+        }
+
+        private void BuildXzLocalScale(ref Vector3 ls, Vector2 scale2D)
+        {
+            ls.x = scale2D.x;
+            ls.z = scale2D.y;
+        }
+
+        private void BuildYzLocalScale(ref Vector3 ls, Vector2 scale2D)
+        {
+            ls.y = scale2D.x;
+            ls.z = scale2D.y;
         }
     }
 }

@@ -1,5 +1,7 @@
 using System;
 using CommunityToolkit.Mvvm.ComponentModel;
+using GearEngine.CarSimulation.Definitions;
+using GearEngine.CarSimulation.Entity;
 using Scaffold.MVVM;
 using UnityEngine;
 

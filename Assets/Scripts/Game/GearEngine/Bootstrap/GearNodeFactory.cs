@@ -1,3 +1,4 @@
+using GearEngine.GearEngine.Nodes;
 using UnityEngine;
 using VContainer;
 
@@ -5,31 +6,32 @@ namespace GearEngine.GearEngine.Bootstrap
 {
     public class GearNodeFactory
     {
-        private readonly IObjectResolver resolver;
-
         public GearNodeFactory(IObjectResolver resolver)
         {
             this.resolver = resolver;
         }
 
+        private readonly IObjectResolver resolver;
+
         public IGridNode CreateNode(Vector2Int position, GearConfigData configData)
         {
-            IGridNode node = null;
-            switch (configData.Category)
-            {
-                case GearCategory.Core:
-                    node = resolver.Resolve<CoreGearNode>();
-                    break;
-                case GearCategory.Aura:
-                    node = resolver.Resolve<AuraGearNode>();
-                    break;
-                case GearCategory.Base:
-                default:
-                    node = resolver.Resolve<BaseGearNode>();
-                    break;
-            }
+            IGridNode node = ResolveNodeForCategory(configData.Category);
             node.Initialize(position, configData);
             return node;
+        }
+
+        private IGridNode ResolveNodeForCategory(GearCategory category)
+        {
+            switch (category)
+            {
+                case GearCategory.Core:
+                    return resolver.Resolve<CoreGearNode>();
+                case GearCategory.Aura:
+                    return resolver.Resolve<AuraGearNode>();
+                case GearCategory.Base:
+                default:
+                    return resolver.Resolve<BaseGearNode>();
+            }
         }
     }
 }

@@ -5,11 +5,11 @@ namespace GearEngine.GearEngine.Presentation.UI
     [RequireComponent(typeof(DragHandler))]
     public class GearInventorySlotView : MonoBehaviour
     {
+        public GearConfigData BoundGearData => boundGearData;
+
+        private GearConfigData boundGearData;
         private GearInventoryViewModel viewModel;
         private DragHandler dragHandler;
-        private GearConfigData boundGearData;
-
-        public GearConfigData BoundGearData => boundGearData;
 
         public void Bind(GearConfigData config, GearInventoryViewModel vm)
         {

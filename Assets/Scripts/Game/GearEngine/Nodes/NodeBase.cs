@@ -5,8 +5,14 @@ namespace GearEngine.GearEngine.Nodes
 {
     public abstract class NodeBase : IGridNode
     {
+        protected NodeBase(IGridManager grid, IEventBus eventBus)
+        {
+            this.grid = grid;
+            this.eventBus = eventBus;
+        }
+
         public Vector2Int Position { get; set; }
-        private float currentRotation;
+
         public float CurrentRotation
         {
             get => currentRotation;
@@ -19,6 +25,9 @@ namespace GearEngine.GearEngine.Nodes
                 }
             }
         }
+
+        private float currentRotation;
+
         public float LastRotationDelta { get; private set; }
         public GearConfigData ConfigData { get; private set; }
         public float LocalSpeedMultiplier { get; set; } = 1.0f;
@@ -31,12 +40,6 @@ namespace GearEngine.GearEngine.Nodes
         protected readonly Scaffold.Events.Contracts.IEventBus eventBus;
 
         private readonly System.Collections.Generic.List<RuntimeAbility> activeAbilities = new System.Collections.Generic.List<RuntimeAbility>();
-
-        protected NodeBase(IGridManager grid, IEventBus eventBus)
-        {
-            this.grid = grid;
-            this.eventBus = eventBus;
-        }
 
         public virtual void Initialize(Vector2Int position, GearConfigData configData)
         {
@@ -58,24 +61,33 @@ namespace GearEngine.GearEngine.Nodes
 
         public virtual void WindDownUpdate(float deltaTime, float speedModifier)
         {
-            // Smoothly snap to closest 90-degree orthogonal rest state in the direction of rotation
-            float target90;
-            if (LastRotationDelta > 0)
-                target90 = Mathf.Ceil(CurrentRotation / 90f) * 90f;
-            else if (LastRotationDelta < 0)
-                target90 = Mathf.Floor(CurrentRotation / 90f) * 90f;
-            else
-                target90 = Mathf.Round(CurrentRotation / 90f) * 90f;
-
+            float target90 = ComputeWindDownSnapTarget();
             CurrentRotation = Mathf.LerpAngle(CurrentRotation, target90, deltaTime * 5f);
-            
             TickAbilities(deltaTime);
+        }
+
+        private float ComputeWindDownSnapTarget()
+        {
+            if (LastRotationDelta > 0)
+            {
+                return Mathf.Ceil(CurrentRotation / 90f) * 90f;
+            }
+
+            if (LastRotationDelta < 0)
+            {
+                return Mathf.Floor(CurrentRotation / 90f) * 90f;
+            }
+
+            return Mathf.Round(CurrentRotation / 90f) * 90f;
         }
 
         public void AddAbility(GearAbilitySO ability, float duration = -1f)
         {
-            if (ability == null) return;
-            
+            if (ability == null)
+            {
+                return;
+            }
+
             var runtimeStatus = new RuntimeAbility(ability, duration);
             activeAbilities.Add(runtimeStatus);
             ability.OnActive(this);
@@ -126,6 +138,7 @@ namespace GearEngine.GearEngine.Nodes
                 abilityNames += runInfo.AbilityDef.name + ", ";
                 runInfo.AbilityDef.Execute(this);
             }
+
             abilityNames = abilityNames.TrimEnd(',', ' ');
             Debug.Log($"<color=#ff99cc>[NodeBase]</color> {Position} Executed {activeAbilities.Count} abilities: [ {abilityNames} ]");
         }

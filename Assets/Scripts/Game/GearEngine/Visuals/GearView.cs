@@ -5,19 +5,19 @@ namespace GearEngine.GearEngine.Visuals
 {
     public class GearView : SerializedMonoBehaviour
     {
+        public IGridNode TargetNode => targetNode;
+
         [SerializeField]
         private IGridNode targetNode;
+
+        [ShowInInspector]
+        public bool IsBeingDragged { get; set; } = false;
+
         [SerializeField]
         private Transform cachedVisual;
         [SerializeField]
         private BoardConfigSO boardConfig;
-        
-        public IGridNode TargetNode => targetNode;
-        [ShowInInspector]
-        public bool IsBeingDragged { get; set; } = false;
-        
         private float baseRotationOffset = 0f;
-
         [SerializeField]
         private GameObject chargeVisualObj;
         [SerializeField]
@@ -32,14 +32,6 @@ namespace GearEngine.GearEngine.Visuals
         [SerializeField]
         private static Sprite squareSpriteBottom;
 
-        private void InitSprites()
-        {
-            if (squareSpriteCenter == null)
-                squareSpriteCenter = Sprite.Create(Texture2D.whiteTexture, new Rect(0, 0, 4, 4), new Vector2(0.5f, 0.5f), 4f);
-            if (squareSpriteBottom == null)
-                squareSpriteBottom = Sprite.Create(Texture2D.whiteTexture, new Rect(0, 0, 4, 4), new Vector2(0.5f, 0f), 4f);
-        }
-
         private GearViewFactory ownerFactory;
 
         public void Initialize(IGridNode node, GearConfigData configData, BoardConfigSO config, GearViewFactory factory)
@@ -52,14 +44,6 @@ namespace GearEngine.GearEngine.Visuals
 
             SetupVisual(configData);
             SetupChargeVisual(configData);
-        }
-
-        private void OnDestroy()
-        {
-            if (ownerFactory != null && targetNode != null)
-            {
-                ownerFactory.UnregisterView(targetNode);
-            }
         }
 
         public void RecalculateRotationOffset()
@@ -76,6 +60,14 @@ namespace GearEngine.GearEngine.Visuals
             ClearCachedVisual();
             SetupVisual(configData);
             SetupChargeVisual(configData);
+        }
+
+        private void OnDestroy()
+        {
+            if (ownerFactory != null && targetNode != null)
+            {
+                ownerFactory.UnregisterView(targetNode);
+            }
         }
 
         private void SetupVisual(GearConfigData configData)
@@ -95,6 +87,7 @@ namespace GearEngine.GearEngine.Visuals
                 Destroy(cachedVisual.gameObject);
                 cachedVisual = null;
             }
+
             if (chargeVisualObj != null)
             {
                 Destroy(chargeVisualObj);
@@ -106,63 +99,92 @@ namespace GearEngine.GearEngine.Visuals
 
         private void SetupChargeVisual(GearConfigData configData)
         {
-            if (targetNode is BaseGearNode baseGear && configData != null && configData.MaxCharge > 0)
+            if (targetNode is not BaseGearNode || configData == null || configData.MaxCharge <= 0)
             {
-                InitSprites();
-
-                chargeVisualObj = new GameObject("ChargeVisual");
-                chargeFillTransform = chargeVisualObj.transform;
-                chargeVisualObj.transform.SetParent(transform, false);
-                chargeVisualObj.transform.localPosition = new Vector3(0, 0, -0.5f); // In front of gear
-                chargeVisualObj.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
-                
-                chargeFillRenderer = chargeVisualObj.AddComponent<SpriteRenderer>();
-                chargeFillRenderer.sprite = configData.UIIcon != null ? configData.UIIcon : squareSpriteCenter;
-                chargeFillRenderer.color = new Color(0.2f, 0.8f, 1f, 0.9f); // Cyan fill
-                chargeFillRenderer.sortingOrder = 6;
-
-                Shader fillShader = Shader.Find("GearEngine/Sprites/SpriteFillGrayscale");
-                if (fillShader != null)
-                {
-                    Material mat = new Material(fillShader);
-                    mat.SetFloat("_FillAmount", 0f);
-                    chargeFillRenderer.material = mat;
-                }
-
-                currentVisualFill = 0f;
+                return;
             }
+
+            EnsureSquareSpritesExist();
+            CreateChargeVisualObjects(configData);
         }
 
         private void Update()
         {
-            if (targetNode == null || boardConfig == null) return;
+            if (targetNode == null || boardConfig == null)
+            {
+                return;
+            }
 
             Transform target = cachedVisual != null ? cachedVisual : transform;
 
-            // Allow native unity transforms to safely lerp
             if (!IsBeingDragged)
             {
-                // Lerp towards the logical position smoothly
                 Vector3 logicalWorldPos = boardConfig.GetWorldPosition(targetNode.Position);
                 transform.localPosition = Vector3.Lerp(transform.localPosition, logicalWorldPos, Time.deltaTime * 20f);
             }
 
-            // Lerp smooth rotation including base stagger offset
-            // We flip the rotation because Unity 2D standard rotates counter-clockwise with positive Z
             Quaternion targetRot = Quaternion.Euler(0, 0, (-targetNode.CurrentRotation) + baseRotationOffset);
             target.localRotation = Quaternion.Lerp(target.localRotation, targetRot, Time.deltaTime * 15f);
 
-            // Update charge fill
-            if (chargeFillRenderer != null && targetNode is BaseGearNode baseGear && baseGear.ConfigData != null && baseGear.ConfigData.MaxCharge > 0)
+            UpdateChargeFillDisplay();
+        }
+
+        private void EnsureSquareSpritesExist()
+        {
+            if (squareSpriteCenter == null)
             {
-                float targetFill = baseGear.CurrentCharge / baseGear.ConfigData.MaxCharge;
-                currentVisualFill = Mathf.Lerp(currentVisualFill, targetFill, Time.deltaTime * 10f);
-                
-                if (chargeFillRenderer.material != null)
-                {
-                    chargeFillRenderer.material.SetFloat("_FillAmount", currentVisualFill);
-                }
+                squareSpriteCenter = Sprite.Create(Texture2D.whiteTexture, new Rect(0, 0, 4, 4), new Vector2(0.5f, 0.5f), 4f);
             }
+
+            if (squareSpriteBottom == null)
+            {
+                squareSpriteBottom = Sprite.Create(Texture2D.whiteTexture, new Rect(0, 0, 4, 4), new Vector2(0.5f, 0f), 4f);
+            }
+        }
+
+        private void CreateChargeVisualObjects(GearConfigData configData)
+        {
+            chargeVisualObj = new GameObject("ChargeVisual");
+            chargeFillTransform = chargeVisualObj.transform;
+            chargeVisualObj.transform.SetParent(transform, false);
+            chargeVisualObj.transform.localPosition = new Vector3(0, 0, -0.5f);
+            chargeVisualObj.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
+
+            chargeFillRenderer = chargeVisualObj.AddComponent<SpriteRenderer>();
+            chargeFillRenderer.sprite = configData.UIIcon != null ? configData.UIIcon : squareSpriteCenter;
+            chargeFillRenderer.color = new Color(0.2f, 0.8f, 1f, 0.9f);
+            chargeFillRenderer.sortingOrder = 6;
+            BuildChargeFillMaterialForRenderer(chargeFillRenderer);
+            currentVisualFill = 0f;
+        }
+
+        private void UpdateChargeFillDisplay()
+        {
+            if (chargeFillRenderer == null || targetNode is not BaseGearNode baseGear || baseGear.ConfigData == null || baseGear.ConfigData.MaxCharge <= 0)
+            {
+                return;
+            }
+
+            float targetFill = baseGear.CurrentCharge / baseGear.ConfigData.MaxCharge;
+            currentVisualFill = Mathf.Lerp(currentVisualFill, targetFill, Time.deltaTime * 10f);
+
+            if (chargeFillRenderer.material != null)
+            {
+                chargeFillRenderer.material.SetFloat("_FillAmount", currentVisualFill);
+            }
+        }
+
+        private static void BuildChargeFillMaterialForRenderer(SpriteRenderer renderer)
+        {
+            Shader fillShader = Shader.Find("GearEngine/Sprites/SpriteFillGrayscale");
+            if (fillShader == null)
+            {
+                return;
+            }
+
+            Material mat = new Material(fillShader);
+            mat.SetFloat("_FillAmount", 0f);
+            renderer.material = mat;
         }
     }
 }

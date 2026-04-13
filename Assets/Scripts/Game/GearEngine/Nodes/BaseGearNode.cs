@@ -7,6 +7,15 @@ namespace GearEngine.GearEngine.Nodes
 {
     public class BaseGearNode : NodeBase
     {
+        public BaseGearNode(IGridManager grid, IEventBus eventBus) : base(grid, eventBus)
+        {
+            triggerAction = OnTriggerReceived;
+            eventBus.AddListener(triggerAction);
+        }
+
+        [ShowInInspector]
+        public float CurrentCharge { get; private set; }
+
         [SerializeField]
         private Action<DirectionalTriggerEvent> triggerAction;
         [SerializeField]
@@ -14,26 +23,22 @@ namespace GearEngine.GearEngine.Nodes
         [SerializeField]
         private bool hasRotatedThisTick;
 
-        [ShowInInspector]
-        public float CurrentCharge { get; private set; }
-
-        public BaseGearNode(IGridManager grid, IEventBus eventBus)
-            : base(grid, eventBus)
-        {
-            triggerAction = OnTriggerReceived;
-            eventBus.AddListener(triggerAction);
-        }
-
         public override void NodeUpdate(float deltaTime, float speedModifier)
         {
-            hasExecutedThisTick = false; // Reset threshold every tick
-            hasRotatedThisTick = false; // Reset mechanical trigger lock
-            
-            if (ConfigData == null || !IsActive) return;
+            hasExecutedThisTick = false;
+            hasRotatedThisTick = false;
+
+            if (ConfigData == null || !IsActive)
+            {
+                return;
+            }
 
             float speed = ConfigData.BaseRotationSpeed;
             CurrentRotation += speed * speedModifier * deltaTime;
-            if (CurrentRotation >= 360f) CurrentRotation -= 360f;
+            if (CurrentRotation >= 360f)
+            {
+                CurrentRotation -= 360f;
+            }
 
             ApplyCharge(ConfigData.ChargeOverTimeAmount * deltaTime);
             TickAbilities(deltaTime);
@@ -41,10 +46,77 @@ namespace GearEngine.GearEngine.Nodes
             CheckAndExecute();
         }
 
+        private void OnTriggerReceived(DirectionalTriggerEvent evt)
+        {
+            if (!CanProcessTrigger(evt))
+            {
+                return;
+            }
+
+            hasRotatedThisTick = true;
+            float currentSign = ApplyTriggerSpin(evt.SourceRotationSign);
+            ApplyCharge(ConfigData.ChargeOnTriggerAmount);
+            CheckAndExecute();
+            RaiseNeighborTriggers(currentSign);
+        }
+
+        private bool CanProcessTrigger(DirectionalTriggerEvent evt)
+        {
+            if (evt.TargetPosition != Position || ConfigData == null)
+            {
+                return false;
+            }
+
+            if (hasRotatedThisTick)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        private float ApplyTriggerSpin(float sourceRotationSign)
+        {
+            float currentSign = -sourceRotationSign;
+            CurrentRotation += ConfigData.TriggerSpinDegrees * currentSign;
+            NormalizeRotation();
+            return currentSign;
+        }
+
+        private void NormalizeRotation()
+        {
+            while (CurrentRotation >= 360f)
+            {
+                CurrentRotation -= 360f;
+            }
+
+            while (CurrentRotation < 0f)
+            {
+                CurrentRotation += 360f;
+            }
+        }
+
+        private void RaiseNeighborTriggers(float currentSign)
+        {
+            Vector2Int[] dirs = ConfigData.TriggerPattern.GetDirections();
+
+            foreach (Vector2Int dir in dirs)
+            {
+                Vector2Int neighborPos = Position + dir;
+                if (grid.GetNode(neighborPos) is BaseGearNode)
+                {
+                    eventBus.Raise(new DirectionalTriggerEvent(neighborPos, 0f, currentSign));
+                }
+            }
+        }
+
         public void ApplyCharge(float amount)
         {
-            if (ConfigData == null) return;
-            
+            if (ConfigData == null)
+            {
+                return;
+            }
+
             if (CurrentCharge < ConfigData.MaxCharge)
             {
                 CurrentCharge += amount;
@@ -55,45 +127,13 @@ namespace GearEngine.GearEngine.Nodes
             }
         }
 
-        private void OnTriggerReceived(DirectionalTriggerEvent evt)
-        {
-            if (evt.TargetPosition != Position || ConfigData == null) return;
-            if (hasRotatedThisTick) return;
-
-            hasRotatedThisTick = true;
-
-            // Visual feedback chunk: jump by config degrees and let GearView lerp it smoothly!
-            // Inverse gear ratio mechanics -> + becomes -, - becomes +
-            float currentSign = -evt.SourceRotationSign;
-            CurrentRotation += ConfigData.TriggerSpinDegrees * currentSign;
-            
-            while (CurrentRotation >= 360f) CurrentRotation -= 360f;
-            while (CurrentRotation < 0f) CurrentRotation += 360f;
-
-            ApplyCharge(ConfigData.ChargeOnTriggerAmount);
-            CheckAndExecute();
-
-            // Cascade mechanics to adjacent interlocking gears
-            Vector2Int[] dirs = ConfigData.TriggerPattern.GetDirections();
-
-            foreach (var dir in dirs)
-            {
-                var neighborPos = Position + dir;
-                if (grid.GetNode(neighborPos) is BaseGearNode)
-                {
-                    eventBus.Raise(new DirectionalTriggerEvent(neighborPos, 0f, currentSign));
-                }
-            }
-        }
-
         private void CheckAndExecute()
         {
             if (CurrentCharge >= ConfigData.MaxCharge && ConfigData.MaxCharge > 0)
             {
                 if (hasExecutedThisTick)
                 {
-                    // Delay execution of overflowing charge to the exact next tick
-                    return; 
+                    return;
                 }
 
                 CurrentCharge = 0f;
@@ -108,7 +148,7 @@ namespace GearEngine.GearEngine.Nodes
         public override void Dispose()
         {
             base.Dispose();
-            
+
             if (eventBus != null && triggerAction != null)
             {
                 eventBus.RemoveListener(triggerAction);

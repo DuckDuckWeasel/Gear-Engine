@@ -1,4 +1,7 @@
 using GearEngine.CarSimulation;
+using GearEngine.CarSimulation.Definitions;
+using GearEngine.CarSimulation.Presentation;
+using TrackViewComponent = GearEngine.CarSimulation.Track.Track;
 using NUnit.Framework;
 using UnityEditor;
 using UnityEngine;
@@ -60,7 +63,7 @@ namespace GearEngine.CarSimulation.Tests
             var trackGo = new GameObject("Track");
             trackGo.transform.SetParent(root.transform, false);
             var container = trackGo.AddComponent<SplineContainer>();
-            var track = trackGo.AddComponent<Track>();
+            var track = trackGo.AddComponent<TrackViewComponent>();
             var shellSo = new SerializedObject(shell);
             shellSo.FindProperty("track").objectReferenceValue = track;
             shellSo.ApplyModifiedPropertiesWithoutUndo();

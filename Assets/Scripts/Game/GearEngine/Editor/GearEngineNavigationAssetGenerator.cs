@@ -23,9 +23,6 @@ using UnityEngine.UI;
 
 namespace GearEngine.GearEngine.Editor
 {
-    /// <summary>
-    /// Creates the navigation stub prefab, <see cref="ViewConfig"/>, and registers it on <c>Assets/Data/Navigation/Navigation Settings.asset</c>.
-    /// </summary>
     public static class GearEngineNavigationAssetGenerator
     {
         public const string StubPrefabPath = "Assets/Game/GearEngine/Prefabs/GearEngineView_NavigationStub.prefab";
@@ -68,24 +65,46 @@ namespace GearEngine.GearEngine.Editor
                 return;
             }
 
-            var root = new GameObject("GearEngineViewStub", typeof(RectTransform));
-            var canvas = root.AddComponent<Canvas>();
+            GameObject root = BuildStubRootCanvas();
+            PopulateStubChildViews(root);
+            SaveAndDestroyStubRoot(root);
+        }
+
+        private static GameObject BuildStubRootCanvas()
+        {
+            GameObject root = new GameObject("GearEngineViewStub", typeof(RectTransform));
+            Canvas canvas = root.AddComponent<Canvas>();
             canvas.renderMode = RenderMode.ScreenSpaceOverlay;
             root.AddComponent<CanvasScaler>();
             root.AddComponent<GraphicRaycaster>();
-            var gearView = root.AddComponent<GearEngineView>();
+            root.AddComponent<GearEngineView>();
+            return root;
+        }
 
+        private static void PopulateStubChildViews(GameObject root)
+        {
+            SimulationControlView simView = CreateStubSimulationView(root.transform);
+            GearInventoryView invView = CreateStubInventoryView(root.transform);
+            BoardView boardView = CreateStubBoardPlaceholder(root.transform);
+            WireGearEngineViewReferences(root.GetComponent<GearEngineView>(), simView, invView, boardView);
+        }
+
+        private static SimulationControlView CreateStubSimulationView(Transform parent)
+        {
             GameObject simGo = new GameObject("SimulationControlView", typeof(RectTransform));
-            simGo.transform.SetParent(root.transform, false);
-            var simView = simGo.AddComponent<SimulationControlView>();
+            simGo.transform.SetParent(parent, false);
+            return simGo.AddComponent<SimulationControlView>();
+        }
 
+        private static GearInventoryView CreateStubInventoryView(Transform parent)
+        {
             GameObject invGo = new GameObject("GearInventoryView", typeof(RectTransform));
-            invGo.transform.SetParent(root.transform, false);
-            var invView = invGo.AddComponent<GearInventoryView>();
+            invGo.transform.SetParent(parent, false);
+            GearInventoryView invView = invGo.AddComponent<GearInventoryView>();
             GameObject itemsGo = new GameObject("ItemsContainer", typeof(RectTransform));
             itemsGo.transform.SetParent(invGo.transform, false);
-            var itemsRt = itemsGo.GetComponent<RectTransform>();
-            var invSo = new SerializedObject(invView);
+            RectTransform itemsRt = itemsGo.GetComponent<RectTransform>();
+            SerializedObject invSo = new SerializedObject(invView);
             SerializedProperty containerProp = invSo.FindProperty("itemsContainer");
             if (containerProp != null)
             {
@@ -93,17 +112,27 @@ namespace GearEngine.GearEngine.Editor
             }
 
             invSo.ApplyModifiedPropertiesWithoutUndo();
+            return invView;
+        }
 
+        private static BoardView CreateStubBoardPlaceholder(Transform parent)
+        {
             GameObject boardGo = new GameObject("BoardViewPlaceholder", typeof(RectTransform));
-            boardGo.transform.SetParent(root.transform, false);
-            var boardView = boardGo.AddComponent<BoardView>();
+            boardGo.transform.SetParent(parent, false);
+            return boardGo.AddComponent<BoardView>();
+        }
 
-            var gvSo = new SerializedObject(gearView);
+        private static void WireGearEngineViewReferences(GearEngineView gearView, SimulationControlView simView, GearInventoryView invView, BoardView boardView)
+        {
+            SerializedObject gvSo = new SerializedObject(gearView);
             SetReference(gvSo, "simControlView", simView);
             SetReference(gvSo, "inventoryView", invView);
             SetReference(gvSo, "boardView", boardView);
             gvSo.ApplyModifiedPropertiesWithoutUndo();
+        }
 
+        private static void SaveAndDestroyStubRoot(GameObject root)
+        {
             PrefabUtility.SaveAsPrefabAsset(root, StubPrefabPath);
             Object.DestroyImmediate(root);
         }
@@ -112,41 +141,60 @@ namespace GearEngine.GearEngine.Editor
         {
             try
             {
-                AddressableAssetSettings settings = AddressableAssetSettingsDefaultObject.Settings;
-                if (settings == null)
-                {
-                    Debug.LogWarning(
-                        "[GearEngineNavigationAssetGenerator] AddressableAssetSettings not found. " +
-                        "Open Window > Asset Management > Addressables > Groups, then run this menu again.");
-                    return;
-                }
-
-                string guid = AssetDatabase.AssetPathToGUID(StubPrefabPath);
-                if (string.IsNullOrEmpty(guid))
-                {
-                    Debug.LogWarning($"[GearEngineNavigationAssetGenerator] Stub prefab has no GUID yet ({StubPrefabPath}).");
-                    return;
-                }
-
-                AddressableAssetEntry existing = settings.FindAssetEntry(guid);
-                if (existing != null)
+                if (!TryGetAddressableSettings(out AddressableAssetSettings settings))
                 {
                     return;
                 }
 
-                AddressableAssetEntry entry = settings.CreateOrMoveEntry(guid, settings.DefaultGroup);
-                if (entry == null)
-                {
-                    Debug.LogError("[GearEngineNavigationAssetGenerator] CreateOrMoveEntry returned null for navigation stub.");
-                    return;
-                }
-
-                entry.address = StubPrefabPath;
+                TryRegisterStubEntry(settings);
             }
             catch (System.Exception ex)
             {
                 Debug.LogError($"[GearEngineNavigationAssetGenerator] Addressable registration failed: {ex.Message}\n{ex.StackTrace}");
             }
+        }
+
+        private static bool TryGetAddressableSettings(out AddressableAssetSettings settings)
+        {
+            settings = AddressableAssetSettingsDefaultObject.Settings;
+            if (settings == null)
+            {
+                Debug.LogWarning(
+                    "[GearEngineNavigationAssetGenerator] AddressableAssetSettings not found. " +
+                    "Open Window > Asset Management > Addressables > Groups, then run this menu again.");
+                return false;
+            }
+
+            return true;
+        }
+
+        private static void TryRegisterStubEntry(AddressableAssetSettings settings)
+        {
+            string guid = AssetDatabase.AssetPathToGUID(StubPrefabPath);
+            if (string.IsNullOrEmpty(guid))
+            {
+                Debug.LogWarning($"[GearEngineNavigationAssetGenerator] Stub prefab has no GUID yet ({StubPrefabPath}).");
+                return;
+            }
+
+            if (settings.FindAssetEntry(guid) != null)
+            {
+                return;
+            }
+
+            CreateStubAddressableEntry(settings, guid);
+        }
+
+        private static void CreateStubAddressableEntry(AddressableAssetSettings settings, string guid)
+        {
+            AddressableAssetEntry entry = settings.CreateOrMoveEntry(guid, settings.DefaultGroup);
+            if (entry == null)
+            {
+                Debug.LogError("[GearEngineNavigationAssetGenerator] CreateOrMoveEntry returned null for navigation stub.");
+                return;
+            }
+
+            entry.address = StubPrefabPath;
         }
 
         private static void SetReference(SerializedObject so, string propertyName, Object value)
@@ -160,7 +208,7 @@ namespace GearEngine.GearEngine.Editor
 
         private static ViewConfig EnsureViewConfig()
         {
-            var existing = AssetDatabase.LoadAssetAtPath<ViewConfig>(ViewConfigPath);
+            ViewConfig existing = AssetDatabase.LoadAssetAtPath<ViewConfig>(ViewConfigPath);
             if (existing != null)
             {
                 AssignStubAssetReference(existing);
@@ -168,7 +216,7 @@ namespace GearEngine.GearEngine.Editor
                 return existing;
             }
 
-            var viewConfig = ScriptableObject.CreateInstance<ViewConfig>();
+            ViewConfig viewConfig = ScriptableObject.CreateInstance<ViewConfig>();
             AssetDatabase.CreateAsset(viewConfig, ViewConfigPath);
             AssignStubAssetReference(viewConfig);
             EditorUtility.SetDirty(viewConfig);
@@ -177,61 +225,88 @@ namespace GearEngine.GearEngine.Editor
 
         private static void AssignStubAssetReference(ViewConfig viewConfig)
         {
-            string guid = AssetDatabase.AssetPathToGUID(StubPrefabPath);
-            if (string.IsNullOrEmpty(guid))
-            {
-                throw new System.InvalidOperationException($"Stub prefab not found at {StubPrefabPath}.");
-            }
-
-            var so = new SerializedObject(viewConfig);
+            string guid = RequireStubPrefabGuid();
+            SerializedObject so = new SerializedObject(viewConfig);
             SerializedProperty assetProp = so.FindProperty("asset") ?? so.FindProperty("viewAsset");
             if (assetProp == null)
             {
                 throw new System.InvalidOperationException("ViewConfig: could not find serialized asset field.");
             }
 
-            SerializedProperty guidProp = assetProp.FindPropertyRelative("m_AssetGUID");
-            if (guidProp != null)
-            {
-                guidProp.stringValue = guid;
-            }
-
+            ApplyGuidToSerializedAsset(assetProp, guid);
             so.ApplyModifiedPropertiesWithoutUndo();
             viewConfig.SetType(typeof(GearEngineView));
             EditorUtility.SetDirty(viewConfig);
         }
 
+        private static string RequireStubPrefabGuid()
+        {
+            string guid = AssetDatabase.AssetPathToGUID(StubPrefabPath);
+            if (string.IsNullOrEmpty(guid))
+            {
+                throw new System.InvalidOperationException($"Stub prefab not found at {StubPrefabPath}.");
+            }
+
+            return guid;
+        }
+
+        private static void ApplyGuidToSerializedAsset(SerializedProperty assetProp, string guid)
+        {
+            SerializedProperty guidProp = assetProp.FindPropertyRelative("m_AssetGUID");
+            if (guidProp != null)
+            {
+                guidProp.stringValue = guid;
+            }
+        }
+
         private static void RegisterViewConfigOnNavigationSettings(ViewConfig viewConfig)
         {
-            var settings = AssetDatabase.LoadAssetAtPath<NavigationSettings>(NavigationSettingsPath);
+            NavigationSettings settings = AssetDatabase.LoadAssetAtPath<NavigationSettings>(NavigationSettingsPath);
             if (settings == null)
             {
                 Debug.LogError($"[GearEngine] Missing Navigation Settings at {NavigationSettingsPath}. Create it in the editor (Scaffold/Core/Settings/Navigation).");
                 return;
             }
 
-            var so = new SerializedObject(settings);
+            TryAppendViewConfigToNavigation(settings, viewConfig);
+        }
+
+        private static void TryAppendViewConfigToNavigation(NavigationSettings settings, ViewConfig viewConfig)
+        {
+            SerializedObject so = new SerializedObject(settings);
             SerializedProperty screens = so.FindProperty("screens");
             if (screens == null)
             {
                 return;
             }
 
+            if (!NavigationScreensContainView(screens, viewConfig))
+            {
+                AppendViewConfigToScreens(screens, viewConfig);
+            }
+
+            so.ApplyModifiedPropertiesWithoutUndo();
+            EditorUtility.SetDirty(settings);
+        }
+
+        private static bool NavigationScreensContainView(SerializedProperty screens, ViewConfig viewConfig)
+        {
             for (int i = 0; i < screens.arraySize; i++)
             {
                 if (screens.GetArrayElementAtIndex(i).objectReferenceValue == viewConfig)
                 {
-                    so.ApplyModifiedPropertiesWithoutUndo();
-                    EditorUtility.SetDirty(settings);
-                    return;
+                    return true;
                 }
             }
 
+            return false;
+        }
+
+        private static void AppendViewConfigToScreens(SerializedProperty screens, ViewConfig viewConfig)
+        {
             int idx = screens.arraySize;
             screens.InsertArrayElementAtIndex(idx);
             screens.GetArrayElementAtIndex(idx).objectReferenceValue = viewConfig;
-            so.ApplyModifiedPropertiesWithoutUndo();
-            EditorUtility.SetDirty(settings);
         }
     }
 }

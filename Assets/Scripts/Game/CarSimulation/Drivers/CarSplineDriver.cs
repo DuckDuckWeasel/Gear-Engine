@@ -1,9 +1,10 @@
 using System;
+using GearEngine.CarSimulation.Entity;
 using Scaffold.Entities;
 using UnityEngine;
 using UnityEngine.Splines;
 
-namespace GearEngine.CarSimulation
+namespace GearEngine.CarSimulation.Drivers
 {
     internal sealed class CarSplineDriver : MonoBehaviour
     {

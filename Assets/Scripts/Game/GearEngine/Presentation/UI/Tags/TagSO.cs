@@ -8,7 +8,7 @@ namespace GearEngine.GearEngine.Presentation.UI.Tags
         [Tooltip("Optional description for what this tag represents.")]
         public string Description;
 
-        // Implicit conversion to string enables us to use it easily in logs or legacy Unity tag comparisons if needed
+        /// <summary>Sample: Implicit conversion for logs or legacy Unity tag comparisons.</summary>
         public static implicit operator string(TagSO tag)
         {
             return tag != null ? tag.name : "null_tag";

@@ -18,22 +18,21 @@ namespace GearEngine.GearEngine.Presentation.UI
             enabled = false;
         }
 
-        private void Start() => mainCamera = Camera.main;
+        private void Start()
+        {
+            mainCamera = Camera.main;
+        }
 
         private void Update()
         {
-            if (boardView == null || mainCamera == null)
+            if (CanProcessDragFrame())
             {
-                return;
+                ProcessDragInteractions(GetWorldPointerPosition());
             }
+        }
 
-            if (boardView.IsRunning())
-            {
-                return;
-            }
-
-            Vector3 worldPos = GetWorldPointerPosition();
-
+        private void ProcessDragInteractions(Vector3 worldPos)
+        {
             if (IsPointerDown())
             {
                 HandlePickup(worldPos);
@@ -50,6 +49,21 @@ namespace GearEngine.GearEngine.Presentation.UI
             }
         }
 
+        private bool CanProcessDragFrame()
+        {
+            if (boardView == null || mainCamera == null)
+            {
+                return false;
+            }
+
+            if (boardView.IsRunning())
+            {
+                return false;
+            }
+
+            return true;
+        }
+
         private void HandlePickup(Vector3 worldPos)
         {
             BoardConfigSO boardConfig = boardView.GetBoardConfig();
@@ -58,27 +72,7 @@ namespace GearEngine.GearEngine.Presentation.UI
                 return;
             }
 
-            float closestDist = boardConfig.MaxDragGrabDistance;
-            GearView closest = null;
-
-            foreach (GearView view in boardView.GetViews())
-            {
-                if (view == null || view.TargetNode == null || !view.TargetNode.IsInteractable)
-                {
-                    continue;
-                }
-
-                float dist = Vector2.Distance(
-                    new Vector2(view.transform.position.x, view.transform.position.y),
-                    new Vector2(worldPos.x, worldPos.y));
-
-                if (dist < closestDist)
-                {
-                    closestDist = dist;
-                    closest = view;
-                }
-            }
-
+            GearView closest = FindClosestInteractableGear(worldPos, boardConfig.MaxDragGrabDistance);
             if (closest == null)
             {
                 return;
@@ -88,6 +82,34 @@ namespace GearEngine.GearEngine.Presentation.UI
             draggedView.IsBeingDragged = true;
             originalGridPos = closest.TargetNode.Position;
             boardView.NotifyPickedUp(closest.TargetNode, originalGridPos);
+        }
+
+        private GearView FindClosestInteractableGear(Vector3 worldPos, float maxDist)
+        {
+            Vector2 p = new Vector2(worldPos.x, worldPos.y);
+            GearView closest = null;
+
+            foreach (GearView view in boardView.GetViews())
+            {
+                TrySelectCloserGear(view, p, ref maxDist, ref closest);
+            }
+
+            return closest;
+        }
+
+        private void TrySelectCloserGear(GearView view, Vector2 pointer, ref float bestDist, ref GearView best)
+        {
+            if (view?.TargetNode == null || !view.TargetNode.IsInteractable)
+            {
+                return;
+            }
+
+            float dist = Vector2.Distance(new Vector2(view.transform.position.x, view.transform.position.y), pointer);
+            if (dist < bestDist)
+            {
+                bestDist = dist;
+                best = view;
+            }
         }
 
         private void HandleHover(Vector3 worldPos)
@@ -105,19 +127,27 @@ namespace GearEngine.GearEngine.Presentation.UI
                 return;
             }
 
-            bool overUI = IsPointerOverUI();
-
-            if (overUI)
+            if (IsPointerOverUI())
             {
-                IGridNode node = draggedView.TargetNode;
-                GearConfigData droppedConfig = node?.ConfigData;
-                draggedView.IsBeingDragged = false;
-                DestroyGO(draggedView.gameObject);
-                draggedView = null;
-                boardView.NotifyBoardGearDroppedOverUI(node, droppedConfig, worldPos);
+                CompleteDropOverUi(worldPos);
                 return;
             }
 
+            CompleteDropOnBoard(worldPos);
+        }
+
+        private void CompleteDropOverUi(Vector3 worldPos)
+        {
+            IGridNode node = draggedView.TargetNode;
+            GearConfigData droppedConfig = node?.ConfigData;
+            draggedView.IsBeingDragged = false;
+            DestroyGO(draggedView.gameObject);
+            draggedView = null;
+            boardView.NotifyBoardGearDroppedOverUI(node, droppedConfig, worldPos);
+        }
+
+        private void CompleteDropOnBoard(Vector3 worldPos)
+        {
             BoardConfigSO cfg = boardView.GetBoardConfig();
             if (cfg == null)
             {
@@ -132,25 +162,6 @@ namespace GearEngine.GearEngine.Presentation.UI
             draggedView = null;
         }
 
-        private bool IsPointerDown()
-            => Input.GetMouseButtonDown(0)
-            || (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began);
-
-        private bool IsPointerHeld()
-            => Input.GetMouseButton(0)
-            || (Input.touchCount > 0
-                && (Input.GetTouch(0).phase == TouchPhase.Moved
-                    || Input.GetTouch(0).phase == TouchPhase.Stationary));
-
-        private bool IsPointerUp()
-            => Input.GetMouseButtonUp(0)
-            || (Input.touchCount > 0
-                && (Input.GetTouch(0).phase == TouchPhase.Ended
-                    || Input.GetTouch(0).phase == TouchPhase.Canceled));
-
-        private Vector3 GetPointerPosition()
-            => Input.touchCount > 0 ? (Vector3)Input.GetTouch(0).position : Input.mousePosition;
-
         private Vector3 GetWorldPointerPosition()
         {
             Vector3 p = GetPointerPosition();
@@ -158,6 +169,26 @@ namespace GearEngine.GearEngine.Presentation.UI
             Vector3 world = mainCamera.ScreenToWorldPoint(p);
             world.z = -1f;
             return world;
+        }
+
+        private Vector3 GetPointerPosition()
+        {
+            return Input.touchCount > 0 ? (Vector3)Input.GetTouch(0).position : Input.mousePosition;
+        }
+
+        private bool IsPointerDown()
+        {
+            return Input.GetMouseButtonDown(0) || (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began);
+        }
+
+        private bool IsPointerHeld()
+        {
+            return Input.GetMouseButton(0) || (Input.touchCount > 0 && (Input.GetTouch(0).phase == TouchPhase.Moved || Input.GetTouch(0).phase == TouchPhase.Stationary));
+        }
+
+        private bool IsPointerUp()
+        {
+            return Input.GetMouseButtonUp(0) || (Input.touchCount > 0 && (Input.GetTouch(0).phase == TouchPhase.Ended || Input.GetTouch(0).phase == TouchPhase.Canceled));
         }
 
         private bool IsPointerOverUI()

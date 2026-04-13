@@ -1,9 +1,12 @@
 using System;
 using CommunityToolkit.Mvvm.ComponentModel;
+using GearEngine.CarSimulation;
+using GearEngine.CarSimulation.Definitions;
+using GearEngine.CarSimulation.Entity;
 using Scaffold.MVVM;
 using Scaffold.MVVM.Binding;
 
-namespace GearEngine.CarSimulation
+namespace GearEngine.CarSimulation.Presentation
 {
     public sealed partial class TrackViewModel : ViewModel
     {
@@ -16,10 +19,10 @@ namespace GearEngine.CarSimulation
         public CarEntity Car => simulation.Car;
 
         [NestedProperty] private TrackSimulation simulation;
-        
+
         [ObservableProperty] private SimulationLifecycleState state;
         [ObservableProperty] private float currentSpeed;
-        
+
         protected override void Initialize()
         {
             base.Initialize();

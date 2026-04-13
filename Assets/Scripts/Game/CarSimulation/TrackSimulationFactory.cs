@@ -1,4 +1,6 @@
 using System;
+using GearEngine.CarSimulation.Definitions;
+using GearEngine.CarSimulation.Entity;
 using UnityEngine;
 
 namespace GearEngine.CarSimulation

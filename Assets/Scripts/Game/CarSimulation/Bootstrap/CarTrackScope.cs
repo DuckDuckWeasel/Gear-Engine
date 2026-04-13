@@ -9,7 +9,7 @@ using UnityEngine;
 using VContainer;
 using VContainer.Unity;
 
-namespace GearEngine.CarSimulation
+namespace GearEngine.CarSimulation.Bootstrap
 {
     public sealed class CarTrackScope : LifetimeScope
     {

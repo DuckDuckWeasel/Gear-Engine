@@ -1,12 +1,12 @@
 using Scaffold.MVVM;
 using UnityEngine;
 
-namespace GearEngine.CarSimulation
+namespace GearEngine.CarSimulation.Presentation
 {
-    /// <summary>Sample view for the spline track test scene: hosts <see cref="Track"/> as a reusable ViewComponent.</summary>
+    /// <summary>Sample view for the spline track test scene: hosts <see cref="GearEngine.CarSimulation.Track.Track"/> as a reusable ViewComponent.</summary>
     public sealed class CarTrackTestView : View<TrackViewModel>
     {
-        [SerializeField] private Track track;
+        [SerializeField] private Track.Track track;
 
         protected override void OnBind()
         {

@@ -9,12 +9,12 @@ namespace GearEngine.GearEngine.Presentation.UI
 {
     public partial class GearInventoryViewModel : ViewModel
     {
+        public bool CanDrag => engineService != null && !engineService.IsRunning;
+
         private IGearEngineService engineService;
 
         [ObservableProperty]
         private GearInventoryModel inventoryModel = new GearInventoryModel();
-
-        public bool CanDrag => engineService != null && !engineService.IsRunning;
 
         public event Action<Vector3, GearConfigData> OnGearDraggedToBoard;
 

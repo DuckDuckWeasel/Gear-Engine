@@ -30,6 +30,7 @@
       "Scaffold.MVVM.ViewModel",
       "Scaffold.Navigation",
       "Scaffold.Navigation.Container",
+      "Scaffold.Records",
       "Scaffold.SceneFlow",
       "Scaffold.Schemas",
       "Scaffold.Scope",

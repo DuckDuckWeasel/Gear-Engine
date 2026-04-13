@@ -5,31 +5,34 @@ namespace GearEngine.GearEngine.Nodes
 {
     public class CoreGearNode : NodeBase
     {
+        public CoreGearNode(IGridManager grid, IEventBus eventBus) : base(grid, eventBus)
+        {
+        }
+
         [SerializeField]
         private float lastFiredRotation = 0f;
         [SerializeField]
         private float slowdownTimer = 0f;
 
-        public CoreGearNode(IGridManager grid, IEventBus eventBus) : base(grid, eventBus) { }
-
         public override void NodeUpdate(float deltaTime, float speedModifier)
         {
-            if (ConfigData == null || !IsActive) return;
+            if (ConfigData == null || !IsActive)
+            {
+                return;
+            }
 
             float currentSpeedMod = speedModifier;
             if (slowdownTimer > 0)
             {
-                currentSpeedMod *= ConfigData.SnapSlowdownMultiplier; // Config-driven stutter drag
+                currentSpeedMod *= ConfigData.SnapSlowdownMultiplier;
                 slowdownTimer -= deltaTime;
             }
 
             float speed = ConfigData.BaseRotationSpeed;
             float rotationDelta = speed * LocalSpeedMultiplier * currentSpeedMod * deltaTime;
-            
-            // Apply continuously for buttery smooth view rendering
+
             CurrentRotation += rotationDelta;
 
-            // Fluid over-time charge to neighbors continues to happen based on time
             ApplyOverTimeChargeToNeighbors(deltaTime, speed, currentSpeedMod);
 
             CheckSnapAndTrigger();
@@ -39,35 +42,37 @@ namespace GearEngine.GearEngine.Nodes
         {
             float segmentAngle = ConfigData.TriggerPattern == TriggerPattern.EightWay ? 45f : 90f;
 
-            // Has our continuous smooth rotation crossed the mathematical threshold for the next segment?
             while (CurrentRotation - lastFiredRotation >= segmentAngle)
             {
                 lastFiredRotation += segmentAngle;
-                
-                // Calculate which segment we just snapped to logically
-                int currentSegment = Mathf.FloorToInt(lastFiredRotation / segmentAngle);
-
-                Vector2Int targetDir = GetDirectionForSegment(currentSegment);
-                Vector2Int targetPos = Position + targetDir;
-                
-                IGridNode hitNode = grid.GetNode(targetPos);
-                if (hitNode != null)
-                {
-                    Debug.Log($"<color=#ffcc00>[CoreGearNode]</color> Smooth Tick! Logically crossed {lastFiredRotation}° -> Fired at {targetPos}");
-
-                    float currentSign = Mathf.Sign(ConfigData.BaseRotationSpeed * LocalSpeedMultiplier);
-                    eventBus.Raise(new DirectionalTriggerEvent(targetPos, ConfigData.ChargeOnTriggerAmount, currentSign));
-                    
-                    slowdownTimer = ConfigData.SnapSlowdownDuration; // Config-driven stutter duration
-                }
+                TryFireTriggerForSegment(segmentAngle);
             }
 
-            // Loop reset safeguard
             if (CurrentRotation >= 360f && lastFiredRotation >= 360f)
             {
                 CurrentRotation -= 360f;
                 lastFiredRotation -= 360f;
             }
+        }
+
+        private void TryFireTriggerForSegment(float segmentAngle)
+        {
+            int currentSegment = Mathf.FloorToInt(lastFiredRotation / segmentAngle);
+            Vector2Int targetDir = GetDirectionForSegment(currentSegment);
+            Vector2Int targetPos = Position + targetDir;
+
+            IGridNode hitNode = grid.GetNode(targetPos);
+            if (hitNode == null)
+            {
+                return;
+            }
+
+            Debug.Log($"<color=#ffcc00>[CoreGearNode]</color> Smooth Tick! Logically crossed {lastFiredRotation}° -> Fired at {targetPos}");
+
+            float currentSign = Mathf.Sign(ConfigData.BaseRotationSpeed * LocalSpeedMultiplier);
+            eventBus.Raise(new DirectionalTriggerEvent(targetPos, ConfigData.ChargeOnTriggerAmount, currentSign));
+
+            slowdownTimer = ConfigData.SnapSlowdownDuration;
         }
 
         private void ApplyOverTimeChargeToNeighbors(float deltaTime, float speed, float speedModifier)
@@ -87,30 +92,42 @@ namespace GearEngine.GearEngine.Nodes
             }
         }
 
-
-
         private Vector2Int GetDirectionForSegment(int segment)
         {
             var dirs = ConfigData.TriggerPattern.GetDirections();
-            if (segment >= 0 && segment < dirs.Length) return dirs[segment];
+            if (segment >= 0 && segment < dirs.Length)
+            {
+                return dirs[segment];
+            }
+
             return Vector2Int.up;
         }
 
         public override void WindDownUpdate(float deltaTime, float speedModifier)
         {
-            if (ConfigData == null) return;
+            if (ConfigData == null)
+            {
+                return;
+            }
 
-            // Smoothly snap to closest 90-degree orthogonal rest state in the direction of rotation
-            float targetRotation;
-            if (LastRotationDelta > 0)
-                targetRotation = Mathf.Ceil(CurrentRotation / 90f) * 90f;
-            else if (LastRotationDelta < 0)
-                targetRotation = Mathf.Floor(CurrentRotation / 90f) * 90f;
-            else
-                targetRotation = Mathf.Round(CurrentRotation / 90f) * 90f;
-
+            float targetRotation = ComputeWindDownTargetRotation();
             float smoothSpeed = 5f;
             CurrentRotation = Mathf.LerpAngle(CurrentRotation, targetRotation, deltaTime * smoothSpeed);
+        }
+
+        private float ComputeWindDownTargetRotation()
+        {
+            if (LastRotationDelta > 0)
+            {
+                return Mathf.Ceil(CurrentRotation / 90f) * 90f;
+            }
+
+            if (LastRotationDelta < 0)
+            {
+                return Mathf.Floor(CurrentRotation / 90f) * 90f;
+            }
+
+            return Mathf.Round(CurrentRotation / 90f) * 90f;
         }
     }
 }

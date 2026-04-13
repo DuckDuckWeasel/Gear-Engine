@@ -1,10 +1,13 @@
 using System;
+using GearEngine.CarSimulation;
+using GearEngine.CarSimulation.Definitions;
+using GearEngine.CarSimulation.Presentation;
 using Scaffold.Navigation.Contracts;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
 
-namespace GearEngine.CarSimulation
+namespace GearEngine.CarSimulation.Bootstrap
 {
     public sealed class CarTrackBootstrap : MonoBehaviour, IInitializable
     {

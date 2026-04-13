@@ -1,4 +1,7 @@
 using GearEngine.CarSimulation;
+using GearEngine.CarSimulation.Definitions;
+using GearEngine.CarSimulation.Drivers;
+using GearEngine.CarSimulation.Entity;
 using NUnit.Framework;
 using Scaffold.Entities;
 using UnityEngine;

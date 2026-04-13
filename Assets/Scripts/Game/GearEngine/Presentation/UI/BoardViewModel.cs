@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using GearEngine.GearEngine;
+using GearEngine.GearEngine.Bootstrap;
+using GearEngine.GearEngine.Nodes;
 using Scaffold.MVVM;
 using UnityEngine;
 
@@ -8,25 +10,22 @@ namespace GearEngine.GearEngine.Presentation.UI
 {
     public sealed class BoardViewModel : ViewModel
     {
+        public IGearEngineService EngineService => engineService;
+
         private IGearEngineService engineService;
-        private IGridManager gridManager;
-        private GearNodeFactory nodeFactory;
+
+        public BoardConfigSO BoardConfig => boardConfig;
+
         private BoardConfigSO boardConfig;
 
+        private IGridManager gridManager;
+        private GearNodeFactory nodeFactory;
         private Vector2Int pickupOriginalPos;
 
         public event Action<IGridNode> OnGearPlaced;
         public event Action<IGridNode> OnGearRemoved;
 
-        public IGearEngineService EngineService => engineService;
-
-        public BoardConfigSO BoardConfig => boardConfig;
-
-        public void Initialize(
-            IGearEngineService engineService,
-            IGridManager gridManager,
-            GearNodeFactory nodeFactory,
-            BoardConfigSO boardConfig)
+        public void Initialize(IGearEngineService engineService, IGridManager gridManager, GearNodeFactory nodeFactory, BoardConfigSO boardConfig)
         {
             this.engineService = engineService ?? throw new ArgumentNullException(nameof(engineService));
             this.gridManager = gridManager ?? throw new ArgumentNullException(nameof(gridManager));
@@ -34,9 +33,15 @@ namespace GearEngine.GearEngine.Presentation.UI
             this.boardConfig = boardConfig ?? throw new ArgumentNullException(nameof(boardConfig));
         }
 
-        public IGridNode GetNode(Vector2Int coord) => gridManager.GetNode(coord);
+        public IGridNode GetNode(Vector2Int coord)
+        {
+            return gridManager.GetNode(coord);
+        }
 
-        public IEnumerable<IGridNode> GetCurrentNodes() => gridManager.GetAllNodes();
+        public IEnumerable<IGridNode> GetCurrentNodes()
+        {
+            return gridManager.GetAllNodes();
+        }
 
         public void LoadLayout(BoardLayoutData layout)
         {
@@ -52,31 +57,7 @@ namespace GearEngine.GearEngine.Presentation.UI
 
             foreach (BoardGearPlacementData placement in layout.Placements)
             {
-                if (placement == null || placement.GearConfig == null)
-                {
-                    continue;
-                }
-
-                Vector2Int pos = placement.Position;
-                bool inBounds =
-                    pos.x >= 0 && pos.x < boardConfig.GridWidth &&
-                    pos.y >= 0 && pos.y < boardConfig.GridHeight;
-
-                if (!inBounds)
-                {
-                    Debug.LogError($"[BoardViewModel] Ignoring out-of-bounds starting gear at {pos}.");
-                    continue;
-                }
-
-                if (gridManager.GetNode(pos) != null)
-                {
-                    Debug.LogError($"[BoardViewModel] Duplicate starting gear at {pos}.");
-                    continue;
-                }
-
-                GearConfigData runtimeData = placement.GearConfig.CreateRuntimeData();
-                IGridNode node = nodeFactory.CreateNode(pos, runtimeData);
-                gridManager.AddNode(node);
+                TryPlaceLayoutGear(placement);
             }
         }
 
@@ -93,26 +74,28 @@ namespace GearEngine.GearEngine.Presentation.UI
 
         public void OnGearDropped(IGridNode node, Vector2Int toPos)
         {
-            if (node == null || engineService == null || gridManager == null || boardConfig == null)
+            if (!CanProcessBoardDrop(node))
             {
                 return;
             }
 
-            if (engineService.IsRunning)
-            {
-                return;
-            }
-
-            bool isValidDrop = toPos.x >= 0 && toPos.x < boardConfig.GridWidth &&
-                               toPos.y >= 0 && toPos.y < boardConfig.GridHeight;
-
-            if (!isValidDrop)
+            if (!IsDropInBounds(toPos))
             {
                 SnapNodeBackToOriginal(node);
                 Debug.LogWarning($"<color=#ff5555>[BoardViewModel]</color> Drop at {toPos} out of bounds. Snapped back.");
                 return;
             }
 
+            HandleDropAtOccupiedCell(node, toPos);
+        }
+
+        private bool CanProcessBoardDrop(IGridNode node)
+        {
+            return node != null && engineService != null && gridManager != null && boardConfig != null && !engineService.IsRunning;
+        }
+
+        private void HandleDropAtOccupiedCell(IGridNode node, Vector2Int toPos)
+        {
             IGridNode occupant = gridManager.GetNode(toPos);
 
             if (occupant == null)
@@ -122,6 +105,41 @@ namespace GearEngine.GearEngine.Presentation.UI
                 return;
             }
 
+            TryMergeSwapOrLog(node, occupant, toPos);
+        }
+
+        public void HandleBoardGearReturnedOverUI(IGridNode node)
+        {
+            try
+            {
+                node?.Dispose();
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"[BoardViewModel] HandleBoardGearReturnedOverUI failed: {ex.Message}\n{ex.StackTrace}");
+            }
+        }
+
+        public bool HandleInventoryDrop(Vector3 worldPosition, GearConfigData gearData)
+        {
+            try
+            {
+                return TryHandleInventoryDropCore(worldPosition, gearData);
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"[BoardViewModel] HandleInventoryDrop failed: {ex.Message}\n{ex.StackTrace}");
+                return false;
+            }
+        }
+
+        private bool IsDropInBounds(Vector2Int toPos)
+        {
+            return toPos.x >= 0 && toPos.x < boardConfig.GridWidth && toPos.y >= 0 && toPos.y < boardConfig.GridHeight;
+        }
+
+        private void TryMergeSwapOrLog(IGridNode node, IGridNode occupant, Vector2Int toPos)
+        {
             GearConfigData draggedData = node.ConfigData;
             GearConfigData occupantData = occupant.ConfigData;
 
@@ -135,80 +153,107 @@ namespace GearEngine.GearEngine.Presentation.UI
             Debug.Log($"<color=#ffff33>[BoardViewModel]</color> Swapped positions! {toPos} <-> {pickupOriginalPos}");
         }
 
-        /// <summary>
-        /// Disposes the logical node after a board gear is dragged over UI (view is destroyed separately).
-        /// </summary>
-        public void HandleBoardGearReturnedOverUI(IGridNode node)
+        private void TryPlaceLayoutGear(BoardGearPlacementData placement)
         {
-            try
+            if (placement?.GearConfig == null || !TryValidateLayoutSlot(placement.Position))
             {
-                node?.Dispose();
+                return;
             }
-            catch (Exception ex)
-            {
-                Debug.LogError($"[BoardViewModel] HandleBoardGearReturnedOverUI failed: {ex.Message}\n{ex.StackTrace}");
-            }
+
+            PlaceLayoutGearAt(placement.Position, placement.GearConfig);
         }
 
-        /// <summary>
-        /// Places or merges inventory gear onto the board. Does not modify inventory; the screen consumes on success.
-        /// </summary>
-        /// <returns>True if a node was placed or merged.</returns>
-        public bool HandleInventoryDrop(Vector3 worldPosition, GearConfigData gearData)
+        private bool TryValidateLayoutSlot(Vector2Int pos)
         {
-            try
+            if (!IsLayoutPositionInBounds(pos))
             {
-                if (gearData == null)
-                {
-                    throw new ArgumentNullException(nameof(gearData));
-                }
-
-                if (gridManager == null || boardConfig == null || engineService == null || engineService.IsRunning)
-                {
-                    return false;
-                }
-
-                Vector2Int targetDropPos = boardConfig.GetGridPosition(worldPosition);
-                IGridNode occupant = gridManager.GetNode(targetDropPos);
-
-                if (occupant == null)
-                {
-                    IGridNode newNode = nodeFactory.CreateNode(targetDropPos, gearData);
-                    gridManager.AddNode(newNode);
-                    OnGearPlaced?.Invoke(newNode);
-                    return true;
-                }
-
-                GearConfigData occupantData = occupant.ConfigData;
-
-                if (occupantData.Id == gearData.Id && occupantData.NextLevelConfig != null)
-                {
-                    IGridNode removedOccupant = gridManager.ExtractNode(targetDropPos);
-                    if (removedOccupant != occupant)
-                    {
-                        Debug.LogError("[BoardViewModel] Grid state mismatch during UI merge.");
-                        return false;
-                    }
-
-                    OnGearRemoved?.Invoke(occupant);
-                    occupant.Dispose();
-
-                    GearConfigData upgradedData = occupantData.NextLevelConfig.CreateRuntimeData();
-                    IGridNode newNode = nodeFactory.CreateNode(targetDropPos, upgradedData);
-                    gridManager.AddNode(newNode);
-                    OnGearPlaced?.Invoke(newNode);
-                    Debug.Log($"<color=#ffaa55>[BoardViewModel]</color> MERGED UI {gearData.Id} into {upgradedData.Id} at {targetDropPos}!");
-                    return true;
-                }
-
-                Debug.LogWarning($"<color=#ff5555>[BoardViewModel]</color> UI Drop Cancelled! {gearData.Id} dropped on incompatible/occupied {occupantData.Id}.");
+                Debug.LogError($"[BoardViewModel] Ignoring out-of-bounds starting gear at {pos}.");
                 return false;
             }
-            catch (Exception ex)
+
+            if (gridManager.GetNode(pos) != null)
             {
-                Debug.LogError($"[BoardViewModel] HandleInventoryDrop failed: {ex.Message}\n{ex.StackTrace}");
+                Debug.LogError($"[BoardViewModel] Duplicate starting gear at {pos}.");
                 return false;
             }
+
+            return true;
+        }
+
+        private bool IsLayoutPositionInBounds(Vector2Int pos)
+        {
+            return pos.x >= 0 && pos.x < boardConfig.GridWidth && pos.y >= 0 && pos.y < boardConfig.GridHeight;
+        }
+
+        private void PlaceLayoutGearAt(Vector2Int pos, GearConfig gearConfig)
+        {
+            GearConfigData runtimeData = gearConfig.CreateRuntimeData();
+            IGridNode node = nodeFactory.CreateNode(pos, runtimeData);
+            gridManager.AddNode(node);
+        }
+
+        private bool TryHandleInventoryDropCore(Vector3 worldPosition, GearConfigData gearData)
+        {
+            if (gearData == null)
+            {
+                throw new ArgumentNullException(nameof(gearData));
+            }
+
+            if (gridManager == null || boardConfig == null || engineService == null || engineService.IsRunning)
+            {
+                return false;
+            }
+
+            Vector2Int targetDropPos = boardConfig.GetGridPosition(worldPosition);
+            IGridNode occupant = gridManager.GetNode(targetDropPos);
+
+            if (occupant == null)
+            {
+                return TryPlaceInventoryGearAtEmptyCell(targetDropPos, gearData);
+            }
+
+            return TryMergeOrRejectInventoryDrop(occupant, targetDropPos, gearData);
+        }
+
+        private bool TryPlaceInventoryGearAtEmptyCell(Vector2Int targetDropPos, GearConfigData gearData)
+        {
+            IGridNode newNode = nodeFactory.CreateNode(targetDropPos, gearData);
+            gridManager.AddNode(newNode);
+            OnGearPlaced?.Invoke(newNode);
+            return true;
+        }
+
+        private bool TryMergeOrRejectInventoryDrop(IGridNode occupant, Vector2Int targetDropPos, GearConfigData gearData)
+        {
+            GearConfigData occupantData = occupant.ConfigData;
+
+            if (occupantData.Id == gearData.Id && occupantData.NextLevelConfig != null)
+            {
+                return TryMergeInventoryIntoOccupant(occupant, targetDropPos, gearData, occupantData);
+            }
+
+            Debug.LogWarning($"<color=#ff5555>[BoardViewModel]</color> UI Drop Cancelled! {gearData.Id} dropped on incompatible/occupied {occupantData.Id}.");
+            return false;
+        }
+
+        private bool TryMergeInventoryIntoOccupant(IGridNode occupant, Vector2Int targetDropPos, GearConfigData gearData, GearConfigData occupantData)
+        {
+            IGridNode removedOccupant = gridManager.ExtractNode(targetDropPos);
+            if (removedOccupant != occupant)
+            {
+                Debug.LogError("[BoardViewModel] Grid state mismatch during UI merge.");
+                return false;
+            }
+
+            OnGearRemoved?.Invoke(occupant);
+            occupant.Dispose();
+
+            GearConfigData upgradedData = occupantData.NextLevelConfig.CreateRuntimeData();
+            IGridNode newNode = nodeFactory.CreateNode(targetDropPos, upgradedData);
+            gridManager.AddNode(newNode);
+            OnGearPlaced?.Invoke(newNode);
+            Debug.Log($"<color=#ffaa55>[BoardViewModel]</color> MERGED UI {gearData.Id} into {upgradedData.Id} at {targetDropPos}!");
+            return true;
         }
 
         private void PlaceNodeAt(IGridNode node, Vector2Int toPos)

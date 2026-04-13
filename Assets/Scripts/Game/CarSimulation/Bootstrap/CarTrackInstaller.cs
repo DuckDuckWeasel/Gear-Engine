@@ -1,6 +1,7 @@
+using GearEngine.CarSimulation;
 using VContainer;
 
-namespace GearEngine.CarSimulation
+namespace GearEngine.CarSimulation.Bootstrap
 {
     public sealed class CarTrackInstaller
     {

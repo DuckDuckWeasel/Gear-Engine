@@ -1,8 +1,11 @@
 using System;
+using GearEngine.CarSimulation;
+using GearEngine.CarSimulation.Drivers;
+using GearEngine.CarSimulation.Entity;
 using UnityEngine;
 using UnityEngine.Splines;
 
-namespace GearEngine.CarSimulation
+namespace GearEngine.CarSimulation.Presentation
 {
     public sealed class CarView : MonoBehaviour
     {

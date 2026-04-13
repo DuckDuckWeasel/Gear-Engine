@@ -17,8 +17,7 @@ namespace GearEngine.GearEngine.Abilities
             Debug.Log($"<color=#44ff44>[InactiveAbility]</color> {owner.Position} is now ACTIVE again.");
         }
 
-        // Execute happens on max charge, but since it's inactive, it probably won't trigger. 
-        // We leave it empty as this is a Status Effect ability.
+        /// <summary>Sample: No-op execute; inactive gears rarely reach max charge.</summary>
         public override void Execute(IGridNode owner)
         {
         }

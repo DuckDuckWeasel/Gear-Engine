@@ -34,16 +34,26 @@ namespace GearEngine.GearEngine.Presentation.UI
 
             if (engineService.IsRunning)
             {
-                engineService.Stop();
-                IsRunning = false;
-                Debug.Log($"<color=#ffaa00>[UI_Simulation]</color> Engine Manually STOPPED.");
+                StopSimulationUi();
             }
             else
             {
-                engineService.Play();
-                IsRunning = true;
-                Debug.Log($"<color=#55ff55>[UI_Simulation]</color> Engine Manually STARTED.");
+                StartSimulationUi();
             }
+        }
+
+        private void StopSimulationUi()
+        {
+            engineService.Stop();
+            IsRunning = false;
+            Debug.Log($"<color=#ffaa00>[UI_Simulation]</color> Engine Manually STOPPED.");
+        }
+
+        private void StartSimulationUi()
+        {
+            engineService.Play();
+            IsRunning = true;
+            Debug.Log($"<color=#55ff55>[UI_Simulation]</color> Engine Manually STARTED.");
         }
     }
 }

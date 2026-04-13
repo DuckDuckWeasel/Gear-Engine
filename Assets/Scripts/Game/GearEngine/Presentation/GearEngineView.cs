@@ -32,20 +32,25 @@ namespace GearEngine.GearEngine.Presentation
         {
             try
             {
-                if (viewModel.Board.EngineService.IsRunning)
-                {
-                    return;
-                }
-
-                bool placed = viewModel.Board.HandleInventoryDrop(worldPos, gearData);
-                if (placed)
-                {
-                    viewModel.Inventory.ConsumeSpecificGear(gearData);
-                }
+                TryPlaceInventoryFromDrag(worldPos, gearData);
             }
             catch (Exception ex)
             {
                 Debug.LogError($"[GearEngineView] HandleGearDraggedToBoard failed: {ex.Message}\n{ex.StackTrace}");
+            }
+        }
+
+        private void TryPlaceInventoryFromDrag(Vector3 worldPos, GearConfigData gearData)
+        {
+            if (viewModel.Board.EngineService.IsRunning)
+            {
+                return;
+            }
+
+            bool placed = viewModel.Board.HandleInventoryDrop(worldPos, gearData);
+            if (placed)
+            {
+                viewModel.Inventory.ConsumeSpecificGear(gearData);
             }
         }
 

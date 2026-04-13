@@ -1,4 +1,6 @@
 using System.IO;
+using GearEngine.CarSimulation.Presentation;
+using TrackViewComponent = GearEngine.CarSimulation.Track.Track;
 using Scaffold.Navigation;
 using UnityEditor;
 using UnityEditor.AddressableAssets;
@@ -95,7 +97,7 @@ namespace GearEngine.CarSimulation.Editor
             var trackGo = new GameObject("Track");
             trackGo.transform.SetParent(root.transform, false);
             var container = trackGo.AddComponent<SplineContainer>();
-            var track = trackGo.AddComponent<Track>();
+            var track = trackGo.AddComponent<TrackViewComponent>();
 
             var pathGo = new GameObject("Path");
             pathGo.transform.SetParent(trackGo.transform, false);
@@ -108,7 +110,7 @@ namespace GearEngine.CarSimulation.Editor
             Object.DestroyImmediate(root);
         }
 
-        private static void WireTrackSerializedFields(Track track, SplineContainer container, SplineExtrude extrude)
+        private static void WireTrackSerializedFields(TrackViewComponent track, SplineContainer container, SplineExtrude extrude)
         {
             var trackSo = new SerializedObject(track);
             trackSo.FindProperty("splineContainer").objectReferenceValue = container;
@@ -116,7 +118,7 @@ namespace GearEngine.CarSimulation.Editor
             trackSo.ApplyModifiedPropertiesWithoutUndo();
         }
 
-        private static void WireShellTrackReference(GameObject root, Track track)
+        private static void WireShellTrackReference(GameObject root, TrackViewComponent track)
         {
             var shellSo = new SerializedObject(root.GetComponent<CarTrackTestView>());
             shellSo.FindProperty("track").objectReferenceValue = track;
