@@ -4,7 +4,7 @@ using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Splines;
 
-namespace GearEngine.CarSimulation.Track
+namespace GearEngine.CarSimulation.Tracks
 {
     public static class TrackProfileBaker
     {

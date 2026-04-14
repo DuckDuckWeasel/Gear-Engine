@@ -4,7 +4,7 @@ using GearEngine.CarSimulation.Bootstrap;
 using GearEngine.CarSimulation.Definitions;
 using GearEngine.CarSimulation.Drivers;
 using GearEngine.CarSimulation.Presentation;
-using TrackViewComponent = GearEngine.CarSimulation.Track.Track;
+using TrackViewComponent = GearEngine.CarSimulation.Tracks.Track;
 using Scaffold.Entities;
 using Scaffold.Navigation;
 using UnityEditor;
@@ -480,7 +480,7 @@ namespace GearEngine.CarSimulation.Editor
             return GameObject.Find("CircleRaceTrack");
         }
 
-        /// <summary>Sample: Keeps the scene spline for authoring <see cref="TrackDefinition"/>; runtime <see cref="GearEngine.CarSimulation.Track.Track"/> opens via navigation.</summary>
+        /// <summary>Sample: Keeps the scene spline for authoring <see cref="TrackDefinition"/>; runtime <see cref="GearEngine.CarSimulation.Tracks.Track"/> opens via navigation.</summary>
         private static void EnsureAuthoringSplineOnlyOnCircleRaceHost()
         {
             if (!TryFindCircleRaceParent(out GameObject parent))

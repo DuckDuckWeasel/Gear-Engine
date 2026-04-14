@@ -6,7 +6,7 @@ using Scaffold.MVVM;
 using UnityEngine;
 using UnityEngine.Splines;
 
-namespace GearEngine.CarSimulation.Track
+namespace GearEngine.CarSimulation.Tracks
 {
     [DisallowMultipleComponent]
     [RequireComponent(typeof(SplineContainer))]

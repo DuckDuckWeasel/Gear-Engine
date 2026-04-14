@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace GearEngine.CarSimulation.Track
+namespace GearEngine.CarSimulation.Tracks
 {
     public sealed class BakedTrackProfile
     {

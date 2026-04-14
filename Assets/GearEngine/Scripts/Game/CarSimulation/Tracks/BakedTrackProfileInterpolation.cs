@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace GearEngine.CarSimulation.Track
+namespace GearEngine.CarSimulation.Tracks
 {
     internal static class BakedTrackProfileInterpolation
     {

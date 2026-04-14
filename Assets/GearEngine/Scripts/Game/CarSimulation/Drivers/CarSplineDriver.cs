@@ -1,7 +1,7 @@
 using System;
 using GearEngine.CarSimulation;
 using GearEngine.CarSimulation.Simulation;
-using GearEngine.CarSimulation.Track;
+using GearEngine.CarSimulation.Tracks;
 using UnityEngine;
 using UnityEngine.Splines;
 

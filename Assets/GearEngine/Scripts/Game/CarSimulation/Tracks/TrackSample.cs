@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace GearEngine.CarSimulation.Track
+namespace GearEngine.CarSimulation.Tracks
 {
     public readonly struct TrackSample
     {

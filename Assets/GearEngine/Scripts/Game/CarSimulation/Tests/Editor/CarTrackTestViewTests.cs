@@ -1,7 +1,7 @@
 using GearEngine.CarSimulation;
 using GearEngine.CarSimulation.Definitions;
 using GearEngine.CarSimulation.Presentation;
-using TrackViewComponent = GearEngine.CarSimulation.Track.Track;
+using TrackViewComponent = GearEngine.CarSimulation.Tracks.Track;
 using NUnit.Framework;
 using UnityEditor;
 using UnityEngine;
