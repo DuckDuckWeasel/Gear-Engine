@@ -18,12 +18,12 @@ MonoBehaviour:
     Category: 0
     BaseRotationSpeed: 0
     VisualPrefab: {fileID: 522121566319413383, guid: 51970ee9abfae4f67869c8b3ceabc8e1, type: 3}
-    UIIcon: {fileID: 21300000, guid: fcfe20b09c8874fe4bf0b85d06a0d441, type: 3}
+    UIIcon: {fileID: 0}
     RelativeScaleMultiplier: 1
     TriggerPattern: 4
-    IsInteractable: 1
-    IsMovable: 1
-    IsReturnable: 1
+    IsInteractable: 0
+    IsMovable: 0
+    IsReturnable: 0
     MaxCharge: 30
     ChargeOverTimeAmount: 0
     ChargeOnTriggerAmount: 10
