@@ -19,3 +19,4 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 69e686b79377d4526aa5270b340e53a2, type: 2}
   - {fileID: 11400000, guid: fc9fa8903c002405f937050464c1d2a5, type: 2}
   - {fileID: 11400000, guid: 9f0ce76835399481e9aaf8f8af8f41ca, type: 2}
+  MaxInventorySlots: 10

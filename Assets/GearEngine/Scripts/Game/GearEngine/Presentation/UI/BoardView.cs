@@ -12,14 +12,12 @@ namespace GearEngine.GearEngine.Presentation.UI
     {
         [SerializeField] private GearBoardDragHandler dragHandler;
 
+        public event Action<GearConfigData, Vector3> OnGearDroppedOverUI;
+        public event Action<IGridNode> OnTrashDropRequested;
+
         private BoardViewModel viewModel;
         private GearViewFactory localFactory;
         private readonly Dictionary<IGridNode, GearView> viewsByNode = new Dictionary<IGridNode, GearView>();
-
-        public event Action<GearConfigData, Vector3> OnGearDroppedOverUI;
-        public event Action<GearConfigData> OnDragStarted;
-        public event Action OnDragEnded;
-        public event Action<IGridNode> OnTrashDropRequested;
 
         public void Bind(BoardViewModel vm, bool interactable = false)
         {
@@ -29,8 +27,6 @@ namespace GearEngine.GearEngine.Presentation.UI
 
             vm.OnGearPlaced += HandleGearPlaced;
             vm.OnGearRemoved += HandleGearRemoved;
-            vm.OnBoardDragStarted += HandleDragStarted;
-            vm.OnBoardDragEnded += HandleDragEnded;
 
             foreach (IGridNode node in vm.GetCurrentNodes())
             {
@@ -41,17 +37,36 @@ namespace GearEngine.GearEngine.Presentation.UI
             {
                 dragHandler.enabled = interactable;
             }
+            else
+            {
+                Debug.LogError($"<color=#ff0000>[BoardView]</color> CRITICAL ERROR: dragHandler is NULL in inspector! Board interactions will be silently disabled!");
+            }
+        }
+
+        public void Unbind()
+        {
+            if (viewModel == null)
+            {
+                return;
+            }
+
+            viewModel.OnGearPlaced -= HandleGearPlaced;
+            viewModel.OnGearRemoved -= HandleGearRemoved;
+            DestroyAllViews();
+            localFactory = null;
+            viewModel = null;
+
+            if (dragHandler != null)
+            {
+                dragHandler.enabled = false;
+            }
         }
 
         internal void NotifyPickedUp(IGridNode node, Vector2Int coord)
-        {
-            viewModel?.OnGearPickedUp(node, coord);
-        }
+            => viewModel?.OnGearPickedUp(node, coord);
 
         internal void NotifyDropped(IGridNode node, Vector2Int coord)
-        {
-            viewModel?.OnGearDropped(node, coord);
-        }
+            => viewModel?.OnGearDropped(node, coord);
 
         internal void NotifyBoardGearDroppedOverUI(IGridNode node, GearConfigData config, Vector3 worldPos)
         {
@@ -67,30 +82,44 @@ namespace GearEngine.GearEngine.Presentation.UI
             OnTrashDropRequested?.Invoke(node);
         }
 
-        private void HandleDragStarted(GearConfigData data)
+        /// <summary>
+        /// Removes the view from the tracking dictionary without destroying it.
+        /// Called when a gear is picked up for dragging — the view stays alive
+        /// so the user can see it moving, but the board no longer owns it.
+        /// </summary>
+        internal GearView DetachViewForDrag(IGridNode node)
         {
-            OnDragStarted?.Invoke(data);
+            if (node == null)
+            {
+                return null;
+            }
+
+            if (viewsByNode.TryGetValue(node, out GearView view))
+            {
+                viewsByNode.Remove(node);
+                return view;
+            }
+
+            return null;
         }
 
-        private void HandleDragEnded()
+        /// <summary>
+        /// Destroys a previously detached (dragged) view.
+        /// Called after the drop completes and a fresh view has been spawned.
+        /// </summary>
+        internal void DestroyDetachedView(GearView view)
         {
-            OnDragEnded?.Invoke();
+            if (view != null)
+            {
+                DestroyViewGameObject(view.gameObject);
+            }
         }
 
-        internal IEnumerable<GearView> GetViews()
-        {
-            return viewsByNode.Values;
-        }
+        internal IEnumerable<GearView> GetViews() => viewsByNode.Values;
 
-        internal bool IsRunning()
-        {
-            return viewModel?.EngineService?.IsRunning ?? false;
-        }
+        internal bool IsRunning() => viewModel?.EngineService?.IsRunning ?? false;
 
-        internal BoardConfigSO GetBoardConfig()
-        {
-            return viewModel?.BoardConfig;
-        }
+        internal BoardConfigSO GetBoardConfig() => viewModel?.BoardConfig;
 
         private void HandleGearPlaced(IGridNode node)
         {
@@ -138,32 +167,6 @@ namespace GearEngine.GearEngine.Presentation.UI
             viewsByNode[node] = view;
         }
 
-        private void OnDestroy()
-        {
-            Unbind();
-        }
-
-        public void Unbind()
-        {
-            if (viewModel == null)
-            {
-                return;
-            }
-
-            viewModel.OnGearPlaced -= HandleGearPlaced;
-            viewModel.OnGearRemoved -= HandleGearRemoved;
-            viewModel.OnBoardDragStarted -= HandleDragStarted;
-            viewModel.OnBoardDragEnded -= HandleDragEnded;
-            DestroyAllViews();
-            localFactory = null;
-            viewModel = null;
-
-            if (dragHandler != null)
-            {
-                dragHandler.enabled = false;
-            }
-        }
-
         private void DestroyAllViews()
         {
             foreach (KeyValuePair<IGridNode, GearView> pair in viewsByNode)
@@ -177,7 +180,7 @@ namespace GearEngine.GearEngine.Presentation.UI
             viewsByNode.Clear();
         }
 
-        private void DestroyViewGameObject(GameObject go)
+        private static void DestroyViewGameObject(GameObject go)
         {
             if (go == null)
             {
@@ -193,5 +196,7 @@ namespace GearEngine.GearEngine.Presentation.UI
 #endif
             UnityEngine.Object.Destroy(go);
         }
+
+        private void OnDestroy() => Unbind();
     }
 }

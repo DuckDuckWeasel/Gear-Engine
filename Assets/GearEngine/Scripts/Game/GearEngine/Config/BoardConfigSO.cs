@@ -17,10 +17,27 @@ namespace GearEngine.GearEngine.Config
 
         [Header("Interaction Mechanics")]
         [Min(0.1f)]
-        public float MaxDragGrabDistance = 0.75f;
+        public float MaxDragGrabDistance = 0.35f;
         
         [Header("Visuals")]
         public float StaggeredRotationOffset = 22.5f;
+
+        [Tooltip("Vertical pixel offset of the trash zone above the grid's top edge.")]
+        public float TrashZoneYOffset = 80f;
+
+        [Tooltip("Centralized global multiplier applied to all gear SpriteRenderers to seamlessly align World-Space sprites with Canvas pixel dimensions (e.g. 115).")]
+        [Min(0.1f)]
+        public float GlobalGearScale = 115f;
+
+        [Header("Limits")]
+        [Tooltip("Gameplay limit for dynamic board control. Must be ≤ MaxBoardGears.")]
+        [Min(1)]
+        public int MaxAllowedBoardGears = 5;
+
+        /// <summary>
+        /// Physical maximum gears the board can hold.
+        /// </summary>
+        public int MaxBoardGears => GridWidth * GridHeight;
 
         public Vector3 GetWorldPosition(Vector2Int gridPos, float zOffset = 0f)
         {
@@ -46,5 +63,13 @@ namespace GearEngine.GearEngine.Config
             
             return new Vector2Int(x, y);
         }
+
+        private void OnValidate()
+        {
+            GridWidth = Mathf.Max(1, GridWidth);
+            GridHeight = Mathf.Max(1, GridHeight);
+            MaxAllowedBoardGears = Mathf.Clamp(MaxAllowedBoardGears, 1, MaxBoardGears);
+        }
     }
 }
+

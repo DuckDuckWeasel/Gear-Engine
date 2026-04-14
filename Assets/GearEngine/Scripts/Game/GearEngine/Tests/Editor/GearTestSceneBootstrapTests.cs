@@ -21,7 +21,7 @@ namespace GearEngine.GearEngine.Tests.Editor
             }
             finally
             {
-                Object.DestroyImmediate(go);
+                UnityEngine.Object.DestroyImmediate(go);
             }
         }
 

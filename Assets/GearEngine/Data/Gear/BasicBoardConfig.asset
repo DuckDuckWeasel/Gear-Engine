@@ -17,3 +17,6 @@ MonoBehaviour:
   Spacing: 0.75
   MaxDragGrabDistance: 0.75
   StaggeredRotationOffset: 22.5
+  TrashZoneYOffset: 160
+  GlobalGearScale: 115
+  MaxAllowedBoardGears: 5

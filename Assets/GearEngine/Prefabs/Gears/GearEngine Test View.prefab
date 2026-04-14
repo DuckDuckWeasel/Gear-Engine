@@ -240,7 +240,7 @@ MonoBehaviour:
   m_BlockingObjects: 0
   m_BlockingMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 55
 --- !u!114 &9036650705840224816
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -257,6 +257,8 @@ MonoBehaviour:
   simControlView: {fileID: 4707446593559049686}
   inventoryView: {fileID: 8797920028067678339}
   boardView: {fileID: 0}
+  boardLimitLabel: {fileID: 0}
+  inventoryLimitLabel: {fileID: 0}
 --- !u!1 &5052385136220911513
 GameObject:
   m_ObjectHideFlags: 0
@@ -308,6 +310,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Presentation.UI.GearInventoryView
   itemsContainer: {fileID: 2381387223155718013}
   gridBoardTag: {fileID: 11400000, guid: 5c2b250558aea402685c1701a76d0a37, type: 2}
+  slotPrefab: {fileID: 0}
 --- !u!1 &6691081567479060732
 GameObject:
   m_ObjectHideFlags: 0

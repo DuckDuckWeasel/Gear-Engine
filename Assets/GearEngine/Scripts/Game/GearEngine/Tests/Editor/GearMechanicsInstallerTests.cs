@@ -25,6 +25,7 @@ namespace GearEngine.GearEngine.Tests.Editor
                 Assert.DoesNotThrow(() => container.Resolve<IGridManager>());
                 Assert.DoesNotThrow(() => container.Resolve<IGearEngineService>());
                 Assert.DoesNotThrow(() => container.Resolve<GearNodeFactory>());
+                Assert.DoesNotThrow(() => container.Resolve<IDragService>());
             }
         }
 
