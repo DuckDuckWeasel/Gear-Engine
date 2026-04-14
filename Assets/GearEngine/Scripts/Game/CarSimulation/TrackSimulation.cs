@@ -11,30 +11,33 @@ namespace GearEngine.CarSimulation
 {
     public sealed partial class TrackSimulation : Model
     {
-        public TrackSimulation(TrackDefinition track, CarEntity car, BakedTrackProfile profile, CarVariableSet carVariables)
+        public TrackSimulation(TrackDefinition track, CarEntity car, BakedTrackProfile profile, CarVariableSet carVariables, TrackSimulationTuning tuning = null)
         {
-            this.track = track ?? throw new ArgumentNullException(nameof(track));
-            this.car = car ?? throw new ArgumentNullException(nameof(car));
-            BakedProfile = profile ?? throw new ArgumentNullException(nameof(profile));
-            CarVariables = carVariables;
+            if (track == null)
+            {
+                throw new ArgumentNullException(nameof(track));
+            }
+
+            if (car == null)
+            {
+                throw new ArgumentNullException(nameof(car));
+            }
+
+            if (profile == null)
+            {
+                throw new ArgumentNullException(nameof(profile));
+            }
+
+            Context = new TrackSimulationContext(track, car, profile, carVariables, tuning);
             Race = new RaceRuntimeState();
+            Motion = new CarMotionState();
         }
 
-        public TrackDefinition Track => track;
-
-        private readonly TrackDefinition track;
-
-        public CarEntity Car => car;
-
-        private readonly CarEntity car;
-
-        public BakedTrackProfile BakedProfile { get; }
-
-        public CarVariableSet CarVariables { get; }
-
+        public TrackDefinition Track => Context.Track;
+        public CarEntity Car => Context.Car;
+        internal TrackSimulationContext Context { get; }
         public RaceRuntimeState Race { get; }
-
-        internal CarMotionState Motion { get; } = new CarMotionState();
+        internal CarMotionState Motion { get; }
 
         [ObservableProperty]
         private SimulationLifecycleState state = SimulationLifecycleState.Created;
@@ -109,7 +112,6 @@ namespace GearEngine.CarSimulation
                 State = SimulationLifecycleState.Running;
                 return;
             }
-
             throw new InvalidOperationException("Simulation cannot be started from the current state.");
         }
 

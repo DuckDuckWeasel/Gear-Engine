@@ -13,3 +13,9 @@ MonoBehaviour:
   m_Name: CarVariableSet
   m_EditorClassIdentifier: Game.CarSimulation::GearEngine.CarSimulation.Definitions.CarVariableSet
   speed: {fileID: 11400000, guid: c0806bf40ec902d4a8ab2ca98623f1d9, type: 2}
+  acceleration: {fileID: 11400000, guid: 59d5c57b7ab775d42be1156d137e0b4b, type: 2}
+  brake: {fileID: 11400000, guid: 843e28f6dad8bfd4f86540c334317070, type: 2}
+  handling: {fileID: 11400000, guid: 254e57d3d7dc4874586b6c74096bdb82, type: 2}
+  stability: {fileID: 11400000, guid: aa7d0017c0a11a14f959ebc855b5ef6e, type: 2}
+  recovery: {fileID: 11400000, guid: d1c9e529bb6dbf842bf8da3e22fe6d71, type: 2}
+  driftPenalty: {fileID: 11400000, guid: 46002a27b28af394d85a60d7018a844f, type: 2}

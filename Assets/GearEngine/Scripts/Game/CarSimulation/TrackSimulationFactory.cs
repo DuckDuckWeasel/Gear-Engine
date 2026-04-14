@@ -10,7 +10,7 @@ namespace GearEngine.CarSimulation
     {
         private readonly CarEntityFactory carEntityFactory = new CarEntityFactory();
 
-        public TrackSimulation Create(CarDefinition carDefinition, TrackDefinition trackDefinition, CarVariableSet carVariables)
+        public TrackSimulation Create(CarDefinition carDefinition, TrackDefinition trackDefinition, TrackSimulationConfig config = null)
         {
             if (carDefinition == null)
             {
@@ -22,14 +22,16 @@ namespace GearEngine.CarSimulation
                 throw new ArgumentNullException(nameof(trackDefinition));
             }
 
-            return CreateCore(carDefinition, trackDefinition, carVariables);
+            return CreateCore(carDefinition, trackDefinition, config);
         }
 
-        private TrackSimulation CreateCore(CarDefinition carDefinition, TrackDefinition trackDefinition, CarVariableSet carVariables)
+        private TrackSimulation CreateCore(CarDefinition carDefinition, TrackDefinition trackDefinition, TrackSimulationConfig config)
         {
             CarEntity car = carEntityFactory.Create(carDefinition);
             BakedTrackProfile profile = TrackProfileBaker.Bake(trackDefinition.Spline);
-            return new TrackSimulation(trackDefinition, car, profile, carVariables);
+            CarVariableSet carVariables = config != null ? config.Variables : null;
+            TrackSimulationTuning tuning = config != null ? config.Tuning : null;
+            return new TrackSimulation(trackDefinition, car, profile, carVariables, tuning);
         }
     }
 }

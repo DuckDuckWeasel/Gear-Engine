@@ -190,6 +190,7 @@ MonoBehaviour:
     trackDefinition: {fileID: 11400000, guid: d2d2d2d2b2a3948576c5d4e3f2a1b0c8, type: 2}
     carDefinition: {fileID: 11400000, guid: b4e1eaf4e8dd58b418b4e6efc603f72e, type: 2}
     carVariables: {fileID: 11400000, guid: f6cfd8fa3fbb61843b66534996d0329d, type: 2}
+    simulationTuning: {fileID: 11400000, guid: 9c0d1e2f3a4b5678c9d0e1f2a3b4c5d6, type: 2}
     gearEngineData:
       boardLayout:
         placements:
@@ -198,6 +199,7 @@ MonoBehaviour:
       inventoryGears:
       - {fileID: 11400000, guid: 3783c6d85510a4bf6b4f879d30ef249b, type: 2}
       - {fileID: 11400000, guid: b642772cacb3f48d7870118c94a3e3a0, type: 2}
+      maxInventorySlots: 5
 --- !u!1 &500010010
 GameObject:
   m_ObjectHideFlags: 0
@@ -670,6 +672,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Presentation.UI.GearInventoryView
   itemsContainer: {fileID: 500010304}
   gridBoardTag: {fileID: 11400000, guid: 5c2b250558aea402685c1701a76d0a37, type: 2}
+  slotPrefab: {fileID: 2214151973688211825, guid: 87597cc13e8d24ee089e6ea42d9aaed7, type: 3}
 --- !u!1 &500010303
 GameObject:
   m_ObjectHideFlags: 0

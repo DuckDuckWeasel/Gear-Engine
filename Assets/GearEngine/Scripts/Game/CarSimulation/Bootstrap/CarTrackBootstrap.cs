@@ -14,7 +14,7 @@ namespace GearEngine.CarSimulation.Bootstrap
     {
         [SerializeField] private TrackDefinition trackDefinition;
         [SerializeField] private CarDefinition carDefinition;
-        [SerializeField] private CarVariableSet carVariables;
+        [SerializeField] private TrackSimulationConfig simulationConfig = new TrackSimulationConfig();
 
         [Inject] private TrackSimulationFactory factory;
         [Inject] private TrackSimulationRunner trackSimulationRunner;
@@ -25,7 +25,7 @@ namespace GearEngine.CarSimulation.Bootstrap
             try
             {
                 ValidateSerializedReferences();
-                TrackSimulation simulation = factory.Create(carDefinition, trackDefinition, carVariables);
+                TrackSimulation simulation = factory.Create(carDefinition, trackDefinition, simulationConfig);
                 trackSimulationRunner.SetSimulation(simulation);
                 navigation.Open(new TrackViewModel(simulation));
             }

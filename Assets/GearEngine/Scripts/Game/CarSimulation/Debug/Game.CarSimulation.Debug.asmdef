@@ -1,0 +1,20 @@
+{
+    "name": "Game.CarSimulation.Debug",
+    "rootNamespace": "GearEngine.CarSimulation.Debug",
+    "references": [
+        "Game.CarSimulation",
+        "Scaffold.Entities",
+        "VContainer"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "Sirenix.OdinInspector.Attributes.dll"
+    ],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

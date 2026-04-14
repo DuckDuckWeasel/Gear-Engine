@@ -148,9 +148,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 969476c66789c25459a99585025f16d1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Game.CarSimulation::GearEngine.CarSimulation.Bootstrap.CarTrackBootstrap
-  trackDefinition: {fileID: 11400000, guid: d2d2d2d2b2a3948576c5d4e3f2a1b0c8, type: 2}
+  trackDefinition: {fileID: 11400000, guid: 6ce7712943d0d1344bcaccc8749ee69c, type: 2}
   carDefinition: {fileID: 11400000, guid: b4e1eaf4e8dd58b418b4e6efc603f72e, type: 2}
-  carVariables: {fileID: 11400000, guid: f6cfd8fa3fbb61843b66534996d0329d, type: 2}
+  simulationConfig:
+    variables: {fileID: 11400000, guid: f6cfd8fa3fbb61843b66534996d0329d, type: 2}
+    tuning: {fileID: 11400000, guid: 9c0d1e2f3a4b5678c9d0e1f2a3b4c5d6, type: 2}
 --- !u!4 &74913802
 Transform:
   m_ObjectHideFlags: 0
@@ -233,7 +235,7 @@ Camera:
   far clip plane: 500
   field of view: 60
   orthographic: 1
-  orthographic size: 100
+  orthographic size: 50
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -318,6 +320,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1627110254}
   - component: {fileID: 1627110253}
+  - component: {fileID: 1627110255}
   m_Layer: 0
   m_Name: CarTrack_LifetimeScope
   m_TagString: Untagged
@@ -344,6 +347,7 @@ MonoBehaviour:
   navigationSettings: {fileID: 11400000, guid: 137da207fe7ec1345a5d209afdac17bd, type: 2}
   navigationViewHolder: {fileID: 1627110254}
   sceneBootstrap: {fileID: 74913801}
+  debugComponent: {fileID: 1627110255}
 --- !u!4 &1627110254
 Transform:
   m_ObjectHideFlags: 0
@@ -360,6 +364,20 @@ Transform:
   - {fileID: 261833182}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1627110255
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1627110252}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a3b5c7d2e4f6018b9c0d1e2f3a4b5c6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.CarSimulation.Debug::GearEngine.CarSimulation.Debug.CarSimulationDebug
+  targetAttribute: {fileID: 0}
+  modifierValue: 0
 --- !u!1001 &1714960698
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -406,6 +424,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1896732183894800341, guid: 6a4018fa1395fe74fa82a63a40a91772, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3265025119678407754, guid: 6a4018fa1395fe74fa82a63a40a91772, type: 3}
+      propertyPath: m_LocalPosition.z
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6041064943763358181, guid: 6a4018fa1395fe74fa82a63a40a91772, type: 3}

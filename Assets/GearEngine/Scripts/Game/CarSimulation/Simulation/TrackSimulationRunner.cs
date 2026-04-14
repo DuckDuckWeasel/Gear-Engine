@@ -1,6 +1,5 @@
-using GearEngine.CarSimulation.Entity;
+using GearEngine.CarSimulation;
 using GearEngine.CarSimulation.Track;
-using Scaffold.Entities;
 using UnityEngine;
 using VContainer.Unity;
 
@@ -8,24 +7,14 @@ namespace GearEngine.CarSimulation.Simulation
 {
     internal sealed class TrackSimulationRunner : ITickable, ITrackSimulationRunner
     {
-        private const float curvatureEpsilon = 1e-5f;
-        private const float driftPenaltyScale = 0.15f;
-        private const float defaultAcceleration = 12f;
-        private const float defaultBrake = 22f;
-        private const float defaultHandling = 48f;
-        private const float defaultStability = 1.1f;
-        private const float defaultRecovery = 0.85f;
-        private const float defaultTopSpeed = 32f;
-        private const float gripScale = 0.12f;
-        private const float lookAheadMinMetres = 8f;
-        private const float lookAheadSpeedFactor = 0.75f;
-        private const float aheadProbeStep = 0.25f;
-
         private TrackSimulation simulation;
+
+        public TrackSimulation ActiveSimulation { get; private set; }
 
         public void SetSimulation(TrackSimulation sim)
         {
             simulation = sim;
+            ActiveSimulation = sim;
         }
 
         public void Tick()
@@ -51,7 +40,7 @@ namespace GearEngine.CarSimulation.Simulation
         private void StepCore(float dt)
         {
             TrackSimulation sim = simulation;
-            if (sim.BakedProfile.TotalLength < 1e-4f)
+            if (sim.Context.Profile.TotalLength < 1e-4f)
             {
                 return;
             }
@@ -61,18 +50,12 @@ namespace GearEngine.CarSimulation.Simulation
 
         private void RunDynamicsStep(float dt, TrackSimulation sim)
         {
-            BakedTrackProfile profile = sim.BakedProfile;
-            CarMotionState motion = sim.Motion;
-            RaceRuntimeState race = sim.Race;
-            float totalLength = profile.TotalLength;
-            float topSpeed = BuildTopSpeedFromEntity(sim.Car);
-            ApplySpeedImpulse(motion);
-            TrackSample here = profile.Evaluate(motion.Distance);
-            motion.SampleIndex = profile.FindSampleIndexNear(motion.Distance);
-            IntegrateSpeedTowardTarget(motion, profile, here, topSpeed, dt);
-            ApplyDriftIntensity(motion, here, dt);
-            ApplyDriftVisuals(motion, here, dt);
-            AdvanceDistanceAndRace(motion, race, profile, totalLength, dt);
+            ApplySpeedImpulse(sim.Motion);
+            SimulationFrame frame = SimulationFrame.Create(sim, dt);
+            IntegrateSpeed(frame);
+            ApplyDrift(frame);
+            ApplyDriftVisuals(frame);
+            AdvanceRace(frame);
         }
 
         private void ApplySpeedImpulse(CarMotionState motion)
@@ -81,55 +64,51 @@ namespace GearEngine.CarSimulation.Simulation
             motion.PendingSpeedBoost = 0f;
         }
 
-        private void IntegrateSpeedTowardTarget(CarMotionState motion, BakedTrackProfile profile, TrackSample here, float topSpeed, float dt)
+        private void IntegrateSpeed(SimulationFrame f)
         {
-            float curveHere = BuildCornerSpeedLimit(defaultHandling, here.Curvature);
-            float lookDist = Mathf.Max(lookAheadMinMetres, motion.Speed * lookAheadSpeedFactor);
-            float minAhead = BuildMinCornerSpeedAhead(profile, motion.Distance, lookDist, defaultHandling);
-            float targetSpeed = Mathf.Min(topSpeed, curveHere, minAhead);
-            ApplyAccelDecelToward(motion, targetSpeed, dt);
+            ResolvedSimulationInputs i = f.Inputs;
+            float curveHere = BuildCornerSpeedLimit(i.Handling, f.Here.Curvature, i.CurvatureEpsilon);
+            float lookDist = Mathf.Max(i.LookAheadMin, f.Motion.Speed * i.LookAheadSpeedFactor);
+            float minAhead = BuildMinCornerSpeedAhead(f.Profile, f.Motion.Distance, lookDist, i.Handling, i.AheadProbeStep, i.CurvatureEpsilon);
+            float targetSpeed = Mathf.Min(i.TopSpeed, curveHere, minAhead);
+            ApplyAccelDecelToward(f.Motion, targetSpeed, f.Dt, i.Acceleration, i.Brake);
         }
 
-        private void ApplyAccelDecelToward(CarMotionState motion, float targetSpeed, float dt)
+        private void ApplyAccelDecelToward(CarMotionState motion, float targetSpeed, float dt, float acceleration, float brake)
         {
             if (motion.Speed > targetSpeed)
             {
-                motion.Speed = Mathf.Max(targetSpeed, motion.Speed - defaultBrake * dt);
+                motion.Speed = Mathf.Max(targetSpeed, motion.Speed - brake * dt);
             }
             else
             {
-                motion.Speed = Mathf.Min(targetSpeed, motion.Speed + defaultAcceleration * dt);
+                motion.Speed = Mathf.Min(targetSpeed, motion.Speed + acceleration * dt);
             }
         }
 
-        private void ApplyDriftIntensity(CarMotionState motion, TrackSample here, float dt)
+        private void ApplyDrift(SimulationFrame f)
         {
+            CarMotionState motion = f.Motion;
+            TrackSample here = f.Here;
+            ResolvedSimulationInputs i = f.Inputs;
             float lateralDemand = motion.Speed * motion.Speed * Mathf.Max(here.Curvature, 0f);
-            float gripCapacity = defaultHandling * gripScale;
-            float driftDelta = dt * 2.5f / Mathf.Max(0.2f, defaultStability);
+            float gripCapacity = i.Handling * i.GripScale;
+            float driftDelta = f.Dt * 2.5f / Mathf.Max(0.2f, i.Stability);
             if (lateralDemand > gripCapacity)
             {
-                GrowDriftForOverGrip(motion, lateralDemand, gripCapacity, driftDelta);
+                float excessRatio = (lateralDemand - gripCapacity) / Mathf.Max(gripCapacity, 1e-4f);
+                motion.DriftIntensity = Mathf.Clamp01(motion.DriftIntensity + excessRatio * driftDelta);
             }
             else
             {
-                DecayDrift(motion, defaultRecovery, dt);
+                motion.DriftIntensity = Mathf.Clamp01(motion.DriftIntensity - i.Recovery * f.Dt);
             }
         }
 
-        private void DecayDrift(CarMotionState motion, float recovery, float dt)
+        private void ApplyDriftVisuals(SimulationFrame f)
         {
-            motion.DriftIntensity = Mathf.Clamp01(motion.DriftIntensity - recovery * dt);
-        }
-
-        private void GrowDriftForOverGrip(CarMotionState motion, float lateralDemand, float gripCapacity, float driftDelta)
-        {
-            float excessRatio = (lateralDemand - gripCapacity) / Mathf.Max(gripCapacity, 1e-4f);
-            motion.DriftIntensity = Mathf.Clamp01(motion.DriftIntensity + excessRatio * driftDelta);
-        }
-
-        private void ApplyDriftVisuals(CarMotionState motion, TrackSample here, float dt)
-        {
+            CarMotionState motion = f.Motion;
+            TrackSample here = f.Here;
             float sideSign = Mathf.Sign(here.SignedCurvature);
             if (Mathf.Abs(sideSign) < 1e-4f)
             {
@@ -137,19 +116,24 @@ namespace GearEngine.CarSimulation.Simulation
             }
 
             float targetSlip = motion.DriftIntensity * 28f * sideSign;
-            motion.SlipAngle = Mathf.Lerp(motion.SlipAngle, targetSlip, dt * 4f);
-            motion.LateralOffset = Mathf.Lerp(motion.LateralOffset, motion.DriftIntensity * 0.45f * sideSign, dt * 3f);
+            motion.SlipAngle = Mathf.Lerp(motion.SlipAngle, targetSlip, f.Dt * 4f);
+            motion.LateralOffset = Mathf.Lerp(motion.LateralOffset, motion.DriftIntensity * 0.45f * sideSign, f.Dt * 3f);
         }
 
-        private void AdvanceDistanceAndRace(CarMotionState motion, RaceRuntimeState race, BakedTrackProfile profile, float totalLength, float dt)
+        private void AdvanceRace(SimulationFrame f)
         {
+            CarMotionState motion = f.Motion;
+            RaceRuntimeState race = f.Race;
+            BakedTrackProfile profile = f.Profile;
+            float totalLength = f.TotalLength;
+            float driftPenaltyScale = f.Inputs.DriftPenaltyScale;
             float driftPenalty = motion.DriftIntensity * driftPenaltyScale;
             float effectiveSpeed = motion.Speed * (1f - driftPenalty);
-            float newDistance = motion.Distance + effectiveSpeed * dt;
+            float newDistance = motion.Distance + effectiveSpeed * f.Dt;
             int lapIncrement = AdvanceDistanceCore(motion, profile, totalLength, ref newDistance, ref effectiveSpeed);
             motion.Distance = newDistance;
-            race.CurrentTime += dt;
-            race.DistanceTravelled += effectiveSpeed * dt;
+            race.CurrentTime += f.Dt;
+            race.DistanceTravelled += effectiveSpeed * f.Dt;
             race.CurrentLap += lapIncrement;
             race.Progress01 = Mathf.Clamp01(motion.Distance / totalLength);
             race.CurrentSegmentIndex = motion.SampleIndex;
@@ -186,7 +170,7 @@ namespace GearEngine.CarSimulation.Simulation
             return lapIncrement;
         }
 
-        private float BuildMinCornerSpeedAhead(BakedTrackProfile profile, float fromDistance, float windowMetres, float handling)
+        private float BuildMinCornerSpeedAhead(BakedTrackProfile profile, float fromDistance, float windowMetres, float handling, float aheadProbeStep, float curvatureEpsilon)
         {
             float minV = float.MaxValue;
             float walked = 0f;
@@ -194,7 +178,7 @@ namespace GearEngine.CarSimulation.Simulation
             while (walked < windowMetres)
             {
                 TrackSample s = profile.Evaluate(d);
-                float limit = BuildCornerSpeedLimit(handling, s.Curvature);
+                float limit = BuildCornerSpeedLimit(handling, s.Curvature, curvatureEpsilon);
                 minV = Mathf.Min(minV, limit);
                 walked += aheadProbeStep;
                 d += aheadProbeStep;
@@ -203,21 +187,10 @@ namespace GearEngine.CarSimulation.Simulation
             return minV;
         }
 
-        private float BuildCornerSpeedLimit(float handling, float curvature)
+        private float BuildCornerSpeedLimit(float handling, float curvature, float curvatureEpsilon)
         {
             float k = Mathf.Max(curvature, curvatureEpsilon);
             return Mathf.Sqrt(Mathf.Max(0f, handling / k));
-        }
-
-        private float BuildTopSpeedFromEntity(CarEntity car)
-        {
-            VariableSO speedVar = simulation.CarVariables?.Speed;
-            if (speedVar != null && car.TryGetValue<float>(speedVar, out float v))
-            {
-                return Mathf.Max(0.1f, v);
-            }
-
-            return defaultTopSpeed;
         }
     }
 }

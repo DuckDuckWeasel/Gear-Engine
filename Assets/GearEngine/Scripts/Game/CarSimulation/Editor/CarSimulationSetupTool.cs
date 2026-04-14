@@ -1,4 +1,5 @@
 using System.IO;
+using Unity.Mathematics;
 using GearEngine.CarSimulation.Bootstrap;
 using GearEngine.CarSimulation.Definitions;
 using GearEngine.CarSimulation.Drivers;
@@ -22,6 +23,13 @@ namespace GearEngine.CarSimulation.Editor
         private const string carPrefabPath = "Assets/Game/CarSimulation/Prefabs/Car.prefab";
         private const string circleTrackDefinitionPath = "Assets/Game/CarSimulation/Data/Tracks/CircleTrack.asset";
         private const string squareTrackDefinitionPath = "Assets/Game/CarSimulation/Data/Tracks/SquareTrack.asset";
+        private const string gearEngineTracksFolder = "Assets/GearEngine/Data/Track/Tracks";
+        private const string ovalTrackDefinitionPath = gearEngineTracksFolder + "/OvalTrack.asset";
+        private const string roundedSquareTrackDefinitionPath = gearEngineTracksFolder + "/RoundedSquareTrack.asset";
+        private const string infinityTrackDefinitionPath = gearEngineTracksFolder + "/InfinityTrack.asset";
+        private const float quarterCircleBezierK = 0.55228475f;
+        private const float infinityTrackAmplitude = 55f;
+        private const int infinityTrackSampleCount = 48;
         private const string scenePath = "Assets/Scenes/SplineTrack_TestScene.unity";
         private const float squareTrackHalfExtent = 30f;
 
@@ -43,6 +51,25 @@ namespace GearEngine.CarSimulation.Editor
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
             Debug.Log("Car Simulation: setup complete.");
+        }
+
+        private const string createTrackPresetsMenuPath = "Game/Car Simulation/Create Track Presets";
+
+        [MenuItem(createTrackPresetsMenuPath)]
+        public static void CreateTrackPresets()
+        {
+            EnsureFolder("Assets/GearEngine");
+            EnsureFolder("Assets/GearEngine/Data");
+            EnsureFolder("Assets/GearEngine/Data/Track");
+            EnsureFolder(gearEngineTracksFolder);
+
+            CreateOrLoadOvalTrackDefinition();
+            CreateOrLoadRoundedSquareTrackDefinition();
+            CreateOrLoadInfinityTrackDefinition();
+
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+            Debug.Log($"Car Simulation: track presets saved under {gearEngineTracksFolder}.");
         }
 
         private static void EnsureFolder(string path)
@@ -70,7 +97,7 @@ namespace GearEngine.CarSimulation.Editor
                 return existing;
             }
 
-            var speed = ScriptableObject.CreateInstance<VariableSO>();
+                       var speed = ScriptableObject.CreateInstance<VariableSO>();
             AssetDatabase.CreateAsset(speed, speedAssetPath);
             var so = new SerializedObject(speed);
             so.FindProperty("valueType").enumValueIndex = (int)VariableValueType.Float;
@@ -275,6 +302,151 @@ namespace GearEngine.CarSimulation.Editor
             spline.Closed = true;
             var range = new SplineRange(0, spline.Count);
             spline.SetTangentMode(range, TangentMode.Linear);
+        }
+
+        private static void CreateOrLoadOvalTrackDefinition()
+        {
+            var def = AssetDatabase.LoadAssetAtPath<TrackDefinition>(ovalTrackDefinitionPath);
+            if (def == null)
+            {
+                def = ScriptableObject.CreateInstance<TrackDefinition>();
+                AssetDatabase.CreateAsset(def, ovalTrackDefinitionPath);
+            }
+
+            WriteOvalSpline(def.Spline);
+            var so = new SerializedObject(def);
+            so.FindProperty("trackName").stringValue = "Oval";
+            so.ApplyModifiedPropertiesWithoutUndo();
+            EditorUtility.SetDirty(def);
+        }
+
+        private static void CreateOrLoadRoundedSquareTrackDefinition()
+        {
+            var def = AssetDatabase.LoadAssetAtPath<TrackDefinition>(roundedSquareTrackDefinitionPath);
+            if (def == null)
+            {
+                def = ScriptableObject.CreateInstance<TrackDefinition>();
+                AssetDatabase.CreateAsset(def, roundedSquareTrackDefinitionPath);
+            }
+
+            WriteRoundedSquareSpline(def.Spline, squareTrackHalfExtent, cornerRadius: 8f);
+            var so = new SerializedObject(def);
+            so.FindProperty("trackName").stringValue = "RoundedSquare";
+            so.ApplyModifiedPropertiesWithoutUndo();
+            EditorUtility.SetDirty(def);
+        }
+
+        private static void CreateOrLoadInfinityTrackDefinition()
+        {
+            var def = AssetDatabase.LoadAssetAtPath<TrackDefinition>(infinityTrackDefinitionPath);
+            if (def == null)
+            {
+                def = ScriptableObject.CreateInstance<TrackDefinition>();
+                AssetDatabase.CreateAsset(def, infinityTrackDefinitionPath);
+            }
+
+            WriteInfinitySpline(def.Spline, infinityTrackAmplitude, infinityTrackSampleCount);
+            var so = new SerializedObject(def);
+            so.FindProperty("trackName").stringValue = "Infinity";
+            so.ApplyModifiedPropertiesWithoutUndo();
+            EditorUtility.SetDirty(def);
+        }
+
+        /// <summary>Straight top/bottom, semicircular left/right caps. Half-straight s=20, arc radius r=20.</summary>
+        private static void WriteOvalSpline(Spline spline)
+        {
+            const float s = 20f;
+            const float r = 20f;
+            float k = quarterCircleBezierK * r;
+            float sh = (2f * s) / 3f;
+
+            spline.Knots = new[]
+            {
+                Knot(-s, 0f, r, new Vector3(-k, 0f, 0f), new Vector3(sh, 0f, 0f)),
+                Knot(s, 0f, r, new Vector3(-sh, 0f, 0f), new Vector3(k, 0f, 0f)),
+                Knot(s + r, 0f, 0f, new Vector3(0f, 0f, k), new Vector3(0f, 0f, -k)),
+                Knot(s, 0f, -r, new Vector3(k, 0f, 0f), new Vector3(-sh, 0f, 0f)),
+                Knot(-s, 0f, -r, new Vector3(sh, 0f, 0f), new Vector3(-k, 0f, 0f)),
+                Knot(-s - r, 0f, 0f, new Vector3(0f, 0f, -k), new Vector3(0f, 0f, k)),
+            };
+            spline.Closed = true;
+
+            ApplyTangentModes(spline, TangentMode.Continuous, TangentMode.Continuous, TangentMode.Mirrored, TangentMode.Continuous, TangentMode.Continuous, TangentMode.Mirrored);
+        }
+
+        /// <summary>Square with quarter-circle corners; half-extent h matches square track, corner radius r.</summary>
+        private static void WriteRoundedSquareSpline(Spline spline, float halfExtent, float cornerRadius)
+        {
+            float h = halfExtent;
+            float cr = cornerRadius;
+            float k = quarterCircleBezierK * cr;
+            float sh = (2f * (h - cr)) / 3f;
+            float inset = h - cr;
+
+            spline.Knots = new[]
+            {
+                Knot(-inset, 0f, h, new Vector3(-k, 0f, 0f), new Vector3(sh, 0f, 0f)),
+                Knot(inset, 0f, h, new Vector3(-sh, 0f, 0f), new Vector3(k, 0f, 0f)),
+                Knot(h, 0f, inset, new Vector3(0f, 0f, k), new Vector3(0f, 0f, -sh)),
+                Knot(h, 0f, -inset, new Vector3(0f, 0f, sh), new Vector3(0f, 0f, -k)),
+                Knot(inset, 0f, -h, new Vector3(k, 0f, 0f), new Vector3(-sh, 0f, 0f)),
+                Knot(-inset, 0f, -h, new Vector3(sh, 0f, 0f), new Vector3(-k, 0f, 0f)),
+                Knot(-h, 0f, -inset, new Vector3(0f, 0f, -k), new Vector3(0f, 0f, sh)),
+                Knot(-h, 0f, inset, new Vector3(0f, 0f, -sh), new Vector3(0f, 0f, k)),
+            };
+            spline.Closed = true;
+
+            ApplyTangentModes(spline,
+                TangentMode.Continuous, TangentMode.Continuous, TangentMode.Continuous, TangentMode.Continuous,
+                TangentMode.Continuous, TangentMode.Continuous, TangentMode.Continuous, TangentMode.Continuous);
+        }
+
+        /// <summary>
+        /// Bernoulli lemniscate: rounder lobes than sin/sin(2t). x = a*cos(t)/(1+sin^2(t)), z = a*sin(t)*cos(t)/(1+sin^2(t)).
+        /// Uniform t with a half-step offset avoids stacking knots on the self-crossing. More samples + larger a = smoother, bigger track.
+        /// </summary>
+        private static void WriteInfinitySpline(Spline spline, float amplitude, int sampleCount)
+        {
+            float a = amplitude;
+            var knots = new BezierKnot[sampleCount];
+            for (int i = 0; i < sampleCount; i++)
+            {
+                float t = ((i + 0.5f) / sampleCount) * (2f * Mathf.PI);
+                float sinT = Mathf.Sin(t);
+                float cosT = Mathf.Cos(t);
+                float denom = 1f + sinT * sinT;
+                float x = a * cosT / denom;
+                float z = a * sinT * cosT / denom;
+                knots[i] = new BezierKnot(new float3(x, 0f, z));
+            }
+
+            spline.Knots = knots;
+            spline.Closed = true;
+            var range = new SplineRange(0, spline.Count);
+            spline.SetTangentMode(range, TangentMode.AutoSmooth);
+        }
+
+        private static BezierKnot Knot(float x, float y, float z, Vector3 tangentIn, Vector3 tangentOut)
+        {
+            return new BezierKnot(
+                new float3(x, y, z),
+                new float3(tangentIn.x, tangentIn.y, tangentIn.z),
+                new float3(tangentOut.x, tangentOut.y, tangentOut.z),
+                quaternion.identity);
+        }
+
+        private static void ApplyTangentModes(Spline spline, params TangentMode[] modes)
+        {
+            if (modes.Length != spline.Count)
+            {
+                Debug.LogError($"Car Simulation: tangent mode count {modes.Length} != spline knot count {spline.Count}.");
+                return;
+            }
+
+            for (int i = 0; i < modes.Length; i++)
+            {
+                spline.SetTangentMode(new SplineRange(i, 1), modes[i]);
+            }
         }
 
         private static bool TryGetCircleRaceSpline(out SplineContainer container)

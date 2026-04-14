@@ -10,8 +10,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dfd26dd94e89447889f600b6c748a69c, type: 3}
-  m_Name: Speed
+  m_Name: Acceleration
   m_EditorClassIdentifier: Scaffold.Entities::Scaffold.Entities.VariableSO
   valueType: 1
-  description: Maximum forward speed the track simulation targets on straights (distance per second
-    along the spline). Upper cap when integrating toward corner limits and lookahead braking.
+  description: How quickly the car increases speed when below the target speed. Higher values reach
+    top speed faster on straights and after slow corners.

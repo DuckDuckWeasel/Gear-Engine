@@ -10,8 +10,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dfd26dd94e89447889f600b6c748a69c, type: 3}
-  m_Name: Speed
+  m_Name: Recovery
   m_EditorClassIdentifier: Scaffold.Entities::Scaffold.Entities.VariableSO
   valueType: 1
-  description: Maximum forward speed the track simulation targets on straights (distance per second
-    along the spline). Upper cap when integrating toward corner limits and lookahead braking.
+  description: Drift recovery rate when back within grip budget. Higher values decay drift intensity
+    faster; lower values keep a slide lingering.

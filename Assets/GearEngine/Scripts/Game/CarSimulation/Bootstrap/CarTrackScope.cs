@@ -20,12 +20,19 @@ namespace GearEngine.CarSimulation.Bootstrap
         [Header("Optional test launcher")]
         [SerializeField] private CarTrackBootstrap sceneBootstrap;
 
+        [Header("Debug")]
+        [SerializeField] private MonoBehaviour debugComponent;
+
         protected override void Configure(IContainerBuilder builder)
         {
             RegisterCrossLayer(builder);
             InstallInfra(builder);
             new CarTrackInstaller().Install(builder);
             builder.RegisterComponent(sceneBootstrap).AsImplementedInterfaces().AsSelf();
+            if (debugComponent != null)
+            {
+                builder.RegisterComponent(debugComponent).AsImplementedInterfaces().AsSelf();
+            }
         }
 
         private void RegisterCrossLayer(IContainerBuilder builder)

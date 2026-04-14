@@ -10,21 +10,26 @@ namespace GearEngine.Race
     {
         public RaceStartData()
         {
+            simulationConfig = new TrackSimulationConfig();
         }
 
-        public RaceStartData(TrackDefinition trackDefinition, CarDefinition carDefinition, GearEngineStartData gearEngineData = null, CarVariableSet carVariables = null)
+        public RaceStartData(
+            TrackDefinition trackDefinition,
+            CarDefinition carDefinition,
+            GearEngineStartData gearEngineData = null,
+            TrackSimulationConfig simulationConfig = null)
         {
             this.trackDefinition = trackDefinition;
             this.carDefinition = carDefinition;
             this.gearEngineData = gearEngineData;
-            this.carVariables = carVariables;
+            this.simulationConfig = simulationConfig ?? new TrackSimulationConfig();
         }
 
         public TrackDefinition TrackDefinition => trackDefinition;
 
         public CarDefinition CarDefinition => carDefinition;
 
-        public CarVariableSet CarVariables => carVariables;
+        public TrackSimulationConfig SimulationConfig => simulationConfig;
 
         public GearEngineStartData GearEngineData => gearEngineData;
 
@@ -35,7 +40,7 @@ namespace GearEngine.Race
         private CarDefinition carDefinition;
 
         [SerializeField]
-        private CarVariableSet carVariables;
+        private TrackSimulationConfig simulationConfig = new TrackSimulationConfig();
 
         [SerializeField]
         private GearEngineStartData gearEngineData;
