@@ -7,7 +7,6 @@ namespace GearEngine.CarSimulation.Simulation
         public float LateralOffset;
         public float SlipAngle;
         public float DriftIntensity;
-        public float RecoveryTimer;
         public float PendingSpeedBoost;
         public int SampleIndex;
 
@@ -18,7 +17,6 @@ namespace GearEngine.CarSimulation.Simulation
             LateralOffset = 0f;
             SlipAngle = 0f;
             DriftIntensity = 0f;
-            RecoveryTimer = 0f;
             PendingSpeedBoost = 0f;
             SampleIndex = 0;
         }

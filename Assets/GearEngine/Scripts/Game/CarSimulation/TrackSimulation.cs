@@ -28,14 +28,20 @@ namespace GearEngine.CarSimulation
                 throw new ArgumentNullException(nameof(profile));
             }
 
-            Context = new TrackSimulationContext(track, car, profile, carVariables, tuning);
+            Track = track;
+            Car = car;
+            Profile = profile;
+            Variables = carVariables;
+            Tuning = tuning;
             Race = new RaceRuntimeState();
             Motion = new CarMotionState();
         }
 
-        public TrackDefinition Track => Context.Track;
-        public CarEntity Car => Context.Car;
-        internal TrackSimulationContext Context { get; }
+        public TrackDefinition Track { get; }
+        public CarEntity Car { get; }
+        public BakedTrackProfile Profile { get; }
+        internal CarVariableSet Variables { get; }
+        internal TrackSimulationTuning Tuning { get; }
         public RaceRuntimeState Race { get; }
         internal CarMotionState Motion { get; }
 

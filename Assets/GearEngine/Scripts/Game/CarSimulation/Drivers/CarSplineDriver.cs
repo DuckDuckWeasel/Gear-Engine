@@ -39,7 +39,7 @@ namespace GearEngine.CarSimulation.Drivers
         {
             CarMotionState motion = simulation.Motion;
             motion.Distance = 0f;
-            UpdateTransform(motion, simulation.Context.Profile);
+            UpdateTransform(motion, simulation.Profile);
         }
 
         public void Play()
@@ -64,7 +64,7 @@ namespace GearEngine.CarSimulation.Drivers
                 return;
             }
 
-            UpdateTransform(simulation.Motion, simulation.Context.Profile);
+            UpdateTransform(simulation.Motion, simulation.Profile);
         }
 
         private void UpdateTransform(CarMotionState motion, BakedTrackProfile profile)

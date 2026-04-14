@@ -40,7 +40,7 @@ namespace GearEngine.CarSimulation.Simulation
         private void StepCore(float dt)
         {
             TrackSimulation sim = simulation;
-            if (sim.Context.Profile.TotalLength < 1e-4f)
+            if (sim.Profile.TotalLength < 1e-4f)
             {
                 return;
             }
@@ -66,12 +66,11 @@ namespace GearEngine.CarSimulation.Simulation
 
         private void IntegrateSpeed(SimulationFrame f)
         {
-            ResolvedSimulationInputs i = f.Inputs;
-            float curveHere = BuildCornerSpeedLimit(i.Handling, f.Here.Curvature, i.CurvatureEpsilon);
-            float lookDist = Mathf.Max(i.LookAheadMin, f.Motion.Speed * i.LookAheadSpeedFactor);
-            float minAhead = BuildMinCornerSpeedAhead(f.Profile, f.Motion.Distance, lookDist, i.Handling, i.AheadProbeStep, i.CurvatureEpsilon);
-            float targetSpeed = Mathf.Min(i.TopSpeed, curveHere, minAhead);
-            ApplyAccelDecelToward(f.Motion, targetSpeed, f.Dt, i.Acceleration, i.Brake);
+            float curveHere = BuildCornerSpeedLimit(f.Handling, f.Here.Curvature, f.CurvatureEpsilon);
+            float lookDist = Mathf.Max(f.LookAheadMin, f.Motion.Speed * f.LookAheadSpeedFactor);
+            float minAhead = BuildMinCornerSpeedAhead(f.Profile, f.Motion.Distance, lookDist, f.Handling, f.AheadProbeStep, f.CurvatureEpsilon);
+            float targetSpeed = Mathf.Min(f.TopSpeed, curveHere, minAhead);
+            ApplyAccelDecelToward(f.Motion, targetSpeed, f.Dt, f.Acceleration, f.Brake);
         }
 
         private void ApplyAccelDecelToward(CarMotionState motion, float targetSpeed, float dt, float acceleration, float brake)
@@ -90,10 +89,9 @@ namespace GearEngine.CarSimulation.Simulation
         {
             CarMotionState motion = f.Motion;
             TrackSample here = f.Here;
-            ResolvedSimulationInputs i = f.Inputs;
             float lateralDemand = motion.Speed * motion.Speed * Mathf.Max(here.Curvature, 0f);
-            float gripCapacity = i.Handling * i.GripScale;
-            float driftDelta = f.Dt * 2.5f / Mathf.Max(0.2f, i.Stability);
+            float gripCapacity = f.Handling * f.GripScale;
+            float driftDelta = f.Dt * 2.5f / Mathf.Max(0.2f, f.Stability);
             if (lateralDemand > gripCapacity)
             {
                 float excessRatio = (lateralDemand - gripCapacity) / Mathf.Max(gripCapacity, 1e-4f);
@@ -101,7 +99,7 @@ namespace GearEngine.CarSimulation.Simulation
             }
             else
             {
-                motion.DriftIntensity = Mathf.Clamp01(motion.DriftIntensity - i.Recovery * f.Dt);
+                motion.DriftIntensity = Mathf.Clamp01(motion.DriftIntensity - f.Recovery * f.Dt);
             }
         }
 
@@ -126,7 +124,7 @@ namespace GearEngine.CarSimulation.Simulation
             RaceRuntimeState race = f.Race;
             BakedTrackProfile profile = f.Profile;
             float totalLength = f.TotalLength;
-            float driftPenaltyScale = f.Inputs.DriftPenaltyScale;
+            float driftPenaltyScale = f.DriftPenaltyScale;
             float driftPenalty = motion.DriftIntensity * driftPenaltyScale;
             float effectiveSpeed = motion.Speed * (1f - driftPenalty);
             float newDistance = motion.Distance + effectiveSpeed * f.Dt;
