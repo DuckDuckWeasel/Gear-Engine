@@ -2,6 +2,7 @@ using System;
 using GearEngine.GearEngine.Config;
 using GearEngine.GearEngine.Presentation.UI;
 using Scaffold.MVVM;
+using TMPro;
 using UnityEngine;
 
 namespace GearEngine.GearEngine.Presentation
@@ -11,19 +12,43 @@ namespace GearEngine.GearEngine.Presentation
         [SerializeField] private SimulationControlView simControlView;
         [SerializeField] private GearInventoryView inventoryView;
         [SerializeField] private BoardView boardView;
+        [SerializeField] private TextMeshProUGUI boardLimitLabel;
+        [SerializeField] private TextMeshProUGUI inventoryLimitLabel;
 
         private GearTrashFeature trashFeature;
 
         protected override void OnBind()
         {
             simControlView.Bind(viewModel.SimControl);
-            inventoryView.Bind(viewModel.Inventory);
+            inventoryView.SetDragService(viewModel.DragService);
+            
             boardView.Bind(viewModel.Board, interactable: true);
+
+            var frustumFit = GameObject.FindObjectOfType<GearEngine.Presentation.World.FrustumFit>();
+            if (frustumFit != null)
+            {
+                frustumFit.Apply();
+                inventoryView.SetBoardReference(frustumFit.transform);
+            }
+            else
+            {
+                inventoryView.SetBoardReference(boardView.transform);
+            }
+
+            inventoryView.Bind(viewModel.Inventory);
 
             boardView.OnGearDroppedOverUI += HandleGearDroppedOverUI;
             viewModel.Inventory.OnGearDraggedToBoard += HandleGearDraggedToBoard;
 
+            viewModel.Board.OnGearPlaced += HandleBoardGearChanged;
+            viewModel.Board.OnGearRemoved += HandleBoardGearChanged;
+            if (viewModel.Inventory.InventoryModel.AvailableGears != null)
+            {
+                viewModel.Inventory.InventoryModel.AvailableGears.CollectionChanged += HandleInventoryChanged;
+            }
+
             InitializeTrashFeature();
+            UpdateLimitLabels();
         }
 
         private void InitializeTrashFeature()
@@ -52,18 +77,14 @@ namespace GearEngine.GearEngine.Presentation
                 viewModel.Inventory,
                 overlayCanvas,
                 viewModel.Board.BoardConfig,
+                viewModel.DragService,
                 toggle != null ? toggle.TrashAlignment : TrashZoneAlignment.Right,
+                viewModel.Board.BoardConfig != null ? viewModel.Board.BoardConfig.TrashZoneYOffset : 80f,
                 toggle?.TrashZoneTag,
                 toggle?.TrashIcon);
 
-            // Board drag lifecycle → trash feature
-            boardView.OnDragStarted += trashFeature.OnDragStarted;
-            boardView.OnDragEnded += trashFeature.OnDragEnded;
+            // Board trash drop request — still event-based since it's a view-to-feature command
             boardView.OnTrashDropRequested += trashFeature.OnTrashDropRequested;
-
-            // Inventory drag lifecycle → trash feature
-            inventoryView.OnInventoryDragStarted += trashFeature.OnDragStarted;
-            inventoryView.OnInventoryDragEnded += trashFeature.OnDragEnded;
         }
 
         private void HandleGearDroppedOverUI(GearConfigData config, Vector3 _)
@@ -72,6 +93,8 @@ namespace GearEngine.GearEngine.Presentation
             {
                 viewModel.Inventory.AddGearToInventory(config);
             }
+
+            UpdateLimitLabels();
         }
 
         private void HandleGearDraggedToBoard(Vector3 worldPos, GearConfigData gearData)
@@ -97,7 +120,31 @@ namespace GearEngine.GearEngine.Presentation
             if (placed)
             {
                 viewModel.Inventory.ConsumeSpecificGear(gearData);
+                UpdateLimitLabels();
             }
+        }
+
+        private void UpdateLimitLabels()
+        {
+            if (boardLimitLabel != null)
+            {
+                boardLimitLabel.text = $"Board: {viewModel.Board.CurrentBoardGearCount}/{viewModel.Board.MaxAllowedBoardGears}";
+            }
+
+            if (inventoryLimitLabel != null)
+            {
+                inventoryLimitLabel.text = $"Inventory: {viewModel.Inventory.CurrentCount}/{viewModel.Inventory.MaxSlots}";
+            }
+        }
+
+        private void HandleBoardGearChanged(Nodes.IGridNode _)
+        {
+            UpdateLimitLabels();
+        }
+
+        private void HandleInventoryChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            UpdateLimitLabels();
         }
 
         private void OnDestroy()
@@ -108,23 +155,21 @@ namespace GearEngine.GearEngine.Presentation
 
                 if (trashFeature != null)
                 {
-                    boardView.OnDragStarted -= trashFeature.OnDragStarted;
-                    boardView.OnDragEnded -= trashFeature.OnDragEnded;
                     boardView.OnTrashDropRequested -= trashFeature.OnTrashDropRequested;
                 }
 
                 boardView.Unbind();
             }
 
-            if (inventoryView != null && trashFeature != null)
-            {
-                inventoryView.OnInventoryDragStarted -= trashFeature.OnDragStarted;
-                inventoryView.OnInventoryDragEnded -= trashFeature.OnDragEnded;
-            }
-
             if (viewModel != null)
             {
                 viewModel.Inventory.OnGearDraggedToBoard -= HandleGearDraggedToBoard;
+                viewModel.Board.OnGearPlaced -= HandleBoardGearChanged;
+                viewModel.Board.OnGearRemoved -= HandleBoardGearChanged;
+                if (viewModel.Inventory.InventoryModel?.AvailableGears != null)
+                {
+                    viewModel.Inventory.InventoryModel.AvailableGears.CollectionChanged -= HandleInventoryChanged;
+                }
             }
 
             trashFeature?.Dispose();

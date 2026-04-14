@@ -18,8 +18,11 @@ namespace GearEngine.GearEngine.Presentation
         [Inject] private BoardConfigSO boardConfig;
         [Inject] private IEventBus eventBus;
         [Inject] private GearEngineFeatureToggleSO featureToggle;
+        [Inject] private IDragService dragService;
 
         public GearEngineFeatureToggleSO FeatureToggle => featureToggle;
+
+        public IDragService DragService => dragService;
 
         public SimulationControlViewModel SimControl { get; } = new SimulationControlViewModel();
         public GearInventoryViewModel Inventory { get; } = new GearInventoryViewModel();
@@ -39,14 +42,14 @@ namespace GearEngine.GearEngine.Presentation
             BindChildViewModel(Board);
 
             SimControl.Initialize(engineService);
-            Inventory.Initialize(engineService);
+            Inventory.Initialize(engineService, startData.MaxInventorySlots);
 
             if (startData.InventoryGears != null)
             {
                 Inventory.LoadInventory(startData.InventoryGears);
             }
 
-            Board.Initialize(engineService, gridManager, nodeFactory, boardConfig, eventBus, featureToggle);
+            Board.Initialize(engineService, gridManager, nodeFactory, boardConfig, eventBus, featureToggle, dragService);
 
             if (startData.BoardLayout != null)
             {

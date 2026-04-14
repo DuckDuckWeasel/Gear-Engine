@@ -20,6 +20,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6e9cd533eec944d2d8eb2b7cf5e8cdca
+    m_Address: Assets/GearEngine/Gears/GearEngineView_NavigationStub.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 92188c92e2caa3240ae6016fd22d425d
     m_Address: Assets/Prefabs/Gear/GearEngine Test View.prefab
     m_ReadOnly: 0

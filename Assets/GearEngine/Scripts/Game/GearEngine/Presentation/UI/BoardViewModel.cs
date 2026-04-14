@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using GearEngine.GearEngine;
 using GearEngine.GearEngine.Bootstrap;
 using GearEngine.GearEngine.Config;
@@ -20,17 +21,20 @@ namespace GearEngine.GearEngine.Presentation.UI
         private BoardConfigSO boardConfig;
         private IEventBus eventBus;
         private GearEngineFeatureToggleSO featureToggle;
+        private IDragService dragService;
 
         private Vector2Int pickupOriginalPos;
 
         public event Action<IGridNode> OnGearPlaced;
         public event Action<IGridNode> OnGearRemoved;
-        public event Action<GearConfigData> OnBoardDragStarted;
-        public event Action OnBoardDragEnded;
 
         public IGearEngineService EngineService => engineService;
 
         public BoardConfigSO BoardConfig => boardConfig;
+
+        public int CurrentBoardGearCount => gridManager?.GetAllNodes().Count() ?? 0;
+
+        public int MaxAllowedBoardGears => boardConfig != null ? boardConfig.MaxAllowedBoardGears : int.MaxValue;
 
         public void Initialize(
             IGearEngineService engineService,
@@ -38,7 +42,8 @@ namespace GearEngine.GearEngine.Presentation.UI
             GearNodeFactory nodeFactory,
             BoardConfigSO boardConfig,
             IEventBus eventBus = null,
-            GearEngineFeatureToggleSO featureToggle = null)
+            GearEngineFeatureToggleSO featureToggle = null,
+            IDragService dragService = null)
         {
             this.engineService = engineService ?? throw new ArgumentNullException(nameof(engineService));
             this.gridManager = gridManager ?? throw new ArgumentNullException(nameof(gridManager));
@@ -46,6 +51,7 @@ namespace GearEngine.GearEngine.Presentation.UI
             this.boardConfig = boardConfig ?? throw new ArgumentNullException(nameof(boardConfig));
             this.eventBus = eventBus;
             this.featureToggle = featureToggle;
+            this.dragService = dragService;
         }
 
         public IGridNode GetNode(Vector2Int coord) => gridManager.GetNode(coord);
@@ -103,7 +109,7 @@ namespace GearEngine.GearEngine.Presentation.UI
 
             pickupOriginalPos = fromPos;
             gridManager.ExtractNode(fromPos);
-            OnBoardDragStarted?.Invoke(node.ConfigData);
+            dragService?.StartDrag(node.ConfigData);
         }
 
         public void OnGearDropped(IGridNode node, Vector2Int toPos)
@@ -114,7 +120,7 @@ namespace GearEngine.GearEngine.Presentation.UI
             }
             finally
             {
-                OnBoardDragEnded?.Invoke();
+                dragService?.EndDrag();
             }
         }
 
@@ -186,7 +192,7 @@ namespace GearEngine.GearEngine.Presentation.UI
             }
             finally
             {
-                OnBoardDragEnded?.Invoke();
+                dragService?.EndDrag();
             }
         }
 
@@ -235,7 +241,7 @@ namespace GearEngine.GearEngine.Presentation.UI
                 }
                 else if (extracted != node)
                 {
-                    // Safey check: if another node somehow occupied this pos, put it back
+                    // Safety check: if another node somehow occupied this pos, put it back
                     gridManager.AddNode(extracted);
                     extracted = node;
                 }
@@ -276,7 +282,7 @@ namespace GearEngine.GearEngine.Presentation.UI
             }
 
             SnapNodeBackToOriginal(node);
-            OnBoardDragEnded?.Invoke();
+            dragService?.EndDrag();
         }
 
         /// <summary>
@@ -302,6 +308,13 @@ namespace GearEngine.GearEngine.Presentation.UI
 
                 if (occupant == null)
                 {
+                    // Check board limit before placing
+                    if (CurrentBoardGearCount >= boardConfig.MaxAllowedBoardGears)
+                    {
+                        Debug.LogWarning($"<color=#ff5555>[BoardViewModel]</color> Board limit reached ({CurrentBoardGearCount}/{boardConfig.MaxAllowedBoardGears}). Cannot place gear.");
+                        return false;
+                    }
+
                     IGridNode newNode = nodeFactory.CreateNode(targetDropPos, gearData);
                     gridManager.AddNode(newNode);
                     OnGearPlaced?.Invoke(newNode);
@@ -344,21 +357,25 @@ namespace GearEngine.GearEngine.Presentation.UI
         {
             ((NodeBase)node).Position = toPos;
             gridManager.AddNode(node);
+            OnGearPlaced?.Invoke(node);
         }
 
         private void SnapNodeBackToOriginal(IGridNode node)
         {
             ((NodeBase)node).Position = pickupOriginalPos;
             gridManager.AddNode(node);
+            OnGearPlaced?.Invoke(node);
         }
 
         private void SwapBoardGears(IGridNode draggedNode, IGridNode occupantNode, Vector2Int targetDropPos)
         {
             gridManager.ExtractNode(targetDropPos);
 
+            // Place dragged node at target position
             ((NodeBase)draggedNode).Position = targetDropPos;
             gridManager.AddNode(draggedNode);
 
+            // Place occupant at the original pickup position
             ((NodeBase)occupantNode).Position = pickupOriginalPos;
             gridManager.AddNode(occupantNode);
         }

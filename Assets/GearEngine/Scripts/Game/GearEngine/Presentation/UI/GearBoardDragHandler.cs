@@ -24,13 +24,21 @@ namespace GearEngine.GearEngine.Presentation.UI
         private void Awake()
         {
             boardView = GetComponent<BoardView>();
-            enabled = false;
         }
 
         private void Start() => mainCamera = Camera.main;
 
         private void Update()
         {
+            // Failsafe dynamic fetching
+            if (mainCamera == null) mainCamera = Camera.main;
+
+            if (IsPointerDown())
+            {
+                bool isRunning = boardView != null && boardView.IsRunning();
+                Debug.Log($"<color=#ff00ff>[GearBoardDragHandler]</color> CLICK_OR_TOUCH! HasBoardView={boardView != null}, HasCamera={mainCamera != null}, IsRunning={isRunning}, HasDraggedView={draggedView != null}");
+            }
+
             if (boardView == null || mainCamera == null)
             {
                 return;
@@ -43,7 +51,7 @@ namespace GearEngine.GearEngine.Presentation.UI
 
             Vector3 worldPos = GetWorldPointerPosition();
 
-            if (IsPointerDown())
+            if (IsPointerDown() && draggedView == null)
             {
                 HandlePickup(worldPos);
             }
@@ -64,28 +72,41 @@ namespace GearEngine.GearEngine.Presentation.UI
             BoardConfigSO boardConfig = boardView.GetBoardConfig();
             if (boardConfig == null)
             {
+                Debug.LogWarning("[GearBoardDragHandler] HandlePickup failed: BoardConfig is null.");
                 return;
             }
 
             float closestDist = boardConfig.MaxDragGrabDistance;
             GearView closest = null;
+            int viewCount = 0;
 
             foreach (GearView view in boardView.GetViews())
             {
-                if (view == null || view.TargetNode == null || !view.TargetNode.IsInteractable)
+                viewCount++;
+                if (view == null || view.TargetNode == null)
                 {
+                    Debug.Log($"[GearBoardDragHandler] Skipping view: view or target node is null.");
+                    continue;
+                }
+
+                if (!view.TargetNode.IsInteractable)
+                {
+                    Debug.Log($"[GearBoardDragHandler] Skipping '{view.TargetNode.ConfigData?.Id}': IsInteractable is false.");
                     continue;
                 }
 
                 // Gears marked as not movable cannot be picked up or swapped
                 if (view.TargetNode.ConfigData != null && !view.TargetNode.ConfigData.IsMovable)
                 {
+                    Debug.Log($"[GearBoardDragHandler] Skipping '{view.TargetNode.ConfigData?.Id}': IsMovable is false.");
                     continue;
                 }
 
                 float dist = Vector2.Distance(
                     new Vector2(view.transform.position.x, view.transform.position.y),
                     new Vector2(worldPos.x, worldPos.y));
+
+                Debug.Log($"[GearBoardDragHandler] Evaluating '{view.TargetNode.ConfigData?.Id}' at distance {dist} (Allowed: {closestDist})");
 
                 if (dist < closestDist)
                 {
@@ -96,13 +117,19 @@ namespace GearEngine.GearEngine.Presentation.UI
 
             if (closest == null)
             {
+                Debug.Log($"[GearBoardDragHandler] HandlePickup failed: No movable gear found within {boardConfig.MaxDragGrabDistance} of Pointer at {worldPos}. Evaluated {viewCount} views.");
                 return;
             }
 
+            Debug.Log($"<color=#00ff00>[GearBoardDragHandler]</color> Successfully Picked up '{closest.TargetNode.ConfigData?.Id}'!");
+
+
             draggedView = closest;
-            draggedView.IsBeingDragged = true;
+            draggedView.enabled = false; // Decouples update loops instead of injecting arbitrary flags
             originalGridPos = closest.TargetNode.Position;
             DraggedGearData = closest.TargetNode.ConfigData;
+
+            // It stays alive for the user to drag; handled natively by the grid
             boardView.NotifyPickedUp(closest.TargetNode, originalGridPos);
         }
 
@@ -121,37 +148,55 @@ namespace GearEngine.GearEngine.Presentation.UI
                 return;
             }
 
-            bool overUI = IsPointerOverUI();
+            bool overTrash = false;
+            bool overInventory = false;
 
-            if (overUI)
+            if (EventSystem.current != null)
             {
-                if (EventSystem.current != null)
+                PointerEventData ped = new PointerEventData(EventSystem.current) { position = GetPointerPosition() };
+                var results = new System.Collections.Generic.List<RaycastResult>();
+                EventSystem.current.RaycastAll(ped, results);
+                
+                foreach (var result in results)
                 {
-                    PointerEventData ped = new PointerEventData(EventSystem.current) { position = GetPointerPosition() };
-                    var results = new System.Collections.Generic.List<RaycastResult>();
-                    EventSystem.current.RaycastAll(ped, results);
-                    
-                    foreach (var result in results)
+                    // Check Trash
+                    bool isTrash = result.gameObject.GetComponentInParent<TrashDropZoneView>() != null;
+                    if (!isTrash && trashZoneTag != null)
                     {
-                        bool isTrash = result.gameObject.GetComponentInParent<TrashDropZoneView>() != null;
-                        if (!isTrash && trashZoneTag != null)
-                        {
-                            var tc = result.gameObject.GetComponentInParent<TagComponent>();
-                            isTrash = tc != null && tc.HasTag(trashZoneTag);
-                        }
+                        var tc = result.gameObject.GetComponentInParent<TagComponent>();
+                        isTrash = tc != null && tc.HasTag(trashZoneTag);
+                    }
 
-                        if (isTrash)
-                        {
-                            IGridNode returnNode = draggedView.TargetNode;
-                            Debug.Log($"<color=#ff9900>[GearBoardDragHandler]</color> Gear '{returnNode?.ConfigData?.Id}' dropped on trash zone. Forwarding to BoardView.");
-                            draggedView.IsBeingDragged = false;
-                            draggedView = null;
-                            DraggedGearData = null;
-                            boardView.NotifyTrashDrop(returnNode);
-                            return;
-                        }
+                    if (isTrash)
+                    {
+                        overTrash = true;
+                        break;
+                    }
+
+                    // Check Inventory / Return Area
+                    if (result.gameObject.GetComponentInParent<GearInventoryView>() != null || 
+                        result.gameObject.name == "ItemsContainer" ||
+                        (result.gameObject.layer == LayerMask.NameToLayer("UI") && result.gameObject.GetComponent<UnityEngine.UI.Image>() != null && result.gameObject.GetComponent<UnityEngine.UI.Image>().color.a > 0.05f))
+                    {
+                        // Exclude the trash zone from being labeled as inventory
+                        if (!isTrash) overInventory = true;
                     }
                 }
+            }
+
+            if (overTrash)
+            {
+                IGridNode returnNode = draggedView.TargetNode;
+                Debug.Log($"<color=#ff9900>[GearBoardDragHandler]</color> Gear '{returnNode?.ConfigData?.Id}' dropped on trash zone. Forwarding to BoardView.");
+                draggedView.enabled = true;
+                draggedView = null;
+                DraggedGearData = null;
+                boardView.NotifyTrashDrop(returnNode);
+                return;
+            }
+
+            if (overInventory)
+            {
                 IGridNode node = draggedView.TargetNode;
                 GearConfigData droppedConfig = node?.ConfigData;
 
@@ -160,15 +205,14 @@ namespace GearEngine.GearEngine.Presentation.UI
                 {
                     Debug.Log($"<color=#ff9900>[GearBoardDragHandler]</color> Gear '{droppedConfig.Id}' is not returnable. Snapping back.");
                     boardView.NotifyDropped(draggedView.TargetNode, originalGridPos);
-                    draggedView.IsBeingDragged = false;
+                    draggedView.enabled = true;
                     draggedView = null;
                     DraggedGearData = null;
                     return;
                 }
 
                 Debug.Log($"<color=#ff9900>[GearBoardDragHandler]</color> Gear '{droppedConfig?.Id}' dropped over UI (not trash). Returning to inventory.");
-                draggedView.IsBeingDragged = false;
-                DestroyGO(draggedView.gameObject);
+                draggedView.enabled = true;
                 draggedView = null;
                 DraggedGearData = null;
                 boardView.NotifyBoardGearDroppedOverUI(node, droppedConfig, worldPos);
@@ -178,7 +222,7 @@ namespace GearEngine.GearEngine.Presentation.UI
             BoardConfigSO cfg = boardView.GetBoardConfig();
             if (cfg == null)
             {
-                draggedView.IsBeingDragged = false;
+                draggedView.enabled = true;
                 draggedView = null;
                 return;
             }
@@ -190,14 +234,14 @@ namespace GearEngine.GearEngine.Presentation.UI
                 || targetPos.y < 0 || targetPos.y >= cfg.GridHeight)
             {
                 boardView.NotifyDropped(draggedView.TargetNode, originalGridPos);
-                draggedView.IsBeingDragged = false;
+                draggedView.enabled = true;
                 draggedView = null;
                 DraggedGearData = null;
                 return;
             }
 
             boardView.NotifyDropped(draggedView.TargetNode, targetPos);
-            draggedView.IsBeingDragged = false;
+            draggedView.enabled = true;
             draggedView = null;
             DraggedGearData = null;
         }
@@ -230,17 +274,7 @@ namespace GearEngine.GearEngine.Presentation.UI
             return world;
         }
 
-        private bool IsPointerOverUI()
-        {
-            if (EventSystem.current == null)
-            {
-                return false;
-            }
 
-            return Input.touchCount > 0
-                ? EventSystem.current.IsPointerOverGameObject(Input.GetTouch(0).fingerId)
-                : EventSystem.current.IsPointerOverGameObject();
-        }
 
         private static void DestroyGO(GameObject go)
         {

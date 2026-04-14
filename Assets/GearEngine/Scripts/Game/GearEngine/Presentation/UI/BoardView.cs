@@ -13,8 +13,6 @@ namespace GearEngine.GearEngine.Presentation.UI
         [SerializeField] private GearBoardDragHandler dragHandler;
 
         public event Action<GearConfigData, Vector3> OnGearDroppedOverUI;
-        public event Action<GearConfigData> OnDragStarted;
-        public event Action OnDragEnded;
         public event Action<IGridNode> OnTrashDropRequested;
 
         private BoardViewModel viewModel;
@@ -29,8 +27,6 @@ namespace GearEngine.GearEngine.Presentation.UI
 
             vm.OnGearPlaced += HandleGearPlaced;
             vm.OnGearRemoved += HandleGearRemoved;
-            vm.OnBoardDragStarted += HandleDragStarted;
-            vm.OnBoardDragEnded += HandleDragEnded;
 
             foreach (IGridNode node in vm.GetCurrentNodes())
             {
@@ -40,6 +36,10 @@ namespace GearEngine.GearEngine.Presentation.UI
             if (dragHandler != null)
             {
                 dragHandler.enabled = interactable;
+            }
+            else
+            {
+                Debug.LogError($"<color=#ff0000>[BoardView]</color> CRITICAL ERROR: dragHandler is NULL in inspector! Board interactions will be silently disabled!");
             }
         }
 
@@ -52,8 +52,6 @@ namespace GearEngine.GearEngine.Presentation.UI
 
             viewModel.OnGearPlaced -= HandleGearPlaced;
             viewModel.OnGearRemoved -= HandleGearRemoved;
-            viewModel.OnBoardDragStarted -= HandleDragStarted;
-            viewModel.OnBoardDragEnded -= HandleDragEnded;
             DestroyAllViews();
             localFactory = null;
             viewModel = null;
@@ -84,8 +82,38 @@ namespace GearEngine.GearEngine.Presentation.UI
             OnTrashDropRequested?.Invoke(node);
         }
 
-        private void HandleDragStarted(GearConfigData data) => OnDragStarted?.Invoke(data);
-        private void HandleDragEnded() => OnDragEnded?.Invoke();
+        /// <summary>
+        /// Removes the view from the tracking dictionary without destroying it.
+        /// Called when a gear is picked up for dragging — the view stays alive
+        /// so the user can see it moving, but the board no longer owns it.
+        /// </summary>
+        internal GearView DetachViewForDrag(IGridNode node)
+        {
+            if (node == null)
+            {
+                return null;
+            }
+
+            if (viewsByNode.TryGetValue(node, out GearView view))
+            {
+                viewsByNode.Remove(node);
+                return view;
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Destroys a previously detached (dragged) view.
+        /// Called after the drop completes and a fresh view has been spawned.
+        /// </summary>
+        internal void DestroyDetachedView(GearView view)
+        {
+            if (view != null)
+            {
+                DestroyViewGameObject(view.gameObject);
+            }
+        }
 
         internal IEnumerable<GearView> GetViews() => viewsByNode.Values;
 

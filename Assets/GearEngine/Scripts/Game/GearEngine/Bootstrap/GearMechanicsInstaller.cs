@@ -30,6 +30,7 @@ namespace GearEngine.GearEngine.Bootstrap
 
             builder.Register<GearMergeService>(Lifetime.Singleton);
             builder.Register<GearNodeFactory>(Lifetime.Singleton);
+            builder.Register<DragService>(Lifetime.Singleton).As<IDragService>();
         }
     }
 }

@@ -11,16 +11,15 @@ namespace GearEngine.GearEngine.Presentation
     /// Mediator that encapsulates all trash/scrap deletion coordination.
     /// Owns the trash zone view, pending node state, popup spawning, and confirm/cancel callbacks.
     /// Created by <see cref="GearEngineView"/> only when the feature toggle is enabled.
+    /// Subscribes to <see cref="IDragService"/> for drag lifecycle events.
     /// </summary>
     public sealed class GearTrashFeature : IDisposable
     {
-        /// <summary>Vertical pixel offset above the grid's top edge.</summary>
-        private static readonly float TrashZoneYOffset = 160f;
-
         private readonly BoardViewModel boardVm;
         private readonly GearInventoryViewModel inventoryVm;
         private readonly Canvas canvas;
         private readonly TrashDropZoneView trashZone;
+        private readonly IDragService dragService;
 
         private IGridNode pendingTrashNode;
         private GearConfigData pendingTrashConfigData;
@@ -30,7 +29,9 @@ namespace GearEngine.GearEngine.Presentation
         /// <param name="inventoryVm">Inventory view model for removing trashed gears from inventory.</param>
         /// <param name="canvas">Canvas to parent the trash zone and popups.</param>
         /// <param name="boardConfig">Board config used to compute the grid's top edge.</param>
+        /// <param name="dragService">Centralized drag service for drag lifecycle events.</param>
         /// <param name="alignment">Horizontal alignment relative to the grid (Left, Center, Right).</param>
+        /// <param name="yOffset">Vertical pixel offset above the grid's top edge.</param>
         /// <param name="trashZoneTag">Tag for discovery by the drag handler via the tag system.</param>
         /// <param name="trashIcon">Sprite for the trash icon.</param>
         public GearTrashFeature(
@@ -38,21 +39,54 @@ namespace GearEngine.GearEngine.Presentation
             GearInventoryViewModel inventoryVm,
             Canvas canvas,
             BoardConfigSO boardConfig,
+            IDragService dragService,
             TrashZoneAlignment alignment = TrashZoneAlignment.Right,
+            float yOffset = 80f,
             TagSO trashZoneTag = null,
             Sprite trashIcon = null)
         {
             this.boardVm = boardVm ?? throw new ArgumentNullException(nameof(boardVm));
             this.inventoryVm = inventoryVm;
             this.canvas = canvas ?? throw new ArgumentNullException(nameof(canvas));
+            this.dragService = dragService;
 
             Vector3 gridAnchorPoint = ComputeGridAnchor(boardConfig, alignment);
             Vector2 pivot = ComputePivot(alignment);
 
             trashZone = TrashDropZoneFactory.Create(
-                canvas, gridAnchorPoint, new Vector2(0f, TrashZoneYOffset), pivot, trashZoneTag, trashIcon);
+                canvas, gridAnchorPoint, new Vector2(0f, yOffset), pivot, trashZoneTag, trashIcon);
 
             trashZone.OnInventoryGearDropped += HandleInventoryGearDropped;
+
+            // Subscribe to centralized drag service
+            if (dragService != null)
+            {
+                dragService.OnDragStarted += HandleDragServiceStarted;
+                dragService.OnDragEnded += HandleDragServiceEnded;
+            }
+        }
+
+        private void HandleDragServiceStarted(object data)
+        {
+            if (isDisposed)
+            {
+                return;
+            }
+
+            GearConfigData gearData = data as GearConfigData;
+            Debug.Log($"<color=#ff9900>[GearTrashFeature]</color> Drag started — gear: {gearData?.Id ?? "null"}, deletable: {gearData?.IsDeletable ?? false}");
+            trashZone?.OnDragStarted(gearData);
+        }
+
+        private void HandleDragServiceEnded()
+        {
+            if (isDisposed)
+            {
+                return;
+            }
+
+            Debug.Log("<color=#ff9900>[GearTrashFeature]</color> Drag ended — hiding trash zone.");
+            trashZone?.OnDragEnded();
         }
 
         private void HandleInventoryGearDropped(GearConfigData data)
@@ -113,36 +147,6 @@ namespace GearEngine.GearEngine.Presentation
                 default:
                     return topRight;
             }
-        }
-
-        /// <summary>
-        /// Called when a drag starts (from board or inventory).
-        /// Shows the trash zone if the gear is deletable.
-        /// </summary>
-        public void OnDragStarted(GearConfigData data)
-        {
-            if (isDisposed)
-            {
-                return;
-            }
-
-            Debug.Log($"<color=#ff9900>[GearTrashFeature]</color> Drag started — gear: {data?.Id ?? "null"}, deletable: {data?.IsDeletable ?? false}");
-            trashZone?.OnDragStarted(data);
-        }
-
-        /// <summary>
-        /// Called when a drag ends (any outcome).
-        /// Hides the trash zone.
-        /// </summary>
-        public void OnDragEnded()
-        {
-            if (isDisposed)
-            {
-                return;
-            }
-
-            Debug.Log("<color=#ff9900>[GearTrashFeature]</color> Drag ended — hiding trash zone.");
-            trashZone?.OnDragEnded();
         }
 
         /// <summary>
@@ -214,6 +218,12 @@ namespace GearEngine.GearEngine.Presentation
 
             isDisposed = true;
             pendingTrashNode = null;
+
+            if (dragService != null)
+            {
+                dragService.OnDragStarted -= HandleDragServiceStarted;
+                dragService.OnDragEnded -= HandleDragServiceEnded;
+            }
 
             if (trashZone != null)
             {

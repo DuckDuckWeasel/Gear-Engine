@@ -2,6 +2,7 @@ using System.Collections.Specialized;
 using System.Linq;
 using GearEngine.GearEngine.Config;
 using GearEngine.GearEngine.Presentation.UI.Tags;
+using GearEngine.GearEngine.Visuals;
 using UnityEngine;
 using Scaffold.MVVM;
 
@@ -11,9 +12,21 @@ namespace GearEngine.GearEngine.Presentation.UI
     {
         [SerializeField] private RectTransform itemsContainer;
         [SerializeField] private TagSO gridBoardTag;
+        [SerializeField] private GameObject slotPrefab;
 
-        public event System.Action<GearConfigData> OnInventoryDragStarted;
-        public event System.Action OnInventoryDragEnded;
+        private IDragService dragService;
+
+        public void SetDragService(IDragService dragService)
+        {
+            this.dragService = dragService;
+        }
+
+        private Transform boardReferenceTransform;
+
+        public void SetBoardReference(Transform boardTransform)
+        {
+            this.boardReferenceTransform = boardTransform;
+        }
 
         protected override void OnBind()
         {
@@ -74,69 +87,76 @@ namespace GearEngine.GearEngine.Presentation.UI
 
             foreach (var gear in viewModel.InventoryModel.AvailableGears)
             {
-                GameObject slotGroup = new GameObject($"Slot_{gear.Id}");
-                slotGroup.transform.SetParent(itemsContainer, false);
+                GameObject slotObj = CreateSlotObject(gear);
+                if (slotObj == null)
+                {
+                    continue;
+                }
 
-                var rect = slotGroup.AddComponent<RectTransform>();
-                rect.sizeDelta = new Vector2(120, 120);
+                var dragger = slotObj.GetComponent<DragHandler>();
+                if (dragger == null)
+                {
+                    dragger = slotObj.AddComponent<DragHandler>();
+                }
 
-                var img = slotGroup.AddComponent<UnityEngine.UI.Image>();
-                img.color = new Color(0.1f, 0.1f, 0.1f, 0.5f);
-
-                var dragger = slotGroup.AddComponent<DragHandler>();
-                var slotView = slotGroup.AddComponent<GearInventorySlotView>();
+                var slotView = slotObj.GetComponent<GearInventorySlotView>();
+                if (slotView == null)
+                {
+                    slotView = slotObj.AddComponent<GearInventorySlotView>();
+                }
 
                 if (gridBoardTag != null)
                 {
                     dragger.AddAcceptedTag(gridBoardTag);
                 }
 
-                dragger.GhostScaleMultiplier = gear.UIScaleMultiplier;
-
-                if (gear.VisualPrefab != null)
+                // Locate containment boundary
+                Transform visualContainer = slotObj.transform.Find("VisualContainer");
+                if (visualContainer == null)
                 {
-                    GameObject visualObj = Instantiate(gear.VisualPrefab, slotGroup.transform);
-                    visualObj.name = "VisualInstance";
-                    visualObj.transform.localPosition = new Vector3(0, 0, -10f);
+                    visualContainer = slotObj.transform;
+                }
 
-                    visualObj.transform.localScale = new Vector3(gear.UIScaleMultiplier, gear.UIScaleMultiplier, gear.UIScaleMultiplier);
+                // Match pure physical screen space: force the SpriteRenderer lossyScale to equal the Grid's lossyScale
+                float baseScale = 56f;
+                if (boardReferenceTransform != null && visualContainer.lossyScale.x > 0f)
+                {
+                    baseScale = boardReferenceTransform.lossyScale.x / visualContainer.lossyScale.x;
+                }
+                float totalScale = gear.RelativeScaleMultiplier * baseScale;
 
-                    var srs = visualObj.GetComponentsInChildren<SpriteRenderer>(true);
-                    foreach (var sr in srs)
-                    {
-                        sr.sortingOrder = 50;
-                    }
+                dragger.GhostScaleMultiplier = totalScale;
 
-                    if (gear.UIIcon != null)
-                    {
-                        GameObject iconObj = new GameObject("InventoryUIIcon");
-                        iconObj.transform.SetParent(visualObj.transform, false);
-                        iconObj.transform.localPosition = new Vector3(0, 0, -1f);
-                        iconObj.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
-
-                        SpriteRenderer iconRenderer = iconObj.AddComponent<SpriteRenderer>();
-                        iconRenderer.sprite = gear.UIIcon;
-                        iconRenderer.sortingOrder = 55;
-
-                        Shader fillShader = Shader.Find("GearEngine/Sprites/SpriteFillGrayscale");
-                        if (fillShader != null)
-                        {
-                            Material mat = new Material(fillShader);
-                            mat.SetFloat("_FillAmount", 1f);
-                            iconRenderer.material = mat;
-                        }
-                    }
-
+                // Setup visual using shared utility
+                GameObject visualObj = GearVisualSetup.SetupVisual(visualContainer, gear, totalScale);
+                if (visualObj != null)
+                {
                     dragger.GhostPrefab = visualObj;
                 }
 
                 slotView.Bind(gear, viewModel);
 
-                // Wire drag lifecycle for trash zone visibility
-                GearConfigData capturedGear = gear;
-                dragger.OnDragBegin += () => OnInventoryDragStarted?.Invoke(capturedGear);
-                dragger.OnDragEnd += () => OnInventoryDragEnded?.Invoke();
+                // Wire drag lifecycle to centralized IDragService
+                if (dragService != null)
+                {
+                    GearConfigData capturedGear = gear;
+                    dragger.OnDragBegin += () => dragService.StartDrag(capturedGear);
+                    dragger.OnDragEnd += () => dragService.EndDrag();
+                }
             }
+        }
+
+        private GameObject CreateSlotObject(GearConfigData gear)
+        {
+            if (slotPrefab == null)
+            {
+                Debug.LogError($"[GearInventoryView] slotPrefab is missing! Cannot create slot for '{gear.Id}'. Please assign the GearSlot prefab in the inspector.");
+                return null;
+            }
+
+            GameObject slot = Instantiate(slotPrefab, itemsContainer);
+            slot.name = $"Slot_{gear.Id}";
+            return slot;
         }
 
         private void OnDestroy()

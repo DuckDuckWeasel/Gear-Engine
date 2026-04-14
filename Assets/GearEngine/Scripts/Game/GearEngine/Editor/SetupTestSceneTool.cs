@@ -43,11 +43,12 @@ namespace GearEngine.GearEngine.Editor
             GearEngineNavigationAssetGenerator.Generate();
 
             string folderPath = "Assets/GearEngine/Data/Gear";
-            string prefabPath = "Assets/Prefabs/Gear/Gears";
+            string prefabPath = "Assets/GearEngine/Prefabs/Gears/Gears";
 
             GearConfig core = AssetDatabase.LoadAssetAtPath<GearConfig>($"{folderPath}/Gear/CoreGearConfig.asset");
             GearConfig baseGear = AssetDatabase.LoadAssetAtPath<GearConfig>($"{folderPath}/Gear/BaseGearConfig_Level1.asset");
             GameObject emptySlot = AssetDatabase.LoadAssetAtPath<GameObject>($"{prefabPath}/EmptySlotView.prefab");
+            GameObject gearSlot = AssetDatabase.LoadAssetAtPath<GameObject>($"{prefabPath}/GearSlot.prefab");
             BoardConfigSO boardConfig = AssetDatabase.LoadAssetAtPath<BoardConfigSO>($"{folderPath}/BasicBoardConfig.asset");
             GearInventoryLoadoutSO loadout = AssetDatabase.LoadAssetAtPath<GearInventoryLoadoutSO>($"{folderPath}/GearInventoryLoadout.asset");
             GearEngineFeatureToggleSO featureToggle = AssetDatabase.LoadAssetAtPath<GearEngineFeatureToggleSO>($"{folderPath}/GearEngineFeatureToggle.asset");
@@ -132,6 +133,38 @@ namespace GearEngine.GearEngine.Editor
 
             simSo.ApplyModifiedProperties();
 
+            // Setup Board Limit Label
+            var boardLabelObj = new GameObject("BoardCapacityLabel");
+            var boardLabelRt = boardLabelObj.AddComponent<RectTransform>();
+            boardLabelRt.SetParent(canvasObj.transform, false);
+            boardLabelRt.anchorMin = new Vector2(0f, 1f);
+            boardLabelRt.anchorMax = new Vector2(0f, 1f);
+            boardLabelRt.pivot = new Vector2(0f, 1f);
+            boardLabelRt.anchoredPosition = new Vector2(20f, -20f);
+            boardLabelRt.sizeDelta = new Vector2(250f, 40f);
+            
+            var boardLabelTxt = boardLabelObj.AddComponent<TMPro.TextMeshProUGUI>();
+            boardLabelTxt.text = "Board: 0/0";
+            boardLabelTxt.alignment = TMPro.TextAlignmentOptions.TopLeft;
+            boardLabelTxt.color = Color.white;
+            boardLabelTxt.fontSize = 24f;
+
+            // Setup Inventory Limit Label
+            var invLabelObj = new GameObject("InventoryCapacityLabel");
+            var invLabelRt = invLabelObj.AddComponent<RectTransform>();
+            invLabelRt.SetParent(canvasObj.transform, false);
+            invLabelRt.anchorMin = new Vector2(1f, 1f);
+            invLabelRt.anchorMax = new Vector2(1f, 1f);
+            invLabelRt.pivot = new Vector2(1f, 1f);
+            invLabelRt.anchoredPosition = new Vector2(-20f, -20f);
+            invLabelRt.sizeDelta = new Vector2(250f, 40f);
+            
+            var invLabelTxt = invLabelObj.AddComponent<TMPro.TextMeshProUGUI>();
+            invLabelTxt.text = "Inventory: 0/0";
+            invLabelTxt.alignment = TMPro.TextAlignmentOptions.TopRight;
+            invLabelTxt.color = Color.white;
+            invLabelTxt.fontSize = 24f;
+
             GameObject invViewObj = new GameObject("GearInventoryView");
             var invRt = invViewObj.AddComponent<RectTransform>();
             invRt.SetParent(canvasObj.transform, false);
@@ -168,6 +201,12 @@ namespace GearEngine.GearEngine.Editor
             if (tagProp != null && gridBoardTagRef != null)
             {
                 tagProp.objectReferenceValue = gridBoardTagRef;
+            }
+
+            var slotPrefabProp = invSo.FindProperty("slotPrefab");
+            if (slotPrefabProp != null && gearSlot != null)
+            {
+                slotPrefabProp.objectReferenceValue = gearSlot;
             }
 
             invSo.ApplyModifiedProperties();
@@ -230,6 +269,12 @@ namespace GearEngine.GearEngine.Editor
             {
                 iv.objectReferenceValue = invViewDef;
             }
+
+            var blProp = gearViewSo.FindProperty("boardLimitLabel");
+            if (blProp != null) blProp.objectReferenceValue = boardLabelTxt;
+
+            var ilProp = gearViewSo.FindProperty("inventoryLimitLabel");
+            if (ilProp != null) ilProp.objectReferenceValue = invLabelTxt;
 
             var bv = gearViewSo.FindProperty("boardView");
             if (bv != null)
@@ -335,6 +380,12 @@ namespace GearEngine.GearEngine.Editor
             }
 
             SerializedProperty invProp = startDataProp.FindPropertyRelative("inventoryGears");
+            SerializedProperty maxSlotsProp = startDataProp.FindPropertyRelative("maxInventorySlots");
+            
+            if (maxSlotsProp != null && loadout != null)
+            {
+                maxSlotsProp.intValue = loadout.MaxInventorySlots;
+            }
             if (invProp != null && loadout != null && loadout.StartingGears != null)
             {
                 invProp.ClearArray();

@@ -12,15 +12,20 @@ namespace GearEngine.GearEngine.Presentation.UI
         public bool CanDrag => engineService != null && !engineService.IsRunning;
 
         private IGearEngineService engineService;
+        private int maxInventorySlots = int.MaxValue;
 
         [ObservableProperty]
         private GearInventoryModel inventoryModel = new GearInventoryModel();
 
         public event Action<Vector3, GearConfigData> OnGearDraggedToBoard;
 
-        public void Initialize(IGearEngineService engineService)
+        public int CurrentCount => InventoryModel.AvailableGears.Count;
+        public int MaxSlots => maxInventorySlots;
+
+        public void Initialize(IGearEngineService engineService, int maxInventorySlots = int.MaxValue)
         {
             this.engineService = engineService;
+            this.maxInventorySlots = maxInventorySlots;
         }
 
         protected override void Initialize()
@@ -49,6 +54,12 @@ namespace GearEngine.GearEngine.Presentation.UI
         {
             if (gear == null)
             {
+                return;
+            }
+
+            if (InventoryModel.AvailableGears.Count >= maxInventorySlots)
+            {
+                Debug.LogWarning($"[GearInventoryViewModel] Inventory full ({InventoryModel.AvailableGears.Count}/{maxInventorySlots}). Cannot add gear '{gear.Id}'.");
                 return;
             }
 

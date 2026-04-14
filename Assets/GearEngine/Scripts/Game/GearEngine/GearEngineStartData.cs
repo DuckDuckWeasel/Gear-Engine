@@ -15,5 +15,9 @@ namespace GearEngine.GearEngine
         public IReadOnlyList<GearConfig> InventoryGears => inventoryGears;
 
         [SerializeField] private List<GearConfig> inventoryGears = new List<GearConfig>();
+        
+        public int MaxInventorySlots => maxInventorySlots;
+
+        [SerializeField] private int maxInventorySlots = 5;
     }
 }

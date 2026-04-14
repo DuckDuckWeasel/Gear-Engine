@@ -14,7 +14,7 @@ namespace GearEngine.GearEngine.Editor
         public static void GenerateConfigs()
         {
             string folderPath = "Assets/GearEngine/Data/Gear";
-            string prefabPath = "Assets/Prefabs/Gear/Gears";
+            string prefabPath = "Assets/GearEngine/Prefabs/Gears/Gears";
             
             if (!Directory.Exists(folderPath)) Directory.CreateDirectory(folderPath);
             if (!Directory.Exists(folderPath + "/Tag")) Directory.CreateDirectory(folderPath + "/Tag");
@@ -47,14 +47,31 @@ namespace GearEngine.GearEngine.Editor
             trashZoneTag.Description = "Marks the trash drop zone for gear deletion.";
             AssetDatabase.CreateAsset(trashZoneTag, $"{folderPath}/Tag/TrashZone_Tag.asset");
 
-            // 1.2 Create Board Config
-            BoardConfigSO boardConfig = ScriptableObject.CreateInstance<BoardConfigSO>();
+            // 1.2 Create or Update Board Config
+            string boardCfgPath = $"{folderPath}/BasicBoardConfig.asset";
+            BoardConfigSO boardConfig = AssetDatabase.LoadAssetAtPath<BoardConfigSO>(boardCfgPath);
+            bool isNewBoardCfg = false;
+            if (boardConfig == null)
+            {
+                boardConfig = ScriptableObject.CreateInstance<BoardConfigSO>();
+                isNewBoardCfg = true;
+            }
+
             boardConfig.GridWidth = 7;
             boardConfig.GridHeight = 5;
             boardConfig.Spacing = 0.75f;
             boardConfig.MaxDragGrabDistance = 0.75f;
             boardConfig.StaggeredRotationOffset = 22.5f;
-            AssetDatabase.CreateAsset(boardConfig, $"{folderPath}/BasicBoardConfig.asset");
+            boardConfig.TrashZoneYOffset = 160f;
+
+            if (isNewBoardCfg)
+            {
+                AssetDatabase.CreateAsset(boardConfig, boardCfgPath);
+            }
+            else
+            {
+                EditorUtility.SetDirty(boardConfig);
+            }
 
             // 1.3 Create Feature Toggle
             string togglePath = $"{folderPath}/GearEngineFeatureToggle.asset";
@@ -91,6 +108,7 @@ namespace GearEngine.GearEngine.Editor
             {
                 featureToggle = ScriptableObject.CreateInstance<GearEngineFeatureToggleSO>();
                 featureToggle.EnableTrashDeletion = true;
+                featureToggle.TrashAlignment = TrashZoneAlignment.Right;
                 featureToggle.TrashZoneTag = trashZoneTag;
                 featureToggle.TrashIcon = trashIconSprite;
                 AssetDatabase.CreateAsset(featureToggle, togglePath);
@@ -98,6 +116,11 @@ namespace GearEngine.GearEngine.Editor
             else
             {
                 bool dirty = false;
+                if (!featureToggle.EnableTrashDeletion)
+                {
+                    featureToggle.EnableTrashDeletion = true;
+                    dirty = true;
+                }
                 if (featureToggle.TrashZoneTag == null)
                 {
                     featureToggle.TrashZoneTag = trashZoneTag;
@@ -121,7 +144,50 @@ namespace GearEngine.GearEngine.Editor
             GameObject emptySlot = CreatePrefabPrimitive("EmptySlotView", "", new Color(0.2f, 0.2f, 0.2f, 0.3f), prefabPath);
             // We just generate the physical block prefab, no config file needed since it's just background visual!
 
-            // 2. Create Core Gear
+            // 1.6 Create Gear Inventory Slot Prefab
+            GameObject slotTemplate = new GameObject("GearSlot");
+            var slotRect = slotTemplate.AddComponent<RectTransform>();
+            slotRect.sizeDelta = new Vector2(120, 120);
+            var slotImg = slotTemplate.AddComponent<UnityEngine.UI.Image>();
+            slotImg.color = new Color(0.1f, 0.1f, 0.1f, 0.5f);
+            PrefabUtility.SaveAsPrefabAsset(slotTemplate, $"{prefabPath}/GearSlot.prefab");
+            Object.DestroyImmediate(slotTemplate);
+
+            string[] allGearGuids = AssetDatabase.FindAssets("t:GearConfig");
+            foreach (string guid in allGearGuids)
+            {
+                string p = AssetDatabase.GUIDToAssetPath(guid);
+                GearConfig gc = AssetDatabase.LoadAssetAtPath<GearConfig>(p);
+                if (gc != null)
+                {
+                    SerializedObject serializedObj = new SerializedObject(gc);
+                    SerializedProperty dataP = serializedObj.FindProperty("privateData");
+                    if (dataP != null)
+                    {
+                        var categoryP = dataP.FindPropertyRelative("Category");
+                        bool core = categoryP != null && categoryP.enumValueIndex == (int)GearCategory.Core;
+                        
+                        var mProp = dataP.FindPropertyRelative("IsMovable");
+                        if (mProp != null && !mProp.boolValue && !core) mProp.boolValue = true;
+
+                        var rProp = dataP.FindPropertyRelative("IsReturnable");
+                        if (rProp != null && !rProp.boolValue && !core) rProp.boolValue = true;
+
+                        var dProp = dataP.FindPropertyRelative("IsDeletable");
+                        if (dProp != null && !dProp.boolValue && !core) dProp.boolValue = true;
+
+                        var rwdProp = dataP.FindPropertyRelative("DeleteRewardAmount");
+                        if (rwdProp != null && rwdProp.intValue <= 0 && !core) rwdProp.intValue = 25;
+                        
+                        var iProp = dataP.FindPropertyRelative("IsInteractable");
+                        if (iProp != null && !iProp.boolValue && !core) iProp.boolValue = true;
+                    }
+                    serializedObj.ApplyModifiedProperties();
+                    EditorUtility.SetDirty(gc);
+                }
+            }
+            AssetDatabase.SaveAssets();
+
             GameObject coreView = CreatePrefabPrimitive("CoreGearView", "CoreGear", new Color(1f, 0.8f, 0.1f), prefabPath);
             bool isCoreNew;
             GearConfig coreGear = GetOrCreateGearConfig($"{folderPath}/Gear/CoreGearConfig.asset", out isCoreNew);
@@ -136,7 +202,7 @@ namespace GearEngine.GearEngine.Editor
                     IsInteractable = true,
                     IsMovable = false,
                     IsReturnable = false,
-                    UIScaleMultiplier = 115f,
+                    RelativeScaleMultiplier = 1.0f,
                     MaxCharge = 0f, 
                     ChargeOverTimeAmount = 0f,
                     ChargeOnTriggerAmount = 0f,
@@ -163,7 +229,7 @@ namespace GearEngine.GearEngine.Editor
             }
             coreSo.ApplyModifiedProperties();
 
-            UpdateVisualsAndMeta(coreGear, coreView, null, null, null);
+            UpdateVisualsAndMeta(coreGear, coreView, null, null, null, 0);
             // 3. Create Base Gear Level 2
             GameObject base2View = CreatePrefabPrimitive("BaseGear2View", "BaseGear", new Color(0.8f, 0.8f, 0.9f), prefabPath);
             bool isBase2New;
@@ -175,7 +241,9 @@ namespace GearEngine.GearEngine.Editor
                     Id = "base_gear_2",
                     BaseRotationSpeed = 0f, 
                     IsInteractable = true,
-                    UIScaleMultiplier = 115f,
+                    IsMovable = true,
+                    IsReturnable = true,
+                    RelativeScaleMultiplier = 1.0f,
                     MaxCharge = 200f,
                     ChargeOverTimeAmount = 0f,
                     ChargeOnTriggerAmount = 50f,
@@ -187,7 +255,7 @@ namespace GearEngine.GearEngine.Editor
                 }, null, null);
                 AssetDatabase.CreateAsset(baseGearLv2, $"{folderPath}/Gear/BaseGearConfig_Level2.asset");
             }
-            UpdateVisualsAndMeta(baseGearLv2, base2View, iconNumber2, null, null);
+            UpdateVisualsAndMeta(baseGearLv2, base2View, iconNumber2, null, null, 75);
 
             // 4. Create Base Gear Level 1 (Links to Level 2)
             GameObject base1View = CreatePrefabPrimitive("BaseGear1View", "BaseGear", new Color(0.8f, 0.8f, 0.9f), prefabPath);
@@ -200,7 +268,9 @@ namespace GearEngine.GearEngine.Editor
                     Id = "base_gear_1",
                     BaseRotationSpeed = 0f,
                     IsInteractable = true,
-                    UIScaleMultiplier = 115f,
+                    IsMovable = true,
+                    IsReturnable = true,
+                    RelativeScaleMultiplier = 1.0f,
                     MaxCharge = 100f,
                     ChargeOverTimeAmount = 0f, 
                     ChargeOnTriggerAmount = 25f,
@@ -212,7 +282,7 @@ namespace GearEngine.GearEngine.Editor
                 }, baseGearLv2, null);
                 AssetDatabase.CreateAsset(baseGearLv1, $"{folderPath}/Gear/BaseGearConfig_Level1.asset");
             }
-            UpdateVisualsAndMeta(baseGearLv1, base1View, iconNumber1, baseGearLv2, null);
+            UpdateVisualsAndMeta(baseGearLv1, base1View, iconNumber1, baseGearLv2, null, 25);
 
             // 4. Create Abilities
             DestroySelfAbility destroyAbility = ScriptableObject.CreateInstance<DestroySelfAbility>();
@@ -237,7 +307,9 @@ namespace GearEngine.GearEngine.Editor
                     Id = "obstacle_rock",
                     BaseRotationSpeed = 0f,
                     IsInteractable = false, 
-                    UIScaleMultiplier = 115f,
+                    IsMovable = true,
+                    IsReturnable = true,
+                    RelativeScaleMultiplier = 1.0f,
                     MaxCharge = 30f,
                     ChargeOverTimeAmount = 0f,
                     ChargeOnTriggerAmount = 10f,
@@ -249,7 +321,7 @@ namespace GearEngine.GearEngine.Editor
                 }, null, new List<GearAbilitySO> { destroyAbility });
                 AssetDatabase.CreateAsset(rockObstacle, $"{folderPath}/Gear/ObstacleRockConfig.asset");
             }
-            UpdateVisualsAndMeta(rockObstacle, rockView, baseSpr, null, new List<GearAbilitySO> { destroyAbility });
+            UpdateVisualsAndMeta(rockObstacle, rockView, baseSpr, null, new List<GearAbilitySO> { destroyAbility }, 0);
 
             // 7. Create Score Gear
             GameObject scoreView = CreatePrefabPrimitive("ScoreGearView", "BaseGear", new Color(0.1f, 0.9f, 0.2f), prefabPath);
@@ -262,7 +334,9 @@ namespace GearEngine.GearEngine.Editor
                     Id = "score_gear",
                     BaseRotationSpeed = 0f,
                     IsInteractable = true,
-                    UIScaleMultiplier = 115f,
+                    IsMovable = true,
+                    IsReturnable = true,
+                    RelativeScaleMultiplier = 1.0f,
                     MaxCharge = 100f,
                     ChargeOverTimeAmount = 0f,
                     ChargeOnTriggerAmount = 50f,
@@ -274,7 +348,7 @@ namespace GearEngine.GearEngine.Editor
                 }, null, new List<GearAbilitySO> { scoreAbility });
                 AssetDatabase.CreateAsset(scoreGear, $"{folderPath}/Gear/ScoreGearConfig.asset");
             }
-            UpdateVisualsAndMeta(scoreGear, scoreView, iconCoin, null, new List<GearAbilitySO> { scoreAbility });
+            UpdateVisualsAndMeta(scoreGear, scoreView, iconCoin, null, new List<GearAbilitySO> { scoreAbility }, 100);
 
             // 8. Create Speed Buff Gear
             GameObject speedView = CreatePrefabPrimitive("SpeedGearView", "BaseGear", new Color(0.1f, 0.9f, 0.2f), prefabPath);
@@ -287,7 +361,7 @@ namespace GearEngine.GearEngine.Editor
                     Id = "speed_buff_gear",
                     BaseRotationSpeed = 0f,
                     IsInteractable = true,
-                    UIScaleMultiplier = 115f,
+                    RelativeScaleMultiplier = 1.0f,
                     MaxCharge = 0f, 
                     ChargeOverTimeAmount = 0f,
                     ChargeOnTriggerAmount = 0f,
@@ -299,7 +373,7 @@ namespace GearEngine.GearEngine.Editor
                 }, null, new List<GearAbilitySO> { speedAbility });
                 AssetDatabase.CreateAsset(speedGear, $"{folderPath}/Gear/SpeedBuffGearConfig.asset");
             }
-            UpdateVisualsAndMeta(speedGear, speedView, iconArrowUp, null, new List<GearAbilitySO> { speedAbility });
+            UpdateVisualsAndMeta(speedGear, speedView, iconArrowUp, null, new List<GearAbilitySO> { speedAbility }, 50);
 
             GearConfig loadoutCore = AssetDatabase.LoadAssetAtPath<GearConfig>($"{folderPath}/Gear/CoreGearConfig.asset");
             GearConfig loadoutBase1 = AssetDatabase.LoadAssetAtPath<GearConfig>($"{folderPath}/Gear/BaseGearConfig_Level1.asset");
@@ -401,7 +475,7 @@ namespace GearEngine.GearEngine.Editor
             return cfg;
         }
 
-        private static void UpdateVisualsAndMeta(GearConfig config, GameObject visual, Sprite icon, GearConfig nextLvl, List<GearAbilitySO> abilities)
+        private static void UpdateVisualsAndMeta(GearConfig config, GameObject visual, Sprite icon, GearConfig nextLvl, List<GearAbilitySO> abilities, int? forceReward = null)
         {
             SerializedObject so = new SerializedObject(config);
             SerializedProperty dataProp = so.FindProperty("data");
@@ -414,6 +488,28 @@ namespace GearEngine.GearEngine.Editor
                 // nulling out manually assigned icons when a sprite fails to load.
                 var iconProp = dataProp.FindPropertyRelative("UIIcon");
                 if (iconProp != null && icon != null) iconProp.objectReferenceValue = icon;
+
+                // FORCE critically missing properties that might have defaulted to false upon deserialization
+                var categoryProp = dataProp.FindPropertyRelative("Category");
+                bool isCore = categoryProp != null && categoryProp.enumValueIndex == (int)GearCategory.Core;
+                
+                var isInteractableProp = dataProp.FindPropertyRelative("IsInteractable");
+                if (isInteractableProp != null) isInteractableProp.boolValue = !isCore;
+
+                var isMovableProp = dataProp.FindPropertyRelative("IsMovable");
+                if (isMovableProp != null) isMovableProp.boolValue = !isCore;
+
+                var isReturnableProp = dataProp.FindPropertyRelative("IsReturnable");
+                if (isReturnableProp != null) isReturnableProp.boolValue = !isCore;
+
+                var isDeletableProp = dataProp.FindPropertyRelative("IsDeletable");
+                if (isDeletableProp != null) isDeletableProp.boolValue = !isCore;
+
+                if (forceReward.HasValue)
+                {
+                    var deleteRewardProp = dataProp.FindPropertyRelative("DeleteRewardAmount");
+                    if (deleteRewardProp != null) deleteRewardProp.intValue = forceReward.Value;
+                }
             }
 
             // Set Next Level
@@ -504,12 +600,14 @@ namespace GearEngine.GearEngine.Editor
                 dataProp.FindPropertyRelative("TriggerPattern").enumValueIndex = triggerIndex;
 
                 dataProp.FindPropertyRelative("IsInteractable").boolValue = data.IsInteractable;
+                dataProp.FindPropertyRelative("IsMovable").boolValue = data.IsMovable;
+                dataProp.FindPropertyRelative("IsReturnable").boolValue = data.IsReturnable;
                 dataProp.FindPropertyRelative("MaxCharge").floatValue = data.MaxCharge;
                 dataProp.FindPropertyRelative("ChargeOverTimeAmount").floatValue = data.ChargeOverTimeAmount;
                 dataProp.FindPropertyRelative("ChargeOnTriggerAmount").floatValue = data.ChargeOnTriggerAmount;
 
-                var uiScaleProp = dataProp.FindPropertyRelative("UIScaleMultiplier");
-                if (uiScaleProp != null) uiScaleProp.floatValue = data.UIScaleMultiplier;
+                var uiScaleProp = dataProp.FindPropertyRelative("RelativeScaleMultiplier");
+                if (uiScaleProp != null) uiScaleProp.floatValue = data.RelativeScaleMultiplier;
 
                 var slowdownDurProp = dataProp.FindPropertyRelative("SnapSlowdownDuration");
                 if (slowdownDurProp != null) slowdownDurProp.floatValue = data.SnapSlowdownDuration;

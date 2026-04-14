@@ -48,7 +48,7 @@ namespace GearEngine.GearEngine.Presentation.UI
             CanvasGroup cg = rootObj.AddComponent<CanvasGroup>();
             cg.alpha = 0f;
             cg.blocksRaycasts = true;
-            cg.interactable = false;
+            cg.interactable = true;
 
             // Background
             Image bg = rootObj.AddComponent<Image>();

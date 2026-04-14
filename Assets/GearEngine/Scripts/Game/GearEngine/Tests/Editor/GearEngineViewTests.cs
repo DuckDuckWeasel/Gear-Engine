@@ -1,3 +1,4 @@
+using System;
 using GearEngine.GearEngine;
 using GearEngine.GearEngine.Presentation;
 using NUnit.Framework;
@@ -23,6 +24,31 @@ namespace GearEngine.GearEngine.Tests.Editor
             }
         }
 
+        private sealed class FakeDragService : IDragService
+        {
+            public bool IsDragging { get; private set; }
+            private object dragData;
+
+            public event Action<object> OnDragStarted;
+            public event Action OnDragEnded;
+
+            public T GetDragData<T>() where T : class => dragData as T;
+
+            public void StartDrag(object data)
+            {
+                dragData = data;
+                IsDragging = true;
+                OnDragStarted?.Invoke(data);
+            }
+
+            public void EndDrag()
+            {
+                dragData = null;
+                IsDragging = false;
+                OnDragEnded?.Invoke();
+            }
+        }
+
         [Test]
         public void HandleGearDraggedToBoard_OnSuccessfulPlacement_ConsumesInventory()
         {
@@ -31,6 +57,7 @@ namespace GearEngine.GearEngine.Tests.Editor
             BoardConfigSO boardConfig = ScriptableObject.CreateInstance<BoardConfigSO>();
             boardConfig.GridWidth = 5;
             boardConfig.GridHeight = 5;
+            boardConfig.MaxAllowedBoardGears = 10;
 
             var builder = new ContainerBuilder();
             builder.RegisterInstance(gridManager).As<IGridManager>();
@@ -47,7 +74,7 @@ namespace GearEngine.GearEngine.Tests.Editor
             }
 
             var boardVm = new BoardViewModel();
-            boardVm.Initialize(new FakeEngine(), gridManager, nodeFactory, boardConfig);
+            boardVm.Initialize(new FakeEngine(), gridManager, nodeFactory, boardConfig, dragService: new FakeDragService());
 
             var inventoryVm = new GearInventoryViewModel();
             inventoryVm.Initialize(new FakeEngine());
@@ -62,7 +89,7 @@ namespace GearEngine.GearEngine.Tests.Editor
             inventoryVm.ConsumeSpecificGear(gearData);
             Assert.AreEqual(0, inventoryVm.InventoryModel.AvailableGears.Count);
 
-            Object.DestroyImmediate(boardConfig);
+            UnityEngine.Object.DestroyImmediate(boardConfig);
         }
     }
 }

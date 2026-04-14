@@ -15,8 +15,8 @@ namespace GearEngine.GearEngine.Visuals
         private BoardConfigSO boardConfig;
         
         public IGridNode TargetNode => targetNode;
-        [ShowInInspector]
-        public bool IsBeingDragged { get; set; } = false;
+        
+
         
         private float baseRotationOffset = 0f;
 
@@ -87,6 +87,8 @@ namespace GearEngine.GearEngine.Visuals
                 GameObject instance = Instantiate(configData.VisualPrefab, transform);
                 cachedVisual = instance.transform;
                 cachedVisual.localPosition = Vector3.zero;
+                float finalScale = configData.RelativeScaleMultiplier;
+                cachedVisual.localScale = new Vector3(finalScale, finalScale, finalScale);
             }
         }
 
@@ -156,13 +158,9 @@ namespace GearEngine.GearEngine.Visuals
 
             Transform target = cachedVisual != null ? cachedVisual : transform;
 
-            // Allow native unity transforms to safely lerp
-            if (!IsBeingDragged)
-            {
-                // Lerp towards the logical position smoothly
-                Vector3 logicalWorldPos = boardConfig.GetWorldPosition(targetNode.Position);
-                transform.localPosition = Vector3.Lerp(transform.localPosition, logicalWorldPos, Time.deltaTime * 20f);
-            }
+            // Lerp towards the logical position smoothly
+            Vector3 logicalWorldPos = boardConfig.GetWorldPosition(targetNode.Position);
+            transform.localPosition = Vector3.Lerp(transform.localPosition, logicalWorldPos, Time.deltaTime * 20f);
 
             // Lerp smooth rotation including base stagger offset
             // We flip the rotation because Unity 2D standard rotates counter-clockwise with positive Z

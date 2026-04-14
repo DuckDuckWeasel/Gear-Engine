@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using GearEngine.GearEngine;
@@ -26,11 +27,37 @@ namespace GearEngine.GearEngine.Tests.Editor
             }
         }
 
+        private sealed class FakeDragService : IDragService
+        {
+            public bool IsDragging { get; private set; }
+            private object dragData;
+
+            public event Action<object> OnDragStarted;
+            public event Action OnDragEnded;
+
+            public T GetDragData<T>() where T : class => dragData as T;
+
+            public void StartDrag(object data)
+            {
+                dragData = data;
+                IsDragging = true;
+                OnDragStarted?.Invoke(data);
+            }
+
+            public void EndDrag()
+            {
+                dragData = null;
+                IsDragging = false;
+                OnDragEnded?.Invoke();
+            }
+        }
+
         private GridManager gridManager;
         private EventController eventController;
         private BoardConfigSO boardConfig;
         private GearNodeFactory nodeFactory;
         private BoardViewModel boardVm;
+        private FakeDragService fakeDragService;
         private int placedCount;
         private int removedCount;
         private readonly List<IGridNode> placedNodes = new List<IGridNode>();
@@ -44,6 +71,8 @@ namespace GearEngine.GearEngine.Tests.Editor
             boardConfig = ScriptableObject.CreateInstance<BoardConfigSO>();
             boardConfig.GridWidth = 5;
             boardConfig.GridHeight = 5;
+            boardConfig.MaxAllowedBoardGears = 5;
+            fakeDragService = new FakeDragService();
 
             var builder = new ContainerBuilder();
             builder.RegisterInstance(gridManager).As<IGridManager>();
@@ -63,7 +92,8 @@ namespace GearEngine.GearEngine.Tests.Editor
                 new FakeEngine(),
                 gridManager,
                 nodeFactory,
-                boardConfig);
+                boardConfig,
+                dragService: fakeDragService);
 
             placedCount = 0;
             removedCount = 0;
@@ -87,7 +117,7 @@ namespace GearEngine.GearEngine.Tests.Editor
         {
             if (boardConfig != null)
             {
-                Object.DestroyImmediate(boardConfig);
+                UnityEngine.Object.DestroyImmediate(boardConfig);
             }
         }
 
@@ -128,6 +158,20 @@ namespace GearEngine.GearEngine.Tests.Editor
         }
 
         [Test]
+        public void OnGearPickedUp_FiresDragServiceStartDrag()
+        {
+            var data = new GearConfigData { Id = "drag_start_test", Category = GearCategory.Base };
+            var node = new BaseGearNode(gridManager, eventController);
+            node.Initialize(new Vector2Int(1, 1), data);
+            gridManager.AddNode(node);
+
+            boardVm.OnGearPickedUp(node, new Vector2Int(1, 1));
+
+            Assert.IsTrue(fakeDragService.IsDragging, "DragService should be dragging after pickup.");
+            Assert.AreSame(data, fakeDragService.GetDragData<GearConfigData>());
+        }
+
+        [Test]
         public void OnGearDropped_EmptySlot_AddsNodeAtNewPosition()
         {
             var data = new GearConfigData { Id = "move_test", Category = GearCategory.Base };
@@ -142,6 +186,7 @@ namespace GearEngine.GearEngine.Tests.Editor
             Assert.AreSame(node, gridManager.GetNode(new Vector2Int(1, 1)));
             Assert.AreEqual(0, placedCount);
             Assert.AreEqual(0, removedCount);
+            Assert.IsFalse(fakeDragService.IsDragging, "DragService should not be dragging after drop.");
         }
 
         [Test]
@@ -215,11 +260,11 @@ namespace GearEngine.GearEngine.Tests.Editor
             Assert.Contains(dragged, removedNodes);
             Assert.Contains(atTarget, placedNodes);
 
-            Object.DestroyImmediate(nextLvl);
+            UnityEngine.Object.DestroyImmediate(nextLvl);
         }
 
         [Test]
-        public void SwapNode_DoesNotFireLifecycleEvents()
+        public void SwapNode_FiresLifecycleEvents()
         {
             var d1 = new GearConfigData { Id = "s1", Category = GearCategory.Base };
             var d2 = new GearConfigData { Id = "s2", Category = GearCategory.Base };
@@ -233,8 +278,12 @@ namespace GearEngine.GearEngine.Tests.Editor
             boardVm.OnGearPickedUp(a, new Vector2Int(0, 0));
             boardVm.OnGearDropped(a, new Vector2Int(1, 0));
 
-            Assert.AreEqual(0, placedCount);
-            Assert.AreEqual(0, removedCount);
+            // Swap fires: 1x OnGearRemoved (occupant), 2x OnGearPlaced (dragged + occupant)
+            Assert.AreEqual(1, removedCount, "OnGearRemoved should fire once for the occupant.");
+            Assert.AreEqual(2, placedCount, "OnGearPlaced should fire for both dragged and occupant.");
+            Assert.Contains(b, removedNodes);
+            Assert.Contains(a, placedNodes);
+            Assert.Contains(b, placedNodes);
         }
 
         [Test]
@@ -266,6 +315,28 @@ namespace GearEngine.GearEngine.Tests.Editor
         }
 
         [Test]
+        public void HandleInventoryDrop_RejectsWhenBoardLimitReached()
+        {
+            // Place gears up to the MaxAllowedBoardGears limit (5)
+            for (int i = 0; i < boardConfig.MaxAllowedBoardGears; i++)
+            {
+                var data = new GearConfigData { Id = $"fill_{i}", Category = GearCategory.Base };
+                Vector3 world = boardConfig.GetWorldPosition(new Vector2Int(i, 0));
+                bool placed = boardVm.HandleInventoryDrop(world, data);
+                Assert.IsTrue(placed, $"Gear {i} should be placed successfully.");
+            }
+
+            // Next placement should be rejected
+            var extraGear = new GearConfigData { Id = "overflow", Category = GearCategory.Base };
+            Vector3 overflowWorld = boardConfig.GetWorldPosition(new Vector2Int(0, 1));
+            LogAssert.Expect(LogType.Warning, new System.Text.RegularExpressions.Regex(@"Board limit reached"));
+            bool rejected = boardVm.HandleInventoryDrop(overflowWorld, extraGear);
+
+            Assert.IsFalse(rejected, "Placement should be rejected when board limit is reached.");
+            Assert.IsNull(gridManager.GetNode(new Vector2Int(0, 1)), "No gear should be at the overflow position.");
+        }
+
+        [Test]
         public void LoadLayout_AddsNodesToGridWithoutLifecycleEvents()
         {
             var gc = ScriptableObject.CreateInstance<GearConfig>();
@@ -287,7 +358,7 @@ namespace GearEngine.GearEngine.Tests.Editor
             Assert.AreEqual(0, placedCount);
             Assert.AreEqual(0, removedCount);
 
-            Object.DestroyImmediate(gc);
+            UnityEngine.Object.DestroyImmediate(gc);
         }
 
         [Test]
@@ -313,7 +384,7 @@ namespace GearEngine.GearEngine.Tests.Editor
             Assert.IsNotNull(gridManager.GetNode(new Vector2Int(1, 1)));
             Assert.AreEqual(1, gridManager.GetAllNodes().Count());
 
-            Object.DestroyImmediate(gc);
+            UnityEngine.Object.DestroyImmediate(gc);
         }
 
         [Test]
@@ -337,7 +408,7 @@ namespace GearEngine.GearEngine.Tests.Editor
 
             Assert.AreEqual(0, gridManager.GetAllNodes().Count());
 
-            Object.DestroyImmediate(gc);
+            UnityEngine.Object.DestroyImmediate(gc);
         }
 
         [Test]
@@ -358,7 +429,7 @@ namespace GearEngine.GearEngine.Tests.Editor
             }
             finally
             {
-                Object.DestroyImmediate(go);
+                UnityEngine.Object.DestroyImmediate(go);
             }
         }
     }

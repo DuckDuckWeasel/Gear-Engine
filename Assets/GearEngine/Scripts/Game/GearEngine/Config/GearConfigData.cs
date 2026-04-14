@@ -13,7 +13,8 @@ namespace GearEngine.GearEngine.Config
         public float BaseRotationSpeed;
         public GameObject VisualPrefab;
         public Sprite UIIcon;
-        public float UIScaleMultiplier = 115f; // Used to scale native visually into overlay canvases
+        [Tooltip("Relative size modifier for this specific gear (1.0 is default). Multiplication depends on the BoardConfig's GlobalGearScale.")]
+        public float RelativeScaleMultiplier = 1.0f;
         public TriggerPattern TriggerPattern = TriggerPattern.FourWay;
         public bool IsInteractable = true;
         public bool IsMovable = true;
@@ -48,7 +49,7 @@ namespace GearEngine.GearEngine.Config
                 BaseRotationSpeed = BaseRotationSpeed,
                 VisualPrefab = VisualPrefab,
                 UIIcon = UIIcon,
-                UIScaleMultiplier = UIScaleMultiplier,
+                RelativeScaleMultiplier = RelativeScaleMultiplier,
                 TriggerPattern = TriggerPattern,
                 IsInteractable = IsInteractable,
                 IsMovable = IsMovable,
