@@ -67,84 +67,108 @@ namespace GearEngine.GearEngine.Presentation.UI
                 return;
             }
 
+            ClearItemSlots();
+
+            foreach (GearConfigData gear in viewModel.InventoryModel.AvailableGears)
+            {
+                CreateSlotForGear(gear);
+            }
+        }
+
+        private void ClearItemSlots()
+        {
             foreach (Transform child in itemsContainer)
             {
                 Destroy(child.gameObject);
             }
+        }
 
-            foreach (var gear in viewModel.InventoryModel.AvailableGears)
+        private void CreateSlotForGear(GearConfigData gear)
+        {
+            GameObject slotGroup = new GameObject($"Slot_{gear.Id}");
+            slotGroup.transform.SetParent(itemsContainer, false);
+            RectTransform rect = slotGroup.AddComponent<RectTransform>();
+            rect.sizeDelta = new Vector2(120, 120);
+            UnityEngine.UI.Image img = slotGroup.AddComponent<UnityEngine.UI.Image>();
+            img.color = new Color(0.1f, 0.1f, 0.1f, 0.5f);
+            DragHandler dragger = slotGroup.AddComponent<DragHandler>();
+            GearInventorySlotView slotView = slotGroup.AddComponent<GearInventorySlotView>();
+            ConfigureDraggerForGear(dragger, gear);
+            TryAttachVisualPrefab(slotGroup, dragger, gear);
+            slotView.Bind(gear, viewModel);
+            WireDragLifecycle(dragger, gear);
+        }
+
+        private void ConfigureDraggerForGear(DragHandler dragger, GearConfigData gear)
+        {
+            if (gridBoardTag != null)
             {
-                GameObject slotGroup = new GameObject($"Slot_{gear.Id}");
-                slotGroup.transform.SetParent(itemsContainer, false);
+                dragger.AddAcceptedTag(gridBoardTag);
+            }
 
-                var rect = slotGroup.AddComponent<RectTransform>();
-                rect.sizeDelta = new Vector2(120, 120);
+            dragger.GhostScaleMultiplier = gear.UIScaleMultiplier;
+        }
 
-                var img = slotGroup.AddComponent<UnityEngine.UI.Image>();
-                img.color = new Color(0.1f, 0.1f, 0.1f, 0.5f);
+        private void WireDragLifecycle(DragHandler dragger, GearConfigData gear)
+        {
+            GearConfigData capturedGear = gear;
+            dragger.OnDragBegin += () => OnInventoryDragStarted?.Invoke(capturedGear);
+            dragger.OnDragEnd += () => OnInventoryDragEnded?.Invoke();
+        }
 
-                var dragger = slotGroup.AddComponent<DragHandler>();
-                var slotView = slotGroup.AddComponent<GearInventorySlotView>();
+        private void TryAttachVisualPrefab(GameObject slotGroup, DragHandler dragger, GearConfigData gear)
+        {
+            if (gear.VisualPrefab == null)
+            {
+                return;
+            }
 
-                if (gridBoardTag != null)
-                {
-                    dragger.AddAcceptedTag(gridBoardTag);
-                }
+            GameObject visualObj = Instantiate(gear.VisualPrefab, slotGroup.transform);
+            visualObj.name = "VisualInstance";
+            visualObj.transform.localPosition = new Vector3(0, 0, -10f);
+            visualObj.transform.localScale = new Vector3(gear.UIScaleMultiplier, gear.UIScaleMultiplier, gear.UIScaleMultiplier);
+            BuildBoostedSpriteRenderers(visualObj);
+            BuildInventoryIconOverlay(visualObj, gear);
+            dragger.GhostPrefab = visualObj;
+        }
 
-                dragger.GhostScaleMultiplier = gear.UIScaleMultiplier;
-
-                if (gear.VisualPrefab != null)
-                {
-                    GameObject visualObj = Instantiate(gear.VisualPrefab, slotGroup.transform);
-                    visualObj.name = "VisualInstance";
-                    visualObj.transform.localPosition = new Vector3(0, 0, -10f);
-
-                    visualObj.transform.localScale = new Vector3(gear.UIScaleMultiplier, gear.UIScaleMultiplier, gear.UIScaleMultiplier);
-
-                    var srs = visualObj.GetComponentsInChildren<SpriteRenderer>(true);
-                    foreach (var sr in srs)
-                    {
-                        sr.sortingOrder = 50;
-                    }
-
-                    if (gear.UIIcon != null)
-                    {
-                        GameObject iconObj = new GameObject("InventoryUIIcon");
-                        iconObj.transform.SetParent(visualObj.transform, false);
-                        iconObj.transform.localPosition = new Vector3(0, 0, -1f);
-                        iconObj.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
-
-                        SpriteRenderer iconRenderer = iconObj.AddComponent<SpriteRenderer>();
-                        iconRenderer.sprite = gear.UIIcon;
-                        iconRenderer.sortingOrder = 55;
-
-                        Shader fillShader = Shader.Find("GearEngine/Sprites/SpriteFillGrayscale");
-                        if (fillShader != null)
-                        {
-                            Material mat = new Material(fillShader);
-                            mat.SetFloat("_FillAmount", 1f);
-                            iconRenderer.material = mat;
-                        }
-                    }
-
-                    dragger.GhostPrefab = visualObj;
-                }
-
-                slotView.Bind(gear, viewModel);
-
-                // Wire drag lifecycle for trash zone visibility
-                GearConfigData capturedGear = gear;
-                dragger.OnDragBegin += () => OnInventoryDragStarted?.Invoke(capturedGear);
-                dragger.OnDragEnd += () => OnInventoryDragEnded?.Invoke();
+        private void BuildBoostedSpriteRenderers(GameObject visualObj)
+        {
+            SpriteRenderer[] srs = visualObj.GetComponentsInChildren<SpriteRenderer>(true);
+            foreach (SpriteRenderer sr in srs)
+            {
+                sr.sortingOrder = 50;
             }
         }
 
-        private void OnDestroy()
+        private void BuildInventoryIconOverlay(GameObject visualObj, GearConfigData gear)
         {
-            if (viewModel?.InventoryModel?.AvailableGears != null)
+            if (gear.UIIcon == null)
             {
-                viewModel.InventoryModel.AvailableGears.CollectionChanged -= OnInventoryCollectionChanged;
+                return;
             }
+
+            GameObject iconObj = new GameObject("InventoryUIIcon");
+            iconObj.transform.SetParent(visualObj.transform, false);
+            iconObj.transform.localPosition = new Vector3(0, 0, -1f);
+            iconObj.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
+            SpriteRenderer iconRenderer = iconObj.AddComponent<SpriteRenderer>();
+            iconRenderer.sprite = gear.UIIcon;
+            iconRenderer.sortingOrder = 55;
+            BuildFillMaterialForIcon(iconRenderer);
+        }
+
+        private void BuildFillMaterialForIcon(SpriteRenderer iconRenderer)
+        {
+            Shader fillShader = Shader.Find("GearEngine/Sprites/SpriteFillGrayscale");
+            if (fillShader == null)
+            {
+                return;
+            }
+
+            Material mat = new Material(fillShader);
+            mat.SetFloat("_FillAmount", 1f);
+            iconRenderer.material = mat;
         }
 
         [ContextMenu("Mock: UI Click First Available Gear")]
@@ -153,6 +177,14 @@ namespace GearEngine.GearEngine.Presentation.UI
             if (viewModel.InventoryModel.AvailableGears.Count > 0)
             {
                 viewModel.SelectGearLocal(viewModel.InventoryModel.AvailableGears.First());
+            }
+        }
+
+        private void OnDestroy()
+        {
+            if (viewModel?.InventoryModel?.AvailableGears != null)
+            {
+                viewModel.InventoryModel.AvailableGears.CollectionChanged -= OnInventoryCollectionChanged;
             }
         }
     }

@@ -32,9 +32,9 @@ namespace GearEngine.CarSimulation.Tests
         public void CarSplineDriver_Bind_DoesNotThrowBeforeUnityStart()
         {
             var carDef = ScriptableObject.CreateInstance<CarDefinition>();
-            var speed = ScriptableObject.CreateInstance<AttributeSO>();
+            var speed = ScriptableObject.CreateInstance<VariableSO>();
             var so = new UnityEditor.SerializedObject(speed);
-            so.FindProperty("valueType").enumValueIndex = (int)AttributeValueType.Float;
+            so.FindProperty("valueType").enumValueIndex = (int)VariableValueType.Float;
             so.ApplyModifiedPropertiesWithoutUndo();
 
             var go = new GameObject("DriverBindTest");
@@ -44,7 +44,7 @@ namespace GearEngine.CarSimulation.Tests
                 var driver = go.AddComponent<CarSplineDriver>();
                 var driverSerialized = new UnityEditor.SerializedObject(driver);
                 driverSerialized.FindProperty("splineAnimate").objectReferenceValue = splineAnimate;
-                driverSerialized.FindProperty("speedAttribute").objectReferenceValue = speed;
+                driverSerialized.FindProperty("speedVariable").objectReferenceValue = speed;
                 driverSerialized.ApplyModifiedPropertiesWithoutUndo();
 
                 CarEntity car = CarEntity.Create(carDef);

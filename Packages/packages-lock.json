@@ -76,7 +76,7 @@
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "82e0e547b7e77ed6387b7443404d14dc32247f1d"
+      "hash": "86617f4905c68917478ad957d8d262d7b213da19"
     },
     "com.scaffold.events": {
       "version": "https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.events#main",

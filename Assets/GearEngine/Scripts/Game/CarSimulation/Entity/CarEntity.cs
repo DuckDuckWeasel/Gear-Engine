@@ -1,7 +1,7 @@
 using System;
+using GearEngine.CarSimulation.Definitions;
 using Scaffold.Entities;
 using UnityEngine;
-using GearEngine.CarSimulation.Definitions;
 
 namespace GearEngine.CarSimulation.Entity
 {
@@ -15,9 +15,12 @@ namespace GearEngine.CarSimulation.Entity
 
         public EntityInstance<CarDefinition> Instance => instance;
 
+        [SerializeField] private EntityInstance<CarDefinition> instance;
+
         public CarDefinition Definition => instance.Definition;
 
-        [SerializeField] private EntityInstance<CarDefinition> instance;
+        private static readonly EntityInstanceCreator<CarDefinition> instanceCreator =
+            new EntityInstanceCreator<CarDefinition>(new IncrementingInstanceIdGenerator());
 
         public static CarEntity Create(CarDefinition definition)
         {
@@ -26,7 +29,7 @@ namespace GearEngine.CarSimulation.Entity
                 throw new ArgumentNullException(nameof(definition));
             }
 
-            return new CarEntity(EntityInstanceFactory.CreateInstance(definition));
+            return new CarEntity(instanceCreator.Create(definition));
         }
     }
 }

@@ -62,24 +62,24 @@ namespace GearEngine.CarSimulation.Editor
             AssetDatabase.CreateFolder(parent, name);
         }
 
-        private static AttributeSO CreateOrLoadSpeedAsset()
+        private static VariableSO CreateOrLoadSpeedAsset()
         {
-            var existing = AssetDatabase.LoadAssetAtPath<AttributeSO>(speedAssetPath);
+            var existing = AssetDatabase.LoadAssetAtPath<VariableSO>(speedAssetPath);
             if (existing != null)
             {
                 return existing;
             }
 
-            var speed = ScriptableObject.CreateInstance<AttributeSO>();
+            var speed = ScriptableObject.CreateInstance<VariableSO>();
             AssetDatabase.CreateAsset(speed, speedAssetPath);
             var so = new SerializedObject(speed);
-            so.FindProperty("valueType").enumValueIndex = (int)AttributeValueType.Float;
+            so.FindProperty("valueType").enumValueIndex = (int)VariableValueType.Float;
             so.ApplyModifiedPropertiesWithoutUndo();
             EditorUtility.SetDirty(speed);
             return speed;
         }
 
-        private static GameObject CreateOrLoadCarPrefab(AttributeSO speed)
+        private static GameObject CreateOrLoadCarPrefab(VariableSO speed)
         {
             var existing = AssetDatabase.LoadAssetAtPath<GameObject>(carPrefabPath);
             if (existing != null)
@@ -131,7 +131,7 @@ namespace GearEngine.CarSimulation.Editor
             return spline;
         }
 
-        private static void EnsureCarPrefabDriverAndViewWired(AttributeSO speed)
+        private static void EnsureCarPrefabDriverAndViewWired(VariableSO speed)
         {
             GameObject contents = PrefabUtility.LoadPrefabContents(carPrefabPath);
             try
@@ -144,7 +144,7 @@ namespace GearEngine.CarSimulation.Editor
             }
         }
 
-        private static void RepairCarPrefabContentsIfSplinePresent(GameObject contents, AttributeSO speed)
+        private static void RepairCarPrefabContentsIfSplinePresent(GameObject contents, VariableSO speed)
         {
             var spline = contents.GetComponent<SplineAnimate>();
             if (spline == null)
@@ -157,13 +157,13 @@ namespace GearEngine.CarSimulation.Editor
             PrefabUtility.SaveAsPrefabAsset(contents, carPrefabPath);
         }
 
-        private static void WireCarDriver(GameObject go, SplineAnimate spline, AttributeSO speed)
+        private static void WireCarDriver(GameObject go, SplineAnimate spline, VariableSO speed)
         {
             var driver = go.GetComponent<CarSplineDriver>() ?? go.AddComponent<CarSplineDriver>();
             var carView = go.GetComponent<CarView>() ?? go.AddComponent<CarView>();
             var driverSo = new SerializedObject(driver);
             driverSo.FindProperty("splineAnimate").objectReferenceValue = spline;
-            driverSo.FindProperty("speedAttribute").objectReferenceValue = speed;
+            driverSo.FindProperty("speedVariable").objectReferenceValue = speed;
             driverSo.ApplyModifiedPropertiesWithoutUndo();
             var carViewSo = new SerializedObject(carView);
             carViewSo.FindProperty("splineDriver").objectReferenceValue = driver;
@@ -172,7 +172,7 @@ namespace GearEngine.CarSimulation.Editor
             EditorUtility.SetDirty(carView);
         }
 
-        private static CarDefinition CreateOrLoadCarDefinition(AttributeSO speed, GameObject carPrefab)
+        private static CarDefinition CreateOrLoadCarDefinition(VariableSO speed, GameObject carPrefab)
         {
             var existing = AssetDatabase.LoadAssetAtPath<CarDefinition>(carDefinitionPath);
             if (existing != null)
@@ -189,7 +189,7 @@ namespace GearEngine.CarSimulation.Editor
             return def;
         }
 
-        private static void WriteCarDefinitionEntries(SerializedObject defSo, GameObject carPrefab, AttributeSO speed)
+        private static void WriteCarDefinitionEntries(SerializedObject defSo, GameObject carPrefab, VariableSO speed)
         {
             defSo.FindProperty("carPrefab").objectReferenceValue = carPrefab;
             SerializedProperty bagProp = defSo.FindProperty("bag");
@@ -202,8 +202,8 @@ namespace GearEngine.CarSimulation.Editor
             SerializedProperty entries = bagProp.FindPropertyRelative("entries");
             entries.arraySize = 1;
             SerializedProperty e0 = entries.GetArrayElementAtIndex(0);
-            e0.FindPropertyRelative("attribute").objectReferenceValue = speed;
-            e0.FindPropertyRelative("baseValue").managedReferenceValue = new FloatAttributeValue { Value = 10f };
+            e0.FindPropertyRelative("variable").objectReferenceValue = speed;
+            e0.FindPropertyRelative("baseValue").managedReferenceValue = new FloatVariableValue { Value = 10f };
         }
 
         private static void WireScene(CarDefinition carDefinition)

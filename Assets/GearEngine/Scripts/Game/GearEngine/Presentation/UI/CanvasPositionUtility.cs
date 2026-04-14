@@ -2,20 +2,8 @@ using UnityEngine;
 
 namespace GearEngine.GearEngine.Presentation.UI
 {
-    /// <summary>
-    /// Reusable utility for positioning canvas-space UI elements relative to world-space anchors.
-    /// Used by any programmatic UI that needs to track a world position projected onto a canvas
-    /// (e.g. trash zone, floating labels, tooltips).
-    /// </summary>
     public static class CanvasPositionUtility
     {
-        /// <summary>
-        /// Computes the canvas-local position for a given world position.
-        /// </summary>
-        /// <param name="canvas">The target canvas.</param>
-        /// <param name="worldPos">World-space position to project.</param>
-        /// <param name="localPoint">Resulting position in the canvas's local coordinate space.</param>
-        /// <returns>True if the conversion succeeded, false if no camera was available.</returns>
         public static bool WorldToCanvasLocal(Canvas canvas, Vector3 worldPos, out Vector2 localPoint)
         {
             localPoint = Vector2.zero;
@@ -25,12 +13,7 @@ namespace GearEngine.GearEngine.Presentation.UI
                 return false;
             }
 
-            Camera cam = canvas.worldCamera;
-            if (cam == null)
-            {
-                cam = Camera.main;
-            }
-
+            Camera cam = ResolveWorldCamera(canvas);
             if (cam == null)
             {
                 return false;
@@ -38,21 +21,11 @@ namespace GearEngine.GearEngine.Presentation.UI
 
             RectTransform canvasRect = canvas.GetComponent<RectTransform>();
             Vector3 screenPos = cam.WorldToScreenPoint(worldPos);
+            Camera overlayCam = canvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : cam;
 
-            return RectTransformUtility.ScreenPointToLocalPointInRectangle(
-                canvasRect,
-                screenPos,
-                canvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : cam,
-                out localPoint);
+            return RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRect, screenPos, overlayCam, out localPoint);
         }
 
-        /// <summary>
-        /// Computes the canvas-local position for a screen-space point (e.g. pointer position).
-        /// </summary>
-        /// <param name="canvas">The target canvas.</param>
-        /// <param name="screenPoint">Screen-space position (e.g. Input.mousePosition).</param>
-        /// <param name="localPoint">Resulting position in the canvas's local coordinate space.</param>
-        /// <returns>True if the conversion succeeded.</returns>
         public static bool ScreenToCanvasLocal(Canvas canvas, Vector2 screenPoint, out Vector2 localPoint)
         {
             localPoint = Vector2.zero;
@@ -65,40 +38,13 @@ namespace GearEngine.GearEngine.Presentation.UI
             RectTransform canvasRect = canvas.GetComponent<RectTransform>();
             Camera cam = canvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : canvas.worldCamera;
 
-            return RectTransformUtility.ScreenPointToLocalPointInRectangle(
-                canvasRect,
-                screenPoint,
-                cam,
-                out localPoint);
+            return RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRect, screenPoint, cam, out localPoint);
         }
 
-        /// <summary>
-        /// Positions a RectTransform at a world position projected into canvas space, with pixel offset.
-        /// Sets center anchoring (0.5, 0.5) and a configurable pivot for alignment control.
-        /// Falls back to a canvas-relative anchor if no camera is available.
-        /// </summary>
-        /// <param name="rect">The RectTransform to position.</param>
-        /// <param name="canvas">The parent canvas.</param>
-        /// <param name="worldPos">World-space anchor point.</param>
-        /// <param name="offset">Pixel offset in canvas local space applied after projection.</param>
-        /// <param name="pivot">
-        /// Pivot of the rect relative to the anchor.
-        /// (0.5, 0.5) centers the rect on the anchor.
-        /// (0, 0.5) aligns the left edge to the anchor.
-        /// (1, 0.5) aligns the right edge to the anchor.
-        /// </param>
-        public static void AnchorToWorldPosition(
-            RectTransform rect,
-            Canvas canvas,
-            Vector3 worldPos,
-            Vector2 offset,
-            Vector2? pivot = null)
+        public static void AnchorToWorldPosition(RectTransform rect, Canvas canvas, Vector3 worldPos, Vector2 offset, Vector2? pivot = null)
         {
             Vector2 usedPivot = pivot ?? new Vector2(0.5f, 0.5f);
-
-            rect.anchorMin = new Vector2(0.5f, 0.5f);
-            rect.anchorMax = new Vector2(0.5f, 0.5f);
-            rect.pivot = usedPivot;
+            ApplyCenterAnchors(rect, usedPivot);
 
             if (WorldToCanvasLocal(canvas, worldPos, out Vector2 localPoint))
             {
@@ -106,12 +52,34 @@ namespace GearEngine.GearEngine.Presentation.UI
             }
             else
             {
-                // Fallback — anchor to top-right of canvas
-                rect.anchorMin = new Vector2(1f, 1f);
-                rect.anchorMax = new Vector2(1f, 1f);
-                rect.pivot = new Vector2(1f, 1f);
-                rect.anchoredPosition = new Vector2(-30f, -30f);
+                ApplyCanvasFallbackAnchor(rect);
             }
+        }
+
+        private static Camera ResolveWorldCamera(Canvas canvas)
+        {
+            Camera cam = canvas.worldCamera;
+            if (cam == null)
+            {
+                cam = Camera.main;
+            }
+
+            return cam;
+        }
+
+        private static void ApplyCenterAnchors(RectTransform rect, Vector2 usedPivot)
+        {
+            rect.anchorMin = new Vector2(0.5f, 0.5f);
+            rect.anchorMax = new Vector2(0.5f, 0.5f);
+            rect.pivot = usedPivot;
+        }
+
+        private static void ApplyCanvasFallbackAnchor(RectTransform rect)
+        {
+            rect.anchorMin = new Vector2(1f, 1f);
+            rect.anchorMax = new Vector2(1f, 1f);
+            rect.pivot = new Vector2(1f, 1f);
+            rect.anchoredPosition = new Vector2(-30f, -30f);
         }
     }
 }

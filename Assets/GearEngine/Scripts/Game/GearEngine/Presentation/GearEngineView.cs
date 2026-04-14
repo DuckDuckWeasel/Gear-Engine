@@ -35,33 +35,44 @@ namespace GearEngine.GearEngine.Presentation
                 return;
             }
 
-            Canvas overlayCanvas = GetComponentInParent<Canvas>();
-            if (overlayCanvas == null)
-            {
-                overlayCanvas = FindObjectOfType<Canvas>();
-            }
-
+            Canvas overlayCanvas = ResolveOverlayCanvas();
             if (overlayCanvas == null)
             {
                 Debug.LogWarning("[GearEngineView] No Canvas found — trash feature disabled.");
                 return;
             }
 
-            trashFeature = new GearTrashFeature(
-                viewModel.Board,
-                viewModel.Inventory,
-                overlayCanvas,
-                viewModel.Board.BoardConfig,
-                toggle != null ? toggle.TrashAlignment : TrashZoneAlignment.Right,
-                toggle?.TrashZoneTag,
-                toggle?.TrashIcon);
+            trashFeature = BuildTrashFeature(overlayCanvas, toggle);
+            WireTrashFeatureToBoard();
+            WireTrashFeatureToInventory();
+        }
 
-            // Board drag lifecycle → trash feature
+        private Canvas ResolveOverlayCanvas()
+        {
+            Canvas overlayCanvas = GetComponentInParent<Canvas>();
+            if (overlayCanvas == null)
+            {
+                overlayCanvas = FindObjectOfType<Canvas>();
+            }
+
+            return overlayCanvas;
+        }
+
+        private GearTrashFeature BuildTrashFeature(Canvas overlayCanvas, GearEngineFeatureToggleSO toggle)
+        {
+            TrashZoneAlignment alignment = toggle != null ? toggle.TrashAlignment : TrashZoneAlignment.Right;
+            return new GearTrashFeature(viewModel.Board, viewModel.Inventory, overlayCanvas, viewModel.Board.BoardConfig, alignment, toggle?.TrashZoneTag, toggle?.TrashIcon);
+        }
+
+        private void WireTrashFeatureToBoard()
+        {
             boardView.OnDragStarted += trashFeature.OnDragStarted;
             boardView.OnDragEnded += trashFeature.OnDragEnded;
             boardView.OnTrashDropRequested += trashFeature.OnTrashDropRequested;
+        }
 
-            // Inventory drag lifecycle → trash feature
+        private void WireTrashFeatureToInventory()
+        {
             inventoryView.OnInventoryDragStarted += trashFeature.OnDragStarted;
             inventoryView.OnInventoryDragEnded += trashFeature.OnDragEnded;
         }
@@ -102,31 +113,51 @@ namespace GearEngine.GearEngine.Presentation
 
         private void OnDestroy()
         {
-            if (boardView != null)
+            UnsubscribeBoardTrash();
+            UnsubscribeInventoryTrash();
+            UnsubscribeViewModel();
+            DisposeTrashFeature();
+        }
+
+        private void UnsubscribeBoardTrash()
+        {
+            if (boardView == null)
             {
-                boardView.OnGearDroppedOverUI -= HandleGearDroppedOverUI;
-
-                if (trashFeature != null)
-                {
-                    boardView.OnDragStarted -= trashFeature.OnDragStarted;
-                    boardView.OnDragEnded -= trashFeature.OnDragEnded;
-                    boardView.OnTrashDropRequested -= trashFeature.OnTrashDropRequested;
-                }
-
-                boardView.Unbind();
+                return;
             }
 
-            if (inventoryView != null && trashFeature != null)
+            boardView.OnGearDroppedOverUI -= HandleGearDroppedOverUI;
+            if (trashFeature != null)
             {
-                inventoryView.OnInventoryDragStarted -= trashFeature.OnDragStarted;
-                inventoryView.OnInventoryDragEnded -= trashFeature.OnDragEnded;
+                boardView.OnDragStarted -= trashFeature.OnDragStarted;
+                boardView.OnDragEnded -= trashFeature.OnDragEnded;
+                boardView.OnTrashDropRequested -= trashFeature.OnTrashDropRequested;
             }
 
+            boardView.Unbind();
+        }
+
+        private void UnsubscribeInventoryTrash()
+        {
+            if (inventoryView == null || trashFeature == null)
+            {
+                return;
+            }
+
+            inventoryView.OnInventoryDragStarted -= trashFeature.OnDragStarted;
+            inventoryView.OnInventoryDragEnded -= trashFeature.OnDragEnded;
+        }
+
+        private void UnsubscribeViewModel()
+        {
             if (viewModel != null)
             {
                 viewModel.Inventory.OnGearDraggedToBoard -= HandleGearDraggedToBoard;
             }
+        }
 
+        private void DisposeTrashFeature()
+        {
             trashFeature?.Dispose();
             trashFeature = null;
         }

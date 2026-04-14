@@ -1,3 +1,4 @@
+using System;
 using System.Reflection;
 using GearEngine.CarSimulation;
 using GearEngine.CarSimulation.Definitions;
@@ -7,13 +8,34 @@ using GearEngine.GearEngine.Config;
 using GearEngine.GearEngine.Manager;
 using GearEngine.GearEngine.Nodes;
 using NUnit.Framework;
+using Scaffold.Navigation.Contracts;
 using UnityEngine;
 using VContainer;
+using Object = UnityEngine.Object;
 
 namespace GearEngine.Race.Tests.Editor
 {
     public sealed class RaceViewModelToggleTests
     {
+        private sealed class NoOpNavigation : INavigation
+        {
+            public IViewController CurrentController => null;
+
+            public void Open<TViewController>(TViewController controller, bool closeCurrent = false, NavigationOptions options = null)
+                where TViewController : IViewController
+            {
+            }
+
+            public void Close<TViewController>(TViewController controller) where TViewController : IViewController
+            {
+            }
+
+            public IViewController Return()
+            {
+                return null;
+            }
+        }
+
         private sealed class FakeEngine : IGearEngineService
         {
             public bool IsRunning { get; set; }
@@ -133,6 +155,7 @@ namespace GearEngine.Race.Tests.Editor
             InjectPrivateField(vm, "nodeFactory", nodeFactory);
             InjectPrivateField(vm, "boardConfig", boardConfig);
             InjectPrivateField(vm, "trackFactory", trackFactory);
+            InjectPrivateFieldInHierarchy(vm, "navigation", new NoOpNavigation());
 
             InvokeProtectedInitialize(vm);
             return vm;
@@ -160,6 +183,22 @@ namespace GearEngine.Race.Tests.Editor
             FieldInfo field = target.GetType().GetField(name, BindingFlags.Instance | BindingFlags.NonPublic);
             Assert.That(field, Is.Not.Null);
             field.SetValue(target, value);
+        }
+
+        private static void InjectPrivateFieldInHierarchy(object target, string name, object value)
+        {
+            const BindingFlags flags = BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.DeclaredOnly;
+            for (Type type = target.GetType(); type != null; type = type.BaseType)
+            {
+                FieldInfo field = type.GetField(name, flags);
+                if (field != null)
+                {
+                    field.SetValue(target, value);
+                    return;
+                }
+            }
+
+            Assert.Fail($"Field '{name}' not found on type hierarchy of {target.GetType()}.");
         }
     }
 }

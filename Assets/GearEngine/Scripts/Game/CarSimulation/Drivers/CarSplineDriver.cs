@@ -2,6 +2,7 @@ using System;
 using GearEngine.CarSimulation.Entity;
 using Scaffold.Entities;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.Splines;
 
 namespace GearEngine.CarSimulation.Drivers
@@ -9,7 +10,8 @@ namespace GearEngine.CarSimulation.Drivers
     internal sealed class CarSplineDriver : MonoBehaviour
     {
         [SerializeField] private SplineAnimate splineAnimate;
-        [SerializeField] private AttributeSO speedAttribute;
+        [FormerlySerializedAs("speedAttribute")]
+        [SerializeField] private VariableSO speedVariable;
 
         private CarEntity car = null!;
         private IDisposable speedSubscription;
@@ -20,7 +22,7 @@ namespace GearEngine.CarSimulation.Drivers
             speedSubscription?.Dispose();
             car = carEntity;
             ApplySplineSettings(splineContainer);
-            speedSubscription = car.Instance.SubscribeToAttribute<FloatAttributeValue>(speedAttribute, OnSpeedChanged);
+            speedSubscription = car.Instance.Subscribe(speedVariable, OnSpeedChanged);
         }
 
         private void ValidateBindArguments(CarEntity carEntity, SplineContainer splineContainer)
@@ -70,12 +72,14 @@ namespace GearEngine.CarSimulation.Drivers
             }
         }
 
-        private void OnSpeedChanged(FloatAttributeValue value)
+        private void OnSpeedChanged(VariableValue value)
         {
-            if (splineAnimate != null)
+            if (splineAnimate == null || value is not FloatVariableValue f)
             {
-                splineAnimate.MaxSpeed = value.Value;
+                return;
             }
+
+            splineAnimate.MaxSpeed = f.Value;
         }
 
         private void OnDestroy()

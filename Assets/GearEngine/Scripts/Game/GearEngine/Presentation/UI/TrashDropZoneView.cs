@@ -7,15 +7,11 @@ using TMPro;
 
 namespace GearEngine.GearEngine.Presentation.UI
 {
-    /// <summary>
-    /// Trash drop zone anchored to the top-right of the overlay Canvas.
-    /// Appears when a deletable gear is being dragged and shows the reward amount.
-    /// UI hierarchy is built by <see cref="TrashDropZoneFactory"/>.
-    /// </summary>
     public sealed class TrashDropZoneView : MonoBehaviour, IDropHandler
     {
-        public event Action<GearConfigData> OnInventoryGearDropped;
         [Header("References")]
+        public RectTransform ZoneRect => rootPanel;
+
         [SerializeField] private RectTransform rootPanel;
         [SerializeField] private Image trashIcon;
         [SerializeField] private TextMeshProUGUI rewardLabel;
@@ -31,12 +27,8 @@ namespace GearEngine.GearEngine.Presentation.UI
         private float animationProgress;
         private Vector3 baseScale;
 
-        /// <summary>The RectTransform used for overlap detection by the drag handler.</summary>
-        public RectTransform ZoneRect => rootPanel;
+        public event Action<GearConfigData> OnInventoryGearDropped;
 
-        /// <summary>
-        /// Called by <see cref="TrashDropZoneFactory"/> to wire serialized fields after creation.
-        /// </summary>
         internal void SetReferences(RectTransform root, Image icon, TextMeshProUGUI label, CanvasGroup cg)
         {
             rootPanel = root;
@@ -53,10 +45,6 @@ namespace GearEngine.GearEngine.Presentation.UI
             }
 
             baseScale = rootPanel != null ? rootPanel.localScale : Vector3.one;
-
-            // Initialize visual state only — don't call Hide() here because Awake
-            // fires on the first SetActive(true) from Show(), and calling
-            // SetActive(false) inside Awake would immediately undo the Show().
             animationProgress = 0f;
             if (canvasGroup != null)
             {
@@ -64,9 +52,6 @@ namespace GearEngine.GearEngine.Presentation.UI
             }
         }
 
-        /// <summary>
-        /// Called when a drag starts. Shows the zone if the gear is deletable.
-        /// </summary>
         public void OnDragStarted(GearConfigData gearData)
         {
             if (gearData == null || !gearData.IsDeletable)
@@ -79,13 +64,41 @@ namespace GearEngine.GearEngine.Presentation.UI
             Show();
         }
 
-        /// <summary>
-        /// Called when a drag ends (drop, cancel, etc). Hides the zone.
-        /// </summary>
         public void OnDragEnded()
         {
             isHovered = false;
             Hide(immediate: false);
+        }
+
+        public void SetHovered(bool hovered)
+        {
+            isHovered = hovered;
+
+            if (trashIcon != null)
+            {
+                trashIcon.color = hovered ? new Color(1f, 0.4f, 0.4f, 1f) : Color.white;
+            }
+        }
+
+        public void OnDrop(PointerEventData eventData)
+        {
+            if (eventData.pointerDrag == null)
+            {
+                return;
+            }
+
+            var slotView = eventData.pointerDrag.GetComponent<GearInventorySlotView>();
+            var dragHandler = eventData.pointerDrag.GetComponent<DragHandler>();
+
+            if (dragHandler != null)
+            {
+                dragHandler.ForceGhostCleanup();
+            }
+
+            if (slotView != null && slotView.BoundGearData != null)
+            {
+                OnInventoryGearDropped?.Invoke(slotView.BoundGearData);
+            }
         }
 
         private void Show()
@@ -113,6 +126,13 @@ namespace GearEngine.GearEngine.Presentation.UI
 
         private void Update()
         {
+            TickFadeAnimation();
+            TickScaleAnimation();
+            TickAutoHideWhenFaded();
+        }
+
+        private void TickFadeAnimation()
+        {
             float target = isShowing ? 1f : 0f;
             float speed = isShowing ? (1f / Mathf.Max(fadeInDuration, 0.01f)) : (1f / Mathf.Max(fadeOutDuration, 0.01f));
             animationProgress = Mathf.MoveTowards(animationProgress, target, Time.unscaledDeltaTime * speed);
@@ -121,32 +141,23 @@ namespace GearEngine.GearEngine.Presentation.UI
             {
                 canvasGroup.alpha = animationProgress;
             }
+        }
 
-            // Scale for hover feedback
+        private void TickScaleAnimation()
+        {
             float scaleFactor = isHovered ? hoverScaleMultiplier : 1f;
             Vector3 targetScale = baseScale * Mathf.Lerp(1f, scaleFactor, animationProgress);
             if (rootPanel != null)
             {
                 rootPanel.localScale = Vector3.Lerp(rootPanel.localScale, targetScale, Time.unscaledDeltaTime * 12f);
             }
+        }
 
-            // Auto-hide when fully faded out
+        private void TickAutoHideWhenFaded()
+        {
             if (!isShowing && animationProgress <= 0f)
             {
                 gameObject.SetActive(false);
-            }
-        }
-
-        /// <summary>Called externally when the pointer enters the trash zone during a drag.</summary>
-        public void SetHovered(bool hovered)
-        {
-            isHovered = hovered;
-
-            if (trashIcon != null)
-            {
-                trashIcon.color = hovered
-                    ? new Color(1f, 0.4f, 0.4f, 1f)
-                    : Color.white;
             }
         }
 
@@ -155,27 +166,6 @@ namespace GearEngine.GearEngine.Presentation.UI
             if (rewardLabel != null)
             {
                 rewardLabel.text = $"+{rewardAmount}";
-            }
-        }
-
-        public void OnDrop(PointerEventData eventData)
-        {
-            if (eventData.pointerDrag != null)
-            {
-                var slotView = eventData.pointerDrag.GetComponent<GearInventorySlotView>();
-                var dragHandler = eventData.pointerDrag.GetComponent<DragHandler>();
-
-                // Force ghost cleanup immediately before the UI list rebuild destroys the DragHandler.
-                // This resolves EventSystem race conditions deterministically without needing a frame delay.
-                if (dragHandler != null)
-                {
-                    dragHandler.ForceGhostCleanup();
-                }
-
-                if (slotView != null && slotView.BoundGearData != null)
-                {
-                    OnInventoryGearDropped?.Invoke(slotView.BoundGearData);
-                }
             }
         }
     }

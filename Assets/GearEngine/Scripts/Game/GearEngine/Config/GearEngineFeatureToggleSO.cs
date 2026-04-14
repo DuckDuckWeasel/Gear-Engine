@@ -10,10 +10,6 @@ namespace GearEngine.GearEngine.Config
         Right
     }
 
-    /// <summary>
-    /// Design-time feature toggle for GearEngine optional mechanics.
-    /// Assigned in the DI scope; read by views and view models to gate features.
-    /// </summary>
     [CreateAssetMenu(menuName = "GearEngine/Feature Toggle", fileName = "GearEngineFeatureToggle")]
     public sealed class GearEngineFeatureToggleSO : ScriptableObject
     {

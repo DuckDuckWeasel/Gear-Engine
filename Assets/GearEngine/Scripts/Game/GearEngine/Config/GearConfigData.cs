@@ -13,57 +13,61 @@ namespace GearEngine.GearEngine.Config
         public float BaseRotationSpeed;
         public GameObject VisualPrefab;
         public Sprite UIIcon;
-        public float UIScaleMultiplier = 115f; // Used to scale native visually into overlay canvases
+        public float UIScaleMultiplier = 115f;
         public TriggerPattern TriggerPattern = TriggerPattern.FourWay;
         public bool IsInteractable = true;
         public bool IsMovable = true;
         public bool IsReturnable = true;
 
-        // Progression Mechanics
         public float MaxCharge = 100f;
-        public float ChargeOverTimeAmount = 10f; // Amount gained per second from CoreGear
-        public float ChargeOnTriggerAmount = 25f; // Amount gained when hit by a trigger
+        public float ChargeOverTimeAmount = 10f;
+        public float ChargeOnTriggerAmount = 25f;
 
-        // Snap Feedback Mechanics
         public float SnapSlowdownDuration = 0.5f;
         public float SnapSlowdownMultiplier = 0.15f;
         public float TriggerSpinDegrees = 45f;
 
-        // Delete / Scrap Mechanics (opt-in)
         public bool IsDeletable = false;
         public int DeleteRewardAmount = 0;
 
-        // Abilities configured specifically for this gear
         public List<GearAbilitySO> Abilities = new List<GearAbilitySO>();
 
-        // Runtime copy of the next level config
         [NonSerialized] public GearConfig NextLevelConfig;
 
         public GearConfigData Clone(GearConfig nextLevelConfig, List<GearAbilitySO> abilities)
         {
-            return new GearConfigData
-            {
-                Id = Id,
-                Category = Category,
-                BaseRotationSpeed = BaseRotationSpeed,
-                VisualPrefab = VisualPrefab,
-                UIIcon = UIIcon,
-                UIScaleMultiplier = UIScaleMultiplier,
-                TriggerPattern = TriggerPattern,
-                IsInteractable = IsInteractable,
-                IsMovable = IsMovable,
-                IsReturnable = IsReturnable,
-                MaxCharge = MaxCharge,
-                ChargeOverTimeAmount = ChargeOverTimeAmount,
-                ChargeOnTriggerAmount = ChargeOnTriggerAmount,
-                SnapSlowdownDuration = SnapSlowdownDuration,
-                SnapSlowdownMultiplier = SnapSlowdownMultiplier,
-                TriggerSpinDegrees = TriggerSpinDegrees,
-                IsDeletable = IsDeletable,
-                DeleteRewardAmount = DeleteRewardAmount,
-                NextLevelConfig = nextLevelConfig,
-                Abilities = new List<GearAbilitySO>(abilities ?? new List<GearAbilitySO>())
-            };
+            var copy = new GearConfigData();
+            BuildCoreAndUiCopy(source: this, dest: copy);
+            BuildProgressionCopy(source: this, dest: copy);
+            copy.NextLevelConfig = nextLevelConfig;
+            copy.Abilities = new List<GearAbilitySO>(abilities ?? new List<GearAbilitySO>());
+            return copy;
+        }
+
+        private static void BuildCoreAndUiCopy(GearConfigData source, GearConfigData dest)
+        {
+            dest.Id = source.Id;
+            dest.Category = source.Category;
+            dest.BaseRotationSpeed = source.BaseRotationSpeed;
+            dest.VisualPrefab = source.VisualPrefab;
+            dest.UIIcon = source.UIIcon;
+            dest.UIScaleMultiplier = source.UIScaleMultiplier;
+            dest.TriggerPattern = source.TriggerPattern;
+            dest.IsInteractable = source.IsInteractable;
+            dest.IsMovable = source.IsMovable;
+            dest.IsReturnable = source.IsReturnable;
+        }
+
+        private static void BuildProgressionCopy(GearConfigData source, GearConfigData dest)
+        {
+            dest.MaxCharge = source.MaxCharge;
+            dest.ChargeOverTimeAmount = source.ChargeOverTimeAmount;
+            dest.ChargeOnTriggerAmount = source.ChargeOnTriggerAmount;
+            dest.SnapSlowdownDuration = source.SnapSlowdownDuration;
+            dest.SnapSlowdownMultiplier = source.SnapSlowdownMultiplier;
+            dest.TriggerSpinDegrees = source.TriggerSpinDegrees;
+            dest.IsDeletable = source.IsDeletable;
+            dest.DeleteRewardAmount = source.DeleteRewardAmount;
         }
     }
 }
