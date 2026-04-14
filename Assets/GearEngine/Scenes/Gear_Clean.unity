@@ -256,6 +256,7 @@ MonoBehaviour:
     - {fileID: 11400000, guid: 69e686b79377d4526aa5270b340e53a2, type: 2}
     - {fileID: 11400000, guid: fc9fa8903c002405f937050464c1d2a5, type: 2}
     - {fileID: 11400000, guid: 9f0ce76835399481e9aaf8f8af8f41ca, type: 2}
+    maxInventorySlots: 5
 --- !u!114 &752330615
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -701,6 +702,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8797920028067678339, guid: 92188c92e2caa3240ae6016fd22d425d, type: 3}
+      propertyPath: slotPrefab
+      value: 
+      objectReference: {fileID: 2214151973688211825, guid: 87597cc13e8d24ee089e6ea42d9aaed7, type: 3}
     - target: {fileID: 9036650705840224816, guid: 92188c92e2caa3240ae6016fd22d425d, type: 3}
       propertyPath: boardView
       value: 
