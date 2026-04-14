@@ -2,6 +2,22 @@
 
 This document records the agreed model for the single-car track simulation. It is a specification for implementation and future tuning, not a user guide.
 
+## Conversation context (compact)
+
+**What we were trying to achieve.** The existing simulation felt **too realistic and complex** for the product goal. We wanted a lighter model that still reads as racing: clear knobs for **how fast on straights**, **how fast in corners**, and **how likely / severe corner mistakes are**, plus **acceleration** split into **automatic** slowdown when the track forces a lower cap and **gameplay-driven** bursts that do not require simulating full vehicle physics.
+
+**Direction we converged on.** Separate **geometry caps** (straight max vs curve max) from **execution risk** (handling → overshoot). Slowdown toward the curve cap should feel **automatic**; handling should mainly gate **line error** (drift vs correct) rather than duplicate the cap logic. **Single-car races** were confirmed, so **drafting / slipstream between cars is out of scope** (no second car wake). Solo “DRS zones” or push-to-pass remain possible later as **segment modifiers**, not as drafting.
+
+**Decisions captured here.**
+
+| Topic | Decision |
+|--------|-----------|
+| Look-ahead | **As simple as possible:** distance from speed (and a floor), not a full braking-distance integral unless we add it later. |
+| Overshoot | **Procedural core:** curve demand (e.g. curvature-related “force”) × current speed → overshoot **potential**, scaled by **handling**, plus a **small random component** also scaled by handling. **Outcomes are a mix:** drift vs correct, costing mainly **time and space**, optionally **speed**. |
+| Acceleration bank | **Stackable** (`+10` twice → `20`). **All-at-once apply** for now (spread over ticks later). **Normal** apply only: pushes toward cap, **never through** it; **extra boost** ignoring cap is explicitly later. **Clamp once at the end** of the step, then **consume** the bank to zero. **Each major step in its own method** so tick **order can change** without a rewrite. |
+
+The sections below spell out the same contract in implementation-oriented detail.
+
 ## Goals
 
 - Replace overly realistic dynamics with a small set of **orthogonal, tunable** stats.
