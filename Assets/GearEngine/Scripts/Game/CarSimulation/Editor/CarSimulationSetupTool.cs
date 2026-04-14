@@ -91,8 +91,8 @@ namespace GearEngine.CarSimulation.Editor
             var go = GameObject.CreatePrimitive(PrimitiveType.Cube);
             go.name = "Car";
             ApplyCarVisual(go);
-            var spline = ConfigureCarSpline(go);
-            WireCarDriver(go, spline, speed);
+            ConfigureCarSpline(go);
+            WireCarDriver(go);
             PrefabUtility.SaveAsPrefabAsset(go, carPrefabPath);
             Object.DestroyImmediate(go);
             return AssetDatabase.LoadAssetAtPath<GameObject>(carPrefabPath);
@@ -121,14 +121,13 @@ namespace GearEngine.CarSimulation.Editor
             renderer.sharedMaterial = mat;
         }
 
-        private static SplineAnimate ConfigureCarSpline(GameObject go)
+        private static void ConfigureCarSpline(GameObject go)
         {
-            var spline = go.AddComponent<SplineAnimate>();
+            var spline = go.GetComponent<SplineAnimate>() ?? go.AddComponent<SplineAnimate>();
             spline.PlayOnAwake = false;
             spline.AnimationMethod = SplineAnimate.Method.Speed;
             spline.Easing = SplineAnimate.EasingMode.None;
             spline.Loop = SplineAnimate.LoopMode.Loop;
-            return spline;
         }
 
         private static void EnsureCarPrefabDriverAndViewWired(VariableSO speed)
@@ -136,7 +135,7 @@ namespace GearEngine.CarSimulation.Editor
             GameObject contents = PrefabUtility.LoadPrefabContents(carPrefabPath);
             try
             {
-                RepairCarPrefabContentsIfSplinePresent(contents, speed);
+                RepairCarPrefabContentsIfSplinePresent(contents);
             }
             finally
             {
@@ -144,27 +143,17 @@ namespace GearEngine.CarSimulation.Editor
             }
         }
 
-        private static void RepairCarPrefabContentsIfSplinePresent(GameObject contents, VariableSO speed)
+        private static void RepairCarPrefabContentsIfSplinePresent(GameObject contents)
         {
-            var spline = contents.GetComponent<SplineAnimate>();
-            if (spline == null)
-            {
-                Debug.LogError("Car Simulation: Car prefab must have SplineAnimate on root; cannot repair wiring.");
-                return;
-            }
-
-            WireCarDriver(contents, spline, speed);
+            ConfigureCarSpline(contents);
+            WireCarDriver(contents);
             PrefabUtility.SaveAsPrefabAsset(contents, carPrefabPath);
         }
 
-        private static void WireCarDriver(GameObject go, SplineAnimate spline, VariableSO speed)
+        private static void WireCarDriver(GameObject go)
         {
-            var driver = go.GetComponent<CarSplineDriver>() ?? go.AddComponent<CarSplineDriver>();
-            var carView = go.GetComponent<CarView>() ?? go.AddComponent<CarView>();
-            var driverSo = new SerializedObject(driver);
-            driverSo.FindProperty("splineAnimate").objectReferenceValue = spline;
-            driverSo.FindProperty("speedVariable").objectReferenceValue = speed;
-            driverSo.ApplyModifiedPropertiesWithoutUndo();
+            CarSplineDriver driver = go.GetComponent<CarSplineDriver>() ?? go.AddComponent<CarSplineDriver>();
+            CarView carView = go.GetComponent<CarView>() ?? go.AddComponent<CarView>();
             var carViewSo = new SerializedObject(carView);
             carViewSo.FindProperty("splineDriver").objectReferenceValue = driver;
             carViewSo.ApplyModifiedPropertiesWithoutUndo();

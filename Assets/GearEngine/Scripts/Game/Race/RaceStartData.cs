@@ -12,16 +12,19 @@ namespace GearEngine.Race
         {
         }
 
-        public RaceStartData(TrackDefinition trackDefinition, CarDefinition carDefinition, GearEngineStartData gearEngineData = null)
+        public RaceStartData(TrackDefinition trackDefinition, CarDefinition carDefinition, GearEngineStartData gearEngineData = null, CarVariableSet carVariables = null)
         {
             this.trackDefinition = trackDefinition;
             this.carDefinition = carDefinition;
             this.gearEngineData = gearEngineData;
+            this.carVariables = carVariables;
         }
 
         public TrackDefinition TrackDefinition => trackDefinition;
 
         public CarDefinition CarDefinition => carDefinition;
+
+        public CarVariableSet CarVariables => carVariables;
 
         public GearEngineStartData GearEngineData => gearEngineData;
 
@@ -30,6 +33,9 @@ namespace GearEngine.Race
 
         [SerializeField]
         private CarDefinition carDefinition;
+
+        [SerializeField]
+        private CarVariableSet carVariables;
 
         [SerializeField]
         private GearEngineStartData gearEngineData;

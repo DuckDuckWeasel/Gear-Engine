@@ -10,6 +10,7 @@ using GearEngine.GearEngine.Nodes;
 using NUnit.Framework;
 using Scaffold.Navigation.Contracts;
 using UnityEngine;
+using UnityEngine.Splines;
 using VContainer;
 using Object = UnityEngine.Object;
 
@@ -127,6 +128,8 @@ namespace GearEngine.Race.Tests.Editor
             TrackDefinition trackDef,
             out FakeEngine engine)
         {
+            trackDef.Spline.Knots = new[] { new BezierKnot(Vector3.zero), new BezierKnot(Vector3.right * 10f) };
+            trackDef.Spline.Closed = false;
             var startData = new RaceStartData(trackDef, carDef);
 
             engine = new FakeEngine();

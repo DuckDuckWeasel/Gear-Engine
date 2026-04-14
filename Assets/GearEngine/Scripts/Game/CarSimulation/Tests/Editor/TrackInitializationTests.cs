@@ -6,6 +6,7 @@ using TrackViewComponent = GearEngine.CarSimulation.Track.Track;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.Splines;
+using UnityEngine.TestTools;
 
 namespace GearEngine.CarSimulation.Tests
 {
@@ -34,15 +35,24 @@ namespace GearEngine.CarSimulation.Tests
                     };
                     source.Closed = false;
 
-                    var viewModel = new TrackViewModel(new TrackSimulation(def, car: null));
-                    track.Bind(viewModel);
+                    var carDef = ScriptableObject.CreateInstance<CarDefinition>();
+                    try
+                    {
+                        var viewModel = new TrackViewModel(new TrackSimulationFactory().Create(carDef, def, null));
+                        LogAssert.Expect(LogType.Error, "[Track] CarDefinition.CarPrefab is missing; cannot spawn CarView.");
+                        track.Bind(viewModel);
 
-                    var target = container.Spline;
-                    Assert.That(target.Count, Is.EqualTo(2));
-                    Assert.That(target.Closed, Is.False);
-                    var knots = target.Knots.ToArray();
-                    Assert.That(knots[0].Position.x, Is.EqualTo(0).Within(0.001f));
-                    Assert.That(knots[1].Position.x, Is.EqualTo(10).Within(0.001f));
+                        var target = container.Spline;
+                        Assert.That(target.Count, Is.EqualTo(2));
+                        Assert.That(target.Closed, Is.False);
+                        var knots = target.Knots.ToArray();
+                        Assert.That(knots[0].Position.x, Is.EqualTo(0).Within(0.001f));
+                        Assert.That(knots[1].Position.x, Is.EqualTo(10).Within(0.001f));
+                    }
+                    finally
+                    {
+                        Object.DestroyImmediate(carDef);
+                    }
                 }
                 finally
                 {
@@ -91,12 +101,21 @@ namespace GearEngine.CarSimulation.Tests
                     };
                     def.Spline.Closed = true;
 
-                    var viewModel = new TrackViewModel(new TrackSimulation(def, car: null));
-                    track.Bind(viewModel);
+                    var carDef = ScriptableObject.CreateInstance<CarDefinition>();
+                    try
+                    {
+                        var viewModel = new TrackViewModel(new TrackSimulationFactory().Create(carDef, def, null));
+                        LogAssert.Expect(LogType.Error, "[Track] CarDefinition.CarPrefab is missing; cannot spawn CarView.");
+                        track.Bind(viewModel);
 
-                    Assert.That(extrude.Container, Is.SameAs(container));
-                    Assert.That(container.Spline.Count, Is.EqualTo(4));
-                    Assert.That(container.Spline.Closed, Is.True);
+                        Assert.That(extrude.Container, Is.SameAs(container));
+                        Assert.That(container.Spline.Count, Is.EqualTo(4));
+                        Assert.That(container.Spline.Closed, Is.True);
+                    }
+                    finally
+                    {
+                        Object.DestroyImmediate(carDef);
+                    }
                 }
                 finally
                 {

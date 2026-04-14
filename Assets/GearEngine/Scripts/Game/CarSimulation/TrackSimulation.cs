@@ -2,17 +2,22 @@ using System;
 using CommunityToolkit.Mvvm.ComponentModel;
 using GearEngine.CarSimulation.Definitions;
 using GearEngine.CarSimulation.Entity;
+using GearEngine.CarSimulation.Simulation;
+using GearEngine.CarSimulation.Track;
 using Scaffold.MVVM;
 using UnityEngine;
 
 namespace GearEngine.CarSimulation
 {
-    public sealed partial class TrackSimulation : ViewModel
+    public sealed partial class TrackSimulation : Model
     {
-        public TrackSimulation(TrackDefinition track, CarEntity car)
+        public TrackSimulation(TrackDefinition track, CarEntity car, BakedTrackProfile profile, CarVariableSet carVariables)
         {
-            this.track = track;
-            this.car = car;
+            this.track = track ?? throw new ArgumentNullException(nameof(track));
+            this.car = car ?? throw new ArgumentNullException(nameof(car));
+            BakedProfile = profile ?? throw new ArgumentNullException(nameof(profile));
+            CarVariables = carVariables;
+            Race = new RaceRuntimeState();
         }
 
         public TrackDefinition Track => track;
@@ -22,6 +27,14 @@ namespace GearEngine.CarSimulation
         public CarEntity Car => car;
 
         private readonly CarEntity car;
+
+        public BakedTrackProfile BakedProfile { get; }
+
+        public CarVariableSet CarVariables { get; }
+
+        public RaceRuntimeState Race { get; }
+
+        internal CarMotionState Motion { get; } = new CarMotionState();
 
         [ObservableProperty]
         private SimulationLifecycleState state = SimulationLifecycleState.Created;
@@ -88,6 +101,11 @@ namespace GearEngine.CarSimulation
 
             if (State == SimulationLifecycleState.Created || State == SimulationLifecycleState.Paused)
             {
+                if (State == SimulationLifecycleState.Created)
+                {
+                    ResetRuntimeState();
+                }
+
                 State = SimulationLifecycleState.Running;
                 return;
             }
@@ -103,6 +121,12 @@ namespace GearEngine.CarSimulation
             }
 
             State = SimulationLifecycleState.Paused;
+        }
+
+        private void ResetRuntimeState()
+        {
+            Motion.Reset();
+            Race.Reset();
         }
     }
 }

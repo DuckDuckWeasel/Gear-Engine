@@ -1,26 +1,16 @@
 using System;
 using GearEngine.CarSimulation.Definitions;
 using GearEngine.CarSimulation.Entity;
+using GearEngine.CarSimulation.Track;
 using UnityEngine;
 
 namespace GearEngine.CarSimulation
 {
     public sealed class TrackSimulationFactory
     {
-        public TrackSimulation Create(CarDefinition carDefinition, TrackDefinition trackDefinition)
-        {
-            try
-            {
-                return CreateCore(carDefinition, trackDefinition);
-            }
-            catch (Exception ex)
-            {
-                Debug.LogError($"[TrackSimulationFactory] Create failed: {ex.Message}\n{ex.StackTrace}");
-                throw;
-            }
-        }
+        private readonly CarEntityFactory carEntityFactory = new CarEntityFactory();
 
-        private static TrackSimulation CreateCore(CarDefinition carDefinition, TrackDefinition trackDefinition)
+        public TrackSimulation Create(CarDefinition carDefinition, TrackDefinition trackDefinition, CarVariableSet carVariables)
         {
             if (carDefinition == null)
             {
@@ -32,8 +22,14 @@ namespace GearEngine.CarSimulation
                 throw new ArgumentNullException(nameof(trackDefinition));
             }
 
-            CarEntity car = CarEntity.Create(carDefinition);
-            return new TrackSimulation(trackDefinition, car);
+            return CreateCore(carDefinition, trackDefinition, carVariables);
+        }
+
+        private TrackSimulation CreateCore(CarDefinition carDefinition, TrackDefinition trackDefinition, CarVariableSet carVariables)
+        {
+            CarEntity car = carEntityFactory.Create(carDefinition);
+            BakedTrackProfile profile = TrackProfileBaker.Bake(trackDefinition.Spline);
+            return new TrackSimulation(trackDefinition, car, profile, carVariables);
         }
     }
 }

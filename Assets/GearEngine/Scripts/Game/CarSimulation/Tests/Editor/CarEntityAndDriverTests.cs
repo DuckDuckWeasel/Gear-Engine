@@ -1,9 +1,7 @@
 using GearEngine.CarSimulation;
 using GearEngine.CarSimulation.Definitions;
 using GearEngine.CarSimulation.Drivers;
-using GearEngine.CarSimulation.Entity;
 using NUnit.Framework;
-using Scaffold.Entities;
 using UnityEngine;
 using UnityEngine.Splines;
 
@@ -11,51 +9,33 @@ namespace GearEngine.CarSimulation.Tests
 {
     public sealed class CarEntityAndDriverTests
     {
-        [Test]
-        public void CarEntity_Create_ProducesRuntimeInstanceWithoutPrefabHost()
-        {
-            var carDef = ScriptableObject.CreateInstance<CarDefinition>();
-            try
-            {
-                CarEntity car = CarEntity.Create(carDef);
-                Assert.That(car, Is.Not.Null);
-                Assert.That(car.Instance, Is.Not.Null);
-                Assert.That(car.Definition, Is.SameAs(carDef));
-            }
-            finally
-            {
-                Object.DestroyImmediate(carDef);
-            }
-        }
 
         [Test]
         public void CarSplineDriver_Bind_DoesNotThrowBeforeUnityStart()
         {
             var carDef = ScriptableObject.CreateInstance<CarDefinition>();
-            var speed = ScriptableObject.CreateInstance<VariableSO>();
-            var so = new UnityEditor.SerializedObject(speed);
-            so.FindProperty("valueType").enumValueIndex = (int)VariableValueType.Float;
-            so.ApplyModifiedPropertiesWithoutUndo();
+            var trackDef = ScriptableObject.CreateInstance<TrackDefinition>();
 
             var go = new GameObject("DriverBindTest");
             try
             {
-                var splineAnimate = go.AddComponent<SplineAnimate>();
+                trackDef.Spline.Knots = new[]
+                {
+                    new BezierKnot(new Vector3(0f, 0f, 0f)),
+                    new BezierKnot(new Vector3(20f, 0f, 0f)),
+                };
+                trackDef.Spline.Closed = false;
+
                 var driver = go.AddComponent<CarSplineDriver>();
-                var driverSerialized = new UnityEditor.SerializedObject(driver);
-                driverSerialized.FindProperty("splineAnimate").objectReferenceValue = splineAnimate;
-                driverSerialized.FindProperty("speedVariable").objectReferenceValue = speed;
-                driverSerialized.ApplyModifiedPropertiesWithoutUndo();
-
-                CarEntity car = CarEntity.Create(carDef);
                 var container = go.AddComponent<SplineContainer>();
+                TrackSimulation simulation = new TrackSimulationFactory().Create(carDef, trackDef, null);
 
-                Assert.DoesNotThrow(() => driver.Bind(car, container));
+                Assert.DoesNotThrow(() => driver.Bind(simulation, container));
             }
             finally
             {
                 Object.DestroyImmediate(go);
-                Object.DestroyImmediate(speed);
+                Object.DestroyImmediate(trackDef);
                 Object.DestroyImmediate(carDef);
             }
         }

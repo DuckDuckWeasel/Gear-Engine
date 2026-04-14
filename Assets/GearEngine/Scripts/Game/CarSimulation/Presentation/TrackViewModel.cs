@@ -17,17 +17,24 @@ namespace GearEngine.CarSimulation.Presentation
 
         public TrackDefinition Track => simulation.Track;
         public CarEntity Car => simulation.Car;
+        public TrackSimulation Simulation => simulation;
 
         [NestedProperty] private TrackSimulation simulation;
 
         [ObservableProperty] private SimulationLifecycleState state;
         [ObservableProperty] private float currentSpeed;
+        [ObservableProperty] private float progress01;
+        [ObservableProperty] private int currentLap;
+        [ObservableProperty] private bool isDrifting;
 
         protected override void Initialize()
         {
             base.Initialize();
-            BindChildViewModel(simulation);
             Bind(() => simulation.State, () => State);
+            Bind(() => simulation.Race.CurrentSpeed, () => CurrentSpeed);
+            Bind(() => simulation.Race.Progress01, () => Progress01);
+            Bind(() => simulation.Race.CurrentLap, () => CurrentLap);
+            Bind(() => simulation.Race.IsDrifting, () => IsDrifting);
         }
 
         public void Toggle(bool running)

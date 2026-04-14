@@ -1,6 +1,6 @@
 using GearEngine.CarSimulation;
+using GearEngine.CarSimulation.Simulation;
 using VContainer;
-
 namespace GearEngine.CarSimulation.Bootstrap
 {
     public sealed class CarTrackInstaller
@@ -13,6 +13,7 @@ namespace GearEngine.CarSimulation.Bootstrap
             }
 
             builder.Register<TrackSimulationFactory>(Lifetime.Singleton);
+            builder.Register<TrackSimulationRunner>(Lifetime.Singleton).AsImplementedInterfaces().AsSelf();
         }
     }
 }

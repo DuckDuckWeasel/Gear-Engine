@@ -1,90 +1,81 @@
 using System;
-using GearEngine.CarSimulation.Entity;
-using Scaffold.Entities;
+using GearEngine.CarSimulation;
+using GearEngine.CarSimulation.Simulation;
+using GearEngine.CarSimulation.Track;
 using UnityEngine;
-using UnityEngine.Serialization;
 using UnityEngine.Splines;
 
 namespace GearEngine.CarSimulation.Drivers
 {
     internal sealed class CarSplineDriver : MonoBehaviour
     {
-        [SerializeField] private SplineAnimate splineAnimate;
-        [FormerlySerializedAs("speedAttribute")]
-        [SerializeField] private VariableSO speedVariable;
+        private TrackSimulation simulation = null!;
+        private SplineContainer splineContainer = null!;
+        private bool playbackActive;
 
-        private CarEntity car = null!;
-        private IDisposable speedSubscription;
-
-        public void Bind(CarEntity carEntity, SplineContainer splineContainer)
+        public void Bind(TrackSimulation trackSimulation, SplineContainer container)
         {
-            ValidateBindArguments(carEntity, splineContainer);
-            speedSubscription?.Dispose();
-            car = carEntity;
-            ApplySplineSettings(splineContainer);
-            speedSubscription = car.Instance.Subscribe(speedVariable, OnSpeedChanged);
+            GuardBindArguments(trackSimulation, container);
+            simulation = trackSimulation;
+            splineContainer = container;
+            playbackActive = false;
+            ApplyInitialPose();
         }
 
-        private void ValidateBindArguments(CarEntity carEntity, SplineContainer splineContainer)
+        private void GuardBindArguments(TrackSimulation trackSimulation, SplineContainer container)
         {
-            if (carEntity == null)
+            if (trackSimulation == null)
             {
-                throw new ArgumentNullException(nameof(carEntity));
+                throw new ArgumentNullException(nameof(trackSimulation));
             }
 
-            if (splineContainer == null)
+            if (container == null)
             {
-                throw new ArgumentNullException(nameof(splineContainer));
-            }
-
-            if (splineAnimate == null)
-            {
-                throw new InvalidOperationException("[CarSplineDriver] SplineAnimate reference is missing.");
+                throw new ArgumentNullException(nameof(container));
             }
         }
 
-        private void ApplySplineSettings(SplineContainer splineContainer)
+        private void ApplyInitialPose()
         {
-            splineAnimate.Container = splineContainer;
-            splineAnimate.AnimationMethod = SplineAnimate.Method.Speed;
-            splineAnimate.Easing = SplineAnimate.EasingMode.None;
-            SnapToSplineStart();
-        }
-
-        private void SnapToSplineStart()
-        {
-            splineAnimate.NormalizedTime = 0f;
+            CarMotionState motion = simulation.Motion;
+            motion.Distance = 0f;
+            UpdateTransform(motion, simulation.BakedProfile);
         }
 
         public void Play()
         {
-            if (splineAnimate != null)
-            {
-                splineAnimate.Play();
-            }
+            playbackActive = true;
         }
 
         public void Stop()
         {
-            if (splineAnimate != null)
-            {
-                splineAnimate.Pause();
-            }
+            playbackActive = false;
         }
 
-        private void OnSpeedChanged(VariableValue value)
+        private void Update()
         {
-            if (splineAnimate == null || value is not FloatVariableValue f)
+            if (!playbackActive || simulation == null || splineContainer == null)
             {
                 return;
             }
 
-            splineAnimate.MaxSpeed = f.Value;
+            if (simulation.State != SimulationLifecycleState.Running)
+            {
+                return;
+            }
+
+            UpdateTransform(simulation.Motion, simulation.BakedProfile);
         }
 
-        private void OnDestroy()
+        private void UpdateTransform(CarMotionState motion, BakedTrackProfile profile)
         {
-            speedSubscription?.Dispose();
+            TrackSample s = profile.Evaluate(motion.Distance);
+            Vector3 fwd = splineContainer.transform.TransformDirection(s.Forward).normalized;
+            Vector3 up = splineContainer.transform.TransformDirection(s.Up).normalized;
+            Vector3 right = Vector3.Cross(up, fwd).normalized;
+            Vector3 worldPos = splineContainer.transform.TransformPoint(s.Position + right * motion.LateralOffset);
+            Quaternion baseRot = Quaternion.LookRotation(fwd, up);
+            transform.SetPositionAndRotation(worldPos, baseRot * Quaternion.Euler(0f, motion.SlipAngle, 0f));
         }
     }
 }

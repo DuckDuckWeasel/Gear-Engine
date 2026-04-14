@@ -5,31 +5,17 @@ using GearEngine.CarSimulation.Definitions;
 using NUnit.Framework;
 using Scaffold.MVVM;
 using UnityEngine;
+using UnityEngine.Splines;
 using UnityEngine.TestTools;
 
 namespace GearEngine.CarSimulation.Tests
 {
     public sealed class TrackSimulationTests
     {
-        [Test]
-        public void Factory_Create_ReturnsSimulationWithCarAndTrack()
+        private static void SeedMinimalOpenTrack(TrackDefinition trackDef)
         {
-            var carDef = ScriptableObject.CreateInstance<CarDefinition>();
-            var trackDef = ScriptableObject.CreateInstance<TrackDefinition>();
-            try
-            {
-                var factory = new TrackSimulationFactory();
-                TrackSimulation sim = factory.Create(carDef, trackDef);
-                Assert.That(sim.Track, Is.SameAs(trackDef));
-                Assert.That(sim.Car, Is.Not.Null);
-                Assert.That(sim.Car.Instance, Is.Not.Null);
-                Assert.That(sim.State != SimulationLifecycleState.Running);
-            }
-            finally
-            {
-                Object.DestroyImmediate(carDef);
-                Object.DestroyImmediate(trackDef);
-            }
+            trackDef.Spline.Knots = new[] { new BezierKnot(Vector3.zero), new BezierKnot(Vector3.right * 10f) };
+            trackDef.Spline.Closed = false;
         }
 
         [Test]
@@ -39,8 +25,7 @@ namespace GearEngine.CarSimulation.Tests
             try
             {
                 var factory = new TrackSimulationFactory();
-                LogAssert.Expect(LogType.Error, new Regex(@"\[TrackSimulationFactory\] Create failed:.*"));
-                Assert.Throws<System.ArgumentNullException>(() => factory.Create(null, trackDef));
+                Assert.Throws<System.ArgumentNullException>(() => factory.Create(null, trackDef, null));
             }
             finally
             {
@@ -55,7 +40,8 @@ namespace GearEngine.CarSimulation.Tests
             var trackDef = ScriptableObject.CreateInstance<TrackDefinition>();
             try
             {
-                TrackSimulation sim = new TrackSimulationFactory().Create(carDef, trackDef);
+                SeedMinimalOpenTrack(trackDef);
+                TrackSimulation sim = new TrackSimulationFactory().Create(carDef, trackDef, null);
                 sim.Toggle(true);
                 Assert.That(sim.State == SimulationLifecycleState.Running);
                 sim.Toggle(false);
@@ -77,7 +63,8 @@ namespace GearEngine.CarSimulation.Tests
             var trackDef = ScriptableObject.CreateInstance<TrackDefinition>();
             try
             {
-                TrackSimulation sim = new TrackSimulationFactory().Create(carDef, trackDef);
+                SeedMinimalOpenTrack(trackDef);
+                TrackSimulation sim = new TrackSimulationFactory().Create(carDef, trackDef, null);
                 sim.Toggle(true);
                 sim.Complete();
                 Assert.That(sim.State != SimulationLifecycleState.Running);
@@ -98,7 +85,8 @@ namespace GearEngine.CarSimulation.Tests
             var trackDef = ScriptableObject.CreateInstance<TrackDefinition>();
             try
             {
-                TrackSimulation sim = new TrackSimulationFactory().Create(carDef, trackDef);
+                SeedMinimalOpenTrack(trackDef);
+                TrackSimulation sim = new TrackSimulationFactory().Create(carDef, trackDef, null);
                 LogAssert.Expect(LogType.Error, new Regex(@"\[TrackSimulation\] Complete failed:.*"));
                 Assert.Throws<System.InvalidOperationException>(() => sim.Complete());
             }

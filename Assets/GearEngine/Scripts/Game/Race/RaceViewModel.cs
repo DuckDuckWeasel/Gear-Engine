@@ -111,7 +111,7 @@ namespace GearEngine.Race
 
         private void SetupTrack()
         {
-            TrackSimulation simulation = trackFactory.Create(startData.CarDefinition, startData.TrackDefinition);
+            TrackSimulation simulation = trackFactory.Create(startData.CarDefinition, startData.TrackDefinition, startData.CarVariables);
             Track = new TrackViewModel(simulation);
             BindChildViewModel(Track);
         }

@@ -2,6 +2,7 @@ using System;
 using GearEngine.CarSimulation;
 using GearEngine.CarSimulation.Definitions;
 using GearEngine.CarSimulation.Presentation;
+using GearEngine.CarSimulation.Simulation;
 using Scaffold.Navigation.Contracts;
 using UnityEngine;
 using VContainer;
@@ -13,8 +14,10 @@ namespace GearEngine.CarSimulation.Bootstrap
     {
         [SerializeField] private TrackDefinition trackDefinition;
         [SerializeField] private CarDefinition carDefinition;
+        [SerializeField] private CarVariableSet carVariables;
 
         [Inject] private TrackSimulationFactory factory;
+        [Inject] private TrackSimulationRunner trackSimulationRunner;
         [Inject] private INavigation navigation;
 
         public void Initialize()
@@ -22,7 +25,8 @@ namespace GearEngine.CarSimulation.Bootstrap
             try
             {
                 ValidateSerializedReferences();
-                TrackSimulation simulation = factory.Create(carDefinition, trackDefinition);
+                TrackSimulation simulation = factory.Create(carDefinition, trackDefinition, carVariables);
+                trackSimulationRunner.SetSimulation(simulation);
                 navigation.Open(new TrackViewModel(simulation));
             }
             catch (Exception ex)

@@ -11,27 +11,28 @@ namespace GearEngine.CarSimulation.Presentation
     {
         [SerializeField] private CarSplineDriver splineDriver;
 
-        public void Initialize(CarEntity car, SplineContainer splineContainer, TrackViewModel trackViewModel)
+        public void Initialize(CarEntity car, SplineContainer splineContainer, TrackSimulation trackSimulation)
         {
-            GuardInitializeArguments(car, splineContainer, trackViewModel);
+            GuardInitializeArguments(car, splineContainer, trackSimulation);
             CarSplineDriver driver = ResolveSplineDriver();
-            driver.Bind(car, splineContainer);
+            driver.Bind(trackSimulation, splineContainer);
         }
 
-        internal void OnRunningChanged(SimulationLifecycleState state)
+        private void GuardInitializeArguments(CarEntity car, SplineContainer splineContainer, TrackSimulation trackSimulation)
         {
-            if (splineDriver == null)
+            if (car == null)
             {
-                return;
+                throw new ArgumentNullException(nameof(car));
             }
 
-            if (state is SimulationLifecycleState.Running)
+            if (splineContainer == null)
             {
-                splineDriver.Play();
+                throw new ArgumentNullException(nameof(splineContainer));
             }
-            else
+
+            if (trackSimulation == null)
             {
-                splineDriver.Stop();
+                throw new ArgumentNullException(nameof(trackSimulation));
             }
         }
 
@@ -51,21 +52,20 @@ namespace GearEngine.CarSimulation.Presentation
             return splineDriver;
         }
 
-        private void GuardInitializeArguments(CarEntity car, SplineContainer splineContainer, TrackViewModel trackViewModel)
+        internal void OnRunningChanged(SimulationLifecycleState state)
         {
-            if (car == null)
+            if (splineDriver == null)
             {
-                throw new ArgumentNullException(nameof(car));
+                return;
             }
 
-            if (splineContainer == null)
+            if (state is SimulationLifecycleState.Running)
             {
-                throw new ArgumentNullException(nameof(splineContainer));
+                splineDriver.Play();
             }
-
-            if (trackViewModel == null)
+            else
             {
-                throw new ArgumentNullException(nameof(trackViewModel));
+                splineDriver.Stop();
             }
         }
     }

@@ -3,15 +3,23 @@ using GearEngine.CarSimulation;
 using GearEngine.CarSimulation.Bootstrap;
 using GearEngine.CarSimulation.Definitions;
 using GearEngine.CarSimulation.Presentation;
+using GearEngine.CarSimulation.Simulation;
 using NUnit.Framework;
 using Scaffold.Navigation.Contracts;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Splines;
 
 namespace GearEngine.CarSimulation.Tests
 {
     public sealed class CarTrackBootstrapTests
     {
+        private static void SeedMinimalOpenTrack(TrackDefinition trackDef)
+        {
+            trackDef.Spline.Knots = new[] { new BezierKnot(Vector3.zero), new BezierKnot(Vector3.right * 10f) };
+            trackDef.Spline.Closed = false;
+        }
+
         [Test]
         public void CarTrackBootstrap_Initialize_OpensTrackViewModel()
         {
@@ -32,6 +40,7 @@ namespace GearEngine.CarSimulation.Tests
             var trackDef = ScriptableObject.CreateInstance<TrackDefinition>();
             try
             {
+                SeedMinimalOpenTrack(trackDef);
                 (CarTrackBootstrap bootstrap, CapturingNavigation nav) = CreateBootstrapWithNav(go, carDef, trackDef);
                 bootstrap.Initialize();
                 Assert.That(nav.LastOpened, Is.InstanceOf<TrackViewModel>());
@@ -51,8 +60,10 @@ namespace GearEngine.CarSimulation.Tests
             bSo.FindProperty("trackDefinition").objectReferenceValue = trackDef;
             bSo.ApplyModifiedPropertiesWithoutUndo();
             var factory = new TrackSimulationFactory();
+            var runner = new TrackSimulationRunner();
             var nav = new CapturingNavigation();
             InjectPrivateField(bootstrap, "factory", factory);
+            InjectPrivateField(bootstrap, "trackSimulationRunner", runner);
             InjectPrivateField(bootstrap, "navigation", nav);
             return (bootstrap, nav);
         }

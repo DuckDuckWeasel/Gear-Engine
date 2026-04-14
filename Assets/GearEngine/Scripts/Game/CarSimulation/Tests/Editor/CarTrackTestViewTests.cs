@@ -6,6 +6,7 @@ using NUnit.Framework;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Splines;
+using UnityEngine.TestTools;
 
 namespace GearEngine.CarSimulation.Tests
 {
@@ -33,8 +34,17 @@ namespace GearEngine.CarSimulation.Tests
             try
             {
                 WriteTwoPointOpenSpline(def);
-                shell.Bind(new TrackViewModel(new TrackSimulation(def, car: null)));
-                AssertOpenTwoKnotSpline(container);
+                var carDef = ScriptableObject.CreateInstance<CarDefinition>();
+                try
+                {
+                    LogAssert.Expect(LogType.Error, "[Track] CarDefinition.CarPrefab is missing; cannot spawn CarView.");
+                    shell.Bind(new TrackViewModel(new TrackSimulationFactory().Create(carDef, def, null)));
+                    AssertOpenTwoKnotSpline(container);
+                }
+                finally
+                {
+                    Object.DestroyImmediate(carDef);
+                }
             }
             finally
             {
