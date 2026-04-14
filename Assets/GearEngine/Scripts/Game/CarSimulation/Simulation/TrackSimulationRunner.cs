@@ -6,7 +6,7 @@ using VContainer.Unity;
 
 namespace GearEngine.CarSimulation.Simulation
 {
-    internal sealed class TrackSimulationRunner : ITickable
+    internal sealed class TrackSimulationRunner : ITickable, ITrackSimulationRunner
     {
         private const float curvatureEpsilon = 1e-5f;
         private const float driftPenaltyScale = 0.15f;

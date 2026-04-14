@@ -2,6 +2,7 @@ using System;
 using System.Reflection;
 using GearEngine.CarSimulation;
 using GearEngine.CarSimulation.Definitions;
+using GearEngine.CarSimulation.Simulation;
 using GearEngine.GearEngine;
 using GearEngine.GearEngine.Bootstrap;
 using GearEngine.GearEngine.Config;
@@ -46,6 +47,37 @@ namespace GearEngine.Race.Tests.Editor
             public void Stop() => IsRunning = false;
         }
 
+        private sealed class RecordingTrackSimulationRunner : ITrackSimulationRunner
+        {
+            public TrackSimulation LastSimulation { get; private set; }
+
+            public void SetSimulation(TrackSimulation simulation)
+            {
+                LastSimulation = simulation;
+            }
+        }
+
+        [Test]
+        public void Initialize_BindsTrackSimulationToRunner()
+        {
+            var carDef = ScriptableObject.CreateInstance<CarDefinition>();
+            var trackDef = ScriptableObject.CreateInstance<TrackDefinition>();
+            RaceViewModel vm = null;
+            try
+            {
+                var runnerSink = new RecordingTrackSimulationRunner();
+                vm = CreateInitializedRaceViewModel(carDef, trackDef, out _, runnerSink);
+                Assert.That(runnerSink.LastSimulation, Is.Not.Null);
+                Assert.That(runnerSink.LastSimulation, Is.SameAs(vm.Track.Simulation));
+            }
+            finally
+            {
+                TearDownRaceViewModel(vm);
+                Object.DestroyImmediate(carDef);
+                Object.DestroyImmediate(trackDef);
+            }
+        }
+
         [Test]
         public void ToggleRace_WhenStopped_StartsEngineAndTrack()
         {
@@ -55,7 +87,7 @@ namespace GearEngine.Race.Tests.Editor
             try
             {
                 FakeEngine engine;
-                vm = CreateInitializedRaceViewModel(carDef, trackDef, out engine);
+                vm = CreateInitializedRaceViewModel(carDef, trackDef, out engine, new RecordingTrackSimulationRunner());
                 Assert.That(engine.IsRunning, Is.False);
                 Assert.That(vm.Track.State, Is.EqualTo(SimulationLifecycleState.Created));
 
@@ -82,7 +114,7 @@ namespace GearEngine.Race.Tests.Editor
             try
             {
                 FakeEngine engine;
-                vm = CreateInitializedRaceViewModel(carDef, trackDef, out engine);
+                vm = CreateInitializedRaceViewModel(carDef, trackDef, out engine, new RecordingTrackSimulationRunner());
                 vm.ToggleRace();
                 vm.ToggleRace();
 
@@ -107,7 +139,7 @@ namespace GearEngine.Race.Tests.Editor
             try
             {
                 FakeEngine engine;
-                vm = CreateInitializedRaceViewModel(carDef, trackDef, out engine);
+                vm = CreateInitializedRaceViewModel(carDef, trackDef, out engine, new RecordingTrackSimulationRunner());
                 vm.ToggleRace();
                 vm.ToggleRace();
                 vm.ToggleRace();
@@ -126,7 +158,8 @@ namespace GearEngine.Race.Tests.Editor
         private static RaceViewModel CreateInitializedRaceViewModel(
             CarDefinition carDef,
             TrackDefinition trackDef,
-            out FakeEngine engine)
+            out FakeEngine engine,
+            ITrackSimulationRunner trackSimulationRunner)
         {
             trackDef.Spline.Knots = new[] { new BezierKnot(Vector3.zero), new BezierKnot(Vector3.right * 10f) };
             trackDef.Spline.Closed = false;
@@ -158,6 +191,7 @@ namespace GearEngine.Race.Tests.Editor
             InjectPrivateField(vm, "nodeFactory", nodeFactory);
             InjectPrivateField(vm, "boardConfig", boardConfig);
             InjectPrivateField(vm, "trackFactory", trackFactory);
+            InjectPrivateField(vm, "trackSimulationRunner", trackSimulationRunner);
             InjectPrivateFieldInHierarchy(vm, "navigation", new NoOpNavigation());
 
             InvokeProtectedInitialize(vm);

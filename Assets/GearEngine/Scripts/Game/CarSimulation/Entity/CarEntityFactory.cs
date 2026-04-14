@@ -16,7 +16,6 @@ namespace GearEngine.CarSimulation.Entity
             }
 
             var car = new CarEntity();
-            car.Bind(definition);
             car.Initialize(idGenerator.Next(), definition);
             return car;
         }

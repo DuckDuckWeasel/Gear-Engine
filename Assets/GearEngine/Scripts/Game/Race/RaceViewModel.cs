@@ -2,6 +2,7 @@ using System;
 using GearEngine.CarSimulation;
 using GearEngine.CarSimulation.Definitions;
 using GearEngine.CarSimulation.Presentation;
+using GearEngine.CarSimulation.Simulation;
 using GearEngine.GearEngine;
 using GearEngine.GearEngine.Bootstrap;
 using GearEngine.GearEngine.Config;
@@ -43,6 +44,9 @@ namespace GearEngine.Race
 
         [Inject]
         private TrackSimulationFactory trackFactory;
+
+        [Inject]
+        private ITrackSimulationRunner trackSimulationRunner;
 
         protected override void Initialize()
         {
@@ -112,6 +116,7 @@ namespace GearEngine.Race
         private void SetupTrack()
         {
             TrackSimulation simulation = trackFactory.Create(startData.CarDefinition, startData.TrackDefinition, startData.CarVariables);
+            trackSimulationRunner.SetSimulation(simulation);
             Track = new TrackViewModel(simulation);
             BindChildViewModel(Track);
         }
