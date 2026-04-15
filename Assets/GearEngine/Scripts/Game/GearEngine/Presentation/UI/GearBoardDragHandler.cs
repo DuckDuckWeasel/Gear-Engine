@@ -1,6 +1,3 @@
-using GearEngine.GearEngine.Config;
-using GearEngine.GearEngine.Nodes;
-using GearEngine.GearEngine.Presentation.UI.Tags;
 using GearEngine.GearEngine.Visuals;
 using UnityEngine;
 using UnityEngine.EventSystems;

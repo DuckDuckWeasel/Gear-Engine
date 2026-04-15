@@ -11,8 +11,12 @@ namespace GearEngine.GearEngine.Nodes
             this.eventBus = eventBus;
         }
 
-        public Vector2Int Position { get; set; }
+        public Vector2Int Position { get; private set; }
 
+        public void SetPosition(Vector2Int position)
+        {
+            Position = position;
+        }
         public float CurrentRotation
         {
             get => currentRotation;

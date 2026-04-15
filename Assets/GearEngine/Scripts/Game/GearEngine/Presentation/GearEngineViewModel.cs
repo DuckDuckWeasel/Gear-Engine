@@ -2,6 +2,7 @@ using System;
 using GearEngine.GearEngine;
 using GearEngine.GearEngine.Bootstrap;
 using GearEngine.GearEngine.Config;
+using GearEngine.GearEngine.Services;
 using Scaffold.Events.Contracts;
 using Scaffold.MVVM;
 using VContainer;
@@ -19,6 +20,11 @@ namespace GearEngine.GearEngine.Presentation
         [Inject] private IEventBus eventBus;
         [Inject] private GearEngineFeatureToggleSO featureToggle;
         [Inject] private IDragService dragService;
+
+        [Inject] private IGearTransferService transferService;
+        [Inject] private IGearTrashService trashService;
+
+        public IGearTrashService TrashService => trashService;
 
         public GearEngineFeatureToggleSO FeatureToggle => featureToggle;
 
@@ -42,7 +48,7 @@ namespace GearEngine.GearEngine.Presentation
             BindChildViewModel(Board);
 
             SimControl.Initialize(engineService);
-            Inventory.Initialize(engineService, startData.MaxInventorySlots);
+            Inventory.Initialize(engineService, startData.MaxInventorySlots, dragService);
 
             if (startData.InventoryGears != null)
             {
@@ -50,6 +56,18 @@ namespace GearEngine.GearEngine.Presentation
             }
 
             Board.Initialize(engineService, gridManager, nodeFactory, boardConfig, eventBus, featureToggle, dragService);
+
+            if (transferService != null)
+            {
+                transferService.LinkBoard(Board);
+                transferService.LinkInventory(Inventory);
+            }
+
+            if (trashService != null)
+            {
+                trashService.LinkedBoard = Board;
+                trashService.LinkedInventory = Inventory;
+            }
 
             if (startData.BoardLayout != null)
             {

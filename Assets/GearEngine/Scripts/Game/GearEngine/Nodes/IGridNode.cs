@@ -14,6 +14,7 @@ namespace GearEngine.GearEngine.Nodes
         
         Scaffold.Events.Contracts.IEventBus EventBus { get; }
         
+        void SetPosition(Vector2Int position);
         void AddAbility(GearAbilitySO ability, float duration = -1f);
         void RemoveAbility(GearAbilitySO ability);
         void Initialize(Vector2Int position, GearConfigData configData);

@@ -26,6 +26,8 @@ namespace GearEngine.Race.Bootstrap
         [Header("Gear mechanics")]
         [SerializeField]
         private BoardConfigSO boardConfig;
+        [SerializeField]
+        private GearEngineFeatureToggleSO featureToggle;
 
         [Header("Bootstrap")]
         [SerializeField]
@@ -36,7 +38,7 @@ namespace GearEngine.Race.Bootstrap
             ValidateScopeAssignments();
             BuildCrossLayerRegistration(builder);
             InstallAddressablesAndNavigation(builder);
-            new GearMechanicsInstaller(boardConfig).Install(builder);
+            new GearMechanicsInstaller(boardConfig, featureToggle).Install(builder);
             new CarTrackInstaller().Install(builder);
             builder.RegisterComponent(sceneBootstrap).AsImplementedInterfaces().AsSelf();
         }

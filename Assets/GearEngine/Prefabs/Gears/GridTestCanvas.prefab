@@ -840,3 +840,4 @@ MonoBehaviour:
   boardView: {fileID: 0}
   boardLimitLabel: {fileID: 3489799338832126779}
   inventoryLimitLabel: {fileID: 2552185410746883540}
+  dropZoneCanvas: {fileID: 8626341340861794233}

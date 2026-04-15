@@ -356,43 +356,37 @@ namespace GearEngine.GearEngine.Presentation.UI
 
         private void PlaceNodeAt(IGridNode node, Vector2Int toPos)
         {
-            ((NodeBase)node).Position = toPos;
+            node.SetPosition(toPos);
             gridManager.AddNode(node);
         }
 
         private void SnapNodeBackToOriginal(IGridNode node)
         {
-            ((NodeBase)node).Position = pickupOriginalPos;
+            node.SetPosition(pickupOriginalPos);
             gridManager.AddNode(node);
         }
 
         private void SwapBoardGears(IGridNode draggedNode, IGridNode occupantNode, Vector2Int targetDropPos)
         {
-            gridManager.ExtractNode(targetDropPos);
+            gridManager.SwapNodes(pickupOriginalPos, targetDropPos);
+
             OnGearRemoved?.Invoke(occupantNode);
-
-            ((NodeBase)draggedNode).Position = targetDropPos;
-            gridManager.AddNode(draggedNode);
             OnGearPlaced?.Invoke(draggedNode);
-
-            ((NodeBase)occupantNode).Position = pickupOriginalPos;
-            gridManager.AddNode(occupantNode);
             OnGearPlaced?.Invoke(occupantNode);
         }
 
         private void MergeBoardGearsAt(IGridNode draggedNode, IGridNode occupantNode, Vector2Int targetDropPos, GearConfigData occupantData)
         {
-            gridManager.ExtractNode(targetDropPos);
-
+            gridManager.ExtractNode(pickupOriginalPos); // The dragged node was technically still at original pos before swap
             OnGearRemoved?.Invoke(draggedNode);
             OnGearRemoved?.Invoke(occupantNode);
-
             draggedNode.Dispose();
-            occupantNode.Dispose();
 
             GearConfigData upgradedData = occupantData.NextLevelConfig.CreateRuntimeData();
             IGridNode newNode = nodeFactory.CreateNode(targetDropPos, upgradedData);
-            gridManager.AddNode(newNode);
+            
+            gridManager.MergeNode(targetPos: targetDropPos, newNode: newNode);
+            
             OnGearPlaced?.Invoke(newNode);
             Debug.Log($"<color=#ffaa55>[BoardViewModel]</color> MERGED board gears into {upgradedData.Id} at {targetDropPos}!");
         }

@@ -1,5 +1,4 @@
 using System;
-using GearEngine.GearEngine.Config;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -7,7 +6,7 @@ using TMPro;
 
 namespace GearEngine.GearEngine.Presentation.UI
 {
-    public sealed class TrashDropZoneView : MonoBehaviour, IDropHandler
+    public sealed class TrashDropZoneView : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerExitHandler
     {
         [Header("References")]
         public RectTransform ZoneRect => rootPanel;
@@ -54,12 +53,21 @@ namespace GearEngine.GearEngine.Presentation.UI
 
         public void OnDragStarted(GearConfigData gearData)
         {
-            if (gearData == null || !gearData.IsDeletable)
+            if (gearData == null)
             {
+                Debug.LogWarning("[TrashDropZone] OnDragStarted called with null gearData. Hiding zone.");
                 Hide(immediate: false);
                 return;
             }
 
+            if (!gearData.IsDeletable)
+            {
+                Debug.Log($"<color=#ff9900>[TrashDropZone]</color> Gear '{gearData.Id}' is NOT deletable. Hiding trash zone.");
+                Hide(immediate: false);
+                return;
+            }
+
+            Debug.Log($"<color=#00ffff>[TrashDropZone]</color> Gear '{gearData.Id}' IS deletable. Showing trash zone! Reward: {gearData.DeleteRewardAmount}");
             UpdateRewardLabel(gearData.DeleteRewardAmount);
             Show();
         }
@@ -80,6 +88,20 @@ namespace GearEngine.GearEngine.Presentation.UI
             }
         }
 
+        public void OnPointerEnter(PointerEventData eventData)
+        {
+            if (isShowing) SetHovered(true);
+        }
+
+        public void OnPointerExit(PointerEventData eventData)
+        {
+            SetHovered(false);
+        }
+
+        /// <summary>
+        /// Unity IDropHandler — called when an inventory DragHandler drops onto this zone.
+        /// Fires OnInventoryGearDropped and then starts the hide animation.
+        /// </summary>
         public void OnDrop(PointerEventData eventData)
         {
             if (eventData.pointerDrag == null)
@@ -97,7 +119,12 @@ namespace GearEngine.GearEngine.Presentation.UI
 
             if (slotView != null && slotView.BoundGearData != null)
             {
+                Debug.Log($"<color=#ff5555>[TrashDropZone]</color> Inventory gear '{slotView.BoundGearData.Id}' dropped on trash! Firing event.");
                 OnInventoryGearDropped?.Invoke(slotView.BoundGearData);
+
+                // Hide immediately after a successful inventory trash drop
+                isHovered = false;
+                Hide(immediate: false);
             }
         }
 
@@ -122,6 +149,7 @@ namespace GearEngine.GearEngine.Presentation.UI
 
                 gameObject.SetActive(false);
             }
+            // When not immediate, TickAutoHideWhenFaded() will SetActive(false) once fade completes.
         }
 
         private void Update()

@@ -15,165 +15,167 @@ namespace GearEngine.GearEngine.Presentation
         [SerializeField] private TextMeshProUGUI boardLimitLabel;
         [SerializeField] private TextMeshProUGUI inventoryLimitLabel;
 
-        private GearTrashFeature trashFeature;
+        [Header("Trash Zone")]
+        [Tooltip("Assign the TrashDropZone prefab instance from the scene Canvas.")]
+        [SerializeField] private TrashDropZoneView trashDropZone;
+
+        private GearInteractionBinder interactionBinder;
 
         protected override void OnBind()
         {
             simControlView.Bind(viewModel.SimControl);
-            inventoryView.SetDragService(viewModel.DragService);
-            
-            boardView.Bind(viewModel.Board, interactable: true);
 
-            var frustumFit = GameObject.FindObjectOfType<GearEngine.Presentation.World.FrustumFit>();
-            if (frustumFit != null)
-            {
-                frustumFit.Apply();
-                inventoryView.SetBoardReference(frustumFit.transform);
-            }
-            else
-            {
-                inventoryView.SetBoardReference(boardView.transform);
-            }
+            interactionBinder = new GearInteractionBinder(
+                boardView,
+                inventoryView,
+                viewModel.Board,
+                viewModel.Inventory,
+                boardLimitLabel,
+                inventoryLimitLabel);
+            interactionBinder.Bind();
 
-            inventoryView.Bind(viewModel.Inventory);
-
-            boardView.OnGearDroppedOverUI += HandleGearDroppedOverUI;
-            viewModel.Inventory.OnGearDraggedToBoard += HandleGearDraggedToBoard;
-
-            viewModel.Board.OnGearPlaced += HandleBoardGearChanged;
-            viewModel.Board.OnGearRemoved += HandleBoardGearChanged;
-            if (viewModel.Inventory.InventoryModel.AvailableGears != null)
-            {
-                viewModel.Inventory.InventoryModel.AvailableGears.CollectionChanged += HandleInventoryChanged;
-            }
-
-            InitializeTrashFeature();
-            UpdateLimitLabels();
+            InitializeTrashZone();
         }
 
-        private void InitializeTrashFeature()
+        private void InitializeTrashZone()
         {
             GearEngineFeatureToggleSO toggle = viewModel.FeatureToggle;
 
             if (toggle != null && !toggle.EnableTrashDeletion)
             {
+                if (trashDropZone != null)
+                {
+                    trashDropZone.gameObject.SetActive(false);
+                }
                 return;
             }
 
-            Canvas overlayCanvas = GetComponentInParent<Canvas>();
-            if (overlayCanvas == null)
+            if (trashDropZone == null)
             {
-                overlayCanvas = FindObjectOfType<Canvas>();
-            }
-
-            if (overlayCanvas == null)
-            {
-                Debug.LogWarning("[GearEngineView] No Canvas found — trash feature disabled.");
+                Debug.LogWarning("[GearEngineView] TrashDropZone reference is not assigned. Trash deletion will not work.");
                 return;
             }
 
-            trashFeature = new GearTrashFeature(
-                viewModel.Board,
-                viewModel.Inventory,
-                overlayCanvas,
-                viewModel.Board.BoardConfig,
-                viewModel.DragService,
-                toggle != null ? toggle.TrashAlignment : TrashZoneAlignment.Right,
-                viewModel.Board.BoardConfig != null ? viewModel.Board.BoardConfig.TrashZoneYOffset : 80f,
-                toggle?.TrashZoneTag,
-                toggle?.TrashIcon);
+            // Ensure it starts hidden (the view manages its own show/hide via OnDragStarted/OnDragEnded)
+            trashDropZone.gameObject.SetActive(false);
 
-            // Board trash drop request — still event-based since it's a view-to-feature command
-            boardView.OnTrashDropRequested += trashFeature.OnTrashDropRequested;
-        }
+            // Position the zone relative to the board grid
+            RepositionTrashZone(toggle);
 
-        private void HandleGearDroppedOverUI(GearConfigData config, Vector3 _)
-        {
-            if (config != null)
+            // Wire events
+            if (viewModel.TrashService != null)
             {
-                viewModel.Inventory.AddGearToInventory(config);
+                trashDropZone.OnInventoryGearDropped += viewModel.TrashService.HandleInventoryGearDropped;
+                boardView.OnTrashDropRequested += viewModel.TrashService.RequestTrashDrop;
             }
 
-            UpdateLimitLabels();
+            viewModel.DragService.OnDragStarted += HandleDragStartedForTrash;
+            viewModel.DragService.OnDragEnded += trashDropZone.OnDragEnded;
         }
 
-        private void HandleGearDraggedToBoard(Vector3 worldPos, GearConfigData gearData)
+        private void RepositionTrashZone(GearEngineFeatureToggleSO toggle)
         {
-            try
-            {
-                TryPlaceInventoryFromDrag(worldPos, gearData);
-            }
-            catch (Exception ex)
-            {
-                Debug.LogError($"[GearEngineView] HandleGearDraggedToBoard failed: {ex.Message}\n{ex.StackTrace}");
-            }
-        }
-
-        private void TryPlaceInventoryFromDrag(Vector3 worldPos, GearConfigData gearData)
-        {
-            if (viewModel.Board.EngineService.IsRunning)
+            if (trashDropZone == null || viewModel.Board.BoardConfig == null)
             {
                 return;
             }
 
-            bool placed = viewModel.Board.HandleInventoryDrop(worldPos, gearData);
-            if (placed)
+            TrashZoneAlignment alignment = toggle != null ? toggle.TrashAlignment : TrashZoneAlignment.Right;
+            float yOffset = viewModel.Board.BoardConfig.TrashZoneYOffset;
+
+            Vector3 gridAnchorPoint = ComputeGridAnchor(viewModel.Board.BoardConfig, alignment);
+            Vector2 pivot = ComputePivot(alignment);
+
+            // Find the parent canvas for projection
+            Canvas parentCanvas = trashDropZone.GetComponentInParent<Canvas>();
+            if (parentCanvas != null)
             {
-                viewModel.Inventory.ConsumeSpecificGear(gearData);
-                UpdateLimitLabels();
+                RectTransform rect = trashDropZone.GetComponent<RectTransform>();
+                if (rect != null)
+                {
+                    CanvasPositionUtility.AnchorToWorldPosition(
+                        rect, parentCanvas, gridAnchorPoint, new Vector2(0f, yOffset), pivot);
+                }
             }
         }
 
-        private void UpdateLimitLabels()
+        private void HandleDragStartedForTrash(object data)
         {
-            if (boardLimitLabel != null)
+            if (trashDropZone == null)
             {
-                boardLimitLabel.text = $"Board: {viewModel.Board.CurrentBoardGearCount}/{viewModel.Board.MaxAllowedBoardGears}";
+                Debug.LogWarning("[GearEngineView] HandleDragStartedForTrash: trashDropZone reference is null!");
+                return;
             }
 
-            if (inventoryLimitLabel != null)
+            if (data is GearConfigData gearData)
             {
-                inventoryLimitLabel.text = $"Inventory: {viewModel.Inventory.CurrentCount}/{viewModel.Inventory.MaxSlots}";
+                Debug.Log($"<color=#00ffff>[GearEngineView]</color> Forwarding drag start to trash zone for gear '{gearData.Id}'");
+                trashDropZone.OnDragStarted(gearData);
+            }
+            else
+            {
+                Debug.LogWarning($"[GearEngineView] HandleDragStartedForTrash: data is not GearConfigData, type={data?.GetType().Name ?? "null"}");
             }
         }
 
-        private void HandleBoardGearChanged(Nodes.IGridNode _)
+        private static Vector2 ComputePivot(TrashZoneAlignment alignment)
         {
-            UpdateLimitLabels();
+            switch (alignment)
+            {
+                case TrashZoneAlignment.Left:
+                    return new Vector2(0f, 0.5f);
+                case TrashZoneAlignment.Center:
+                    return new Vector2(0.5f, 0.5f);
+                case TrashZoneAlignment.Right:
+                default:
+                    return new Vector2(1f, 0.5f);
+            }
         }
 
-        private void HandleInventoryChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        private static Vector3 ComputeGridAnchor(BoardConfigSO boardConfig, TrashZoneAlignment alignment)
         {
-            UpdateLimitLabels();
+            if (boardConfig == null)
+            {
+                return Vector3.zero;
+            }
+
+            int topY = boardConfig.GridHeight - 1;
+            Vector3 topLeft = boardConfig.GetWorldPosition(new Vector2Int(0, topY));
+            Vector3 topRight = boardConfig.GetWorldPosition(new Vector2Int(boardConfig.GridWidth - 1, topY));
+
+            switch (alignment)
+            {
+                case TrashZoneAlignment.Left:
+                    return topLeft;
+                case TrashZoneAlignment.Center:
+                    return (topLeft + topRight) * 0.5f;
+                case TrashZoneAlignment.Right:
+                default:
+                    return topRight;
+            }
         }
 
         private void OnDestroy()
         {
-            if (boardView != null)
-            {
-                boardView.OnGearDroppedOverUI -= HandleGearDroppedOverUI;
+            interactionBinder?.Dispose();
 
-                if (trashFeature != null)
+            if (trashDropZone != null)
+            {
+                if (viewModel?.TrashService != null)
                 {
-                    boardView.OnTrashDropRequested -= trashFeature.OnTrashDropRequested;
+                    trashDropZone.OnInventoryGearDropped -= viewModel.TrashService.HandleInventoryGearDropped;
+                    if (boardView != null)
+                    {
+                        boardView.OnTrashDropRequested -= viewModel.TrashService.RequestTrashDrop;
+                    }
                 }
 
-                boardView.Unbind();
-            }
-
-            if (viewModel != null)
-            {
-                viewModel.Inventory.OnGearDraggedToBoard -= HandleGearDraggedToBoard;
-                viewModel.Board.OnGearPlaced -= HandleBoardGearChanged;
-                viewModel.Board.OnGearRemoved -= HandleBoardGearChanged;
-                if (viewModel.Inventory.InventoryModel?.AvailableGears != null)
+                if (viewModel?.DragService != null)
                 {
-                    viewModel.Inventory.InventoryModel.AvailableGears.CollectionChanged -= HandleInventoryChanged;
+                    viewModel.DragService.OnDragStarted -= HandleDragStartedForTrash;
+                    viewModel.DragService.OnDragEnded -= trashDropZone.OnDragEnded;
                 }
             }
-
-            trashFeature?.Dispose();
-            trashFeature = null;
         }
     }
 }

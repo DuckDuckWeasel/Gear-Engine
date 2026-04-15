@@ -14,6 +14,9 @@ namespace GearEngine.GearEngine.Presentation.UI
         private IGearEngineService engineService;
         private int maxInventorySlots = int.MaxValue;
 
+        private IDragService dragService;
+        public IDragService DragService => dragService;
+
         [ObservableProperty]
         private GearInventoryModel inventoryModel = new GearInventoryModel();
 
@@ -22,10 +25,11 @@ namespace GearEngine.GearEngine.Presentation.UI
         public int CurrentCount => InventoryModel.AvailableGears.Count;
         public int MaxSlots => maxInventorySlots;
 
-        public void Initialize(IGearEngineService engineService, int maxInventorySlots = int.MaxValue)
+        public void Initialize(IGearEngineService engineService, int maxInventorySlots = int.MaxValue, IDragService dragService = null)
         {
             this.engineService = engineService;
             this.maxInventorySlots = maxInventorySlots;
+            this.dragService = dragService;
         }
 
         protected override void Initialize()

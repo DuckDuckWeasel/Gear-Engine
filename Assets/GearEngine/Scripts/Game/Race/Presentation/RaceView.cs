@@ -2,8 +2,9 @@ using System;
 using GearEngine.CarSimulation;
 using GearEngine.CarSimulation.Tracks;
 using GearEngine.GearEngine.Config;
-using GearEngine.Race;
+using GearEngine.GearEngine.Presentation;
 using GearEngine.GearEngine.Presentation.UI;
+using GearEngine.Race;
 using Scaffold.MVVM;
 using TMPro;
 using UnityEngine;
@@ -13,56 +14,129 @@ namespace GearEngine.Race.Presentation
 {
     public sealed class RaceView : View<RaceViewModel>
     {
-        [SerializeField]
-        private BoardView boardView;
+        [SerializeField] private Track track;
+        [SerializeField] private Button raceButton;
+        
+        [Header("Gear UI")]
+        [SerializeField] private BoardView boardView;
+        [SerializeField] private GearInventoryView inventoryView;
+        [SerializeField] private TextMeshProUGUI boardLimitLabel;
+        [SerializeField] private TextMeshProUGUI inventoryLimitLabel;
 
-        [SerializeField]
-        private GearInventoryView inventoryView;
+        [Header("Trash Zone")]
+        [Tooltip("Assign the TrashDropZone prefab instance from the scene Canvas.")]
+        [SerializeField] private TrashDropZoneView trashDropZone;
 
-        [SerializeField]
-        private Track track;
-
-        [SerializeField]
-        private Button raceButton;
+        private GearInteractionBinder interactionBinder;
 
         protected override void OnBind()
         {
             ValidateRaceViewHierarchy();
-            BindRaceChildViews();
+
+            track.Bind(viewModel.Track);
+
+            interactionBinder = new GearInteractionBinder(
+                boardView,
+                inventoryView,
+                viewModel.Board,
+                viewModel.Inventory,
+                boardLimitLabel,
+                inventoryLimitLabel,
+                () => viewModel.IsRaceRunning);
+            interactionBinder.Bind();
+
+            InitializeTrashZone();
             SubscribeRaceUi();
         }
 
         protected override void OnUnbind()
         {
             UnsubscribeRaceUi();
-            UnbindWorldAndBoard();
+            CleanupTrashZone();
+
+            interactionBinder?.Dispose();
+            interactionBinder = null;
+
+            if (track != null) track.Unbind();
+
             base.OnUnbind();
         }
 
-        private void BindRaceChildViews()
+        private void InitializeTrashZone()
         {
-            inventoryView.Bind(viewModel.Inventory);
-            boardView.Bind(viewModel.Board, interactable: true);
-            track.Bind(viewModel.Track);
+            GearEngineFeatureToggleSO toggle = viewModel.FeatureToggle;
+
+            if (toggle != null && !toggle.EnableTrashDeletion)
+            {
+                Debug.Log("[RaceView] Trash deletion is disabled by FeatureToggle.");
+                if (trashDropZone != null)
+                {
+                    trashDropZone.gameObject.SetActive(false);
+                }
+                return;
+            }
+
+            if (trashDropZone == null)
+            {
+                Debug.LogWarning("[RaceView] TrashDropZone reference is not assigned in the inspector. Trash deletion will not work.");
+                return;
+            }
+
+            trashDropZone.gameObject.SetActive(false);
+
+            if (viewModel.TrashService != null)
+            {
+                trashDropZone.OnInventoryGearDropped += viewModel.TrashService.HandleInventoryGearDropped;
+                boardView.OnTrashDropRequested += viewModel.TrashService.RequestTrashDrop;
+            }
+            else
+            {
+                Debug.LogWarning("[RaceView] TrashService is null. Trash drop events will not fire.");
+            }
+
+            if (viewModel.DragService != null)
+            {
+                viewModel.DragService.OnDragStarted += HandleDragStartedForTrash;
+                viewModel.DragService.OnDragEnded += trashDropZone.OnDragEnded;
+                Debug.Log("[RaceView] Trash zone wired to DragService successfully.");
+            }
+            else
+            {
+                Debug.LogWarning("[RaceView] DragService is null. Trash zone will not show/hide during drag.");
+            }
         }
 
-        private void HandleGearDraggedToBoard(Vector3 worldPos, GearConfigData gearData)
+        private void CleanupTrashZone()
         {
-            try
+            if (trashDropZone != null)
             {
-                TryPlaceInventoryFromDrag(worldPos, gearData);
-            }
-            catch (Exception ex)
-            {
-                Debug.LogError($"[RaceView] HandleGearDraggedToBoard failed: {ex.Message}\n{ex.StackTrace}");
+                if (viewModel?.TrashService != null)
+                {
+                    trashDropZone.OnInventoryGearDropped -= viewModel.TrashService.HandleInventoryGearDropped;
+                    if (boardView != null)
+                    {
+                        boardView.OnTrashDropRequested -= viewModel.TrashService.RequestTrashDrop;
+                    }
+                }
+
+                if (viewModel?.DragService != null)
+                {
+                    viewModel.DragService.OnDragStarted -= HandleDragStartedForTrash;
+                    viewModel.DragService.OnDragEnded -= trashDropZone.OnDragEnded;
+                }
             }
         }
 
-        private void HandleGearDroppedOverUI(GearConfigData config, Vector3 _)
+        private void HandleDragStartedForTrash(object data)
         {
-            if (config != null)
+            if (trashDropZone == null)
             {
-                viewModel.Inventory.AddGearToInventory(config);
+                return;
+            }
+
+            if (data is GearConfigData gearData)
+            {
+                trashDropZone.OnDragStarted(gearData);
             }
         }
 
@@ -81,46 +155,15 @@ namespace GearEngine.Race.Presentation
         private void SubscribeRaceUi()
         {
             Bind<SimulationLifecycleState, SimulationLifecycleState>(() => viewModel.Track.State, OnTrackStateChanged);
-            boardView.OnGearDroppedOverUI += HandleGearDroppedOverUI;
-            viewModel.Inventory.OnGearDraggedToBoard += HandleGearDraggedToBoard;
             raceButton.onClick.AddListener(OnRaceButtonClicked);
         }
 
         private void OnTrackStateChanged(SimulationLifecycleState state)
         {
             TextMeshProUGUI label = raceButton.GetComponentInChildren<TextMeshProUGUI>(true);
-            if (label == null)
+            if (label != null)
             {
-                return;
-            }
-
-            label.text = state == SimulationLifecycleState.Running ? "Stop" : "Start";
-        }
-
-        private void TryPlaceInventoryFromDrag(Vector3 worldPos, GearConfigData gearData)
-        {
-            if (viewModel.Board.EngineService.IsRunning)
-            {
-                return;
-            }
-
-            bool placed = viewModel.Board.HandleInventoryDrop(worldPos, gearData);
-            if (placed)
-            {
-                viewModel.Inventory.ConsumeSpecificGear(gearData);
-            }
-        }
-
-        private void UnbindWorldAndBoard()
-        {
-            if (track != null)
-            {
-                track.Unbind();
-            }
-
-            if (boardView != null)
-            {
-                boardView.Unbind();
+                label.text = state == SimulationLifecycleState.Running ? "Stop" : "Start";
             }
         }
 
@@ -130,24 +173,14 @@ namespace GearEngine.Race.Presentation
             {
                 raceButton.onClick.RemoveListener(OnRaceButtonClicked);
             }
-
-            if (viewModel != null)
-            {
-                viewModel.Inventory.OnGearDraggedToBoard -= HandleGearDraggedToBoard;
-            }
-
-            if (boardView != null)
-            {
-                boardView.OnGearDroppedOverUI -= HandleGearDroppedOverUI;
-            }
         }
 
         private void ValidateRaceViewHierarchy()
         {
-            ThrowIfMissing(boardView, "boardView");
-            ThrowIfMissing(inventoryView, "inventoryView");
             ThrowIfMissing(track, "track");
             ThrowIfMissing(raceButton, "raceButton");
+            ThrowIfMissing(boardView, "boardView");
+            ThrowIfMissing(inventoryView, "inventoryView");
         }
 
         private void ThrowIfMissing(object field, string name)

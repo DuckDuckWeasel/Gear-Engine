@@ -14,19 +14,7 @@ namespace GearEngine.GearEngine.Presentation.UI
         [SerializeField] private TagSO gridBoardTag;
         [SerializeField] private GameObject slotPrefab;
 
-        private IDragService dragService;
-
-        public void SetDragService(IDragService dragService)
-        {
-            this.dragService = dragService;
-        }
-
         private Transform boardReferenceTransform;
-
-        public void SetBoardReference(Transform boardTransform)
-        {
-            this.boardReferenceTransform = boardTransform;
-        }
 
         protected override void OnBind()
         {
@@ -36,6 +24,21 @@ namespace GearEngine.GearEngine.Presentation.UI
             }
 
             Bind<GearConfigData, GearConfigData>(() => viewModel.InventoryModel.SelectedGear, OnSelectionChanged);
+
+            var frustumFit = GameObject.FindObjectOfType<GearEngine.Presentation.World.FrustumFit>();
+            if (frustumFit != null)
+            {
+                boardReferenceTransform = frustumFit.transform;
+            }
+            else
+            {
+                // Fallback to searching by standard GearBoardView if no frustum mapping is used
+                var boardView = GameObject.FindObjectOfType<BoardView>();
+                if (boardView != null)
+                {
+                    boardReferenceTransform = boardView.transform;
+                }
+            }
 
             DrawInitialList();
         }
@@ -137,11 +140,11 @@ namespace GearEngine.GearEngine.Presentation.UI
                 slotView.Bind(gear, viewModel);
 
                 // Wire drag lifecycle to centralized IDragService
-                if (dragService != null)
+                if (viewModel.DragService != null)
                 {
                     GearConfigData capturedGear = gear;
-                    dragger.OnDragBegin += () => dragService.StartDrag(capturedGear);
-                    dragger.OnDragEnd += () => dragService.EndDrag();
+                    dragger.OnDragBegin += () => viewModel.DragService.StartDrag(capturedGear);
+                    dragger.OnDragEnd += () => viewModel.DragService.EndDrag();
                 }
             }
         }

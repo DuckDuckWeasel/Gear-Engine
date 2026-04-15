@@ -14,6 +14,10 @@ namespace GearEngine.GearEngine.Manager
         IGridNode ExtractNode(Vector2Int pos);
         IGridNode GetNode(Vector2Int pos);
 
+        // Atomic Domain Operations
+        void SwapNodes(Vector2Int posA, Vector2Int posB);
+        void MergeNode(Vector2Int targetPos, IGridNode newNode);
+
         bool IsRunning { get; }
         void Play();
         void Stop();
