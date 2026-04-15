@@ -61,24 +61,7 @@ namespace GearEngine.GearEngine.Nodes
 
         public virtual void WindDownUpdate(float deltaTime, float speedModifier)
         {
-            float target90 = ComputeWindDownSnapTarget();
-            CurrentRotation = Mathf.LerpAngle(CurrentRotation, target90, deltaTime * 5f);
             TickAbilities(deltaTime);
-        }
-
-        private float ComputeWindDownSnapTarget()
-        {
-            if (LastRotationDelta > 0)
-            {
-                return Mathf.Ceil(CurrentRotation / 90f) * 90f;
-            }
-
-            if (LastRotationDelta < 0)
-            {
-                return Mathf.Floor(CurrentRotation / 90f) * 90f;
-            }
-
-            return Mathf.Round(CurrentRotation / 90f) * 90f;
         }
 
         public void AddAbility(GearAbilitySO ability, float duration = -1f)

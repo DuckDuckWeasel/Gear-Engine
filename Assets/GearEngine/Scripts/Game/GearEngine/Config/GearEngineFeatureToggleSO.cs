@@ -20,6 +20,9 @@ namespace GearEngine.GearEngine.Config
         [Tooltip("Tag assigned to the trash drop zone for discovery by the drag handler.")]
         public TagSO TrashZoneTag;
 
+        [Tooltip("Tag assigned to the inventory drop zone for discovery by the drag handler.")]
+        public TagSO InventoryZoneTag;
+
         [Tooltip("Horizontal alignment of the trash zone relative to the grid.")]
         public TrashZoneAlignment TrashAlignment = TrashZoneAlignment.Right;
 

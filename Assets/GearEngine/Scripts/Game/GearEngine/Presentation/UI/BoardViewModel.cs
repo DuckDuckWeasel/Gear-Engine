@@ -184,6 +184,7 @@ namespace GearEngine.GearEngine.Presentation.UI
         {
             try
             {
+                OnGearRemoved?.Invoke(node);
                 node?.Dispose();
             }
             catch (Exception ex)

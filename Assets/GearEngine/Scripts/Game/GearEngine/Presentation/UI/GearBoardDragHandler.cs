@@ -13,6 +13,9 @@ namespace GearEngine.GearEngine.Presentation.UI
         [Tooltip("Tag identifying the trash zone drop target.")]
         [SerializeField] private TagSO trashZoneTag;
 
+        [Tooltip("Tag identifying the inventory zone drop target.")]
+        [SerializeField] private TagSO inventoryZoneTag;
+
         private BoardView boardView;
         private Camera mainCamera;
         private GearView draggedView;
@@ -36,7 +39,6 @@ namespace GearEngine.GearEngine.Presentation.UI
             if (IsPointerDown())
             {
                 bool isRunning = boardView != null && boardView.IsRunning();
-                Debug.Log($"<color=#ff00ff>[GearBoardDragHandler]</color> CLICK_OR_TOUCH! HasBoardView={boardView != null}, HasCamera={mainCamera != null}, IsRunning={isRunning}, HasDraggedView={draggedView != null}");
             }
 
             if (boardView == null || mainCamera == null)
@@ -91,7 +93,6 @@ namespace GearEngine.GearEngine.Presentation.UI
 
                 if (!view.TargetNode.IsInteractable)
                 {
-                    Debug.Log($"[GearBoardDragHandler] Skipping '{view.TargetNode.ConfigData?.Id}': IsInteractable is false.");
                     continue;
                 }
 
@@ -105,8 +106,6 @@ namespace GearEngine.GearEngine.Presentation.UI
                 float dist = Vector2.Distance(
                     new Vector2(view.transform.position.x, view.transform.position.y),
                     new Vector2(worldPos.x, worldPos.y));
-
-                Debug.Log($"[GearBoardDragHandler] Evaluating '{view.TargetNode.ConfigData?.Id}' at distance {dist} (Allowed: {closestDist})");
 
                 if (dist < closestDist)
                 {
@@ -174,12 +173,18 @@ namespace GearEngine.GearEngine.Presentation.UI
                     }
 
                     // Check Inventory / Return Area
-                    if (result.gameObject.GetComponentInParent<GearInventoryView>() != null || 
-                        result.gameObject.name == "ItemsContainer" ||
-                        (result.gameObject.layer == LayerMask.NameToLayer("UI") && result.gameObject.GetComponent<UnityEngine.UI.Image>() != null && result.gameObject.GetComponent<UnityEngine.UI.Image>().color.a > 0.05f))
+                    bool isInventory = result.gameObject.GetComponentInParent<GearInventoryView>() != null || 
+                                       result.gameObject.name == "ItemsContainer";
+
+                    if (!isInventory && inventoryZoneTag != null)
                     {
-                        // Exclude the trash zone from being labeled as inventory
-                        if (!isTrash) overInventory = true;
+                        var tc = result.gameObject.GetComponentInParent<TagComponent>();
+                        isInventory = tc != null && tc.HasTag(inventoryZoneTag);
+                    }
+
+                    if (isInventory && !isTrash)
+                    {
+                        overInventory = true;
                     }
                 }
             }

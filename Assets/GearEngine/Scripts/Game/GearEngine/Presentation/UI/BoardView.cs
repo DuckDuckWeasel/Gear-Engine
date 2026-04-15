@@ -11,6 +11,8 @@ namespace GearEngine.GearEngine.Presentation.UI
     public class BoardView : MonoBehaviour
     {
         [SerializeField] private GearBoardDragHandler dragHandler;
+        [SerializeField] private GameObject gridSlotPrefab;
+        [SerializeField] private Transform gridRoot;
 
         public event Action<GearConfigData, Vector3> OnGearDroppedOverUI;
         public event Action<IGridNode> OnTrashDropRequested;
@@ -18,6 +20,7 @@ namespace GearEngine.GearEngine.Presentation.UI
         private BoardViewModel viewModel;
         private GearViewFactory localFactory;
         private readonly Dictionary<IGridNode, GearView> viewsByNode = new Dictionary<IGridNode, GearView>();
+        private readonly List<GameObject> backgroundSlots = new List<GameObject>();
 
         public void Bind(BoardViewModel vm, bool interactable = false)
         {
@@ -27,6 +30,8 @@ namespace GearEngine.GearEngine.Presentation.UI
 
             vm.OnGearPlaced += HandleGearPlaced;
             vm.OnGearRemoved += HandleGearRemoved;
+
+            SpawnBackgroundGrid(vm.BoardConfig);
 
             foreach (IGridNode node in vm.GetCurrentNodes())
             {
@@ -178,6 +183,35 @@ namespace GearEngine.GearEngine.Presentation.UI
             }
 
             viewsByNode.Clear();
+
+            foreach (GameObject slot in backgroundSlots)
+            {
+                if (slot != null)
+                {
+                    DestroyViewGameObject(slot);
+                }
+            }
+            backgroundSlots.Clear();
+        }
+
+        private void SpawnBackgroundGrid(BoardConfigSO config)
+        {
+            if (gridSlotPrefab == null || gridRoot == null || config == null)
+            {
+                return;
+            }
+
+            for (int x = 0; x < config.GridWidth; x++)
+            {
+                for (int y = 0; y < config.GridHeight; y++)
+                {
+                    Vector2Int pos = new Vector2Int(x, y);
+                    GameObject slotView = Instantiate(gridSlotPrefab, gridRoot);
+                    slotView.transform.localPosition = config.GetWorldPosition(pos, 0.5f);
+                    slotView.name = $"GridSlot_{x}_{y}";
+                    backgroundSlots.Add(slotView);
+                }
+            }
         }
 
         private static void DestroyViewGameObject(GameObject go)

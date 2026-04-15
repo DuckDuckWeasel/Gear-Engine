@@ -103,31 +103,6 @@ namespace GearEngine.GearEngine.Nodes
             return Vector2Int.up;
         }
 
-        public override void WindDownUpdate(float deltaTime, float speedModifier)
-        {
-            if (ConfigData == null)
-            {
-                return;
-            }
 
-            float targetRotation = ComputeWindDownTargetRotation();
-            float smoothSpeed = 5f;
-            CurrentRotation = Mathf.LerpAngle(CurrentRotation, targetRotation, deltaTime * smoothSpeed);
-        }
-
-        private float ComputeWindDownTargetRotation()
-        {
-            if (LastRotationDelta > 0)
-            {
-                return Mathf.Ceil(CurrentRotation / 90f) * 90f;
-            }
-
-            if (LastRotationDelta < 0)
-            {
-                return Mathf.Floor(CurrentRotation / 90f) * 90f;
-            }
-
-            return Mathf.Round(CurrentRotation / 90f) * 90f;
-        }
     }
 }
