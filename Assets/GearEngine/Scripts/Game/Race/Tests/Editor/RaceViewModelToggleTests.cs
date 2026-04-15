@@ -55,6 +55,10 @@ namespace GearEngine.Race.Tests.Editor
             {
                 LastSimulation = simulation;
             }
+
+            public void Tick()
+            {
+            }
         }
 
         [Test]

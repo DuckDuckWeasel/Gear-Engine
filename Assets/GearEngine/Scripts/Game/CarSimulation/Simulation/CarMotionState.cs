@@ -4,8 +4,7 @@ namespace GearEngine.CarSimulation.Simulation
     {
         public float Distance;
         public float Speed;
-        public float SpeedStress;
-        public float LineError;
+        public float HeadingErrorDeg;
         public float LateralOffset;
         public float SlipAngle;
         public int SampleIndex;
@@ -14,8 +13,7 @@ namespace GearEngine.CarSimulation.Simulation
         {
             Distance = 0f;
             Speed = 0f;
-            SpeedStress = 0f;
-            LineError = 0f;
+            HeadingErrorDeg = 0f;
             LateralOffset = 0f;
             SlipAngle = 0f;
             SampleIndex = 0;

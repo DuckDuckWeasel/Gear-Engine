@@ -51,10 +51,7 @@ namespace GearEngine.CarSimulation.Debug
         private float RawSpeed => Motion?.Speed ?? 0f;
 
         [ShowInInspector, ReadOnly, BoxGroup("Motion")]
-        private float LineError => Motion?.LineError ?? 0f;
-
-        [ShowInInspector, ReadOnly, BoxGroup("Motion")]
-        private float SpeedStress => Motion?.SpeedStress ?? 0f;
+        private float HeadingErrorDeg => Motion?.HeadingErrorDeg ?? 0f;
 
         [ShowInInspector, ReadOnly, BoxGroup("Motion")]
         private float Distance => Motion?.Distance ?? 0f;

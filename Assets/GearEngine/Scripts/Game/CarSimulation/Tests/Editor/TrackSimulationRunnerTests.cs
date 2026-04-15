@@ -181,9 +181,6 @@ namespace GearEngine.CarSimulation.Tests
                 BakedTrackProfile profile = TrackProfileBaker.Bake(trackDef.Spline);
                 var tuning = ScriptableObject.CreateInstance<TrackSimulationTuning>();
                 toDestroy.Add(tuning);
-                SerializedObject tSo = new SerializedObject(tuning);
-                tSo.FindProperty("activeCapCurvatureSpan").floatValue = 0.02f;
-                tSo.ApplyModifiedPropertiesWithoutUndo();
 
                 var simulation = new TrackSimulation(trackDef, car, profile, carVars, tuning);
                 simulation.Toggle(true);
@@ -207,34 +204,31 @@ namespace GearEngine.CarSimulation.Tests
         }
 
         [Test]
-        public void LineError_HigherHandling_ReducesLineError_AfterShortCorner()
+        public void HeadingError_HigherHandling_ReducesHeadingError_AfterShortCorner()
         {
-            float wide = RunLineErrorAtEnd(5f);
-            float narrow = RunLineErrorAtEnd(95f);
+            float wide = Mathf.Abs(RunHeadingErrorAtEnd(5f));
+            float narrow = Mathf.Abs(RunHeadingErrorAtEnd(95f));
             Assert.That(narrow, Is.LessThanOrEqualTo(wide));
         }
 
         [Test]
-        public void LineError_Decays_WhenNoLongerStressed()
+        public void HeadingError_Decays_OnStraight_WithRecovery()
         {
-            float afterStress = RunLineErrorAtEnd(4f);
-            Assert.That(afterStress, Is.GreaterThan(0.05f));
-
             var toDestroy = new List<Object>();
             try
             {
-                (CarEntity car, CarVariableSet carVars, TrackDefinition trackDef) = BuildCarAndVars(toDestroy, maxStraight: 40f, maxCurve: 10f, acceleration: 5f, brake: 5f, handling: 4f);
+                (CarEntity car, CarVariableSet carVars, TrackDefinition trackDef) = BuildCarAndVars(toDestroy, maxStraight: 40f, maxCurve: 10f, acceleration: 5f, brake: 5f, handling: 50f);
                 BakedTrackProfile profile = TrackProfileBaker.Bake(trackDef.Spline);
                 var tuning = ScriptableObject.CreateInstance<TrackSimulationTuning>();
                 toDestroy.Add(tuning);
                 SerializedObject tSo = new SerializedObject(tuning);
-                tSo.FindProperty("lineErrorDecayRate").floatValue = 2f;
+                tSo.FindProperty("recoveryRateDegPerSec").floatValue = 200f;
                 tSo.ApplyModifiedPropertiesWithoutUndo();
 
                 var simulation = new TrackSimulation(trackDef, car, profile, carVars, tuning);
                 simulation.Toggle(true);
                 simulation.Motion.Speed = 10f;
-                simulation.Motion.LineError = 0.9f;
+                simulation.Motion.HeadingErrorDeg = 25f;
                 var runner = new TrackSimulationRunner(new UnityRaceRandom());
                 runner.SetSimulation(simulation);
                 for (int i = 0; i < 40; i++)
@@ -242,7 +236,7 @@ namespace GearEngine.CarSimulation.Tests
                     runner.Step(0.05f);
                 }
 
-                Assert.That(simulation.Motion.LineError, Is.LessThan(0.4f));
+                Assert.That(Mathf.Abs(simulation.Motion.HeadingErrorDeg), Is.LessThan(5f));
             }
             finally
             {
@@ -254,7 +248,7 @@ namespace GearEngine.CarSimulation.Tests
         }
 
         [Test]
-        public void AdvanceRace_ReducesEffectiveSpeed_WhenLineErrorNonZero()
+        public void AdvanceRace_ReducesEffectiveSpeed_WhenHeadingErrorNonZero()
         {
             var toDestroy = new List<Object>();
             try
@@ -264,13 +258,13 @@ namespace GearEngine.CarSimulation.Tests
                 var tuning = ScriptableObject.CreateInstance<TrackSimulationTuning>();
                 toDestroy.Add(tuning);
                 SerializedObject tSo = new SerializedObject(tuning);
-                tSo.FindProperty("overshootPenaltyScale").floatValue = 0.5f;
+                tSo.FindProperty("speedPenaltyScale").floatValue = 0.5f;
                 tSo.ApplyModifiedPropertiesWithoutUndo();
 
                 var simulation = new TrackSimulation(trackDef, car, profile, carVars, tuning);
                 simulation.Toggle(true);
                 simulation.Motion.Speed = 20f;
-                simulation.Motion.LineError = 0.5f;
+                simulation.Motion.HeadingErrorDeg = 15f;
                 var runner = new TrackSimulationRunner(new UnityRaceRandom());
                 runner.SetSimulation(simulation);
                 runner.Step(0.1f);
@@ -286,7 +280,7 @@ namespace GearEngine.CarSimulation.Tests
         }
 
         [Test]
-        public void LineError_BuildsFromHandlingAlone_WhenCurveAndStraightSpeedAreEqual()
+        public void HeadingError_Builds_WhenTurnDemandExceedsHandling()
         {
             var toDestroy = new List<Object>();
             try
@@ -306,8 +300,7 @@ namespace GearEngine.CarSimulation.Tests
                 var tuning = ScriptableObject.CreateInstance<TrackSimulationTuning>();
                 toDestroy.Add(tuning);
                 SerializedObject tSo = new SerializedObject(tuning);
-                tSo.FindProperty("activeCapCurvatureSpan").floatValue = 0.02f;
-                tSo.FindProperty("maxAbsorbableDifficulty").floatValue = 0.2f;
+                tSo.FindProperty("handlingTurnRateDegPerSec").floatValue = 30f;
                 tSo.ApplyModifiedPropertiesWithoutUndo();
 
                 var simulation = new TrackSimulation(trackDef, car, profile, carVars, tuning);
@@ -321,7 +314,7 @@ namespace GearEngine.CarSimulation.Tests
                     runner.Step(0.05f);
                 }
 
-                Assert.That(simulation.Motion.LineError, Is.GreaterThan(0.02f));
+                Assert.That(Mathf.Abs(simulation.Motion.HeadingErrorDeg), Is.GreaterThan(0.5f));
             }
             finally
             {
@@ -333,7 +326,7 @@ namespace GearEngine.CarSimulation.Tests
         }
 
         [Test]
-        public void LineError_DoesNotBuild_WhenHandlingAbsorbsAllDifficulty()
+        public void HeadingError_StaysLow_WhenHandlingAbsorbsTurn()
         {
             var toDestroy = new List<Object>();
             try
@@ -343,8 +336,7 @@ namespace GearEngine.CarSimulation.Tests
                 var tuning = ScriptableObject.CreateInstance<TrackSimulationTuning>();
                 toDestroy.Add(tuning);
                 SerializedObject tSo = new SerializedObject(tuning);
-                tSo.FindProperty("activeCapCurvatureSpan").floatValue = 200f;
-                tSo.FindProperty("maxAbsorbableDifficulty").floatValue = 1f;
+                tSo.FindProperty("handlingTurnRateDegPerSec").floatValue = 5000f;
                 tSo.ApplyModifiedPropertiesWithoutUndo();
 
                 var simulation = new TrackSimulation(trackDef, car, profile, carVars, tuning);
@@ -358,7 +350,7 @@ namespace GearEngine.CarSimulation.Tests
                     runner.Step(0.05f);
                 }
 
-                Assert.That(simulation.Motion.LineError, Is.LessThanOrEqualTo(0.001f));
+                Assert.That(Mathf.Abs(simulation.Motion.HeadingErrorDeg), Is.LessThanOrEqualTo(0.05f));
             }
             finally
             {
@@ -380,9 +372,6 @@ namespace GearEngine.CarSimulation.Tests
                 BakedTrackProfile profile = TrackProfileBaker.Bake(trackDef.Spline);
                 var tuning = ScriptableObject.CreateInstance<TrackSimulationTuning>();
                 toDestroy.Add(tuning);
-                SerializedObject tuneSo = new SerializedObject(tuning);
-                tuneSo.FindProperty("activeCapCurvatureSpan").floatValue = 200f;
-                tuneSo.ApplyModifiedPropertiesWithoutUndo();
                 var simulation = new TrackSimulation(trackDef, car, profile, carVars, tuning);
                 simulation.Toggle(true);
                 car.AddModifier(new EntityModifierEntry(accelVar, new FloatVariableValue { Value = 80f }));
@@ -445,7 +434,7 @@ namespace GearEngine.CarSimulation.Tests
             }
         }
 
-        private static float RunLineErrorAtEnd(float handling)
+        private static float RunHeadingErrorAtEnd(float handling)
         {
             var toDestroy = new List<Object>();
             try
@@ -464,9 +453,6 @@ namespace GearEngine.CarSimulation.Tests
                 BakedTrackProfile profile = TrackProfileBaker.Bake(trackDef.Spline);
                 var tuning = ScriptableObject.CreateInstance<TrackSimulationTuning>();
                 toDestroy.Add(tuning);
-                SerializedObject tSo = new SerializedObject(tuning);
-                tSo.FindProperty("activeCapCurvatureSpan").floatValue = 0.02f;
-                tSo.ApplyModifiedPropertiesWithoutUndo();
 
                 var simulation = new TrackSimulation(trackDef, car, profile, carVars, tuning);
                 simulation.Toggle(true);
@@ -479,7 +465,7 @@ namespace GearEngine.CarSimulation.Tests
                     runner.Step(0.05f);
                 }
 
-                return simulation.Motion.LineError;
+                return simulation.Motion.HeadingErrorDeg;
             }
             finally
             {
