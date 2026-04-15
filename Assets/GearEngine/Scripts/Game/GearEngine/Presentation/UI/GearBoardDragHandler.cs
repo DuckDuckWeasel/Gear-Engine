@@ -229,7 +229,7 @@ namespace GearEngine.GearEngine.Presentation.UI
                 return;
             }
 
-            Vector2Int targetPos = cfg.GetGridPosition(worldPos);
+            Vector2Int targetPos = cfg.GetGridPosition(worldPos - boardView.transform.position);
 
             // Reject drops outside valid grid bounds — snap back
             if (targetPos.x < 0 || targetPos.x >= cfg.GridWidth
