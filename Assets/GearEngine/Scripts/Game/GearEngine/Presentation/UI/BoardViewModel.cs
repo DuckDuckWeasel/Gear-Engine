@@ -32,8 +32,7 @@ namespace GearEngine.GearEngine.Presentation.UI
         private GearEngineFeatureToggleSO featureToggle;
         private IDragService dragService;
         private Vector2Int pickupOriginalPos;
-        
-        [ObservableProperty] private bool interactable = false;
+        [ObservableProperty] private bool interactable = true;
 
         public event Action<IGridNode> OnGearPlaced;
         public event Action<IGridNode> OnGearRemoved;
@@ -350,11 +349,11 @@ namespace GearEngine.GearEngine.Presentation.UI
 
         private void SwapBoardGears(IGridNode draggedNode, IGridNode occupantNode, Vector2Int targetDropPos)
         {
-            gridManager.SwapNodes(pickupOriginalPos, targetDropPos);
-
-            OnGearRemoved?.Invoke(occupantNode);
-            OnGearPlaced?.Invoke(draggedNode);
+            gridManager.SwapNodes(draggedNode, occupantNode);
+            
+            // Both views are retained in the UI layer. They will gracefully lerp to their new swapped coordinates!
             OnGearPlaced?.Invoke(occupantNode);
+            OnGearPlaced?.Invoke(draggedNode);
         }
 
         private void MergeBoardGearsAt(IGridNode draggedNode, IGridNode occupantNode, Vector2Int targetDropPos, GearConfigData occupantData)

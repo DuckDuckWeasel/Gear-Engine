@@ -1,8 +1,5 @@
 using System;
 using System.Collections.Generic;
-using GearEngine.GearEngine.Bootstrap;
-using GearEngine.GearEngine.Config;
-using GearEngine.GearEngine.Nodes;
 using GearEngine.GearEngine.Visuals;
 using Scaffold.MVVM;
 using UnityEngine;
@@ -155,7 +152,7 @@ namespace GearEngine.GearEngine.Presentation.UI
                 return;
             }
 
-            if (viewsByNode.ContainsKey(node))
+            if (viewsByNode.TryGetValue(node, out GearView existingView))
             {
                 return;
             }
@@ -226,11 +223,11 @@ namespace GearEngine.GearEngine.Presentation.UI
 #if UNITY_EDITOR
             if (!Application.isPlaying)
             {
-                UnityEngine.Object.DestroyImmediate(go);
+                DestroyImmediate(go);
                 return;
             }
 #endif
-            UnityEngine.Object.Destroy(go);
+            Destroy(go);
         }
     }
 }

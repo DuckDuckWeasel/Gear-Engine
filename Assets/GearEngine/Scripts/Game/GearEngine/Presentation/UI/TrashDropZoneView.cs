@@ -3,10 +3,11 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using TMPro;
+using Scaffold.MVVM;
 
 namespace GearEngine.GearEngine.Presentation.UI
 {
-    public sealed class TrashDropZoneView : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerExitHandler
+    public sealed class TrashDropZoneView : View<TrashZoneViewModel>, IDropHandler, IPointerEnterHandler, IPointerExitHandler
     {
         [Header("References")]
         public RectTransform ZoneRect => rootPanel;
@@ -25,8 +26,6 @@ namespace GearEngine.GearEngine.Presentation.UI
         private bool isHovered;
         private float animationProgress;
         private Vector3 baseScale;
-
-        public event Action<GearConfigData> OnInventoryGearDropped;
 
         internal void SetReferences(RectTransform root, Image icon, TextMeshProUGUI label, CanvasGroup cg)
         {
@@ -51,31 +50,31 @@ namespace GearEngine.GearEngine.Presentation.UI
             }
         }
 
-        public void OnDragStarted(GearConfigData gearData)
+        protected override void OnBind()
         {
-            if (gearData == null)
-            {
-                Debug.LogWarning("[TrashDropZone] OnDragStarted called with null gearData. Hiding zone.");
-                Hide(immediate: false);
-                return;
-            }
-
-            if (!gearData.IsDeletable)
-            {
-                Debug.Log($"<color=#ff9900>[TrashDropZone]</color> Gear '{gearData.Id}' is NOT deletable. Hiding trash zone.");
-                Hide(immediate: false);
-                return;
-            }
-
-            Debug.Log($"<color=#00ffff>[TrashDropZone]</color> Gear '{gearData.Id}' IS deletable. Showing trash zone! Reward: {gearData.DeleteRewardAmount}");
-            UpdateRewardLabel(gearData.DeleteRewardAmount);
-            Show();
+            Bind<bool, bool>(() => viewModel.IsActive, OnIsActiveChanged);
+            Bind<string, string>(() => viewModel.RewardText, OnRewardTextChanged);
         }
 
-        public void OnDragEnded()
+        private void OnIsActiveChanged(bool active)
         {
-            isHovered = false;
-            Hide(immediate: false);
+            if (active)
+            {
+                Show();
+            }
+            else
+            {
+                isHovered = false;
+                Hide(immediate: false);
+            }
+        }
+
+        private void OnRewardTextChanged(string text)
+        {
+            if (rewardLabel != null)
+            {
+                rewardLabel.text = text;
+            }
         }
 
         public void SetHovered(bool hovered)
@@ -100,7 +99,7 @@ namespace GearEngine.GearEngine.Presentation.UI
 
         /// <summary>
         /// Unity IDropHandler — called when an inventory DragHandler drops onto this zone.
-        /// Fires OnInventoryGearDropped and then starts the hide animation.
+        /// Fires HandleGearDropped on the viewModel and starts the hide animation.
         /// </summary>
         public void OnDrop(PointerEventData eventData)
         {
@@ -119,12 +118,8 @@ namespace GearEngine.GearEngine.Presentation.UI
 
             if (slotView != null && slotView.BoundGearData != null)
             {
-                Debug.Log($"<color=#ff5555>[TrashDropZone]</color> Inventory gear '{slotView.BoundGearData.Id}' dropped on trash! Firing event.");
-                OnInventoryGearDropped?.Invoke(slotView.BoundGearData);
-
-                // Hide immediately after a successful inventory trash drop
-                isHovered = false;
-                Hide(immediate: false);
+                Debug.Log($"<color=#ff5555>[TrashDropZone]</color> Inventory gear '{slotView.BoundGearData.Id}' dropped on trash! Notifying ViewModel.");
+                viewModel?.HandleGearDropped(slotView.BoundGearData);
             }
         }
 
@@ -149,7 +144,6 @@ namespace GearEngine.GearEngine.Presentation.UI
 
                 gameObject.SetActive(false);
             }
-            // When not immediate, TickAutoHideWhenFaded() will SetActive(false) once fade completes.
         }
 
         private void Update()
@@ -186,14 +180,6 @@ namespace GearEngine.GearEngine.Presentation.UI
             if (!isShowing && animationProgress <= 0f)
             {
                 gameObject.SetActive(false);
-            }
-        }
-
-        private void UpdateRewardLabel(int rewardAmount)
-        {
-            if (rewardLabel != null)
-            {
-                rewardLabel.text = $"+{rewardAmount}";
             }
         }
     }

@@ -1,6 +1,4 @@
-using System;
-using GearEngine.GearEngine.Config;
-using GearEngine.GearEngine.Presentation.UI;
+using GearEngine.GearEngine.Presentation.World;
 using Scaffold.MVVM;
 using TMPro;
 using UnityEngine;
@@ -19,22 +17,51 @@ namespace GearEngine.GearEngine.Presentation
         [Tooltip("Assign the TrashDropZone prefab instance from the scene Canvas.")]
         [SerializeField] private TrashDropZoneView trashDropZone;
 
-        private GearInteractionBinder interactionBinder;
-
         protected override void OnBind()
         {
-            simControlView.Bind(viewModel.SimControl);
+            if (simControlView)
+            {
+                simControlView.Bind(viewModel.SimControl);
+            }
 
-            interactionBinder = new GearInteractionBinder(
-                boardView,
-                inventoryView,
-                viewModel.Board,
-                viewModel.Inventory,
-                boardLimitLabel,
-                inventoryLimitLabel);
-            interactionBinder.Bind();
-
+            BindBoard();
+            BindInventory();
+            BindLimits();
+            SubscribeGearEvents();
             InitializeTrashZone();
+        }
+
+        private void BindBoard()
+        {
+            boardView.Bind(viewModel.Board);
+
+            FrustumFit frustumFit = FindObjectOfType<FrustumFit>();
+            if (frustumFit != null)
+            {
+                frustumFit.Apply();
+            }
+        }
+
+        private void BindInventory()
+        {
+            inventoryView.Bind(viewModel.Inventory);
+        }
+
+        private void BindLimits()
+        {
+            Bind<string, string>(() => viewModel.BoardLimitText, text => {
+                if (boardLimitLabel != null) boardLimitLabel.text = text;
+            });
+
+            Bind<string, string>(() => viewModel.InventoryLimitText, text => {
+                if (inventoryLimitLabel != null) inventoryLimitLabel.text = text;
+            });
+        }
+
+        private void SubscribeGearEvents()
+        {
+            boardView.OnGearDroppedOverUI += HandleGearDroppedOverUI;
+            viewModel.Inventory.OnGearDraggedToBoard += HandleGearDraggedToBoard;
         }
 
         private void InitializeTrashZone()
@@ -56,22 +83,30 @@ namespace GearEngine.GearEngine.Presentation
                 return;
             }
 
-            // Ensure it starts hidden (the view manages its own show/hide via OnDragStarted/OnDragEnded)
             trashDropZone.gameObject.SetActive(false);
-
-            // Position the zone relative to the board grid
+            trashDropZone.Bind(viewModel.TrashZone);
             RepositionTrashZone(toggle);
 
-            // Wire events
             if (viewModel.TrashService != null)
             {
-                trashDropZone.OnInventoryGearDropped += viewModel.TrashService.HandleInventoryGearDropped;
                 boardView.OnTrashDropRequested += viewModel.TrashService.RequestTrashDrop;
             }
-
-            viewModel.DragService.OnDragStarted += HandleDragStartedForTrash;
-            viewModel.DragService.OnDragEnded += trashDropZone.OnDragEnded;
         }
+
+        // ── Handlers ────────────────────────────────────────────
+
+        private void HandleGearDroppedOverUI(GearConfigData config, Vector3 _)
+        {
+            viewModel.ReturnGearToInventory(config);
+        }
+
+        private void HandleGearDraggedToBoard(Vector3 worldPos, GearConfigData gearData)
+        {
+            Vector3 localPos = worldPos - boardView.transform.position;
+            viewModel.TryPlaceFromInventory(localPos, gearData);
+        }
+
+        // ── Trash Zone Positioning ──────────────────────────────
 
         private void RepositionTrashZone(GearEngineFeatureToggleSO toggle)
         {
@@ -86,7 +121,6 @@ namespace GearEngine.GearEngine.Presentation
             Vector3 gridAnchorPoint = ComputeGridAnchor(viewModel.Board.BoardConfig, alignment);
             Vector2 pivot = ComputePivot(alignment);
 
-            // Find the parent canvas for projection
             Canvas parentCanvas = trashDropZone.GetComponentInParent<Canvas>();
             if (parentCanvas != null)
             {
@@ -96,25 +130,6 @@ namespace GearEngine.GearEngine.Presentation
                     CanvasPositionUtility.AnchorToWorldPosition(
                         rect, parentCanvas, gridAnchorPoint, new Vector2(0f, yOffset), pivot);
                 }
-            }
-        }
-
-        private void HandleDragStartedForTrash(object data)
-        {
-            if (trashDropZone == null)
-            {
-                Debug.LogWarning("[GearEngineView] HandleDragStartedForTrash: trashDropZone reference is null!");
-                return;
-            }
-
-            if (data is GearConfigData gearData)
-            {
-                Debug.Log($"<color=#00ffff>[GearEngineView]</color> Forwarding drag start to trash zone for gear '{gearData.Id}'");
-                trashDropZone.OnDragStarted(gearData);
-            }
-            else
-            {
-                Debug.LogWarning($"[GearEngineView] HandleDragStartedForTrash: data is not GearConfigData, type={data?.GetType().Name ?? "null"}");
             }
         }
 
@@ -155,26 +170,28 @@ namespace GearEngine.GearEngine.Presentation
             }
         }
 
+        // ── Cleanup ─────────────────────────────────────────────
+
         private void OnDestroy()
         {
-            interactionBinder?.Dispose();
+            if (boardView != null)
+            {
+                boardView.OnGearDroppedOverUI -= HandleGearDroppedOverUI;
+                if (viewModel?.TrashService != null)
+                {
+                    boardView.OnTrashDropRequested -= viewModel.TrashService.RequestTrashDrop;
+                }
+                boardView.Unbind();
+            }
+
+            if (viewModel != null)
+            {
+                viewModel.Inventory.OnGearDraggedToBoard -= HandleGearDraggedToBoard;
+            }
 
             if (trashDropZone != null)
             {
-                if (viewModel?.TrashService != null)
-                {
-                    trashDropZone.OnInventoryGearDropped -= viewModel.TrashService.HandleInventoryGearDropped;
-                    if (boardView != null)
-                    {
-                        boardView.OnTrashDropRequested -= viewModel.TrashService.RequestTrashDrop;
-                    }
-                }
-
-                if (viewModel?.DragService != null)
-                {
-                    viewModel.DragService.OnDragStarted -= HandleDragStartedForTrash;
-                    viewModel.DragService.OnDragEnded -= trashDropZone.OnDragEnded;
-                }
+                trashDropZone.Unbind();
             }
         }
     }

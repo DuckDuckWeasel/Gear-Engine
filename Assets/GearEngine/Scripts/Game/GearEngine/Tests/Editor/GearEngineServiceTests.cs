@@ -33,6 +33,10 @@ namespace GearEngine.GearEngine.Tests.Editor
             {
             }
 
+            public void SwapNodes(IGridNode nodeA, IGridNode nodeB)
+            {
+            }
+
             public void MergeNode(Vector2Int targetPos, IGridNode newNode)
             {
             }

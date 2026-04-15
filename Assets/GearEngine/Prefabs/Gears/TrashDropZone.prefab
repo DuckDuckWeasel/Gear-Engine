@@ -74,7 +74,7 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294967295
+    rgba: 4286644044
   m_fontColor: {r: 0.3, g: 1, b: 0.5, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
@@ -87,7 +87,7 @@ MonoBehaviour:
   m_spriteAsset: {fileID: 0}
   m_tintAllSprites: 0
   m_StyleSheet: {fileID: 0}
-  m_TextStyleHashCode: 0
+  m_TextStyleHashCode: -1183493901
   m_overrideHtmlColors: 0
   m_faceColor:
     serializedVersion: 2
@@ -255,6 +255,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9773e930565084b8ba09833fbc6f546c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Presentation.UI.TrashDropZoneView
+  type: 0
   rootPanel: {fileID: 6712970679748167461}
   trashIcon: {fileID: 985793049605413261}
   rewardLabel: {fileID: 4313379685552422426}

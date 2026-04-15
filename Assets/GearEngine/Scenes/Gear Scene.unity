@@ -514,21 +514,9 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 2030636792}
     m_Modifications:
-    - target: {fileID: 4313379685552422426, guid: 5c0f2c75741614be083b530936f65100, type: 3}
-      propertyPath: m_fontColor32.rgba
-      value: 4286644044
-      objectReference: {fileID: 0}
-    - target: {fileID: 4313379685552422426, guid: 5c0f2c75741614be083b530936f65100, type: 3}
-      propertyPath: m_TextStyleHashCode
-      value: -1183493901
-      objectReference: {fileID: 0}
     - target: {fileID: 5837107420566151494, guid: 5c0f2c75741614be083b530936f65100, type: 3}
       propertyPath: m_Name
-      value: TrashDropZone
-      objectReference: {fileID: 0}
-    - target: {fileID: 5837107420566151494, guid: 5c0f2c75741614be083b530936f65100, type: 3}
-      propertyPath: m_IsActive
-      value: 0
+      value: TrashDropZoneView
       objectReference: {fileID: 0}
     - target: {fileID: 6712970679748167461, guid: 5c0f2c75741614be083b530936f65100, type: 3}
       propertyPath: m_Pivot.x

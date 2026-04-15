@@ -16,6 +16,7 @@ namespace GearEngine.GearEngine.Manager
 
         // Atomic Domain Operations
         void SwapNodes(Vector2Int posA, Vector2Int posB);
+        void SwapNodes(IGridNode nodeA, IGridNode nodeB);
         void MergeNode(Vector2Int targetPos, IGridNode newNode);
 
         bool IsRunning { get; }

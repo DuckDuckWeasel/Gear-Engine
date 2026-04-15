@@ -200,9 +200,9 @@ namespace GearEngine.Race.Tests.Editor
 
         private static void TearDownRaceViewModel(RaceViewModel vm)
         {
-            if (vm?.Board?.BoardConfig != null)
+            if (vm?.GearEngine?.Board?.BoardConfig != null)
             {
-                Object.DestroyImmediate(vm.Board.BoardConfig);
+                Object.DestroyImmediate(vm.GearEngine.Board.BoardConfig);
             }
         }
 
