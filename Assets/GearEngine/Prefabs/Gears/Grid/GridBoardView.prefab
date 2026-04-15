@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 6220333922910125170}
   - component: {fileID: 850522966390633303}
   m_Layer: 0
-  m_Name: GridBoardCollider
+  m_Name: GridBoardView
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3067215487907053221}
   m_Layer: 0
-  m_Name: GridSlotView
+  m_Name: GridSlot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

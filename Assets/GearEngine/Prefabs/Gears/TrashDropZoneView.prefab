@@ -152,7 +152,7 @@ GameObject:
   - component: {fileID: 874879940244574948}
   - component: {fileID: 1520337072925335536}
   m_Layer: 0
-  m_Name: TrashDropZone
+  m_Name: TrashDropZoneView
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
