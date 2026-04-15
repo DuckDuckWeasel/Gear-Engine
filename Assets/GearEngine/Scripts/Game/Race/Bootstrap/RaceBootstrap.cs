@@ -12,31 +12,19 @@ namespace GearEngine.Race.Bootstrap
         [SerializeField]
         private RaceStartData startData;
 
-        private INavigation navigation;
-
         [Inject]
-        public void Construct(INavigation navigation)
-        {
-            this.navigation = navigation ?? throw new ArgumentNullException(nameof(navigation));
-        }
+        private INavigation navigation;
 
         public void Initialize()
         {
             try
             {
-                RaceStartData data = startData != null ? startData : CreateDefaultStartData();
-                navigation.Open(new RaceViewModel(data));
+                navigation.Open(new RaceViewModel(startData));
             }
             catch (Exception ex)
             {
                 Debug.LogError($"[RaceBootstrap] Initialize failed: {ex.Message}\n{ex.StackTrace}");
             }
-        }
-
-        private static RaceStartData CreateDefaultStartData()
-        {
-            Debug.LogWarning("[RaceBootstrap] No RaceStartData assigned. Using empty defaults.");
-            return new RaceStartData();
         }
     }
 }

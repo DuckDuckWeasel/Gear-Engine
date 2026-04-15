@@ -10,7 +10,8 @@
         "Scaffold.MVVM.View",
         "Scaffold.MVVM.ViewModel",
         "Scaffold.Navigation",
-        "VContainer"
+        "VContainer",
+        "Scaffold.MVVM"
     ],
     "includePlatforms": [
         "Editor"

@@ -101,8 +101,7 @@ namespace GearEngine.CarSimulation.Simulation
 
         private float ComputeLineFailure(SimulationFrame f)
         {
-            float cornerDifficulty = f.Here.Curvature * f.LineDifficultyFromCurvature
-                                   + f.Motion.Speed * f.LineDifficultyFromSpeed;
+            float cornerDifficulty = (f.Here.Curvature * f.LineDifficultyFromCurvature) + (f.Motion.Speed * f.LineDifficultyFromSpeed);
             float absorbable = f.Handling01 * f.MaxAbsorbableDifficulty;
             return Mathf.Max(0f, cornerDifficulty - absorbable);
         }
@@ -125,26 +124,11 @@ namespace GearEngine.CarSimulation.Simulation
         private void ApplyCorneringVisuals(SimulationFrame f)
         {
             CarMotionState motion = f.Motion;
-            float sideSign = Mathf.Sign(f.Here.SignedCurvature);
-            if (Mathf.Abs(sideSign) < 1e-4f)
-            {
-                sideSign = 1f;
-            }
-
+            float sideSign = BuildCorneringSideSign(f);
             float targetSlip = motion.LineError * f.SlipAngleScale * sideSign;
             float targetOffset = motion.LineError * f.LateralOffsetScale * sideSign;
-
             bool recovering = motion.LineError < 0.01f;
-            if (!recovering)
-            {
-                motion.SlipAngle = Mathf.MoveTowards(motion.SlipAngle, targetSlip, f.SlipBuildRate * f.Dt);
-                motion.LateralOffset = Mathf.MoveTowards(motion.LateralOffset, targetOffset, f.OffsetBuildRate * f.Dt);
-            }
-            else
-            {
-                motion.SlipAngle = Mathf.MoveTowards(motion.SlipAngle, 0f, f.SlipRecoveryRate * f.Dt);
-                motion.LateralOffset = Mathf.MoveTowards(motion.LateralOffset, 0f, f.OffsetRecoveryRate * f.Dt);
-            }
+            UpdateSlipAndLateralMotion(motion, f, targetSlip, targetOffset, recovering);
         }
 
         private void AdvanceRace(SimulationFrame f)
@@ -205,6 +189,26 @@ namespace GearEngine.CarSimulation.Simulation
             }
 
             return lapIncrement;
+        }
+
+        private float BuildCorneringSideSign(SimulationFrame f)
+        {
+            float sideSign = Mathf.Sign(f.Here.SignedCurvature);
+            return Mathf.Abs(sideSign) < 1e-4f ? 1f : sideSign;
+        }
+
+        private void UpdateSlipAndLateralMotion(CarMotionState motion, SimulationFrame f, float targetSlip, float targetOffset, bool recovering)
+        {
+            if (!recovering)
+            {
+                motion.SlipAngle = Mathf.MoveTowards(motion.SlipAngle, targetSlip, f.SlipBuildRate * f.Dt);
+                motion.LateralOffset = Mathf.MoveTowards(motion.LateralOffset, targetOffset, f.OffsetBuildRate * f.Dt);
+            }
+            else
+            {
+                motion.SlipAngle = Mathf.MoveTowards(motion.SlipAngle, 0f, f.SlipRecoveryRate * f.Dt);
+                motion.LateralOffset = Mathf.MoveTowards(motion.LateralOffset, 0f, f.OffsetRecoveryRate * f.Dt);
+            }
         }
     }
 }

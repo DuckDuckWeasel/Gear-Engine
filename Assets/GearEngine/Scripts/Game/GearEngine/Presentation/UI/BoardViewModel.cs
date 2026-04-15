@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using CommunityToolkit.Mvvm.ComponentModel;
 using GearEngine.GearEngine;
 using GearEngine.GearEngine.Bootstrap;
 using GearEngine.GearEngine.Config;
@@ -13,21 +14,8 @@ using UnityEngine;
 
 namespace GearEngine.GearEngine.Presentation.UI
 {
-    public sealed class BoardViewModel : ViewModel
+    public partial class BoardViewModel : ViewModel
     {
-        private IGearEngineService engineService;
-        private IGridManager gridManager;
-        private GearNodeFactory nodeFactory;
-        private BoardConfigSO boardConfig;
-        private IEventBus eventBus;
-        private GearEngineFeatureToggleSO featureToggle;
-        private IDragService dragService;
-
-        private Vector2Int pickupOriginalPos;
-
-        public event Action<IGridNode> OnGearPlaced;
-        public event Action<IGridNode> OnGearRemoved;
-
         public IGearEngineService EngineService => engineService;
 
         public BoardConfigSO BoardConfig => boardConfig;
@@ -35,6 +23,20 @@ namespace GearEngine.GearEngine.Presentation.UI
         public int CurrentBoardGearCount => gridManager?.GetAllNodes().Count() ?? 0;
 
         public int MaxAllowedBoardGears => boardConfig != null ? boardConfig.MaxAllowedBoardGears : int.MaxValue;
+
+        private IGearEngineService engineService;
+        private IGridManager gridManager;
+        private GearNodeFactory nodeFactory;
+        private BoardConfigSO boardConfig;
+        private IEventBus eventBus;
+        private GearEngineFeatureToggleSO featureToggle;
+        private IDragService dragService;
+        private Vector2Int pickupOriginalPos;
+        
+        [ObservableProperty] private bool interactable = false;
+
+        public event Action<IGridNode> OnGearPlaced;
+        public event Action<IGridNode> OnGearRemoved;
 
         public void Initialize(
             IGearEngineService engineService,
@@ -78,9 +80,7 @@ namespace GearEngine.GearEngine.Presentation.UI
                 }
 
                 Vector2Int pos = placement.Position;
-                bool inBounds =
-                    pos.x >= 0 && pos.x < boardConfig.GridWidth &&
-                    pos.y >= 0 && pos.y < boardConfig.GridHeight;
+                bool inBounds = pos.x >= 0 && pos.x < boardConfig.GridWidth && pos.y >= 0 && pos.y < boardConfig.GridHeight;
 
                 if (!inBounds)
                 {
@@ -177,9 +177,6 @@ namespace GearEngine.GearEngine.Presentation.UI
             Debug.Log($"<color=#ffff33>[BoardViewModel]</color> Swapped positions! {toPos} <-> {pickupOriginalPos}");
         }
 
-        /// <summary>
-        /// Disposes the logical node after a board gear is dragged over UI (view is destroyed separately).
-        /// </summary>
         public void HandleBoardGearReturnedOverUI(IGridNode node)
         {
             try
@@ -197,11 +194,6 @@ namespace GearEngine.GearEngine.Presentation.UI
             }
         }
 
-        /// <summary>
-        /// Permanently removes a gear from the board and returns the reward amount.
-        /// Called after the player confirms deletion in the confirmation popup.
-        /// </summary>
-        /// <returns>True if the gear was successfully deleted.</returns>
         public bool DeleteGear(IGridNode node)
         {
             try
@@ -261,9 +253,6 @@ namespace GearEngine.GearEngine.Presentation.UI
             }
         }
 
-        /// <summary>
-        /// Grants a scrap reward for deleting a gear directly from the inventory.
-        /// </summary>
         public void GrantTrashReward(int rewardAmount)
         {
             if (rewardAmount > 0)
@@ -272,9 +261,6 @@ namespace GearEngine.GearEngine.Presentation.UI
             }
         }
 
-        /// <summary>
-        /// Snaps a gear back to its pickup position. Used when the player cancels deletion.
-        /// </summary>
         public void SnapBackToOriginal(IGridNode node)
         {
             if (node == null)
@@ -286,10 +272,6 @@ namespace GearEngine.GearEngine.Presentation.UI
             dragService?.EndDrag();
         }
 
-        /// <summary>
-        /// Places or merges inventory gear onto the board. Does not modify inventory; the screen consumes on success.
-        /// </summary>
-        /// <returns>True if a node was placed or merged.</returns>
         public bool HandleInventoryDrop(Vector3 worldPosition, GearConfigData gearData)
         {
             try

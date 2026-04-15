@@ -7,11 +7,6 @@ using UnityEngine;
 
 namespace GearEngine.GearEngine.Presentation.UI
 {
-    /// <summary>
-    /// Encapsulates all shared gear interaction wiring between Board and Inventory.
-    /// Used by both GearEngineView and RaceView to avoid logic duplication.
-    /// Call <see cref="Bind"/> during OnBind and <see cref="Unbind"/> during OnUnbind/OnDestroy.
-    /// </summary>
     public sealed class GearInteractionBinder : IDisposable
     {
         private readonly BoardView boardView;
@@ -24,16 +19,6 @@ namespace GearEngine.GearEngine.Presentation.UI
 
         private bool isBound;
 
-        /// <summary>
-        /// Creates a new GearInteractionBinder.
-        /// </summary>
-        /// <param name="boardView">The board view to bind.</param>
-        /// <param name="inventoryView">The inventory view to bind.</param>
-        /// <param name="boardVm">The board view model.</param>
-        /// <param name="inventoryVm">The inventory view model.</param>
-        /// <param name="boardLimitLabel">Optional label for board gear count.</param>
-        /// <param name="inventoryLimitLabel">Optional label for inventory gear count.</param>
-        /// <param name="isRunningCheck">Optional delegate to check if the engine is running. Defaults to boardVm.EngineService.IsRunning.</param>
         public GearInteractionBinder(
             BoardView boardView,
             GearInventoryView inventoryView,
@@ -52,10 +37,6 @@ namespace GearEngine.GearEngine.Presentation.UI
             this.isRunningCheck = isRunningCheck ?? (() => boardVm.EngineService?.IsRunning ?? false);
         }
 
-        /// <summary>
-        /// Binds board and inventory views, applies FrustumFit, wires all drag/drop events,
-        /// and performs the initial limit label update.
-        /// </summary>
         public void Bind()
         {
             if (isBound)
@@ -65,13 +46,8 @@ namespace GearEngine.GearEngine.Presentation.UI
 
             isBound = true;
 
-            boardView.Bind(boardVm, interactable: true);
-
-            var frustumFit = GameObject.FindObjectOfType<FrustumFit>();
-            if (frustumFit != null)
-            {
-                frustumFit.Apply();
-            }
+            boardView.Bind(boardVm);
+            ApplyFrustum();
 
             inventoryView.Bind(inventoryVm);
 
@@ -89,10 +65,15 @@ namespace GearEngine.GearEngine.Presentation.UI
             UpdateLimitLabels();
         }
 
-        /// <summary>
-        /// Unsubscribes all events and unbinds the board view.
-        /// Safe to call multiple times.
-        /// </summary>
+        private static void ApplyFrustum()
+        {
+            var frustumFit = GameObject.FindObjectOfType<FrustumFit>();
+            if (frustumFit != null)
+            {
+                frustumFit.Apply();
+            }
+        }
+
         public void Unbind()
         {
             if (!isBound)
@@ -105,7 +86,6 @@ namespace GearEngine.GearEngine.Presentation.UI
             if (boardView != null)
             {
                 boardView.OnGearDroppedOverUI -= HandleGearDroppedOverUI;
-                boardView.Unbind();
             }
 
             inventoryVm.OnGearDraggedToBoard -= HandleGearDraggedToBoard;
@@ -118,9 +98,6 @@ namespace GearEngine.GearEngine.Presentation.UI
             }
         }
 
-        /// <summary>
-        /// Forces a refresh of the limit labels.
-        /// </summary>
         public void UpdateLimitLabels()
         {
             if (boardLimitLabel != null)

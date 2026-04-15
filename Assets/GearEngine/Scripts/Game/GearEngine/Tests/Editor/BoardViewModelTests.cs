@@ -428,7 +428,8 @@ namespace GearEngine.GearEngine.Tests.Editor
                 SerializedObject boardSo = new SerializedObject(boardView);
                 boardSo.FindProperty("dragHandler").objectReferenceValue = dragHandler;
                 boardSo.ApplyModifiedPropertiesWithoutUndo();
-                boardView.Bind(boardVm, interactable: false);
+                boardVm.Interactable = false;
+                boardView.Bind(boardVm);
                 GearView[] views = go.GetComponentsInChildren<GearView>(true);
                 Assert.AreEqual(1, views.Length);
             }

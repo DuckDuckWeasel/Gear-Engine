@@ -52,14 +52,14 @@ namespace GearEngine.Race
         {
             base.Initialize();
             ValidateStartData();
-            
+
             BindChildViewModel(Board);
             BindChildViewModel(Inventory);
 
             int maxSlots = startData.GearEngineData?.MaxInventorySlots ?? 5;
             Inventory.Initialize(engineService, maxSlots, dragService);
             Board.Initialize(engineService, gridManager, nodeFactory, boardConfig, eventBus, featureToggle, dragService);
-            
+
             if (transferService != null)
             {
                 transferService.LinkBoard(Board);
