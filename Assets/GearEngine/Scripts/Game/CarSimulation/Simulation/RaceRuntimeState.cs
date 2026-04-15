@@ -11,6 +11,7 @@ namespace GearEngine.CarSimulation.Simulation
         [ObservableProperty] private int currentSegmentIndex;
         [ObservableProperty] private float currentSpeed;
         [ObservableProperty] private bool isDrifting;
+        [ObservableProperty] private bool isOvershot;
         [ObservableProperty] private float distanceTravelled;
 
         public void Reset()
@@ -21,6 +22,7 @@ namespace GearEngine.CarSimulation.Simulation
             CurrentSegmentIndex = 0;
             CurrentSpeed = 0f;
             IsDrifting = false;
+            IsOvershot = false;
             DistanceTravelled = 0f;
         }
     }

@@ -1,25 +1,40 @@
 using Scaffold.Entities;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace GearEngine.CarSimulation.Definitions
 {
     [CreateAssetMenu(menuName = "Game/Car/Car Variable Set", fileName = "CarVariableSet")]
     public sealed class CarVariableSet : ScriptableObject
     {
-        public VariableSO Speed => speed;
-        public VariableSO Acceleration => acceleration;
-        public VariableSO Brake => brake;
-        public VariableSO Handling => handling;
-        public VariableSO Stability => stability;
-        public VariableSO Recovery => recovery;
-        public VariableSO DriftPenalty => driftPenalty;
+        public VariableSO MaxStraightSpeed => maxStraightSpeed;
 
-        [SerializeField] private VariableSO speed;
+        [FormerlySerializedAs("speed")]
+        [SerializeField] private VariableSO maxStraightSpeed;
+
+        public VariableSO MaxCurveSpeed => maxCurveSpeed;
+
+        [SerializeField] private VariableSO maxCurveSpeed;
+
+        public VariableSO Acceleration => acceleration;
+
         [SerializeField] private VariableSO acceleration;
+
+        public VariableSO Brake => brake;
+
         [SerializeField] private VariableSO brake;
+
+        public VariableSO Handling => handling;
+
         [SerializeField] private VariableSO handling;
-        [SerializeField] private VariableSO stability;
-        [SerializeField] private VariableSO recovery;
-        [SerializeField] private VariableSO driftPenalty;
+
+        internal void AssignVariablesForTests(VariableSO maxStraight, VariableSO maxCurve, VariableSO accel, VariableSO brakeVar, VariableSO handle)
+        {
+            maxStraightSpeed = maxStraight;
+            maxCurveSpeed = maxCurve;
+            acceleration = accel;
+            brake = brakeVar;
+            handling = handle;
+        }
     }
 }

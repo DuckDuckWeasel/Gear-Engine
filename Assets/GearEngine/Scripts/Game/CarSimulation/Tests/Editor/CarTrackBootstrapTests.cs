@@ -60,7 +60,7 @@ namespace GearEngine.CarSimulation.Tests
             bSo.FindProperty("trackDefinition").objectReferenceValue = trackDef;
             bSo.ApplyModifiedPropertiesWithoutUndo();
             var factory = new TrackSimulationFactory();
-            var runner = new TrackSimulationRunner();
+            var runner = new TrackSimulationRunner(new UnityRaceRandom());
             var nav = new CapturingNavigation();
             InjectPrivateField(bootstrap, "factory", factory);
             InjectPrivateField(bootstrap, "trackSimulationRunner", runner);

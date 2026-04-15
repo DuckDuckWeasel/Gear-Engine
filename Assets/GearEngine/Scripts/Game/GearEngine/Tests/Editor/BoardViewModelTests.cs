@@ -6,6 +6,7 @@ using GearEngine.GearEngine.Presentation;
 using NUnit.Framework;
 using Scaffold.Events;
 using Scaffold.Events.Contracts;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.TestTools;
 using VContainer;
@@ -423,6 +424,10 @@ namespace GearEngine.GearEngine.Tests.Editor
             try
             {
                 var boardView = go.AddComponent<BoardView>();
+                var dragHandler = go.AddComponent<GearBoardDragHandler>();
+                SerializedObject boardSo = new SerializedObject(boardView);
+                boardSo.FindProperty("dragHandler").objectReferenceValue = dragHandler;
+                boardSo.ApplyModifiedPropertiesWithoutUndo();
                 boardView.Bind(boardVm, interactable: false);
                 GearView[] views = go.GetComponentsInChildren<GearView>(true);
                 Assert.AreEqual(1, views.Length);

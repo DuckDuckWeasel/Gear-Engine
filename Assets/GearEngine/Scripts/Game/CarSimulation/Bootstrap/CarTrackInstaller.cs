@@ -13,6 +13,7 @@ namespace GearEngine.CarSimulation.Bootstrap
             }
 
             builder.Register<TrackSimulationFactory>(Lifetime.Singleton);
+            builder.Register<UnityRaceRandom>(Lifetime.Singleton).As<IRaceRandom>();
             builder.Register<TrackSimulationRunner>(Lifetime.Singleton).AsImplementedInterfaces().AsSelf();
         }
     }

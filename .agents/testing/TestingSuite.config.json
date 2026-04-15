@@ -8,7 +8,10 @@
     "excludeIfLineContainsSubstrings": [
       "Assets/Samples/",
       "Assets/Plugins/",
-      "Assets/Packages/"
+      "Assets/Packages/",
+      "Assets/GearEngine/Scripts/Game/GearEngine/",
+      "Assets/GearEngine/Scripts/Game/CarSimulation/Debug/",
+      "Assets/TestScript.cs"
     ]
   },
   "asmdefReferences": {

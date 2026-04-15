@@ -11,7 +11,7 @@ namespace GearEngine.CarSimulation
 {
     public sealed partial class TrackSimulation : Model
     {
-        public TrackSimulation(TrackDefinition track, CarEntity car, BakedTrackProfile profile, CarVariableSet carVariables, TrackSimulationTuning tuning = null)
+        public TrackSimulation(TrackDefinition track, CarEntity car, BakedTrackProfile profile, CarVariableSet carVariables, TrackSimulationTuning tuning)
         {
             if (track == null)
             {
@@ -26,6 +26,11 @@ namespace GearEngine.CarSimulation
             if (profile == null)
             {
                 throw new ArgumentNullException(nameof(profile));
+            }
+
+            if (tuning == null)
+            {
+                throw new ArgumentNullException(nameof(tuning));
             }
 
             Track = track;

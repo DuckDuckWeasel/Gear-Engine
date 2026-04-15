@@ -12,8 +12,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7a8b9c0d1e2f3456789abcde01234560, type: 3}
   m_Name: TrackSimulationTuning
   m_EditorClassIdentifier: Game.CarSimulation::GearEngine.CarSimulation.Definitions.TrackSimulationTuning
-  gripScale: 0.12
+  overshootPenaltyScale: 0.15
+  activeCapCurvatureSpan: 0.06
   lookAheadMinMetres: 3
   lookAheadSpeedFactor: 0.5
   aheadProbeStep: 0.25
   curvatureEpsilon: 0.00001
+  handlingNormalizationScale: 100
+  curvatureStressMultiplier: 12
+  speedStressScale: 1
+  speedStressToLineErrorScale: 0.5
+  lineDifficultyFromCurvature: 1
+  lineDifficultyFromSpeed: 0.01
+  maxAbsorbableDifficulty: 1
+  lineErrorBuildRate: 1
+  lineErrorDecayRate: 0.8
+  slipAngleScale: 28
+  lateralOffsetScale: 0.45
+  slipBuildRate: 6
+  offsetBuildRate: 4
+  slipRecoveryRate: 12
+  offsetRecoveryRate: 8
+  isDriftingThreshold: 0.12
+  isOvershotThreshold: 0.5

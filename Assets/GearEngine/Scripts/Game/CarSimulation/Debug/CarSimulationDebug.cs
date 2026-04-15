@@ -44,11 +44,17 @@ namespace GearEngine.CarSimulation.Debug
         [ShowInInspector, ReadOnly, BoxGroup("Race")]
         private bool IsDrifting => Race?.IsDrifting ?? false;
 
+        [ShowInInspector, ReadOnly, BoxGroup("Race")]
+        private bool IsOvershot => Race?.IsOvershot ?? false;
+
         [ShowInInspector, ReadOnly, BoxGroup("Motion")]
         private float RawSpeed => Motion?.Speed ?? 0f;
 
         [ShowInInspector, ReadOnly, BoxGroup("Motion")]
-        private float DriftIntensity => Motion?.DriftIntensity ?? 0f;
+        private float LineError => Motion?.LineError ?? 0f;
+
+        [ShowInInspector, ReadOnly, BoxGroup("Motion")]
+        private float SpeedStress => Motion?.SpeedStress ?? 0f;
 
         [ShowInInspector, ReadOnly, BoxGroup("Motion")]
         private float Distance => Motion?.Distance ?? 0f;

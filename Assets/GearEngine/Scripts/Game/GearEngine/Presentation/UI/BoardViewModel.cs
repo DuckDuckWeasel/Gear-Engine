@@ -357,27 +357,26 @@ namespace GearEngine.GearEngine.Presentation.UI
         {
             ((NodeBase)node).Position = toPos;
             gridManager.AddNode(node);
-            OnGearPlaced?.Invoke(node);
         }
 
         private void SnapNodeBackToOriginal(IGridNode node)
         {
             ((NodeBase)node).Position = pickupOriginalPos;
             gridManager.AddNode(node);
-            OnGearPlaced?.Invoke(node);
         }
 
         private void SwapBoardGears(IGridNode draggedNode, IGridNode occupantNode, Vector2Int targetDropPos)
         {
             gridManager.ExtractNode(targetDropPos);
+            OnGearRemoved?.Invoke(occupantNode);
 
-            // Place dragged node at target position
             ((NodeBase)draggedNode).Position = targetDropPos;
             gridManager.AddNode(draggedNode);
+            OnGearPlaced?.Invoke(draggedNode);
 
-            // Place occupant at the original pickup position
             ((NodeBase)occupantNode).Position = pickupOriginalPos;
             gridManager.AddNode(occupantNode);
+            OnGearPlaced?.Invoke(occupantNode);
         }
 
         private void MergeBoardGearsAt(IGridNode draggedNode, IGridNode occupantNode, Vector2Int targetDropPos, GearConfigData occupantData)

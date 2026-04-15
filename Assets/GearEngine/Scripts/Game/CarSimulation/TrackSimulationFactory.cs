@@ -31,6 +31,11 @@ namespace GearEngine.CarSimulation
             BakedTrackProfile profile = TrackProfileBaker.Bake(trackDefinition.Spline);
             CarVariableSet carVariables = config != null ? config.Variables : null;
             TrackSimulationTuning tuning = config != null ? config.Tuning : null;
+            if (tuning == null)
+            {
+                tuning = ScriptableObject.CreateInstance<TrackSimulationTuning>();
+            }
+
             return new TrackSimulation(trackDefinition, car, profile, carVariables, tuning);
         }
     }
