@@ -1,6 +1,8 @@
-using System;
+using GearEngine.CarSimulation;
 using GearEngine.GearEngine;
 using Scaffold.Navigation.Contracts;
+using System;
+using System.Threading.Tasks;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
@@ -24,7 +26,7 @@ namespace GearEngine.GearEngine.Presentation
             try
             {
                 GearEngineStartData data = startData != null ? startData : new GearEngineStartData();
-                navigation.Open(new GearEngineViewModel(data));
+                navigation.Open(new GearEngineViewModel(data, null));
             }
             catch (Exception ex)
             {

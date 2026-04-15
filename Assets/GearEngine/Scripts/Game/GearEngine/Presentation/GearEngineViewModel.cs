@@ -1,4 +1,5 @@
 using System;
+using GearEngine.CarSimulation;
 using GearEngine.GearEngine;
 using GearEngine.GearEngine.Bootstrap;
 using GearEngine.GearEngine.Config;
@@ -11,6 +12,17 @@ namespace GearEngine.GearEngine.Presentation
 {
     public sealed class GearEngineViewModel : ViewModel
     {
+        public GearEngineViewModel(GearEngineStartData startData, TrackSimulation simulation)
+        {
+            this.startData = startData ?? throw new ArgumentNullException(nameof(startData));
+        }
+        public GearEngineFeatureToggleSO FeatureToggle => featureToggle;
+        public IGearTrashService TrashService => trashService;
+        public IDragService DragService => dragService;
+        public SimulationControlViewModel SimControl { get; } = new SimulationControlViewModel();
+        public GearInventoryViewModel Inventory { get; } = new GearInventoryViewModel();
+        public BoardViewModel Board { get; } = new BoardViewModel();
+
         private readonly GearEngineStartData startData;
 
         [Inject] private IGearEngineService engineService;
@@ -20,24 +32,8 @@ namespace GearEngine.GearEngine.Presentation
         [Inject] private IEventBus eventBus;
         [Inject] private GearEngineFeatureToggleSO featureToggle;
         [Inject] private IDragService dragService;
-
         [Inject] private IGearTransferService transferService;
         [Inject] private IGearTrashService trashService;
-
-        public IGearTrashService TrashService => trashService;
-
-        public GearEngineFeatureToggleSO FeatureToggle => featureToggle;
-
-        public IDragService DragService => dragService;
-
-        public SimulationControlViewModel SimControl { get; } = new SimulationControlViewModel();
-        public GearInventoryViewModel Inventory { get; } = new GearInventoryViewModel();
-        public BoardViewModel Board { get; } = new BoardViewModel();
-
-        public GearEngineViewModel(GearEngineStartData startData)
-        {
-            this.startData = startData ?? throw new ArgumentNullException(nameof(startData));
-        }
 
         protected override void Initialize()
         {

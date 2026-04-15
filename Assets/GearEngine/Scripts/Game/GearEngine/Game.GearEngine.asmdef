@@ -15,7 +15,8 @@
         "Scaffold.Records",
         "Scaffold.Scope",
         "Unity.TextMeshPro",
-        "Unity.InputSystem"
+        "Unity.InputSystem",
+        "Game.CarSimulation"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

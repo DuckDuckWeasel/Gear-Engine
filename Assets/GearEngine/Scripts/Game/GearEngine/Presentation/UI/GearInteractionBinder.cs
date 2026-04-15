@@ -46,7 +46,6 @@ namespace GearEngine.GearEngine.Presentation.UI
 
             isBound = true;
 
-            boardView.Bind(boardVm);
             ApplyFrustum();
 
             inventoryView.Bind(inventoryVm);
