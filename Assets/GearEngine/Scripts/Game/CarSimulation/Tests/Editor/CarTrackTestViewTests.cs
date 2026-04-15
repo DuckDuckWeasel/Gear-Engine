@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using GearEngine.CarSimulation;
 using GearEngine.CarSimulation.Definitions;
 using GearEngine.CarSimulation.Presentation;
@@ -37,8 +38,9 @@ namespace GearEngine.CarSimulation.Tests
                 var carDef = ScriptableObject.CreateInstance<CarDefinition>();
                 try
                 {
-                    LogAssert.Expect(LogType.Error, "[Track] CarDefinition.CarPrefab is missing; cannot spawn CarView.");
-                    shell.Bind(new TrackViewModel(new TrackSimulationFactory().Create(carDef, def, null)));
+                    LogAssert.Expect(LogType.Error, "[CarTrackTestView] CarPrefab is missing on CarDefinition.");
+                    TrackSimulation sim = new TrackSimulationFactory().Create(carDef, def, null);
+                    shell.Bind(new TrackListViewModel(def, new List<TrackSimulation> { sim }));
                     AssertOpenTwoKnotSpline(container);
                 }
                 finally

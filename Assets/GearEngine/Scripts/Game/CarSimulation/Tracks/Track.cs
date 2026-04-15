@@ -1,6 +1,5 @@
 using System;
 using GearEngine.CarSimulation.Definitions;
-using GearEngine.CarSimulation.Entity;
 using GearEngine.CarSimulation.Presentation;
 using Scaffold.MVVM;
 using UnityEngine;
@@ -18,8 +17,6 @@ namespace GearEngine.CarSimulation.Tracks
 
         [SerializeField] private SplineContainer splineContainer;
         [SerializeField] private SplineExtrude splineExtrude;
-
-        private CarView spawnedCarView;
 
         public new void Unbind()
         {
@@ -40,118 +37,12 @@ namespace GearEngine.CarSimulation.Tracks
             }
 
             InitializeTrack(viewModel.Track);
-            Bind<SimulationLifecycleState, SimulationLifecycleState>(() => viewModel.State, SyncSpawnedCarPlayback);
-            if (viewModel.Car != null)
-            {
-                SpawnCarView(viewModel.Car);
-            }
-
-            SyncSpawnedCarPlayback(viewModel.State);
         }
 
         protected override void OnUnbind()
         {
-            DestroyCarViewIfNeeded();
             viewModel?.TearDown();
             base.OnUnbind();
-        }
-
-        private void OnDestroy()
-        {
-            DestroyCarViewIfNeeded();
-        }
-
-        private void SpawnCarView(CarEntity car)
-        {
-            DestroyCarViewIfNeeded();
-            GameObject prefab = car.CarPrefab;
-            if (prefab == null)
-            {
-                LogMissingCarPrefab();
-                return;
-            }
-
-            InstantiateAndInitializeCarView(car, prefab);
-        }
-
-        private void LogMissingCarPrefab()
-        {
-            Debug.LogError("[Track] CarDefinition.CarPrefab is missing; cannot spawn CarView.");
-        }
-
-        private void InstantiateAndInitializeCarView(CarEntity car, GameObject prefab)
-        {
-            GameObject instance = Instantiate(prefab);
-            PlaceCarUnderTrack(instance, prefab);
-            if (!TryGetCarView(instance, out CarView view))
-            {
-                Destroy(instance);
-                return;
-            }
-
-            spawnedCarView = view;
-            FinalizeCarViewBinding(car, instance, view);
-        }
-
-        private void PlaceCarUnderTrack(GameObject instance, GameObject prefabAssetRoot)
-        {
-            Transform prefabTransform = prefabAssetRoot.transform;
-            Transform instanceTransform = instance.transform;
-            instanceTransform.SetParent(transform, false);
-            instanceTransform.localPosition = prefabTransform.localPosition;
-            instanceTransform.localRotation = prefabTransform.localRotation;
-            instanceTransform.localScale = prefabTransform.localScale;
-        }
-
-        private void FinalizeCarViewBinding(CarEntity car, GameObject instance, CarView view)
-        {
-            if (viewModel == null)
-            {
-                CancelSpawnedCar(instance);
-                return;
-            }
-
-            view.Initialize(car, splineContainer, viewModel.Simulation);
-            SyncSpawnedCarPlayback(viewModel.State);
-        }
-
-        private void SyncSpawnedCarPlayback(SimulationLifecycleState state)
-        {
-            if (spawnedCarView == null || viewModel == null)
-            {
-                return;
-            }
-
-            spawnedCarView.OnRunningChanged(state);
-        }
-
-        private bool TryGetCarView(GameObject instance, out CarView view)
-        {
-            view = instance.GetComponent<CarView>();
-            if (view != null)
-            {
-                return true;
-            }
-
-            Debug.LogError("[Track] Car prefab is missing CarView.");
-            return false;
-        }
-
-        private void CancelSpawnedCar(GameObject instance)
-        {
-            Destroy(instance);
-            spawnedCarView = null;
-        }
-
-        private void DestroyCarViewIfNeeded()
-        {
-            if (spawnedCarView == null)
-            {
-                return;
-            }
-
-            Destroy(spawnedCarView.gameObject);
-            spawnedCarView = null;
         }
 
         private void InitializeTrack(TrackDefinition data)

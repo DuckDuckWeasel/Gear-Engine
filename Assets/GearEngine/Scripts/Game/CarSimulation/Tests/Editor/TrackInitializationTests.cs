@@ -6,7 +6,6 @@ using TrackViewComponent = GearEngine.CarSimulation.Tracks.Track;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.Splines;
-using UnityEngine.TestTools;
 
 namespace GearEngine.CarSimulation.Tests
 {
@@ -39,7 +38,6 @@ namespace GearEngine.CarSimulation.Tests
                     try
                     {
                         var viewModel = new TrackViewModel(new TrackSimulationFactory().Create(carDef, def, null));
-                        LogAssert.Expect(LogType.Error, "[Track] CarDefinition.CarPrefab is missing; cannot spawn CarView.");
                         track.Bind(viewModel);
 
                         var target = container.Spline;
@@ -105,7 +103,6 @@ namespace GearEngine.CarSimulation.Tests
                     try
                     {
                         var viewModel = new TrackViewModel(new TrackSimulationFactory().Create(carDef, def, null));
-                        LogAssert.Expect(LogType.Error, "[Track] CarDefinition.CarPrefab is missing; cannot spawn CarView.");
                         track.Bind(viewModel);
 
                         Assert.That(extrude.Container, Is.SameAs(container));

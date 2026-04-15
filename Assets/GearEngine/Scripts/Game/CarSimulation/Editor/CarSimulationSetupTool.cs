@@ -549,7 +549,9 @@ namespace GearEngine.CarSimulation.Editor
             CarTrackBootstrap bootstrap = GetOrCreateCarTrackBootstrap();
             SerializedObject bootstrapSo = new SerializedObject(bootstrap);
             bootstrapSo.FindProperty("trackDefinition").objectReferenceValue = trackDefinition;
-            bootstrapSo.FindProperty("carDefinition").objectReferenceValue = carDefinition;
+            SerializedProperty carList = bootstrapSo.FindProperty("carDefinitions");
+            carList.arraySize = 1;
+            carList.GetArrayElementAtIndex(0).objectReferenceValue = carDefinition;
             bootstrapSo.ApplyModifiedPropertiesWithoutUndo();
             EditorUtility.SetDirty(bootstrap);
             return bootstrap;
