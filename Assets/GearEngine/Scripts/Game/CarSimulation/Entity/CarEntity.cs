@@ -6,7 +6,7 @@ using UnityEngine;
 namespace GearEngine.CarSimulation.Entity
 {
     [Serializable]
-    public class CarEntity: EntityInstance<CarDefinition>
+    public sealed class CarEntity : EntityInstance<CarDefinition>
     {
         public CarDefinition Definition => definition;
     }

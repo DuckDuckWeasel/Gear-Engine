@@ -12,14 +12,14 @@ namespace GearEngine.CarSimulation.Tests
     public sealed class CarEntityAndDriverTests
     {
         [Test]
-        public void CarEntity_Create_ProducesRuntimeInstanceWithoutPrefabHost()
+        public void CarEntityFactory_Create_ProducesRuntimeInstanceWithoutPrefabHost()
         {
             var carDef = ScriptableObject.CreateInstance<CarDefinition>();
             try
             {
-                CarEntity car = CarEntity.Create(carDef);
+                var factory = new CarEntityFactory();
+                CarEntity car = factory.Create(carDef);
                 Assert.That(car, Is.Not.Null);
-                Assert.That(car.Instance, Is.Not.Null);
                 Assert.That(car.Definition, Is.SameAs(carDef));
             }
             finally
@@ -47,7 +47,7 @@ namespace GearEngine.CarSimulation.Tests
                 driverSerialized.FindProperty("speedVariable").objectReferenceValue = speed;
                 driverSerialized.ApplyModifiedPropertiesWithoutUndo();
 
-                CarEntity car = CarEntity.Create(carDef);
+                CarEntity car = new CarEntityFactory().Create(carDef);
                 var container = go.AddComponent<SplineContainer>();
 
                 Assert.DoesNotThrow(() => driver.Bind(car, container));
@@ -58,6 +58,13 @@ namespace GearEngine.CarSimulation.Tests
                 Object.DestroyImmediate(speed);
                 Object.DestroyImmediate(carDef);
             }
+        }
+
+        [Test]
+        public void CarEntityFactory_Create_ThrowsOnNullCarDefinition()
+        {
+            var factory = new CarEntityFactory();
+            Assert.Throws<System.ArgumentNullException>(() => factory.Create(null));
         }
     }
 }

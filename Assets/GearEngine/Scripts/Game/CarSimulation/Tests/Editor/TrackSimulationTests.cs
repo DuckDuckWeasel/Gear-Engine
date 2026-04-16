@@ -22,7 +22,6 @@ namespace GearEngine.CarSimulation.Tests
                 TrackSimulation sim = factory.Create(carDef, trackDef);
                 Assert.That(sim.Track, Is.SameAs(trackDef));
                 Assert.That(sim.Car, Is.Not.Null);
-                Assert.That(sim.Car.Instance, Is.Not.Null);
                 Assert.That(sim.State != SimulationLifecycleState.Running);
             }
             finally

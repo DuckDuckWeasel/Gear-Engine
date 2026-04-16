@@ -1,18 +1,28 @@
 using System;
 using GearEngine.CarSimulation.Definitions;
 using GearEngine.CarSimulation.Entity;
-using Scaffold.Entities;
 using UnityEngine;
 
 namespace GearEngine.CarSimulation
 {
     public sealed class TrackSimulationFactory
     {
+        public TrackSimulationFactory() : this(new CarEntityFactory())
+        {
+        }
+
+        public TrackSimulationFactory(CarEntityFactory carEntityFactory)
+        {
+            this.carEntityFactory = carEntityFactory ?? throw new ArgumentNullException(nameof(carEntityFactory));
+        }
+
+        private readonly CarEntityFactory carEntityFactory;
+
         public TrackSimulation Create(CarDefinition carDefinition, TrackDefinition trackDefinition)
         {
             try
             {
-                return CreateCore(carDefinition, trackDefinition);
+                return CreateCore(carEntityFactory, carDefinition, trackDefinition);
             }
             catch (Exception ex)
             {
@@ -21,7 +31,7 @@ namespace GearEngine.CarSimulation
             }
         }
 
-        private static TrackSimulation CreateCore(CarDefinition carDefinition, TrackDefinition trackDefinition)
+        private static TrackSimulation CreateCore(CarEntityFactory carEntityFactory, CarDefinition carDefinition, TrackDefinition trackDefinition)
         {
             if (carDefinition == null)
             {
@@ -33,8 +43,7 @@ namespace GearEngine.CarSimulation
                 throw new ArgumentNullException(nameof(trackDefinition));
             }
 
-            CarEntity car = new CarEntity();
-            car.Initialize(new InstanceId(0), carDefinition);
+            CarEntity car = carEntityFactory.Create(carDefinition);
             return new TrackSimulation(trackDefinition, car);
         }
     }
