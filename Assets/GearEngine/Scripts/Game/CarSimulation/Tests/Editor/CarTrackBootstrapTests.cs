@@ -3,6 +3,7 @@ using GearEngine.CarSimulation;
 using GearEngine.CarSimulation.Bootstrap;
 using GearEngine.CarSimulation.Definitions;
 using GearEngine.CarSimulation.Presentation;
+using GearEngine.CarSimulation.Simulation;
 using NUnit.Framework;
 using Scaffold.Navigation.Contracts;
 using UnityEditor;
@@ -64,6 +65,7 @@ namespace GearEngine.CarSimulation.Tests
             var nav = new CapturingNavigation();
             InjectPrivateField(bootstrap, "factory", factory);
             InjectPrivateField(bootstrap, "navigation", nav);
+            InjectPrivateField(bootstrap, "raceSessionRunner", new RaceSessionRunner());
             return (bootstrap, nav);
         }
 

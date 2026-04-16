@@ -20,8 +20,9 @@ namespace GearEngine.CarSimulation.Bootstrap
 
         [Inject] private TrackSimulationFactory factory;
         [Inject] private INavigation navigation;
+        [Inject] private IRaceSessionRunner raceSessionRunner;
 
-        private readonly List<RaceSessionRunner> runners = new List<RaceSessionRunner>();
+        private readonly List<IRaceSessionRunner> runners = new List<IRaceSessionRunner>();
 
         public void Initialize()
         {
@@ -29,7 +30,7 @@ namespace GearEngine.CarSimulation.Bootstrap
             {
                 ValidateSerializedReferences();
                 List<LapRaceSession> sessions = CreateSessionsForCars();
-                navigation.Open(new TrackListViewModel(trackDefinition, sessions));
+                navigation.Open(new TrackListViewModel(sessions));
             }
             catch (Exception ex)
             {
@@ -40,7 +41,7 @@ namespace GearEngine.CarSimulation.Bootstrap
 
         private void Update()
         {
-            foreach (RaceSessionRunner runner in runners)
+            foreach (IRaceSessionRunner runner in runners)
             {
                 runner.Tick();
             }
@@ -68,9 +69,13 @@ namespace GearEngine.CarSimulation.Bootstrap
         private void AddSessionForCar(CarDefinition carDef, List<LapRaceSession> sessions)
         {
             LapRaceSession session = factory.Create(carDef, trackDefinition, sessionConfig);
-            var runner = new RaceSessionRunner();
+            IRaceSessionRunner runner = runners.Count == 0 ? raceSessionRunner : new RaceSessionRunner();
+            if (runner == null)
+            {
+                throw new InvalidOperationException("[CarTrackBootstrap] IRaceSessionRunner is not injected.");
+            }
+
             runner.SetSession(session);
-            session.SetClockRunning(true);
             sessions.Add(session);
             runners.Add(runner);
         }

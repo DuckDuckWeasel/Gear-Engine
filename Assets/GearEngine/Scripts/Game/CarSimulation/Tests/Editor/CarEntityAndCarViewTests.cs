@@ -1,22 +1,20 @@
-using GearEngine.CarSimulation;
 using GearEngine.CarSimulation.Definitions;
-using GearEngine.CarSimulation.Drivers;
+using GearEngine.CarSimulation.Presentation;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.Splines;
 
 namespace GearEngine.CarSimulation.Tests
 {
-    public sealed class CarEntityAndDriverTests
+    public sealed class CarEntityAndCarViewTests
     {
-
         [Test]
-        public void CarSplineDriver_Bind_DoesNotThrowBeforeUnityStart()
+        public void CarView_Initialize_DoesNotThrowBeforeUnityStart()
         {
             var carDef = ScriptableObject.CreateInstance<CarDefinition>();
             var trackDef = ScriptableObject.CreateInstance<TrackDefinition>();
 
-            var go = new GameObject("DriverBindTest");
+            var go = new GameObject("CarViewBindTest");
             try
             {
                 trackDef.Spline.Knots = new[]
@@ -26,11 +24,11 @@ namespace GearEngine.CarSimulation.Tests
                 };
                 trackDef.Spline.Closed = false;
 
-                var driver = go.AddComponent<CarSplineDriver>();
+                var carView = go.AddComponent<CarView>();
                 var container = go.AddComponent<SplineContainer>();
                 LapRaceSession session = new TrackSimulationFactory().Create(carDef, trackDef, null);
 
-                Assert.DoesNotThrow(() => driver.Bind(session, container));
+                Assert.DoesNotThrow(() => carView.Initialize(session.Car, container, session));
             }
             finally
             {

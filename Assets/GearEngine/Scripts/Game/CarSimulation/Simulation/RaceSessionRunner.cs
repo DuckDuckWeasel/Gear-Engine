@@ -1,9 +1,8 @@
 using UnityEngine;
-using VContainer.Unity;
 
 namespace GearEngine.CarSimulation.Simulation
 {
-    public sealed class RaceSessionRunner : ITickable, IRaceSessionRunner
+    public sealed class RaceSessionRunner : IRaceSessionRunner
     {
         public LapRaceSession ActiveSession => session;
 
@@ -17,11 +16,6 @@ namespace GearEngine.CarSimulation.Simulation
         public void Tick()
         {
             session?.Tick(Time.deltaTime);
-        }
-
-        internal void Step(float dt)
-        {
-            session?.Tick(dt);
         }
     }
 }

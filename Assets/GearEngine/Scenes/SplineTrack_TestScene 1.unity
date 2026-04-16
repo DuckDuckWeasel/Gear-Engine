@@ -153,7 +153,20 @@ MonoBehaviour:
   - {fileID: 11400000, guid: b4e1eaf4e8dd58b418b4e6efc603f72e, type: 2}
   sessionConfig:
     variables: {fileID: 11400000, guid: f6cfd8fa3fbb61843b66534996d0329d, type: 2}
-    totalLaps: 3
+    lap:
+      CurveSlowdown: 1
+      TotalLaps: -1
+      HandlingNormalizationScale: 100
+    sampler:
+      CurveLookAheadStep: 0.02
+      MaxCurveAngle: 90
+    visual:
+      CornerResponse: 10
+      DriftStrength: 5
+      DriftRecoverRate: 5
+      MaxVisualOffset: 1.2
+      MaxSlipAngle: 12
+      DriftThreshold: 0.05
 --- !u!4 &74913802
 Transform:
   m_ObjectHideFlags: 0

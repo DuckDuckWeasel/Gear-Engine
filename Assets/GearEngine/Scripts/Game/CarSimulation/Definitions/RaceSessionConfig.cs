@@ -1,6 +1,4 @@
 using System;
-using GearEngine.CarSimulation.Presentation;
-using GearEngine.CarSimulation.Simulation;
 using UnityEngine;
 
 namespace GearEngine.CarSimulation.Definitions
@@ -10,27 +8,20 @@ namespace GearEngine.CarSimulation.Definitions
     {
         public CarVariableSet Variables => variables;
 
-        public LapSimulationConfig Lap => lap;
+        public int TotalLaps => totalLaps;
 
-        public SplineSamplerConfig Sampler => sampler;
+        [SerializeField] private CarVariableSet variables;
 
-        public CarVisualConfig Visual => visual;
-
-        [SerializeField]
-        private CarVariableSet variables;
-
-        [SerializeField]
-        private LapSimulationConfig lap = new LapSimulationConfig();
-
-        [SerializeField]
-        private SplineSamplerConfig sampler = new SplineSamplerConfig();
-
-        [SerializeField]
-        private CarVisualConfig visual = new CarVisualConfig();
+        [SerializeField] private int totalLaps = 3;
 
         internal void SetVariablesForTests(CarVariableSet value)
         {
             variables = value;
+        }
+
+        internal void SetTotalLapsForTests(int value)
+        {
+            totalLaps = value;
         }
     }
 }

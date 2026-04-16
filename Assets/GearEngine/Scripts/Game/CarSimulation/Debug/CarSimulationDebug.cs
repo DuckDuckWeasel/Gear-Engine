@@ -1,9 +1,8 @@
+using GearEngine.CarSimulation;
 using GearEngine.CarSimulation.Entity;
-using GearEngine.CarSimulation.Presentation;
 using GearEngine.CarSimulation.Simulation;
 using Scaffold.Entities;
 using Sirenix.OdinInspector;
-using UnityEditor;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
@@ -28,30 +27,20 @@ namespace GearEngine.CarSimulation.Debug
 
         private CarEntity Car => Session?.Car;
 
-        private RaceState Race => Session?.RaceState;
-
-        private CarVisualState Visual => Session?.VisualState;
+        [ShowInInspector, ReadOnly, BoxGroup("Race")]
+        private float CurrentSpeed => Session?.CurrentSpeed ?? 0f;
 
         [ShowInInspector, ReadOnly, BoxGroup("Race")]
-        private float CurrentSpeed => Race?.CurrentSpeed ?? 0f;
+        private float NormalizedProgress => Session?.NormalizedProgress ?? 0f;
 
         [ShowInInspector, ReadOnly, BoxGroup("Race")]
-        private float NormalizedProgress => Race?.NormalizedProgress ?? 0f;
+        private int CurrentLap => Session?.CurrentLap ?? 0;
 
         [ShowInInspector, ReadOnly, BoxGroup("Race")]
-        private int CurrentLap => Race?.CurrentLap ?? 0;
+        private float RaceTime => Session?.RaceTime ?? 0f;
 
         [ShowInInspector, ReadOnly, BoxGroup("Race")]
-        private float RaceTime => Race?.RaceTime ?? 0f;
-
-        [ShowInInspector, ReadOnly, BoxGroup("Race")]
-        private RaceLifecycle Lifecycle => Race?.Lifecycle ?? RaceLifecycle.Idle;
-
-        [ShowInInspector, ReadOnly, BoxGroup("Visual")]
-        private bool IsDrifting => Visual?.IsDrifting ?? false;
-
-        [ShowInInspector, ReadOnly, BoxGroup("Visual")]
-        private float LateralOffset => Visual?.LateralOffset ?? 0f;
+        private SimulationLifecycleState Phase => Session?.Phase ?? SimulationLifecycleState.Created;
 
         [ShowInInspector, ReadOnly, BoxGroup("Attribute")]
         private float CurrentAttributeValue

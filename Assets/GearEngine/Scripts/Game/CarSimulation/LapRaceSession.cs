@@ -1,8 +1,7 @@
 using System;
+using System.Collections.Generic;
 using GearEngine.CarSimulation.Definitions;
 using GearEngine.CarSimulation.Entity;
-using GearEngine.CarSimulation.Presentation;
-using GearEngine.CarSimulation.Simulation;
 using UnityEngine;
 using UnityEngine.Splines;
 
@@ -10,62 +9,83 @@ namespace GearEngine.CarSimulation
 {
     public sealed class LapRaceSession
     {
+        private const float defaultSpeedWhenUnset = 30f;
+
         public LapRaceSession(TrackDefinition trackDefinition, CarEntity car, RaceSessionConfig config)
         {
             this.trackDefinition = trackDefinition ?? throw new ArgumentNullException(nameof(trackDefinition));
             Car = car ?? throw new ArgumentNullException(nameof(car));
-            if (config == null)
-            {
-                throw new ArgumentNullException(nameof(config));
-            }
-
-            Variables = config.Variables;
-            lapConfig = config.Lap ?? new LapSimulationConfig();
-            samplerConfig = config.Sampler ?? new SplineSamplerConfig();
-            CarVisualConfig visualConfig = config.Visual ?? new CarVisualConfig();
-            lapSimulation = new LapSimulation(raceState, lapConfig);
-            visualPlayback = new CarVisualPlayback(visualState, visualConfig, lapConfig);
+            RaceSessionConfig resolved = config ?? new RaceSessionConfig();
+            variables = resolved.Variables;
+            totalLaps = resolved.TotalLaps;
         }
 
         public TrackDefinition Track => trackDefinition;
 
         public CarEntity Car { get; }
 
-        public CarVariableSet Variables { get; }
+        public SimulationLifecycleState Phase => phase;
 
-        public RaceState RaceState => raceState;
+        public bool IsSplineBound => trackLength > 1e-4f;
 
-        public CarVisualState VisualState => visualState;
+        internal float BoundTrackLength => trackLength;
 
-        public LapSimulationConfig LapConfig => lapConfig;
+        public float ProgressDistance => progressDistance;
 
-        public CurveSample LastCurveSample { get; private set; }
-
-        public bool ClockRunning => clockRunning;
-
-        public bool VisualPlaybackEnabled
+        public float NormalizedProgress
         {
-            get => visualPlaybackEnabled;
-            set => visualPlaybackEnabled = value;
+            get
+            {
+                if (!IsSplineBound || trackLength < 1e-4f)
+                {
+                    return 0f;
+                }
+
+                if (!isClosed)
+                {
+                    return Mathf.Clamp01(progressDistance / trackLength);
+                }
+
+                return (progressDistance % trackLength) / trackLength;
+            }
         }
 
-        public bool IsSplineBound => sampler != null && trackLength > 1e-4f;
+        public float CurrentSpeed => currentSpeed;
+
+        public float RaceTime => raceTime;
+
+        public int CurrentLap => currentLap;
+
+        public IReadOnlyList<float> LapTimes => lapTimes;
 
         private readonly TrackDefinition trackDefinition;
-        private readonly LapSimulation lapSimulation;
-        private readonly CarVisualPlayback visualPlayback;
-        private readonly RaceState raceState = new RaceState();
-        private readonly CarVisualState visualState = new CarVisualState();
-        private readonly LapSimulationConfig lapConfig;
-        private readonly SplineSamplerConfig samplerConfig;
-        private SplineCurveSampler sampler;
+        private readonly List<float> lapTimes = new List<float>();
+        private readonly int totalLaps;
+        private readonly CarVariableSet variables;
         private float trackLength;
         private bool isClosed;
         private bool clockRunning;
-        private bool visualPlaybackEnabled = true;
         private bool raceFinishNotified;
+        private bool pendingSplineRestart;
+        private float progressDistance;
+        private float currentSpeed;
+        private float raceTime;
+        private int currentLap;
+        private float previousLapStartTime;
+        private SimulationLifecycleState phase = SimulationLifecycleState.Created;
 
         public event Action PresentationChanged;
+
+        public bool ConsumePendingSplineRestart()
+        {
+            if (!pendingSplineRestart)
+            {
+                return false;
+            }
+
+            pendingSplineRestart = false;
+            return true;
+        }
 
         public void BindSpline(SplineContainer container)
         {
@@ -83,52 +103,49 @@ namespace GearEngine.CarSimulation
 
             isClosed = spline.Closed;
             trackLength = spline.GetLength();
-            sampler = new SplineCurveSampler(spline, samplerConfig, isClosed);
-            PrimeSample();
         }
 
         public void Reset()
         {
             raceFinishNotified = false;
-            raceState.Reset();
-            visualState.Reset();
-            PrimeSample();
-        }
-
-        public void PrimeSample()
-        {
-            if (sampler == null || trackLength < 1e-4f)
-            {
-                return;
-            }
-
-            float t = Mathf.Clamp01(raceState.NormalizedProgress);
-            LastCurveSample = sampler.Sample(t);
+            progressDistance = 0f;
+            currentSpeed = 0f;
+            raceTime = 0f;
+            currentLap = 0;
+            lapTimes.Clear();
+            previousLapStartTime = 0f;
+            phase = SimulationLifecycleState.Created;
+            pendingSplineRestart = true;
         }
 
         public void SetClockRunning(bool running)
         {
             clockRunning = running;
-            if (running && raceState.Lifecycle == RaceLifecycle.Idle)
+            if (running)
             {
-                raceState.Lifecycle = RaceLifecycle.Running;
+                if (phase == SimulationLifecycleState.Created || phase == SimulationLifecycleState.Paused)
+                {
+                    phase = SimulationLifecycleState.Running;
+                }
+
+                return;
+            }
+
+            if (phase == SimulationLifecycleState.Running)
+            {
+                phase = SimulationLifecycleState.Paused;
             }
         }
 
         public void ForceFinish()
         {
-            raceState.Lifecycle = RaceLifecycle.Finished;
+            phase = SimulationLifecycleState.Completed;
             clockRunning = false;
             if (!raceFinishNotified)
             {
                 raceFinishNotified = true;
                 PresentationChanged?.Invoke();
             }
-        }
-
-        public bool IsCarPlaybackAllowed()
-        {
-            return clockRunning && raceState.Lifecycle == RaceLifecycle.Running && IsSplineBound;
         }
 
         public void Tick(float dt)
@@ -138,33 +155,64 @@ namespace GearEngine.CarSimulation
                 return;
             }
 
-            RunLapAndVisual(dt);
+            RunTickCore(dt);
+        }
+
+        private void RunTickCore(float dt)
+        {
+            currentSpeed = ReadSpeed();
+            raceTime += dt;
+            if (!isClosed)
+            {
+                TickOpenTrack(dt);
+            }
+            else
+            {
+                AdvanceClosedTrack(dt);
+            }
+
             ApplyFinishClockStop();
             NotifyRaceFinishedOnce();
         }
 
         private bool ShouldRunTick(float dt)
         {
-            return clockRunning && IsSplineBound && dt > 0f && raceState.Lifecycle == RaceLifecycle.Running;
+            return clockRunning && IsSplineBound && dt > 0f && phase == SimulationLifecycleState.Running;
         }
 
-        private void RunLapAndVisual(float dt)
+        private void TickOpenTrack(float dt)
         {
-            LastCurveSample = sampler.Sample(raceState.NormalizedProgress);
-            lapSimulation.Tick(dt, Car, Variables, LastCurveSample, trackLength, isClosed);
-            if (visualPlaybackEnabled)
+            progressDistance += currentSpeed * dt;
+            if (progressDistance >= trackLength)
             {
-                visualPlayback.Tick(dt, Car, Variables, LastCurveSample);
+                progressDistance = trackLength;
+                currentSpeed = 0f;
+                phase = SimulationLifecycleState.Completed;
+                return;
             }
-            else
+        }
+
+        private void AdvanceClosedTrack(float dt)
+        {
+            progressDistance += currentSpeed * dt;
+            int nextLap = Mathf.FloorToInt(progressDistance / trackLength);
+            if (nextLap > currentLap)
             {
-                visualState.ClearCosmetic();
+                float lapTime = raceTime - previousLapStartTime;
+                lapTimes.Add(lapTime);
+                previousLapStartTime = raceTime;
+            }
+
+            currentLap = nextLap;
+            if (totalLaps >= 0 && currentLap >= totalLaps)
+            {
+                phase = SimulationLifecycleState.Completed;
             }
         }
 
         private void ApplyFinishClockStop()
         {
-            if (raceState.Lifecycle == RaceLifecycle.Finished)
+            if (phase == SimulationLifecycleState.Completed)
             {
                 clockRunning = false;
             }
@@ -172,11 +220,21 @@ namespace GearEngine.CarSimulation
 
         private void NotifyRaceFinishedOnce()
         {
-            if (raceState.Lifecycle == RaceLifecycle.Finished && !raceFinishNotified)
+            if (phase == SimulationLifecycleState.Completed && !raceFinishNotified)
             {
                 raceFinishNotified = true;
                 PresentationChanged?.Invoke();
             }
+        }
+
+        private float ReadSpeed()
+        {
+            if (variables == null || variables.Speed == null)
+            {
+                return defaultSpeedWhenUnset;
+            }
+
+            return Mathf.Max(0f, Car.GetValue<float>(variables.Speed));
         }
     }
 }

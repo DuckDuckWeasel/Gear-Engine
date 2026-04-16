@@ -2,7 +2,6 @@ using System;
 using CommunityToolkit.Mvvm.ComponentModel;
 using GearEngine.CarSimulation.Definitions;
 using GearEngine.CarSimulation.Entity;
-using GearEngine.CarSimulation.Simulation;
 using Scaffold.MVVM;
 using Scaffold.MVVM.Binding;
 
@@ -37,7 +36,7 @@ namespace GearEngine.CarSimulation.Presentation
         {
             if (running)
             {
-                if (session.RaceState.Lifecycle == RaceLifecycle.Finished)
+                if (session.Phase == SimulationLifecycleState.Completed)
                 {
                     session.Reset();
                 }
@@ -70,22 +69,7 @@ namespace GearEngine.CarSimulation.Presentation
 
         private void RefreshUiState()
         {
-            State = BuildUiState(session);
-        }
-
-        private static SimulationLifecycleState BuildUiState(LapRaceSession s)
-        {
-            if (s.RaceState.Lifecycle == RaceLifecycle.Finished)
-            {
-                return SimulationLifecycleState.Completed;
-            }
-
-            if (!s.ClockRunning)
-            {
-                return s.RaceState.Lifecycle == RaceLifecycle.Idle ? SimulationLifecycleState.Created : SimulationLifecycleState.Paused;
-            }
-
-            return SimulationLifecycleState.Running;
+            State = session.Phase;
         }
     }
 }
