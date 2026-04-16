@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using System.Reflection;
+using GearEngine.Cards;
 using GearEngine.Cards.Powerups;
 using NUnit.Framework;
 using UnityEngine;
@@ -35,18 +37,32 @@ namespace GearEngine.Cards.Tests.Editor
             }
             finally
             {
-                Object.DestroyImmediate(early);
-                Object.DestroyImmediate(late);
-                Object.DestroyImmediate(card);
-                Object.DestroyImmediate(catalog);
+                UnityEngine.Object.DestroyImmediate(early);
+                UnityEngine.Object.DestroyImmediate(late);
+                UnityEngine.Object.DestroyImmediate(card);
+                UnityEngine.Object.DestroyImmediate(catalog);
             }
         }
 
         private static void SetField<T>(object target, string name, T value)
         {
-            FieldInfo field = target.GetType().GetField(name, BindingFlags.Instance | BindingFlags.NonPublic);
+            FieldInfo field = GetInstanceField(target.GetType(), name);
             Assert.That(field, Is.Not.Null);
             field.SetValue(target, value);
+        }
+
+        private static FieldInfo GetInstanceField(Type type, string name)
+        {
+            for (Type t = type; t != null; t = t.BaseType)
+            {
+                FieldInfo field = t.GetField(name, BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.DeclaredOnly);
+                if (field != null)
+                {
+                    return field;
+                }
+            }
+
+            return null;
         }
     }
 }

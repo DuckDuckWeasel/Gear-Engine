@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using GearEngine.Cards;
 using NUnit.Framework;
 using UnityEditor;
 using UnityEngine;
@@ -18,30 +19,30 @@ namespace GearEngine.Cards.Tests.Editor
 
             var inventory = new PlayerCardInventoryState
             {
-                slots = new List<CardSlotSnapshot>
+                Slots = new List<CardSlotSnapshot>
                 {
-                    new CardSlotSnapshot { slotIndex = 0, state = CardSlotState.Uncollected, cardId = null },
+                    new CardSlotSnapshot { SlotIndex = 0, State = CardSlotState.Uncollected, CardId = null },
                 },
             };
 
             long gold = 500;
             var service = new LocalCardSlotPurchaseService(catalog, () => gold, v => gold = v);
-            var rng = new Random(42);
+            var rng = new System.Random(42);
 
             try
             {
                 bool ok = service.TryPurchaseSlot(inventory, 0, rng, out string error);
                 Assert.That(ok, Is.True);
                 Assert.That(error, Is.Null);
-                Assert.That(inventory.slots[0].state, Is.EqualTo(CardSlotState.Collected));
-                Assert.That(inventory.slots[0].cardId, Is.EqualTo("card_a"));
+                Assert.That(inventory.Slots[0].State, Is.EqualTo(CardSlotState.Collected));
+                Assert.That(inventory.Slots[0].CardId, Is.EqualTo("card_a"));
                 long expected = 500 - CardCostCurve.GoldCostForSlot(0);
                 Assert.That(gold, Is.EqualTo(expected));
             }
             finally
             {
-                Object.DestroyImmediate(card);
-                Object.DestroyImmediate(catalog);
+                UnityEngine.Object.DestroyImmediate(card);
+                UnityEngine.Object.DestroyImmediate(catalog);
             }
         }
 
@@ -55,9 +56,9 @@ namespace GearEngine.Cards.Tests.Editor
 
             var inventory = new PlayerCardInventoryState
             {
-                slots = new List<CardSlotSnapshot>
+                Slots = new List<CardSlotSnapshot>
                 {
-                    new CardSlotSnapshot { slotIndex = 0, state = CardSlotState.Uncollected, cardId = null },
+                    new CardSlotSnapshot { SlotIndex = 0, State = CardSlotState.Uncollected, CardId = null },
                 },
             };
 
@@ -66,16 +67,16 @@ namespace GearEngine.Cards.Tests.Editor
 
             try
             {
-                bool ok = service.TryPurchaseSlot(inventory, 0, new Random(1), out string error);
+                bool ok = service.TryPurchaseSlot(inventory, 0, new System.Random(1), out string error);
                 Assert.That(ok, Is.False);
                 Assert.That(error, Is.EqualTo("Not enough gold."));
-                Assert.That(inventory.slots[0].state, Is.EqualTo(CardSlotState.Uncollected));
+                Assert.That(inventory.Slots[0].State, Is.EqualTo(CardSlotState.Uncollected));
                 Assert.That(gold, Is.EqualTo(10));
             }
             finally
             {
-                Object.DestroyImmediate(card);
-                Object.DestroyImmediate(catalog);
+                UnityEngine.Object.DestroyImmediate(card);
+                UnityEngine.Object.DestroyImmediate(catalog);
             }
         }
 

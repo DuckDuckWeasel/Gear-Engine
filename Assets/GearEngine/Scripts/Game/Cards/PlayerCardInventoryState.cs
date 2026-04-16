@@ -3,22 +3,20 @@ using System.Collections.Generic;
 
 namespace GearEngine.Cards
 {
-    /// <summary>
-    /// Client-side inventory: ordered slots plus collected card ids for powerup resolution.
-    /// </summary>
+    /// <summary>sample: Client-side inventory — ordered slots plus collected card ids for powerup resolution.</summary>
     [Serializable]
     public sealed class PlayerCardInventoryState
     {
-        public List<CardSlotSnapshot> slots = new List<CardSlotSnapshot>();
+        public List<CardSlotSnapshot> Slots = new List<CardSlotSnapshot>();
 
         public IEnumerable<string> EnumerateCollectedCardIds()
         {
-            for (var i = 0; i < slots.Count; i++)
+            for (var i = 0; i < Slots.Count; i++)
             {
-                CardSlotSnapshot s = slots[i];
-                if (s.state == CardSlotState.Collected && !string.IsNullOrEmpty(s.cardId))
+                CardSlotSnapshot s = Slots[i];
+                if (s.State == CardSlotState.Collected && !string.IsNullOrEmpty(s.CardId))
                 {
-                    yield return s.cardId;
+                    yield return s.CardId;
                 }
             }
         }

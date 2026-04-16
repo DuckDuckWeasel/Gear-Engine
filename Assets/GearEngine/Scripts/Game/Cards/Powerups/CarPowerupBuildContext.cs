@@ -3,9 +3,7 @@ using System.Collections.Generic;
 
 namespace GearEngine.Cards.Powerups
 {
-    /// <summary>
-    /// Resolved modifier stack for a single race / car setup. Built from collected card ids.
-    /// </summary>
+    /// <summary>sample: Resolved modifier stack for a single race / car setup. Built from collected card ids.</summary>
     public sealed class CarPowerupBuildContext
     {
         public CarPowerupBuildContext(IReadOnlyList<ICarPowerupModifier> modifiers)
@@ -13,9 +11,9 @@ namespace GearEngine.Cards.Powerups
             this.modifiers = modifiers ?? throw new ArgumentNullException(nameof(modifiers));
         }
 
-        private readonly IReadOnlyList<ICarPowerupModifier> modifiers;
-
         public IReadOnlyList<ICarPowerupModifier> Modifiers => modifiers;
+
+        private readonly IReadOnlyList<ICarPowerupModifier> modifiers;
 
         public CarPowerupStats Evaluate()
         {

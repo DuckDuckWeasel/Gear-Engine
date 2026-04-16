@@ -112,9 +112,7 @@ namespace GearEngine.Race
 
         private void SetupTrack()
         {
-            CarPowerupBuildResult powerups = CarPowerupRuntimeBootstrap.Resolve(
-                startData.CardsCatalog,
-                startData.CardsInventory?.EnumerateCollectedCardIds());
+            CarPowerupBuildResult powerups = CarPowerupRuntimeBootstrap.Resolve(startData.CardsCatalog, startData.CardsInventory?.EnumerateCollectedCardIds());
             TrackSimulation simulation = trackFactory.Create(startData.CarDefinition, startData.TrackDefinition, powerups);
             Track = new TrackViewModel(simulation);
             BindChildViewModel(Track);

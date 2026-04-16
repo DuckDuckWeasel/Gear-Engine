@@ -1,8 +1,6 @@
 namespace GearEngine.Cards.Powerups
 {
-    /// <summary>
-    /// Stable ordering for stacking modifiers (extend as new channels are added).
-    /// </summary>
+    /// <summary>sample: Stable ordering for stacking modifiers (extend as new channels are added).</summary>
     public enum CarPowerupApplyPhase
     {
         Base = 0,

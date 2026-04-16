@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using GearEngine.Cards;
 
 namespace GearEngine.Cards.Powerups
 {

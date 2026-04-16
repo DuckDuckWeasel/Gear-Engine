@@ -7,9 +7,9 @@ namespace GearEngine.Cards
     [CreateAssetMenu(menuName = "Game/Cards/Card Catalog", fileName = "CardCatalog")]
     public sealed class CardCatalogSO : ScriptableObject, ICardDefinitionProvider
     {
-        [SerializeField] private List<CardDefinition> cards = new List<CardDefinition>();
-
         public IReadOnlyList<CardDefinition> Cards => cards;
+
+        [SerializeField] private List<CardDefinition> cards = new List<CardDefinition>();
 
         public bool TryGet(string cardId, out CardDefinition definition)
         {

@@ -13,12 +13,7 @@ namespace GearEngine.Race
         {
         }
 
-        public RaceStartData(
-            TrackDefinition trackDefinition,
-            CarDefinition carDefinition,
-            GearEngineStartData gearEngineData = null,
-            CardCatalogSO cardsCatalog = null,
-            PlayerCardInventoryState cardsInventory = null)
+        public RaceStartData(TrackDefinition trackDefinition, CarDefinition carDefinition, GearEngineStartData gearEngineData = null, CardCatalogSO cardsCatalog = null, PlayerCardInventoryState cardsInventory = null)
         {
             this.trackDefinition = trackDefinition;
             this.carDefinition = carDefinition;

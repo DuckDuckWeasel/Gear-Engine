@@ -4,10 +4,7 @@ using UnityEngine;
 
 namespace GearEngine.Cards
 {
-    /// <summary>
-    /// Local stub: spends gold via callback, rolls random card from catalog, assigns slot.
-    /// Replace with Cloud Code / backend when ready.
-    /// </summary>
+    /// <summary>sample: Local stub — spends gold via callback, rolls random card from catalog, assigns slot. Replace with Cloud Code / backend when ready.</summary>
     public sealed class LocalCardSlotPurchaseService
     {
         public LocalCardSlotPurchaseService(CardCatalogSO catalog, Func<long> getGold, Action<long> setGold)
@@ -23,53 +20,103 @@ namespace GearEngine.Cards
 
         public bool TryPurchaseSlot(PlayerCardInventoryState inventory, int slotIndex, System.Random rng, out string error)
         {
-            error = null;
             if (inventory == null)
             {
                 error = "Inventory is null.";
                 return false;
             }
 
-            if (slotIndex < 0 || slotIndex >= inventory.slots.Count)
+            error = null;
+            return TryPurchaseAfterInventoryValidated(inventory, slotIndex, rng, out error);
+        }
+
+        private bool TryPurchaseAfterInventoryValidated(PlayerCardInventoryState inventory, int slotIndex, System.Random rng, out string error)
+        {
+            if (!TryGetPurchasableSlot(inventory, slotIndex, out error, out CardSlotSnapshot slot))
             {
-                error = "Invalid slot index.";
                 return false;
             }
 
-            CardSlotSnapshot slot = inventory.slots[slotIndex];
-            if (slot.state != CardSlotState.Uncollected)
+            if (!TryEvaluateGoldAgainstSlotCost(slotIndex, out long gold, out long cost, out error))
             {
-                error = "Slot is not available for purchase.";
                 return false;
             }
 
-            long cost = CardCostCurve.GoldCostForSlot(slotIndex);
-            long gold = getGold();
+            return TryFinalizeRandomCardAndCommit(inventory, slotIndex, slot, rng, gold, cost, out error);
+        }
+
+        private bool TryEvaluateGoldAgainstSlotCost(int slotIndex, out long gold, out long cost, out string error)
+        {
+            cost = CardCostCurve.GoldCostForSlot(slotIndex);
+            gold = getGold();
             if (gold < cost)
             {
                 error = "Not enough gold.";
                 return false;
             }
 
+            error = null;
+            return true;
+        }
+
+        private bool TryFinalizeRandomCardAndCommit(PlayerCardInventoryState inventory, int slotIndex, CardSlotSnapshot slot, System.Random rng, long gold, long cost, out string error)
+        {
+            if (!TryPickRandomCard(rng, out CardDefinition pick, out error))
+            {
+                return false;
+            }
+
+            CommitPurchase(inventory, slotIndex, slot, gold, cost, pick);
+            return true;
+        }
+
+        private bool TryGetPurchasableSlot(PlayerCardInventoryState inventory, int slotIndex, out string error, out CardSlotSnapshot slot)
+        {
+            if (slotIndex < 0 || slotIndex >= inventory.Slots.Count)
+            {
+                error = "Invalid slot index.";
+                slot = default;
+                return false;
+            }
+
+            slot = inventory.Slots[slotIndex];
+            if (slot.State != CardSlotState.Uncollected)
+            {
+                error = "Slot is not available for purchase.";
+                return false;
+            }
+
+            error = null;
+            return true;
+        }
+
+        private bool TryPickRandomCard(System.Random rng, out CardDefinition pick, out string error)
+        {
             IReadOnlyList<CardDefinition> pool = catalog.GetRollPool();
             if (pool == null || pool.Count == 0)
             {
+                pick = null;
                 error = "Card catalog is empty.";
                 return false;
             }
 
-            CardDefinition pick = pool[rng.Next(0, pool.Count)];
+            pick = pool[rng.Next(0, pool.Count)];
             if (pick == null || string.IsNullOrEmpty(pick.Id))
             {
                 error = "Rolled invalid card.";
                 return false;
             }
 
-            setGold(gold - cost);
-            slot.state = CardSlotState.Collected;
-            slot.cardId = pick.Id;
-            inventory.slots[slotIndex] = slot;
+            error = null;
             return true;
+        }
+
+        private void CommitPurchase(PlayerCardInventoryState inventory, int slotIndex, CardSlotSnapshot slot, long goldBefore, long cost, CardDefinition pick)
+        {
+            setGold(goldBefore - cost);
+            slot.State = CardSlotState.Collected;
+            slot.CardId = pick.Id;
+            inventory.Slots[slotIndex] = slot;
         }
     }
 }

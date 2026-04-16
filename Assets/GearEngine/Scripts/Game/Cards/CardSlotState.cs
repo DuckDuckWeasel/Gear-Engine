@@ -1,8 +1,6 @@
 namespace GearEngine.Cards
 {
-    /// <summary>
-    /// Mirrors backend slot state: blocked progression, purchasable, or permanently collected.
-    /// </summary>
+    /// <summary>sample: Mirrors backend slot state — blocked progression, purchasable, or permanently collected.</summary>
     public enum CardSlotState
     {
         Blocked = 0,

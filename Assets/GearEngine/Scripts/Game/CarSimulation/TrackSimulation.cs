@@ -14,9 +14,7 @@ namespace GearEngine.CarSimulation
         {
             this.track = track;
             this.car = car;
-            this.powerups = powerups.MaxSpeedMultiplier > 0f && powerups.GripMultiplier > 0f
-                ? powerups
-                : CarPowerupBuildResult.Neutral;
+            this.powerups = powerups.MaxSpeedMultiplier > 0f && powerups.GripMultiplier > 0f ? powerups : CarPowerupBuildResult.Neutral;
         }
 
         public TrackDefinition Track => track;

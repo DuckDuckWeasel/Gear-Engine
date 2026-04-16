@@ -8,10 +8,7 @@ namespace GearEngine.CarSimulation
 {
     public sealed class TrackSimulationFactory
     {
-        public TrackSimulation Create(
-            CarDefinition carDefinition,
-            TrackDefinition trackDefinition,
-            CarPowerupBuildResult powerups = default)
+        public TrackSimulation Create(CarDefinition carDefinition, TrackDefinition trackDefinition, CarPowerupBuildResult powerups = default)
         {
             try
             {
@@ -24,10 +21,7 @@ namespace GearEngine.CarSimulation
             }
         }
 
-        private static TrackSimulation CreateCore(
-            CarDefinition carDefinition,
-            TrackDefinition trackDefinition,
-            CarPowerupBuildResult powerups)
+        private static TrackSimulation CreateCore(CarDefinition carDefinition, TrackDefinition trackDefinition, CarPowerupBuildResult powerups)
         {
             if (carDefinition == null)
             {

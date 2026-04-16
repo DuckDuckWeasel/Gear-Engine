@@ -5,6 +5,7 @@
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner",
         "Game.Race",
+        "Game.Cards",
         "Game.CarSimulation",
         "Game.GearEngine",
         "Scaffold.Entities",

@@ -7,12 +7,13 @@ namespace GearEngine.Cards
     [CreateAssetMenu(menuName = "Game/Cards/Card Definition", fileName = "CardDefinition")]
     public class CardDefinition : ScriptableObject
     {
-        [SerializeField] private string id;
-        [SerializeField] private List<CarPowerupModifierSO> modifiers = new List<CarPowerupModifierSO>();
-
         public string Id => id;
 
+        [SerializeField] private string id;
+
         public IReadOnlyList<CarPowerupModifierSO> ModifierAssets => modifiers;
+
+        [SerializeField] private List<CarPowerupModifierSO> modifiers = new List<CarPowerupModifierSO>();
 
         public void CollectModifiers(List<ICarPowerupModifier> destination)
         {
