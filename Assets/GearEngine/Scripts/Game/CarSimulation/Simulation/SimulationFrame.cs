@@ -8,8 +8,9 @@ namespace GearEngine.CarSimulation.Simulation
 {
     internal readonly struct SimulationFrame
     {
-        private SimulationFrame(CarMotionState motion, RaceRuntimeState race, BakedTrackProfile profile, TrackSample here, float totalLength, float dt, float topSpeed, float acceleration, float brake, float handling, float stability, float recovery, float driftPenaltyScale, float gripScale, float lookAheadMin, float lookAheadSpeedFactor, float aheadProbeStep, float curvatureEpsilon)
+        private SimulationFrame(TrackSimulation trackSimulation, CarMotionState motion, RaceRuntimeState race, BakedTrackProfile profile, TrackSample here, float totalLength, float dt, float topSpeed, float acceleration, float brake, float handling, float stability, float recovery, float driftPenaltyScale, float gripScale, float lookAheadMin, float lookAheadSpeedFactor, float aheadProbeStep, float curvatureEpsilon)
         {
+            TrackSimulation = trackSimulation;
             Motion = motion;
             Race = race;
             Profile = profile;
@@ -29,6 +30,8 @@ namespace GearEngine.CarSimulation.Simulation
             AheadProbeStep = aheadProbeStep;
             CurvatureEpsilon = curvatureEpsilon;
         }
+
+        public TrackSimulation TrackSimulation { get; }
 
         public CarMotionState Motion { get; }
 
@@ -74,7 +77,7 @@ namespace GearEngine.CarSimulation.Simulation
             CarStatScalars stats = FromCar(sim.Car, sim.Variables);
             TrackSample here = profile.Evaluate(motion.Distance);
             motion.SampleIndex = profile.FindSampleIndexNear(motion.Distance);
-            return new SimulationFrame(motion, sim.Race, profile, here, profile.TotalLength, dt, stats.TopSpeed, stats.Acceleration, stats.Brake, stats.Handling, stats.Stability, stats.Recovery, stats.DriftPenaltyScale, tuning.GripScale, tuning.LookAheadMin, tuning.LookAheadSpeedFactor, tuning.AheadProbeStep, tuning.CurvatureEpsilon);
+            return new SimulationFrame(sim, motion, sim.Race, profile, here, profile.TotalLength, dt, stats.TopSpeed, stats.Acceleration, stats.Brake, stats.Handling, stats.Stability, stats.Recovery, stats.DriftPenaltyScale, tuning.GripScale, tuning.LookAheadMin, tuning.LookAheadSpeedFactor, tuning.AheadProbeStep, tuning.CurvatureEpsilon);
         }
 
         private static TuningScalars FromTuning(TrackSimulationTuning t)

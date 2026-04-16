@@ -8,6 +8,7 @@ using GearEngine.GearEngine.Bootstrap;
 using GearEngine.GearEngine.Config;
 using GearEngine.GearEngine.Manager;
 using GearEngine.GearEngine.Nodes;
+using GearEngine.Race.Rewards;
 using NUnit.Framework;
 using Scaffold.Navigation.Contracts;
 using UnityEngine;
@@ -192,6 +193,7 @@ namespace GearEngine.Race.Tests.Editor
             InjectPrivateField(vm, "boardConfig", boardConfig);
             InjectPrivateField(vm, "trackFactory", trackFactory);
             InjectPrivateField(vm, "trackSimulationRunner", trackSimulationRunner);
+            InjectPrivateField(vm, "raceRewardLiveOps", new StubRaceRewardLiveOpsClient());
             InjectPrivateFieldInHierarchy(vm, "navigation", new NoOpNavigation());
 
             InvokeProtectedInitialize(vm);
@@ -200,6 +202,7 @@ namespace GearEngine.Race.Tests.Editor
 
         private static void TearDownRaceViewModel(RaceViewModel vm)
         {
+            vm?.TearDown();
             if (vm?.Board?.BoardConfig != null)
             {
                 Object.DestroyImmediate(vm.Board.BoardConfig);

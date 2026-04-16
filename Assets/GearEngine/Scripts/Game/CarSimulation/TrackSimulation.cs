@@ -11,6 +11,7 @@ namespace GearEngine.CarSimulation
 {
     public sealed partial class TrackSimulation : Model
     {
+        public event Action Completed;
         public TrackSimulation(TrackDefinition track, CarEntity car, BakedTrackProfile profile, CarVariableSet carVariables, TrackSimulationTuning tuning = null)
         {
             if (track == null)
@@ -99,6 +100,7 @@ namespace GearEngine.CarSimulation
             }
 
             State = SimulationLifecycleState.Completed;
+            Completed?.Invoke();
         }
 
         private void TryStartOrResume()

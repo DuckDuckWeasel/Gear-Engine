@@ -2,6 +2,7 @@ using System;
 using GearEngine.CarSimulation.Bootstrap;
 using GearEngine.GearEngine.Bootstrap;
 using GearEngine.GearEngine.Config;
+using GearEngine.Race.Rewards;
 using Scaffold.Addressables.Container;
 using Scaffold.Events.Container;
 using Scaffold.Navigation;
@@ -38,6 +39,7 @@ namespace GearEngine.Race.Bootstrap
             InstallAddressablesAndNavigation(builder);
             new GearMechanicsInstaller(boardConfig).Install(builder);
             new CarTrackInstaller().Install(builder);
+            builder.Register<StubRaceRewardLiveOpsClient>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
             builder.RegisterComponent(sceneBootstrap).AsImplementedInterfaces().AsSelf();
         }
 
