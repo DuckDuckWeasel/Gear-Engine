@@ -2,6 +2,7 @@
     "name": "Game.GearEngine",
     "rootNamespace": "GearEngine.GearEngine",
     "references": [
+        "Game.SceneFoundation",
         "VContainer",
         "Scaffold.Addressables",
         "Scaffold.Addressables.Container",

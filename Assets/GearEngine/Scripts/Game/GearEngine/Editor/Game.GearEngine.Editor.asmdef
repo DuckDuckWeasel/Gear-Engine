@@ -2,6 +2,7 @@
     "name": "Game.GearEngine.Editor",
     "rootNamespace": "GearEngine.GearEngine.Editor",
     "references": [
+        "Game.SceneFoundation",
         "Game.GearEngine",
         "VContainer",
         "Scaffold.MVVM.View",

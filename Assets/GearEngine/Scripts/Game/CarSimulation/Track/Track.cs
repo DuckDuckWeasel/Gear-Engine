@@ -112,7 +112,6 @@ namespace GearEngine.CarSimulation.Track
             }
 
             view.Initialize(car, splineContainer, viewModel);
-            view.ApplyPowerups(viewModel.Powerups);
             SyncSpawnedCarPlayback(viewModel.State);
         }
 

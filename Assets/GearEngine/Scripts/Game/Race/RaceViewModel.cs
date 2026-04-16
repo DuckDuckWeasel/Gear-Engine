@@ -2,7 +2,6 @@ using System;
 using GearEngine.CarSimulation;
 using GearEngine.CarSimulation.Definitions;
 using GearEngine.CarSimulation.Presentation;
-using GearEngine.Cards.Powerups;
 using GearEngine.GearEngine;
 using GearEngine.GearEngine.Bootstrap;
 using GearEngine.GearEngine.Config;
@@ -112,8 +111,7 @@ namespace GearEngine.Race
 
         private void SetupTrack()
         {
-            CarPowerupBuildResult powerups = CarPowerupRuntimeBootstrap.Resolve(startData.CardsCatalog, startData.CardsInventory?.EnumerateCollectedCardIds());
-            TrackSimulation simulation = trackFactory.Create(startData.CarDefinition, startData.TrackDefinition, powerups);
+            TrackSimulation simulation = trackFactory.Create(startData.CarDefinition, startData.TrackDefinition);
             Track = new TrackViewModel(simulation);
             BindChildViewModel(Track);
         }

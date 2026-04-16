@@ -1,18 +1,17 @@
 using System;
 using GearEngine.CarSimulation.Definitions;
 using GearEngine.CarSimulation.Entity;
-using GearEngine.Cards.Powerups;
 using UnityEngine;
 
 namespace GearEngine.CarSimulation
 {
     public sealed class TrackSimulationFactory
     {
-        public TrackSimulation Create(CarDefinition carDefinition, TrackDefinition trackDefinition, CarPowerupBuildResult powerups = default)
+        public TrackSimulation Create(CarDefinition carDefinition, TrackDefinition trackDefinition)
         {
             try
             {
-                return CreateCore(carDefinition, trackDefinition, powerups);
+                return CreateCore(carDefinition, trackDefinition);
             }
             catch (Exception ex)
             {
@@ -21,7 +20,7 @@ namespace GearEngine.CarSimulation
             }
         }
 
-        private static TrackSimulation CreateCore(CarDefinition carDefinition, TrackDefinition trackDefinition, CarPowerupBuildResult powerups)
+        private static TrackSimulation CreateCore(CarDefinition carDefinition, TrackDefinition trackDefinition)
         {
             if (carDefinition == null)
             {
@@ -34,7 +33,7 @@ namespace GearEngine.CarSimulation
             }
 
             CarEntity car = CarEntity.Create(carDefinition);
-            return new TrackSimulation(trackDefinition, car, powerups);
+            return new TrackSimulation(trackDefinition, car);
         }
     }
 }

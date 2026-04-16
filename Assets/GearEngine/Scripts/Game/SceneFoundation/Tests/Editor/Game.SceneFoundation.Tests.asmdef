@@ -1,17 +1,16 @@
 {
-    "name": "Game.CarSimulation.Tests",
-    "rootNamespace": "GearEngine.CarSimulation.Tests",
+    "name": "Game.SceneFoundation.Tests",
+    "rootNamespace": "GearEngine.SceneFoundation.Tests.Editor",
     "references": [
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner",
-        "Game.CarSimulation",
-        "Scaffold.Entities",
-        "Scaffold.MVVM",
-        "Scaffold.MVVM.View",
-        "Scaffold.MVVM.ViewModel",
+        "Game.SceneFoundation",
+        "VContainer",
         "Scaffold.Navigation",
-        "Unity.Splines",
-        "Unity.Mathematics"
+        "Scaffold.Addressables.Container",
+        "Scaffold.Events.Container",
+        "Scaffold.Navigation.Container",
+        "Scaffold.Scope"
     ],
     "includePlatforms": [
         "Editor"
@@ -20,8 +19,7 @@
     "allowUnsafeCode": false,
     "overrideReferences": true,
     "precompiledReferences": [
-        "nunit.framework.dll",
-        "CommunityToolkit.Mvvm.dll"
+        "nunit.framework.dll"
     ],
     "autoReferenced": false,
     "defineConstraints": [

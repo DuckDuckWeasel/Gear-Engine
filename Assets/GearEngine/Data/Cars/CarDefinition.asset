@@ -14,16 +14,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: Game.CarSimulation::GearEngine.CarSimulation.Definitions.CarDefinition
   bag:
     entries:
-    - attribute: {fileID: 11400000, guid: a99063be5b271b547adb25ed6084939b, type: 2}
+    - variable: {fileID: 11400000, guid: a99063be5b271b547adb25ed6084939b, type: 2}
       baseValue:
-        rid: 4306785134842478841
+        rid: 4306785226478584099
   carPrefab: {fileID: 2482284025406797222, guid: 6f783d67944439c419e90723e4e9cbc3, type: 3}
   references:
     version: 2
     RefIds:
-    - rid: 4306785134842478841
-      type: {class: FloatAttributeValue, ns: Scaffold.Entities, asm: Scaffold.Entities}
+    - rid: 4306785226478584099
+      type: {class: StringVariableValue, ns: Scaffold.Entities, asm: Scaffold.Entities}
       data:
-        value: 50
-        min: -3.4028235e+38
-        max: 3.4028235e+38
+        value: 

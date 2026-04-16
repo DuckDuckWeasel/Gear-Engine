@@ -2,7 +2,6 @@ using System;
 using CommunityToolkit.Mvvm.ComponentModel;
 using GearEngine.CarSimulation.Definitions;
 using GearEngine.CarSimulation.Entity;
-using GearEngine.Cards.Powerups;
 using Scaffold.MVVM;
 using UnityEngine;
 
@@ -10,11 +9,10 @@ namespace GearEngine.CarSimulation
 {
     public sealed partial class TrackSimulation : ViewModel
     {
-        public TrackSimulation(TrackDefinition track, CarEntity car, CarPowerupBuildResult powerups = default)
+        public TrackSimulation(TrackDefinition track, CarEntity car)
         {
             this.track = track;
             this.car = car;
-            this.powerups = powerups.MaxSpeedMultiplier > 0f && powerups.GripMultiplier > 0f ? powerups : CarPowerupBuildResult.Neutral;
         }
 
         public TrackDefinition Track => track;
@@ -24,10 +22,6 @@ namespace GearEngine.CarSimulation
         public CarEntity Car => car;
 
         private readonly CarEntity car;
-
-        public CarPowerupBuildResult Powerups => powerups;
-
-        private readonly CarPowerupBuildResult powerups;
 
         [ObservableProperty]
         private SimulationLifecycleState state = SimulationLifecycleState.Created;

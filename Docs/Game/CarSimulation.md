@@ -6,7 +6,7 @@ Runtime code lives in `Assets/Scripts/Game/CarSimulation/` (`Game.CarSimulation`
 
 - **`TrackDefinition`** (`Definitions/TrackDefinition.cs`) — ScriptableObject holding a `Spline` (knots, closed flag) and a display name.
 - **`Track`** (`Track/Track.cs`) — Scene component with a `SplineContainer`. Call `Initialize(TrackDefinition)` at startup to copy spline data from the asset into the container (used by `CarTrackBootstrap`).
-- **`CarTrackScope`** — Assign `CarDefinition`, `TrackDefinition`, and the scene `Track` reference. Swap the `TrackDefinition` asset to change the course (e.g. `CircleTrack` vs `SquareTrack` under `Assets/Game/CarSimulation/Data/Tracks/`).
+- **`CarTrackScope`** — Inherits **`SceneFoundationScope`** (shared Addressables, navigation, events, cross-layer resolver); installs car track services and registers **`CarTrackBootstrap`**. Assign `CarDefinition` and `TrackDefinition` on the bootstrap; swap the `TrackDefinition` asset to change the course. See [`SceneFoundation.md`](SceneFoundation.md).
 
 ## Editor setup
 
