@@ -1,4 +1,5 @@
 using GearEngine.CarSimulation;
+using GearEngine.CarSimulation.Definitions;
 using GearEngine.CarSimulation.Tracks;
 using UnityEngine;
 using VContainer.Unity;
@@ -137,6 +138,29 @@ namespace GearEngine.CarSimulation.Simulation
             race.CurrentSegmentIndex = motion.SampleIndex;
             race.CurrentSpeed = effectiveSpeed;
             race.IsDrifting = motion.DriftIntensity > 0.12f;
+            TryCompleteRaceWhenLapTargetReached(f.TrackSimulation);
+        }
+
+        private static void TryCompleteRaceWhenLapTargetReached(TrackSimulation simulation)
+        {
+            if (simulation == null)
+            {
+                return;
+            }
+
+            TrackDefinition track = simulation.Track;
+            if (track == null)
+            {
+                return;
+            }
+
+            int target = track.TotalLaps;
+            if (target < 1 || simulation.Race.CurrentLap < target)
+            {
+                return;
+            }
+
+            simulation.Complete();
         }
 
         private int AdvanceDistanceCore(CarMotionState motion, BakedTrackProfile profile, float totalLength, ref float newDistance, ref float effectiveSpeed)

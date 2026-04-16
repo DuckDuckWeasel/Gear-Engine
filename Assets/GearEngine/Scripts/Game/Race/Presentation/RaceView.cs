@@ -25,16 +25,21 @@ namespace GearEngine.Race.Presentation
         [SerializeField]
         private Button raceButton;
 
+        [SerializeField]
+        private TextMeshProUGUI goldLabel;
+
         protected override void OnBind()
         {
             ValidateRaceViewHierarchy();
             BindRaceChildViews();
             SubscribeRaceUi();
+            BindGoldLabel();
         }
 
         protected override void OnUnbind()
         {
             UnsubscribeRaceUi();
+            viewModel?.TearDown();
             UnbindWorldAndBoard();
             base.OnUnbind();
         }
@@ -140,6 +145,16 @@ namespace GearEngine.Race.Presentation
             {
                 boardView.OnGearDroppedOverUI -= HandleGearDroppedOverUI;
             }
+        }
+
+        private void BindGoldLabel()
+        {
+            if (goldLabel == null)
+            {
+                return;
+            }
+
+            Bind<int, int>(() => viewModel.PlayerGold.Gold, v => goldLabel.text = $"Gold: {v}");
         }
 
         private void ValidateRaceViewHierarchy()

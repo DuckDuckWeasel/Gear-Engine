@@ -1,6 +1,7 @@
 using System;
+using System.Threading;
+using System.Threading.Tasks;
 using GearEngine.CarSimulation;
-using GearEngine.CarSimulation.Definitions;
 using GearEngine.CarSimulation.Presentation;
 using GearEngine.CarSimulation.Simulation;
 using GearEngine.GearEngine;
@@ -8,7 +9,9 @@ using GearEngine.GearEngine.Bootstrap;
 using GearEngine.GearEngine.Config;
 using GearEngine.GearEngine.Manager;
 using GearEngine.GearEngine.Presentation.UI;
+using GearEngine.Race.Rewards;
 using Scaffold.MVVM;
+using UnityEngine;
 using VContainer;
 
 namespace GearEngine.Race
@@ -26,9 +29,15 @@ namespace GearEngine.Race
 
         public TrackViewModel Track { get; private set; }
 
+        public PlayerGoldViewModel PlayerGold { get; } = new PlayerGoldViewModel();
+
         public bool IsRaceRunning => engineService?.IsRunning ?? false;
 
         private readonly RaceStartData startData;
+
+        private TrackSimulation activeSimulation;
+
+        private CancellationTokenSource rewardFlowCts;
 
         [Inject]
         private IGearEngineService engineService;
@@ -48,6 +57,9 @@ namespace GearEngine.Race
         [Inject]
         private ITrackSimulationRunner trackSimulationRunner;
 
+        [Inject]
+        private IRaceRewardLiveOpsClient raceRewardLiveOps;
+
         protected override void Initialize()
         {
             base.Initialize();
@@ -55,11 +67,19 @@ namespace GearEngine.Race
             SetupInventory();
             SetupBoard();
             SetupTrack();
+            BindChildViewModel(PlayerGold);
+            rewardFlowCts = new CancellationTokenSource();
+            _ = SyncGoldBalanceAsync(rewardFlowCts.Token);
         }
 
         public void ToggleRace()
         {
             if (engineService == null || Track == null)
+            {
+                return;
+            }
+
+            if (Track.State == SimulationLifecycleState.Completed)
             {
                 return;
             }
@@ -73,6 +93,19 @@ namespace GearEngine.Race
             {
                 engineService.Play();
                 Track.Toggle(true);
+            }
+        }
+
+        public void TearDown()
+        {
+            rewardFlowCts?.Cancel();
+            rewardFlowCts?.Dispose();
+            rewardFlowCts = null;
+
+            if (activeSimulation != null)
+            {
+                activeSimulation.Completed -= OnTrackSimulationCompleted;
+                activeSimulation = null;
             }
         }
 
@@ -116,9 +149,85 @@ namespace GearEngine.Race
         private void SetupTrack()
         {
             TrackSimulation simulation = trackFactory.Create(startData.CarDefinition, startData.TrackDefinition, startData.SimulationConfig);
+            activeSimulation = simulation;
+            activeSimulation.Completed += OnTrackSimulationCompleted;
             trackSimulationRunner.SetSimulation(simulation);
             Track = new TrackViewModel(simulation);
             BindChildViewModel(Track);
+        }
+
+        private void OnTrackSimulationCompleted()
+        {
+            if (activeSimulation == null)
+            {
+                return;
+            }
+
+            if (engineService != null && engineService.IsRunning)
+            {
+                engineService.Stop();
+            }
+
+            RaceRewardEvaluation evaluation = RaceRewardEvaluator.Evaluate(
+                startData.TrackDefinition,
+                activeSimulation.Race.CurrentTime,
+                activeSimulation.Race.CurrentLap);
+
+            if (!evaluation.MatchedBracket || evaluation.GoldReward <= 0)
+            {
+                return;
+            }
+
+            CancellationToken token = rewardFlowCts?.Token ?? CancellationToken.None;
+            _ = GrantRewardFlowAsync(evaluation, token);
+        }
+
+        private async Task GrantRewardFlowAsync(RaceRewardEvaluation evaluation, CancellationToken cancellationToken)
+        {
+            if (raceRewardLiveOps == null)
+            {
+                return;
+            }
+
+            try
+            {
+                string trackId = startData.TrackDefinition != null ? startData.TrackDefinition.name : string.Empty;
+                var request = new RaceRewardGrantRequest(trackId, evaluation.RankId, evaluation.GoldReward, evaluation.FinishTimeSeconds);
+                RaceRewardGrantResult result = await raceRewardLiveOps.GrantRaceRewardAsync(request, cancellationToken).ConfigureAwait(true);
+                if (result.Success)
+                {
+                    PlayerGold.Gold = result.NewGoldBalance;
+                }
+                else if (!string.IsNullOrEmpty(result.Message))
+                {
+                    Debug.LogWarning($"[RaceViewModel] Race reward not applied: {result.Message}");
+                }
+            }
+            catch (OperationCanceledException)
+            {
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"[RaceViewModel] GrantRaceRewardAsync failed: {ex.Message}\n{ex.StackTrace}");
+            }
+        }
+
+        private async Task SyncGoldBalanceAsync(CancellationToken cancellationToken)
+        {
+            if (raceRewardLiveOps is not StubRaceRewardLiveOpsClient stub)
+            {
+                return;
+            }
+
+            try
+            {
+                await Task.Yield();
+                cancellationToken.ThrowIfCancellationRequested();
+                PlayerGold.Gold = stub.GoldBalance;
+            }
+            catch (OperationCanceledException)
+            {
+            }
         }
     }
 }
