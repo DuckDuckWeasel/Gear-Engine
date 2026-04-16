@@ -51,7 +51,10 @@ namespace GearEngine.CarSimulation.Debug
         private float DriftIntensity => Motion?.DriftIntensity ?? 0f;
 
         [ShowInInspector, ReadOnly, BoxGroup("Motion")]
-        private float Distance => Motion?.Distance ?? 0f;
+        private int WaypointIndex => Motion?.WaypointIndex ?? 0;
+
+        [ShowInInspector, ReadOnly, BoxGroup("Motion")]
+        private float DistanceAlongPath => Motion?.DistanceAlongPath ?? 0f;
 
         [ShowInInspector, ReadOnly, BoxGroup("Attribute")]
         private float CurrentAttributeValue

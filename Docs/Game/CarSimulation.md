@@ -2,19 +2,24 @@
 
 Runtime code lives in `Assets/GearEngine/Scripts/Game/CarSimulation/` (`Game.CarSimulation` assembly).
 
-## Rolling solver
+## Simple waypoint driver
 
-- **`TrackProfileBaker`** bakes a `Spline` into a **`BakedTrackProfile`** (fixed-distance `TrackSample`s: position, frame, curvature). No car data is baked.
-- **`TrackSimulation`** is a **`Scaffold.MVVM.Model`**: lifecycle (`State`), **`RaceRuntimeState`** (public observables: lap, time, progress, speed, drift flag, distance travelled), and internal **`CarMotionState`** (distance, speed, drift visuals, pending speed boost).
-- **`TrackSimulationRunner`** (`ITickable`, VContainer singleton) steps the solver each frame when the simulation is **Running**: reads **top speed** from **`TrackSimulation.CarVariables.Speed`** via **`CarEntity.TryGetValue<float>`** (fallback default if the set or value is missing), applies lookahead braking, acceleration limits, drift intensity, and lap wrapping on closed splines.
-- **`CarVariableSet`** — ScriptableObject facade listing **`VariableSO`** references the simulation watches (e.g. **Speed**); assign on **`CarTrackBootstrap`** (and optionally **`RaceStartData`** for race flow).
-- **`CarEntityFactory`** — creates **`CarEntity`** instances with incrementing **`InstanceId`**s; **`CarEntity`** exposes **`Definition`** and **`CarPrefab`** for presentation code (base **`EntityInstance`** definition access is internal to Scaffold.Entities).
-- **`CarSplineDriver`** sets the car transform from **`CarMotionState`** + **`BakedTrackProfile`** (no `SplineAnimate` driving path).
-- **`TrackViewModel`** mirrors **`TrackSimulation.State`** and **`RaceRuntimeState`** fields for UI; it does not use `BindChildViewModel` on the simulation model.
+- **`SplineWaypointPath`** — Builds a polyline of world-space points by sampling the track **`Spline`** at a fixed spacing (`SimpleTrackDriverTuning.WaypointSpacingMetres`). Used only for steering targets and path length; no per-frame curvature solver.
+- **`TrackSimulation`** is a **`Scaffold.MVVM.Model`**: lifecycle (`State`), **`RaceRuntimeState`** (lap, time, progress, speed, drift flag, distance travelled), and internal **`CarMotionState`** (world **Position**, **YawDegrees**, **WaypointIndex**, **DistanceAlongPath**, speed, slip/drift visuals, pending speed boost). **`TrackRootTransform`** is set from **`CarSplineDriver.Bind`** so the runner uses the same space as the scene spline.
+- **`TrackSimulationRunner`** (`ITickable`, VContainer singleton) steps when the simulation is **Running**: applies pending speed boost, then **`SimpleWaypointDriver.Step`** — seeks a lookahead point on the waypoint polyline, caps yaw rate (scaled slightly with speed), brakes when the required turn rate exceeds the cap, updates drift visuals from steering-error bands, integrates position, updates race stats.
+- **`SimpleTrackDriverTuning`** — Serializable block on **`TrackSimulationConfig`** (spacing, capture radius, lookahead, yaw rate, accel/brake, corner slowdown scale, drift band degrees, slip lerp). No separate ScriptableObject for track tuning.
+- **`CarVariableSet`** — ScriptableObject listing **`VariableSO`** references: **Speed**, **Acceleration**, and **Brake** are read by the driver (with safe defaults if unset); other entries remain for future use or tooling.
+- **`CarEntityFactory`** — creates **`CarEntity`** instances; **`CarEntity`** exposes **`Definition`** and **`CarPrefab`** for presentation.
+- **`CarSplineDriver`** — Sets the car transform from **`CarMotionState`** (position + yaw + slip). Does not evaluate a baked profile each frame.
+- **`TrackViewModel`** mirrors **`TrackSimulation.State`** and **`RaceRuntimeState`** for UI.
+
+## Track profile baking (optional / tooling)
+
+- **`TrackProfileBaker`** bakes a `Spline` into a **`BakedTrackProfile`** (dense samples with curvature). The runtime race driver no longer uses this for motion; tests and tooling may still reference it.
 
 ## Track selection
 
-- **`TrackDefinition`** (`Definitions/TrackDefinition.cs`) — ScriptableObject holding a `Spline` (knots, closed flag) and a display name. The factory bakes this spline when creating a **`TrackSimulation`**.
+- **`TrackDefinition`** — ScriptableObject holding a `Spline` (knots, closed flag) and a display name. **`TrackSimulationFactory`** builds **`SplineWaypointPath`** from this spline when creating a **`TrackSimulation`**.
 - **`Track`** (`Track/Track.cs`) — Scene component with a `SplineContainer`. Binds a **`TrackViewModel`** and copies spline data from the definition into the container for rendering.
 - **`CarTrackScope`** — Assign `CarDefinition`, `TrackDefinition`, and the scene `Track` reference.
 

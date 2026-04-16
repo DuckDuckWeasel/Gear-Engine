@@ -28,10 +28,10 @@ namespace GearEngine.CarSimulation
         private TrackSimulation CreateCore(CarDefinition carDefinition, TrackDefinition trackDefinition, TrackSimulationConfig config)
         {
             CarEntity car = carEntityFactory.Create(carDefinition);
-            BakedTrackProfile profile = TrackProfileBaker.Bake(trackDefinition.Spline);
             CarVariableSet carVariables = config != null ? config.Variables : null;
-            TrackSimulationTuning tuning = config != null ? config.Tuning : null;
-            return new TrackSimulation(trackDefinition, car, profile, carVariables, tuning);
+            SimpleTrackDriverTuning tuning = config != null ? config.Driver : new SimpleTrackDriverTuning();
+            SplineWaypointPath path = SplineWaypointPath.Build(trackDefinition.Spline, tuning.WaypointSpacingMetres);
+            return new TrackSimulation(trackDefinition, car, path, carVariables, tuning);
         }
     }
 }

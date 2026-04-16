@@ -1,7 +1,6 @@
 using System;
 using GearEngine.CarSimulation;
 using GearEngine.CarSimulation.Simulation;
-using GearEngine.CarSimulation.Tracks;
 using UnityEngine;
 using UnityEngine.Splines;
 
@@ -19,6 +18,7 @@ namespace GearEngine.CarSimulation.Drivers
             simulation = trackSimulation;
             splineContainer = container;
             playbackActive = false;
+            simulation.AttachTrackRoot(container.transform);
             ApplyInitialPose();
         }
 
@@ -37,9 +37,8 @@ namespace GearEngine.CarSimulation.Drivers
 
         private void ApplyInitialPose()
         {
-            CarMotionState motion = simulation.Motion;
-            motion.Distance = 0f;
-            UpdateTransform(motion, simulation.Profile);
+            simulation.SeedMotionFromTrack();
+            UpdateTransform(simulation.Motion);
         }
 
         public void Play()
@@ -64,18 +63,13 @@ namespace GearEngine.CarSimulation.Drivers
                 return;
             }
 
-            UpdateTransform(simulation.Motion, simulation.Profile);
+            UpdateTransform(simulation.Motion);
         }
 
-        private void UpdateTransform(CarMotionState motion, BakedTrackProfile profile)
+        private void UpdateTransform(CarMotionState motion)
         {
-            TrackSample s = profile.Evaluate(motion.Distance);
-            Vector3 fwd = splineContainer.transform.TransformDirection(s.Forward).normalized;
-            Vector3 up = splineContainer.transform.TransformDirection(s.Up).normalized;
-            Vector3 right = Vector3.Cross(up, fwd).normalized;
-            Vector3 worldPos = splineContainer.transform.TransformPoint(s.Position + right * motion.LateralOffset);
-            Quaternion baseRot = Quaternion.LookRotation(fwd, up);
-            transform.SetPositionAndRotation(worldPos, baseRot * Quaternion.Euler(0f, motion.SlipAngle, 0f));
+            Quaternion baseRot = Quaternion.Euler(0f, motion.YawDegrees, 0f);
+            transform.SetPositionAndRotation(motion.Position, baseRot * Quaternion.Euler(0f, motion.SlipAngle, 0f));
         }
     }
 }

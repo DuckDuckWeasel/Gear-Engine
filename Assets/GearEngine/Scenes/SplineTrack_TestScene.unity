@@ -152,7 +152,19 @@ MonoBehaviour:
   carDefinition: {fileID: 11400000, guid: b4e1eaf4e8dd58b418b4e6efc603f72e, type: 2}
   simulationConfig:
     variables: {fileID: 11400000, guid: f6cfd8fa3fbb61843b66534996d0329d, type: 2}
-    tuning: {fileID: 11400000, guid: 9c0d1e2f3a4b5678c9d0e1f2a3b4c5d6, type: 2}
+    driver:
+      waypointSpacingMetres: 4
+      waypointCaptureRadius: 2.5
+      lookaheadMetres: 6
+      baseMaxYawRateDegreesPerSecond: 90
+      acceleration: 12
+      braking: 18
+      cornerSlowdownYawDemandScale: 0.35
+      perfectLineErrorDegrees: 8
+      driftErrorMinDegrees: 12
+      driftErrorMaxDegrees: 35
+      driftSpeedPenalty: 0.06
+      slipVisualLerpSpeed: 4
 --- !u!4 &74913802
 Transform:
   m_ObjectHideFlags: 0

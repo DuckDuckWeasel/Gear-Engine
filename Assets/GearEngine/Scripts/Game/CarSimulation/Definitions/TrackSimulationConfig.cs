@@ -8,12 +8,12 @@ namespace GearEngine.CarSimulation.Definitions
     {
         public CarVariableSet Variables => variables;
 
-        public TrackSimulationTuning Tuning => tuning;
+        public SimpleTrackDriverTuning Driver => driver;
 
         [SerializeField]
         private CarVariableSet variables;
 
         [SerializeField]
-        private TrackSimulationTuning tuning;
+        private SimpleTrackDriverTuning driver = new SimpleTrackDriverTuning();
     }
 }

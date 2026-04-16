@@ -14,7 +14,7 @@ namespace GearEngine.CarSimulation.Tests
     public sealed class TrackSimulationRunnerTests
     {
         [Test]
-        public void Step_WhenRunning_AdvancesDistanceAndRaceTime()
+        public void Step_WhenRunning_AdvancesRaceTimeAndDistanceTravelled()
         {
             var trackDef = ScriptableObject.CreateInstance<TrackDefinition>();
             var toDestroy = new List<Object>();
@@ -79,20 +79,23 @@ namespace GearEngine.CarSimulation.Tests
                 cvSo.FindProperty("driftPenalty").objectReferenceValue = driftPenaltyVar;
                 cvSo.ApplyModifiedPropertiesWithoutUndo();
 
-                var tuning = ScriptableObject.CreateInstance<TrackSimulationTuning>();
-                toDestroy.Add(tuning);
-
+                var config = new TrackSimulationConfig();
                 CarEntity car = new CarEntityFactory().Create(carDef);
-                BakedTrackProfile profile = TrackProfileBaker.Bake(trackDef.Spline);
-                var simulation = new TrackSimulation(trackDef, car, profile, carVars, tuning);
+                SplineWaypointPath path = SplineWaypointPath.Build(trackDef.Spline, config.Driver.WaypointSpacingMetres);
+                var simulation = new TrackSimulation(trackDef, car, path, carVars, config.Driver);
+                var trackGo = new GameObject("TrackRoot");
+                toDestroy.Add(trackGo);
+                trackGo.transform.SetPositionAndRotation(Vector3.zero, Quaternion.identity);
+                simulation.AttachTrackRoot(trackGo.transform);
+                simulation.SeedMotionFromTrack();
                 simulation.Toggle(true);
 
                 var runner = new TrackSimulationRunner();
                 runner.SetSimulation(simulation);
-                float before = simulation.Motion.Distance;
+                float beforeTravel = simulation.Race.DistanceTravelled;
                 runner.Step(0.2f);
 
-                Assert.That(simulation.Motion.Distance, Is.GreaterThan(before));
+                Assert.That(simulation.Race.DistanceTravelled, Is.GreaterThan(beforeTravel));
                 Assert.That(simulation.Race.CurrentTime, Is.GreaterThan(0f));
             }
             finally
@@ -124,15 +127,59 @@ namespace GearEngine.CarSimulation.Tests
                 trackDef.Spline.Closed = false;
 
                 TrackSimulation simulation = new TrackSimulationFactory().Create(carDef, trackDef, null);
-                var runner = new TrackSimulationRunner();
-                runner.SetSimulation(simulation);
-                runner.Step(0.5f);
-                Assert.That(simulation.Motion.Distance, Is.EqualTo(0f));
+                var trackGo = new GameObject("TrackRoot");
+                try
+                {
+                    simulation.AttachTrackRoot(trackGo.transform);
+                    simulation.SeedMotionFromTrack();
+                    var runner = new TrackSimulationRunner();
+                    runner.SetSimulation(simulation);
+                    float travelBefore = simulation.Race.DistanceTravelled;
+                    runner.Step(0.5f);
+                    Assert.That(simulation.Race.DistanceTravelled, Is.EqualTo(travelBefore));
+                }
+                finally
+                {
+                    Object.DestroyImmediate(trackGo);
+                }
             }
             finally
             {
                 Object.DestroyImmediate(trackDef);
                 Object.DestroyImmediate(carDef);
+            }
+        }
+
+        [Test]
+        public void AdvanceWaypointIndex_IncrementsWhenInsideCaptureRadius()
+        {
+            var spline = new Spline();
+            spline.Knots = new[]
+            {
+                new BezierKnot(new Vector3(0f, 0f, 0f)),
+                new BezierKnot(new Vector3(10f, 0f, 0f)),
+                new BezierKnot(new Vector3(20f, 0f, 0f)),
+            };
+            spline.Closed = false;
+
+            SplineWaypointPath path = SplineWaypointPath.Build(spline, spacingMetres: 2f);
+            var root = new GameObject("T").transform;
+            root.SetPositionAndRotation(Vector3.zero, Quaternion.identity);
+            try
+            {
+                Vector3 nearSecond = path.GetWorldPoint(1, root) + Vector3.left * 0.1f;
+                int next = SimpleWaypointDriver.AdvanceWaypointIndex(
+                    path,
+                    0,
+                    nearSecond,
+                    root,
+                    captureRadius: 5f,
+                    closed: false);
+                Assert.That(next, Is.GreaterThan(0));
+            }
+            finally
+            {
+                Object.DestroyImmediate(root.gameObject);
             }
         }
     }
