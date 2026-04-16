@@ -25,7 +25,7 @@ namespace GearEngine.CarSimulation.Drivers
             speedSubscription?.Dispose();
             car = carEntity;
             ApplySplineSettings(splineContainer);
-            speedSubscription = car.Instance.Subscribe(speedVariable, OnSpeedChanged);
+            speedSubscription = car.Subscribe(speedVariable, OnSpeedChanged);
         }
 
         public void SetPowerupSpeedMultiplier(float multiplier)

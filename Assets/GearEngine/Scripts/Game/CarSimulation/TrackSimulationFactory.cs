@@ -1,6 +1,7 @@
 using System;
 using GearEngine.CarSimulation.Definitions;
 using GearEngine.CarSimulation.Entity;
+using Scaffold.Entities;
 using UnityEngine;
 
 namespace GearEngine.CarSimulation
@@ -32,7 +33,8 @@ namespace GearEngine.CarSimulation
                 throw new ArgumentNullException(nameof(trackDefinition));
             }
 
-            CarEntity car = CarEntity.Create(carDefinition);
+            CarEntity car = new CarEntity();
+            car.Initialize(new InstanceId(0), carDefinition);
             return new TrackSimulation(trackDefinition, car);
         }
     }
