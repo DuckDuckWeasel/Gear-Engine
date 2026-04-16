@@ -13,8 +13,11 @@ namespace GearEngine.CarSimulation.Drivers
         [FormerlySerializedAs("speedAttribute")]
         [SerializeField] private VariableSO speedVariable;
 
+        [SerializeField] [Min(0.01f)] private float powerupSpeedMultiplier = 1f;
+
         private CarEntity car = null!;
         private IDisposable speedSubscription;
+        private float lastBaseMaxSpeed;
 
         public void Bind(CarEntity carEntity, SplineContainer splineContainer)
         {
@@ -23,6 +26,12 @@ namespace GearEngine.CarSimulation.Drivers
             car = carEntity;
             ApplySplineSettings(splineContainer);
             speedSubscription = car.Instance.Subscribe(speedVariable, OnSpeedChanged);
+        }
+
+        public void SetPowerupSpeedMultiplier(float multiplier)
+        {
+            powerupSpeedMultiplier = Mathf.Max(0.01f, multiplier);
+            ApplyEffectiveMaxSpeed();
         }
 
         private void ValidateBindArguments(CarEntity carEntity, SplineContainer splineContainer)
@@ -79,7 +88,18 @@ namespace GearEngine.CarSimulation.Drivers
                 return;
             }
 
-            splineAnimate.MaxSpeed = f.Value;
+            lastBaseMaxSpeed = f.Value;
+            ApplyEffectiveMaxSpeed();
+        }
+
+        private void ApplyEffectiveMaxSpeed()
+        {
+            if (splineAnimate == null)
+            {
+                return;
+            }
+
+            splineAnimate.MaxSpeed = lastBaseMaxSpeed * powerupSpeedMultiplier;
         }
 
         private void OnDestroy()

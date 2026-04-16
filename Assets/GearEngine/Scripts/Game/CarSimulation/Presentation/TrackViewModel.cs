@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using GearEngine.CarSimulation;
 using GearEngine.CarSimulation.Definitions;
 using GearEngine.CarSimulation.Entity;
+using GearEngine.Cards.Powerups;
 using Scaffold.MVVM;
 using Scaffold.MVVM.Binding;
 
@@ -17,6 +18,8 @@ namespace GearEngine.CarSimulation.Presentation
 
         public TrackDefinition Track => simulation.Track;
         public CarEntity Car => simulation.Car;
+
+        public CarPowerupBuildResult Powerups => simulation.Powerups;
 
         [NestedProperty] private TrackSimulation simulation;
 

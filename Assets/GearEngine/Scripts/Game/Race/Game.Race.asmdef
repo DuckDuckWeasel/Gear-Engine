@@ -2,6 +2,7 @@
     "name": "Game.Race",
     "rootNamespace": "GearEngine.Race",
     "references": [
+        "Game.Cards",
         "Game.GearEngine",
         "Game.CarSimulation",
         "Scaffold.Entities",

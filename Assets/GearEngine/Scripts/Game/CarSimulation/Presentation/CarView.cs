@@ -2,6 +2,7 @@ using System;
 using GearEngine.CarSimulation;
 using GearEngine.CarSimulation.Drivers;
 using GearEngine.CarSimulation.Entity;
+using GearEngine.Cards.Powerups;
 using UnityEngine;
 using UnityEngine.Splines;
 
@@ -16,6 +17,12 @@ namespace GearEngine.CarSimulation.Presentation
             GuardInitializeArguments(car, splineContainer, trackViewModel);
             CarSplineDriver driver = ResolveSplineDriver();
             driver.Bind(car, splineContainer);
+        }
+
+        public void ApplyPowerups(CarPowerupBuildResult powerups)
+        {
+            CarSplineDriver driver = ResolveSplineDriver();
+            driver.SetPowerupSpeedMultiplier(powerups.MaxSpeedMultiplier);
         }
 
         internal void OnRunningChanged(SimulationLifecycleState state)

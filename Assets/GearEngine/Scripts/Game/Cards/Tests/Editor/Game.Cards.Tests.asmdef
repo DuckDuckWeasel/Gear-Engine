@@ -1,18 +1,10 @@
 {
-    "name": "Game.CarSimulation.Tests",
-    "rootNamespace": "GearEngine.CarSimulation.Tests",
+    "name": "Game.Cards.Tests",
+    "rootNamespace": "GearEngine.Cards.Tests",
     "references": [
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner",
-        "Game.CarSimulation",
-        "Game.Cards",
-        "Scaffold.Entities",
-        "Scaffold.MVVM",
-        "Scaffold.MVVM.View",
-        "Scaffold.MVVM.ViewModel",
-        "Scaffold.Navigation",
-        "Unity.Splines",
-        "Unity.Mathematics"
+        "Game.Cards"
     ],
     "includePlatforms": [
         "Editor"
@@ -21,8 +13,7 @@
     "allowUnsafeCode": false,
     "overrideReferences": true,
     "precompiledReferences": [
-        "nunit.framework.dll",
-        "CommunityToolkit.Mvvm.dll"
+        "nunit.framework.dll"
     ],
     "autoReferenced": false,
     "defineConstraints": [
