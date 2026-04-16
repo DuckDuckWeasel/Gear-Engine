@@ -1,12 +1,25 @@
 {
     "name": "Game.Cards",
     "rootNamespace": "GearEngine.Cards",
-    "references": [],
+    "references": [
+        "Game.SceneFoundation",
+        "VContainer",
+        "Scaffold.MVVM",
+        "Scaffold.MVVM.View",
+        "Scaffold.MVVM.ViewModel",
+        "Scaffold.Navigation",
+        "Scaffold.Navigation.Container",
+        "Scaffold.Scope",
+        "Unity.TextMeshPro",
+        "UnityEngine.UI"
+    ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
-    "overrideReferences": false,
-    "precompiledReferences": [],
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "CommunityToolkit.Mvvm.dll"
+    ],
     "autoReferenced": true,
     "defineConstraints": [],
     "versionDefines": [],

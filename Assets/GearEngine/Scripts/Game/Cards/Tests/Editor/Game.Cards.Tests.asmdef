@@ -4,7 +4,9 @@
     "references": [
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner",
-        "Game.Cards"
+        "Game.Cards",
+        "Scaffold.MVVM.ViewModel",
+        "Scaffold.MVVM"
     ],
     "includePlatforms": [
         "Editor"
@@ -13,7 +15,8 @@
     "allowUnsafeCode": false,
     "overrideReferences": true,
     "precompiledReferences": [
-        "nunit.framework.dll"
+        "nunit.framework.dll",
+        "CommunityToolkit.Mvvm.dll"
     ],
     "autoReferenced": false,
     "defineConstraints": [
