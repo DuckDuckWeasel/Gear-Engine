@@ -13,10 +13,6 @@ Runtime code lives in `Assets/GearEngine/Scripts/Game/CarSimulation/` (`Game.Car
 - **`CarSplineDriver`** — Sets the car transform from **`CarMotionState`** (position + yaw + slip). Does not evaluate a baked profile each frame.
 - **`TrackViewModel`** mirrors **`TrackSimulation.State`** and **`RaceRuntimeState`** for UI.
 
-## Track profile baking (optional / tooling)
-
-- **`TrackProfileBaker`** bakes a `Spline` into a **`BakedTrackProfile`** (dense samples with curvature). The runtime race driver no longer uses this for motion; tests and tooling may still reference it.
-
 ## Track selection
 
 - **`TrackDefinition`** — ScriptableObject holding a `Spline` (knots, closed flag) and a display name. **`TrackSimulationFactory`** builds **`SplineWaypointPath`** from this spline when creating a **`TrackSimulation`**.
@@ -29,4 +25,4 @@ Menu **Game / Car Simulation / Setup Scene** refreshes track assets from `Spline
 
 ## Tests
 
-EditMode tests: `Assets/GearEngine/Scripts/Game/CarSimulation/Tests/Editor/` (`Game.CarSimulation.Tests`). Includes `BakedTrackProfileTests` and `TrackSimulationRunnerTests`.
+EditMode tests: `Assets/GearEngine/Scripts/Game/CarSimulation/Tests/Editor/` (`Game.CarSimulation.Tests`). Includes `TrackSimulationRunnerTests`.

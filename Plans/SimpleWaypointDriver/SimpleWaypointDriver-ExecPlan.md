@@ -303,7 +303,7 @@ transform.SetPositionAndRotation(
 
 - **No new public interface required** if `ITrackSimulationRunner` remains the tick entry; implementation swaps internals.
 - **`CarEntity`:** continue using `TryGetValue<float>` for speed (same as current runner’s top speed resolution — mirror that helper in the new driver).
-- **Unity Splines:** `Spline`, `SplineUtility` / `SplineCache` for equidistant sampling — pick one API already used in `TrackProfileBaker` for consistency.
+- **Unity Splines:** `Spline`, `SplineUtility` for equidistant sampling along the track spline.
 
 ---
 
