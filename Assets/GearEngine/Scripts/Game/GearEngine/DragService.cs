@@ -3,10 +3,6 @@ using UnityEngine;
 
 namespace GearEngine.GearEngine
 {
-    /// <summary>
-    /// Centralized drag state service. Any drag source (board, inventory, future UI)
-    /// reports drag lifecycle here; any consumer subscribes for state changes.
-    /// </summary>
     public sealed class DragService : IDragService
     {
         public bool IsDragging { get; private set; }

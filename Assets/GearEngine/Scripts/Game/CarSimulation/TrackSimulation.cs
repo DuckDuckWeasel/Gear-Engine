@@ -9,14 +9,9 @@ using UnityEngine;
 
 namespace GearEngine.CarSimulation
 {
-    public sealed class TrackSimulation : Model
+    public sealed partial class TrackSimulation : Model
     {
-        public TrackSimulation(
-            TrackDefinition track,
-            CarEntity car,
-            SplineWaypointPath waypointPath,
-            CarVariableSet carVariables,
-            SimpleTrackDriverTuning driverTuning)
+        public TrackSimulation(TrackDefinition track, CarEntity car, SplineWaypointPath waypointPath, CarVariableSet carVariables, SimpleTrackDriverTuning driverTuning)
         {
             if (track == null)
             {

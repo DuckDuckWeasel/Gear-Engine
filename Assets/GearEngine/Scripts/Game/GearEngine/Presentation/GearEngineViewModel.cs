@@ -10,6 +10,31 @@ namespace GearEngine.GearEngine.Presentation
 {
     public sealed class GearEngineViewModel : ViewModel
     {
+        public GearEngineViewModel(GearEngineStartData startData)
+        {
+            this.startData = startData ?? throw new ArgumentNullException(nameof(startData));
+        }
+
+        public GearEngineFeatureToggleSO FeatureToggle
+        {
+            get
+            {
+                return featureToggle;
+            }
+        }
+
+        public IDragService DragService
+        {
+            get
+            {
+                return dragService;
+            }
+        }
+
+        public SimulationControlViewModel SimControl { get; } = new SimulationControlViewModel();
+        public GearInventoryViewModel Inventory { get; } = new GearInventoryViewModel();
+        public BoardViewModel Board { get; } = new BoardViewModel();
+
         private readonly GearEngineStartData startData;
 
         [Inject] private IGearEngineService engineService;
@@ -19,19 +44,6 @@ namespace GearEngine.GearEngine.Presentation
         [Inject] private IEventBus eventBus;
         [Inject] private GearEngineFeatureToggleSO featureToggle;
         [Inject] private IDragService dragService;
-
-        public GearEngineFeatureToggleSO FeatureToggle => featureToggle;
-
-        public IDragService DragService => dragService;
-
-        public SimulationControlViewModel SimControl { get; } = new SimulationControlViewModel();
-        public GearInventoryViewModel Inventory { get; } = new GearInventoryViewModel();
-        public BoardViewModel Board { get; } = new BoardViewModel();
-
-        public GearEngineViewModel(GearEngineStartData startData)
-        {
-            this.startData = startData ?? throw new ArgumentNullException(nameof(startData));
-        }
 
         protected override void Initialize()
         {

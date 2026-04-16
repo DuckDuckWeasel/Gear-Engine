@@ -3,5 +3,8 @@ using UnityEngine;
 
 public class TestScript : MonoBehaviour
 {
-    [SerializeField] public CarEntity entity;
+    public CarEntity Entity => entity;
+
+    [SerializeField]
+    private CarEntity entity;
 }

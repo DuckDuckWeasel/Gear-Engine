@@ -9,7 +9,29 @@ namespace GearEngine.GearEngine.Presentation.UI
 {
     public partial class GearInventoryViewModel : ViewModel
     {
-        public bool CanDrag => engineService != null && !engineService.IsRunning;
+        public bool CanDrag
+        {
+            get
+            {
+                return engineService != null && !engineService.IsRunning;
+            }
+        }
+
+        public int CurrentCount
+        {
+            get
+            {
+                return InventoryModel.AvailableGears.Count;
+            }
+        }
+
+        public int MaxSlots
+        {
+            get
+            {
+                return maxInventorySlots;
+            }
+        }
 
         private IGearEngineService engineService;
         private int maxInventorySlots = int.MaxValue;
@@ -18,9 +40,6 @@ namespace GearEngine.GearEngine.Presentation.UI
         private GearInventoryModel inventoryModel = new GearInventoryModel();
 
         public event Action<Vector3, GearConfigData> OnGearDraggedToBoard;
-
-        public int CurrentCount => InventoryModel.AvailableGears.Count;
-        public int MaxSlots => maxInventorySlots;
 
         public void Initialize(IGearEngineService engineService, int maxInventorySlots = int.MaxValue)
         {
