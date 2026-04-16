@@ -82,7 +82,7 @@ namespace GearEngine.Race
 
         private void SetupGears(GearEngineStartData gearData, TrackSimulation simulation)
         {
-            GearEngine = new GearEngineViewModel(gearData, simulation);
+            GearEngine = new GearEngineViewModel(gearData);
             objectResolver?.Inject(GearEngine);
             BindChildViewModel(GearEngine);
         }

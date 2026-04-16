@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Config.GearConfig
   nextLevel: {fileID: 0}
   data:
-    Id: base_gear_2
+    id: gear_base_2
     Category: 0
     BaseRotationSpeed: 0
     VisualPrefab: {fileID: 4444594598132281025, guid: d4ae7c8518bc94a9bb6a319c6a6902b6, type: 3}

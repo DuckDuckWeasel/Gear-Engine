@@ -2,12 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
-using GearEngine.GearEngine;
-using GearEngine.GearEngine.Bootstrap;
-using GearEngine.GearEngine.Config;
-using GearEngine.GearEngine.Events;
-using GearEngine.GearEngine.Manager;
-using GearEngine.GearEngine.Nodes;
+using GearEngine.GearEngine.Services;
 using Scaffold.Events.Contracts;
 using Scaffold.MVVM;
 using UnityEngine;
@@ -26,25 +21,32 @@ namespace GearEngine.GearEngine.Presentation.UI
 
         private IGearEngineService engineService;
         private IGridManager gridManager;
-        private GearNodeFactory nodeFactory;
+        private IGearNodeFactory nodeFactory;
         private BoardConfigSO boardConfig;
         private IEventBus eventBus;
         private GearEngineFeatureToggleSO featureToggle;
         private IDragService dragService;
+        private IGridSwapService swapService;
+        private IGridMergeService mergeService;
+        
         private Vector2Int pickupOriginalPos;
         [ObservableProperty] private bool interactable = true;
 
         public event Action<IGridNode> OnGearPlaced;
         public event Action<IGridNode> OnGearRemoved;
+        public event Action<GearConfigData> OnGearReturnRequested;
+        public event Action<IGridNode> OnTrashDropRequested;
 
         public void Initialize(
             IGearEngineService engineService,
             IGridManager gridManager,
-            GearNodeFactory nodeFactory,
+            IGearNodeFactory nodeFactory,
             BoardConfigSO boardConfig,
             IEventBus eventBus = null,
             GearEngineFeatureToggleSO featureToggle = null,
-            IDragService dragService = null)
+            IDragService dragService = null,
+            IGridSwapService swapService = null,
+            IGridMergeService mergeService = null)
         {
             this.engineService = engineService ?? throw new ArgumentNullException(nameof(engineService));
             this.gridManager = gridManager ?? throw new ArgumentNullException(nameof(gridManager));
@@ -53,6 +55,8 @@ namespace GearEngine.GearEngine.Presentation.UI
             this.eventBus = eventBus;
             this.featureToggle = featureToggle;
             this.dragService = dragService;
+            this.swapService = swapService;
+            this.mergeService = mergeService;
         }
 
         public IGridNode GetNode(Vector2Int coord) => gridManager.GetNode(coord);
@@ -172,14 +176,15 @@ namespace GearEngine.GearEngine.Presentation.UI
                 return;
             }
 
-            SwapBoardGears(node, occupant, toPos);
+            SwapBoardGears(node, occupant);
             Debug.Log($"<color=#ffff33>[BoardViewModel]</color> Swapped positions! {toPos} <-> {pickupOriginalPos}");
         }
 
-        public void HandleBoardGearReturnedOverUI(IGridNode node)
+        public void HandleBoardGearReturnedOverUI(IGridNode node, GearConfigData config)
         {
             try
             {
+                OnGearReturnRequested?.Invoke(config);
                 OnGearRemoved?.Invoke(node);
                 node?.Dispose();
             }
@@ -191,6 +196,11 @@ namespace GearEngine.GearEngine.Presentation.UI
             {
                 dragService?.EndDrag();
             }
+        }
+
+        public void RequestTrashDrop(IGridNode node)
+        {
+            OnTrashDropRequested?.Invoke(node);
         }
 
         public bool DeleteGear(IGridNode node)
@@ -271,7 +281,7 @@ namespace GearEngine.GearEngine.Presentation.UI
             dragService?.EndDrag();
         }
 
-        public bool HandleInventoryDrop(Vector3 worldPosition, GearConfigData gearData)
+        public bool HandleInventoryDrop(Vector2Int targetDropPos, GearConfigData gearData)
         {
             try
             {
@@ -285,7 +295,6 @@ namespace GearEngine.GearEngine.Presentation.UI
                     return false;
                 }
 
-                Vector2Int targetDropPos = boardConfig.GetGridPosition(worldPosition);
                 IGridNode occupant = gridManager.GetNode(targetDropPos);
 
                 if (occupant == null)
@@ -347,9 +356,17 @@ namespace GearEngine.GearEngine.Presentation.UI
             gridManager.AddNode(node);
         }
 
-        private void SwapBoardGears(IGridNode draggedNode, IGridNode occupantNode, Vector2Int targetDropPos)
+        private void SwapBoardGears(IGridNode draggedNode, IGridNode occupantNode)
         {
-            gridManager.SwapNodes(draggedNode, occupantNode);
+            if (swapService != null)
+            {
+                swapService.SwapNodes(draggedNode, occupantNode);
+            }
+            else
+            {
+                Debug.LogError("[BoardViewModel] IGridSwapService is missing!");
+                return;
+            }
             
             // Both views are retained in the UI layer. They will gracefully lerp to their new swapped coordinates!
             OnGearPlaced?.Invoke(occupantNode);
@@ -358,18 +375,28 @@ namespace GearEngine.GearEngine.Presentation.UI
 
         private void MergeBoardGearsAt(IGridNode draggedNode, IGridNode occupantNode, Vector2Int targetDropPos, GearConfigData occupantData)
         {
-            gridManager.ExtractNode(pickupOriginalPos); // The dragged node was technically still at original pos before swap
+            if (mergeService == null)
+            {
+                Debug.LogError("[BoardViewModel] IGridMergeService is missing!");
+                return;
+            }
+
+            // Restore the node to grid temporarily so the merge service can safely extract it natively
+            draggedNode.SetPosition(pickupOriginalPos);
+            gridManager.AddNode(draggedNode);
+
             OnGearRemoved?.Invoke(draggedNode);
             OnGearRemoved?.Invoke(occupantNode);
-            draggedNode.Dispose();
 
-            GearConfigData upgradedData = occupantData.NextLevelConfig.CreateRuntimeData();
-            IGridNode newNode = nodeFactory.CreateNode(targetDropPos, upgradedData);
-            
-            gridManager.MergeNode(targetPos: targetDropPos, newNode: newNode);
-            
-            OnGearPlaced?.Invoke(newNode);
-            Debug.Log($"<color=#ffaa55>[BoardViewModel]</color> MERGED board gears into {upgradedData.Id} at {targetDropPos}!");
+            IGridNode newNode = mergeService.MergeNodes(draggedNode, occupantNode, targetDropPos);
+            if (newNode != null)
+            {
+                draggedNode.Dispose();
+                occupantNode.Dispose();
+
+                OnGearPlaced?.Invoke(newNode);
+                Debug.Log($"<color=#ffaa55>[BoardViewModel]</color> MERGED board gears into {newNode.ConfigData.Id} at {targetDropPos}!");
+            }
         }
     }
 }

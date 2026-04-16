@@ -25,10 +25,6 @@ namespace GearEngine.GearEngine.Config
         [Tooltip("Vertical pixel offset of the trash zone above the grid's top edge.")]
         public float TrashZoneYOffset = 80f;
 
-        [Tooltip("Centralized global multiplier applied to all gear SpriteRenderers to seamlessly align World-Space sprites with Canvas pixel dimensions (e.g. 115).")]
-        [Min(0.1f)]
-        public float GlobalGearScale = 115f;
-
         [Header("Limits")]
         [Tooltip("Gameplay limit for dynamic board control. Must be ≤ MaxBoardGears.")]
         [Min(1)]

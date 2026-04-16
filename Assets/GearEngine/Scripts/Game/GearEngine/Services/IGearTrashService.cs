@@ -8,7 +8,7 @@ namespace GearEngine.GearEngine.Services
     public interface IGearTrashService
     {
         BoardViewModel LinkedBoard { get; set; }
-        GearInventoryViewModel LinkedInventory { get; set; }
+        Inventory.IInventoryService LinkedInventory { get; set; }
         void RequestTrashDrop(IGridNode node);
         void HandleInventoryGearDropped(GearConfigData gearData);
     }

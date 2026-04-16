@@ -10,7 +10,7 @@ namespace GearEngine.CarSimulation.Tracks
 {
     [DisallowMultipleComponent]
     [RequireComponent(typeof(SplineContainer))]
-    public sealed class Track : ViewComponent<TrackViewModel>
+    public sealed class TrackViewComponent : ViewComponent<TrackViewModel>
     {
         private const string pathChildName = "Path";
 

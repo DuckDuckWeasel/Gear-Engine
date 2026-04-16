@@ -1,8 +1,4 @@
-using System;
 using UnityEngine;
-using GearEngine.GearEngine.Config;
-using GearEngine.GearEngine.Manager;
-using GearEngine.GearEngine.Presentation.UI;
 
 namespace GearEngine.GearEngine.Services
 {
@@ -18,7 +14,7 @@ namespace GearEngine.GearEngine.Services
         private readonly BoardConfigSO boardConfig;
 
         private BoardViewModel LinkedBoard;
-        private GearInventoryViewModel LinkedInventory;
+        private Inventory.IInventoryService LinkedInventory;
 
         public GearTransferService(IGridManager gridManager, IGearEngineService engineService, BoardConfigSO boardConfig)
         {
@@ -29,7 +25,7 @@ namespace GearEngine.GearEngine.Services
 
         public void LinkBoard(BoardViewModel board) => LinkedBoard = board;
         
-        public void LinkInventory(GearInventoryViewModel inventory) => LinkedInventory = inventory;
+        public void LinkInventory(Inventory.IInventoryService inventory) => LinkedInventory = inventory;
 
         public void RequestTransferToBoard(Vector3 worldPos, GearConfigData gearData)
         {
@@ -37,10 +33,11 @@ namespace GearEngine.GearEngine.Services
 
             if (engineService != null && engineService.IsRunning) return;
 
-            bool placed = LinkedBoard.HandleInventoryDrop(worldPos, gearData);
+            Vector2Int gridPos = boardConfig.GetGridPosition(worldPos);
+            bool placed = LinkedBoard.HandleInventoryDrop(gridPos, gearData);
             if (placed)
             {
-                LinkedInventory.ConsumeSpecificGear(gearData);
+                LinkedInventory.ConsumeSpecificItem(gearData);
             }
         }
 
@@ -49,7 +46,7 @@ namespace GearEngine.GearEngine.Services
             if (LinkedInventory == null) return;
             if (gearData != null)
             {
-                LinkedInventory.AddGearToInventory(gearData);
+                LinkedInventory.AddItem(gearData);
             }
         }
     }

@@ -1,8 +1,5 @@
-using GearEngine.CarSimulation;
-using GearEngine.GearEngine;
 using Scaffold.Navigation.Contracts;
 using System;
-using System.Threading.Tasks;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
@@ -11,7 +8,8 @@ namespace GearEngine.GearEngine.Presentation
 {
     public sealed class GearTestSceneBootstrap : MonoBehaviour, IInitializable
     {
-        [SerializeField] private GearEngineStartData startData;
+        [SerializeField] 
+        private GearEngineStartData startData;
 
         private INavigation navigation;
 
@@ -26,7 +24,7 @@ namespace GearEngine.GearEngine.Presentation
             try
             {
                 GearEngineStartData data = startData != null ? startData : new GearEngineStartData();
-                navigation.Open(new GearEngineViewModel(data, null));
+                navigation.Open(new GearEngineViewModel(data));
             }
             catch (Exception ex)
             {

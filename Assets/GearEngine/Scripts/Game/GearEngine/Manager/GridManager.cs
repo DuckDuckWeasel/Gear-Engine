@@ -58,61 +58,6 @@ namespace GearEngine.GearEngine.Manager
             return nodes.Values;
         }
 
-        public void SwapNodes(Vector2Int posA, Vector2Int posB)
-        {
-            IGridNode nodeA = ExtractNode(posA);
-            IGridNode nodeB = ExtractNode(posB);
-
-            if (nodeA != null)
-            {
-                nodeA.SetPosition(posB);
-                AddNode(nodeA);
-            }
-
-            if (nodeB != null)
-            {
-                nodeB.SetPosition(posA);
-                AddNode(nodeB);
-            }
-        }
-
-        public void SwapNodes(IGridNode nodeA, IGridNode nodeB)
-        {
-            if (nodeA == null || nodeB == null)
-            {
-                return;
-            }
-
-            Vector2Int posA = nodeA.Position;
-            Vector2Int posB = nodeB.Position;
-
-            // Extract them safely in case they are still tracked by the grid
-            ExtractNode(posA);
-            ExtractNode(posB);
-
-            // Reassign opposite positions and re-insert
-            nodeA.SetPosition(posB);
-            AddNode(nodeA);
-
-            nodeB.SetPosition(posA);
-            AddNode(nodeB);
-        }
-
-        public void MergeNode(Vector2Int targetPos, IGridNode newNode)
-        {
-            IGridNode occupant = ExtractNode(targetPos);
-            if (occupant != null)
-            {
-                occupant.Dispose();
-            }
-
-            if (newNode != null)
-            {
-                newNode.SetPosition(targetPos);
-                AddNode(newNode);
-            }
-        }
-
         public void Tick()
         {
             float dt = Time.deltaTime;

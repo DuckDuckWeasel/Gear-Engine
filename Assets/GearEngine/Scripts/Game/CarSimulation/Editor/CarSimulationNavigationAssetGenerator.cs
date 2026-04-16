@@ -1,6 +1,6 @@
 using System.IO;
 using GearEngine.CarSimulation.Presentation;
-using TrackViewComponent = GearEngine.CarSimulation.Tracks.Track;
+using GearEngine.CarSimulation.Tracks;
 using Scaffold.Navigation;
 using UnityEditor;
 using UnityEditor.AddressableAssets;

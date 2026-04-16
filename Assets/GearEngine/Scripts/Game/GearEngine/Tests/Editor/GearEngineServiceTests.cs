@@ -29,17 +29,7 @@ namespace GearEngine.GearEngine.Tests.Editor
 
             public IGridNode GetNode(Vector2Int pos) => null;
 
-            public void SwapNodes(Vector2Int posA, Vector2Int posB)
-            {
-            }
 
-            public void SwapNodes(IGridNode nodeA, IGridNode nodeB)
-            {
-            }
-
-            public void MergeNode(Vector2Int targetPos, IGridNode newNode)
-            {
-            }
 
             public void Play() => PlayCalled = true;
 

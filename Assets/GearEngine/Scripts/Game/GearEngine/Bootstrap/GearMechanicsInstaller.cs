@@ -1,10 +1,7 @@
 using System;
 using VContainer;
-using GearEngine.GearEngine.Manager;
-using GearEngine.GearEngine.Config;
-using GearEngine.GearEngine.Nodes;
 using GearEngine.GearEngine.Services;
-using UnityEngine;
+using GearEngine.GearEngine.Services.Inventory;
 
 namespace GearEngine.GearEngine.Bootstrap
 {
@@ -29,20 +26,26 @@ namespace GearEngine.GearEngine.Bootstrap
             builder.RegisterInstance(boardConfig);
             builder.RegisterInstance(featureToggle);
 
-            builder.Register<GridManager>(Lifetime.Singleton).AsImplementedInterfaces().AsSelf();
+            builder.Register<GridManager>(Lifetime.Singleton).As<IGridManager, VContainer.Unity.ITickable>();
             builder.Register<GearEngineService>(Lifetime.Singleton).As<IGearEngineService>();
 
             builder.Register<CoreGearNode>(Lifetime.Transient);
             builder.Register<BaseGearNode>(Lifetime.Transient);
             builder.Register<AuraGearNode>(Lifetime.Transient);
 
-            builder.Register<GearMergeService>(Lifetime.Singleton);
-            builder.Register<GearNodeFactory>(Lifetime.Singleton);
+            builder.Register<Merge.GridMergeService>(Lifetime.Singleton).As<Merge.IGridMergeService>();
+            builder.Register<Services.GridSwapService>(Lifetime.Singleton).As<Services.IGridSwapService>();
+            builder.Register<GearNodeFactory>(Lifetime.Singleton).As<IGearNodeFactory>();
             builder.Register<DragService>(Lifetime.Singleton).As<IDragService>();
             
-            // New Generic Services
             builder.Register<GearTransferService>(Lifetime.Singleton).As<IGearTransferService>();
             builder.Register<GearTrashService>(Lifetime.Singleton).As<IGearTrashService>();
+            builder.Register<InventoryService>(Lifetime.Singleton).As<IInventoryService>();
+
+            // ViewModels
+            builder.Register<GearInventoryViewModel>(Lifetime.Transient);
+            builder.Register<BoardViewModel>(Lifetime.Transient);
+            builder.Register<TrashZoneViewModel>(Lifetime.Transient);
         }
     }
 }

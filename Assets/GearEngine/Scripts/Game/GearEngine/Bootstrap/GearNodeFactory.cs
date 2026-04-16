@@ -1,10 +1,9 @@
-using GearEngine.GearEngine.Nodes;
 using UnityEngine;
 using VContainer;
 
 namespace GearEngine.GearEngine.Bootstrap
 {
-    public class GearNodeFactory
+    public class GearNodeFactory : IGearNodeFactory
     {
         public GearNodeFactory(IObjectResolver resolver)
         {

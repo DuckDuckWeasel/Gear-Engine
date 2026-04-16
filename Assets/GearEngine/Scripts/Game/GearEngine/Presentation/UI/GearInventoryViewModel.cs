@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using CommunityToolkit.Mvvm.ComponentModel;
-using GearEngine.GearEngine;
 using Scaffold.MVVM;
 using UnityEngine;
+using GearEngine.GearEngine.Services.Inventory;
 
 namespace GearEngine.GearEngine.Presentation.UI
 {
@@ -18,17 +18,18 @@ namespace GearEngine.GearEngine.Presentation.UI
         public IDragService DragService => dragService;
 
         [ObservableProperty]
-        private GearInventoryModel inventoryModel = new GearInventoryModel();
+        private InventoryModel inventoryModel;
 
         public event Action<Vector3, GearConfigData> OnGearDraggedToBoard;
 
-        public int CurrentCount => InventoryModel.AvailableGears.Count;
+        public int CurrentCount => InventoryModel?.AvailableItems.Count ?? 0;
         public int MaxSlots => maxInventorySlots;
 
-        public void Initialize(IGearEngineService engineService, int maxInventorySlots = int.MaxValue, IDragService dragService = null)
+        public void Initialize(IGearEngineService engineService, IInventoryService inventoryService, IDragService dragService = null)
         {
             this.engineService = engineService;
-            this.maxInventorySlots = maxInventorySlots;
+            this.inventoryModel = inventoryService.Model;
+            this.maxInventorySlots = inventoryService.MaxSlots;
             this.dragService = dragService;
         }
 
@@ -36,72 +37,7 @@ namespace GearEngine.GearEngine.Presentation.UI
         {
         }
 
-        public void LoadInventory(IEnumerable<GearConfig> gearConfigs)
-        {
-            if (gearConfigs == null)
-            {
-                throw new ArgumentNullException(nameof(gearConfigs));
-            }
-
-            foreach (GearConfig config in gearConfigs)
-            {
-                if (config == null)
-                {
-                    continue;
-                }
-
-                AddGearToInventory(config.CreateRuntimeData());
-            }
-        }
-
-        public void AddGearToInventory(GearConfigData gear)
-        {
-            if (gear == null)
-            {
-                return;
-            }
-
-            if (InventoryModel.AvailableGears.Count >= maxInventorySlots)
-            {
-                Debug.LogWarning($"[GearInventoryViewModel] Inventory full ({InventoryModel.AvailableGears.Count}/{maxInventorySlots}). Cannot add gear '{gear.Id}'.");
-                return;
-            }
-
-            InventoryModel.AvailableGears.Add(gear);
-        }
-
-        public bool TryConsumeSelectedGear()
-        {
-            if (InventoryModel.SelectedGear == null)
-            {
-                return false;
-            }
-
-            bool success = InventoryModel.AvailableGears.Remove(InventoryModel.SelectedGear);
-            if (success)
-            {
-                InventoryModel.SelectedGear = null;
-            }
-
-            return success;
-        }
-
-        public void ConsumeSpecificGear(GearConfigData gearData)
-        {
-            if (gearData == null)
-            {
-                throw new ArgumentNullException(nameof(gearData));
-            }
-
-            int index = FindGearIndex(gearData);
-            if (index < 0)
-            {
-                Debug.LogError("[GearInventoryViewModel] ConsumeSpecificGear: gear not found in inventory.");
-                return;
-            }
-
-            RemoveGearAt(index);
-        }
+        // State mutations delegated down to backend inventoryService.
 
         public void NotifyGearDropped(Vector3 worldPos, GearConfigData gearData)
         {
@@ -115,34 +51,12 @@ namespace GearEngine.GearEngine.Presentation.UI
 
         public void SelectGearLocal(GearConfigData gear)
         {
-            if (InventoryModel.AvailableGears.Contains(gear))
+            if (InventoryModel.AvailableItems.Contains(gear))
             {
-                InventoryModel.SelectedGear = gear;
+                InventoryModel.SelectedItem = gear;
                 Debug.Log($"<color=#aaaaff>[UI_ViewModel]</color> Player selected: {gear.Id}");
             }
         }
 
-        private int FindGearIndex(GearConfigData gearData)
-        {
-            for (int i = 0; i < InventoryModel.AvailableGears.Count; i++)
-            {
-                if (ReferenceEquals(InventoryModel.AvailableGears[i], gearData))
-                {
-                    return i;
-                }
-            }
-
-            return -1;
-        }
-
-        private void RemoveGearAt(int index)
-        {
-            GearConfigData removed = InventoryModel.AvailableGears[index];
-            InventoryModel.AvailableGears.RemoveAt(index);
-            if (ReferenceEquals(InventoryModel.SelectedGear, removed))
-            {
-                InventoryModel.SelectedGear = null;
-            }
-        }
     }
 }

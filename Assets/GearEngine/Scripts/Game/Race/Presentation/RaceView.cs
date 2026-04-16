@@ -2,18 +2,17 @@ using System;
 using GearEngine.CarSimulation;
 using GearEngine.CarSimulation.Tracks;
 using GearEngine.GearEngine.Presentation;
-using GearEngine.Race;
-using Scaffold.MVVM;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using Scaffold.MVVM;
 
 namespace GearEngine.Race.Presentation
 {
     public sealed class RaceView : View<RaceViewModel>
     {
         [SerializeField] private GearEngineView gearEngineView;
-        [SerializeField] private Track track;
+        [SerializeField] private TrackViewComponent track;
         [SerializeField] private Button raceButton;
 
         protected override void OnBind()

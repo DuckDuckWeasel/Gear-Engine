@@ -1,12 +1,14 @@
 using System;
 using System.Collections.Generic;
+using GearEngine.GearEngine.Extensions;
 using GearEngine.GearEngine.Visuals;
 using Scaffold.MVVM;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 namespace GearEngine.GearEngine.Presentation.UI
 {
-    public class BoardView : ViewComponent<BoardViewModel>
+    public class BoardViewComponent : ViewComponent<BoardViewModel>
     {
         [SerializeField] private GearBoardDragHandler dragHandler;
         [SerializeField] private GameObject gridSlotPrefab;
@@ -16,11 +18,13 @@ namespace GearEngine.GearEngine.Presentation.UI
         private readonly Dictionary<IGridNode, GearView> viewsByNode = new Dictionary<IGridNode, GearView>();
         private readonly List<GameObject> backgroundSlots = new List<GameObject>();
 
-        public event Action<GearConfigData, Vector3> OnGearDroppedOverUI;
-        public event Action<IGridNode> OnTrashDropRequested;
-
         protected override void OnBind()
         {
+            Assert.IsNotNull(viewModel, "[BoardView] ViewModel is missing.");
+            Assert.IsNotNull(dragHandler, "[BoardView] DragHandler is not assigned.");
+            Assert.IsNotNull(gridSlotPrefab, "[BoardView] GridSlotPrefab is not assigned.");
+            Assert.IsNotNull(gridRoot, "[BoardView] GridRoot is not assigned.");
+
             localFactory = new GearViewFactory();
 
             viewModel.OnGearPlaced += HandleGearPlaced;
@@ -66,16 +70,12 @@ namespace GearEngine.GearEngine.Presentation.UI
 
         internal void NotifyBoardGearDroppedOverUI(IGridNode node, GearConfigData config, Vector3 worldPos)
         {
-            viewModel?.HandleBoardGearReturnedOverUI(node);
-            if (config != null)
-            {
-                OnGearDroppedOverUI?.Invoke(config, worldPos);
-            }
+            viewModel?.HandleBoardGearReturnedOverUI(node, config);
         }
 
         internal void NotifyTrashDrop(IGridNode node)
         {
-            OnTrashDropRequested?.Invoke(node);
+            viewModel?.RequestTrashDrop(node);
         }
 
         internal GearView DetachViewForDrag(IGridNode node)
@@ -187,10 +187,7 @@ namespace GearEngine.GearEngine.Presentation.UI
 
         private void SpawnBackgroundGrid(BoardConfigSO config)
         {
-            if (gridSlotPrefab == null || gridRoot == null || config == null)
-            {
-                return;
-            }
+            Assert.IsNotNull(config, "[BoardView] BoardConfigSO is missing.");
 
             for (int x = 0; x < config.GridWidth; x++)
             {
@@ -205,29 +202,9 @@ namespace GearEngine.GearEngine.Presentation.UI
             }
         }
 
-        private void OnDestroy()
-        {
-            if (viewModel != null)
-            {
-                Unbind();
-            }
-        }
-
         private void DestroyViewGameObject(GameObject go)
         {
-            if (go == null)
-            {
-                return;
-            }
-
-#if UNITY_EDITOR
-            if (!Application.isPlaying)
-            {
-                DestroyImmediate(go);
-                return;
-            }
-#endif
-            Destroy(go);
+            go.SafeDestroy();
         }
     }
 }

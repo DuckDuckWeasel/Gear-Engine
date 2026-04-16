@@ -4,7 +4,7 @@ using GearEngine.CarSimulation.Bootstrap;
 using GearEngine.CarSimulation.Definitions;
 using GearEngine.CarSimulation.Drivers;
 using GearEngine.CarSimulation.Presentation;
-using TrackViewComponent = GearEngine.CarSimulation.Tracks.Track;
+using GearEngine.CarSimulation.Tracks;
 using Scaffold.Entities;
 using Scaffold.Navigation;
 using UnityEditor;

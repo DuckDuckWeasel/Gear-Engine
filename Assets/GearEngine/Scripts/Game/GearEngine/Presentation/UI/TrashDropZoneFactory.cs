@@ -7,7 +7,7 @@ namespace GearEngine.GearEngine.Presentation.UI
 {
     /// <summary>
     /// Factory responsible for building the TrashDropZone UI hierarchy programmatically.
-    /// Separated from <see cref="TrashDropZoneView"/> to respect SRP — the view only
+    /// Separated from <see cref="TrashDropZoneViewComponent"/> to respect SRP — the view only
     /// manages runtime behavior (animation, hover, visibility).
     /// </summary>
     public static class TrashDropZoneFactory
@@ -22,7 +22,7 @@ namespace GearEngine.GearEngine.Presentation.UI
         /// <param name="pivot">Pivot for alignment control. Defaults to center (0.5, 0.5).</param>
         /// <param name="trashZoneTag">Optional tag for discovery by drag handlers via the tag system.</param>
         /// <param name="trashIcon">Sprite for the trash icon. If null, the icon image will be empty.</param>
-        public static TrashDropZoneView Create(
+        public static TrashDropZoneViewComponent Create(
             Canvas parentCanvas,
             Vector3 worldAnchor,
             Vector2 offset,
@@ -92,7 +92,7 @@ namespace GearEngine.GearEngine.Presentation.UI
             label.raycastTarget = false;
 
             // Wire component
-            TrashDropZoneView zone = rootObj.AddComponent<TrashDropZoneView>();
+            TrashDropZoneViewComponent zone = rootObj.AddComponent<TrashDropZoneViewComponent>();
             zone.SetReferences(rootRect, iconImage, label, cg);
 
             // Tag for discovery by GearBoardDragHandler

@@ -1,13 +1,13 @@
-using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using TMPro;
 using Scaffold.MVVM;
+using UnityEngine.Assertions;
 
 namespace GearEngine.GearEngine.Presentation.UI
 {
-    public sealed class TrashDropZoneView : View<TrashZoneViewModel>, IDropHandler, IPointerEnterHandler, IPointerExitHandler
+    public sealed class TrashDropZoneViewComponent : ViewComponent<TrashZoneViewModel>, IDropHandler, IPointerEnterHandler, IPointerExitHandler
     {
         [Header("References")]
         public RectTransform ZoneRect => rootPanel;
@@ -52,6 +52,12 @@ namespace GearEngine.GearEngine.Presentation.UI
 
         protected override void OnBind()
         {
+            Assert.IsNotNull(viewModel, "[TrashDropZone] ViewModel is missing.");
+            Assert.IsNotNull(rootPanel, "[TrashDropZone] rootPanel is missing.");
+            Assert.IsNotNull(trashIcon, "[TrashDropZone] trashIcon is missing.");
+            Assert.IsNotNull(rewardLabel, "[TrashDropZone] rewardLabel is missing.");
+            Assert.IsNotNull(canvasGroup, "[TrashDropZone] canvasGroup is missing.");
+            
             Bind<bool, bool>(() => viewModel.IsActive, OnIsActiveChanged);
             Bind<string, string>(() => viewModel.RewardText, OnRewardTextChanged);
         }
@@ -71,20 +77,13 @@ namespace GearEngine.GearEngine.Presentation.UI
 
         private void OnRewardTextChanged(string text)
         {
-            if (rewardLabel != null)
-            {
-                rewardLabel.text = text;
-            }
+            rewardLabel.text = text;
         }
 
         public void SetHovered(bool hovered)
         {
             isHovered = hovered;
-
-            if (trashIcon != null)
-            {
-                trashIcon.color = hovered ? new Color(1f, 0.4f, 0.4f, 1f) : Color.white;
-            }
+            trashIcon.color = hovered ? new Color(1f, 0.4f, 0.4f, 1f) : Color.white;
         }
 
         public void OnPointerEnter(PointerEventData eventData)
@@ -108,7 +107,6 @@ namespace GearEngine.GearEngine.Presentation.UI
                 return;
             }
 
-            var slotView = eventData.pointerDrag.GetComponent<GearInventorySlotView>();
             var dragHandler = eventData.pointerDrag.GetComponent<DragHandler>();
 
             if (dragHandler != null)
@@ -116,17 +114,13 @@ namespace GearEngine.GearEngine.Presentation.UI
                 dragHandler.ForceGhostCleanup();
             }
 
-            if (slotView != null && slotView.BoundGearData != null)
-            {
-                Debug.Log($"<color=#ff5555>[TrashDropZone]</color> Inventory gear '{slotView.BoundGearData.Id}' dropped on trash! Notifying ViewModel.");
-                viewModel?.HandleGearDropped(slotView.BoundGearData);
-            }
+            viewModel?.HandleGearDropped();
         }
 
         private void Show()
         {
             isShowing = true;
-            gameObject.SetActive(true);
+            rootPanel.gameObject.SetActive(true);
         }
 
         private void Hide(bool immediate)
@@ -137,12 +131,8 @@ namespace GearEngine.GearEngine.Presentation.UI
             if (immediate)
             {
                 animationProgress = 0f;
-                if (canvasGroup != null)
-                {
-                    canvasGroup.alpha = 0f;
-                }
-
-                gameObject.SetActive(false);
+                canvasGroup.alpha = 0f;
+                rootPanel.gameObject.SetActive(false);
             }
         }
 
@@ -159,27 +149,21 @@ namespace GearEngine.GearEngine.Presentation.UI
             float speed = isShowing ? (1f / Mathf.Max(fadeInDuration, 0.01f)) : (1f / Mathf.Max(fadeOutDuration, 0.01f));
             animationProgress = Mathf.MoveTowards(animationProgress, target, Time.unscaledDeltaTime * speed);
 
-            if (canvasGroup != null)
-            {
-                canvasGroup.alpha = animationProgress;
-            }
+            canvasGroup.alpha = animationProgress;
         }
 
         private void TickScaleAnimation()
         {
             float scaleFactor = isHovered ? hoverScaleMultiplier : 1f;
             Vector3 targetScale = baseScale * Mathf.Lerp(1f, scaleFactor, animationProgress);
-            if (rootPanel != null)
-            {
-                rootPanel.localScale = Vector3.Lerp(rootPanel.localScale, targetScale, Time.unscaledDeltaTime * 12f);
-            }
+            rootPanel.localScale = Vector3.Lerp(rootPanel.localScale, targetScale, Time.unscaledDeltaTime * 12f);
         }
 
         private void TickAutoHideWhenFaded()
         {
-            if (!isShowing && animationProgress <= 0f)
+            if (!isShowing && animationProgress <= 0f && rootPanel.gameObject.activeSelf)
             {
-                gameObject.SetActive(false);
+                rootPanel.gameObject.SetActive(false);
             }
         }
     }

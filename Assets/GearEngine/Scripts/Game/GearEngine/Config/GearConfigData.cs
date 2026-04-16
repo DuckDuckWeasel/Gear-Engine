@@ -1,14 +1,15 @@
 using System;
 using System.Collections.Generic;
-using GearEngine.GearEngine.Abilities;
 using UnityEngine;
+using GearEngine.GearEngine.Services.Inventory;
 
 namespace GearEngine.GearEngine.Config
 {
     [Serializable]
-    public class GearConfigData
+    public class GearConfigData : IItem
     {
-        public string Id;
+        [SerializeField] private string id;
+        public string Id { get => id; set => id = value; }
         public GearCategory Category = GearCategory.Base;
         public float BaseRotationSpeed;
         public GameObject VisualPrefab;

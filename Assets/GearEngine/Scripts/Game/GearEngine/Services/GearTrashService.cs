@@ -14,7 +14,7 @@ namespace GearEngine.GearEngine.Services
         private readonly IDragService dragService;
         
         public BoardViewModel LinkedBoard { get; set; }
-        public GearInventoryViewModel LinkedInventory { get; set; }
+        public Inventory.IInventoryService LinkedInventory { get; set; }
 
         public GearTrashService(IGridManager gridManager, IGearEngineService engineService, IDragService dragService)
         {
@@ -77,7 +77,7 @@ namespace GearEngine.GearEngine.Services
 
             try
             {
-                LinkedInventory.ConsumeSpecificGear(gearData);
+                LinkedInventory.ConsumeSpecificItem(gearData);
 
                 // Grant the scrap reward for deleting the gear
                 if (LinkedBoard != null && gearData.DeleteRewardAmount > 0)

@@ -1,19 +1,38 @@
-using GearEngine.GearEngine.Config;
 using Scaffold.Events.Contracts;
 using UnityEngine;
 
 namespace GearEngine.GearEngine.Merge
 {
-    public class GearMergeService
+    public class GridMergeService : IGridMergeService
     {
-        public GearMergeService(IGridManager grid, IEventBus eventBus)
+        public GridMergeService(IGridManager grid, IEventBus eventBus, Bootstrap.IGearNodeFactory nodeFactory)
         {
             this.grid = grid;
             this.eventBus = eventBus;
+            this.nodeFactory = nodeFactory;
         }
 
         private readonly IGridManager grid;
         private readonly IEventBus eventBus;
+        private readonly Bootstrap.IGearNodeFactory nodeFactory;
+
+        public IGridNode MergeNodes(IGridNode draggedNode, IGridNode occupantNode, Vector2Int targetPos)
+        {
+            if (draggedNode == null || occupantNode == null || occupantNode.ConfigData?.NextLevelConfig == null)
+            {
+                return null;
+            }
+
+            grid.ExtractNode(draggedNode.Position);
+            grid.ExtractNode(occupantNode.Position);
+
+            GearConfigData upgradedData = occupantNode.ConfigData.NextLevelConfig.CreateRuntimeData();
+            IGridNode newNode = nodeFactory.CreateNode(targetPos, upgradedData);
+            
+            grid.AddNode(newNode);
+
+            return newNode;
+        }
 
         public bool TryMerge(Vector2Int posA, Vector2Int posB)
         {

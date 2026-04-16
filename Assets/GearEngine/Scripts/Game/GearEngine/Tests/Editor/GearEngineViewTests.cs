@@ -76,18 +76,18 @@ namespace GearEngine.GearEngine.Tests.Editor
             var boardVm = new BoardViewModel();
             boardVm.Initialize(new FakeEngine(), gridManager, nodeFactory, boardConfig, dragService: new FakeDragService());
 
-            var inventoryVm = new GearInventoryViewModel();
-            inventoryVm.Initialize(new FakeEngine());
+            var inventoryService = new GearEngine.Services.Inventory.InventoryService();
+            inventoryService.Initialize(10, () => false);
 
             var gearData = new GearConfigData { Id = "bridge", Category = GearCategory.Base };
-            inventoryVm.AddGearToInventory(gearData);
+            inventoryService.AddItem(gearData);
 
-            Vector3 world = boardConfig.GetWorldPosition(new Vector2Int(3, 3));
-            bool placed = boardVm.HandleInventoryDrop(world, gearData);
+            Vector2Int pos = new Vector2Int(3, 3);
+            bool placed = boardVm.HandleInventoryDrop(pos, gearData);
             Assert.IsTrue(placed);
 
-            inventoryVm.ConsumeSpecificGear(gearData);
-            Assert.AreEqual(0, inventoryVm.InventoryModel.AvailableGears.Count);
+            inventoryService.ConsumeSpecificItem(gearData);
+            Assert.AreEqual(0, inventoryService.Model.AvailableItems.Count);
 
             UnityEngine.Object.DestroyImmediate(boardConfig);
         }

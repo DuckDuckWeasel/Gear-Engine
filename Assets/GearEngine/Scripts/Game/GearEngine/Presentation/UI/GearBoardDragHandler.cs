@@ -1,10 +1,11 @@
+using GearEngine.GearEngine.Extensions;
 using GearEngine.GearEngine.Visuals;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
 namespace GearEngine.GearEngine.Presentation.UI
 {
-    [RequireComponent(typeof(BoardView))]
+    [RequireComponent(typeof(BoardViewComponent))]
     internal sealed class GearBoardDragHandler : MonoBehaviour
     {
         [Tooltip("Tag identifying the trash zone drop target.")]
@@ -13,7 +14,7 @@ namespace GearEngine.GearEngine.Presentation.UI
         [Tooltip("Tag identifying the inventory zone drop target.")]
         [SerializeField] private TagSO inventoryZoneTag;
 
-        private BoardView boardView;
+        private BoardViewComponent boardView;
         private Camera mainCamera;
         private GearView draggedView;
         private Vector2Int originalGridPos;
@@ -23,7 +24,7 @@ namespace GearEngine.GearEngine.Presentation.UI
 
         private void Awake()
         {
-            boardView = GetComponent<BoardView>();
+            boardView = GetComponent<BoardViewComponent>();
         }
 
         private void Start() => mainCamera = Camera.main;
@@ -156,7 +157,7 @@ namespace GearEngine.GearEngine.Presentation.UI
                 foreach (var result in results)
                 {
                     // Check Trash
-                    bool isTrash = result.gameObject.GetComponentInParent<TrashDropZoneView>() != null;
+                    bool isTrash = result.gameObject.GetComponentInParent<TrashDropZoneViewComponent>() != null;
                     if (!isTrash && trashZoneTag != null)
                     {
                         var tc = result.gameObject.GetComponentInParent<TagComponent>();
@@ -170,7 +171,7 @@ namespace GearEngine.GearEngine.Presentation.UI
                     }
 
                     // Check Inventory / Return Area
-                    bool isInventory = result.gameObject.GetComponentInParent<GearInventoryView>() != null || 
+                    bool isInventory = result.gameObject.GetComponentInParent<GearInventoryViewComponent>() != null || 
                                        result.gameObject.name == "ItemsContainer";
 
                     if (!isInventory && inventoryZoneTag != null)
@@ -280,19 +281,7 @@ namespace GearEngine.GearEngine.Presentation.UI
 
         private static void DestroyGO(GameObject go)
         {
-            if (go == null)
-            {
-                return;
-            }
-
-#if UNITY_EDITOR
-            if (!Application.isPlaying)
-            {
-                UnityEngine.Object.DestroyImmediate(go);
-                return;
-            }
-#endif
-            UnityEngine.Object.Destroy(go);
+            go.SafeDestroy();
         }
     }
 }

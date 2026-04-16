@@ -5,7 +5,7 @@ using TMPro;
 
 namespace GearEngine.GearEngine.Presentation.UI
 {
-    public class SimulationControlView : ViewComponent<SimulationControlViewModel>
+    public class GearSimulationControlViewComponent : ViewComponent<GearSimulationControlViewModel>
     {
         [SerializeField] private Button toggleButton;
         [SerializeField] private TextMeshProUGUI buttonText;

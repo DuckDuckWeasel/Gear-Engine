@@ -13,6 +13,8 @@ namespace GearEngine.GearEngine.Presentation.UI
         [ObservableProperty]
         private string rewardText = string.Empty;
 
+        [VContainer.Inject] private readonly IDragService dragService;
+
         public void HandleDragStarted(object data)
         {
             if (data is GearConfigData gearData && gearData.IsDeletable)
@@ -33,9 +35,16 @@ namespace GearEngine.GearEngine.Presentation.UI
 
         public event Action<GearConfigData> OnGearDropped;
 
-        public void HandleGearDropped(GearConfigData data)
+        public void HandleGearDropped()
         {
-            OnGearDropped?.Invoke(data);
+            if (dragService != null)
+            {
+                var data = dragService.GetDragData<GearConfigData>();
+                if (data != null)
+                {
+                    OnGearDropped?.Invoke(data);
+                }
+            }
             HandleDragEnded();
         }
     }
