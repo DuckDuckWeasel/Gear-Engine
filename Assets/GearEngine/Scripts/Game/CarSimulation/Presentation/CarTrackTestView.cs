@@ -21,22 +21,22 @@ namespace GearEngine.CarSimulation.Presentation
                 return;
             }
 
-            if (viewModel.Simulations.Count == 0)
+            if (viewModel.Sessions.Count == 0)
             {
                 return;
             }
 
-            track.Bind(new TrackViewModel(viewModel.Simulations[0]));
+            track.Bind(new TrackViewModel(viewModel.Sessions[0]));
 
-            foreach (TrackSimulation sim in viewModel.Simulations)
+            foreach (LapRaceSession session in viewModel.Sessions)
             {
-                SpawnCar(sim);
+                TrySpawnCar(session);
             }
         }
 
-        private void SpawnCar(TrackSimulation sim)
+        private void TrySpawnCar(LapRaceSession session)
         {
-            GameObject prefab = sim.Car.CarPrefab;
+            GameObject prefab = session.Car.CarPrefab;
             if (prefab == null)
             {
                 Debug.LogError("[CarTrackTestView] CarPrefab is missing on CarDefinition.");
@@ -44,16 +44,25 @@ namespace GearEngine.CarSimulation.Presentation
             }
 
             GameObject go = Instantiate(prefab, track.transform);
+            if (!TryRegisterSpawnedCar(go, session))
+            {
+                return;
+            }
+        }
+
+        private bool TryRegisterSpawnedCar(GameObject go, LapRaceSession session)
+        {
             if (!go.TryGetComponent(out CarView carView))
             {
                 Debug.LogError("[CarTrackTestView] Spawned prefab is missing CarView.");
                 Destroy(go);
-                return;
+                return false;
             }
 
-            carView.Initialize(sim.Car, track.SplineContainer, sim);
-            carView.OnRunningChanged(SimulationLifecycleState.Running);
+            carView.Initialize(session.Car, track.SplineContainer, session);
+            session.SetClockRunning(true);
             spawnedCars.Add(carView);
+            return true;
         }
 
         protected override void OnUnbind()

@@ -46,7 +46,7 @@ namespace GearEngine.Race
         private TrackSimulationFactory trackFactory;
 
         [Inject]
-        private ITrackSimulationRunner trackSimulationRunner;
+        private IRaceSessionRunner raceSessionRunner;
 
         protected override void Initialize()
         {
@@ -115,9 +115,9 @@ namespace GearEngine.Race
 
         private void SetupTrack()
         {
-            TrackSimulation simulation = trackFactory.Create(startData.CarDefinition, startData.TrackDefinition, startData.SimulationConfig);
-            trackSimulationRunner.SetSimulation(simulation);
-            Track = new TrackViewModel(simulation);
+            LapRaceSession session = trackFactory.Create(startData.CarDefinition, startData.TrackDefinition, startData.SessionConfig);
+            raceSessionRunner.SetSession(session);
+            Track = new TrackViewModel(session);
             BindChildViewModel(Track);
         }
     }

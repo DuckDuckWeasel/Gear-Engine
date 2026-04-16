@@ -1,5 +1,5 @@
-using GearEngine.CarSimulation;
 using GearEngine.CarSimulation.Entity;
+using GearEngine.CarSimulation.Presentation;
 using GearEngine.CarSimulation.Simulation;
 using Scaffold.Entities;
 using Sirenix.OdinInspector;
@@ -22,39 +22,36 @@ namespace GearEngine.CarSimulation.Debug
         private EntityModifierEntry activeModifier;
 
         [Inject]
-        private TrackSimulationRunner runner;
+        private IRaceSessionRunner runner;
 
-        private TrackSimulation Sim => runner?.ActiveSimulation;
+        private LapRaceSession Session => runner?.ActiveSession;
 
-        private CarEntity Car => Sim?.Car;
+        private CarEntity Car => Session?.Car;
 
-        private CarMotionState Motion => Sim?.Motion;
+        private RaceState Race => Session?.RaceState;
 
-        private RaceRuntimeState Race => Sim?.Race;
+        private CarVisualState Visual => Session?.VisualState;
 
         [ShowInInspector, ReadOnly, BoxGroup("Race")]
         private float CurrentSpeed => Race?.CurrentSpeed ?? 0f;
 
         [ShowInInspector, ReadOnly, BoxGroup("Race")]
-        private float Progress01 => Race?.Progress01 ?? 0f;
+        private float NormalizedProgress => Race?.NormalizedProgress ?? 0f;
 
         [ShowInInspector, ReadOnly, BoxGroup("Race")]
         private int CurrentLap => Race?.CurrentLap ?? 0;
 
         [ShowInInspector, ReadOnly, BoxGroup("Race")]
-        private bool IsDrifting => Race?.IsDrifting ?? false;
+        private float RaceTime => Race?.RaceTime ?? 0f;
 
         [ShowInInspector, ReadOnly, BoxGroup("Race")]
-        private bool IsOvershot => Race?.IsOvershot ?? false;
+        private RaceLifecycle Lifecycle => Race?.Lifecycle ?? RaceLifecycle.Idle;
 
-        [ShowInInspector, ReadOnly, BoxGroup("Motion")]
-        private float RawSpeed => Motion?.Speed ?? 0f;
+        [ShowInInspector, ReadOnly, BoxGroup("Visual")]
+        private bool IsDrifting => Visual?.IsDrifting ?? false;
 
-        [ShowInInspector, ReadOnly, BoxGroup("Motion")]
-        private float HeadingErrorDeg => Motion?.HeadingErrorDeg ?? 0f;
-
-        [ShowInInspector, ReadOnly, BoxGroup("Motion")]
-        private float Distance => Motion?.Distance ?? 0f;
+        [ShowInInspector, ReadOnly, BoxGroup("Visual")]
+        private float LateralOffset => Visual?.LateralOffset ?? 0f;
 
         [ShowInInspector, ReadOnly, BoxGroup("Attribute")]
         private float CurrentAttributeValue

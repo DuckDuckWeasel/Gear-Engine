@@ -13,7 +13,5 @@ MonoBehaviour:
   m_Name: CarVariableSet
   m_EditorClassIdentifier: Game.CarSimulation::GearEngine.CarSimulation.Definitions.CarVariableSet
   maxStraightSpeed: {fileID: 11400000, guid: c0806bf40ec902d4a8ab2ca98623f1d9, type: 2}
-  maxCurveSpeed: {fileID: 11400000, guid: 7f6e5d4c3b2a19087766554433221100, type: 2}
   acceleration: {fileID: 11400000, guid: 59d5c57b7ab775d42be1156d137e0b4b, type: 2}
-  brake: {fileID: 11400000, guid: 843e28f6dad8bfd4f86540c334317070, type: 2}
   handling: {fileID: 11400000, guid: 254e57d3d7dc4874586b6c74096bdb82, type: 2}

@@ -1,4 +1,5 @@
 using System;
+using GearEngine.CarSimulation;
 using GearEngine.CarSimulation.Definitions;
 using GearEngine.CarSimulation.Presentation;
 using Scaffold.MVVM;
@@ -37,12 +38,29 @@ namespace GearEngine.CarSimulation.Tracks
             }
 
             InitializeTrack(viewModel.Track);
+            TryBindRaceSessionToScene();
         }
 
         protected override void OnUnbind()
         {
             viewModel?.TearDown();
             base.OnUnbind();
+        }
+
+        private void TryBindRaceSessionToScene()
+        {
+            LapRaceSession session = viewModel.Session;
+            if (session == null)
+            {
+                return;
+            }
+
+            session.BindSpline(SplineContainer);
+            CarView carView = GetComponentInChildren<CarView>(true);
+            if (carView != null)
+            {
+                carView.Initialize(session.Car, SplineContainer, session);
+            }
         }
 
         private void InitializeTrack(TrackDefinition data)

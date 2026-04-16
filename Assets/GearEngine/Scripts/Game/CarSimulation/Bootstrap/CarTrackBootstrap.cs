@@ -1,11 +1,11 @@
 using System;
 using System.Collections.Generic;
-using GearEngine.CarSimulation;
 using GearEngine.CarSimulation.Definitions;
 using GearEngine.CarSimulation.Presentation;
 using GearEngine.CarSimulation.Simulation;
 using Scaffold.Navigation.Contracts;
 using UnityEngine;
+using UnityEngine.Serialization;
 using VContainer;
 using VContainer.Unity;
 
@@ -15,40 +15,21 @@ namespace GearEngine.CarSimulation.Bootstrap
     {
         [SerializeField] private TrackDefinition trackDefinition;
         [SerializeField] private List<CarDefinition> carDefinitions = new List<CarDefinition>();
-        [SerializeField] private TrackSimulationConfig simulationConfig = new TrackSimulationConfig();
+        [FormerlySerializedAs("simulationConfig")]
+        [SerializeField] private RaceSessionConfig sessionConfig = new RaceSessionConfig();
 
         [Inject] private TrackSimulationFactory factory;
         [Inject] private INavigation navigation;
 
-        private readonly List<TrackSimulationRunner> runners = new List<TrackSimulationRunner>();
+        private readonly List<RaceSessionRunner> runners = new List<RaceSessionRunner>();
 
         public void Initialize()
         {
             try
             {
                 ValidateSerializedReferences();
-                var simulations = new List<TrackSimulation>();
-                foreach (CarDefinition carDef in carDefinitions)
-                {
-                    if (carDef == null)
-                    {
-                        continue;
-                    }
-
-                    TrackSimulation sim = factory.Create(carDef, trackDefinition, simulationConfig);
-                    var runner = new TrackSimulationRunner(new UnityRaceRandom());
-                    runner.SetSimulation(sim);
-                    sim.Toggle(true);
-                    simulations.Add(sim);
-                    runners.Add(runner);
-                }
-
-                if (simulations.Count == 0)
-                {
-                    throw new InvalidOperationException("[CarTrackBootstrap] No valid CarDefinitions assigned.");
-                }
-
-                navigation.Open(new TrackListViewModel(trackDefinition, simulations));
+                List<LapRaceSession> sessions = CreateSessionsForCars();
+                navigation.Open(new TrackListViewModel(trackDefinition, sessions));
             }
             catch (Exception ex)
             {
@@ -59,10 +40,39 @@ namespace GearEngine.CarSimulation.Bootstrap
 
         private void Update()
         {
-            foreach (TrackSimulationRunner runner in runners)
+            foreach (RaceSessionRunner runner in runners)
             {
                 runner.Tick();
             }
+        }
+
+        private List<LapRaceSession> CreateSessionsForCars()
+        {
+            var sessions = new List<LapRaceSession>();
+            foreach (CarDefinition carDef in carDefinitions)
+            {
+                if (carDef != null)
+                {
+                    AddSessionForCar(carDef, sessions);
+                }
+            }
+
+            if (sessions.Count == 0)
+            {
+                throw new InvalidOperationException("[CarTrackBootstrap] No valid CarDefinitions assigned.");
+            }
+
+            return sessions;
+        }
+
+        private void AddSessionForCar(CarDefinition carDef, List<LapRaceSession> sessions)
+        {
+            LapRaceSession session = factory.Create(carDef, trackDefinition, sessionConfig);
+            var runner = new RaceSessionRunner();
+            runner.SetSession(session);
+            session.SetClockRunning(true);
+            sessions.Add(session);
+            runners.Add(runner);
         }
 
         private void ValidateSerializedReferences()

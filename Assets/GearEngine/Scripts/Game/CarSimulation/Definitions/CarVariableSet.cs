@@ -12,28 +12,18 @@ namespace GearEngine.CarSimulation.Definitions
         [FormerlySerializedAs("speed")]
         [SerializeField] private VariableSO maxStraightSpeed;
 
-        public VariableSO MaxCurveSpeed => maxCurveSpeed;
-
-        [SerializeField] private VariableSO maxCurveSpeed;
-
         public VariableSO Acceleration => acceleration;
 
         [SerializeField] private VariableSO acceleration;
-
-        public VariableSO Brake => brake;
-
-        [SerializeField] private VariableSO brake;
 
         public VariableSO Handling => handling;
 
         [SerializeField] private VariableSO handling;
 
-        internal void AssignVariablesForTests(VariableSO maxStraight, VariableSO maxCurve, VariableSO accel, VariableSO brakeVar, VariableSO handle)
+        internal void AssignVariablesForTests(VariableSO maxStraight, VariableSO accel, VariableSO handle)
         {
             maxStraightSpeed = maxStraight;
-            maxCurveSpeed = maxCurve;
             acceleration = accel;
-            brake = brakeVar;
             handling = handle;
         }
     }

@@ -1,5 +1,4 @@
 using System;
-using GearEngine.CarSimulation;
 using GearEngine.CarSimulation.Drivers;
 using GearEngine.CarSimulation.Entity;
 using UnityEngine;
@@ -11,14 +10,14 @@ namespace GearEngine.CarSimulation.Presentation
     {
         [SerializeField] private CarSplineDriver splineDriver;
 
-        public void Initialize(CarEntity car, SplineContainer splineContainer, TrackSimulation trackSimulation)
+        public void Initialize(CarEntity car, SplineContainer splineContainer, LapRaceSession session)
         {
-            GuardInitializeArguments(car, splineContainer, trackSimulation);
+            GuardInitializeArguments(car, splineContainer, session);
             CarSplineDriver driver = ResolveSplineDriver();
-            driver.Bind(trackSimulation, splineContainer);
+            driver.Bind(session, splineContainer);
         }
 
-        private void GuardInitializeArguments(CarEntity car, SplineContainer splineContainer, TrackSimulation trackSimulation)
+        private void GuardInitializeArguments(CarEntity car, SplineContainer splineContainer, LapRaceSession session)
         {
             if (car == null)
             {
@@ -30,9 +29,9 @@ namespace GearEngine.CarSimulation.Presentation
                 throw new ArgumentNullException(nameof(splineContainer));
             }
 
-            if (trackSimulation == null)
+            if (session == null)
             {
-                throw new ArgumentNullException(nameof(trackSimulation));
+                throw new ArgumentNullException(nameof(session));
             }
         }
 
@@ -50,23 +49,6 @@ namespace GearEngine.CarSimulation.Presentation
             }
 
             return splineDriver;
-        }
-
-        internal void OnRunningChanged(SimulationLifecycleState state)
-        {
-            if (splineDriver == null)
-            {
-                return;
-            }
-
-            if (state is SimulationLifecycleState.Running)
-            {
-                splineDriver.Play();
-            }
-            else
-            {
-                splineDriver.Stop();
-            }
         }
     }
 }

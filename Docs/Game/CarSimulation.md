@@ -2,26 +2,22 @@
 
 Runtime code lives in `Assets/GearEngine/Scripts/Game/CarSimulation/` (`Game.CarSimulation` assembly).
 
-## Rolling solver
+## Lap race session (unified spline model)
 
-- **`TrackProfileBaker`** bakes a `Spline` into a **`BakedTrackProfile`** (fixed-distance `TrackSample`s: position, frame, curvature). No car data is baked.
-- **`TrackSimulation`** is a **`Scaffold.MVVM.Model`**: lifecycle (`State`), **`RaceRuntimeState`** (public observables: lap, time, progress, speed, drift flag, distance travelled), and internal **`CarMotionState`** (distance, speed, drift visuals, pending speed boost).
-- **`TrackSimulationRunner`** (`ITickable`, VContainer singleton) steps the solver each frame when the simulation is **Running**: reads **top speed** from **`TrackSimulation.CarVariables.Speed`** via **`CarEntity.TryGetValue<float>`** (fallback default if the set or value is missing), applies lookahead braking, acceleration limits, drift intensity, and lap wrapping on closed splines.
-- **`CarVariableSet`** — ScriptableObject facade listing **`VariableSO`** references the simulation watches (e.g. **Speed**); assign on **`CarTrackBootstrap`** (and optionally **`RaceStartData`** for race flow).
-- **`CarEntityFactory`** — creates **`CarEntity`** instances with incrementing **`InstanceId`**s; **`CarEntity`** exposes **`Definition`** and **`CarPrefab`** for presentation code (base **`EntityInstance`** definition access is internal to Scaffold.Entities).
-- **`CarSplineDriver`** sets the car transform from **`CarMotionState`** + **`BakedTrackProfile`** (no `SplineAnimate` driving path).
-- **`TrackViewModel`** mirrors **`TrackSimulation.State`** and **`RaceRuntimeState`** fields for UI; it does not use `BindChildViewModel` on the simulation model.
+- **`CarEntity`** remains the live stat authority. Pace and cosmetic playback read **`VariableSO`** values through **`CarVariableSet`** on **`RaceSessionConfig`** (same pattern as the previous **`CarVariableSet`** wiring).
+- **`Track`** remains the scene spline authority: it owns the **`SplineContainer`**, copies authoring data from **`TrackDefinition`** on bind, and calls **`LapRaceSession.BindSpline`** so runtime sampling uses the scene spline.
+- **`SplineCurveSampler`** evaluates the **closed or open** scene **`Spline`** once per sample: shared **`CurveSample`** carries **`CurveAmount`**, **`CurveDirection`**, and pose **`Position` / `Tangent` / `Up`** for simulation, visual playback, and the car driver.
+- **`LapSimulation`** owns only race outcome state in **`RaceState`** (progress, speed, clock, lap count, **`LapTimes`**, **`RaceLifecycle`**). Target pace uses **`CarVariableSet.MaxStraightSpeed`** and **`CarVariableSet.Acceleration`** on **`CarEntity`** (no separate sim **`MaxSpeed`** / **`AccelerationRate`**). **`LapSimulationConfig`** keeps only race-wide tuning: **`CurveSlowdown`**, **`TotalLaps`** (**-1** = unlimited laps on closed tracks), **`HandlingNormalizationScale`** (set this near the top of your handling stat range so `handling / scale` is a meaningful 0–1 value; e.g. **100** when bag handling uses 0–100).
+- **`CarVisualPlayback`** updates **`CarVisualState`** (corner effect, lateral offset, slip angle, drift flag). Cosmetic playback does not feed back into lap timing in this pass.
+- **`LapRaceSession`** composes sampler, lap simulation, visual playback, and session clock. **`IRaceSessionRunner`** / **`RaceSessionRunner`** tick the active session from **`RaceBootstrap`** or **`CarTrackBootstrap`**.
+- **`TrackSimulationFactory`** builds a **`LapRaceSession`** from **`CarDefinition`**, **`TrackDefinition`**, and **`RaceSessionConfig`** ( **`LapSimulationConfig`**, **`SplineSamplerConfig`**, **`CarVisualConfig`**, optional **`CarVariableSet`** ).
+- **`CarSplineDriver`** is presentation-only: places the car from **`CurveSample`** + **`CarVisualState`** in **`LateUpdate`** after the runner advances the session.
+- **`TrackViewModel`** mirrors **`SimulationLifecycleState`** for the Race UI ( **`Created` / `Running` / `Paused` / `Completed`** ) from **`RaceLifecycle`** plus the session clock.
 
-## Track selection
+## Removed legacy stack
 
-- **`TrackDefinition`** (`Definitions/TrackDefinition.cs`) — ScriptableObject holding a `Spline` (knots, closed flag) and a display name. The factory bakes this spline when creating a **`TrackSimulation`**.
-- **`Track`** (`Track/Track.cs`) — Scene component with a `SplineContainer`. Binds a **`TrackViewModel`** and copies spline data from the definition into the container for rendering.
-- **`CarTrackScope`** — Assign `CarDefinition`, `TrackDefinition`, and the scene `Track` reference.
-
-## Editor setup
-
-Menu **Game / Car Simulation / Setup Scene** refreshes track assets from `SplineTrack_TestScene`, expects a scene root **Track** with **`Path`** (spline mesh) and runtime **Car** under the same root, and wires `CarTrack_LifetimeScope`.
+The baked-profile / curve-band / heading-error **`TrackSimulationRunner`** path (**`BakedTrackProfile`**, **`TrackSample`**, **`TrackSimulationTuning`**, **`SimulationFrame`**, **`CarMotionState`**, **`RaceRuntimeState`**, **`TrackSimulation`**) was removed in favor of live **`SplineContainer`** sampling and the simulation vs. visual split above.
 
 ## Tests
 
-EditMode tests: `Assets/GearEngine/Scripts/Game/CarSimulation/Tests/Editor/` (`Game.CarSimulation.Tests`). Includes `BakedTrackProfileTests` and `TrackSimulationRunnerTests`.
+EditMode tests: `Assets/GearEngine/Scripts/Game/CarSimulation/Tests/Editor/` (`Game.CarSimulation.Tests`). Includes **`SplineCurveSamplerTests`** and **`LapRaceSimulationTests`**.

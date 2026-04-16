@@ -189,8 +189,9 @@ MonoBehaviour:
   startData:
     trackDefinition: {fileID: 11400000, guid: d2d2d2d2b2a3948576c5d4e3f2a1b0c8, type: 2}
     carDefinition: {fileID: 11400000, guid: b4e1eaf4e8dd58b418b4e6efc603f72e, type: 2}
-    carVariables: {fileID: 11400000, guid: f6cfd8fa3fbb61843b66534996d0329d, type: 2}
-    simulationTuning: {fileID: 11400000, guid: 9c0d1e2f3a4b5678c9d0e1f2a3b4c5d6, type: 2}
+    simulationConfig:
+      variables: {fileID: 0}
+      tuning: {fileID: 0}
     gearEngineData:
       boardLayout:
         placements:
@@ -251,15 +252,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8298623856469553584, guid: a6f20e9e09e7715449856810b9a31e98, type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.1
+      value: 0.13
       objectReference: {fileID: 0}
     - target: {fileID: 8298623856469553584, guid: a6f20e9e09e7715449856810b9a31e98, type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.1
+      value: 0.13
       objectReference: {fileID: 0}
     - target: {fileID: 8298623856469553584, guid: a6f20e9e09e7715449856810b9a31e98, type: 3}
       propertyPath: m_LocalScale.z
-      value: 0.1
+      value: 0.13
       objectReference: {fileID: 0}
     - target: {fileID: 8298623856469553584, guid: a6f20e9e09e7715449856810b9a31e98, type: 3}
       propertyPath: m_LocalPosition.x
@@ -536,7 +537,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: -131.97}
   m_SizeDelta: {x: 220, y: 56}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &500010212

@@ -17,11 +17,11 @@ namespace GearEngine.Race.Bootstrap
         private INavigation navigation;
 
         [Inject]
-        private ITrackSimulationRunner trackSimulationRunner;
+        private IRaceSessionRunner raceSessionRunner;
 
         private void Update()
         {
-            trackSimulationRunner?.Tick();
+            raceSessionRunner?.Tick();
         }
 
         public void Initialize()

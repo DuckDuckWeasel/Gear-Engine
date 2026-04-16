@@ -20,15 +20,9 @@ MonoBehaviour:
     - variable: {fileID: 11400000, guid: 59d5c57b7ab775d42be1156d137e0b4b, type: 2}
       baseValue:
         rid: 4306785165221036291
-    - variable: {fileID: 11400000, guid: 843e28f6dad8bfd4f86540c334317070, type: 2}
-      baseValue:
-        rid: 4306785165221036292
     - variable: {fileID: 11400000, guid: 254e57d3d7dc4874586b6c74096bdb82, type: 2}
       baseValue:
         rid: 4306785165221036293
-    - variable: {fileID: 11400000, guid: 7f6e5d4c3b2a19087766554433221100, type: 2}
-      baseValue:
-        rid: 4306785165221036300
   carPrefab: {fileID: 2482284025406797222, guid: 6f783d67944439c419e90723e4e9cbc3, type: 3}
   references:
     version: 2
@@ -45,21 +39,9 @@ MonoBehaviour:
         value: 10
         min: -3.4028235e+38
         max: 3.4028235e+38
-    - rid: 4306785165221036292
-      type: {class: FloatVariableValue, ns: Scaffold.Entities, asm: Scaffold.Entities}
-      data:
-        value: 10
-        min: -3.4028235e+38
-        max: 3.4028235e+38
     - rid: 4306785165221036293
       type: {class: FloatVariableValue, ns: Scaffold.Entities, asm: Scaffold.Entities}
       data:
-        value: 100
-        min: -3.4028235e+38
-        max: 3.4028235e+38
-    - rid: 4306785165221036300
-      type: {class: FloatVariableValue, ns: Scaffold.Entities, asm: Scaffold.Entities}
-      data:
-        value: 100
+        value: 1
         min: -3.4028235e+38
         max: 3.4028235e+38

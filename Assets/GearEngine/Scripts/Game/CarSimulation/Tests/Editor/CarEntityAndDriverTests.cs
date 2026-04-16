@@ -28,9 +28,9 @@ namespace GearEngine.CarSimulation.Tests
 
                 var driver = go.AddComponent<CarSplineDriver>();
                 var container = go.AddComponent<SplineContainer>();
-                TrackSimulation simulation = new TrackSimulationFactory().Create(carDef, trackDef, null);
+                LapRaceSession session = new TrackSimulationFactory().Create(carDef, trackDef, null);
 
-                Assert.DoesNotThrow(() => driver.Bind(simulation, container));
+                Assert.DoesNotThrow(() => driver.Bind(session, container));
             }
             finally
             {

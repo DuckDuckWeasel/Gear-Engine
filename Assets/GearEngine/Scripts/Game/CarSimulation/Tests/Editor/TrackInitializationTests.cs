@@ -64,7 +64,7 @@ namespace GearEngine.CarSimulation.Tests
         }
 
         [Test]
-        public void TrackViewModel_ThrowsWhenSimulationIsNull()
+        public void TrackViewModel_ThrowsWhenSessionIsNull()
         {
             Assert.Throws<System.ArgumentNullException>(() => new TrackViewModel(null));
         }

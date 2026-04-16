@@ -39,8 +39,8 @@ namespace GearEngine.CarSimulation.Tests
                 try
                 {
                     LogAssert.Expect(LogType.Error, "[CarTrackTestView] CarPrefab is missing on CarDefinition.");
-                    TrackSimulation sim = new TrackSimulationFactory().Create(carDef, def, null);
-                    shell.Bind(new TrackListViewModel(def, new List<TrackSimulation> { sim }));
+                    LapRaceSession session = new TrackSimulationFactory().Create(carDef, def, null);
+                    shell.Bind(new TrackListViewModel(def, new List<LapRaceSession> { session }));
                     AssertOpenTwoKnotSpline(container);
                 }
                 finally
