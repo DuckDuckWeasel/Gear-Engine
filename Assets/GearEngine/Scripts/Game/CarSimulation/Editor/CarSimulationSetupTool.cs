@@ -2,7 +2,6 @@ using System.IO;
 using Unity.Mathematics;
 using GearEngine.CarSimulation.Bootstrap;
 using GearEngine.CarSimulation.Definitions;
-using GearEngine.CarSimulation.Drivers;
 using GearEngine.CarSimulation.Presentation;
 using GearEngine.CarSimulation.Tracks;
 using Scaffold.Entities;
@@ -21,9 +20,8 @@ namespace GearEngine.CarSimulation.Editor
         private const string speedAssetPath = "Assets/Game/CarSimulation/Data/Speed.asset";
         private const string carDefinitionPath = "Assets/Game/CarSimulation/Data/CarDefinition.asset";
         private const string carPrefabPath = "Assets/Game/CarSimulation/Prefabs/Car.prefab";
-        private const string circleTrackDefinitionPath = "Assets/Game/CarSimulation/Data/Tracks/CircleTrack.asset";
-        private const string squareTrackDefinitionPath = "Assets/Game/CarSimulation/Data/Tracks/SquareTrack.asset";
         private const string gearEngineTracksFolder = "Assets/GearEngine/Data/Track/Tracks";
+        private const string circleTrackDefinitionPath = gearEngineTracksFolder + "/CircleTrack.asset";
         private const string ovalTrackDefinitionPath = gearEngineTracksFolder + "/OvalTrack.asset";
         private const string roundedSquareTrackDefinitionPath = gearEngineTracksFolder + "/RoundedSquareTrack.asset";
         private const string infinityTrackDefinitionPath = gearEngineTracksFolder + "/InfinityTrack.asset";
@@ -39,8 +37,11 @@ namespace GearEngine.CarSimulation.Editor
             EnsureFolder("Assets/Game");
             EnsureFolder("Assets/Game/CarSimulation");
             EnsureFolder("Assets/Game/CarSimulation/Data");
-            EnsureFolder("Assets/Game/CarSimulation/Data/Tracks");
             EnsureFolder("Assets/Game/CarSimulation/Prefabs");
+            EnsureFolder("Assets/GearEngine");
+            EnsureFolder("Assets/GearEngine/Data");
+            EnsureFolder("Assets/GearEngine/Data/Track");
+            EnsureFolder(gearEngineTracksFolder);
 
             var speed = CreateOrLoadSpeedAsset();
             var carPrefab = CreateOrLoadCarPrefab(speed);
@@ -179,12 +180,16 @@ namespace GearEngine.CarSimulation.Editor
 
         private static void WireCarDriver(GameObject go)
         {
-            CarSplineDriver driver = go.GetComponent<CarSplineDriver>() ?? go.AddComponent<CarSplineDriver>();
             CarView carView = go.GetComponent<CarView>() ?? go.AddComponent<CarView>();
+            SplineAnimate spline = go.GetComponent<SplineAnimate>();
             var carViewSo = new SerializedObject(carView);
-            carViewSo.FindProperty("splineDriver").objectReferenceValue = driver;
+            SerializedProperty splineProp = carViewSo.FindProperty("splineAnimate");
+            if (splineProp != null && spline != null)
+            {
+                splineProp.objectReferenceValue = spline;
+            }
+
             carViewSo.ApplyModifiedPropertiesWithoutUndo();
-            EditorUtility.SetDirty(driver);
             EditorUtility.SetDirty(carView);
         }
 
@@ -231,7 +236,6 @@ namespace GearEngine.CarSimulation.Editor
             }
 
             var circleTrackDef = CreateOrLoadCircleTrackDefinition(circleSpline);
-            CreateOrLoadSquareTrackDefinition();
 
             CarSimulationNavigationAssetGenerator.Generate();
             EnsureAuthoringSplineOnlyOnCircleRaceHost();
@@ -258,22 +262,6 @@ namespace GearEngine.CarSimulation.Editor
             return def;
         }
 
-        private static void CreateOrLoadSquareTrackDefinition()
-        {
-            var def = AssetDatabase.LoadAssetAtPath<TrackDefinition>(squareTrackDefinitionPath);
-            if (def == null)
-            {
-                def = ScriptableObject.CreateInstance<TrackDefinition>();
-                AssetDatabase.CreateAsset(def, squareTrackDefinitionPath);
-            }
-
-            WriteClosedSquareSpline(def.Spline, squareTrackHalfExtent);
-            var so = new SerializedObject(def);
-            so.FindProperty("trackName").stringValue = "Square";
-            so.ApplyModifiedPropertiesWithoutUndo();
-            EditorUtility.SetDirty(def);
-        }
-
         private static void CopySplineFromContainerToDefinition(SplineContainer container, TrackDefinition definition)
         {
             if (container == null || definition == null)
@@ -287,21 +275,6 @@ namespace GearEngine.CarSimulation.Editor
             dest.Knots = source.Knots;
             dest.Closed = source.Closed;
             EditorUtility.SetDirty(definition);
-        }
-
-        private static void WriteClosedSquareSpline(Spline spline, float halfExtent)
-        {
-            var h = halfExtent;
-            spline.Knots = new[]
-            {
-                new BezierKnot(new Vector3(-h, 0, -h)),
-                new BezierKnot(new Vector3(-h, 0, h)),
-                new BezierKnot(new Vector3(h, 0, h)),
-                new BezierKnot(new Vector3(h, 0, -h)),
-            };
-            spline.Closed = true;
-            var range = new SplineRange(0, spline.Count);
-            spline.SetTangentMode(range, TangentMode.Linear);
         }
 
         private static void CreateOrLoadOvalTrackDefinition()
@@ -549,7 +522,9 @@ namespace GearEngine.CarSimulation.Editor
             CarTrackBootstrap bootstrap = GetOrCreateCarTrackBootstrap();
             SerializedObject bootstrapSo = new SerializedObject(bootstrap);
             bootstrapSo.FindProperty("trackDefinition").objectReferenceValue = trackDefinition;
-            bootstrapSo.FindProperty("carDefinition").objectReferenceValue = carDefinition;
+            SerializedProperty carList = bootstrapSo.FindProperty("carDefinitions");
+            carList.arraySize = 1;
+            carList.GetArrayElementAtIndex(0).objectReferenceValue = carDefinition;
             bootstrapSo.ApplyModifiedPropertiesWithoutUndo();
             EditorUtility.SetDirty(bootstrap);
             return bootstrap;

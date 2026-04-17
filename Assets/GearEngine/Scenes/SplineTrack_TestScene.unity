@@ -149,10 +149,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Game.CarSimulation::GearEngine.CarSimulation.Bootstrap.CarTrackBootstrap
   trackDefinition: {fileID: 11400000, guid: 6ce7712943d0d1344bcaccc8749ee69c, type: 2}
-  carDefinition: {fileID: 11400000, guid: b4e1eaf4e8dd58b418b4e6efc603f72e, type: 2}
-  simulationConfig:
+  carDefinitions:
+  - {fileID: 11400000, guid: b4e1eaf4e8dd58b418b4e6efc603f72e, type: 2}
+  sessionConfig:
     variables: {fileID: 11400000, guid: f6cfd8fa3fbb61843b66534996d0329d, type: 2}
-    tuning: {fileID: 11400000, guid: 9c0d1e2f3a4b5678c9d0e1f2a3b4c5d6, type: 2}
+    totalLaps: 3
 --- !u!4 &74913802
 Transform:
   m_ObjectHideFlags: 0
@@ -235,7 +236,7 @@ Camera:
   far clip plane: 500
   field of view: 60
   orthographic: 1
-  orthographic size: 50
+  orthographic size: 100.1
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2

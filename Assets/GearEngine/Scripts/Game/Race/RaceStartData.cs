@@ -2,6 +2,7 @@ using System;
 using GearEngine.CarSimulation.Definitions;
 using GearEngine.GearEngine;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace GearEngine.Race
 {
@@ -10,35 +11,29 @@ namespace GearEngine.Race
     {
         public RaceStartData()
         {
-            simulationConfig = new TrackSimulationConfig();
+            sessionConfig = new RaceSessionConfig();
         }
 
-        public RaceStartData(TrackDefinition trackDefinition, CarDefinition carDefinition, GearEngineStartData gearEngineData = null, TrackSimulationConfig simulationConfig = null)
+        public RaceStartData(TrackDefinition trackDefinition, CarDefinition carDefinition, GearEngineStartData gearEngineData = null, RaceSessionConfig sessionConfig = null)
         {
             this.trackDefinition = trackDefinition;
             this.carDefinition = carDefinition;
             this.gearEngineData = gearEngineData;
-            this.simulationConfig = simulationConfig ?? new TrackSimulationConfig();
+            this.sessionConfig = sessionConfig ?? new RaceSessionConfig();
         }
 
         public TrackDefinition TrackDefinition => trackDefinition;
 
         public CarDefinition CarDefinition => carDefinition;
 
-        public TrackSimulationConfig SimulationConfig => simulationConfig;
+        public RaceSessionConfig SessionConfig => sessionConfig;
 
         public GearEngineStartData GearEngineData => gearEngineData;
 
-        [SerializeField]
-        private TrackDefinition trackDefinition;
-
-        [SerializeField]
-        private CarDefinition carDefinition;
-
-        [SerializeField]
-        private TrackSimulationConfig simulationConfig = new TrackSimulationConfig();
-
-        [SerializeField]
-        private GearEngineStartData gearEngineData;
+        [SerializeField] private TrackDefinition trackDefinition;
+        [SerializeField] private CarDefinition carDefinition;
+        [FormerlySerializedAs("simulationConfig")]
+        [SerializeField] private RaceSessionConfig sessionConfig = new RaceSessionConfig();
+        [SerializeField] private GearEngineStartData gearEngineData;
     }
 }

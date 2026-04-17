@@ -7,13 +7,9 @@ using GearEngine.GearEngine;
 using GearEngine.GearEngine.Bootstrap;
 using GearEngine.GearEngine.Config;
 using GearEngine.GearEngine.Manager;
-using GearEngine.GearEngine.Nodes;
-using GearEngine.GearEngine.Services;
 using GearEngine.GearEngine.Presentation.UI;
-using Scaffold.Events.Contracts;
 using Scaffold.MVVM;
 using VContainer;
-using GearEngine.GearEngine.Presentation;
 
 namespace GearEngine.Race
 {
@@ -24,37 +20,58 @@ namespace GearEngine.Race
             this.startData = startData ?? throw new ArgumentNullException(nameof(startData));
         }
 
-        public TrackViewModel Track { get; private set; }
-        public GearEngineViewModel GearEngine { get; private set; }
+        public GearInventoryViewModel Inventory { get; } = new GearInventoryViewModel();
 
-        public bool IsRaceRunning => false;
+        public BoardViewModel Board { get; } = new BoardViewModel();
+
+        public TrackViewModel Track { get; private set; }
+
+        public bool IsRaceRunning => engineService?.IsRunning ?? false;
 
         private readonly RaceStartData startData;
 
-        [Inject] private TrackSimulationFactory trackFactory;
-        [Inject] private ITrackSimulationRunner trackSimulationRunner;
-        [Inject] private IObjectResolver objectResolver;
-        
+        [Inject]
+        private IGearEngineService engineService;
+
+        [Inject]
+        private IGridManager gridManager;
+
+        [Inject]
+        private GearNodeFactory nodeFactory;
+
+        [Inject]
+        private BoardConfigSO boardConfig;
+
+        [Inject]
+        private TrackSimulationFactory trackFactory;
+
+        [Inject]
+        private IRaceSessionRunner raceSessionRunner;
+
         protected override void Initialize()
         {
             base.Initialize();
             ValidateStartData();
-
-            TrackSimulation simulation = trackFactory.Create(startData.CarDefinition, startData.TrackDefinition, startData.SimulationConfig);
-            SetupTrack(simulation);
-            SetupGears(startData.GearEngineData, simulation);
+            SetupInventory();
+            SetupBoard();
+            SetupTrack();
         }
 
         public void ToggleRace()
         {
-            if (IsRaceRunning)
+            if (engineService == null || Track == null)
             {
-                //stop engine
+                return;
+            }
+
+            if (engineService.IsRunning)
+            {
+                engineService.Stop();
                 Track.Toggle(false);
             }
             else
             {
-                //start engine
+                engineService.Play();
                 Track.Toggle(true);
             }
         }
@@ -72,19 +89,36 @@ namespace GearEngine.Race
             }
         }
 
-        private void SetupTrack(TrackSimulation simulation)
+        private void SetupInventory()
         {
-            trackSimulationRunner.SetSimulation(simulation);
-            Track = new TrackViewModel(simulation);
-            objectResolver?.Inject(Track);
-            BindChildViewModel(Track);
+            BindChildViewModel(Inventory);
+            Inventory.Initialize(engineService);
+
+            GearEngineStartData gearData = startData.GearEngineData;
+            if (gearData?.InventoryGears != null)
+            {
+                Inventory.LoadInventory(gearData.InventoryGears);
+            }
         }
 
-        private void SetupGears(GearEngineStartData gearData, TrackSimulation simulation)
+        private void SetupBoard()
         {
-            GearEngine = new GearEngineViewModel(gearData);
-            objectResolver?.Inject(GearEngine);
-            BindChildViewModel(GearEngine);
+            BindChildViewModel(Board);
+            Board.Initialize(engineService, gridManager, nodeFactory, boardConfig);
+
+            GearEngineStartData gearData = startData.GearEngineData;
+            if (gearData?.BoardLayout != null)
+            {
+                Board.LoadLayout(gearData.BoardLayout);
+            }
+        }
+
+        private void SetupTrack()
+        {
+            LapRaceSession session = trackFactory.Create(startData.CarDefinition, startData.TrackDefinition, startData.SessionConfig);
+            raceSessionRunner.SetSession(session);
+            Track = new TrackViewModel(session);
+            BindChildViewModel(Track);
         }
     }
 }

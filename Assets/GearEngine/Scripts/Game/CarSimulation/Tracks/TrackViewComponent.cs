@@ -1,6 +1,6 @@
 using System;
+using GearEngine.CarSimulation;
 using GearEngine.CarSimulation.Definitions;
-using GearEngine.CarSimulation.Entity;
 using GearEngine.CarSimulation.Presentation;
 using Scaffold.MVVM;
 using UnityEngine;
@@ -10,7 +10,7 @@ namespace GearEngine.CarSimulation.Tracks
 {
     [DisallowMultipleComponent]
     [RequireComponent(typeof(SplineContainer))]
-    public sealed class TrackViewComponent : ViewComponent<TrackViewModel>
+    public sealed class Track : ViewComponent<TrackViewModel>
     {
         private const string pathChildName = "Path";
 
@@ -18,8 +18,6 @@ namespace GearEngine.CarSimulation.Tracks
 
         [SerializeField] private SplineContainer splineContainer;
         [SerializeField] private SplineExtrude splineExtrude;
-
-        private CarView spawnedCarView;
 
         public new void Unbind()
         {
@@ -40,118 +38,29 @@ namespace GearEngine.CarSimulation.Tracks
             }
 
             InitializeTrack(viewModel.Track);
-            Bind<SimulationLifecycleState, SimulationLifecycleState>(() => viewModel.State, SyncSpawnedCarPlayback);
-            if (viewModel.Car != null)
-            {
-                SpawnCarView(viewModel.Car);
-            }
-
-            SyncSpawnedCarPlayback(viewModel.State);
+            TryBindRaceSessionToScene();
         }
 
         protected override void OnUnbind()
         {
-            DestroyCarViewIfNeeded();
             viewModel?.TearDown();
             base.OnUnbind();
         }
 
-        private void OnDestroy()
+        private void TryBindRaceSessionToScene()
         {
-            DestroyCarViewIfNeeded();
-        }
-
-        private void SpawnCarView(CarEntity car)
-        {
-            DestroyCarViewIfNeeded();
-            GameObject prefab = car.Definition != null ? car.Definition.CarPrefab : null;
-            if (prefab == null)
-            {
-                LogMissingCarPrefab();
-                return;
-            }
-
-            InstantiateAndInitializeCarView(car, prefab);
-        }
-
-        private void LogMissingCarPrefab()
-        {
-            Debug.LogError("[Track] CarDefinition.CarPrefab is missing; cannot spawn CarView.");
-        }
-
-        private void InstantiateAndInitializeCarView(CarEntity car, GameObject prefab)
-        {
-            GameObject instance = Instantiate(prefab);
-            PlaceCarUnderTrack(instance, prefab);
-            if (!TryGetCarView(instance, out CarView view))
-            {
-                Destroy(instance);
-                return;
-            }
-
-            spawnedCarView = view;
-            FinalizeCarViewBinding(car, instance, view);
-        }
-
-        private void PlaceCarUnderTrack(GameObject instance, GameObject prefabAssetRoot)
-        {
-            Transform prefabTransform = prefabAssetRoot.transform;
-            Transform instanceTransform = instance.transform;
-            instanceTransform.SetParent(transform, false);
-            instanceTransform.localPosition = prefabTransform.localPosition;
-            instanceTransform.localRotation = prefabTransform.localRotation;
-            instanceTransform.localScale = prefabTransform.localScale;
-        }
-
-        private void FinalizeCarViewBinding(CarEntity car, GameObject instance, CarView view)
-        {
-            if (viewModel == null)
-            {
-                CancelSpawnedCar(instance);
-                return;
-            }
-
-            view.Initialize(car, splineContainer, viewModel.Simulation);
-            SyncSpawnedCarPlayback(viewModel.State);
-        }
-
-        private void SyncSpawnedCarPlayback(SimulationLifecycleState state)
-        {
-            if (spawnedCarView == null || viewModel == null)
+            LapRaceSession session = viewModel.Session;
+            if (session == null)
             {
                 return;
             }
 
-            spawnedCarView.OnRunningChanged(state);
-        }
-
-        private bool TryGetCarView(GameObject instance, out CarView view)
-        {
-            view = instance.GetComponent<CarView>();
-            if (view != null)
+            session.BindSpline(SplineContainer);
+            CarView carView = GetComponentInChildren<CarView>(true);
+            if (carView != null)
             {
-                return true;
+                carView.Initialize(session.Car, SplineContainer, session);
             }
-
-            Debug.LogError("[Track] Car prefab is missing CarView.");
-            return false;
-        }
-
-        private void CancelSpawnedCar(GameObject instance)
-        {
-            Destroy(instance);
-            spawnedCarView = null;
-        }
-
-        private void DestroyCarViewIfNeeded()
-        {
-            if (spawnedCarView == null)
-            {
-                return;
-            }
-
-            Destroy(spawnedCarView.gameObject);
-            spawnedCarView = null;
         }
 
         private void InitializeTrack(TrackDefinition data)

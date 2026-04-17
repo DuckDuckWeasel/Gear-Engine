@@ -3,7 +3,6 @@ using GearEngine.CarSimulation.Entity;
 using GearEngine.CarSimulation.Simulation;
 using Scaffold.Entities;
 using Sirenix.OdinInspector;
-using UnityEditor;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
@@ -22,42 +21,26 @@ namespace GearEngine.CarSimulation.Debug
         private EntityModifierEntry activeModifier;
 
         [Inject]
-        private TrackSimulationRunner runner;
+        private IRaceSessionRunner runner;
 
-        private TrackSimulation Sim => runner?.ActiveSimulation;
+        private LapRaceSession Session => runner?.ActiveSession;
 
-        private CarEntity Car => Sim?.Car;
-
-        private CarMotionState Motion => Sim?.Motion;
-
-        private RaceRuntimeState Race => Sim?.Race;
+        private CarEntity Car => Session?.Car;
 
         [ShowInInspector, ReadOnly, BoxGroup("Race")]
-        private float CurrentSpeed => Race?.CurrentSpeed ?? 0f;
+        private float CurrentSpeed => Session?.CurrentSpeed ?? 0f;
 
         [ShowInInspector, ReadOnly, BoxGroup("Race")]
-        private float Progress01 => Race?.Progress01 ?? 0f;
+        private float NormalizedProgress => Session?.NormalizedProgress ?? 0f;
 
         [ShowInInspector, ReadOnly, BoxGroup("Race")]
-        private int CurrentLap => Race?.CurrentLap ?? 0;
+        private int CurrentLap => Session?.CurrentLap ?? 0;
 
         [ShowInInspector, ReadOnly, BoxGroup("Race")]
-        private bool IsDrifting => Race?.IsDrifting ?? false;
+        private float RaceTime => Session?.RaceTime ?? 0f;
 
         [ShowInInspector, ReadOnly, BoxGroup("Race")]
-        private bool IsOvershot => Race?.IsOvershot ?? false;
-
-        [ShowInInspector, ReadOnly, BoxGroup("Motion")]
-        private float RawSpeed => Motion?.Speed ?? 0f;
-
-        [ShowInInspector, ReadOnly, BoxGroup("Motion")]
-        private float LineError => Motion?.LineError ?? 0f;
-
-        [ShowInInspector, ReadOnly, BoxGroup("Motion")]
-        private float SpeedStress => Motion?.SpeedStress ?? 0f;
-
-        [ShowInInspector, ReadOnly, BoxGroup("Motion")]
-        private float Distance => Motion?.Distance ?? 0f;
+        private SimulationLifecycleState Phase => Session?.Phase ?? SimulationLifecycleState.Created;
 
         [ShowInInspector, ReadOnly, BoxGroup("Attribute")]
         private float CurrentAttributeValue

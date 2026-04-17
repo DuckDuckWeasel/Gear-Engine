@@ -1,6 +1,5 @@
 using System;
 using CommunityToolkit.Mvvm.ComponentModel;
-using GearEngine.CarSimulation;
 using GearEngine.CarSimulation.Definitions;
 using GearEngine.CarSimulation.Entity;
 using Scaffold.MVVM;
@@ -10,38 +9,67 @@ namespace GearEngine.CarSimulation.Presentation
 {
     public sealed partial class TrackViewModel : ViewModel
     {
-        public TrackViewModel(TrackSimulation simulation)
+        public TrackViewModel(LapRaceSession session)
         {
-            this.simulation = simulation ?? throw new ArgumentNullException(nameof(simulation));
+            this.session = session ?? throw new ArgumentNullException(nameof(session));
         }
 
-        public TrackDefinition Track => simulation.Track;
-        public CarEntity Car => simulation.Car;
-        public TrackSimulation Simulation => simulation;
+        public TrackDefinition Track => session.Track;
 
-        [NestedProperty] private TrackSimulation simulation;
+        public CarEntity Car => session.Car;
 
-        [ObservableProperty] private SimulationLifecycleState state;
+        public LapRaceSession Session => session;
+
+        [ObservableProperty]
+        private SimulationLifecycleState state;
+
+        private readonly LapRaceSession session;
 
         protected override void Initialize()
         {
             base.Initialize();
-            Bind(() => simulation.State, () => State);
+            session.PresentationChanged += OnSessionPresentationChanged;
+            RefreshUiState();
         }
 
         public void Toggle(bool running)
         {
-            simulation.Toggle(running);
+            if (running)
+            {
+                if (session.Phase == SimulationLifecycleState.Completed)
+                {
+                    session.Reset();
+                }
+
+                session.SetClockRunning(true);
+            }
+            else
+            {
+                session.SetClockRunning(false);
+            }
+
+            RefreshUiState();
         }
 
         public void Complete()
         {
-            simulation.Complete();
+            session.ForceFinish();
+            RefreshUiState();
         }
 
         internal void TearDown()
         {
+            session.PresentationChanged -= OnSessionPresentationChanged;
+        }
 
+        private void OnSessionPresentationChanged()
+        {
+            RefreshUiState();
+        }
+
+        private void RefreshUiState()
+        {
+            State = session.Phase;
         }
     }
 }
