@@ -191,37 +191,56 @@ MonoBehaviour:
   baseSimulationMultiplier: 2
   statTopSpeed: 0.5
   statAcceleration: 0.5
-  statBrakingPower: 0.5
-  statDriftGrip: 0.5
-  statCorneringAssist: 0.5
-  statSimulationSpeed: 0
+  statBrakingSystem: 0.5
+  statDriftControl: 0.5
+  statNitrousBoost: 0.5
+  statSteeringGrip: 0.5
+  statRacingLine: 0.5
+  statDriverReflexes: 0.5
   driftAccelerationMultiplier: 1.8
+  boundsDriftAccMult: {x: 1.1, y: 2.5}
   driftSteerAssistMultiplier: 1.5
+  boundsDriftSteerMult: {x: 1, y: 2}
   hairpinAccelerationBoost: 2.75
+  boundsHairpinAccBoost: {x: 1.5, y: 4}
   hairpinSteerAssistBoost: 2.1
+  boundsHairpinSteerBoost: {x: 1.2, y: 3}
   waypointCount: 5
   baseWaypointDistance: 9
-  distanceSpeedMultiplier: 0.325
+  boundsBaseWaypointDist: {x: 6, y: 12}
+  distanceSpeedMultiplier: 0.15
+  boundsDistSpeedMult: {x: 0.1, y: 0.2}
   waypointSpacingMultiplier: 0.8
   waypointArrivalRangeBase: 6
-  waypointArrivalSpeedMultiplier: 0.2
+  boundsArrivalRangeBase: {x: 4, y: 8}
+  waypointArrivalSpeedMultiplier: 0.15
+  boundsArrivalSpeedMult: {x: 0.1, y: 0.2}
   waypointMaxLateralOffset: 10
   laneChangeVariationSpeed: 0.25
   maxDeviationDistance: 7
-  preCurveWideOffset: 2
-  postCurveWideOffset: 1.5
+  preCurveWideOffset: 4.5
+  boundsPreCurveOffset: {x: 1, y: 8}
+  postCurveWideOffset: 2.25
+  boundsPostCurveOffset: {x: 0.5, y: 4}
   steerDeadzone: 0.060000002
-  curveAngleThreshold: 13
-  handbrakeAngleThreshold: 26
-  hairpinAngleThreshold: 55
-  macroCurveAngleThreshold: 32.5
-  maxSimulationSpeed: 131.09999
-  safeCornerSpeed: 24.725
-  arcadeSteerAssist: 2.1275
-  calculatedAcceleration: 6
-  calculatedBrakeForce: 259
+  boundsSteerDeadzone: {x: 0.1, y: 0.02}
+  curveAngleThreshold: 20
+  boundsCurveAngle: {x: 15, y: 25}
+  handbrakeAngleThreshold: 37.5
+  boundsHandbrakeAngle: {x: 30, y: 45}
+  hairpinAngleThreshold: 72.5
+  boundsHairpinAngle: {x: 60, y: 85}
+  macroCurveAngleThreshold: 42.5
+  boundsMacroCurveAngle: {x: 35, y: 50}
+  maxSimulationSpeed: 188.09999
+  safeCornerSpeed: 156.75
+  boundsSafeCornerSpeed: {x: 60, y: 130}
+  arcadeSteerAssist: 3.0525
+  boundsArcadeSteerAssist: {x: 0.2, y: 3.5}
+  calculatedAcceleration: 11
+  calculatedBrakeForce: 371
   calculatedDriftGrip: 6
-  currentSimulationMultiplier: 1.15
+  currentSimulationMultiplier: 1.65
   currentSpeed: 64.22942
   upcomingWaypoints:
   - {x: -14.844387, y: 0, z: 26.945908}
@@ -232,8 +251,7 @@ MonoBehaviour:
   isBrakingForCurve: 0
   requiresHandbrake: 1
   isHairpinPowerDrift: 0
-  boundsAI_SafeCornerSpeed: {x: 8, y: 35}
-  boundsArcadeSteerAssist: {x: 0.2, y: 3.5}
+  currentDeviation: 0
 --- !u!4 &56816858
 Transform:
   m_ObjectHideFlags: 0
@@ -812,11 +830,25 @@ MonoBehaviour:
   propRules:
   - prefabs:
     - {fileID: 1951466408381339306, guid: f2ad49960953b4806a6242c16590434f, type: 3}
-    side: 2
-    lateralDistance: 4.5
-    chancePerCurve: 0.8
+    side: 1
+    lateralDistance: 3
+    chancePerCurve: 0.4
     minAmount: 3
-    maxAmount: 10
+    maxAmount: 8
+  - prefabs:
+    - {fileID: 1951466408381339306, guid: f2ad49960953b4806a6242c16590434f, type: 3}
+    side: 0
+    lateralDistance: 2
+    chancePerCurve: 0.4
+    minAmount: 3
+    maxAmount: 8
+  - prefabs:
+    - {fileID: 8940077666693441932, guid: f7ae8739f888645ef9f9118defc5103d, type: 3}
+    side: 2
+    lateralDistance: 1
+    chancePerCurve: 0.2
+    minAmount: 1
+    maxAmount: 2
   generateOnStart: 1
   generatedProps: []
 --- !u!4 &601111230
@@ -873,37 +905,56 @@ MonoBehaviour:
   baseSimulationMultiplier: 2
   statTopSpeed: 0.5
   statAcceleration: 0.5
-  statBrakingPower: 0.5
-  statDriftGrip: 0.5
-  statCorneringAssist: 0.5
-  statSimulationSpeed: 0
+  statBrakingSystem: 0.5
+  statDriftControl: 0.5
+  statNitrousBoost: 0.5
+  statSteeringGrip: 0.5
+  statRacingLine: 0.5
+  statDriverReflexes: 0.5
   driftAccelerationMultiplier: 1.8
+  boundsDriftAccMult: {x: 1.1, y: 2.5}
   driftSteerAssistMultiplier: 1.5
+  boundsDriftSteerMult: {x: 1, y: 2}
   hairpinAccelerationBoost: 2.75
+  boundsHairpinAccBoost: {x: 1.5, y: 4}
   hairpinSteerAssistBoost: 2.1
+  boundsHairpinSteerBoost: {x: 1.2, y: 3}
   waypointCount: 5
   baseWaypointDistance: 9
-  distanceSpeedMultiplier: 0.325
+  boundsBaseWaypointDist: {x: 6, y: 12}
+  distanceSpeedMultiplier: 0.15
+  boundsDistSpeedMult: {x: 0.1, y: 0.2}
   waypointSpacingMultiplier: 0.8
   waypointArrivalRangeBase: 6
-  waypointArrivalSpeedMultiplier: 0.2
+  boundsArrivalRangeBase: {x: 4, y: 8}
+  waypointArrivalSpeedMultiplier: 0.15
+  boundsArrivalSpeedMult: {x: 0.1, y: 0.2}
   waypointMaxLateralOffset: 10
   laneChangeVariationSpeed: 0.25
   maxDeviationDistance: 7
-  preCurveWideOffset: 2
-  postCurveWideOffset: 1.5
+  preCurveWideOffset: 4.5
+  boundsPreCurveOffset: {x: 1, y: 8}
+  postCurveWideOffset: 2.25
+  boundsPostCurveOffset: {x: 0.5, y: 4}
   steerDeadzone: 0.060000002
-  curveAngleThreshold: 13
-  handbrakeAngleThreshold: 26
-  hairpinAngleThreshold: 55
-  macroCurveAngleThreshold: 32.5
-  maxSimulationSpeed: 131.09999
-  safeCornerSpeed: 24.725
-  arcadeSteerAssist: 2.1275
-  calculatedAcceleration: 6
-  calculatedBrakeForce: 259
+  boundsSteerDeadzone: {x: 0.1, y: 0.02}
+  curveAngleThreshold: 20
+  boundsCurveAngle: {x: 15, y: 25}
+  handbrakeAngleThreshold: 37.5
+  boundsHandbrakeAngle: {x: 30, y: 45}
+  hairpinAngleThreshold: 72.5
+  boundsHairpinAngle: {x: 60, y: 85}
+  macroCurveAngleThreshold: 42.5
+  boundsMacroCurveAngle: {x: 35, y: 50}
+  maxSimulationSpeed: 188.09999
+  safeCornerSpeed: 156.75
+  boundsSafeCornerSpeed: {x: 60, y: 130}
+  arcadeSteerAssist: 3.0525
+  boundsArcadeSteerAssist: {x: 0.2, y: 3.5}
+  calculatedAcceleration: 11
+  calculatedBrakeForce: 371
   calculatedDriftGrip: 6
-  currentSimulationMultiplier: 1.15
+  currentSimulationMultiplier: 1.65
   currentSpeed: 64.22942
   upcomingWaypoints:
   - {x: -14.844387, y: 0, z: 26.945908}
@@ -914,8 +965,7 @@ MonoBehaviour:
   isBrakingForCurve: 0
   requiresHandbrake: 1
   isHairpinPowerDrift: 0
-  boundsAI_SafeCornerSpeed: {x: 8, y: 35}
-  boundsArcadeSteerAssist: {x: 0.2, y: 3.5}
+  currentDeviation: 0
 --- !u!4 &609078991
 Transform:
   m_ObjectHideFlags: 0
@@ -1417,37 +1467,56 @@ MonoBehaviour:
   baseSimulationMultiplier: 2
   statTopSpeed: 0.5
   statAcceleration: 0.5
-  statBrakingPower: 0.5
-  statDriftGrip: 0.5
-  statCorneringAssist: 0.5
-  statSimulationSpeed: 0
+  statBrakingSystem: 0.5
+  statDriftControl: 0.5
+  statNitrousBoost: 0.5
+  statSteeringGrip: 0.5
+  statRacingLine: 0.5
+  statDriverReflexes: 0.5
   driftAccelerationMultiplier: 1.8
+  boundsDriftAccMult: {x: 1.1, y: 2.5}
   driftSteerAssistMultiplier: 1.5
+  boundsDriftSteerMult: {x: 1, y: 2}
   hairpinAccelerationBoost: 2.75
+  boundsHairpinAccBoost: {x: 1.5, y: 4}
   hairpinSteerAssistBoost: 2.1
+  boundsHairpinSteerBoost: {x: 1.2, y: 3}
   waypointCount: 5
   baseWaypointDistance: 9
-  distanceSpeedMultiplier: 0.325
+  boundsBaseWaypointDist: {x: 6, y: 12}
+  distanceSpeedMultiplier: 0.15
+  boundsDistSpeedMult: {x: 0.1, y: 0.2}
   waypointSpacingMultiplier: 0.8
   waypointArrivalRangeBase: 6
-  waypointArrivalSpeedMultiplier: 0.2
+  boundsArrivalRangeBase: {x: 4, y: 8}
+  waypointArrivalSpeedMultiplier: 0.15
+  boundsArrivalSpeedMult: {x: 0.1, y: 0.2}
   waypointMaxLateralOffset: 10
   laneChangeVariationSpeed: 0.25
   maxDeviationDistance: 7
-  preCurveWideOffset: 2
-  postCurveWideOffset: 1.5
+  preCurveWideOffset: 4.5
+  boundsPreCurveOffset: {x: 1, y: 8}
+  postCurveWideOffset: 2.25
+  boundsPostCurveOffset: {x: 0.5, y: 4}
   steerDeadzone: 0.060000002
-  curveAngleThreshold: 13
-  handbrakeAngleThreshold: 26
-  hairpinAngleThreshold: 55
-  macroCurveAngleThreshold: 32.5
-  maxSimulationSpeed: 131.09999
-  safeCornerSpeed: 24.725
-  arcadeSteerAssist: 2.1275
-  calculatedAcceleration: 6
-  calculatedBrakeForce: 259
+  boundsSteerDeadzone: {x: 0.1, y: 0.02}
+  curveAngleThreshold: 20
+  boundsCurveAngle: {x: 15, y: 25}
+  handbrakeAngleThreshold: 37.5
+  boundsHandbrakeAngle: {x: 30, y: 45}
+  hairpinAngleThreshold: 72.5
+  boundsHairpinAngle: {x: 60, y: 85}
+  macroCurveAngleThreshold: 42.5
+  boundsMacroCurveAngle: {x: 35, y: 50}
+  maxSimulationSpeed: 188.09999
+  safeCornerSpeed: 156.75
+  boundsSafeCornerSpeed: {x: 60, y: 130}
+  arcadeSteerAssist: 3.0525
+  boundsArcadeSteerAssist: {x: 0.2, y: 3.5}
+  calculatedAcceleration: 11
+  calculatedBrakeForce: 371
   calculatedDriftGrip: 6
-  currentSimulationMultiplier: 1.15
+  currentSimulationMultiplier: 1.65
   currentSpeed: 64.22942
   upcomingWaypoints:
   - {x: -14.844387, y: 0, z: 26.945908}
@@ -1458,8 +1527,7 @@ MonoBehaviour:
   isBrakingForCurve: 0
   requiresHandbrake: 1
   isHairpinPowerDrift: 0
-  boundsAI_SafeCornerSpeed: {x: 8, y: 35}
-  boundsArcadeSteerAssist: {x: 0.2, y: 3.5}
+  currentDeviation: 0
 --- !u!4 &807221284
 Transform:
   m_ObjectHideFlags: 0
@@ -1514,37 +1582,56 @@ MonoBehaviour:
   baseSimulationMultiplier: 2
   statTopSpeed: 0.5
   statAcceleration: 0.5
-  statBrakingPower: 0.5
-  statDriftGrip: 0.5
-  statCorneringAssist: 0.5
-  statSimulationSpeed: 0
+  statBrakingSystem: 0.5
+  statDriftControl: 0.5
+  statNitrousBoost: 0.5
+  statSteeringGrip: 0.5
+  statRacingLine: 0.5
+  statDriverReflexes: 0.5
   driftAccelerationMultiplier: 1.8
+  boundsDriftAccMult: {x: 1.1, y: 2.5}
   driftSteerAssistMultiplier: 1.5
+  boundsDriftSteerMult: {x: 1, y: 2}
   hairpinAccelerationBoost: 2.75
+  boundsHairpinAccBoost: {x: 1.5, y: 4}
   hairpinSteerAssistBoost: 2.1
+  boundsHairpinSteerBoost: {x: 1.2, y: 3}
   waypointCount: 5
   baseWaypointDistance: 9
-  distanceSpeedMultiplier: 0.325
+  boundsBaseWaypointDist: {x: 6, y: 12}
+  distanceSpeedMultiplier: 0.15
+  boundsDistSpeedMult: {x: 0.1, y: 0.2}
   waypointSpacingMultiplier: 0.8
   waypointArrivalRangeBase: 6
-  waypointArrivalSpeedMultiplier: 0.2
+  boundsArrivalRangeBase: {x: 4, y: 8}
+  waypointArrivalSpeedMultiplier: 0.15
+  boundsArrivalSpeedMult: {x: 0.1, y: 0.2}
   waypointMaxLateralOffset: 10
   laneChangeVariationSpeed: 0.25
   maxDeviationDistance: 7
-  preCurveWideOffset: 2
-  postCurveWideOffset: 1.5
+  preCurveWideOffset: 4.5
+  boundsPreCurveOffset: {x: 1, y: 8}
+  postCurveWideOffset: 2.25
+  boundsPostCurveOffset: {x: 0.5, y: 4}
   steerDeadzone: 0.060000002
-  curveAngleThreshold: 13
-  handbrakeAngleThreshold: 26
-  hairpinAngleThreshold: 55
-  macroCurveAngleThreshold: 32.5
-  maxSimulationSpeed: 131.09999
-  safeCornerSpeed: 24.725
-  arcadeSteerAssist: 2.1275
-  calculatedAcceleration: 6
-  calculatedBrakeForce: 259
+  boundsSteerDeadzone: {x: 0.1, y: 0.02}
+  curveAngleThreshold: 20
+  boundsCurveAngle: {x: 15, y: 25}
+  handbrakeAngleThreshold: 37.5
+  boundsHandbrakeAngle: {x: 30, y: 45}
+  hairpinAngleThreshold: 72.5
+  boundsHairpinAngle: {x: 60, y: 85}
+  macroCurveAngleThreshold: 42.5
+  boundsMacroCurveAngle: {x: 35, y: 50}
+  maxSimulationSpeed: 188.09999
+  safeCornerSpeed: 156.75
+  boundsSafeCornerSpeed: {x: 60, y: 130}
+  arcadeSteerAssist: 3.0525
+  boundsArcadeSteerAssist: {x: 0.2, y: 3.5}
+  calculatedAcceleration: 11
+  calculatedBrakeForce: 371
   calculatedDriftGrip: 6
-  currentSimulationMultiplier: 1.15
+  currentSimulationMultiplier: 1.65
   currentSpeed: 64.22942
   upcomingWaypoints:
   - {x: -14.844387, y: 0, z: 26.945908}
@@ -1555,8 +1642,7 @@ MonoBehaviour:
   isBrakingForCurve: 0
   requiresHandbrake: 1
   isHairpinPowerDrift: 0
-  boundsAI_SafeCornerSpeed: {x: 8, y: 35}
-  boundsArcadeSteerAssist: {x: 0.2, y: 3.5}
+  currentDeviation: 0
 --- !u!4 &898285875
 Transform:
   m_ObjectHideFlags: 0
@@ -1834,37 +1920,56 @@ MonoBehaviour:
   baseSimulationMultiplier: 2
   statTopSpeed: 0.5
   statAcceleration: 0.5
-  statBrakingPower: 0.5
-  statDriftGrip: 0.5
-  statCorneringAssist: 0.5
-  statSimulationSpeed: 0
+  statBrakingSystem: 0.5
+  statDriftControl: 0.5
+  statNitrousBoost: 0.5
+  statSteeringGrip: 0.5
+  statRacingLine: 0.5
+  statDriverReflexes: 0.5
   driftAccelerationMultiplier: 1.8
+  boundsDriftAccMult: {x: 1.1, y: 2.5}
   driftSteerAssistMultiplier: 1.5
+  boundsDriftSteerMult: {x: 1, y: 2}
   hairpinAccelerationBoost: 2.75
+  boundsHairpinAccBoost: {x: 1.5, y: 4}
   hairpinSteerAssistBoost: 2.1
+  boundsHairpinSteerBoost: {x: 1.2, y: 3}
   waypointCount: 5
   baseWaypointDistance: 9
-  distanceSpeedMultiplier: 0.325
+  boundsBaseWaypointDist: {x: 6, y: 12}
+  distanceSpeedMultiplier: 0.15
+  boundsDistSpeedMult: {x: 0.1, y: 0.2}
   waypointSpacingMultiplier: 0.8
   waypointArrivalRangeBase: 6
-  waypointArrivalSpeedMultiplier: 0.2
+  boundsArrivalRangeBase: {x: 4, y: 8}
+  waypointArrivalSpeedMultiplier: 0.15
+  boundsArrivalSpeedMult: {x: 0.1, y: 0.2}
   waypointMaxLateralOffset: 10
   laneChangeVariationSpeed: 0.25
   maxDeviationDistance: 7
-  preCurveWideOffset: 2
-  postCurveWideOffset: 1.5
+  preCurveWideOffset: 4.5
+  boundsPreCurveOffset: {x: 1, y: 8}
+  postCurveWideOffset: 2.25
+  boundsPostCurveOffset: {x: 0.5, y: 4}
   steerDeadzone: 0.060000002
-  curveAngleThreshold: 13
-  handbrakeAngleThreshold: 26
-  hairpinAngleThreshold: 55
-  macroCurveAngleThreshold: 32.5
-  maxSimulationSpeed: 131.09999
-  safeCornerSpeed: 24.725
-  arcadeSteerAssist: 2.1275
-  calculatedAcceleration: 6
-  calculatedBrakeForce: 259
+  boundsSteerDeadzone: {x: 0.1, y: 0.02}
+  curveAngleThreshold: 20
+  boundsCurveAngle: {x: 15, y: 25}
+  handbrakeAngleThreshold: 37.5
+  boundsHandbrakeAngle: {x: 30, y: 45}
+  hairpinAngleThreshold: 72.5
+  boundsHairpinAngle: {x: 60, y: 85}
+  macroCurveAngleThreshold: 42.5
+  boundsMacroCurveAngle: {x: 35, y: 50}
+  maxSimulationSpeed: 188.09999
+  safeCornerSpeed: 156.75
+  boundsSafeCornerSpeed: {x: 60, y: 130}
+  arcadeSteerAssist: 3.0525
+  boundsArcadeSteerAssist: {x: 0.2, y: 3.5}
+  calculatedAcceleration: 11
+  calculatedBrakeForce: 371
   calculatedDriftGrip: 6
-  currentSimulationMultiplier: 1.15
+  currentSimulationMultiplier: 1.65
   currentSpeed: 64.22942
   upcomingWaypoints:
   - {x: -14.844387, y: 0, z: 26.945908}
@@ -1875,8 +1980,7 @@ MonoBehaviour:
   isBrakingForCurve: 0
   requiresHandbrake: 1
   isHairpinPowerDrift: 0
-  boundsAI_SafeCornerSpeed: {x: 8, y: 35}
-  boundsArcadeSteerAssist: {x: 0.2, y: 3.5}
+  currentDeviation: 0
 --- !u!4 &1229671570
 Transform:
   m_ObjectHideFlags: 0
@@ -1931,37 +2035,56 @@ MonoBehaviour:
   baseSimulationMultiplier: 2
   statTopSpeed: 0.5
   statAcceleration: 0.5
-  statBrakingPower: 0.5
-  statDriftGrip: 0.5
-  statCorneringAssist: 0.5
-  statSimulationSpeed: 0
+  statBrakingSystem: 0.5
+  statDriftControl: 0.5
+  statNitrousBoost: 0.5
+  statSteeringGrip: 0.5
+  statRacingLine: 0.5
+  statDriverReflexes: 0.5
   driftAccelerationMultiplier: 1.8
+  boundsDriftAccMult: {x: 1.1, y: 2.5}
   driftSteerAssistMultiplier: 1.5
+  boundsDriftSteerMult: {x: 1, y: 2}
   hairpinAccelerationBoost: 2.75
+  boundsHairpinAccBoost: {x: 1.5, y: 4}
   hairpinSteerAssistBoost: 2.1
+  boundsHairpinSteerBoost: {x: 1.2, y: 3}
   waypointCount: 5
   baseWaypointDistance: 9
-  distanceSpeedMultiplier: 0.325
+  boundsBaseWaypointDist: {x: 6, y: 12}
+  distanceSpeedMultiplier: 0.15
+  boundsDistSpeedMult: {x: 0.1, y: 0.2}
   waypointSpacingMultiplier: 0.8
   waypointArrivalRangeBase: 6
-  waypointArrivalSpeedMultiplier: 0.2
+  boundsArrivalRangeBase: {x: 4, y: 8}
+  waypointArrivalSpeedMultiplier: 0.15
+  boundsArrivalSpeedMult: {x: 0.1, y: 0.2}
   waypointMaxLateralOffset: 10
   laneChangeVariationSpeed: 0.25
   maxDeviationDistance: 7
-  preCurveWideOffset: 2
-  postCurveWideOffset: 1.5
+  preCurveWideOffset: 4.5
+  boundsPreCurveOffset: {x: 1, y: 8}
+  postCurveWideOffset: 2.25
+  boundsPostCurveOffset: {x: 0.5, y: 4}
   steerDeadzone: 0.060000002
-  curveAngleThreshold: 13
-  handbrakeAngleThreshold: 26
-  hairpinAngleThreshold: 55
-  macroCurveAngleThreshold: 32.5
-  maxSimulationSpeed: 131.09999
-  safeCornerSpeed: 24.725
-  arcadeSteerAssist: 2.1275
-  calculatedAcceleration: 6
-  calculatedBrakeForce: 259
+  boundsSteerDeadzone: {x: 0.1, y: 0.02}
+  curveAngleThreshold: 20
+  boundsCurveAngle: {x: 15, y: 25}
+  handbrakeAngleThreshold: 37.5
+  boundsHandbrakeAngle: {x: 30, y: 45}
+  hairpinAngleThreshold: 72.5
+  boundsHairpinAngle: {x: 60, y: 85}
+  macroCurveAngleThreshold: 42.5
+  boundsMacroCurveAngle: {x: 35, y: 50}
+  maxSimulationSpeed: 188.09999
+  safeCornerSpeed: 156.75
+  boundsSafeCornerSpeed: {x: 60, y: 130}
+  arcadeSteerAssist: 3.0525
+  boundsArcadeSteerAssist: {x: 0.2, y: 3.5}
+  calculatedAcceleration: 11
+  calculatedBrakeForce: 371
   calculatedDriftGrip: 6
-  currentSimulationMultiplier: 1.15
+  currentSimulationMultiplier: 1.65
   currentSpeed: 64.22942
   upcomingWaypoints:
   - {x: -14.844387, y: 0, z: 26.945908}
@@ -1972,8 +2095,7 @@ MonoBehaviour:
   isBrakingForCurve: 0
   requiresHandbrake: 1
   isHairpinPowerDrift: 0
-  boundsAI_SafeCornerSpeed: {x: 8, y: 35}
-  boundsArcadeSteerAssist: {x: 0.2, y: 3.5}
+  currentDeviation: 0
 --- !u!4 &1322451652
 Transform:
   m_ObjectHideFlags: 0
@@ -2137,37 +2259,56 @@ MonoBehaviour:
   baseSimulationMultiplier: 2
   statTopSpeed: 0.5
   statAcceleration: 0.5
-  statBrakingPower: 0.5
-  statDriftGrip: 0.5
-  statCorneringAssist: 0.5
-  statSimulationSpeed: 0
+  statBrakingSystem: 0.5
+  statDriftControl: 0.5
+  statNitrousBoost: 0.5
+  statSteeringGrip: 0.5
+  statRacingLine: 0.5
+  statDriverReflexes: 0.5
   driftAccelerationMultiplier: 1.8
+  boundsDriftAccMult: {x: 1.1, y: 2.5}
   driftSteerAssistMultiplier: 1.5
+  boundsDriftSteerMult: {x: 1, y: 2}
   hairpinAccelerationBoost: 2.75
+  boundsHairpinAccBoost: {x: 1.5, y: 4}
   hairpinSteerAssistBoost: 2.1
+  boundsHairpinSteerBoost: {x: 1.2, y: 3}
   waypointCount: 5
   baseWaypointDistance: 9
-  distanceSpeedMultiplier: 0.325
+  boundsBaseWaypointDist: {x: 6, y: 12}
+  distanceSpeedMultiplier: 0.15
+  boundsDistSpeedMult: {x: 0.1, y: 0.2}
   waypointSpacingMultiplier: 0.8
   waypointArrivalRangeBase: 6
-  waypointArrivalSpeedMultiplier: 0.2
+  boundsArrivalRangeBase: {x: 4, y: 8}
+  waypointArrivalSpeedMultiplier: 0.15
+  boundsArrivalSpeedMult: {x: 0.1, y: 0.2}
   waypointMaxLateralOffset: 10
   laneChangeVariationSpeed: 0.25
   maxDeviationDistance: 7
-  preCurveWideOffset: 2
-  postCurveWideOffset: 1.5
+  preCurveWideOffset: 4.5
+  boundsPreCurveOffset: {x: 1, y: 8}
+  postCurveWideOffset: 2.25
+  boundsPostCurveOffset: {x: 0.5, y: 4}
   steerDeadzone: 0.060000002
-  curveAngleThreshold: 13
-  handbrakeAngleThreshold: 26
-  hairpinAngleThreshold: 55
-  macroCurveAngleThreshold: 32.5
-  maxSimulationSpeed: 131.09999
-  safeCornerSpeed: 24.725
-  arcadeSteerAssist: 2.1275
-  calculatedAcceleration: 6
-  calculatedBrakeForce: 259
+  boundsSteerDeadzone: {x: 0.1, y: 0.02}
+  curveAngleThreshold: 20
+  boundsCurveAngle: {x: 15, y: 25}
+  handbrakeAngleThreshold: 37.5
+  boundsHandbrakeAngle: {x: 30, y: 45}
+  hairpinAngleThreshold: 72.5
+  boundsHairpinAngle: {x: 60, y: 85}
+  macroCurveAngleThreshold: 42.5
+  boundsMacroCurveAngle: {x: 35, y: 50}
+  maxSimulationSpeed: 188.09999
+  safeCornerSpeed: 156.75
+  boundsSafeCornerSpeed: {x: 60, y: 130}
+  arcadeSteerAssist: 3.0525
+  boundsArcadeSteerAssist: {x: 0.2, y: 3.5}
+  calculatedAcceleration: 11
+  calculatedBrakeForce: 371
   calculatedDriftGrip: 6
-  currentSimulationMultiplier: 1.15
+  currentSimulationMultiplier: 1.65
   currentSpeed: 64.22942
   upcomingWaypoints:
   - {x: -14.844387, y: 0, z: 26.945908}
@@ -2178,8 +2319,7 @@ MonoBehaviour:
   isBrakingForCurve: 0
   requiresHandbrake: 1
   isHairpinPowerDrift: 0
-  boundsAI_SafeCornerSpeed: {x: 8, y: 35}
-  boundsArcadeSteerAssist: {x: 0.2, y: 3.5}
+  currentDeviation: 0
 --- !u!4 &1400760375
 Transform:
   m_ObjectHideFlags: 0
@@ -2195,28 +2335,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!64 &1568358683
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9126154219016471513}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 1
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 6912372362326455421, guid: aa35326e084c5774b9fea1733afca70f, type: 3}
 --- !u!1 &1697935061
 GameObject:
   m_ObjectHideFlags: 0
@@ -2503,54 +2621,72 @@ MonoBehaviour:
   baseSimulationMultiplier: 1
   statTopSpeed: 0.5
   statAcceleration: 0.5
-  statBrakingPower: 0.5
-  statDriftGrip: 0.5
-  statCorneringAssist: 0.5
-  statSimulationSpeed: 0
+  statBrakingSystem: 0.5
+  statDriftControl: 0.5
+  statNitrousBoost: 0.5
+  statSteeringGrip: 0.5
+  statRacingLine: 0.1
+  statDriverReflexes: 0.1
   driftAccelerationMultiplier: 1.8
+  boundsDriftAccMult: {x: 1.1, y: 2.5}
   driftSteerAssistMultiplier: 1.5
+  boundsDriftSteerMult: {x: 1, y: 2}
   hairpinAccelerationBoost: 2.75
+  boundsHairpinAccBoost: {x: 1.5, y: 4}
   hairpinSteerAssistBoost: 2.1
+  boundsHairpinSteerBoost: {x: 1.2, y: 3}
   waypointCount: 10
-  baseWaypointDistance: 9
-  distanceSpeedMultiplier: 0.325
+  baseWaypointDistance: 6.6
+  boundsBaseWaypointDist: {x: 6, y: 12}
+  distanceSpeedMultiplier: 0.11
+  boundsDistSpeedMult: {x: 0.1, y: 0.2}
   waypointSpacingMultiplier: 0.8
-  waypointArrivalRangeBase: 6
-  waypointArrivalSpeedMultiplier: 0.2
+  waypointArrivalRangeBase: 4.4
+  boundsArrivalRangeBase: {x: 4, y: 8}
+  waypointArrivalSpeedMultiplier: 0.11
+  boundsArrivalSpeedMult: {x: 0.1, y: 0.2}
   waypointMaxLateralOffset: 2
   laneChangeVariationSpeed: 0.25
   maxDeviationDistance: 7
-  preCurveWideOffset: 2
-  postCurveWideOffset: 1.5
+  preCurveWideOffset: 2.4
+  boundsPreCurveOffset: {x: 2, y: 6}
+  postCurveWideOffset: 0.85
+  boundsPostCurveOffset: {x: 0.5, y: 4}
   steerDeadzone: 0.060000002
-  curveAngleThreshold: 13
-  handbrakeAngleThreshold: 26
-  hairpinAngleThreshold: 55
-  macroCurveAngleThreshold: 32.5
+  boundsSteerDeadzone: {x: 0.1, y: 0.02}
+  curveAngleThreshold: 16
+  boundsCurveAngle: {x: 15, y: 25}
+  handbrakeAngleThreshold: 31.5
+  boundsHandbrakeAngle: {x: 30, y: 45}
+  hairpinAngleThreshold: 62.5
+  boundsHairpinAngle: {x: 60, y: 85}
+  macroCurveAngleThreshold: 36.5
+  boundsMacroCurveAngle: {x: 35, y: 50}
   maxSimulationSpeed: 133
-  safeCornerSpeed: 21.5
+  safeCornerSpeed: 95
+  boundsSafeCornerSpeed: {x: 60, y: 130}
   arcadeSteerAssist: 1.85
+  boundsArcadeSteerAssist: {x: 0.2, y: 3.5}
   calculatedAcceleration: 6
   calculatedBrakeForce: 225
   calculatedDriftGrip: 6
   currentSimulationMultiplier: 1
-  currentSpeed: 5.6659184
+  currentSpeed: 56.172646
   upcomingWaypoints:
-  - {x: -22.12346, y: 0, z: -23.147816}
-  - {x: -15.857206, y: 0, z: -31.424109}
-  - {x: -17.445805, y: 0, z: -35.333862}
-  - {x: -22.721178, y: -0.00010490157, z: -37.093647}
-  - {x: -29.353733, y: -0.00034398065, z: -41.79722}
-  - {x: -30.36044, y: -0.00053440675, z: -48.151962}
-  - {x: -31.14936, y: -0.000996232, z: -53.10327}
-  - {x: -28.368233, y: -0.0008769848, z: -55.5829}
-  - {x: -26.56956, y: -0.000866095, z: -57.46946}
-  - {x: -25.71857, y: -0.0010405652, z: -59.384945}
-  isBrakingForCurve: 1
-  requiresHandbrake: 1
+  - {x: 48.713326, y: 0, z: -14.057927}
+  - {x: 45.175335, y: 0, z: -3.2715046}
+  - {x: 38.153263, y: 0, z: 0.42174423}
+  - {x: 33.82153, y: 0, z: 5.509203}
+  - {x: 29.118122, y: 0, z: 6.8844676}
+  - {x: 25.379879, y: 0, z: 7.9688177}
+  - {x: 22.069954, y: 0, z: 7.5503707}
+  - {x: 19.75932, y: 0, z: 8.546713}
+  - {x: 17.756474, y: 0, z: 8.690487}
+  - {x: 16.132843, y: 0, z: 8.700538}
+  isBrakingForCurve: 0
+  requiresHandbrake: 0
   isHairpinPowerDrift: 0
-  boundsAI_SafeCornerSpeed: {x: 8, y: 35}
-  boundsArcadeSteerAssist: {x: 0.2, y: 3.5}
+  currentDeviation: 0.8546831
 --- !u!1001 &5000000001
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3020,7 +3156,6 @@ Transform:
   - {fileID: 7134651499235490138}
   - {fileID: 4937824108105400658}
   - {fileID: 8344318726331120692}
-  - {fileID: 7750852081676343296}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &543450653621877418 stripped
@@ -3261,55 +3396,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 543450653150262629}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!23 &5364932718813188148
-MeshRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9126154219016471513}
-  m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 2
-  m_RayTraceProcedural: 0
-  m_RayTracingAccelStructBuildFlagsOverride: 0
-  m_RayTracingAccelStructBuildFlags: 1
-  m_SmallMeshCulling: 1
-  m_ForceMeshLod: -1
-  m_MeshLodSelectionBias: 0
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 2100000, guid: 6c7e85d89b2e5e34a93e7f83facefcaa, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_MaskInteraction: 0
-  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!33 &6041110696529034043
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -3471,21 +3557,6 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!4 &7750852081676343296
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9126154219016471513}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: 0.6021929, z: -0, w: 0.7983507}
-  m_LocalPosition: {x: 19.3, y: 0, z: 2.9}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 543450653150262629}
-  m_LocalEulerAnglesHint: {x: 0, y: 74.054, z: 0}
 --- !u!4 &8344318726331120692
 Transform:
   m_ObjectHideFlags: 0
@@ -3566,14 +3637,6 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!33 &8758912473014972156
-MeshFilter:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9126154219016471513}
-  m_Mesh: {fileID: 6912372362326455421, guid: aa35326e084c5774b9fea1733afca70f, type: 3}
 --- !u!23 &8855828310409471674
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -3624,25 +3687,6 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!1 &9126154219016471513
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 7750852081676343296}
-  - component: {fileID: 8758912473014972156}
-  - component: {fileID: 5364932718813188148}
-  - component: {fileID: 1568358683}
-  m_Layer: 0
-  m_Name: Street_Bump
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
