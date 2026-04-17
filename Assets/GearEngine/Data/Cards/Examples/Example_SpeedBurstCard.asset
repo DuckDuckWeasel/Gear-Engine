@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e245c9810b80f2042a7079bf7d24dca4, type: 3}
+  m_Name: Example_SpeedBurstCard
+  m_EditorClassIdentifier: Game.Cards::GearEngine.Cards.CardDefinition
+  id: example_speed_burst
+  modifiers:
+  - {fileID: 11400000, guid: 8ef92171d46886747b6a3c0529506d11, type: 2}

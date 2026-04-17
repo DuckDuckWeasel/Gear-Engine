@@ -1,0 +1,26 @@
+{
+    "name": "Game.GearEngine.Editor",
+    "rootNamespace": "GearEngine.GearEngine.Editor",
+    "references": [
+        "Game.SceneFoundation",
+        "Game.GearEngine",
+        "VContainer",
+        "Scaffold.MVVM.View",
+        "Scaffold.Navigation",
+        "Scaffold.Schemas",
+        "Unity.Addressables.Editor",
+        "Unity.InputSystem",
+        "Unity.TextMeshPro"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

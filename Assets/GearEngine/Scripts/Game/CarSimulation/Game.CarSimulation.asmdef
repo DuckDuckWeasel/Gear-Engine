@@ -2,6 +2,7 @@
     "name": "Game.CarSimulation",
     "rootNamespace": "GearEngine.CarSimulation",
     "references": [
+        "Game.SceneFoundation",
         "Scaffold.Addressables",
         "Scaffold.Addressables.Container",
         "Scaffold.Entities",

@@ -1,68 +1,34 @@
 using System;
-using Scaffold.Addressables.Container;
-using Scaffold.Events.Container;
-using Scaffold.Navigation;
-using Scaffold.Navigation.Container;
-using Scaffold.Scope;
-using Scaffold.Scope.Contracts;
+using GearEngine.SceneFoundation.Bootstrap;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
 
 namespace GearEngine.CarSimulation.Bootstrap
 {
-    public sealed class CarTrackScope : LifetimeScope
+    public sealed class CarTrackScope : SceneFoundationScope
     {
-        [Header("Navigation")]
-        [SerializeField] private NavigationSettings navigationSettings;
-        [SerializeField] private Transform navigationViewHolder;
-
         [Header("Optional test launcher")]
-        [SerializeField] private CarTrackBootstrap sceneBootstrap;
+        [SerializeField]
+        private CarTrackBootstrap sceneBootstrap;
 
-        [Header("Debug")]
-        [SerializeField] private MonoBehaviour debugComponent;
-
-        protected override void Configure(IContainerBuilder builder)
+        protected override void ValidateSceneAssignments()
         {
-            RegisterCrossLayer(builder);
-            InstallInfra(builder);
+            RequireSceneBootstrap();
+        }
+
+        protected override void InstallFeatureServices(IContainerBuilder builder)
+        {
             new CarTrackInstaller().Install(builder);
             builder.RegisterComponent(sceneBootstrap).AsImplementedInterfaces().AsSelf();
-            if (debugComponent != null)
-            {
-                builder.RegisterComponent(debugComponent).AsImplementedInterfaces().AsSelf();
-            }
         }
 
-        private void RegisterCrossLayer(IContainerBuilder builder)
+        private void RequireSceneBootstrap()
         {
-            builder.Register<CrossLayerObjectResolver>(Lifetime.Singleton)
-                .As<ICrossLayerObjectResolver>()
-                .AsSelf();
-            builder.RegisterBuildCallback(RegisterCrossLayerOnBuild);
-        }
-
-        private void RegisterCrossLayerOnBuild(IObjectResolver container)
-        {
-            try
+            if (sceneBootstrap == null)
             {
-                ICrossLayerObjectResolver cross = container.Resolve<ICrossLayerObjectResolver>();
-                cross.Reset();
-                cross.RegisterScope(container);
+                throw new InvalidOperationException("[CarTrackScope] Assign sceneBootstrap.");
             }
-            catch (Exception ex)
-            {
-                Debug.LogError($"[CarTrackScope] Cross-layer registration failed: {ex.Message}\n{ex.StackTrace}");
-            }
-        }
-
-        private void InstallInfra(IContainerBuilder builder)
-        {
-            builder.RegisterInstance(navigationSettings);
-            new AddressablesInstaller().Install(builder);
-            new NavigationInstaller(navigationViewHolder).Install(builder);
-            new EventsInstaller().Install(builder);
         }
     }
 }

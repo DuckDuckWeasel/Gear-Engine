@@ -8,9 +8,32 @@ namespace GearEngine.CarSimulation
 {
     public sealed class TrackSimulationFactory
     {
+        public TrackSimulationFactory()
+        {
+
+        }
+
         private readonly CarEntityFactory carEntityFactory = new CarEntityFactory();
 
-        public TrackSimulation Create(CarDefinition carDefinition, TrackDefinition trackDefinition, TrackSimulationConfig config = null)
+        public TrackSimulation Create(CarDefinition carDefinition, TrackDefinition trackDefinition)
+        {
+            return Create(carDefinition, trackDefinition, null);
+        }
+
+        public TrackSimulation Create(CarDefinition carDefinition, TrackDefinition trackDefinition, TrackSimulationConfig config)
+        {
+            try
+            {
+                return CreateCore(carEntityFactory, carDefinition, trackDefinition, config);
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"[TrackSimulationFactory] Create failed: {ex.Message}\n{ex.StackTrace}");
+                throw;
+            }
+        }
+
+        private static TrackSimulation CreateCore(CarEntityFactory carEntityFactory, CarDefinition carDefinition, TrackDefinition trackDefinition, TrackSimulationConfig config)
         {
             if (carDefinition == null)
             {
@@ -22,21 +45,16 @@ namespace GearEngine.CarSimulation
                 throw new ArgumentNullException(nameof(trackDefinition));
             }
 
-            return CreateCore(carDefinition, trackDefinition, config);
-        }
-
-        private TrackSimulation CreateCore(CarDefinition carDefinition, TrackDefinition trackDefinition, TrackSimulationConfig config)
-        {
             CarEntity car = carEntityFactory.Create(carDefinition);
             BakedTrackProfile profile = TrackProfileBaker.Bake(trackDefinition.Spline);
-            CarVariableSet carVariables = config != null ? config.Variables : null;
+            CarVariableSet variables = config != null ? config.Variables : null;
             TrackSimulationTuning tuning = config != null ? config.Tuning : null;
             if (tuning == null)
             {
                 tuning = ScriptableObject.CreateInstance<TrackSimulationTuning>();
             }
 
-            return new TrackSimulation(trackDefinition, car, profile, carVariables, tuning);
+            return new TrackSimulation(trackDefinition, car, profile, variables, tuning);
         }
     }
 }

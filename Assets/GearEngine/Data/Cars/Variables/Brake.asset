@@ -10,8 +10,6 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dfd26dd94e89447889f600b6c748a69c, type: 3}
-  m_Name: Brake
-  m_EditorClassIdentifier: Scaffold.Entities::Scaffold.Entities.VariableSO
-  valueType: 1
-  description: How quickly the car sheds speed when above the target (braking / lifting). Used when
-    curvature or lookahead requires slowing down.
+  m_Name: Speed
+  m_EditorClassIdentifier: Scaffold.Entities::Scaffold.Entities.AttributeSO
+  valueType: 0

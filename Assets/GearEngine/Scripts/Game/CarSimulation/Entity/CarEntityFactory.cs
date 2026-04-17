@@ -6,17 +6,15 @@ namespace GearEngine.CarSimulation.Entity
 {
     public sealed class CarEntityFactory
     {
-        private readonly IInstanceIdGenerator idGenerator = new IncrementingInstanceIdGenerator();
-
-        public CarEntity Create(CarDefinition definition)
+        public CarEntity Create(CarDefinition carDefinition)
         {
-            if (definition == null)
+            if (carDefinition == null)
             {
-                throw new ArgumentNullException(nameof(definition));
+                throw new ArgumentNullException(nameof(carDefinition));
             }
 
             var car = new CarEntity();
-            car.Initialize(idGenerator.Next(), definition);
+            car.Initialize(new InstanceId(0), carDefinition);
             return car;
         }
     }

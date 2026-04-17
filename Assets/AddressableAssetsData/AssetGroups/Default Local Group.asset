@@ -35,6 +35,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a7b8c9d0e1f2435465768798a9bacdef
+    m_Address: Assets/GearEngine/Prefabs/Cards/CardSampleViewRoot.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: fbb208bb5aa7a441d95f8c927490d368, type: 2}
   m_SchemaSet:

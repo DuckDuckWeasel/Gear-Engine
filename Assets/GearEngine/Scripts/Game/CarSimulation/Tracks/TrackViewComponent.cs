@@ -64,7 +64,7 @@ namespace GearEngine.CarSimulation.Tracks
         private void SpawnCarView(CarEntity car)
         {
             DestroyCarViewIfNeeded();
-            GameObject prefab = car.CarPrefab;
+            GameObject prefab = car.Definition != null ? car.Definition.CarPrefab : null;
             if (prefab == null)
             {
                 LogMissingCarPrefab();

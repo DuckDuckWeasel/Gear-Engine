@@ -1,0 +1,27 @@
+{
+    "name": "Game.Cards.Tests",
+    "rootNamespace": "GearEngine.Cards.Tests",
+    "references": [
+        "UnityEngine.TestRunner",
+        "UnityEditor.TestRunner",
+        "Game.Cards",
+        "Scaffold.MVVM.ViewModel",
+        "Scaffold.MVVM"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "nunit.framework.dll",
+        "CommunityToolkit.Mvvm.dll"
+    ],
+    "autoReferenced": false,
+    "defineConstraints": [
+        "UNITY_INCLUDE_TESTS"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

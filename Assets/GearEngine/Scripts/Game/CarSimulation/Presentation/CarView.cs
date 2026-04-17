@@ -15,7 +15,7 @@ namespace GearEngine.CarSimulation.Presentation
         {
             GuardInitializeArguments(car, splineContainer, trackSimulation);
             CarSplineDriver driver = ResolveSplineDriver();
-            driver.Bind(trackSimulation, splineContainer);
+            driver.Bind(car, splineContainer);
         }
 
         private void GuardInitializeArguments(CarEntity car, SplineContainer splineContainer, TrackSimulation trackSimulation)

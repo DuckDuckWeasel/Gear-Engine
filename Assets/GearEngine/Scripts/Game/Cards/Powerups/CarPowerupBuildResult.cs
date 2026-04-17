@@ -1,0 +1,44 @@
+using System;
+
+namespace GearEngine.Cards.Powerups
+{
+    /// <summary>sample: Values consumed by car simulation / presentation after resolving collected cards.</summary>
+    [Serializable]
+    public readonly struct CarPowerupBuildResult : IEquatable<CarPowerupBuildResult>
+    {
+        public static CarPowerupBuildResult Neutral => new CarPowerupBuildResult(1f, 1f);
+
+        public CarPowerupBuildResult(float maxSpeedMultiplier, float gripMultiplier)
+        {
+            MaxSpeedMultiplier = maxSpeedMultiplier;
+            GripMultiplier = gripMultiplier;
+        }
+
+        public float MaxSpeedMultiplier { get; }
+
+        public float GripMultiplier { get; }
+
+        public override bool Equals(object obj)
+        {
+            return obj is CarPowerupBuildResult other && Equals(other);
+        }
+
+        public bool Equals(CarPowerupBuildResult other)
+        {
+            return MaxSpeedMultiplier.Equals(other.MaxSpeedMultiplier) && GripMultiplier.Equals(other.GripMultiplier);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                return (MaxSpeedMultiplier.GetHashCode() * 397) ^ GripMultiplier.GetHashCode();
+            }
+        }
+
+        public static CarPowerupBuildResult FromStats(CarPowerupStats stats)
+        {
+            return new CarPowerupBuildResult(stats.MaxSpeedMultiplier, stats.GripMultiplier);
+        }
+    }
+}
