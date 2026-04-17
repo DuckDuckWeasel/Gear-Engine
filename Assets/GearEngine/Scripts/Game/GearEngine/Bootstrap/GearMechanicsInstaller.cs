@@ -7,7 +7,7 @@ namespace GearEngine.GearEngine.Bootstrap
 {
     public sealed class GearMechanicsInstaller
     {
-        public GearMechanicsInstaller(BoardConfigSO boardConfig, GearEngineFeatureToggleSO featureToggle = null)
+        public GearMechanicsInstaller(BoardConfigSO boardConfig, GearEngineFeatureToggleSO featureToggle)
         {
             this.boardConfig = boardConfig ?? throw new ArgumentNullException(nameof(boardConfig));
             this.featureToggle = featureToggle;
