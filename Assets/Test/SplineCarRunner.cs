@@ -620,6 +620,23 @@ public class SplineCarRunner : MonoBehaviour
         float rawArrivalRange = waypointArrivalRangeBase + (currentSpeed * waypointArrivalSpeedMultiplier);
         float safeStartingDistance = Mathf.Max(baseWaypointDistance + speedPush, rawArrivalRange + 1f);
 
+        // Pre-calculate Anchor Perlin Noises (First, Middle, Last) to avoid individual waypoint zigzag on straights
+        float accTemp = safeStartingDistance;
+        float curTemp = baseWaypointDistance;
+        
+        float startDist = baseDistance + accTemp;
+        for (int i = 0; i < waypointCount / 2; i++) { accTemp += curTemp; curTemp *= waypointSpacingMultiplier; }
+        float midDist = baseDistance + accTemp;
+        for (int i = waypointCount / 2; i < waypointCount - 1; i++) { accTemp += curTemp; curTemp *= waypointSpacingMultiplier; }
+        float endDist = baseDistance + accTemp;
+
+        float p0 = (Mathf.PerlinNoise(startDist * laneChangeVariationSpeed, 0f) * 2f) - 1f;
+        float p1 = (Mathf.PerlinNoise(midDist * laneChangeVariationSpeed, 0f) * 2f) - 1f;
+        float p2 = (Mathf.PerlinNoise(endDist * laneChangeVariationSpeed, 0f) * 2f) - 1f;
+        
+        int midIndex = waypointCount / 2;
+        int endIndex = waypointCount - 1;
+
         float accDist = safeStartingDistance;
         float curSpacing = baseWaypointDistance;
 
@@ -643,9 +660,19 @@ public class SplineCarRunner : MonoBehaviour
             Vector3 splineUp = track.transform.TransformDirection(splLocalUp);
             Vector3 right = Vector3.Cross(splineUp, splineTangent).normalized;
             
-            // Generate a natural, contiguous lane shift via Perlin Noise
-            float noiseX = distAlongSpline * laneChangeVariationSpeed;
-            float perlinOffset = (Mathf.PerlinNoise(noiseX, 0f) * 2f) - 1f; // Rescale 0-1 to -1 to +1
+            // Evaluate smooth perlin offset linearly interpolated by anchoring points
+            float perlinOffset = 0f;
+            if (i <= midIndex)
+            {
+                float t = midIndex > 0 ? (float)i / midIndex : 0f;
+                perlinOffset = Mathf.Lerp(p0, p1, t);
+            }
+            else
+            {
+                float t = (endIndex - midIndex) > 0 ? (float)(i - midIndex) / (endIndex - midIndex) : 0f;
+                perlinOffset = Mathf.Lerp(p1, p2, t);
+            }
+            
             float absoluteOffset = perlinOffset * waypointMaxLateralOffset;
             
             // --- Pre-Curve Wide Offset (OUTSIDE APPROACH) ---
