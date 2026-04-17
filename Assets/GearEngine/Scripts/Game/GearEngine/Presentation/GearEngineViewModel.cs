@@ -20,14 +20,13 @@ namespace GearEngine.GearEngine.Presentation
             this.startData = startData ?? throw new ArgumentNullException(nameof(startData));
         }
 
-        [ObservableProperty]
-        private bool isSimulationRunning;
+        [ObservableProperty] private bool isSimulationRunning;
 
         private readonly GearEngineStartData startData;
 
-        private BoardViewModel board;
-        private GearInventoryViewModel inventory;
-        private TrashZoneViewModel trashZone;
+        internal BoardViewModel Board;
+        internal GearInventoryViewModel Inventory;
+        internal TrashZoneViewModel TrashZone;
 
         [Inject] private IGearEngineService engineService;
         [Inject] private IGridManager gridManager;
@@ -44,8 +43,8 @@ namespace GearEngine.GearEngine.Presentation
         {
             base.Initialize();
 
-            board = new BoardViewModel();
-            board.Initialize(
+            Board = new BoardViewModel();
+            Board.Initialize(
                 engineService,
                 gridManager,
                 nodeFactory,
@@ -56,44 +55,27 @@ namespace GearEngine.GearEngine.Presentation
                 swapService,
                 mergeService,
                 startData.BoardLayout);
+            BindChildViewModel(Board);
 
-            inventory = new GearInventoryViewModel();
-            inventory.Initialize(
+            Inventory = new GearInventoryViewModel();
+            Inventory.Initialize(
                 startData.MaxInventorySlots,
                 startData.InventoryGears,
                 engineService,
                 inventoryService,
-                board,
+                Board,
                 dragService);
+            BindChildViewModel(Inventory);
 
-            trashZone = new TrashZoneViewModel(dragService, engineService, board, inventory, eventBus, featureToggle);
+            TrashZone = new TrashZoneViewModel(dragService, engineService, Board, Inventory, eventBus, featureToggle);
+            BindChildViewModel(TrashZone);
 
-            Bind(() => board.IsSimulationRunning, () => IsSimulationRunning);
-            IsSimulationRunning = board.IsSimulationRunning;
-
-            BindChildViewModel(board);
-            BindChildViewModel(inventory);
-            BindChildViewModel(trashZone);
-        }
-
-        /// <summary>
-        /// Binds child views to this screen's view models. Keeps child VMs off the public surface.
-        /// </summary>
-        internal void BindSubPresentation(
-            BoardViewComponent boardView,
-            GearInventoryViewComponent inventoryView,
-            TrashDropZoneViewComponent trashDropZone)
-        {
-            boardView?.Bind(board);
-            inventoryView?.SetBoardScaleReference(boardView != null ? boardView.transform : null);
-            inventoryView?.Bind(inventory);
-            trashDropZone?.Bind(trashZone);
-            trashDropZone?.ApplyInitialPlacement();
+            Bind(() => Board.IsSimulationRunning, () => IsSimulationRunning);
         }
 
         internal void ToggleSimulation()
         {
-            board?.ToggleSimulation();
+            Board?.ToggleSimulation();
         }
     }
 }
