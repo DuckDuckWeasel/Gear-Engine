@@ -21,12 +21,12 @@ MonoBehaviour:
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 6e9cd533eec944d2d8eb2b7cf5e8cdca
-    m_Address: Assets/GearEngine/Gears/GearEngineView_NavigationStub.prefab
+    m_Address: Assets/GearEngine/Prefabs/Gears/GearEngineView_NavigationStub.prefab
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: ae9649b11d04d44e4835017c358d0574
-    m_Address: Assets/GearEngine/Gears/GearEngineView_NavigationStub.prefab
+    m_Address: Assets/GearEngine/Prefabs/GearEngineView_NavigationStub.prefab
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0

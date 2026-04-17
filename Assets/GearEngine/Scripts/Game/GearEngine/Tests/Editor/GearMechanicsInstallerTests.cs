@@ -1,6 +1,7 @@
 using GearEngine.GearEngine.Bootstrap;
 using GearEngine.GearEngine.Config;
 using GearEngine.GearEngine.Services;
+using GearEngine.GearEngine.Services.Inventory;
 using NUnit.Framework;
 using Scaffold.Events.Container;
 using Scaffold.Events.Contracts;
@@ -24,7 +25,7 @@ namespace GearEngine.GearEngine.Tests.Editor
 
             var builder = new ContainerBuilder();
             new EventsInstaller().Install(builder);
-            new GearMechanicsInstaller(board).Install(builder);
+            new GearMechanicsInstaller(board, null).Install(builder);
             using (IObjectResolver container = builder.Build())
             {
                 Assert.DoesNotThrow(() => container.Resolve<IEventBus>());
@@ -32,7 +33,8 @@ namespace GearEngine.GearEngine.Tests.Editor
                 Assert.DoesNotThrow(() => container.Resolve<IGearEngineService>());
                 Assert.DoesNotThrow(() => container.Resolve<GearNodeFactory>());
                 Assert.DoesNotThrow(() => container.Resolve<IDragService>());
-                Assert.DoesNotThrow(() => container.Resolve<IGearTrashService>());
+                Assert.DoesNotThrow(() => container.Resolve<IInventoryService>());
+                Assert.DoesNotThrow(() => container.Resolve<IGearPresentationTransferService>());
                 Assert.DoesNotThrow(() => container.Resolve<GearEngineFeatureToggleSO>());
             }
 
@@ -66,7 +68,7 @@ namespace GearEngine.GearEngine.Tests.Editor
 
             var builder = new ContainerBuilder();
             new EventsInstaller().Install(builder);
-            new GearMechanicsInstaller(board).Install(builder);
+            new GearMechanicsInstaller(board, null).Install(builder);
             using (IObjectResolver container = builder.Build())
             {
                 Assert.Throws<VContainerException>(() => container.Resolve<GearViewFactory>());

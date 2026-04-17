@@ -392,6 +392,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Presentation.GearEngineCoreViewComponent
   inventoryView: {fileID: 0}
   boardView: {fileID: 0}
-  boardLimitLabel: {fileID: 3489799338832126779}
-  inventoryLimitLabel: {fileID: 2552185410746883540}
   trashDropZone: {fileID: 0}

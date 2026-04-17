@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Generic;
 using GearEngine.GearEngine;
 using GearEngine.GearEngine.Presentation;
+using GearEngine.GearEngine.Presentation.UI;
 using NUnit.Framework;
 using Scaffold.Events;
 using Scaffold.Events.Contracts;
@@ -26,70 +28,49 @@ namespace GearEngine.GearEngine.Tests.Editor
 
         private sealed class FakeDragService : IDragService
         {
+            private readonly List<IDragTarget> targets = new List<IDragTarget>();
+
             public bool IsDragging { get; private set; }
             private object dragData;
 
-            public event Action<object> OnDragStarted;
-            public event Action OnDragEnded;
-
             public T GetDragData<T>() where T : class => dragData as T;
+
+            public void Register(IDragTarget target)
+            {
+                if (target != null && !targets.Contains(target))
+                {
+                    targets.Add(target);
+                }
+            }
+
+            public void Unregister(IDragTarget target)
+            {
+                if (target != null)
+                {
+                    targets.Remove(target);
+                }
+            }
 
             public void StartDrag(object data)
             {
                 dragData = data;
                 IsDragging = true;
-                OnDragStarted?.Invoke(data);
+                var payload = new DragPayload(dragData, Vector3.zero, null);
+                foreach (IDragTarget t in targets.ToArray())
+                {
+                    t.OnDragStarted(payload);
+                }
             }
 
             public void EndDrag()
             {
                 dragData = null;
                 IsDragging = false;
-                OnDragEnded?.Invoke();
+                foreach (IDragTarget t in targets.ToArray())
+                {
+                    t.OnDragEnded();
+                }
             }
-        }
-
-        [Test]
-        public void HandleGearDraggedToBoard_OnSuccessfulPlacement_ConsumesInventory()
-        {
-            var gridManager = new GridManager();
-            var eventController = new EventController();
-            BoardConfigSO boardConfig = ScriptableObject.CreateInstance<BoardConfigSO>();
-            boardConfig.GridWidth = 5;
-            boardConfig.GridHeight = 5;
-            boardConfig.MaxAllowedBoardGears = 10;
-
-            var builder = new ContainerBuilder();
-            builder.RegisterInstance(gridManager).As<IGridManager>();
-            builder.RegisterInstance((IEventBus)eventController);
-            builder.RegisterInstance(boardConfig);
-            builder.Register<BaseGearNode>(Lifetime.Transient);
-            builder.Register<CoreGearNode>(Lifetime.Transient);
-            builder.Register<AuraGearNode>(Lifetime.Transient);
-            builder.Register<GearNodeFactory>(Lifetime.Singleton);
-            GearNodeFactory nodeFactory;
-            using (IObjectResolver container = builder.Build())
-            {
-                nodeFactory = container.Resolve<GearNodeFactory>();
-            }
-
-            var boardVm = new BoardViewModel();
-            boardVm.Initialize(new FakeEngine(), gridManager, nodeFactory, boardConfig, dragService: new FakeDragService());
-
-            var inventoryService = new GearEngine.Services.Inventory.InventoryService();
-            inventoryService.Initialize(10, () => false);
-
-            var gearData = new GearConfigData { Id = "bridge", Category = GearCategory.Base };
-            inventoryService.AddItem(gearData);
-
-            Vector2Int pos = new Vector2Int(3, 3);
-            bool placed = boardVm.HandleInventoryDrop(pos, gearData);
-            Assert.IsTrue(placed);
-
-            inventoryService.ConsumeSpecificItem(gearData);
-            Assert.AreEqual(0, inventoryService.Model.AvailableItems.Count);
-
-            UnityEngine.Object.DestroyImmediate(boardConfig);
         }
     }
 }

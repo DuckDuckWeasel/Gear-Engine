@@ -1,11 +1,10 @@
 using System;
-using GearEngine.GearEngine.Presentation.UI.Tags;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
 namespace GearEngine.GearEngine.Presentation.UI
 {
-    public class DragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
+    public class DragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IDragSource
     {
         public GameObject GhostPrefab { get => ghostPrefab; set => ghostPrefab = value; }
 
@@ -15,33 +14,17 @@ namespace GearEngine.GearEngine.Presentation.UI
         public bool IsInteractable { get; set; } = true;
         public float GhostScaleMultiplier { get; set; } = 115f;
 
-        [Tooltip("The conceptual tags that THIS drag handler is allowed to drop onto.")]
-        [SerializeField] private System.Collections.Generic.List<TagSO> acceptedTargetTags;
-
-        public Action<Vector3> OnValidDropWorldPos;
         public Action OnDragBegin;
         public Action OnDragEnd;
 
+        /// <summary>Builds a <see cref="DragPayload"/> for the current drag at the given world hit position.</summary>
+        public Func<Vector3, DragPayload> BuildPayload;
+
+        /// <summary>Invoked when a target accepts the drop (after <see cref="IDragTarget.OnDrop"/>).</summary>
+        public Action<IDragTarget> OnDragAccepted;
+
         private GameObject currentGhost;
         private Canvas mainCanvas;
-
-        public void AddAcceptedTag(TagSO tag)
-        {
-            if (tag == null)
-            {
-                return;
-            }
-
-            if (acceptedTargetTags == null)
-            {
-                acceptedTargetTags = new System.Collections.Generic.List<TagSO>();
-            }
-
-            if (!acceptedTargetTags.Contains(tag))
-            {
-                acceptedTargetTags.Add(tag);
-            }
-        }
 
         private void Start()
         {
@@ -94,13 +77,13 @@ namespace GearEngine.GearEngine.Presentation.UI
         private void CloneSelfAsGhost()
         {
             currentGhost = Instantiate(gameObject, mainCanvas.transform);
-            var slotView = currentGhost.GetComponent("GearInventorySlotView");
+            Component slotView = currentGhost.GetComponent("GearInventorySlotView");
             if (slotView != null)
             {
                 DestroyImmediate(slotView);
             }
 
-            var childDrag = currentGhost.GetComponent<DragHandler>();
+            DragHandler childDrag = currentGhost.GetComponent<DragHandler>();
             if (childDrag != null)
             {
                 DestroyImmediate(childDrag);
@@ -110,7 +93,7 @@ namespace GearEngine.GearEngine.Presentation.UI
         private void ConfigureGhostRaycast()
         {
             currentGhost.transform.SetAsLastSibling();
-            var canvasGroup = currentGhost.GetComponent<CanvasGroup>();
+            CanvasGroup canvasGroup = currentGhost.GetComponent<CanvasGroup>();
             if (canvasGroup == null)
             {
                 canvasGroup = currentGhost.AddComponent<CanvasGroup>();
@@ -161,44 +144,54 @@ namespace GearEngine.GearEngine.Presentation.UI
             if (currentGhost != null)
             {
                 Destroy(currentGhost);
+                currentGhost = null;
             }
 
-            // Process the world drop FIRST (before ending the drag),
-            // so the drag state and trash zone remain active during placement.
-            TryProcessWorldDrop();
-            OnDragEnd?.Invoke();
+            try
+            {
+                TryProcessDrop(eventData);
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"[DragHandler] TryProcessDrop failed: {ex.Message}\n{ex.StackTrace}");
+            }
+            finally
+            {
+                OnDragEnd?.Invoke();
+            }
         }
 
-        private void TryProcessWorldDrop()
+        private void TryProcessDrop(PointerEventData eventData)
         {
             Camera cam = Camera.main;
-            if (cam == null)
+            if (cam == null || BuildPayload == null)
             {
                 return;
             }
 
-            Ray ray = cam.ScreenPointToRay(Input.mousePosition);
-            if (!Physics.Raycast(ray, out RaycastHit hit))
-            {
-                Debug.Log($"<color=#ff5555>[DragHandler]</color> Drop missed! Raycast hit no colliders.");
-                return;
-            }
+            Vector2 screenPos = eventData.position;
+            Ray ray = cam.ScreenPointToRay(screenPos);
+            Vector3 worldPos = Physics.Raycast(ray, out RaycastHit hit) ? hit.point : Vector3.zero;
+            DragPayload payload = BuildPayload(worldPos);
 
-            TryInvokeValidTagDrop(hit);
+            IDragTarget target = DragTargetFinder.Find(payload, screenPos, cam);
+            if (target != null)
+            {
+                target.OnDrop(payload);
+            }
+            else
+            {
+                Debug.Log($"<color=#ff5555>[DragHandler]</color> Drop missed — no accepting IDragTarget under pointer.");
+            }
         }
 
-        private void TryInvokeValidTagDrop(RaycastHit hit)
+        public void OnDropAccepted(IDragTarget by)
         {
-            TagComponent targetTags = hit.collider.GetComponent<TagComponent>();
+            OnDragAccepted?.Invoke(by);
+        }
 
-            if (targetTags != null && targetTags.HasAnyTag(acceptedTargetTags))
-            {
-                Debug.Log($"<color=#55ff55>[DragHandler]</color> Successfully dropped on valid TagComponent.");
-                OnValidDropWorldPos?.Invoke(hit.point);
-                return;
-            }
-
-            Debug.LogWarning($"<color=#ff5555>[DragHandler]</color> Dropped on invalid object. It either lacks a TagComponent or does not match Accepted Tags.");
+        public void OnDropRejected()
+        {
         }
     }
 }

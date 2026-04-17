@@ -1,13 +1,16 @@
+using GearEngine.GearEngine.Config;
+using GearEngine.GearEngine.Nodes;
+using GearEngine.GearEngine.Services;
+using Scaffold.MVVM;
+using TMPro;
 using UnityEngine;
+using UnityEngine.Assertions;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
-using TMPro;
-using Scaffold.MVVM;
-using UnityEngine.Assertions;
 
 namespace GearEngine.GearEngine.Presentation.UI
 {
-    public sealed class TrashDropZoneViewComponent : ViewComponent<TrashZoneViewModel>, IDropHandler, IPointerEnterHandler, IPointerExitHandler
+    public sealed class TrashDropZoneViewComponent : ViewComponent<TrashZoneViewModel>, IDragTarget, IPointerEnterHandler, IPointerExitHandler
     {
         [Header("References")]
         public RectTransform ZoneRect => rootPanel;
@@ -26,6 +29,14 @@ namespace GearEngine.GearEngine.Presentation.UI
         private bool isHovered;
         private float animationProgress;
         private Vector3 baseScale;
+
+        private IDragService dragService;
+
+        // todo: wired from GearEngineCoreViewComponent before Bind.
+        internal void SetDragService(IDragService service)
+        {
+            dragService = service;
+        }
 
         internal void SetReferences(RectTransform root, Image icon, TextMeshProUGUI label, CanvasGroup cg)
         {
@@ -57,9 +68,19 @@ namespace GearEngine.GearEngine.Presentation.UI
             Assert.IsNotNull(trashIcon, "[TrashDropZone] trashIcon is missing.");
             Assert.IsNotNull(rewardLabel, "[TrashDropZone] rewardLabel is missing.");
             Assert.IsNotNull(canvasGroup, "[TrashDropZone] canvasGroup is missing.");
-            
+            Assert.IsNotNull(dragService, "[TrashDropZone] IDragService is missing. Call SetDragService before Bind.");
+
+            dragService.Register(this);
+
             Bind<bool, bool>(() => viewModel.IsActive, OnIsActiveChanged);
             Bind<string, string>(() => viewModel.RewardText, OnRewardTextChanged);
+        }
+
+        protected override void OnUnbind()
+        {
+            dragService?.Unregister(this);
+
+            base.OnUnbind();
         }
 
         private void OnIsActiveChanged(bool active)
@@ -88,7 +109,10 @@ namespace GearEngine.GearEngine.Presentation.UI
 
         public void OnPointerEnter(PointerEventData eventData)
         {
-            if (isShowing) SetHovered(true);
+            if (isShowing)
+            {
+                SetHovered(true);
+            }
         }
 
         public void OnPointerExit(PointerEventData eventData)
@@ -96,25 +120,44 @@ namespace GearEngine.GearEngine.Presentation.UI
             SetHovered(false);
         }
 
-        /// <summary>
-        /// Unity IDropHandler — called when an inventory DragHandler drops onto this zone.
-        /// Fires HandleGearDropped on the viewModel and starts the hide animation.
-        /// </summary>
-        public void OnDrop(PointerEventData eventData)
+        public void OnDragStarted(DragPayload payload)
         {
-            if (eventData.pointerDrag == null)
+            viewModel?.HandleDragStarted(payload.Data);
+        }
+
+        public void OnDragEnded()
+        {
+            viewModel?.HandleDragEnded();
+        }
+
+        public bool CanAccept(DragPayload payload)
+        {
+            GearConfigData gear = payload.GetData<GearConfigData>() ?? payload.GetData<IGridNode>()?.ConfigData;
+            return gear != null && viewModel != null && viewModel.CanTrashAcceptGear(gear);
+        }
+
+        public void OnDrop(DragPayload payload)
+        {
+            IGridNode node = payload.GetData<IGridNode>();
+            GearConfigData gear = payload.GetData<GearConfigData>();
+            if (node != null)
             {
-                return;
+                viewModel?.HandleBoardGearDropped(node);
             }
-
-            var dragHandler = eventData.pointerDrag.GetComponent<DragHandler>();
-
-            if (dragHandler != null)
+            else if (gear != null)
             {
-                dragHandler.ForceGhostCleanup();
+                viewModel?.HandleInventoryGearDropped(gear);
             }
+        }
 
-            viewModel?.HandleGearDropped();
+        public void OnHoverEnter(DragPayload payload)
+        {
+            SetHovered(true);
+        }
+
+        public void OnHoverExit()
+        {
+            SetHovered(false);
         }
 
         private void Show()
@@ -164,6 +207,99 @@ namespace GearEngine.GearEngine.Presentation.UI
             if (!isShowing && animationProgress <= 0f && rootPanel.gameObject.activeSelf)
             {
                 rootPanel.gameObject.SetActive(false);
+            }
+        }
+
+        /// <summary>
+        /// Hides the trash zone when the feature is off, otherwise prepares placement relative to the board grid.
+        /// Call after <see cref="ViewComponent{T}.Bind"/> so <see cref="TrashZoneViewModel"/> is available.
+        /// </summary>
+        public void ApplyInitialPlacement()
+        {
+            if (viewModel == null)
+            {
+                Debug.LogError("[TrashDropZone] ApplyInitialPlacement called before Bind.");
+                return;
+            }
+
+            GearEngineFeatureToggleSO featureToggle = viewModel.FeatureToggleForTrashPlacement;
+            BoardConfigSO boardConfig = viewModel.BoardConfigForTrashPlacement;
+
+            if (featureToggle != null && !featureToggle.EnableTrashDeletion)
+            {
+                if (rootPanel != null)
+                {
+                    rootPanel.gameObject.SetActive(false);
+                }
+
+                return;
+            }
+
+            Assert.IsNotNull(rootPanel, "[TrashDropZone] rootPanel is not assigned. Trash deletion will not work.");
+
+            rootPanel.gameObject.SetActive(false);
+            RepositionRelativeToBoard(boardConfig);
+        }
+
+        private void RepositionRelativeToBoard(BoardConfigSO boardConfig)
+        {
+            if (rootPanel == null || boardConfig == null)
+            {
+                return;
+            }
+
+            TrashZoneAlignment alignment = TrashZoneAlignment.Right;
+            float yOffset = boardConfig.TrashZoneYOffset;
+
+            Vector3 gridAnchorPoint = ComputeGridAnchor(boardConfig, alignment);
+            Vector2 pivot = ComputePivot(alignment);
+
+            Canvas parentCanvas = GetComponentInParent<Canvas>();
+            if (parentCanvas != null)
+            {
+                RectTransform rect = GetComponent<RectTransform>();
+                if (rect != null)
+                {
+                    CanvasPositionUtility.AnchorToWorldPosition(
+                        rect, parentCanvas, gridAnchorPoint, new Vector2(0f, yOffset), pivot);
+                }
+            }
+        }
+
+        private static Vector2 ComputePivot(TrashZoneAlignment alignment)
+        {
+            switch (alignment)
+            {
+                case TrashZoneAlignment.Left:
+                    return new Vector2(0f, 0.5f);
+                case TrashZoneAlignment.Center:
+                    return new Vector2(0.5f, 0.5f);
+                case TrashZoneAlignment.Right:
+                default:
+                    return new Vector2(1f, 0.5f);
+            }
+        }
+
+        private static Vector3 ComputeGridAnchor(BoardConfigSO boardConfig, TrashZoneAlignment alignment)
+        {
+            if (boardConfig == null)
+            {
+                return Vector3.zero;
+            }
+
+            int topY = boardConfig.GridHeight - 1;
+            Vector3 topLeft = boardConfig.GetWorldPosition(new Vector2Int(0, topY));
+            Vector3 topRight = boardConfig.GetWorldPosition(new Vector2Int(boardConfig.GridWidth - 1, topY));
+
+            switch (alignment)
+            {
+                case TrashZoneAlignment.Left:
+                    return topLeft;
+                case TrashZoneAlignment.Center:
+                    return (topLeft + topRight) * 0.5f;
+                case TrashZoneAlignment.Right:
+                default:
+                    return topRight;
             }
         }
     }

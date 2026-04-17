@@ -1,32 +1,28 @@
-using System;
-using System.Collections.Generic;
+using GearEngine.GearEngine.Config;
 using GearEngine.GearEngine.Extensions;
 using GearEngine.GearEngine.Visuals;
 using Scaffold.MVVM;
+using System;
+using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Assertions;
 
 namespace GearEngine.GearEngine.Presentation.UI
 {
-    public class BoardViewComponent : ViewComponent<BoardViewModel>
+    public class BoardViewComponent : ViewComponent<BoardViewModel>, IDragTarget
     {
         [SerializeField] private GearBoardDragHandler dragHandler;
         [SerializeField] private GameObject gridSlotPrefab;
         [SerializeField] private Transform gridRoot;
+        [SerializeField] private TextMeshProUGUI boardLimitLabel;
 
-        private GearViewFactory localFactory;
+        private GearViewFactory localFactory = new GearViewFactory();
         private readonly Dictionary<IGridNode, GearView> viewsByNode = new Dictionary<IGridNode, GearView>();
         private readonly List<GameObject> backgroundSlots = new List<GameObject>();
 
         protected override void OnBind()
         {
-            Assert.IsNotNull(viewModel, "[BoardView] ViewModel is missing.");
-            Assert.IsNotNull(dragHandler, "[BoardView] DragHandler is not assigned.");
-            Assert.IsNotNull(gridSlotPrefab, "[BoardView] GridSlotPrefab is not assigned.");
-            Assert.IsNotNull(gridRoot, "[BoardView] GridRoot is not assigned.");
-
-            localFactory = new GearViewFactory();
-
             viewModel.OnGearPlaced += HandleGearPlaced;
             viewModel.OnGearRemoved += HandleGearRemoved;
 
@@ -37,6 +33,7 @@ namespace GearEngine.GearEngine.Presentation.UI
             }
 
             Bind(() => viewModel.Interactable, () => dragHandler.enabled);
+            Bind(() => viewModel.BoardLimitText, () => boardLimitLabel.text);
         }
 
         protected override void OnUnbind()
@@ -68,14 +65,9 @@ namespace GearEngine.GearEngine.Presentation.UI
             viewModel?.OnGearDropped(node, coord);
         }
 
-        internal void NotifyBoardGearDroppedOverUI(IGridNode node, GearConfigData config, Vector3 worldPos)
+        internal void NotifyBoardGearReturnAccepted(IGridNode node, GearConfigData config, Vector3 worldPos)
         {
-            viewModel?.HandleBoardGearReturnedOverUI(node, config);
-        }
-
-        internal void NotifyTrashDrop(IGridNode node)
-        {
-            viewModel?.RequestTrashDrop(node);
+            viewModel?.CompleteBoardGearReturnToInventory(node, config);
         }
 
         internal GearView DetachViewForDrag(IGridNode node)
@@ -205,6 +197,44 @@ namespace GearEngine.GearEngine.Presentation.UI
         private void DestroyViewGameObject(GameObject go)
         {
             go.SafeDestroy();
+        }
+
+        public void OnDragStarted(DragPayload payload)
+        {
+        }
+
+        public void OnDragEnded()
+        {
+        }
+
+        public bool CanAccept(DragPayload payload)
+        {
+            return payload.GetData<GearConfigData>() != null;
+        }
+
+        public void OnDrop(DragPayload payload)
+        {
+            GearConfigData gear = payload.GetData<GearConfigData>();
+            if (gear == null || viewModel == null)
+            {
+                return;
+            }
+
+            Vector3 localWorld = payload.WorldPosition - transform.position;
+            Vector2Int gridPos = viewModel.BoardConfig.GetGridPosition(localWorld);
+            bool placed = viewModel.HandleInventoryDrop(gridPos, gear);
+            if (placed)
+            {
+                payload.Source?.OnDropAccepted(this);
+            }
+        }
+
+        public void OnHoverEnter(DragPayload payload)
+        {
+        }
+
+        public void OnHoverExit()
+        {
         }
     }
 }

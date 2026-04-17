@@ -1,24 +1,47 @@
 using System;
+using System.Collections.Generic;
+using GearEngine.GearEngine.Presentation.UI;
 using UnityEngine;
 
 namespace GearEngine.GearEngine
 {
     /// <summary>
-    /// Centralized drag state service. Any drag source (board, inventory, future UI)
-    /// reports drag lifecycle here; any consumer subscribes for state changes.
+    /// Centralized drag state. Broadcasts lifecycle to registered <see cref="IDragTarget"/> instances.
     /// </summary>
     public sealed class DragService : IDragService
     {
+        private readonly List<IDragTarget> registeredTargets = new List<IDragTarget>();
+
         public bool IsDragging { get; private set; }
 
         private object dragData;
 
-        public event Action<object> OnDragStarted;
-        public event Action OnDragEnded;
-
         public T GetDragData<T>() where T : class
         {
             return dragData as T;
+        }
+
+        public void Register(IDragTarget target)
+        {
+            if (target == null)
+            {
+                return;
+            }
+
+            if (!registeredTargets.Contains(target))
+            {
+                registeredTargets.Add(target);
+            }
+        }
+
+        public void Unregister(IDragTarget target)
+        {
+            if (target == null)
+            {
+                return;
+            }
+
+            registeredTargets.Remove(target);
         }
 
         public void StartDrag(object data)
@@ -36,14 +59,48 @@ namespace GearEngine.GearEngine
 
             dragData = data;
             IsDragging = true;
-            OnDragStarted?.Invoke(data);
+
+            var payload = new DragPayload(dragData, Vector3.zero, null);
+            BroadcastDragStarted(payload);
         }
 
         public void EndDrag()
         {
             dragData = null;
             IsDragging = false;
-            OnDragEnded?.Invoke();
+            BroadcastDragEnded();
+        }
+
+        private void BroadcastDragStarted(DragPayload payload)
+        {
+            IDragTarget[] snapshot = registeredTargets.ToArray();
+            foreach (IDragTarget target in snapshot)
+            {
+                try
+                {
+                    target.OnDragStarted(payload);
+                }
+                catch (Exception ex)
+                {
+                    Debug.LogError($"[DragService] IDragTarget.OnDragStarted failed: {ex.Message}\n{ex.StackTrace}");
+                }
+            }
+        }
+
+        private void BroadcastDragEnded()
+        {
+            IDragTarget[] snapshot = registeredTargets.ToArray();
+            foreach (IDragTarget target in snapshot)
+            {
+                try
+                {
+                    target.OnDragEnded();
+                }
+                catch (Exception ex)
+                {
+                    Debug.LogError($"[DragService] IDragTarget.OnDragEnded failed: {ex.Message}\n{ex.StackTrace}");
+                }
+            }
         }
     }
 }

@@ -1,13 +1,15 @@
 using System;
-using VContainer;
+using GearEngine.GearEngine;
+using GearEngine.GearEngine.Config;
 using GearEngine.GearEngine.Services;
 using GearEngine.GearEngine.Services.Inventory;
+using VContainer;
 
 namespace GearEngine.GearEngine.Bootstrap
 {
     public sealed class GearMechanicsInstaller
     {
-        public GearMechanicsInstaller(BoardConfigSO boardConfig, GearEngineFeatureToggleSO featureToggle = null)
+        public GearMechanicsInstaller(BoardConfigSO boardConfig, GearEngineFeatureToggleSO featureToggle)
         {
             this.boardConfig = boardConfig ?? throw new ArgumentNullException(nameof(boardConfig));
             this.featureToggle = featureToggle;
@@ -37,15 +39,9 @@ namespace GearEngine.GearEngine.Bootstrap
             builder.Register<Services.GridSwapService>(Lifetime.Singleton).As<Services.IGridSwapService>();
             builder.Register<GearNodeFactory>(Lifetime.Singleton).As<IGearNodeFactory>();
             builder.Register<DragService>(Lifetime.Singleton).As<IDragService>();
-            
-            builder.Register<GearTransferService>(Lifetime.Singleton).As<IGearTransferService>();
-            builder.Register<GearTrashService>(Lifetime.Singleton).As<IGearTrashService>();
-            builder.Register<InventoryService>(Lifetime.Singleton).As<IInventoryService>();
 
-            // ViewModels
-            builder.Register<GearInventoryViewModel>(Lifetime.Transient);
-            builder.Register<BoardViewModel>(Lifetime.Transient);
-            builder.Register<TrashZoneViewModel>(Lifetime.Transient);
+            builder.Register<InventoryService>(Lifetime.Singleton).As<IInventoryService>();
+            builder.Register<GearPresentationTransferService>(Lifetime.Singleton).As<IGearPresentationTransferService>();
         }
     }
 }

@@ -7,7 +7,11 @@ using GearEngine.GearEngine;
 using GearEngine.GearEngine.Bootstrap;
 using GearEngine.GearEngine.Config;
 using GearEngine.GearEngine.Manager;
+using GearEngine.GearEngine.Merge;
 using GearEngine.GearEngine.Presentation.UI;
+using GearEngine.GearEngine.Services;
+using GearEngine.GearEngine.Services.Inventory;
+using Scaffold.Events.Contracts;
 using Scaffold.MVVM;
 using VContainer;
 
@@ -20,9 +24,9 @@ namespace GearEngine.Race
             this.startData = startData ?? throw new ArgumentNullException(nameof(startData));
         }
 
-        public GearInventoryViewModel Inventory { get; } = new GearInventoryViewModel();
+        public GearInventoryViewModel Inventory { get; private set; }
 
-        public BoardViewModel Board { get; } = new BoardViewModel();
+        public BoardViewModel Board { get; private set; }
 
         public TrackViewModel Track { get; private set; }
 
@@ -47,6 +51,27 @@ namespace GearEngine.Race
 
         [Inject]
         private IRaceSessionRunner raceSessionRunner;
+
+        [Inject]
+        private IInventoryService inventoryService;
+
+        [Inject]
+        private IDragService dragService;
+
+        [Inject]
+        private IEventBus eventBus;
+
+        [Inject]
+        private GearEngineFeatureToggleSO featureToggle;
+
+        [Inject]
+        private IGridSwapService swapService;
+
+        [Inject]
+        private IGridMergeService mergeService;
+
+        [Inject]
+        private IGearPresentationTransferService presentationTransfer;
 
         protected override void Initialize()
         {
@@ -91,26 +116,16 @@ namespace GearEngine.Race
 
         private void SetupInventory()
         {
+            GearEngineStartData gearData = startData.GearEngineData ?? new GearEngineStartData();
+            Inventory = new GearInventoryViewModel(gearData.MaxInventorySlots, gearData.InventoryGears, engineService, inventoryService, dragService);
             BindChildViewModel(Inventory);
-            //Inventory.Initialize(engineService);
-
-            GearEngineStartData gearData = startData.GearEngineData;
-            //if (gearData?.InventoryGears != null)
-            //{
-            //    Inventory.LoadInventory(gearData.InventoryGears);
-            //}
         }
 
         private void SetupBoard()
         {
-            BindChildViewModel(Board);
-            Board.Initialize(engineService, gridManager, nodeFactory, boardConfig);
-
             GearEngineStartData gearData = startData.GearEngineData;
-            if (gearData?.BoardLayout != null)
-            {
-                Board.LoadLayout(gearData.BoardLayout);
-            }
+            Board = new BoardViewModel(engineService, gridManager, nodeFactory, boardConfig, presentationTransfer, eventBus, featureToggle, dragService, swapService, mergeService, gearData?.BoardLayout);
+            BindChildViewModel(Board);
         }
 
         private void SetupTrack()
