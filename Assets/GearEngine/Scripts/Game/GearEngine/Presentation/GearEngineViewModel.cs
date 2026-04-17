@@ -8,7 +8,6 @@ using GearEngine.GearEngine.Services;
 using GearEngine.GearEngine.Services.Inventory;
 using Scaffold.Events.Contracts;
 using Scaffold.MVVM;
-using UnityEngine;
 using VContainer;
 
 namespace GearEngine.GearEngine.Presentation
@@ -19,6 +18,8 @@ namespace GearEngine.GearEngine.Presentation
         {
             this.startData = startData ?? throw new ArgumentNullException(nameof(startData));
         }
+
+        internal IDragService DragService => dragService;
 
         [ObservableProperty] private bool isSimulationRunning;
 
@@ -38,39 +39,33 @@ namespace GearEngine.GearEngine.Presentation
         [Inject] private IGridSwapService swapService;
         [Inject] private IGridMergeService mergeService;
         [Inject] private IInventoryService inventoryService;
+        [Inject] private IGearPresentationTransferService presentationTransferService;
 
         protected override void Initialize()
         {
             base.Initialize();
-
-            Board = new BoardViewModel();
-            Board.Initialize(
-                engineService,
-                gridManager,
-                nodeFactory,
-                boardConfig,
-                eventBus,
-                featureToggle,
-                dragService,
-                swapService,
-                mergeService,
-                startData.BoardLayout);
+            Board = CreateBoard();
             BindChildViewModel(Board);
-
-            Inventory = new GearInventoryViewModel();
-            Inventory.Initialize(
-                startData.MaxInventorySlots,
-                startData.InventoryGears,
-                engineService,
-                inventoryService,
-                Board,
-                dragService);
+            Inventory = CreateInventory();
             BindChildViewModel(Inventory);
-
-            TrashZone = new TrashZoneViewModel(dragService, engineService, Board, Inventory, eventBus, featureToggle);
+            TrashZone = CreateTrashZone();
             BindChildViewModel(TrashZone);
-
             Bind(() => Board.IsSimulationRunning, () => IsSimulationRunning);
+        }
+
+        private BoardViewModel CreateBoard()
+        {
+            return new BoardViewModel(engineService, gridManager, nodeFactory, boardConfig, presentationTransferService, eventBus, featureToggle, dragService, swapService, mergeService, startData.BoardLayout);
+        }
+
+        private GearInventoryViewModel CreateInventory()
+        {
+            return new GearInventoryViewModel(startData.MaxInventorySlots, startData.InventoryGears, engineService, inventoryService, dragService);
+        }
+
+        private TrashZoneViewModel CreateTrashZone()
+        {
+            return new TrashZoneViewModel(dragService, engineService, Board, presentationTransferService, featureToggle);
         }
 
         internal void ToggleSimulation()

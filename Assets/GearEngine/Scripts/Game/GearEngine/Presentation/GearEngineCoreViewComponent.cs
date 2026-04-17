@@ -14,7 +14,9 @@ namespace GearEngine.GearEngine.Presentation
         {
             base.OnBind();
             boardView.Bind(viewModel.Board);
+            inventoryView.SetBoardScaleReference(boardView.transform);
             inventoryView.Bind(viewModel.Inventory);
+            trashDropZone.SetDragService(viewModel.DragService);
             trashDropZone.Bind(viewModel.TrashZone);
         }
     }

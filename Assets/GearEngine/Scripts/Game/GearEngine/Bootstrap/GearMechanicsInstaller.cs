@@ -1,6 +1,7 @@
 using System;
 using GearEngine.GearEngine;
 using GearEngine.GearEngine.Config;
+using GearEngine.GearEngine.Services;
 using GearEngine.GearEngine.Services.Inventory;
 using VContainer;
 
@@ -40,6 +41,7 @@ namespace GearEngine.GearEngine.Bootstrap
             builder.Register<DragService>(Lifetime.Singleton).As<IDragService>();
 
             builder.Register<InventoryService>(Lifetime.Singleton).As<IInventoryService>();
+            builder.Register<GearPresentationTransferService>(Lifetime.Singleton).As<IGearPresentationTransferService>();
         }
     }
 }

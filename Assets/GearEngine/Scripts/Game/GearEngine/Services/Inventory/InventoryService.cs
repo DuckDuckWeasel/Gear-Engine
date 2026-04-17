@@ -7,24 +7,23 @@ namespace GearEngine.GearEngine.Services.Inventory
     public class InventoryService : IInventoryService
     {
         public InventoryModel Model { get; } = new InventoryModel();
-        
+
         public int CurrentCount => Model.AvailableItems.Count;
         public int MaxSlots { get; private set; } = int.MaxValue;
-        
-        public bool CanPerformActions => canPerformActionsDelegate == null || canPerformActionsDelegate.Invoke();
 
-        private Func<bool> canPerformActionsDelegate;
-
-        public void Initialize(int maxSlots, IReadOnlyList<GearConfig> inventoryGears, Func<bool> canPerformActionsDelegate = null)
+        public void Initialize(int maxSlots, IReadOnlyList<GearConfig> inventoryGears)
         {
             MaxSlots = maxSlots;
-            this.canPerformActionsDelegate = canPerformActionsDelegate;
 
-            var runtimeGears = new System.Collections.Generic.List<IItem>();
-            foreach (var config in inventoryGears)
+            var runtimeGears = new List<IItem>();
+            foreach (GearConfig config in inventoryGears)
             {
-                if (config != null) runtimeGears.Add(config.CreateRuntimeData());
+                if (config != null)
+                {
+                    runtimeGears.Add(config.CreateRuntimeData());
+                }
             }
+
             LoadInventory(runtimeGears);
         }
 
@@ -37,14 +36,21 @@ namespace GearEngine.GearEngine.Services.Inventory
 
             foreach (IItem item in items)
             {
-                if (item == null) continue;
+                if (item == null)
+                {
+                    continue;
+                }
+
                 AddItem(item);
             }
         }
 
         public void AddItem(IItem item)
         {
-            if (item == null) return;
+            if (item == null)
+            {
+                return;
+            }
 
             if (Model.AvailableItems.Count >= MaxSlots)
             {
@@ -53,22 +59,6 @@ namespace GearEngine.GearEngine.Services.Inventory
             }
 
             Model.AvailableItems.Add(item);
-        }
-
-        public bool TryConsumeSelectedItem()
-        {
-            if (Model.SelectedItem == null)
-            {
-                return false;
-            }
-
-            bool success = Model.AvailableItems.Remove(Model.SelectedItem);
-            if (success)
-            {
-                Model.SelectedItem = null;
-            }
-
-            return success;
         }
 
         public void ConsumeSpecificItem(IItem item)
@@ -88,15 +78,6 @@ namespace GearEngine.GearEngine.Services.Inventory
             RemoveItemAt(index);
         }
 
-        public void SelectItemLocal(IItem item)
-        {
-            if (Model.AvailableItems.Contains(item))
-            {
-                Model.SelectedItem = item;
-                Debug.Log($"<color=#aaaaff>[InventoryService]</color> Player selected item: {item.Id}");
-            }
-        }
-
         private int FindItemIndex(IItem item)
         {
             for (int i = 0; i < Model.AvailableItems.Count; i++)
@@ -114,7 +95,7 @@ namespace GearEngine.GearEngine.Services.Inventory
         {
             IItem removed = Model.AvailableItems[index];
             Model.AvailableItems.RemoveAt(index);
-            
+
             if (ReferenceEquals(Model.SelectedItem, removed))
             {
                 Model.SelectedItem = null;

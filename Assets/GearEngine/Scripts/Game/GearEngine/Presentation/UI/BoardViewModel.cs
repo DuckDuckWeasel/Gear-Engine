@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 using GearEngine.GearEngine;
+using GearEngine.GearEngine.Config;
 using GearEngine.GearEngine.Services;
 using Scaffold.Events.Contracts;
 using Scaffold.MVVM;
@@ -12,46 +13,13 @@ namespace GearEngine.GearEngine.Presentation.UI
 {
     public partial class BoardViewModel : ViewModel
     {
-        public IGearEngineService EngineService => engineService;
-        public BoardConfigSO BoardConfig => boardConfig;
-        public int CurrentBoardGearCount => gridManager?.GetAllNodes().Count() ?? 0;
-        public int MaxAllowedBoardGears => boardConfig != null ? boardConfig.MaxAllowedBoardGears : int.MaxValue;
-
-        private IGearEngineService engineService;
-        private IGridManager gridManager;
-        private IGearNodeFactory nodeFactory;
-        private BoardConfigSO boardConfig;
-        private IEventBus eventBus;
-        private GearEngineFeatureToggleSO featureToggle;
-        private IDragService dragService;
-        private IGridSwapService swapService;
-        private IGridMergeService mergeService;
-        private Vector2Int pickupOriginalPos;
-
-        [ObservableProperty] private bool interactable = true;
-        [ObservableProperty] private string boardLimitText = string.Empty;
-        [ObservableProperty] private bool isSimulationRunning;
-
-        public event Action<IGridNode> OnGearPlaced;
-        public event Action<IGridNode> OnGearRemoved;
-        public event Action<GearConfigData> BoardGearReturnedToInventory;
-
-        public void Initialize(
-            IGearEngineService engineService,
-            IGridManager gridManager,
-            IGearNodeFactory nodeFactory,
-            BoardConfigSO boardConfig,
-            IEventBus eventBus = null,
-            GearEngineFeatureToggleSO featureToggle = null,
-            IDragService dragService = null,
-            IGridSwapService swapService = null,
-            IGridMergeService mergeService = null,
-            BoardLayoutData initialLayout = null)
+        public BoardViewModel(IGearEngineService engineService, IGridManager gridManager, IGearNodeFactory nodeFactory, BoardConfigSO boardConfig, IGearPresentationTransferService presentationTransfer, IEventBus eventBus = null, GearEngineFeatureToggleSO featureToggle = null, IDragService dragService = null, IGridSwapService swapService = null, IGridMergeService mergeService = null, BoardLayoutData initialLayout = null)
         {
             this.engineService = engineService ?? throw new ArgumentNullException(nameof(engineService));
             this.gridManager = gridManager ?? throw new ArgumentNullException(nameof(gridManager));
             this.nodeFactory = nodeFactory ?? throw new ArgumentNullException(nameof(nodeFactory));
             this.boardConfig = boardConfig ?? throw new ArgumentNullException(nameof(boardConfig));
+            this.presentationTransfer = presentationTransfer ?? throw new ArgumentNullException(nameof(presentationTransfer));
             this.eventBus = eventBus;
             this.featureToggle = featureToggle;
             this.dragService = dragService;
@@ -64,7 +32,33 @@ namespace GearEngine.GearEngine.Presentation.UI
             {
                 LoadLayout(initialLayout);
             }
+
+            UpdateLabels();
         }
+
+        public IGearEngineService EngineService => engineService;
+        public BoardConfigSO BoardConfig => boardConfig;
+        public int CurrentBoardGearCount => gridManager?.GetAllNodes().Count() ?? 0;
+        public int MaxAllowedBoardGears => boardConfig != null ? boardConfig.MaxAllowedBoardGears : int.MaxValue;
+
+        private readonly IGearEngineService engineService;
+        private readonly IGridManager gridManager;
+        private readonly IGearNodeFactory nodeFactory;
+        private readonly BoardConfigSO boardConfig;
+        private readonly IGearPresentationTransferService presentationTransfer;
+        private readonly IEventBus eventBus;
+        private readonly GearEngineFeatureToggleSO featureToggle;
+        private readonly IDragService dragService;
+        private readonly IGridSwapService swapService;
+        private readonly IGridMergeService mergeService;
+        private Vector2Int pickupOriginalPos;
+
+        [ObservableProperty] private bool interactable = true;
+        [ObservableProperty] private string boardLimitText = string.Empty;
+        [ObservableProperty] private bool isSimulationRunning;
+
+        public event Action<IGridNode> OnGearPlaced;
+        public event Action<IGridNode> OnGearRemoved;
 
         public void ToggleSimulation()
         {
@@ -222,7 +216,7 @@ namespace GearEngine.GearEngine.Presentation.UI
         {
             try
             {
-                BoardGearReturnedToInventory?.Invoke(config);
+                presentationTransfer.AddReturnedBoardGearToInventory(config);
                 RemoveGear(node);
             }
             catch (Exception ex)
@@ -290,14 +284,6 @@ namespace GearEngine.GearEngine.Presentation.UI
             {
                 Debug.LogError($"[BoardViewModel] DeleteGear failed: {ex.Message}\n{ex.StackTrace}");
                 return false;
-            }
-        }
-
-        public void GrantTrashReward(int rewardAmount)
-        {
-            if (rewardAmount > 0)
-            {
-                eventBus?.Raise(new GearDeletedEvent(Vector2Int.zero, rewardAmount));
             }
         }
 

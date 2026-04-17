@@ -1,88 +1,48 @@
-using CommunityToolkit.Mvvm.ComponentModel;
-using GearEngine.GearEngine.Config;
-using GearEngine.GearEngine.Services.Inventory;
-using Scaffold.MVVM;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using CommunityToolkit.Mvvm.ComponentModel;
+using GearEngine.GearEngine;
+using GearEngine.GearEngine.Config;
+using GearEngine.GearEngine.Services.Inventory;
+using Scaffold.MVVM;
 using UnityEngine;
 
 namespace GearEngine.GearEngine.Presentation.UI
 {
     public partial class GearInventoryViewModel : ViewModel
     {
+        public GearInventoryViewModel(int maxInventorySlots, IReadOnlyList<GearConfig> inventoryGears, IGearEngineService engineService, IInventoryService inventoryService, IDragService dragService = null)
+        {
+            this.engineService = engineService ?? throw new ArgumentNullException(nameof(engineService));
+            this.inventoryService = inventoryService ?? throw new ArgumentNullException(nameof(inventoryService));
+            this.dragService = dragService;
+
+            InventoryModel = inventoryService.Model;
+            if (InventoryModel?.AvailableItems != null)
+            {
+                InventoryModel.AvailableItems.CollectionChanged += OnAvailableItemsChanged;
+            }
+
+            inventoryService.Initialize(maxInventorySlots, inventoryGears);
+            this.maxInventorySlots = inventoryService.MaxSlots;
+            RefreshInventoryLabel();
+        }
+
         public int MaxSlots => maxInventorySlots;
-        private int maxInventorySlots = int.MaxValue;
 
         public int CurrentCount => InventoryModel?.AvailableItems.Count ?? 0;
+
         public bool CanDrag => engineService != null && !engineService.IsRunning;
 
-        private IDragService dragService;
-        private IGearEngineService engineService;
-        private IInventoryService inventoryService;
+        private readonly IDragService dragService;
+        private readonly IGearEngineService engineService;
+        private readonly IInventoryService inventoryService;
+        private int maxInventorySlots = int.MaxValue;
 
         [ObservableProperty] private InventoryModel inventoryModel;
         [ObservableProperty] private string inventoryLimitText;
-
-        private BoardViewModel board;
-
-        public void Initialize(
-            int maxInventorySlots,
-            IReadOnlyList<GearConfig> inventoryGears,
-            IGearEngineService engineService,
-            IInventoryService inventoryService,
-            BoardViewModel boardViewModel,
-            IDragService dragService = null)
-        {
-            this.engineService = engineService;
-            this.inventoryService = inventoryService;
-            this.inventoryModel = inventoryService.Model;
-            this.maxInventorySlots = inventoryService.MaxSlots;
-            this.dragService = dragService;
-            this.board = boardViewModel ?? throw new ArgumentNullException(nameof(boardViewModel));
-
-            board.BoardGearReturnedToInventory += OnBoardGearReturnedToInventory;
-
-            inventoryService.Model.AvailableItems.CollectionChanged += UpdateLabels;
-            inventoryService.Initialize(maxInventorySlots, inventoryGears);
-        }
-
-        private void OnBoardGearReturnedToInventory(GearConfigData config)
-        {
-            try
-            {
-                if (config != null)
-                {
-                    inventoryService?.AddItem(config);
-                }
-            }
-            catch (Exception ex)
-            {
-                Debug.LogError($"[GearInventoryViewModel] OnBoardGearReturnedToInventory failed: {ex.Message}\n{ex.StackTrace}");
-            }
-        }
-
-        public void ConsumeGearFromTrash(GearConfigData gear)
-        {
-            try
-            {
-                if (gear == null)
-                {
-                    return;
-                }
-
-                inventoryService?.ConsumeSpecificItem(gear);
-            }
-            catch (Exception ex)
-            {
-                Debug.LogError($"[GearInventoryViewModel] ConsumeGearFromTrash failed: {ex.Message}\n{ex.StackTrace}");
-            }
-        }
-
-        private void UpdateLabels(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            InventoryLimitText = $"Inventory: {CurrentCount}/{MaxSlots}";
-        }
+        [ObservableProperty] private int inventoryListRevision;
 
         public void NotifySlotDragStarted(GearConfigData gear)
         {
@@ -136,12 +96,23 @@ namespace GearEngine.GearEngine.Presentation.UI
 
         protected override void OnClosed()
         {
-            if (board != null)
+            if (InventoryModel?.AvailableItems != null)
             {
-                board.BoardGearReturnedToInventory -= OnBoardGearReturnedToInventory;
+                InventoryModel.AvailableItems.CollectionChanged -= OnAvailableItemsChanged;
             }
 
             base.OnClosed();
+        }
+
+        private void OnAvailableItemsChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            RefreshInventoryLabel();
+            InventoryListRevision++;
+        }
+
+        private void RefreshInventoryLabel()
+        {
+            InventoryLimitText = $"Inventory: {CurrentCount}/{MaxSlots}";
         }
     }
 }

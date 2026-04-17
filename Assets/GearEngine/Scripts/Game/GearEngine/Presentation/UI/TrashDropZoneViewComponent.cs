@@ -1,5 +1,6 @@
 using GearEngine.GearEngine.Config;
 using GearEngine.GearEngine.Nodes;
+using GearEngine.GearEngine.Services;
 using Scaffold.MVVM;
 using TMPro;
 using UnityEngine;
@@ -28,6 +29,14 @@ namespace GearEngine.GearEngine.Presentation.UI
         private bool isHovered;
         private float animationProgress;
         private Vector3 baseScale;
+
+        private IDragService dragService;
+
+        // todo: wired from GearEngineCoreViewComponent before Bind.
+        internal void SetDragService(IDragService service)
+        {
+            dragService = service;
+        }
 
         internal void SetReferences(RectTransform root, Image icon, TextMeshProUGUI label, CanvasGroup cg)
         {
@@ -59,8 +68,9 @@ namespace GearEngine.GearEngine.Presentation.UI
             Assert.IsNotNull(trashIcon, "[TrashDropZone] trashIcon is missing.");
             Assert.IsNotNull(rewardLabel, "[TrashDropZone] rewardLabel is missing.");
             Assert.IsNotNull(canvasGroup, "[TrashDropZone] canvasGroup is missing.");
+            Assert.IsNotNull(dragService, "[TrashDropZone] IDragService is missing. Call SetDragService before Bind.");
 
-            viewModel.RegisterAsDragTarget(this);
+            dragService.Register(this);
 
             Bind<bool, bool>(() => viewModel.IsActive, OnIsActiveChanged);
             Bind<string, string>(() => viewModel.RewardText, OnRewardTextChanged);
@@ -68,10 +78,7 @@ namespace GearEngine.GearEngine.Presentation.UI
 
         protected override void OnUnbind()
         {
-            if (viewModel != null)
-            {
-                viewModel.UnregisterAsDragTarget(this);
-            }
+            dragService?.Unregister(this);
 
             base.OnUnbind();
         }

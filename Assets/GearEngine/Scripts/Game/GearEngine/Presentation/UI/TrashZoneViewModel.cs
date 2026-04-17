@@ -1,8 +1,9 @@
 using System;
+using GearEngine.GearEngine;
 using GearEngine.GearEngine.Config;
 using GearEngine.GearEngine.Nodes;
+using GearEngine.GearEngine.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
-using Scaffold.Events.Contracts;
 using Scaffold.MVVM;
 using UnityEngine;
 
@@ -10,32 +11,12 @@ namespace GearEngine.GearEngine.Presentation.UI
 {
     public partial class TrashZoneViewModel : ViewModel
     {
-        private readonly IDragService dragService;
-        private readonly IGearEngineService engineService;
-        private readonly BoardViewModel board;
-        private readonly GearInventoryViewModel inventory;
-        private readonly IEventBus eventBus;
-        private readonly GearEngineFeatureToggleSO featureToggle;
-
-        [ObservableProperty]
-        private bool isActive;
-
-        [ObservableProperty]
-        private string rewardText = string.Empty;
-
-        public TrashZoneViewModel(
-            IDragService dragService,
-            IGearEngineService engineService,
-            BoardViewModel board,
-            GearInventoryViewModel inventory,
-            IEventBus eventBus,
-            GearEngineFeatureToggleSO featureToggle)
+        public TrashZoneViewModel(IDragService dragService, IGearEngineService engineService, BoardViewModel board, IGearPresentationTransferService presentationTransfer, GearEngineFeatureToggleSO featureToggle)
         {
             this.dragService = dragService ?? throw new ArgumentNullException(nameof(dragService));
             this.engineService = engineService ?? throw new ArgumentNullException(nameof(engineService));
             this.board = board ?? throw new ArgumentNullException(nameof(board));
-            this.inventory = inventory ?? throw new ArgumentNullException(nameof(inventory));
-            this.eventBus = eventBus;
+            this.presentationTransfer = presentationTransfer ?? throw new ArgumentNullException(nameof(presentationTransfer));
             this.featureToggle = featureToggle;
         }
 
@@ -43,29 +24,17 @@ namespace GearEngine.GearEngine.Presentation.UI
 
         internal GearEngineFeatureToggleSO FeatureToggleForTrashPlacement => featureToggle;
 
-        public void RegisterAsDragTarget(IDragTarget target) => dragService?.Register(target);
+        private readonly IDragService dragService;
+        private readonly IGearEngineService engineService;
+        private readonly BoardViewModel board;
+        private readonly IGearPresentationTransferService presentationTransfer;
+        private readonly GearEngineFeatureToggleSO featureToggle;
 
-        public void UnregisterAsDragTarget(IDragTarget target) => dragService?.Unregister(target);
+        [ObservableProperty]
+        private bool isActive;
 
-        public bool CanTrashAcceptGear(GearConfigData gear)
-        {
-            if (gear == null || !gear.IsDeletable)
-            {
-                return false;
-            }
-
-            if (featureToggle != null && !featureToggle.EnableTrashDeletion)
-            {
-                return false;
-            }
-
-            if (engineService != null && engineService.IsRunning)
-            {
-                return false;
-            }
-
-            return true;
-        }
+        [ObservableProperty]
+        private string rewardText = string.Empty;
 
         public void HandleDragStarted(object data)
         {
@@ -89,33 +58,11 @@ namespace GearEngine.GearEngine.Presentation.UI
         {
             try
             {
-                if (node == null)
-                {
-                    return;
-                }
-
-                if (engineService != null && engineService.IsRunning)
-                {
-                    return;
-                }
-
-                bool deleted = board.DeleteGear(node);
-                if (!deleted)
-                {
-                    board.SnapBackToOriginal(node);
-                }
+                TryDeleteBoardGearOrSnapBack(node);
             }
             catch (Exception ex)
             {
-                Debug.LogError($"[TrashZoneViewModel] HandleBoardGearDropped failed: {ex.Message}\n{ex.StackTrace}");
-                try
-                {
-                    board?.SnapBackToOriginal(node);
-                }
-                catch (Exception snapEx)
-                {
-                    Debug.LogError($"[TrashZoneViewModel] SnapBackToOriginal failed: {snapEx.Message}\n{snapEx.StackTrace}");
-                }
+                LogBoardDropFailure(ex, node);
             }
             finally
             {
@@ -127,24 +74,7 @@ namespace GearEngine.GearEngine.Presentation.UI
         {
             try
             {
-                if (gear == null)
-                {
-                    return;
-                }
-
-                if (engineService != null && engineService.IsRunning)
-                {
-                    return;
-                }
-
-                inventory.ConsumeGearFromTrash(gear);
-
-                if (gear.DeleteRewardAmount > 0)
-                {
-                    board.GrantTrashReward(gear.DeleteRewardAmount);
-                }
-
-                Debug.Log($"<color=#ff5555>[TrashZoneViewModel]</color> Inventory Item '{gear.Id}' Trashed! Reward: {gear.DeleteRewardAmount}");
+                TryTrashInventoryGear(gear);
             }
             catch (Exception ex)
             {
@@ -154,6 +84,64 @@ namespace GearEngine.GearEngine.Presentation.UI
             {
                 dragService?.EndDrag();
             }
+        }
+
+        public bool CanTrashAcceptGear(GearConfigData gear)
+        {
+            if (gear == null || !gear.IsDeletable)
+            {
+                return false;
+            }
+
+            if (featureToggle != null && !featureToggle.EnableTrashDeletion)
+            {
+                return false;
+            }
+
+            if (engineService != null && engineService.IsRunning)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        private void TryDeleteBoardGearOrSnapBack(IGridNode node)
+        {
+            if (node == null || (engineService != null && engineService.IsRunning))
+            {
+                return;
+            }
+
+            bool deleted = board.DeleteGear(node);
+            if (!deleted)
+            {
+                board.SnapBackToOriginal(node);
+            }
+        }
+
+        private void LogBoardDropFailure(Exception ex, IGridNode node)
+        {
+            Debug.LogError($"[TrashZoneViewModel] HandleBoardGearDropped failed: {ex.Message}\n{ex.StackTrace}");
+            try
+            {
+                board?.SnapBackToOriginal(node);
+            }
+            catch (Exception snapEx)
+            {
+                Debug.LogError($"[TrashZoneViewModel] SnapBackToOriginal failed: {snapEx.Message}\n{snapEx.StackTrace}");
+            }
+        }
+
+        private void TryTrashInventoryGear(GearConfigData gear)
+        {
+            if (gear == null || (engineService != null && engineService.IsRunning))
+            {
+                return;
+            }
+
+            presentationTransfer.TrashInventoryGear(gear);
+            Debug.Log($"<color=#ff5555>[TrashZoneViewModel]</color> Inventory Item '{gear.Id}' Trashed! Reward: {gear.DeleteRewardAmount}");
         }
     }
 }
