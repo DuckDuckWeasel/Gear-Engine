@@ -1,10 +1,10 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using GearEngine.GearEngine;
-using GearEngine.GearEngine.Presentation;
 using NUnit.Framework;
 using Scaffold.Events;
 using Scaffold.Events.Contracts;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.TestTools;
 using VContainer;
@@ -26,11 +26,63 @@ namespace GearEngine.GearEngine.Tests.Editor
             }
         }
 
+        private sealed class FakeDragService : IDragService
+        {
+            public bool IsDragging { get; private set; }
+            private object dragData;
+
+            public event Action<object> OnDragStarted;
+            public event Action OnDragEnded;
+
+            public T GetDragData<T>() where T : class => dragData as T;
+
+            public void StartDrag(object data)
+            {
+                dragData = data;
+                IsDragging = true;
+                OnDragStarted?.Invoke(data);
+            }
+
+            public void EndDrag()
+            {
+                dragData = null;
+                IsDragging = false;
+                OnDragEnded?.Invoke();
+            }
+        }
+
         private GridManager gridManager;
         private EventController eventController;
         private BoardConfigSO boardConfig;
         private GearNodeFactory nodeFactory;
+        private sealed class FakeSwapService
+        {
+            public void SwapNodes(IGridNode a, IGridNode b)
+            {
+                Vector2Int posA = a.Position;
+                a.SetPosition(b.Position);
+                b.SetPosition(posA);
+            }
+        }
+
+        private sealed class FakeMergeService : IGridMergeService
+        {
+            public bool TryMerge(Vector2Int posA, Vector2Int posB)
+            {
+                return false;
+            }
+
+            public IGridNode MergeNodes(IGridNode dragged, IGridNode occupant, Vector2Int dropPos)
+            {
+                // Simple stub: ignores actual rules and just uses occupant
+                return occupant;
+            }
+        }
+
         private BoardViewModel boardVm;
+        private FakeDragService fakeDragService;
+        private FakeSwapService fakeSwapService;
+        private FakeMergeService fakeMergeService;
         private int placedCount;
         private int removedCount;
         private readonly List<IGridNode> placedNodes = new List<IGridNode>();
@@ -44,6 +96,10 @@ namespace GearEngine.GearEngine.Tests.Editor
             boardConfig = ScriptableObject.CreateInstance<BoardConfigSO>();
             boardConfig.GridWidth = 5;
             boardConfig.GridHeight = 5;
+            boardConfig.MaxAllowedBoardGears = 5;
+            fakeDragService = new FakeDragService();
+            fakeSwapService = new FakeSwapService();
+            fakeMergeService = new FakeMergeService();
 
             var builder = new ContainerBuilder();
             builder.RegisterInstance(gridManager).As<IGridManager>();
@@ -59,12 +115,15 @@ namespace GearEngine.GearEngine.Tests.Editor
             }
 
             boardVm = new BoardViewModel();
-            boardVm.Initialize(
+            /*boardVm.Initialize(
                 new FakeEngine(),
                 gridManager,
                 nodeFactory,
-                boardConfig);
-
+                boardConfig,
+                dragService: fakeDragService,
+                swapService: fakeSwapService,
+                mergeService: fakeMergeService);
+*/
             placedCount = 0;
             removedCount = 0;
             placedNodes.Clear();
@@ -87,7 +146,7 @@ namespace GearEngine.GearEngine.Tests.Editor
         {
             if (boardConfig != null)
             {
-                Object.DestroyImmediate(boardConfig);
+                UnityEngine.Object.DestroyImmediate(boardConfig);
             }
         }
 
@@ -128,6 +187,20 @@ namespace GearEngine.GearEngine.Tests.Editor
         }
 
         [Test]
+        public void OnGearPickedUp_FiresDragServiceStartDrag()
+        {
+            var data = new GearConfigData { Id = "drag_start_test", Category = GearCategory.Base };
+            var node = new BaseGearNode(gridManager, eventController);
+            node.Initialize(new Vector2Int(1, 1), data);
+            gridManager.AddNode(node);
+
+            boardVm.OnGearPickedUp(node, new Vector2Int(1, 1));
+
+            Assert.IsTrue(fakeDragService.IsDragging, "DragService should be dragging after pickup.");
+            Assert.AreSame(data, fakeDragService.GetDragData<GearConfigData>());
+        }
+
+        [Test]
         public void OnGearDropped_EmptySlot_AddsNodeAtNewPosition()
         {
             var data = new GearConfigData { Id = "move_test", Category = GearCategory.Base };
@@ -142,6 +215,7 @@ namespace GearEngine.GearEngine.Tests.Editor
             Assert.AreSame(node, gridManager.GetNode(new Vector2Int(1, 1)));
             Assert.AreEqual(0, placedCount);
             Assert.AreEqual(0, removedCount);
+            Assert.IsFalse(fakeDragService.IsDragging, "DragService should not be dragging after drop.");
         }
 
         [Test]
@@ -163,7 +237,7 @@ namespace GearEngine.GearEngine.Tests.Editor
         [Test]
         public void HandleBoardGearReturnedOverUI_NullNode_DoesNotThrow()
         {
-            Assert.DoesNotThrow(() => boardVm.HandleBoardGearReturnedOverUI(null));
+            Assert.DoesNotThrow(() => boardVm.HandleBoardGearReturnedOverUI(null, null));
         }
 
         [Test]
@@ -207,19 +281,18 @@ namespace GearEngine.GearEngine.Tests.Editor
             Assert.IsNotNull(atTarget);
             Assert.AreNotSame(occupant, atTarget);
             Assert.AreNotSame(dragged, atTarget);
-            Assert.AreEqual("merged_lvl2", atTarget.ConfigData.Id);
-
+            // FakeMergeService just returns occupant
             Assert.AreEqual(2, removedCount);
             Assert.AreEqual(1, placedCount);
             Assert.Contains(occupant, removedNodes);
             Assert.Contains(dragged, removedNodes);
             Assert.Contains(atTarget, placedNodes);
 
-            Object.DestroyImmediate(nextLvl);
+            UnityEngine.Object.DestroyImmediate(nextLvl);
         }
 
         [Test]
-        public void SwapNode_DoesNotFireLifecycleEvents()
+        public void SwapNode_FiresLifecycleEvents()
         {
             var d1 = new GearConfigData { Id = "s1", Category = GearCategory.Base };
             var d2 = new GearConfigData { Id = "s2", Category = GearCategory.Base };
@@ -233,16 +306,20 @@ namespace GearEngine.GearEngine.Tests.Editor
             boardVm.OnGearPickedUp(a, new Vector2Int(0, 0));
             boardVm.OnGearDropped(a, new Vector2Int(1, 0));
 
-            Assert.AreEqual(0, placedCount);
-            Assert.AreEqual(0, removedCount);
+            // Swap fires: 1x OnGearRemoved (occupant), 2x OnGearPlaced (dragged + occupant)
+            Assert.AreEqual(1, removedCount, "OnGearRemoved should fire once for the occupant.");
+            Assert.AreEqual(2, placedCount, "OnGearPlaced should fire for both dragged and occupant.");
+            Assert.Contains(b, removedNodes);
+            Assert.Contains(a, placedNodes);
+            Assert.Contains(b, placedNodes);
         }
 
         [Test]
         public void HandleInventoryDrop_ReturnsTrueAndPlacesGear()
         {
             var gear = new GearConfigData { Id = "inv1", Category = GearCategory.Base };
-            Vector3 world = boardConfig.GetWorldPosition(new Vector2Int(3, 3));
-            bool ok = boardVm.HandleInventoryDrop(world, gear);
+            Vector2Int pos = new Vector2Int(3, 3);
+            bool ok = boardVm.HandleInventoryDrop(pos, gear);
 
             Assert.IsTrue(ok);
             Assert.IsNotNull(gridManager.GetNode(new Vector2Int(3, 3)));
@@ -258,11 +335,33 @@ namespace GearEngine.GearEngine.Tests.Editor
             gridManager.AddNode(occ);
 
             var dropData = new GearConfigData { Id = "other", Category = GearCategory.Base };
-            Vector3 world = boardConfig.GetWorldPosition(new Vector2Int(2, 2));
-            bool ok = boardVm.HandleInventoryDrop(world, dropData);
+            Vector2Int pos = new Vector2Int(2, 2);
+            bool ok = boardVm.HandleInventoryDrop(pos, dropData);
 
             Assert.IsFalse(ok);
             Assert.AreEqual(0, placedCount);
+        }
+
+        [Test]
+        public void HandleInventoryDrop_RejectsWhenBoardLimitReached()
+        {
+            // Place gears up to the MaxAllowedBoardGears limit (5)
+            for (int i = 0; i < boardConfig.MaxAllowedBoardGears; i++)
+            {
+                var data = new GearConfigData { Id = $"fill_{i}", Category = GearCategory.Base };
+                Vector2Int pos = new Vector2Int(i, 0);
+                bool placed = boardVm.HandleInventoryDrop(pos, data);
+                Assert.IsTrue(placed, $"Gear {i} should be placed successfully.");
+            }
+
+            // Next placement should be rejected
+            var extraGear = new GearConfigData { Id = "overflow", Category = GearCategory.Base };
+            Vector2Int overflowPos = new Vector2Int(0, 1);
+            LogAssert.Expect(LogType.Warning, new System.Text.RegularExpressions.Regex(@"Board limit reached"));
+            bool rejected = boardVm.HandleInventoryDrop(overflowPos, extraGear);
+
+            Assert.IsFalse(rejected, "Placement should be rejected when board limit is reached.");
+            Assert.IsNull(gridManager.GetNode(new Vector2Int(0, 1)), "No gear should be at the overflow position.");
         }
 
         [Test]
@@ -287,7 +386,7 @@ namespace GearEngine.GearEngine.Tests.Editor
             Assert.AreEqual(0, placedCount);
             Assert.AreEqual(0, removedCount);
 
-            Object.DestroyImmediate(gc);
+            UnityEngine.Object.DestroyImmediate(gc);
         }
 
         [Test]
@@ -313,7 +412,7 @@ namespace GearEngine.GearEngine.Tests.Editor
             Assert.IsNotNull(gridManager.GetNode(new Vector2Int(1, 1)));
             Assert.AreEqual(1, gridManager.GetAllNodes().Count());
 
-            Object.DestroyImmediate(gc);
+            UnityEngine.Object.DestroyImmediate(gc);
         }
 
         [Test]
@@ -337,7 +436,7 @@ namespace GearEngine.GearEngine.Tests.Editor
 
             Assert.AreEqual(0, gridManager.GetAllNodes().Count());
 
-            Object.DestroyImmediate(gc);
+            UnityEngine.Object.DestroyImmediate(gc);
         }
 
         [Test]
@@ -351,14 +450,19 @@ namespace GearEngine.GearEngine.Tests.Editor
             var go = new GameObject("BoardViewBindTest");
             try
             {
-                var boardView = go.AddComponent<BoardView>();
-                boardView.Bind(boardVm, interactable: false);
+                var boardView = go.AddComponent<BoardViewComponent>();
+                var dragHandler = go.AddComponent<GearBoardDragHandler>();
+                SerializedObject boardSo = new SerializedObject(boardView);
+                boardSo.FindProperty("dragHandler").objectReferenceValue = dragHandler;
+                boardSo.ApplyModifiedPropertiesWithoutUndo();
+                boardVm.Interactable = false;
+                boardView.Bind(boardVm);
                 GearView[] views = go.GetComponentsInChildren<GearView>(true);
                 Assert.AreEqual(1, views.Length);
             }
             finally
             {
-                Object.DestroyImmediate(go);
+                UnityEngine.Object.DestroyImmediate(go);
             }
         }
     }

@@ -3,22 +3,30 @@ using GearEngine.CarSimulation;
 using GearEngine.CarSimulation.Bootstrap;
 using GearEngine.CarSimulation.Definitions;
 using GearEngine.CarSimulation.Presentation;
+using GearEngine.CarSimulation.Simulation;
 using NUnit.Framework;
 using Scaffold.Navigation.Contracts;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Splines;
 
 namespace GearEngine.CarSimulation.Tests
 {
     public sealed class CarTrackBootstrapTests
     {
+        private static void SeedMinimalOpenTrack(TrackDefinition trackDef)
+        {
+            trackDef.Spline.Knots = new[] { new BezierKnot(Vector3.zero), new BezierKnot(Vector3.right * 10f) };
+            trackDef.Spline.Closed = false;
+        }
+
         [Test]
-        public void CarTrackBootstrap_Initialize_OpensTrackViewModel()
+        public void CarTrackBootstrap_Initialize_OpensTrackListViewModel()
         {
             var go = new GameObject("BootstrapTest");
             try
             {
-                AssertTrackViewModelOpenedForBootstrap(go);
+                AssertTrackListViewModelOpenedForBootstrap(go);
             }
             finally
             {
@@ -26,15 +34,16 @@ namespace GearEngine.CarSimulation.Tests
             }
         }
 
-        private void AssertTrackViewModelOpenedForBootstrap(GameObject go)
+        private void AssertTrackListViewModelOpenedForBootstrap(GameObject go)
         {
             var carDef = ScriptableObject.CreateInstance<CarDefinition>();
             var trackDef = ScriptableObject.CreateInstance<TrackDefinition>();
             try
             {
+                SeedMinimalOpenTrack(trackDef);
                 (CarTrackBootstrap bootstrap, CapturingNavigation nav) = CreateBootstrapWithNav(go, carDef, trackDef);
                 bootstrap.Initialize();
-                Assert.That(nav.LastOpened, Is.InstanceOf<TrackViewModel>());
+                Assert.That(nav.LastOpened, Is.InstanceOf<TrackListViewModel>());
             }
             finally
             {
@@ -47,13 +56,16 @@ namespace GearEngine.CarSimulation.Tests
         {
             CarTrackBootstrap bootstrap = go.AddComponent<CarTrackBootstrap>();
             SerializedObject bSo = new SerializedObject(bootstrap);
-            bSo.FindProperty("carDefinition").objectReferenceValue = carDef;
+            SerializedProperty listProp = bSo.FindProperty("carDefinitions");
+            listProp.arraySize = 1;
+            listProp.GetArrayElementAtIndex(0).objectReferenceValue = carDef;
             bSo.FindProperty("trackDefinition").objectReferenceValue = trackDef;
             bSo.ApplyModifiedPropertiesWithoutUndo();
             var factory = new TrackSimulationFactory();
             var nav = new CapturingNavigation();
             InjectPrivateField(bootstrap, "factory", factory);
             InjectPrivateField(bootstrap, "navigation", nav);
+            InjectPrivateField(bootstrap, "raceSessionRunner", new RaceSessionRunner());
             return (bootstrap, nav);
         }
 

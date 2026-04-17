@@ -12,22 +12,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: faf34a39f5b75466d9fbf4f99fc70808, type: 3}
   m_Name: ScoreGearConfig
   m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Config.GearConfig
+  nextLevel: {fileID: 0}
   data:
-    Id: score_gear
+    id: gear_score
     Category: 0
     BaseRotationSpeed: 0
     VisualPrefab: {fileID: 2949619139704920152, guid: 2d4c5c939f40c43e3bc8bd60757e0340, type: 3}
-    UIIcon: {fileID: 21300000, guid: 3b88397aedb7b457b964e28b2084ea41, type: 3}
-    UIScaleMultiplier: 115
+    UIIcon: {fileID: -3338749442709606003, guid: 99e3de0c26942419f9aae22146e5f1c0, type: 3}
+    RelativeScaleMultiplier: 1
     TriggerPattern: 4
     IsInteractable: 1
+    IsMovable: 1
+    IsReturnable: 1
     MaxCharge: 100
     ChargeOverTimeAmount: 0
     ChargeOnTriggerAmount: 50
     SnapSlowdownDuration: 0.5
     SnapSlowdownMultiplier: 0.15
     TriggerSpinDegrees: 45
+    IsDeletable: 1
+    DeleteRewardAmount: 100
     Abilities: []
-  nextLevel: {fileID: 0}
   abilities:
   - {fileID: 11400000, guid: f3eae640064d348a59b085ff08c45909, type: 2}

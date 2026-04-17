@@ -76,7 +76,7 @@
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "86617f4905c68917478ad957d8d262d7b213da19"
+      "hash": "44156f6de3294cdea08e40455378317f9ca4d5a0"
     },
     "com.scaffold.events": {
       "version": "https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.events#main",
@@ -401,7 +401,7 @@
       "dependencies": {}
     },
     "com.unity.ide.rider": {
-      "version": "3.0.39",
+      "version": "3.0.40",
       "depth": 0,
       "source": "registry",
       "dependencies": {

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using GearEngine.GearEngine;
 using GearEngine.GearEngine.Bootstrap;
@@ -25,12 +26,38 @@ namespace GearEngine.GearEngine.Tests.Editor
             public void Stop() => IsRunning = false;
         }
 
+        private sealed class FakeDragService : IDragService
+        {
+            public bool IsDragging { get; private set; }
+            private object dragData;
+
+            public event Action<object> OnDragStarted;
+            public event Action OnDragEnded;
+
+            public T GetDragData<T>() where T : class => dragData as T;
+
+            public void StartDrag(object data)
+            {
+                dragData = data;
+                IsDragging = true;
+                OnDragStarted?.Invoke(data);
+            }
+
+            public void EndDrag()
+            {
+                dragData = null;
+                IsDragging = false;
+                OnDragEnded?.Invoke();
+            }
+        }
+
         private GridManager gridManager;
         private EventController eventController;
         private BoardConfigSO boardConfig;
         private GearNodeFactory nodeFactory;
         private BoardViewModel boardVm;
         private FakeEngine fakeEngine;
+        private FakeDragService fakeDragService;
         private GearEngineFeatureToggleSO featureToggle;
         private readonly List<IGridNode> removedNodes = new List<IGridNode>();
         private readonly List<GearDeletedEvent> deletedEvents = new List<GearDeletedEvent>();
@@ -44,6 +71,7 @@ namespace GearEngine.GearEngine.Tests.Editor
             boardConfig.GridWidth = 5;
             boardConfig.GridHeight = 5;
             fakeEngine = new FakeEngine();
+            fakeDragService = new FakeDragService();
 
             var builder = new ContainerBuilder();
             builder.RegisterInstance(gridManager).As<IGridManager>();
@@ -64,7 +92,8 @@ namespace GearEngine.GearEngine.Tests.Editor
                 gridManager,
                 nodeFactory,
                 boardConfig,
-                eventController);
+                eventController,
+                dragService: fakeDragService);
 
             removedNodes.Clear();
             deletedEvents.Clear();
@@ -78,12 +107,12 @@ namespace GearEngine.GearEngine.Tests.Editor
         {
             if (boardConfig != null)
             {
-                Object.DestroyImmediate(boardConfig);
+                UnityEngine.Object.DestroyImmediate(boardConfig);
             }
 
             if (featureToggle != null)
             {
-                Object.DestroyImmediate(featureToggle);
+                UnityEngine.Object.DestroyImmediate(featureToggle);
                 featureToggle = null;
             }
         }
@@ -219,7 +248,7 @@ namespace GearEngine.GearEngine.Tests.Editor
         }
 
         [Test]
-        public void DeleteGear_FiresDragEndedEvent()
+        public void DeleteGear_UsesDragServiceForDragStarted()
         {
             var data = new GearConfigData
             {
@@ -233,16 +262,11 @@ namespace GearEngine.GearEngine.Tests.Editor
             node.Initialize(new Vector2Int(0, 0), data);
             gridManager.AddNode(node);
 
-            int dragStartedCount = 0;
-            int dragEndedCount = 0;
-            boardVm.OnBoardDragStarted += _ => dragStartedCount++;
-            boardVm.OnBoardDragEnded += () => dragEndedCount++;
-
             boardVm.OnGearPickedUp(node, new Vector2Int(0, 0));
-            Assert.AreEqual(1, dragStartedCount, "Drag started should fire on pickup.");
+            Assert.IsTrue(fakeDragService.IsDragging, "DragService should be dragging after pickup.");
 
             boardVm.DeleteGear(node);
-            // Note: DeleteGear does not fire OnBoardDragEnded — that's the caller's responsibility.
+            // Note: DeleteGear does not call dragService.EndDrag — that's the caller's responsibility.
             // The view layer (GearEngineView) calls trashZone.OnDragEnded after confirm/cancel.
         }
 
@@ -261,7 +285,8 @@ namespace GearEngine.GearEngine.Tests.Editor
                 nodeFactory,
                 boardConfig,
                 eventController,
-                featureToggle);
+                featureToggle,
+                fakeDragService);
 
             var data = new GearConfigData
             {
@@ -296,7 +321,8 @@ namespace GearEngine.GearEngine.Tests.Editor
                 nodeFactory,
                 boardConfig,
                 eventController,
-                featureToggle);
+                featureToggle,
+                fakeDragService);
 
             vmWithToggle.OnGearRemoved += n => removedNodes.Add(n);
 

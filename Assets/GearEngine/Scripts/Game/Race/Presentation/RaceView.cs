@@ -1,70 +1,53 @@
 using System;
 using GearEngine.CarSimulation;
-using GearEngine.CarSimulation.Track;
-using GearEngine.GearEngine.Config;
-using GearEngine.Race;
-using GearEngine.GearEngine.Presentation.UI;
-using Scaffold.MVVM;
+using GearEngine.CarSimulation.Tracks;
+using GearEngine.GearEngine.Presentation;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using Scaffold.MVVM;
 
 namespace GearEngine.Race.Presentation
 {
     public sealed class RaceView : View<RaceViewModel>
     {
-        [SerializeField]
-        private BoardView boardView;
-
-        [SerializeField]
-        private GearInventoryView inventoryView;
-
-        [SerializeField]
-        private Track track;
-
-        [SerializeField]
-        private Button raceButton;
+        [SerializeField] private Track track;
+        [SerializeField] private Button raceButton;
 
         protected override void OnBind()
         {
-            ValidateRaceViewHierarchy();
-            BindRaceChildViews();
+            ValidateHierarchy();
+
+            BindGearEngine();
+            BindTrack();
             SubscribeRaceUi();
         }
 
         protected override void OnUnbind()
         {
             UnsubscribeRaceUi();
-            UnbindWorldAndBoard();
             base.OnUnbind();
         }
 
-        private void BindRaceChildViews()
+        // ── Binding ─────────────────────────────────────────────
+
+        private void BindGearEngine()
         {
-            inventoryView.Bind(viewModel.Inventory);
-            boardView.Bind(viewModel.Board, interactable: true);
+            //gearEngineView.Bind(viewModel.GearEngine);
+        }
+
+        private void BindTrack()
+        {
             track.Bind(viewModel.Track);
         }
 
-        private void HandleGearDraggedToBoard(Vector3 worldPos, GearConfigData gearData)
+        private void SubscribeRaceUi()
         {
-            try
-            {
-                TryPlaceInventoryFromDrag(worldPos, gearData);
-            }
-            catch (Exception ex)
-            {
-                Debug.LogError($"[RaceView] HandleGearDraggedToBoard failed: {ex.Message}\n{ex.StackTrace}");
-            }
+            Bind<SimulationLifecycleState, SimulationLifecycleState>(() => viewModel.Track.State, OnTrackStateChanged);
+            raceButton.onClick.AddListener(OnRaceButtonClicked);
         }
 
-        private void HandleGearDroppedOverUI(GearConfigData config, Vector3 _)
-        {
-            if (config != null)
-            {
-                viewModel.Inventory.AddGearToInventory(config);
-            }
-        }
+        // ── Race UI Handlers ────────────────────────────────────
 
         private void OnRaceButtonClicked()
         {
@@ -78,51 +61,16 @@ namespace GearEngine.Race.Presentation
             }
         }
 
-        private void SubscribeRaceUi()
-        {
-            Bind<SimulationLifecycleState, SimulationLifecycleState>(() => viewModel.Track.State, OnTrackStateChanged);
-            boardView.OnGearDroppedOverUI += HandleGearDroppedOverUI;
-            viewModel.Inventory.OnGearDraggedToBoard += HandleGearDraggedToBoard;
-            raceButton.onClick.AddListener(OnRaceButtonClicked);
-        }
-
         private void OnTrackStateChanged(SimulationLifecycleState state)
         {
             TextMeshProUGUI label = raceButton.GetComponentInChildren<TextMeshProUGUI>(true);
-            if (label == null)
+            if (label != null)
             {
-                return;
-            }
-
-            label.text = state == SimulationLifecycleState.Running ? "Stop" : "Start";
-        }
-
-        private void TryPlaceInventoryFromDrag(Vector3 worldPos, GearConfigData gearData)
-        {
-            if (viewModel.Board.EngineService.IsRunning)
-            {
-                return;
-            }
-
-            bool placed = viewModel.Board.HandleInventoryDrop(worldPos, gearData);
-            if (placed)
-            {
-                viewModel.Inventory.ConsumeSpecificGear(gearData);
+                label.text = state == SimulationLifecycleState.Running ? "Stop" : "Start";
             }
         }
 
-        private void UnbindWorldAndBoard()
-        {
-            if (track != null)
-            {
-                track.Unbind();
-            }
-
-            if (boardView != null)
-            {
-                boardView.Unbind();
-            }
-        }
+        // ── Cleanup ─────────────────────────────────────────────
 
         private void UnsubscribeRaceUi()
         {
@@ -130,27 +78,15 @@ namespace GearEngine.Race.Presentation
             {
                 raceButton.onClick.RemoveListener(OnRaceButtonClicked);
             }
-
-            if (viewModel != null)
-            {
-                viewModel.Inventory.OnGearDraggedToBoard -= HandleGearDraggedToBoard;
-            }
-
-            if (boardView != null)
-            {
-                boardView.OnGearDroppedOverUI -= HandleGearDroppedOverUI;
-            }
         }
 
-        private void ValidateRaceViewHierarchy()
+        private void ValidateHierarchy()
         {
-            ThrowIfMissing(boardView, "boardView");
-            ThrowIfMissing(inventoryView, "inventoryView");
             ThrowIfMissing(track, "track");
             ThrowIfMissing(raceButton, "raceButton");
         }
 
-        private void ThrowIfMissing(object field, string name)
+        private static void ThrowIfMissing(object field, string name)
         {
             if (field == null)
             {

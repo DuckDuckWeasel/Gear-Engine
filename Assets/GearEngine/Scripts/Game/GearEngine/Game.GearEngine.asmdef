@@ -2,6 +2,7 @@
     "name": "Game.GearEngine",
     "rootNamespace": "GearEngine.GearEngine",
     "references": [
+        "Game.SceneFoundation",
         "VContainer",
         "Scaffold.Addressables",
         "Scaffold.Addressables.Container",
@@ -15,7 +16,8 @@
         "Scaffold.Records",
         "Scaffold.Scope",
         "Unity.TextMeshPro",
-        "Unity.InputSystem"
+        "Unity.InputSystem",
+        "Game.CarSimulation"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

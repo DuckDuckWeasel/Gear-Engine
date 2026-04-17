@@ -7,20 +7,9 @@ namespace GearEngine.CarSimulation
 {
     public sealed class TrackSimulationFactory
     {
-        public TrackSimulation Create(CarDefinition carDefinition, TrackDefinition trackDefinition)
-        {
-            try
-            {
-                return CreateCore(carDefinition, trackDefinition);
-            }
-            catch (Exception ex)
-            {
-                Debug.LogError($"[TrackSimulationFactory] Create failed: {ex.Message}\n{ex.StackTrace}");
-                throw;
-            }
-        }
+        private readonly CarEntityFactory carEntityFactory = new CarEntityFactory();
 
-        private static TrackSimulation CreateCore(CarDefinition carDefinition, TrackDefinition trackDefinition)
+        public LapRaceSession Create(CarDefinition carDefinition, TrackDefinition trackDefinition, RaceSessionConfig config = null)
         {
             if (carDefinition == null)
             {
@@ -32,8 +21,9 @@ namespace GearEngine.CarSimulation
                 throw new ArgumentNullException(nameof(trackDefinition));
             }
 
-            CarEntity car = CarEntity.Create(carDefinition);
-            return new TrackSimulation(trackDefinition, car);
+            CarEntity car = carEntityFactory.Create(carDefinition);
+            RaceSessionConfig resolved = config ?? new RaceSessionConfig();
+            return new LapRaceSession(trackDefinition, car, resolved);
         }
     }
 }

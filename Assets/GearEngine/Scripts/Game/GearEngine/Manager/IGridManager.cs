@@ -5,8 +5,6 @@ namespace GearEngine.GearEngine.Manager
 {
     public interface IGridManager
     {
-        float GlobalSpeedModifier { get; set; }
-
         IEnumerable<IGridNode> GetAllNodes();
 
         void AddNode(IGridNode node);

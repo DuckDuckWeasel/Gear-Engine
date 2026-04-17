@@ -1,6 +1,5 @@
-using System;
-using GearEngine.GearEngine;
 using Scaffold.Navigation.Contracts;
+using System;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
@@ -9,7 +8,8 @@ namespace GearEngine.GearEngine.Presentation
 {
     public sealed class GearTestSceneBootstrap : MonoBehaviour, IInitializable
     {
-        [SerializeField] private GearEngineStartData startData;
+        [SerializeField] 
+        private GearEngineStartData startData;
 
         private INavigation navigation;
 

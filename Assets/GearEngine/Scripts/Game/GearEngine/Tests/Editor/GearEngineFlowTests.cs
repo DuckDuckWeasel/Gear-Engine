@@ -93,9 +93,9 @@ namespace GearEngine.GearEngine.Tests.Editor
         }
 
         [Test]
-        public void Test_GearMergeService_Merges_Identical_Gears()
+        public void Test_GridMergeService_Merges_Identical_Gears()
         {
-            var mergeService = new GearMergeService(gridManager, eventBus);
+            var mergeService = new GridMergeService(gridManager, eventBus, null); // Mock factory if needed, though TryMerge doesn't use it.
             var nextLvl = ScriptableObject.CreateInstance<GearConfig>();
             
             var baseDataLvl1 = new GearConfigData

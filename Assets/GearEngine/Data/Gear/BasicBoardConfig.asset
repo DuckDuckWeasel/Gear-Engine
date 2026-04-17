@@ -13,7 +13,10 @@ MonoBehaviour:
   m_Name: BasicBoardConfig
   m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Config.BoardConfigSO
   GridWidth: 7
-  GridHeight: 5
+  GridHeight: 4
   Spacing: 0.75
   MaxDragGrabDistance: 0.75
   StaggeredRotationOffset: 22.5
+  TrashZoneYOffset: 160
+  GlobalGearScale: 115
+  MaxAllowedBoardGears: 5

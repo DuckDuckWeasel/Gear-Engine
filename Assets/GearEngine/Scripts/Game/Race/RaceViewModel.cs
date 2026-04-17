@@ -2,6 +2,7 @@ using System;
 using GearEngine.CarSimulation;
 using GearEngine.CarSimulation.Definitions;
 using GearEngine.CarSimulation.Presentation;
+using GearEngine.CarSimulation.Simulation;
 using GearEngine.GearEngine;
 using GearEngine.GearEngine.Bootstrap;
 using GearEngine.GearEngine.Config;
@@ -36,13 +37,16 @@ namespace GearEngine.Race
         private IGridManager gridManager;
 
         [Inject]
-        private GearNodeFactory nodeFactory;
+        private IGearNodeFactory nodeFactory;
 
         [Inject]
         private BoardConfigSO boardConfig;
 
         [Inject]
         private TrackSimulationFactory trackFactory;
+
+        [Inject]
+        private IRaceSessionRunner raceSessionRunner;
 
         protected override void Initialize()
         {
@@ -88,13 +92,13 @@ namespace GearEngine.Race
         private void SetupInventory()
         {
             BindChildViewModel(Inventory);
-            Inventory.Initialize(engineService);
+            //Inventory.Initialize(engineService);
 
             GearEngineStartData gearData = startData.GearEngineData;
-            if (gearData?.InventoryGears != null)
-            {
-                Inventory.LoadInventory(gearData.InventoryGears);
-            }
+            //if (gearData?.InventoryGears != null)
+            //{
+            //    Inventory.LoadInventory(gearData.InventoryGears);
+            //}
         }
 
         private void SetupBoard()
@@ -111,8 +115,9 @@ namespace GearEngine.Race
 
         private void SetupTrack()
         {
-            TrackSimulation simulation = trackFactory.Create(startData.CarDefinition, startData.TrackDefinition);
-            Track = new TrackViewModel(simulation);
+            LapRaceSession session = trackFactory.Create(startData.CarDefinition, startData.TrackDefinition, startData.SessionConfig);
+            raceSessionRunner.SetSession(session);
+            Track = new TrackViewModel(session);
             BindChildViewModel(Track);
         }
     }

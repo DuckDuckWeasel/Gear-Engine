@@ -10,7 +10,10 @@
         "Scaffold.Entities",
         "Scaffold.MVVM.ViewModel",
         "Scaffold.Navigation",
-        "VContainer"
+        "Unity.Mathematics",
+        "Unity.Splines",
+        "VContainer",
+        "Scaffold.MVVM.Model"
     ],
     "includePlatforms": [
         "Editor"

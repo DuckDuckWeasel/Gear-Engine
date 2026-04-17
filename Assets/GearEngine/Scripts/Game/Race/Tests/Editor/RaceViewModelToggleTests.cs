@@ -2,6 +2,7 @@ using System;
 using System.Reflection;
 using GearEngine.CarSimulation;
 using GearEngine.CarSimulation.Definitions;
+using GearEngine.CarSimulation.Simulation;
 using GearEngine.GearEngine;
 using GearEngine.GearEngine.Bootstrap;
 using GearEngine.GearEngine.Config;
@@ -10,6 +11,7 @@ using GearEngine.GearEngine.Nodes;
 using NUnit.Framework;
 using Scaffold.Navigation.Contracts;
 using UnityEngine;
+using UnityEngine.Splines;
 using VContainer;
 using Object = UnityEngine.Object;
 
@@ -45,6 +47,43 @@ namespace GearEngine.Race.Tests.Editor
             public void Stop() => IsRunning = false;
         }
 
+        private sealed class RecordingRaceSessionRunner : IRaceSessionRunner
+        {
+            public LapRaceSession LastSession { get; private set; }
+
+            public LapRaceSession ActiveSession => throw new NotImplementedException();
+
+            public void SetSession(LapRaceSession session)
+            {
+                LastSession = session;
+            }
+
+            public void Tick()
+            {
+            }
+        }
+
+        [Test]
+        public void Initialize_BindsLapRaceSessionToRunner()
+        {
+            var carDef = ScriptableObject.CreateInstance<CarDefinition>();
+            var trackDef = ScriptableObject.CreateInstance<TrackDefinition>();
+            RaceViewModel vm = null;
+            try
+            {
+                var runnerSink = new RecordingRaceSessionRunner();
+                vm = CreateInitializedRaceViewModel(carDef, trackDef, out _, runnerSink);
+                Assert.That(runnerSink.LastSession, Is.Not.Null);
+                Assert.That(runnerSink.LastSession, Is.SameAs(vm.Track.Session));
+            }
+            finally
+            {
+                TearDownRaceViewModel(vm);
+                Object.DestroyImmediate(carDef);
+                Object.DestroyImmediate(trackDef);
+            }
+        }
+
         [Test]
         public void ToggleRace_WhenStopped_StartsEngineAndTrack()
         {
@@ -54,7 +93,7 @@ namespace GearEngine.Race.Tests.Editor
             try
             {
                 FakeEngine engine;
-                vm = CreateInitializedRaceViewModel(carDef, trackDef, out engine);
+                vm = CreateInitializedRaceViewModel(carDef, trackDef, out engine, new RecordingRaceSessionRunner());
                 Assert.That(engine.IsRunning, Is.False);
                 Assert.That(vm.Track.State, Is.EqualTo(SimulationLifecycleState.Created));
 
@@ -81,7 +120,7 @@ namespace GearEngine.Race.Tests.Editor
             try
             {
                 FakeEngine engine;
-                vm = CreateInitializedRaceViewModel(carDef, trackDef, out engine);
+                vm = CreateInitializedRaceViewModel(carDef, trackDef, out engine, new RecordingRaceSessionRunner());
                 vm.ToggleRace();
                 vm.ToggleRace();
 
@@ -106,7 +145,7 @@ namespace GearEngine.Race.Tests.Editor
             try
             {
                 FakeEngine engine;
-                vm = CreateInitializedRaceViewModel(carDef, trackDef, out engine);
+                vm = CreateInitializedRaceViewModel(carDef, trackDef, out engine, new RecordingRaceSessionRunner());
                 vm.ToggleRace();
                 vm.ToggleRace();
                 vm.ToggleRace();
@@ -125,8 +164,11 @@ namespace GearEngine.Race.Tests.Editor
         private static RaceViewModel CreateInitializedRaceViewModel(
             CarDefinition carDef,
             TrackDefinition trackDef,
-            out FakeEngine engine)
+            out FakeEngine engine,
+            IRaceSessionRunner raceSessionRunner)
         {
+            trackDef.Spline.Knots = new[] { new BezierKnot(Vector3.zero), new BezierKnot(Vector3.right * 10f) };
+            trackDef.Spline.Closed = false;
             var startData = new RaceStartData(trackDef, carDef);
 
             engine = new FakeEngine();
@@ -155,6 +197,7 @@ namespace GearEngine.Race.Tests.Editor
             InjectPrivateField(vm, "nodeFactory", nodeFactory);
             InjectPrivateField(vm, "boardConfig", boardConfig);
             InjectPrivateField(vm, "trackFactory", trackFactory);
+            InjectPrivateField(vm, "raceSessionRunner", raceSessionRunner);
             InjectPrivateFieldInHierarchy(vm, "navigation", new NoOpNavigation());
 
             InvokeProtectedInitialize(vm);

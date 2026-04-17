@@ -163,14 +163,16 @@ namespace GearEngine.GearEngine.Presentation.UI
                 Destroy(currentGhost);
             }
 
-            OnDragEnd?.Invoke();
+            // Process the world drop FIRST (before ending the drag),
+            // so the drag state and trash zone remain active during placement.
             TryProcessWorldDrop();
+            OnDragEnd?.Invoke();
         }
 
         private void TryProcessWorldDrop()
         {
             Camera cam = Camera.main;
-            if (cam == null || IsDropBlockedByUi())
+            if (cam == null)
             {
                 return;
             }
@@ -183,17 +185,6 @@ namespace GearEngine.GearEngine.Presentation.UI
             }
 
             TryInvokeValidTagDrop(hit);
-        }
-
-        private bool IsDropBlockedByUi()
-        {
-            if (EventSystem.current == null || !EventSystem.current.IsPointerOverGameObject())
-            {
-                return false;
-            }
-
-            Debug.Log($"<color=#aaaaaa>[DragHandler]</color> Drop landed on UI element (not a 3D collider). Ignoring 3D drop.");
-            return true;
         }
 
         private void TryInvokeValidTagDrop(RaycastHit hit)

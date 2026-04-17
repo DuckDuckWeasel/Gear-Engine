@@ -1,6 +1,4 @@
 using System;
-using GearEngine.CarSimulation;
-using GearEngine.CarSimulation.Drivers;
 using GearEngine.CarSimulation.Entity;
 using UnityEngine;
 using UnityEngine.Splines;
@@ -9,63 +7,97 @@ namespace GearEngine.CarSimulation.Presentation
 {
     public sealed class CarView : MonoBehaviour
     {
-        [SerializeField] private CarSplineDriver splineDriver;
+        [SerializeField] private SplineAnimate splineAnimate;
 
-        public void Initialize(CarEntity car, SplineContainer splineContainer, TrackViewModel trackViewModel)
+        private LapRaceSession session = null!;
+        private SplineContainer splineContainer = null!;
+
+        public void Initialize(CarEntity car, SplineContainer container, LapRaceSession lapSession)
         {
-            GuardInitializeArguments(car, splineContainer, trackViewModel);
-            CarSplineDriver driver = ResolveSplineDriver();
-            driver.Bind(car, splineContainer);
+            ValidateInitializeArguments(car, container, lapSession);
+            session = lapSession;
+            splineContainer = container;
+            splineAnimate = splineAnimate != null ? splineAnimate : GetComponent<SplineAnimate>();
+            if (splineAnimate == null)
+            {
+                splineAnimate = gameObject.AddComponent<SplineAnimate>();
+            }
+
+            ApplySplineAnimateSettings();
+            splineAnimate.Restart(false);
         }
 
-        internal void OnRunningChanged(SimulationLifecycleState state)
+        private void LateUpdate()
         {
-            if (splineDriver == null)
+            if (session == null || splineContainer == null)
             {
                 return;
             }
 
-            if (state is SimulationLifecycleState.Running)
+            try
             {
-                splineDriver.Play();
+                DriveSplineForSession();
             }
-            else
+            catch (Exception ex)
             {
-                splineDriver.Stop();
+                Debug.LogError($"[CarView] LateUpdate failed: {ex.Message}\n{ex.StackTrace}");
             }
         }
 
-        private CarSplineDriver ResolveSplineDriver()
+        private void DriveSplineForSession()
         {
-            if (splineDriver != null)
-            {
-                return splineDriver;
-            }
-
-            splineDriver = GetComponent<CarSplineDriver>();
-            if (splineDriver == null)
-            {
-                throw new InvalidOperationException("[CarView] CarSplineDriver is missing on prefab.");
-            }
-
-            return splineDriver;
+            TryRestartSplineFromSession();
+            PushSessionStateOntoSpline();
         }
 
-        private void GuardInitializeArguments(CarEntity car, SplineContainer splineContainer, TrackViewModel trackViewModel)
+        private void TryRestartSplineFromSession()
+        {
+            if (!session.ConsumePendingSplineRestart())
+            {
+                return;
+            }
+
+            ApplySplineAnimateSettings();
+            splineAnimate.Restart(false);
+        }
+
+        private void PushSessionStateOntoSpline()
+        {
+            splineAnimate.MaxSpeed = Mathf.Max(0f, session.CurrentSpeed);
+            splineAnimate.Pause();
+            if (!session.IsSplineBound)
+            {
+                return;
+            }
+
+            float len = session.BoundTrackLength;
+            splineAnimate.NormalizedTime = session.ProgressDistance / Mathf.Max(1e-4f, len);
+        }
+
+        private void ApplySplineAnimateSettings()
+        {
+            splineAnimate.Container = splineContainer;
+            splineAnimate.PlayOnAwake = false;
+            splineAnimate.AnimationMethod = SplineAnimate.Method.Speed;
+            splineAnimate.Easing = SplineAnimate.EasingMode.None;
+            splineAnimate.Loop = splineContainer.Spline.Closed ? SplineAnimate.LoopMode.Loop : SplineAnimate.LoopMode.Once;
+        }
+
+        private void ValidateInitializeArguments(CarEntity car, SplineContainer container, LapRaceSession lapSession)
         {
             if (car == null)
             {
                 throw new ArgumentNullException(nameof(car));
             }
 
-            if (splineContainer == null)
+            if (container == null)
             {
-                throw new ArgumentNullException(nameof(splineContainer));
+                throw new ArgumentNullException(nameof(container));
             }
 
-            if (trackViewModel == null)
+            if (lapSession == null)
             {
-                throw new ArgumentNullException(nameof(trackViewModel));
+                throw new ArgumentNullException(nameof(lapSession));
             }
         }
     }

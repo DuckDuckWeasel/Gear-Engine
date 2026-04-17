@@ -1,55 +1,33 @@
 using System;
-using GearEngine.GearEngine;
-using GearEngine.GearEngine.Bootstrap;
-using GearEngine.GearEngine.Config;
-using Scaffold.Events.Contracts;
 using Scaffold.MVVM;
 using VContainer;
 
 namespace GearEngine.GearEngine.Presentation
 {
-    public sealed class GearEngineViewModel : ViewModel
+    public partial class GearEngineViewModel : ViewModel
     {
         public GearEngineViewModel(GearEngineStartData startData)
         {
             this.startData = startData ?? throw new ArgumentNullException(nameof(startData));
         }
-
-        public GearEngineFeatureToggleSO FeatureToggle => featureToggle;
-        public SimulationControlViewModel SimControl { get; } = new SimulationControlViewModel();
-        public GearInventoryViewModel Inventory { get; } = new GearInventoryViewModel();
-        public BoardViewModel Board { get; } = new BoardViewModel();
+        
+        public GearEngineCoreViewModel Core { get; private set; }
+        public GearSimulationControlViewModel SimControl { get; private set; } = new GearSimulationControlViewModel();
 
         private readonly GearEngineStartData startData;
-        [Inject] private IGearEngineService engineService;
-        [Inject] private IGridManager gridManager;
-        [Inject] private GearNodeFactory nodeFactory;
-        [Inject] private BoardConfigSO boardConfig;
-        [Inject] private IEventBus eventBus;
-        [Inject] private GearEngineFeatureToggleSO featureToggle;
+
+        [Inject] private IObjectResolver objectResolver;
 
         protected override void Initialize()
         {
             base.Initialize();
 
+            Core = new GearEngineCoreViewModel(startData, null);
+            objectResolver?.Inject(Core);
+            BindChildViewModel(Core);
+
+            objectResolver?.Inject(SimControl);
             BindChildViewModel(SimControl);
-            BindChildViewModel(Inventory);
-            BindChildViewModel(Board);
-
-            SimControl.Initialize(engineService);
-            Inventory.Initialize(engineService);
-
-            if (startData.InventoryGears != null)
-            {
-                Inventory.LoadInventory(startData.InventoryGears);
-            }
-
-            Board.Initialize(engineService, gridManager, nodeFactory, boardConfig, eventBus, featureToggle);
-
-            if (startData.BoardLayout != null)
-            {
-                Board.LoadLayout(startData.BoardLayout);
-            }
         }
     }
 }

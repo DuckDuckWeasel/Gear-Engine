@@ -1,0 +1,30 @@
+{
+    "name": "Game.SceneFoundation.Tests",
+    "rootNamespace": "GearEngine.SceneFoundation.Tests.Editor",
+    "references": [
+        "UnityEngine.TestRunner",
+        "UnityEditor.TestRunner",
+        "Game.SceneFoundation",
+        "VContainer",
+        "Scaffold.Navigation",
+        "Scaffold.Addressables.Container",
+        "Scaffold.Events.Container",
+        "Scaffold.Navigation.Container",
+        "Scaffold.Scope"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "nunit.framework.dll"
+    ],
+    "autoReferenced": false,
+    "defineConstraints": [
+        "UNITY_INCLUDE_TESTS"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

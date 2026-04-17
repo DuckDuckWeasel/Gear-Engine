@@ -174,6 +174,7 @@ MonoBehaviour:
   navigationViewHolder: {fileID: 500010001}
   boardConfig: {fileID: 11400000, guid: c8936b7a974414cf6aba78a5ac6be445, type: 2}
   sceneBootstrap: {fileID: 500010003}
+  featureToggle: {fileID: 11400000, guid: e8f9a0b1c2d34432bcdef01234567891, type: 2}
 --- !u!114 &500010003
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -187,8 +188,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Game.Race::GearEngine.Race.Bootstrap.RaceBootstrap
   startData:
-    trackDefinition: {fileID: 11400000, guid: c1c1c1c1b2a3948576c5d4e3f2a1b0c9, type: 2}
+    trackDefinition: {fileID: 11400000, guid: d2d2d2d2b2a3948576c5d4e3f2a1b0c8, type: 2}
     carDefinition: {fileID: 11400000, guid: b4e1eaf4e8dd58b418b4e6efc603f72e, type: 2}
+    sessionConfig:
+      variables: {fileID: 0}
+      totalLaps: 3
     gearEngineData:
       boardLayout:
         placements:
@@ -197,6 +201,7 @@ MonoBehaviour:
       inventoryGears:
       - {fileID: 11400000, guid: 3783c6d85510a4bf6b4f879d30ef249b, type: 2}
       - {fileID: 11400000, guid: b642772cacb3f48d7870118c94a3e3a0, type: 2}
+      maxInventorySlots: 5
 --- !u!1 &500010010
 GameObject:
   m_ObjectHideFlags: 0
@@ -248,15 +253,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8298623856469553584, guid: a6f20e9e09e7715449856810b9a31e98, type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.1
+      value: 0.13
       objectReference: {fileID: 0}
     - target: {fileID: 8298623856469553584, guid: a6f20e9e09e7715449856810b9a31e98, type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.1
+      value: 0.13
       objectReference: {fileID: 0}
     - target: {fileID: 8298623856469553584, guid: a6f20e9e09e7715449856810b9a31e98, type: 3}
       propertyPath: m_LocalScale.z
-      value: 0.1
+      value: 0.13
       objectReference: {fileID: 0}
     - target: {fileID: 8298623856469553584, guid: a6f20e9e09e7715449856810b9a31e98, type: 3}
       propertyPath: m_LocalPosition.x
@@ -314,7 +319,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8e5b9c3d2eaf507b9c1d2e3f4a5b6c7d, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Game.CarSimulation::GearEngine.CarSimulation.Track.Track
+  m_EditorClassIdentifier: Game.CarSimulation::GearEngine.CarSimulation.Tracks.Track
 --- !u!1001 &500010130
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -365,17 +370,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5861437231989158850, guid: 1bb691964ce722a4ba6aed0bf6fb73c1, type: 3}
   m_PrefabInstance: {fileID: 500010130}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &500010132 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 2103925626671770930, guid: 1bb691964ce722a4ba6aed0bf6fb73c1, type: 3}
-  m_PrefabInstance: {fileID: 500010130}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 28cae4dad4cae425dbf7c1a06cd4e3ea, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Presentation.UI.BoardView
 --- !u!1 &500010200
 GameObject:
   m_ObjectHideFlags: 0
@@ -479,7 +473,7 @@ MonoBehaviour:
   m_BlockingObjects: 0
   m_BlockingMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 55
 --- !u!114 &500010205
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -493,8 +487,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Game.Race::GearEngine.Race.Presentation.RaceView
   type: 0
-  boardView: {fileID: 500010132}
-  inventoryView: {fileID: 500010302}
+  gearEngineView: {fileID: 0}
   track: {fileID: 500010102}
   raceButton: {fileID: 500010214}
 --- !u!1 &500010210
@@ -533,7 +526,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: -131.97}
   m_SizeDelta: {x: 220, y: 56}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &500010212
@@ -669,6 +662,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Presentation.UI.GearInventoryView
   itemsContainer: {fileID: 500010304}
   gridBoardTag: {fileID: 11400000, guid: 5c2b250558aea402685c1701a76d0a37, type: 2}
+  slotPrefab: {fileID: 2214151973688211825, guid: 87597cc13e8d24ee089e6ea42d9aaed7, type: 3}
 --- !u!1 &500010303
 GameObject:
   m_ObjectHideFlags: 0
