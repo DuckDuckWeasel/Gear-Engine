@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Generic;
 using GearEngine.GearEngine;
 using GearEngine.GearEngine.Presentation;
+using GearEngine.GearEngine.Presentation.UI;
 using NUnit.Framework;
 using Scaffold.Events;
 using Scaffold.Events.Contracts;
@@ -26,26 +28,48 @@ namespace GearEngine.GearEngine.Tests.Editor
 
         private sealed class FakeDragService : IDragService
         {
+            private readonly List<IDragTarget> targets = new List<IDragTarget>();
+
             public bool IsDragging { get; private set; }
             private object dragData;
 
-            public event Action<object> OnDragStarted;
-            public event Action OnDragEnded;
-
             public T GetDragData<T>() where T : class => dragData as T;
+
+            public void Register(IDragTarget target)
+            {
+                if (target != null && !targets.Contains(target))
+                {
+                    targets.Add(target);
+                }
+            }
+
+            public void Unregister(IDragTarget target)
+            {
+                if (target != null)
+                {
+                    targets.Remove(target);
+                }
+            }
 
             public void StartDrag(object data)
             {
                 dragData = data;
                 IsDragging = true;
-                OnDragStarted?.Invoke(data);
+                var payload = new DragPayload(dragData, Vector3.zero, null);
+                foreach (IDragTarget t in targets.ToArray())
+                {
+                    t.OnDragStarted(payload);
+                }
             }
 
             public void EndDrag()
             {
                 dragData = null;
                 IsDragging = false;
-                OnDragEnded?.Invoke();
+                foreach (IDragTarget t in targets.ToArray())
+                {
+                    t.OnDragEnded();
+                }
             }
         }
     }

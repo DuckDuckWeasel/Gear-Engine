@@ -1,6 +1,5 @@
 using GearEngine.GearEngine.Bootstrap;
 using GearEngine.GearEngine.Config;
-using GearEngine.GearEngine.Services;
 using NUnit.Framework;
 using Scaffold.Events.Container;
 using Scaffold.Events.Contracts;
@@ -32,7 +31,6 @@ namespace GearEngine.GearEngine.Tests.Editor
                 Assert.DoesNotThrow(() => container.Resolve<IGearEngineService>());
                 Assert.DoesNotThrow(() => container.Resolve<GearNodeFactory>());
                 Assert.DoesNotThrow(() => container.Resolve<IDragService>());
-                Assert.DoesNotThrow(() => container.Resolve<IGearTrashService>());
                 Assert.DoesNotThrow(() => container.Resolve<GearEngineFeatureToggleSO>());
             }
 

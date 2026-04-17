@@ -1,3 +1,4 @@
+using GearEngine.GearEngine.Config;
 using GearEngine.GearEngine.Extensions;
 using GearEngine.GearEngine.Visuals;
 using Scaffold.MVVM;
@@ -9,7 +10,7 @@ using UnityEngine.Assertions;
 
 namespace GearEngine.GearEngine.Presentation.UI
 {
-    public class BoardViewComponent : ViewComponent<BoardViewModel>
+    public class BoardViewComponent : ViewComponent<BoardViewModel>, IDragTarget
     {
         [SerializeField] private GearBoardDragHandler dragHandler;
         [SerializeField] private GameObject gridSlotPrefab;
@@ -67,11 +68,6 @@ namespace GearEngine.GearEngine.Presentation.UI
         internal void NotifyBoardGearDroppedOverUI(IGridNode node, GearConfigData config, Vector3 worldPos)
         {
             viewModel?.HandleBoardGearReturnedOverUI(node, config);
-        }
-
-        internal void NotifyTrashDrop(IGridNode node)
-        {
-            viewModel?.RequestTrashDrop(node);
         }
 
         internal GearView DetachViewForDrag(IGridNode node)
@@ -201,6 +197,44 @@ namespace GearEngine.GearEngine.Presentation.UI
         private void DestroyViewGameObject(GameObject go)
         {
             go.SafeDestroy();
+        }
+
+        public void OnDragStarted(DragPayload payload)
+        {
+        }
+
+        public void OnDragEnded()
+        {
+        }
+
+        public bool CanAccept(DragPayload payload)
+        {
+            return payload.GetData<GearConfigData>() != null;
+        }
+
+        public void OnDrop(DragPayload payload)
+        {
+            GearConfigData gear = payload.GetData<GearConfigData>();
+            if (gear == null || viewModel == null)
+            {
+                return;
+            }
+
+            Vector3 localWorld = payload.WorldPosition - transform.position;
+            Vector2Int gridPos = viewModel.BoardConfig.GetGridPosition(localWorld);
+            bool placed = viewModel.HandleInventoryDrop(gridPos, gear);
+            if (placed)
+            {
+                payload.Source?.OnDropAccepted(this);
+            }
+        }
+
+        public void OnHoverEnter(DragPayload payload)
+        {
+        }
+
+        public void OnHoverExit()
+        {
         }
     }
 }

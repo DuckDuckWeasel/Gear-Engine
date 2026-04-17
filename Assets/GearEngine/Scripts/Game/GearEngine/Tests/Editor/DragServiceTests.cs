@@ -1,12 +1,46 @@
 using System;
 using GearEngine.GearEngine;
+using GearEngine.GearEngine.Presentation.UI;
 using NUnit.Framework;
+using UnityEngine;
 
 namespace GearEngine.GearEngine.Tests.Editor
 {
     [TestFixture]
     public class DragServiceTests
     {
+        private sealed class RecordingTarget : IDragTarget
+        {
+            public object LastStartedData;
+            public int StartedCount;
+            public int EndedCount;
+
+            public void OnDragStarted(DragPayload payload)
+            {
+                StartedCount++;
+                LastStartedData = payload.Data;
+            }
+
+            public void OnDragEnded()
+            {
+                EndedCount++;
+            }
+
+            public bool CanAccept(DragPayload payload) => false;
+
+            public void OnDrop(DragPayload payload)
+            {
+            }
+
+            public void OnHoverEnter(DragPayload payload)
+            {
+            }
+
+            public void OnHoverExit()
+            {
+            }
+        }
+
         [Test]
         public void StartDrag_SetsDraggingTrue()
         {
@@ -19,16 +53,17 @@ namespace GearEngine.GearEngine.Tests.Editor
         }
 
         [Test]
-        public void StartDrag_FiresOnDragStarted()
+        public void StartDrag_NotifiesRegisteredTargets()
         {
             var service = new DragService();
             var data = new GearConfigData { Id = "test_gear" };
-            object received = null;
-            service.OnDragStarted += d => received = d;
+            var target = new RecordingTarget();
+            service.Register(target);
 
             service.StartDrag(data);
 
-            Assert.AreSame(data, received);
+            Assert.AreEqual(1, target.StartedCount);
+            Assert.AreSame(data, target.LastStartedData);
         }
 
         [Test]
@@ -43,17 +78,16 @@ namespace GearEngine.GearEngine.Tests.Editor
         }
 
         [Test]
-        public void EndDrag_FiresOnDragEnded()
+        public void EndDrag_NotifiesRegisteredTargets()
         {
             var service = new DragService();
             service.StartDrag(new GearConfigData { Id = "x" });
-
-            bool ended = false;
-            service.OnDragEnded += () => ended = true;
+            var target = new RecordingTarget();
+            service.Register(target);
 
             service.EndDrag();
 
-            Assert.IsTrue(ended);
+            Assert.AreEqual(1, target.EndedCount);
         }
 
         [Test]
@@ -104,13 +138,14 @@ namespace GearEngine.GearEngine.Tests.Editor
             var data1 = new GearConfigData { Id = "first" };
             var data2 = new GearConfigData { Id = "second" };
 
-            bool endedCalled = false;
-            service.OnDragEnded += () => endedCalled = true;
+            var target = new RecordingTarget();
+            service.Register(target);
 
             service.StartDrag(data1);
             service.StartDrag(data2);
 
-            Assert.IsTrue(endedCalled, "EndDrag should have been called for the first drag.");
+            Assert.AreEqual(2, target.StartedCount, "Second StartDrag should notify after implicit EndDrag + new Start.");
+            Assert.AreEqual(1, target.EndedCount, "First drag should end before second starts.");
             Assert.IsTrue(service.IsDragging);
             Assert.AreSame(data2, service.GetDragData<GearConfigData>());
         }

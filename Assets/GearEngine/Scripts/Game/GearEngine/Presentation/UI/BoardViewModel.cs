@@ -33,7 +33,6 @@ namespace GearEngine.GearEngine.Presentation.UI
         public event Action<IGridNode> OnGearPlaced;
         public event Action<IGridNode> OnGearRemoved;
         public event Action<GearConfigData> OnGearReturnRequested;
-        public event Action<IGridNode> OnTrashDropRequested;
 
         public void Initialize(
             IGearEngineService engineService,
@@ -193,11 +192,6 @@ namespace GearEngine.GearEngine.Presentation.UI
             {
                 dragService?.EndDrag();
             }
-        }
-
-        public void RequestTrashDrop(IGridNode node)
-        {
-            OnTrashDropRequested?.Invoke(node);
         }
 
         public bool DeleteGear(IGridNode node)

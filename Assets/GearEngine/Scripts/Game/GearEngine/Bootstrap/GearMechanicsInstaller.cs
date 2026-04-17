@@ -1,7 +1,8 @@
 using System;
-using VContainer;
-using GearEngine.GearEngine.Services;
+using GearEngine.GearEngine;
+using GearEngine.GearEngine.Config;
 using GearEngine.GearEngine.Services.Inventory;
+using VContainer;
 
 namespace GearEngine.GearEngine.Bootstrap
 {
@@ -37,15 +38,8 @@ namespace GearEngine.GearEngine.Bootstrap
             builder.Register<Services.GridSwapService>(Lifetime.Singleton).As<Services.IGridSwapService>();
             builder.Register<GearNodeFactory>(Lifetime.Singleton).As<IGearNodeFactory>();
             builder.Register<DragService>(Lifetime.Singleton).As<IDragService>();
-            
-            builder.Register<GearTransferService>(Lifetime.Singleton).As<IGearTransferService>();
-            builder.Register<GearTrashService>(Lifetime.Singleton).As<IGearTrashService>();
-            builder.Register<InventoryService>(Lifetime.Singleton).As<IInventoryService>();
 
-            // ViewModels
-            builder.Register<GearInventoryViewModel>(Lifetime.Transient);
-            builder.Register<BoardViewModel>(Lifetime.Transient);
-            builder.Register<TrashZoneViewModel>(Lifetime.Transient);
+            builder.Register<InventoryService>(Lifetime.Singleton).As<IInventoryService>();
         }
     }
 }

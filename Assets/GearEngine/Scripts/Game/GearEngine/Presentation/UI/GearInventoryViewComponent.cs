@@ -1,7 +1,7 @@
 using System.Collections.Specialized;
 using System.Linq;
 using GearEngine.GearEngine.Config;
-using GearEngine.GearEngine.Presentation.UI.Tags;
+using GearEngine.GearEngine.Nodes;
 using GearEngine.GearEngine.Visuals;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -11,10 +11,9 @@ using TMPro;
 
 namespace GearEngine.GearEngine.Presentation.UI
 {
-    public class GearInventoryViewComponent : ViewComponent<GearInventoryViewModel>
+    public class GearInventoryViewComponent : ViewComponent<GearInventoryViewModel>, IDragTarget
     {
         [SerializeField] private RectTransform itemsContainer;
-        [SerializeField] private TagSO gridBoardTag;
         [SerializeField] private GameObject slotPrefab;
         [SerializeField] private TextMeshProUGUI inventoryLimitLabel;
         
@@ -100,8 +99,6 @@ namespace GearEngine.GearEngine.Presentation.UI
                 var slotView = slotObj.GetComponent<GearInventorySlotView>();
                 if (slotView == null) slotView = slotObj.AddComponent<GearInventorySlotView>();
 
-                if (gridBoardTag != null) dragger.AddAcceptedTag(gridBoardTag);
-
                 // Now attempt to resolve specific Visual definitions (requires Concrete object)
                 if (item is GearConfigData gear)
                 {
@@ -130,15 +127,39 @@ namespace GearEngine.GearEngine.Presentation.UI
 
                     slotView.Bind(gear, viewModel);
 
-                    // Wire drag lifecycle to centralized IDragService
-                    if (viewModel.DragService != null)
-                    {
-                        GearConfigData capturedGear = gear;
-                        dragger.OnDragBegin += () => viewModel.DragService.StartDrag(capturedGear);
-                        dragger.OnDragEnd += () => viewModel.DragService.EndDrag();
-                    }
+                    GearConfigData capturedGear = gear;
+                    dragger.OnDragBegin += () => viewModel.NotifySlotDragStarted(capturedGear);
+                    dragger.OnDragEnd += () => viewModel.NotifySlotDragEnded();
+                    dragger.BuildPayload = worldPos => new DragPayload(capturedGear, worldPos, dragger);
+                    dragger.OnDragAccepted = _ => viewModel.NotifySlotDragAccepted(capturedGear);
                 }
             }
+        }
+
+        public void OnDragStarted(DragPayload payload)
+        {
+        }
+
+        public void OnDragEnded()
+        {
+        }
+
+        public bool CanAccept(DragPayload payload)
+        {
+            return payload.GetData<IGridNode>()?.ConfigData?.IsReturnable == true;
+        }
+
+        public void OnDrop(DragPayload payload)
+        {
+            payload.Source?.OnDropAccepted(this);
+        }
+
+        public void OnHoverEnter(DragPayload payload)
+        {
+        }
+
+        public void OnHoverExit()
+        {
         }
 
         private GameObject CreateSlotObject(IItem item)

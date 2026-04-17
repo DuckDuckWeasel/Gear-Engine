@@ -1,13 +1,15 @@
+using GearEngine.GearEngine.Config;
+using GearEngine.GearEngine.Nodes;
+using Scaffold.MVVM;
+using TMPro;
 using UnityEngine;
+using UnityEngine.Assertions;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
-using TMPro;
-using Scaffold.MVVM;
-using UnityEngine.Assertions;
 
 namespace GearEngine.GearEngine.Presentation.UI
 {
-    public sealed class TrashDropZoneViewComponent : ViewComponent<TrashZoneViewModel>, IDropHandler, IPointerEnterHandler, IPointerExitHandler
+    public sealed class TrashDropZoneViewComponent : ViewComponent<TrashZoneViewModel>, IDragTarget, IPointerEnterHandler, IPointerExitHandler
     {
         [Header("References")]
         public RectTransform ZoneRect => rootPanel;
@@ -57,9 +59,21 @@ namespace GearEngine.GearEngine.Presentation.UI
             Assert.IsNotNull(trashIcon, "[TrashDropZone] trashIcon is missing.");
             Assert.IsNotNull(rewardLabel, "[TrashDropZone] rewardLabel is missing.");
             Assert.IsNotNull(canvasGroup, "[TrashDropZone] canvasGroup is missing.");
-            
+
+            viewModel.RegisterAsDragTarget(this);
+
             Bind<bool, bool>(() => viewModel.IsActive, OnIsActiveChanged);
             Bind<string, string>(() => viewModel.RewardText, OnRewardTextChanged);
+        }
+
+        protected override void OnUnbind()
+        {
+            if (viewModel != null)
+            {
+                viewModel.UnregisterAsDragTarget(this);
+            }
+
+            base.OnUnbind();
         }
 
         private void OnIsActiveChanged(bool active)
@@ -88,7 +102,10 @@ namespace GearEngine.GearEngine.Presentation.UI
 
         public void OnPointerEnter(PointerEventData eventData)
         {
-            if (isShowing) SetHovered(true);
+            if (isShowing)
+            {
+                SetHovered(true);
+            }
         }
 
         public void OnPointerExit(PointerEventData eventData)
@@ -96,25 +113,44 @@ namespace GearEngine.GearEngine.Presentation.UI
             SetHovered(false);
         }
 
-        /// <summary>
-        /// Unity IDropHandler — called when an inventory DragHandler drops onto this zone.
-        /// Fires HandleGearDropped on the viewModel and starts the hide animation.
-        /// </summary>
-        public void OnDrop(PointerEventData eventData)
+        public void OnDragStarted(DragPayload payload)
         {
-            if (eventData.pointerDrag == null)
+            viewModel?.HandleDragStarted(payload.Data);
+        }
+
+        public void OnDragEnded()
+        {
+            viewModel?.HandleDragEnded();
+        }
+
+        public bool CanAccept(DragPayload payload)
+        {
+            GearConfigData gear = payload.GetData<GearConfigData>() ?? payload.GetData<IGridNode>()?.ConfigData;
+            return gear != null && viewModel != null && viewModel.CanTrashAcceptGear(gear);
+        }
+
+        public void OnDrop(DragPayload payload)
+        {
+            IGridNode node = payload.GetData<IGridNode>();
+            GearConfigData gear = payload.GetData<GearConfigData>();
+            if (node != null)
             {
-                return;
+                viewModel?.HandleBoardGearDropped(node);
             }
-
-            var dragHandler = eventData.pointerDrag.GetComponent<DragHandler>();
-
-            if (dragHandler != null)
+            else if (gear != null)
             {
-                dragHandler.ForceGhostCleanup();
+                viewModel?.HandleInventoryGearDropped(gear);
             }
+        }
 
-            viewModel?.HandleGearDropped();
+        public void OnHoverEnter(DragPayload payload)
+        {
+            SetHovered(true);
+        }
+
+        public void OnHoverExit()
+        {
+            SetHovered(false);
         }
 
         private void Show()

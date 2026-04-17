@@ -4,9 +4,7 @@ using Scaffold.MVVM;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Runtime.InteropServices.ComTypes;
 using UnityEngine;
-using VContainer;
 
 namespace GearEngine.GearEngine.Presentation.UI
 {
@@ -15,19 +13,15 @@ namespace GearEngine.GearEngine.Presentation.UI
         public int MaxSlots => maxInventorySlots;
         private int maxInventorySlots = int.MaxValue;
 
-        public IDragService DragService => dragService;
-        private IDragService dragService;
-
         public int CurrentCount => InventoryModel?.AvailableItems.Count ?? 0;
         public bool CanDrag => engineService != null && !engineService.IsRunning;
 
+        private IDragService dragService;
         private IGearEngineService engineService;
         private IInventoryService inventoryService;
 
         [ObservableProperty] private InventoryModel inventoryModel;
         [ObservableProperty] private string inventoryLimitText;
-
-        public event Action<Vector3, GearConfigData> OnGearDraggedToBoard;
 
         public void Initialize(int maxInventorySlots, IReadOnlyList<GearConfig> inventoryGears, IGearEngineService engineService, IInventoryService inventoryService, IDragService dragService = null)
         {
@@ -46,14 +40,45 @@ namespace GearEngine.GearEngine.Presentation.UI
             InventoryLimitText = $"Inventory: {CurrentCount}/{MaxSlots}";
         }
 
-        public void NotifyGearDropped(Vector3 worldPos, GearConfigData gearData)
+        public void NotifySlotDragStarted(GearConfigData gear)
         {
-            if (gearData == null)
+            try
             {
-                throw new ArgumentNullException(nameof(gearData));
+                dragService?.StartDrag(gear);
             }
+            catch (Exception ex)
+            {
+                Debug.LogError($"[GearInventoryViewModel] NotifySlotDragStarted failed: {ex.Message}\n{ex.StackTrace}");
+            }
+        }
 
-            OnGearDraggedToBoard?.Invoke(worldPos, gearData);
+        public void NotifySlotDragEnded()
+        {
+            try
+            {
+                dragService?.EndDrag();
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"[GearInventoryViewModel] NotifySlotDragEnded failed: {ex.Message}\n{ex.StackTrace}");
+            }
+        }
+
+        public void NotifySlotDragAccepted(GearConfigData gear)
+        {
+            try
+            {
+                if (gear == null)
+                {
+                    throw new ArgumentNullException(nameof(gear));
+                }
+
+                inventoryService?.ConsumeSpecificItem(gear);
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"[GearInventoryViewModel] NotifySlotDragAccepted failed: {ex.Message}\n{ex.StackTrace}");
+            }
         }
 
         public void SelectGearLocal(GearConfigData gear)
@@ -64,6 +89,5 @@ namespace GearEngine.GearEngine.Presentation.UI
                 Debug.Log($"<color=#aaaaff>[UI_ViewModel]</color> Player selected: {gear.Id}");
             }
         }
-
     }
 }
