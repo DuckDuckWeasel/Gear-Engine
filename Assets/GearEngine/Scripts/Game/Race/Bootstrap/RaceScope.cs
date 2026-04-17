@@ -19,6 +19,10 @@ namespace GearEngine.Race.Bootstrap
         [SerializeField]
         private RaceBootstrap sceneBootstrap;
 
+        [Header("Feature Toggles")]
+        [SerializeField]
+        private GearEngineFeatureToggleSO featureToggle;
+
         protected override void ValidateSceneAssignments()
         {
             RequireBoardConfig();
@@ -27,7 +31,7 @@ namespace GearEngine.Race.Bootstrap
 
         protected override void InstallFeatureServices(IContainerBuilder builder)
         {
-            new GearMechanicsInstaller(boardConfig).Install(builder);
+            new GearMechanicsInstaller(boardConfig, featureToggle).Install(builder);
             new CarTrackInstaller().Install(builder);
             builder.RegisterComponent(sceneBootstrap).AsImplementedInterfaces().AsSelf();
         }

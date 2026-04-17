@@ -11,7 +11,6 @@ namespace GearEngine.Race.Presentation
 {
     public sealed class RaceView : View<RaceViewModel>
     {
-        [SerializeField] private GearEngineView gearEngineView;
         [SerializeField] private Track track;
         [SerializeField] private Button raceButton;
 
@@ -83,7 +82,6 @@ namespace GearEngine.Race.Presentation
 
         private void ValidateHierarchy()
         {
-            ThrowIfMissing(gearEngineView, "gearEngineView");
             ThrowIfMissing(track, "track");
             ThrowIfMissing(raceButton, "raceButton");
         }

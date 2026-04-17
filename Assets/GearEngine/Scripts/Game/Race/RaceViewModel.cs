@@ -37,7 +37,7 @@ namespace GearEngine.Race
         private IGridManager gridManager;
 
         [Inject]
-        private GearNodeFactory nodeFactory;
+        private IGearNodeFactory nodeFactory;
 
         [Inject]
         private BoardConfigSO boardConfig;

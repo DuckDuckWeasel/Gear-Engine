@@ -174,6 +174,7 @@ MonoBehaviour:
   navigationViewHolder: {fileID: 500010001}
   boardConfig: {fileID: 11400000, guid: c8936b7a974414cf6aba78a5ac6be445, type: 2}
   sceneBootstrap: {fileID: 500010003}
+  featureToggle: {fileID: 11400000, guid: e8f9a0b1c2d34432bcdef01234567891, type: 2}
 --- !u!114 &500010003
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -189,9 +190,9 @@ MonoBehaviour:
   startData:
     trackDefinition: {fileID: 11400000, guid: d2d2d2d2b2a3948576c5d4e3f2a1b0c8, type: 2}
     carDefinition: {fileID: 11400000, guid: b4e1eaf4e8dd58b418b4e6efc603f72e, type: 2}
-    simulationConfig:
+    sessionConfig:
       variables: {fileID: 0}
-      tuning: {fileID: 0}
+      totalLaps: 3
     gearEngineData:
       boardLayout:
         placements:
@@ -369,17 +370,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5861437231989158850, guid: 1bb691964ce722a4ba6aed0bf6fb73c1, type: 3}
   m_PrefabInstance: {fileID: 500010130}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &500010132 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 2103925626671770930, guid: 1bb691964ce722a4ba6aed0bf6fb73c1, type: 3}
-  m_PrefabInstance: {fileID: 500010130}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 28cae4dad4cae425dbf7c1a06cd4e3ea, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Presentation.UI.BoardView
 --- !u!1 &500010200
 GameObject:
   m_ObjectHideFlags: 0
@@ -483,7 +473,7 @@ MonoBehaviour:
   m_BlockingObjects: 0
   m_BlockingMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 55
 --- !u!114 &500010205
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -497,8 +487,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Game.Race::GearEngine.Race.Presentation.RaceView
   type: 0
-  boardView: {fileID: 500010132}
-  inventoryView: {fileID: 500010302}
+  gearEngineView: {fileID: 0}
   track: {fileID: 500010102}
   raceButton: {fileID: 500010214}
 --- !u!1 &500010210
