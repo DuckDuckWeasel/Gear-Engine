@@ -12,11 +12,8 @@ namespace GearEngine.GearEngine.Presentation.UI
     public partial class BoardViewModel : ViewModel
     {
         public IGearEngineService EngineService => engineService;
-
         public BoardConfigSO BoardConfig => boardConfig;
-
         public int CurrentBoardGearCount => gridManager?.GetAllNodes().Count() ?? 0;
-
         public int MaxAllowedBoardGears => boardConfig != null ? boardConfig.MaxAllowedBoardGears : int.MaxValue;
 
         private IGearEngineService engineService;
@@ -28,9 +25,10 @@ namespace GearEngine.GearEngine.Presentation.UI
         private IDragService dragService;
         private IGridSwapService swapService;
         private IGridMergeService mergeService;
-        
         private Vector2Int pickupOriginalPos;
+
         [ObservableProperty] private bool interactable = true;
+        [ObservableProperty] private string boardLimitText = string.Empty;
 
         public event Action<IGridNode> OnGearPlaced;
         public event Action<IGridNode> OnGearRemoved;
@@ -185,8 +183,7 @@ namespace GearEngine.GearEngine.Presentation.UI
             try
             {
                 OnGearReturnRequested?.Invoke(config);
-                OnGearRemoved?.Invoke(node);
-                node?.Dispose();
+                RemoveGear(node);
             }
             catch (Exception ex)
             {
@@ -248,8 +245,7 @@ namespace GearEngine.GearEngine.Presentation.UI
                     extracted = node;
                 }
 
-                OnGearRemoved?.Invoke(extracted);
-                extracted.Dispose();
+                RemoveGear(extracted);
 
                 eventBus?.Raise(new GearDeletedEvent(pos, reward));
                 Debug.Log($"<color=#ff5555>[BoardViewModel]</color> Gear at {pos} DELETED. Reward: {reward}");
@@ -308,7 +304,7 @@ namespace GearEngine.GearEngine.Presentation.UI
 
                     IGridNode newNode = nodeFactory.CreateNode(targetDropPos, gearData);
                     gridManager.AddNode(newNode);
-                    OnGearPlaced?.Invoke(newNode);
+                    PlaceGear(newNode);
                     return true;
                 }
 
@@ -323,13 +319,12 @@ namespace GearEngine.GearEngine.Presentation.UI
                         return false;
                     }
 
-                    OnGearRemoved?.Invoke(occupant);
-                    occupant.Dispose();
+                    RemoveGear(occupant);
 
                     GearConfigData upgradedData = occupantData.NextLevelConfig.CreateRuntimeData();
                     IGridNode newNode = nodeFactory.CreateNode(targetDropPos, upgradedData);
                     gridManager.AddNode(newNode);
-                    OnGearPlaced?.Invoke(newNode);
+                    PlaceGear(newNode);
                     Debug.Log($"<color=#ffaa55>[BoardViewModel]</color> MERGED UI {gearData.Id} into {upgradedData.Id} at {targetDropPos}!");
                     return true;
                 }
@@ -368,9 +363,7 @@ namespace GearEngine.GearEngine.Presentation.UI
                 return;
             }
             
-            // Both views are retained in the UI layer. They will gracefully lerp to their new swapped coordinates!
-            OnGearPlaced?.Invoke(occupantNode);
-            OnGearPlaced?.Invoke(draggedNode);
+            PlaceGear(occupantNode, draggedNode);
         }
 
         private void MergeBoardGearsAt(IGridNode draggedNode, IGridNode occupantNode, Vector2Int targetDropPos, GearConfigData occupantData)
@@ -385,18 +378,37 @@ namespace GearEngine.GearEngine.Presentation.UI
             draggedNode.SetPosition(pickupOriginalPos);
             gridManager.AddNode(draggedNode);
 
-            OnGearRemoved?.Invoke(draggedNode);
-            OnGearRemoved?.Invoke(occupantNode);
-
             IGridNode newNode = mergeService.MergeNodes(draggedNode, occupantNode, targetDropPos);
+            RemoveGear(draggedNode, occupantNode);
             if (newNode != null)
             {
-                draggedNode.Dispose();
-                occupantNode.Dispose();
-
-                OnGearPlaced?.Invoke(newNode);
+                PlaceGear(newNode);
                 Debug.Log($"<color=#ffaa55>[BoardViewModel]</color> MERGED board gears into {newNode.ConfigData.Id} at {targetDropPos}!");
             }
+        }
+
+        private void PlaceGear(params IGridNode[] nodes)
+        {
+            foreach(var node in nodes)
+            {
+                OnGearPlaced?.Invoke(node);
+            }
+            UpdateLabels();
+        }
+
+        private void RemoveGear(params IGridNode[] nodes)
+        {
+            foreach(var node in nodes)
+            {
+                OnGearRemoved?.Invoke(node);
+                node?.Dispose();
+            }
+            UpdateLabels();
+        }
+
+        private void UpdateLabels()
+        {
+            BoardLimitText = $"Board: {CurrentBoardGearCount}/{MaxAllowedBoardGears}";
         }
     }
 }

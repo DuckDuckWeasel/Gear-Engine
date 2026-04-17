@@ -4,26 +4,27 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using Scaffold.MVVM;
 using UnityEngine;
 using GearEngine.GearEngine.Services.Inventory;
+using System.Collections.Specialized;
 
 namespace GearEngine.GearEngine.Presentation.UI
 {
     public partial class GearInventoryViewModel : ViewModel
     {
+        public int MaxSlots => maxInventorySlots;
+        private int maxInventorySlots = int.MaxValue;
+
+        public IDragService DragService => dragService;
+        private IDragService dragService;
+
+        public int CurrentCount => InventoryModel?.AvailableItems.Count ?? 0;
         public bool CanDrag => engineService != null && !engineService.IsRunning;
 
         private IGearEngineService engineService;
-        private int maxInventorySlots = int.MaxValue;
 
-        private IDragService dragService;
-        public IDragService DragService => dragService;
-
-        [ObservableProperty]
-        private InventoryModel inventoryModel;
+        [ObservableProperty] private InventoryModel inventoryModel;
+        [ObservableProperty] private string inventoryLimitText;
 
         public event Action<Vector3, GearConfigData> OnGearDraggedToBoard;
-
-        public int CurrentCount => InventoryModel?.AvailableItems.Count ?? 0;
-        public int MaxSlots => maxInventorySlots;
 
         public void Initialize(IGearEngineService engineService, IInventoryService inventoryService, IDragService dragService = null)
         {
@@ -31,13 +32,14 @@ namespace GearEngine.GearEngine.Presentation.UI
             this.inventoryModel = inventoryService.Model;
             this.maxInventorySlots = inventoryService.MaxSlots;
             this.dragService = dragService;
+
+            inventoryService.Model.AvailableItems.CollectionChanged += UpdateLabels;
         }
 
-        protected override void Initialize()
+        private void UpdateLabels(object sender, NotifyCollectionChangedEventArgs e)
         {
+            InventoryLimitText = $"Inventory: {CurrentCount}/{MaxSlots}";
         }
-
-        // State mutations delegated down to backend inventoryService.
 
         public void NotifyGearDropped(Vector3 worldPos, GearConfigData gearData)
         {

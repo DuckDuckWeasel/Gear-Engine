@@ -1,8 +1,9 @@
-using System;
-using System.Collections.Generic;
 using GearEngine.GearEngine.Extensions;
 using GearEngine.GearEngine.Visuals;
 using Scaffold.MVVM;
+using System;
+using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Assertions;
 
@@ -13,20 +14,14 @@ namespace GearEngine.GearEngine.Presentation.UI
         [SerializeField] private GearBoardDragHandler dragHandler;
         [SerializeField] private GameObject gridSlotPrefab;
         [SerializeField] private Transform gridRoot;
+        [SerializeField] private TextMeshProUGUI boardLimitLabel;
 
-        private GearViewFactory localFactory;
+        private GearViewFactory localFactory = new GearViewFactory();
         private readonly Dictionary<IGridNode, GearView> viewsByNode = new Dictionary<IGridNode, GearView>();
         private readonly List<GameObject> backgroundSlots = new List<GameObject>();
 
         protected override void OnBind()
         {
-            Assert.IsNotNull(viewModel, "[BoardView] ViewModel is missing.");
-            Assert.IsNotNull(dragHandler, "[BoardView] DragHandler is not assigned.");
-            Assert.IsNotNull(gridSlotPrefab, "[BoardView] GridSlotPrefab is not assigned.");
-            Assert.IsNotNull(gridRoot, "[BoardView] GridRoot is not assigned.");
-
-            localFactory = new GearViewFactory();
-
             viewModel.OnGearPlaced += HandleGearPlaced;
             viewModel.OnGearRemoved += HandleGearRemoved;
 
@@ -37,6 +32,7 @@ namespace GearEngine.GearEngine.Presentation.UI
             }
 
             Bind(() => viewModel.Interactable, () => dragHandler.enabled);
+            Bind(() => viewModel.BoardLimitText, () => boardLimitLabel.text);
         }
 
         protected override void OnUnbind()

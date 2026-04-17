@@ -7,6 +7,7 @@ using UnityEngine;
 using UnityEngine.Assertions;
 using Scaffold.MVVM;
 using GearEngine.GearEngine.Services.Inventory;
+using TMPro;
 
 namespace GearEngine.GearEngine.Presentation.UI
 {
@@ -15,22 +16,25 @@ namespace GearEngine.GearEngine.Presentation.UI
         [SerializeField] private RectTransform itemsContainer;
         [SerializeField] private TagSO gridBoardTag;
         [SerializeField] private GameObject slotPrefab;
-
+        [SerializeField] private TextMeshProUGUI inventoryLimitLabel;
+        
         private Transform boardReferenceTransform;
 
         protected override void OnBind()
         {
-            Assert.IsNotNull(viewModel, "[GearInventoryView] ViewModel is missing.");
-            Assert.IsNotNull(itemsContainer, "[GearInventoryView] itemsContainer is not assigned in the inspector.");
-            Assert.IsNotNull(slotPrefab, "[GearInventoryView] slotPrefab is not assigned.");
-
             if (viewModel.InventoryModel.AvailableItems != null)
             {
                 viewModel.InventoryModel.AvailableItems.CollectionChanged += OnInventoryCollectionChanged;
             }
 
+            Bind(() => viewModel.InventoryLimitText, () => inventoryLimitLabel.text);
             Bind<IItem, IItem>(() => viewModel.InventoryModel.SelectedItem, OnSelectionChanged);
+            CheckTargetRect();
+            DrawInitialList();
+        }
 
+        private void CheckTargetRect()
+        {
             var frustumFit = GameObject.FindObjectOfType<GearEngine.Presentation.World.FrustumFit>();
             if (frustumFit != null)
             {
@@ -45,8 +49,6 @@ namespace GearEngine.GearEngine.Presentation.UI
                     boardReferenceTransform = boardView.transform;
                 }
             }
-
-            DrawInitialList();
         }
 
         private void DrawInitialList()

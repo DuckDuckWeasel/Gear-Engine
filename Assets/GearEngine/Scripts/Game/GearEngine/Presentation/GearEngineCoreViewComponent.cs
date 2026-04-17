@@ -11,16 +11,9 @@ namespace GearEngine.GearEngine.Presentation
         [SerializeField] private GearInventoryViewComponent inventoryView;
         [SerializeField] private BoardViewComponent boardView;
         [SerializeField] private TrashDropZoneViewComponent trashDropZone;
-        
-        [SerializeField] private TextMeshProUGUI boardLimitLabel;
-        [SerializeField] private TextMeshProUGUI inventoryLimitLabel;
 
         protected override void OnBind()
         {
-            Assert.IsNotNull(viewModel, "[GearEngineCoreView] ViewModel is missing.");
-            Assert.IsNotNull(boardView, "[GearEngineCoreView] BoardViewComponent is not assigned.");
-            Assert.IsNotNull(inventoryView, "[GearEngineCoreView] GearInventoryViewComponent is not assigned.");
-            
             BindBoard();
             BindInventory();
             BindLimits();
@@ -30,12 +23,6 @@ namespace GearEngine.GearEngine.Presentation
         private void BindBoard()
         {
             boardView.Bind(viewModel.Board);
-
-            FrustumFit frustumFit = FindObjectOfType<FrustumFit>();
-            if (frustumFit != null)
-            {
-                frustumFit.Apply();
-            }
         }
 
         private void BindInventory()
@@ -45,13 +32,7 @@ namespace GearEngine.GearEngine.Presentation
 
         private void BindLimits()
         {
-            Bind<string, string>(() => viewModel.BoardLimitText, text => {
-                if (boardLimitLabel != null) boardLimitLabel.text = text;
-            });
 
-            Bind<string, string>(() => viewModel.InventoryLimitText, text => {
-                if (inventoryLimitLabel != null) inventoryLimitLabel.text = text;
-            });
         }
 
         private void InitializeTrashZone()
@@ -73,8 +54,6 @@ namespace GearEngine.GearEngine.Presentation
             trashDropZone.Bind(viewModel.TrashZone);
             RepositionTrashZone();
         }
-
-        // ── Trash Zone Positioning ──────────────────────────────
 
         private void RepositionTrashZone()
         {

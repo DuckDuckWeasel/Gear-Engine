@@ -814,7 +814,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Presentation.GearEngineView
   type: 0
   coreView: {fileID: 2030636797}
-  simControlView: {fileID: 9031590679861942428}
+  toggleButton: {fileID: 1283366005}
+  buttonText: {fileID: 1607985010}
 --- !u!224 &2030636792 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 4218357357083581484, guid: 57c7972890ab640bfacf871f59c53158, type: 3}
@@ -952,6 +953,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4892077753707846451, guid: 57c7972890ab640bfacf871f59c53158, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7003482695423435714, guid: 57c7972890ab640bfacf871f59c53158, type: 3}
       propertyPath: m_Name
       value: GearEngineCoreViewCompoenent
@@ -973,7 +978,9 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1352780038}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 4892077753707846451, guid: 57c7972890ab640bfacf871f59c53158, type: 3}
+    - {fileID: 729821155599774619, guid: 57c7972890ab640bfacf871f59c53158, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 57c7972890ab640bfacf871f59c53158, type: 3}
@@ -1311,7 +1318,6 @@ GameObject:
   - component: {fileID: 9031590679861942427}
   - component: {fileID: 2394922236134272317}
   - component: {fileID: 508844511273509483}
-  - component: {fileID: 9031590679861942428}
   m_Layer: 0
   m_Name: SimulationControlViewComponent
   m_TagString: Untagged
@@ -1342,20 +1348,6 @@ Canvas:
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
---- !u!114 &9031590679861942428
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7769010650176355552}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fb47ea7d310fe4a7280e426a23f91be7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Presentation.UI.SimulationControlView
-  toggleButton: {fileID: 1283366005}
-  buttonText: {fileID: 1607985010}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

@@ -1,4 +1,5 @@
 using System;
+using CommunityToolkit.Mvvm.ComponentModel;
 using Scaffold.MVVM;
 using VContainer;
 
@@ -10,24 +11,35 @@ namespace GearEngine.GearEngine.Presentation
         {
             this.startData = startData ?? throw new ArgumentNullException(nameof(startData));
         }
-        
-        public GearEngineCoreViewModel Core { get; private set; }
-        public GearSimulationControlViewModel SimControl { get; private set; } = new GearSimulationControlViewModel();
+
+        public GearEngineCoreViewModel Core => core;
+        private GearEngineCoreViewModel core;
 
         private readonly GearEngineStartData startData;
 
+        [Inject] private IGridManager gridManager;
         [Inject] private IObjectResolver objectResolver;
+
+        [ObservableProperty] private bool isRunning = false;
 
         protected override void Initialize()
         {
             base.Initialize();
+            core = new GearEngineCoreViewModel(startData, null);
+            objectResolver?.Inject(core);
+            BindChildViewModel(core);
+        }
 
-            Core = new GearEngineCoreViewModel(startData, null);
-            objectResolver?.Inject(Core);
-            BindChildViewModel(Core);
-
-            objectResolver?.Inject(SimControl);
-            BindChildViewModel(SimControl);
+        internal void ToggleSimulation()
+        {
+            if (gridManager.IsRunning)
+            {
+                gridManager.Stop();
+            }
+            else
+            {
+                gridManager.Play();
+            }
         }
     }
 }

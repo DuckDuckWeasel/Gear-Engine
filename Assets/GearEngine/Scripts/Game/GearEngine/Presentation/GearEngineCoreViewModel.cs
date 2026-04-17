@@ -25,9 +25,6 @@ namespace GearEngine.GearEngine.Presentation
         [Inject] public BoardViewModel Board { get; private set; }
         [Inject] public TrashZoneViewModel TrashZone { get; private set; }
 
-        [ObservableProperty] private string boardLimitText = string.Empty;
-        [ObservableProperty] private string inventoryLimitText = string.Empty;
-
         private readonly GearEngineStartData startData;
 
         [Inject] private IGearEngineService engineService;
@@ -94,13 +91,6 @@ namespace GearEngine.GearEngine.Presentation
                 Board.LoadLayout(startData.BoardLayout);
             }
 
-            Board.OnGearPlaced += _ => UpdateLimitLabels();
-            Board.OnGearRemoved += _ => UpdateLimitLabels();
-            if (inventoryService.Model?.AvailableItems != null)
-            {
-                inventoryService.Model.AvailableItems.CollectionChanged += (_, _) => UpdateLimitLabels();
-            }
-
             if (dragService != null)
             {
                 dragService.OnDragStarted += TrashZone.HandleDragStarted;
@@ -115,8 +105,6 @@ namespace GearEngine.GearEngine.Presentation
 
             Board.OnGearReturnRequested += ReturnGearToInventory;
             Inventory.OnGearDraggedToBoard += HandleGearDraggedToBoard;
-
-            UpdateLimitLabels();
         }
 
         private void HandleGearDraggedToBoard(Vector3 worldPos, GearConfigData gearData)
@@ -124,13 +112,6 @@ namespace GearEngine.GearEngine.Presentation
             Vector2Int gridPos = Board.BoardConfig.GetGridPosition(worldPos);
             TryPlaceFromInventory(gridPos, gearData);
         }
-
-        private void UpdateLimitLabels()
-        {
-            BoardLimitText = $"Board: {Board.CurrentBoardGearCount}/{Board.MaxAllowedBoardGears}";
-            InventoryLimitText = $"Inventory: {Inventory.CurrentCount}/{Inventory.MaxSlots}";
-        }
-
         public bool TryPlaceFromInventory(Vector2Int gridPos, GearConfigData gearData)
         {
             try

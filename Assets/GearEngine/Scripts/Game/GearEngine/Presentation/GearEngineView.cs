@@ -1,6 +1,8 @@
 using Scaffold.MVVM;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Assertions;
+using UnityEngine.UI;
 using VContainer;
 
 namespace GearEngine.GearEngine.Presentation
@@ -8,23 +10,40 @@ namespace GearEngine.GearEngine.Presentation
     public class GearEngineView : View<GearEngineViewModel>
     {
         [SerializeField] private GearEngineCoreViewComponent coreView;
-        [SerializeField] private GearSimulationControlViewComponent simControlView;
-
-        [Inject] private IObjectResolver objectResolver;
+        [SerializeField] private Button toggleButton;
+        [SerializeField] private TextMeshProUGUI buttonText;
 
         protected override void OnBind()
         {
-            Assert.IsNotNull(viewModel, "[GearEngineView] viewModel is null.");
-            Assert.IsNotNull(viewModel.Core, "[GearEngineView] viewModel.Core is null.");
-            Assert.IsNotNull(coreView, "[GearEngineView] coreView is null.");
-            Assert.IsNotNull(viewModel.SimControl, "[GearEngineView] viewModel.SimControl is null.");
-            Assert.IsNotNull(simControlView, "[GearEngineView] simControlView is null.");
-
-            objectResolver?.Inject(viewModel.Core);
             coreView.Bind(viewModel.Core);
+            Bind<bool, bool>(() => viewModel.IsRunning, OnSimulationStateChanged);
+            if (toggleButton != null)
+            {
+                toggleButton.onClick.AddListener(OnToggleButtonClicked);
+            }
+        }
 
-            objectResolver?.Inject(viewModel.SimControl);
-            simControlView.Bind(viewModel.SimControl);
+        protected override void OnUnbind()
+        {
+            base.OnUnbind();
+            if (toggleButton != null)
+            {
+                toggleButton.onClick.RemoveListener(OnToggleButtonClicked);
+            }
+        }
+
+        private void OnToggleButtonClicked()
+        {
+            viewModel.ToggleSimulation();
+        }
+
+        private void OnSimulationStateChanged(bool isRunning)
+        {
+            if (buttonText != null)
+            {
+                buttonText.text = isRunning ? "STOP ENGINE" : "START ENGINE";
+                buttonText.color = isRunning ? Color.red : Color.green;
+            }
         }
     }
 }
