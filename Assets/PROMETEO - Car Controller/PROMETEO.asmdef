@@ -1,11 +1,7 @@
 {
-    "name": "Game.Test.Prototype",
-    "references": [
-        "Game.CarSimulation",
-        "Unity.Mathematics",
-        "Unity.Splines",
-        "PROMETEO"
-    ],
+    "name": "PROMETEO",
+    "rootNamespace": "",
+    "references": [],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
