@@ -15,10 +15,17 @@ namespace GearEngine.GearEngine.Services.Inventory
 
         private Func<bool> canPerformActionsDelegate;
 
-        public void Initialize(int maxSlots, Func<bool> canPerformActionsDelegate = null)
+        public void Initialize(int maxSlots, IReadOnlyList<GearConfig> inventoryGears, Func<bool> canPerformActionsDelegate = null)
         {
             MaxSlots = maxSlots;
             this.canPerformActionsDelegate = canPerformActionsDelegate;
+
+            var runtimeGears = new System.Collections.Generic.List<IItem>();
+            foreach (var config in inventoryGears)
+            {
+                if (config != null) runtimeGears.Add(config.CreateRuntimeData());
+            }
+            LoadInventory(runtimeGears);
         }
 
         public void LoadInventory(IEnumerable<IItem> items)

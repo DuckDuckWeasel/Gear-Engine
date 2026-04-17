@@ -38,40 +38,16 @@ namespace GearEngine.GearEngine.Presentation
         [Inject] private IGearTrashService trashService;
         [Inject] private IGridSwapService swapService;
         [Inject] private IGridMergeService mergeService;
-        [Inject] private Services.Inventory.IInventoryService inventoryService;
+        [Inject] private IInventoryService inventoryService;
 
         protected override void Initialize()
         {
             base.Initialize();
-
-            if (Inventory == null) throw new ArgumentNullException(nameof(Inventory));
-            if (Board == null) throw new ArgumentNullException(nameof(Board));
-            if (TrashZone == null) throw new ArgumentNullException(nameof(TrashZone));
-            if (engineService == null) throw new ArgumentNullException(nameof(engineService));
-            if (gridManager == null) throw new ArgumentNullException(nameof(gridManager));
-            if (nodeFactory == null) throw new ArgumentNullException(nameof(nodeFactory));
-            if (boardConfig == null) throw new ArgumentNullException(nameof(boardConfig));
-            if (swapService == null) throw new ArgumentNullException(nameof(swapService));
-            if (mergeService == null) throw new ArgumentNullException(nameof(mergeService));
-
             BindChildViewModel(Inventory);
             BindChildViewModel(Board);
             BindChildViewModel(TrashZone);
 
-            inventoryService.Initialize(startData.MaxInventorySlots);
-
-            if (startData.InventoryGears != null)
-            {
-                var runtimeGears = new System.Collections.Generic.List<IItem>();
-                foreach (var config in startData.InventoryGears)
-                {
-                    if (config != null) runtimeGears.Add(config.CreateRuntimeData());
-                }
-                inventoryService.LoadInventory(runtimeGears);
-            }
-
-            Inventory.Initialize(engineService, inventoryService, dragService);
-
+            Inventory.Initialize(startData.MaxInventorySlots, startData.InventoryGears, engineService, inventoryService, dragService);
             Board.Initialize(engineService, gridManager, nodeFactory, boardConfig, eventBus, featureToggle, dragService, swapService, mergeService);
 
             if (transferService != null)
@@ -112,6 +88,7 @@ namespace GearEngine.GearEngine.Presentation
             Vector2Int gridPos = Board.BoardConfig.GetGridPosition(worldPos);
             TryPlaceFromInventory(gridPos, gearData);
         }
+
         public bool TryPlaceFromInventory(Vector2Int gridPos, GearConfigData gearData)
         {
             try

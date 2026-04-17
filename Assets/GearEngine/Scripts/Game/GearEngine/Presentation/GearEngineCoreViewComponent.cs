@@ -16,7 +16,6 @@ namespace GearEngine.GearEngine.Presentation
         {
             BindBoard();
             BindInventory();
-            BindLimits();
             InitializeTrashZone();
         }
 
@@ -28,11 +27,6 @@ namespace GearEngine.GearEngine.Presentation
         private void BindInventory()
         {
             inventoryView.Bind(viewModel.Inventory);
-        }
-
-        private void BindLimits()
-        {
-
         }
 
         private void InitializeTrashZone()

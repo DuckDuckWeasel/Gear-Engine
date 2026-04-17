@@ -11,7 +11,7 @@ namespace GearEngine.GearEngine.Services.Inventory
         int MaxSlots { get; }
         bool CanPerformActions { get; }
 
-        void Initialize(int maxSlots, Func<bool> canPerformActionsDelegate = null);
+        void Initialize(int maxSlots, IReadOnlyList<GearConfig> inventoryGears, Func<bool> canPerformActionsDelegate = null);
         void LoadInventory(IEnumerable<IItem> items);
         void AddItem(IItem item);
         void ConsumeSpecificItem(IItem item);

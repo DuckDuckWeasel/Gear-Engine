@@ -1,10 +1,12 @@
+using CommunityToolkit.Mvvm.ComponentModel;
+using GearEngine.GearEngine.Services.Inventory;
+using Scaffold.MVVM;
 using System;
 using System.Collections.Generic;
-using CommunityToolkit.Mvvm.ComponentModel;
-using Scaffold.MVVM;
-using UnityEngine;
-using GearEngine.GearEngine.Services.Inventory;
 using System.Collections.Specialized;
+using System.Runtime.InteropServices.ComTypes;
+using UnityEngine;
+using VContainer;
 
 namespace GearEngine.GearEngine.Presentation.UI
 {
@@ -20,20 +22,23 @@ namespace GearEngine.GearEngine.Presentation.UI
         public bool CanDrag => engineService != null && !engineService.IsRunning;
 
         private IGearEngineService engineService;
+        private IInventoryService inventoryService;
 
         [ObservableProperty] private InventoryModel inventoryModel;
         [ObservableProperty] private string inventoryLimitText;
 
         public event Action<Vector3, GearConfigData> OnGearDraggedToBoard;
 
-        public void Initialize(IGearEngineService engineService, IInventoryService inventoryService, IDragService dragService = null)
+        public void Initialize(int maxInventorySlots, IReadOnlyList<GearConfig> inventoryGears, IGearEngineService engineService, IInventoryService inventoryService, IDragService dragService = null)
         {
             this.engineService = engineService;
+            this.inventoryService = inventoryService;
             this.inventoryModel = inventoryService.Model;
             this.maxInventorySlots = inventoryService.MaxSlots;
             this.dragService = dragService;
 
             inventoryService.Model.AvailableItems.CollectionChanged += UpdateLabels;
+            inventoryService.Initialize(maxInventorySlots, inventoryGears);
         }
 
         private void UpdateLabels(object sender, NotifyCollectionChangedEventArgs e)
