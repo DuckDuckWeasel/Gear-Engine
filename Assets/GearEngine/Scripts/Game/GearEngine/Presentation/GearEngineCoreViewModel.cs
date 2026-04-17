@@ -12,7 +12,7 @@ namespace GearEngine.GearEngine.Presentation
 {
     public partial class GearEngineCoreViewModel : ViewModel
     {
-        public GearEngineCoreViewModel(GearEngineStartData startData, TrackSimulation simulation)
+        public GearEngineCoreViewModel(GearEngineStartData startData, LapRaceSession simulation)
         {
             this.startData = startData ?? throw new ArgumentNullException(nameof(startData));
         }

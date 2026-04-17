@@ -12,7 +12,7 @@ namespace GearEngine.Race.Presentation
     public sealed class RaceView : View<RaceViewModel>
     {
         [SerializeField] private GearEngineView gearEngineView;
-        [SerializeField] private TrackViewComponent track;
+        [SerializeField] private Track track;
         [SerializeField] private Button raceButton;
 
         protected override void OnBind()
@@ -34,7 +34,7 @@ namespace GearEngine.Race.Presentation
 
         private void BindGearEngine()
         {
-            gearEngineView.Bind(viewModel.GearEngine);
+            //gearEngineView.Bind(viewModel.GearEngine);
         }
 
         private void BindTrack()

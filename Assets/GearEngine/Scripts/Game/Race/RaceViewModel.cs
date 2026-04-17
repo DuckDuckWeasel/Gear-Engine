@@ -92,13 +92,13 @@ namespace GearEngine.Race
         private void SetupInventory()
         {
             BindChildViewModel(Inventory);
-            Inventory.Initialize(engineService);
+            //Inventory.Initialize(engineService);
 
             GearEngineStartData gearData = startData.GearEngineData;
-            if (gearData?.InventoryGears != null)
-            {
-                Inventory.LoadInventory(gearData.InventoryGears);
-            }
+            //if (gearData?.InventoryGears != null)
+            //{
+            //    Inventory.LoadInventory(gearData.InventoryGears);
+            //}
         }
 
         private void SetupBoard()

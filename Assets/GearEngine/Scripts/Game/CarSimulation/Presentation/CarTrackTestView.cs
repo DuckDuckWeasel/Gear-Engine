@@ -36,7 +36,7 @@ namespace GearEngine.CarSimulation.Presentation
 
         private void TrySpawnCar(LapRaceSession session)
         {
-            GameObject prefab = session.Car.CarPrefab;
+            GameObject prefab = session.Car.Definition.CarPrefab;
             if (prefab == null)
             {
                 Debug.LogError("[CarTrackTestView] CarPrefab is missing on CarDefinition.");
