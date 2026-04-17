@@ -1,5 +1,6 @@
 using System;
 using CommunityToolkit.Mvvm.ComponentModel;
+using GearEngine.GearEngine;
 using GearEngine.GearEngine.Config;
 using GearEngine.GearEngine.Merge;
 using GearEngine.GearEngine.Presentation.UI;
@@ -19,13 +20,14 @@ namespace GearEngine.GearEngine.Presentation
             this.startData = startData ?? throw new ArgumentNullException(nameof(startData));
         }
 
-        public BoardViewModel Board { get; private set; }
-        public GearInventoryViewModel Inventory { get; private set; }
-        public TrashZoneViewModel TrashZone { get; private set; }
-
-        public GearEngineFeatureToggleSO FeatureToggle => featureToggle;
+        [ObservableProperty]
+        private bool isSimulationRunning;
 
         private readonly GearEngineStartData startData;
+
+        private BoardViewModel board;
+        private GearInventoryViewModel inventory;
+        private TrashZoneViewModel trashZone;
 
         [Inject] private IGearEngineService engineService;
         [Inject] private IGridManager gridManager;
@@ -38,69 +40,60 @@ namespace GearEngine.GearEngine.Presentation
         [Inject] private IGridMergeService mergeService;
         [Inject] private IInventoryService inventoryService;
 
-        [ObservableProperty] private bool isRunning = false;
-
         protected override void Initialize()
         {
             base.Initialize();
 
-            Board = new BoardViewModel();
-            Board.Initialize(engineService, gridManager, nodeFactory, boardConfig, eventBus, featureToggle, dragService, swapService, mergeService);
+            board = new BoardViewModel();
+            board.Initialize(
+                engineService,
+                gridManager,
+                nodeFactory,
+                boardConfig,
+                eventBus,
+                featureToggle,
+                dragService,
+                swapService,
+                mergeService,
+                startData.BoardLayout);
 
-            Inventory = new GearInventoryViewModel();
-            Inventory.Initialize(startData.MaxInventorySlots, startData.InventoryGears, engineService, inventoryService, dragService);
+            inventory = new GearInventoryViewModel();
+            inventory.Initialize(
+                startData.MaxInventorySlots,
+                startData.InventoryGears,
+                engineService,
+                inventoryService,
+                board,
+                dragService);
 
-            TrashZone = new TrashZoneViewModel(dragService, engineService, Board, inventoryService, eventBus, featureToggle);
+            trashZone = new TrashZoneViewModel(dragService, engineService, board, inventory, eventBus, featureToggle);
 
-            BindChildViewModel(Board);
-            BindChildViewModel(Inventory);
-            BindChildViewModel(TrashZone);
+            Bind(() => board.IsSimulationRunning, () => IsSimulationRunning);
+            IsSimulationRunning = board.IsSimulationRunning;
 
-            Board.OnGearReturnRequested += ReturnGearToInventory;
-
-            if (startData.BoardLayout != null)
-            {
-                Board.LoadLayout(startData.BoardLayout);
-            }
+            BindChildViewModel(board);
+            BindChildViewModel(inventory);
+            BindChildViewModel(trashZone);
         }
 
-        private void ReturnGearToInventory(GearConfigData config)
+        /// <summary>
+        /// Binds child views to this screen's view models. Keeps child VMs off the public surface.
+        /// </summary>
+        internal void BindSubPresentation(
+            BoardViewComponent boardView,
+            GearInventoryViewComponent inventoryView,
+            TrashDropZoneViewComponent trashDropZone)
         {
-            try
-            {
-                if (config != null)
-                {
-                    inventoryService?.AddItem(config);
-                }
-            }
-            catch (Exception ex)
-            {
-                Debug.LogError($"[GearEngineViewModel] ReturnGearToInventory failed: {ex.Message}\n{ex.StackTrace}");
-            }
+            boardView?.Bind(board);
+            inventoryView?.SetBoardScaleReference(boardView != null ? boardView.transform : null);
+            inventoryView?.Bind(inventory);
+            trashDropZone?.Bind(trashZone);
+            trashDropZone?.ApplyInitialPlacement();
         }
 
         internal void ToggleSimulation()
         {
-            try
-            {
-                if (gridManager == null)
-                {
-                    throw new InvalidOperationException("Grid manager is not available.");
-                }
-
-                if (gridManager.IsRunning)
-                {
-                    gridManager.Stop();
-                }
-                else
-                {
-                    gridManager.Play();
-                }
-            }
-            catch (Exception ex)
-            {
-                Debug.LogError($"[GearEngineViewModel] ToggleSimulation failed: {ex.Message}\n{ex.StackTrace}");
-            }
+            board?.ToggleSimulation();
         }
     }
 }

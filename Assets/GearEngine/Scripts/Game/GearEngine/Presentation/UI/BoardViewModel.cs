@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
+using GearEngine.GearEngine;
 using GearEngine.GearEngine.Services;
 using Scaffold.Events.Contracts;
 using Scaffold.MVVM;
@@ -29,10 +30,11 @@ namespace GearEngine.GearEngine.Presentation.UI
 
         [ObservableProperty] private bool interactable = true;
         [ObservableProperty] private string boardLimitText = string.Empty;
+        [ObservableProperty] private bool isSimulationRunning;
 
         public event Action<IGridNode> OnGearPlaced;
         public event Action<IGridNode> OnGearRemoved;
-        public event Action<GearConfigData> OnGearReturnRequested;
+        public event Action<GearConfigData> BoardGearReturnedToInventory;
 
         public void Initialize(
             IGearEngineService engineService,
@@ -43,7 +45,8 @@ namespace GearEngine.GearEngine.Presentation.UI
             GearEngineFeatureToggleSO featureToggle = null,
             IDragService dragService = null,
             IGridSwapService swapService = null,
-            IGridMergeService mergeService = null)
+            IGridMergeService mergeService = null,
+            BoardLayoutData initialLayout = null)
         {
             this.engineService = engineService ?? throw new ArgumentNullException(nameof(engineService));
             this.gridManager = gridManager ?? throw new ArgumentNullException(nameof(gridManager));
@@ -54,6 +57,44 @@ namespace GearEngine.GearEngine.Presentation.UI
             this.dragService = dragService;
             this.swapService = swapService;
             this.mergeService = mergeService;
+
+            RefreshSimulationRunningFromGrid();
+
+            if (initialLayout != null)
+            {
+                LoadLayout(initialLayout);
+            }
+        }
+
+        public void ToggleSimulation()
+        {
+            try
+            {
+                if (gridManager == null)
+                {
+                    throw new InvalidOperationException("Grid manager is not available.");
+                }
+
+                if (gridManager.IsRunning)
+                {
+                    gridManager.Stop();
+                }
+                else
+                {
+                    gridManager.Play();
+                }
+
+                RefreshSimulationRunningFromGrid();
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"[BoardViewModel] ToggleSimulation failed: {ex.Message}\n{ex.StackTrace}");
+            }
+        }
+
+        private void RefreshSimulationRunningFromGrid()
+        {
+            IsSimulationRunning = gridManager != null && gridManager.IsRunning;
         }
 
         public IGridNode GetNode(Vector2Int coord) => gridManager.GetNode(coord);
@@ -177,16 +218,16 @@ namespace GearEngine.GearEngine.Presentation.UI
             Debug.Log($"<color=#ffff33>[BoardViewModel]</color> Swapped positions! {toPos} <-> {pickupOriginalPos}");
         }
 
-        public void HandleBoardGearReturnedOverUI(IGridNode node, GearConfigData config)
+        public void CompleteBoardGearReturnToInventory(IGridNode node, GearConfigData config)
         {
             try
             {
-                OnGearReturnRequested?.Invoke(config);
+                BoardGearReturnedToInventory?.Invoke(config);
                 RemoveGear(node);
             }
             catch (Exception ex)
             {
-                Debug.LogError($"[BoardViewModel] HandleBoardGearReturnedOverUI failed: {ex.Message}\n{ex.StackTrace}");
+                Debug.LogError($"[BoardViewModel] CompleteBoardGearReturnToInventory failed: {ex.Message}\n{ex.StackTrace}");
             }
             finally
             {

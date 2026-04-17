@@ -181,7 +181,7 @@ namespace GearEngine.GearEngine.Presentation.UI
 
         public void OnDropAccepted(IDragTarget by)
         {
-            boardView.NotifyBoardGearDroppedOverUI(pendingNode, pendingConfig, pendingWorldPos);
+            boardView.NotifyBoardGearReturnAccepted(pendingNode, pendingConfig, pendingWorldPos);
         }
 
         public void OnDropRejected()

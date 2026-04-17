@@ -65,9 +65,9 @@ namespace GearEngine.GearEngine.Presentation.UI
             viewModel?.OnGearDropped(node, coord);
         }
 
-        internal void NotifyBoardGearDroppedOverUI(IGridNode node, GearConfigData config, Vector3 worldPos)
+        internal void NotifyBoardGearReturnAccepted(IGridNode node, GearConfigData config, Vector3 worldPos)
         {
-            viewModel?.HandleBoardGearReturnedOverUI(node, config);
+            viewModel?.CompleteBoardGearReturnToInventory(node, config);
         }
 
         internal GearView DetachViewForDrag(IGridNode node)

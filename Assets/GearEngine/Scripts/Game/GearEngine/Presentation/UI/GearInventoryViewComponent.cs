@@ -17,7 +17,15 @@ namespace GearEngine.GearEngine.Presentation.UI
         [SerializeField] private GameObject slotPrefab;
         [SerializeField] private TextMeshProUGUI inventoryLimitLabel;
         
-        private Transform boardReferenceTransform;
+        private Transform boardScaleReference;
+
+        /// <summary>
+        /// Optional world-space scale reference (typically the board root). Prefer wiring from <see cref="GearEngineCoreViewComponent"/>.
+        /// </summary>
+        internal void SetBoardScaleReference(Transform reference)
+        {
+            boardScaleReference = reference;
+        }
 
         protected override void OnBind()
         {
@@ -34,19 +42,22 @@ namespace GearEngine.GearEngine.Presentation.UI
 
         private void CheckTargetRect()
         {
-            var frustumFit = GameObject.FindObjectOfType<GearEngine.Presentation.World.FrustumFit>();
+            if (boardScaleReference != null)
+            {
+                return;
+            }
+
+            GearEngine.Presentation.World.FrustumFit frustumFit = GameObject.FindObjectOfType<GearEngine.Presentation.World.FrustumFit>();
             if (frustumFit != null)
             {
-                boardReferenceTransform = frustumFit.transform;
+                boardScaleReference = frustumFit.transform;
+                return;
             }
-            else
+
+            BoardViewComponent boardView = GameObject.FindObjectOfType<BoardViewComponent>();
+            if (boardView != null)
             {
-                // Fallback to searching by standard GearBoardViewComponent if no frustum mapping is used
-                var boardView = GameObject.FindObjectOfType<BoardViewComponent>();
-                if (boardView != null)
-                {
-                    boardReferenceTransform = boardView.transform;
-                }
+                boardScaleReference = boardView.transform;
             }
         }
 
@@ -110,9 +121,9 @@ namespace GearEngine.GearEngine.Presentation.UI
 
                     // Match pure physical screen space: force the SpriteRenderer lossyScale to equal the Grid's lossyScale
                     float baseScale = 56f;
-                    if (boardReferenceTransform != null && visualContainer.lossyScale.x > 0f)
+                    if (boardScaleReference != null && visualContainer.lossyScale.x > 0f)
                     {
-                        baseScale = boardReferenceTransform.lossyScale.x / visualContainer.lossyScale.x;
+                        baseScale = boardScaleReference.lossyScale.x / visualContainer.lossyScale.x;
                     }
                     float totalScale = gear.RelativeScaleMultiplier * baseScale;
 

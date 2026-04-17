@@ -202,5 +202,98 @@ namespace GearEngine.GearEngine.Presentation.UI
                 rootPanel.gameObject.SetActive(false);
             }
         }
+
+        /// <summary>
+        /// Hides the trash zone when the feature is off, otherwise prepares placement relative to the board grid.
+        /// Call after <see cref="ViewComponent{T}.Bind"/> so <see cref="TrashZoneViewModel"/> is available.
+        /// </summary>
+        public void ApplyInitialPlacement()
+        {
+            if (viewModel == null)
+            {
+                Debug.LogError("[TrashDropZone] ApplyInitialPlacement called before Bind.");
+                return;
+            }
+
+            GearEngineFeatureToggleSO featureToggle = viewModel.FeatureToggleForTrashPlacement;
+            BoardConfigSO boardConfig = viewModel.BoardConfigForTrashPlacement;
+
+            if (featureToggle != null && !featureToggle.EnableTrashDeletion)
+            {
+                if (rootPanel != null)
+                {
+                    rootPanel.gameObject.SetActive(false);
+                }
+
+                return;
+            }
+
+            Assert.IsNotNull(rootPanel, "[TrashDropZone] rootPanel is not assigned. Trash deletion will not work.");
+
+            rootPanel.gameObject.SetActive(false);
+            RepositionRelativeToBoard(boardConfig);
+        }
+
+        private void RepositionRelativeToBoard(BoardConfigSO boardConfig)
+        {
+            if (rootPanel == null || boardConfig == null)
+            {
+                return;
+            }
+
+            TrashZoneAlignment alignment = TrashZoneAlignment.Right;
+            float yOffset = boardConfig.TrashZoneYOffset;
+
+            Vector3 gridAnchorPoint = ComputeGridAnchor(boardConfig, alignment);
+            Vector2 pivot = ComputePivot(alignment);
+
+            Canvas parentCanvas = GetComponentInParent<Canvas>();
+            if (parentCanvas != null)
+            {
+                RectTransform rect = GetComponent<RectTransform>();
+                if (rect != null)
+                {
+                    CanvasPositionUtility.AnchorToWorldPosition(
+                        rect, parentCanvas, gridAnchorPoint, new Vector2(0f, yOffset), pivot);
+                }
+            }
+        }
+
+        private static Vector2 ComputePivot(TrashZoneAlignment alignment)
+        {
+            switch (alignment)
+            {
+                case TrashZoneAlignment.Left:
+                    return new Vector2(0f, 0.5f);
+                case TrashZoneAlignment.Center:
+                    return new Vector2(0.5f, 0.5f);
+                case TrashZoneAlignment.Right:
+                default:
+                    return new Vector2(1f, 0.5f);
+            }
+        }
+
+        private static Vector3 ComputeGridAnchor(BoardConfigSO boardConfig, TrashZoneAlignment alignment)
+        {
+            if (boardConfig == null)
+            {
+                return Vector3.zero;
+            }
+
+            int topY = boardConfig.GridHeight - 1;
+            Vector3 topLeft = boardConfig.GetWorldPosition(new Vector2Int(0, topY));
+            Vector3 topRight = boardConfig.GetWorldPosition(new Vector2Int(boardConfig.GridWidth - 1, topY));
+
+            switch (alignment)
+            {
+                case TrashZoneAlignment.Left:
+                    return topLeft;
+                case TrashZoneAlignment.Center:
+                    return (topLeft + topRight) * 0.5f;
+                case TrashZoneAlignment.Right:
+                default:
+                    return topRight;
+            }
+        }
     }
 }

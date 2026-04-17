@@ -1,4 +1,5 @@
 using CommunityToolkit.Mvvm.ComponentModel;
+using GearEngine.GearEngine.Config;
 using GearEngine.GearEngine.Services.Inventory;
 using Scaffold.MVVM;
 using System;
@@ -23,16 +24,59 @@ namespace GearEngine.GearEngine.Presentation.UI
         [ObservableProperty] private InventoryModel inventoryModel;
         [ObservableProperty] private string inventoryLimitText;
 
-        public void Initialize(int maxInventorySlots, IReadOnlyList<GearConfig> inventoryGears, IGearEngineService engineService, IInventoryService inventoryService, IDragService dragService = null)
+        private BoardViewModel board;
+
+        public void Initialize(
+            int maxInventorySlots,
+            IReadOnlyList<GearConfig> inventoryGears,
+            IGearEngineService engineService,
+            IInventoryService inventoryService,
+            BoardViewModel boardViewModel,
+            IDragService dragService = null)
         {
             this.engineService = engineService;
             this.inventoryService = inventoryService;
             this.inventoryModel = inventoryService.Model;
             this.maxInventorySlots = inventoryService.MaxSlots;
             this.dragService = dragService;
+            this.board = boardViewModel ?? throw new ArgumentNullException(nameof(boardViewModel));
+
+            board.BoardGearReturnedToInventory += OnBoardGearReturnedToInventory;
 
             inventoryService.Model.AvailableItems.CollectionChanged += UpdateLabels;
             inventoryService.Initialize(maxInventorySlots, inventoryGears);
+        }
+
+        private void OnBoardGearReturnedToInventory(GearConfigData config)
+        {
+            try
+            {
+                if (config != null)
+                {
+                    inventoryService?.AddItem(config);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"[GearInventoryViewModel] OnBoardGearReturnedToInventory failed: {ex.Message}\n{ex.StackTrace}");
+            }
+        }
+
+        public void ConsumeGearFromTrash(GearConfigData gear)
+        {
+            try
+            {
+                if (gear == null)
+                {
+                    return;
+                }
+
+                inventoryService?.ConsumeSpecificItem(gear);
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"[GearInventoryViewModel] ConsumeGearFromTrash failed: {ex.Message}\n{ex.StackTrace}");
+            }
         }
 
         private void UpdateLabels(object sender, NotifyCollectionChangedEventArgs e)
@@ -88,6 +132,16 @@ namespace GearEngine.GearEngine.Presentation.UI
                 InventoryModel.SelectedItem = gear;
                 Debug.Log($"<color=#aaaaff>[UI_ViewModel]</color> Player selected: {gear.Id}");
             }
+        }
+
+        protected override void OnClosed()
+        {
+            if (board != null)
+            {
+                board.BoardGearReturnedToInventory -= OnBoardGearReturnedToInventory;
+            }
+
+            base.OnClosed();
         }
     }
 }

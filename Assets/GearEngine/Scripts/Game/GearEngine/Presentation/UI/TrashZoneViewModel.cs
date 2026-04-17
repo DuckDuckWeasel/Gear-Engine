@@ -1,7 +1,6 @@
 using System;
 using GearEngine.GearEngine.Config;
 using GearEngine.GearEngine.Nodes;
-using GearEngine.GearEngine.Services.Inventory;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Scaffold.Events.Contracts;
 using Scaffold.MVVM;
@@ -14,7 +13,7 @@ namespace GearEngine.GearEngine.Presentation.UI
         private readonly IDragService dragService;
         private readonly IGearEngineService engineService;
         private readonly BoardViewModel board;
-        private readonly IInventoryService inventoryService;
+        private readonly GearInventoryViewModel inventory;
         private readonly IEventBus eventBus;
         private readonly GearEngineFeatureToggleSO featureToggle;
 
@@ -28,17 +27,21 @@ namespace GearEngine.GearEngine.Presentation.UI
             IDragService dragService,
             IGearEngineService engineService,
             BoardViewModel board,
-            IInventoryService inventoryService,
+            GearInventoryViewModel inventory,
             IEventBus eventBus,
             GearEngineFeatureToggleSO featureToggle)
         {
             this.dragService = dragService ?? throw new ArgumentNullException(nameof(dragService));
             this.engineService = engineService ?? throw new ArgumentNullException(nameof(engineService));
             this.board = board ?? throw new ArgumentNullException(nameof(board));
-            this.inventoryService = inventoryService ?? throw new ArgumentNullException(nameof(inventoryService));
+            this.inventory = inventory ?? throw new ArgumentNullException(nameof(inventory));
             this.eventBus = eventBus;
             this.featureToggle = featureToggle;
         }
+
+        internal BoardConfigSO BoardConfigForTrashPlacement => board?.BoardConfig;
+
+        internal GearEngineFeatureToggleSO FeatureToggleForTrashPlacement => featureToggle;
 
         public void RegisterAsDragTarget(IDragTarget target) => dragService?.Register(target);
 
@@ -134,7 +137,7 @@ namespace GearEngine.GearEngine.Presentation.UI
                     return;
                 }
 
-                inventoryService.ConsumeSpecificItem(gear);
+                inventory.ConsumeGearFromTrash(gear);
 
                 if (gear.DeleteRewardAmount > 0)
                 {
