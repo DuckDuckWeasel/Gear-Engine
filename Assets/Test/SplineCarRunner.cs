@@ -2,7 +2,9 @@ using UnityEngine;
 using UnityEngine.Splines;
 using Unity.Mathematics;
 using System.Reflection;
+using System.Collections.Generic;
 using Sirenix.OdinInspector;
+
 
 [InfoBox("AI Spline Runner\nControls the logic for a vehicle following a Spline in a Roguelike environment.\nIt overrides input on the Prometeo Car Controller based on upcoming curve angles, distances, and scaled Roguelike physics stats.")]
 public class SplineCarRunner : MonoBehaviour
@@ -48,34 +50,32 @@ public class SplineCarRunner : MonoBehaviour
 
     [FoldoutGroup("Roguelike Base Stats", Expanded = true)]
     [InfoBox("Normalized stats (0 to 1) representing the current power level of the vehicle in the run.")]
-    [Range(0f, 1f), PropertyTooltip("Scales Car Engine Max Speed & AI top prediction boundaries (e.g., Lada vs F1).")]
-    [OnValueChanged("ApplyProgressionStats")]
-    public float statTopSpeed = 0.5f;
+    
+    [Header("Car Mechanical Capabilities")]
+    [Range(0f, 1f), PropertyTooltip("Scales Car Engine Max Speed limit.")]
+    [OnValueChanged("ApplyProgressionStats")] public float statTopSpeed = 0.5f;
 
-    [FoldoutGroup("Roguelike Base Stats")]
-    [Range(0f, 1f), PropertyTooltip("Scales Car acceleration force multiplier.")]
-    [OnValueChanged("ApplyProgressionStats")]
-    public float statAcceleration = 0.5f;
+    [Range(0f, 1f), PropertyTooltip("Scales Engine raw acceleration torque.")]
+    [OnValueChanged("ApplyProgressionStats")] public float statAcceleration = 0.5f;
 
-    [FoldoutGroup("Roguelike Base Stats")]
-    [Range(0f, 1f), PropertyTooltip("Scales physical brakes & AI curve confidence speeds.")]
-    [OnValueChanged("ApplyProgressionStats")]
-    public float statBrakingPower = 0.5f;
+    [Range(0f, 1f), PropertyTooltip("Scales Physical Brake stopping power.")]
+    [OnValueChanged("ApplyProgressionStats")] public float statBrakingSystem = 0.5f;
 
-    [FoldoutGroup("Roguelike Base Stats")]
-    [Range(0f, 1f), PropertyTooltip("Scales grip loss physics when drifting (1.0 = Drifts effortlessly, 0.0 = Sticks extremely well). INVERSELY PROPORTIONAL.")]
-    [OnValueChanged("ApplyProgressionStats")]
-    public float statDriftGrip = 0.5f;
+    [Range(0f, 1f), PropertyTooltip("Scales physical drift grip logic (1.0 = Drifts beautifully with wide slippery slides).")]
+    [OnValueChanged("ApplyProgressionStats")] public float statDriftControl = 0.5f;
 
-    [FoldoutGroup("Roguelike Base Stats")]
-    [Range(0f, 1f), PropertyTooltip("Scales the Arcade Steer Assist steering strength to overcome understeer.")]
-    [OnValueChanged("ApplyProgressionStats")]
-    public float statCorneringAssist = 0.5f;
+    [Range(0f, 1f), PropertyTooltip("Scales Nitrous Oxide explosion power when exiting drifts and hairpins!")]
+    [OnValueChanged("ApplyProgressionStats")] public float statNitrousBoost = 0.5f;
 
-    [FoldoutGroup("Roguelike Base Stats")]
-    [Range(0f, 1f), PropertyTooltip("Scales the Simulation Speed (Nitro), dictating how much faster the car acts holistically.")]
-    [OnValueChanged("ApplyProgressionStats")]
-    public float statSimulationSpeed = 0f;
+    [Header("AI Driver Skill (Ghost)")]
+    [Range(0f, 1f), PropertyTooltip("How faithfully the AI sticks to the track limits and nullifies physics understeer.")]
+    [OnValueChanged("ApplyProgressionStats")] public float statSteeringGrip = 0.5f;
+
+    [Range(0f, 1f), PropertyTooltip("AI's ability to take Out-In-Out racing lines instead of rigidly sniffing the middle of the road.")]
+    [OnValueChanged("ApplyProgressionStats")] public float statRacingLine = 0.5f;
+
+    [Range(0f, 1f), PropertyTooltip("AI's courage to brake late and read predictive road chords fast.")]
+    [OnValueChanged("ApplyProgressionStats")] public float statDriverReflexes = 0.5f;
 
     [FoldoutGroup("Advanced Heuristics (Automated)", expanded: false)]
     [InfoBox("ALL variables here are calculated mathematically based on the Roguelike Base Stats. Tweak their 'Bounds' to alter the limits (X = 0% stat, Y = 100% stat).")]
@@ -95,7 +95,7 @@ public class SplineCarRunner : MonoBehaviour
     [FoldoutGroup("Advanced Heuristics (Automated)")] [ReadOnly] public int waypointCount = 7;
     
     [FoldoutGroup("Advanced Heuristics (Automated)")] [ReadOnly] public float baseWaypointDistance;
-    [FoldoutGroup("Advanced Heuristics (Automated)"), LabelText(" Bounds"), OnValueChanged("ApplyProgressionStats")] public Vector2 boundsBaseWaypointDist = new Vector2(6f, 12f);
+    [FoldoutGroup("Advanced Heuristics (Automated)"), LabelText(" Bounds"), OnValueChanged("ApplyProgressionStats")] public Vector2 boundsBaseWaypointDist = new Vector2(4f, 8f);
 
     [FoldoutGroup("Advanced Heuristics (Automated)")] [ReadOnly] public float distanceSpeedMultiplier;
     [FoldoutGroup("Advanced Heuristics (Automated)"), LabelText(" Bounds"), OnValueChanged("ApplyProgressionStats")] public Vector2 boundsDistSpeedMult = new Vector2(0.1f, 0.2f);
@@ -168,12 +168,26 @@ public class SplineCarRunner : MonoBehaviour
     [FoldoutGroup("Runtime Status")]
     [ReadOnly, ShowInInspector] public float currentDeviation;
 
+    // External Area Modifiers
+    private List<CarAreaModifier> activeAreaModifiers = new List<CarAreaModifier>();
+
+    public void AddAreaModifier(CarAreaModifier modifier)
+    {
+        if (!activeAreaModifiers.Contains(modifier)) activeAreaModifiers.Add(modifier);
+    }
+
+    public void RemoveAreaModifier(CarAreaModifier modifier)
+    {
+        activeAreaModifiers.Remove(modifier);
+    }
+
     // Internal states
     private bool isInitialized = false;
     private float _splineLength;
     private Rigidbody targetCarRb;
     private float currentTrackTargetDistance;
     private bool mustRecalculateWaypoints = true;
+    private float activeTempSpeedMult = 1f;
 
     // Dummy Touch Inputs for bypassing Prometeo's keyboard logic
     private PrometeoTouchInput aiThrottle;
@@ -222,69 +236,55 @@ public class SplineCarRunner : MonoBehaviour
         // --- HEURISTICS TRANSLATION ---
         
         // 1. Tie top speed stat slightly to simulation speed heuristic so "Speed feels faster" holistically
-        float effectiveSimulationStat = Mathf.Clamp01(statSimulationSpeed + (statTopSpeed * 0.3f));
+        float effectiveSimulationStat = Mathf.Clamp01(statNitrousBoost + (statTopSpeed * 0.3f));
         currentSimulationMultiplier = Mathf.Lerp(1f, baseSimulationMultiplier, effectiveSimulationStat);
 
-        // 2. Driving Aggressiveness & Braking Confidence (statBrakingPower)
-        // Values calibrated for fixed 5m spatial chords parsing
-        curveAngleThreshold = Mathf.Lerp(boundsCurveAngle.x, boundsCurveAngle.y, statBrakingPower);
-        macroCurveAngleThreshold = Mathf.Lerp(boundsMacroCurveAngle.x, boundsMacroCurveAngle.y, statBrakingPower);
-        handbrakeAngleThreshold = Mathf.Lerp(boundsHandbrakeAngle.x, boundsHandbrakeAngle.y, statBrakingPower);
-        hairpinAngleThreshold = Mathf.Lerp(boundsHairpinAngle.x, boundsHairpinAngle.y, statBrakingPower);
+        // --- AI Driver Skill Translation ---
 
-        // 3. Cornering & Racing Line Mastery (statCorneringAssist)
-        preCurveWideOffset = Mathf.Lerp(boundsPreCurveOffset.x, boundsPreCurveOffset.y, statCorneringAssist);
-        postCurveWideOffset = Mathf.Lerp(boundsPostCurveOffset.x, boundsPostCurveOffset.y, statCorneringAssist);
-        steerDeadzone = Mathf.Lerp(boundsSteerDeadzone.x, boundsSteerDeadzone.y, statCorneringAssist);
+        // Reflexes & Courage (statDriverReflexes)
+        curveAngleThreshold = Mathf.Lerp(boundsCurveAngle.x, boundsCurveAngle.y, statDriverReflexes);
+        macroCurveAngleThreshold = Mathf.Lerp(boundsMacroCurveAngle.x, boundsMacroCurveAngle.y, statDriverReflexes);
+        handbrakeAngleThreshold = Mathf.Lerp(boundsHandbrakeAngle.x, boundsHandbrakeAngle.y, statDriverReflexes);
+        hairpinAngleThreshold = Mathf.Lerp(boundsHairpinAngle.x, boundsHairpinAngle.y, statDriverReflexes);
         
-        // 4. Drift & Grip Mastery (statDriftGrip)
-        driftAccelerationMultiplier = Mathf.Lerp(boundsDriftAccMult.x, boundsDriftAccMult.y, statDriftGrip);
-        hairpinAccelerationBoost = Mathf.Lerp(boundsHairpinAccBoost.x, boundsHairpinAccBoost.y, statDriftGrip);
-        driftSteerAssistMultiplier = Mathf.Lerp(boundsDriftSteerMult.x, boundsDriftSteerMult.y, statDriftGrip);
-        hairpinSteerAssistBoost = Mathf.Lerp(boundsHairpinSteerBoost.x, boundsHairpinSteerBoost.y, statDriftGrip);
-        
-        // 5. Navigation / Spatial Prediction Profile (statTopSpeed)
-        baseWaypointDistance = Mathf.Lerp(boundsBaseWaypointDist.x, boundsBaseWaypointDist.y, statTopSpeed);
-        distanceSpeedMultiplier = Mathf.Lerp(boundsDistSpeedMult.x, boundsDistSpeedMult.y, statTopSpeed);
-        waypointArrivalRangeBase = Mathf.Lerp(boundsArrivalRangeBase.x, boundsArrivalRangeBase.y, statTopSpeed);
-        waypointArrivalSpeedMultiplier = Mathf.Lerp(boundsArrivalSpeedMult.x, boundsArrivalSpeedMult.y, statTopSpeed);
+        baseWaypointDistance = Mathf.Lerp(boundsBaseWaypointDist.x, boundsBaseWaypointDist.y, statDriverReflexes);
+        distanceSpeedMultiplier = Mathf.Lerp(boundsDistSpeedMult.x, boundsDistSpeedMult.y, statDriverReflexes);
+        waypointArrivalRangeBase = Mathf.Lerp(boundsArrivalRangeBase.x, boundsArrivalRangeBase.y, statDriverReflexes);
+        waypointArrivalSpeedMultiplier = Mathf.Lerp(boundsArrivalSpeedMult.x, boundsArrivalSpeedMult.y, statDriverReflexes);
 
-        // 1. Top Speed Sync (Engine Physics + AI Simulator Limit)
-        // Set a dynamic minimum floor (based on minSpeedPercentage) so the car never breaks at 0% stats
+        // Track Knowledge (statRacingLine)
+        preCurveWideOffset = Mathf.Lerp(boundsPreCurveOffset.x, boundsPreCurveOffset.y, statRacingLine);
+        postCurveWideOffset = Mathf.Lerp(boundsPostCurveOffset.x, boundsPostCurveOffset.y, statRacingLine);
+
+        // Steering Grip (statSteeringGrip)
+        steerDeadzone = Mathf.Lerp(boundsSteerDeadzone.x, boundsSteerDeadzone.y, statSteeringGrip);
+        safeCornerSpeed = Mathf.Lerp(boundsSafeCornerSpeed.x, boundsSafeCornerSpeed.y, statSteeringGrip) * currentSimulationMultiplier;
+        arcadeSteerAssist = Mathf.Lerp(boundsArcadeSteerAssist.x, boundsArcadeSteerAssist.y, statSteeringGrip) * currentSimulationMultiplier;
+
+        // --- Car Mechanics Translation ---
+        
+        // Nitrous/Burst (statNitrousBoost)
+        driftAccelerationMultiplier = Mathf.Lerp(boundsDriftAccMult.x, boundsDriftAccMult.y, statNitrousBoost);
+        hairpinAccelerationBoost = Mathf.Lerp(boundsHairpinAccBoost.x, boundsHairpinAccBoost.y, statNitrousBoost);
+        
+        // Drift Tuning (statDriftControl)
+        driftSteerAssistMultiplier = Mathf.Lerp(boundsDriftSteerMult.x, boundsDriftSteerMult.y, statDriftControl);
+        hairpinSteerAssistBoost = Mathf.Lerp(boundsHairpinSteerBoost.x, boundsHairpinSteerBoost.y, statDriftControl);
+        calculatedDriftGrip = Mathf.RoundToInt(Mathf.Lerp(1f, 10f, statDriftControl));
+        if (Application.isPlaying) { targetCar.handbrakeDriftMultiplier = calculatedDriftGrip; }
+
+        // Engine Top Speed
         float minSpeedLimit = baseMaxSpeed * minSpeedPercentage;
         maxSimulationSpeed = Mathf.Lerp(minSpeedLimit, baseMaxSpeed, statTopSpeed) * currentSimulationMultiplier;
-        if (Application.isPlaying) 
-        {
-            targetCar.maxSpeed = Mathf.RoundToInt(maxSimulationSpeed);
-        }
+        if (Application.isPlaying) { targetCar.maxSpeed = Mathf.RoundToInt(maxSimulationSpeed); }
 
-        // 2. Acceleration Sync
-        // Shifted the starting minimum from 1f to 3f so low-stat runs are generally faster and punchier.
+        // Engine Acceleration
         calculatedAcceleration = Mathf.RoundToInt(Mathf.Lerp(3f, baseAcceleration, statAcceleration) * currentSimulationMultiplier);
-        if (Application.isPlaying) 
-        {
-            // Set base acceleration (dynamic drift damping is handled per-frame in Update)
-            targetCar.accelerationMultiplier = calculatedAcceleration;
-        }
+        if (Application.isPlaying) { targetCar.accelerationMultiplier = calculatedAcceleration; }
 
-        // 3. Braking Power Sync (Brake Physical Force)
-        calculatedBrakeForce = Mathf.RoundToInt(Mathf.Lerp(100f, baseBrakeForce, statBrakingPower) * currentSimulationMultiplier);
-        if (Application.isPlaying) 
-        {
-            targetCar.brakeForce = calculatedBrakeForce;
-        }
-
-        // 4. Cornering Assist & Safe AI Corner speeds (Confidence tied to chassis handling, not brakes!)
-        safeCornerSpeed = Mathf.Lerp(boundsSafeCornerSpeed.x, boundsSafeCornerSpeed.y, statCorneringAssist) * currentSimulationMultiplier;
-        arcadeSteerAssist = Mathf.Lerp(boundsArcadeSteerAssist.x, boundsArcadeSteerAssist.y, statCorneringAssist) * currentSimulationMultiplier;
-
-        // 5. Drift Grip Sync (Prometeo: 10f is max slippery, 1f is super sticky)
-        // INVERSELY PROPORTIONAL: High Roguelike stat = HIGHER slip capability (drifts better!)
-        calculatedDriftGrip = Mathf.RoundToInt(Mathf.Lerp(1f, 10f, statDriftGrip));
-        if (Application.isPlaying) 
-        {
-            targetCar.handbrakeDriftMultiplier = calculatedDriftGrip;
-        }
+        // Braking System
+        calculatedBrakeForce = Mathf.RoundToInt(Mathf.Lerp(100f, baseBrakeForce, statBrakingSystem) * currentSimulationMultiplier);
+        if (Application.isPlaying) { targetCar.brakeForce = calculatedBrakeForce; }
     }
 
     private void SetupPrometeoTouchOverride()
@@ -322,12 +322,27 @@ public class SplineCarRunner : MonoBehaviour
     {
         if (targetCar == null || track == null) return;
         
+        activeTempSpeedMult = 1f;
+        float tempAccMult = 1f;
+        float tempGripMult = 1f;
+
+        activeAreaModifiers.RemoveAll(m => m == null);
+        for (int i = 0; i < activeAreaModifiers.Count; i++)
+        {
+            activeTempSpeedMult *= activeAreaModifiers[i].speedMultiplier;
+            tempAccMult *= activeAreaModifiers[i].accelerationMultiplier;
+            tempGripMult *= activeAreaModifiers[i].splineGripMultiplier;
+        }
+
+        float effectiveMaxSimulationSpeed = maxSimulationSpeed * activeTempSpeedMult;
+        targetCar.maxSpeed = Mathf.RoundToInt(effectiveMaxSimulationSpeed);
+
         // --- Continuous AI Physic Overrides ---
         if (targetCar.isDrifting) {
             float boost = isHairpinPowerDrift ? hairpinAccelerationBoost : 1f;
-            targetCar.accelerationMultiplier = Mathf.RoundToInt(calculatedAcceleration * driftAccelerationMultiplier * boost);
+            targetCar.accelerationMultiplier = Mathf.RoundToInt(calculatedAcceleration * driftAccelerationMultiplier * boost * tempAccMult);
         } else {
-            targetCar.accelerationMultiplier = calculatedAcceleration;
+            targetCar.accelerationMultiplier = Mathf.RoundToInt(calculatedAcceleration * tempAccMult);
         }
 
         // Ghost follow for gizmos and components
@@ -393,11 +408,11 @@ public class SplineCarRunner : MonoBehaviour
             aiBrake.buttonPressed = true;
             
             // Rapid Deceleration: if coming in way too hot, brake hard ("zerar o que precisar zerar")
-            if (currentSpeed > safeCornerSpeed * 1.5f) {
+            if (currentSpeed > safeCornerSpeed * activeTempSpeedMult * 1.5f) {
                 aiReverse.buttonPressed = true;
             } 
             // Power Out: once speed is managed, smash throttle to exit ("gaining a lot of acceleration")
-            else if (currentSpeed < maxSimulationSpeed) {
+            else if (currentSpeed < effectiveMaxSimulationSpeed) {
                 aiThrottle.buttonPressed = true;
             }
         }
@@ -412,7 +427,7 @@ public class SplineCarRunner : MonoBehaviour
         else
         {
             // Cap the max speed logic by limiting throttle if we're going too fast
-            if (currentSpeed < maxSimulationSpeed) {
+            if (currentSpeed < effectiveMaxSimulationSpeed) {
                 aiThrottle.buttonPressed = true;
             }
         }
@@ -456,9 +471,12 @@ public class SplineCarRunner : MonoBehaviour
             if (!targetCar.isDrifting)
             {
                 // Normal Grip: Interpolates the actual Rigidbody velocity to perfectly match the car's forward direction.
-                // This makes the vehicle follow the AI's steering line "fidedigno" without physics slipping off.
-                Vector3 idealVel = targetCar.transform.forward * vel.magnitude;
-                float gripEnforcement = Mathf.Lerp(0f, 6f, statCorneringAssist) * Time.deltaTime;
+                // To make it even MORE faithful to the track (fidedigno), we subtly blend the forward direction with the desired track waypoint.
+                Vector3 toWaypoint = (upcomingWaypoints[0] - targetCar.transform.position).normalized;
+                Vector3 faithfulForward = Vector3.Lerp(targetCar.transform.forward, toWaypoint, 0.15f).normalized;
+                Vector3 idealVel = faithfulForward * vel.magnitude;
+                
+                float gripEnforcement = Mathf.Lerp(0f, 8f, statSteeringGrip) * tempGripMult * Time.deltaTime; // Rounded magnetic pull based on feedback
                 targetCarRb.linearVelocity = Vector3.Lerp(vel, idealVel, gripEnforcement);
             }
             else
@@ -469,7 +487,7 @@ public class SplineCarRunner : MonoBehaviour
                 Vector3 idealVel = toWaypoint * vel.magnitude;
                 
                 // Slightly weaker than standard grip to allow natural drifting, scaled by cornering assist!
-                float driftEnforcement = Mathf.Lerp(0f, 3f, statCorneringAssist) * Time.deltaTime;
+                float driftEnforcement = Mathf.Lerp(0f, 3f, statSteeringGrip) * tempGripMult * Time.deltaTime;
                 targetCarRb.linearVelocity = Vector3.Lerp(vel, idealVel, driftEnforcement);
             }
         }
@@ -544,14 +562,15 @@ public class SplineCarRunner : MonoBehaviour
                 float curveSeverity = Mathf.InverseLerp(curveAngleThreshold, handbrakeAngleThreshold, maxAngle);
                 
                 // Make Safe Corner Speed relative to Current Speed to preserve momentum naturally
-                float speedScaling = Mathf.Lerp(0.5f, 0.85f, statCorneringAssist);
-                float dynamicSafeSpeed = Mathf.Max(safeCornerSpeed, currentSpeed * speedScaling);
+                float speedScaling = Mathf.Lerp(0.5f, 0.85f, statSteeringGrip);
+                float dynamicSafeSpeed = Mathf.Max(safeCornerSpeed * activeTempSpeedMult, currentSpeed * speedScaling);
                 
                 // Penalize dynamic speed if the car is NOT correct on the spline (forces it to brake to recover trajectory)
                 float deviationPenalty = Mathf.Clamp01(currentDeviation / 10f); // Up to 30% penalty
                 dynamicSafeSpeed *= (1f - (deviationPenalty * 0.3f));
                 
-                float reqSpeed = Mathf.Lerp(maxSimulationSpeed, dynamicSafeSpeed, curveSeverity);
+                float effectiveMaxSpeed = maxSimulationSpeed * activeTempSpeedMult;
+                float reqSpeed = Mathf.Lerp(effectiveMaxSpeed, dynamicSafeSpeed, curveSeverity);
                 
                 if (reqSpeed < targetSpeed)
                 {
@@ -566,7 +585,8 @@ public class SplineCarRunner : MonoBehaviour
         {
             // Calculate a gentle slow-down requirement based on how severe the macro curve is.
             float macroSeverity = Mathf.InverseLerp(macroCurveAngleThreshold, macroCurveAngleThreshold * 2f, macroAngle);
-            float macroReqSpeed = Mathf.Lerp(maxSimulationSpeed, safeCornerSpeed, macroSeverity);
+            float effectiveMaxSpeed = maxSimulationSpeed * activeTempSpeedMult;
+            float macroReqSpeed = Mathf.Lerp(effectiveMaxSpeed, safeCornerSpeed * activeTempSpeedMult, macroSeverity);
 
             if (macroReqSpeed < targetSpeed)
             {
