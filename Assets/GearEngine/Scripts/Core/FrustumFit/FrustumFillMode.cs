@@ -1,4 +1,4 @@
-namespace GearEngine.GearEngine.Presentation.World
+namespace GearEngine.FrustumFit
 {
     public enum FrustumFillMode
     {

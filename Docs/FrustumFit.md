@@ -1,111 +1,107 @@
-# FrustumFit
+# FrustumFit and UI-driven world placement
 
-`FrustumFit` is a MonoBehaviour that scales a world-space GameObject so it occupies a configured fraction of the camera's visible frustum area. It is the world-space equivalent of a Canvas Scaler anchor — instead of `RectTransform` anchors that adapt UI elements, `FrustumFit` computes and applies `localScale` so any world-space mesh always fills the intended proportion of the screen, regardless of resolution, aspect ratio, field of view, or projection type.
+This feature has two parts:
 
----
+1. **`FrustumFitAnchor`** (preferred for production UI) — a UI `RectTransform` defines the on-screen box; a **world** target (`Transform` + `Renderer`) is moved and scaled to match that box at a chosen camera depth.
+2. **`FrustumFit`** (legacy / simple samples) — scales a mesh on the same GameObject to a **fraction of the full camera frustum** at `depth`. It does **not** read UI rects and does **not** change world position.
 
-## Quick Start
+All runtime types use namespace **`GearEngine.FrustumFit`** in assembly **`Game.GearEngine.FrustumFit`**:
 
-1. Place a world-space **Quad** in the scene (GameObject > 3D Object > Quad).
-2. Position it in front of the camera at a known Z distance, e.g. `Z = 10`.
-3. Add the `FrustumFit` component to the Quad.
-4. In the Inspector, configure:
-   - **Camera** — drag in the scene camera (or leave empty; defaults to `Camera.main`).
-   - **Depth** — set to `10` (the Quad's distance from the camera).
-   - **Fill X / Fill Y** — `1` fills the full frustum width/height.
-   - **Mode** — `Fit` to fill the smaller dimension uniformly (no distortion).
-   - **Axes** — `XY` for a Quad (default).
-   - **Apply On Start** — enabled (applies the scale as soon as the scene starts).
-5. Enter Play mode. The Quad fills the screen.
+- Scripts: `Assets/GearEngine/Scripts/Core/FrustumFit/`
+- Sample helpers: `Assets/GearEngine/Scripts/Core/FrustumFit/Samples/` (`Game.GearEngine.FrustumFit.Samples`)
+- EditMode tests: `Assets/GearEngine/Scripts/Game/GearEngine/Tests/Editor/FrustumFitMathTests.cs` (assembly `Game.GearEngine.Tests`, references `Game.GearEngine.FrustumFit`)
+
+Sample scene: `Assets/GearEngine/Scenes/FrustumFit Sample.unity` (Canvas panel + `FrustumFitAnchor` driving a world sprite). The Canvas also has **`FrustumFitSampleController`**: set **Mode** to **Continuous** (default), **Apply On Key**, or **Tween On Key** (press **Space** to re-fit in the on-demand modes).
 
 ---
 
-## Fill Modes
+## Quick start — `FrustumFitAnchor`
 
-| Mode        | Behavior                                                                   | Analogy       |
-|-------------|----------------------------------------------------------------------------|---------------|
-| `Stretch`   | Each axis scales independently to hit the exact fill percentages. Aspect ratio is not preserved. | CSS `stretch` |
-| `Fit`       | Uniform scale. Fits entirely inside the target box; may leave empty space on two sides (letterbox). | CSS `contain` |
-| `Fill`      | Uniform scale. Covers the entire target box; may exceed one axis (crop). | CSS `cover`   |
-| `FillWidth` | Matches the target width exactly. Height scales proportionally.            | —             |
-| `FillHeight`| Matches the target height exactly. Width scales proportionally.            | —             |
+1. Add a **Canvas** (any render mode). Put a **panel** `Image` or empty `RectTransform` where you want the world object to appear on screen.
+2. Add **`FrustumFitAnchor`** to that UI element (or assign `sourceRect` explicitly).
+3. Assign:
+   - **World camera** — the camera that renders the world target (often the same as the gameplay camera).
+   - **Target transform** — root of the world object.
+   - **Target renderer** — `MeshRenderer`, `SpriteRenderer`, etc. (used for `localBounds`).
+4. Set **depth** — distance passed to `Camera.ViewportToWorldPoint` (perspective) and to frustum sizing (must be `> 0` for perspective).
+5. Choose **fill mode** (`Fit`, `Fill`, `Stretch`, …) and **axes** (`XY` for quads/sprites facing default orientation).
+6. Enable **Apply Every Frame** if the UI layout, camera, or window size changes at runtime; otherwise call **`Apply()`** from your coordinator.
 
-**Fill X / Fill Y** define the target box as a fraction of the frustum. `fillX = 0.8, fillY = 0.8` means the target box is 80% of the frustum width and 80% of the frustum height. The fill mode then determines how the object occupies that box.
-
-Values greater than `1` are valid — they intentionally make the object bleed past the screen edge (e.g. a background plane that extends 10% past every edge: `fillX = 1.1, fillY = 1.1`).
-
----
-
-## Axes
-
-The `FrustumFitAxes` field tells the component which two local-space axes of the mesh map to screen horizontal and screen vertical.
-
-| Value | Screen horizontal | Screen vertical | When to use |
-|-------|-------------------|-----------------|-------------|
-| `XY`  | Local X           | Local Y         | **Default.** Unity Quad, custom meshes, sprites. |
-| `XZ`  | Local X           | Local Z         | Unity **Plane** primitive (10×10 flat mesh). Rotate the Plane 90° on X to face the camera, then use `XZ`. |
-| `YZ`  | Local Y           | Local Z         | Custom meshes with an unusual facing convention. |
-
-The component reads `Renderer.localBounds.size` to determine the mesh's natural size on the selected axes. This means it works correctly for any mesh shape — a unit Quad (`1×1`), a Unity Plane (`10×10`), or a custom-sized mesh.
+Expected result: the world target’s **center** aligns with the UI rect’s **center** on screen, and its **size** matches the UI rect’s screen footprint (per fill mode).
 
 ---
 
-## Depth
+## `RectTransform` as source of truth
 
-`_depth` is the world-space distance from the camera at which the frustum is sampled. Set it to match the object's actual Z distance from the camera.
+Use the **resolved** rectangle after layout:
 
-For **orthographic cameras**, depth has no mathematical effect — the frustum width and height are determined solely by `orthographicSize` and the camera's aspect ratio. You can leave `_depth` at any positive value when using an orthographic camera.
-
----
-
-## Update Timing
-
-| Field | Behavior |
-|---|---|
-| `_applyOnStart = true` | Applies once on `Start`. Sufficient for static scenes or scenes where the camera settings never change. |
-| `_applyEveryFrame = true` | Applies every `LateUpdate`. Use when camera FOV, window size, or fill settings change at runtime. Has a minor per-frame cost (one frustum calculation per component). |
-| Both false | Only applies when `Apply()` is called externally. |
-
-### Calling `Apply()` externally
-
-`Apply()` is public and idempotent. For best performance when supporting runtime screen resize, disable `_applyEveryFrame` on all components and instead call `Apply()` from a centralized resize coordinator that detects when `Screen.width` or `Screen.height` changes:
-
-```csharp
-// Example: drive all FrustumFit components from a coordinator
-void OnScreenResized()
-{
-    foreach (var fit in _registeredComponents)
-        fit.Apply();
-}
-```
-
-See the Decision Log in `Plans/FrustumFit/FrustumFit-ExecPlan.md` for the planned `ScreenResizeWatcher` + `FrustumFitCoordinator` upgrade path.
+- Prefer reading corners via `RectTransform.GetWorldCorners` (what `RectTransformScreenBoxUtility` does internally).
+- Do **not** drive sizing from raw `anchorMin` / `anchorMax` alone — layout groups, offsets, and `CanvasScaler` change the final rect.
 
 ---
 
-## Parent Hierarchy
+## Fill modes and axes
 
-`FrustumFit` correctly handles parent transforms with non-trivial scale. It divides the desired world-space scale by the parent's `lossyScale` on the relevant axes to produce the correct `localScale`. Place `FrustumFit` objects under scaled parents freely — the math accounts for it.
+| Mode | Behavior |
+|------|----------|
+| `Stretch` | Independent X/Y scale to hit the exact target box (may distort). |
+| `Fit` | Uniform scale; fits inside the box (letterbox). |
+| `Fill` | Uniform scale; covers the box (may extend past). |
+| `FillWidth` / `FillHeight` | One axis matches exactly; the other follows proportionally. |
+
+**Axes** (`FrustumFitAxes`): which two **local** mesh axes map to screen horizontal and vertical (`XY` default for Unity Quad / most sprites).
 
 ---
 
-## Multiple Objects
+## Math API (testable, Unity-free except `Mathf` / `Vector`)
 
-Each `FrustumFit` instance is fully independent. Place the component on as many objects as needed; each computes its own scale from its own `Renderer.localBounds` and its own fill settings. There is no shared state between instances.
+`FrustumFitMath`:
+
+- `ComputeBounds(...)` / `FrustumBounds.FromCamera(...)` — full frustum width × height at `depth`.
+- `ComputeTargetWorldSize(bounds, viewportWidthFrac, viewportHeightFrac)` — world size of a viewport sub-rectangle.
+- `ComputeLocalScaleForTargetSize(targetWorldSize, mode, meshSize, parentLossyScale)` — local scale for a given world target box.
+- `ComputeLocalScale(bounds, fillX, fillY, ...)` — **full-frustum** fractions (used by `FrustumFit`).
+
+Parent `lossyScale` on the relevant axes is corrected so hierarchies with scaled parents still match the intended world size.
 
 ---
 
-## Assembly
+## Legacy — `FrustumFit` (full frustum only)
 
-All types live in `Game.GearEngine.Presentation.World` inside the `Game.GearEngine` assembly:
+Use when you want “fill 80% of the **entire** view height/width at this depth” without any UI rect:
 
-```
-Assets/Scripts/Game/GearEngine/Presentation/World/
-  FrustumFillMode.cs
-  FrustumFitAxes.cs
-  FrustumBounds.cs
-  FrustumFitMath.cs
-  FrustumFit.cs
-```
+- Attach to the GameObject that owns the `Renderer`.
+- Configure `fillX`, `fillY`, `depth`, `FrustumFillMode`, `FrustumFitAxes`.
+- **Scale only** — third local axis is left unchanged (for `XY`, Z is not modified).
 
-Tests are in `Assets/Scripts/Game/GearEngine/Tests/Editor/FrustumFitMathTests.cs` (EditMode, `Game.GearEngine.Tests` assembly).
+---
+
+## Compute without applying (tweens)
+
+Use **`FrustumFitAnchor.TryComputePlacement`** to get a **`FrustumFitAnchorPlacement`** (world position, full local scale, optional world rotation) without touching the target transform.
+
+- **Instance:** `bool ok = anchor.TryComputePlacement(out FrustumFitAnchorPlacement p);` — uses the anchor’s serialized fields; baseline local scale is the target’s current `localScale`.
+- **Static:** overload with explicit `RectTransform`, `Canvas`, `Camera`, `Transform`, `Renderer`, modes, and **`baselineLocalScale`** (the third axis is copied from this vector).
+
+Then either:
+
+- tween toward `placement.WorldPosition`, `placement.LocalScale`, and optionally `placement.WorldRotation` when `placement.HasWorldRotation`, or
+- snap with **`FrustumFitAnchor.ApplyPlacement(targetTransform, placement)`**.
+
+**Rotation:** `FrustumFitAnchorRotationMode.MatchCameraRotation` sets `HasWorldRotation` and `WorldRotation` to the world camera’s rotation (typical for screen-facing sprites). `PreserveTarget` leaves rotation to the tween or prior state.
+
+## Update timing and performance
+
+- `applyEveryFrame` / `LateUpdate`: simple but costs one alignment pass per component per frame.
+- For many instances, prefer **`Apply()`** from a single resize/layout coordinator when `Screen` size or canvas layout changes.
+
+---
+
+## Canvas render modes
+
+`RectTransformScreenBoxUtility` uses:
+
+- **Screen Space Overlay** — `null` event camera for `WorldToScreenPoint` on UI corners.
+- **Screen Space Camera** / **World Space** — `Canvas.worldCamera` for UI → screen, then the **world** camera for screen → viewport.
+
+Ensure the assigned **world camera** matches the one that should define depth and viewport for the target object.
