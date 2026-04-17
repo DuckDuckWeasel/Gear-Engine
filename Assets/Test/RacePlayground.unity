@@ -152,6 +152,92 @@ Transform:
   - {fileID: 66484011}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &56816856
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 56816858}
+  - component: {fileID: 56816857}
+  m_Layer: 0
+  m_Name: CarRunner (5)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!114 &56816857
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 56816856}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e7f3a2c89d1b4e6fa0b5c8d3e2f1a904, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.Test.Prototype::SplineCarRunner
+  track: {fileID: 5000000003}
+  targetCar: {fileID: 106660386}
+  waypointCount: 5
+  baseWaypointDistance: 10
+  distanceSpeedMultiplier: 0.2
+  waypointSpacingMultiplier: 0.8
+  waypointArrivalRangeBase: 5
+  waypointArrivalSpeedMultiplier: 0.2
+  waypointMaxLateralOffset: 10
+  laneChangeVariationSpeed: 0.25
+  steerDeadzone: 0.3
+  statTopSpeed: 0.5
+  statAcceleration: 0.5
+  statBrakingPower: 0.5
+  statDriftGrip: 0.5
+  statCorneringAssist: 0.5
+  driftAccelerationMultiplier: 0.5
+  driftSteerAssistMultiplier: 2
+  maxSimulationSpeed: 105
+  safeCornerSpeed: 21.5
+  arcadeSteerAssist: 1.85
+  calculatedAcceleration: 6
+  calculatedBrakeForce: 225
+  calculatedDriftGrip: 6
+  boundsAI_SafeCornerSpeed: {x: 8, y: 35}
+  boundsArcadeSteerAssist: {x: 0.2, y: 3.5}
+  baseMaxSpeed: 190
+  baseAcceleration: 10
+  baseBrakeForce: 350
+  baseDriftGrip: 5
+  curveAngleThreshold: 22
+  handbrakeAngleThreshold: 20
+  currentSpeed: 64.22942
+  upcomingWaypoints:
+  - {x: -14.844387, y: 0, z: 26.945908}
+  - {x: -6.3333797, y: 0, z: 36.90177}
+  - {x: 2.958309, y: 0, z: 30.553766}
+  - {x: 9.397385, y: 0, z: 29.352903}
+  - {x: 13.607654, y: 0, z: 26.109049}
+  isBrakingForCurve: 0
+  requiresHandbrake: 1
+  maxDeviationDistance: 7
+--- !u!4 &56816858
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 56816856}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &66484010
 GameObject:
   m_ObjectHideFlags: 0
@@ -281,6 +367,17 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &106660386 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 627556911, guid: 79d0ca8b77e301442afdb49f102e8aed, type: 3}
+  m_PrefabInstance: {fileID: 1345697939}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c0fefceefe666bb4682b272ec8c5bdd0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &160066912
 GameObject:
   m_ObjectHideFlags: 0
@@ -1566,6 +1663,92 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 170, y: 1.5, z: 3}
   m_Center: {x: 0, y: 0.5, z: 81}
+--- !u!1 &609078989
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 609078991}
+  - component: {fileID: 609078990}
+  m_Layer: 0
+  m_Name: CarRunner (2)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!114 &609078990
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 609078989}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e7f3a2c89d1b4e6fa0b5c8d3e2f1a904, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.Test.Prototype::SplineCarRunner
+  track: {fileID: 5000000003}
+  targetCar: {fileID: 971274526}
+  waypointCount: 5
+  baseWaypointDistance: 10
+  distanceSpeedMultiplier: 0.2
+  waypointSpacingMultiplier: 0.8
+  waypointArrivalRangeBase: 5
+  waypointArrivalSpeedMultiplier: 0.2
+  waypointMaxLateralOffset: 10
+  laneChangeVariationSpeed: 0.25
+  steerDeadzone: 0.3
+  statTopSpeed: 0.5
+  statAcceleration: 0.5
+  statBrakingPower: 0.5
+  statDriftGrip: 0.5
+  statCorneringAssist: 0.5
+  driftAccelerationMultiplier: 0.5
+  driftSteerAssistMultiplier: 2
+  maxSimulationSpeed: 105
+  safeCornerSpeed: 21.5
+  arcadeSteerAssist: 1.85
+  calculatedAcceleration: 6
+  calculatedBrakeForce: 225
+  calculatedDriftGrip: 6
+  boundsAI_SafeCornerSpeed: {x: 8, y: 35}
+  boundsArcadeSteerAssist: {x: 0.2, y: 3.5}
+  baseMaxSpeed: 190
+  baseAcceleration: 10
+  baseBrakeForce: 350
+  baseDriftGrip: 5
+  curveAngleThreshold: 22
+  handbrakeAngleThreshold: 20
+  currentSpeed: 64.22942
+  upcomingWaypoints:
+  - {x: -14.844387, y: 0, z: 26.945908}
+  - {x: -6.3333797, y: 0, z: 36.90177}
+  - {x: 2.958309, y: 0, z: 30.553766}
+  - {x: 9.397385, y: 0, z: 29.352903}
+  - {x: 13.607654, y: 0, z: 26.109049}
+  isBrakingForCurve: 0
+  requiresHandbrake: 1
+  maxDeviationDistance: 7
+--- !u!4 &609078991
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 609078989}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &627903774
 GameObject:
   m_ObjectHideFlags: 0
@@ -1773,6 +1956,126 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 677710024}
   m_CullTransparentMesh: 0
+--- !u!1001 &678679973
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 627556911, guid: 79d0ca8b77e301442afdb49f102e8aed, type: 3}
+      propertyPath: useUI
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 627556911, guid: 79d0ca8b77e301442afdb49f102e8aed, type: 3}
+      propertyPath: maxSpeed
+      value: 190
+      objectReference: {fileID: 0}
+    - target: {fileID: 627556911, guid: 79d0ca8b77e301442afdb49f102e8aed, type: 3}
+      propertyPath: useSounds
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 627556911, guid: 79d0ca8b77e301442afdb49f102e8aed, type: 3}
+      propertyPath: brakeForce
+      value: 350
+      objectReference: {fileID: 0}
+    - target: {fileID: 627556911, guid: 79d0ca8b77e301442afdb49f102e8aed, type: 3}
+      propertyPath: carSpeedText
+      value: 
+      objectReference: {fileID: 677710026}
+    - target: {fileID: 627556911, guid: 79d0ca8b77e301442afdb49f102e8aed, type: 3}
+      propertyPath: carEngineSound
+      value: 
+      objectReference: {fileID: 511879847}
+    - target: {fileID: 627556911, guid: 79d0ca8b77e301442afdb49f102e8aed, type: 3}
+      propertyPath: tireScreechSound
+      value: 
+      objectReference: {fileID: 66484012}
+    - target: {fileID: 627556911, guid: 79d0ca8b77e301442afdb49f102e8aed, type: 3}
+      propertyPath: accelerationMultiplier
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 627556911, guid: 79d0ca8b77e301442afdb49f102e8aed, type: 3}
+      propertyPath: decelerationMultiplier
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 627556911, guid: 79d0ca8b77e301442afdb49f102e8aed, type: 3}
+      propertyPath: handbrakeDriftMultiplier
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 261786959625234688, guid: 79d0ca8b77e301442afdb49f102e8aed, type: 3}
+      propertyPath: m_RootOrder
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 261786959625234688, guid: 79d0ca8b77e301442afdb49f102e8aed, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -9.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 261786959625234688, guid: 79d0ca8b77e301442afdb49f102e8aed, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 261786959625234688, guid: 79d0ca8b77e301442afdb49f102e8aed, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 261786959625234688, guid: 79d0ca8b77e301442afdb49f102e8aed, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 261786959625234688, guid: 79d0ca8b77e301442afdb49f102e8aed, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 261786959625234688, guid: 79d0ca8b77e301442afdb49f102e8aed, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 261786959625234688, guid: 79d0ca8b77e301442afdb49f102e8aed, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 261786959625234688, guid: 79d0ca8b77e301442afdb49f102e8aed, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 261786959625234688, guid: 79d0ca8b77e301442afdb49f102e8aed, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 261786959625234688, guid: 79d0ca8b77e301442afdb49f102e8aed, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 642287924342879162, guid: 79d0ca8b77e301442afdb49f102e8aed, type: 3}
+      propertyPath: m_Name
+      value: Car (4)
+      objectReference: {fileID: 0}
+    - target: {fileID: 642287924342879162, guid: 79d0ca8b77e301442afdb49f102e8aed, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5135156708204615449, guid: 79d0ca8b77e301442afdb49f102e8aed, type: 3}
+      propertyPath: m_Mass
+      value: 900
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 79d0ca8b77e301442afdb49f102e8aed, type: 3}
+--- !u!114 &678679974 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 627556911, guid: 79d0ca8b77e301442afdb49f102e8aed, type: 3}
+  m_PrefabInstance: {fileID: 678679973}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c0fefceefe666bb4682b272ec8c5bdd0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &689600284
 GameObject:
   m_ObjectHideFlags: 0
@@ -1914,6 +2217,298 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 689600284}
   m_Mesh: {fileID: 3613567641014311022, guid: aa35326e084c5774b9fea1733afca70f, type: 3}
+--- !u!1001 &805090287
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 627556911, guid: 79d0ca8b77e301442afdb49f102e8aed, type: 3}
+      propertyPath: useUI
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 627556911, guid: 79d0ca8b77e301442afdb49f102e8aed, type: 3}
+      propertyPath: maxSpeed
+      value: 190
+      objectReference: {fileID: 0}
+    - target: {fileID: 627556911, guid: 79d0ca8b77e301442afdb49f102e8aed, type: 3}
+      propertyPath: useSounds
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 627556911, guid: 79d0ca8b77e301442afdb49f102e8aed, type: 3}
+      propertyPath: brakeForce
+      value: 350
+      objectReference: {fileID: 0}
+    - target: {fileID: 627556911, guid: 79d0ca8b77e301442afdb49f102e8aed, type: 3}
+      propertyPath: carSpeedText
+      value: 
+      objectReference: {fileID: 677710026}
+    - target: {fileID: 627556911, guid: 79d0ca8b77e301442afdb49f102e8aed, type: 3}
+      propertyPath: carEngineSound
+      value: 
+      objectReference: {fileID: 511879847}
+    - target: {fileID: 627556911, guid: 79d0ca8b77e301442afdb49f102e8aed, type: 3}
+      propertyPath: tireScreechSound
+      value: 
+      objectReference: {fileID: 66484012}
+    - target: {fileID: 627556911, guid: 79d0ca8b77e301442afdb49f102e8aed, type: 3}
+      propertyPath: accelerationMultiplier
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 627556911, guid: 79d0ca8b77e301442afdb49f102e8aed, type: 3}
+      propertyPath: decelerationMultiplier
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 627556911, guid: 79d0ca8b77e301442afdb49f102e8aed, type: 3}
+      propertyPath: handbrakeDriftMultiplier
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 261786959625234688, guid: 79d0ca8b77e301442afdb49f102e8aed, type: 3}
+      propertyPath: m_RootOrder
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 261786959625234688, guid: 79d0ca8b77e301442afdb49f102e8aed, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 9.6
+      objectReference: {fileID: 0}
+    - target: {fileID: 261786959625234688, guid: 79d0ca8b77e301442afdb49f102e8aed, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 261786959625234688, guid: 79d0ca8b77e301442afdb49f102e8aed, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 261786959625234688, guid: 79d0ca8b77e301442afdb49f102e8aed, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 261786959625234688, guid: 79d0ca8b77e301442afdb49f102e8aed, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 261786959625234688, guid: 79d0ca8b77e301442afdb49f102e8aed, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 261786959625234688, guid: 79d0ca8b77e301442afdb49f102e8aed, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 261786959625234688, guid: 79d0ca8b77e301442afdb49f102e8aed, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 261786959625234688, guid: 79d0ca8b77e301442afdb49f102e8aed, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 261786959625234688, guid: 79d0ca8b77e301442afdb49f102e8aed, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 642287924342879162, guid: 79d0ca8b77e301442afdb49f102e8aed, type: 3}
+      propertyPath: m_Name
+      value: Car (3)
+      objectReference: {fileID: 0}
+    - target: {fileID: 642287924342879162, guid: 79d0ca8b77e301442afdb49f102e8aed, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5135156708204615449, guid: 79d0ca8b77e301442afdb49f102e8aed, type: 3}
+      propertyPath: m_Mass
+      value: 900
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 79d0ca8b77e301442afdb49f102e8aed, type: 3}
+--- !u!114 &805090288 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 627556911, guid: 79d0ca8b77e301442afdb49f102e8aed, type: 3}
+  m_PrefabInstance: {fileID: 805090287}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c0fefceefe666bb4682b272ec8c5bdd0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!1 &807221282
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 807221284}
+  - component: {fileID: 807221283}
+  m_Layer: 0
+  m_Name: CarRunner (4)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!114 &807221283
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 807221282}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e7f3a2c89d1b4e6fa0b5c8d3e2f1a904, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.Test.Prototype::SplineCarRunner
+  track: {fileID: 5000000003}
+  targetCar: {fileID: 805090288}
+  waypointCount: 5
+  baseWaypointDistance: 10
+  distanceSpeedMultiplier: 0.2
+  waypointSpacingMultiplier: 0.8
+  waypointArrivalRangeBase: 5
+  waypointArrivalSpeedMultiplier: 0.2
+  waypointMaxLateralOffset: 10
+  laneChangeVariationSpeed: 0.25
+  steerDeadzone: 0.3
+  statTopSpeed: 0.5
+  statAcceleration: 0.5
+  statBrakingPower: 0.5
+  statDriftGrip: 0.5
+  statCorneringAssist: 0.5
+  driftAccelerationMultiplier: 0.5
+  driftSteerAssistMultiplier: 2
+  maxSimulationSpeed: 105
+  safeCornerSpeed: 21.5
+  arcadeSteerAssist: 1.85
+  calculatedAcceleration: 6
+  calculatedBrakeForce: 225
+  calculatedDriftGrip: 6
+  boundsAI_SafeCornerSpeed: {x: 8, y: 35}
+  boundsArcadeSteerAssist: {x: 0.2, y: 3.5}
+  baseMaxSpeed: 190
+  baseAcceleration: 10
+  baseBrakeForce: 350
+  baseDriftGrip: 5
+  curveAngleThreshold: 22
+  handbrakeAngleThreshold: 20
+  currentSpeed: 64.22942
+  upcomingWaypoints:
+  - {x: -14.844387, y: 0, z: 26.945908}
+  - {x: -6.3333797, y: 0, z: 36.90177}
+  - {x: 2.958309, y: 0, z: 30.553766}
+  - {x: 9.397385, y: 0, z: 29.352903}
+  - {x: 13.607654, y: 0, z: 26.109049}
+  isBrakingForCurve: 0
+  requiresHandbrake: 1
+  maxDeviationDistance: 7
+--- !u!4 &807221284
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 807221282}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &898285873
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 898285875}
+  - component: {fileID: 898285874}
+  m_Layer: 0
+  m_Name: CarRunner (7)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!114 &898285874
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 898285873}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e7f3a2c89d1b4e6fa0b5c8d3e2f1a904, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.Test.Prototype::SplineCarRunner
+  track: {fileID: 5000000003}
+  targetCar: {fileID: 106660386}
+  waypointCount: 5
+  baseWaypointDistance: 10
+  distanceSpeedMultiplier: 0.2
+  waypointSpacingMultiplier: 0.8
+  waypointArrivalRangeBase: 5
+  waypointArrivalSpeedMultiplier: 0.2
+  waypointMaxLateralOffset: 10
+  laneChangeVariationSpeed: 0.25
+  steerDeadzone: 0.3
+  statTopSpeed: 0.5
+  statAcceleration: 0.5
+  statBrakingPower: 0.5
+  statDriftGrip: 0.5
+  statCorneringAssist: 0.5
+  driftAccelerationMultiplier: 0.5
+  driftSteerAssistMultiplier: 2
+  maxSimulationSpeed: 105
+  safeCornerSpeed: 21.5
+  arcadeSteerAssist: 1.85
+  calculatedAcceleration: 6
+  calculatedBrakeForce: 225
+  calculatedDriftGrip: 6
+  boundsAI_SafeCornerSpeed: {x: 8, y: 35}
+  boundsArcadeSteerAssist: {x: 0.2, y: 3.5}
+  baseMaxSpeed: 190
+  baseAcceleration: 10
+  baseBrakeForce: 350
+  baseDriftGrip: 5
+  curveAngleThreshold: 22
+  handbrakeAngleThreshold: 20
+  currentSpeed: 64.22942
+  upcomingWaypoints:
+  - {x: -14.844387, y: 0, z: 26.945908}
+  - {x: -6.3333797, y: 0, z: 36.90177}
+  - {x: 2.958309, y: 0, z: 30.553766}
+  - {x: 9.397385, y: 0, z: 29.352903}
+  - {x: 13.607654, y: 0, z: 26.109049}
+  isBrakingForCurve: 0
+  requiresHandbrake: 1
+  maxDeviationDistance: 7
+--- !u!4 &898285875
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 898285873}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &947214807
 GameObject:
   m_ObjectHideFlags: 0
@@ -2055,6 +2650,126 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 947214807}
   m_Mesh: {fileID: 3613567641014311022, guid: aa35326e084c5774b9fea1733afca70f, type: 3}
+--- !u!1001 &971274525
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 627556911, guid: 79d0ca8b77e301442afdb49f102e8aed, type: 3}
+      propertyPath: useUI
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 627556911, guid: 79d0ca8b77e301442afdb49f102e8aed, type: 3}
+      propertyPath: maxSpeed
+      value: 190
+      objectReference: {fileID: 0}
+    - target: {fileID: 627556911, guid: 79d0ca8b77e301442afdb49f102e8aed, type: 3}
+      propertyPath: useSounds
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 627556911, guid: 79d0ca8b77e301442afdb49f102e8aed, type: 3}
+      propertyPath: brakeForce
+      value: 350
+      objectReference: {fileID: 0}
+    - target: {fileID: 627556911, guid: 79d0ca8b77e301442afdb49f102e8aed, type: 3}
+      propertyPath: carSpeedText
+      value: 
+      objectReference: {fileID: 677710026}
+    - target: {fileID: 627556911, guid: 79d0ca8b77e301442afdb49f102e8aed, type: 3}
+      propertyPath: carEngineSound
+      value: 
+      objectReference: {fileID: 511879847}
+    - target: {fileID: 627556911, guid: 79d0ca8b77e301442afdb49f102e8aed, type: 3}
+      propertyPath: tireScreechSound
+      value: 
+      objectReference: {fileID: 66484012}
+    - target: {fileID: 627556911, guid: 79d0ca8b77e301442afdb49f102e8aed, type: 3}
+      propertyPath: accelerationMultiplier
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 627556911, guid: 79d0ca8b77e301442afdb49f102e8aed, type: 3}
+      propertyPath: decelerationMultiplier
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 627556911, guid: 79d0ca8b77e301442afdb49f102e8aed, type: 3}
+      propertyPath: handbrakeDriftMultiplier
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 261786959625234688, guid: 79d0ca8b77e301442afdb49f102e8aed, type: 3}
+      propertyPath: m_RootOrder
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 261786959625234688, guid: 79d0ca8b77e301442afdb49f102e8aed, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 4.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 261786959625234688, guid: 79d0ca8b77e301442afdb49f102e8aed, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 261786959625234688, guid: 79d0ca8b77e301442afdb49f102e8aed, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 261786959625234688, guid: 79d0ca8b77e301442afdb49f102e8aed, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 261786959625234688, guid: 79d0ca8b77e301442afdb49f102e8aed, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 261786959625234688, guid: 79d0ca8b77e301442afdb49f102e8aed, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 261786959625234688, guid: 79d0ca8b77e301442afdb49f102e8aed, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 261786959625234688, guid: 79d0ca8b77e301442afdb49f102e8aed, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 261786959625234688, guid: 79d0ca8b77e301442afdb49f102e8aed, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 261786959625234688, guid: 79d0ca8b77e301442afdb49f102e8aed, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 642287924342879162, guid: 79d0ca8b77e301442afdb49f102e8aed, type: 3}
+      propertyPath: m_Name
+      value: Car (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 642287924342879162, guid: 79d0ca8b77e301442afdb49f102e8aed, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5135156708204615449, guid: 79d0ca8b77e301442afdb49f102e8aed, type: 3}
+      propertyPath: m_Mass
+      value: 900
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 79d0ca8b77e301442afdb49f102e8aed, type: 3}
+--- !u!114 &971274526 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 627556911, guid: 79d0ca8b77e301442afdb49f102e8aed, type: 3}
+  m_PrefabInstance: {fileID: 971274525}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c0fefceefe666bb4682b272ec8c5bdd0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &999111292
 GameObject:
   m_ObjectHideFlags: 0
@@ -2440,6 +3155,92 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1166051424}
   m_Mesh: {fileID: 3613567641014311022, guid: aa35326e084c5774b9fea1733afca70f, type: 3}
+--- !u!1 &1229671568
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1229671570}
+  - component: {fileID: 1229671569}
+  m_Layer: 0
+  m_Name: CarRunner (3)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!114 &1229671569
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1229671568}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e7f3a2c89d1b4e6fa0b5c8d3e2f1a904, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.Test.Prototype::SplineCarRunner
+  track: {fileID: 5000000003}
+  targetCar: {fileID: 106660386}
+  waypointCount: 5
+  baseWaypointDistance: 10
+  distanceSpeedMultiplier: 0.2
+  waypointSpacingMultiplier: 0.8
+  waypointArrivalRangeBase: 5
+  waypointArrivalSpeedMultiplier: 0.2
+  waypointMaxLateralOffset: 10
+  laneChangeVariationSpeed: 0.25
+  steerDeadzone: 0.3
+  statTopSpeed: 0.5
+  statAcceleration: 0.5
+  statBrakingPower: 0.5
+  statDriftGrip: 0.5
+  statCorneringAssist: 0.5
+  driftAccelerationMultiplier: 0.5
+  driftSteerAssistMultiplier: 2
+  maxSimulationSpeed: 105
+  safeCornerSpeed: 21.5
+  arcadeSteerAssist: 1.85
+  calculatedAcceleration: 6
+  calculatedBrakeForce: 225
+  calculatedDriftGrip: 6
+  boundsAI_SafeCornerSpeed: {x: 8, y: 35}
+  boundsArcadeSteerAssist: {x: 0.2, y: 3.5}
+  baseMaxSpeed: 190
+  baseAcceleration: 10
+  baseBrakeForce: 350
+  baseDriftGrip: 5
+  curveAngleThreshold: 22
+  handbrakeAngleThreshold: 20
+  currentSpeed: 64.22942
+  upcomingWaypoints:
+  - {x: -14.844387, y: 0, z: 26.945908}
+  - {x: -6.3333797, y: 0, z: 36.90177}
+  - {x: 2.958309, y: 0, z: 30.553766}
+  - {x: 9.397385, y: 0, z: 29.352903}
+  - {x: 13.607654, y: 0, z: 26.109049}
+  isBrakingForCurve: 0
+  requiresHandbrake: 1
+  maxDeviationDistance: 7
+--- !u!4 &1229671570
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1229671568}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1267731283
 GameObject:
   m_ObjectHideFlags: 0
@@ -2863,6 +3664,92 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1309821753}
   m_Mesh: {fileID: 3613567641014311022, guid: aa35326e084c5774b9fea1733afca70f, type: 3}
+--- !u!1 &1322451650
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1322451652}
+  - component: {fileID: 1322451651}
+  m_Layer: 0
+  m_Name: CarRunner (1)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!114 &1322451651
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1322451650}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e7f3a2c89d1b4e6fa0b5c8d3e2f1a904, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.Test.Prototype::SplineCarRunner
+  track: {fileID: 5000000003}
+  targetCar: {fileID: 106660386}
+  waypointCount: 5
+  baseWaypointDistance: 10
+  distanceSpeedMultiplier: 0.2
+  waypointSpacingMultiplier: 0.8
+  waypointArrivalRangeBase: 5
+  waypointArrivalSpeedMultiplier: 0.2
+  waypointMaxLateralOffset: 10
+  laneChangeVariationSpeed: 0.25
+  steerDeadzone: 0.3
+  statTopSpeed: 0.5
+  statAcceleration: 0.5
+  statBrakingPower: 0.5
+  statDriftGrip: 0.5
+  statCorneringAssist: 0.5
+  driftAccelerationMultiplier: 0.5
+  driftSteerAssistMultiplier: 2
+  maxSimulationSpeed: 105
+  safeCornerSpeed: 21.5
+  arcadeSteerAssist: 1.85
+  calculatedAcceleration: 6
+  calculatedBrakeForce: 225
+  calculatedDriftGrip: 6
+  boundsAI_SafeCornerSpeed: {x: 8, y: 35}
+  boundsArcadeSteerAssist: {x: 0.2, y: 3.5}
+  baseMaxSpeed: 190
+  baseAcceleration: 10
+  baseBrakeForce: 350
+  baseDriftGrip: 5
+  curveAngleThreshold: 22
+  handbrakeAngleThreshold: 20
+  currentSpeed: 64.22942
+  upcomingWaypoints:
+  - {x: -14.844387, y: 0, z: 26.945908}
+  - {x: -6.3333797, y: 0, z: 36.90177}
+  - {x: 2.958309, y: 0, z: 30.553766}
+  - {x: 9.397385, y: 0, z: 29.352903}
+  - {x: 13.607654, y: 0, z: 26.109049}
+  isBrakingForCurve: 0
+  requiresHandbrake: 1
+  maxDeviationDistance: 7
+--- !u!4 &1322451652
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1322451650}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1331393349
 GameObject:
   m_ObjectHideFlags: 0
@@ -3004,6 +3891,115 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1331393349}
   m_Mesh: {fileID: 3613567641014311022, guid: aa35326e084c5774b9fea1733afca70f, type: 3}
+--- !u!1001 &1345697939
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 627556911, guid: 79d0ca8b77e301442afdb49f102e8aed, type: 3}
+      propertyPath: useUI
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 627556911, guid: 79d0ca8b77e301442afdb49f102e8aed, type: 3}
+      propertyPath: maxSpeed
+      value: 190
+      objectReference: {fileID: 0}
+    - target: {fileID: 627556911, guid: 79d0ca8b77e301442afdb49f102e8aed, type: 3}
+      propertyPath: useSounds
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 627556911, guid: 79d0ca8b77e301442afdb49f102e8aed, type: 3}
+      propertyPath: brakeForce
+      value: 350
+      objectReference: {fileID: 0}
+    - target: {fileID: 627556911, guid: 79d0ca8b77e301442afdb49f102e8aed, type: 3}
+      propertyPath: carSpeedText
+      value: 
+      objectReference: {fileID: 677710026}
+    - target: {fileID: 627556911, guid: 79d0ca8b77e301442afdb49f102e8aed, type: 3}
+      propertyPath: carEngineSound
+      value: 
+      objectReference: {fileID: 511879847}
+    - target: {fileID: 627556911, guid: 79d0ca8b77e301442afdb49f102e8aed, type: 3}
+      propertyPath: tireScreechSound
+      value: 
+      objectReference: {fileID: 66484012}
+    - target: {fileID: 627556911, guid: 79d0ca8b77e301442afdb49f102e8aed, type: 3}
+      propertyPath: accelerationMultiplier
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 627556911, guid: 79d0ca8b77e301442afdb49f102e8aed, type: 3}
+      propertyPath: decelerationMultiplier
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 627556911, guid: 79d0ca8b77e301442afdb49f102e8aed, type: 3}
+      propertyPath: handbrakeDriftMultiplier
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 261786959625234688, guid: 79d0ca8b77e301442afdb49f102e8aed, type: 3}
+      propertyPath: m_RootOrder
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 261786959625234688, guid: 79d0ca8b77e301442afdb49f102e8aed, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -4.8
+      objectReference: {fileID: 0}
+    - target: {fileID: 261786959625234688, guid: 79d0ca8b77e301442afdb49f102e8aed, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 261786959625234688, guid: 79d0ca8b77e301442afdb49f102e8aed, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 261786959625234688, guid: 79d0ca8b77e301442afdb49f102e8aed, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 261786959625234688, guid: 79d0ca8b77e301442afdb49f102e8aed, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 261786959625234688, guid: 79d0ca8b77e301442afdb49f102e8aed, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 261786959625234688, guid: 79d0ca8b77e301442afdb49f102e8aed, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 261786959625234688, guid: 79d0ca8b77e301442afdb49f102e8aed, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 261786959625234688, guid: 79d0ca8b77e301442afdb49f102e8aed, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 261786959625234688, guid: 79d0ca8b77e301442afdb49f102e8aed, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 642287924342879162, guid: 79d0ca8b77e301442afdb49f102e8aed, type: 3}
+      propertyPath: m_Name
+      value: Car (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 642287924342879162, guid: 79d0ca8b77e301442afdb49f102e8aed, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5135156708204615449, guid: 79d0ca8b77e301442afdb49f102e8aed, type: 3}
+      propertyPath: m_Mass
+      value: 900
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 79d0ca8b77e301442afdb49f102e8aed, type: 3}
 --- !u!1 &1397381300
 GameObject:
   m_ObjectHideFlags: 0
@@ -3145,6 +4141,92 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1397381300}
   m_Mesh: {fileID: 3613567641014311022, guid: aa35326e084c5774b9fea1733afca70f, type: 3}
+--- !u!1 &1400760373
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1400760375}
+  - component: {fileID: 1400760374}
+  m_Layer: 0
+  m_Name: CarRunner (6)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!114 &1400760374
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1400760373}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e7f3a2c89d1b4e6fa0b5c8d3e2f1a904, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.Test.Prototype::SplineCarRunner
+  track: {fileID: 5000000003}
+  targetCar: {fileID: 678679974}
+  waypointCount: 5
+  baseWaypointDistance: 10
+  distanceSpeedMultiplier: 0.2
+  waypointSpacingMultiplier: 0.8
+  waypointArrivalRangeBase: 5
+  waypointArrivalSpeedMultiplier: 0.2
+  waypointMaxLateralOffset: 10
+  laneChangeVariationSpeed: 0.25
+  steerDeadzone: 0.3
+  statTopSpeed: 0.5
+  statAcceleration: 0.5
+  statBrakingPower: 0.5
+  statDriftGrip: 0.5
+  statCorneringAssist: 0.5
+  driftAccelerationMultiplier: 0.5
+  driftSteerAssistMultiplier: 2
+  maxSimulationSpeed: 105
+  safeCornerSpeed: 21.5
+  arcadeSteerAssist: 1.85
+  calculatedAcceleration: 6
+  calculatedBrakeForce: 225
+  calculatedDriftGrip: 6
+  boundsAI_SafeCornerSpeed: {x: 8, y: 35}
+  boundsArcadeSteerAssist: {x: 0.2, y: 3.5}
+  baseMaxSpeed: 190
+  baseAcceleration: 10
+  baseBrakeForce: 350
+  baseDriftGrip: 5
+  curveAngleThreshold: 22
+  handbrakeAngleThreshold: 20
+  currentSpeed: 64.22942
+  upcomingWaypoints:
+  - {x: -14.844387, y: 0, z: 26.945908}
+  - {x: -6.3333797, y: 0, z: 36.90177}
+  - {x: 2.958309, y: 0, z: 30.553766}
+  - {x: 9.397385, y: 0, z: 29.352903}
+  - {x: 13.607654, y: 0, z: 26.109049}
+  isBrakingForCurve: 0
+  requiresHandbrake: 1
+  maxDeviationDistance: 7
+--- !u!4 &1400760375
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1400760373}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1410572420
 GameObject:
   m_ObjectHideFlags: 0
@@ -5193,6 +6275,14 @@ PrefabInstance:
       propertyPath: m_Shape
       value: 6246091746657960177
       objectReference: {fileID: 0}
+    - target: {fileID: 7014771420695656104, guid: a6f20e9e09e7715449856810b9a31e98, type: 3}
+      propertyPath: m_Radius
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 7014771420695656104, guid: a6f20e9e09e7715449856810b9a31e98, type: 3}
+      propertyPath: 'managedReferences[6246091746657960177]'
+      value: Unity.Splines UnityEngine.Splines.ExtrusionShapes.Square
+      objectReference: {fileID: 0}
     - target: {fileID: 8298623856469553584, guid: a6f20e9e09e7715449856810b9a31e98, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -6141,7 +7231,18 @@ SceneRoots:
   - {fileID: 627903776}
   - {fileID: 5000000001}
   - {fileID: 3000000002}
+  - {fileID: 609078991}
+  - {fileID: 807221284}
+  - {fileID: 1400760375}
+  - {fileID: 1322451652}
+  - {fileID: 1229671570}
+  - {fileID: 56816858}
+  - {fileID: 898285875}
   - {fileID: 299688005468115882}
+  - {fileID: 971274525}
+  - {fileID: 805090287}
+  - {fileID: 678679973}
+  - {fileID: 1345697939}
   - {fileID: 543450653150262629}
   - {fileID: 1144274278}
   - {fileID: 500328634}
