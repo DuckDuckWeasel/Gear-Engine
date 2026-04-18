@@ -55,8 +55,10 @@ namespace GearEngine.Campaign.Presentation
         {
             try
             {
+                engineService.Stop();
+
                 LapRaceSession session = trackService.CurrentSession;
-                RaceResultModel result = new RaceResultModel(session.RaceTime, session.CurrentLap);
+                RaceResultModel result = new RaceResultModel(session.RaceTime, session.CurrentLap, trackService.CurrentTrack);
                 walletService.AddGold(result.Gold.Amount);
                 trackService.RecordResult(result);
                 navigation.Open(new ResultPopupViewModel(result));

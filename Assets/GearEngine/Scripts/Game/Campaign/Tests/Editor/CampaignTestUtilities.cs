@@ -79,6 +79,13 @@ namespace GearEngine.Campaign.Tests.Editor
             return factory.Create(carDef, trackDef);
         }
 
+        public static TrackDefinition CreateTrackWithScoreBandsForTests(params TrackScoreBand[] bands)
+        {
+            var track = ScriptableObject.CreateInstance<TrackDefinition>();
+            track.SetScoreBandsForTests(bands);
+            return track;
+        }
+
         public static void DestroyGearConfig(GearConfig config)
         {
             if (config != null)

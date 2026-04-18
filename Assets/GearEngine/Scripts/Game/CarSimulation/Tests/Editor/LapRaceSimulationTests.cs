@@ -274,4 +274,65 @@ namespace GearEngine.CarSimulation.Tests
             }
         }
     }
+
+    public sealed class TrackDefinitionScoreBandTests
+    {
+        [Test]
+        public void EvaluateReward_PicksTightestQualifyingBand_AfterSorting()
+        {
+            TrackDefinition track = ScriptableObject.CreateInstance<TrackDefinition>();
+            track.SetScoreBandsForTests(new[]
+            {
+                new TrackScoreBand(90f, 100),
+                new TrackScoreBand(30f, 900),
+                new TrackScoreBand(60f, 500),
+            });
+
+            try
+            {
+                Assert.That(track.EvaluateRewardForTotalRaceTime(25f), Is.EqualTo(900));
+                Assert.That(track.EvaluateRewardForTotalRaceTime(45f), Is.EqualTo(500));
+                Assert.That(track.EvaluateRewardForTotalRaceTime(75f), Is.EqualTo(100));
+            }
+            finally
+            {
+                Object.DestroyImmediate(track);
+            }
+        }
+
+        [Test]
+        public void EvaluateReward_WhenSlowerThanAllBands_ReturnsZero()
+        {
+            TrackDefinition track = ScriptableObject.CreateInstance<TrackDefinition>();
+            track.SetScoreBandsForTests(new[]
+            {
+                new TrackScoreBand(10f, 1000),
+            });
+
+            try
+            {
+                Assert.That(track.EvaluateRewardForTotalRaceTime(15f), Is.EqualTo(0));
+            }
+            finally
+            {
+                Object.DestroyImmediate(track);
+            }
+        }
+
+        [Test]
+        public void EvaluateReward_WhenNoBandsConfigured_ReturnsZero()
+        {
+            TrackDefinition track = ScriptableObject.CreateInstance<TrackDefinition>();
+            track.SetScoreBandsForTests(System.Array.Empty<TrackScoreBand>());
+
+            try
+            {
+                Assert.That(track.EvaluateRewardForTotalRaceTime(5f), Is.EqualTo(0));
+            }
+            finally
+            {
+                Object.DestroyImmediate(track);
+            }
+        }
+    }
 }

@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 5848077168222288501}
   - component: {fileID: 6671208370226862571}
   m_Layer: 0
-  m_Name: Active Race View
+  m_Name: Race View
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

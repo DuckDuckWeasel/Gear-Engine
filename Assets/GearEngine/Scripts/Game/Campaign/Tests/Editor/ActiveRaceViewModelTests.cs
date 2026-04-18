@@ -44,6 +44,7 @@ namespace GearEngine.Campaign.Tests.Editor
             var trackDef = ScriptableObject.CreateInstance<TrackDefinition>();
             trackDef.Spline.Knots = new[] { new BezierKnot(Vector3.zero), new BezierKnot(Vector3.right * 10f) };
             trackDef.Spline.Closed = false;
+            trackDef.SetScoreBandsForTests(new[] { new TrackScoreBand(9999f, 200) });
 
             LapRaceSession initialSession = CampaignTestUtilities.CreateMinimalSession(carDef, trackDef);
             var trackService = new FakeTrackService(trackDef, carDef, initialSession);
@@ -80,6 +81,7 @@ namespace GearEngine.Campaign.Tests.Editor
             var trackDef = ScriptableObject.CreateInstance<TrackDefinition>();
             trackDef.Spline.Knots = new[] { new BezierKnot(Vector3.zero), new BezierKnot(Vector3.right * 10f) };
             trackDef.Spline.Closed = false;
+            trackDef.SetScoreBandsForTests(new[] { new TrackScoreBand(9999f, 200) });
 
             LapRaceSession initialSession = CampaignTestUtilities.CreateMinimalSession(carDef, trackDef);
             var trackService = new FakeTrackService(trackDef, carDef, initialSession);
@@ -100,6 +102,7 @@ namespace GearEngine.Campaign.Tests.Editor
             ViewModelTestInject.InvokeInitialize(vm);
             vm.Track.Complete();
 
+            Assert.That(engine.IsRunning, Is.False);
             Assert.That(navigation.OpenedControllers.Count, Is.EqualTo(1));
             Assert.That(navigation.OpenedControllers[0], Is.InstanceOf<ResultPopupViewModel>());
             Assert.That(wallet.CurrentGold, Is.GreaterThan(0));

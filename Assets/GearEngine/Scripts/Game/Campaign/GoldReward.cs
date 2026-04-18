@@ -1,12 +1,12 @@
+using UnityEngine;
+
 namespace GearEngine.Campaign
 {
     public sealed class GoldReward
     {
-        private const int goldPerScorePoint = 5;
-
-        public GoldReward(int score)
+        public GoldReward(int goldAmount)
         {
-            Amount = score * goldPerScorePoint;
+            Amount = Mathf.Max(0, goldAmount);
         }
 
         public int Amount { get; }

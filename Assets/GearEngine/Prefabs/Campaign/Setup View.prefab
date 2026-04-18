@@ -272,7 +272,7 @@ GameObject:
   - component: {fileID: 9100000012345014}
   - component: {fileID: 142787377809809379}
   m_Layer: 0
-  m_Name: Campaign_SetupView
+  m_Name: Setup View
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

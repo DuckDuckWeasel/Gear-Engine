@@ -1,4 +1,5 @@
 using System;
+using GearEngine.CarSimulation.Definitions;
 using UnityEngine;
 
 namespace GearEngine.Campaign
@@ -6,8 +7,9 @@ namespace GearEngine.Campaign
     public sealed class RaceResultModel
     {
         private const int scoreThresholdToAdvance = 500;
+        private const int legacyGoldPerScorePoint = 5;
 
-        public RaceResultModel(float raceTime, int lapCount)
+        public RaceResultModel(float raceTime, int lapCount, TrackDefinition track)
         {
             if (raceTime < 0f)
             {
@@ -16,8 +18,18 @@ namespace GearEngine.Campaign
 
             RaceTime = raceTime;
             LapCount = lapCount;
-            Score = ComputeScore(raceTime, lapCount);
-            Gold = new GoldReward(Score);
+
+            if (track != null && track.HasConfiguredScoreBands)
+            {
+                Score = track.EvaluateRewardForTotalRaceTime(raceTime);
+                Gold = new GoldReward(Score);
+            }
+            else
+            {
+                Score = ComputeLegacyScore(raceTime, lapCount);
+                Gold = new GoldReward(Score * legacyGoldPerScorePoint);
+            }
+
             IsGoodResult = Score >= scoreThresholdToAdvance;
         }
 
@@ -27,7 +39,7 @@ namespace GearEngine.Campaign
         public GoldReward Gold { get; }
         public bool IsGoodResult { get; }
 
-        private int ComputeScore(float raceTime, int lapCount)
+        private static int ComputeLegacyScore(float raceTime, int lapCount)
         {
             float perLap = lapCount > 0 ? raceTime / lapCount : raceTime;
             return Mathf.Max(0, 1000 - Mathf.RoundToInt(perLap * 10f));
