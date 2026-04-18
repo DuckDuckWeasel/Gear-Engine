@@ -19,7 +19,7 @@ namespace GearEngine.GearEngine.Presentation.UI
         private Transform boardScaleReference;
 
         // todo: wired from GearEngineCoreViewComponent for board-matched ghost scale.
-        internal void SetBoardScaleReference(Transform reference)
+        public void SetBoardScaleReference(Transform reference)
         {
             boardScaleReference = reference;
         }

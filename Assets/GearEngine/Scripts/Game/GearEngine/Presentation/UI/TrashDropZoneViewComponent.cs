@@ -33,7 +33,7 @@ namespace GearEngine.GearEngine.Presentation.UI
         private IDragService dragService;
 
         // todo: wired from GearEngineCoreViewComponent before Bind.
-        internal void SetDragService(IDragService service)
+        public void SetDragService(IDragService service)
         {
             dragService = service;
         }

@@ -1,0 +1,34 @@
+{
+    "name": "Game.Campaign",
+    "rootNamespace": "GearEngine.Campaign",
+    "references": [
+        "Game.SceneFoundation",
+        "Game.GearEngine",
+        "Game.CarSimulation",
+        "Scaffold.Entities",
+        "VContainer",
+        "Scaffold.Addressables",
+        "Scaffold.Addressables.Container",
+        "Scaffold.Events",
+        "Scaffold.Events.Container",
+        "Scaffold.MVVM",
+        "Scaffold.MVVM.View",
+        "Scaffold.MVVM.ViewModel",
+        "Scaffold.Navigation",
+        "Scaffold.Navigation.Container",
+        "Scaffold.Scope",
+        "Unity.TextMeshPro",
+        "UnityEngine.UI"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "CommunityToolkit.Mvvm.dll"
+    ],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
