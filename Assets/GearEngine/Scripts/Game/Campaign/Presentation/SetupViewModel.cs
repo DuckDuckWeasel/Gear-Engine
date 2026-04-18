@@ -1,6 +1,10 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using GearEngine.Campaign.Services;
+using GearEngine.CarSimulation;
 using GearEngine.CarSimulation.Presentation;
+using GearEngine.CarSimulation.Simulation;
 using GearEngine.GearEngine;
 using GearEngine.GearEngine.Bootstrap;
 using GearEngine.GearEngine.Config;
@@ -39,20 +43,38 @@ namespace GearEngine.Campaign.Presentation
         [Inject] private IInventoryService inventoryService;
         [Inject] private IGearPresentationTransferService presentationTransferService;
         [Inject] private GearEngineStartData campaignGearStartData;
+        [Inject] private IGearLoadoutService loadoutService;
+        [Inject] private TrackSimulationFactory trackFactory;
+        [Inject] private IRaceSessionRunner raceSessionRunner;
 
         protected override void Initialize()
         {
             base.Initialize();
+
+            engineService.ResetGridSimulationState();
+
+            LapRaceSession previewSession = trackFactory.Create(trackService.CurrentCar, trackService.CurrentTrack);
+            trackService.SetCurrentSession(previewSession);
+            raceSessionRunner.SetSession(previewSession);
 
             GearEngineStartData gearStart = campaignGearStartData ?? new GearEngineStartData();
 
             Track = new TrackViewModel(trackService.CurrentSession);
             BindChildViewModel(Track);
 
-            Board = new BoardViewModel(engineService, gridManager, nodeFactory, boardConfig, presentationTransferService, eventBus, featureToggle, dragService, swapService, mergeService, initialLayout: gearStart.BoardLayout);
+            Board = new BoardViewModel(engineService, gridManager, nodeFactory, boardConfig, presentationTransferService, eventBus, featureToggle, dragService, swapService, mergeService, initialLayout: null);
             BindChildViewModel(Board);
 
-            Inventory = new GearInventoryViewModel(gearStart.MaxInventorySlots, gearStart.InventoryGears, engineService, inventoryService, dragService);
+            if (loadoutService.HasSavedLoadout && !gridManager.GetAllNodes().Any())
+            {
+                Board.LoadLayout(loadoutService.GetBoardLayout());
+            }
+
+            IReadOnlyList<GearConfig> inventorySeed = loadoutService.HasSavedInventory
+                ? loadoutService.GetInventoryGearConfigs()
+                : gearStart.InventoryGears;
+
+            Inventory = new GearInventoryViewModel(gearStart.MaxInventorySlots, inventorySeed, engineService, inventoryService, dragService);
             BindChildViewModel(Inventory);
 
             TrashZone = new TrashZoneViewModel(dragService, engineService, Board, presentationTransferService, featureToggle);
@@ -63,6 +85,10 @@ namespace GearEngine.Campaign.Presentation
         {
             try
             {
+                BoardLayoutData snapshot = BoardLayoutData.FromNodes(gridManager.GetAllNodes());
+                loadoutService.SaveBoardLayout(snapshot);
+                loadoutService.SaveInventoryGearConfigs(SnapshotInventoryGearConfigs());
+
                 navigation.Open(new ActiveRaceViewModel());
             }
             catch (Exception ex)
@@ -81,6 +107,20 @@ namespace GearEngine.Campaign.Presentation
             {
                 Debug.LogError($"[SetupViewModel] ReturnToMainMenu failed: {ex.Message}\n{ex.StackTrace}");
             }
+        }
+
+        private IReadOnlyList<GearConfig> SnapshotInventoryGearConfigs()
+        {
+            var list = new List<GearConfig>();
+            foreach (IItem item in inventoryService.Model.AvailableItems)
+            {
+                if (item is GearConfigData data && data.SourceGearConfig != null)
+                {
+                    list.Add(data.SourceGearConfig);
+                }
+            }
+
+            return list;
         }
     }
 }

@@ -1,6 +1,8 @@
 using System;
 using GearEngine.Campaign.Services;
+using GearEngine.CarSimulation;
 using GearEngine.CarSimulation.Presentation;
+using GearEngine.CarSimulation.Simulation;
 using Scaffold.MVVM;
 using Scaffold.Navigation.Contracts;
 using UnityEngine;
@@ -14,10 +16,21 @@ namespace GearEngine.Campaign.Presentation
         public TrackStatsViewModel Stats { get; private set; }
 
         [Inject] private ITrackService trackService;
+        [Inject] private TrackSimulationFactory trackFactory;
+        [Inject] private IRaceSessionRunner raceSessionRunner;
 
         protected override void Initialize()
         {
             base.Initialize();
+
+            LapRaceSession current = trackService.CurrentSession;
+            if (current == null || current.Phase == SimulationLifecycleState.Completed)
+            {
+                LapRaceSession preview = trackFactory.Create(trackService.CurrentCar, trackService.CurrentTrack);
+                trackService.SetCurrentSession(preview);
+                raceSessionRunner.SetSession(preview);
+            }
+
             Track = new TrackViewModel(trackService.CurrentSession);
             BindChildViewModel(Track);
             Stats = new TrackStatsViewModel(trackService);

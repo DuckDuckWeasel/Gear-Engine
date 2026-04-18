@@ -20,7 +20,9 @@ namespace GearEngine.GearEngine.Config
 
         public GearConfigData CreateRuntimeData()
         {
-            return data.Clone(nextLevel, abilities);
+            GearConfigData runtime = data.Clone(nextLevel, abilities);
+            runtime.SourceGearConfig = this;
+            return runtime;
         }
     }
 }

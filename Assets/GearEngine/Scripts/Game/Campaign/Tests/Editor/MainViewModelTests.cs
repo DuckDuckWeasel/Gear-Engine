@@ -2,6 +2,7 @@ using System.Reflection;
 using GearEngine.Campaign.Presentation;
 using GearEngine.CarSimulation;
 using GearEngine.CarSimulation.Definitions;
+using GearEngine.CarSimulation.Simulation;
 using NUnit.Framework;
 using Scaffold.MVVM;
 using UnityEditor;
@@ -26,6 +27,8 @@ namespace GearEngine.Campaign.Tests.Editor
 
             var vm = new MainViewModel();
             Inject(vm, "trackService", trackService);
+            Inject(vm, "trackFactory", new TrackSimulationFactory());
+            Inject(vm, "raceSessionRunner", new RaceSessionRunner());
             InjectNavigation(vm, new RecordingNavigation());
 
             InvokeInitialize(vm);

@@ -21,6 +21,10 @@ namespace GearEngine.GearEngine.Tests.Editor
             public void Stop()
             {
             }
+
+            public void ResetGridSimulationState()
+            {
+            }
         }
 
         [Test]

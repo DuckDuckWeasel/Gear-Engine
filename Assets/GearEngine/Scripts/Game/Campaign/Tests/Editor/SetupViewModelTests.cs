@@ -1,5 +1,7 @@
 using GearEngine.Campaign.Presentation;
+using GearEngine.Campaign.Services;
 using GearEngine.CarSimulation;
+using GearEngine.CarSimulation.Simulation;
 using GearEngine.CarSimulation.Definitions;
 using GearEngine.GearEngine;
 using GearEngine.GearEngine.Config;
@@ -46,6 +48,9 @@ namespace GearEngine.Campaign.Tests.Editor
                 ViewModelTestInject.InjectPrivateField(vm, "inventoryService", gear.InventoryService);
                 ViewModelTestInject.InjectPrivateField(vm, "presentationTransferService", gear.PresentationTransfer);
                 ViewModelTestInject.InjectPrivateField(vm, "campaignGearStartData", new GearEngineStartData());
+                ViewModelTestInject.InjectPrivateField(vm, "loadoutService", new LocalGearLoadoutService());
+                ViewModelTestInject.InjectPrivateField(vm, "trackFactory", new TrackSimulationFactory());
+                ViewModelTestInject.InjectPrivateField(vm, "raceSessionRunner", new RaceSessionRunner());
                 ViewModelTestInject.InjectNavigation(vm, new RecordingNavigation());
 
                 ViewModelTestInject.InvokeInitialize(vm);
@@ -95,6 +100,9 @@ namespace GearEngine.Campaign.Tests.Editor
                 ViewModelTestInject.InjectPrivateField(vm, "inventoryService", gear.InventoryService);
                 ViewModelTestInject.InjectPrivateField(vm, "presentationTransferService", gear.PresentationTransfer);
                 ViewModelTestInject.InjectPrivateField(vm, "campaignGearStartData", new GearEngineStartData());
+                ViewModelTestInject.InjectPrivateField(vm, "loadoutService", new LocalGearLoadoutService());
+                ViewModelTestInject.InjectPrivateField(vm, "trackFactory", new TrackSimulationFactory());
+                ViewModelTestInject.InjectPrivateField(vm, "raceSessionRunner", new RaceSessionRunner());
                 ViewModelTestInject.InjectNavigation(vm, navigation);
 
                 ViewModelTestInject.InvokeInitialize(vm);
@@ -143,6 +151,9 @@ namespace GearEngine.Campaign.Tests.Editor
                 ViewModelTestInject.InjectPrivateField(vm, "inventoryService", gear.InventoryService);
                 ViewModelTestInject.InjectPrivateField(vm, "presentationTransferService", gear.PresentationTransfer);
                 ViewModelTestInject.InjectPrivateField(vm, "campaignGearStartData", new GearEngineStartData());
+                ViewModelTestInject.InjectPrivateField(vm, "loadoutService", new LocalGearLoadoutService());
+                ViewModelTestInject.InjectPrivateField(vm, "trackFactory", new TrackSimulationFactory());
+                ViewModelTestInject.InjectPrivateField(vm, "raceSessionRunner", new RaceSessionRunner());
                 ViewModelTestInject.InjectNavigation(vm, navigation);
 
                 ViewModelTestInject.InvokeInitialize(vm);

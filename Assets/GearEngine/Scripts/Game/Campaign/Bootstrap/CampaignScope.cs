@@ -63,6 +63,14 @@ namespace GearEngine.Campaign.Bootstrap
             LocalWalletService walletService = new LocalWalletService(initialGold: 0);
             builder.RegisterInstance<IWalletService>(walletService);
 
+            LocalGearLoadoutService loadoutService = new LocalGearLoadoutService();
+            if (gearStart.BoardLayout != null)
+            {
+                loadoutService.SaveBoardLayout(gearStart.BoardLayout);
+            }
+
+            builder.RegisterInstance<IGearLoadoutService>(loadoutService);
+
             builder.RegisterComponent(sceneBootstrap).AsImplementedInterfaces().AsSelf();
         }
     }

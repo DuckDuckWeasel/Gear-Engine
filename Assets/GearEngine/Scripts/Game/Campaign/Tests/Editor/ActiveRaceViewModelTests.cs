@@ -19,6 +19,8 @@ namespace GearEngine.Campaign.Tests.Editor
             public void Play() => IsRunning = true;
 
             public void Stop() => IsRunning = false;
+
+            public void ResetGridSimulationState() => Stop();
         }
 
         private sealed class RecordingRaceSessionRunner : IRaceSessionRunner

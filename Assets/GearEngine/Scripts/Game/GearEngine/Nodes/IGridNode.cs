@@ -20,5 +20,8 @@ namespace GearEngine.GearEngine.Nodes
         void Initialize(Vector2Int position, GearConfigData configData);
         void NodeUpdate(float deltaTime, float speedModifier);
         void WindDownUpdate(float deltaTime, float speedModifier);
+
+        /// <summary>Clears rotation, charge, and other per-run simulation state (layout unchanged).</summary>
+        void ResetSimulationState();
     }
 }

@@ -41,6 +41,15 @@ namespace GearEngine.GearEngine.Config
         // Runtime copy of the next level config
         [NonSerialized] public GearConfig NextLevelConfig;
 
+        /// <summary>ScriptableObject this runtime row was created from (set by <see cref="GearConfig.CreateRuntimeData"/>).</summary>
+        [NonSerialized] private GearConfig sourceGearConfig;
+
+        public GearConfig SourceGearConfig
+        {
+            get => sourceGearConfig;
+            set => sourceGearConfig = value;
+        }
+
         public GearConfigData Clone(GearConfig nextLevelConfig, List<GearAbilitySO> abilities)
         {
             return new GearConfigData
@@ -64,7 +73,8 @@ namespace GearEngine.GearEngine.Config
                 IsDeletable = IsDeletable,
                 DeleteRewardAmount = DeleteRewardAmount,
                 NextLevelConfig = nextLevelConfig,
-                Abilities = new List<GearAbilitySO>(abilities ?? new List<GearAbilitySO>())
+                Abilities = new List<GearAbilitySO>(abilities ?? new List<GearAbilitySO>()),
+                SourceGearConfig = SourceGearConfig
             };
         }
     }

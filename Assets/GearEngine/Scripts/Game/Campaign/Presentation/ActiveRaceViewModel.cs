@@ -34,6 +34,8 @@ namespace GearEngine.Campaign.Presentation
             trackService.SetCurrentSession(freshSession);
             raceSessionRunner.SetSession(freshSession);
 
+            engineService.ResetGridSimulationState();
+
             Track = new TrackViewModel(trackService.CurrentSession, spawnCarOnBindIfNoChild: true);
             BindChildViewModel(Track);
 
@@ -55,7 +57,7 @@ namespace GearEngine.Campaign.Presentation
         {
             try
             {
-                engineService.Stop();
+                engineService.ResetGridSimulationState();
 
                 LapRaceSession session = trackService.CurrentSession;
                 RaceResultModel result = new RaceResultModel(session.RaceTime, session.CurrentLap, trackService.CurrentTrack);

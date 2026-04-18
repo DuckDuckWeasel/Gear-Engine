@@ -14,6 +14,7 @@ namespace GearEngine.GearEngine.Tests.Editor
             public float GlobalSpeedModifier { get; set; }
             public bool PlayCalled;
             public bool StopCalled;
+            public bool ResetAllCalled;
 
             public IEnumerable<IGridNode> GetAllNodes() => Array.Empty<IGridNode>();
 
@@ -31,6 +32,11 @@ namespace GearEngine.GearEngine.Tests.Editor
 
             public void ClearAll()
             {
+            }
+
+            public void ResetAllNodeSimulationState()
+            {
+                ResetAllCalled = true;
             }
 
             public void Play() => PlayCalled = true;
@@ -58,6 +64,18 @@ namespace GearEngine.GearEngine.Tests.Editor
             service.Stop();
 
             Assert.IsTrue(grid.StopCalled);
+        }
+
+        [Test]
+        public void ResetGridSimulationState_StopsAndResetsAllNodes()
+        {
+            var grid = new StubGrid();
+            var service = new GearEngineService(grid);
+
+            service.ResetGridSimulationState();
+
+            Assert.IsTrue(grid.StopCalled);
+            Assert.IsTrue(grid.ResetAllCalled);
         }
 
         [Test]
