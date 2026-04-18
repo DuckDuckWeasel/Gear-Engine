@@ -6,22 +6,11 @@ namespace GearEngine.GearEngine.Presentation.UI
 {
     public class DragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IDragSource
     {
-        public GameObject GhostPrefab { get => ghostPrefab; set => ghostPrefab = value; }
-
-        [Tooltip("Visual prefab or sprite to show as a ghost while dragging.")]
-        [SerializeField] private GameObject ghostPrefab;
-
         public bool IsInteractable { get; set; } = true;
-        public float GhostScaleMultiplier { get; set; } = 115f;
 
-        /// <summary>
-        /// When set, called each drag frame with screen position to compute uniform local scale for the ghost.
-        /// Use this so the ghost tracks live canvas/board scale instead of a single value captured at drag start.
-        /// </summary>
-        public Func<Vector2, float> GhostUniformScaleResolver { get; set; }
-
-        public Action OnDragBegin;
-        public Action OnDragEnd;
+        public Action<PointerEventData> OnDragBegin;
+        public Action<PointerEventData> OnDragMoved;
+        public Action<PointerEventData> OnDragEnd;
 
         /// <summary>Builds a <see cref="DragPayload"/> for the current drag at the given world hit position.</summary>
         public Func<Vector3, DragPayload> BuildPayload;
@@ -29,16 +18,21 @@ namespace GearEngine.GearEngine.Presentation.UI
         /// <summary>Invoked when a target accepts the drop (after <see cref="IDragTarget.OnDrop"/>).</summary>
         public Action<IDragTarget> OnDragAccepted;
 
-        private GameObject currentGhost;
-        private Canvas mainCanvas;
-
-        private void Start()
+        /// <summary>
+        /// World position from the pointer ray (same logic as drop resolution). Use for positioning a board-space drag ghost.
+        /// </summary>
+        public static bool TryGetPointerWorldPosition(PointerEventData eventData, out Vector3 worldPosition)
         {
-            mainCanvas = FindObjectOfType<Canvas>();
-            if (mainCanvas == null)
+            worldPosition = Vector3.zero;
+            Camera cam = Camera.main;
+            if (cam == null || eventData == null)
             {
-                Debug.LogWarning($"<color=#ffaa33>[DragHandler]</color> No Canvas found in scene. Ghost visuals may fail.");
+                return false;
             }
+
+            Ray ray = cam.ScreenPointToRay(eventData.position);
+            worldPosition = Physics.Raycast(ray, out RaycastHit hit) ? hit.point : Vector3.zero;
+            return true;
         }
 
         public void OnBeginDrag(PointerEventData eventData)
@@ -48,117 +42,17 @@ namespace GearEngine.GearEngine.Presentation.UI
                 return;
             }
 
-            OnDragBegin?.Invoke();
-            TryCreateGhost();
-            ApplyGhostUniformScale(eventData);
-        }
-
-        private void TryCreateGhost()
-        {
-            if (mainCanvas == null)
-            {
-                return;
-            }
-
-            if (ghostPrefab != null)
-            {
-                currentGhost = Instantiate(ghostPrefab, mainCanvas.transform);
-                ApplyGhostScaleIfNeeded();
-            }
-            else
-            {
-                CloneSelfAsGhost();
-            }
-
-            ConfigureGhostRaycast();
-        }
-
-        private void ApplyGhostScaleIfNeeded()
-        {
-            if (GhostUniformScaleResolver != null)
-            {
-                return;
-            }
-
-            if (currentGhost.GetComponent<RectTransform>() == null)
-            {
-                currentGhost.transform.localScale = new Vector3(GhostScaleMultiplier, GhostScaleMultiplier, GhostScaleMultiplier);
-            }
-        }
-
-        private void ApplyGhostUniformScale(PointerEventData eventData)
-        {
-            if (GhostUniformScaleResolver == null || currentGhost == null)
-            {
-                return;
-            }
-
-            float uniform = GhostUniformScaleResolver(eventData.position);
-            if (uniform > 0f)
-            {
-                currentGhost.transform.localScale = new Vector3(uniform, uniform, uniform);
-            }
-        }
-
-        private void CloneSelfAsGhost()
-        {
-            currentGhost = Instantiate(gameObject, mainCanvas.transform);
-            Component slotView = currentGhost.GetComponent("GearInventorySlotView");
-            if (slotView != null)
-            {
-                DestroyImmediate(slotView);
-            }
-
-            DragHandler childDrag = currentGhost.GetComponent<DragHandler>();
-            if (childDrag != null)
-            {
-                DestroyImmediate(childDrag);
-            }
-        }
-
-        private void ConfigureGhostRaycast()
-        {
-            currentGhost.transform.SetAsLastSibling();
-            CanvasGroup canvasGroup = currentGhost.GetComponent<CanvasGroup>();
-            if (canvasGroup == null)
-            {
-                canvasGroup = currentGhost.AddComponent<CanvasGroup>();
-            }
-
-            canvasGroup.blocksRaycasts = false;
-            canvasGroup.alpha = 0.6f;
+            OnDragBegin?.Invoke(eventData);
         }
 
         public void OnDrag(PointerEventData eventData)
         {
-            if (!IsInteractable || currentGhost == null)
+            if (!IsInteractable)
             {
                 return;
             }
 
-            UpdateGhostDragPosition(eventData);
-            ApplyGhostUniformScale(eventData);
-        }
-
-        private void UpdateGhostDragPosition(PointerEventData eventData)
-        {
-            if (mainCanvas != null && CanvasPositionUtility.ScreenToCanvasLocal(mainCanvas, eventData.position, out Vector2 localPoint))
-            {
-                currentGhost.transform.localPosition = localPoint;
-            }
-            else
-            {
-                currentGhost.transform.position = Input.mousePosition;
-            }
-        }
-
-        public void ForceGhostCleanup()
-        {
-            if (currentGhost != null)
-            {
-                Destroy(currentGhost);
-                currentGhost = null;
-            }
+            OnDragMoved?.Invoke(eventData);
         }
 
         public void OnEndDrag(PointerEventData eventData)
@@ -166,12 +60,6 @@ namespace GearEngine.GearEngine.Presentation.UI
             if (!IsInteractable)
             {
                 return;
-            }
-
-            if (currentGhost != null)
-            {
-                Destroy(currentGhost);
-                currentGhost = null;
             }
 
             try
@@ -184,7 +72,7 @@ namespace GearEngine.GearEngine.Presentation.UI
             }
             finally
             {
-                OnDragEnd?.Invoke();
+                OnDragEnd?.Invoke(eventData);
             }
         }
 

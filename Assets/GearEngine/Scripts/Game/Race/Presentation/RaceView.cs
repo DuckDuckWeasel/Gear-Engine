@@ -56,7 +56,7 @@ namespace GearEngine.Race.Presentation
         private void BindGearEngine()
         {
             boardView.Bind(viewModel.Board);
-            inventoryView.SetBoardScaleReference(boardView.transform);
+            inventoryView.SetBoardRoot(boardView.GetBoardSpaceRoot());
             inventoryView.Bind(viewModel.Inventory);
             trashDropZone.SetDragService(viewModel.DragService);
             trashDropZone.Bind(viewModel.TrashZone);

@@ -9,3 +9,8 @@
 ## Scopes
 
 `CampaignScope`, `RaceScope`, and `GearMechanicsScope` pass inventory and board loadout data into `GearMechanicsInstaller` so services are constructed before any gear UI view model runs.
+
+## Drag presentation
+
+- **`DragGhostController`** — Instantiates `GearConfigData.VisualPrefab` under the board’s `gearsRoot` (via `BoardViewComponent.GetBoardSpaceRoot()`), applies `RelativeScaleMultiplier` as local scale, and moves the ghost in world space. Used for both inventory drags (`GearInventoryViewComponent`) and board drags (`GearBoardDragHandler`) so the ghost matches placed gears without canvas/world scale ratio math.
+- **`DragHandler`** — EventSystem forwarder only: `OnDragBegin` / `OnDragMoved` / `OnDragEnd` with `PointerEventData`, plus `BuildPayload` and drop resolution via `DragTargetFinder`. Inventory slots wire these callbacks to `DragGhostController` and keep slot icons scaled with `GearVisualSetup` separately.

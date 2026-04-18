@@ -49,7 +49,7 @@ namespace GearEngine.Campaign.Presentation
             boardView.gameObject.SetActive(true);
             boardView.Bind(viewModel.Board);
             inventoryView.gameObject.SetActive(true);
-            inventoryView.SetBoardScaleReference(boardView.transform);
+            inventoryView.SetBoardRoot(boardView.GetBoardSpaceRoot());
             inventoryView.Bind(viewModel.Inventory);
             trashDropZone.gameObject.SetActive(true);
             trashDropZone.SetDragService(viewModel.DragService);

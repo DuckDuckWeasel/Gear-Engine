@@ -31,7 +31,7 @@ namespace GearEngine.Campaign.Presentation
             track.Bind(viewModel.Track);
             
             boardView.Bind(viewModel.Board);
-            inventoryView.SetBoardScaleReference(boardView.transform);
+            inventoryView.SetBoardRoot(boardView.GetBoardSpaceRoot());
             inventoryView.Bind(viewModel.Inventory);
             
             trashDropZone.SetDragService(viewModel.DragService);

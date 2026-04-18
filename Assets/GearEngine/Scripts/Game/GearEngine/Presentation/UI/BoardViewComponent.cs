@@ -114,7 +114,7 @@ namespace GearEngine.GearEngine.Presentation.UI
         }
 
         /// <summary>Transform whose local space matches <see cref="BoardConfigSO.GetWorldPosition"/> / grid layout.</summary>
-        internal Transform GetBoardSpaceRoot()
+        public Transform GetBoardSpaceRoot()
         {
             if (gearsRoot != null)
             {

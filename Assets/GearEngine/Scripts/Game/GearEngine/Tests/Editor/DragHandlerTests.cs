@@ -21,23 +21,28 @@ namespace GearEngine.GearEngine.Tests.Editor
         }
 
         [Test]
-        public void GhostUniformScaleResolver_InvokedOnBeginDragAndOnDrag()
+        public void OnBeginDrag_InvokesOnDragBeginWithSamePointerEventData()
         {
             _host = new GameObject("DragHost", typeof(DragHandler));
-            new GameObject("Canvas", typeof(Canvas)).transform.SetParent(_host.transform);
-            var ghostTemplate = new GameObject("GhostTemplate");
-
             var drag = _host.GetComponent<DragHandler>();
-            drag.GhostPrefab = ghostTemplate;
-            int calls = 0;
-            drag.GhostUniformScaleResolver = _ => { calls++; return 2f; };
-
-            var ped = new PointerEventData(EventSystem.current) { position = Vector2.zero };
+            PointerEventData received = null;
+            drag.OnDragBegin += e => received = e;
+            var ped = new PointerEventData(EventSystem.current) { position = new Vector2(5f, 7f) };
             drag.OnBeginDrag(ped);
-            Assert.GreaterOrEqual(calls, 1);
-            int afterBegin = calls;
+            Assert.AreSame(ped, received);
+        }
+
+        [Test]
+        public void OnDrag_InvokesOnDragMovedWithSamePointerEventData()
+        {
+            _host = new GameObject("DragHost", typeof(DragHandler));
+            var drag = _host.GetComponent<DragHandler>();
+            drag.IsInteractable = true;
+            PointerEventData received = null;
+            drag.OnDragMoved += e => received = e;
+            var ped = new PointerEventData(EventSystem.current) { position = new Vector2(1f, 2f) };
             drag.OnDrag(ped);
-            Assert.Greater(calls, afterBegin);
+            Assert.AreSame(ped, received);
         }
     }
 }

@@ -7,6 +7,7 @@ using Scaffold.MVVM;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Assertions;
+using UnityEngine.EventSystems;
 
 namespace GearEngine.GearEngine.Presentation.UI
 {
@@ -16,18 +17,18 @@ namespace GearEngine.GearEngine.Presentation.UI
         [SerializeField] private GameObject slotPrefab;
         [SerializeField] private TextMeshProUGUI inventoryLimitLabel;
 
-        private Transform boardScaleReference;
-        private BoardViewComponent boardView;
+        private Transform boardRoot;
+        private DragGhostController ghostController;
 
         private bool inventoryUiBinding;
 
         /// <summary>
-        /// Wires the board root used to match inventory gear scale to the board (and resolves <see cref="BoardViewComponent"/> for drag scaling).
+        /// Wires the board root used for inventory slot scale matching and for parenting the drag ghost.
         /// </summary>
-        public void SetBoardScaleReference(Transform reference)
+        public void SetBoardRoot(Transform root)
         {
-            boardScaleReference = reference;
-            boardView = reference != null ? reference.GetComponentInParent<BoardViewComponent>() : null;
+            boardRoot = root;
+            ghostController = root != null ? new DragGhostController(root) : null;
         }
 
         protected override void OnBind()
@@ -41,7 +42,7 @@ namespace GearEngine.GearEngine.Presentation.UI
                 Bind(() => viewModel.InventoryLimitText, () => inventoryLimitLabel.text);
                 Bind<int, int>(() => viewModel.InventoryListRevision, OnInventoryListRevisionChanged);
                 Bind<IItem, IItem>(() => viewModel.SelectedItem, OnSelectionChanged);
-                CheckTargetRect();
+                CheckBoardRoot();
                 RebuildUIList();
             }
             finally
@@ -60,11 +61,11 @@ namespace GearEngine.GearEngine.Presentation.UI
             RebuildUIList();
         }
 
-        private void CheckTargetRect()
+        private void CheckBoardRoot()
         {
-            if (boardScaleReference == null)
+            if (boardRoot == null)
             {
-                Debug.LogWarning("[GearInventoryView] Board scale reference is not wired from GearEngineCoreViewComponent; gear ghost scaling may be incorrect.");
+                Debug.LogWarning("[GearInventoryView] Board root is not wired from GearEngineCoreViewComponent; slot scaling and drag ghost may be incorrect.");
             }
         }
 
@@ -99,8 +100,6 @@ namespace GearEngine.GearEngine.Presentation.UI
                 return;
             }
 
-            // Destroy() is deferred until end of frame; multiple RebuildUIList calls in one frame
-            // (e.g. OnBind + InventoryListRevision binding) would stack new slots on top of queued destroys.
             for (int i = itemsContainer.childCount - 1; i >= 0; i--)
             {
                 Transform child = itemsContainer.GetChild(i);
@@ -133,59 +132,69 @@ namespace GearEngine.GearEngine.Presentation.UI
         private void ApplyGearVisualAndDrag(Transform visualContainer, GearConfigData gear, DragHandler dragger, GearInventorySlotView slotView)
         {
             float totalScale = gear.RelativeScaleMultiplier * ComputeBaseScale(visualContainer);
-            dragger.GhostScaleMultiplier = totalScale;
             GameObject visualObj = GearVisualSetup.SetupVisual(visualContainer, gear, totalScale);
-            if (visualObj != null)
+            if (visualObj == null)
             {
-                dragger.GhostPrefab = visualObj;
+                Debug.LogError($"[GearInventoryView] SetupVisual returned null for gear '{gear?.Id}'.");
             }
 
             slotView.Bind(gear, viewModel);
-            HookDragHandlers(dragger, gear, visualContainer);
+            HookDragHandlers(dragger, gear);
         }
 
         private float ComputeBaseScale(Transform visualContainer)
         {
             float baseScale = 56f;
-            if (boardScaleReference != null && visualContainer.lossyScale.x > 0f)
+            if (boardRoot != null && visualContainer.lossyScale.x > 0f)
             {
-                baseScale = boardScaleReference.lossyScale.x / visualContainer.lossyScale.x;
+                baseScale = boardRoot.lossyScale.x / visualContainer.lossyScale.x;
             }
 
             return baseScale;
         }
 
-        private void HookDragHandlers(DragHandler dragger, GearConfigData gear, Transform visualContainer)
+        private void HookDragHandlers(DragHandler dragger, GearConfigData gear)
         {
             GearConfigData capturedGear = gear;
-            dragger.OnDragBegin += () => viewModel.NotifySlotDragStarted(capturedGear);
-            dragger.OnDragEnd += () => viewModel.NotifySlotDragEnded();
+            dragger.OnDragBegin += BeginInventoryDrag;
+            dragger.OnDragMoved += MoveInventoryDragGhost;
+            dragger.OnDragEnd += EndInventoryDrag;
             dragger.BuildPayload = worldPos => new DragPayload(capturedGear, worldPos, dragger);
             dragger.OnDragAccepted = _ => viewModel.NotifySlotDragAccepted(capturedGear);
-            dragger.GhostUniformScaleResolver = screenPos => ResolveGhostUniformScale(capturedGear, visualContainer, dragger, screenPos);
-        }
 
-        private float ResolveGhostUniformScale(GearConfigData gear, Transform visualContainer, DragHandler dragger, Vector2 screenPos)
-        {
-            float slotRelativeScale = gear.RelativeScaleMultiplier * ComputeBaseScale(visualContainer);
-            Camera cam = Camera.main;
-            if (cam == null || boardView == null)
+            void BeginInventoryDrag(PointerEventData e)
             {
-                return slotRelativeScale;
-            }
-
-            var payload = new DragPayload(gear, Vector3.zero, dragger);
-            IDragTarget target = DragTargetFinder.Find(payload, screenPos, cam);
-            if (target is BoardViewComponent board && ReferenceEquals(board, boardView))
-            {
-                Transform root = board.GetBoardSpaceRoot();
-                if (root != null && visualContainer != null && visualContainer.lossyScale.x > 0f)
+                viewModel.NotifySlotDragStarted(capturedGear);
+                if (ghostController == null)
                 {
-                    return gear.RelativeScaleMultiplier * (root.lossyScale.x / visualContainer.lossyScale.x);
+                    return;
+                }
+
+                ghostController.CreateGhost(capturedGear);
+                if (DragHandler.TryGetPointerWorldPosition(e, out Vector3 w))
+                {
+                    ghostController.MoveGhostTo(w);
                 }
             }
 
-            return slotRelativeScale;
+            void MoveInventoryDragGhost(PointerEventData e)
+            {
+                if (ghostController == null)
+                {
+                    return;
+                }
+
+                if (DragHandler.TryGetPointerWorldPosition(e, out Vector3 w))
+                {
+                    ghostController.MoveGhostTo(w);
+                }
+            }
+
+            void EndInventoryDrag(PointerEventData e)
+            {
+                ghostController?.DestroyGhost();
+                viewModel.NotifySlotDragEnded();
+            }
         }
 
         public void OnDragStarted(DragPayload payload)
