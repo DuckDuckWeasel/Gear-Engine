@@ -160,8 +160,9 @@ namespace GearEngine.GearEngine.Presentation.UI
                 else
                 {
                     BoardConfigSO cfg = boardView.GetBoardConfig();
+                    Transform boardRoot = boardView.GetBoardSpaceRoot();
                     Vector2Int targetPos = cfg != null
-                        ? cfg.GetGridPosition(worldPos - boardView.transform.position)
+                        ? cfg.GetGridPosition(boardRoot.InverseTransformPoint(worldPos))
                         : originalGridPos;
                     boardView.NotifyDropped(pendingNode, targetPos);
                 }

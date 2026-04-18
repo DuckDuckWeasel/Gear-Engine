@@ -35,6 +35,7 @@ Transform:
   m_Children:
   - {fileID: 7759678743638286429}
   - {fileID: 4642411023274189975}
+  - {fileID: 4556119119787354363}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!65 &4064134289630635625
@@ -73,7 +74,8 @@ MonoBehaviour:
   dragHandler: {fileID: 6220333922910125170}
   gridSlotPrefab: {fileID: 4115414381565513330, guid: f361ce0788996485687478c4a23a5374, type: 3}
   gridRoot: {fileID: 7759678743638286429}
-  boardLimitLabel: {fileID: 6477635007171428367}
+  gearsRoot: {fileID: 4556119119787354363}
+  boardLimitLabel: {fileID: 0}
 --- !u!114 &6220333922910125170
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -86,8 +88,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 45fe5a6221b93504c82f832f5d0c2434, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Presentation.UI.GearBoardDragHandler
-  trashZoneTag: {fileID: 11400000, guid: f7a8b9c0d1e24321abcdef1234567890, type: 2}
-  inventoryZoneTag: {fileID: 11400000, guid: f015376b4d5f0466e99dc400b4d3e2c2, type: 2}
 --- !u!114 &850522966390633303
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -102,6 +102,37 @@ MonoBehaviour:
   m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Presentation.UI.Tags.TagComponent
   tags:
   - {fileID: 11400000, guid: 5c2b250558aea402685c1701a76d0a37, type: 2}
+--- !u!1 &2728441158736966221
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4556119119787354363}
+  m_Layer: 0
+  m_Name: Gear_Root
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4556119119787354363
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2728441158736966221}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5861437231989158850}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &3980856341236674043
 GameObject:
   m_ObjectHideFlags: 0
@@ -249,7 +280,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7759678743638286429}
   m_Layer: 0
-  m_Name: GearGrid_Root
+  m_Name: Grid_Root
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
