@@ -12,6 +12,7 @@ namespace GearEngine.CarSimulation.Presentation
     public sealed class CarTrackTestView : View<CarTrackScreenViewModel>
     {
         [SerializeField] private TrackViewComponent track;
+        [SerializeField] private TrackTelemetryViewComponent telemetry;
         [SerializeField] private Button raceButton;
 
         private readonly List<CarView> spawnedCars = new List<CarView>();
@@ -19,19 +20,31 @@ namespace GearEngine.CarSimulation.Presentation
 
         protected override void OnBind()
         {
+            if (!CanBind())
+            {
+                return;
+            }
+
+            BindTrackAndCars();
+            SubscribeToSessionUpdates();
+            HookRaceButton();
+            RefreshButtonState();
+        }
+
+        private bool CanBind()
+        {
             if (track == null)
             {
                 Debug.LogError("[CarTrackTestView] Assign the Track ViewComponent reference.");
-                return;
+                return false;
             }
 
-            if (viewModel.Sessions == null || viewModel.Sessions.Count == 0)
-            {
-                return;
-            }
+            return viewModel.Sessions != null && viewModel.Sessions.Count > 0;
+        }
 
+        private void BindTrackAndCars()
+        {
             track.Bind(viewModel.Track);
-
             viewModel.AttachRunnersRequested += OnAttachRunnersRequested;
 
             IReadOnlyList<CarViewModel> cars = viewModel.Cars;
@@ -39,18 +52,22 @@ namespace GearEngine.CarSimulation.Presentation
             {
                 TrySpawnCar(cars[i]);
             }
+        }
 
+        private void SubscribeToSessionUpdates()
+        {
             foreach (Simulation.RaceState session in viewModel.Sessions)
             {
                 session.PresentationChanged += RefreshButtonState;
             }
+        }
 
+        private void HookRaceButton()
+        {
             if (raceButton != null)
             {
                 raceButton.onClick.AddListener(viewModel.ToggleRace);
             }
-
-            RefreshButtonState();
         }
 
         private void OnAttachRunnersRequested()
@@ -117,9 +134,9 @@ namespace GearEngine.CarSimulation.Presentation
 
         private void Update()
         {
-            if (primaryCar != null && track != null)
+            if (primaryCar != null && telemetry != null)
             {
-                track.UpdateTelemetryUI(
+                telemetry.UpdateTelemetry(
                     primaryCar.Speed,
                     primaryCar.Progress,
                     primaryCar.IsBraking,
@@ -136,11 +153,24 @@ namespace GearEngine.CarSimulation.Presentation
 
         protected override void OnUnbind()
         {
+            UnhookAttachRunners();
+            DestroySpawnedCars();
+            UnbindTrack();
+            UnsubscribeFromSessionUpdates();
+            UnhookRaceButton();
+            base.OnUnbind();
+        }
+
+        private void UnhookAttachRunners()
+        {
             if (viewModel != null)
             {
                 viewModel.AttachRunnersRequested -= OnAttachRunnersRequested;
             }
+        }
 
+        private void DestroySpawnedCars()
+        {
             foreach (CarView car in spawnedCars)
             {
                 if (car != null)
@@ -151,26 +181,35 @@ namespace GearEngine.CarSimulation.Presentation
 
             spawnedCars.Clear();
             primaryCar = null;
+        }
 
+        private void UnbindTrack()
+        {
             if (track != null)
             {
                 track.Unbind();
             }
+        }
 
-            if (viewModel?.Sessions != null)
+        private void UnsubscribeFromSessionUpdates()
+        {
+            if (viewModel?.Sessions == null)
             {
-                foreach (Simulation.RaceState session in viewModel.Sessions)
-                {
-                    session.PresentationChanged -= RefreshButtonState;
-                }
+                return;
             }
 
+            foreach (Simulation.RaceState session in viewModel.Sessions)
+            {
+                session.PresentationChanged -= RefreshButtonState;
+            }
+        }
+
+        private void UnhookRaceButton()
+        {
             if (raceButton != null && viewModel != null)
             {
                 raceButton.onClick.RemoveListener(viewModel.ToggleRace);
             }
-
-            base.OnUnbind();
         }
     }
 }
