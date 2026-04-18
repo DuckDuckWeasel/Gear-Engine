@@ -144,7 +144,7 @@ namespace GearEngine.FrustumFit
             Vector3 localScale = FrustumFitAxisMapping.MergeLocalScaleAxes(baselineLocalScale, localScale2D, fitAxes);
 
             bool hasRotation = rotationMode == FrustumFitAnchorRotationMode.MatchCameraRotation;
-            Quaternion worldRotation = hasRotation ? worldCamera.transform.rotation : default;
+            Quaternion worldRotation = hasRotation ? worldCamera.transform.rotation : Quaternion.identity;
             placement = new FrustumFitAnchorPlacement(worldCenter, localScale, hasRotation, worldRotation);
             return true;
         }
