@@ -4,7 +4,9 @@ using GearEngine.CarSimulation.Definitions;
 using GearEngine.CarSimulation.Presentation;
 using GearEngine.CarSimulation.Simulation;
 using GearEngine.GearEngine;
+using GearEngine.GearEngine.Config;
 using GearEngine.GearEngine.Presentation.UI;
+using GearEngine.GearEngine.Services;
 using GearEngine.GearEngine.Services.Board;
 using GearEngine.GearEngine.Services.Inventory;
 using Scaffold.MVVM;
@@ -25,7 +27,11 @@ namespace GearEngine.Race
 
         public TrackViewModel Track { get; private set; }
 
+        public TrashZoneViewModel TrashZone { get; private set; }
+
         public bool IsRaceRunning => engineService?.IsRunning ?? false;
+
+        internal IDragService DragService => dragService;
 
         private readonly RaceStartData startData;
 
@@ -47,12 +53,19 @@ namespace GearEngine.Race
         [Inject]
         private IDragService dragService;
 
+        [Inject]
+        private IGearPresentationTransferService presentationTransferService;
+
+        [Inject]
+        private GearEngineFeatureToggleSO featureToggle;
+
         protected override void Initialize()
         {
             base.Initialize();
             ValidateStartData();
             SetupInventory();
             SetupBoard();
+            SetupTrashZone();
             SetupTrack();
         }
 
@@ -98,6 +111,12 @@ namespace GearEngine.Race
         {
             Board = new BoardViewModel(boardService, inventoryService, engineService, dragService);
             BindChildViewModel(Board);
+        }
+
+        private void SetupTrashZone()
+        {
+            TrashZone = new TrashZoneViewModel(dragService, engineService, Board, presentationTransferService, featureToggle);
+            BindChildViewModel(TrashZone);
         }
 
         private void SetupTrack()

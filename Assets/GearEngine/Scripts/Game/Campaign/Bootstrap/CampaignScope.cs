@@ -52,13 +52,13 @@ namespace GearEngine.Campaign.Bootstrap
             GearEngineStartData gearStart = campaignGearStartData ?? new GearEngineStartData();
 
             LocalGearLoadoutService loadoutService = new LocalGearLoadoutService();
-            if (gearStart.BoardLayout != null)
+            if (gearStart.BoardLoadout.BoardLayout != null)
             {
-                loadoutService.SaveBoardLayout(gearStart.BoardLayout);
+                loadoutService.SaveBoardLayout(gearStart.BoardLoadout.BoardLayout);
             }
 
             GearInventoryLoadoutData inventoryLoadout = loadoutService.HasSavedInventory
-                ? GearInventoryLoadoutData.FromGearConfigs(gearStart.MaxInventorySlots, loadoutService.GetInventoryGearConfigs())
+                ? GearInventoryLoadoutData.FromGearConfigs(gearStart.InventoryLoadout.MaxSlots, loadoutService.GetInventoryGearConfigs())
                 : gearStart.GetInventoryLoadoutData();
 
             new GearMechanicsInstaller(boardConfig, featureToggle).Install(builder, inventoryLoadout, gearStart.GetBoardLoadoutData());

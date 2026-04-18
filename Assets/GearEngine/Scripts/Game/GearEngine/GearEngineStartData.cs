@@ -1,35 +1,21 @@
 using System;
-using System.Collections.Generic;
 using UnityEngine;
-using GearEngine.GearEngine.Config;
 
 namespace GearEngine.GearEngine
 {
     [Serializable]
     public sealed class GearEngineStartData
     {
-        public BoardLayoutData BoardLayout => boardLayout;
+        [SerializeField] private GearInventoryLoadoutData inventoryLoadout = new GearInventoryLoadoutData();
 
-        [SerializeField] private BoardLayoutData boardLayout;
+        [SerializeField] private GearBoardLoadoutData boardLoadout = new GearBoardLoadoutData();
 
-        public IReadOnlyList<GearConfig> InventoryGears => inventoryGears;
+        public GearInventoryLoadoutData InventoryLoadout => inventoryLoadout;
 
-        [SerializeField] private List<GearConfig> inventoryGears = new List<GearConfig>();
+        public GearBoardLoadoutData BoardLoadout => boardLoadout;
 
-        public int MaxInventorySlots => maxInventorySlots;
+        public GearInventoryLoadoutData GetInventoryLoadoutData() => inventoryLoadout;
 
-        [SerializeField] private int maxInventorySlots = 5;
-
-        /// <summary>Adapter for inventory service construction and new loadout type.</summary>
-        public GearInventoryLoadoutData GetInventoryLoadoutData()
-        {
-            return GearInventoryLoadoutData.FromGearConfigs(maxInventorySlots, inventoryGears);
-        }
-
-        /// <summary>Adapter for board startup.</summary>
-        public GearBoardLoadoutData GetBoardLoadoutData()
-        {
-            return new GearBoardLoadoutData { BoardLayout = boardLayout };
-        }
+        public GearBoardLoadoutData GetBoardLoadoutData() => boardLoadout;
     }
 }

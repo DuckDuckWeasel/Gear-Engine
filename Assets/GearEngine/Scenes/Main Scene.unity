@@ -288,17 +288,17 @@ MonoBehaviour:
   boardConfig: {fileID: 11400000, guid: c8936b7a974414cf6aba78a5ac6be445, type: 2}
   featureToggle: {fileID: 11400000, guid: e8f9a0b1c2d34432bcdef01234567891, type: 2}
   campaignGearStartData:
-    boardLayout:
-      placements:
-      - position: {x: 0, y: 0}
-        gearConfig: {fileID: 11400000, guid: 39144108699f44d10b422acf50e748ba, type: 2}
-      - position: {x: 1, y: 1}
-        gearConfig: {fileID: 11400000, guid: fc9fa8903c002405f937050464c1d2a5, type: 2}
-    inventoryGears:
-    - {fileID: 11400000, guid: 39144108699f44d10b422acf50e748ba, type: 2}
-    - {fileID: 11400000, guid: 3783c6d85510a4bf6b4f879d30ef249b, type: 2}
-    - {fileID: 11400000, guid: 9f0ce76835399481e9aaf8f8af8f41ca, type: 2}
-    maxInventorySlots: 5
+    inventoryLoadout:
+      maxSlots: 5
+      startingItems:
+      - {fileID: 11400000, guid: 3783c6d85510a4bf6b4f879d30ef249b, type: 2}
+      - {fileID: 11400000, guid: b642772cacb3f48d7870118c94a3e3a0, type: 2}
+      - {fileID: 11400000, guid: 9f0ce76835399481e9aaf8f8af8f41ca, type: 2}
+    boardLoadout:
+      boardLayout:
+        placements:
+        - position: {x: 1, y: 1}
+          gearConfig: {fileID: 11400000, guid: 39144108699f44d10b422acf50e748ba, type: 2}
   roguelikeCardPool:
   - {fileID: 11400000, guid: 39144108699f44d10b422acf50e748ba, type: 2}
   - {fileID: 11400000, guid: 3783c6d85510a4bf6b4f879d30ef249b, type: 2}
