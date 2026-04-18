@@ -3,7 +3,10 @@ using UnityEngine;
 
 namespace GearEngine.FrustumFit
 {
-    /// sample: UI-anchored frustum fitting; Canvas from source rect parents; Renderer from target transform parents or children.
+    /// <summary>
+    /// UI-anchored frustum fitting: scales and positions a world-space target so it
+    /// visually fills the screen region defined by a <see cref="RectTransform"/>.
+    /// </summary>
     public sealed class FrustumFitAnchor : MonoBehaviour
     {
         public Transform TargetTransform => targetTransform;
@@ -24,6 +27,13 @@ namespace GearEngine.FrustumFit
 
         [SerializeField]
         private Transform targetTransform;
+
+        [Tooltip("How the target's visual extent is measured.\n" +
+                 "• DirectRenderer — reads the Renderer on targetTransform itself; fails if none.\n" +
+                 "• CombineChildBounds — encapsulates all child Renderer world bounds; good for " +
+                 "logical roots whose size is defined by many children (e.g. a grid of tiles).")]
+        [SerializeField]
+        private FrustumFitBoundsMode boundsMode = FrustumFitBoundsMode.DirectRenderer;
 
         [Header("Fit")]
         [SerializeField]
@@ -115,9 +125,13 @@ namespace GearEngine.FrustumFit
                 return false;
             }
 
-            Renderer renderer = FrustumFitTargetRenderer.FromTargetTransform(targetTransform);
+            if (!FrustumFitBoundsResolver.TryResolve(boundsMode, targetTransform, out Vector3 effectiveMeshSize))
+            {
+                return false;
+            }
+
             Vector3 baseline = targetTransform != null ? targetTransform.localScale : Vector3.one;
-            return FrustumFitPlacementFactory.TryCreate(sourceRect, canvas, worldCamera, depth, targetTransform, renderer, fillMode, fitAxes, rotationMode, baseline, out placement);
+            return FrustumFitPlacementFactory.TryCreate(sourceRect, canvas, worldCamera, depth, targetTransform, effectiveMeshSize, fillMode, fitAxes, rotationMode, baseline, out placement);
         }
 
         private void LogApplySkipped()
@@ -126,9 +140,8 @@ namespace GearEngine.FrustumFit
             if (LogIfCanvasMissing()) return;
             if (LogIfCameraMissing()) return;
             if (LogIfTargetMissing()) return;
-            if (LogIfRendererMissing()) return;
+            if (LogIfBoundsInvalid()) return;
             if (LogIfDepthInvalid()) return;
-            if (LogIfMeshExtentsInvalid()) return;
             Debug.LogError($"[FrustumFitAnchor] Could not compute placement on '{name}' (degenerate viewport or invalid inputs).");
         }
 
@@ -176,15 +189,24 @@ namespace GearEngine.FrustumFit
             return true;
         }
 
-        private bool LogIfRendererMissing()
+        private bool LogIfBoundsInvalid()
         {
-            if (FrustumFitTargetRenderer.FromTargetTransform(targetTransform) != null)
+            if (!FrustumFitBoundsResolver.TryResolve(boundsMode, targetTransform, out Vector3 effectiveMeshSize))
             {
-                return false;
+                Debug.LogError($"[FrustumFitAnchor] '{name}': boundsMode={boundsMode} found no valid Renderer on '{targetTransform?.name}'. " +
+                               "Switch to CombineChildBounds or add a Renderer to the target.");
+                return true;
             }
 
-            Debug.LogError($"[FrustumFitAnchor] No Renderer on target ancestors or children on '{name}'. Assign targetTransform to a hierarchy that includes a Renderer.");
-            return true;
+            Vector2 meshSize2D = FrustumFitAxisMapping.ExtractAxesPair(effectiveMeshSize, fitAxes);
+            if (meshSize2D.x <= 0f || meshSize2D.y <= 0f)
+            {
+                Debug.LogError($"[FrustumFitAnchor] '{name}': effective bounds have no extent on fit axes {fitAxes} (size={meshSize2D}). " +
+                               "Adjust fitAxes to match your mesh (e.g. XZ for a ground/track plane).");
+                return true;
+            }
+
+            return false;
         }
 
         private bool LogIfDepthInvalid()
@@ -197,43 +219,34 @@ namespace GearEngine.FrustumFit
             Debug.LogError($"[FrustumFitAnchor] depth must be positive for perspective cameras on '{name}'.");
             return true;
         }
-
-        private bool LogIfMeshExtentsInvalid()
-        {
-            Renderer renderer = FrustumFitTargetRenderer.FromTargetTransform(targetTransform);
-            Vector2 meshSize = FrustumFitAxisMapping.ExtractAxesPair(renderer.localBounds.size, fitAxes);
-            if (meshSize.x > 0f && meshSize.y > 0f)
-            {
-                return false;
-            }
-
-            Debug.LogError(
-                $"[FrustumFitAnchor] Renderer local bounds have no extent on fit axes {fitAxes} on '{name}' (size={meshSize}). " +
-                "Use Frustum Fit Axes that match your mesh (e.g. XZ for a ground/track plane).");
-            return true;
-        }
-    }
-
-    public static class FrustumFitTargetRenderer
-    {
-        public static Renderer FromTargetTransform(Transform targetTransform)
-        {
-            if (targetTransform == null)
-            {
-                return null;
-            }
-
-            Renderer renderer = targetTransform.GetComponentInParent<Renderer>();
-            return renderer != null ? renderer : targetTransform.GetComponentInChildren<Renderer>(true);
-        }
     }
 
     public static class FrustumFitPlacementFactory
     {
-        public static bool TryCreate(RectTransform sourceRect, Canvas sourceCanvas, Camera worldCamera, float depth, Transform targetTransform, Renderer targetRenderer, FrustumFillMode fillMode, FrustumFitAxes fitAxes, FrustumFitAnchorRotationMode rotationMode, Vector3 baselineLocalScale, out FrustumFitAnchorPlacement placement)
+        /// <summary>
+        /// Computes a <see cref="FrustumFitAnchorPlacement"/> that scales and positions
+        /// <paramref name="targetTransform"/> so it fills the screen region described by
+        /// <paramref name="sourceRect"/>.
+        /// </summary>
+        /// <param name="effectiveMeshSize">
+        /// The target mesh extent per unit of <paramref name="targetTransform"/> lossyScale,
+        /// as produced by <see cref="FrustumFitBoundsResolver.TryResolve"/>.
+        /// </param>
+        public static bool TryCreate(
+            RectTransform sourceRect,
+            Canvas sourceCanvas,
+            Camera worldCamera,
+            float depth,
+            Transform targetTransform,
+            Vector3 effectiveMeshSize,
+            FrustumFillMode fillMode,
+            FrustumFitAxes fitAxes,
+            FrustumFitAnchorRotationMode rotationMode,
+            Vector3 baselineLocalScale,
+            out FrustumFitAnchorPlacement placement)
         {
             placement = default;
-            if (!HasValidCoreInputs(sourceRect, worldCamera, targetTransform, targetRenderer) || !HasValidDepth(depth, worldCamera.orthographic))
+            if (!HasValidCoreInputs(sourceRect, worldCamera, targetTransform) || !HasValidDepth(depth, worldCamera.orthographic))
             {
                 return false;
             }
@@ -243,12 +256,12 @@ namespace GearEngine.FrustumFit
                 return false;
             }
 
-            return TryBuildPlacement(worldCamera, depth, targetTransform, targetRenderer, fillMode, fitAxes, rotationMode, baselineLocalScale, vpSize, vpCenter, out placement);
+            return TryBuildPlacement(worldCamera, depth, targetTransform, effectiveMeshSize, fillMode, fitAxes, rotationMode, baselineLocalScale, vpSize, vpCenter, out placement);
         }
 
-        private static bool HasValidCoreInputs(RectTransform sourceRect, Camera worldCamera, Transform targetTransform, Renderer targetRenderer)
+        private static bool HasValidCoreInputs(RectTransform sourceRect, Camera worldCamera, Transform targetTransform)
         {
-            return sourceRect != null && worldCamera != null && targetTransform != null && targetRenderer != null;
+            return sourceRect != null && worldCamera != null && targetTransform != null;
         }
 
         private static bool HasValidDepth(float depth, bool orthographic)
@@ -263,12 +276,24 @@ namespace GearEngine.FrustumFit
             return vpSize.x > 0f && vpSize.y > 0f;
         }
 
-        private static bool TryBuildPlacement(Camera worldCamera, float depth, Transform targetTransform, Renderer targetRenderer, FrustumFillMode fillMode, FrustumFitAxes fitAxes, FrustumFitAnchorRotationMode rotationMode, Vector3 baselineLocalScale, Vector2 vpSize, Vector2 vpCenter, out FrustumFitAnchorPlacement placement)
+        private static bool TryBuildPlacement(
+            Camera worldCamera,
+            float depth,
+            Transform targetTransform,
+            Vector3 effectiveMeshSize,
+            FrustumFillMode fillMode,
+            FrustumFitAxes fitAxes,
+            FrustumFitAnchorRotationMode rotationMode,
+            Vector3 baselineLocalScale,
+            Vector2 vpSize,
+            Vector2 vpCenter,
+            out FrustumFitAnchorPlacement placement)
         {
             FrustumBounds bounds = FrustumFitMath.ComputeBounds(worldCamera.orthographic, worldCamera.orthographicSize, worldCamera.fieldOfView, worldCamera.aspect, depth);
             Vector2 targetWorldSize = FrustumFitMath.ComputeTargetWorldSize(bounds, vpSize.x, vpSize.y);
             Vector3 worldCenter = worldCamera.ViewportToWorldPoint(new Vector3(vpCenter.x, vpCenter.y, depth));
-            if (!TryMergeLocalScale(targetTransform, targetRenderer, targetWorldSize, fillMode, fitAxes, baselineLocalScale, out Vector3 localScale))
+
+            if (!TryMergeLocalScale(targetTransform, effectiveMeshSize, targetWorldSize, fillMode, fitAxes, baselineLocalScale, out Vector3 localScale))
             {
                 placement = default;
                 return false;
@@ -280,10 +305,16 @@ namespace GearEngine.FrustumFit
             return true;
         }
 
-        private static bool TryMergeLocalScale(Transform targetTransform, Renderer targetRenderer, Vector2 targetWorldSize, FrustumFillMode fillMode, FrustumFitAxes fitAxes, Vector3 baselineLocalScale, out Vector3 localScale)
+        private static bool TryMergeLocalScale(
+            Transform targetTransform,
+            Vector3 effectiveMeshSize,
+            Vector2 targetWorldSize,
+            FrustumFillMode fillMode,
+            FrustumFitAxes fitAxes,
+            Vector3 baselineLocalScale,
+            out Vector3 localScale)
         {
-            Vector3 boundsSize = targetRenderer.localBounds.size;
-            Vector2 meshSize = FrustumFitAxisMapping.ExtractAxesPair(boundsSize, fitAxes);
+            Vector2 meshSize = FrustumFitAxisMapping.ExtractAxesPair(effectiveMeshSize, fitAxes);
             if (meshSize.x <= 0f || meshSize.y <= 0f)
             {
                 localScale = default;
