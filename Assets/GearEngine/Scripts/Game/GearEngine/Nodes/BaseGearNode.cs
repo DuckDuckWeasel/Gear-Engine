@@ -23,6 +23,14 @@ namespace GearEngine.GearEngine.Nodes
         [SerializeField]
         private bool hasRotatedThisTick;
 
+        public override void ResetSimulationState()
+        {
+            base.ResetSimulationState();
+            CurrentCharge = 0f;
+            hasExecutedThisTick = false;
+            hasRotatedThisTick = false;
+        }
+
         public override void NodeUpdate(float deltaTime, float speedModifier)
         {
             hasExecutedThisTick = false;

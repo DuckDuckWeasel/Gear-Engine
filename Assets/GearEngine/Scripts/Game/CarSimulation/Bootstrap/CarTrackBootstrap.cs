@@ -20,7 +20,6 @@ namespace GearEngine.CarSimulation.Bootstrap
 
         [Inject] private TrackSimulationFactory factory;
         [Inject] private INavigation navigation;
-        [Inject] private IRaceSessionRunner raceSessionRunner;
 
         private readonly List<IRaceSessionRunner> runners = new List<IRaceSessionRunner>();
 
@@ -69,12 +68,7 @@ namespace GearEngine.CarSimulation.Bootstrap
         private void AddSessionForCar(CarDefinition carDef, List<LapRaceSession> sessions)
         {
             LapRaceSession session = factory.Create(carDef, trackDefinition, sessionConfig);
-            IRaceSessionRunner runner = runners.Count == 0 ? raceSessionRunner : new RaceSessionRunner();
-            if (runner == null)
-            {
-                throw new InvalidOperationException("[CarTrackBootstrap] IRaceSessionRunner is not injected.");
-            }
-
+            var runner = new RaceSessionRunner();
             runner.SetSession(session);
             sessions.Add(session);
             runners.Add(runner);

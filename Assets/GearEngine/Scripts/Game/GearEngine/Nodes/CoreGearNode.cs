@@ -14,6 +14,13 @@ namespace GearEngine.GearEngine.Nodes
         [SerializeField]
         private float slowdownTimer = 0f;
 
+        public override void ResetSimulationState()
+        {
+            base.ResetSimulationState();
+            lastFiredRotation = 0f;
+            slowdownTimer = 0f;
+        }
+
         public override void NodeUpdate(float deltaTime, float speedModifier)
         {
             if (ConfigData == null || !IsActive)

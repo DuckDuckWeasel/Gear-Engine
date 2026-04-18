@@ -4,16 +4,22 @@ using GearEngine.CarSimulation;
 using GearEngine.CarSimulation.Definitions;
 using GearEngine.CarSimulation.Simulation;
 using GearEngine.GearEngine;
-using GearEngine.GearEngine.Bootstrap;
 using GearEngine.GearEngine.Config;
+using GearEngine.GearEngine.Merge;
 using GearEngine.GearEngine.Manager;
 using GearEngine.GearEngine.Nodes;
+using GearEngine.GearEngine.Presentation.UI;
+using GearEngine.GearEngine.Services;
+using GearEngine.GearEngine.Services.Board;
+using GearEngine.GearEngine.Services.Inventory;
 using NUnit.Framework;
+using Scaffold.Events.Container;
 using Scaffold.Navigation.Contracts;
 using UnityEngine;
 using UnityEngine.Splines;
 using VContainer;
 using Object = UnityEngine.Object;
+using GearEngine.GearEngine.Bootstrap;
 
 namespace GearEngine.Race.Tests.Editor
 {
@@ -45,6 +51,30 @@ namespace GearEngine.Race.Tests.Editor
             public void Play() => IsRunning = true;
 
             public void Stop() => IsRunning = false;
+
+            public void ResetGridSimulationState() => Stop();
+        }
+
+        private sealed class FakeDragService : IDragService
+        {
+            public bool IsDragging { get; private set; }
+
+            public T GetDragData<T>() where T : class => null;
+
+            public void StartDrag(object data) => IsDragging = true;
+
+            public void EndDrag() => IsDragging = false;
+
+            public void Register(IDragTarget target) { }
+
+            public void Unregister(IDragTarget target) { }
+        }
+
+        private sealed class FakePresentationTransferService : IGearPresentationTransferService
+        {
+            public void AddReturnedBoardGearToInventory(GearConfigData config) { }
+
+            public void TrashInventoryGear(GearConfigData gear) { }
         }
 
         private sealed class RecordingRaceSessionRunner : IRaceSessionRunner
@@ -75,6 +105,9 @@ namespace GearEngine.Race.Tests.Editor
                 vm = CreateInitializedRaceViewModel(carDef, trackDef, out _, runnerSink);
                 Assert.That(runnerSink.LastSession, Is.Not.Null);
                 Assert.That(runnerSink.LastSession, Is.SameAs(vm.Track.Session));
+                Assert.That(vm.Board, Is.Not.Null);
+                Assert.That(vm.Inventory, Is.Not.Null);
+                Assert.That(vm.TrashZone, Is.Not.Null);
             }
             finally
             {
@@ -177,25 +210,39 @@ namespace GearEngine.Race.Tests.Editor
             boardConfig.GridWidth = 5;
             boardConfig.GridHeight = 5;
 
-            GearNodeFactory nodeFactory;
+            GearEngineFeatureToggleSO toggle = ScriptableObject.CreateInstance<GearEngineFeatureToggleSO>();
+            var inventoryService = new InventoryService(GearInventoryLoadoutData.Empty());
+
             var builder = new ContainerBuilder();
+            new EventsInstaller().Install(builder);
             builder.RegisterInstance(gridManager).As<IGridManager>();
             builder.RegisterInstance(boardConfig);
+            builder.RegisterInstance(engine).As<IGearEngineService>();
+            builder.RegisterInstance(toggle);
+            builder.RegisterInstance(new GearBoardLoadoutData());
+            builder.Register<GridSwapService>(Lifetime.Singleton).As<IGridSwapService>();
+            builder.Register<GearEngine.Merge.GridMergeService>(Lifetime.Singleton).As<IGridMergeService>();
             builder.Register<BaseGearNode>(Lifetime.Transient);
             builder.Register<CoreGearNode>(Lifetime.Transient);
             builder.Register<AuraGearNode>(Lifetime.Transient);
-            builder.Register<GearNodeFactory>(Lifetime.Singleton);
+            builder.Register<GearNodeFactory>(Lifetime.Singleton).As<IGearNodeFactory>();
+            builder.Register<BoardService>(Lifetime.Singleton).As<IBoardService>();
+
+            IBoardService boardService;
             using (IObjectResolver container = builder.Build())
             {
-                nodeFactory = container.Resolve<GearNodeFactory>();
+                boardService = container.Resolve<IBoardService>();
             }
 
             var trackFactory = new TrackSimulationFactory();
+            var dragService = new FakeDragService();
             var vm = new RaceViewModel(startData);
             InjectPrivateField(vm, "engineService", engine);
-            InjectPrivateField(vm, "gridManager", gridManager);
-            InjectPrivateField(vm, "nodeFactory", nodeFactory);
-            InjectPrivateField(vm, "boardConfig", boardConfig);
+            InjectPrivateField(vm, "boardService", boardService);
+            InjectPrivateField(vm, "inventoryService", inventoryService);
+            InjectPrivateField(vm, "dragService", (IDragService)dragService);
+            InjectPrivateField(vm, "presentationTransferService", (IGearPresentationTransferService)new FakePresentationTransferService());
+            InjectPrivateField(vm, "featureToggle", toggle);
             InjectPrivateField(vm, "trackFactory", trackFactory);
             InjectPrivateField(vm, "raceSessionRunner", raceSessionRunner);
             InjectPrivateFieldInHierarchy(vm, "navigation", new NoOpNavigation());
@@ -206,6 +253,7 @@ namespace GearEngine.Race.Tests.Editor
 
         private static void TearDownRaceViewModel(RaceViewModel vm)
         {
+            // BoardConfig is owned by the BoardService (via BoardModel) — destroy the SO created in the test setup.
             if (vm?.Board?.BoardConfig != null)
             {
                 Object.DestroyImmediate(vm.Board.BoardConfig);

@@ -15,6 +15,8 @@ namespace GearEngine.GearEngine.Presentation.UI
         [SerializeField] private GearBoardDragHandler dragHandler;
         [SerializeField] private GameObject gridSlotPrefab;
         [SerializeField] private Transform gridRoot;
+        [Tooltip("Parent for spawned gear views. If unset, uses Grid Root, then this component's transform.")]
+        [SerializeField] private Transform gearsRoot;
         [SerializeField] private TextMeshProUGUI boardLimitLabel;
 
         private GearViewFactory localFactory = new GearViewFactory();
@@ -23,6 +25,8 @@ namespace GearEngine.GearEngine.Presentation.UI
 
         protected override void OnBind()
         {
+            localFactory ??= new GearViewFactory();
+
             viewModel.OnGearPlaced += HandleGearPlaced;
             viewModel.OnGearRemoved += HandleGearRemoved;
 
@@ -109,6 +113,22 @@ namespace GearEngine.GearEngine.Presentation.UI
             return viewModel?.BoardConfig;
         }
 
+        /// <summary>Transform whose local space matches <see cref="BoardConfigSO.GetWorldPosition"/> / grid layout.</summary>
+        public Transform GetBoardSpaceRoot()
+        {
+            if (gearsRoot != null)
+            {
+                return gearsRoot;
+            }
+
+            if (gridRoot != null)
+            {
+                return gridRoot;
+            }
+
+            return transform;
+        }
+
         private void HandleGearPlaced(IGridNode node)
         {
             if (node == null)
@@ -150,7 +170,7 @@ namespace GearEngine.GearEngine.Presentation.UI
             }
 
             Vector3 localPosition = viewModel.BoardConfig.GetWorldPosition(node.Position);
-            GearView view = localFactory.CreateView(node, node.ConfigData, transform, localPosition);
+            GearView view = localFactory.CreateView(node, node.ConfigData, GetBoardSpaceRoot(), localPosition);
             view.Initialize(node, node.ConfigData, viewModel.BoardConfig, localFactory);
             viewsByNode[node] = view;
         }
@@ -220,8 +240,8 @@ namespace GearEngine.GearEngine.Presentation.UI
                 return;
             }
 
-            Vector3 localWorld = payload.WorldPosition - transform.position;
-            Vector2Int gridPos = viewModel.BoardConfig.GetGridPosition(localWorld);
+            Vector3 boardLocal = GetBoardSpaceRoot().InverseTransformPoint(payload.WorldPosition);
+            Vector2Int gridPos = viewModel.BoardConfig.GetGridPosition(boardLocal);
             bool placed = viewModel.HandleInventoryDrop(gridPos, gear);
             if (placed)
             {

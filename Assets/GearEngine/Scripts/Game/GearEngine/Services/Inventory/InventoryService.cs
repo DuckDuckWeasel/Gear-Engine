@@ -1,67 +1,53 @@
 using System;
 using System.Collections.Generic;
+using GearEngine.GearEngine.Config;
 using UnityEngine;
+using GearEngine.GearEngine;
 
 namespace GearEngine.GearEngine.Services.Inventory
 {
-    public class InventoryService : IInventoryService
+    public sealed class InventoryService : IInventoryService
     {
-        public InventoryModel Model { get; } = new InventoryModel();
+        private readonly InventoryModel model;
 
-        public int CurrentCount => Model.AvailableItems.Count;
-        public int MaxSlots { get; private set; } = int.MaxValue;
-
-        public void Initialize(int maxSlots, IReadOnlyList<GearConfig> inventoryGears)
+        public InventoryService(GearInventoryLoadoutData loadout)
         {
-            MaxSlots = maxSlots;
+            loadout ??= GearInventoryLoadoutData.Empty();
+            model = new InventoryModel
+            {
+                MaxSlots = loadout.MaxSlots
+            };
 
-            var runtimeGears = new List<IItem>();
-            foreach (GearConfig config in inventoryGears)
+            IReadOnlyList<GearConfig> configs = loadout.StartingItems;
+            foreach (GearConfig config in configs)
             {
                 if (config != null)
                 {
-                    runtimeGears.Add(config.CreateRuntimeData());
+                    TryAdd(config.CreateRuntimeData());
                 }
-            }
-
-            LoadInventory(runtimeGears);
-        }
-
-        public void LoadInventory(IEnumerable<IItem> items)
-        {
-            if (items == null)
-            {
-                throw new ArgumentNullException(nameof(items));
-            }
-
-            foreach (IItem item in items)
-            {
-                if (item == null)
-                {
-                    continue;
-                }
-
-                AddItem(item);
             }
         }
 
-        public void AddItem(IItem item)
+        public InventoryModel GetInventory() => model;
+
+        public bool TryAdd(IItem item)
         {
             if (item == null)
             {
-                return;
+                return false;
             }
 
-            if (Model.AvailableItems.Count >= MaxSlots)
+            if (model.Items.Count >= model.MaxSlots)
             {
-                Debug.LogWarning($"[InventoryService] Inventory full ({Model.AvailableItems.Count}/{MaxSlots}). Cannot add item '{item.Id}'.");
-                return;
+                Debug.LogWarning($"[InventoryService] Inventory full ({model.Items.Count}/{model.MaxSlots}). Cannot add item '{item.Id}'.");
+                return false;
             }
 
-            Model.AvailableItems.Add(item);
+            model.Items.Add(item);
+            return true;
         }
 
-        public void ConsumeSpecificItem(IItem item)
+        public bool TryConsume(IItem item)
         {
             if (item == null)
             {
@@ -71,35 +57,25 @@ namespace GearEngine.GearEngine.Services.Inventory
             int index = FindItemIndex(item);
             if (index < 0)
             {
-                Debug.LogError("[InventoryService] ConsumeSpecificItem: item not found in inventory.");
-                return;
+                Debug.LogError("[InventoryService] TryConsume: item not found in inventory.");
+                return false;
             }
 
-            RemoveItemAt(index);
+            model.Items.RemoveAt(index);
+            return true;
         }
 
         private int FindItemIndex(IItem item)
         {
-            for (int i = 0; i < Model.AvailableItems.Count; i++)
+            for (int i = 0; i < model.Items.Count; i++)
             {
-                if (ReferenceEquals(Model.AvailableItems[i], item))
+                if (ReferenceEquals(model.Items[i], item))
                 {
                     return i;
                 }
             }
 
             return -1;
-        }
-
-        private void RemoveItemAt(int index)
-        {
-            IItem removed = Model.AvailableItems[index];
-            Model.AvailableItems.RemoveAt(index);
-
-            if (ReferenceEquals(Model.SelectedItem, removed))
-            {
-                Model.SelectedItem = null;
-            }
         }
     }
 }

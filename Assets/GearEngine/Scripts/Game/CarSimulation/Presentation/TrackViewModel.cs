@@ -9,9 +9,11 @@ namespace GearEngine.CarSimulation.Presentation
 {
     public sealed partial class TrackViewModel : ViewModel
     {
-        public TrackViewModel(LapRaceSession session)
+        public TrackViewModel(LapRaceSession session, bool spawnCarOnBindIfNoChild = false, bool spawnCarWhenSessionStartsRunning = false)
         {
             this.session = session ?? throw new ArgumentNullException(nameof(session));
+            SpawnCarOnBindIfNoChild = spawnCarOnBindIfNoChild;
+            SpawnCarWhenSessionStartsRunning = spawnCarWhenSessionStartsRunning;
         }
 
         public TrackDefinition Track => session.Track;
@@ -20,8 +22,18 @@ namespace GearEngine.CarSimulation.Presentation
 
         public LapRaceSession Session => session;
 
+        public bool SpawnCarOnBindIfNoChild { get; }
+
+        public bool SpawnCarWhenSessionStartsRunning { get; }
+
         [ObservableProperty]
         private SimulationLifecycleState state;
+
+        [ObservableProperty]
+        private float hudRaceTime;
+
+        [ObservableProperty]
+        private int hudCurrentLap;
 
         private readonly LapRaceSession session;
 
@@ -29,6 +41,7 @@ namespace GearEngine.CarSimulation.Presentation
         {
             base.Initialize();
             session.PresentationChanged += OnSessionPresentationChanged;
+            session.AfterTick += OnSessionAfterTick;
             RefreshUiState();
         }
 
@@ -60,6 +73,7 @@ namespace GearEngine.CarSimulation.Presentation
         internal void TearDown()
         {
             session.PresentationChanged -= OnSessionPresentationChanged;
+            session.AfterTick -= OnSessionAfterTick;
         }
 
         private void OnSessionPresentationChanged()
@@ -67,9 +81,21 @@ namespace GearEngine.CarSimulation.Presentation
             RefreshUiState();
         }
 
+        private void OnSessionAfterTick()
+        {
+            RefreshHudMetrics();
+        }
+
         private void RefreshUiState()
         {
             State = session.Phase;
+            RefreshHudMetrics();
+        }
+
+        private void RefreshHudMetrics()
+        {
+            HudRaceTime = session.RaceTime;
+            HudCurrentLap = session.CurrentLap;
         }
     }
 }

@@ -1,5 +1,6 @@
 using GearEngine.CarSimulation.Simulation;
 using VContainer;
+using VContainer.Unity;
 
 namespace GearEngine.CarSimulation.Bootstrap
 {
@@ -13,7 +14,7 @@ namespace GearEngine.CarSimulation.Bootstrap
             }
 
             builder.Register<TrackSimulationFactory>(Lifetime.Singleton);
-            builder.Register<RaceSessionRunner>(Lifetime.Singleton).As<IRaceSessionRunner>();
+            builder.Register<RaceSessionRunner>(Lifetime.Singleton).As<IRaceSessionRunner, ITickable>();
         }
     }
 }

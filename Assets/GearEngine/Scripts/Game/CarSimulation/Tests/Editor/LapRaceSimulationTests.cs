@@ -44,11 +44,9 @@ namespace GearEngine.CarSimulation.Tests
                     new BezierKnot(new Vector3(0f, 0f, 20f)),
                 };
                 trackDef.Spline.Closed = true;
+                trackDef.SetTotalLapsForTests(5);
 
-                var cfg = new RaceSessionConfig();
-                cfg.SetTotalLapsForTests(5);
-
-                LapRaceSession session = new TrackSimulationFactory().Create(carDef, trackDef, cfg);
+                LapRaceSession session = new TrackSimulationFactory().Create(carDef, trackDef);
                 var go = new GameObject("SplineHost");
                 try
                 {
@@ -95,11 +93,9 @@ namespace GearEngine.CarSimulation.Tests
                     new BezierKnot(new Vector3(0f, 0f, 20f)),
                 };
                 trackDef.Spline.Closed = true;
+                trackDef.SetTotalLapsForTests(-1);
 
-                var cfg = new RaceSessionConfig();
-                cfg.SetTotalLapsForTests(-1);
-
-                LapRaceSession session = new TrackSimulationFactory().Create(carDef, trackDef, cfg);
+                LapRaceSession session = new TrackSimulationFactory().Create(carDef, trackDef);
                 var go = new GameObject("SplineHost");
                 try
                 {
@@ -187,6 +183,155 @@ namespace GearEngine.CarSimulation.Tests
                 Object.DestroyImmediate(carDef);
                 Object.DestroyImmediate(speedVar);
                 Object.DestroyImmediate(vars);
+            }
+        }
+
+        [Test]
+        public void AfterTick_FiresEachTimeSimulationAdvances()
+        {
+            var trackDef = ScriptableObject.CreateInstance<TrackDefinition>();
+            var carDef = ScriptableObject.CreateInstance<CarDefinition>();
+            try
+            {
+                trackDef.Spline.Knots = new[]
+                {
+                    new BezierKnot(new Vector3(0f, 0f, 0f)),
+                    new BezierKnot(new Vector3(20f, 0f, 0f)),
+                };
+                trackDef.Spline.Closed = true;
+
+                LapRaceSession session = new TrackSimulationFactory().Create(carDef, trackDef);
+                var go = new GameObject("SplineHostAfterTick");
+                try
+                {
+                    SplineContainer container = go.AddComponent<SplineContainer>();
+                    container.Spline.Knots = trackDef.Spline.Knots;
+                    container.Spline.Closed = true;
+
+                    session.BindSpline(container);
+                    session.SetClockRunning(true);
+
+                    int count = 0;
+                    session.AfterTick += () => count++;
+
+                    session.Tick(0.05f);
+                    session.Tick(0.05f);
+
+                    Assert.That(count, Is.EqualTo(2));
+                }
+                finally
+                {
+                    Object.DestroyImmediate(go);
+                }
+            }
+            finally
+            {
+                Object.DestroyImmediate(trackDef);
+                Object.DestroyImmediate(carDef);
+            }
+        }
+
+        [Test]
+        public void AfterTick_DoesNotFireWhenClockNotRunning()
+        {
+            var trackDef = ScriptableObject.CreateInstance<TrackDefinition>();
+            var carDef = ScriptableObject.CreateInstance<CarDefinition>();
+            try
+            {
+                trackDef.Spline.Knots = new[]
+                {
+                    new BezierKnot(new Vector3(0f, 0f, 0f)),
+                    new BezierKnot(new Vector3(20f, 0f, 0f)),
+                };
+                trackDef.Spline.Closed = true;
+
+                LapRaceSession session = new TrackSimulationFactory().Create(carDef, trackDef);
+                var go = new GameObject("SplineHostAfterTickIdle");
+                try
+                {
+                    SplineContainer container = go.AddComponent<SplineContainer>();
+                    container.Spline.Knots = trackDef.Spline.Knots;
+                    container.Spline.Closed = true;
+
+                    session.BindSpline(container);
+
+                    int count = 0;
+                    session.AfterTick += () => count++;
+
+                    session.Tick(0.05f);
+
+                    Assert.That(count, Is.EqualTo(0));
+                }
+                finally
+                {
+                    Object.DestroyImmediate(go);
+                }
+            }
+            finally
+            {
+                Object.DestroyImmediate(trackDef);
+                Object.DestroyImmediate(carDef);
+            }
+        }
+    }
+
+    public sealed class TrackDefinitionScoreBandTests
+    {
+        [Test]
+        public void EvaluateReward_PicksTightestQualifyingBand_AfterSorting()
+        {
+            TrackDefinition track = ScriptableObject.CreateInstance<TrackDefinition>();
+            track.SetScoreBandsForTests(new[]
+            {
+                new TrackScoreBand(90f, 100),
+                new TrackScoreBand(30f, 900),
+                new TrackScoreBand(60f, 500),
+            });
+
+            try
+            {
+                Assert.That(track.EvaluateRewardForTotalRaceTime(25f), Is.EqualTo(900));
+                Assert.That(track.EvaluateRewardForTotalRaceTime(45f), Is.EqualTo(500));
+                Assert.That(track.EvaluateRewardForTotalRaceTime(75f), Is.EqualTo(100));
+            }
+            finally
+            {
+                Object.DestroyImmediate(track);
+            }
+        }
+
+        [Test]
+        public void EvaluateReward_WhenSlowerThanAllBands_ReturnsZero()
+        {
+            TrackDefinition track = ScriptableObject.CreateInstance<TrackDefinition>();
+            track.SetScoreBandsForTests(new[]
+            {
+                new TrackScoreBand(10f, 1000),
+            });
+
+            try
+            {
+                Assert.That(track.EvaluateRewardForTotalRaceTime(15f), Is.EqualTo(0));
+            }
+            finally
+            {
+                Object.DestroyImmediate(track);
+            }
+        }
+
+        [Test]
+        public void EvaluateReward_WhenNoBandsConfigured_ReturnsZero()
+        {
+            TrackDefinition track = ScriptableObject.CreateInstance<TrackDefinition>();
+            track.SetScoreBandsForTests(System.Array.Empty<TrackScoreBand>());
+
+            try
+            {
+                Assert.That(track.EvaluateRewardForTotalRaceTime(5f), Is.EqualTo(0));
+            }
+            finally
+            {
+                Object.DestroyImmediate(track);
             }
         }
     }

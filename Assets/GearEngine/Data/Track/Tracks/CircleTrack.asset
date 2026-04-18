@@ -106,3 +106,14 @@ MonoBehaviour:
       m_Data: []
     m_ObjectData:
       m_Data: []
+  totalLaps: 3
+  timeToBeatSeconds: 60
+  scoreBands:
+  - maxRaceTimeSeconds: 40
+    rewardValue: 900
+  - maxRaceTimeSeconds: 55
+    rewardValue: 650
+  - maxRaceTimeSeconds: 75
+    rewardValue: 400
+  - maxRaceTimeSeconds: 99999
+    rewardValue: 150

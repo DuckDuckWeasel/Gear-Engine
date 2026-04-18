@@ -1,5 +1,4 @@
 using System;
-using GearEngine.CarSimulation.Simulation;
 using GearEngine.Race;
 using Scaffold.Navigation.Contracts;
 using UnityEngine;
@@ -15,14 +14,6 @@ namespace GearEngine.Race.Bootstrap
 
         [Inject]
         private INavigation navigation;
-
-        [Inject]
-        private IRaceSessionRunner raceSessionRunner;
-
-        private void Update()
-        {
-            raceSessionRunner?.Tick();
-        }
 
         public void Initialize()
         {

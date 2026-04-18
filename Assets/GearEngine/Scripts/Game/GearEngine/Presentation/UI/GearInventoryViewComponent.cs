@@ -7,6 +7,7 @@ using Scaffold.MVVM;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Assertions;
+using UnityEngine.EventSystems;
 
 namespace GearEngine.GearEngine.Presentation.UI
 {
@@ -16,36 +17,55 @@ namespace GearEngine.GearEngine.Presentation.UI
         [SerializeField] private GameObject slotPrefab;
         [SerializeField] private TextMeshProUGUI inventoryLimitLabel;
 
-        private Transform boardScaleReference;
+        private Transform boardRoot;
+        private DragGhostController ghostController;
 
-        // todo: wired from GearEngineCoreViewComponent for board-matched ghost scale.
-        internal void SetBoardScaleReference(Transform reference)
+        private bool inventoryUiBinding;
+
+        /// <summary>
+        /// Wires the board root used for inventory slot scale matching and for parenting the drag ghost.
+        /// </summary>
+        public void SetBoardRoot(Transform root)
         {
-            boardScaleReference = reference;
+            boardRoot = root;
+            ghostController = root != null ? new DragGhostController(root) : null;
         }
 
         protected override void OnBind()
         {
             Assert.IsNotNull(viewModel, "[GearInventoryView] ViewModel is missing.");
-            Assert.IsNotNull(viewModel.InventoryModel?.AvailableItems, "[GearInventoryView] Inventory items collection is missing.");
+            Assert.IsNotNull(viewModel.InventoryModel?.Items, "[GearInventoryView] Inventory items collection is missing.");
 
-            Bind(() => viewModel.InventoryLimitText, () => inventoryLimitLabel.text);
-            Bind<int, int>(() => viewModel.InventoryListRevision, OnInventoryListRevisionChanged);
-            Bind<IItem, IItem>(() => viewModel.InventoryModel.SelectedItem, OnSelectionChanged);
-            CheckTargetRect();
-            RebuildUIList();
+            inventoryUiBinding = true;
+            try
+            {
+                Bind(() => viewModel.InventoryLimitText, () => inventoryLimitLabel.text);
+                Bind<int, int>(() => viewModel.InventoryListRevision, OnInventoryListRevisionChanged);
+                Bind<IItem, IItem>(() => viewModel.SelectedItem, OnSelectionChanged);
+                CheckBoardRoot();
+                RebuildUIList();
+            }
+            finally
+            {
+                inventoryUiBinding = false;
+            }
         }
 
         private void OnInventoryListRevisionChanged(int _)
         {
+            if (inventoryUiBinding)
+            {
+                return;
+            }
+
             RebuildUIList();
         }
 
-        private void CheckTargetRect()
+        private void CheckBoardRoot()
         {
-            if (boardScaleReference == null)
+            if (boardRoot == null)
             {
-                Debug.LogWarning("[GearInventoryView] Board scale reference is not wired from GearEngineCoreViewComponent; gear ghost scaling may be incorrect.");
+                Debug.LogWarning("[GearInventoryView] Board root is not wired from GearEngineCoreViewComponent; slot scaling and drag ghost may be incorrect.");
             }
         }
 
@@ -67,7 +87,7 @@ namespace GearEngine.GearEngine.Presentation.UI
         private void RebuildUIList()
         {
             ClearInventorySlots();
-            foreach (IItem item in viewModel.InventoryModel.AvailableItems)
+            foreach (IItem item in viewModel.InventoryModel.Items)
             {
                 AddPresenterForItem(item);
             }
@@ -75,9 +95,15 @@ namespace GearEngine.GearEngine.Presentation.UI
 
         private void ClearInventorySlots()
         {
-            foreach (Transform child in itemsContainer)
+            if (itemsContainer == null)
             {
-                Destroy(child.gameObject);
+                return;
+            }
+
+            for (int i = itemsContainer.childCount - 1; i >= 0; i--)
+            {
+                Transform child = itemsContainer.GetChild(i);
+                DestroyImmediate(child.gameObject);
             }
         }
 
@@ -106,11 +132,10 @@ namespace GearEngine.GearEngine.Presentation.UI
         private void ApplyGearVisualAndDrag(Transform visualContainer, GearConfigData gear, DragHandler dragger, GearInventorySlotView slotView)
         {
             float totalScale = gear.RelativeScaleMultiplier * ComputeBaseScale(visualContainer);
-            dragger.GhostScaleMultiplier = totalScale;
             GameObject visualObj = GearVisualSetup.SetupVisual(visualContainer, gear, totalScale);
-            if (visualObj != null)
+            if (visualObj == null)
             {
-                dragger.GhostPrefab = visualObj;
+                Debug.LogError($"[GearInventoryView] SetupVisual returned null for gear '{gear?.Id}'.");
             }
 
             slotView.Bind(gear, viewModel);
@@ -120,9 +145,9 @@ namespace GearEngine.GearEngine.Presentation.UI
         private float ComputeBaseScale(Transform visualContainer)
         {
             float baseScale = 56f;
-            if (boardScaleReference != null && visualContainer.lossyScale.x > 0f)
+            if (boardRoot != null && visualContainer.lossyScale.x > 0f)
             {
-                baseScale = boardScaleReference.lossyScale.x / visualContainer.lossyScale.x;
+                baseScale = boardRoot.lossyScale.x / visualContainer.lossyScale.x;
             }
 
             return baseScale;
@@ -131,10 +156,45 @@ namespace GearEngine.GearEngine.Presentation.UI
         private void HookDragHandlers(DragHandler dragger, GearConfigData gear)
         {
             GearConfigData capturedGear = gear;
-            dragger.OnDragBegin += () => viewModel.NotifySlotDragStarted(capturedGear);
-            dragger.OnDragEnd += () => viewModel.NotifySlotDragEnded();
+            dragger.OnDragBegin += BeginInventoryDrag;
+            dragger.OnDragMoved += MoveInventoryDragGhost;
+            dragger.OnDragEnd += EndInventoryDrag;
             dragger.BuildPayload = worldPos => new DragPayload(capturedGear, worldPos, dragger);
             dragger.OnDragAccepted = _ => viewModel.NotifySlotDragAccepted(capturedGear);
+
+            void BeginInventoryDrag(PointerEventData e)
+            {
+                viewModel.NotifySlotDragStarted(capturedGear);
+                if (ghostController == null)
+                {
+                    return;
+                }
+
+                ghostController.CreateGhost(capturedGear);
+                if (DragHandler.TryGetPointerWorldPosition(e, out Vector3 w))
+                {
+                    ghostController.MoveGhostTo(w);
+                }
+            }
+
+            void MoveInventoryDragGhost(PointerEventData e)
+            {
+                if (ghostController == null)
+                {
+                    return;
+                }
+
+                if (DragHandler.TryGetPointerWorldPosition(e, out Vector3 w))
+                {
+                    ghostController.MoveGhostTo(w);
+                }
+            }
+
+            void EndInventoryDrag(PointerEventData e)
+            {
+                ghostController?.DestroyGhost();
+                viewModel.NotifySlotDragEnded();
+            }
         }
 
         public void OnDragStarted(DragPayload payload)
@@ -179,9 +239,9 @@ namespace GearEngine.GearEngine.Presentation.UI
         [ContextMenu("Mock: UI Click First Available Gear")]
         public void MockClickFirstGear()
         {
-            if (viewModel.InventoryModel.AvailableItems.Count > 0)
+            if (viewModel.InventoryModel.Items.Count > 0)
             {
-                viewModel.SelectGearLocal(viewModel.InventoryModel.AvailableItems.First() as GearConfigData);
+                viewModel.SelectGearLocal(viewModel.InventoryModel.Items.First() as GearConfigData);
             }
         }
 

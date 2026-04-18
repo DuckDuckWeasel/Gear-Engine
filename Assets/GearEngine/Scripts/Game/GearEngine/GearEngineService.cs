@@ -22,5 +22,11 @@ namespace GearEngine.GearEngine
         {
             gridManager.Stop();
         }
+
+        public void ResetGridSimulationState()
+        {
+            gridManager.Stop();
+            gridManager.ResetAllNodeSimulationState();
+        }
     }
 }

@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Collections.Specialized;
 using CommunityToolkit.Mvvm.ComponentModel;
 using GearEngine.GearEngine;
@@ -12,33 +11,32 @@ namespace GearEngine.GearEngine.Presentation.UI
 {
     public partial class GearInventoryViewModel : ViewModel
     {
-        public GearInventoryViewModel(int maxInventorySlots, IReadOnlyList<GearConfig> inventoryGears, IGearEngineService engineService, IInventoryService inventoryService, IDragService dragService = null)
+        public GearInventoryViewModel(IGearEngineService engineService, IInventoryService inventoryService, IDragService dragService = null)
         {
             this.engineService = engineService ?? throw new ArgumentNullException(nameof(engineService));
             this.inventoryService = inventoryService ?? throw new ArgumentNullException(nameof(inventoryService));
             this.dragService = dragService;
 
-            InventoryModel = inventoryService.Model;
-            if (InventoryModel?.AvailableItems != null)
+            InventoryModel = inventoryService.GetInventory();
+            if (InventoryModel?.Items != null)
             {
-                InventoryModel.AvailableItems.CollectionChanged += OnAvailableItemsChanged;
+                InventoryModel.Items.CollectionChanged += OnAvailableItemsChanged;
             }
 
-            inventoryService.Initialize(maxInventorySlots, inventoryGears);
-            this.maxInventorySlots = inventoryService.MaxSlots;
             RefreshInventoryLabel();
         }
 
-        public int MaxSlots => maxInventorySlots;
+        public int MaxSlots => InventoryModel?.MaxSlots ?? 0;
 
-        public int CurrentCount => InventoryModel?.AvailableItems.Count ?? 0;
+        public int CurrentCount => InventoryModel?.Items.Count ?? 0;
 
         public bool CanDrag => engineService != null && !engineService.IsRunning;
 
         private readonly IDragService dragService;
         private readonly IGearEngineService engineService;
         private readonly IInventoryService inventoryService;
-        private int maxInventorySlots = int.MaxValue;
+
+        [ObservableProperty] private IItem selectedItem;
 
         [ObservableProperty] private InventoryModel inventoryModel;
         [ObservableProperty] private string inventoryLimitText;
@@ -77,7 +75,7 @@ namespace GearEngine.GearEngine.Presentation.UI
                     throw new ArgumentNullException(nameof(gear));
                 }
 
-                inventoryService?.ConsumeSpecificItem(gear);
+                inventoryService?.TryConsume(gear);
             }
             catch (Exception ex)
             {
@@ -87,18 +85,18 @@ namespace GearEngine.GearEngine.Presentation.UI
 
         public void SelectGearLocal(GearConfigData gear)
         {
-            if (InventoryModel.AvailableItems.Contains(gear))
+            if (InventoryModel.Items.Contains(gear))
             {
-                InventoryModel.SelectedItem = gear;
+                SelectedItem = gear;
                 Debug.Log($"<color=#aaaaff>[UI_ViewModel]</color> Player selected: {gear.Id}");
             }
         }
 
         protected override void OnClosed()
         {
-            if (InventoryModel?.AvailableItems != null)
+            if (InventoryModel?.Items != null)
             {
-                InventoryModel.AvailableItems.CollectionChanged -= OnAvailableItemsChanged;
+                InventoryModel.Items.CollectionChanged -= OnAvailableItemsChanged;
             }
 
             base.OnClosed();

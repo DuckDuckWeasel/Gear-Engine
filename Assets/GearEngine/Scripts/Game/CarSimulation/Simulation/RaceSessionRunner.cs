@@ -1,8 +1,9 @@
 using UnityEngine;
+using VContainer.Unity;
 
 namespace GearEngine.CarSimulation.Simulation
 {
-    public sealed class RaceSessionRunner : IRaceSessionRunner
+    public sealed class RaceSessionRunner : IRaceSessionRunner, ITickable
     {
         public LapRaceSession ActiveSession => session;
 

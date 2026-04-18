@@ -2,7 +2,9 @@ using System;
 using GearEngine.GearEngine;
 using GearEngine.GearEngine.Config;
 using GearEngine.GearEngine.Services;
+using GearEngine.GearEngine.Services.Board;
 using GearEngine.GearEngine.Services.Inventory;
+using UnityEngine;
 using VContainer;
 
 namespace GearEngine.GearEngine.Bootstrap
@@ -18,15 +20,26 @@ namespace GearEngine.GearEngine.Bootstrap
         private readonly BoardConfigSO boardConfig;
         private readonly GearEngineFeatureToggleSO featureToggle;
 
-        public void Install(IContainerBuilder builder)
+        public void Install(IContainerBuilder builder, GearInventoryLoadoutData inventoryLoadout, GearBoardLoadoutData boardLoadout)
         {
             if (builder == null)
             {
                 throw new ArgumentNullException(nameof(builder));
             }
 
+            inventoryLoadout ??= GearInventoryLoadoutData.Empty();
+            boardLoadout ??= new GearBoardLoadoutData();
+
+            GearEngineFeatureToggleSO toggle = featureToggle;
+            if (toggle == null)
+            {
+                Debug.LogWarning("[GearMechanicsInstaller] No GearEngineFeatureToggleSO provided. Using runtime default.");
+                toggle = ScriptableObject.CreateInstance<GearEngineFeatureToggleSO>();
+            }
+
             builder.RegisterInstance(boardConfig);
-            builder.RegisterInstance(featureToggle);
+            builder.RegisterInstance(toggle);
+            builder.RegisterInstance(boardLoadout);
 
             builder.Register<GridManager>(Lifetime.Singleton).As<IGridManager, VContainer.Unity.ITickable>();
             builder.Register<GearEngineService>(Lifetime.Singleton).As<IGearEngineService>();
@@ -40,9 +53,9 @@ namespace GearEngine.GearEngine.Bootstrap
             builder.Register<GearNodeFactory>(Lifetime.Singleton).As<IGearNodeFactory>();
             builder.Register<DragService>(Lifetime.Singleton).As<IDragService>();
 
-            builder.Register<InventoryService>(Lifetime.Singleton).As<IInventoryService>();
+            builder.RegisterInstance<IInventoryService>(new InventoryService(inventoryLoadout));
+            builder.Register<BoardService>(Lifetime.Singleton).As<IBoardService>();
             builder.Register<GearPresentationTransferService>(Lifetime.Singleton).As<IGearPresentationTransferService>();
         }
     }
 }
-

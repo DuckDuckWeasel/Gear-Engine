@@ -15,6 +15,16 @@ MonoBehaviour:
   m_GroupName: Default Local Group
   m_GUID: 0bdbf61a5d37c41ee95db94752ea759c
   m_SerializeEntries:
+  - m_GUID: 3baae1b6fa9ea2345a187b40f8fe60ee
+    m_Address: Assets/GearEngine/Prefabs/Campaign/Main View.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 689dcd40046774c4b80166058bccaf5f
+    m_Address: Assets/GearEngine/Prefabs/Campaign/Campaign_ActiveRaceView.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 6a4018fa1395fe74fa82a63a40a91772
     m_Address: Assets/Prefabs/Tracks/Views/Track Test View.prefab
     m_ReadOnly: 0
@@ -25,18 +35,33 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: ae9649b11d04d44e4835017c358d0574
-    m_Address: Assets/GearEngine/Prefabs/GearEngineView_NavigationStub.prefab
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: e9f4a2b8c1d645e7a3b9c0d2e5f6a7b8
-    m_Address: Assets/GearEngine/Prefabs/Race/RaceNavigationStub.prefab
+  - m_GUID: 7fc0f6df20b58de419af0dc0a0b99674
+    m_Address: Assets/GearEngine/Prefabs/Campaign/Campaign_ResultPopupView.prefab
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: a7b8c9d0e1f2435465768798a9bacdef
     m_Address: Assets/GearEngine/Prefabs/Cards/CardSampleViewRoot.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ae9649b11d04d44e4835017c358d0574
+    m_Address: Assets/GearEngine/Prefabs/GearEngineView_NavigationStub.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d628a68ecdaeac44c84b7f3072518b94
+    m_Address: Assets/GearEngine/Prefabs/Campaign/Campaign_RoguelikeView.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d9b2bf9ad3d2d21439a807add8a1c39e
+    m_Address: Assets/GearEngine/Prefabs/Campaign/Campaign_SetupView.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e9f4a2b8c1d645e7a3b9c0d2e5f6a7b8
+    m_Address: Assets/GearEngine/Prefabs/Race/RaceNavigationStub.prefab
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0

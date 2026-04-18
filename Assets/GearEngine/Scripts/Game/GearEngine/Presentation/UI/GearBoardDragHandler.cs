@@ -14,6 +14,7 @@ namespace GearEngine.GearEngine.Presentation.UI
         private Camera mainCamera;
         private GearView draggedView;
         private Vector2Int originalGridPos;
+        private DragGhostController ghostController;
 
         private IGridNode pendingNode;
         private GearConfigData pendingConfig;
@@ -27,7 +28,11 @@ namespace GearEngine.GearEngine.Presentation.UI
             boardView = GetComponent<BoardViewComponent>();
         }
 
-        private void Start() => mainCamera = Camera.main;
+        private void Start()
+        {
+            mainCamera = Camera.main;
+            ghostController = boardView != null ? new DragGhostController(boardView.GetBoardSpaceRoot()) : null;
+        }
 
         private void Update()
         {
@@ -118,8 +123,12 @@ namespace GearEngine.GearEngine.Presentation.UI
 
             draggedView = closest;
             draggedView.enabled = false;
+            draggedView.gameObject.SetActive(false);
             originalGridPos = closest.TargetNode.Position;
             DraggedGearData = closest.TargetNode.ConfigData;
+
+            ghostController?.CreateGhost(closest.TargetNode.ConfigData);
+            ghostController?.MoveGhostTo(worldPos);
 
             boardView.NotifyPickedUp(closest.TargetNode, originalGridPos);
         }
@@ -128,7 +137,7 @@ namespace GearEngine.GearEngine.Presentation.UI
         {
             if (draggedView != null)
             {
-                draggedView.transform.position = worldPos;
+                ghostController?.MoveGhostTo(worldPos);
             }
         }
 
@@ -151,6 +160,8 @@ namespace GearEngine.GearEngine.Presentation.UI
             draggedView = null;
             DraggedGearData = null;
 
+            ghostController?.DestroyGhost();
+
             try
             {
                 if (target != null)
@@ -160,8 +171,9 @@ namespace GearEngine.GearEngine.Presentation.UI
                 else
                 {
                     BoardConfigSO cfg = boardView.GetBoardConfig();
+                    Transform boardRoot = boardView.GetBoardSpaceRoot();
                     Vector2Int targetPos = cfg != null
-                        ? cfg.GetGridPosition(worldPos - boardView.transform.position)
+                        ? cfg.GetGridPosition(boardRoot.InverseTransformPoint(worldPos))
                         : originalGridPos;
                     boardView.NotifyDropped(pendingNode, targetPos);
                 }
@@ -174,6 +186,7 @@ namespace GearEngine.GearEngine.Presentation.UI
             {
                 if (released != null)
                 {
+                    released.gameObject.SetActive(true);
                     released.enabled = true;
                 }
             }

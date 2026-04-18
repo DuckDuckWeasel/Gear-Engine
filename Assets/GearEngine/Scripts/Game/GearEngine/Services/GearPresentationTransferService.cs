@@ -26,7 +26,7 @@ namespace GearEngine.GearEngine.Services
 
             try
             {
-                inventoryService.AddItem(config);
+                inventoryService.TryAdd(config);
             }
             catch (Exception ex)
             {
@@ -53,7 +53,7 @@ namespace GearEngine.GearEngine.Services
 
         private void ApplyInventoryTrash(GearConfigData gear)
         {
-            inventoryService.ConsumeSpecificItem(gear);
+            inventoryService.TryConsume(gear);
             RaiseTrashReward(gear.DeleteRewardAmount);
         }
 

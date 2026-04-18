@@ -1,23 +1,21 @@
 using System;
-using System.Collections.Generic;
 using UnityEngine;
-using GearEngine.GearEngine.Config;
 
 namespace GearEngine.GearEngine
 {
     [Serializable]
     public sealed class GearEngineStartData
     {
-        public BoardLayoutData BoardLayout => boardLayout;
+        [SerializeField] private GearInventoryLoadoutData inventoryLoadout = new GearInventoryLoadoutData();
 
-        [SerializeField] private BoardLayoutData boardLayout;
+        [SerializeField] private GearBoardLoadoutData boardLoadout = new GearBoardLoadoutData();
 
-        public IReadOnlyList<GearConfig> InventoryGears => inventoryGears;
+        public GearInventoryLoadoutData InventoryLoadout => inventoryLoadout;
 
-        [SerializeField] private List<GearConfig> inventoryGears = new List<GearConfig>();
-        
-        public int MaxInventorySlots => maxInventorySlots;
+        public GearBoardLoadoutData BoardLoadout => boardLoadout;
 
-        [SerializeField] private int maxInventorySlots = 5;
+        public GearInventoryLoadoutData GetInventoryLoadoutData() => inventoryLoadout;
+
+        public GearBoardLoadoutData GetBoardLoadoutData() => boardLoadout;
     }
 }

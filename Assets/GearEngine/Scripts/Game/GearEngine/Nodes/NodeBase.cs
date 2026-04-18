@@ -68,6 +68,13 @@ namespace GearEngine.GearEngine.Nodes
             TickAbilities(deltaTime);
         }
 
+        public virtual void ResetSimulationState()
+        {
+            currentRotation = 0f;
+            LastRotationDelta = 0f;
+            LocalSpeedMultiplier = 1f;
+        }
+
         public void AddAbility(GearAbilitySO ability, float duration = -1f)
         {
             if (ability == null)

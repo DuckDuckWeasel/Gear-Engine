@@ -8,9 +8,6 @@ namespace GearEngine.GearEngine.Presentation
 {
     public sealed class GearTestSceneBootstrap : MonoBehaviour, IInitializable
     {
-        [SerializeField] 
-        private GearEngineStartData startData;
-
         private INavigation navigation;
 
         [Inject]
@@ -23,8 +20,7 @@ namespace GearEngine.GearEngine.Presentation
         {
             try
             {
-                GearEngineStartData data = startData != null ? startData : new GearEngineStartData();
-                navigation.Open(new GearEngineViewModel(data));
+                navigation.Open(new GearEngineViewModel());
             }
             catch (Exception ex)
             {

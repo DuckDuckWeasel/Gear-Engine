@@ -47,6 +47,25 @@ namespace GearEngine.GearEngine.Manager
             return null;
         }
 
+        public void ClearAll()
+        {
+            Stop();
+            foreach (IGridNode node in nodes.Values)
+            {
+                node?.Dispose();
+            }
+
+            nodes.Clear();
+        }
+
+        public void ResetAllNodeSimulationState()
+        {
+            foreach (IGridNode node in nodes.Values)
+            {
+                node?.ResetSimulationState();
+            }
+        }
+
         public IGridNode GetNode(Vector2Int pos)
         {
             nodes.TryGetValue(pos, out var node);

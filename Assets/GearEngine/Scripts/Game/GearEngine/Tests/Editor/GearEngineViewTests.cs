@@ -24,6 +24,10 @@ namespace GearEngine.GearEngine.Tests.Editor
             public void Stop()
             {
             }
+
+            public void ResetGridSimulationState()
+            {
+            }
         }
 
         private sealed class FakeDragService : IDragService

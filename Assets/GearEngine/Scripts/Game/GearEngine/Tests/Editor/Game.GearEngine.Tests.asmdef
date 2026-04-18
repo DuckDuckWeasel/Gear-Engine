@@ -12,7 +12,8 @@
         "Scaffold.MVVM.ViewModel",
         "Scaffold.Navigation",
         "VContainer",
-        "Scaffold.MVVM"
+        "Scaffold.MVVM",
+        "Unity.TextMeshPro"
     ],
     "includePlatforms": [
         "Editor"
@@ -22,7 +23,8 @@
     "overrideReferences": true,
     "precompiledReferences": [
         "nunit.framework.dll",
-        "CommunityToolkit.Mvvm.dll"
+        "CommunityToolkit.Mvvm.dll",
+        "DOTween.dll"
     ],
     "autoReferenced": false,
     "defineConstraints": [

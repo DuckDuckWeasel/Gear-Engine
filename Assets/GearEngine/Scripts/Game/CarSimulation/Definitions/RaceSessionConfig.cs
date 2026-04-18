@@ -23,5 +23,15 @@ namespace GearEngine.CarSimulation.Definitions
         {
             totalLaps = value;
         }
+
+        internal void ApplyFromTrack(TrackDefinition track)
+        {
+            if (track == null)
+            {
+                return;
+            }
+
+            totalLaps = track.TotalLaps;
+        }
     }
 }

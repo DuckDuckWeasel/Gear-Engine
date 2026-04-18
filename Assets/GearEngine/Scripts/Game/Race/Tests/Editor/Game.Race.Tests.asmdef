@@ -7,6 +7,8 @@
         "Game.Race",
         "Game.CarSimulation",
         "Game.GearEngine",
+        "Scaffold.Events",
+        "Scaffold.Events.Container",
         "Scaffold.Entities",
         "Scaffold.MVVM.ViewModel",
         "Scaffold.Navigation",

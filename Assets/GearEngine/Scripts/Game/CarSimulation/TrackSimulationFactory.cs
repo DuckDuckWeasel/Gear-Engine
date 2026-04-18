@@ -23,6 +23,7 @@ namespace GearEngine.CarSimulation
 
             CarEntity car = carEntityFactory.Create(carDefinition);
             RaceSessionConfig resolved = config ?? new RaceSessionConfig();
+            resolved.ApplyFromTrack(trackDefinition);
             return new LapRaceSession(trackDefinition, car, resolved);
         }
     }
