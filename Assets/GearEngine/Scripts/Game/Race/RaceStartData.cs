@@ -13,11 +13,7 @@ namespace GearEngine.Race
             simulationConfig = new TrackSimulationConfig();
         }
 
-        public RaceStartData(
-            TrackDefinition trackDefinition,
-            CarDefinition carDefinition,
-            GearEngineStartData gearEngineData = null,
-            TrackSimulationConfig simulationConfig = null)
+        public RaceStartData(TrackDefinition trackDefinition, CarDefinition carDefinition, GearEngineStartData gearEngineData = null, TrackSimulationConfig simulationConfig = null)
         {
             this.trackDefinition = trackDefinition;
             this.carDefinition = carDefinition;

@@ -11,7 +11,7 @@ namespace GearEngine.CarSimulation
 {
     public sealed partial class TrackSimulation : Model
     {
-        public TrackSimulation(TrackDefinition track, CarEntity car, BakedTrackProfile profile, CarVariableSet carVariables, TrackSimulationTuning tuning = null)
+        public TrackSimulation(TrackDefinition track, CarEntity car, SplineWaypointPath waypointPath, CarVariableSet carVariables, SimpleTrackDriverTuning driverTuning)
         {
             if (track == null)
             {
@@ -23,26 +23,34 @@ namespace GearEngine.CarSimulation
                 throw new ArgumentNullException(nameof(car));
             }
 
-            if (profile == null)
+            if (waypointPath == null)
             {
-                throw new ArgumentNullException(nameof(profile));
+                throw new ArgumentNullException(nameof(waypointPath));
             }
 
             Track = track;
             Car = car;
-            Profile = profile;
+            WaypointPath = waypointPath;
             Variables = carVariables;
-            Tuning = tuning;
+            DriverTuning = driverTuning ?? new SimpleTrackDriverTuning();
             Race = new RaceRuntimeState();
             Motion = new CarMotionState();
         }
 
+        internal Transform TrackRootTransform { get; private set; }
+
         public TrackDefinition Track { get; }
+
         public CarEntity Car { get; }
-        public BakedTrackProfile Profile { get; }
+
+        internal SplineWaypointPath WaypointPath { get; }
+
         internal CarVariableSet Variables { get; }
-        internal TrackSimulationTuning Tuning { get; }
+
+        internal SimpleTrackDriverTuning DriverTuning { get; }
+
         public RaceRuntimeState Race { get; }
+
         internal CarMotionState Motion { get; }
 
         [ObservableProperty]
@@ -118,6 +126,7 @@ namespace GearEngine.CarSimulation
                 State = SimulationLifecycleState.Running;
                 return;
             }
+
             throw new InvalidOperationException("Simulation cannot be started from the current state.");
         }
 
@@ -135,6 +144,22 @@ namespace GearEngine.CarSimulation
         {
             Motion.Reset();
             Race.Reset();
+            SeedMotionFromTrack();
+        }
+
+        internal void AttachTrackRoot(Transform root)
+        {
+            TrackRootTransform = root;
+        }
+
+        internal void SeedMotionFromTrack()
+        {
+            if (TrackRootTransform == null || WaypointPath == null)
+            {
+                return;
+            }
+
+            SimpleWaypointDriver.SeedStart(Motion, WaypointPath, TrackRootTransform);
         }
     }
 }

@@ -20,27 +20,30 @@ namespace GearEngine.GearEngine.Config
         public bool IsMovable = true;
         public bool IsReturnable = true;
 
-        // Progression Mechanics
         public float MaxCharge = 100f;
-        public float ChargeOverTimeAmount = 10f; // Amount gained per second from CoreGear
-        public float ChargeOnTriggerAmount = 25f; // Amount gained when hit by a trigger
+        public float ChargeOverTimeAmount = 10f;
+        public float ChargeOnTriggerAmount = 25f;
 
-        // Snap Feedback Mechanics
         public float SnapSlowdownDuration = 0.5f;
         public float SnapSlowdownMultiplier = 0.15f;
         public float TriggerSpinDegrees = 45f;
 
-        // Delete / Scrap Mechanics (opt-in)
         public bool IsDeletable = false;
         public int DeleteRewardAmount = 0;
 
-        // Abilities configured specifically for this gear
         public List<GearAbilitySO> Abilities = new List<GearAbilitySO>();
 
-        // Runtime copy of the next level config
         [NonSerialized] public GearConfig NextLevelConfig;
 
         public GearConfigData Clone(GearConfig nextLevelConfig, List<GearAbilitySO> abilities)
+        {
+            GearConfigData clone = CreateBaseClone();
+            ApplyChargeSettings(clone);
+            ApplyDeletionSettings(clone, nextLevelConfig, abilities);
+            return clone;
+        }
+
+        private GearConfigData CreateBaseClone()
         {
             return new GearConfigData
             {
@@ -53,18 +56,26 @@ namespace GearEngine.GearEngine.Config
                 TriggerPattern = TriggerPattern,
                 IsInteractable = IsInteractable,
                 IsMovable = IsMovable,
-                IsReturnable = IsReturnable,
-                MaxCharge = MaxCharge,
-                ChargeOverTimeAmount = ChargeOverTimeAmount,
-                ChargeOnTriggerAmount = ChargeOnTriggerAmount,
-                SnapSlowdownDuration = SnapSlowdownDuration,
-                SnapSlowdownMultiplier = SnapSlowdownMultiplier,
-                TriggerSpinDegrees = TriggerSpinDegrees,
-                IsDeletable = IsDeletable,
-                DeleteRewardAmount = DeleteRewardAmount,
-                NextLevelConfig = nextLevelConfig,
-                Abilities = new List<GearAbilitySO>(abilities ?? new List<GearAbilitySO>())
+                IsReturnable = IsReturnable
             };
+        }
+
+        private void ApplyChargeSettings(GearConfigData clone)
+        {
+            clone.MaxCharge = MaxCharge;
+            clone.ChargeOverTimeAmount = ChargeOverTimeAmount;
+            clone.ChargeOnTriggerAmount = ChargeOnTriggerAmount;
+            clone.SnapSlowdownDuration = SnapSlowdownDuration;
+            clone.SnapSlowdownMultiplier = SnapSlowdownMultiplier;
+            clone.TriggerSpinDegrees = TriggerSpinDegrees;
+        }
+
+        private void ApplyDeletionSettings(GearConfigData clone, GearConfig nextLevelConfig, List<GearAbilitySO> abilities)
+        {
+            clone.IsDeletable = IsDeletable;
+            clone.DeleteRewardAmount = DeleteRewardAmount;
+            clone.NextLevelConfig = nextLevelConfig;
+            clone.Abilities = abilities == null ? new List<GearAbilitySO>() : new List<GearAbilitySO>(abilities);
         }
     }
 }

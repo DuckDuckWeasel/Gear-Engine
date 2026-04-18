@@ -5,6 +5,14 @@ namespace GearEngine.GearEngine.Config
     [CreateAssetMenu(fileName = "BoardConfig", menuName = "GearEngine/BoardConfig")]
     public class BoardConfigSO : ScriptableObject
     {
+        public int MaxBoardGears
+        {
+            get
+            {
+                return GridWidth * GridHeight;
+            }
+        }
+
         [Header("Grid Layout")]
         [Min(1)]
         public int GridWidth = 5;
@@ -33,11 +41,6 @@ namespace GearEngine.GearEngine.Config
         [Tooltip("Gameplay limit for dynamic board control. Must be ≤ MaxBoardGears.")]
         [Min(1)]
         public int MaxAllowedBoardGears = 5;
-
-        /// <summary>
-        /// Physical maximum gears the board can hold.
-        /// </summary>
-        public int MaxBoardGears => GridWidth * GridHeight;
 
         public Vector3 GetWorldPosition(Vector2Int gridPos, float zOffset = 0f)
         {

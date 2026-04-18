@@ -13,17 +13,6 @@ namespace GearEngine.CarSimulation.Debug
     [ExecuteAlways]
     public sealed class CarSimulationDebug : MonoBehaviour, IInitializable
     {
-        [SerializeField]
-        private VariableSO targetAttribute;
-
-        [SerializeField]
-        private float modifierValue;
-
-        private EntityModifierEntry activeModifier;
-
-        [Inject]
-        private TrackSimulationRunner runner;
-
         private TrackSimulation Sim => runner?.ActiveSimulation;
 
         private CarEntity Car => Sim?.Car;
@@ -51,7 +40,10 @@ namespace GearEngine.CarSimulation.Debug
         private float DriftIntensity => Motion?.DriftIntensity ?? 0f;
 
         [ShowInInspector, ReadOnly, BoxGroup("Motion")]
-        private float Distance => Motion?.Distance ?? 0f;
+        private int WaypointIndex => Motion?.WaypointIndex ?? 0;
+
+        [ShowInInspector, ReadOnly, BoxGroup("Motion")]
+        private float DistanceAlongPath => Motion?.DistanceAlongPath ?? 0f;
 
         [ShowInInspector, ReadOnly, BoxGroup("Attribute")]
         private float CurrentAttributeValue
@@ -65,6 +57,21 @@ namespace GearEngine.CarSimulation.Debug
 
                 return Car.TryGetValue(targetAttribute, out float v) ? v : 0f;
             }
+        }
+
+        [SerializeField]
+        private VariableSO targetAttribute;
+
+        [SerializeField]
+        private float modifierValue;
+
+        private EntityModifierEntry activeModifier;
+
+        [Inject]
+        private TrackSimulationRunner runner;
+
+        public void Initialize()
+        {
         }
 
         [Button, BoxGroup("Modifiers")]
@@ -96,10 +103,6 @@ namespace GearEngine.CarSimulation.Debug
         {
             Car?.ClearModifiers();
             activeModifier = null;
-        }
-
-        public void Initialize()
-        {
         }
     }
 }

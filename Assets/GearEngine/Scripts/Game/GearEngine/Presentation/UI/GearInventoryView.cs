@@ -15,17 +15,16 @@ namespace GearEngine.GearEngine.Presentation.UI
         [SerializeField] private GameObject slotPrefab;
 
         private IDragService dragService;
+        private Transform boardReferenceTransform;
 
         public void SetDragService(IDragService dragService)
         {
             this.dragService = dragService;
         }
 
-        private Transform boardReferenceTransform;
-
         public void SetBoardReference(Transform boardTransform)
         {
-            this.boardReferenceTransform = boardTransform;
+            boardReferenceTransform = boardTransform;
         }
 
         protected override void OnBind()
@@ -80,70 +79,40 @@ namespace GearEngine.GearEngine.Presentation.UI
                 return;
             }
 
+            ClearSlots();
+            BuildSlots();
+        }
+
+        private void ClearSlots()
+        {
             foreach (Transform child in itemsContainer)
             {
                 Destroy(child.gameObject);
             }
+        }
 
-            foreach (var gear in viewModel.InventoryModel.AvailableGears)
+        private void BuildSlots()
+        {
+            foreach (GearConfigData gear in viewModel.InventoryModel.AvailableGears)
             {
-                GameObject slotObj = CreateSlotObject(gear);
-                if (slotObj == null)
-                {
-                    continue;
-                }
-
-                var dragger = slotObj.GetComponent<DragHandler>();
-                if (dragger == null)
-                {
-                    dragger = slotObj.AddComponent<DragHandler>();
-                }
-
-                var slotView = slotObj.GetComponent<GearInventorySlotView>();
-                if (slotView == null)
-                {
-                    slotView = slotObj.AddComponent<GearInventorySlotView>();
-                }
-
-                if (gridBoardTag != null)
-                {
-                    dragger.AddAcceptedTag(gridBoardTag);
-                }
-
-                // Locate containment boundary
-                Transform visualContainer = slotObj.transform.Find("VisualContainer");
-                if (visualContainer == null)
-                {
-                    visualContainer = slotObj.transform;
-                }
-
-                // Match pure physical screen space: force the SpriteRenderer lossyScale to equal the Grid's lossyScale
-                float baseScale = 56f;
-                if (boardReferenceTransform != null && visualContainer.lossyScale.x > 0f)
-                {
-                    baseScale = boardReferenceTransform.lossyScale.x / visualContainer.lossyScale.x;
-                }
-                float totalScale = gear.RelativeScaleMultiplier * baseScale;
-
-                dragger.GhostScaleMultiplier = totalScale;
-
-                // Setup visual using shared utility
-                GameObject visualObj = GearVisualSetup.SetupVisual(visualContainer, gear, totalScale);
-                if (visualObj != null)
-                {
-                    dragger.GhostPrefab = visualObj;
-                }
-
-                slotView.Bind(gear, viewModel);
-
-                // Wire drag lifecycle to centralized IDragService
-                if (dragService != null)
-                {
-                    GearConfigData capturedGear = gear;
-                    dragger.OnDragBegin += () => dragService.StartDrag(capturedGear);
-                    dragger.OnDragEnd += () => dragService.EndDrag();
-                }
+                BuildSlot(gear);
             }
+        }
+
+        private void BuildSlot(GearConfigData gear)
+        {
+            GameObject slotObj = CreateSlotObject(gear);
+            if (slotObj == null)
+            {
+                return;
+            }
+
+            DragHandler dragger = GetOrAddDragHandler(slotObj);
+            GearInventorySlotView slotView = GetOrAddSlotView(slotObj);
+            ConfigureDragTarget(dragger);
+            ConfigureSlotVisual(slotObj, dragger, gear);
+            slotView.Bind(gear, viewModel);
+            SubscribeDragEvents(dragger, gear);
         }
 
         private GameObject CreateSlotObject(GearConfigData gear)
@@ -157,6 +126,77 @@ namespace GearEngine.GearEngine.Presentation.UI
             GameObject slot = Instantiate(slotPrefab, itemsContainer);
             slot.name = $"Slot_{gear.Id}";
             return slot;
+        }
+
+        private DragHandler GetOrAddDragHandler(GameObject slotObj)
+        {
+            DragHandler dragger = slotObj.GetComponent<DragHandler>();
+            if (dragger == null)
+            {
+                dragger = slotObj.AddComponent<DragHandler>();
+            }
+
+            return dragger;
+        }
+
+        private GearInventorySlotView GetOrAddSlotView(GameObject slotObj)
+        {
+            GearInventorySlotView slotView = slotObj.GetComponent<GearInventorySlotView>();
+            if (slotView == null)
+            {
+                slotView = slotObj.AddComponent<GearInventorySlotView>();
+            }
+
+            return slotView;
+        }
+
+        private void ConfigureDragTarget(DragHandler dragger)
+        {
+            if (gridBoardTag != null)
+            {
+                dragger.AddAcceptedTag(gridBoardTag);
+            }
+        }
+
+        private void ConfigureSlotVisual(GameObject slotObj, DragHandler dragger, GearConfigData gear)
+        {
+            Transform visualContainer = GetVisualContainer(slotObj.transform);
+            float totalScale = CalculateSlotScale(gear, visualContainer);
+            dragger.GhostScaleMultiplier = totalScale;
+            GameObject visualObj = GearVisualSetup.SetupVisual(visualContainer, gear, totalScale);
+            if (visualObj != null)
+            {
+                dragger.GhostPrefab = visualObj;
+            }
+        }
+
+        private Transform GetVisualContainer(Transform slotTransform)
+        {
+            Transform visualContainer = slotTransform.Find("VisualContainer");
+            return visualContainer ?? slotTransform;
+        }
+
+        private float CalculateSlotScale(GearConfigData gear, Transform visualContainer)
+        {
+            float baseScale = 56f;
+            if (boardReferenceTransform != null && visualContainer.lossyScale.x > 0f)
+            {
+                baseScale = boardReferenceTransform.lossyScale.x / visualContainer.lossyScale.x;
+            }
+
+            return gear.RelativeScaleMultiplier * baseScale;
+        }
+
+        private void SubscribeDragEvents(DragHandler dragger, GearConfigData gear)
+        {
+            if (dragService == null)
+            {
+                return;
+            }
+
+            GearConfigData capturedGear = gear;
+            dragger.OnDragBegin += () => dragService.StartDrag(capturedGear);
+            dragger.OnDragEnd += () => dragService.EndDrag();
         }
 
         private void OnDestroy()
