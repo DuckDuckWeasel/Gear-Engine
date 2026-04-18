@@ -653,6 +653,9 @@ MonoBehaviour:
   track: {fileID: 0}
   playButton: {fileID: 6155666345822347639}
   statsPanel: {fileID: 5209651545994221926}
+  openTransitionAnchors:
+  - {fileID: 9100100110011001003}
+  openTransitionDurationSeconds: 0.35
 --- !u!1 &6476755253643570494
 GameObject:
   m_ObjectHideFlags: 0

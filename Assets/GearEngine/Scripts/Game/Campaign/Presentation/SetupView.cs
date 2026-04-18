@@ -1,5 +1,6 @@
 using System;
 using GearEngine.CarSimulation.Tracks;
+using GearEngine.FrustumFit;
 using GearEngine.GearEngine.Presentation.UI;
 using Scaffold.MVVM;
 using UnityEngine;
@@ -15,6 +16,8 @@ namespace GearEngine.Campaign.Presentation
         [SerializeField] private TrashDropZoneViewComponent trashDropZone;
         [SerializeField] private Button raceButton;
         [SerializeField] private Button returnToMainButton;
+        [SerializeField] private FrustumFitAnchor[] openTransitionAnchors;
+        [SerializeField] private float openTransitionDurationSeconds = 0.35f;
 
         protected override void OnBind()
         {
@@ -47,6 +50,8 @@ namespace GearEngine.Campaign.Presentation
             raceButton.onClick.AddListener(OnRaceClicked);
             returnToMainButton.onClick.RemoveListener(OnReturnClicked);
             returnToMainButton.onClick.AddListener(OnReturnClicked);
+
+            FrustumFitAnchorOpenTransition.PlayAfterCanvasLayout(this, openTransitionAnchors, openTransitionDurationSeconds);
         }
 
         protected override void OnClose()

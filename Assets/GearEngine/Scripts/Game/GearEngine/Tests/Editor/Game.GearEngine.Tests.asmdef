@@ -23,7 +23,8 @@
     "overrideReferences": true,
     "precompiledReferences": [
         "nunit.framework.dll",
-        "CommunityToolkit.Mvvm.dll"
+        "CommunityToolkit.Mvvm.dll",
+        "DOTween.dll"
     ],
     "autoReferenced": false,
     "defineConstraints": [

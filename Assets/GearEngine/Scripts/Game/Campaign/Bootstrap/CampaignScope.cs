@@ -55,9 +55,7 @@ namespace GearEngine.Campaign.Bootstrap
             LocalTrackService trackService = new LocalTrackService(tracks, roguelikeCardPool);
             builder.RegisterInstance<ITrackService>(trackService);
 
-            GearEngineStartData gearStart = campaignGearStartData != null
-                ? campaignGearStartData
-                : new GearEngineStartData();
+            GearEngineStartData gearStart = campaignGearStartData;
             builder.RegisterInstance(gearStart);
 
             LocalWalletService walletService = new LocalWalletService(initialGold: 0);
@@ -70,7 +68,6 @@ namespace GearEngine.Campaign.Bootstrap
             }
 
             builder.RegisterInstance<IGearLoadoutService>(loadoutService);
-
             builder.RegisterComponent(sceneBootstrap).AsImplementedInterfaces().AsSelf();
         }
     }

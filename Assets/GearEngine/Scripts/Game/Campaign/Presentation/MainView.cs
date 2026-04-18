@@ -1,5 +1,6 @@
 using System;
 using GearEngine.CarSimulation.Tracks;
+using GearEngine.FrustumFit;
 using Scaffold.MVVM;
 using UnityEngine;
 using UnityEngine.UI;
@@ -11,6 +12,8 @@ namespace GearEngine.Campaign.Presentation
         [SerializeField] private Track track;
         [SerializeField] private Button playButton;
         [SerializeField] private TrackStatsViewComponent statsPanel;
+        [SerializeField] private FrustumFitAnchor[] openTransitionAnchors;
+        [SerializeField] private float openTransitionDurationSeconds = 0.35f;
 
         protected override void OnBind()
         {
@@ -31,6 +34,7 @@ namespace GearEngine.Campaign.Presentation
             playButton.onClick.RemoveListener(OnPlayClicked);
             playButton.onClick.AddListener(OnPlayClicked);
             track.gameObject.SetActive(true);
+            FrustumFitAnchorOpenTransition.PlayAfterCanvasLayout(this, openTransitionAnchors, openTransitionDurationSeconds);
         }
 
         protected override void OnFocus()
@@ -39,6 +43,7 @@ namespace GearEngine.Campaign.Presentation
             playButton.onClick.RemoveListener(OnPlayClicked);
             playButton.onClick.AddListener(OnPlayClicked);
             track.gameObject.SetActive(true);
+            FrustumFitAnchorOpenTransition.PlayAfterCanvasLayout(this, openTransitionAnchors, openTransitionDurationSeconds);
         }
 
         protected override void OnClose()

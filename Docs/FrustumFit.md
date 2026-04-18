@@ -8,8 +8,9 @@ This feature has two parts:
 All runtime types use namespace **`GearEngine.FrustumFit`** in assembly **`Game.GearEngine.FrustumFit`**:
 
 - Scripts: `Assets/GearEngine/Scripts/Core/FrustumFit/`
+- Open transition (DOTween): **`FrustumFitAnchorOpenTransition`**, optional inspector runner **`FrustumFitAnchorOpenTransitionRunner`**
 - Sample helpers: `Assets/GearEngine/Scripts/Core/FrustumFit/Samples/` (`Game.GearEngine.FrustumFit.Samples`)
-- EditMode tests: `Assets/GearEngine/Scripts/Game/GearEngine/Tests/Editor/FrustumFitMathTests.cs` (assembly `Game.GearEngine.Tests`, references `Game.GearEngine.FrustumFit`)
+- EditMode tests: `Assets/GearEngine/Scripts/Game/GearEngine/Tests/Editor/` (e.g. `FrustumFitMathTests.cs`, `FrustumFitAnchorOpenTransitionTests.cs`; assembly `Game.GearEngine.Tests`, references `Game.GearEngine.FrustumFit` and `DOTween.dll` where needed)
 
 Sample scene: `Assets/GearEngine/Scenes/FrustumFit Sample.unity` (Canvas panel + `FrustumFitAnchor` driving a world sprite). The Canvas also has **`FrustumFitSampleController`**: set **Mode** to **Continuous** (default), **Apply On Key**, or **Tween On Key** (press **Space** to re-fit in the on-demand modes).
 
@@ -89,6 +90,19 @@ Then either:
 - snap with **`placement.ApplyTo(targetTransform)`** on the computed **`FrustumFitAnchorPlacement`**.
 
 **Rotation:** `FrustumFitAnchorRotationMode.MatchCameraRotation` sets `HasWorldRotation` and `WorldRotation` to the world camera’s rotation (typical for screen-facing sprites). `PreserveTarget` leaves rotation to the tween or prior state.
+
+### Open transition (multi-anchor, DOTween)
+
+Use **`FrustumFitAnchorOpenTransition.Play`** to tween one or more **`FrustumFitAnchor`** targets from their **current** pose to a **freshly computed** placement (DOTween **`DOMove`**, **`DOScale`** for local scale, **`DORotateQuaternion`** when `HasWorldRotation`). Default easing is **`Ease.InOutQuad`** (smooth in/out; not identical to a manual smoothstep curve).
+
+- **Return value:** a **`Tween`** / **`Sequence`**, or **`null`** if nothing could be driven (invalid anchor, failed compute, empty list). On completion, **`FrustumFitAnchorPlacement.ApplyTo`** runs so the final pose matches math exactly.
+- **Inspector:** add **`FrustumFitAnchorOpenTransitionRunner`**, assign anchors and duration/ease, call **`Play()`** from **`OnOpen`** after content is active. **`OnDisable`** kills the active tween.
+- **`PlayAfterCanvasLayout`:** use from a **`MonoBehaviour`** view after **`SetActive(true)`** — runs **`Canvas.ForceUpdateCanvases()`**, waits one frame, then calls **`Play`** with **`Ease.InOutQuad`**. It temporarily sets **`ConfigureAutoApply(false, false)`** on the listed anchors and restores **`applyEveryFrame`** when the tween completes. The public overloads take **`(host, anchors, duration)`** (or **`params` anchors**) so views do **not** need a **`DOTween.dll`** assembly reference; custom easing uses **`Play`** directly from code that references DOTween.
+- **UX flow:** typical pattern is **`OnOpen`** → **`SetActive(true)`** on world/UI roots → **`Play(...)`** or **`PlayAfterCanvasLayout`**; **`OnClose`** → **`SetActive(false)`** only (no exit tween).
+- **Layout:** **`PlayAfterCanvasLayout`** handles **`Canvas.ForceUpdateCanvases()`** plus **`yield return null`**; if you call **`Play`** directly, do the same first when rects are not ready.
+- **Continuous fit:** **`PlayAfterCanvasLayout`** suppresses continuous fit during the tween and restores afterward. If you call **`Play`** directly, turn off **`applyEveryFrame`** / avoid **`Apply()`** fighting the tween, then re-enable **`applyEveryFrame`** when done.
+
+---
 
 ## Update timing and performance
 

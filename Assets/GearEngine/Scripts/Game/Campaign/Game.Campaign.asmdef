@@ -4,6 +4,7 @@
     "references": [
         "Game.SceneFoundation",
         "Game.GearEngine",
+        "Game.GearEngine.FrustumFit",
         "Game.CarSimulation",
         "Scaffold.Entities",
         "VContainer",

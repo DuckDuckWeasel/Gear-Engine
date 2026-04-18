@@ -383,6 +383,9 @@ MonoBehaviour:
   trashDropZone: {fileID: 0}
   raceButton: {fileID: 7196897562586100971}
   returnToMainButton: {fileID: 1111222233334405}
+  openTransitionAnchors:
+  - {fileID: 4361779213749456876}
+  openTransitionDurationSeconds: 0.35
 --- !u!1 &9100000012345020
 GameObject:
   m_ObjectHideFlags: 0

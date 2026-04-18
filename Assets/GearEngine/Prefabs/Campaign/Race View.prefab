@@ -120,6 +120,9 @@ MonoBehaviour:
   type: 0
   track: {fileID: 0}
   hud: {fileID: 3933233036168636468}
+  openTransitionAnchors:
+  - {fileID: 920020011001100103}
+  openTransitionDurationSeconds: 0.35
 --- !u!1 &475032438383026787
 GameObject:
   m_ObjectHideFlags: 0
