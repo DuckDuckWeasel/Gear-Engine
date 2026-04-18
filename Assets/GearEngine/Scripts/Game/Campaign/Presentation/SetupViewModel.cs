@@ -4,6 +4,7 @@ using System.Linq;
 using GearEngine.Campaign.Services;
 using GearEngine.CarSimulation;
 using GearEngine.CarSimulation.Presentation;
+using GearEngine.CarSimulation.Simulation;
 using GearEngine.GearEngine;
 using GearEngine.GearEngine.Config;
 using GearEngine.GearEngine.Presentation.UI;
@@ -37,6 +38,8 @@ namespace GearEngine.Campaign.Presentation
         [Inject] private IGearPresentationTransferService presentationTransferService;
         [Inject] private IGearLoadoutService loadoutService;
         [Inject] private TrackSimulationFactory trackFactory;
+        [Inject] private RaceManagerService raceManager;
+        [Inject] private SplineCarRunnerService aiRunner;
 
         protected override void Initialize()
         {
@@ -44,10 +47,11 @@ namespace GearEngine.Campaign.Presentation
 
             engineService.ResetGridSimulationState();
 
-            LapRaceSession previewSession = trackFactory.Create(trackService.CurrentCar, trackService.CurrentTrack);
+            RaceState previewSession = trackFactory.Create(trackService.CurrentCar, trackService.CurrentTrack, null);
             trackService.SetCurrentSession(previewSession);
+            raceManager.RegisterRace(previewSession);
 
-            Track = new TrackViewModel(trackService.CurrentSession);
+            Track = new TrackViewModel(trackService.CurrentSession, raceManager, aiRunner, trackFactory);
             BindChildViewModel(Track);
 
             Board = new BoardViewModel(boardService, inventoryService, engineService, dragService);

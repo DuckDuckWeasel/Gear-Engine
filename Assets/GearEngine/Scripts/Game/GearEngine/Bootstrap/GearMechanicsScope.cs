@@ -37,12 +37,20 @@ namespace GearEngine.GearEngine.Bootstrap
             {
                 throw new InvalidOperationException("GearMechanicsScope: assign sceneBootstrap.");
             }
+
+            if (gearStartData == null)
+            {
+                throw new InvalidOperationException("GearMechanicsScope: assign gearStartData.");
+            }
         }
 
         protected override void InstallFeatureServices(IContainerBuilder builder)
         {
-            GearEngineStartData start = gearStartData != null ? gearStartData : new GearEngineStartData();
-            new GearMechanicsInstaller(boardConfig, featureToggle).Install(builder, start.GetInventoryLoadoutData(), start.GetBoardLoadoutData());
+            new GearMechanicsInstaller(
+                boardConfig,
+                featureToggle,
+                gearStartData.GetInventoryLoadoutData(),
+                gearStartData.GetBoardLoadoutData()).Install(builder);
             builder.RegisterComponent(sceneBootstrap).AsImplementedInterfaces().AsSelf();
         }
     }

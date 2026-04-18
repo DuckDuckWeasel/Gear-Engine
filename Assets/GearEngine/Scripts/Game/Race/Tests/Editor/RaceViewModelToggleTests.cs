@@ -4,22 +4,19 @@ using GearEngine.CarSimulation;
 using GearEngine.CarSimulation.Definitions;
 using GearEngine.CarSimulation.Simulation;
 using GearEngine.GearEngine;
+using GearEngine.GearEngine.Bootstrap;
 using GearEngine.GearEngine.Config;
-using GearEngine.GearEngine.Merge;
-using GearEngine.GearEngine.Manager;
-using GearEngine.GearEngine.Nodes;
-using GearEngine.GearEngine.Presentation.UI;
 using GearEngine.GearEngine.Services;
 using GearEngine.GearEngine.Services.Board;
 using GearEngine.GearEngine.Services.Inventory;
 using NUnit.Framework;
-using Scaffold.Events.Container;
+using Scaffold.MVVM;
 using Scaffold.Navigation.Contracts;
+using Scaffold.Events.Container;
 using UnityEngine;
 using UnityEngine.Splines;
 using VContainer;
 using Object = UnityEngine.Object;
-using GearEngine.GearEngine.Bootstrap;
 
 namespace GearEngine.Race.Tests.Editor
 {
@@ -50,68 +47,34 @@ namespace GearEngine.Race.Tests.Editor
 
             public void Play() => IsRunning = true;
 
+            public void ResetGridSimulationState()
+            {
+                throw new NotImplementedException();
+            }
+
             public void Stop() => IsRunning = false;
-
-            public void ResetGridSimulationState() => Stop();
-        }
-
-        private sealed class FakeDragService : IDragService
-        {
-            public bool IsDragging { get; private set; }
-
-            public T GetDragData<T>() where T : class => null;
-
-            public void StartDrag(object data) => IsDragging = true;
-
-            public void EndDrag() => IsDragging = false;
-
-            public void Register(IDragTarget target) { }
-
-            public void Unregister(IDragTarget target) { }
-        }
-
-        private sealed class FakePresentationTransferService : IGearPresentationTransferService
-        {
-            public void AddReturnedBoardGearToInventory(GearConfigData config) { }
-
-            public void TrashInventoryGear(GearConfigData gear) { }
-        }
-
-        private sealed class RecordingRaceSessionRunner : IRaceSessionRunner
-        {
-            public LapRaceSession LastSession { get; private set; }
-
-            public LapRaceSession ActiveSession => throw new NotImplementedException();
-
-            public void SetSession(LapRaceSession session)
-            {
-                LastSession = session;
-            }
-
-            public void Tick()
-            {
-            }
         }
 
         [Test]
-        public void Initialize_BindsLapRaceSessionToRunner()
+        public void Initialize_RegistersRaceStateToManager()
         {
             var carDef = ScriptableObject.CreateInstance<CarDefinition>();
             var trackDef = ScriptableObject.CreateInstance<TrackDefinition>();
             RaceViewModel vm = null;
+            IObjectResolver scope = null;
             try
             {
-                var runnerSink = new RecordingRaceSessionRunner();
-                vm = CreateInitializedRaceViewModel(carDef, trackDef, out _, runnerSink);
-                Assert.That(runnerSink.LastSession, Is.Not.Null);
-                Assert.That(runnerSink.LastSession, Is.SameAs(vm.Track.Session));
-                Assert.That(vm.Board, Is.Not.Null);
-                Assert.That(vm.Inventory, Is.Not.Null);
-                Assert.That(vm.TrashZone, Is.Not.Null);
+                var carRunnerConfig = ScriptableObject.CreateInstance<SplineCarRunnerConfigSO>();
+                var carRunner = new SplineCarRunnerService(carRunnerConfig);
+                var manager = new RaceManagerService(carRunner);
+
+                (vm, scope) = CreateInitializedRaceViewModel(carDef, trackDef, out _, manager, carRunner);
+                Assert.That(vm.Track.Session, Is.Not.Null);
+                Assert.That(manager.GetFirstRaceForDebug(), Is.SameAs(vm.Track.Session));
             }
             finally
             {
-                TearDownRaceViewModel(vm);
+                TearDownRaceViewModel(vm, scope);
                 Object.DestroyImmediate(carDef);
                 Object.DestroyImmediate(trackDef);
             }
@@ -123,10 +86,14 @@ namespace GearEngine.Race.Tests.Editor
             var carDef = ScriptableObject.CreateInstance<CarDefinition>();
             var trackDef = ScriptableObject.CreateInstance<TrackDefinition>();
             RaceViewModel vm = null;
+            IObjectResolver scope = null;
             try
             {
                 FakeEngine engine;
-                vm = CreateInitializedRaceViewModel(carDef, trackDef, out engine, new RecordingRaceSessionRunner());
+                var carRunnerConfig = ScriptableObject.CreateInstance<SplineCarRunnerConfigSO>();
+                var carRunner = new SplineCarRunnerService(carRunnerConfig);
+                var manager = new RaceManagerService(carRunner);
+                (vm, scope) = CreateInitializedRaceViewModel(carDef, trackDef, out engine, manager, carRunner);
                 Assert.That(engine.IsRunning, Is.False);
                 Assert.That(vm.Track.State, Is.EqualTo(SimulationLifecycleState.Created));
 
@@ -138,7 +105,7 @@ namespace GearEngine.Race.Tests.Editor
             }
             finally
             {
-                TearDownRaceViewModel(vm);
+                TearDownRaceViewModel(vm, scope);
                 Object.DestroyImmediate(carDef);
                 Object.DestroyImmediate(trackDef);
             }
@@ -150,10 +117,14 @@ namespace GearEngine.Race.Tests.Editor
             var carDef = ScriptableObject.CreateInstance<CarDefinition>();
             var trackDef = ScriptableObject.CreateInstance<TrackDefinition>();
             RaceViewModel vm = null;
+            IObjectResolver scope = null;
             try
             {
                 FakeEngine engine;
-                vm = CreateInitializedRaceViewModel(carDef, trackDef, out engine, new RecordingRaceSessionRunner());
+                var carRunnerConfig = ScriptableObject.CreateInstance<SplineCarRunnerConfigSO>();
+                var carRunner = new SplineCarRunnerService(carRunnerConfig);
+                var manager = new RaceManagerService(carRunner);
+                (vm, scope) = CreateInitializedRaceViewModel(carDef, trackDef, out engine, manager, carRunner);
                 vm.ToggleRace();
                 vm.ToggleRace();
 
@@ -163,7 +134,7 @@ namespace GearEngine.Race.Tests.Editor
             }
             finally
             {
-                TearDownRaceViewModel(vm);
+                TearDownRaceViewModel(vm, scope);
                 Object.DestroyImmediate(carDef);
                 Object.DestroyImmediate(trackDef);
             }
@@ -175,10 +146,14 @@ namespace GearEngine.Race.Tests.Editor
             var carDef = ScriptableObject.CreateInstance<CarDefinition>();
             var trackDef = ScriptableObject.CreateInstance<TrackDefinition>();
             RaceViewModel vm = null;
+            IObjectResolver scope = null;
             try
             {
                 FakeEngine engine;
-                vm = CreateInitializedRaceViewModel(carDef, trackDef, out engine, new RecordingRaceSessionRunner());
+                var carRunnerConfig = ScriptableObject.CreateInstance<SplineCarRunnerConfigSO>();
+                var carRunner = new SplineCarRunnerService(carRunnerConfig);
+                var manager = new RaceManagerService(carRunner);
+                (vm, scope) = CreateInitializedRaceViewModel(carDef, trackDef, out engine, manager, carRunner);
                 vm.ToggleRace();
                 vm.ToggleRace();
                 vm.ToggleRace();
@@ -188,75 +163,62 @@ namespace GearEngine.Race.Tests.Editor
             }
             finally
             {
-                TearDownRaceViewModel(vm);
+                TearDownRaceViewModel(vm, scope);
                 Object.DestroyImmediate(carDef);
                 Object.DestroyImmediate(trackDef);
             }
         }
 
-        private static RaceViewModel CreateInitializedRaceViewModel(
+        private static (RaceViewModel vm, IObjectResolver scope) CreateInitializedRaceViewModel(
             CarDefinition carDef,
             TrackDefinition trackDef,
             out FakeEngine engine,
-            IRaceSessionRunner raceSessionRunner)
+            RaceManagerService raceManager,
+            SplineCarRunnerService aiRunner)
         {
             trackDef.Spline.Knots = new[] { new BezierKnot(Vector3.zero), new BezierKnot(Vector3.right * 10f) };
             trackDef.Spline.Closed = false;
             var startData = new RaceStartData(trackDef, carDef);
 
             engine = new FakeEngine();
-            var gridManager = new GridManager();
             BoardConfigSO boardConfig = ScriptableObject.CreateInstance<BoardConfigSO>();
             boardConfig.GridWidth = 5;
             boardConfig.GridHeight = 5;
 
-            GearEngineFeatureToggleSO toggle = ScriptableObject.CreateInstance<GearEngineFeatureToggleSO>();
-            var inventoryService = new InventoryService(GearInventoryLoadoutData.Empty());
-
             var builder = new ContainerBuilder();
             new EventsInstaller().Install(builder);
-            builder.RegisterInstance(gridManager).As<IGridManager>();
-            builder.RegisterInstance(boardConfig);
-            builder.RegisterInstance(engine).As<IGearEngineService>();
-            builder.RegisterInstance(toggle);
-            builder.RegisterInstance(new GearBoardLoadoutData());
-            builder.Register<GridSwapService>(Lifetime.Singleton).As<IGridSwapService>();
-            builder.Register<GearEngine.Merge.GridMergeService>(Lifetime.Singleton).As<IGridMergeService>();
-            builder.Register<BaseGearNode>(Lifetime.Transient);
-            builder.Register<CoreGearNode>(Lifetime.Transient);
-            builder.Register<AuraGearNode>(Lifetime.Transient);
-            builder.Register<GearNodeFactory>(Lifetime.Singleton).As<IGearNodeFactory>();
-            builder.Register<BoardService>(Lifetime.Singleton).As<IBoardService>();
+            new GearMechanicsInstaller(
+                boardConfig,
+                null,
+                GearInventoryLoadoutData.Empty(),
+                new GearBoardLoadoutData()).Install(builder);
+            IObjectResolver scope = builder.Build();
+            IInventoryService inventoryService = scope.Resolve<IInventoryService>();
+            IBoardService boardService = scope.Resolve<IBoardService>();
+            IDragService dragService = scope.Resolve<IDragService>();
 
-            IBoardService boardService;
-            using (IObjectResolver container = builder.Build())
-            {
-                boardService = container.Resolve<IBoardService>();
-            }
-
-            var trackFactory = new TrackSimulationFactory();
-            var dragService = new FakeDragService();
+            var trackFactory = new TrackSimulationFactory(scope);
             var vm = new RaceViewModel(startData);
             InjectPrivateField(vm, "engineService", engine);
-            InjectPrivateField(vm, "boardService", boardService);
             InjectPrivateField(vm, "inventoryService", inventoryService);
-            InjectPrivateField(vm, "dragService", (IDragService)dragService);
-            InjectPrivateField(vm, "presentationTransferService", (IGearPresentationTransferService)new FakePresentationTransferService());
-            InjectPrivateField(vm, "featureToggle", toggle);
+            InjectPrivateField(vm, "boardService", boardService);
+            InjectPrivateField(vm, "dragService", dragService);
             InjectPrivateField(vm, "trackFactory", trackFactory);
-            InjectPrivateField(vm, "raceSessionRunner", raceSessionRunner);
+            InjectPrivateField(vm, "raceManager", raceManager);
+            InjectPrivateField(vm, "aiRunner", aiRunner);
             InjectPrivateFieldInHierarchy(vm, "navigation", new NoOpNavigation());
 
             InvokeProtectedInitialize(vm);
-            return vm;
+            return (vm, scope);
         }
 
-        private static void TearDownRaceViewModel(RaceViewModel vm)
+        private static void TearDownRaceViewModel(RaceViewModel vm, IObjectResolver scope)
         {
-            // BoardConfig is owned by the BoardService (via BoardModel) — destroy the SO created in the test setup.
-            if (vm?.Board?.BoardConfig != null)
+            BoardConfigSO boardConfig = vm?.Board?.BoardConfig;
+            scope?.Dispose();
+            if (boardConfig != null)
             {
-                Object.DestroyImmediate(vm.Board.BoardConfig);
+                Object.DestroyImmediate(boardConfig);
             }
         }
 

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using GearEngine.Campaign;
-using GearEngine.CarSimulation;
 using GearEngine.CarSimulation.Definitions;
+using GearEngine.CarSimulation.Simulation;
 using GearEngine.GearEngine.Config;
 
 namespace GearEngine.Campaign.Services
@@ -12,7 +12,7 @@ namespace GearEngine.Campaign.Services
 
         CarDefinition CurrentCar { get; }
 
-        LapRaceSession CurrentSession { get; }
+        RaceState CurrentSession { get; }
 
         TrackProgressModel GetTrackProgress();
 
@@ -20,7 +20,7 @@ namespace GearEngine.Campaign.Services
 
         IReadOnlyList<GearConfig> GetRoguelikeCardOptions();
 
-        void SetCurrentSession(LapRaceSession session);
+        void SetCurrentSession(RaceState session);
 
         void RecordResult(RaceResultModel result);
 

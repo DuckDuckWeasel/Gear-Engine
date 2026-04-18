@@ -45,11 +45,16 @@ namespace GearEngine.Campaign.Bootstrap
             {
                 throw new InvalidOperationException("[CampaignScope] Assign sceneBootstrap.");
             }
+
+            if (campaignGearStartData == null)
+            {
+                throw new InvalidOperationException("[CampaignScope] Assign campaignGearStartData.");
+            }
         }
 
         protected override void InstallFeatureServices(IContainerBuilder builder)
         {
-            GearEngineStartData gearStart = campaignGearStartData ?? new GearEngineStartData();
+            GearEngineStartData gearStart = campaignGearStartData;
 
             LocalGearLoadoutService loadoutService = new LocalGearLoadoutService();
             if (gearStart.BoardLoadout.BoardLayout != null)
@@ -61,7 +66,7 @@ namespace GearEngine.Campaign.Bootstrap
                 ? GearInventoryLoadoutData.FromGearConfigs(gearStart.InventoryLoadout.MaxSlots, loadoutService.GetInventoryGearConfigs())
                 : gearStart.GetInventoryLoadoutData();
 
-            new GearMechanicsInstaller(boardConfig, featureToggle).Install(builder, inventoryLoadout, gearStart.GetBoardLoadoutData());
+            new GearMechanicsInstaller(boardConfig, featureToggle, inventoryLoadout, gearStart.GetBoardLoadoutData()).Install(builder);
             new CarTrackInstaller().Install(builder);
 
             LocalTrackService trackService = new LocalTrackService(tracks, roguelikeCardPool);

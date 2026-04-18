@@ -15,17 +15,15 @@ MonoBehaviour:
   schemas:
     rid: 4306785141663990075
   asset:
-    m_AssetGUID: 6a4018fa1395fe74fa82a63a40a91772
+    m_AssetGUID: b050ac44f110045e79e6df30f00fe8d0
     m_SubObjectName: 
     m_SubObjectType: 
     m_SubObjectGUID: 
     m_EditorAssetChanged: 0
   viewType:
-    serializedType: '"Game.CarSimulation.CarTrackTestView, Game.CarSimulation, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null"'
+    serializedType: '"GearEngine.CarSimulation.Presentation.CarTrackTestView, Game.CarSimulation, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null"'
   controllerType:
-    serializedType: '"Game.CarSimulation.TrackViewModel, Game.CarSimulation, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null"'
+    serializedType: '"GearEngine.CarSimulation.Presentation.TrackListViewModel, Game.CarSimulation, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null"'
   references:
     version: 2
     RefIds:

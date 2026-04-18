@@ -11,24 +11,29 @@ namespace GearEngine.GearEngine.Bootstrap
 {
     public sealed class GearMechanicsInstaller
     {
-        public GearMechanicsInstaller(BoardConfigSO boardConfig, GearEngineFeatureToggleSO featureToggle)
+        public GearMechanicsInstaller(
+            BoardConfigSO boardConfig,
+            GearEngineFeatureToggleSO featureToggle,
+            GearInventoryLoadoutData inventoryLoadout,
+            GearBoardLoadoutData boardLoadout)
         {
             this.boardConfig = boardConfig ?? throw new ArgumentNullException(nameof(boardConfig));
             this.featureToggle = featureToggle;
+            this.inventoryLoadout = inventoryLoadout ?? throw new ArgumentNullException(nameof(inventoryLoadout));
+            this.boardLoadout = boardLoadout ?? throw new ArgumentNullException(nameof(boardLoadout));
         }
 
         private readonly BoardConfigSO boardConfig;
         private readonly GearEngineFeatureToggleSO featureToggle;
+        private readonly GearInventoryLoadoutData inventoryLoadout;
+        private readonly GearBoardLoadoutData boardLoadout;
 
-        public void Install(IContainerBuilder builder, GearInventoryLoadoutData inventoryLoadout, GearBoardLoadoutData boardLoadout)
+        public void Install(IContainerBuilder builder)
         {
             if (builder == null)
             {
                 throw new ArgumentNullException(nameof(builder));
             }
-
-            inventoryLoadout ??= GearInventoryLoadoutData.Empty();
-            boardLoadout ??= new GearBoardLoadoutData();
 
             GearEngineFeatureToggleSO toggle = featureToggle;
             if (toggle == null)

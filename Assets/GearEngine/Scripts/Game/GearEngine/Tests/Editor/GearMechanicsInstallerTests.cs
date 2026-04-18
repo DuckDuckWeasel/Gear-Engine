@@ -27,7 +27,7 @@ namespace GearEngine.GearEngine.Tests.Editor
 
             var builder = new ContainerBuilder();
             new EventsInstaller().Install(builder);
-            new GearMechanicsInstaller(board, null).Install(builder, null, null);
+            new GearMechanicsInstaller(board, null, GearInventoryLoadoutData.Empty(), new GearBoardLoadoutData()).Install(builder);
             using (IObjectResolver container = builder.Build())
             {
                 Assert.DoesNotThrow(() => container.Resolve<IEventBus>());
@@ -52,7 +52,7 @@ namespace GearEngine.GearEngine.Tests.Editor
 
             var builder = new ContainerBuilder();
             new EventsInstaller().Install(builder);
-            new GearMechanicsInstaller(board, toggle).Install(builder, GearInventoryLoadoutData.Empty(), new GearBoardLoadoutData());
+            new GearMechanicsInstaller(board, toggle, GearInventoryLoadoutData.Empty(), new GearBoardLoadoutData()).Install(builder);
             using (IObjectResolver container = builder.Build())
             {
                 var resolved = container.Resolve<GearEngineFeatureToggleSO>();
@@ -71,7 +71,7 @@ namespace GearEngine.GearEngine.Tests.Editor
 
             var builder = new ContainerBuilder();
             new EventsInstaller().Install(builder);
-            new GearMechanicsInstaller(board, null).Install(builder, null, null);
+            new GearMechanicsInstaller(board, null, GearInventoryLoadoutData.Empty(), new GearBoardLoadoutData()).Install(builder);
             using (IObjectResolver container = builder.Build())
             {
                 Assert.Throws<VContainerException>(() => container.Resolve<GearViewFactory>());

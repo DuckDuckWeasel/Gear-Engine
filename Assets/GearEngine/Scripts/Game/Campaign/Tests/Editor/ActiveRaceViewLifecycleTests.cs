@@ -20,7 +20,8 @@ namespace GearEngine.Campaign.Tests.Editor
         public void OnClose_DisablesTrackAndHudRoots()
         {
             GameObject trackGo = new GameObject("Track");
-            Track track = trackGo.AddComponent<Track>();
+            trackGo.AddComponent<UnityEngine.Splines.SplineContainer>();
+            TrackViewComponent track = trackGo.AddComponent<TrackViewComponent>();
             GameObject hudGo = new GameObject("Hud");
             hudGo.AddComponent<RaceHudViewComponent>();
             GameObject root = new GameObject("Root");
@@ -47,7 +48,8 @@ namespace GearEngine.Campaign.Tests.Editor
         public void OnOpen_EnablesTrackAndHudRoots()
         {
             GameObject trackGo = new GameObject("Track");
-            Track track = trackGo.AddComponent<Track>();
+            trackGo.AddComponent<UnityEngine.Splines.SplineContainer>();
+            TrackViewComponent track = trackGo.AddComponent<TrackViewComponent>();
             GameObject hudGo = new GameObject("Hud");
             hudGo.AddComponent<RaceHudViewComponent>();
             GameObject root = new GameObject("Root");

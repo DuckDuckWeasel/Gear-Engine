@@ -5,6 +5,7 @@ using GearEngine.Campaign;
 using GearEngine.Campaign.Services;
 using GearEngine.CarSimulation;
 using GearEngine.CarSimulation.Definitions;
+using GearEngine.CarSimulation.Simulation;
 using GearEngine.GearEngine;
 using GearEngine.GearEngine.Services.Board;
 using GearEngine.GearEngine.Bootstrap;
@@ -27,7 +28,7 @@ namespace GearEngine.Campaign.Tests.Editor
         {
             var builder = new ContainerBuilder();
             new EventsInstaller().Install(builder);
-            new GearMechanicsInstaller(boardConfig, null).Install(builder, GearInventoryLoadoutData.Empty(), new GearBoardLoadoutData());
+            new GearMechanicsInstaller(boardConfig, null, GearInventoryLoadoutData.Empty(), new GearBoardLoadoutData()).Install(builder);
             container = builder.Build();
             Engine = container.Resolve<IGearEngineService>();
             GridManager = container.Resolve<IGridManager>();
@@ -76,10 +77,10 @@ namespace GearEngine.Campaign.Tests.Editor
             return config;
         }
 
-        public static LapRaceSession CreateMinimalSession(CarDefinition carDef, TrackDefinition trackDef)
+        public static RaceState CreateMinimalSession(CarDefinition carDef, TrackDefinition trackDef)
         {
             var factory = new TrackSimulationFactory();
-            return factory.Create(carDef, trackDef);
+            return factory.Create(carDef, trackDef, null);
         }
 
         public static TrackDefinition CreateTrackWithScoreBandsForTests(params TrackScoreBand[] bands)
@@ -111,7 +112,7 @@ namespace GearEngine.Campaign.Tests.Editor
         public FakeTrackService(
             TrackDefinition track,
             CarDefinition car,
-            LapRaceSession session,
+            RaceState session,
             IReadOnlyList<GearConfig> roguelikePool = null)
         {
             CurrentTrack = track;
@@ -122,7 +123,7 @@ namespace GearEngine.Campaign.Tests.Editor
 
         public TrackDefinition CurrentTrack { get; }
         public CarDefinition CurrentCar { get; }
-        public LapRaceSession CurrentSession { get; private set; }
+        public RaceState CurrentSession { get; private set; }
 
         private readonly IReadOnlyList<GearConfig> roguelikeOptions;
         private readonly TrackProgressModel trackProgress = new TrackProgressModel();
@@ -135,7 +136,7 @@ namespace GearEngine.Campaign.Tests.Editor
 
         public IReadOnlyList<GearConfig> GetRoguelikeCardOptions() => roguelikeOptions;
 
-        public void SetCurrentSession(LapRaceSession session)
+        public void SetCurrentSession(RaceState session)
         {
             CurrentSession = session ?? throw new ArgumentNullException(nameof(session));
         }

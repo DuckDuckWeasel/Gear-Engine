@@ -4,7 +4,6 @@ using GearEngine.CarSimulation.Definitions;
 using GearEngine.CarSimulation.Presentation;
 using GearEngine.CarSimulation.Simulation;
 using GearEngine.GearEngine;
-using GearEngine.GearEngine.Config;
 using GearEngine.GearEngine.Presentation.UI;
 using GearEngine.GearEngine.Services;
 using GearEngine.GearEngine.Services.Board;
@@ -27,11 +26,7 @@ namespace GearEngine.Race
 
         public TrackViewModel Track { get; private set; }
 
-        public TrashZoneViewModel TrashZone { get; private set; }
-
         public bool IsRaceRunning => engineService?.IsRunning ?? false;
-
-        internal IDragService DragService => dragService;
 
         private readonly RaceStartData startData;
 
@@ -39,25 +34,22 @@ namespace GearEngine.Race
         private IGearEngineService engineService;
 
         [Inject]
-        private IBoardService boardService;
-
-        [Inject]
         private TrackSimulationFactory trackFactory;
 
         [Inject]
-        private IRaceSessionRunner raceSessionRunner;
+        private RaceManagerService raceManager;
 
         [Inject]
         private IInventoryService inventoryService;
 
         [Inject]
+        private IBoardService boardService;
+
+        [Inject]
         private IDragService dragService;
 
         [Inject]
-        private IGearPresentationTransferService presentationTransferService;
-
-        [Inject]
-        private GearEngineFeatureToggleSO featureToggle;
+        private SplineCarRunnerService aiRunner;
 
         protected override void Initialize()
         {
@@ -65,7 +57,6 @@ namespace GearEngine.Race
             ValidateStartData();
             SetupInventory();
             SetupBoard();
-            SetupTrashZone();
             SetupTrack();
         }
 
@@ -113,17 +104,11 @@ namespace GearEngine.Race
             BindChildViewModel(Board);
         }
 
-        private void SetupTrashZone()
-        {
-            TrashZone = new TrashZoneViewModel(dragService, engineService, Board, presentationTransferService, featureToggle);
-            BindChildViewModel(TrashZone);
-        }
-
         private void SetupTrack()
         {
-            LapRaceSession session = trackFactory.Create(startData.CarDefinition, startData.TrackDefinition, startData.SessionConfig);
-            raceSessionRunner.SetSession(session);
-            Track = new TrackViewModel(session, spawnCarOnBindIfNoChild: false, spawnCarWhenSessionStartsRunning: true);
+            RaceState session = trackFactory.Create(startData.CarDefinition, startData.TrackDefinition, startData.SessionConfig);
+            raceManager.RegisterRace(session);
+            Track = new TrackViewModel(session, raceManager, aiRunner, trackFactory);
             BindChildViewModel(Track);
         }
     }

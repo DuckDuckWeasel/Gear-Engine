@@ -1,8 +1,8 @@
 using GearEngine.Campaign.Presentation;
+using GearEngine.GearEngine;
 using GearEngine.CarSimulation;
 using GearEngine.CarSimulation.Definitions;
 using GearEngine.CarSimulation.Simulation;
-using GearEngine.GearEngine;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.Splines;
@@ -23,22 +23,6 @@ namespace GearEngine.Campaign.Tests.Editor
             public void ResetGridSimulationState() => Stop();
         }
 
-        private sealed class RecordingRaceSessionRunner : IRaceSessionRunner
-        {
-            public LapRaceSession LastSetSession { get; private set; }
-
-            public LapRaceSession ActiveSession => LastSetSession;
-
-            public void SetSession(LapRaceSession session)
-            {
-                LastSetSession = session;
-            }
-
-            public void Tick()
-            {
-            }
-        }
-
         [Test]
         public void Initialize_CreatesSessionRegistersRunnerAndStartsEngine()
         {
@@ -48,32 +32,35 @@ namespace GearEngine.Campaign.Tests.Editor
             trackDef.Spline.Closed = false;
             trackDef.SetScoreBandsForTests(new[] { new TrackScoreBand(9999f, 200) });
 
-            LapRaceSession initialSession = CampaignTestUtilities.CreateMinimalSession(carDef, trackDef);
+            RaceState initialSession = CampaignTestUtilities.CreateMinimalSession(carDef, trackDef);
             var trackService = new FakeTrackService(trackDef, carDef, initialSession);
             var wallet = new FakeWalletService();
             var engine = new FakeEngine();
-            var runner = new RecordingRaceSessionRunner();
             var factory = new TrackSimulationFactory();
             var navigation = new RecordingNavigation();
+
+            var carRunnerConfig = ScriptableObject.CreateInstance<SplineCarRunnerConfigSO>();
+            var carRunner = new SplineCarRunnerService(carRunnerConfig);
+            var raceManager = new RaceManagerService(carRunner);
 
             var vm = new ActiveRaceViewModel();
             ViewModelTestInject.InjectPrivateField(vm, "trackService", trackService);
             ViewModelTestInject.InjectPrivateField(vm, "walletService", wallet);
             ViewModelTestInject.InjectPrivateField(vm, "engineService", engine);
             ViewModelTestInject.InjectPrivateField(vm, "trackFactory", factory);
-            ViewModelTestInject.InjectPrivateField(vm, "raceSessionRunner", runner);
+            ViewModelTestInject.InjectPrivateField(vm, "raceManager", raceManager);
+            ViewModelTestInject.InjectPrivateField(vm, "aiRunner", carRunner);
             ViewModelTestInject.InjectNavigation(vm, navigation);
 
             ViewModelTestInject.InvokeInitialize(vm);
 
             Assert.That(engine.IsRunning, Is.True);
-            Assert.That(runner.LastSetSession, Is.Not.Null);
-            Assert.That(trackService.CurrentSession, Is.SameAs(runner.LastSetSession));
+            Assert.That(raceManager.GetFirstRaceForDebug(), Is.SameAs(trackService.CurrentSession));
             Assert.That(vm.Track.Session, Is.SameAs(trackService.CurrentSession));
-            Assert.That(vm.Track.SpawnCarOnBindIfNoChild, Is.True);
 
             Object.DestroyImmediate(carDef);
             Object.DestroyImmediate(trackDef);
+            Object.DestroyImmediate(carRunnerConfig);
         }
 
         [Test]
@@ -85,20 +72,24 @@ namespace GearEngine.Campaign.Tests.Editor
             trackDef.Spline.Closed = false;
             trackDef.SetScoreBandsForTests(new[] { new TrackScoreBand(9999f, 200) });
 
-            LapRaceSession initialSession = CampaignTestUtilities.CreateMinimalSession(carDef, trackDef);
+            RaceState initialSession = CampaignTestUtilities.CreateMinimalSession(carDef, trackDef);
             var trackService = new FakeTrackService(trackDef, carDef, initialSession);
             var wallet = new FakeWalletService();
             var engine = new FakeEngine();
-            var runner = new RecordingRaceSessionRunner();
             var factory = new TrackSimulationFactory();
             var navigation = new RecordingNavigation();
+
+            var carRunnerConfig = ScriptableObject.CreateInstance<SplineCarRunnerConfigSO>();
+            var carRunner = new SplineCarRunnerService(carRunnerConfig);
+            var raceManager = new RaceManagerService(carRunner);
 
             var vm = new ActiveRaceViewModel();
             ViewModelTestInject.InjectPrivateField(vm, "trackService", trackService);
             ViewModelTestInject.InjectPrivateField(vm, "walletService", wallet);
             ViewModelTestInject.InjectPrivateField(vm, "engineService", engine);
             ViewModelTestInject.InjectPrivateField(vm, "trackFactory", factory);
-            ViewModelTestInject.InjectPrivateField(vm, "raceSessionRunner", runner);
+            ViewModelTestInject.InjectPrivateField(vm, "raceManager", raceManager);
+            ViewModelTestInject.InjectPrivateField(vm, "aiRunner", carRunner);
             ViewModelTestInject.InjectNavigation(vm, navigation);
 
             ViewModelTestInject.InvokeInitialize(vm);
@@ -112,6 +103,7 @@ namespace GearEngine.Campaign.Tests.Editor
 
             Object.DestroyImmediate(carDef);
             Object.DestroyImmediate(trackDef);
+            Object.DestroyImmediate(carRunnerConfig);
         }
     }
 }

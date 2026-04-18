@@ -3,7 +3,8 @@
     "references": [
         "Game.CarSimulation",
         "Unity.Mathematics",
-        "Unity.Splines"
+        "Unity.Splines",
+        "PROMETEO"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

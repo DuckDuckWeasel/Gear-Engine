@@ -1,17 +1,15 @@
 using System;
-using GearEngine.CarSimulation;
 using GearEngine.CarSimulation.Definitions;
-using GearEngine.CarSimulation.Entity;
 using GearEngine.CarSimulation.Presentation;
 using Scaffold.MVVM;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Splines;
 
 namespace GearEngine.CarSimulation.Tracks
 {
     [DisallowMultipleComponent]
-    [RequireComponent(typeof(SplineContainer))]
-    public sealed class Track : ViewComponent<TrackViewModel>
+    public sealed class TrackViewComponent : ViewComponent<TrackViewModel>
     {
         private const string pathChildName = "Path";
 
@@ -20,11 +18,70 @@ namespace GearEngine.CarSimulation.Tracks
         [SerializeField] private SplineContainer splineContainer;
         [SerializeField] private SplineExtrude splineExtrude;
 
-        private GameObject spawnedDynamicCar;
+        [Header("Telemetry UI")]
+        [SerializeField] private TextMeshProUGUI speedText;
+        [SerializeField] private TextMeshProUGUI progressText;
+        [SerializeField] private TextMeshProUGUI isBrakingText;
+        [SerializeField] private TextMeshProUGUI isDriftingText;
+        [SerializeField] private TextMeshProUGUI isAcceleratingText;
+        [SerializeField] private TextMeshProUGUI lapsText;
+        [SerializeField] private TextMeshProUGUI accelerationText;
+        [SerializeField] private TextMeshProUGUI timesText;
 
-        public void ReleaseViewBinding()
+        public new void Unbind()
         {
-            Unbind();
+            base.Unbind();
+        }
+
+        public void UpdateTelemetryUI(float speed, float progress, bool isBraking, bool isDrifting, bool isAccelerating, int currentLap, int maxLaps, float currentAcceleration, float raceTime, System.Collections.Generic.IReadOnlyList<float> lapTimes)
+        {
+            if (speedText != null)
+                speedText.text = $"Speed: {Mathf.RoundToInt(speed)} km/h";
+            
+            if (progressText != null)
+                progressText.text = $"Progress: {(progress * 100f):F1}%";
+
+            if (isBrakingText != null)
+            {
+                isBrakingText.text = isBraking ? "BRAKING : ON" : "BRAKING : OFF";
+                isBrakingText.color = isBraking ? Color.red : Color.gray;
+            }
+
+            if (isDriftingText != null)
+            {
+                isDriftingText.text = isDrifting ? "DRIFTING : ON" : "DRIFTING : OFF";
+                isDriftingText.color = isDrifting ? new Color(1f, 0.5f, 0f) : Color.gray;
+            }
+
+            if (isAcceleratingText != null)
+            {
+                isAcceleratingText.text = isAccelerating ? "ACCEL : ON" : "ACCEL : OFF";
+                isAcceleratingText.color = isAccelerating ? Color.green : Color.gray;
+            }
+
+            if (lapsText != null)
+            {
+                lapsText.text = $"Lap: {currentLap} / {maxLaps}";
+            }
+
+            if (accelerationText != null)
+            {
+                accelerationText.text = $"Accel Ratio: {currentAcceleration:F2}";
+            }
+
+            if (timesText != null)
+            {
+                System.Text.StringBuilder sb = new System.Text.StringBuilder();
+                sb.AppendLine($"Race Time: {raceTime:F2}s");
+                if (lapTimes != null && lapTimes.Count > 0)
+                {
+                    for (int i = 0; i < lapTimes.Count; i++)
+                    {
+                        sb.AppendLine($"Lap {i + 1}: {lapTimes[i]:F2}s");
+                    }
+                }
+                timesText.text = sb.ToString();
+            }
         }
 
         private void Awake()
@@ -41,16 +98,10 @@ namespace GearEngine.CarSimulation.Tracks
             }
 
             InitializeTrack(viewModel.Track);
-            TryBindRaceSessionToScene();
-            if (viewModel.SpawnCarWhenSessionStartsRunning)
-            {
-                Bind<SimulationLifecycleState, SimulationLifecycleState>(() => viewModel.State, OnTrackStateChangedForDeferredCarSpawn);
-            }
         }
 
         protected override void OnUnbind()
         {
-            DestroySpawnedDynamicCar();
             viewModel?.TearDown();
             base.OnUnbind();
         }
@@ -168,116 +219,6 @@ namespace GearEngine.CarSimulation.Tracks
             Spline target = targetContainer.Spline;
             target.Knots = source.Knots;
             target.Closed = source.Closed;
-        }
-
-        private void TryBindRaceSessionToScene()
-        {
-            LapRaceSession session = viewModel.Session;
-            if (session == null)
-            {
-                return;
-            }
-
-            session.BindSpline(SplineContainer);
-            TryInitializeExistingOrSpawnCar(session);
-        }
-
-        private void TryInitializeExistingOrSpawnCar(LapRaceSession session)
-        {
-            CarView carView = GetComponentInChildren<CarView>(true);
-            if (carView != null)
-            {
-                carView.Initialize(session.Car, SplineContainer, session);
-                return;
-            }
-
-            if (viewModel.SpawnCarOnBindIfNoChild)
-            {
-                TrySpawnDynamicCarForSession(session);
-            }
-        }
-
-        private void OnTrackStateChangedForDeferredCarSpawn(SimulationLifecycleState state)
-        {
-            if (state != SimulationLifecycleState.Running)
-            {
-                return;
-            }
-
-            if (GetComponentInChildren<CarView>(true) != null)
-            {
-                return;
-            }
-
-            LapRaceSession session = viewModel.Session;
-            if (session == null)
-            {
-                return;
-            }
-
-            TrySpawnDynamicCarForSession(session);
-        }
-
-        private void TrySpawnDynamicCarForSession(LapRaceSession session)
-        {
-            if (!TryResolveCarPrefab(session, out GameObject prefab))
-            {
-                return;
-            }
-
-            GameObject instance = Instantiate(prefab, transform);
-            if (!instance.TryGetComponent(out CarView newCarView))
-            {
-                Debug.LogError("[Track] Spawned CarPrefab is missing a CarView component.");
-                DestroySpawnedGameObject(instance);
-                return;
-            }
-
-            spawnedDynamicCar = instance;
-            newCarView.Initialize(session.Car, SplineContainer, session);
-        }
-
-        private bool TryResolveCarPrefab(LapRaceSession session, out GameObject prefab)
-        {
-            prefab = null;
-            CarEntity car = session.Car;
-            if (car?.Definition == null)
-            {
-                Debug.LogError("[Track] Cannot spawn car: session.Car or CarDefinition is missing.");
-                return false;
-            }
-
-            prefab = car.Definition.CarPrefab;
-            if (prefab == null)
-            {
-                Debug.LogError("[Track] Cannot spawn car: CarDefinition.CarPrefab is not assigned.");
-                return false;
-            }
-
-            return true;
-        }
-
-        private void DestroySpawnedDynamicCar()
-        {
-            DestroySpawnedGameObject(spawnedDynamicCar);
-            spawnedDynamicCar = null;
-        }
-
-        private void DestroySpawnedGameObject(GameObject instance)
-        {
-            if (instance == null)
-            {
-                return;
-            }
-
-            if (Application.isPlaying)
-            {
-                UnityEngine.Object.Destroy(instance);
-            }
-            else
-            {
-                UnityEngine.Object.DestroyImmediate(instance);
-            }
         }
     }
 }

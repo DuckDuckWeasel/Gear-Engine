@@ -17,22 +17,28 @@ namespace GearEngine.Campaign.Presentation
 
         [Inject] private ITrackService trackService;
         [Inject] private TrackSimulationFactory trackFactory;
-        [Inject] private IRaceSessionRunner raceSessionRunner;
+        [Inject] private RaceManagerService raceManager;
+        [Inject] private SplineCarRunnerService aiRunner;
 
         protected override void Initialize()
         {
             base.Initialize();
 
-            raceSessionRunner.SetSession(null);
-
-            LapRaceSession current = trackService.CurrentSession;
+            RaceState current = trackService.CurrentSession;
             if (current == null || current.Phase == SimulationLifecycleState.Completed)
             {
-                LapRaceSession preview = trackFactory.Create(trackService.CurrentCar, trackService.CurrentTrack);
+                if (current != null)
+                {
+                    raceManager.UnregisterRace(current);
+                }
+
+                RaceState preview = trackFactory.Create(trackService.CurrentCar, trackService.CurrentTrack, null);
                 trackService.SetCurrentSession(preview);
             }
 
-            Track = new TrackViewModel(trackService.CurrentSession);
+            raceManager.RegisterRace(trackService.CurrentSession);
+
+            Track = new TrackViewModel(trackService.CurrentSession, raceManager, aiRunner, trackFactory);
             BindChildViewModel(Track);
             Stats = new TrackStatsViewModel(trackService);
             BindChildViewModel(Stats);

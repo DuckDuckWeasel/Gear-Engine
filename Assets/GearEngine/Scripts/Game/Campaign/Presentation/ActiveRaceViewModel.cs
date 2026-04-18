@@ -22,21 +22,25 @@ namespace GearEngine.Campaign.Presentation
         [Inject] private IWalletService walletService;
         [Inject] private IGearEngineService engineService;
         [Inject] private TrackSimulationFactory trackFactory;
-        [Inject] private IRaceSessionRunner raceSessionRunner;
-
-
+        [Inject] private RaceManagerService raceManager;
+        [Inject] private SplineCarRunnerService aiRunner;
 
         protected override void Initialize()
         {
             base.Initialize();
 
-            LapRaceSession freshSession = trackFactory.Create(trackService.CurrentCar, trackService.CurrentTrack);
+            if (trackService.CurrentSession != null)
+            {
+                raceManager.UnregisterRace(trackService.CurrentSession);
+            }
+
+            RaceState freshSession = trackFactory.Create(trackService.CurrentCar, trackService.CurrentTrack, null);
             trackService.SetCurrentSession(freshSession);
-            raceSessionRunner.SetSession(freshSession);
+            raceManager.RegisterRace(freshSession);
 
             engineService.ResetGridSimulationState();
 
-            Track = new TrackViewModel(trackService.CurrentSession, spawnCarOnBindIfNoChild: true);
+            Track = new TrackViewModel(trackService.CurrentSession, raceManager, aiRunner, trackFactory);
             BindChildViewModel(Track);
 
             engineService.Play();
@@ -59,7 +63,7 @@ namespace GearEngine.Campaign.Presentation
             {
                 engineService.ResetGridSimulationState();
 
-                LapRaceSession session = trackService.CurrentSession;
+                RaceState session = trackService.CurrentSession;
                 RaceResultModel result = new RaceResultModel(session.RaceTime, session.CurrentLap, trackService.CurrentTrack);
                 walletService.AddGold(result.Gold.Amount);
                 trackService.RecordResult(result);

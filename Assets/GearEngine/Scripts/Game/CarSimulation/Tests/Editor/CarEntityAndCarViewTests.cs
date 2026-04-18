@@ -1,5 +1,6 @@
 using GearEngine.CarSimulation.Definitions;
 using GearEngine.CarSimulation.Presentation;
+using GearEngine.CarSimulation.Simulation;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.Splines;
@@ -26,9 +27,14 @@ namespace GearEngine.CarSimulation.Tests
 
                 var carView = go.AddComponent<CarView>();
                 var container = go.AddComponent<SplineContainer>();
-                LapRaceSession session = new TrackSimulationFactory().Create(carDef, trackDef, null);
+                var session = new TrackSimulationFactory(null).Create(carDef, trackDef, null);
 
-                Assert.DoesNotThrow(() => carView.Initialize(session.Car, container, session));
+                var runnerConfig = ScriptableObject.CreateInstance<SplineCarRunnerConfigSO>();
+                var runnerService = new SplineCarRunnerService(runnerConfig);
+                var vm = new CarViewModel(session, runnerService);
+                carView.SplineContainer = container;
+
+                Assert.DoesNotThrow(() => carView.Bind(vm));
             }
             finally
             {

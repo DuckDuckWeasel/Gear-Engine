@@ -14,22 +14,6 @@ namespace GearEngine.Campaign.Tests.Editor
 {
     public sealed class MainViewModelTests
     {
-        private sealed class RecordingRaceSessionRunner : IRaceSessionRunner
-        {
-            public LapRaceSession LastSetSession { get; private set; }
-
-            public LapRaceSession ActiveSession => LastSetSession;
-
-            public void SetSession(LapRaceSession session)
-            {
-                LastSetSession = session;
-            }
-
-            public void Tick()
-            {
-            }
-        }
-
         [Test]
         public void Initialize_CreatesTrackAndStatsChildren()
         {
@@ -38,19 +22,23 @@ namespace GearEngine.Campaign.Tests.Editor
             trackDef.Spline.Knots = new[] { new BezierKnot(Vector3.zero), new BezierKnot(Vector3.right * 10f) };
             trackDef.Spline.Closed = false;
 
-            LapRaceSession session = CampaignTestUtilities.CreateMinimalSession(carDef, trackDef);
+            RaceState session = CampaignTestUtilities.CreateMinimalSession(carDef, trackDef);
             var trackService = new FakeTrackService(trackDef, carDef, session);
 
-            var runner = new RecordingRaceSessionRunner();
+            var carRunnerConfig = ScriptableObject.CreateInstance<SplineCarRunnerConfigSO>();
+            var carRunner = new SplineCarRunnerService(carRunnerConfig);
+            var raceManager = new RaceManagerService(carRunner);
+
             var vm = new MainViewModel();
             Inject(vm, "trackService", trackService);
             Inject(vm, "trackFactory", new TrackSimulationFactory());
-            Inject(vm, "raceSessionRunner", runner);
+            Inject(vm, "raceManager", raceManager);
+            Inject(vm, "aiRunner", carRunner);
             InjectNavigation(vm, new RecordingNavigation());
 
             InvokeInitialize(vm);
 
-            Assert.That(runner.LastSetSession, Is.Null);
+            Assert.That(raceManager.GetFirstRaceForDebug(), Is.SameAs(session));
             Assert.That(vm.Track, Is.Not.Null);
             Assert.That(vm.Stats, Is.Not.Null);
             Assert.That(vm.Track.Session, Is.SameAs(session));
@@ -71,6 +59,7 @@ namespace GearEngine.Campaign.Tests.Editor
 
             Object.DestroyImmediate(carDef);
             Object.DestroyImmediate(trackDef);
+            Object.DestroyImmediate(carRunnerConfig);
         }
 
         private static void InvokeInitialize(ViewModel vm)

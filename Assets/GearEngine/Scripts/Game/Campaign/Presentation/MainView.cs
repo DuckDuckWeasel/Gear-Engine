@@ -9,7 +9,7 @@ namespace GearEngine.Campaign.Presentation
 {
     public sealed class MainView : View<MainViewModel>
     {
-        [SerializeField] private Track track;
+        [SerializeField] private TrackViewComponent track;
         [SerializeField] private Button playButton;
         [SerializeField] private TrackStatsViewComponent statsPanel;
         [SerializeField] private FrustumFitAnchor[] openTransitionAnchors;

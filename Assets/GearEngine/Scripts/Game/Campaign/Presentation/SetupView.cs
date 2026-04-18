@@ -10,7 +10,7 @@ namespace GearEngine.Campaign.Presentation
 {
     public sealed class SetupView : View<SetupViewModel>
     {
-        [SerializeField] private Track track;
+        [SerializeField] private TrackViewComponent track;
         [SerializeField] private BoardViewComponent boardView;
         [SerializeField] private GearInventoryViewComponent inventoryView;
         [SerializeField] private TrashDropZoneViewComponent trashDropZone;

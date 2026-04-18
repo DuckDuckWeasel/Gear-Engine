@@ -1,30 +1,23 @@
 using System;
+using System.Collections.Generic;
 using CommunityToolkit.Mvvm.ComponentModel;
 using GearEngine.CarSimulation.Definitions;
 using GearEngine.CarSimulation.Entity;
 using Scaffold.MVVM;
 using Scaffold.MVVM.Binding;
+using GearEngine.CarSimulation.Simulation;
 
 namespace GearEngine.CarSimulation.Presentation
 {
     public sealed partial class TrackViewModel : ViewModel
     {
-        public TrackViewModel(LapRaceSession session, bool spawnCarOnBindIfNoChild = false, bool spawnCarWhenSessionStartsRunning = false)
-        {
-            this.session = session ?? throw new ArgumentNullException(nameof(session));
-            SpawnCarOnBindIfNoChild = spawnCarOnBindIfNoChild;
-            SpawnCarWhenSessionStartsRunning = spawnCarWhenSessionStartsRunning;
-        }
+        public RaceState Session { get; }
 
-        public TrackDefinition Track => session.Track;
+        public TrackDefinition Track => Session.Track;
 
-        public CarEntity Car => session.Car;
+        public CarEntity Car => Session.Car;
 
-        public LapRaceSession Session => session;
-
-        public bool SpawnCarOnBindIfNoChild { get; }
-
-        public bool SpawnCarWhenSessionStartsRunning { get; }
+        public IReadOnlyList<CarViewModel> CarViewModels { get; private set; }
 
         [ObservableProperty]
         private SimulationLifecycleState state;
@@ -35,13 +28,29 @@ namespace GearEngine.CarSimulation.Presentation
         [ObservableProperty]
         private int hudCurrentLap;
 
-        private readonly LapRaceSession session;
+        private readonly RaceManagerService raceManager;
+        public SplineCarRunnerService AiRunner { get; }
+        public TrackSimulationFactory Factory { get; }
+
+        public TrackViewModel(RaceState session, RaceManagerService raceManager, SplineCarRunnerService aiRunner, TrackSimulationFactory factory)
+        {
+            Session = session ?? throw new ArgumentNullException(nameof(session));
+            this.raceManager = raceManager;
+            AiRunner = aiRunner;
+            Factory = factory;
+        }
 
         protected override void Initialize()
         {
             base.Initialize();
-            session.PresentationChanged += OnSessionPresentationChanged;
-            session.AfterTick += OnSessionAfterTick;
+            Session.PresentationChanged += OnSessionPresentationChanged;
+            
+            var list = new System.Collections.Generic.List<CarViewModel>();
+            var cvm = new CarViewModel(Session, AiRunner);
+            BindChildViewModel(cvm);
+            list.Add(cvm);
+            CarViewModels = list;
+
             RefreshUiState();
         }
 
@@ -49,16 +58,16 @@ namespace GearEngine.CarSimulation.Presentation
         {
             if (running)
             {
-                if (session.Phase == SimulationLifecycleState.Completed)
+                if (Session.Phase == SimulationLifecycleState.Completed)
                 {
-                    session.Reset();
+                    Session.Reset();
                 }
 
-                session.SetClockRunning(true);
+                raceManager?.StartRace(Session);
             }
             else
             {
-                session.SetClockRunning(false);
+                raceManager?.StopRace(Session);
             }
 
             RefreshUiState();
@@ -66,14 +75,13 @@ namespace GearEngine.CarSimulation.Presentation
 
         public void Complete()
         {
-            session.ForceFinish();
+            raceManager?.ForceFinish(Session);
             RefreshUiState();
         }
 
         internal void TearDown()
         {
-            session.PresentationChanged -= OnSessionPresentationChanged;
-            session.AfterTick -= OnSessionAfterTick;
+            Session.PresentationChanged -= OnSessionPresentationChanged;
         }
 
         private void OnSessionPresentationChanged()
@@ -81,21 +89,11 @@ namespace GearEngine.CarSimulation.Presentation
             RefreshUiState();
         }
 
-        private void OnSessionAfterTick()
-        {
-            RefreshHudMetrics();
-        }
-
         private void RefreshUiState()
         {
-            State = session.Phase;
-            RefreshHudMetrics();
-        }
-
-        private void RefreshHudMetrics()
-        {
-            HudRaceTime = session.RaceTime;
-            HudCurrentLap = session.CurrentLap;
+            State = Session.Phase;
+            HudRaceTime = Session.RaceTime;
+            HudCurrentLap = Session.CurrentLap;
         }
     }
 }

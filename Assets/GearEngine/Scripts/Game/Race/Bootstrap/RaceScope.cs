@@ -1,5 +1,7 @@
 using System;
-using GearEngine.CarSimulation.Bootstrap;
+using GearEngine.CarSimulation;
+using GearEngine.CarSimulation.Definitions;
+using GearEngine.CarSimulation.Simulation;
 using GearEngine.GearEngine;
 using GearEngine.GearEngine.Bootstrap;
 using GearEngine.GearEngine.Config;
@@ -16,6 +18,10 @@ namespace GearEngine.Race.Bootstrap
         [SerializeField]
         private BoardConfigSO boardConfig;
 
+        [Header("Gear loadout")]
+        [SerializeField]
+        private GearEngineStartData gearStartData;
+
         [Header("Bootstrap")]
         [SerializeField]
         private RaceBootstrap sceneBootstrap;
@@ -23,29 +29,40 @@ namespace GearEngine.Race.Bootstrap
         [Header("Feature Toggles")]
         [SerializeField]
         private GearEngineFeatureToggleSO featureToggle;
-
-        [Header("Race start (inventory seed for gear mechanics)")]
+        
+        [Header("Simulation")]
         [SerializeField]
-        private RaceStartData raceStartData;
+        private SplineCarRunnerConfigSO splineCarRunnerConfig;
 
         protected override void ValidateSceneAssignments()
         {
             RequireBoardConfig();
             RequireSceneBootstrap();
+            
+            if (splineCarRunnerConfig == null)
+            {
+                throw new InvalidOperationException("[RaceScope] Assign SplineCarRunnerConfigSO.");
+            }
+
+            if (gearStartData == null)
+            {
+                throw new InvalidOperationException("[RaceScope] Assign gearStartData.");
+            }
         }
 
         protected override void InstallFeatureServices(IContainerBuilder builder)
         {
-            GearInventoryLoadoutData inventoryLoadout = raceStartData?.GearEngineData != null
-                ? raceStartData.GearEngineData.GetInventoryLoadoutData()
-                : GearInventoryLoadoutData.Empty();
-
-            GearBoardLoadoutData boardLoadout = raceStartData?.GearEngineData != null
-                ? raceStartData.GearEngineData.GetBoardLoadoutData()
-                : new GearBoardLoadoutData();
-
-            new GearMechanicsInstaller(boardConfig, featureToggle).Install(builder, inventoryLoadout, boardLoadout);
-            new CarTrackInstaller().Install(builder);
+            new GearMechanicsInstaller(
+                boardConfig,
+                featureToggle,
+                gearStartData.GetInventoryLoadoutData(),
+                gearStartData.GetBoardLoadoutData()).Install(builder);
+            
+            builder.RegisterInstance(splineCarRunnerConfig);
+            builder.Register<TrackSimulationFactory>(Lifetime.Singleton);
+            builder.RegisterEntryPoint<RaceManagerService>(Lifetime.Singleton).AsSelf();
+            builder.RegisterEntryPoint<SplineCarRunnerService>(Lifetime.Singleton).AsSelf();
+            
             builder.RegisterComponent(sceneBootstrap).AsImplementedInterfaces().AsSelf();
         }
 

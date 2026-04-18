@@ -9,7 +9,7 @@ namespace GearEngine.Campaign.Presentation
 {
     public class ActiveRaceView : View<ActiveRaceViewModel>
     {
-        [SerializeField] private Track track;
+        [SerializeField] private TrackViewComponent track;
         [SerializeField] private BoardViewComponent board;
         [SerializeField] private RaceHudViewComponent hud;
         [SerializeField] private FrustumFitAnchor[] openTransitionAnchors;
@@ -51,7 +51,7 @@ namespace GearEngine.Campaign.Presentation
         {
             if (track != null)
             {
-                track.ReleaseViewBinding();
+                track.Unbind();
             }
 
             SetRaceSceneRootsActive(false);

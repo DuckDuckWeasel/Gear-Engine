@@ -1,16 +1,13 @@
-using GearEngine.CarSimulation;
 using GearEngine.CarSimulation.Entity;
 using GearEngine.CarSimulation.Simulation;
+using GearEngine.CarSimulation.Definitions;
 using Scaffold.Entities;
 using Sirenix.OdinInspector;
 using UnityEngine;
-using VContainer;
-using VContainer.Unity;
 
 namespace GearEngine.CarSimulation.Debug
 {
-    [ExecuteAlways]
-    public sealed class CarSimulationDebug : MonoBehaviour, IInitializable
+    public sealed class CarSimulationDebug : MonoBehaviour
     {
         [SerializeField]
         private VariableSO targetAttribute;
@@ -20,10 +17,8 @@ namespace GearEngine.CarSimulation.Debug
 
         private EntityModifierEntry activeModifier;
 
-        [Inject]
-        private IRaceSessionRunner runner;
-
-        private LapRaceSession Session => runner?.ActiveSession;
+        [ShowInInspector, ReadOnly, BoxGroup("Race")]
+        public RaceState Session { get; private set; }
 
         private CarEntity Car => Session?.Car;
 
@@ -56,12 +51,47 @@ namespace GearEngine.CarSimulation.Debug
             }
         }
 
+        private SplineCarRunnerService runner;
+
+        private SplineCarRunnerContext Context => runner?.GetDebugContext(Car);
+
+        [ShowInInspector, ReadOnly, BoxGroup("Progression Stats")]
+        public RoguelikeCarStats SourceStats => Context?.sourceStats ?? RoguelikeCarStats.Default;
+
+        [ShowInInspector, ReadOnly, BoxGroup("Runtime Mechanics")]
+        private float MaxSimulationSpeed => Context?.maxSimulationSpeed ?? 0f;
+
+        [ShowInInspector, ReadOnly, BoxGroup("Runtime Mechanics")]
+        private float SafeCornerSpeed => Context?.safeCornerSpeed ?? 0f;
+
+        [ShowInInspector, ReadOnly, BoxGroup("Runtime Mechanics")]
+        private float ArcadeSteerAssist => Context?.arcadeSteerAssist ?? 0f;
+
+        [ShowInInspector, ReadOnly, BoxGroup("Runtime Mechanics")]
+        private int CalculatedAcceleration => Context?.calculatedAcceleration ?? 0;
+
+        [ShowInInspector, ReadOnly, BoxGroup("Runtime Mechanics")]
+        private int CalculatedBrakeForce => Context?.calculatedBrakeForce ?? 0;
+
+        [ShowInInspector, ReadOnly, BoxGroup("Runtime Mechanics")]
+        private int CalculatedDriftGrip => Context?.calculatedDriftGrip ?? 0;
+
+        [ShowInInspector, ReadOnly, BoxGroup("Runtime Mechanics")]
+        private float CurrentSimulationMultiplier => Context?.currentSimulationMultiplier ?? 0f;
+
+        public void Setup(RaceState session, SplineCarRunnerService runner)
+        {
+            Session = session;
+            this.runner = runner;
+        }
+
         [Button, BoxGroup("Modifiers")]
         private void AddModifier()
         {
             if (Car == null || targetAttribute == null)
             {
-                throw new System.Exception("[CarSimulationDebug] Car or target attribute is null.");
+                UnityEngine.Debug.LogError("[CarSimulationDebug] Car or target attribute is null.");
+                return;
             }
 
             activeModifier = new EntityModifierEntry(targetAttribute, new FloatVariableValue { Value = modifierValue });
@@ -87,8 +117,28 @@ namespace GearEngine.CarSimulation.Debug
             activeModifier = null;
         }
 
-        public void Initialize()
+        private void OnDrawGizmos()
         {
+            if (!Application.isPlaying || runner == null || Car == null) return;
+            
+            if (runner.GetDebugTelemetry(Car, out Vector3[] waypoints, out bool requiresHandbrake, out bool isBrakingForCurve, out Transform carTransform))
+            {
+                if (waypoints == null || waypoints.Length == 0 || carTransform == null) return;
+
+                Gizmos.color = Color.magenta;
+                for (int i = 0; i < waypoints.Length; i++) {
+                    Gizmos.DrawWireSphere(waypoints[i], 1f);
+                    if (i == 0) {
+                        Gizmos.DrawLine(carTransform.position, waypoints[i]);
+                    } else {
+                        Gizmos.DrawLine(waypoints[i - 1], waypoints[i]);
+                    }
+                }
+
+                Gizmos.color = requiresHandbrake ? Color.red : (isBrakingForCurve ? new Color(1f, 0.5f, 0f) : Color.green);
+                Vector3 dir = carTransform.forward * CurrentSpeed;
+                Gizmos.DrawRay(carTransform.position, dir * 0.2f);
+            }
         }
     }
 }
