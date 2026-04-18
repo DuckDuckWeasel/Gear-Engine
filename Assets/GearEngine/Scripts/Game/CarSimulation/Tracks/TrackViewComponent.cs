@@ -1,16 +1,15 @@
 using System;
-using GearEngine.CarSimulation;
 using GearEngine.CarSimulation.Definitions;
 using GearEngine.CarSimulation.Presentation;
 using Scaffold.MVVM;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Splines;
 
 namespace GearEngine.CarSimulation.Tracks
 {
     [DisallowMultipleComponent]
-    [RequireComponent(typeof(SplineContainer))]
-    public sealed class Track : ViewComponent<TrackViewModel>
+    public sealed class TrackViewComponent : ViewComponent<TrackViewModel>
     {
         private const string pathChildName = "Path";
 
@@ -19,9 +18,70 @@ namespace GearEngine.CarSimulation.Tracks
         [SerializeField] private SplineContainer splineContainer;
         [SerializeField] private SplineExtrude splineExtrude;
 
+        [Header("Telemetry UI")]
+        [SerializeField] private TextMeshProUGUI speedText;
+        [SerializeField] private TextMeshProUGUI progressText;
+        [SerializeField] private TextMeshProUGUI isBrakingText;
+        [SerializeField] private TextMeshProUGUI isDriftingText;
+        [SerializeField] private TextMeshProUGUI isAcceleratingText;
+        [SerializeField] private TextMeshProUGUI lapsText;
+        [SerializeField] private TextMeshProUGUI accelerationText;
+        [SerializeField] private TextMeshProUGUI timesText;
+
         public new void Unbind()
         {
             base.Unbind();
+        }
+
+        public void UpdateTelemetryUI(float speed, float progress, bool isBraking, bool isDrifting, bool isAccelerating, int currentLap, int maxLaps, float currentAcceleration, float raceTime, System.Collections.Generic.IReadOnlyList<float> lapTimes)
+        {
+            if (speedText != null)
+                speedText.text = $"Speed: {Mathf.RoundToInt(speed)} km/h";
+            
+            if (progressText != null)
+                progressText.text = $"Progress: {(progress * 100f):F1}%";
+
+            if (isBrakingText != null)
+            {
+                isBrakingText.text = isBraking ? "BRAKING : ON" : "BRAKING : OFF";
+                isBrakingText.color = isBraking ? Color.red : Color.gray;
+            }
+
+            if (isDriftingText != null)
+            {
+                isDriftingText.text = isDrifting ? "DRIFTING : ON" : "DRIFTING : OFF";
+                isDriftingText.color = isDrifting ? new Color(1f, 0.5f, 0f) : Color.gray;
+            }
+
+            if (isAcceleratingText != null)
+            {
+                isAcceleratingText.text = isAccelerating ? "ACCEL : ON" : "ACCEL : OFF";
+                isAcceleratingText.color = isAccelerating ? Color.green : Color.gray;
+            }
+
+            if (lapsText != null)
+            {
+                lapsText.text = $"Lap: {currentLap} / {maxLaps}";
+            }
+
+            if (accelerationText != null)
+            {
+                accelerationText.text = $"Accel Ratio: {currentAcceleration:F2}";
+            }
+
+            if (timesText != null)
+            {
+                System.Text.StringBuilder sb = new System.Text.StringBuilder();
+                sb.AppendLine($"Race Time: {raceTime:F2}s");
+                if (lapTimes != null && lapTimes.Count > 0)
+                {
+                    for (int i = 0; i < lapTimes.Count; i++)
+                    {
+                        sb.AppendLine($"Lap {i + 1}: {lapTimes[i]:F2}s");
+                    }
+                }
+                timesText.text = sb.ToString();
+            }
         }
 
         private void Awake()
@@ -38,29 +98,12 @@ namespace GearEngine.CarSimulation.Tracks
             }
 
             InitializeTrack(viewModel.Track);
-            TryBindRaceSessionToScene();
         }
 
         protected override void OnUnbind()
         {
             viewModel?.TearDown();
             base.OnUnbind();
-        }
-
-        private void TryBindRaceSessionToScene()
-        {
-            LapRaceSession session = viewModel.Session;
-            if (session == null)
-            {
-                return;
-            }
-
-            session.BindSpline(SplineContainer);
-            CarView carView = GetComponentInChildren<CarView>(true);
-            if (carView != null)
-            {
-                carView.Initialize(session.Car, SplineContainer, session);
-            }
         }
 
         private void InitializeTrack(TrackDefinition data)

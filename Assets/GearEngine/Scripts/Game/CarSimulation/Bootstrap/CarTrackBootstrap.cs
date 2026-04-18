@@ -20,17 +20,16 @@ namespace GearEngine.CarSimulation.Bootstrap
 
         [Inject] private TrackSimulationFactory factory;
         [Inject] private INavigation navigation;
-        [Inject] private IRaceSessionRunner raceSessionRunner;
-
-        private readonly List<IRaceSessionRunner> runners = new List<IRaceSessionRunner>();
+        [Inject] private RaceManagerService raceManager;
+        [Inject] private SplineCarRunnerService aiRunner;
 
         public void Initialize()
         {
             try
             {
                 ValidateSerializedReferences();
-                List<LapRaceSession> sessions = CreateSessionsForCars();
-                navigation.Open(new TrackListViewModel(sessions));
+                List<RaceState> sessions = CreateSessionsForCars();
+                navigation.Open(new TrackListViewModel(sessions, factory, aiRunner, raceManager));
             }
             catch (Exception ex)
             {
@@ -39,17 +38,9 @@ namespace GearEngine.CarSimulation.Bootstrap
             }
         }
 
-        private void Update()
+        private List<RaceState> CreateSessionsForCars()
         {
-            foreach (IRaceSessionRunner runner in runners)
-            {
-                runner.Tick();
-            }
-        }
-
-        private List<LapRaceSession> CreateSessionsForCars()
-        {
-            var sessions = new List<LapRaceSession>();
+            var sessions = new List<RaceState>();
             foreach (CarDefinition carDef in carDefinitions)
             {
                 if (carDef != null)
@@ -66,18 +57,17 @@ namespace GearEngine.CarSimulation.Bootstrap
             return sessions;
         }
 
-        private void AddSessionForCar(CarDefinition carDef, List<LapRaceSession> sessions)
+        private void AddSessionForCar(CarDefinition carDef, List<RaceState> sessions)
         {
-            LapRaceSession session = factory.Create(carDef, trackDefinition, sessionConfig);
-            IRaceSessionRunner runner = runners.Count == 0 ? raceSessionRunner : new RaceSessionRunner();
-            if (runner == null)
+            RaceState session = factory.Create(carDef, trackDefinition, sessionConfig);
+            
+            if (raceManager == null)
             {
-                throw new InvalidOperationException("[CarTrackBootstrap] IRaceSessionRunner is not injected.");
+                throw new InvalidOperationException("[CarTrackBootstrap] RaceManagerService is not injected.");
             }
 
-            runner.SetSession(session);
+            raceManager.RegisterRace(session);
             sessions.Add(session);
-            runners.Add(runner);
         }
 
         private void ValidateSerializedReferences()

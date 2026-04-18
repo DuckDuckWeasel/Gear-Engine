@@ -10,9 +10,13 @@ namespace GearEngine.CarSimulation.Definitions
 
         public int TotalLaps => totalLaps;
 
+        public RoguelikeCarStats RoguelikeStats => roguelikeStats;
+
         [SerializeField] private CarVariableSet variables;
 
         [SerializeField] private int totalLaps = 3;
+
+        [SerializeField] private RoguelikeCarStats roguelikeStats = RoguelikeCarStats.Default;
 
         internal void SetVariablesForTests(CarVariableSet value)
         {

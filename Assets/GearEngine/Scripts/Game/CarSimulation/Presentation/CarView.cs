@@ -1,103 +1,79 @@
-using System;
-using GearEngine.CarSimulation.Entity;
+using Scaffold.MVVM;
 using UnityEngine;
 using UnityEngine.Splines;
 
 namespace GearEngine.CarSimulation.Presentation
 {
-    public sealed class CarView : MonoBehaviour
+    public sealed class CarView : ViewComponent<CarViewModel>
     {
-        [SerializeField] private SplineAnimate splineAnimate;
+        public SplineContainer SplineContainer { get; set; }
 
-        private LapRaceSession session = null!;
-        private SplineContainer splineContainer = null!;
+        [SerializeField]
+        private PrometeoCarController prometeoController;
 
-        public void Initialize(CarEntity car, SplineContainer container, LapRaceSession lapSession)
+        protected override void OnBind()
         {
-            ValidateInitializeArguments(car, container, lapSession);
-            session = lapSession;
-            splineContainer = container;
-            splineAnimate = splineAnimate != null ? splineAnimate : GetComponent<SplineAnimate>();
-            if (splineAnimate == null)
+            if (prometeoController == null)
             {
-                splineAnimate = gameObject.AddComponent<SplineAnimate>();
-            }
-
-            ApplySplineAnimateSettings();
-            splineAnimate.Restart(false);
-        }
-
-        private void LateUpdate()
-        {
-            if (session == null || splineContainer == null)
-            {
+                Debug.LogError("[CarView] Missing PrometeoCarController. Cannot bind AI logic.");
                 return;
             }
 
-            try
+            if (SplineContainer == null)
             {
-                DriveSplineForSession();
-            }
-            catch (Exception ex)
-            {
-                Debug.LogError($"[CarView] LateUpdate failed: {ex.Message}\n{ex.StackTrace}");
-            }
-        }
-
-        private void DriveSplineForSession()
-        {
-            TryRestartSplineFromSession();
-            PushSessionStateOntoSpline();
-        }
-
-        private void TryRestartSplineFromSession()
-        {
-            if (!session.ConsumePendingSplineRestart())
-            {
+                Debug.LogError("[CarView] SplineContainer not set before Bind.");
                 return;
             }
 
-            ApplySplineAnimateSettings();
-            splineAnimate.Restart(false);
-        }
+            SetupStartTransform();
 
-        private void PushSessionStateOntoSpline()
-        {
-            splineAnimate.MaxSpeed = Mathf.Max(0f, session.CurrentSpeed);
-            splineAnimate.Pause();
-            if (!session.IsSplineBound)
+            if (viewModel.RunnerService != null)
             {
-                return;
+                viewModel.RunnerService.InitializeRun(prometeoController, SplineContainer, viewModel.Stats, viewModel.Car);
             }
 
-            float len = session.BoundTrackLength;
-            splineAnimate.NormalizedTime = session.ProgressDistance / Mathf.Max(1e-4f, len);
+#if UNITY_EDITOR
+            System.Type debugType = System.Type.GetType("GearEngine.CarSimulation.Debug.CarSimulationDebug, Game.CarSimulation.Debug");
+            if (debugType != null)
+            {
+                var debugComponent = gameObject.GetComponent(debugType) ?? gameObject.AddComponent(debugType);
+                var setupMethod = debugType.GetMethod("Setup", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
+                if (setupMethod != null)
+                {
+                    setupMethod.Invoke(debugComponent, new object[] { viewModel.Session, viewModel.RunnerService });
+                }
+            }
+#endif
         }
 
-        private void ApplySplineAnimateSettings()
+        private void Update()
         {
-            splineAnimate.Container = splineContainer;
-            splineAnimate.PlayOnAwake = false;
-            splineAnimate.AnimationMethod = SplineAnimate.Method.Speed;
-            splineAnimate.Easing = SplineAnimate.EasingMode.None;
-            splineAnimate.Loop = splineContainer.Spline.Closed ? SplineAnimate.LoopMode.Loop : SplineAnimate.LoopMode.Once;
+            if (viewModel != null)
+            {
+                viewModel.TickTelemetry();
+            }
         }
 
-        private void ValidateInitializeArguments(CarEntity car, SplineContainer container, LapRaceSession lapSession)
+        private void SetupStartTransform()
         {
-            if (car == null)
+            if (SplineContainer != null && SplineContainer.Spline != null && SplineContainer.Spline.Count > 0)
             {
-                throw new ArgumentNullException(nameof(car));
-            }
+                var startParam = 0f;
+                // Evaluate World position from t=0
+                Vector3 startPos = SplineContainer.transform.TransformPoint(
+                    UnityEngine.Splines.SplineUtility.EvaluatePosition(SplineContainer.Spline, startParam));
+                
+                Vector3 startForward = SplineContainer.transform.TransformDirection(
+                    UnityEngine.Splines.SplineUtility.EvaluateTangent(SplineContainer.Spline, startParam)).normalized;
 
-            if (container == null)
-            {
-                throw new ArgumentNullException(nameof(container));
-            }
+                Vector3 startUp = SplineContainer.transform.TransformDirection(
+                    UnityEngine.Splines.SplineUtility.EvaluateUpVector(SplineContainer.Spline, startParam)).normalized;
 
-            if (lapSession == null)
-            {
-                throw new ArgumentNullException(nameof(lapSession));
+                transform.position = startPos;
+                if (startForward != Vector3.zero)
+                {
+                    transform.rotation = Quaternion.LookRotation(startForward, startUp);
+                }
             }
         }
     }

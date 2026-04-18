@@ -16,13 +16,7 @@ namespace GearEngine.Race.Bootstrap
         [Inject]
         private INavigation navigation;
 
-        [Inject]
-        private IRaceSessionRunner raceSessionRunner;
 
-        private void Update()
-        {
-            raceSessionRunner?.Tick();
-        }
 
         public void Initialize()
         {

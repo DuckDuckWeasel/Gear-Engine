@@ -1,7 +1,6 @@
 using System;
 using GearEngine.CarSimulation;
 using GearEngine.CarSimulation.Tracks;
-using GearEngine.GearEngine.Presentation;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -11,7 +10,7 @@ namespace GearEngine.Race.Presentation
 {
     public sealed class RaceView : View<RaceViewModel>
     {
-        [SerializeField] private Track track;
+        [SerializeField] private TrackViewComponent trackViewComponent;
         [SerializeField] private Button raceButton;
 
         protected override void OnBind()
@@ -38,7 +37,7 @@ namespace GearEngine.Race.Presentation
 
         private void BindTrack()
         {
-            track.Bind(viewModel.Track);
+            trackViewComponent.Bind(viewModel.Track);
         }
 
         private void SubscribeRaceUi()
@@ -82,7 +81,7 @@ namespace GearEngine.Race.Presentation
 
         private void ValidateHierarchy()
         {
-            ThrowIfMissing(track, "track");
+            ThrowIfMissing(trackViewComponent, "track");
             ThrowIfMissing(raceButton, "raceButton");
         }
 

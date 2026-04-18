@@ -50,7 +50,7 @@ namespace GearEngine.Race
         private TrackSimulationFactory trackFactory;
 
         [Inject]
-        private IRaceSessionRunner raceSessionRunner;
+        private RaceManagerService raceManager;
 
         [Inject]
         private IInventoryService inventoryService;
@@ -72,6 +72,9 @@ namespace GearEngine.Race
 
         [Inject]
         private IGearPresentationTransferService presentationTransfer;
+
+        [Inject]
+        private SplineCarRunnerService aiRunner;
 
         protected override void Initialize()
         {
@@ -130,9 +133,9 @@ namespace GearEngine.Race
 
         private void SetupTrack()
         {
-            LapRaceSession session = trackFactory.Create(startData.CarDefinition, startData.TrackDefinition, startData.SessionConfig);
-            raceSessionRunner.SetSession(session);
-            Track = new TrackViewModel(session);
+            RaceState session = trackFactory.Create(startData.CarDefinition, startData.TrackDefinition, startData.SessionConfig);
+            raceManager.RegisterRace(session);
+            Track = new TrackViewModel(session, raceManager, aiRunner, trackFactory);
             BindChildViewModel(Track);
         }
     }

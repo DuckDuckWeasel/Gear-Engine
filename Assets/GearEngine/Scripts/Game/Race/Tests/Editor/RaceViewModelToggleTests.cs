@@ -47,34 +47,23 @@ namespace GearEngine.Race.Tests.Editor
             public void Stop() => IsRunning = false;
         }
 
-        private sealed class RecordingRaceSessionRunner : IRaceSessionRunner
-        {
-            public LapRaceSession LastSession { get; private set; }
 
-            public LapRaceSession ActiveSession => throw new NotImplementedException();
-
-            public void SetSession(LapRaceSession session)
-            {
-                LastSession = session;
-            }
-
-            public void Tick()
-            {
-            }
-        }
 
         [Test]
-        public void Initialize_BindsLapRaceSessionToRunner()
+        public void Initialize_RegistersRaceStateToManager()
         {
             var carDef = ScriptableObject.CreateInstance<CarDefinition>();
             var trackDef = ScriptableObject.CreateInstance<TrackDefinition>();
             RaceViewModel vm = null;
             try
             {
-                var runnerSink = new RecordingRaceSessionRunner();
-                vm = CreateInitializedRaceViewModel(carDef, trackDef, out _, runnerSink);
-                Assert.That(runnerSink.LastSession, Is.Not.Null);
-                Assert.That(runnerSink.LastSession, Is.SameAs(vm.Track.Session));
+                var carRunnerConfig = ScriptableObject.CreateInstance<SplineCarRunnerConfigSO>();
+                var carRunner = new SplineCarRunnerService(carRunnerConfig);
+                var manager = new RaceManagerService(carRunner);
+                
+                vm = CreateInitializedRaceViewModel(carDef, trackDef, out _, manager);
+                Assert.That(vm.Track.Session, Is.Not.Null);
+                Assert.That(manager.GetFirstRaceForDebug(), Is.SameAs(vm.Track.Session));
             }
             finally
             {
@@ -93,7 +82,10 @@ namespace GearEngine.Race.Tests.Editor
             try
             {
                 FakeEngine engine;
-                vm = CreateInitializedRaceViewModel(carDef, trackDef, out engine, new RecordingRaceSessionRunner());
+                var carRunnerConfig = ScriptableObject.CreateInstance<SplineCarRunnerConfigSO>();
+                var carRunner = new SplineCarRunnerService(carRunnerConfig);
+                var manager = new RaceManagerService(carRunner);
+                vm = CreateInitializedRaceViewModel(carDef, trackDef, out engine, manager);
                 Assert.That(engine.IsRunning, Is.False);
                 Assert.That(vm.Track.State, Is.EqualTo(SimulationLifecycleState.Created));
 
@@ -120,7 +112,10 @@ namespace GearEngine.Race.Tests.Editor
             try
             {
                 FakeEngine engine;
-                vm = CreateInitializedRaceViewModel(carDef, trackDef, out engine, new RecordingRaceSessionRunner());
+                var carRunnerConfig = ScriptableObject.CreateInstance<SplineCarRunnerConfigSO>();
+                var carRunner = new SplineCarRunnerService(carRunnerConfig);
+                var manager = new RaceManagerService(carRunner);
+                vm = CreateInitializedRaceViewModel(carDef, trackDef, out engine, manager);
                 vm.ToggleRace();
                 vm.ToggleRace();
 
@@ -145,7 +140,10 @@ namespace GearEngine.Race.Tests.Editor
             try
             {
                 FakeEngine engine;
-                vm = CreateInitializedRaceViewModel(carDef, trackDef, out engine, new RecordingRaceSessionRunner());
+                var carRunnerConfig = ScriptableObject.CreateInstance<SplineCarRunnerConfigSO>();
+                var carRunner = new SplineCarRunnerService(carRunnerConfig);
+                var manager = new RaceManagerService(carRunner);
+                vm = CreateInitializedRaceViewModel(carDef, trackDef, out engine, manager);
                 vm.ToggleRace();
                 vm.ToggleRace();
                 vm.ToggleRace();
@@ -165,7 +163,7 @@ namespace GearEngine.Race.Tests.Editor
             CarDefinition carDef,
             TrackDefinition trackDef,
             out FakeEngine engine,
-            IRaceSessionRunner raceSessionRunner)
+            RaceManagerService raceManager)
         {
             trackDef.Spline.Knots = new[] { new BezierKnot(Vector3.zero), new BezierKnot(Vector3.right * 10f) };
             trackDef.Spline.Closed = false;
@@ -197,7 +195,7 @@ namespace GearEngine.Race.Tests.Editor
             InjectPrivateField(vm, "nodeFactory", nodeFactory);
             InjectPrivateField(vm, "boardConfig", boardConfig);
             InjectPrivateField(vm, "trackFactory", trackFactory);
-            InjectPrivateField(vm, "raceSessionRunner", raceSessionRunner);
+            InjectPrivateField(vm, "raceManager", raceManager);
             InjectPrivateFieldInHierarchy(vm, "navigation", new NoOpNavigation());
 
             InvokeProtectedInitialize(vm);

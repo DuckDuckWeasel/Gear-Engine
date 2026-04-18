@@ -9,10 +9,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8298623856469553584}
-  - component: {fileID: 1055921026126558074}
   - component: {fileID: 1133858145817991951}
   m_Layer: 0
-  m_Name: Track
+  m_Name: TrackViewComponent
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -27,20 +26,140 @@ Transform:
   m_GameObject: {fileID: 1989613484878146521}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 45}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 819291471866438983}
+  - {fileID: 893777420287832912}
+  - {fileID: 6797588645402631771}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1055921026126558074
+--- !u!114 &1133858145817991951
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1989613484878146521}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e5b9c3d2eaf507b9c1d2e3f4a5b6c7d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.CarSimulation::GearEngine.CarSimulation.Tracks.Track
+  splineContainer: {fileID: 4493629028657937679}
+  splineExtrude: {fileID: 7014771420695656104}
+--- !u!1 &2590981144284363586
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6797588645402631771}
+  - component: {fileID: 1266038648746095082}
+  m_Layer: 0
+  m_Name: PropGenerator
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6797588645402631771
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2590981144284363586}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8298623856469553584}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1266038648746095082
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2590981144284363586}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d32f34181d0b441738f4fa67b5edc1a6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.Test.Prototype::SplinePropGenerator
+  track: {fileID: 0}
+  propRules:
+  - prefabs:
+    - {fileID: 1951466408381339306, guid: f2ad49960953b4806a6242c16590434f, type: 3}
+    side: 0
+    lateralDistance: 3
+    randomOffsetRange: {x: 1, y: 1}
+    chancePerCurve: 0.3
+    minAmount: 1
+    maxAmount: 4
+  - prefabs:
+    - {fileID: 1951466408381339306, guid: f2ad49960953b4806a6242c16590434f, type: 3}
+    side: 1
+    lateralDistance: 3
+    randomOffsetRange: {x: 1, y: 1}
+    chancePerCurve: 0.7
+    minAmount: 5
+    maxAmount: 10
+  - prefabs:
+    - {fileID: 8940077666693441932, guid: f7ae8739f888645ef9f9118defc5103d, type: 3}
+    side: 2
+    lateralDistance: 0
+    randomOffsetRange: {x: 1, y: 1}
+    chancePerCurve: 0.2
+    minAmount: 1
+    maxAmount: 2
+  generateOnStart: 1
+  generatedProps: []
+--- !u!1 &5656383149569711307
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 893777420287832912}
+  - component: {fileID: 4493629028657937679}
+  m_Layer: 0
+  m_Name: Track
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &893777420287832912
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5656383149569711307}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 819291471866438983}
+  m_Father: {fileID: 8298623856469553584}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4493629028657937679
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5656383149569711307}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dab5c7d4c32e743048dfca98e2d5914f, type: 3}
@@ -234,20 +353,6 @@ MonoBehaviour:
       m_Data: []
   m_Knots:
     m_KnotsLink: []
---- !u!114 &1133858145817991951
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1989613484878146521}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8e5b9c3d2eaf507b9c1d2e3f4a5b6c7d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Game.CarSimulation::GearEngine.CarSimulation.Tracks.Track
-  splineContainer: {fileID: 1055921026126558074}
-  splineExtrude: {fileID: 7014771420695656104}
 --- !u!1 &5921238161633093600
 GameObject:
   m_ObjectHideFlags: 0
@@ -275,12 +380,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5921238161633093600}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 0.1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 8298623856469553584}
+  m_Father: {fileID: 893777420287832912}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &987200839733941279
 MeshFilter:
@@ -351,7 +456,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 222dc08d484f16869bdd89edd9d368fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Splines::UnityEngine.Splines.SplineExtrude
-  m_Container: {fileID: 1055921026126558074}
+  m_Container: {fileID: 4493629028657937679}
   m_TargetMesh: {fileID: 0}
   m_RebuildOnSplineChange: 0
   m_RebuildFrequency: 30

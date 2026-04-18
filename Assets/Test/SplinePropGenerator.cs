@@ -31,6 +31,9 @@ public class SplinePropGenerator : MonoBehaviour
         [Tooltip("Distance from the center of the spline to the edge of the track.")]
         public float lateralDistance = 4.5f;
 
+        [Tooltip("Maximum random variation applied to the local X (lateral) and Z (forward/backward) position of each prop. E.g. (1, 2) varies X from -1 to 1 and Z from -2 to 2.")]
+        public Vector2 randomOffsetRange = Vector2.zero;
+
         [Title("Distribution per Curve")]
         [Range(0f, 1f), Tooltip("Chance (0% to 100%) to spawn this prop group in a given curve segment.")]
         public float chancePerCurve = 0.8f;
@@ -89,15 +92,15 @@ public class SplinePropGenerator : MonoBehaviour
 
                     for (int i = 0; i < amount; i++)
                     {
-                        // Fraction of distance within this specific curve (from 0 to 1)
-                        float localT = amount == 1 ? 0.5f : (i / (float)(amount - 1));
+                        // Fraction of distance within this specific curve: center objects inside the curve segments to avoid overlaps at knot junctions
+                        float localT = (i + 0.5f) / amount;
                         
                         // Map local curve T to overall Spline T
                         float globalT = (curveIndex + localT) / curveCount;
 
                         Vector3 position = track.transform.TransformPoint(SplineUtility.EvaluatePosition(spline, globalT));
-                        Vector3 tangent = track.transform.TransformDirection(SplineUtility.EvaluateTangent(spline, globalT));
-                        Vector3 up = track.transform.TransformDirection(SplineUtility.EvaluateUpVector(spline, globalT));
+                        Vector3 tangent = track.transform.TransformDirection(SplineUtility.EvaluateTangent(spline, globalT)).normalized;
+                        Vector3 up = track.transform.TransformDirection(SplineUtility.EvaluateUpVector(spline, globalT)).normalized;
                         Vector3 right = Vector3.Cross(up, tangent).normalized;
 
                         // Determine actual side for this specific prop instance
@@ -116,7 +119,15 @@ public class SplinePropGenerator : MonoBehaviour
                                 break;
                         }
 
-                        Vector3 finalPos = position + (right * rule.lateralDistance * currentLateralMultiplier);
+                        // Apply track scaling to lateral distance so props stay exactly on the visual edge even if the track is scaled
+                        float effectiveLateralDistance = rule.lateralDistance * track.transform.lossyScale.x;
+                        Vector3 finalPos = position + (right * effectiveLateralDistance * currentLateralMultiplier);
+
+                        if (rule.randomOffsetRange.x > 0f)
+                            finalPos += right * UnityEngine.Random.Range(-rule.randomOffsetRange.x, rule.randomOffsetRange.x) * track.transform.lossyScale.x;
+                        
+                        if (rule.randomOffsetRange.y > 0f)
+                            finalPos += tangent * UnityEngine.Random.Range(-rule.randomOffsetRange.y, rule.randomOffsetRange.y) * track.transform.lossyScale.z;
 
                         GameObject prefabToSpawn = rule.prefabs[UnityEngine.Random.Range(0, rule.prefabs.Count)];
                         if (prefabToSpawn != null)

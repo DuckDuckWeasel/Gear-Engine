@@ -14,28 +14,4 @@ public class CarAreaModifier : MonoBehaviour
 
     [Tooltip("Multiplies the physical force applied by the engine to keep the car glued to the spline line. (e.g. 0 makes it slide out into grass like Oil).")]
     public float splineGripMultiplier = 1f;
-
-    private void OnTriggerEnter(Collider other)
-    {
-        var runner = other.GetComponentInParent<SplineCarRunner>();
-        if (runner == null && other.transform.parent != null)
-            runner = other.transform.parent.GetComponentInParent<SplineCarRunner>();
-
-        if (runner != null)
-        {
-            runner.AddAreaModifier(this);
-        }
-    }
-
-    private void OnTriggerExit(Collider other)
-    {
-        var runner = other.GetComponentInParent<SplineCarRunner>();
-        if (runner == null && other.transform.parent != null)
-            runner = other.transform.parent.GetComponentInParent<SplineCarRunner>();
-
-        if (runner != null)
-        {
-            runner.RemoveAreaModifier(this);
-        }
-    }
 }

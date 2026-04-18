@@ -1,7 +1,6 @@
 using System;
 using GearEngine.CarSimulation.Definitions;
 using Scaffold.Entities;
-using UnityEngine;
 
 namespace GearEngine.CarSimulation.Entity
 {

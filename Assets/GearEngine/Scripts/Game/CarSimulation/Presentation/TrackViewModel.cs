@@ -1,34 +1,50 @@
 using System;
+using System.Collections.Generic;
 using CommunityToolkit.Mvvm.ComponentModel;
 using GearEngine.CarSimulation.Definitions;
 using GearEngine.CarSimulation.Entity;
 using Scaffold.MVVM;
 using Scaffold.MVVM.Binding;
+using GearEngine.CarSimulation.Simulation;
 
 namespace GearEngine.CarSimulation.Presentation
 {
     public sealed partial class TrackViewModel : ViewModel
     {
-        public TrackViewModel(LapRaceSession session)
-        {
-            this.session = session ?? throw new ArgumentNullException(nameof(session));
-        }
+        public RaceState Session { get; }
 
-        public TrackDefinition Track => session.Track;
+        public TrackDefinition Track => Session.Track;
 
-        public CarEntity Car => session.Car;
+        public CarEntity Car => Session.Car;
 
-        public LapRaceSession Session => session;
+        public IReadOnlyList<CarViewModel> CarViewModels { get; private set; }
 
         [ObservableProperty]
         private SimulationLifecycleState state;
 
-        private readonly LapRaceSession session;
+        private readonly RaceManagerService raceManager;
+        public SplineCarRunnerService AiRunner { get; }
+        public TrackSimulationFactory Factory { get; }
+
+        public TrackViewModel(RaceState session, RaceManagerService raceManager, SplineCarRunnerService aiRunner, TrackSimulationFactory factory)
+        {
+            Session = session ?? throw new ArgumentNullException(nameof(session));
+            this.raceManager = raceManager;
+            AiRunner = aiRunner;
+            Factory = factory;
+        }
 
         protected override void Initialize()
         {
             base.Initialize();
-            session.PresentationChanged += OnSessionPresentationChanged;
+            Session.PresentationChanged += OnSessionPresentationChanged;
+            
+            var list = new System.Collections.Generic.List<CarViewModel>();
+            var cvm = new CarViewModel(Session, AiRunner);
+            BindChildViewModel(cvm);
+            list.Add(cvm);
+            CarViewModels = list;
+
             RefreshUiState();
         }
 
@@ -36,16 +52,16 @@ namespace GearEngine.CarSimulation.Presentation
         {
             if (running)
             {
-                if (session.Phase == SimulationLifecycleState.Completed)
+                if (Session.Phase == SimulationLifecycleState.Completed)
                 {
-                    session.Reset();
+                    Session.Reset();
                 }
 
-                session.SetClockRunning(true);
+                raceManager?.StartRace(Session);
             }
             else
             {
-                session.SetClockRunning(false);
+                raceManager?.StopRace(Session);
             }
 
             RefreshUiState();
@@ -53,13 +69,13 @@ namespace GearEngine.CarSimulation.Presentation
 
         public void Complete()
         {
-            session.ForceFinish();
+            raceManager?.ForceFinish(Session);
             RefreshUiState();
         }
 
         internal void TearDown()
         {
-            session.PresentationChanged -= OnSessionPresentationChanged;
+            Session.PresentationChanged -= OnSessionPresentationChanged;
         }
 
         private void OnSessionPresentationChanged()
@@ -69,7 +85,7 @@ namespace GearEngine.CarSimulation.Presentation
 
         private void RefreshUiState()
         {
-            State = session.Phase;
+            State = Session.Phase;
         }
     }
 }

@@ -17,6 +17,7 @@
         "Scaffold.Navigation",
         "Scaffold.Navigation.Container",
         "Scaffold.Scope",
+        "Unity.Splines",
         "Unity.TextMeshPro",
         "UnityEngine.UI"
     ],

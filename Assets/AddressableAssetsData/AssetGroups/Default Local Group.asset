@@ -15,13 +15,13 @@ MonoBehaviour:
   m_GroupName: Default Local Group
   m_GUID: 0bdbf61a5d37c41ee95db94752ea759c
   m_SerializeEntries:
-  - m_GUID: 6a4018fa1395fe74fa82a63a40a91772
-    m_Address: Assets/Prefabs/Tracks/Views/Track Test View.prefab
+  - m_GUID: 6e9cd533eec944d2d8eb2b7cf5e8cdca
+    m_Address: Assets/GearEngine/Prefabs/Gears/GearEngineView_NavigationStub.prefab
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 6e9cd533eec944d2d8eb2b7cf5e8cdca
-    m_Address: Assets/GearEngine/Prefabs/Gears/GearEngineView_NavigationStub.prefab
+  - m_GUID: a7b8c9d0e1f2435465768798a9bacdef
+    m_Address: Assets/GearEngine/Prefabs/Cards/CardSampleViewRoot.prefab
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
@@ -30,13 +30,13 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: e9f4a2b8c1d645e7a3b9c0d2e5f6a7b8
-    m_Address: Assets/GearEngine/Prefabs/Race/RaceNavigationStub.prefab
+  - m_GUID: b050ac44f110045e79e6df30f00fe8d0
+    m_Address: Assets/GearEngine/Prefabs/Race/Track Test View.prefab
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: a7b8c9d0e1f2435465768798a9bacdef
-    m_Address: Assets/GearEngine/Prefabs/Cards/CardSampleViewRoot.prefab
+  - m_GUID: e9f4a2b8c1d645e7a3b9c0d2e5f6a7b8
+    m_Address: Assets/GearEngine/Prefabs/Race/RaceNavigationStub.prefab
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
