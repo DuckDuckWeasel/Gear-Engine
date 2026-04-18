@@ -24,7 +24,7 @@ namespace GearEngine.Campaign.Presentation
             BindChildViewModel(Stats);
         }
 
-        public void GoToSetup()
+        public void ClickedPlay()
         {
             try
             {

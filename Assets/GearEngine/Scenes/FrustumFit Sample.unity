@@ -546,11 +546,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Game.GearEngine.FrustumFit::GearEngine.FrustumFit.FrustumFitAnchor
   sourceRect: {fileID: 1240246584}
-  sourceCanvas: {fileID: 560741026}
   worldCamera: {fileID: 236420763}
   depth: 10
   targetTransform: {fileID: 784048470}
-  targetRenderer: {fileID: 784048469}
   fillMode: 1
   fitAxes: 0
   rotationMode: 0

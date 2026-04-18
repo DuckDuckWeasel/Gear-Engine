@@ -15,6 +15,12 @@ namespace GearEngine.Campaign.Presentation
         protected override void OnBind()
         {
             ValidateHierarchy();
+            if (track == null)
+            {
+                throw new InvalidOperationException(
+                    "[MainView] Track must be assigned on the scene instance (not baked into the prefab).");
+            }
+
             track.Bind(viewModel.Track);
             statsPanel.Bind(viewModel.Stats);
             playButton.onClick.AddListener(OnPlayClicked);
@@ -23,7 +29,11 @@ namespace GearEngine.Campaign.Presentation
         protected override void OnUnbind()
         {
             playButton.onClick.RemoveListener(OnPlayClicked);
-            track.Unbind();
+            if (track != null)
+            {
+                track.Unbind();
+            }
+
             base.OnUnbind();
         }
 
@@ -31,7 +41,7 @@ namespace GearEngine.Campaign.Presentation
         {
             try
             {
-                viewModel?.GoToSetup();
+                viewModel?.ClickedPlay();
             }
             catch (Exception ex)
             {
@@ -41,7 +51,6 @@ namespace GearEngine.Campaign.Presentation
 
         private void ValidateHierarchy()
         {
-            RequireReference(track, nameof(track));
             RequireReference(playButton, nameof(playButton));
             RequireReference(statsPanel, nameof(statsPanel));
         }

@@ -86,7 +86,7 @@ Use **`FrustumFitAnchor.TryComputePlacement`** to get a **`FrustumFitAnchorPlace
 Then either:
 
 - tween toward `placement.WorldPosition`, `placement.LocalScale`, and optionally `placement.WorldRotation` when `placement.HasWorldRotation`, or
-- snap with **`FrustumFitAnchor.ApplyPlacement(targetTransform, placement)`**.
+- snap with **`placement.ApplyTo(targetTransform)`** on the computed **`FrustumFitAnchorPlacement`**.
 
 **Rotation:** `FrustumFitAnchorRotationMode.MatchCameraRotation` sets `HasWorldRotation` and `WorldRotation` to the world camera’s rotation (typical for screen-facing sprites). `PreserveTarget` leaves rotation to the tween or prior state.
 

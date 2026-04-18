@@ -118,7 +118,7 @@ namespace GearEngine.FrustumFit.Samples
                 yield return null;
             }
 
-            FrustumFitAnchor.ApplyPlacement(target, end);
+            end.ApplyTo(target);
         }
     }
 }
