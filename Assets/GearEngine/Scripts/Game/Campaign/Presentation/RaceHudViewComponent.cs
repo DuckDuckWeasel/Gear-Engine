@@ -1,4 +1,3 @@
-using GearEngine.CarSimulation;
 using Scaffold.MVVM;
 using TMPro;
 using UnityEngine;
@@ -13,19 +12,20 @@ namespace GearEngine.Campaign.Presentation
         protected override void OnBind()
         {
             base.OnBind();
-            Bind<SimulationLifecycleState, SimulationLifecycleState>(() => viewModel.Track.State, OnTrackStateChanged);
+            Bind<float, float>(() => viewModel.Track.HudRaceTime, OnHudMetricsChanged);
+            Bind<int, int>(() => viewModel.Track.HudCurrentLap, OnHudMetricsChanged);
         }
 
-        private void OnTrackStateChanged(SimulationLifecycleState _)
+        private void OnHudMetricsChanged<T>(T _)
         {
             if (lapTimeLabel != null)
             {
-                lapTimeLabel.text = $"{viewModel.Track.Session.RaceTime:F2}s";
+                lapTimeLabel.text = $"{viewModel.Track.HudRaceTime:F2}s";
             }
 
             if (lapCountLabel != null)
             {
-                lapCountLabel.text = $"Lap {viewModel.Track.Session.CurrentLap}";
+                lapCountLabel.text = $"Lap {viewModel.Track.HudCurrentLap}";
             }
         }
     }

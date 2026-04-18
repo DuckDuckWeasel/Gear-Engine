@@ -20,7 +20,8 @@ namespace GearEngine.Campaign.Presentation
 
             if (targetLapsLabel != null)
             {
-                targetLapsLabel.text = $"Laps: {viewModel.TargetLaps}";
+                string lapsText = viewModel.TargetLaps < 0 ? "Laps: —" : $"Laps: {viewModel.TargetLaps}";
+                targetLapsLabel.text = lapsText;
             }
 
             if (targetTimeLabel != null)

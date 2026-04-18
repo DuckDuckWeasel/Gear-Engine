@@ -24,7 +24,7 @@ namespace GearEngine.GearEngine.Tests.Editor
         }
 
         [Test]
-        public void Constructor_UsesMaxSlotsFromInventoryServiceAfterInitialize()
+        public void Constructor_PassesMaxSlotsToInventoryService()
         {
             var inventory = new InventoryService();
             var engine = new FakeEngine();

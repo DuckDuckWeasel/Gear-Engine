@@ -1,5 +1,6 @@
 using System;
 using GearEngine.Campaign.Services;
+using GearEngine.CarSimulation.Definitions;
 using Scaffold.MVVM;
 
 namespace GearEngine.Campaign.Presentation
@@ -13,9 +14,10 @@ namespace GearEngine.Campaign.Presentation
                 throw new ArgumentNullException(nameof(trackService));
             }
 
-            TrackName = trackService.CurrentTrack.name;
-            TargetLaps = 3;
-            TargetTime = 60f;
+            TrackDefinition track = trackService.CurrentTrack;
+            TrackName = track.GetDisplayName();
+            TargetLaps = track.TotalLaps;
+            TargetTime = track.TimeToBeatSeconds;
         }
 
         public string TrackName { get; }

@@ -1,4 +1,5 @@
 using System;
+using CommunityToolkit.Mvvm.ComponentModel;
 using GearEngine.Campaign;
 using GearEngine.Campaign.Services;
 using GearEngine.CarSimulation;
@@ -12,15 +13,18 @@ using VContainer;
 
 namespace GearEngine.Campaign.Presentation
 {
-    public sealed class ActiveRaceViewModel : ViewModel
+    public partial class ActiveRaceViewModel : ViewModel
     {
-        public TrackViewModel Track { get; private set; }
+        [ObservableProperty]
+        private TrackViewModel track;
 
         [Inject] private ITrackService trackService;
         [Inject] private IWalletService walletService;
         [Inject] private IGearEngineService engineService;
         [Inject] private TrackSimulationFactory trackFactory;
         [Inject] private IRaceSessionRunner raceSessionRunner;
+
+
 
         protected override void Initialize()
         {

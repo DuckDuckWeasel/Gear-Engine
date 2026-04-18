@@ -4,6 +4,7 @@ using GearEngine.CarSimulation;
 using GearEngine.CarSimulation.Definitions;
 using NUnit.Framework;
 using Scaffold.MVVM;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.Splines;
 using Object = UnityEngine.Object;
@@ -32,7 +33,20 @@ namespace GearEngine.Campaign.Tests.Editor
             Assert.That(vm.Track, Is.Not.Null);
             Assert.That(vm.Stats, Is.Not.Null);
             Assert.That(vm.Track.Session, Is.SameAs(session));
-            Assert.That(vm.Stats.TrackName, Is.EqualTo(trackDef.name));
+            Assert.That(vm.Stats.TrackName, Is.EqualTo(trackDef.GetDisplayName()));
+            Assert.That(vm.Stats.TargetLaps, Is.EqualTo(trackDef.TotalLaps));
+            Assert.That(vm.Stats.TargetTime, Is.EqualTo(trackDef.TimeToBeatSeconds));
+
+            var so = new SerializedObject(trackDef);
+            so.FindProperty("trackName").stringValue = "Coast Run";
+            so.FindProperty("totalLaps").intValue = 4;
+            so.FindProperty("timeToBeatSeconds").floatValue = 72.5f;
+            so.ApplyModifiedPropertiesWithoutUndo();
+
+            var statsFromTrack = new TrackStatsViewModel(trackService);
+            Assert.That(statsFromTrack.TrackName, Is.EqualTo("Coast Run"));
+            Assert.That(statsFromTrack.TargetLaps, Is.EqualTo(4));
+            Assert.That(statsFromTrack.TargetTime, Is.EqualTo(72.5f));
 
             Object.DestroyImmediate(carDef);
             Object.DestroyImmediate(trackDef);

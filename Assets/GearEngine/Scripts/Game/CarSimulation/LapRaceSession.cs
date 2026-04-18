@@ -76,6 +76,8 @@ namespace GearEngine.CarSimulation
 
         public event Action PresentationChanged;
 
+        public event Action AfterTick;
+
         public bool ConsumePendingSplineRestart()
         {
             if (!pendingSplineRestart)
@@ -156,6 +158,7 @@ namespace GearEngine.CarSimulation
             }
 
             RunTickCore(dt);
+            AfterTick?.Invoke();
         }
 
         private void RunTickCore(float dt)

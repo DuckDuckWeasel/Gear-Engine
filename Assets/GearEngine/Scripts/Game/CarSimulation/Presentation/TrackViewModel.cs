@@ -29,12 +29,19 @@ namespace GearEngine.CarSimulation.Presentation
         [ObservableProperty]
         private SimulationLifecycleState state;
 
+        [ObservableProperty]
+        private float hudRaceTime;
+
+        [ObservableProperty]
+        private int hudCurrentLap;
+
         private readonly LapRaceSession session;
 
         protected override void Initialize()
         {
             base.Initialize();
             session.PresentationChanged += OnSessionPresentationChanged;
+            session.AfterTick += OnSessionAfterTick;
             RefreshUiState();
         }
 
@@ -66,6 +73,7 @@ namespace GearEngine.CarSimulation.Presentation
         internal void TearDown()
         {
             session.PresentationChanged -= OnSessionPresentationChanged;
+            session.AfterTick -= OnSessionAfterTick;
         }
 
         private void OnSessionPresentationChanged()
@@ -73,9 +81,21 @@ namespace GearEngine.CarSimulation.Presentation
             RefreshUiState();
         }
 
+        private void OnSessionAfterTick()
+        {
+            RefreshHudMetrics();
+        }
+
         private void RefreshUiState()
         {
             State = session.Phase;
+            RefreshHudMetrics();
+        }
+
+        private void RefreshHudMetrics()
+        {
+            HudRaceTime = session.RaceTime;
+            HudCurrentLap = session.CurrentLap;
         }
     }
 }
