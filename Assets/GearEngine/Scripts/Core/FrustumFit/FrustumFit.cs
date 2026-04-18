@@ -2,8 +2,12 @@ using System;
 using UnityEngine;
 using UnityEngine.Serialization;
 
-namespace GearEngine.GearEngine.Presentation.World
+namespace GearEngine.FrustumFit
 {
+    /// <summary>
+    /// Scales this GameObject's <see cref="Renderer"/> to a fraction of the <strong>full</strong> camera frustum at <see cref="depth"/>.
+    /// For UI-anchored screen regions, use <see cref="FrustumFitAnchor"/> instead.
+    /// </summary>
     public sealed class FrustumFit : MonoBehaviour
     {
         [Header("Camera")]
@@ -150,88 +154,16 @@ namespace GearEngine.GearEngine.Presentation.World
         private void ApplyScaleForBounds(FrustumBounds bounds)
         {
             Vector3 boundsSize = meshRenderer.localBounds.size;
-            Vector2 meshSize = ExtractAxesPair(boundsSize, fitAxes);
+            Vector2 meshSize = FrustumFitAxisMapping.ExtractAxesPair(boundsSize, fitAxes);
             Vector2 parentScale = GetParentLossyScalePair(fitAxes);
             Vector2 localScale2D = FrustumFitMath.ComputeLocalScale(bounds, fillX, fillY, fillMode, meshSize, parentScale);
-            WriteLocalScaleAxes(localScale2D, fitAxes);
+            FrustumFitAxisMapping.WriteLocalScaleAxes(transform, localScale2D, fitAxes);
         }
 
         private Vector2 GetParentLossyScalePair(FrustumFitAxes axes)
         {
             Vector3 ps = transform.parent != null ? transform.parent.lossyScale : Vector3.one;
-            return ExtractAxesPair(ps, axes);
-        }
-
-        private Vector2 ExtractAxesPair(Vector3 v, FrustumFitAxes axes)
-        {
-            return axes switch
-            {
-                FrustumFitAxes.XY => new Vector2(v.x, v.y),
-                FrustumFitAxes.XZ => new Vector2(v.x, v.z),
-                FrustumFitAxes.YZ => new Vector2(v.y, v.z),
-                _ => throw new ArgumentOutOfRangeException(nameof(axes), axes, null),
-            };
-        }
-
-        private void WriteLocalScaleAxes(Vector2 scale2D, FrustumFitAxes axes)
-        {
-            Vector3 ls = transform.localScale;
-            BuildLocalScaleComponents(ref ls, scale2D, axes);
-            transform.localScale = ls;
-        }
-
-        private void BuildLocalScaleComponents(ref Vector3 ls, Vector2 scale2D, FrustumFitAxes axes)
-        {
-            if (!TryWriteAxisPairToLocalScale(ref ls, scale2D, axes))
-            {
-                throw new ArgumentOutOfRangeException(nameof(axes), axes, null);
-            }
-        }
-
-        private bool TryWriteAxisPairToLocalScale(ref Vector3 ls, Vector2 scale2D, FrustumFitAxes axes)
-        {
-            if (axes == FrustumFitAxes.XY)
-            {
-                BuildXyLocalScale(ref ls, scale2D);
-                return true;
-            }
-
-            return TryWriteNonXyAxes(ref ls, scale2D, axes);
-        }
-
-        private void BuildXyLocalScale(ref Vector3 ls, Vector2 scale2D)
-        {
-            ls.x = scale2D.x;
-            ls.y = scale2D.y;
-        }
-
-        private bool TryWriteNonXyAxes(ref Vector3 ls, Vector2 scale2D, FrustumFitAxes axes)
-        {
-            if (axes == FrustumFitAxes.XZ)
-            {
-                BuildXzLocalScale(ref ls, scale2D);
-                return true;
-            }
-
-            if (axes == FrustumFitAxes.YZ)
-            {
-                BuildYzLocalScale(ref ls, scale2D);
-                return true;
-            }
-
-            return false;
-        }
-
-        private void BuildXzLocalScale(ref Vector3 ls, Vector2 scale2D)
-        {
-            ls.x = scale2D.x;
-            ls.z = scale2D.y;
-        }
-
-        private void BuildYzLocalScale(ref Vector3 ls, Vector2 scale2D)
-        {
-            ls.y = scale2D.x;
-            ls.z = scale2D.y;
+            return FrustumFitAxisMapping.ExtractAxesPair(ps, axes);
         }
     }
 }

@@ -1,7 +1,7 @@
 using System;
+using GearEngine.FrustumFit;
 using NUnit.Framework;
 using UnityEngine;
-using GearEngine.GearEngine.Presentation.World;
 
 namespace GearEngine.GearEngine.Tests.Editor
 {
@@ -72,6 +72,86 @@ namespace GearEngine.GearEngine.Tests.Editor
 
             Assert.AreEqual(10f, result.x, Tolerance, "Stretch X should be 20 * 0.5 / 1.");
             Assert.AreEqual(10f, result.y, Tolerance, "Stretch Y should be 10 * 1.0 / 1.");
+        }
+
+        [Test]
+        public void ComputeLocalScaleForTargetSize_MatchesComputeLocalScale_ForEquivalentTargetBox()
+        {
+            var bounds   = MakeBounds(20f, 10f);
+            var meshSize = new Vector2(1f, 1f);
+
+            Vector2 fromFill = FrustumFitMath.ComputeLocalScale(
+                bounds, 0.5f, 0.8f, FrustumFillMode.Stretch, meshSize, Vector2.one);
+
+            Vector2 targetSize = FrustumFitMath.ComputeTargetWorldSize(bounds, 0.5f, 0.8f);
+            Vector2 fromTarget = FrustumFitMath.ComputeLocalScaleForTargetSize(
+                targetSize, FrustumFillMode.Stretch, meshSize, Vector2.one);
+
+            Assert.AreEqual(fromFill.x, fromTarget.x, Tolerance);
+            Assert.AreEqual(fromFill.y, fromTarget.y, Tolerance);
+        }
+
+        [Test]
+        public void ComputeTargetWorldSize_KnownFractions_ReturnsScaledBounds()
+        {
+            var bounds = new FrustumBounds(100f, 40f);
+            Vector2 size = FrustumFitMath.ComputeTargetWorldSize(bounds, 0.25f, 0.5f);
+            Assert.AreEqual(25f, size.x, Tolerance);
+            Assert.AreEqual(20f, size.y, Tolerance);
+        }
+
+        [Test]
+        public void ComputeTargetWorldSize_NegativeViewportWidth_ThrowsArgumentException()
+        {
+            var bounds = new FrustumBounds(10f, 10f);
+            Assert.Throws<ArgumentException>(() =>
+                FrustumFitMath.ComputeTargetWorldSize(bounds, -0.1f, 0.5f));
+        }
+
+        [Test]
+        public void ComputeTargetWorldSize_NegativeViewportHeight_ThrowsArgumentException()
+        {
+            var bounds = new FrustumBounds(10f, 10f);
+            Assert.Throws<ArgumentException>(() =>
+                FrustumFitMath.ComputeTargetWorldSize(bounds, 0.5f, -0.1f));
+        }
+
+        [Test]
+        public void ComputeLocalScaleForTargetSize_NegativeTargetX_ThrowsArgumentException()
+        {
+            Assert.Throws<ArgumentException>(() =>
+                FrustumFitMath.ComputeLocalScaleForTargetSize(
+                    new Vector2(-1f, 1f), FrustumFillMode.Stretch, Vector2.one, Vector2.one));
+        }
+
+        [Test]
+        public void ComputeLocalScaleForTargetSize_NegativeTargetY_ThrowsArgumentException()
+        {
+            Assert.Throws<ArgumentException>(() =>
+                FrustumFitMath.ComputeLocalScaleForTargetSize(
+                    new Vector2(1f, -1f), FrustumFillMode.Stretch, Vector2.one, Vector2.one));
+        }
+
+        // --- FrustumFitAxisMapping.MergeLocalScaleAxes --------------------------------
+
+        [Test]
+        public void MergeLocalScaleAxes_XY_PreservesZ()
+        {
+            Vector3 merged = FrustumFitAxisMapping.MergeLocalScaleAxes(
+                new Vector3(1f, 2f, 3f), new Vector2(5f, 6f), FrustumFitAxes.XY);
+            Assert.AreEqual(5f, merged.x, Tolerance);
+            Assert.AreEqual(6f, merged.y, Tolerance);
+            Assert.AreEqual(3f, merged.z, Tolerance);
+        }
+
+        [Test]
+        public void MergeLocalScaleAxes_XZ_PreservesY()
+        {
+            Vector3 merged = FrustumFitAxisMapping.MergeLocalScaleAxes(
+                new Vector3(1f, 2f, 3f), new Vector2(7f, 8f), FrustumFitAxes.XZ);
+            Assert.AreEqual(7f, merged.x, Tolerance);
+            Assert.AreEqual(2f, merged.y, Tolerance);
+            Assert.AreEqual(8f, merged.z, Tolerance);
         }
 
         [Test]

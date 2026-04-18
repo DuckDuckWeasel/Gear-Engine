@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace GearEngine.GearEngine.Presentation.World
+namespace GearEngine.FrustumFit
 {
     public static class FrustumFitMath
     {
@@ -12,12 +12,48 @@ namespace GearEngine.GearEngine.Presentation.World
 
         public static Vector2 ComputeLocalScale(FrustumBounds bounds, float fillX, float fillY, FrustumFillMode mode, Vector2 meshSize, Vector2 parentLossyScale)
         {
+            Vector2 targetWorldSize = ComputeTargetWorldSize(bounds, fillX, fillY);
+            return ComputeLocalScaleForTargetSize(targetWorldSize, mode, meshSize, parentLossyScale);
+        }
+
+        /// <summary>
+        /// World-space width and height of a viewport sub-rectangle at the same depth used to build <paramref name="bounds"/>.
+        /// </summary>
+        public static Vector2 ComputeTargetWorldSize(FrustumBounds bounds, float viewportWidthFraction, float viewportHeightFraction)
+        {
+            if (viewportWidthFraction < 0f)
+            {
+                throw new ArgumentException($"viewportWidthFraction must be non-negative, got {viewportWidthFraction}.", nameof(viewportWidthFraction));
+            }
+
+            if (viewportHeightFraction < 0f)
+            {
+                throw new ArgumentException($"viewportHeightFraction must be non-negative, got {viewportHeightFraction}.", nameof(viewportHeightFraction));
+            }
+
+            return new Vector2(bounds.Width * viewportWidthFraction, bounds.Height * viewportHeightFraction);
+        }
+
+        /// <summary>
+        /// Computes local scale so the mesh occupies <paramref name="targetWorldSize"/> in world units on the two mesh axes,
+        /// after applying <paramref name="mode"/> and correcting for <paramref name="parentLossyScale"/>.
+        /// </summary>
+        public static Vector2 ComputeLocalScaleForTargetSize(Vector2 targetWorldSize, FrustumFillMode mode, Vector2 meshSize, Vector2 parentLossyScale)
+        {
             ThrowIfInvalidMeshSize(meshSize);
             ThrowIfInvalidParentScale(parentLossyScale);
-            float targetWidth = bounds.Width * fillX;
-            float targetHeight = bounds.Height * fillY;
-            float rawScaleX = targetWidth / meshSize.x;
-            float rawScaleY = targetHeight / meshSize.y;
+            if (targetWorldSize.x < 0f)
+            {
+                throw new ArgumentException($"targetWorldSize.x must be non-negative, got {targetWorldSize.x}.", nameof(targetWorldSize));
+            }
+
+            if (targetWorldSize.y < 0f)
+            {
+                throw new ArgumentException($"targetWorldSize.y must be non-negative, got {targetWorldSize.y}.", nameof(targetWorldSize));
+            }
+
+            float rawScaleX = targetWorldSize.x / meshSize.x;
+            float rawScaleY = targetWorldSize.y / meshSize.y;
             Vector2 worldScale = ComputeWorldScalePair(mode, rawScaleX, rawScaleY);
             return new Vector2(worldScale.x / parentLossyScale.x, worldScale.y / parentLossyScale.y);
         }

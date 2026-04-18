@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace GearEngine.GearEngine.Presentation.World
+namespace GearEngine.FrustumFit
 {
     public readonly struct FrustumBounds
     {

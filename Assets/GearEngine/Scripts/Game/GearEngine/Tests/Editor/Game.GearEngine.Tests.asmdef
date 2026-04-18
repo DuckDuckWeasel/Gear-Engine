@@ -5,6 +5,7 @@
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner",
         "Game.GearEngine",
+        "Game.GearEngine.FrustumFit",
         "Scaffold.Events",
         "Scaffold.Events.Container",
         "Scaffold.MVVM.View",

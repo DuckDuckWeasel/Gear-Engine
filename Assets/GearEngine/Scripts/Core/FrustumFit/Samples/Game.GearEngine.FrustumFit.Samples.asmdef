@@ -1,0 +1,16 @@
+{
+    "name": "Game.GearEngine.FrustumFit.Samples",
+    "rootNamespace": "GearEngine.FrustumFit.Samples",
+    "references": [
+        "Game.GearEngine.FrustumFit"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
