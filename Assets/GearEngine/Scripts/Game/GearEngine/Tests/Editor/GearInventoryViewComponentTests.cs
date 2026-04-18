@@ -1,4 +1,3 @@
-using System;
 using System.Reflection;
 using GearEngine.GearEngine;
 using GearEngine.GearEngine.Config;
@@ -49,12 +48,14 @@ namespace GearEngine.GearEngine.Tests.Editor
             out RectTransform itemsContainerOut,
             out GearInventoryViewModel viewModel)
         {
-            var inventory = new InventoryService();
+            var loadout = GearInventoryLoadoutData.FromGearConfigs(10, System.Array.Empty<GearConfig>());
+            var inventory = new InventoryService(loadout);
             var engine = new FakeEngine();
-            viewModel = new GearInventoryViewModel(10, Array.Empty<GearConfig>(), engine, inventory, dragService: null);
-            inventory.AddItem(new GearConfigData { Id = "g0" });
-            inventory.AddItem(new GearConfigData { Id = "g1" });
-            inventory.AddItem(new GearConfigData { Id = "g2" });
+            inventory.TryAdd(new GearConfigData { Id = "g0" });
+            inventory.TryAdd(new GearConfigData { Id = "g1" });
+            inventory.TryAdd(new GearConfigData { Id = "g2" });
+
+            viewModel = new GearInventoryViewModel(engine, inventory, dragService: null);
 
             var root = new GameObject("InventoryRoot");
             var containerGo = new GameObject("ItemsContainer", typeof(RectTransform));

@@ -1,4 +1,5 @@
 using System;
+using GearEngine.GearEngine;
 using GearEngine.GearEngine.Config;
 using GearEngine.GearEngine.Services.Inventory;
 using NUnit.Framework;
@@ -23,29 +24,46 @@ namespace GearEngine.GearEngine.Tests.Editor
         }
 
         [Test]
-        public void Initialize_ClearsExistingItemsThenLoadsStartingGears()
+        public void Constructor_SeedsItemsFromLoadout()
         {
-            var service = new InventoryService();
-            service.Initialize(10, Array.Empty<GearConfig>());
-            service.AddItem(new GearConfigData { Id = "stale" });
+            GearConfig a = CreateGearConfig("a");
+            GearConfig b = CreateGearConfig("b");
+            var loadout = GearInventoryLoadoutData.FromGearConfigs(10, new[] { a, b });
 
-            GearConfig extra = CreateGearConfig("fromInit");
-            service.Initialize(10, new[] { extra });
+            var service = new InventoryService(loadout);
 
-            Assert.AreEqual(1, service.CurrentCount);
-            Assert.AreEqual("fromInit", service.Model.AvailableItems[0].Id);
+            Assert.AreEqual(2, service.GetInventory().Items.Count);
+            Assert.AreEqual("a", service.GetInventory().Items[0].Id);
+            Assert.AreEqual("b", service.GetInventory().Items[1].Id);
+            Assert.AreEqual(10, service.GetInventory().MaxSlots);
+
+            UnityEngine.Object.DestroyImmediate(a);
+            UnityEngine.Object.DestroyImmediate(b);
         }
 
         [Test]
-        public void Initialize_SecondCallClearsAndUpdatesMaxSlots()
+        public void TryConsume_RemovesReferenceFromInventory()
         {
-            var service = new InventoryService();
-            service.Initialize(5, Array.Empty<GearConfig>());
-            service.AddItem(new GearConfigData { Id = "a" });
-            service.Initialize(12, Array.Empty<GearConfig>());
+            GearConfig cfg = CreateGearConfig("x");
+            var loadout = GearInventoryLoadoutData.FromGearConfigs(5, new[] { cfg });
+            var service = new InventoryService(loadout);
+            IItem item = service.GetInventory().Items[0];
 
-            Assert.AreEqual(12, service.MaxSlots);
-            Assert.AreEqual(0, service.CurrentCount);
+            Assert.IsTrue(service.TryConsume(item));
+            Assert.AreEqual(0, service.GetInventory().Items.Count);
+
+            UnityEngine.Object.DestroyImmediate(cfg);
+        }
+
+        [Test]
+        public void TryAdd_RespectsMaxSlots()
+        {
+            var loadout = GearInventoryLoadoutData.Empty(maxSlots: 1);
+            var service = new InventoryService(loadout);
+
+            Assert.IsTrue(service.TryAdd(new GearConfigData { Id = "one" }));
+            LogAssert.Expect(LogType.Warning, "[InventoryService] Inventory full (1/1). Cannot add item 'two'.");
+            Assert.IsFalse(service.TryAdd(new GearConfigData { Id = "two" }));
         }
     }
 }

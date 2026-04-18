@@ -6,6 +6,7 @@ using GearEngine.Campaign.Services;
 using GearEngine.CarSimulation;
 using GearEngine.CarSimulation.Definitions;
 using GearEngine.GearEngine;
+using GearEngine.GearEngine.Services.Board;
 using GearEngine.GearEngine.Bootstrap;
 using GearEngine.GearEngine.Config;
 using GearEngine.GearEngine.Merge;
@@ -26,7 +27,7 @@ namespace GearEngine.Campaign.Tests.Editor
         {
             var builder = new ContainerBuilder();
             new EventsInstaller().Install(builder);
-            new GearMechanicsInstaller(boardConfig, null).Install(builder);
+            new GearMechanicsInstaller(boardConfig, null).Install(builder, GearInventoryLoadoutData.Empty(), new GearBoardLoadoutData());
             container = builder.Build();
             Engine = container.Resolve<IGearEngineService>();
             GridManager = container.Resolve<IGridManager>();
@@ -39,6 +40,7 @@ namespace GearEngine.Campaign.Tests.Editor
             MergeService = container.Resolve<IGridMergeService>();
             InventoryService = container.Resolve<IInventoryService>();
             PresentationTransfer = container.Resolve<IGearPresentationTransferService>();
+            BoardService = container.Resolve<IBoardService>();
         }
 
         public IGearEngineService Engine { get; }
@@ -52,6 +54,7 @@ namespace GearEngine.Campaign.Tests.Editor
         public IGridMergeService MergeService { get; }
         public IInventoryService InventoryService { get; }
         public IGearPresentationTransferService PresentationTransfer { get; }
+        public IBoardService BoardService { get; }
 
         private readonly IObjectResolver container;
 
@@ -122,8 +125,13 @@ namespace GearEngine.Campaign.Tests.Editor
         public LapRaceSession CurrentSession { get; private set; }
 
         private readonly IReadOnlyList<GearConfig> roguelikeOptions;
+        private readonly TrackProgressModel trackProgress = new TrackProgressModel();
         public int AdvanceCallCount { get; private set; }
         public int RecordResultCallCount { get; private set; }
+
+        public TrackProgressModel GetTrackProgress() => trackProgress;
+
+        public IReadOnlyList<TrackEntry> GetOrderedTracks() => Array.Empty<TrackEntry>();
 
         public IReadOnlyList<GearConfig> GetRoguelikeCardOptions() => roguelikeOptions;
 
@@ -150,45 +158,68 @@ namespace GearEngine.Campaign.Tests.Editor
 
     internal sealed class FakeWalletService : IWalletService
     {
-        public int CurrentGold { get; private set; }
+        private readonly WalletModel wallet = new WalletModel();
+
+        public WalletModel GetWallet() => wallet;
 
         public void AddGold(int amount)
         {
-            CurrentGold += amount;
+            wallet.Gold += amount;
         }
 
-        public void SpendGold(int amount)
+        public bool TrySpendGold(int amount)
         {
-            CurrentGold -= amount;
+            if (amount < 0 || amount > wallet.Gold)
+            {
+                return false;
+            }
+
+            wallet.Gold -= amount;
+            return true;
         }
     }
 
     internal sealed class RecordingInventoryService : IInventoryService
     {
         public readonly List<IItem> AddedItems = new List<IItem>();
-        public InventoryModel Model { get; } = new InventoryModel();
-        public int CurrentCount => Model.AvailableItems.Count;
-        public int MaxSlots { get; private set; } = 32;
+        private readonly InventoryModel model = new InventoryModel();
 
-        public void Initialize(int maxSlots, IReadOnlyList<GearConfig> inventoryGears)
+        public RecordingInventoryService()
         {
-            MaxSlots = maxSlots;
+            model.MaxSlots = 32;
         }
 
-        public void LoadInventory(IEnumerable<IItem> items)
-        {
-        }
+        public InventoryModel GetInventory() => model;
 
-        public void AddItem(IItem item)
+        public bool TryAdd(IItem item)
         {
-            if (item != null)
+            if (item == null)
             {
-                AddedItems.Add(item);
+                return false;
             }
+
+            AddedItems.Add(item);
+            model.Items.Add(item);
+            return true;
         }
 
-        public void ConsumeSpecificItem(IItem item)
+        public bool TryConsume(IItem item)
         {
+            if (item == null)
+            {
+                return false;
+            }
+
+            for (int i = 0; i < model.Items.Count; i++)
+            {
+                if (ReferenceEquals(model.Items[i], item))
+                {
+                    model.Items.RemoveAt(i);
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 }

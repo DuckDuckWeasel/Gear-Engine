@@ -1,6 +1,8 @@
+using GearEngine.GearEngine;
 using GearEngine.GearEngine.Bootstrap;
 using GearEngine.GearEngine.Config;
 using GearEngine.GearEngine.Services;
+using GearEngine.GearEngine.Services.Board;
 using GearEngine.GearEngine.Services.Inventory;
 using NUnit.Framework;
 using Scaffold.Events.Container;
@@ -25,7 +27,7 @@ namespace GearEngine.GearEngine.Tests.Editor
 
             var builder = new ContainerBuilder();
             new EventsInstaller().Install(builder);
-            new GearMechanicsInstaller(board, null).Install(builder);
+            new GearMechanicsInstaller(board, null).Install(builder, null, null);
             using (IObjectResolver container = builder.Build())
             {
                 Assert.DoesNotThrow(() => container.Resolve<IEventBus>());
@@ -34,11 +36,12 @@ namespace GearEngine.GearEngine.Tests.Editor
                 Assert.DoesNotThrow(() => container.Resolve<GearNodeFactory>());
                 Assert.DoesNotThrow(() => container.Resolve<IDragService>());
                 Assert.DoesNotThrow(() => container.Resolve<IInventoryService>());
+                Assert.DoesNotThrow(() => container.Resolve<IBoardService>());
                 Assert.DoesNotThrow(() => container.Resolve<IGearPresentationTransferService>());
                 Assert.DoesNotThrow(() => container.Resolve<GearEngineFeatureToggleSO>());
             }
 
-            Object.DestroyImmediate(board);
+            UnityEngine.Object.DestroyImmediate(board);
         }
 
         [Test]
@@ -49,15 +52,15 @@ namespace GearEngine.GearEngine.Tests.Editor
 
             var builder = new ContainerBuilder();
             new EventsInstaller().Install(builder);
-            new GearMechanicsInstaller(board, toggle).Install(builder);
+            new GearMechanicsInstaller(board, toggle).Install(builder, GearInventoryLoadoutData.Empty(), new GearBoardLoadoutData());
             using (IObjectResolver container = builder.Build())
             {
                 var resolved = container.Resolve<GearEngineFeatureToggleSO>();
                 Assert.AreSame(toggle, resolved, "Should resolve the explicitly provided toggle.");
             }
 
-            Object.DestroyImmediate(board);
-            Object.DestroyImmediate(toggle);
+            UnityEngine.Object.DestroyImmediate(board);
+            UnityEngine.Object.DestroyImmediate(toggle);
         }
 
         [Test]
@@ -68,13 +71,13 @@ namespace GearEngine.GearEngine.Tests.Editor
 
             var builder = new ContainerBuilder();
             new EventsInstaller().Install(builder);
-            new GearMechanicsInstaller(board, null).Install(builder);
+            new GearMechanicsInstaller(board, null).Install(builder, null, null);
             using (IObjectResolver container = builder.Build())
             {
                 Assert.Throws<VContainerException>(() => container.Resolve<GearViewFactory>());
             }
 
-            Object.DestroyImmediate(board);
+            UnityEngine.Object.DestroyImmediate(board);
         }
     }
 }

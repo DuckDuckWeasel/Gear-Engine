@@ -65,7 +65,6 @@ namespace GearEngine.CarSimulation.Tests
             var nav = new CapturingNavigation();
             InjectPrivateField(bootstrap, "factory", factory);
             InjectPrivateField(bootstrap, "navigation", nav);
-            InjectPrivateField(bootstrap, "raceSessionRunner", new RaceSessionRunner());
             return (bootstrap, nav);
         }
 

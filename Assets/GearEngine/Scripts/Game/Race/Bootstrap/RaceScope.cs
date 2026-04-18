@@ -1,5 +1,6 @@
 using System;
 using GearEngine.CarSimulation.Bootstrap;
+using GearEngine.GearEngine;
 using GearEngine.GearEngine.Bootstrap;
 using GearEngine.GearEngine.Config;
 using GearEngine.SceneFoundation.Bootstrap;
@@ -23,6 +24,10 @@ namespace GearEngine.Race.Bootstrap
         [SerializeField]
         private GearEngineFeatureToggleSO featureToggle;
 
+        [Header("Race start (inventory seed for gear mechanics)")]
+        [SerializeField]
+        private RaceStartData raceStartData;
+
         protected override void ValidateSceneAssignments()
         {
             RequireBoardConfig();
@@ -31,7 +36,15 @@ namespace GearEngine.Race.Bootstrap
 
         protected override void InstallFeatureServices(IContainerBuilder builder)
         {
-            new GearMechanicsInstaller(boardConfig, featureToggle).Install(builder);
+            GearInventoryLoadoutData inventoryLoadout = raceStartData?.GearEngineData != null
+                ? raceStartData.GearEngineData.GetInventoryLoadoutData()
+                : GearInventoryLoadoutData.Empty();
+
+            GearBoardLoadoutData boardLoadout = raceStartData?.GearEngineData != null
+                ? raceStartData.GearEngineData.GetBoardLoadoutData()
+                : new GearBoardLoadoutData();
+
+            new GearMechanicsInstaller(boardConfig, featureToggle).Install(builder, inventoryLoadout, boardLoadout);
             new CarTrackInstaller().Install(builder);
             builder.RegisterComponent(sceneBootstrap).AsImplementedInterfaces().AsSelf();
         }

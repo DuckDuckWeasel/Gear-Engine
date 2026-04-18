@@ -49,23 +49,28 @@ namespace GearEngine.Campaign.Bootstrap
 
         protected override void InstallFeatureServices(IContainerBuilder builder)
         {
-            new GearMechanicsInstaller(boardConfig, featureToggle).Install(builder);
-            new CarTrackInstaller().Install(builder);
-
-            LocalTrackService trackService = new LocalTrackService(tracks, roguelikeCardPool);
-            builder.RegisterInstance<ITrackService>(trackService);
-
-            GearEngineStartData gearStart = campaignGearStartData;
-            builder.RegisterInstance(gearStart);
-
-            LocalWalletService walletService = new LocalWalletService(initialGold: 0);
-            builder.RegisterInstance<IWalletService>(walletService);
+            GearEngineStartData gearStart = campaignGearStartData ?? new GearEngineStartData();
 
             LocalGearLoadoutService loadoutService = new LocalGearLoadoutService();
             if (gearStart.BoardLayout != null)
             {
                 loadoutService.SaveBoardLayout(gearStart.BoardLayout);
             }
+
+            GearInventoryLoadoutData inventoryLoadout = loadoutService.HasSavedInventory
+                ? GearInventoryLoadoutData.FromGearConfigs(gearStart.MaxInventorySlots, loadoutService.GetInventoryGearConfigs())
+                : gearStart.GetInventoryLoadoutData();
+
+            new GearMechanicsInstaller(boardConfig, featureToggle).Install(builder, inventoryLoadout, gearStart.GetBoardLoadoutData());
+            new CarTrackInstaller().Install(builder);
+
+            LocalTrackService trackService = new LocalTrackService(tracks, roguelikeCardPool);
+            builder.RegisterInstance<ITrackService>(trackService);
+
+            builder.RegisterInstance(gearStart);
+
+            LocalWalletService walletService = new LocalWalletService(initialGold: 0);
+            builder.RegisterInstance<IWalletService>(walletService);
 
             builder.RegisterInstance<IGearLoadoutService>(loadoutService);
             builder.RegisterComponent(sceneBootstrap).AsImplementedInterfaces().AsSelf();

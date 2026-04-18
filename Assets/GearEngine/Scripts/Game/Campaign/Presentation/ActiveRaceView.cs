@@ -1,6 +1,7 @@
 using System;
 using GearEngine.CarSimulation.Tracks;
 using GearEngine.FrustumFit;
+using GearEngine.GearEngine.Presentation.UI;
 using Scaffold.MVVM;
 using UnityEngine;
 
@@ -9,13 +10,13 @@ namespace GearEngine.Campaign.Presentation
     public class ActiveRaceView : View<ActiveRaceViewModel>
     {
         [SerializeField] private Track track;
+        [SerializeField] private BoardViewComponent board;
         [SerializeField] private RaceHudViewComponent hud;
         [SerializeField] private FrustumFitAnchor[] openTransitionAnchors;
         [SerializeField] private float openTransitionDurationSeconds = 0.35f;
 
         protected override void OnBind()
         {
-            ValidateHierarchy();
             if (track == null)
             {
                 throw new InvalidOperationException(
@@ -64,22 +65,9 @@ namespace GearEngine.Campaign.Presentation
                 track.gameObject.SetActive(active);
             }
 
-            if (hud != null)
+            if(board != null)
             {
-                hud.gameObject.SetActive(active);
-            }
-        }
-
-        private void ValidateHierarchy()
-        {
-            RequireReference(hud, nameof(hud));
-        }
-
-        private void RequireReference(UnityEngine.Object field, string name)
-        {
-            if (field == null)
-            {
-                throw new InvalidOperationException($"[ActiveRaceView] {name} reference is missing.");
+                board.gameObject.SetActive(active);
             }
         }
     }

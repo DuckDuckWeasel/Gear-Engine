@@ -4,14 +4,9 @@ using GearEngine.CarSimulation.Definitions;
 using GearEngine.CarSimulation.Presentation;
 using GearEngine.CarSimulation.Simulation;
 using GearEngine.GearEngine;
-using GearEngine.GearEngine.Bootstrap;
-using GearEngine.GearEngine.Config;
-using GearEngine.GearEngine.Manager;
-using GearEngine.GearEngine.Merge;
 using GearEngine.GearEngine.Presentation.UI;
-using GearEngine.GearEngine.Services;
+using GearEngine.GearEngine.Services.Board;
 using GearEngine.GearEngine.Services.Inventory;
-using Scaffold.Events.Contracts;
 using Scaffold.MVVM;
 using VContainer;
 
@@ -38,13 +33,7 @@ namespace GearEngine.Race
         private IGearEngineService engineService;
 
         [Inject]
-        private IGridManager gridManager;
-
-        [Inject]
-        private IGearNodeFactory nodeFactory;
-
-        [Inject]
-        private BoardConfigSO boardConfig;
+        private IBoardService boardService;
 
         [Inject]
         private TrackSimulationFactory trackFactory;
@@ -57,21 +46,6 @@ namespace GearEngine.Race
 
         [Inject]
         private IDragService dragService;
-
-        [Inject]
-        private IEventBus eventBus;
-
-        [Inject]
-        private GearEngineFeatureToggleSO featureToggle;
-
-        [Inject]
-        private IGridSwapService swapService;
-
-        [Inject]
-        private IGridMergeService mergeService;
-
-        [Inject]
-        private IGearPresentationTransferService presentationTransfer;
 
         protected override void Initialize()
         {
@@ -116,15 +90,13 @@ namespace GearEngine.Race
 
         private void SetupInventory()
         {
-            GearEngineStartData gearData = startData.GearEngineData ?? new GearEngineStartData();
-            Inventory = new GearInventoryViewModel(gearData.MaxInventorySlots, gearData.InventoryGears, engineService, inventoryService, dragService);
+            Inventory = new GearInventoryViewModel(engineService, inventoryService, dragService);
             BindChildViewModel(Inventory);
         }
 
         private void SetupBoard()
         {
-            GearEngineStartData gearData = startData.GearEngineData;
-            Board = new BoardViewModel(engineService, gridManager, nodeFactory, boardConfig, presentationTransfer, eventBus, featureToggle, dragService, swapService, mergeService, gearData?.BoardLayout);
+            Board = new BoardViewModel(boardService, inventoryService, engineService, dragService);
             BindChildViewModel(Board);
         }
 

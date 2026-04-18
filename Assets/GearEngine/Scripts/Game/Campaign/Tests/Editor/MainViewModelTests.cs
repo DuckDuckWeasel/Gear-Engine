@@ -14,6 +14,22 @@ namespace GearEngine.Campaign.Tests.Editor
 {
     public sealed class MainViewModelTests
     {
+        private sealed class RecordingRaceSessionRunner : IRaceSessionRunner
+        {
+            public LapRaceSession LastSetSession { get; private set; }
+
+            public LapRaceSession ActiveSession => LastSetSession;
+
+            public void SetSession(LapRaceSession session)
+            {
+                LastSetSession = session;
+            }
+
+            public void Tick()
+            {
+            }
+        }
+
         [Test]
         public void Initialize_CreatesTrackAndStatsChildren()
         {
@@ -25,14 +41,16 @@ namespace GearEngine.Campaign.Tests.Editor
             LapRaceSession session = CampaignTestUtilities.CreateMinimalSession(carDef, trackDef);
             var trackService = new FakeTrackService(trackDef, carDef, session);
 
+            var runner = new RecordingRaceSessionRunner();
             var vm = new MainViewModel();
             Inject(vm, "trackService", trackService);
             Inject(vm, "trackFactory", new TrackSimulationFactory());
-            Inject(vm, "raceSessionRunner", new RaceSessionRunner());
+            Inject(vm, "raceSessionRunner", runner);
             InjectNavigation(vm, new RecordingNavigation());
 
             InvokeInitialize(vm);
 
+            Assert.That(runner.LastSetSession, Is.Null);
             Assert.That(vm.Track, Is.Not.Null);
             Assert.That(vm.Stats, Is.Not.Null);
             Assert.That(vm.Track.Session, Is.SameAs(session));

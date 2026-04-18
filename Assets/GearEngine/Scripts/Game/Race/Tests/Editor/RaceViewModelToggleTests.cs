@@ -4,16 +4,21 @@ using GearEngine.CarSimulation;
 using GearEngine.CarSimulation.Definitions;
 using GearEngine.CarSimulation.Simulation;
 using GearEngine.GearEngine;
-using GearEngine.GearEngine.Bootstrap;
 using GearEngine.GearEngine.Config;
+using GearEngine.GearEngine.Merge;
 using GearEngine.GearEngine.Manager;
 using GearEngine.GearEngine.Nodes;
+using GearEngine.GearEngine.Services;
+using GearEngine.GearEngine.Services.Board;
+using GearEngine.GearEngine.Services.Inventory;
 using NUnit.Framework;
+using Scaffold.Events.Container;
 using Scaffold.Navigation.Contracts;
 using UnityEngine;
 using UnityEngine.Splines;
 using VContainer;
 using Object = UnityEngine.Object;
+using GearEngine.GearEngine.Bootstrap;
 
 namespace GearEngine.Race.Tests.Editor
 {
@@ -179,25 +184,36 @@ namespace GearEngine.Race.Tests.Editor
             boardConfig.GridWidth = 5;
             boardConfig.GridHeight = 5;
 
-            GearNodeFactory nodeFactory;
+            GearEngineFeatureToggleSO toggle = ScriptableObject.CreateInstance<GearEngineFeatureToggleSO>();
+            var inventoryService = new InventoryService(GearInventoryLoadoutData.Empty());
+
             var builder = new ContainerBuilder();
+            new EventsInstaller().Install(builder);
             builder.RegisterInstance(gridManager).As<IGridManager>();
             builder.RegisterInstance(boardConfig);
+            builder.RegisterInstance(engine).As<IGearEngineService>();
+            builder.RegisterInstance(toggle);
+            builder.RegisterInstance(new GearBoardLoadoutData());
+            builder.Register<GridSwapService>(Lifetime.Singleton).As<IGridSwapService>();
+            builder.Register<GearEngine.Merge.GridMergeService>(Lifetime.Singleton).As<IGridMergeService>();
             builder.Register<BaseGearNode>(Lifetime.Transient);
             builder.Register<CoreGearNode>(Lifetime.Transient);
             builder.Register<AuraGearNode>(Lifetime.Transient);
-            builder.Register<GearNodeFactory>(Lifetime.Singleton);
+            builder.Register<GearNodeFactory>(Lifetime.Singleton).As<IGearNodeFactory>();
+            builder.Register<BoardService>(Lifetime.Singleton).As<IBoardService>();
+
+            IBoardService boardService;
             using (IObjectResolver container = builder.Build())
             {
-                nodeFactory = container.Resolve<GearNodeFactory>();
+                boardService = container.Resolve<IBoardService>();
             }
 
             var trackFactory = new TrackSimulationFactory();
             var vm = new RaceViewModel(startData);
             InjectPrivateField(vm, "engineService", engine);
-            InjectPrivateField(vm, "gridManager", gridManager);
-            InjectPrivateField(vm, "nodeFactory", nodeFactory);
-            InjectPrivateField(vm, "boardConfig", boardConfig);
+            InjectPrivateField(vm, "boardService", boardService);
+            InjectPrivateField(vm, "inventoryService", inventoryService);
+            InjectPrivateField(vm, "dragService", (IDragService)null);
             InjectPrivateField(vm, "trackFactory", trackFactory);
             InjectPrivateField(vm, "raceSessionRunner", raceSessionRunner);
             InjectPrivateFieldInHierarchy(vm, "navigation", new NoOpNavigation());

@@ -3,12 +3,10 @@ using System.Collections.Generic;
 using CommunityToolkit.Mvvm.ComponentModel;
 using GearEngine.Campaign.Services;
 using GearEngine.GearEngine;
-using GearEngine.GearEngine.Bootstrap;
 using GearEngine.GearEngine.Config;
-using GearEngine.GearEngine.Manager;
-using GearEngine.GearEngine.Merge;
 using GearEngine.GearEngine.Presentation.UI;
 using GearEngine.GearEngine.Services;
+using GearEngine.GearEngine.Services.Board;
 using GearEngine.GearEngine.Services.Inventory;
 using Scaffold.Events.Contracts;
 using Scaffold.MVVM;
@@ -34,17 +32,11 @@ namespace GearEngine.Campaign.Presentation
 
         [Inject] private ITrackService trackService;
         [Inject] private IGearEngineService engineService;
-        [Inject] private IGridManager gridManager;
-        [Inject] private IGearNodeFactory nodeFactory;
-        [Inject] private BoardConfigSO boardConfig;
-        [Inject] private IEventBus eventBus;
+        [Inject] private IBoardService boardService;
         [Inject] private GearEngineFeatureToggleSO featureToggle;
         [Inject] private IDragService dragService;
-        [Inject] private IGridSwapService swapService;
-        [Inject] private IGridMergeService mergeService;
         [Inject] private IInventoryService inventoryService;
         [Inject] private IGearPresentationTransferService presentationTransferService;
-        [Inject] private GearEngineStartData campaignGearStartData;
 
         protected override void Initialize()
         {
@@ -75,7 +67,7 @@ namespace GearEngine.Campaign.Presentation
                     throw new InvalidOperationException("[RoguelikeViewModel] No card selected.");
                 }
 
-                inventoryService.AddItem(selectedCard.GearConfig.CreateRuntimeData());
+                inventoryService.TryAdd(selectedCard.GearConfig.CreateRuntimeData());
                 navigation.Open(new MainViewModel());
             }
             catch (Exception ex)
@@ -86,11 +78,9 @@ namespace GearEngine.Campaign.Presentation
 
         private void SetupGearEngineSubtree()
         {
-            GearEngineStartData gearStart = campaignGearStartData ?? new GearEngineStartData();
-
-            Board = new BoardViewModel(engineService, gridManager, nodeFactory, boardConfig, presentationTransferService, eventBus, featureToggle, dragService, swapService, mergeService, initialLayout: null);
+            Board = new BoardViewModel(boardService, inventoryService, engineService, dragService);
             BindChildViewModel(Board);
-            Inventory = new GearInventoryViewModel(gearStart.MaxInventorySlots, gearStart.InventoryGears, engineService, inventoryService, dragService);
+            Inventory = new GearInventoryViewModel(engineService, inventoryService, dragService);
             BindChildViewModel(Inventory);
             TrashZone = new TrashZoneViewModel(dragService, engineService, Board, presentationTransferService, featureToggle);
             BindChildViewModel(TrashZone);

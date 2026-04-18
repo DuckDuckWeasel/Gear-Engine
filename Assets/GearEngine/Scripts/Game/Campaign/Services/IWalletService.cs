@@ -2,8 +2,10 @@ namespace GearEngine.Campaign.Services
 {
     public interface IWalletService
     {
-        int CurrentGold { get; }
+        WalletModel GetWallet();
+
         void AddGold(int amount);
-        void SpendGold(int amount);
+
+        bool TrySpendGold(int amount);
     }
 }

@@ -11,6 +11,7 @@
         "Scaffold.MVVM",
         "Scaffold.MVVM.View",
         "Scaffold.MVVM.ViewModel",
+        "Scaffold.MVVM.Model",
         "Scaffold.Navigation",
         "Scaffold.Navigation.Container",
         "Scaffold.Records",

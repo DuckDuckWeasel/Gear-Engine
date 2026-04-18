@@ -17,26 +17,30 @@ namespace GearEngine.GearEngine.Presentation.UI
         [SerializeField] private TextMeshProUGUI inventoryLimitLabel;
 
         private Transform boardScaleReference;
+        private BoardViewComponent boardView;
 
         private bool inventoryUiBinding;
 
-        // todo: wired from GearEngineCoreViewComponent for board-matched ghost scale.
+        /// <summary>
+        /// Wires the board root used to match inventory gear scale to the board (and resolves <see cref="BoardViewComponent"/> for drag scaling).
+        /// </summary>
         public void SetBoardScaleReference(Transform reference)
         {
             boardScaleReference = reference;
+            boardView = reference != null ? reference.GetComponentInParent<BoardViewComponent>() : null;
         }
 
         protected override void OnBind()
         {
             Assert.IsNotNull(viewModel, "[GearInventoryView] ViewModel is missing.");
-            Assert.IsNotNull(viewModel.InventoryModel?.AvailableItems, "[GearInventoryView] Inventory items collection is missing.");
+            Assert.IsNotNull(viewModel.InventoryModel?.Items, "[GearInventoryView] Inventory items collection is missing.");
 
             inventoryUiBinding = true;
             try
             {
                 Bind(() => viewModel.InventoryLimitText, () => inventoryLimitLabel.text);
                 Bind<int, int>(() => viewModel.InventoryListRevision, OnInventoryListRevisionChanged);
-                Bind<IItem, IItem>(() => viewModel.InventoryModel.SelectedItem, OnSelectionChanged);
+                Bind<IItem, IItem>(() => viewModel.SelectedItem, OnSelectionChanged);
                 CheckTargetRect();
                 RebuildUIList();
             }
@@ -82,7 +86,7 @@ namespace GearEngine.GearEngine.Presentation.UI
         private void RebuildUIList()
         {
             ClearInventorySlots();
-            foreach (IItem item in viewModel.InventoryModel.AvailableItems)
+            foreach (IItem item in viewModel.InventoryModel.Items)
             {
                 AddPresenterForItem(item);
             }
@@ -137,7 +141,7 @@ namespace GearEngine.GearEngine.Presentation.UI
             }
 
             slotView.Bind(gear, viewModel);
-            HookDragHandlers(dragger, gear);
+            HookDragHandlers(dragger, gear, visualContainer);
         }
 
         private float ComputeBaseScale(Transform visualContainer)
@@ -151,13 +155,37 @@ namespace GearEngine.GearEngine.Presentation.UI
             return baseScale;
         }
 
-        private void HookDragHandlers(DragHandler dragger, GearConfigData gear)
+        private void HookDragHandlers(DragHandler dragger, GearConfigData gear, Transform visualContainer)
         {
             GearConfigData capturedGear = gear;
             dragger.OnDragBegin += () => viewModel.NotifySlotDragStarted(capturedGear);
             dragger.OnDragEnd += () => viewModel.NotifySlotDragEnded();
             dragger.BuildPayload = worldPos => new DragPayload(capturedGear, worldPos, dragger);
             dragger.OnDragAccepted = _ => viewModel.NotifySlotDragAccepted(capturedGear);
+            dragger.GhostUniformScaleResolver = screenPos => ResolveGhostUniformScale(capturedGear, visualContainer, dragger, screenPos);
+        }
+
+        private float ResolveGhostUniformScale(GearConfigData gear, Transform visualContainer, DragHandler dragger, Vector2 screenPos)
+        {
+            float slotRelativeScale = gear.RelativeScaleMultiplier * ComputeBaseScale(visualContainer);
+            Camera cam = Camera.main;
+            if (cam == null || boardView == null)
+            {
+                return slotRelativeScale;
+            }
+
+            var payload = new DragPayload(gear, Vector3.zero, dragger);
+            IDragTarget target = DragTargetFinder.Find(payload, screenPos, cam);
+            if (target is BoardViewComponent board && ReferenceEquals(board, boardView))
+            {
+                Transform root = board.GetBoardSpaceRoot();
+                if (root != null && visualContainer != null && visualContainer.lossyScale.x > 0f)
+                {
+                    return gear.RelativeScaleMultiplier * (root.lossyScale.x / visualContainer.lossyScale.x);
+                }
+            }
+
+            return slotRelativeScale;
         }
 
         public void OnDragStarted(DragPayload payload)
@@ -202,9 +230,9 @@ namespace GearEngine.GearEngine.Presentation.UI
         [ContextMenu("Mock: UI Click First Available Gear")]
         public void MockClickFirstGear()
         {
-            if (viewModel.InventoryModel.AvailableItems.Count > 0)
+            if (viewModel.InventoryModel.Items.Count > 0)
             {
-                viewModel.SelectGearLocal(viewModel.InventoryModel.AvailableItems.First() as GearConfigData);
+                viewModel.SelectGearLocal(viewModel.InventoryModel.Items.First() as GearConfigData);
             }
         }
 

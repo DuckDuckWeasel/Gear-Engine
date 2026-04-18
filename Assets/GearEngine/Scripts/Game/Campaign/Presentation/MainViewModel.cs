@@ -23,12 +23,13 @@ namespace GearEngine.Campaign.Presentation
         {
             base.Initialize();
 
+            raceSessionRunner.SetSession(null);
+
             LapRaceSession current = trackService.CurrentSession;
             if (current == null || current.Phase == SimulationLifecycleState.Completed)
             {
                 LapRaceSession preview = trackFactory.Create(trackService.CurrentCar, trackService.CurrentTrack);
                 trackService.SetCurrentSession(preview);
-                raceSessionRunner.SetSession(preview);
             }
 
             Track = new TrackViewModel(trackService.CurrentSession);

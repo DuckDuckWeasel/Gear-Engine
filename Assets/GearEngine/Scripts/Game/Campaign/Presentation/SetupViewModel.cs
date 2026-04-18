@@ -4,14 +4,11 @@ using System.Linq;
 using GearEngine.Campaign.Services;
 using GearEngine.CarSimulation;
 using GearEngine.CarSimulation.Presentation;
-using GearEngine.CarSimulation.Simulation;
 using GearEngine.GearEngine;
-using GearEngine.GearEngine.Bootstrap;
 using GearEngine.GearEngine.Config;
-using GearEngine.GearEngine.Manager;
-using GearEngine.GearEngine.Merge;
 using GearEngine.GearEngine.Presentation.UI;
 using GearEngine.GearEngine.Services;
+using GearEngine.GearEngine.Services.Board;
 using GearEngine.GearEngine.Services.Inventory;
 using Scaffold.Events.Contracts;
 using Scaffold.MVVM;
@@ -32,20 +29,14 @@ namespace GearEngine.Campaign.Presentation
 
         [Inject] private ITrackService trackService;
         [Inject] private IGearEngineService engineService;
-        [Inject] private IGridManager gridManager;
-        [Inject] private IGearNodeFactory nodeFactory;
-        [Inject] private BoardConfigSO boardConfig;
+        [Inject] private IBoardService boardService;
         [Inject] private IEventBus eventBus;
         [Inject] private GearEngineFeatureToggleSO featureToggle;
         [Inject] private IDragService dragService;
-        [Inject] private IGridSwapService swapService;
-        [Inject] private IGridMergeService mergeService;
         [Inject] private IInventoryService inventoryService;
         [Inject] private IGearPresentationTransferService presentationTransferService;
-        [Inject] private GearEngineStartData campaignGearStartData;
         [Inject] private IGearLoadoutService loadoutService;
         [Inject] private TrackSimulationFactory trackFactory;
-        [Inject] private IRaceSessionRunner raceSessionRunner;
 
         protected override void Initialize()
         {
@@ -55,26 +46,19 @@ namespace GearEngine.Campaign.Presentation
 
             LapRaceSession previewSession = trackFactory.Create(trackService.CurrentCar, trackService.CurrentTrack);
             trackService.SetCurrentSession(previewSession);
-            raceSessionRunner.SetSession(previewSession);
-
-            GearEngineStartData gearStart = campaignGearStartData ?? new GearEngineStartData();
 
             Track = new TrackViewModel(trackService.CurrentSession);
             BindChildViewModel(Track);
 
-            Board = new BoardViewModel(engineService, gridManager, nodeFactory, boardConfig, presentationTransferService, eventBus, featureToggle, dragService, swapService, mergeService, initialLayout: null);
+            Board = new BoardViewModel(boardService, inventoryService, engineService, dragService);
             BindChildViewModel(Board);
 
-            if (loadoutService.HasSavedLoadout && !gridManager.GetAllNodes().Any())
+            if (loadoutService.HasSavedLoadout && !boardService.GetAllNodes().Any())
             {
                 Board.LoadLayout(loadoutService.GetBoardLayout());
             }
 
-            IReadOnlyList<GearConfig> inventorySeed = loadoutService.HasSavedInventory
-                ? loadoutService.GetInventoryGearConfigs()
-                : gearStart.InventoryGears;
-
-            Inventory = new GearInventoryViewModel(gearStart.MaxInventorySlots, inventorySeed, engineService, inventoryService, dragService);
+            Inventory = new GearInventoryViewModel(engineService, inventoryService, dragService);
             BindChildViewModel(Inventory);
 
             TrashZone = new TrashZoneViewModel(dragService, engineService, Board, presentationTransferService, featureToggle);
@@ -85,11 +69,11 @@ namespace GearEngine.Campaign.Presentation
         {
             try
             {
-                BoardLayoutData snapshot = BoardLayoutData.FromNodes(gridManager.GetAllNodes());
+                BoardLayoutData snapshot = BoardLayoutData.FromNodes(boardService.GetAllNodes());
                 loadoutService.SaveBoardLayout(snapshot);
                 loadoutService.SaveInventoryGearConfigs(SnapshotInventoryGearConfigs());
 
-                navigation.Open(new ActiveRaceViewModel());
+                navigation.Open(new ActiveRaceViewModel(), closeCurrent: true);
             }
             catch (Exception ex)
             {
@@ -112,7 +96,7 @@ namespace GearEngine.Campaign.Presentation
         private IReadOnlyList<GearConfig> SnapshotInventoryGearConfigs()
         {
             var list = new List<GearConfig>();
-            foreach (IItem item in inventoryService.Model.AvailableItems)
+            foreach (IItem item in inventoryService.GetInventory().Items)
             {
                 if (item is GearConfigData data && data.SourceGearConfig != null)
                 {

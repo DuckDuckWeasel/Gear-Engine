@@ -14,6 +14,12 @@ namespace GearEngine.GearEngine.Presentation.UI
         public bool IsInteractable { get; set; } = true;
         public float GhostScaleMultiplier { get; set; } = 115f;
 
+        /// <summary>
+        /// When set, called each drag frame with screen position to compute uniform local scale for the ghost.
+        /// Use this so the ghost tracks live canvas/board scale instead of a single value captured at drag start.
+        /// </summary>
+        public Func<Vector2, float> GhostUniformScaleResolver { get; set; }
+
         public Action OnDragBegin;
         public Action OnDragEnd;
 
@@ -44,6 +50,7 @@ namespace GearEngine.GearEngine.Presentation.UI
 
             OnDragBegin?.Invoke();
             TryCreateGhost();
+            ApplyGhostUniformScale(eventData);
         }
 
         private void TryCreateGhost()
@@ -68,9 +75,28 @@ namespace GearEngine.GearEngine.Presentation.UI
 
         private void ApplyGhostScaleIfNeeded()
         {
+            if (GhostUniformScaleResolver != null)
+            {
+                return;
+            }
+
             if (currentGhost.GetComponent<RectTransform>() == null)
             {
                 currentGhost.transform.localScale = new Vector3(GhostScaleMultiplier, GhostScaleMultiplier, GhostScaleMultiplier);
+            }
+        }
+
+        private void ApplyGhostUniformScale(PointerEventData eventData)
+        {
+            if (GhostUniformScaleResolver == null || currentGhost == null)
+            {
+                return;
+            }
+
+            float uniform = GhostUniformScaleResolver(eventData.position);
+            if (uniform > 0f)
+            {
+                currentGhost.transform.localScale = new Vector3(uniform, uniform, uniform);
             }
         }
 
@@ -111,6 +137,7 @@ namespace GearEngine.GearEngine.Presentation.UI
             }
 
             UpdateGhostDragPosition(eventData);
+            ApplyGhostUniformScale(eventData);
         }
 
         private void UpdateGhostDragPosition(PointerEventData eventData)

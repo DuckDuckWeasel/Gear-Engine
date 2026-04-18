@@ -1,4 +1,5 @@
 using System;
+using GearEngine.GearEngine;
 using GearEngine.GearEngine.Presentation;
 using GearEngine.SceneFoundation.Bootstrap;
 using UnityEngine;
@@ -12,6 +13,10 @@ namespace GearEngine.GearEngine.Bootstrap
         [Header("Gear mechanics")]
         [SerializeField]
         private BoardConfigSO boardConfig;
+
+        [Header("Gear start (inventory + board seed for tests)")]
+        [SerializeField]
+        private GearEngineStartData gearStartData;
 
         [Header("Feature Toggles")]
         [SerializeField]
@@ -36,7 +41,8 @@ namespace GearEngine.GearEngine.Bootstrap
 
         protected override void InstallFeatureServices(IContainerBuilder builder)
         {
-            new GearMechanicsInstaller(boardConfig, featureToggle).Install(builder);
+            GearEngineStartData start = gearStartData != null ? gearStartData : new GearEngineStartData();
+            new GearMechanicsInstaller(boardConfig, featureToggle).Install(builder, start.GetInventoryLoadoutData(), start.GetBoardLoadoutData());
             builder.RegisterComponent(sceneBootstrap).AsImplementedInterfaces().AsSelf();
         }
     }

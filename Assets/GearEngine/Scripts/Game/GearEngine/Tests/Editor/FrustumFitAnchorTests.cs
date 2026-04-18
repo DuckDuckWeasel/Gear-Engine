@@ -350,6 +350,19 @@ namespace GearEngine.GearEngine.Tests.Editor
                 "Combined collider bounds of two laterally separated boxes must be wider than one.");
         }
 
+        [Test]
+        public void FrustumFitAnchor_ConfigureAutoApply_ExposedFlagsMatch()
+        {
+            _root = new GameObject("Root");
+            FrustumFitAnchor anchor = _root.AddComponent<FrustumFitAnchor>();
+            anchor.ConfigureAutoApply(true, false);
+            Assert.IsTrue(anchor.ApplyOnStart);
+            Assert.IsFalse(anchor.ApplyEveryFrame);
+            anchor.ConfigureAutoApply(false, true);
+            Assert.IsFalse(anchor.ApplyOnStart);
+            Assert.IsTrue(anchor.ApplyEveryFrame);
+        }
+
         // ── Helpers ──────────────────────────────────────────────────────────────
 
         private static void SetupCanvas(GameObject root, out Canvas canvas, out RectTransform uiRt)

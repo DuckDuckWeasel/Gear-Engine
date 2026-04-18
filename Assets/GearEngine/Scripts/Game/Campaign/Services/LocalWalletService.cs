@@ -5,6 +5,8 @@ namespace GearEngine.Campaign.Services
 {
     public sealed class LocalWalletService : IWalletService
     {
+        private readonly WalletModel wallet = new WalletModel();
+
         public LocalWalletService(int initialGold = 0)
         {
             if (initialGold < 0)
@@ -12,12 +14,10 @@ namespace GearEngine.Campaign.Services
                 throw new ArgumentOutOfRangeException(nameof(initialGold));
             }
 
-            currentGold = initialGold;
+            wallet.Gold = initialGold;
         }
 
-        public int CurrentGold => currentGold;
-
-        private int currentGold;
+        public WalletModel GetWallet() => wallet;
 
         public void AddGold(int amount)
         {
@@ -26,25 +26,25 @@ namespace GearEngine.Campaign.Services
                 throw new ArgumentOutOfRangeException(nameof(amount));
             }
 
-            currentGold += amount;
-            Debug.Log($"[LocalWalletService] +{amount} gold → total: {currentGold} (stub, not persisted).");
+            wallet.Gold += amount;
+            Debug.Log($"[LocalWalletService] +{amount} gold → total: {wallet.Gold} (stub, not persisted).");
         }
 
-        public void SpendGold(int amount)
+        public bool TrySpendGold(int amount)
         {
             if (amount < 0)
             {
-                throw new ArgumentOutOfRangeException(nameof(amount));
+                return false;
             }
 
-            if (amount > currentGold)
+            if (amount > wallet.Gold)
             {
-                throw new InvalidOperationException(
-                    $"[LocalWalletService] Cannot spend {amount} gold — only {currentGold} available.");
+                return false;
             }
 
-            currentGold -= amount;
-            Debug.Log($"[LocalWalletService] -{amount} gold → remaining: {currentGold} (stub, not persisted).");
+            wallet.Gold -= amount;
+            Debug.Log($"[LocalWalletService] -{amount} gold → remaining: {wallet.Gold} (stub, not persisted).");
+            return true;
         }
     }
 }

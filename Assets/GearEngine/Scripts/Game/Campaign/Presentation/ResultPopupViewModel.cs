@@ -20,7 +20,7 @@ namespace GearEngine.Campaign.Presentation
         public int Score => result.Score;
         public int GoldAmount => result.Gold.Amount;
 
-        public int CurrentGold => walletService.CurrentGold;
+        public int CurrentGold => walletService.GetWallet().Gold;
 
         private readonly RaceResultModel result;
 

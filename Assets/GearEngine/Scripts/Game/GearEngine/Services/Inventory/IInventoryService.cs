@@ -1,17 +1,11 @@
-using System.Collections.Generic;
-using UnityEngine;
-
 namespace GearEngine.GearEngine.Services.Inventory
 {
     public interface IInventoryService
     {
-        InventoryModel Model { get; }
-        int CurrentCount { get; }
-        int MaxSlots { get; }
+        InventoryModel GetInventory();
 
-        void Initialize(int maxSlots, IReadOnlyList<GearConfig> inventoryGears);
-        void LoadInventory(IEnumerable<IItem> items);
-        void AddItem(IItem item);
-        void ConsumeSpecificItem(IItem item);
+        bool TryAdd(IItem item);
+
+        bool TryConsume(IItem item);
     }
 }

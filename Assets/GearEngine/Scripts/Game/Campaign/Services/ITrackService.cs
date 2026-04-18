@@ -9,13 +9,21 @@ namespace GearEngine.Campaign.Services
     public interface ITrackService
     {
         TrackDefinition CurrentTrack { get; }
+
         CarDefinition CurrentCar { get; }
+
         LapRaceSession CurrentSession { get; }
+
+        TrackProgressModel GetTrackProgress();
+
+        IReadOnlyList<TrackEntry> GetOrderedTracks();
 
         IReadOnlyList<GearConfig> GetRoguelikeCardOptions();
 
         void SetCurrentSession(LapRaceSession session);
+
         void RecordResult(RaceResultModel result);
+
         void AdvanceToNextTrack();
     }
 }

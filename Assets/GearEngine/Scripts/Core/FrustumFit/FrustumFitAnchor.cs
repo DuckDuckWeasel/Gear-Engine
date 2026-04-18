@@ -58,6 +58,12 @@ namespace GearEngine.FrustumFit
             worldCamera = camera;
         }
 
+        /// <summary>Serialized auto-apply on <c>Start()</c>; exposed for snapshot/restore around transitions.</summary>
+        public bool ApplyOnStart => applyOnStart;
+
+        /// <summary>Serialized continuous apply in <c>LateUpdate()</c>; exposed for snapshot/restore around transitions.</summary>
+        public bool ApplyEveryFrame => applyEveryFrame;
+
         public void ConfigureAutoApply(bool applyOnStartValue, bool applyEveryFrameValue)
         {
             applyOnStart = applyOnStartValue;

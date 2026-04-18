@@ -9,7 +9,7 @@ namespace GearEngine.Campaign.Services
 {
     public sealed class LocalTrackService : ITrackService
     {
-        public LocalTrackService(IReadOnlyList<TrackEntry> tracks, GearConfig[] roguelikeCardPool)
+        public LocalTrackService(IReadOnlyList<TrackEntry> tracks, GearConfig[] roguelikeCardPool, TrackProgressModel trackProgress = null)
         {
             if (tracks == null || tracks.Count == 0)
             {
@@ -18,16 +18,23 @@ namespace GearEngine.Campaign.Services
 
             this.tracks = tracks;
             this.roguelikeCardPool = roguelikeCardPool ?? Array.Empty<GearConfig>();
-            currentIndex = 0;
+            this.trackProgress = trackProgress ?? new TrackProgressModel();
+            this.trackProgress.CurrentTrackIndex = 0;
         }
 
-        public TrackDefinition CurrentTrack => tracks[currentIndex].Track;
-        public CarDefinition CurrentCar => tracks[currentIndex].Car;
+        public TrackDefinition CurrentTrack => tracks[trackProgress.CurrentTrackIndex].Track;
+
+        public CarDefinition CurrentCar => tracks[trackProgress.CurrentTrackIndex].Car;
+
         public LapRaceSession CurrentSession { get; private set; }
 
         private readonly IReadOnlyList<TrackEntry> tracks;
         private readonly GearConfig[] roguelikeCardPool;
-        private int currentIndex;
+        private readonly TrackProgressModel trackProgress;
+
+        public TrackProgressModel GetTrackProgress() => trackProgress;
+
+        public IReadOnlyList<TrackEntry> GetOrderedTracks() => tracks;
 
         public IReadOnlyList<GearConfig> GetRoguelikeCardOptions()
         {
@@ -51,10 +58,10 @@ namespace GearEngine.Campaign.Services
 
         public void AdvanceToNextTrack()
         {
-            if (currentIndex < tracks.Count - 1)
+            if (trackProgress.CurrentTrackIndex < tracks.Count - 1)
             {
-                currentIndex++;
-                Debug.Log($"[LocalTrackService] Advanced to track {currentIndex}: {CurrentTrack.name}");
+                trackProgress.CurrentTrackIndex++;
+                Debug.Log($"[LocalTrackService] Advanced to track {trackProgress.CurrentTrackIndex}: {CurrentTrack.name}");
             }
             else
             {

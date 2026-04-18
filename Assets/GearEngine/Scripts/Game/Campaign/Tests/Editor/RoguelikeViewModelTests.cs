@@ -40,17 +40,11 @@ namespace GearEngine.Campaign.Tests.Editor
                     var vm = new RoguelikeViewModel();
                     ViewModelTestInject.InjectPrivateField(vm, "trackService", trackService);
                     ViewModelTestInject.InjectPrivateField(vm, "engineService", gear.Engine);
-                    ViewModelTestInject.InjectPrivateField(vm, "gridManager", gear.GridManager);
-                    ViewModelTestInject.InjectPrivateField(vm, "nodeFactory", gear.NodeFactory);
-                    ViewModelTestInject.InjectPrivateField(vm, "boardConfig", gear.BoardConfig);
-                    ViewModelTestInject.InjectPrivateField(vm, "eventBus", gear.EventBus);
+                    ViewModelTestInject.InjectPrivateField(vm, "boardService", gear.BoardService);
                     ViewModelTestInject.InjectPrivateField(vm, "featureToggle", gear.FeatureToggle);
                     ViewModelTestInject.InjectPrivateField(vm, "dragService", gear.DragService);
-                    ViewModelTestInject.InjectPrivateField(vm, "swapService", gear.SwapService);
-                    ViewModelTestInject.InjectPrivateField(vm, "mergeService", gear.MergeService);
                     ViewModelTestInject.InjectPrivateField(vm, "inventoryService", gear.InventoryService);
                     ViewModelTestInject.InjectPrivateField(vm, "presentationTransferService", gear.PresentationTransfer);
-                    ViewModelTestInject.InjectPrivateField(vm, "campaignGearStartData", new GearEngineStartData());
                     ViewModelTestInject.InjectNavigation(vm, new RecordingNavigation());
 
                     ViewModelTestInject.InvokeInitialize(vm);
@@ -94,17 +88,11 @@ namespace GearEngine.Campaign.Tests.Editor
                     var vm = new RoguelikeViewModel();
                     ViewModelTestInject.InjectPrivateField(vm, "trackService", trackService);
                     ViewModelTestInject.InjectPrivateField(vm, "engineService", gear.Engine);
-                    ViewModelTestInject.InjectPrivateField(vm, "gridManager", gear.GridManager);
-                    ViewModelTestInject.InjectPrivateField(vm, "nodeFactory", gear.NodeFactory);
-                    ViewModelTestInject.InjectPrivateField(vm, "boardConfig", gear.BoardConfig);
-                    ViewModelTestInject.InjectPrivateField(vm, "eventBus", gear.EventBus);
+                    ViewModelTestInject.InjectPrivateField(vm, "boardService", gear.BoardService);
                     ViewModelTestInject.InjectPrivateField(vm, "featureToggle", gear.FeatureToggle);
                     ViewModelTestInject.InjectPrivateField(vm, "dragService", gear.DragService);
-                    ViewModelTestInject.InjectPrivateField(vm, "swapService", gear.SwapService);
-                    ViewModelTestInject.InjectPrivateField(vm, "mergeService", gear.MergeService);
                     ViewModelTestInject.InjectPrivateField(vm, "inventoryService", gear.InventoryService);
                     ViewModelTestInject.InjectPrivateField(vm, "presentationTransferService", gear.PresentationTransfer);
-                    ViewModelTestInject.InjectPrivateField(vm, "campaignGearStartData", new GearEngineStartData());
                     ViewModelTestInject.InjectNavigation(vm, new RecordingNavigation());
 
                     ViewModelTestInject.InvokeInitialize(vm);
@@ -153,17 +141,11 @@ namespace GearEngine.Campaign.Tests.Editor
                     var vm = new RoguelikeViewModel();
                     ViewModelTestInject.InjectPrivateField(vm, "trackService", trackService);
                     ViewModelTestInject.InjectPrivateField(vm, "engineService", gear.Engine);
-                    ViewModelTestInject.InjectPrivateField(vm, "gridManager", gear.GridManager);
-                    ViewModelTestInject.InjectPrivateField(vm, "nodeFactory", gear.NodeFactory);
-                    ViewModelTestInject.InjectPrivateField(vm, "boardConfig", gear.BoardConfig);
-                    ViewModelTestInject.InjectPrivateField(vm, "eventBus", gear.EventBus);
+                    ViewModelTestInject.InjectPrivateField(vm, "boardService", gear.BoardService);
                     ViewModelTestInject.InjectPrivateField(vm, "featureToggle", gear.FeatureToggle);
                     ViewModelTestInject.InjectPrivateField(vm, "dragService", gear.DragService);
-                    ViewModelTestInject.InjectPrivateField(vm, "swapService", gear.SwapService);
-                    ViewModelTestInject.InjectPrivateField(vm, "mergeService", gear.MergeService);
                     ViewModelTestInject.InjectPrivateField(vm, "inventoryService", inventory);
                     ViewModelTestInject.InjectPrivateField(vm, "presentationTransferService", gear.PresentationTransfer);
-                    ViewModelTestInject.InjectPrivateField(vm, "campaignGearStartData", new GearEngineStartData());
                     ViewModelTestInject.InjectNavigation(vm, navigation);
 
                     ViewModelTestInject.InvokeInitialize(vm);

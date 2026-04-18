@@ -107,7 +107,7 @@ namespace GearEngine.Campaign.Tests.Editor
             Assert.That(engine.IsRunning, Is.False);
             Assert.That(navigation.OpenedControllers.Count, Is.EqualTo(1));
             Assert.That(navigation.OpenedControllers[0], Is.InstanceOf<ResultPopupViewModel>());
-            Assert.That(wallet.CurrentGold, Is.GreaterThan(0));
+            Assert.That(wallet.GetWallet().Gold, Is.GreaterThan(0));
             Assert.That(trackService.RecordResultCallCount, Is.EqualTo(1));
 
             Object.DestroyImmediate(carDef);

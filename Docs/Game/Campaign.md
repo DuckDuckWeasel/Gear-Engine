@@ -4,8 +4,8 @@ The **Game.Campaign** assembly implements a five-screen flow in a single scene: 
 
 ## Responsibilities
 
-- **`ITrackService` / `LocalTrackService`** — Current track and car, the active `LapRaceSession`, roguelike card pool, result recording (stub log), and campaign progression (stub index).
-- **`IWalletService` / `LocalWalletService`** — In-memory gold; credited after each race.
+- **`ITrackService` / `LocalTrackService`** — Current track and car, the active `LapRaceSession`, roguelike card pool, result recording (stub log), and campaign progression (stub index). Exposes **`TrackProgressModel`** via `GetTrackProgress()` and ordered `TrackEntry` list via `GetOrderedTracks()`.
+- **`IWalletService` / `LocalWalletService`** — In-memory gold; credited after each race. Exposes **`WalletModel`** via `GetWallet()`; spending uses `TrySpendGold(int)` (returns `false` when insufficient).
 - **`CampaignScope`** — Extends `SceneFoundationScope`, installs `GearMechanicsInstaller`, `CarTrackInstaller`, registers track and wallet services, and registers `CampaignBootstrap`.
 - **`CampaignBootstrap`** — On startup, creates the initial `LapRaceSession` via `TrackSimulationFactory`, assigns it to `ITrackService` and `IRaceSessionRunner`, then opens `MainViewModel`.
 
