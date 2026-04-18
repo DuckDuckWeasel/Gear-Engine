@@ -9,9 +9,11 @@ namespace GearEngine.CarSimulation.Presentation
 {
     public sealed partial class TrackViewModel : ViewModel
     {
-        public TrackViewModel(LapRaceSession session)
+        public TrackViewModel(LapRaceSession session, bool spawnCarOnBindIfNoChild = false, bool spawnCarWhenSessionStartsRunning = false)
         {
             this.session = session ?? throw new ArgumentNullException(nameof(session));
+            SpawnCarOnBindIfNoChild = spawnCarOnBindIfNoChild;
+            SpawnCarWhenSessionStartsRunning = spawnCarWhenSessionStartsRunning;
         }
 
         public TrackDefinition Track => session.Track;
@@ -19,6 +21,10 @@ namespace GearEngine.CarSimulation.Presentation
         public CarEntity Car => session.Car;
 
         public LapRaceSession Session => session;
+
+        public bool SpawnCarOnBindIfNoChild { get; }
+
+        public bool SpawnCarWhenSessionStartsRunning { get; }
 
         [ObservableProperty]
         private SimulationLifecycleState state;

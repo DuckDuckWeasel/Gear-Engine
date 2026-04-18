@@ -49,7 +49,7 @@ namespace GearEngine.Campaign.Presentation
             Track = new TrackViewModel(trackService.CurrentSession);
             BindChildViewModel(Track);
 
-            Board = new BoardViewModel(engineService, gridManager, nodeFactory, boardConfig, presentationTransferService, eventBus, featureToggle, dragService, swapService, mergeService, initialLayout: null);
+            Board = new BoardViewModel(engineService, gridManager, nodeFactory, boardConfig, presentationTransferService, eventBus, featureToggle, dragService, swapService, mergeService, initialLayout: gearStart.BoardLayout);
             BindChildViewModel(Board);
 
             Inventory = new GearInventoryViewModel(gearStart.MaxInventorySlots, gearStart.InventoryGears, engineService, inventoryService, dragService);

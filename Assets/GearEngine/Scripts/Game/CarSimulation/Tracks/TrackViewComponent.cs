@@ -1,6 +1,7 @@
 using System;
 using GearEngine.CarSimulation;
 using GearEngine.CarSimulation.Definitions;
+using GearEngine.CarSimulation.Entity;
 using GearEngine.CarSimulation.Presentation;
 using Scaffold.MVVM;
 using UnityEngine;
@@ -19,6 +20,13 @@ namespace GearEngine.CarSimulation.Tracks
         [SerializeField] private SplineContainer splineContainer;
         [SerializeField] private SplineExtrude splineExtrude;
 
+        private GameObject spawnedDynamicCar;
+
+        public void ReleaseViewBinding()
+        {
+            Unbind();
+        }
+
         private void Awake()
         {
             EnsureSplineContainerReference();
@@ -34,28 +42,17 @@ namespace GearEngine.CarSimulation.Tracks
 
             InitializeTrack(viewModel.Track);
             TryBindRaceSessionToScene();
+            if (viewModel.SpawnCarWhenSessionStartsRunning)
+            {
+                Bind<SimulationLifecycleState, SimulationLifecycleState>(() => viewModel.State, OnTrackStateChangedForDeferredCarSpawn);
+            }
         }
 
         protected override void OnUnbind()
         {
+            DestroySpawnedDynamicCar();
             viewModel?.TearDown();
             base.OnUnbind();
-        }
-
-        private void TryBindRaceSessionToScene()
-        {
-            LapRaceSession session = viewModel.Session;
-            if (session == null)
-            {
-                return;
-            }
-
-            session.BindSpline(SplineContainer);
-            CarView carView = GetComponentInChildren<CarView>(true);
-            if (carView != null)
-            {
-                carView.Initialize(session.Car, SplineContainer, session);
-            }
         }
 
         private void InitializeTrack(TrackDefinition data)
@@ -171,6 +168,116 @@ namespace GearEngine.CarSimulation.Tracks
             Spline target = targetContainer.Spline;
             target.Knots = source.Knots;
             target.Closed = source.Closed;
+        }
+
+        private void TryBindRaceSessionToScene()
+        {
+            LapRaceSession session = viewModel.Session;
+            if (session == null)
+            {
+                return;
+            }
+
+            session.BindSpline(SplineContainer);
+            TryInitializeExistingOrSpawnCar(session);
+        }
+
+        private void TryInitializeExistingOrSpawnCar(LapRaceSession session)
+        {
+            CarView carView = GetComponentInChildren<CarView>(true);
+            if (carView != null)
+            {
+                carView.Initialize(session.Car, SplineContainer, session);
+                return;
+            }
+
+            if (viewModel.SpawnCarOnBindIfNoChild)
+            {
+                TrySpawnDynamicCarForSession(session);
+            }
+        }
+
+        private void OnTrackStateChangedForDeferredCarSpawn(SimulationLifecycleState state)
+        {
+            if (state != SimulationLifecycleState.Running)
+            {
+                return;
+            }
+
+            if (GetComponentInChildren<CarView>(true) != null)
+            {
+                return;
+            }
+
+            LapRaceSession session = viewModel.Session;
+            if (session == null)
+            {
+                return;
+            }
+
+            TrySpawnDynamicCarForSession(session);
+        }
+
+        private void TrySpawnDynamicCarForSession(LapRaceSession session)
+        {
+            if (!TryResolveCarPrefab(session, out GameObject prefab))
+            {
+                return;
+            }
+
+            GameObject instance = Instantiate(prefab, transform);
+            if (!instance.TryGetComponent(out CarView newCarView))
+            {
+                Debug.LogError("[Track] Spawned CarPrefab is missing a CarView component.");
+                DestroySpawnedGameObject(instance);
+                return;
+            }
+
+            spawnedDynamicCar = instance;
+            newCarView.Initialize(session.Car, SplineContainer, session);
+        }
+
+        private bool TryResolveCarPrefab(LapRaceSession session, out GameObject prefab)
+        {
+            prefab = null;
+            CarEntity car = session.Car;
+            if (car?.Definition == null)
+            {
+                Debug.LogError("[Track] Cannot spawn car: session.Car or CarDefinition is missing.");
+                return false;
+            }
+
+            prefab = car.Definition.CarPrefab;
+            if (prefab == null)
+            {
+                Debug.LogError("[Track] Cannot spawn car: CarDefinition.CarPrefab is not assigned.");
+                return false;
+            }
+
+            return true;
+        }
+
+        private void DestroySpawnedDynamicCar()
+        {
+            DestroySpawnedGameObject(spawnedDynamicCar);
+            spawnedDynamicCar = null;
+        }
+
+        private void DestroySpawnedGameObject(GameObject instance)
+        {
+            if (instance == null)
+            {
+                return;
+            }
+
+            if (Application.isPlaying)
+            {
+                UnityEngine.Object.Destroy(instance);
+            }
+            else
+            {
+                UnityEngine.Object.DestroyImmediate(instance);
+            }
         }
     }
 }

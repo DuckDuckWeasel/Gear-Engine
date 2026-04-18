@@ -30,7 +30,7 @@ namespace GearEngine.Campaign.Presentation
             trackService.SetCurrentSession(freshSession);
             raceSessionRunner.SetSession(freshSession);
 
-            Track = new TrackViewModel(trackService.CurrentSession);
+            Track = new TrackViewModel(trackService.CurrentSession, spawnCarOnBindIfNoChild: true);
             BindChildViewModel(Track);
 
             engineService.Play();

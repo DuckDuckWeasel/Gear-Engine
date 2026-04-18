@@ -67,6 +67,7 @@ namespace GearEngine.Campaign.Tests.Editor
             Assert.That(runner.LastSetSession, Is.Not.Null);
             Assert.That(trackService.CurrentSession, Is.SameAs(runner.LastSetSession));
             Assert.That(vm.Track.Session, Is.SameAs(trackService.CurrentSession));
+            Assert.That(vm.Track.SpawnCarOnBindIfNoChild, Is.True);
 
             Object.DestroyImmediate(carDef);
             Object.DestroyImmediate(trackDef);

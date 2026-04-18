@@ -28,6 +28,7 @@ namespace GearEngine.Campaign.Presentation
         {
             if (track != null)
             {
+                track.ReleaseViewBinding();
                 track.gameObject.SetActive(false);
             }
 

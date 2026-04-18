@@ -26,6 +26,11 @@ namespace GearEngine.Race.Presentation
         protected override void OnUnbind()
         {
             UnsubscribeRaceUi();
+            if (track != null)
+            {
+                track.ReleaseViewBinding();
+            }
+
             base.OnUnbind();
         }
 

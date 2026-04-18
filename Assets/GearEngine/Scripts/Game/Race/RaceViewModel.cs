@@ -132,7 +132,7 @@ namespace GearEngine.Race
         {
             LapRaceSession session = trackFactory.Create(startData.CarDefinition, startData.TrackDefinition, startData.SessionConfig);
             raceSessionRunner.SetSession(session);
-            Track = new TrackViewModel(session);
+            Track = new TrackViewModel(session, spawnCarOnBindIfNoChild: false, spawnCarWhenSessionStartsRunning: true);
             BindChildViewModel(Track);
         }
     }

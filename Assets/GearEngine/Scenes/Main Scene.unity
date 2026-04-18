@@ -194,6 +194,8 @@ MonoBehaviour:
       placements:
       - position: {x: 0, y: 0}
         gearConfig: {fileID: 11400000, guid: 39144108699f44d10b422acf50e748ba, type: 2}
+      - position: {x: 1, y: 1}
+        gearConfig: {fileID: 11400000, guid: fc9fa8903c002405f937050464c1d2a5, type: 2}
     inventoryGears:
     - {fileID: 11400000, guid: 39144108699f44d10b422acf50e748ba, type: 2}
     - {fileID: 11400000, guid: 3783c6d85510a4bf6b4f879d30ef249b, type: 2}
@@ -344,6 +346,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2103925626671770930, guid: 1bb691964ce722a4ba6aed0bf6fb73c1, type: 3}
+      propertyPath: boardLimitLabel
+      value: 
+      objectReference: {fileID: 543835141}
     - target: {fileID: 5861437231989158850, guid: 1bb691964ce722a4ba6aed0bf6fb73c1, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -395,8 +401,12 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6729591007542048819, guid: ba83461cca946410a94c4343a45a483e, type: 3}
+      propertyPath: m_Camera
+      value: 
+      objectReference: {fileID: 1196090827}
+    - target: {fileID: 6729591007542048819, guid: ba83461cca946410a94c4343a45a483e, type: 3}
       propertyPath: m_RenderMode
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7117210366275758624, guid: ba83461cca946410a94c4343a45a483e, type: 3}
       propertyPath: m_Name
@@ -597,8 +607,12 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8912927473165671687, guid: 5c0f2c75741614be083b530936f65100, type: 3}
+      propertyPath: m_Camera
+      value: 
+      objectReference: {fileID: 1196090827}
+    - target: {fileID: 8912927473165671687, guid: 5c0f2c75741614be083b530936f65100, type: 3}
       propertyPath: m_RenderMode
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -643,6 +657,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9773e930565084b8ba09833fbc6f546c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Presentation.UI.TrashDropZoneView
+--- !u!114 &543835141 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6477635007171428367, guid: 1bb691964ce722a4ba6aed0bf6fb73c1, type: 3}
+  m_PrefabInstance: {fileID: 500010130}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
 --- !u!1 &661299470
 GameObject:
   m_ObjectHideFlags: 0
@@ -982,6 +1007,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Main View
       objectReference: {fileID: 0}
+    - target: {fileID: 5207228282024246112, guid: 3baae1b6fa9ea2345a187b40f8fe60ee, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6964219568219412174, guid: 3baae1b6fa9ea2345a187b40f8fe60ee, type: 3}
       propertyPath: m_Camera
       value: 
@@ -1146,6 +1175,54 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 920020011001100102, guid: 689dcd40046774c4b80166058bccaf5f, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 920020011001100102, guid: 689dcd40046774c4b80166058bccaf5f, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 920020011001100102, guid: 689dcd40046774c4b80166058bccaf5f, type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 920020011001100102, guid: 689dcd40046774c4b80166058bccaf5f, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 920020011001100102, guid: 689dcd40046774c4b80166058bccaf5f, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 500
+      objectReference: {fileID: 0}
+    - target: {fileID: 920020011001100102, guid: 689dcd40046774c4b80166058bccaf5f, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 500
+      objectReference: {fileID: 0}
+    - target: {fileID: 920020011001100102, guid: 689dcd40046774c4b80166058bccaf5f, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 920020011001100102, guid: 689dcd40046774c4b80166058bccaf5f, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 920020011001100102, guid: 689dcd40046774c4b80166058bccaf5f, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 920020011001100102, guid: 689dcd40046774c4b80166058bccaf5f, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 250
+      objectReference: {fileID: 0}
+    - target: {fileID: 920020011001100102, guid: 689dcd40046774c4b80166058bccaf5f, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 509
+      objectReference: {fileID: 0}
+    - target: {fileID: 920020011001100102, guid: 689dcd40046774c4b80166058bccaf5f, type: 3}
+      propertyPath: m_ConstrainProportionsScale
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 920020011001100103, guid: 689dcd40046774c4b80166058bccaf5f, type: 3}
       propertyPath: worldCamera
       value: 
@@ -1195,7 +1272,8 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 475032438383026787, guid: 689dcd40046774c4b80166058bccaf5f, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 689dcd40046774c4b80166058bccaf5f, type: 3}

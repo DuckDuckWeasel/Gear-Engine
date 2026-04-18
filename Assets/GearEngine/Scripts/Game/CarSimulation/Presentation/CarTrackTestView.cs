@@ -26,11 +26,12 @@ namespace GearEngine.CarSimulation.Presentation
                 return;
             }
 
-            track.Bind(new TrackViewModel(viewModel.Sessions[0]));
+            track.Bind(new TrackViewModel(viewModel.Sessions[0], spawnCarOnBindIfNoChild: true));
+            viewModel.Sessions[0].SetClockRunning(true);
 
-            foreach (LapRaceSession session in viewModel.Sessions)
+            for (int i = 1; i < viewModel.Sessions.Count; i++)
             {
-                TrySpawnCar(session);
+                TrySpawnCar(viewModel.Sessions[i]);
             }
         }
 
@@ -67,6 +68,11 @@ namespace GearEngine.CarSimulation.Presentation
 
         protected override void OnUnbind()
         {
+            if (track != null)
+            {
+                track.ReleaseViewBinding();
+            }
+
             foreach (CarView car in spawnedCars)
             {
                 if (car != null)
