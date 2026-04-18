@@ -107,6 +107,21 @@ namespace GearEngine.GearEngine.Presentation.UI
                 throw new InvalidOperationException("BoardViewModel must be initialized before LoadLayout.");
             }
 
+            if (engineService != null && engineService.IsRunning)
+            {
+                engineService.Stop();
+            }
+
+            RefreshSimulationRunningFromGrid();
+
+            foreach (IGridNode node in gridManager.GetAllNodes().ToArray())
+            {
+                OnGearRemoved?.Invoke(node);
+            }
+
+            gridManager.ClearAll();
+            UpdateLabels();
+
             foreach (BoardGearPlacementData placement in layout.Placements)
             {
                 if (placement == null || placement.GearConfig == null)
@@ -133,6 +148,8 @@ namespace GearEngine.GearEngine.Presentation.UI
                 IGridNode node = nodeFactory.CreateNode(pos, runtimeData);
                 gridManager.AddNode(node);
             }
+
+            UpdateLabels();
         }
 
         public void OnGearPickedUp(IGridNode node, Vector2Int fromPos)

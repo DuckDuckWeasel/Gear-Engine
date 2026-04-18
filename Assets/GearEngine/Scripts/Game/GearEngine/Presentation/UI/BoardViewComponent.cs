@@ -25,6 +25,8 @@ namespace GearEngine.GearEngine.Presentation.UI
 
         protected override void OnBind()
         {
+            localFactory ??= new GearViewFactory();
+
             viewModel.OnGearPlaced += HandleGearPlaced;
             viewModel.OnGearRemoved += HandleGearRemoved;
 

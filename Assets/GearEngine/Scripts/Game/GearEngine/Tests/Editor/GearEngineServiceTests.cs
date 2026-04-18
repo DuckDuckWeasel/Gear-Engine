@@ -29,7 +29,9 @@ namespace GearEngine.GearEngine.Tests.Editor
 
             public IGridNode GetNode(Vector2Int pos) => null;
 
-
+            public void ClearAll()
+            {
+            }
 
             public void Play() => PlayCalled = true;
 

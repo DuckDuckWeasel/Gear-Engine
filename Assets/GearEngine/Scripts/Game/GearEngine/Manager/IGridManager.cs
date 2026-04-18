@@ -12,6 +12,9 @@ namespace GearEngine.GearEngine.Manager
         IGridNode ExtractNode(Vector2Int pos);
         IGridNode GetNode(Vector2Int pos);
 
+        /// <summary>Stops simulation, disposes every node, and clears the grid.</summary>
+        void ClearAll();
+
         bool IsRunning { get; }
         void Play();
         void Stop();
