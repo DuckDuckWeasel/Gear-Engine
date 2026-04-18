@@ -45,7 +45,8 @@ namespace GearEngine.CarSimulation.Simulation
                 targetCar = car,
                 targetCarRb = car.GetComponent<Rigidbody>(),
                 splineLength = trackContainer.Spline.GetLength(),
-                upcomingWaypoints = new Vector3[config.waypointCount]
+                upcomingWaypoints = new Vector3[config.waypointCount],
+                sourceStats = stats
             };
 
             CarAreaSensor sensor = car.gameObject.AddComponent<CarAreaSensor>();
@@ -196,6 +197,11 @@ namespace GearEngine.CarSimulation.Simulation
             isBrakingForCurve = false;
             carTransform = null;
             return false;
+        }
+
+        public SplineCarRunnerContext GetDebugContext(GearEngine.CarSimulation.Entity.CarEntity entity)
+        {
+            return activeRunners.Find(c => c.entity == entity);
         }
 
         public void Tick()

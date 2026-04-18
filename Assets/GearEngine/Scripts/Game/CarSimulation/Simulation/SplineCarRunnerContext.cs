@@ -31,6 +31,7 @@ namespace GearEngine.CarSimulation.Simulation
         public PrometeoTouchInput aiBrake;
 
         // Runtime-dependent boundaries based on Roguelike Stats
+        public GearEngine.CarSimulation.Definitions.RoguelikeCarStats sourceStats;
         public float maxSimulationSpeed;
         public float safeCornerSpeed;
         public float arcadeSteerAssist;

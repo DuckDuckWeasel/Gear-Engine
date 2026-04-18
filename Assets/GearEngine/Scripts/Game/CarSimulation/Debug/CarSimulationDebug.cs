@@ -1,5 +1,6 @@
 using GearEngine.CarSimulation.Entity;
 using GearEngine.CarSimulation.Simulation;
+using GearEngine.CarSimulation.Definitions;
 using Scaffold.Entities;
 using Sirenix.OdinInspector;
 using UnityEngine;
@@ -51,6 +52,32 @@ namespace GearEngine.CarSimulation.Debug
         }
 
         private SplineCarRunnerService runner;
+
+        private SplineCarRunnerContext Context => runner?.GetDebugContext(Car);
+
+        [ShowInInspector, ReadOnly, BoxGroup("Progression Stats")]
+        public RoguelikeCarStats SourceStats => Context?.sourceStats ?? RoguelikeCarStats.Default;
+
+        [ShowInInspector, ReadOnly, BoxGroup("Runtime Mechanics")]
+        private float MaxSimulationSpeed => Context?.maxSimulationSpeed ?? 0f;
+
+        [ShowInInspector, ReadOnly, BoxGroup("Runtime Mechanics")]
+        private float SafeCornerSpeed => Context?.safeCornerSpeed ?? 0f;
+
+        [ShowInInspector, ReadOnly, BoxGroup("Runtime Mechanics")]
+        private float ArcadeSteerAssist => Context?.arcadeSteerAssist ?? 0f;
+
+        [ShowInInspector, ReadOnly, BoxGroup("Runtime Mechanics")]
+        private int CalculatedAcceleration => Context?.calculatedAcceleration ?? 0;
+
+        [ShowInInspector, ReadOnly, BoxGroup("Runtime Mechanics")]
+        private int CalculatedBrakeForce => Context?.calculatedBrakeForce ?? 0;
+
+        [ShowInInspector, ReadOnly, BoxGroup("Runtime Mechanics")]
+        private int CalculatedDriftGrip => Context?.calculatedDriftGrip ?? 0;
+
+        [ShowInInspector, ReadOnly, BoxGroup("Runtime Mechanics")]
+        private float CurrentSimulationMultiplier => Context?.currentSimulationMultiplier ?? 0f;
 
         public void Setup(RaceState session, SplineCarRunnerService runner)
         {
