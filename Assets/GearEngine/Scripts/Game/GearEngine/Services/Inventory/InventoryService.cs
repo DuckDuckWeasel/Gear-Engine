@@ -14,6 +14,8 @@ namespace GearEngine.GearEngine.Services.Inventory
         public void Initialize(int maxSlots, IReadOnlyList<GearConfig> inventoryGears)
         {
             MaxSlots = maxSlots;
+            Model.AvailableItems.Clear();
+            Model.SelectedItem = null;
 
             inventoryGears ??= Array.Empty<GearConfig>();
 

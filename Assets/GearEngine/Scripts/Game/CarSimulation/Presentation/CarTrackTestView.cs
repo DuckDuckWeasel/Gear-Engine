@@ -76,11 +76,6 @@ namespace GearEngine.CarSimulation.Presentation
             }
 
             spawnedCars.Clear();
-            if (track != null)
-            {
-                track.Unbind();
-            }
-
             base.OnUnbind();
         }
     }

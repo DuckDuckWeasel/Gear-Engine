@@ -12,7 +12,8 @@
         "Scaffold.MVVM.ViewModel",
         "Scaffold.Navigation",
         "VContainer",
-        "Scaffold.MVVM"
+        "Scaffold.MVVM",
+        "Unity.TextMeshPro"
     ],
     "includePlatforms": [
         "Editor"

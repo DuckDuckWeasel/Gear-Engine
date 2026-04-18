@@ -19,11 +19,6 @@ namespace GearEngine.CarSimulation.Tracks
         [SerializeField] private SplineContainer splineContainer;
         [SerializeField] private SplineExtrude splineExtrude;
 
-        public new void Unbind()
-        {
-            base.Unbind();
-        }
-
         private void Awake()
         {
             EnsureSplineContainerReference();

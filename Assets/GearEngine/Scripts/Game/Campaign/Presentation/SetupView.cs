@@ -25,51 +25,54 @@ namespace GearEngine.Campaign.Presentation
                     "[SetupView] Track must be assigned on the scene instance (not baked into the prefab).");
             }
 
-            track.gameObject.SetActive(true);
             track.Bind(viewModel.Track);
-
-            boardView.gameObject.SetActive(true);
+            
             boardView.Bind(viewModel.Board);
-            inventoryView.gameObject.SetActive(true);
             inventoryView.SetBoardScaleReference(boardView.transform);
             inventoryView.Bind(viewModel.Inventory);
-            trashDropZone.gameObject.SetActive(true);
+            
             trashDropZone.SetDragService(viewModel.DragService);
             trashDropZone.Bind(viewModel.TrashZone);
+        }
+
+        protected override void OnOpen()
+        {
+            base.OnOpen();
+            track.gameObject.SetActive(true);
+            boardView.gameObject.SetActive(true);
+            inventoryView.gameObject.SetActive(true);
+            trashDropZone.gameObject.SetActive(true);
+            
+            raceButton.onClick.RemoveListener(OnRaceClicked);
             raceButton.onClick.AddListener(OnRaceClicked);
+            returnToMainButton.onClick.RemoveListener(OnReturnClicked);
             returnToMainButton.onClick.AddListener(OnReturnClicked);
         }
 
-        protected override void OnUnbind()
+        protected override void OnClose()
         {
+            base.OnClose();
             raceButton.onClick.RemoveListener(OnRaceClicked);
             returnToMainButton.onClick.RemoveListener(OnReturnClicked);
-
             if (trashDropZone != null)
             {
-                trashDropZone.Unbind();
                 trashDropZone.gameObject.SetActive(false);
             }
 
             if (inventoryView != null)
             {
-                inventoryView.Unbind();
                 inventoryView.gameObject.SetActive(false);
             }
 
             if (boardView != null)
             {
-                boardView.Unbind();
                 boardView.gameObject.SetActive(false);
             }
 
             if (track != null)
             {
-                track.Unbind();
                 track.gameObject.SetActive(false);
             }
-
-            base.OnUnbind();
         }
 
         private void OnRaceClicked()

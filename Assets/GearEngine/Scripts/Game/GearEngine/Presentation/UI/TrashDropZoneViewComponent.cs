@@ -38,11 +38,6 @@ namespace GearEngine.GearEngine.Presentation.UI
             dragService = service;
         }
 
-        public new void Unbind()
-        {
-            base.Unbind();
-        }
-
         internal void SetReferences(RectTransform root, Image icon, TextMeshProUGUI label, CanvasGroup cg)
         {
             rootPanel = root;

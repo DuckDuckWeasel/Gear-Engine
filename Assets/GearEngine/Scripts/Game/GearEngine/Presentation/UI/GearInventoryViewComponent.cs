@@ -18,15 +18,12 @@ namespace GearEngine.GearEngine.Presentation.UI
 
         private Transform boardScaleReference;
 
+        private bool inventoryUiBinding;
+
         // todo: wired from GearEngineCoreViewComponent for board-matched ghost scale.
         public void SetBoardScaleReference(Transform reference)
         {
             boardScaleReference = reference;
-        }
-
-        public new void Unbind()
-        {
-            base.Unbind();
         }
 
         protected override void OnBind()
@@ -34,15 +31,28 @@ namespace GearEngine.GearEngine.Presentation.UI
             Assert.IsNotNull(viewModel, "[GearInventoryView] ViewModel is missing.");
             Assert.IsNotNull(viewModel.InventoryModel?.AvailableItems, "[GearInventoryView] Inventory items collection is missing.");
 
-            Bind(() => viewModel.InventoryLimitText, () => inventoryLimitLabel.text);
-            Bind<int, int>(() => viewModel.InventoryListRevision, OnInventoryListRevisionChanged);
-            Bind<IItem, IItem>(() => viewModel.InventoryModel.SelectedItem, OnSelectionChanged);
-            CheckTargetRect();
-            RebuildUIList();
+            inventoryUiBinding = true;
+            try
+            {
+                Bind(() => viewModel.InventoryLimitText, () => inventoryLimitLabel.text);
+                Bind<int, int>(() => viewModel.InventoryListRevision, OnInventoryListRevisionChanged);
+                Bind<IItem, IItem>(() => viewModel.InventoryModel.SelectedItem, OnSelectionChanged);
+                CheckTargetRect();
+                RebuildUIList();
+            }
+            finally
+            {
+                inventoryUiBinding = false;
+            }
         }
 
         private void OnInventoryListRevisionChanged(int _)
         {
+            if (inventoryUiBinding)
+            {
+                return;
+            }
+
             RebuildUIList();
         }
 
@@ -80,9 +90,17 @@ namespace GearEngine.GearEngine.Presentation.UI
 
         private void ClearInventorySlots()
         {
-            foreach (Transform child in itemsContainer)
+            if (itemsContainer == null)
             {
-                Destroy(child.gameObject);
+                return;
+            }
+
+            // Destroy() is deferred until end of frame; multiple RebuildUIList calls in one frame
+            // (e.g. OnBind + InventoryListRevision binding) would stack new slots on top of queued destroys.
+            for (int i = itemsContainer.childCount - 1; i >= 0; i--)
+            {
+                Transform child = itemsContainer.GetChild(i);
+                DestroyImmediate(child.gameObject);
             }
         }
 

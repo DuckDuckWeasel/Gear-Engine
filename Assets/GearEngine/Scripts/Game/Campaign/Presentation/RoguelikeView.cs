@@ -28,19 +28,16 @@ namespace GearEngine.Campaign.Presentation
 
             if (trashDropZone != null)
             {
-                trashDropZone.Unbind();
                 trashDropZone.gameObject.SetActive(false);
             }
 
             if (inventoryView != null)
             {
-                inventoryView.Unbind();
                 inventoryView.gameObject.SetActive(false);
             }
 
             if (boardView != null)
             {
-                boardView.Unbind();
                 boardView.gameObject.SetActive(false);
             }
 

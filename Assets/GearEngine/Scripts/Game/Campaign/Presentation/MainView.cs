@@ -21,22 +21,34 @@ namespace GearEngine.Campaign.Presentation
                     "[MainView] Track must be assigned on the scene instance (not baked into the prefab).");
             }
 
-            track.gameObject.SetActive(true);
             track.Bind(viewModel.Track);
             statsPanel.Bind(viewModel.Stats);
-            playButton.onClick.AddListener(OnPlayClicked);
         }
 
-        protected override void OnUnbind()
+        protected override void OnOpen()
         {
+            base.OnOpen();
+            playButton.onClick.RemoveListener(OnPlayClicked);
+            playButton.onClick.AddListener(OnPlayClicked);
+            track.gameObject.SetActive(true);
+        }
+
+        protected override void OnFocus()
+        {
+            base.OnFocus();
+            playButton.onClick.RemoveListener(OnPlayClicked);
+            playButton.onClick.AddListener(OnPlayClicked);
+            track.gameObject.SetActive(true);
+        }
+
+        protected override void OnClose()
+        {
+            base.OnClose();
             playButton.onClick.RemoveListener(OnPlayClicked);
             if (track != null)
             {
-                track.Unbind();
                 track.gameObject.SetActive(false);
             }
-
-            base.OnUnbind();
         }
 
         private void OnPlayClicked()
