@@ -24,6 +24,11 @@ namespace GearEngine.GearEngine.Presentation.UI
             boardScaleReference = reference;
         }
 
+        public new void Unbind()
+        {
+            base.Unbind();
+        }
+
         protected override void OnBind()
         {
             Assert.IsNotNull(viewModel, "[GearInventoryView] ViewModel is missing.");

@@ -21,6 +21,11 @@ namespace GearEngine.GearEngine.Presentation.UI
         private readonly Dictionary<IGridNode, GearView> viewsByNode = new Dictionary<IGridNode, GearView>();
         private readonly List<GameObject> backgroundSlots = new List<GameObject>();
 
+        public new void Unbind()
+        {
+            base.Unbind();
+        }
+
         protected override void OnBind()
         {
             viewModel.OnGearPlaced += HandleGearPlaced;

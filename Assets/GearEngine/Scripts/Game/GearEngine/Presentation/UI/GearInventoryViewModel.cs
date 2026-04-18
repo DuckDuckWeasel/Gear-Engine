@@ -24,8 +24,8 @@ namespace GearEngine.GearEngine.Presentation.UI
                 InventoryModel.AvailableItems.CollectionChanged += OnAvailableItemsChanged;
             }
 
-            inventoryService.Initialize(maxInventorySlots, inventoryGears);
             this.maxInventorySlots = inventoryService.MaxSlots;
+            inventoryService.Initialize(maxInventorySlots, inventoryGears);
             RefreshInventoryLabel();
         }
 

@@ -7,6 +7,8 @@ namespace GearEngine.Campaign.Tests.Editor
     {
         public readonly List<object> OpenedControllers = new List<object>();
 
+        public int ReturnCallCount { get; private set; }
+
         public IViewController CurrentController => null;
 
         public void Open<TViewController>(TViewController controller, bool closeCurrent = false, NavigationOptions options = null)
@@ -24,6 +26,7 @@ namespace GearEngine.Campaign.Tests.Editor
 
         public IViewController Return()
         {
+            ReturnCallCount++;
             return null;
         }
     }

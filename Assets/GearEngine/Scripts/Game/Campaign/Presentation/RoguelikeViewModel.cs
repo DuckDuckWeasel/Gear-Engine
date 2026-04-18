@@ -44,6 +44,7 @@ namespace GearEngine.Campaign.Presentation
         [Inject] private IGridMergeService mergeService;
         [Inject] private IInventoryService inventoryService;
         [Inject] private IGearPresentationTransferService presentationTransferService;
+        [Inject] private GearEngineStartData campaignGearStartData;
 
         protected override void Initialize()
         {
@@ -85,9 +86,11 @@ namespace GearEngine.Campaign.Presentation
 
         private void SetupGearEngineSubtree()
         {
+            GearEngineStartData gearStart = campaignGearStartData ?? new GearEngineStartData();
+
             Board = new BoardViewModel(engineService, gridManager, nodeFactory, boardConfig, presentationTransferService, eventBus, featureToggle, dragService, swapService, mergeService, initialLayout: null);
             BindChildViewModel(Board);
-            Inventory = new GearInventoryViewModel(maxInventorySlots: inventoryService.MaxSlots, inventoryGears: null, engineService, inventoryService, dragService);
+            Inventory = new GearInventoryViewModel(gearStart.MaxInventorySlots, gearStart.InventoryGears, engineService, inventoryService, dragService);
             BindChildViewModel(Inventory);
             TrashZone = new TrashZoneViewModel(dragService, engineService, Board, presentationTransferService, featureToggle);
             BindChildViewModel(TrashZone);

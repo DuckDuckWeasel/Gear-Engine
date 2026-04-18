@@ -21,6 +21,7 @@ namespace GearEngine.Campaign.Presentation
                     "[MainView] Track must be assigned on the scene instance (not baked into the prefab).");
             }
 
+            track.gameObject.SetActive(true);
             track.Bind(viewModel.Track);
             statsPanel.Bind(viewModel.Stats);
             playButton.onClick.AddListener(OnPlayClicked);
@@ -32,6 +33,7 @@ namespace GearEngine.Campaign.Presentation
             if (track != null)
             {
                 track.Unbind();
+                track.gameObject.SetActive(false);
             }
 
             base.OnUnbind();

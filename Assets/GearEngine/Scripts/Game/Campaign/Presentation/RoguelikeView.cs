@@ -25,14 +25,36 @@ namespace GearEngine.Campaign.Presentation
         protected override void OnUnbind()
         {
             confirmButton.onClick.RemoveListener(OnConfirmClicked);
+
+            if (trashDropZone != null)
+            {
+                trashDropZone.Unbind();
+                trashDropZone.gameObject.SetActive(false);
+            }
+
+            if (inventoryView != null)
+            {
+                inventoryView.Unbind();
+                inventoryView.gameObject.SetActive(false);
+            }
+
+            if (boardView != null)
+            {
+                boardView.Unbind();
+                boardView.gameObject.SetActive(false);
+            }
+
             base.OnUnbind();
         }
 
         private void BindGearSubtree()
         {
+            boardView.gameObject.SetActive(true);
             boardView.Bind(viewModel.Board);
+            inventoryView.gameObject.SetActive(true);
             inventoryView.SetBoardScaleReference(boardView.transform);
             inventoryView.Bind(viewModel.Inventory);
+            trashDropZone.gameObject.SetActive(true);
             trashDropZone.SetDragService(viewModel.DragService);
             trashDropZone.Bind(viewModel.TrashZone);
         }
@@ -95,7 +117,8 @@ namespace GearEngine.Campaign.Presentation
         {
             if (field == null)
             {
-                throw new InvalidOperationException($"[RoguelikeView] {name} reference is missing.");
+                throw new InvalidOperationException(
+                    $"[RoguelikeView] {name} must be assigned on the scene instance (shared World gear UI / controls).");
             }
         }
     }

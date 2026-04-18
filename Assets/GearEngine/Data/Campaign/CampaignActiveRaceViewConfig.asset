@@ -21,9 +21,11 @@ MonoBehaviour:
     m_SubObjectGUID: 
     m_EditorAssetChanged: 0
   viewType:
-    serializedType: 
+    serializedType: '"GearEngine.Campaign.Presentation.ActiveRaceView, Game.Campaign,
+      Version=0.0.0.0, Culture=neutral, PublicKeyToken=null"'
   controllerType:
-    serializedType: 
+    serializedType: '"GearEngine.Campaign.Presentation.ActiveRaceViewModel, Game.Campaign,
+      Version=0.0.0.0, Culture=neutral, PublicKeyToken=null"'
   references:
     version: 2
     RefIds:

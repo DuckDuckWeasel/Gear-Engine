@@ -40,11 +40,6 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 912baac1bb1bee942acdf8dbd959eeda
-    m_Address: Assets/GearEngine/Prefabs/Campaign/Campaign_MainView.prefab
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: a7b8c9d0e1f2435465768798a9bacdef
     m_Address: Assets/GearEngine/Prefabs/Cards/CardSampleViewRoot.prefab
     m_ReadOnly: 0

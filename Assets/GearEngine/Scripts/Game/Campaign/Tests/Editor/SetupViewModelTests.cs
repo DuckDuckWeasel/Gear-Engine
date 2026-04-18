@@ -1,6 +1,7 @@
 using GearEngine.Campaign.Presentation;
 using GearEngine.CarSimulation;
 using GearEngine.CarSimulation.Definitions;
+using GearEngine.GearEngine;
 using GearEngine.GearEngine.Config;
 using NUnit.Framework;
 using UnityEngine;
@@ -44,6 +45,7 @@ namespace GearEngine.Campaign.Tests.Editor
                 ViewModelTestInject.InjectPrivateField(vm, "mergeService", gear.MergeService);
                 ViewModelTestInject.InjectPrivateField(vm, "inventoryService", gear.InventoryService);
                 ViewModelTestInject.InjectPrivateField(vm, "presentationTransferService", gear.PresentationTransfer);
+                ViewModelTestInject.InjectPrivateField(vm, "campaignGearStartData", new GearEngineStartData());
                 ViewModelTestInject.InjectNavigation(vm, new RecordingNavigation());
 
                 ViewModelTestInject.InvokeInitialize(vm);
@@ -92,6 +94,7 @@ namespace GearEngine.Campaign.Tests.Editor
                 ViewModelTestInject.InjectPrivateField(vm, "mergeService", gear.MergeService);
                 ViewModelTestInject.InjectPrivateField(vm, "inventoryService", gear.InventoryService);
                 ViewModelTestInject.InjectPrivateField(vm, "presentationTransferService", gear.PresentationTransfer);
+                ViewModelTestInject.InjectPrivateField(vm, "campaignGearStartData", new GearEngineStartData());
                 ViewModelTestInject.InjectNavigation(vm, navigation);
 
                 ViewModelTestInject.InvokeInitialize(vm);
@@ -99,6 +102,54 @@ namespace GearEngine.Campaign.Tests.Editor
 
                 Assert.That(navigation.OpenedControllers.Count, Is.EqualTo(1));
                 Assert.That(navigation.OpenedControllers[0], Is.InstanceOf<ActiveRaceViewModel>());
+            }
+
+            Object.DestroyImmediate(boardConfig);
+            Object.DestroyImmediate(carDef);
+            Object.DestroyImmediate(trackDef);
+        }
+
+        [Test]
+        public void ReturnToMainMenu_CallsNavigationReturn()
+        {
+            LogAssert.Expect(LogType.Warning, "[GearMechanicsInstaller] No GearEngineFeatureToggleSO provided. Using runtime default.");
+
+            var carDef = ScriptableObject.CreateInstance<CarDefinition>();
+            var trackDef = ScriptableObject.CreateInstance<TrackDefinition>();
+            trackDef.Spline.Knots = new[] { new BezierKnot(Vector3.zero), new BezierKnot(Vector3.right * 10f) };
+            trackDef.Spline.Closed = false;
+
+            LapRaceSession session = CampaignTestUtilities.CreateMinimalSession(carDef, trackDef);
+            var trackService = new FakeTrackService(trackDef, carDef, session);
+
+            var boardConfig = ScriptableObject.CreateInstance<BoardConfigSO>();
+            boardConfig.GridWidth = 5;
+            boardConfig.GridHeight = 5;
+
+            using (var gear = new GearMechanicsTestContext(boardConfig))
+            {
+                var navigation = new RecordingNavigation();
+                var vm = new SetupViewModel();
+                ViewModelTestInject.InjectPrivateField(vm, "trackService", trackService);
+                ViewModelTestInject.InjectPrivateField(vm, "engineService", gear.Engine);
+                ViewModelTestInject.InjectPrivateField(vm, "gridManager", gear.GridManager);
+                ViewModelTestInject.InjectPrivateField(vm, "nodeFactory", gear.NodeFactory);
+                ViewModelTestInject.InjectPrivateField(vm, "boardConfig", gear.BoardConfig);
+                ViewModelTestInject.InjectPrivateField(vm, "eventBus", gear.EventBus);
+                ViewModelTestInject.InjectPrivateField(vm, "featureToggle", gear.FeatureToggle);
+                ViewModelTestInject.InjectPrivateField(vm, "dragService", gear.DragService);
+                ViewModelTestInject.InjectPrivateField(vm, "swapService", gear.SwapService);
+                ViewModelTestInject.InjectPrivateField(vm, "mergeService", gear.MergeService);
+                ViewModelTestInject.InjectPrivateField(vm, "inventoryService", gear.InventoryService);
+                ViewModelTestInject.InjectPrivateField(vm, "presentationTransferService", gear.PresentationTransfer);
+                ViewModelTestInject.InjectPrivateField(vm, "campaignGearStartData", new GearEngineStartData());
+                ViewModelTestInject.InjectNavigation(vm, navigation);
+
+                ViewModelTestInject.InvokeInitialize(vm);
+                vm.ReturnClicked();
+
+                Assert.That(navigation.ReturnCallCount, Is.EqualTo(1));
+                Assert.That(navigation.OpenedControllers.Count, Is.EqualTo(0));
             }
 
             Object.DestroyImmediate(boardConfig);

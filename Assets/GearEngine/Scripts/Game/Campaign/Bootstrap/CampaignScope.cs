@@ -1,6 +1,7 @@
 using System;
 using GearEngine.Campaign.Services;
 using GearEngine.CarSimulation.Bootstrap;
+using GearEngine.GearEngine;
 using GearEngine.GearEngine.Bootstrap;
 using GearEngine.GearEngine.Config;
 using GearEngine.SceneFoundation.Bootstrap;
@@ -18,6 +19,9 @@ namespace GearEngine.Campaign.Bootstrap
         [Header("Gear Engine")]
         [SerializeField] private BoardConfigSO boardConfig;
         [SerializeField] private GearEngineFeatureToggleSO featureToggle;
+
+        [Header("Campaign gear loadout (setup / roguelike inventory)")]
+        [SerializeField] private GearEngineStartData campaignGearStartData;
 
         [Header("Roguelike card pool")]
         [SerializeField] private GearConfig[] roguelikeCardPool;
@@ -50,6 +54,11 @@ namespace GearEngine.Campaign.Bootstrap
 
             LocalTrackService trackService = new LocalTrackService(tracks, roguelikeCardPool);
             builder.RegisterInstance<ITrackService>(trackService);
+
+            GearEngineStartData gearStart = campaignGearStartData != null
+                ? campaignGearStartData
+                : new GearEngineStartData();
+            builder.RegisterInstance(gearStart);
 
             LocalWalletService walletService = new LocalWalletService(initialGold: 0);
             builder.RegisterInstance<IWalletService>(walletService);

@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using GearEngine.Campaign.Presentation;
 using GearEngine.CarSimulation;
 using GearEngine.CarSimulation.Definitions;
+using GearEngine.GearEngine;
 using GearEngine.GearEngine.Config;
 using NUnit.Framework;
 using UnityEngine;
@@ -49,6 +50,7 @@ namespace GearEngine.Campaign.Tests.Editor
                     ViewModelTestInject.InjectPrivateField(vm, "mergeService", gear.MergeService);
                     ViewModelTestInject.InjectPrivateField(vm, "inventoryService", gear.InventoryService);
                     ViewModelTestInject.InjectPrivateField(vm, "presentationTransferService", gear.PresentationTransfer);
+                    ViewModelTestInject.InjectPrivateField(vm, "campaignGearStartData", new GearEngineStartData());
                     ViewModelTestInject.InjectNavigation(vm, new RecordingNavigation());
 
                     ViewModelTestInject.InvokeInitialize(vm);
@@ -102,6 +104,7 @@ namespace GearEngine.Campaign.Tests.Editor
                     ViewModelTestInject.InjectPrivateField(vm, "mergeService", gear.MergeService);
                     ViewModelTestInject.InjectPrivateField(vm, "inventoryService", gear.InventoryService);
                     ViewModelTestInject.InjectPrivateField(vm, "presentationTransferService", gear.PresentationTransfer);
+                    ViewModelTestInject.InjectPrivateField(vm, "campaignGearStartData", new GearEngineStartData());
                     ViewModelTestInject.InjectNavigation(vm, new RecordingNavigation());
 
                     ViewModelTestInject.InvokeInitialize(vm);
@@ -160,6 +163,7 @@ namespace GearEngine.Campaign.Tests.Editor
                     ViewModelTestInject.InjectPrivateField(vm, "mergeService", gear.MergeService);
                     ViewModelTestInject.InjectPrivateField(vm, "inventoryService", inventory);
                     ViewModelTestInject.InjectPrivateField(vm, "presentationTransferService", gear.PresentationTransfer);
+                    ViewModelTestInject.InjectPrivateField(vm, "campaignGearStartData", new GearEngineStartData());
                     ViewModelTestInject.InjectNavigation(vm, navigation);
 
                     ViewModelTestInject.InvokeInitialize(vm);

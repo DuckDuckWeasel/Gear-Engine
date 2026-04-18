@@ -38,10 +38,13 @@ namespace GearEngine.Campaign.Presentation
         [Inject] private IGridMergeService mergeService;
         [Inject] private IInventoryService inventoryService;
         [Inject] private IGearPresentationTransferService presentationTransferService;
+        [Inject] private GearEngineStartData campaignGearStartData;
 
         protected override void Initialize()
         {
             base.Initialize();
+
+            GearEngineStartData gearStart = campaignGearStartData ?? new GearEngineStartData();
 
             Track = new TrackViewModel(trackService.CurrentSession);
             BindChildViewModel(Track);
@@ -49,7 +52,7 @@ namespace GearEngine.Campaign.Presentation
             Board = new BoardViewModel(engineService, gridManager, nodeFactory, boardConfig, presentationTransferService, eventBus, featureToggle, dragService, swapService, mergeService, initialLayout: null);
             BindChildViewModel(Board);
 
-            Inventory = new GearInventoryViewModel(maxInventorySlots: inventoryService.MaxSlots, inventoryGears: null, engineService, inventoryService, dragService);
+            Inventory = new GearInventoryViewModel(gearStart.MaxInventorySlots, gearStart.InventoryGears, engineService, inventoryService, dragService);
             BindChildViewModel(Inventory);
 
             TrashZone = new TrashZoneViewModel(dragService, engineService, Board, presentationTransferService, featureToggle);
@@ -65,6 +68,18 @@ namespace GearEngine.Campaign.Presentation
             catch (Exception ex)
             {
                 Debug.LogError($"[SetupViewModel] GoToRace failed: {ex.Message}\n{ex.StackTrace}");
+            }
+        }
+
+        public void ReturnClicked()
+        {
+            try
+            {
+                navigation.Return();
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"[SetupViewModel] ReturnToMainMenu failed: {ex.Message}\n{ex.StackTrace}");
             }
         }
     }

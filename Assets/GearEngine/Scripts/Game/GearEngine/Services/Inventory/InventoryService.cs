@@ -15,6 +15,8 @@ namespace GearEngine.GearEngine.Services.Inventory
         {
             MaxSlots = maxSlots;
 
+            inventoryGears ??= Array.Empty<GearConfig>();
+
             var runtimeGears = new List<IItem>();
             foreach (GearConfig config in inventoryGears)
             {

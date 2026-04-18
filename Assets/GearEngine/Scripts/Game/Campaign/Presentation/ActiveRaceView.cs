@@ -13,19 +13,30 @@ namespace GearEngine.Campaign.Presentation
         protected override void OnBind()
         {
             ValidateHierarchy();
+            if (track == null)
+            {
+                throw new InvalidOperationException(
+                    "[ActiveRaceView] Track must be assigned on the scene instance (not baked into the prefab).");
+            }
+
+            track.gameObject.SetActive(true);
             track.Bind(viewModel.Track);
             hud.Bind(viewModel);
         }
 
         protected override void OnUnbind()
         {
-            track.Unbind();
+            if (track != null)
+            {
+                track.Unbind();
+                track.gameObject.SetActive(false);
+            }
+
             base.OnUnbind();
         }
 
         private void ValidateHierarchy()
         {
-            RequireReference(track, nameof(track));
             RequireReference(hud, nameof(hud));
         }
 
