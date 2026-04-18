@@ -112,18 +112,15 @@ namespace GearEngine.Campaign.Tests.Editor
         public FakeTrackService(
             TrackDefinition track,
             CarDefinition car,
-            RaceState session,
             IReadOnlyList<GearConfig> roguelikePool = null)
         {
             CurrentTrack = track;
             CurrentCar = car;
-            CurrentSession = session;
             roguelikeOptions = roguelikePool ?? Array.Empty<GearConfig>();
         }
 
         public TrackDefinition CurrentTrack { get; }
         public CarDefinition CurrentCar { get; }
-        public RaceState CurrentSession { get; private set; }
 
         private readonly IReadOnlyList<GearConfig> roguelikeOptions;
         private readonly TrackProgressModel trackProgress = new TrackProgressModel();
@@ -135,11 +132,6 @@ namespace GearEngine.Campaign.Tests.Editor
         public IReadOnlyList<TrackEntry> GetOrderedTracks() => Array.Empty<TrackEntry>();
 
         public IReadOnlyList<GearConfig> GetRoguelikeCardOptions() => roguelikeOptions;
-
-        public void SetCurrentSession(RaceState session)
-        {
-            CurrentSession = session ?? throw new ArgumentNullException(nameof(session));
-        }
 
         public void RecordResult(RaceResultModel result)
         {

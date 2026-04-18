@@ -21,12 +21,12 @@ namespace GearEngine.CarSimulation.Tests
         }
 
         [Test]
-        public void CarTrackBootstrap_Initialize_OpensTrackListViewModel()
+        public void CarTrackBootstrap_Initialize_OpensCarTrackScreenViewModel()
         {
             var go = new GameObject("BootstrapTest");
             try
             {
-                AssertTrackListViewModelOpenedForBootstrap(go);
+                AssertCarTrackScreenViewModelOpenedForBootstrap(go);
             }
             finally
             {
@@ -34,7 +34,7 @@ namespace GearEngine.CarSimulation.Tests
             }
         }
 
-        private void AssertTrackListViewModelOpenedForBootstrap(GameObject go)
+        private void AssertCarTrackScreenViewModelOpenedForBootstrap(GameObject go)
         {
             var carDef = ScriptableObject.CreateInstance<CarDefinition>();
             var trackDef = ScriptableObject.CreateInstance<TrackDefinition>();
@@ -43,7 +43,7 @@ namespace GearEngine.CarSimulation.Tests
                 SeedMinimalOpenTrack(trackDef);
                 (CarTrackBootstrap bootstrap, CapturingNavigation nav) = CreateBootstrapWithNav(go, carDef, trackDef);
                 bootstrap.Initialize();
-                Assert.That(nav.LastOpened, Is.InstanceOf<TrackListViewModel>());
+                Assert.That(nav.LastOpened, Is.InstanceOf<CarTrackScreenViewModel>());
             }
             finally
             {

@@ -8,4 +8,4 @@ The overview below is historical; prefer the linked doc for architecture and typ
 
 Runtime and test-scene wiring for spline-based car movement. Code lives under `Assets/GearEngine/Scripts/Game/CarSimulation/`.
 
-See **`Docs/Game/CarSimulation.md`** for **`LapRaceSession`**, **`SimulationLifecycleState`**, **`IRaceSessionRunner`**, and **`CarView`** / **`SplineAnimate`** presentation.
+See **`Docs/Game/CarSimulation.md`** for **`RaceState`**, **`SimulationLifecycleState`**, **`CarTrackScreenViewModel`**, and **`CarView`** presentation.

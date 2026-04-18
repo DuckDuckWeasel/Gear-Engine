@@ -23,7 +23,7 @@ MonoBehaviour:
   viewType:
     serializedType: '"GearEngine.CarSimulation.Presentation.CarTrackTestView, Game.CarSimulation, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null"'
   controllerType:
-    serializedType: '"GearEngine.CarSimulation.Presentation.TrackListViewModel, Game.CarSimulation, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null"'
+    serializedType: '"GearEngine.CarSimulation.Presentation.CarTrackScreenViewModel, Game.CarSimulation, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null"'
   references:
     version: 2
     RefIds:

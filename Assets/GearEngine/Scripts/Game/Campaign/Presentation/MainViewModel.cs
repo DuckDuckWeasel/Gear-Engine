@@ -24,21 +24,8 @@ namespace GearEngine.Campaign.Presentation
         {
             base.Initialize();
 
-            RaceState current = trackService.CurrentSession;
-            if (current == null || current.Phase == SimulationLifecycleState.Completed)
-            {
-                if (current != null)
-                {
-                    raceManager.UnregisterRace(current);
-                }
-
-                RaceState preview = trackFactory.Create(trackService.CurrentCar, trackService.CurrentTrack, null);
-                trackService.SetCurrentSession(preview);
-            }
-
-            raceManager.RegisterRace(trackService.CurrentSession);
-
-            Track = new TrackViewModel(trackService.CurrentSession, raceManager, aiRunner, trackFactory);
+            RaceState preview = trackFactory.Create(trackService.CurrentCar, trackService.CurrentTrack, null);
+            Track = new TrackViewModel(preview, raceManager, aiRunner, trackFactory);
             BindChildViewModel(Track);
             Stats = new TrackStatsViewModel(trackService);
             BindChildViewModel(Stats);

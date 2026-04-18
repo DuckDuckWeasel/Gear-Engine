@@ -22,8 +22,7 @@ namespace GearEngine.Campaign.Tests.Editor
             trackDef.Spline.Knots = new[] { new BezierKnot(Vector3.zero), new BezierKnot(Vector3.right * 10f) };
             trackDef.Spline.Closed = false;
 
-            RaceState session = CampaignTestUtilities.CreateMinimalSession(carDef, trackDef);
-            var trackService = new FakeTrackService(trackDef, carDef, session);
+            var trackService = new FakeTrackService(trackDef, carDef);
 
             var carRunnerConfig = ScriptableObject.CreateInstance<SplineCarRunnerConfigSO>();
             var carRunner = new SplineCarRunnerService(carRunnerConfig);
@@ -38,10 +37,12 @@ namespace GearEngine.Campaign.Tests.Editor
 
             InvokeInitialize(vm);
 
-            Assert.That(raceManager.GetFirstRaceForDebug(), Is.SameAs(session));
+            Assert.That(raceManager.GetFirstRaceForDebug(), Is.Null);
             Assert.That(vm.Track, Is.Not.Null);
             Assert.That(vm.Stats, Is.Not.Null);
-            Assert.That(vm.Track.Session, Is.SameAs(session));
+            Assert.That(vm.Track.Session, Is.Not.Null);
+            Assert.That(vm.Track.Session.Track, Is.SameAs(trackDef));
+            Assert.That(vm.Track.Session.Car.Definition, Is.SameAs(carDef));
             Assert.That(vm.Stats.TrackName, Is.EqualTo(trackDef.GetDisplayName()));
             Assert.That(vm.Stats.TargetLaps, Is.EqualTo(trackDef.TotalLaps));
             Assert.That(vm.Stats.TargetTime, Is.EqualTo(trackDef.TimeToBeatSeconds));

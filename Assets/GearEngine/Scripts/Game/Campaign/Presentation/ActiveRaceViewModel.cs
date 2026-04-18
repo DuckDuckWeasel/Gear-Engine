@@ -29,18 +29,12 @@ namespace GearEngine.Campaign.Presentation
         {
             base.Initialize();
 
-            if (trackService.CurrentSession != null)
-            {
-                raceManager.UnregisterRace(trackService.CurrentSession);
-            }
-
             RaceState freshSession = trackFactory.Create(trackService.CurrentCar, trackService.CurrentTrack, null);
-            trackService.SetCurrentSession(freshSession);
             raceManager.RegisterRace(freshSession);
 
             engineService.ResetGridSimulationState();
 
-            Track = new TrackViewModel(trackService.CurrentSession, raceManager, aiRunner, trackFactory);
+            Track = new TrackViewModel(freshSession, raceManager, aiRunner, trackFactory);
             BindChildViewModel(Track);
 
             engineService.Play();
@@ -63,7 +57,7 @@ namespace GearEngine.Campaign.Presentation
             {
                 engineService.ResetGridSimulationState();
 
-                RaceState session = trackService.CurrentSession;
+                RaceState session = Track.Session;
                 RaceResultModel result = new RaceResultModel(session.RaceTime, session.CurrentLap, trackService.CurrentTrack);
                 walletService.AddGold(result.Gold.Amount);
                 trackService.RecordResult(result);

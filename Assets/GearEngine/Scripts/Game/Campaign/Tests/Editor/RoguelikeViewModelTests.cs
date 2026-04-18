@@ -29,8 +29,7 @@ namespace GearEngine.Campaign.Tests.Editor
                 trackDef.Spline.Knots = new[] { new BezierKnot(Vector3.zero), new BezierKnot(Vector3.right * 10f) };
                 trackDef.Spline.Closed = false;
 
-                RaceState session = CampaignTestUtilities.CreateMinimalSession(carDef, trackDef);
-                var trackService = new FakeTrackService(trackDef, carDef, session, new[] { g1, g2 });
+                var trackService = new FakeTrackService(trackDef, carDef, new[] { g1, g2 });
 
                 var boardConfig = ScriptableObject.CreateInstance<BoardConfigSO>();
                 boardConfig.GridWidth = 5;
@@ -77,8 +76,7 @@ namespace GearEngine.Campaign.Tests.Editor
                 trackDef.Spline.Knots = new[] { new BezierKnot(Vector3.zero), new BezierKnot(Vector3.right * 10f) };
                 trackDef.Spline.Closed = false;
 
-                RaceState session = CampaignTestUtilities.CreateMinimalSession(carDef, trackDef);
-                var trackService = new FakeTrackService(trackDef, carDef, session, new List<GearConfig> { g1 });
+                var trackService = new FakeTrackService(trackDef, carDef, new List<GearConfig> { g1 });
 
                 var boardConfig = ScriptableObject.CreateInstance<BoardConfigSO>();
                 boardConfig.GridWidth = 5;
@@ -127,8 +125,7 @@ namespace GearEngine.Campaign.Tests.Editor
                 trackDef.Spline.Knots = new[] { new BezierKnot(Vector3.zero), new BezierKnot(Vector3.right * 10f) };
                 trackDef.Spline.Closed = false;
 
-                RaceState session = CampaignTestUtilities.CreateMinimalSession(carDef, trackDef);
-                var trackService = new FakeTrackService(trackDef, carDef, session, new List<GearConfig> { g1 });
+                var trackService = new FakeTrackService(trackDef, carDef, new List<GearConfig> { g1 });
 
                 var boardConfig = ScriptableObject.CreateInstance<BoardConfigSO>();
                 boardConfig.GridWidth = 5;

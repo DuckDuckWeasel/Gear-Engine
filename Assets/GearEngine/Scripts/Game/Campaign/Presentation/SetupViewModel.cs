@@ -48,10 +48,9 @@ namespace GearEngine.Campaign.Presentation
             engineService.ResetGridSimulationState();
 
             RaceState previewSession = trackFactory.Create(trackService.CurrentCar, trackService.CurrentTrack, null);
-            trackService.SetCurrentSession(previewSession);
             raceManager.RegisterRace(previewSession);
 
-            Track = new TrackViewModel(trackService.CurrentSession, raceManager, aiRunner, trackFactory);
+            Track = new TrackViewModel(previewSession, raceManager, aiRunner, trackFactory);
             BindChildViewModel(Track);
 
             Board = new BoardViewModel(boardService, inventoryService, engineService, dragService);

@@ -9,7 +9,7 @@ using GearEngine.CarSimulation.Tracks;
 namespace GearEngine.CarSimulation.Presentation
 {
     /// <summary>Sample view for the spline track test scene: hosts <see cref="TrackViewComponent"/> as a reusable ViewComponent.</summary>
-    public sealed class CarTrackTestView : View<TrackListViewModel>
+    public sealed class CarTrackTestView : View<CarTrackScreenViewModel>
     {
         [SerializeField] private TrackViewComponent track;
         [SerializeField] private Button raceButton;
@@ -25,16 +25,23 @@ namespace GearEngine.CarSimulation.Presentation
                 return;
             }
 
-            if (viewModel.Sessions.Count == 0)
+            if (viewModel.Sessions == null || viewModel.Sessions.Count == 0)
             {
                 return;
             }
 
-            track.Bind(new TrackViewModel(viewModel.Sessions[0], viewModel.RaceManager, viewModel.AiRunner, viewModel.Factory));
+            track.Bind(viewModel.Track);
+
+            viewModel.AttachRunnersRequested += OnAttachRunnersRequested;
+
+            IReadOnlyList<CarViewModel> cars = viewModel.Cars;
+            for (int i = 0; i < cars.Count; i++)
+            {
+                TrySpawnCar(cars[i]);
+            }
 
             foreach (Simulation.RaceState session in viewModel.Sessions)
             {
-                TrySpawnCar(session);
                 session.PresentationChanged += RefreshButtonState;
             }
 
@@ -46,10 +53,24 @@ namespace GearEngine.CarSimulation.Presentation
             RefreshButtonState();
         }
 
+        private void OnAttachRunnersRequested()
+        {
+            foreach (CarView car in spawnedCars)
+            {
+                if (car != null)
+                {
+                    car.AttachRunner();
+                }
+            }
+        }
+
         private void RefreshButtonState()
         {
-            if (raceButton == null || viewModel.Sessions.Count == 0) return;
-            
+            if (raceButton == null || viewModel.Sessions == null || viewModel.Sessions.Count == 0)
+            {
+                return;
+            }
+
             TextMeshProUGUI label = raceButton.GetComponentInChildren<TextMeshProUGUI>(true);
             if (label != null)
             {
@@ -57,9 +78,9 @@ namespace GearEngine.CarSimulation.Presentation
             }
         }
 
-        private void TrySpawnCar(Simulation.RaceState session)
+        private void TrySpawnCar(CarViewModel carVm)
         {
-            GameObject prefab = session.Car.Definition.CarPrefab;
+            GameObject prefab = carVm.Session.Car.Definition.CarPrefab;
             if (prefab == null)
             {
                 Debug.LogError("[CarTrackTestView] CarPrefab is missing on CarDefinition.");
@@ -67,13 +88,13 @@ namespace GearEngine.CarSimulation.Presentation
             }
 
             GameObject go = Instantiate(prefab, track.transform);
-            if (!TryRegisterSpawnedCar(go, session))
+            if (!TryRegisterSpawnedCar(go, carVm))
             {
                 return;
             }
         }
 
-        private bool TryRegisterSpawnedCar(GameObject go, Simulation.RaceState session)
+        private bool TryRegisterSpawnedCar(GameObject go, CarViewModel carVm)
         {
             if (!go.TryGetComponent(out CarView carView))
             {
@@ -83,12 +104,11 @@ namespace GearEngine.CarSimulation.Presentation
             }
 
             carView.SplineContainer = track.SplineContainer;
-            var cvm = new CarViewModel(session, viewModel.AiRunner);
-            carView.Bind(cvm);
-            
+            carView.Bind(carVm);
+
             if (primaryCar == null)
             {
-                primaryCar = cvm;
+                primaryCar = carVm;
             }
 
             spawnedCars.Add(carView);
@@ -116,6 +136,11 @@ namespace GearEngine.CarSimulation.Presentation
 
         protected override void OnUnbind()
         {
+            if (viewModel != null)
+            {
+                viewModel.AttachRunnersRequested -= OnAttachRunnersRequested;
+            }
+
             foreach (CarView car in spawnedCars)
             {
                 if (car != null)
@@ -132,12 +157,15 @@ namespace GearEngine.CarSimulation.Presentation
                 track.Unbind();
             }
 
-            foreach (Simulation.RaceState session in viewModel.Sessions)
+            if (viewModel?.Sessions != null)
             {
-                session.PresentationChanged -= RefreshButtonState;
+                foreach (Simulation.RaceState session in viewModel.Sessions)
+                {
+                    session.PresentationChanged -= RefreshButtonState;
+                }
             }
 
-            if (raceButton != null)
+            if (raceButton != null && viewModel != null)
             {
                 raceButton.onClick.RemoveListener(viewModel.ToggleRace);
             }

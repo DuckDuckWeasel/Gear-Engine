@@ -11,6 +11,8 @@ namespace GearEngine.CarSimulation.Presentation
         [SerializeField]
         private PrometeoCarController prometeoController;
 
+        private bool runnerAttached;
+
         protected override void OnBind()
         {
             if (prometeoController == null)
@@ -27,23 +29,39 @@ namespace GearEngine.CarSimulation.Presentation
 
             SetupStartTransform();
 
+            if (viewModel.ShouldAttachRunnerOnBind)
+            {
+                AttachRunner();
+            }
+        }
+
+        /// <summary>Attaches the spline runner after preview bind (e.g. when the user starts a race).</summary>
+        public void AttachRunner()
+        {
+            if (runnerAttached || viewModel == null)
+            {
+                return;
+            }
+
+            if (prometeoController == null)
+            {
+                Debug.LogError("[CarView] AttachRunner: PrometeoCarController is missing.");
+                return;
+            }
+
+            if (SplineContainer == null)
+            {
+                Debug.LogError("[CarView] AttachRunner: SplineContainer is not set.");
+                return;
+            }
+
             if (viewModel.RunnerService != null)
             {
                 viewModel.RunnerService.InitializeRun(prometeoController, SplineContainer, viewModel.Stats, viewModel.Car);
             }
 
-#if UNITY_EDITOR
-            System.Type debugType = System.Type.GetType("GearEngine.CarSimulation.Debug.CarSimulationDebug, Game.CarSimulation.Debug");
-            if (debugType != null)
-            {
-                var debugComponent = gameObject.GetComponent(debugType) ?? gameObject.AddComponent(debugType);
-                var setupMethod = debugType.GetMethod("Setup", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
-                if (setupMethod != null)
-                {
-                    setupMethod.Invoke(debugComponent, new object[] { viewModel.Session, viewModel.RunnerService });
-                }
-            }
-#endif
+            runnerAttached = true;
+            TrySetupEditorDebug();
         }
 
         private void Update()
@@ -59,10 +77,9 @@ namespace GearEngine.CarSimulation.Presentation
             if (SplineContainer != null && SplineContainer.Spline != null && SplineContainer.Spline.Count > 0)
             {
                 var startParam = 0f;
-                // Evaluate World position from t=0
                 Vector3 startPos = SplineContainer.transform.TransformPoint(
                     UnityEngine.Splines.SplineUtility.EvaluatePosition(SplineContainer.Spline, startParam));
-                
+
                 Vector3 startForward = SplineContainer.transform.TransformDirection(
                     UnityEngine.Splines.SplineUtility.EvaluateTangent(SplineContainer.Spline, startParam)).normalized;
 
@@ -75,6 +92,22 @@ namespace GearEngine.CarSimulation.Presentation
                     transform.rotation = Quaternion.LookRotation(startForward, startUp);
                 }
             }
+        }
+
+        private void TrySetupEditorDebug()
+        {
+#if UNITY_EDITOR
+            System.Type debugType = System.Type.GetType("GearEngine.CarSimulation.Debug.CarSimulationDebug, Game.CarSimulation.Debug");
+            if (debugType != null)
+            {
+                var debugComponent = gameObject.GetComponent(debugType) ?? gameObject.AddComponent(debugType);
+                System.Reflection.MethodInfo setupMethod = debugType.GetMethod("Setup", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
+                if (setupMethod != null)
+                {
+                    setupMethod.Invoke(debugComponent, new object[] { viewModel.Session, viewModel.RunnerService });
+                }
+            }
+#endif
         }
     }
 }

@@ -33,7 +33,7 @@ namespace GearEngine.Campaign.Tests.Editor
             trackDef.SetScoreBandsForTests(new[] { new TrackScoreBand(9999f, 200) });
 
             RaceState initialSession = CampaignTestUtilities.CreateMinimalSession(carDef, trackDef);
-            var trackService = new FakeTrackService(trackDef, carDef, initialSession);
+            var trackService = new FakeTrackService(trackDef, carDef);
             var wallet = new FakeWalletService();
             var engine = new FakeEngine();
             var factory = new TrackSimulationFactory();
@@ -55,8 +55,8 @@ namespace GearEngine.Campaign.Tests.Editor
             ViewModelTestInject.InvokeInitialize(vm);
 
             Assert.That(engine.IsRunning, Is.True);
-            Assert.That(raceManager.GetFirstRaceForDebug(), Is.SameAs(trackService.CurrentSession));
-            Assert.That(vm.Track.Session, Is.SameAs(trackService.CurrentSession));
+            Assert.That(raceManager.GetFirstRaceForDebug(), Is.SameAs(vm.Track.Session));
+            Assert.That(vm.Track.Session, Is.Not.SameAs(initialSession));
 
             Object.DestroyImmediate(carDef);
             Object.DestroyImmediate(trackDef);
@@ -73,7 +73,7 @@ namespace GearEngine.Campaign.Tests.Editor
             trackDef.SetScoreBandsForTests(new[] { new TrackScoreBand(9999f, 200) });
 
             RaceState initialSession = CampaignTestUtilities.CreateMinimalSession(carDef, trackDef);
-            var trackService = new FakeTrackService(trackDef, carDef, initialSession);
+            var trackService = new FakeTrackService(trackDef, carDef);
             var wallet = new FakeWalletService();
             var engine = new FakeEngine();
             var factory = new TrackSimulationFactory();

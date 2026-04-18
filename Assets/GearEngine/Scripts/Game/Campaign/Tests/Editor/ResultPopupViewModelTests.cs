@@ -17,7 +17,7 @@ namespace GearEngine.Campaign.Tests.Editor
             var good = new RaceResultModel(raceTime: 0f, lapCount: 1, track);
             Assert.That(good.IsGoodResult, Is.True);
 
-            var trackService = new FakeTrackService(null, null, null);
+            var trackService = new FakeTrackService(null, null);
             var wallet = new FakeWalletService();
             var navigation = new RecordingNavigation();
 
@@ -45,7 +45,7 @@ namespace GearEngine.Campaign.Tests.Editor
             var poor = new RaceResultModel(raceTime: 100f, lapCount: 1, track);
             Assert.That(poor.IsGoodResult, Is.False);
 
-            var trackService = new FakeTrackService(null, null, null);
+            var trackService = new FakeTrackService(null, null);
             var wallet = new FakeWalletService();
             var navigation = new RecordingNavigation();
 
@@ -70,7 +70,7 @@ namespace GearEngine.Campaign.Tests.Editor
                 new TrackScoreBand(50f, 800),
                 new TrackScoreBand(9999f, 100));
             var result = new RaceResultModel(raceTime: 0f, lapCount: 1, track);
-            var trackService = new FakeTrackService(null, null, null);
+            var trackService = new FakeTrackService(null, null);
             var wallet = new FakeWalletService();
             var navigation = new RecordingNavigation();
 

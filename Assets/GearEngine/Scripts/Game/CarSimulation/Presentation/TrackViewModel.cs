@@ -44,12 +44,7 @@ namespace GearEngine.CarSimulation.Presentation
         {
             base.Initialize();
             Session.PresentationChanged += OnSessionPresentationChanged;
-            
-            var list = new System.Collections.Generic.List<CarViewModel>();
-            var cvm = new CarViewModel(Session, AiRunner);
-            BindChildViewModel(cvm);
-            list.Add(cvm);
-            CarViewModels = list;
+            CarViewModels = System.Array.Empty<CarViewModel>();
 
             RefreshUiState();
         }

@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using GearEngine.CarSimulation.Definitions;
-using GearEngine.CarSimulation.Simulation;
 using GearEngine.GearEngine.Config;
 using UnityEngine;
 
@@ -26,8 +25,6 @@ namespace GearEngine.Campaign.Services
 
         public CarDefinition CurrentCar => tracks[trackProgress.CurrentTrackIndex].Car;
 
-        public RaceState CurrentSession { get; private set; }
-
         private readonly IReadOnlyList<TrackEntry> tracks;
         private readonly GearConfig[] roguelikeCardPool;
         private readonly TrackProgressModel trackProgress;
@@ -39,11 +36,6 @@ namespace GearEngine.Campaign.Services
         public IReadOnlyList<GearConfig> GetRoguelikeCardOptions()
         {
             return roguelikeCardPool;
-        }
-
-        public void SetCurrentSession(RaceState session)
-        {
-            CurrentSession = session ?? throw new ArgumentNullException(nameof(session));
         }
 
         public void RecordResult(RaceResultModel result)

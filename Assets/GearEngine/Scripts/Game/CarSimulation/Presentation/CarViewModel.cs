@@ -22,12 +22,16 @@ namespace GearEngine.CarSimulation.Presentation
         [ObservableProperty] private bool isAccelerating;
         [ObservableProperty] private float currentAcceleration;
 
-        public CarViewModel(RaceState session, SplineCarRunnerService runnerService)
+        public CarViewModel(RaceState session, SplineCarRunnerService runnerService, bool attachRunnerOnBind = true)
         {
             Session = session ?? throw new ArgumentNullException(nameof(session));
             RunnerService = runnerService ?? throw new ArgumentNullException(nameof(runnerService));
+            ShouldAttachRunnerOnBind = attachRunnerOnBind;
             Stats = ResolveStats(Session);
         }
+
+        /// <summary>When false, <see cref="CarView"/> only places the car until <see cref="CarView.AttachRunner"/> runs.</summary>
+        public bool ShouldAttachRunnerOnBind { get; }
 
         protected override void Initialize()
         {
