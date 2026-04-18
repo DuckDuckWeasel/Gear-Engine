@@ -15,7 +15,9 @@
         "VContainer",
         "Scaffold.MVVM.Model",
         "Scaffold.Events",
-        "Scaffold.Events.Container"
+        "Scaffold.Events.Container",
+        "Scaffold.MVVM",
+        "Scaffold.MVVM.View"
     ],
     "includePlatforms": [
         "Editor"

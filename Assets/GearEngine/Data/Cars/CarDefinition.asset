@@ -30,18 +30,21 @@ MonoBehaviour:
     - rid: 4306785165221036283
       type: {class: FloatVariableValue, ns: Scaffold.Entities, asm: Scaffold.Entities}
       data:
-        value: 100
+        value: 200
         min: -3.4028235e+38
         max: 3.4028235e+38
+        clamped: 0
     - rid: 4306785165221036291
       type: {class: FloatVariableValue, ns: Scaffold.Entities, asm: Scaffold.Entities}
       data:
-        value: 10
+        value: 50
         min: -3.4028235e+38
         max: 3.4028235e+38
+        clamped: 0
     - rid: 4306785165221036293
       type: {class: FloatVariableValue, ns: Scaffold.Entities, asm: Scaffold.Entities}
       data:
         value: 1
         min: -3.4028235e+38
         max: 3.4028235e+38
+        clamped: 0

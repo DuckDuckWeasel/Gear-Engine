@@ -48,7 +48,7 @@ namespace GearEngine.Campaign.Presentation
                     trackService.AdvanceToNextTrack();
                 }
 
-                navigation.Open(new MainViewModel());
+                navigation.Open(new MainViewModel(), true, new NavigationOptions() { CloseAllViews = true});
             }
             catch (Exception ex)
             {
