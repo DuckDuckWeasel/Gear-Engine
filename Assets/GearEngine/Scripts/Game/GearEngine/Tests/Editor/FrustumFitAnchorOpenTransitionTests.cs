@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using DG.Tweening;
 using GearEngine.FrustumFit;
 using NUnit.Framework;
+using UnityEngine;
 
 namespace GearEngine.GearEngine.Tests.Editor
 {
@@ -37,6 +38,25 @@ namespace GearEngine.GearEngine.Tests.Editor
         public void Play_ParamsWithNoArgs_ReturnsNull()
         {
             Assert.IsNull(FrustumFitAnchorOpenTransition.Play(0.35f, Ease.InOutQuad));
+        }
+
+        [Test]
+        public void PlayAfterCanvasLayout_NullHost_InvokesOnCompleteOnce()
+        {
+            int hits = 0;
+            FrustumFitAnchorOpenTransition.PlayAfterCanvasLayout(null, new List<FrustumFitAnchor>(), 0.35f, () => hits++);
+            Assert.AreEqual(1, hits);
+        }
+
+        [Test]
+        public void PlayAfterCanvasLayout_EmptyAnchorListWithHost_InvokesOnCompleteOnce()
+        {
+            var go = new GameObject("FrustumFitTestHost");
+            var host = go.AddComponent<FrustumFitAnchorOpenTransitionRunner>();
+            int hits = 0;
+            FrustumFitAnchorOpenTransition.PlayAfterCanvasLayout(host, new List<FrustumFitAnchor>(), 0.35f, () => hits++);
+            Assert.AreEqual(1, hits);
+            UnityEngine.Object.DestroyImmediate(go);
         }
     }
 }

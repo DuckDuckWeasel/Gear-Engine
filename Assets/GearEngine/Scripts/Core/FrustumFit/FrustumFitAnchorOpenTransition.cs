@@ -112,18 +112,32 @@ namespace GearEngine.FrustumFit
         /// <remarks>This overload avoids a <see cref="Ease"/> parameter so callers (e.g. other assemblies) do not need a reference to DOTween.dll.</remarks>
         /// <param name="host">MonoBehaviour used to run the layout coroutine.</param>
         /// <param name="anchors">Anchors to tween; null or all-null entries are ignored (no coroutine started if none).</param>
-        public static void PlayAfterCanvasLayout(MonoBehaviour host, IReadOnlyList<FrustumFitAnchor> anchors, float durationSeconds)
+        /// <param name="onComplete">Invoked once after layout prep and after the tween snaps (or immediately if no tween runs). Restore of anchor auto-apply runs before this.</param>
+        public static void PlayAfterCanvasLayout(MonoBehaviour host, IReadOnlyList<FrustumFitAnchor> anchors, float durationSeconds, Action onComplete = null)
         {
-            if (host == null || !HasAnyAnchor(anchors))
+            if (host == null)
             {
+                onComplete?.Invoke();
                 return;
             }
 
-            host.StartCoroutine(PlayAfterCanvasLayoutRoutine(anchors, durationSeconds, Ease.InOutQuad, suppressContinuousFitDuringTween: true, restoreApplyEveryFrameAfter: true));
+            if (!HasAnyAnchor(anchors))
+            {
+                onComplete?.Invoke();
+                return;
+            }
+
+            host.StartCoroutine(PlayAfterCanvasLayoutRoutine(
+                anchors,
+                durationSeconds,
+                Ease.InOutQuad,
+                suppressContinuousFitDuringTween: true,
+                restoreApplyEveryFrameAfter: true,
+                onComplete));
         }
 
         /// <summary>
-        /// Same as <see cref="PlayAfterCanvasLayout(MonoBehaviour,IReadOnlyList{FrustumFitAnchor},float)"/> for inline anchor arguments.
+        /// Same as <see cref="PlayAfterCanvasLayout(MonoBehaviour,IReadOnlyList{FrustumFitAnchor},float,Action)"/> for inline anchor arguments.
         /// </summary>
         public static void PlayAfterCanvasLayout(MonoBehaviour host, float durationSeconds, params FrustumFitAnchor[] anchors)
         {
@@ -132,7 +146,7 @@ namespace GearEngine.FrustumFit
                 return;
             }
 
-            PlayAfterCanvasLayout(host, new List<FrustumFitAnchor>(anchors), durationSeconds);
+            PlayAfterCanvasLayout(host, new List<FrustumFitAnchor>(anchors), durationSeconds, onComplete: null);
         }
 
         private static bool HasAnyAnchor(IReadOnlyList<FrustumFitAnchor> anchors)
@@ -158,7 +172,8 @@ namespace GearEngine.FrustumFit
             float durationSeconds,
             Ease ease,
             bool suppressContinuousFitDuringTween,
-            bool restoreApplyEveryFrameAfter)
+            bool restoreApplyEveryFrameAfter,
+            Action onComplete)
         {
             List<FrustumFitAnchorAutoApplySnapshot> snapshots = suppressContinuousFitDuringTween
                 ? CaptureAutoApplySnapshots(anchors)
@@ -174,10 +189,16 @@ namespace GearEngine.FrustumFit
 
             bool shouldRestore = suppressContinuousFitDuringTween && restoreApplyEveryFrameAfter;
             Action restore = shouldRestore && snapshots != null ? () => RestoreAutoApplySnapshots(anchors, snapshots) : null;
-            Tween tween = Play(anchors, durationSeconds, ease, restore);
-            if (tween == null && restore != null)
+            void Combined()
             {
-                restore.Invoke();
+                restore?.Invoke();
+                onComplete?.Invoke();
+            }
+
+            Tween tween = Play(anchors, durationSeconds, ease, Combined);
+            if (tween == null)
+            {
+                Combined();
             }
         }
 

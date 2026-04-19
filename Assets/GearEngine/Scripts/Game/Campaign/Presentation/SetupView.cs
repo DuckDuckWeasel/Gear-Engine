@@ -53,7 +53,11 @@ namespace GearEngine.Campaign.Presentation
             returnToMainButton.onClick.RemoveListener(OnReturnClicked);
             returnToMainButton.onClick.AddListener(OnReturnClicked);
 
-            FrustumFitAnchorOpenTransition.PlayAfterCanvasLayout(this, openTransitionAnchors, openTransitionDurationSeconds);
+            FrustumFitAnchorOpenTransition.PlayAfterCanvasLayout(
+                this,
+                openTransitionAnchors,
+                openTransitionDurationSeconds,
+                onComplete: () => inventoryView.RebuildAndFit());
         }
 
         protected override void OnClose()

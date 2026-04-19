@@ -34,12 +34,20 @@ namespace GearEngine.GearEngine.Tests.Editor
         {
             GearInventoryViewComponent component = CreateBoundInventoryView(out RectTransform container, out _);
 
-            MethodInfo rebuild = typeof(GearInventoryViewComponent).GetMethod(
-                "RebuildUIList",
-                BindingFlags.Instance | BindingFlags.NonPublic);
-            Assert.IsNotNull(rebuild);
-            rebuild.Invoke(component, null);
-            rebuild.Invoke(component, null);
+            component.RebuildAndFit();
+            component.RebuildAndFit();
+
+            Assert.AreEqual(3, container.childCount);
+        }
+
+        [Test]
+        public void Bind_DoesNotPopulateSlots_UntilRebuildAndFitIsCalled()
+        {
+            GearInventoryViewComponent component = CreateBoundInventoryView(out RectTransform container, out _);
+
+            Assert.AreEqual(0, container.childCount);
+
+            component.RebuildAndFit();
 
             Assert.AreEqual(3, container.childCount);
         }

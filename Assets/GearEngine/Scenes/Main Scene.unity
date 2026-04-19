@@ -1464,7 +1464,7 @@ MonoBehaviour:
   tracks:
   - track: {fileID: 11400000, guid: 6ce7712943d0d1344bcaccc8749ee69c, type: 2}
     car: {fileID: 11400000, guid: b4e1eaf4e8dd58b418b4e6efc603f72e, type: 2}
-  boardConfig: {fileID: 11400000, guid: c8936b7a974414cf6aba78a5ac6be445, type: 2}
+  boardRules: {fileID: 11400000, guid: c8936b7a974414cf6aba78a5ac6be445, type: 2}
   featureToggle: {fileID: 11400000, guid: e8f9a0b1c2d34432bcdef01234567891, type: 2}
   splineCarRunnerConfig: {fileID: 11400000, guid: 6a9994ce6517e413a8373080e0b14bbb, type: 2}
   campaignRaceSession:
@@ -1839,7 +1839,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 28cae4dad4cae425dbf7c1a06cd4e3ea, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Presentation.UI.BoardView
+  m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Presentation.UI.BoardViewComponent
 --- !u!114 &500010142 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 1944606547811722807, guid: ba83461cca946410a94c4343a45a483e, type: 3}
@@ -4312,6 +4312,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 231521040734453040, guid: 689dcd40046774c4b80166058bccaf5f, type: 3}
       propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 471602485269854917, guid: 689dcd40046774c4b80166058bccaf5f, type: 3}
+      propertyPath: fitAxes
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 471602485269854917, guid: 689dcd40046774c4b80166058bccaf5f, type: 3}

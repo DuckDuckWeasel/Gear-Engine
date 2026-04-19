@@ -51,6 +51,7 @@ namespace GearEngine.Campaign.Presentation
             boardView.Bind(viewModel.Board);
             inventoryView.gameObject.SetActive(true);
             inventoryView.Bind(viewModel.Inventory);
+            inventoryView.RebuildAndFit();
             trashDropZone.gameObject.SetActive(true);
             trashDropZone.SetDragService(viewModel.DragService);
             trashDropZone.SetBoardPresentation(boardView.BoardLayout, viewModel.Board.BoardRules);

@@ -7,6 +7,7 @@ using Scaffold.MVVM;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Assertions;
+using UnityEngine.UI;
 
 namespace GearEngine.GearEngine.Presentation.UI
 {
@@ -29,7 +30,6 @@ namespace GearEngine.GearEngine.Presentation.UI
                 Bind(() => viewModel.InventoryLimitText, () => inventoryLimitLabel.text);
                 Bind<int, int>(() => viewModel.InventoryListRevision, OnInventoryListRevisionChanged);
                 Bind<IItem, IItem>(() => viewModel.SelectedItem, OnSelectionChanged);
-                RebuildUIList();
             }
             finally
             {
@@ -62,6 +62,12 @@ namespace GearEngine.GearEngine.Presentation.UI
             }
         }
 
+        /// <summary>Rebuilds inventory slot UI and fits gear visuals to each slot rect. Call after the owning view hierarchy is active and layout is final (e.g. after FrustumFit open transition).</summary>
+        public void RebuildAndFit()
+        {
+            RebuildUIList();
+        }
+
         private void RebuildUIList()
         {
             ClearInventorySlots();
@@ -81,7 +87,14 @@ namespace GearEngine.GearEngine.Presentation.UI
             for (int i = itemsContainer.childCount - 1; i >= 0; i--)
             {
                 Transform child = itemsContainer.GetChild(i);
-                DestroyImmediate(child.gameObject);
+                if (Application.isPlaying)
+                {
+                    Destroy(child.gameObject);
+                }
+                else
+                {
+                    DestroyImmediate(child.gameObject);
+                }
             }
         }
 
@@ -143,6 +156,7 @@ namespace GearEngine.GearEngine.Presentation.UI
             RectTransform slotRect = parent as RectTransform;
             if (slotRect != null)
             {
+                LayoutRebuilder.ForceRebuildLayoutImmediate(slotRect);
                 Canvas.ForceUpdateCanvases();
                 view.FitVisualToRect(slotRect);
             }
