@@ -189,6 +189,7 @@ MonoBehaviour:
     car: {fileID: 11400000, guid: b4e1eaf4e8dd58b418b4e6efc603f72e, type: 2}
   boardConfig: {fileID: 11400000, guid: c8936b7a974414cf6aba78a5ac6be445, type: 2}
   featureToggle: {fileID: 11400000, guid: e8f9a0b1c2d34432bcdef01234567891, type: 2}
+  splineCarRunnerConfig: {fileID: 11400000, guid: f7e8d9c0b1a2436587960594a3b2c1d0, type: 2}
   campaignGearStartData:
     inventoryLoadout:
       maxSlots: 5

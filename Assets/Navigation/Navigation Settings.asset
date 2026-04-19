@@ -15,7 +15,6 @@ MonoBehaviour:
   screens:
   - {fileID: 11400000, guid: 33600f74bed54744aafb7cc619fa9c8c, type: 2}
   - {fileID: 11400000, guid: 010bfbcb4438c2748af02d13ed7abb55, type: 2}
-  - {fileID: 11400000, guid: d4e2f8a16c3b49f0a7d9e1b2c3f4a5b6, type: 2}
   - {fileID: 11400000, guid: b8c9d0e1f2536475868798a9bacdef01, type: 2}
   - {fileID: 11400000, guid: b9bb7e96818c992478e550aed9db3489, type: 2}
   - {fileID: 11400000, guid: 4b729f80ead79764d92dac7999c5a1a9, type: 2}

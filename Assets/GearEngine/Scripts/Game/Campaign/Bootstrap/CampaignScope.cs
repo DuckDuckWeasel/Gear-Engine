@@ -1,6 +1,7 @@
 using System;
 using GearEngine.Campaign.Services;
 using GearEngine.CarSimulation.Bootstrap;
+using GearEngine.CarSimulation.Definitions;
 using GearEngine.GearEngine;
 using GearEngine.GearEngine.Bootstrap;
 using GearEngine.GearEngine.Config;
@@ -19,6 +20,9 @@ namespace GearEngine.Campaign.Bootstrap
         [Header("Gear Engine")]
         [SerializeField] private BoardConfigSO boardConfig;
         [SerializeField] private GearEngineFeatureToggleSO featureToggle;
+
+        [Header("Simulation")]
+        [SerializeField] private SplineCarRunnerConfigSO splineCarRunnerConfig;
 
         [Header("Campaign gear loadout (setup / roguelike inventory)")]
         [SerializeField] private GearEngineStartData campaignGearStartData;
@@ -39,6 +43,11 @@ namespace GearEngine.Campaign.Bootstrap
             if (boardConfig == null)
             {
                 throw new InvalidOperationException("[CampaignScope] Assign boardConfig.");
+            }
+
+            if (splineCarRunnerConfig == null)
+            {
+                throw new InvalidOperationException("[CampaignScope] Assign SplineCarRunnerConfigSO.");
             }
 
             if (sceneBootstrap == null)
@@ -67,6 +76,7 @@ namespace GearEngine.Campaign.Bootstrap
                 : gearStart.GetInventoryLoadoutData();
 
             new GearMechanicsInstaller(boardConfig, featureToggle, inventoryLoadout, gearStart.GetBoardLoadoutData()).Install(builder);
+            builder.RegisterInstance(splineCarRunnerConfig);
             new CarTrackInstaller().Install(builder);
 
             LocalTrackService trackService = new LocalTrackService(tracks, roguelikeCardPool);
