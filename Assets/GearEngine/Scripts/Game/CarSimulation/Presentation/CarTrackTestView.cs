@@ -136,18 +136,7 @@ namespace GearEngine.CarSimulation.Presentation
         {
             if (primaryCar != null && telemetry != null)
             {
-                telemetry.UpdateTelemetry(
-                    primaryCar.Speed,
-                    primaryCar.Progress,
-                    primaryCar.IsBraking,
-                    primaryCar.IsDrifting,
-                    primaryCar.IsAccelerating,
-                    primaryCar.Session.CurrentLap,
-                    primaryCar.Session.TotalLaps,
-                    primaryCar.CurrentAcceleration,
-                    primaryCar.Session.RaceTime,
-                    primaryCar.Session.LapTimes
-                );
+                telemetry.UpdateFrom(primaryCar);
             }
         }
 

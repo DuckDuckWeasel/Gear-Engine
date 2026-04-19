@@ -1462,7 +1462,7 @@ MonoBehaviour:
   navigationSettings: {fileID: 11400000, guid: 137da207fe7ec1345a5d209afdac17bd, type: 2}
   navigationViewHolder: {fileID: 500010001}
   tracks:
-  - track: {fileID: 11400000, guid: 6ce7712943d0d1344bcaccc8749ee69c, type: 2}
+  - track: {fileID: 11400000, guid: c1c1c1c1b2a3948576c5d4e3f2a1b0c9, type: 2}
     car: {fileID: 11400000, guid: b4e1eaf4e8dd58b418b4e6efc603f72e, type: 2}
   boardRules: {fileID: 11400000, guid: c8936b7a974414cf6aba78a5ac6be445, type: 2}
   featureToggle: {fileID: 11400000, guid: e8f9a0b1c2d34432bcdef01234567891, type: 2}
@@ -1545,7 +1545,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1871954771881702483, guid: 1bb691964ce722a4ba6aed0bf6fb73c1, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2103925626671770930, guid: 1bb691964ce722a4ba6aed0bf6fb73c1, type: 3}
       propertyPath: boardLimitLabel
@@ -4280,7 +4280,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9100000012345001, guid: d9b2bf9ad3d2d21439a807add8a1c39e, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9100000012345002, guid: d9b2bf9ad3d2d21439a807add8a1c39e, type: 3}
       propertyPath: m_Pivot.x
@@ -4444,10 +4444,6 @@ PrefabInstance:
       propertyPath: targetTransform
       value: 
       objectReference: {fileID: 0}
-    - target: {fileID: 2480575252245656189, guid: 689dcd40046774c4b80166058bccaf5f, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: -113
-      objectReference: {fileID: 0}
     - target: {fileID: 3619819652461239025, guid: 689dcd40046774c4b80166058bccaf5f, type: 3}
       propertyPath: m_Camera
       value: 
@@ -4467,10 +4463,6 @@ PrefabInstance:
     - target: {fileID: 3737454352633131241, guid: 689dcd40046774c4b80166058bccaf5f, type: 3}
       propertyPath: m_LocalRotation.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5172934168796494220, guid: 689dcd40046774c4b80166058bccaf5f, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: -152.99997
       objectReference: {fileID: 0}
     - target: {fileID: 6671208370226862571, guid: 689dcd40046774c4b80166058bccaf5f, type: 3}
       propertyPath: board

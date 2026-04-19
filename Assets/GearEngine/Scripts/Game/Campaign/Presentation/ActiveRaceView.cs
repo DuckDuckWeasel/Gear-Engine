@@ -13,7 +13,7 @@ namespace GearEngine.Campaign.Presentation
     {
         [SerializeField] private TrackViewComponent track;
         [SerializeField] private BoardViewComponent board;
-        [SerializeField] private RaceHudViewComponent hud;
+        [SerializeField] private TrackTelemetryViewComponent telemetry;
         [SerializeField] private FrustumFitAnchor[] openTransitionAnchors;
         [SerializeField] private float openTransitionDurationSeconds = 0.35f;
 
@@ -30,7 +30,14 @@ namespace GearEngine.Campaign.Presentation
             track.Bind(viewModel.Track);
             SpawnAndBindCar();
             viewModel.StartRaceAfterCarReady();
-            hud.Bind(viewModel);
+        }
+
+        private void LateUpdate()
+        {
+            if (telemetry != null && viewModel?.Car != null)
+            {
+                telemetry.UpdateFrom(viewModel.Car);
+            }
         }
 
         private void SpawnAndBindCar()
@@ -120,9 +127,9 @@ namespace GearEngine.Campaign.Presentation
                 board.gameObject.SetActive(active);
             }
 
-            if (hud != null)
+            if (telemetry != null)
             {
-                hud.gameObject.SetActive(active);
+                telemetry.gameObject.SetActive(active);
             }
         }
     }

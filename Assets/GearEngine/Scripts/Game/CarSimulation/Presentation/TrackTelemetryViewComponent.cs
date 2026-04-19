@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Text;
+using GearEngine.CarSimulation.Simulation;
 using TMPro;
 using UnityEngine;
 
@@ -22,6 +23,27 @@ namespace GearEngine.CarSimulation.Presentation
             UpdatePrimaryTelemetry(speed, progress, currentLap, maxLaps, currentAcceleration);
             UpdateStateLabels(isBraking, isDrifting, isAccelerating);
             UpdateTimingTelemetry(raceTime, lapTimes);
+        }
+
+        public void UpdateFrom(CarViewModel carVm)
+        {
+            if (carVm == null)
+            {
+                return;
+            }
+
+            RaceState session = carVm.Session;
+            UpdateTelemetry(
+                carVm.Speed,
+                carVm.Progress,
+                carVm.IsBraking,
+                carVm.IsDrifting,
+                carVm.IsAccelerating,
+                session.CurrentLap,
+                session.TotalLaps,
+                carVm.CurrentAcceleration,
+                session.RaceTime,
+                session.LapTimes);
         }
 
         private void UpdatePrimaryTelemetry(float speed, float progress, int currentLap, int maxLaps, float currentAcceleration)

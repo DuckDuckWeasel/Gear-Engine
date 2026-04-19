@@ -23,12 +23,6 @@ namespace GearEngine.CarSimulation.Presentation
         [ObservableProperty]
         private SimulationLifecycleState state;
 
-        [ObservableProperty]
-        private float hudRaceTime;
-
-        [ObservableProperty]
-        private int hudCurrentLap;
-
         private readonly RaceManagerService raceManager;
         public SplineCarRunnerService AiRunner { get; }
         public TrackSimulationFactory Factory { get; }
@@ -88,8 +82,6 @@ namespace GearEngine.CarSimulation.Presentation
         private void RefreshUiState()
         {
             State = Session.Phase;
-            HudRaceTime = Session.RaceTime;
-            HudCurrentLap = Session.CurrentLap;
         }
     }
 }
