@@ -31,7 +31,7 @@ public partial class ModuleConfig : ICloudCodeSetup
 
         RegisterScoped<IPlayerData, UnityPlayerData>(config);
         RegisterScoped<IGameState, UnityGameState>(config);
-        RegisterScoped<IRemoteConfig, HttpRemoteConfig>(config);
+        RegisterScoped<IRemoteConfig, UnityRemoteConfig>(config);
 
         RegisterScoped<SignalModule>(config);
         RegisterScoped<ModuleRequestHandler>(config);
