@@ -63,8 +63,11 @@ namespace GearEngine.GearEngine.Tests.Editor
             var containerRect = containerGo.GetComponent<RectTransform>();
 
             var slotPrefab = new GameObject("SlotPrefab", typeof(RectTransform));
+            slotPrefab.AddComponent<DragHandler>();
+            GearInventorySlotView slotViewComp = slotPrefab.AddComponent<GearInventorySlotView>();
             var visualContainer = new GameObject("VisualContainer", typeof(RectTransform));
             visualContainer.transform.SetParent(slotPrefab.transform, false);
+            SetPrivateField(slotViewComp, "visualContainer", visualContainer.transform);
 
             var labelGo = new GameObject("LimitLabel", typeof(RectTransform));
             labelGo.transform.SetParent(root.transform, false);

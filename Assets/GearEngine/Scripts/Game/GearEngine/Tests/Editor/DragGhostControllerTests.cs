@@ -60,9 +60,11 @@ namespace GearEngine.GearEngine.Tests.Editor
             controller.CreateGhost(config);
 
             Assert.IsNotNull(controller.Ghost);
-            Assert.AreEqual(scale, controller.Ghost.transform.localScale.x, 1e-5f);
-            Assert.AreEqual(scale, controller.Ghost.transform.localScale.y, 1e-5f);
-            Assert.AreEqual(scale, controller.Ghost.transform.localScale.z, 1e-5f);
+            Transform gearVisual = controller.Ghost.transform.Find("GearVisual");
+            Assert.IsNotNull(gearVisual);
+            Assert.AreEqual(scale, gearVisual.localScale.x, 1e-5f);
+            Assert.AreEqual(scale, gearVisual.localScale.y, 1e-5f);
+            Assert.AreEqual(scale, gearVisual.localScale.z, 1e-5f);
             Object.DestroyImmediate(viewPrefab.gameObject);
         }
 

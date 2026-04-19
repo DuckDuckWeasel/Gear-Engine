@@ -123,21 +123,39 @@ namespace GearEngine.GearEngine.Presentation.UI
 
         private void WireGearSlot(GameObject slotObj, GearConfigData gear)
         {
-            DragHandler dragger = CreateDragHandler(slotObj);
-            GearInventorySlotView slotView = CreateGearInventorySlotView(slotObj);
-            Transform visualContainer = BuildVisualContainer(slotObj);
-            ApplyGearVisualAndDrag(visualContainer, gear, dragger, slotView);
-        }
-
-        private void ApplyGearVisualAndDrag(Transform visualContainer, GearConfigData gear, DragHandler dragger, GearInventorySlotView slotView)
-        {
-            float totalScale = gear.RelativeScaleMultiplier * ComputeBaseScale(visualContainer);
-            GameObject visualObj = GearVisualSetup.SetupVisual(visualContainer, gear, totalScale);
-            if (visualObj == null)
+            GearInventorySlotView slotView = slotObj.GetComponent<GearInventorySlotView>();
+            if (slotView == null)
             {
-                Debug.LogError($"[GearInventoryView] SetupVisual returned null for gear '{gear?.Id}'.");
+                Debug.LogError("[GearInventoryView] Slot prefab must include GearInventorySlotView (see GearSlot prefab).");
+                return;
             }
 
+            DragHandler dragger = slotObj.GetComponent<DragHandler>();
+            if (dragger == null)
+            {
+                Debug.LogError("[GearInventoryView] Slot prefab must include DragHandler.");
+                return;
+            }
+
+            ApplyGearVisualAndDrag(slotView, gear, dragger);
+        }
+
+        private void ApplyGearVisualAndDrag(GearInventorySlotView slotView, GearConfigData gear, DragHandler dragger)
+        {
+            const int inventorySortingBase = 50;
+
+            if (gear.ViewPrefab == null)
+            {
+                Debug.LogError($"[GearInventoryView] Gear '{gear?.Id}' has no ViewPrefab; inventory visual skipped.");
+                slotView.Bind(gear, viewModel);
+                HookDragHandlers(dragger, gear);
+                return;
+            }
+
+            Transform parent = slotView.VisualContainer;
+            float scaleMultiplier = ComputeBaseScale(parent);
+            GearView view = Instantiate(gear.ViewPrefab, parent, false);
+            view.BindForDisplay(gear, DisplayOptions.Inventory(inventorySortingBase, scaleMultiplier));
             slotView.Bind(gear, viewModel);
             HookDragHandlers(dragger, gear);
         }
@@ -245,32 +263,5 @@ namespace GearEngine.GearEngine.Presentation.UI
             }
         }
 
-        private static DragHandler CreateDragHandler(GameObject slotObj)
-        {
-            DragHandler dragger = slotObj.GetComponent<DragHandler>();
-            if (dragger == null)
-            {
-                dragger = slotObj.AddComponent<DragHandler>();
-            }
-
-            return dragger;
-        }
-
-        private static GearInventorySlotView CreateGearInventorySlotView(GameObject slotObj)
-        {
-            GearInventorySlotView slotView = slotObj.GetComponent<GearInventorySlotView>();
-            if (slotView == null)
-            {
-                slotView = slotObj.AddComponent<GearInventorySlotView>();
-            }
-
-            return slotView;
-        }
-
-        private static Transform BuildVisualContainer(GameObject slotObj)
-        {
-            Transform visualContainer = slotObj.transform.Find("VisualContainer");
-            return visualContainer != null ? visualContainer : slotObj.transform;
-        }
     }
 }

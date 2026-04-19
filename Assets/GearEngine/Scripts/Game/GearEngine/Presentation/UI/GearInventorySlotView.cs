@@ -1,3 +1,4 @@
+using GearEngine.GearEngine.Config;
 using UnityEngine;
 
 namespace GearEngine.GearEngine.Presentation.UI
@@ -5,7 +6,12 @@ namespace GearEngine.GearEngine.Presentation.UI
     [RequireComponent(typeof(DragHandler))]
     public class GearInventorySlotView : MonoBehaviour
     {
+        [SerializeField]
+        private Transform visualContainer;
+
         public GearConfigData BoundGearData => boundGearData;
+
+        public Transform VisualContainer => visualContainer != null ? visualContainer : transform;
 
         private GearConfigData boundGearData;
         private GearInventoryViewModel viewModel;

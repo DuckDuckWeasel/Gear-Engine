@@ -5,6 +5,32 @@ using UnityEngine;
 
 namespace GearEngine.GearEngine.Visuals
 {
+    /// <summary>Display-only binding (inventory slot, drag ghost): scale, sprites, sorting, optional <see cref="CanvasGroup"/>.</summary>
+    public readonly struct DisplayOptions
+    {
+        public DisplayOptions(int sortingOrder, float scaleMultiplier, bool blocksRaycasts, float canvasGroupAlpha)
+        {
+            SortingOrder = sortingOrder;
+            ScaleMultiplier = scaleMultiplier;
+            BlocksRaycasts = blocksRaycasts;
+            CanvasGroupAlpha = canvasGroupAlpha;
+        }
+
+        public int SortingOrder { get; }
+
+        public float ScaleMultiplier { get; }
+
+        public bool BlocksRaycasts { get; }
+
+        public float CanvasGroupAlpha { get; }
+
+        public static DisplayOptions Inventory(int sortingOrder, float scaleMultiplier) =>
+            new DisplayOptions(sortingOrder, scaleMultiplier, blocksRaycasts: true, canvasGroupAlpha: 1f);
+
+        public static DisplayOptions Ghost(float alpha) =>
+            new DisplayOptions(sortingOrder: 0, scaleMultiplier: 1f, blocksRaycasts: false, canvasGroupAlpha: alpha);
+    }
+
     public class GearView : MonoBehaviour
     {
         private IGridNode targetNode;
@@ -70,6 +96,83 @@ namespace GearEngine.GearEngine.Visuals
         {
             gearVisual = gearVisualRef;
             chargeFillRenderer = chargeRef;
+        }
+
+        /// <summary>
+        /// Binds config for display only (no board node). Does not require <see cref="BoardLayoutSO"/> or slot transforms.
+        /// </summary>
+        public void BindForDisplay(GearConfigData configData, DisplayOptions options)
+        {
+            ClearDisplayBoardState();
+            ApplyDisplayScale(configData, options);
+            ApplyDisplayIconAndFill(configData);
+            ApplyDisplaySorting(options);
+            ApplyDisplayCanvasGroupIfNeeded(options);
+            transform.localPosition = Vector3.zero;
+            transform.localRotation = Quaternion.identity;
+        }
+
+        private void ClearDisplayBoardState()
+        {
+            targetNode = null;
+            boardLayout = null;
+            boardRules = null;
+            getSlotTransform = null;
+            lastKnownGridPosition = new Vector2Int(int.MinValue, int.MinValue);
+        }
+
+        private void ApplyDisplayScale(GearConfigData configData, DisplayOptions options)
+        {
+            if (configData == null || gearVisual == null)
+            {
+                return;
+            }
+
+            float uniform = configData.RelativeScaleMultiplier * options.ScaleMultiplier;
+            gearVisual.localScale = new Vector3(uniform, uniform, uniform);
+        }
+
+        private void ApplyDisplayIconAndFill(GearConfigData configData)
+        {
+            if (configData?.UIIcon != null && chargeFillRenderer != null)
+            {
+                chargeFillRenderer.sprite = configData.UIIcon;
+            }
+
+            if (chargeFillRenderer == null || chargeFillRenderer.material == null)
+            {
+                return;
+            }
+
+            currentVisualFill = 1f;
+            chargeFillRenderer.material.SetFloat("_FillAmount", 1f);
+        }
+
+        private void ApplyDisplaySorting(DisplayOptions options)
+        {
+            SpriteRenderer[] renderers = GetComponentsInChildren<SpriteRenderer>(true);
+            foreach (SpriteRenderer sr in renderers)
+            {
+                int prefabOrder = sr.sortingOrder;
+                sr.sortingOrder = options.SortingOrder + prefabOrder;
+            }
+        }
+
+        private void ApplyDisplayCanvasGroupIfNeeded(DisplayOptions options)
+        {
+            if (options.BlocksRaycasts && options.CanvasGroupAlpha >= 0.999f)
+            {
+                return;
+            }
+
+            CanvasGroup canvasGroup = GetComponent<CanvasGroup>();
+            if (canvasGroup == null)
+            {
+                canvasGroup = gameObject.AddComponent<CanvasGroup>();
+            }
+
+            canvasGroup.alpha = options.CanvasGroupAlpha;
+            canvasGroup.blocksRaycasts = options.BlocksRaycasts;
         }
 
         private void RecalculateRotationOffset()
