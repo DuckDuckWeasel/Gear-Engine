@@ -156,7 +156,7 @@ namespace GearEngine.GearEngine.Presentation.UI
                 return;
             }
 
-            view.SetChargeFillTarget(1f, snap: true);
+            view.SetChargeFillTarget(0f, snap: true);
             view.SettleNow();
 
             slotView.Bind(gear, viewModel);
