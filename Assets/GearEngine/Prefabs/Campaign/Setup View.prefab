@@ -443,7 +443,7 @@ MonoBehaviour:
   targetTransform: {fileID: 0}
   boundsMode: 1
   fillMode: 1
-  fitAxes: 0
+  fitAxes: 1
   rotationMode: 0
   applyOnStart: 0
   applyEveryFrame: 0

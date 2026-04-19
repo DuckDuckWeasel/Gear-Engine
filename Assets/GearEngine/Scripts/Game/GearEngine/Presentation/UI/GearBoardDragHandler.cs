@@ -51,7 +51,10 @@ namespace GearEngine.GearEngine.Presentation.UI
                 return;
             }
 
-            Vector3 worldPos = GetWorldPointerPosition();
+            if (!TryGetWorldPointerPosition(out Vector3 worldPos))
+            {
+                return;
+            }
 
             if (IsPointerDown() && draggedView == null)
             {
@@ -102,9 +105,7 @@ namespace GearEngine.GearEngine.Presentation.UI
                     continue;
                 }
 
-                float dist = Vector2.Distance(
-                    new Vector2(view.transform.position.x, view.transform.position.y),
-                    new Vector2(worldPos.x, worldPos.y));
+                float dist = Vector3.Distance(view.transform.position, worldPos);
 
                 if (dist < closestDist)
                 {
@@ -220,13 +221,11 @@ namespace GearEngine.GearEngine.Presentation.UI
         private Vector3 GetPointerPosition()
             => Input.touchCount > 0 ? (Vector3)Input.GetTouch(0).position : Input.mousePosition;
 
-        private Vector3 GetWorldPointerPosition()
+        private bool TryGetWorldPointerPosition(out Vector3 worldPosition)
         {
-            Vector3 p = GetPointerPosition();
-            p.z = Mathf.Abs(mainCamera.transform.position.z);
-            Vector3 world = mainCamera.ScreenToWorldPoint(p);
-            world.z = -1f;
-            return world;
+            worldPosition = Vector3.zero;
+            Transform boardRoot = boardView != null ? boardView.GetBoardSpaceRoot() : null;
+            return BoardPointerProjectionUtility.TryProjectScreenPointToPlane(mainCamera, GetPointerPosition(), boardRoot, out worldPosition);
         }
     }
 }
