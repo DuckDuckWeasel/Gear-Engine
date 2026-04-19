@@ -28,7 +28,8 @@
     "allowUnsafeCode": false,
     "overrideReferences": true,
     "precompiledReferences": [
-        "CommunityToolkit.Mvvm.dll"
+        "CommunityToolkit.Mvvm.dll",
+        "DOTween.dll"
     ],
     "autoReferenced": true,
     "defineConstraints": [],

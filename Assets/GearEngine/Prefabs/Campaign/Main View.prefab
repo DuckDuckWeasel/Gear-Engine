@@ -169,6 +169,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2477667717761367335}
+  - {fileID: 920800002}
   - {fileID: 6418393852942332499}
   - {fileID: 2743950063083085535}
   m_Father: {fileID: 4520925794862549634}
@@ -231,6 +232,73 @@ MonoBehaviour:
   trackNameLabel: {fileID: 5682601368797526562}
   targetLapsLabel: {fileID: 7488194787155068597}
   targetTimeLabel: {fileID: 90861281207931334}
+  bandsContainer: {fileID: 920800002}
+  bandSlotPrefab: {fileID: 910600005, guid: 49ad44de31799fa45a539ffa858da572, type: 3}
+  popDuration: 0.25
+  stagger: 0.08
+  popEase: 26
+--- !u!1 &920800001
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 920800002}
+  - component: {fileID: 920800003}
+  m_Layer: 0
+  m_Name: BandsContainer
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &920800002
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 920800001}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1962128714430604997}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.05, y: 0.35}
+  m_AnchorMax: {x: 0.95, y: 0.72}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &920800003
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 920800001}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59f8146938fff824cb5fd77236b75775, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.VerticalLayoutGroup
+  m_Padding:
+    m_Left: 0
+    m_Right: 0
+    m_Top: 0
+    m_Bottom: 0
+  m_ChildAlignment: 1
+  m_Spacing: 8
+  m_ChildForceExpandWidth: 1
+  m_ChildForceExpandHeight: 0
+  m_ChildControlWidth: 1
+  m_ChildControlHeight: 1
+  m_ChildScaleWidth: 0
+  m_ChildScaleHeight: 0
+  m_ReverseArrangement: 0
 --- !u!1 &2326831964725450963
 GameObject:
   m_ObjectHideFlags: 0
@@ -488,7 +556,7 @@ MonoBehaviour:
   type: 0
   track: {fileID: 0}
   playButton: {fileID: 0}
-  statsPanel: {fileID: 0}
+  statsPanel: {fileID: 286797731664905960}
   openTransitionAnchors:
   - {fileID: 9100100110011001003}
   openTransitionDurationSeconds: 0.35
