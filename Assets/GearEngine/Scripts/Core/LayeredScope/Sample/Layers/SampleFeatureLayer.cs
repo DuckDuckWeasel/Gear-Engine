@@ -7,24 +7,32 @@ using VContainer;
 
 namespace GearEngine.LayeredScope.Sample.Layers
 {
-    public sealed class SampleAsset { public string Payload; }
+    internal sealed class SampleAsset { public string Payload; }
 
     internal sealed class SampleFeatureService : IAsyncInitializable, IAsyncDisposable
     {
         private readonly SampleAsset asset;
+        private readonly SharedSampleAsset sharedAsset;
         private readonly ISampleConfigService config;
         private readonly ILayerResolver layered;
 
-        public SampleFeatureService(SampleAsset asset, ISampleConfigService config, ILayerResolver layered)
+        public SampleFeatureService(SampleAsset asset, SharedSampleAsset sharedAsset, ISampleConfigService config, ILayerResolver layered)
         {
+            if (asset == null) throw new ArgumentNullException(nameof(asset));
+            if (sharedAsset == null) throw new ArgumentNullException(nameof(sharedAsset));
+            if (config == null) throw new ArgumentNullException(nameof(config));
+            if (layered == null) throw new ArgumentNullException(nameof(layered));
             this.asset = asset;
+            this.sharedAsset = sharedAsset;
             this.config = config;
             this.layered = layered;
         }
 
         public Task InitializeAsync(CancellationToken ct)
         {
-            Debug.Log($"[SampleFeatureService] init asset='{asset.Payload}', config={config.Current.Value}, top resolves gateway? {layered.TryResolve(out ISampleAssetGateway _)}");
+            Debug.Log(
+                $"[SampleFeatureService] init asset='{asset.Payload}', shared='{sharedAsset.Payload}', " +
+                $"config={config.Current.Value}, top resolves gateway? {layered.TryResolve(out ISampleAssetGateway _)}");
             return Task.CompletedTask;
         }
 
@@ -35,11 +43,9 @@ namespace GearEngine.LayeredScope.Sample.Layers
         }
     }
 
-    public sealed class SampleFeatureLayer : IAsyncScopeLayer
+    internal sealed class SampleFeatureLayer : IAsyncScopeLayer
     {
         private SampleAsset prepared;
-
-        public string Name => "SampleFeature";
 
         public async Task PrepareAsync(IObjectResolver parent, CancellationToken ct)
         {

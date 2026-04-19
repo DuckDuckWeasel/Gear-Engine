@@ -4,7 +4,8 @@ namespace GearEngine.LayeredScope
 {
     public interface IScopeLayer
     {
-        string Name { get; }
+        string Name => this.GetType().Name;
+
         void Install(IContainerBuilder builder);
     }
 }

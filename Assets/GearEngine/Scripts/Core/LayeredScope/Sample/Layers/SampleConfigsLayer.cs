@@ -6,16 +6,20 @@ using VContainer;
 
 namespace GearEngine.LayeredScope.Sample.Layers
 {
-    public sealed class SampleConfig { public int Value; }
+    internal sealed class SampleConfig { public int Value; }
 
-    public interface ISampleConfigService { SampleConfig Current { get; } }
+    internal interface ISampleConfigService { SampleConfig Current { get; } }
 
     internal sealed class SampleConfigService : ISampleConfigService, IAsyncInitializable
     {
         private readonly ISampleAssetGateway gateway;
         public SampleConfig Current { get; private set; }
 
-        public SampleConfigService(ISampleAssetGateway gateway) => this.gateway = gateway;
+        public SampleConfigService(ISampleAssetGateway gateway)
+        {
+            if (gateway == null) throw new System.ArgumentNullException(nameof(gateway));
+            this.gateway = gateway;
+        }
 
         public async Task InitializeAsync(CancellationToken ct)
         {
@@ -26,9 +30,8 @@ namespace GearEngine.LayeredScope.Sample.Layers
         }
     }
 
-    public sealed class SampleConfigsLayer : IScopeLayer
+    internal sealed class SampleConfigsLayer : IScopeLayer
     {
-        public string Name => "SampleConfigs";
         public void Install(IContainerBuilder builder)
         {
             builder.Register<SampleConfigService>(Lifetime.Singleton)

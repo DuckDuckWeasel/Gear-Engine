@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace GearEngine.LayeredScope
 {
-    public sealed class ParallelScheduler : IInLayerScheduler
+    internal sealed class ParallelScheduler : IInLayerScheduler
     {
         public Task RunAsync(IReadOnlyList<IAsyncInitializable> fresh, CancellationToken ct)
         {
