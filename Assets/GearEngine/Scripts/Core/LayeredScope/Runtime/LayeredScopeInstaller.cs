@@ -8,8 +8,7 @@ namespace GearEngine.LayeredScope
         public static void Install(IContainerBuilder builder)
         {
             var proxy = new LayerResolverProxy();
-            builder.RegisterInstance<ILayerResolver>(proxy);
-            builder.RegisterInstance(proxy);
+            builder.RegisterInstance<LayerResolverProxy, ILayerResolver>(proxy);
         }
     }
 }
