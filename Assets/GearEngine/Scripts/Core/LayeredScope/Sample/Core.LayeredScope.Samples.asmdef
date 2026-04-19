@@ -1,0 +1,17 @@
+{
+    "name": "Core.LayeredScope.Samples",
+    "rootNamespace": "GearEngine.LayeredScope.Sample",
+    "references": [
+        "Core.LayeredScope",
+        "VContainer"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
