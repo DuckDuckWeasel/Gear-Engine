@@ -40,17 +40,17 @@ namespace GearEngine.GearEngine.Presentation
 
         private BoardViewModel CreateBoard()
         {
-            return new BoardViewModel(boardService, inventoryService, engineService, dragService);
+            return new BoardViewModel(boardService, inventoryService, engineService);
         }
 
         private GearInventoryViewModel CreateInventory()
         {
-            return new GearInventoryViewModel(engineService, inventoryService, dragService);
+            return new GearInventoryViewModel(engineService, inventoryService);
         }
 
         private TrashZoneViewModel CreateTrashZone()
         {
-            return new TrashZoneViewModel(dragService, engineService, Board, presentationTransferService, featureToggle);
+            return new TrashZoneViewModel(engineService, Board, presentationTransferService, featureToggle);
         }
 
         internal void ToggleSimulation()

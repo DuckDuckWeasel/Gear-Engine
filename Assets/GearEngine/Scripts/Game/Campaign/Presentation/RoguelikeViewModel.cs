@@ -78,11 +78,11 @@ namespace GearEngine.Campaign.Presentation
 
         private void SetupGearEngineSubtree()
         {
-            Board = new BoardViewModel(boardService, inventoryService, engineService, dragService);
+            Board = new BoardViewModel(boardService, inventoryService, engineService);
             BindChildViewModel(Board);
-            Inventory = new GearInventoryViewModel(engineService, inventoryService, dragService);
+            Inventory = new GearInventoryViewModel(engineService, inventoryService);
             BindChildViewModel(Inventory);
-            TrashZone = new TrashZoneViewModel(dragService, engineService, Board, presentationTransferService, featureToggle);
+            TrashZone = new TrashZoneViewModel(engineService, Board, presentationTransferService, featureToggle);
             BindChildViewModel(TrashZone);
         }
 

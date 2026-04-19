@@ -154,11 +154,6 @@ namespace GearEngine.GearEngine.Services.Board
             SyncBoardModel();
         }
 
-        public void ExtractNodeForDrag(Vector2Int fromPos)
-        {
-            gridManager?.ExtractNode(fromPos);
-        }
-
         public bool TryMoveBoardGear(IGridNode node, Vector2Int toPos, Vector2Int fromPos)
         {
             if (node == null || engineService == null || gridManager == null || boardRules == null)
@@ -185,6 +180,11 @@ namespace GearEngine.GearEngine.Services.Board
 
             if (occupant == null)
             {
+                if (gridManager.GetNode(fromPos) == node)
+                {
+                    gridManager.ExtractNode(fromPos);
+                }
+
                 PlaceNodeAt(node, toPos);
                 Debug.Log($"<color=#55ff55>[BoardService]</color> Successfully dropped gear into {toPos}");
                 SyncBoardModel();
@@ -335,10 +335,13 @@ namespace GearEngine.GearEngine.Services.Board
                 {
                     extracted = node;
                 }
-                else if (extracted != node)
+                else
                 {
-                    gridManager.AddNode(extracted);
-                    extracted = node;
+                    if (extracted != node)
+                    {
+                        gridManager.AddNode(extracted);
+                        extracted = node;
+                    }
                 }
 
                 RemoveGear(extracted);

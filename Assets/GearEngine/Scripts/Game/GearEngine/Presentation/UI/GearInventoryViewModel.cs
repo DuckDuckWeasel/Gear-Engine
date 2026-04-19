@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Specialized;
 using CommunityToolkit.Mvvm.ComponentModel;
-using GearEngine.GearEngine;
 using GearEngine.GearEngine.Config;
 using GearEngine.GearEngine.Services.Inventory;
 using Scaffold.MVVM;
@@ -11,11 +10,10 @@ namespace GearEngine.GearEngine.Presentation.UI
 {
     public partial class GearInventoryViewModel : ViewModel
     {
-        public GearInventoryViewModel(IGearEngineService engineService, IInventoryService inventoryService, IDragService dragService = null)
+        public GearInventoryViewModel(IGearEngineService engineService, IInventoryService inventoryService)
         {
             this.engineService = engineService ?? throw new ArgumentNullException(nameof(engineService));
             this.inventoryService = inventoryService ?? throw new ArgumentNullException(nameof(inventoryService));
-            this.dragService = dragService;
 
             InventoryModel = inventoryService.GetInventory();
             if (InventoryModel?.Items != null)
@@ -32,7 +30,6 @@ namespace GearEngine.GearEngine.Presentation.UI
 
         public bool CanDrag => engineService != null && !engineService.IsRunning;
 
-        private readonly IDragService dragService;
         private readonly IGearEngineService engineService;
         private readonly IInventoryService inventoryService;
 
@@ -41,30 +38,6 @@ namespace GearEngine.GearEngine.Presentation.UI
         [ObservableProperty] private InventoryModel inventoryModel;
         [ObservableProperty] private string inventoryLimitText;
         [ObservableProperty] private int inventoryListRevision;
-
-        public void NotifySlotDragStarted(GearConfigData gear)
-        {
-            try
-            {
-                dragService?.StartDrag(gear);
-            }
-            catch (Exception ex)
-            {
-                Debug.LogError($"[GearInventoryViewModel] NotifySlotDragStarted failed: {ex.Message}\n{ex.StackTrace}");
-            }
-        }
-
-        public void NotifySlotDragEnded()
-        {
-            try
-            {
-                dragService?.EndDrag();
-            }
-            catch (Exception ex)
-            {
-                Debug.LogError($"[GearInventoryViewModel] NotifySlotDragEnded failed: {ex.Message}\n{ex.StackTrace}");
-            }
-        }
 
         public void NotifySlotDragAccepted(GearConfigData gear)
         {

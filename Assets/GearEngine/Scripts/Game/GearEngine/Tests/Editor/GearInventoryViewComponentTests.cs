@@ -55,7 +55,7 @@ namespace GearEngine.GearEngine.Tests.Editor
             inventory.TryAdd(new GearConfigData { Id = "g1" });
             inventory.TryAdd(new GearConfigData { Id = "g2" });
 
-            viewModel = new GearInventoryViewModel(engine, inventory, dragService: null);
+            viewModel = new GearInventoryViewModel(engine, inventory);
 
             var root = new GameObject("InventoryRoot");
             var containerGo = new GameObject("ItemsContainer", typeof(RectTransform));
@@ -63,7 +63,7 @@ namespace GearEngine.GearEngine.Tests.Editor
             var containerRect = containerGo.GetComponent<RectTransform>();
 
             var slotPrefab = new GameObject("SlotPrefab", typeof(RectTransform));
-            slotPrefab.AddComponent<DragHandler>();
+            slotPrefab.AddComponent<Draggable>();
             GearInventorySlotView slotViewComp = slotPrefab.AddComponent<GearInventorySlotView>();
             var visualContainer = new GameObject("VisualContainer", typeof(RectTransform));
             visualContainer.transform.SetParent(slotPrefab.transform, false);

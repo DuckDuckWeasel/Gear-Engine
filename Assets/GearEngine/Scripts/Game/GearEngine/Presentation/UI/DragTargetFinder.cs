@@ -5,10 +5,12 @@ using UnityEngine.EventSystems;
 namespace GearEngine.GearEngine.Presentation.UI
 {
     /// <summary>
-    /// Resolves the top-most accepting <see cref="IDragTarget"/> under the pointer (UI first, then 3D world).
+    /// Resolves the top-most accepting <see cref="IDragTarget"/> under the pointer (UI first, then world 2D/3D).
     /// </summary>
     public static class DragTargetFinder
     {
+        private const float MaxRayDistance = 500f;
+
         public static IDragTarget Find(DragPayload payload, Vector2 screenPos, Camera cam)
         {
             return FindInUI(screenPos, payload) ?? FindInWorld(screenPos, cam, payload);
@@ -45,13 +47,27 @@ namespace GearEngine.GearEngine.Presentation.UI
             }
 
             Ray ray = cam.ScreenPointToRay(screenPos);
-            if (!Physics.Raycast(ray, out RaycastHit hit))
+
+            RaycastHit2D hit2d = Physics2D.GetRayIntersection(ray, MaxRayDistance);
+            if (hit2d.collider != null)
             {
-                return null;
+                IDragTarget t = hit2d.collider.GetComponentInParent<IDragTarget>();
+                if (t != null && t.CanAccept(payload))
+                {
+                    return t;
+                }
             }
 
-            IDragTarget t = hit.collider.GetComponentInParent<IDragTarget>();
-            return t != null && t.CanAccept(payload) ? t : null;
+            if (Physics.Raycast(ray, out RaycastHit hit3d, MaxRayDistance))
+            {
+                IDragTarget t = hit3d.collider.GetComponentInParent<IDragTarget>();
+                if (t != null && t.CanAccept(payload))
+                {
+                    return t;
+                }
+            }
+
+            return null;
         }
     }
 }

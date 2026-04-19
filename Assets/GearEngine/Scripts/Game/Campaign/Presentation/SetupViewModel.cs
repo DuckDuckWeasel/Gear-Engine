@@ -44,7 +44,7 @@ namespace GearEngine.Campaign.Presentation
             Track = new CampaignTrackPreviewViewModel(trackService.CurrentTrack);
             BindChildViewModel(Track);
 
-            Board = new BoardViewModel(boardService, inventoryService, engineService, dragService);
+            Board = new BoardViewModel(boardService, inventoryService, engineService);
             BindChildViewModel(Board);
 
             if (loadoutService.HasSavedLoadout && !boardService.GetAllNodes().Any())
@@ -52,10 +52,10 @@ namespace GearEngine.Campaign.Presentation
                 Board.LoadLayout(loadoutService.GetBoardLayout());
             }
 
-            Inventory = new GearInventoryViewModel(engineService, inventoryService, dragService);
+            Inventory = new GearInventoryViewModel(engineService, inventoryService);
             BindChildViewModel(Inventory);
 
-            TrashZone = new TrashZoneViewModel(dragService, engineService, Board, presentationTransferService, featureToggle);
+            TrashZone = new TrashZoneViewModel(engineService, Board, presentationTransferService, featureToggle);
             BindChildViewModel(TrashZone);
         }
 

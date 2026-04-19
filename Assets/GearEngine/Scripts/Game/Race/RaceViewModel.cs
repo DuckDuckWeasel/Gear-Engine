@@ -46,9 +46,6 @@ namespace GearEngine.Race
         private IBoardService boardService;
 
         [Inject]
-        private IDragService dragService;
-
-        [Inject]
         private SplineCarRunnerService aiRunner;
 
         protected override void Initialize()
@@ -94,13 +91,13 @@ namespace GearEngine.Race
 
         private void SetupInventory()
         {
-            Inventory = new GearInventoryViewModel(engineService, inventoryService, dragService);
+            Inventory = new GearInventoryViewModel(engineService, inventoryService);
             BindChildViewModel(Inventory);
         }
 
         private void SetupBoard()
         {
-            Board = new BoardViewModel(boardService, inventoryService, engineService, dragService);
+            Board = new BoardViewModel(boardService, inventoryService, engineService);
             BindChildViewModel(Board);
         }
 

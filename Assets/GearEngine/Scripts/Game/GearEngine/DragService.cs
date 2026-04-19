@@ -6,49 +6,42 @@ using UnityEngine;
 namespace GearEngine.GearEngine
 {
     /// <summary>
-    /// Centralized drag state. Broadcasts lifecycle to registered <see cref="IDragTarget"/> instances.
+    /// Centralized drag state. Broadcasts lifecycle to registered <see cref="IDragLifecycleListener"/> instances.
     /// </summary>
     public sealed class DragService : IDragService
     {
-        private readonly List<IDragTarget> registeredTargets = new List<IDragTarget>();
+        private readonly List<IDragLifecycleListener> listeners = new List<IDragLifecycleListener>();
 
         public bool IsDragging { get; private set; }
 
-        private object dragData;
-
-        public T GetDragData<T>() where T : class
+        public void Register(IDragLifecycleListener listener)
         {
-            return dragData as T;
-        }
-
-        public void Register(IDragTarget target)
-        {
-            if (target == null)
+            if (listener == null)
             {
                 return;
             }
 
-            if (!registeredTargets.Contains(target))
+            if (!listeners.Contains(listener))
             {
-                registeredTargets.Add(target);
+                listeners.Add(listener);
             }
         }
 
-        public void Unregister(IDragTarget target)
+        public void Unregister(IDragLifecycleListener listener)
         {
-            if (target == null)
+            if (listener == null)
             {
                 return;
             }
 
-            registeredTargets.Remove(target);
+            listeners.Remove(listener);
         }
 
-        public void StartDrag(object data)
+        public void StartDrag(DragPayload payload)
         {
-            if (data == null)
+            if (payload.Data == null)
             {
-                throw new ArgumentNullException(nameof(data));
+                throw new ArgumentNullException(nameof(payload));
             }
 
             if (IsDragging)
@@ -57,48 +50,49 @@ namespace GearEngine.GearEngine
                 EndDrag();
             }
 
-            dragData = data;
             IsDragging = true;
-
-            var payload = new DragPayload(dragData, Vector3.zero, null);
             BroadcastDragStarted(payload);
         }
 
         public void EndDrag()
         {
-            dragData = null;
+            if (!IsDragging)
+            {
+                return;
+            }
+
             IsDragging = false;
             BroadcastDragEnded();
         }
 
         private void BroadcastDragStarted(DragPayload payload)
         {
-            IDragTarget[] snapshot = registeredTargets.ToArray();
-            foreach (IDragTarget target in snapshot)
+            IDragLifecycleListener[] snapshot = listeners.ToArray();
+            foreach (IDragLifecycleListener listener in snapshot)
             {
                 try
                 {
-                    target.OnDragStarted(payload);
+                    listener.OnDragStarted(payload);
                 }
                 catch (Exception ex)
                 {
-                    Debug.LogError($"[DragService] IDragTarget.OnDragStarted failed: {ex.Message}\n{ex.StackTrace}");
+                    Debug.LogError($"[DragService] IDragLifecycleListener.OnDragStarted failed: {ex.Message}\n{ex.StackTrace}");
                 }
             }
         }
 
         private void BroadcastDragEnded()
         {
-            IDragTarget[] snapshot = registeredTargets.ToArray();
-            foreach (IDragTarget target in snapshot)
+            IDragLifecycleListener[] snapshot = listeners.ToArray();
+            foreach (IDragLifecycleListener listener in snapshot)
             {
                 try
                 {
-                    target.OnDragEnded();
+                    listener.OnDragEnded();
                 }
                 catch (Exception ex)
                 {
-                    Debug.LogError($"[DragService] IDragTarget.OnDragEnded failed: {ex.Message}\n{ex.StackTrace}");
+                    Debug.LogError($"[DragService] IDragLifecycleListener.OnDragEnded failed: {ex.Message}\n{ex.StackTrace}");
                 }
             }
         }

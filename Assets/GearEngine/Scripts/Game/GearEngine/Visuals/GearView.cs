@@ -112,6 +112,51 @@ namespace GearEngine.GearEngine.Visuals
             transform.localRotation = Quaternion.identity;
         }
 
+        /// <summary>
+        /// Rescales <see cref="gearVisual"/> so its combined renderer bounds fit inside the given
+        /// UI rect. Use this after <see cref="BindForDisplay"/> when the gear lives inside a
+        /// <see cref="RectTransform"/> slot (e.g. inventory) so the world-space visual fills the slot.
+        /// </summary>
+        public void FitVisualToRect(RectTransform target, float padding = 0.9f)
+        {
+            if (gearVisual == null || target == null)
+            {
+                return;
+            }
+
+            Renderer[] renderers = gearVisual.GetComponentsInChildren<Renderer>(true);
+            if (renderers.Length == 0)
+            {
+                return;
+            }
+
+            Bounds combined = renderers[0].bounds;
+            for (int i = 1; i < renderers.Length; i++)
+            {
+                combined.Encapsulate(renderers[i].bounds);
+            }
+
+            if (combined.size.x <= Mathf.Epsilon || combined.size.y <= Mathf.Epsilon)
+            {
+                return;
+            }
+
+            // Slot world-space size derived from its rect plus the canvas/lossy scale chain.
+            Vector2 targetSize = new Vector2(
+                Mathf.Abs(target.rect.width * target.lossyScale.x),
+                Mathf.Abs(target.rect.height * target.lossyScale.y));
+
+            if (targetSize.x <= Mathf.Epsilon || targetSize.y <= Mathf.Epsilon)
+            {
+                return;
+            }
+
+            float scaleX = targetSize.x / combined.size.x;
+            float scaleY = targetSize.y / combined.size.y;
+            float fit = Mathf.Min(scaleX, scaleY) * padding;
+            gearVisual.localScale *= fit;
+        }
+
         private void ClearDisplayBoardState()
         {
             targetNode = null;

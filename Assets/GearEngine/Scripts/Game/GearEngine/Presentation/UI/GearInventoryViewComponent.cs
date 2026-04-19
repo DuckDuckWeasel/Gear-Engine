@@ -7,7 +7,6 @@ using Scaffold.MVVM;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Assertions;
-using UnityEngine.EventSystems;
 
 namespace GearEngine.GearEngine.Presentation.UI
 {
@@ -17,19 +16,7 @@ namespace GearEngine.GearEngine.Presentation.UI
         [SerializeField] private GameObject slotPrefab;
         [SerializeField] private TextMeshProUGUI inventoryLimitLabel;
 
-        private Transform boardRoot;
-        private DragGhostController ghostController;
-
         private bool inventoryUiBinding;
-
-        /// <summary>
-        /// Wires the board root used for inventory slot scale matching and for parenting the drag ghost.
-        /// </summary>
-        public void SetBoardRoot(Transform root)
-        {
-            boardRoot = root;
-            ghostController = root != null ? new DragGhostController(root) : null;
-        }
 
         protected override void OnBind()
         {
@@ -42,7 +29,6 @@ namespace GearEngine.GearEngine.Presentation.UI
                 Bind(() => viewModel.InventoryLimitText, () => inventoryLimitLabel.text);
                 Bind<int, int>(() => viewModel.InventoryListRevision, OnInventoryListRevisionChanged);
                 Bind<IItem, IItem>(() => viewModel.SelectedItem, OnSelectionChanged);
-                CheckBoardRoot();
                 RebuildUIList();
             }
             finally
@@ -59,14 +45,6 @@ namespace GearEngine.GearEngine.Presentation.UI
             }
 
             RebuildUIList();
-        }
-
-        private void CheckBoardRoot()
-        {
-            if (boardRoot == null)
-            {
-                Debug.LogWarning("[GearInventoryView] Board root is not wired from GearEngineCoreViewComponent; slot scaling and drag ghost may be incorrect.");
-            }
         }
 
         private void OnSelectionChanged(IItem newItem)
@@ -130,17 +108,21 @@ namespace GearEngine.GearEngine.Presentation.UI
                 return;
             }
 
-            DragHandler dragger = slotObj.GetComponent<DragHandler>();
-            if (dragger == null)
+            Draggable drag = slotObj.GetComponent<Draggable>() ?? slotObj.AddComponent<Draggable>();
+            drag.SetHideSourceWhileDragging(false);
+            GearConfigData capturedGear = gear;
+            drag.BuildPayload = e =>
             {
-                Debug.LogError("[GearInventoryView] Slot prefab must include DragHandler.");
-                return;
-            }
+                Vector3 world = DragPointerUtility.GetWorldPosition(e);
+                return new DragPayload(capturedGear, world);
+            };
 
-            ApplyGearVisualAndDrag(slotView, gear, dragger);
+            drag.OnDropAccepted = _ => viewModel.NotifySlotDragAccepted(capturedGear);
+
+            ApplyGearVisualAndDrag(slotView, gear, drag);
         }
 
-        private void ApplyGearVisualAndDrag(GearInventorySlotView slotView, GearConfigData gear, DragHandler dragger)
+        private void ApplyGearVisualAndDrag(GearInventorySlotView slotView, GearConfigData gear, Draggable drag)
         {
             const int inventorySortingBase = 50;
 
@@ -148,79 +130,24 @@ namespace GearEngine.GearEngine.Presentation.UI
             {
                 Debug.LogError($"[GearInventoryView] Gear '{gear?.Id}' has no ViewPrefab; inventory visual skipped.");
                 slotView.Bind(gear, viewModel);
-                HookDragHandlers(dragger, gear);
                 return;
             }
 
             Transform parent = slotView.VisualContainer;
-            float scaleMultiplier = ComputeBaseScale(parent);
+            float scaleMultiplier = gear.RelativeScaleMultiplier;
             GearView view = Instantiate(gear.ViewPrefab, parent, false);
             view.BindForDisplay(gear, DisplayOptions.Inventory(inventorySortingBase, scaleMultiplier));
+
+            // Gear visuals live in world space (sized for board cells); make them fill the
+            // inventory slot's rect by rescaling after layout has had a chance to settle.
+            RectTransform slotRect = parent as RectTransform;
+            if (slotRect != null)
+            {
+                Canvas.ForceUpdateCanvases();
+                view.FitVisualToRect(slotRect);
+            }
+
             slotView.Bind(gear, viewModel);
-            HookDragHandlers(dragger, gear);
-        }
-
-        private float ComputeBaseScale(Transform visualContainer)
-        {
-            float baseScale = 56f;
-            if (boardRoot != null && visualContainer.lossyScale.x > 0f)
-            {
-                baseScale = boardRoot.lossyScale.x / visualContainer.lossyScale.x;
-            }
-
-            return baseScale;
-        }
-
-        private void HookDragHandlers(DragHandler dragger, GearConfigData gear)
-        {
-            GearConfigData capturedGear = gear;
-            dragger.OnDragBegin += BeginInventoryDrag;
-            dragger.OnDragMoved += MoveInventoryDragGhost;
-            dragger.OnDragEnd += EndInventoryDrag;
-            dragger.BuildPayload = worldPos => new DragPayload(capturedGear, worldPos, dragger);
-            dragger.OnDragAccepted = _ => viewModel.NotifySlotDragAccepted(capturedGear);
-
-            void BeginInventoryDrag(PointerEventData e)
-            {
-                viewModel.NotifySlotDragStarted(capturedGear);
-                if (ghostController == null)
-                {
-                    return;
-                }
-
-                ghostController.CreateGhost(capturedGear);
-                if (DragHandler.TryGetPointerWorldPosition(e, out Vector3 w))
-                {
-                    ghostController.MoveGhostTo(w);
-                }
-            }
-
-            void MoveInventoryDragGhost(PointerEventData e)
-            {
-                if (ghostController == null)
-                {
-                    return;
-                }
-
-                if (DragHandler.TryGetPointerWorldPosition(e, out Vector3 w))
-                {
-                    ghostController.MoveGhostTo(w);
-                }
-            }
-
-            void EndInventoryDrag(PointerEventData e)
-            {
-                ghostController?.DestroyGhost();
-                viewModel.NotifySlotDragEnded();
-            }
-        }
-
-        public void OnDragStarted(DragPayload payload)
-        {
-        }
-
-        public void OnDragEnded()
-        {
         }
 
         public bool CanAccept(DragPayload payload)
@@ -228,17 +155,9 @@ namespace GearEngine.GearEngine.Presentation.UI
             return payload.GetData<IGridNode>()?.ConfigData?.IsReturnable == true;
         }
 
-        public void OnDrop(DragPayload payload)
+        public bool OnDrop(DragPayload payload)
         {
-            payload.Source?.OnDropAccepted(this);
-        }
-
-        public void OnHoverEnter(DragPayload payload)
-        {
-        }
-
-        public void OnHoverExit()
-        {
+            return CanAccept(payload);
         }
 
         private GameObject CreateSlotObject(IItem item)
@@ -262,6 +181,5 @@ namespace GearEngine.GearEngine.Presentation.UI
                 viewModel.SelectGearLocal(viewModel.InventoryModel.Items.First() as GearConfigData);
             }
         }
-
     }
 }

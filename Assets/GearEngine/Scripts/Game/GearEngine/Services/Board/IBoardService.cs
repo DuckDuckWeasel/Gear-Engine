@@ -26,8 +26,6 @@ namespace GearEngine.GearEngine.Services.Board
 
         void LoadLayout(BoardLayoutData layout);
 
-        void ExtractNodeForDrag(Vector2Int fromPos);
-
         bool TryMoveBoardGear(IGridNode node, Vector2Int toPos, Vector2Int fromPos);
 
         bool TryPlace(Vector2Int targetDropPos, GearConfigData gearData);

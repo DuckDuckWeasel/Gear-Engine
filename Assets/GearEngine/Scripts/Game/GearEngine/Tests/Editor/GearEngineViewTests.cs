@@ -32,47 +32,41 @@ namespace GearEngine.GearEngine.Tests.Editor
 
         private sealed class FakeDragService : IDragService
         {
-            private readonly List<IDragTarget> targets = new List<IDragTarget>();
+            private readonly List<IDragLifecycleListener> listeners = new List<IDragLifecycleListener>();
 
             public bool IsDragging { get; private set; }
-            private object dragData;
 
-            public T GetDragData<T>() where T : class => dragData as T;
-
-            public void Register(IDragTarget target)
+            public void Register(IDragLifecycleListener listener)
             {
-                if (target != null && !targets.Contains(target))
+                if (listener != null && !listeners.Contains(listener))
                 {
-                    targets.Add(target);
+                    listeners.Add(listener);
                 }
             }
 
-            public void Unregister(IDragTarget target)
+            public void Unregister(IDragLifecycleListener listener)
             {
-                if (target != null)
+                if (listener != null)
                 {
-                    targets.Remove(target);
+                    listeners.Remove(listener);
                 }
             }
 
-            public void StartDrag(object data)
+            public void StartDrag(DragPayload payload)
             {
-                dragData = data;
                 IsDragging = true;
-                var payload = new DragPayload(dragData, Vector3.zero, null);
-                foreach (IDragTarget t in targets.ToArray())
+                foreach (IDragLifecycleListener l in listeners.ToArray())
                 {
-                    t.OnDragStarted(payload);
+                    l.OnDragStarted(payload);
                 }
             }
 
             public void EndDrag()
             {
-                dragData = null;
                 IsDragging = false;
-                foreach (IDragTarget t in targets.ToArray())
+                foreach (IDragLifecycleListener l in listeners.ToArray())
                 {
-                    t.OnDragEnded();
+                    l.OnDragEnded();
                 }
             }
         }

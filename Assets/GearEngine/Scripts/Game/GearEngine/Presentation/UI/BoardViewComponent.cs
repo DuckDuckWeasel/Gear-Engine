@@ -5,6 +5,7 @@ using GearEngine.GearEngine.Visuals;
 using Scaffold.MVVM;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -13,10 +14,9 @@ namespace GearEngine.GearEngine.Presentation.UI
 {
     public class BoardViewComponent : ViewComponent<BoardViewModel>, IDragTarget
     {
-        [SerializeField] private GearBoardDragHandler dragHandler;
         [SerializeField] private GameObject gridSlotPrefab;
         [SerializeField] private Transform gridRoot;
-        [Tooltip("Legacy root for board-space plane / drag ghost. Gears parent to grid slots.")]
+        [Tooltip("Legacy root for board-space plane. Gears parent to grid slots.")]
         [SerializeField] private Transform gearsRoot;
         [SerializeField] private TextMeshProUGUI boardLimitLabel;
 
@@ -28,11 +28,15 @@ namespace GearEngine.GearEngine.Presentation.UI
         private readonly Dictionary<Vector2Int, Transform> slotByCoord = new Dictionary<Vector2Int, Transform>();
         private readonly List<GameObject> backgroundSlots = new List<GameObject>();
 
-        internal BoardLayoutSO BoardLayout => boardLayout;
+        public BoardLayoutSO BoardLayout => boardLayout;
 
         protected override void OnBind()
         {
             Assert.IsNotNull(boardLayout, "[BoardView] BoardLayoutSO is missing.");
+
+            // Board gears are world-space colliders; the EventSystem only dispatches
+            // IBeginDragHandler to them via Physics2DRaycaster on the rendering camera.
+            EnsureBoardCameraPhysics2DRaycaster();
 
             viewModel.OnGearPlaced += HandleGearPlaced;
             viewModel.OnGearRemoved += HandleGearRemoved;
@@ -43,7 +47,8 @@ namespace GearEngine.GearEngine.Presentation.UI
                 SpawnView(node);
             }
 
-            Bind(() => viewModel.Interactable, () => dragHandler.enabled);
+            viewModel.PropertyChanged += OnBoardViewModelPropertyChanged;
+            RefreshDraggableInteractable();
             Bind(() => viewModel.BoardLimitText, () => boardLimitLabel.text);
         }
 
@@ -53,65 +58,38 @@ namespace GearEngine.GearEngine.Presentation.UI
             {
                 viewModel.OnGearPlaced -= HandleGearPlaced;
                 viewModel.OnGearRemoved -= HandleGearRemoved;
+                viewModel.PropertyChanged -= OnBoardViewModelPropertyChanged;
             }
 
             DestroyAllViews();
 
-            if (dragHandler != null)
-            {
-                dragHandler.enabled = false;
-            }
-
             base.OnUnbind();
         }
 
-        internal void NotifyPickedUp(IGridNode node, Vector2Int coord)
+        private void OnBoardViewModelPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            viewModel?.OnGearPickedUp(node, coord);
-        }
-
-        internal void NotifyDropped(IGridNode node, Vector2Int coord)
-        {
-            viewModel?.OnGearDropped(node, coord);
-        }
-
-        internal void NotifyBoardGearReturnAccepted(IGridNode node, GearConfigData config, Vector3 worldPos)
-        {
-            viewModel?.CompleteBoardGearReturnToInventory(node, config);
-        }
-
-        internal GearView DetachViewForDrag(IGridNode node)
-        {
-            if (node == null)
+            if (e.PropertyName == nameof(BoardViewModel.Interactable))
             {
-                return null;
-            }
-
-            if (viewsByNode.TryGetValue(node, out GearView view))
-            {
-                viewsByNode.Remove(node);
-                return view;
-            }
-
-            return null;
-        }
-
-        internal void DestroyDetachedView(GearView view)
-        {
-            if (view != null)
-            {
-                DestroyViewGameObject(view.gameObject);
+                RefreshDraggableInteractable();
             }
         }
 
-        internal IEnumerable<GearView> GetViews()
+        private void RefreshDraggableInteractable()
         {
-            return viewsByNode.Values;
-        }
+            bool boardInteractable = viewModel != null && viewModel.Interactable;
+            foreach (KeyValuePair<IGridNode, GearView> pair in viewsByNode)
+            {
+                Draggable drag = pair.Value != null ? pair.Value.GetComponent<Draggable>() : null;
+                if (drag == null)
+                {
+                    continue;
+                }
 
-        internal bool IsRunning()
-        {
-            return viewModel?.EngineService?.IsRunning ?? false;
+                IGridNode node = pair.Key;
+                bool movable = node != null && node.IsInteractable &&
+                                 node.ConfigData != null && node.ConfigData.IsMovable;
+                drag.IsInteractable = boardInteractable && movable;
+            }
         }
 
         /// <summary>Transform whose local space matches <see cref="BoardLayoutSO.GetGridPosition"/> / grid layout.</summary>
@@ -196,6 +174,71 @@ namespace GearEngine.GearEngine.Presentation.UI
             GearView view = Instantiate(prefab, slot, false);
             view.Bind(node, boardLayout, viewModel.BoardRules, GetSlotTransform, node.ConfigData);
             viewsByNode[node] = view;
+            AttachDraggable(view, node);
+        }
+
+        private void AttachDraggable(GearView view, IGridNode node)
+        {
+            GameObject go = view.gameObject;
+            if (go.GetComponent<Collider2D>() == null)
+            {
+                go.AddComponent<BoxCollider2D>();
+            }
+
+            Draggable drag = go.GetComponent<Draggable>() ?? go.AddComponent<Draggable>();
+            drag.SetHideSourceWhileDragging(true);
+            Transform boardRoot = GetBoardSpaceRoot();
+            drag.PreviewParent = boardRoot;
+            bool boardInteractable = viewModel != null && viewModel.Interactable;
+            bool movable = node.IsInteractable && node.ConfigData != null && node.ConfigData.IsMovable;
+            drag.IsInteractable = boardInteractable && movable;
+
+            Camera main = Camera.main;
+            drag.BuildPayload = e =>
+            {
+                Vector3 world;
+                if (main != null && boardRoot != null &&
+                    BoardPointerProjectionUtility.TryProjectScreenPointToPlane(main, e.position, boardRoot, out world))
+                {
+                    return new DragPayload(node, world);
+                }
+
+                world = DragPointerUtility.GetWorldPosition(e);
+                return new DragPayload(node, world);
+            };
+
+            drag.OnDropAccepted = target => OnGearDragAccepted(node, target);
+        }
+
+        private void OnGearDragAccepted(IGridNode node, IDragTarget target)
+        {
+            switch (target)
+            {
+                case BoardViewComponent _:
+                    break;
+                case GearInventoryViewComponent _:
+                    if (node?.ConfigData != null)
+                    {
+                        viewModel.CompleteBoardGearReturnToInventory(node, node.ConfigData);
+                    }
+
+                    break;
+            }
+        }
+
+        private static void EnsureBoardCameraPhysics2DRaycaster()
+        {
+            Camera cam = Camera.main;
+            if (cam == null)
+            {
+                return;
+            }
+
+            Type raycasterType = Type.GetType("UnityEngine.UI.Physics2DRaycaster, UnityEngine.UI");
+            if (raycasterType != null && cam.GetComponent(raycasterType) == null)
+            {
+                cam.gameObject.AddComponent(raycasterType);
+            }
         }
 
         private void DestroyAllViews()
@@ -246,42 +289,34 @@ namespace GearEngine.GearEngine.Presentation.UI
             go.SafeDestroy();
         }
 
-        public void OnDragStarted(DragPayload payload)
-        {
-        }
-
-        public void OnDragEnded()
-        {
-        }
-
         public bool CanAccept(DragPayload payload)
         {
-            return payload.GetData<GearConfigData>() != null;
+            return payload.GetData<GearConfigData>() != null || payload.GetData<IGridNode>() != null;
         }
 
-        public void OnDrop(DragPayload payload)
+        public bool OnDrop(DragPayload payload)
         {
             GearConfigData gear = payload.GetData<GearConfigData>();
-            if (gear == null || viewModel == null || boardLayout == null)
+            IGridNode draggedNode = payload.GetData<IGridNode>();
+            if (viewModel == null || boardLayout == null)
             {
-                return;
+                return false;
             }
 
             Vector3 boardLocal = GetBoardSpaceRoot().InverseTransformPoint(payload.WorldPosition);
             Vector2Int gridPos = boardLayout.GetGridPosition(boardLocal, viewModel.BoardRules);
-            bool placed = viewModel.HandleInventoryDrop(gridPos, gear);
-            if (placed)
+
+            if (draggedNode != null)
             {
-                payload.Source?.OnDropAccepted(this);
+                return viewModel.TryMoveBoardGear(draggedNode, gridPos);
             }
-        }
 
-        public void OnHoverEnter(DragPayload payload)
-        {
-        }
+            if (gear != null)
+            {
+                return viewModel.HandleInventoryDrop(gridPos, gear);
+            }
 
-        public void OnHoverExit()
-        {
+            return false;
         }
     }
 }

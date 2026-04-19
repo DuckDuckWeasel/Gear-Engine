@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace GearEngine.GearEngine.Presentation.UI
 {
-    [RequireComponent(typeof(DragHandler))]
+    [RequireComponent(typeof(Draggable))]
     public class GearInventorySlotView : MonoBehaviour
     {
         [SerializeField]
@@ -15,21 +15,21 @@ namespace GearEngine.GearEngine.Presentation.UI
 
         private GearConfigData boundGearData;
         private GearInventoryViewModel viewModel;
-        private DragHandler dragHandler;
+        private Draggable draggable;
 
         public void Bind(GearConfigData config, GearInventoryViewModel vm)
         {
             boundGearData = config;
             viewModel = vm;
 
-            dragHandler = GetComponent<DragHandler>();
+            draggable = GetComponent<Draggable>();
         }
 
         private void Update()
         {
-            if (dragHandler != null && viewModel != null)
+            if (draggable != null && viewModel != null)
             {
-                dragHandler.IsInteractable = viewModel.CanDrag;
+                draggable.IsInteractable = viewModel.CanDrag;
             }
         }
     }

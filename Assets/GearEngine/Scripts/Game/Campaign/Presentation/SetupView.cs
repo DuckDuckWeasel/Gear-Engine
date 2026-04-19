@@ -29,13 +29,15 @@ namespace GearEngine.Campaign.Presentation
             }
 
             track.Bind(viewModel.Track);
-            
+
+            DragServiceRegistry.Register(viewModel.DragService);
             boardView.Bind(viewModel.Board);
-            inventoryView.SetBoardRoot(boardView.GetBoardSpaceRoot());
             inventoryView.Bind(viewModel.Inventory);
             
             trashDropZone.SetDragService(viewModel.DragService);
+            trashDropZone.SetBoardPresentation(boardView.BoardLayout, viewModel.Board.BoardRules);
             trashDropZone.Bind(viewModel.TrashZone);
+            trashDropZone.ApplyInitialPlacement();
         }
 
         protected override void OnOpen()

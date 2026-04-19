@@ -1,5 +1,5 @@
 using System;
-using GearEngine.GearEngine;
+using GearEngine.GearEngine.Config;
 using GearEngine.GearEngine.Nodes;
 using GearEngine.GearEngine.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -10,9 +10,8 @@ namespace GearEngine.GearEngine.Presentation.UI
 {
     public partial class TrashZoneViewModel : ViewModel
     {
-        public TrashZoneViewModel(IDragService dragService, IGearEngineService engineService, BoardViewModel board, IGearPresentationTransferService presentationTransfer, GearEngineFeatureToggleSO featureToggle)
+        public TrashZoneViewModel(IGearEngineService engineService, BoardViewModel board, IGearPresentationTransferService presentationTransfer, GearEngineFeatureToggleSO featureToggle)
         {
-            this.dragService = dragService ?? throw new ArgumentNullException(nameof(dragService));
             this.engineService = engineService ?? throw new ArgumentNullException(nameof(engineService));
             this.board = board ?? throw new ArgumentNullException(nameof(board));
             this.presentationTransfer = presentationTransfer ?? throw new ArgumentNullException(nameof(presentationTransfer));
@@ -21,7 +20,6 @@ namespace GearEngine.GearEngine.Presentation.UI
 
         internal GearEngineFeatureToggleSO FeatureToggleForTrashPlacement => featureToggle;
 
-        private readonly IDragService dragService;
         private readonly IGearEngineService engineService;
         private readonly BoardViewModel board;
         private readonly IGearPresentationTransferService presentationTransfer;
@@ -33,11 +31,12 @@ namespace GearEngine.GearEngine.Presentation.UI
         [ObservableProperty]
         private string rewardText = string.Empty;
 
-        public void HandleDragStarted(object data)
+        public void HandleDragStarted(DragPayload payload)
         {
-            if (data is GearConfigData gearData && CanTrashAcceptGear(gearData))
+            GearConfigData gear = payload.GetData<GearConfigData>() ?? payload.GetData<IGridNode>()?.ConfigData;
+            if (gear != null && CanTrashAcceptGear(gear))
             {
-                RewardText = $"+{gearData.DeleteRewardAmount}";
+                RewardText = $"+{gear.DeleteRewardAmount}";
                 IsActive = true;
             }
             else
@@ -51,35 +50,29 @@ namespace GearEngine.GearEngine.Presentation.UI
             IsActive = false;
         }
 
-        public void HandleBoardGearDropped(IGridNode node)
+        public bool HandleBoardGearDropped(IGridNode node)
         {
             try
             {
-                TryDeleteBoardGearOrSnapBack(node);
+                return TryDeleteBoardGear(node);
             }
             catch (Exception ex)
             {
                 LogBoardDropFailure(ex, node);
-            }
-            finally
-            {
-                dragService?.EndDrag();
+                return false;
             }
         }
 
-        public void HandleInventoryGearDropped(GearConfigData gear)
+        public bool HandleInventoryGearDropped(GearConfigData gear)
         {
             try
             {
-                TryTrashInventoryGear(gear);
+                return TryTrashInventoryGear(gear);
             }
             catch (Exception ex)
             {
                 Debug.LogError($"[TrashZoneViewModel] HandleInventoryGearDropped failed: {ex.Message}\n{ex.StackTrace}");
-            }
-            finally
-            {
-                dragService?.EndDrag();
+                return false;
             }
         }
 
@@ -103,42 +96,31 @@ namespace GearEngine.GearEngine.Presentation.UI
             return true;
         }
 
-        private void TryDeleteBoardGearOrSnapBack(IGridNode node)
+        private bool TryDeleteBoardGear(IGridNode node)
         {
             if (node == null || (engineService != null && engineService.IsRunning))
             {
-                return;
+                return false;
             }
 
-            bool deleted = board.DeleteGear(node);
-            if (!deleted)
-            {
-                board.SnapBackToOriginal(node);
-            }
+            return board.DeleteGear(node);
         }
 
         private void LogBoardDropFailure(Exception ex, IGridNode node)
         {
             Debug.LogError($"[TrashZoneViewModel] HandleBoardGearDropped failed: {ex.Message}\n{ex.StackTrace}");
-            try
-            {
-                board?.SnapBackToOriginal(node);
-            }
-            catch (Exception snapEx)
-            {
-                Debug.LogError($"[TrashZoneViewModel] SnapBackToOriginal failed: {snapEx.Message}\n{snapEx.StackTrace}");
-            }
         }
 
-        private void TryTrashInventoryGear(GearConfigData gear)
+        private bool TryTrashInventoryGear(GearConfigData gear)
         {
             if (gear == null || (engineService != null && engineService.IsRunning))
             {
-                return;
+                return false;
             }
 
             presentationTransfer.TrashInventoryGear(gear);
             Debug.Log($"<color=#ff5555>[TrashZoneViewModel]</color> Inventory Item '{gear.Id}' Trashed! Reward: {gear.DeleteRewardAmount}");
+            return true;
         }
     }
 }

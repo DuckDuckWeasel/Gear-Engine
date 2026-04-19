@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using GearEngine.GearEngine.Nodes;
 using CommunityToolkit.Mvvm.ComponentModel;
-using GearEngine.GearEngine;
 using GearEngine.GearEngine.Config;
 using GearEngine.GearEngine.Services;
 using GearEngine.GearEngine.Services.Board;
@@ -14,12 +13,11 @@ namespace GearEngine.GearEngine.Presentation.UI
 {
     public partial class BoardViewModel : ViewModel
     {
-        public BoardViewModel(IBoardService boardService, IInventoryService inventoryService, IGearEngineService engineService, IDragService dragService = null)
+        public BoardViewModel(IBoardService boardService, IInventoryService inventoryService, IGearEngineService engineService)
         {
             this.boardService = boardService ?? throw new ArgumentNullException(nameof(boardService));
             this.inventoryService = inventoryService ?? throw new ArgumentNullException(nameof(inventoryService));
             this.engineService = engineService ?? throw new ArgumentNullException(nameof(engineService));
-            this.dragService = dragService;
 
             boardService.GearPlaced += OnBoardGearPlaced;
             boardService.GearRemoved += OnBoardGearRemoved;
@@ -44,8 +42,6 @@ namespace GearEngine.GearEngine.Presentation.UI
         private readonly IBoardService boardService;
         private readonly IInventoryService inventoryService;
         private readonly IGearEngineService engineService;
-        private readonly IDragService dragService;
-        private Vector2Int pickupOriginalPos;
 
         [ObservableProperty] private bool interactable = true;
         [ObservableProperty] private string boardLimitText = string.Empty;
@@ -83,33 +79,6 @@ namespace GearEngine.GearEngine.Presentation.UI
             UpdateLabels();
         }
 
-        public void OnGearPickedUp(IGridNode node, Vector2Int fromPos)
-        {
-            if (node == null)
-            {
-                return;
-            }
-
-            pickupOriginalPos = fromPos;
-            boardService.ExtractNodeForDrag(fromPos);
-            dragService?.StartDrag(node.ConfigData);
-        }
-
-        public void OnGearDropped(IGridNode node, Vector2Int toPos)
-        {
-            try
-            {
-                boardService.TryMoveBoardGear(node, toPos, pickupOriginalPos);
-            }
-            finally
-            {
-                dragService?.EndDrag();
-            }
-
-            RefreshSimulationRunningFromGrid();
-            UpdateLabels();
-        }
-
         public void CompleteBoardGearReturnToInventory(IGridNode node, GearConfigData config)
         {
             try
@@ -125,26 +94,17 @@ namespace GearEngine.GearEngine.Presentation.UI
             {
                 Debug.LogError($"[BoardViewModel] CompleteBoardGearReturnToInventory failed: {ex.Message}\n{ex.StackTrace}");
             }
-            finally
-            {
-                dragService?.EndDrag();
-            }
+        }
+
+        public bool TryMoveBoardGear(IGridNode node, Vector2Int toPos)
+        {
+            bool moved = boardService.TryMoveBoardGear(node, toPos, node.Position);
+            RefreshSimulationRunningFromGrid();
+            UpdateLabels();
+            return moved;
         }
 
         public bool DeleteGear(IGridNode node) => boardService.TryDeleteBoardGear(node);
-
-        public void SnapBackToOriginal(IGridNode node)
-        {
-            if (node == null)
-            {
-                return;
-            }
-
-            boardService.SnapNodeBackToOriginal(node, pickupOriginalPos);
-            dragService?.EndDrag();
-            RefreshSimulationRunningFromGrid();
-            UpdateLabels();
-        }
 
         public bool HandleInventoryDrop(Vector2Int targetDropPos, GearConfigData gearData) =>
             boardService.TryPlace(targetDropPos, gearData);

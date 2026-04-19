@@ -9,13 +9,11 @@ namespace GearEngine.GearEngine.Presentation.UI
     {
         public readonly object Data;
         public readonly Vector3 WorldPosition;
-        public readonly IDragSource Source;
 
-        public DragPayload(object data, Vector3 worldPos, IDragSource source)
+        public DragPayload(object data, Vector3 worldPos)
         {
             Data = data;
             WorldPosition = worldPos;
-            Source = source;
         }
 
         public T GetData<T>() where T : class => Data as T;

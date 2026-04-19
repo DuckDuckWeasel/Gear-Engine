@@ -95,7 +95,7 @@ namespace GearEngine.GearEngine.Presentation.UI
             TrashDropZoneViewComponent zone = rootObj.AddComponent<TrashDropZoneViewComponent>();
             zone.SetReferences(rootRect, iconImage, label, cg);
 
-            // Tag for discovery by GearBoardDragHandler
+            // Optional tag for discovery via the tag system
             if (trashZoneTag != null)
             {
                 var tagComp = rootObj.AddComponent<TagComponent>();

@@ -17,6 +17,7 @@
         "Scaffold.Records",
         "Scaffold.Scope",
         "Unity.TextMeshPro",
+        "UnityEngine.UI",
         "Unity.InputSystem",
         "Game.CarSimulation"
     ],

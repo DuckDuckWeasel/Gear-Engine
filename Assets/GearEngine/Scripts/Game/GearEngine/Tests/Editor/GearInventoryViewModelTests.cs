@@ -37,7 +37,7 @@ namespace GearEngine.GearEngine.Tests.Editor
             var inventory = new InventoryService(loadout);
             var engine = new FakeEngine();
 
-            var vm = new GearInventoryViewModel(engine, inventory, dragService: null);
+            var vm = new GearInventoryViewModel(engine, inventory);
 
             Assert.AreEqual(7, vm.MaxSlots);
             Assert.AreSame(inventory.GetInventory(), vm.InventoryModel);
@@ -55,9 +55,9 @@ namespace GearEngine.GearEngine.Tests.Editor
 
             inventory.TryAdd(new GearConfigData { Id = "persist" });
 
-            _ = new GearInventoryViewModel(engine, inventory, dragService: null);
+            _ = new GearInventoryViewModel(engine, inventory);
 
-            var second = new GearInventoryViewModel(engine, inventory, dragService: null);
+            var second = new GearInventoryViewModel(engine, inventory);
 
             Assert.AreEqual(1, second.InventoryModel.Items.Count);
             Assert.AreEqual("persist", second.InventoryModel.Items[0].Id);

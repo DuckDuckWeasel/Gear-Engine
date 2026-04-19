@@ -47,13 +47,15 @@ namespace GearEngine.Campaign.Presentation
         private void BindGearSubtree()
         {
             boardView.gameObject.SetActive(true);
+            DragServiceRegistry.Register(viewModel.DragService);
             boardView.Bind(viewModel.Board);
             inventoryView.gameObject.SetActive(true);
-            inventoryView.SetBoardRoot(boardView.GetBoardSpaceRoot());
             inventoryView.Bind(viewModel.Inventory);
             trashDropZone.gameObject.SetActive(true);
             trashDropZone.SetDragService(viewModel.DragService);
+            trashDropZone.SetBoardPresentation(boardView.BoardLayout, viewModel.Board.BoardRules);
             trashDropZone.Bind(viewModel.TrashZone);
+            trashDropZone.ApplyInitialPlacement();
         }
 
         private void BindCardSelection()

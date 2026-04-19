@@ -1,3 +1,4 @@
+using GearEngine.GearEngine;
 using GearEngine.GearEngine.Config;
 using GearEngine.GearEngine.Nodes;
 using GearEngine.GearEngine.Services;
@@ -10,7 +11,7 @@ using UnityEngine.UI;
 
 namespace GearEngine.GearEngine.Presentation.UI
 {
-    public sealed class TrashDropZoneViewComponent : ViewComponent<TrashZoneViewModel>, IDragTarget, IPointerEnterHandler, IPointerExitHandler
+    public sealed class TrashDropZoneViewComponent : ViewComponent<TrashZoneViewModel>, IDragTarget, IDragLifecycleListener, IPointerEnterHandler, IPointerExitHandler
     {
         [Header("References")]
         public RectTransform ZoneRect => rootPanel;
@@ -42,7 +43,6 @@ namespace GearEngine.GearEngine.Presentation.UI
             boardRules = rules;
         }
 
-        // todo: wired from GearEngineCoreViewComponent before Bind.
         public void SetDragService(IDragService service)
         {
             dragService = service;
@@ -80,7 +80,7 @@ namespace GearEngine.GearEngine.Presentation.UI
             Assert.IsNotNull(canvasGroup, "[TrashDropZone] canvasGroup is missing.");
             Assert.IsNotNull(dragService, "[TrashDropZone] IDragService is missing. Call SetDragService before Bind.");
 
-            dragService.Register(this);
+            dragService.Register((IDragLifecycleListener)this);
 
             Bind<bool, bool>(() => viewModel.IsActive, OnIsActiveChanged);
             Bind<string, string>(() => viewModel.RewardText, OnRewardTextChanged);
@@ -88,7 +88,7 @@ namespace GearEngine.GearEngine.Presentation.UI
 
         protected override void OnUnbind()
         {
-            dragService?.Unregister(this);
+            dragService?.Unregister((IDragLifecycleListener)this);
 
             base.OnUnbind();
         }
@@ -130,12 +130,12 @@ namespace GearEngine.GearEngine.Presentation.UI
             SetHovered(false);
         }
 
-        public void OnDragStarted(DragPayload payload)
+        void IDragLifecycleListener.OnDragStarted(DragPayload payload)
         {
-            viewModel?.HandleDragStarted(payload.Data);
+            viewModel?.HandleDragStarted(payload);
         }
 
-        public void OnDragEnded()
+        void IDragLifecycleListener.OnDragEnded()
         {
             viewModel?.HandleDragEnded();
         }
@@ -146,28 +146,21 @@ namespace GearEngine.GearEngine.Presentation.UI
             return gear != null && viewModel != null && viewModel.CanTrashAcceptGear(gear);
         }
 
-        public void OnDrop(DragPayload payload)
+        public bool OnDrop(DragPayload payload)
         {
             IGridNode node = payload.GetData<IGridNode>();
             GearConfigData gear = payload.GetData<GearConfigData>();
             if (node != null)
             {
-                viewModel?.HandleBoardGearDropped(node);
+                return viewModel != null && viewModel.HandleBoardGearDropped(node);
             }
-            else if (gear != null)
+
+            if (gear != null)
             {
-                viewModel?.HandleInventoryGearDropped(gear);
+                return viewModel != null && viewModel.HandleInventoryGearDropped(gear);
             }
-        }
 
-        public void OnHoverEnter(DragPayload payload)
-        {
-            SetHovered(true);
-        }
-
-        public void OnHoverExit()
-        {
-            SetHovered(false);
+            return false;
         }
 
         private void Show()
