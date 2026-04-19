@@ -114,6 +114,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1000000000000000104}
+  - component: {fileID: 1000000000000000110}
+  - component: {fileID: 1000000000000000111}
   m_Layer: 0
   m_Name: VisualContainer
   m_TagString: Untagged
@@ -140,3 +142,27 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1000000000000000110
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1000000000000000103}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c3d4e5f60718293a4b5c6d7e8f90a1b2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Presentation.UI.RectContentFitter
+  padding: 0.9
+--- !u!210 &1000000000000000111
+SortingGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1000000000000000103}
+  m_Enabled: 1
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 50

@@ -10,7 +10,7 @@ namespace GearEngine.GearEngine.Tests.Editor
     public sealed class GearViewTests
     {
         [Test]
-        public void BindForDisplay_DoesNotRequireBoardLayout_UpdateDoesNotThrow()
+        public void PureVisual_UpdateDoesNotThrow_AndLerpsRotation()
         {
             var root = new GameObject("ViewRoot");
             var gearGo = new GameObject("GearVisual");
@@ -19,7 +19,9 @@ namespace GearEngine.GearEngine.Tests.Editor
             gearView.WireTestReferences(gearGo.transform);
 
             var config = new GearConfigData { RelativeScaleMultiplier = 1f };
-            gearView.BindForDisplay(config, DisplayOptions.Ghost(0.6f));
+            gearView.ApplyConfig(config);
+            gearView.SetRotationTarget(90f);
+            gearView.SetChargeFillTarget(0.5f, snap: true);
 
             MethodInfo update = typeof(GearView).GetMethod("Update", BindingFlags.Instance | BindingFlags.NonPublic);
             Assert.IsNotNull(update);

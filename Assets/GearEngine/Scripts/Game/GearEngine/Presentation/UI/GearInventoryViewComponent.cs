@@ -7,7 +7,6 @@ using Scaffold.MVVM;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Assertions;
-using UnityEngine.UI;
 
 namespace GearEngine.GearEngine.Presentation.UI
 {
@@ -121,7 +120,13 @@ namespace GearEngine.GearEngine.Presentation.UI
                 return;
             }
 
-            Draggable drag = slotObj.GetComponent<Draggable>() ?? slotObj.AddComponent<Draggable>();
+            Draggable drag = slotObj.GetComponent<Draggable>();
+            if (drag == null)
+            {
+                Debug.LogError("[GearInventoryView] Slot prefab must include Draggable (see GearSlot prefab).");
+                return;
+            }
+
             drag.SetHideSourceWhileDragging(false);
             GearConfigData capturedGear = gear;
             drag.BuildPayload = e =>
@@ -132,13 +137,11 @@ namespace GearEngine.GearEngine.Presentation.UI
 
             drag.OnDropAccepted = _ => viewModel.NotifySlotDragAccepted(capturedGear);
 
-            ApplyGearVisualAndDrag(slotView, gear, drag);
+            ApplyGearVisualAndDrag(slotView, gear);
         }
 
-        private void ApplyGearVisualAndDrag(GearInventorySlotView slotView, GearConfigData gear, Draggable drag)
+        private void ApplyGearVisualAndDrag(GearInventorySlotView slotView, GearConfigData gear)
         {
-            const int inventorySortingBase = 50;
-
             if (gear.ViewPrefab == null)
             {
                 Debug.LogError($"[GearInventoryView] Gear '{gear?.Id}' has no ViewPrefab; inventory visual skipped.");
@@ -146,20 +149,15 @@ namespace GearEngine.GearEngine.Presentation.UI
                 return;
             }
 
-            Transform parent = slotView.VisualContainer;
-            float scaleMultiplier = gear.RelativeScaleMultiplier;
-            GearView view = Instantiate(gear.ViewPrefab, parent, false);
-            view.BindForDisplay(gear, DisplayOptions.Inventory(inventorySortingBase, scaleMultiplier));
-
-            // Gear visuals live in world space (sized for board cells); make them fill the
-            // inventory slot's rect by rescaling after layout has had a chance to settle.
-            RectTransform slotRect = parent as RectTransform;
-            if (slotRect != null)
+            GearView view = GearViewSpawner.Spawn(gear, slotView.VisualContainer);
+            if (view == null)
             {
-                LayoutRebuilder.ForceRebuildLayoutImmediate(slotRect);
-                Canvas.ForceUpdateCanvases();
-                view.FitVisualToRect(slotRect);
+                slotView.Bind(gear, viewModel);
+                return;
             }
+
+            view.SetChargeFillTarget(1f, snap: true);
+            view.SettleNow();
 
             slotView.Bind(gear, viewModel);
         }

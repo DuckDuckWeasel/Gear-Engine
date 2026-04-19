@@ -192,6 +192,8 @@ GameObject:
   m_Component:
   - component: {fileID: 5680690133785166453}
   - component: {fileID: 8811223344556677004}
+  - component: {fileID: 8811223344556677020}
+  - component: {fileID: 8811223344556677021}
   m_Layer: 0
   m_Name: SpeedGearView
   m_TagString: Untagged
@@ -230,3 +232,55 @@ MonoBehaviour:
   m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Visuals.GearView
   gearVisual: {fileID: 6403234717088607395}
   chargeFillRenderer: {fileID: 6990237282493120599}
+  rotationLerpSpeed: 15
+  fillLerpSpeed: 10
+  settleLerpSpeed: 20
+--- !u!61 &8811223344556677020
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8994168311140333348}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  m_Size: {x: 1.024, y: 1.024}
+  m_EdgeRadius: 0
+--- !u!114 &8811223344556677021
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8994168311140333348}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0c836c55cdc132241af9f796ed18601e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Presentation.UI.Draggable
+  previewSource: {fileID: 0}
+  hideSourceWhileDragging: 0

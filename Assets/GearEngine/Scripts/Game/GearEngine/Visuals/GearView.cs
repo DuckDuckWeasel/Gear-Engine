@@ -1,95 +1,32 @@
-using System;
 using GearEngine.GearEngine.Config;
-using GearEngine.GearEngine.Nodes;
 using UnityEngine;
 
 namespace GearEngine.GearEngine.Visuals
 {
-    /// <summary>Display-only binding (inventory slot, drag ghost): scale, sprites, sorting, optional <see cref="CanvasGroup"/>.</summary>
-    public readonly struct DisplayOptions
-    {
-        public DisplayOptions(int sortingOrder, float scaleMultiplier, bool blocksRaycasts, float canvasGroupAlpha)
-        {
-            SortingOrder = sortingOrder;
-            ScaleMultiplier = scaleMultiplier;
-            BlocksRaycasts = blocksRaycasts;
-            CanvasGroupAlpha = canvasGroupAlpha;
-        }
-
-        public int SortingOrder { get; }
-
-        public float ScaleMultiplier { get; }
-
-        public bool BlocksRaycasts { get; }
-
-        public float CanvasGroupAlpha { get; }
-
-        public static DisplayOptions Inventory(int sortingOrder, float scaleMultiplier) =>
-            new DisplayOptions(sortingOrder, scaleMultiplier, blocksRaycasts: true, canvasGroupAlpha: 1f);
-
-        public static DisplayOptions Ghost(float alpha) =>
-            new DisplayOptions(sortingOrder: 0, scaleMultiplier: 1f, blocksRaycasts: false, canvasGroupAlpha: alpha);
-    }
-
+    /// <summary>
+    /// Board-agnostic gear visual. Board-side BoardGearAnimator pushes rotation, charge fill, and reparent;
+    /// inventory only calls <see cref="ApplyConfig"/> and optional fill preview.
+    /// </summary>
     public class GearView : MonoBehaviour
     {
-        private IGridNode targetNode;
-
         [SerializeField]
         private Transform gearVisual;
 
         [SerializeField]
         private SpriteRenderer chargeFillRenderer;
 
-        private BoardLayoutSO boardLayout;
+        [SerializeField]
+        private float rotationLerpSpeed = 15f;
 
-        private BoardRulesSO boardRules;
+        [SerializeField]
+        private float fillLerpSpeed = 10f;
 
-        private Func<Vector2Int, Transform> getSlotTransform;
-        private Vector2Int lastKnownGridPosition = new Vector2Int(int.MinValue, int.MinValue);
+        [SerializeField]
+        private float settleLerpSpeed = 20f;
 
-        private float baseRotationOffset;
+        private float targetRotationZ;
         private float currentVisualFill;
-
-        public IGridNode TargetNode => targetNode;
-
-        /// <summary>
-        /// Binds logical state to this view instance. Prefab must reference <see cref="gearVisual"/> and optional <see cref="chargeFillRenderer"/>.
-        /// </summary>
-        public void Bind(
-            IGridNode node,
-            BoardLayoutSO layout,
-            BoardRulesSO rules,
-            Func<Vector2Int, Transform> getSlot,
-            GearConfigData configData)
-        {
-            targetNode = node;
-            boardLayout = layout;
-            boardRules = rules;
-            getSlotTransform = getSlot;
-            lastKnownGridPosition = node.Position;
-
-            RecalculateRotationOffset();
-
-            if (configData != null && gearVisual != null)
-            {
-                float s = configData.RelativeScaleMultiplier;
-                gearVisual.localScale = new Vector3(s, s, s);
-            }
-
-            if (configData?.UIIcon != null && chargeFillRenderer != null)
-            {
-                chargeFillRenderer.sprite = configData.UIIcon;
-            }
-
-            if (chargeFillRenderer != null && node is BaseGearNode baseGear && baseGear.ConfigData != null && baseGear.ConfigData.MaxCharge > 0)
-            {
-                currentVisualFill = 0f;
-            }
-
-            transform.localPosition = Vector3.zero;
-            transform.localRotation = Quaternion.identity;
-        }
+        private float targetVisualFill = -1f;
 
         /// <summary>Editor tests: assigns serialized references without a prefab asset.</summary>
         internal void WireTestReferences(Transform gearVisualRef, SpriteRenderer chargeRef = null)
@@ -98,170 +35,76 @@ namespace GearEngine.GearEngine.Visuals
             chargeFillRenderer = chargeRef;
         }
 
-        /// <summary>
-        /// Binds config for display only (no board node). Does not require <see cref="BoardLayoutSO"/> or slot transforms.
-        /// </summary>
-        public void BindForDisplay(GearConfigData configData, DisplayOptions options)
+        public void ApplyConfig(GearConfigData config)
         {
-            ClearDisplayBoardState();
-            ApplyDisplayScale(configData, options);
-            ApplyDisplayIconAndFill(configData);
-            ApplyDisplaySorting(options);
-            ApplyDisplayCanvasGroupIfNeeded(options);
+            if (config == null)
+            {
+                return;
+            }
+
+            if (gearVisual != null)
+            {
+                float s = config.RelativeScaleMultiplier;
+                gearVisual.localScale = new Vector3(s, s, s);
+            }
+
+            if (config.UIIcon != null && chargeFillRenderer != null)
+            {
+                chargeFillRenderer.sprite = config.UIIcon;
+            }
+        }
+
+        public void SetRotationTarget(float zDegrees)
+        {
+            targetRotationZ = zDegrees;
+        }
+
+        /// <param name="normalized01">Fill amount 0..1.</param>
+        /// <param name="snap">If true, applies immediately (no lerp).</param>
+        public void SetChargeFillTarget(float normalized01, bool snap = false)
+        {
+            targetVisualFill = Mathf.Clamp01(normalized01);
+            if (snap)
+            {
+                currentVisualFill = targetVisualFill;
+                if (chargeFillRenderer != null && chargeFillRenderer.material != null)
+                {
+                    chargeFillRenderer.material.SetFloat("_FillAmount", currentVisualFill);
+                }
+            }
+        }
+
+        /// <summary>Clears charge fill driving so <see cref="Update"/> does not write the material.</summary>
+        public void ClearChargeFillTarget()
+        {
+            targetVisualFill = -1f;
+        }
+
+        public void SetReparent(Transform parent)
+        {
+            if (parent != null && parent != transform.parent)
+            {
+                transform.SetParent(parent, true);
+            }
+        }
+
+        public void SettleNow()
+        {
             transform.localPosition = Vector3.zero;
-            transform.localRotation = Quaternion.identity;
-        }
-
-        /// <summary>
-        /// Rescales <see cref="gearVisual"/> so its combined renderer bounds fit inside the given
-        /// UI rect. Use this after <see cref="BindForDisplay"/> when the gear lives inside a
-        /// <see cref="RectTransform"/> slot (e.g. inventory) so the world-space visual fills the slot.
-        /// </summary>
-        public void FitVisualToRect(RectTransform target, float padding = 0.9f)
-        {
-            if (gearVisual == null || target == null)
-            {
-                return;
-            }
-
-            Renderer[] renderers = gearVisual.GetComponentsInChildren<Renderer>(true);
-            if (renderers.Length == 0)
-            {
-                return;
-            }
-
-            Bounds combined = renderers[0].bounds;
-            for (int i = 1; i < renderers.Length; i++)
-            {
-                combined.Encapsulate(renderers[i].bounds);
-            }
-
-            if (combined.size.x <= Mathf.Epsilon || combined.size.y <= Mathf.Epsilon)
-            {
-                return;
-            }
-
-            // Slot world-space size derived from its rect plus the canvas/lossy scale chain.
-            Vector2 targetSize = new Vector2(
-                Mathf.Abs(target.rect.width * target.lossyScale.x),
-                Mathf.Abs(target.rect.height * target.lossyScale.y));
-
-            if (targetSize.x <= Mathf.Epsilon || targetSize.y <= Mathf.Epsilon)
-            {
-                return;
-            }
-
-            float scaleX = targetSize.x / combined.size.x;
-            float scaleY = targetSize.y / combined.size.y;
-            float fit = Mathf.Min(scaleX, scaleY) * padding;
-            gearVisual.localScale *= fit;
-        }
-
-        private void ClearDisplayBoardState()
-        {
-            targetNode = null;
-            boardLayout = null;
-            boardRules = null;
-            getSlotTransform = null;
-            lastKnownGridPosition = new Vector2Int(int.MinValue, int.MinValue);
-        }
-
-        private void ApplyDisplayScale(GearConfigData configData, DisplayOptions options)
-        {
-            if (configData == null || gearVisual == null)
-            {
-                return;
-            }
-
-            float uniform = configData.RelativeScaleMultiplier * options.ScaleMultiplier;
-            gearVisual.localScale = new Vector3(uniform, uniform, uniform);
-        }
-
-        private void ApplyDisplayIconAndFill(GearConfigData configData)
-        {
-            if (configData?.UIIcon != null && chargeFillRenderer != null)
-            {
-                chargeFillRenderer.sprite = configData.UIIcon;
-            }
-
-            if (chargeFillRenderer == null || chargeFillRenderer.material == null)
-            {
-                return;
-            }
-
-            currentVisualFill = 1f;
-            chargeFillRenderer.material.SetFloat("_FillAmount", 1f);
-        }
-
-        private void ApplyDisplaySorting(DisplayOptions options)
-        {
-            SpriteRenderer[] renderers = GetComponentsInChildren<SpriteRenderer>(true);
-            foreach (SpriteRenderer sr in renderers)
-            {
-                int prefabOrder = sr.sortingOrder;
-                sr.sortingOrder = options.SortingOrder + prefabOrder;
-            }
-        }
-
-        private void ApplyDisplayCanvasGroupIfNeeded(DisplayOptions options)
-        {
-            if (options.BlocksRaycasts && options.CanvasGroupAlpha >= 0.999f)
-            {
-                return;
-            }
-
-            CanvasGroup canvasGroup = GetComponent<CanvasGroup>();
-            if (canvasGroup == null)
-            {
-                canvasGroup = gameObject.AddComponent<CanvasGroup>();
-            }
-
-            canvasGroup.alpha = options.CanvasGroupAlpha;
-            canvasGroup.blocksRaycasts = options.BlocksRaycasts;
-        }
-
-        private void RecalculateRotationOffset()
-        {
-            baseRotationOffset = 0f;
-            if (targetNode != null && boardLayout != null && boardRules != null && (targetNode.Position.x + targetNode.Position.y) % 2 == 0)
-            {
-                baseRotationOffset = boardLayout.StaggeredRotationOffset;
-            }
         }
 
         private void Update()
         {
-            if (targetNode == null || boardLayout == null || getSlotTransform == null)
-            {
-                return;
-            }
-
-            if (targetNode.Position != lastKnownGridPosition)
-            {
-                lastKnownGridPosition = targetNode.Position;
-                RecalculateRotationOffset();
-                Transform newParent = getSlotTransform(targetNode.Position);
-                if (newParent != null && newParent != transform.parent)
-                {
-                    transform.SetParent(newParent, true);
-                }
-            }
-
-            transform.localPosition = Vector3.Lerp(transform.localPosition, Vector3.zero, Time.deltaTime * 20f);
+            transform.localPosition = Vector3.Lerp(transform.localPosition, Vector3.zero, Time.deltaTime * settleLerpSpeed);
 
             Transform rotateTarget = gearVisual != null ? gearVisual : transform;
-            Quaternion targetRot = Quaternion.Euler(0, 0, (-targetNode.CurrentRotation) + baseRotationOffset);
-            rotateTarget.localRotation = Quaternion.Lerp(rotateTarget.localRotation, targetRot, Time.deltaTime * 15f);
+            Quaternion target = Quaternion.Euler(0, 0, targetRotationZ);
+            rotateTarget.localRotation = Quaternion.Lerp(rotateTarget.localRotation, target, Time.deltaTime * rotationLerpSpeed);
 
-            if (chargeFillRenderer != null && targetNode is BaseGearNode baseGear && baseGear.ConfigData != null && baseGear.ConfigData.MaxCharge > 0)
+            if (targetVisualFill >= 0f && chargeFillRenderer != null && chargeFillRenderer.material != null)
             {
-                float targetFill = baseGear.CurrentCharge / baseGear.ConfigData.MaxCharge;
-                currentVisualFill = Mathf.Lerp(currentVisualFill, targetFill, Time.deltaTime * 10f);
-
-                if (chargeFillRenderer.material != null)
-                {
-                    chargeFillRenderer.material.SetFloat("_FillAmount", currentVisualFill);
-                }
+                currentVisualFill = Mathf.Lerp(currentVisualFill, targetVisualFill, Time.deltaTime * fillLerpSpeed);
+                chargeFillRenderer.material.SetFloat("_FillAmount", currentVisualFill);
             }
         }
     }

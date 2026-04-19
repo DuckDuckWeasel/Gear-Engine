@@ -24,6 +24,9 @@ namespace GearEngine.GearEngine.Presentation.UI
         [Tooltip("Layout math for slots, stagger rotation, and drop projection (view-only).")]
         private BoardLayoutSO boardLayout;
 
+        [SerializeField]
+        private BoardGearAnimator animator;
+
         private readonly Dictionary<IGridNode, GearView> viewsByNode = new Dictionary<IGridNode, GearView>();
         private readonly Dictionary<Vector2Int, Transform> slotByCoord = new Dictionary<Vector2Int, Transform>();
         private readonly List<GameObject> backgroundSlots = new List<GameObject>();
@@ -33,10 +36,13 @@ namespace GearEngine.GearEngine.Presentation.UI
         protected override void OnBind()
         {
             Assert.IsNotNull(boardLayout, "[BoardView] BoardLayoutSO is missing.");
+            Assert.IsNotNull(animator, "[BoardView] BoardGearAnimator is missing.");
 
             // Board gears are world-space colliders; the EventSystem only dispatches
             // IBeginDragHandler to them via Physics2DRaycaster on the rendering camera.
             EnsureBoardCameraPhysics2DRaycaster();
+
+            animator.Configure(GetSlotTransform, boardLayout);
 
             viewModel.OnGearPlaced += HandleGearPlaced;
             viewModel.OnGearRemoved += HandleGearRemoved;
@@ -59,6 +65,11 @@ namespace GearEngine.GearEngine.Presentation.UI
                 viewModel.OnGearPlaced -= HandleGearPlaced;
                 viewModel.OnGearRemoved -= HandleGearRemoved;
                 viewModel.PropertyChanged -= OnBoardViewModelPropertyChanged;
+            }
+
+            if (animator != null)
+            {
+                animator.Clear();
             }
 
             DestroyAllViews();
@@ -147,6 +158,7 @@ namespace GearEngine.GearEngine.Presentation.UI
             }
 
             Debug.Log($"<color=#ff5555>[BoardView]</color> Destroying GearView for '{node.ConfigData?.Id}' at {node.Position}.");
+            animator.Untrack(node);
             viewsByNode.Remove(node);
             DestroyViewGameObject(view.gameObject);
         }
@@ -164,28 +176,33 @@ namespace GearEngine.GearEngine.Presentation.UI
             }
 
             Transform slot = GetSlotTransform(node.Position);
-            GearView prefab = node.ConfigData?.ViewPrefab;
-            if (slot == null || prefab == null)
+            if (slot == null || node.ConfigData?.ViewPrefab == null)
             {
                 Debug.LogError($"[BoardView] Cannot spawn gear: slot or ViewPrefab missing for '{node.ConfigData?.Id}' at {node.Position}.");
                 return;
             }
 
-            GearView view = Instantiate(prefab, slot, false);
-            view.Bind(node, boardLayout, viewModel.BoardRules, GetSlotTransform, node.ConfigData);
-            viewsByNode[node] = view;
-            AttachDraggable(view, node);
-        }
-
-        private void AttachDraggable(GearView view, IGridNode node)
-        {
-            GameObject go = view.gameObject;
-            if (go.GetComponent<Collider2D>() == null)
+            GearView view = GearViewSpawner.Spawn(node.ConfigData, slot);
+            if (view == null)
             {
-                go.AddComponent<BoxCollider2D>();
+                return;
             }
 
-            Draggable drag = go.GetComponent<Draggable>() ?? go.AddComponent<Draggable>();
+            viewsByNode[node] = view;
+            animator.Track(node, view);
+            WireBoardDraggable(view, node);
+        }
+
+        private void WireBoardDraggable(GearView view, IGridNode node)
+        {
+            GameObject go = view.gameObject;
+            Draggable drag = go.GetComponent<Draggable>();
+            if (go.GetComponent<Collider2D>() == null || drag == null)
+            {
+                Debug.LogError($"[BoardView] Gear '{node.ConfigData?.Id}' ViewPrefab must include Draggable and Collider2D on the root.");
+                return;
+            }
+
             drag.SetHideSourceWhileDragging(true);
             Transform boardRoot = GetBoardSpaceRoot();
             drag.PreviewParent = boardRoot;
