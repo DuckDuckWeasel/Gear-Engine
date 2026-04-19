@@ -1,5 +1,6 @@
 using GearEngine.GearEngine.Config;
 using GearEngine.GearEngine.Extensions;
+using GearEngine.GearEngine.Nodes;
 using GearEngine.GearEngine.Visuals;
 using Scaffold.MVVM;
 using System;
@@ -15,22 +16,28 @@ namespace GearEngine.GearEngine.Presentation.UI
         [SerializeField] private GearBoardDragHandler dragHandler;
         [SerializeField] private GameObject gridSlotPrefab;
         [SerializeField] private Transform gridRoot;
-        [Tooltip("Parent for spawned gear views. If unset, uses Grid Root, then this component's transform.")]
+        [Tooltip("Legacy root for board-space plane / drag ghost. Gears parent to grid slots.")]
         [SerializeField] private Transform gearsRoot;
         [SerializeField] private TextMeshProUGUI boardLimitLabel;
 
-        private GearViewFactory localFactory = new GearViewFactory();
+        [SerializeField]
+        [Tooltip("Layout math for slots, stagger rotation, and drop projection (view-only).")]
+        private BoardLayoutSO boardLayout;
+
         private readonly Dictionary<IGridNode, GearView> viewsByNode = new Dictionary<IGridNode, GearView>();
+        private readonly Dictionary<Vector2Int, Transform> slotByCoord = new Dictionary<Vector2Int, Transform>();
         private readonly List<GameObject> backgroundSlots = new List<GameObject>();
+
+        internal BoardLayoutSO BoardLayout => boardLayout;
 
         protected override void OnBind()
         {
-            localFactory ??= new GearViewFactory();
+            Assert.IsNotNull(boardLayout, "[BoardView] BoardLayoutSO is missing.");
 
             viewModel.OnGearPlaced += HandleGearPlaced;
             viewModel.OnGearRemoved += HandleGearRemoved;
 
-            SpawnBackgroundGrid(viewModel.BoardConfig);
+            SpawnBackgroundGrid();
             foreach (IGridNode node in viewModel.GetCurrentNodes())
             {
                 SpawnView(node);
@@ -49,7 +56,6 @@ namespace GearEngine.GearEngine.Presentation.UI
             }
 
             DestroyAllViews();
-            localFactory = null;
 
             if (dragHandler != null)
             {
@@ -108,12 +114,7 @@ namespace GearEngine.GearEngine.Presentation.UI
             return viewModel?.EngineService?.IsRunning ?? false;
         }
 
-        internal BoardConfigSO GetBoardConfig()
-        {
-            return viewModel?.BoardConfig;
-        }
-
-        /// <summary>Transform whose local space matches <see cref="BoardConfigSO.GetWorldPosition"/> / grid layout.</summary>
+        /// <summary>Transform whose local space matches <see cref="BoardLayoutSO.GetGridPosition"/> / grid layout.</summary>
         public Transform GetBoardSpaceRoot()
         {
             if (gearsRoot != null)
@@ -127,6 +128,21 @@ namespace GearEngine.GearEngine.Presentation.UI
             }
 
             return transform;
+        }
+
+        internal Vector2Int BoardLocalToGrid(Vector3 boardLocal)
+        {
+            if (boardLayout == null || viewModel == null)
+            {
+                return Vector2Int.zero;
+            }
+
+            return boardLayout.GetGridPosition(boardLocal, viewModel.BoardRules);
+        }
+
+        private Transform GetSlotTransform(Vector2Int pos)
+        {
+            return slotByCoord.TryGetValue(pos, out Transform t) ? t : null;
         }
 
         private void HandleGearPlaced(IGridNode node)
@@ -169,9 +185,16 @@ namespace GearEngine.GearEngine.Presentation.UI
                 return;
             }
 
-            Vector3 localPosition = viewModel.BoardConfig.GetWorldPosition(node.Position);
-            GearView view = localFactory.CreateView(node, node.ConfigData, GetBoardSpaceRoot(), localPosition);
-            view.Initialize(node, node.ConfigData, viewModel.BoardConfig, localFactory);
+            Transform slot = GetSlotTransform(node.Position);
+            GearView prefab = node.ConfigData?.ViewPrefab;
+            if (slot == null || prefab == null)
+            {
+                Debug.LogError($"[BoardView] Cannot spawn gear: slot or ViewPrefab missing for '{node.ConfigData?.Id}' at {node.Position}.");
+                return;
+            }
+
+            GearView view = Instantiate(prefab, slot, false);
+            view.Bind(node, boardLayout, viewModel.BoardRules, GetSlotTransform, node.ConfigData);
             viewsByNode[node] = view;
         }
 
@@ -186,6 +209,7 @@ namespace GearEngine.GearEngine.Presentation.UI
             }
 
             viewsByNode.Clear();
+            slotByCoord.Clear();
 
             foreach (GameObject slot in backgroundSlots)
             {
@@ -194,21 +218,24 @@ namespace GearEngine.GearEngine.Presentation.UI
                     DestroyViewGameObject(slot);
                 }
             }
+
             backgroundSlots.Clear();
         }
 
-        private void SpawnBackgroundGrid(BoardConfigSO config)
+        private void SpawnBackgroundGrid()
         {
-            Assert.IsNotNull(config, "[BoardView] BoardConfigSO is missing.");
+            BoardRulesSO rules = viewModel.BoardRules;
+            Assert.IsNotNull(rules, "[BoardView] BoardRulesSO is missing.");
 
-            for (int x = 0; x < config.GridWidth; x++)
+            for (int x = 0; x < rules.GridWidth; x++)
             {
-                for (int y = 0; y < config.GridHeight; y++)
+                for (int y = 0; y < rules.GridHeight; y++)
                 {
                     Vector2Int pos = new Vector2Int(x, y);
-                    GameObject slotView = Instantiate(gridSlotPrefab, gridRoot);
-                    slotView.transform.localPosition = config.GetWorldPosition(pos, 0.5f);
+                    GameObject slotView = Instantiate(gridSlotPrefab, gridRoot, false);
+                    slotView.transform.localPosition = boardLayout.GetCellLocalPosition(pos, rules, 0.5f);
                     slotView.name = $"GridSlot_{x}_{y}";
+                    slotByCoord[pos] = slotView.transform;
                     backgroundSlots.Add(slotView);
                 }
             }
@@ -235,13 +262,13 @@ namespace GearEngine.GearEngine.Presentation.UI
         public void OnDrop(DragPayload payload)
         {
             GearConfigData gear = payload.GetData<GearConfigData>();
-            if (gear == null || viewModel == null)
+            if (gear == null || viewModel == null || boardLayout == null)
             {
                 return;
             }
 
             Vector3 boardLocal = GetBoardSpaceRoot().InverseTransformPoint(payload.WorldPosition);
-            Vector2Int gridPos = viewModel.BoardConfig.GetGridPosition(boardLocal);
+            Vector2Int gridPos = boardLayout.GetGridPosition(boardLocal, viewModel.BoardRules);
             bool placed = viewModel.HandleInventoryDrop(gridPos, gear);
             if (placed)
             {

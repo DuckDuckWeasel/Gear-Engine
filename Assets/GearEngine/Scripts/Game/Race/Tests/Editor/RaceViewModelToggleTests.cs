@@ -181,14 +181,14 @@ namespace GearEngine.Race.Tests.Editor
             var startData = new RaceStartData(trackDef, carDef);
 
             engine = new FakeEngine();
-            BoardConfigSO boardConfig = ScriptableObject.CreateInstance<BoardConfigSO>();
-            boardConfig.GridWidth = 5;
-            boardConfig.GridHeight = 5;
+            BoardRulesSO boardRules = ScriptableObject.CreateInstance<BoardRulesSO>();
+            boardRules.GridWidth = 5;
+            boardRules.GridHeight = 5;
 
             var builder = new ContainerBuilder();
             new EventsInstaller().Install(builder);
             new GearMechanicsInstaller(
-                boardConfig,
+                boardRules,
                 null,
                 GearInventoryLoadoutData.Empty(),
                 new GearBoardLoadoutData()).Install(builder);
@@ -214,11 +214,11 @@ namespace GearEngine.Race.Tests.Editor
 
         private static void TearDownRaceViewModel(RaceViewModel vm, IObjectResolver scope)
         {
-            BoardConfigSO boardConfig = vm?.Board?.BoardConfig;
+            BoardRulesSO boardRules = vm?.Board?.BoardRules;
             scope?.Dispose();
-            if (boardConfig != null)
+            if (boardRules != null)
             {
-                Object.DestroyImmediate(boardConfig);
+                Object.DestroyImmediate(boardRules);
             }
         }
 

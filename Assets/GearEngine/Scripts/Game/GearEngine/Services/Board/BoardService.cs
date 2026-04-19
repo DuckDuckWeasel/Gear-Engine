@@ -16,7 +16,7 @@ namespace GearEngine.GearEngine.Services.Board
         public BoardService(
             IGridManager gridManager,
             IGearNodeFactory nodeFactory,
-            BoardConfigSO boardConfig,
+            BoardRulesSO boardRules,
             IGearEngineService engineService,
             IGridSwapService swapService,
             IGridMergeService mergeService,
@@ -26,7 +26,7 @@ namespace GearEngine.GearEngine.Services.Board
         {
             this.gridManager = gridManager ?? throw new ArgumentNullException(nameof(gridManager));
             this.nodeFactory = nodeFactory ?? throw new ArgumentNullException(nameof(nodeFactory));
-            this.boardConfig = boardConfig ?? throw new ArgumentNullException(nameof(boardConfig));
+            this.boardRules = boardRules ?? throw new ArgumentNullException(nameof(boardRules));
             this.engineService = engineService ?? throw new ArgumentNullException(nameof(engineService));
             this.swapService = swapService;
             this.mergeService = mergeService;
@@ -35,7 +35,7 @@ namespace GearEngine.GearEngine.Services.Board
 
             boardModel = new BoardModel
             {
-                BoardConfig = boardConfig
+                BoardRules = boardRules
             };
 
             boardLoadout ??= new GearBoardLoadoutData();
@@ -52,17 +52,17 @@ namespace GearEngine.GearEngine.Services.Board
 
         public BoardModel GetBoard() => boardModel;
 
-        public BoardConfigSO BoardConfig => boardConfig;
+        public BoardRulesSO BoardRules => boardRules;
 
         public bool IsSimulationRunning => gridManager != null && gridManager.IsRunning;
 
         public int CurrentBoardGearCount => gridManager?.GetAllNodes().Count() ?? 0;
 
-        public int MaxAllowedBoardGears => boardConfig != null ? boardConfig.MaxAllowedBoardGears : int.MaxValue;
+        public int MaxAllowedBoardGears => boardRules != null ? boardRules.MaxAllowedBoardGears : int.MaxValue;
 
         private readonly IGridManager gridManager;
         private readonly IGearNodeFactory nodeFactory;
-        private readonly BoardConfigSO boardConfig;
+        private readonly BoardRulesSO boardRules;
         private readonly IGearEngineService engineService;
         private readonly IGridSwapService swapService;
         private readonly IGridMergeService mergeService;
@@ -107,7 +107,7 @@ namespace GearEngine.GearEngine.Services.Board
                 throw new ArgumentNullException(nameof(layout));
             }
 
-            if (gridManager == null || nodeFactory == null || boardConfig == null)
+            if (gridManager == null || nodeFactory == null || boardRules == null)
             {
                 throw new InvalidOperationException("[BoardService] LoadLayout called before dependencies are ready.");
             }
@@ -132,7 +132,7 @@ namespace GearEngine.GearEngine.Services.Board
                 }
 
                 Vector2Int pos = placement.Position;
-                bool inBounds = pos.x >= 0 && pos.x < boardConfig.GridWidth && pos.y >= 0 && pos.y < boardConfig.GridHeight;
+                bool inBounds = pos.x >= 0 && pos.x < boardRules.GridWidth && pos.y >= 0 && pos.y < boardRules.GridHeight;
 
                 if (!inBounds)
                 {
@@ -161,7 +161,7 @@ namespace GearEngine.GearEngine.Services.Board
 
         public bool TryMoveBoardGear(IGridNode node, Vector2Int toPos, Vector2Int fromPos)
         {
-            if (node == null || engineService == null || gridManager == null || boardConfig == null)
+            if (node == null || engineService == null || gridManager == null || boardRules == null)
             {
                 return false;
             }
@@ -171,8 +171,8 @@ namespace GearEngine.GearEngine.Services.Board
                 return false;
             }
 
-            bool isValidDrop = toPos.x >= 0 && toPos.x < boardConfig.GridWidth &&
-                               toPos.y >= 0 && toPos.y < boardConfig.GridHeight;
+            bool isValidDrop = toPos.x >= 0 && toPos.x < boardRules.GridWidth &&
+                               toPos.y >= 0 && toPos.y < boardRules.GridHeight;
 
             if (!isValidDrop)
             {
@@ -224,7 +224,7 @@ namespace GearEngine.GearEngine.Services.Board
                     throw new ArgumentNullException(nameof(gearData));
                 }
 
-                if (gridManager == null || boardConfig == null || engineService == null || engineService.IsRunning)
+                if (gridManager == null || boardRules == null || engineService == null || engineService.IsRunning)
                 {
                     return false;
                 }
@@ -233,9 +233,9 @@ namespace GearEngine.GearEngine.Services.Board
 
                 if (occupant == null)
                 {
-                    if (CurrentBoardGearCount >= boardConfig.MaxAllowedBoardGears)
+                    if (CurrentBoardGearCount >= boardRules.MaxAllowedBoardGears)
                     {
-                        Debug.LogWarning($"<color=#ff5555>[BoardService]</color> Board limit reached ({CurrentBoardGearCount}/{boardConfig.MaxAllowedBoardGears}). Cannot place gear.");
+                        Debug.LogWarning($"<color=#ff5555>[BoardService]</color> Board limit reached ({CurrentBoardGearCount}/{boardRules.MaxAllowedBoardGears}). Cannot place gear.");
                         return false;
                     }
 

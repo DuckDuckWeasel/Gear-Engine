@@ -74,14 +74,14 @@ namespace GearEngine.GearEngine.Presentation.UI
 
         private void HandlePickup(Vector3 worldPos)
         {
-            BoardConfigSO boardConfig = boardView.GetBoardConfig();
-            if (boardConfig == null)
+            BoardLayoutSO layout = boardView.BoardLayout;
+            if (layout == null)
             {
-                Debug.LogWarning("[GearBoardDragHandler] HandlePickup failed: BoardConfig is null.");
+                Debug.LogWarning("[GearBoardDragHandler] HandlePickup failed: BoardLayout is null.");
                 return;
             }
 
-            float closestDist = boardConfig.MaxDragGrabDistance;
+            float closestDist = layout.MaxDragGrabDistance;
             GearView closest = null;
             int viewCount = 0;
 
@@ -116,7 +116,7 @@ namespace GearEngine.GearEngine.Presentation.UI
 
             if (closest == null)
             {
-                Debug.Log($"[GearBoardDragHandler] HandlePickup failed: No movable gear found within {boardConfig.MaxDragGrabDistance} of Pointer at {worldPos}. Evaluated {viewCount} views.");
+                Debug.Log($"[GearBoardDragHandler] HandlePickup failed: No movable gear found within {layout.MaxDragGrabDistance} of Pointer at {worldPos}. Evaluated {viewCount} views.");
                 return;
             }
 
@@ -171,11 +171,8 @@ namespace GearEngine.GearEngine.Presentation.UI
                 }
                 else
                 {
-                    BoardConfigSO cfg = boardView.GetBoardConfig();
                     Transform boardRoot = boardView.GetBoardSpaceRoot();
-                    Vector2Int targetPos = cfg != null
-                        ? cfg.GetGridPosition(boardRoot.InverseTransformPoint(worldPos))
-                        : originalGridPos;
+                    Vector2Int targetPos = boardView.BoardLocalToGrid(boardRoot.InverseTransformPoint(worldPos));
                     boardView.NotifyDropped(pendingNode, targetPos);
                 }
             }

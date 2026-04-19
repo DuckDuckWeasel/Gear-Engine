@@ -10,7 +10,7 @@ namespace GearEngine.GearEngine.Services.Board
     {
         BoardModel GetBoard();
 
-        BoardConfigSO BoardConfig { get; }
+        BoardRulesSO BoardRules { get; }
 
         bool IsSimulationRunning { get; }
 

@@ -1,219 +1,115 @@
+using System;
 using GearEngine.GearEngine.Config;
 using GearEngine.GearEngine.Nodes;
-using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace GearEngine.GearEngine.Visuals
 {
-    public class GearView : SerializedMonoBehaviour
+    public class GearView : MonoBehaviour
     {
-        [SerializeField]
         private IGridNode targetNode;
-        [SerializeField]
-        private Transform cachedVisual;
-        [SerializeField]
-        private BoardConfigSO boardConfig;
-        
-        public IGridNode TargetNode => targetNode;
-        
-
-        
-        private float baseRotationOffset = 0f;
-        private Vector2Int lastKnownPosition = new Vector2Int(-999, -999);
 
         [SerializeField]
-        private GameObject chargeVisualObj;
-        [SerializeField]
-        private Transform chargeFillTransform;
+        private Transform gearVisual;
+
         [SerializeField]
         private SpriteRenderer chargeFillRenderer;
-        [SerializeField]
-        private float currentVisualFill = 0f;
 
-        [SerializeField]
-        private static Sprite squareSpriteCenter;
-        [SerializeField]
-        private static Sprite squareSpriteBottom;
+        private BoardLayoutSO boardLayout;
 
-        private void InitSprites()
-        {
-            if (squareSpriteCenter == null)
-                squareSpriteCenter = Sprite.Create(Texture2D.whiteTexture, new Rect(0, 0, 4, 4), new Vector2(0.5f, 0.5f), 4f);
-            if (squareSpriteBottom == null)
-                squareSpriteBottom = Sprite.Create(Texture2D.whiteTexture, new Rect(0, 0, 4, 4), new Vector2(0.5f, 0f), 4f);
-        }
+        private BoardRulesSO boardRules;
 
-        private GearViewFactory ownerFactory;
+        private Func<Vector2Int, Transform> getSlotTransform;
+        private Vector2Int lastKnownGridPosition = new Vector2Int(int.MinValue, int.MinValue);
 
-        public void Initialize(IGridNode node, GearConfigData configData, BoardConfigSO config, GearViewFactory factory)
+        private float baseRotationOffset;
+        private float currentVisualFill;
+
+        public IGridNode TargetNode => targetNode;
+
+        /// <summary>
+        /// Binds logical state to this view instance. Prefab must reference <see cref="gearVisual"/> and optional <see cref="chargeFillRenderer"/>.
+        /// </summary>
+        public void Bind(
+            IGridNode node,
+            BoardLayoutSO layout,
+            BoardRulesSO rules,
+            Func<Vector2Int, Transform> getSlot,
+            GearConfigData configData)
         {
             targetNode = node;
-            boardConfig = config;
-            ownerFactory = factory;
+            boardLayout = layout;
+            boardRules = rules;
+            getSlotTransform = getSlot;
+            lastKnownGridPosition = node.Position;
 
             RecalculateRotationOffset();
 
-            SetupVisual(configData);
-            SetupChargeVisual(configData);
-        }
-
-        private void OnDestroy()
-        {
-            if (ownerFactory != null && targetNode != null)
+            if (configData != null && gearVisual != null)
             {
-                ownerFactory.UnregisterView(targetNode);
-            }
-        }
-
-        public void RecalculateRotationOffset()
-        {
-            baseRotationOffset = 0f;
-            if (targetNode != null && boardConfig != null && (targetNode.Position.x + targetNode.Position.y) % 2 == 0)
-            {
-                baseRotationOffset = boardConfig.StaggeredRotationOffset;
-            }
-        }
-
-        public void Reconfigure(GearConfigData configData)
-        {
-            ClearCachedVisual();
-            SetupVisual(configData);
-            SetupChargeVisual(configData);
-        }
-
-        private void SetupVisual(GearConfigData configData)
-        {
-            if (configData?.VisualPrefab != null)
-            {
-                GameObject instance = Instantiate(configData.VisualPrefab, transform);
-                cachedVisual = instance.transform;
-                cachedVisual.localPosition = Vector3.zero;
-                float finalScale = configData.RelativeScaleMultiplier;
-                cachedVisual.localScale = new Vector3(finalScale, finalScale, finalScale);
-            }
-        }
-
-        private void ClearCachedVisual()
-        {
-            if (cachedVisual != null)
-            {
-                Destroy(cachedVisual.gameObject);
-                cachedVisual = null;
-            }
-            if (chargeVisualObj != null)
-            {
-                Destroy(chargeVisualObj);
-                chargeVisualObj = null;
-                chargeFillTransform = null;
-                chargeFillRenderer = null;
-            }
-        }
-
-        private void SetupChargeVisual(GearConfigData configData)
-        {
-            if (configData == null)
-            {
-                return;
+                float s = configData.RelativeScaleMultiplier;
+                gearVisual.localScale = new Vector3(s, s, s);
             }
 
-            bool hasIcon = configData.UIIcon != null;
-            bool hasCharge = targetNode is BaseGearNode && configData.MaxCharge > 0;
-
-            if (!hasIcon && !hasCharge)
+            if (configData?.UIIcon != null && chargeFillRenderer != null)
             {
-                return;
+                chargeFillRenderer.sprite = configData.UIIcon;
             }
 
-            // Attempt to link to an existing prefab component first to avoid code-driven setup
-            if (cachedVisual != null)
-            {
-                Transform existingCharge = cachedVisual.Find("ChargeVisual");
-                if (existingCharge != null)
-                {
-                    chargeVisualObj = existingCharge.gameObject;
-                    chargeFillTransform = existingCharge;
-                    chargeFillRenderer = existingCharge.GetComponent<SpriteRenderer>();
-                    
-                    // The charge view must be a child of the standard parent (GearView), not the rotating basic gear prefab!
-                    existingCharge.SetParent(transform, true);
-                }
-            }
-
-            // Fallback: Create dynamically ONLY if not found in the prefab
-            if (chargeVisualObj == null)
-            {
-                InitSprites();
-
-                chargeVisualObj = new GameObject("ChargeVisual");
-                chargeFillTransform = chargeVisualObj.transform;
-                chargeVisualObj.transform.SetParent(transform, false);
-                chargeVisualObj.transform.localPosition = new Vector3(0, 0, -0.5f); // In front of gear
-                chargeVisualObj.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
-                
-                chargeFillRenderer = chargeVisualObj.AddComponent<SpriteRenderer>();
-                chargeFillRenderer.sortingOrder = 6;
-                chargeFillRenderer.sprite = hasIcon ? configData.UIIcon : squareSpriteCenter;
-                chargeFillRenderer.color = hasIcon ? Color.white : new Color(0.2f, 0.8f, 1f, 0.9f); // Cyan fill for geometry fallback
-
-                // Only apply fill shader natively if we built it from code
-                if (hasCharge)
-                {
-                    Shader fillShader = Shader.Find("GearEngine/Sprites/SpriteFillGrayscale");
-                    if (fillShader != null)
-                    {
-                        Material mat = new Material(fillShader);
-                        mat.SetFloat("_FillAmount", 0f);
-                        chargeFillRenderer.material = mat;
-                    }
-                }
-            }
-            else
-            {
-                // If found in prefab, simply override the sprite for dynamic UI icons, respecting the prefab's shader/color setup
-                if (hasIcon && chargeFillRenderer != null)
-                {
-                    chargeFillRenderer.sprite = configData.UIIcon;
-                }
-            }
-
-            if (hasCharge)
+            if (chargeFillRenderer != null && node is BaseGearNode baseGear && baseGear.ConfigData != null && baseGear.ConfigData.MaxCharge > 0)
             {
                 currentVisualFill = 0f;
+            }
+
+            transform.localPosition = Vector3.zero;
+            transform.localRotation = Quaternion.identity;
+        }
+
+        /// <summary>Editor tests: assigns serialized references without a prefab asset.</summary>
+        internal void WireTestReferences(Transform gearVisualRef, SpriteRenderer chargeRef = null)
+        {
+            gearVisual = gearVisualRef;
+            chargeFillRenderer = chargeRef;
+        }
+
+        private void RecalculateRotationOffset()
+        {
+            baseRotationOffset = 0f;
+            if (targetNode != null && boardLayout != null && boardRules != null && (targetNode.Position.x + targetNode.Position.y) % 2 == 0)
+            {
+                baseRotationOffset = boardLayout.StaggeredRotationOffset;
             }
         }
 
         private void Update()
         {
-            if (targetNode == null || boardConfig == null) return;
-
-            if (targetNode.Position != lastKnownPosition)
+            if (targetNode == null || boardLayout == null || getSlotTransform == null)
             {
-                lastKnownPosition = targetNode.Position;
+                return;
+            }
+
+            if (targetNode.Position != lastKnownGridPosition)
+            {
+                lastKnownGridPosition = targetNode.Position;
                 RecalculateRotationOffset();
+                Transform newParent = getSlotTransform(targetNode.Position);
+                if (newParent != null && newParent != transform.parent)
+                {
+                    transform.SetParent(newParent, true);
+                }
             }
 
-            Transform target = transform;
-            if (cachedVisual != null)
-            {
-                Transform gearChild = cachedVisual.Find("GearVisual");
-                target = gearChild != null ? gearChild : cachedVisual;
-            }
+            transform.localPosition = Vector3.Lerp(transform.localPosition, Vector3.zero, Time.deltaTime * 20f);
 
-            // Lerp towards the logical position smoothly
-            Vector3 logicalWorldPos = boardConfig.GetWorldPosition(targetNode.Position);
-            transform.localPosition = Vector3.Lerp(transform.localPosition, logicalWorldPos, Time.deltaTime * 20f);
-
-            // Lerp smooth rotation including base stagger offset
-            // We flip the rotation because Unity 2D standard rotates counter-clockwise with positive Z
+            Transform rotateTarget = gearVisual != null ? gearVisual : transform;
             Quaternion targetRot = Quaternion.Euler(0, 0, (-targetNode.CurrentRotation) + baseRotationOffset);
-            target.localRotation = Quaternion.Lerp(target.localRotation, targetRot, Time.deltaTime * 15f);
+            rotateTarget.localRotation = Quaternion.Lerp(rotateTarget.localRotation, targetRot, Time.deltaTime * 15f);
 
-            // Update charge fill
             if (chargeFillRenderer != null && targetNode is BaseGearNode baseGear && baseGear.ConfigData != null && baseGear.ConfigData.MaxCharge > 0)
             {
                 float targetFill = baseGear.CurrentCharge / baseGear.ConfigData.MaxCharge;
                 currentVisualFill = Mathf.Lerp(currentVisualFill, targetFill, Time.deltaTime * 10f);
-                
+
                 if (chargeFillRenderer.material != null)
                 {
                     chargeFillRenderer.material.SetFloat("_FillAmount", currentVisualFill);

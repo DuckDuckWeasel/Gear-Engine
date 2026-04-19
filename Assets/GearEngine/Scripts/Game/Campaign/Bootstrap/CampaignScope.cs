@@ -7,6 +7,7 @@ using GearEngine.GearEngine.Bootstrap;
 using GearEngine.GearEngine.Config;
 using GearEngine.SceneFoundation.Bootstrap;
 using UnityEngine;
+using UnityEngine.Serialization;
 using VContainer;
 using VContainer.Unity;
 
@@ -18,7 +19,8 @@ namespace GearEngine.Campaign.Bootstrap
         [SerializeField] private TrackEntry[] tracks;
 
         [Header("Gear Engine")]
-        [SerializeField] private BoardConfigSO boardConfig;
+        [FormerlySerializedAs("boardConfig")]
+        [SerializeField] private BoardRulesSO boardRules;
         [SerializeField] private GearEngineFeatureToggleSO featureToggle;
 
         [Header("Simulation")]
@@ -43,9 +45,9 @@ namespace GearEngine.Campaign.Bootstrap
                 throw new InvalidOperationException("[CampaignScope] Assign at least one TrackEntry.");
             }
 
-            if (boardConfig == null)
+            if (boardRules == null)
             {
-                throw new InvalidOperationException("[CampaignScope] Assign boardConfig.");
+                throw new InvalidOperationException("[CampaignScope] Assign boardRules.");
             }
 
             if (splineCarRunnerConfig == null)
@@ -78,7 +80,7 @@ namespace GearEngine.Campaign.Bootstrap
                 ? GearInventoryLoadoutData.FromGearConfigs(gearStart.InventoryLoadout.MaxSlots, loadoutService.GetInventoryGearConfigs())
                 : gearStart.GetInventoryLoadoutData();
 
-            new GearMechanicsInstaller(boardConfig, featureToggle, inventoryLoadout, gearStart.GetBoardLoadoutData()).Install(builder);
+            new GearMechanicsInstaller(boardRules, featureToggle, inventoryLoadout, gearStart.GetBoardLoadoutData()).Install(builder);
             builder.RegisterInstance(splineCarRunnerConfig);
             new CarTrackInstaller().Install(builder);
 

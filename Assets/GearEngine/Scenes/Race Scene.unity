@@ -172,7 +172,7 @@ MonoBehaviour:
   autoInjectGameObjects: []
   navigationSettings: {fileID: 11400000, guid: 137da207fe7ec1345a5d209afdac17bd, type: 2}
   navigationViewHolder: {fileID: 500010001}
-  boardConfig: {fileID: 11400000, guid: c8936b7a974414cf6aba78a5ac6be445, type: 2}
+  boardRules: {fileID: 11400000, guid: c8936b7a974414cf6aba78a5ac6be445, type: 2}
   gearStartData:
     inventoryLoadout:
       maxSlots: 5

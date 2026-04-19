@@ -1,6 +1,5 @@
 using System;
 using GearEngine.GearEngine;
-using GearEngine.GearEngine.Config;
 using GearEngine.GearEngine.Nodes;
 using GearEngine.GearEngine.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -19,8 +18,6 @@ namespace GearEngine.GearEngine.Presentation.UI
             this.presentationTransfer = presentationTransfer ?? throw new ArgumentNullException(nameof(presentationTransfer));
             this.featureToggle = featureToggle;
         }
-
-        internal BoardConfigSO BoardConfigForTrashPlacement => board?.BoardConfig;
 
         internal GearEngineFeatureToggleSO FeatureToggleForTrashPlacement => featureToggle;
 

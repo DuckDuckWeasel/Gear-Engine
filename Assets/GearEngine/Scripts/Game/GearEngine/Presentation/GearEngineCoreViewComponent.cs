@@ -17,7 +17,9 @@ namespace GearEngine.GearEngine.Presentation
             inventoryView.SetBoardRoot(boardView.GetBoardSpaceRoot());
             inventoryView.Bind(viewModel.Inventory);
             trashDropZone.SetDragService(viewModel.DragService);
+            trashDropZone.SetBoardPresentation(boardView.BoardLayout, viewModel.Board.BoardRules);
             trashDropZone.Bind(viewModel.TrashZone);
+            trashDropZone.ApplyInitialPlacement();
         }
     }
 }

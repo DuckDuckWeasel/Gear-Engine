@@ -17,7 +17,7 @@ MonoBehaviour:
     id: gear_score
     Category: 0
     BaseRotationSpeed: 0
-    VisualPrefab: {fileID: 2949619139704920152, guid: 2d4c5c939f40c43e3bc8bd60757e0340, type: 3}
+    ViewPrefab: {fileID: 8811223344556677005, guid: 2d4c5c939f40c43e3bc8bd60757e0340, type: 3}
     UIIcon: {fileID: -3338749442709606003, guid: 99e3de0c26942419f9aae22146e5f1c0, type: 3}
     RelativeScaleMultiplier: 1
     TriggerPattern: 4

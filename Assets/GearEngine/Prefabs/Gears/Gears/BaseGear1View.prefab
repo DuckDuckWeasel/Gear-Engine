@@ -191,6 +191,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2325949039103841578}
+  - component: {fileID: 8811223344556677001}
   m_Layer: 0
   m_Name: BaseGear1View
   m_TagString: Untagged
@@ -215,3 +216,17 @@ Transform:
   - {fileID: 6109488129865995649}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8811223344556677001
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6370815323567363965}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f182ea04d241045a78e2e7b59a039878, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Visuals.GearView
+  gearVisual: {fileID: 4456326032647127560}
+  chargeFillRenderer: {fileID: 5749090498924954127}

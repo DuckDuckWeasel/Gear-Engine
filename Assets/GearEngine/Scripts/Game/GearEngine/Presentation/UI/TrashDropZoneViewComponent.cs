@@ -32,6 +32,16 @@ namespace GearEngine.GearEngine.Presentation.UI
 
         private IDragService dragService;
 
+        private BoardLayoutSO boardLayout;
+        private BoardRulesSO boardRules;
+
+        /// <summary>Wired from <see cref="GearEngineCoreViewComponent"/> before <see cref="ApplyInitialPlacement"/>.</summary>
+        public void SetBoardPresentation(BoardLayoutSO layout, BoardRulesSO rules)
+        {
+            boardLayout = layout;
+            boardRules = rules;
+        }
+
         // todo: wired from GearEngineCoreViewComponent before Bind.
         public void SetDragService(IDragService service)
         {
@@ -223,7 +233,6 @@ namespace GearEngine.GearEngine.Presentation.UI
             }
 
             GearEngineFeatureToggleSO featureToggle = viewModel.FeatureToggleForTrashPlacement;
-            BoardConfigSO boardConfig = viewModel.BoardConfigForTrashPlacement;
 
             if (featureToggle != null && !featureToggle.EnableTrashDeletion)
             {
@@ -238,20 +247,20 @@ namespace GearEngine.GearEngine.Presentation.UI
             Assert.IsNotNull(rootPanel, "[TrashDropZone] rootPanel is not assigned. Trash deletion will not work.");
 
             rootPanel.gameObject.SetActive(false);
-            RepositionRelativeToBoard(boardConfig);
+            RepositionRelativeToBoard();
         }
 
-        private void RepositionRelativeToBoard(BoardConfigSO boardConfig)
+        private void RepositionRelativeToBoard()
         {
-            if (rootPanel == null || boardConfig == null)
+            if (rootPanel == null || boardLayout == null || boardRules == null)
             {
                 return;
             }
 
             TrashZoneAlignment alignment = TrashZoneAlignment.Right;
-            float yOffset = boardConfig.TrashZoneYOffset;
+            float yOffset = boardLayout.TrashZoneYOffset;
 
-            Vector3 gridAnchorPoint = ComputeGridAnchor(boardConfig, alignment);
+            Vector3 gridAnchorPoint = ComputeGridAnchor(alignment);
             Vector2 pivot = ComputePivot(alignment);
 
             Canvas parentCanvas = GetComponentInParent<Canvas>();
@@ -280,16 +289,16 @@ namespace GearEngine.GearEngine.Presentation.UI
             }
         }
 
-        private static Vector3 ComputeGridAnchor(BoardConfigSO boardConfig, TrashZoneAlignment alignment)
+        private Vector3 ComputeGridAnchor(TrashZoneAlignment alignment)
         {
-            if (boardConfig == null)
+            if (boardLayout == null || boardRules == null)
             {
                 return Vector3.zero;
             }
 
-            int topY = boardConfig.GridHeight - 1;
-            Vector3 topLeft = boardConfig.GetWorldPosition(new Vector2Int(0, topY));
-            Vector3 topRight = boardConfig.GetWorldPosition(new Vector2Int(boardConfig.GridWidth - 1, topY));
+            int topY = boardRules.GridHeight - 1;
+            Vector3 topLeft = boardLayout.GetCellLocalPosition(new Vector2Int(0, topY), boardRules);
+            Vector3 topRight = boardLayout.GetCellLocalPosition(new Vector2Int(boardRules.GridWidth - 1, topY), boardRules);
 
             switch (alignment)
             {

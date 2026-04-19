@@ -17,12 +17,19 @@ namespace GearEngine.GearEngine.Visuals
         /// <returns>The instantiated visual GameObject, or null if no visual prefab is defined.</returns>
         public static GameObject SetupVisual(Transform parent, GearConfigData configData, float scaleMultiplier = 1f, int baseSortingOrder = 50)
         {
-            if (configData?.VisualPrefab == null || parent == null)
+            if (configData?.ViewPrefab == null || parent == null)
             {
                 return null;
             }
 
-            GameObject visualObj = Object.Instantiate(configData.VisualPrefab, parent);
+            Transform template = configData.ViewPrefab.transform.Find("GearVisual");
+            if (template == null)
+            {
+                Debug.LogError($"[GearVisualSetup] Gear '{configData.Id}' ViewPrefab has no child named GearVisual.");
+                return null;
+            }
+
+            GameObject visualObj = Object.Instantiate(template.gameObject, parent, false);
             visualObj.name = "VisualInstance";
             visualObj.transform.localPosition = Vector3.zero;
             visualObj.transform.localScale = new Vector3(scaleMultiplier, scaleMultiplier, scaleMultiplier);

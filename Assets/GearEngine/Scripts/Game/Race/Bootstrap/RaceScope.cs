@@ -7,6 +7,7 @@ using GearEngine.GearEngine.Bootstrap;
 using GearEngine.GearEngine.Config;
 using GearEngine.SceneFoundation.Bootstrap;
 using UnityEngine;
+using UnityEngine.Serialization;
 using VContainer;
 using VContainer.Unity;
 
@@ -15,8 +16,9 @@ namespace GearEngine.Race.Bootstrap
     public sealed class RaceScope : SceneFoundationScope
     {
         [Header("Gear mechanics")]
+        [FormerlySerializedAs("boardConfig")]
         [SerializeField]
-        private BoardConfigSO boardConfig;
+        private BoardRulesSO boardRules;
 
         [Header("Gear loadout")]
         [SerializeField]
@@ -53,7 +55,7 @@ namespace GearEngine.Race.Bootstrap
         protected override void InstallFeatureServices(IContainerBuilder builder)
         {
             new GearMechanicsInstaller(
-                boardConfig,
+                boardRules,
                 featureToggle,
                 gearStartData.GetInventoryLoadoutData(),
                 gearStartData.GetBoardLoadoutData()).Install(builder);
@@ -68,9 +70,9 @@ namespace GearEngine.Race.Bootstrap
 
         private void RequireBoardConfig()
         {
-            if (boardConfig == null)
+            if (boardRules == null)
             {
-                throw new InvalidOperationException("[RaceScope] Assign boardConfig.");
+                throw new InvalidOperationException("[RaceScope] Assign boardRules.");
             }
         }
 

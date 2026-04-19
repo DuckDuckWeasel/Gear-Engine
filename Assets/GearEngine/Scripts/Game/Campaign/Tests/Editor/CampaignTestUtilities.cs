@@ -24,16 +24,16 @@ namespace GearEngine.Campaign.Tests.Editor
 {
     internal sealed class GearMechanicsTestContext : System.IDisposable
     {
-        public GearMechanicsTestContext(BoardConfigSO boardConfig)
+        public GearMechanicsTestContext(BoardRulesSO boardRules)
         {
             var builder = new ContainerBuilder();
             new EventsInstaller().Install(builder);
-            new GearMechanicsInstaller(boardConfig, null, GearInventoryLoadoutData.Empty(), new GearBoardLoadoutData()).Install(builder);
+            new GearMechanicsInstaller(boardRules, null, GearInventoryLoadoutData.Empty(), new GearBoardLoadoutData()).Install(builder);
             container = builder.Build();
             Engine = container.Resolve<IGearEngineService>();
             GridManager = container.Resolve<IGridManager>();
             NodeFactory = container.Resolve<IGearNodeFactory>();
-            BoardConfig = boardConfig;
+            BoardRules = boardRules;
             EventBus = container.Resolve<IEventBus>();
             FeatureToggle = container.Resolve<GearEngineFeatureToggleSO>();
             DragService = container.Resolve<IDragService>();
@@ -47,7 +47,7 @@ namespace GearEngine.Campaign.Tests.Editor
         public IGearEngineService Engine { get; }
         public IGridManager GridManager { get; }
         public IGearNodeFactory NodeFactory { get; }
-        public BoardConfigSO BoardConfig { get; }
+        public BoardRulesSO BoardRules { get; }
         public IEventBus EventBus { get; }
         public GearEngineFeatureToggleSO FeatureToggle { get; }
         public IDragService DragService { get; }

@@ -8,7 +8,7 @@ namespace GearEngine.GearEngine.Services.Board
 {
     public partial class BoardModel : Model
     {
-        public BoardConfigSO BoardConfig { get; init; }
+        public BoardRulesSO BoardRules { get; init; }
 
         [ObservableProperty]
         private bool isSimulationRunning;

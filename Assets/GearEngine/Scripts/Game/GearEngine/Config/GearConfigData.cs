@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using GearEngine.GearEngine.Services.Inventory;
+using GearEngine.GearEngine.Visuals;
 
 namespace GearEngine.GearEngine.Config
 {
@@ -12,9 +13,9 @@ namespace GearEngine.GearEngine.Config
         public string Id { get => id; set => id = value; }
         public GearCategory Category = GearCategory.Base;
         public float BaseRotationSpeed;
-        public GameObject VisualPrefab;
+        public GearView ViewPrefab;
         public Sprite UIIcon;
-        [Tooltip("Relative size modifier for this specific gear (1.0 is default). Multiplication depends on the BoardConfig's GlobalGearScale.")]
+        [Tooltip("Relative size modifier for this specific gear (1.0 is default), applied to the GearVisual child of ViewPrefab.")]
         public float RelativeScaleMultiplier = 1.0f;
         public TriggerPattern TriggerPattern = TriggerPattern.FourWay;
         public bool IsInteractable = true;
@@ -57,7 +58,7 @@ namespace GearEngine.GearEngine.Config
                 Id = Id,
                 Category = Category,
                 BaseRotationSpeed = BaseRotationSpeed,
-                VisualPrefab = VisualPrefab,
+                ViewPrefab = ViewPrefab,
                 UIIcon = UIIcon,
                 RelativeScaleMultiplier = RelativeScaleMultiplier,
                 TriggerPattern = TriggerPattern,

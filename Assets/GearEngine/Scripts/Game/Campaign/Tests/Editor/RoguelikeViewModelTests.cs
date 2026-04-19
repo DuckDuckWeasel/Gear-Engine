@@ -31,7 +31,7 @@ namespace GearEngine.Campaign.Tests.Editor
 
                 var trackService = new FakeTrackService(trackDef, carDef, new[] { g1, g2 });
 
-                var boardConfig = ScriptableObject.CreateInstance<BoardConfigSO>();
+                var boardConfig = ScriptableObject.CreateInstance<BoardRulesSO>();
                 boardConfig.GridWidth = 5;
                 boardConfig.GridHeight = 5;
 
@@ -78,7 +78,7 @@ namespace GearEngine.Campaign.Tests.Editor
 
                 var trackService = new FakeTrackService(trackDef, carDef, new List<GearConfig> { g1 });
 
-                var boardConfig = ScriptableObject.CreateInstance<BoardConfigSO>();
+                var boardConfig = ScriptableObject.CreateInstance<BoardRulesSO>();
                 boardConfig.GridWidth = 5;
                 boardConfig.GridHeight = 5;
 
@@ -127,7 +127,7 @@ namespace GearEngine.Campaign.Tests.Editor
 
                 var trackService = new FakeTrackService(trackDef, carDef, new List<GearConfig> { g1 });
 
-                var boardConfig = ScriptableObject.CreateInstance<BoardConfigSO>();
+                var boardConfig = ScriptableObject.CreateInstance<BoardRulesSO>();
                 boardConfig.GridWidth = 5;
                 boardConfig.GridHeight = 5;
 

@@ -12,18 +12,18 @@ namespace GearEngine.GearEngine.Bootstrap
     public sealed class GearMechanicsInstaller
     {
         public GearMechanicsInstaller(
-            BoardConfigSO boardConfig,
+            BoardRulesSO boardRules,
             GearEngineFeatureToggleSO featureToggle,
             GearInventoryLoadoutData inventoryLoadout,
             GearBoardLoadoutData boardLoadout)
         {
-            this.boardConfig = boardConfig ?? throw new ArgumentNullException(nameof(boardConfig));
+            this.boardRules = boardRules ?? throw new ArgumentNullException(nameof(boardRules));
             this.featureToggle = featureToggle;
             this.inventoryLoadout = inventoryLoadout ?? throw new ArgumentNullException(nameof(inventoryLoadout));
             this.boardLoadout = boardLoadout ?? throw new ArgumentNullException(nameof(boardLoadout));
         }
 
-        private readonly BoardConfigSO boardConfig;
+        private readonly BoardRulesSO boardRules;
         private readonly GearEngineFeatureToggleSO featureToggle;
         private readonly GearInventoryLoadoutData inventoryLoadout;
         private readonly GearBoardLoadoutData boardLoadout;
@@ -42,7 +42,7 @@ namespace GearEngine.GearEngine.Bootstrap
                 toggle = ScriptableObject.CreateInstance<GearEngineFeatureToggleSO>();
             }
 
-            builder.RegisterInstance(boardConfig);
+            builder.RegisterInstance(boardRules);
             builder.RegisterInstance(toggle);
             builder.RegisterInstance(boardLoadout);
 

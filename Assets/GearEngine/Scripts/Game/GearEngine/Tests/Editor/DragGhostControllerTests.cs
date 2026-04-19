@@ -1,5 +1,6 @@
 using GearEngine.GearEngine.Config;
 using GearEngine.GearEngine.Presentation.UI;
+using GearEngine.GearEngine.Visuals;
 using NUnit.Framework;
 using UnityEngine;
 
@@ -20,20 +21,31 @@ namespace GearEngine.GearEngine.Tests.Editor
             }
         }
 
+        private static GearView CreateTestViewPrefabWithGearVisual()
+        {
+            GameObject rootGo = new GameObject("GhostViewPrefab");
+            GameObject visGo = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            visGo.name = "GearVisual";
+            visGo.transform.SetParent(rootGo.transform, false);
+            GearView view = rootGo.AddComponent<GearView>();
+            view.WireTestReferences(visGo.transform);
+            return view;
+        }
+
         [Test]
         public void CreateGhost_InstantiatesUnderBoardRoot()
         {
             _boardRootGo = new GameObject("BoardRoot");
             Transform boardRoot = _boardRootGo.transform;
             var controller = new DragGhostController(boardRoot);
-            GameObject cubePrefab = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            var config = new GearConfigData { VisualPrefab = cubePrefab, RelativeScaleMultiplier = 1f };
+            GearView viewPrefab = CreateTestViewPrefabWithGearVisual();
+            var config = new GearConfigData { ViewPrefab = viewPrefab, RelativeScaleMultiplier = 1f };
 
             controller.CreateGhost(config);
 
             Assert.IsNotNull(controller.Ghost);
             Assert.AreSame(boardRoot, controller.Ghost.transform.parent);
-            Object.DestroyImmediate(cubePrefab);
+            Object.DestroyImmediate(viewPrefab.gameObject);
         }
 
         [Test]
@@ -41,9 +53,9 @@ namespace GearEngine.GearEngine.Tests.Editor
         {
             _boardRootGo = new GameObject("BoardRoot");
             var controller = new DragGhostController(_boardRootGo.transform);
-            GameObject cubePrefab = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            GearView viewPrefab = CreateTestViewPrefabWithGearVisual();
             const float scale = 2.25f;
-            var config = new GearConfigData { VisualPrefab = cubePrefab, RelativeScaleMultiplier = scale };
+            var config = new GearConfigData { ViewPrefab = viewPrefab, RelativeScaleMultiplier = scale };
 
             controller.CreateGhost(config);
 
@@ -51,7 +63,7 @@ namespace GearEngine.GearEngine.Tests.Editor
             Assert.AreEqual(scale, controller.Ghost.transform.localScale.x, 1e-5f);
             Assert.AreEqual(scale, controller.Ghost.transform.localScale.y, 1e-5f);
             Assert.AreEqual(scale, controller.Ghost.transform.localScale.z, 1e-5f);
-            Object.DestroyImmediate(cubePrefab);
+            Object.DestroyImmediate(viewPrefab.gameObject);
         }
 
         [Test]
@@ -60,8 +72,8 @@ namespace GearEngine.GearEngine.Tests.Editor
             _boardRootGo = new GameObject("BoardRoot");
             _boardRootGo.transform.position = new Vector3(10f, 20f, 0f);
             var controller = new DragGhostController(_boardRootGo.transform);
-            GameObject cubePrefab = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            var config = new GearConfigData { VisualPrefab = cubePrefab, RelativeScaleMultiplier = 1f };
+            GearView viewPrefab = CreateTestViewPrefabWithGearVisual();
+            var config = new GearConfigData { ViewPrefab = viewPrefab, RelativeScaleMultiplier = 1f };
             controller.CreateGhost(config);
 
             var target = new Vector3(5f, -3f, 7f);
@@ -70,7 +82,7 @@ namespace GearEngine.GearEngine.Tests.Editor
             Assert.AreEqual(target.x, controller.Ghost.transform.position.x, 1e-5f);
             Assert.AreEqual(target.y, controller.Ghost.transform.position.y, 1e-5f);
             Assert.AreEqual(target.z, controller.Ghost.transform.position.z, 1e-5f);
-            Object.DestroyImmediate(cubePrefab);
+            Object.DestroyImmediate(viewPrefab.gameObject);
         }
 
         [Test]
@@ -78,15 +90,15 @@ namespace GearEngine.GearEngine.Tests.Editor
         {
             _boardRootGo = new GameObject("BoardRoot");
             var controller = new DragGhostController(_boardRootGo.transform);
-            GameObject cubePrefab = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            var config = new GearConfigData { VisualPrefab = cubePrefab, RelativeScaleMultiplier = 1f };
+            GearView viewPrefab = CreateTestViewPrefabWithGearVisual();
+            var config = new GearConfigData { ViewPrefab = viewPrefab, RelativeScaleMultiplier = 1f };
             controller.CreateGhost(config);
             Assert.IsNotNull(controller.Ghost);
 
             controller.DestroyGhost();
 
             Assert.IsNull(controller.Ghost);
-            Object.DestroyImmediate(cubePrefab);
+            Object.DestroyImmediate(viewPrefab.gameObject);
         }
     }
 }

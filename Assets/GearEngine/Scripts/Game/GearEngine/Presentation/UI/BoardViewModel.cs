@@ -29,7 +29,13 @@ namespace GearEngine.GearEngine.Presentation.UI
         }
 
         public IGearEngineService EngineService => engineService;
-        public BoardConfigSO BoardConfig => boardService.BoardConfig;
+
+        public BoardRulesSO BoardRules => boardService.BoardRules;
+
+        public int GridWidth => boardService.BoardRules != null ? boardService.BoardRules.GridWidth : 0;
+
+        public int GridHeight => boardService.BoardRules != null ? boardService.BoardRules.GridHeight : 0;
+
         public BoardModel Board => boardService.GetBoard();
 
         public int CurrentBoardGearCount => boardService.CurrentBoardGearCount;

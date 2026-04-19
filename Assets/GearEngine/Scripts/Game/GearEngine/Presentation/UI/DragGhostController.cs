@@ -22,19 +22,26 @@ namespace GearEngine.GearEngine.Presentation.UI
         /// <summary>
         /// Spawns the gear visual under <see cref="boardRoot"/> with the same local scale as board gears.
         /// </summary>
-        /// <param name="config">Gear config; uses <see cref="GearConfigData.VisualPrefab"/> and <see cref="GearConfigData.RelativeScaleMultiplier"/>.</param>
+        /// <param name="config">Gear config; uses the GearVisual child under <see cref="GearConfigData.ViewPrefab"/> and <see cref="GearConfigData.RelativeScaleMultiplier"/>.</param>
         /// <param name="ghostAlpha">CanvasGroup alpha for semi-transparent feedback.</param>
         public void CreateGhost(GearConfigData config, float ghostAlpha = 0.6f)
         {
             try
             {
                 DestroyGhost();
-                if (config == null || boardRoot == null || config.VisualPrefab == null)
+                if (config == null || boardRoot == null || config.ViewPrefab == null)
                 {
                     return;
                 }
 
-                ghost = UnityEngine.Object.Instantiate(config.VisualPrefab, boardRoot);
+                Transform template = config.ViewPrefab.transform.Find("GearVisual");
+                if (template == null)
+                {
+                    Debug.LogError($"[DragGhostController] Gear '{config.Id}' ViewPrefab has no child named GearVisual.");
+                    return;
+                }
+
+                ghost = UnityEngine.Object.Instantiate(template.gameObject, boardRoot, false);
                 ghost.name = "DragGhost";
                 float uniform = config.RelativeScaleMultiplier;
                 ghost.transform.localScale = new Vector3(uniform, uniform, uniform);

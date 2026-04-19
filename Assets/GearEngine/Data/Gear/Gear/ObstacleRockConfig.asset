@@ -17,7 +17,7 @@ MonoBehaviour:
     id: gear_obstacle
     Category: 0
     BaseRotationSpeed: 0
-    VisualPrefab: {fileID: 522121566319413383, guid: 51970ee9abfae4f67869c8b3ceabc8e1, type: 3}
+    ViewPrefab: {fileID: 8811223344556677007, guid: 51970ee9abfae4f67869c8b3ceabc8e1, type: 3}
     UIIcon: {fileID: 0}
     RelativeScaleMultiplier: 1
     TriggerPattern: 4

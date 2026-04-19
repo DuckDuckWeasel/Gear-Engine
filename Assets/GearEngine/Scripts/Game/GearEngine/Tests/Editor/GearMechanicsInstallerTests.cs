@@ -19,7 +19,7 @@ namespace GearEngine.GearEngine.Tests.Editor
         [Test]
         public void Install_BuildsContainer_ResolvesCoreServices()
         {
-            var board = ScriptableObject.CreateInstance<BoardConfigSO>();
+            var board = ScriptableObject.CreateInstance<BoardRulesSO>();
             board.GridWidth = 2;
             board.GridHeight = 2;
 
@@ -47,7 +47,7 @@ namespace GearEngine.GearEngine.Tests.Editor
         [Test]
         public void Install_WithFeatureToggle_RegistersProvidedToggle()
         {
-            var board = ScriptableObject.CreateInstance<BoardConfigSO>();
+            var board = ScriptableObject.CreateInstance<BoardRulesSO>();
             var toggle = ScriptableObject.CreateInstance<GearEngineFeatureToggleSO>();
 
             var builder = new ContainerBuilder();
@@ -64,9 +64,11 @@ namespace GearEngine.GearEngine.Tests.Editor
         }
 
         [Test]
-        public void Install_DoesNotRegisterGearViewFactory()
+        public void Install_BoardService_ExposesRegisteredBoardRules()
         {
-            var board = ScriptableObject.CreateInstance<BoardConfigSO>();
+            var board = ScriptableObject.CreateInstance<BoardRulesSO>();
+            board.GridWidth = 4;
+            board.GridHeight = 3;
             LogAssert.Expect(LogType.Warning, "[GearMechanicsInstaller] No GearEngineFeatureToggleSO provided. Using runtime default.");
 
             var builder = new ContainerBuilder();
@@ -74,11 +76,12 @@ namespace GearEngine.GearEngine.Tests.Editor
             new GearMechanicsInstaller(board, null, GearInventoryLoadoutData.Empty(), new GearBoardLoadoutData()).Install(builder);
             using (IObjectResolver container = builder.Build())
             {
-                Assert.Throws<VContainerException>(() => container.Resolve<GearViewFactory>());
+                IBoardService boardService = container.Resolve<IBoardService>();
+                Assert.AreSame(board, boardService.BoardRules);
+                Assert.AreEqual(4, boardService.BoardRules.GridWidth);
             }
 
             UnityEngine.Object.DestroyImmediate(board);
         }
     }
 }
-
