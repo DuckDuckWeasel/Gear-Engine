@@ -2,9 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using GearEngine.Campaign.Services;
-using GearEngine.CarSimulation;
-using GearEngine.CarSimulation.Presentation;
-using GearEngine.CarSimulation.Simulation;
 using GearEngine.GearEngine;
 using GearEngine.GearEngine.Config;
 using GearEngine.GearEngine.Presentation.UI;
@@ -21,7 +18,7 @@ namespace GearEngine.Campaign.Presentation
 {
     public sealed class SetupViewModel : ViewModel
     {
-        public TrackViewModel Track { get; private set; }
+        public CampaignTrackPreviewViewModel Track { get; private set; }
         public BoardViewModel Board { get; private set; }
         public GearInventoryViewModel Inventory { get; private set; }
         public TrashZoneViewModel TrashZone { get; private set; }
@@ -37,9 +34,6 @@ namespace GearEngine.Campaign.Presentation
         [Inject] private IInventoryService inventoryService;
         [Inject] private IGearPresentationTransferService presentationTransferService;
         [Inject] private IGearLoadoutService loadoutService;
-        [Inject] private TrackSimulationFactory trackFactory;
-        [Inject] private RaceManagerService raceManager;
-        [Inject] private SplineCarRunnerService aiRunner;
 
         protected override void Initialize()
         {
@@ -47,10 +41,7 @@ namespace GearEngine.Campaign.Presentation
 
             engineService.ResetGridSimulationState();
 
-            RaceState previewSession = trackFactory.Create(trackService.CurrentCar, trackService.CurrentTrack, null);
-            raceManager.RegisterRace(previewSession);
-
-            Track = new TrackViewModel(previewSession, raceManager, aiRunner, trackFactory);
+            Track = new CampaignTrackPreviewViewModel(trackService.CurrentTrack);
             BindChildViewModel(Track);
 
             Board = new BoardViewModel(boardService, inventoryService, engineService, dragService);

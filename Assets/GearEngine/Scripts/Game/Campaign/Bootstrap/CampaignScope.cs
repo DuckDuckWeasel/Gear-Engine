@@ -24,6 +24,9 @@ namespace GearEngine.Campaign.Bootstrap
         [Header("Simulation")]
         [SerializeField] private SplineCarRunnerConfigSO splineCarRunnerConfig;
 
+        [Header("Active race session (defaults for ActiveRaceViewModel)")]
+        [SerializeField] private RaceSessionConfig campaignRaceSession = new RaceSessionConfig();
+
         [Header("Campaign gear loadout (setup / roguelike inventory)")]
         [SerializeField] private GearEngineStartData campaignGearStartData;
 
@@ -79,6 +82,9 @@ namespace GearEngine.Campaign.Bootstrap
             builder.RegisterInstance(splineCarRunnerConfig);
             new CarTrackInstaller().Install(builder);
 
+            RaceSessionConfig raceSessionTemplate = campaignRaceSession ?? new RaceSessionConfig();
+            builder.RegisterInstance(new CampaignRaceSessionDefaults(raceSessionTemplate));
+
             LocalTrackService trackService = new LocalTrackService(tracks, roguelikeCardPool);
             builder.RegisterInstance<ITrackService>(trackService);
 
@@ -89,6 +95,29 @@ namespace GearEngine.Campaign.Bootstrap
 
             builder.RegisterInstance<IGearLoadoutService>(loadoutService);
             builder.RegisterComponent(sceneBootstrap).AsImplementedInterfaces().AsSelf();
+        }
+    }
+
+    /// <summary>Builds per-race <see cref="RaceSessionConfig"/> from serialized campaign defaults and the current track.</summary>
+    public sealed class CampaignRaceSessionDefaults
+    {
+        private readonly RaceSessionConfig template;
+
+        public CampaignRaceSessionDefaults(RaceSessionConfig template)
+        {
+            this.template = template ?? new RaceSessionConfig();
+        }
+
+        public RaceSessionConfig CreateForTrack(TrackDefinition track)
+        {
+            if (track == null)
+            {
+                throw new ArgumentNullException(nameof(track));
+            }
+
+            RaceSessionConfig config = template.CloneForNewRace();
+            config.ApplyFromTrack(track);
+            return config;
         }
     }
 }

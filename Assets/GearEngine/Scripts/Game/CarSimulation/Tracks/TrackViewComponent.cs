@@ -8,7 +8,7 @@ using UnityEngine.Splines;
 namespace GearEngine.CarSimulation.Tracks
 {
     [DisallowMultipleComponent]
-    public sealed class TrackViewComponent : ViewComponent<TrackViewModel>
+    public sealed class TrackViewComponent : ViewComponent<ViewModel>
     {
         private const string pathChildName = "Path";
 
@@ -35,12 +35,23 @@ namespace GearEngine.CarSimulation.Tracks
                 return;
             }
 
-            InitializeTrack(viewModel.Track);
+            if (viewModel is ITrackDefinitionSource source)
+            {
+                InitializeTrack(source.Track);
+            }
+            else
+            {
+                Debug.LogError("[Track] ViewModel must implement ITrackDefinitionSource.");
+            }
         }
 
         protected override void OnUnbind()
         {
-            viewModel?.TearDown();
+            if (viewModel is TrackViewModel trackVm)
+            {
+                trackVm.TearDown();
+            }
+
             base.OnUnbind();
         }
 

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using CommunityToolkit.Mvvm.ComponentModel;
+using GearEngine.CarSimulation;
 using GearEngine.CarSimulation.Definitions;
 using GearEngine.CarSimulation.Entity;
 using Scaffold.MVVM;
@@ -9,7 +10,7 @@ using GearEngine.CarSimulation.Simulation;
 
 namespace GearEngine.CarSimulation.Presentation
 {
-    public sealed partial class TrackViewModel : ViewModel
+    public sealed partial class TrackViewModel : ViewModel, ITrackDefinitionSource
     {
         public RaceState Session { get; }
 

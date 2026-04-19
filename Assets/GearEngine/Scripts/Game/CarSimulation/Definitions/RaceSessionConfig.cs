@@ -28,7 +28,8 @@ namespace GearEngine.CarSimulation.Definitions
             totalLaps = value;
         }
 
-        internal void ApplyFromTrack(TrackDefinition track)
+        /// <summary>Copies lap count from the track when the track defines it.</summary>
+        public void ApplyFromTrack(TrackDefinition track)
         {
             if (track == null)
             {
@@ -36,6 +37,16 @@ namespace GearEngine.CarSimulation.Definitions
             }
 
             totalLaps = track.TotalLaps;
+        }
+
+        /// <summary>Creates a copy for a new race session (template values from campaign scope, etc.).</summary>
+        public RaceSessionConfig CloneForNewRace()
+        {
+            var copy = new RaceSessionConfig();
+            copy.variables = variables;
+            copy.totalLaps = totalLaps;
+            copy.roguelikeStats = roguelikeStats;
+            return copy;
         }
     }
 }

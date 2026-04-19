@@ -1,3 +1,4 @@
+using GearEngine.Campaign.Bootstrap;
 using GearEngine.Campaign.Presentation;
 using GearEngine.GearEngine;
 using GearEngine.CarSimulation;
@@ -50,6 +51,7 @@ namespace GearEngine.Campaign.Tests.Editor
             ViewModelTestInject.InjectPrivateField(vm, "trackFactory", factory);
             ViewModelTestInject.InjectPrivateField(vm, "raceManager", raceManager);
             ViewModelTestInject.InjectPrivateField(vm, "aiRunner", carRunner);
+            ViewModelTestInject.InjectPrivateField(vm, "raceSessionDefaults", new CampaignRaceSessionDefaults(new RaceSessionConfig()));
             ViewModelTestInject.InjectNavigation(vm, navigation);
 
             ViewModelTestInject.InvokeInitialize(vm);
@@ -90,6 +92,7 @@ namespace GearEngine.Campaign.Tests.Editor
             ViewModelTestInject.InjectPrivateField(vm, "trackFactory", factory);
             ViewModelTestInject.InjectPrivateField(vm, "raceManager", raceManager);
             ViewModelTestInject.InjectPrivateField(vm, "aiRunner", carRunner);
+            ViewModelTestInject.InjectPrivateField(vm, "raceSessionDefaults", new CampaignRaceSessionDefaults(new RaceSessionConfig()));
             ViewModelTestInject.InjectNavigation(vm, navigation);
 
             ViewModelTestInject.InvokeInitialize(vm);
