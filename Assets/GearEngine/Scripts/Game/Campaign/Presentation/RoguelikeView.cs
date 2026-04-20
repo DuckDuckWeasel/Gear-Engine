@@ -8,39 +8,34 @@ namespace GearEngine.Campaign.Presentation
 {
     public sealed class RoguelikeView : View<RoguelikeViewModel>
     {
-        [SerializeField] private BoardViewComponent boardView;
-        [SerializeField] private GearInventoryViewComponent inventoryView;
-        [SerializeField] private TrashDropZoneViewComponent trashDropZone;
-        [SerializeField] private CardOptionView[] cardOptionViews;
-        [SerializeField] private Button confirmButton;
+        [SerializeField]
+        private BoardViewComponent boardView;
+
+        [SerializeField]
+        private GearInventoryViewComponent inventoryView;
+
+        [SerializeField]
+        private TrashDropZoneViewComponent trashDropZone;
+
+        [SerializeField]
+        private CardOptionView[] cardOptionViews;
+
+        [SerializeField]
+        private Button confirmButton;
 
         protected override void OnBind()
         {
             ValidateHierarchy();
             BindGearSubtree();
-            BindCardSelection();
+            Bind<int, int>(() => viewModel.CardOptionsRevision, _ => RebuildCardSelection());
             BindConfirmUi();
         }
 
         protected override void OnUnbind()
         {
             confirmButton.onClick.RemoveListener(OnConfirmClicked);
-
-            if (trashDropZone != null)
-            {
-                trashDropZone.gameObject.SetActive(false);
-            }
-
-            if (inventoryView != null)
-            {
-                inventoryView.gameObject.SetActive(false);
-            }
-
-            if (boardView != null)
-            {
-                boardView.gameObject.SetActive(false);
-            }
-
+            DisposeViewModelIfNeeded();
+            DeactivateGearPanels();
             base.OnUnbind();
         }
 
@@ -59,13 +54,21 @@ namespace GearEngine.Campaign.Presentation
             trashDropZone.ApplyInitialPlacement();
         }
 
-        private void BindCardSelection()
+        private void RebuildCardSelection()
         {
-            for (int i = 0; i < cardOptionViews.Length && i < viewModel.CardOptions.Count; i++)
+            for (int i = 0; i < cardOptionViews.Length; i++)
             {
-                CardOptionViewModel option = viewModel.CardOptions[i];
-                cardOptionViews[i].Bind(option);
-                Bind<bool, bool>(() => option.IsSelected, selected => OnCardOptionSelectionChanged(option, selected));
+                if (i < viewModel.CardOptions.Count)
+                {
+                    CardOptionViewModel option = viewModel.CardOptions[i];
+                    cardOptionViews[i].gameObject.SetActive(true);
+                    cardOptionViews[i].Bind(option);
+                    Bind<bool, bool>(() => option.IsSelected, selected => OnCardOptionSelectionChanged(option, selected));
+                }
+                else
+                {
+                    cardOptionViews[i].gameObject.SetActive(false);
+                }
             }
         }
 
@@ -107,9 +110,9 @@ namespace GearEngine.Campaign.Presentation
             RequireReference(inventoryView, nameof(inventoryView));
             RequireReference(trashDropZone, nameof(trashDropZone));
             RequireReference(confirmButton, nameof(confirmButton));
-            if (cardOptionViews == null || cardOptionViews.Length == 0)
+            if (cardOptionViews == null)
             {
-                throw new InvalidOperationException("[RoguelikeView] cardOptionViews array is empty.");
+                throw new InvalidOperationException("[RoguelikeView] cardOptionViews must be assigned on the scene instance.");
             }
         }
 
@@ -119,6 +122,29 @@ namespace GearEngine.Campaign.Presentation
             {
                 throw new InvalidOperationException(
                     $"[RoguelikeView] {name} must be assigned on the scene instance (shared World gear UI / controls).");
+            }
+        }
+
+        private void DisposeViewModelIfNeeded()
+        {
+            if (viewModel is IDisposable disposable)
+            {
+                disposable.Dispose();
+            }
+        }
+
+        private void DeactivateGearPanels()
+        {
+            TryDeactivatePanel(trashDropZone?.gameObject);
+            TryDeactivatePanel(inventoryView?.gameObject);
+            TryDeactivatePanel(boardView?.gameObject);
+        }
+
+        private void TryDeactivatePanel(GameObject go)
+        {
+            if (go != null)
+            {
+                go.SetActive(false);
             }
         }
     }

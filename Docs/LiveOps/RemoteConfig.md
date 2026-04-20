@@ -21,6 +21,7 @@ Each `.rc` file should expose **one** top-level Remote Config key that matches t
 | `Card.rc` | `CardConfig` | `CardsModule` |
 | `Loadout.rc` | `LoadoutConfig` | `LoadoutModule` |
 | `Inventory.rc` | `InventoryConfig` | `InventoryModule` |
+| `Roguelike.rc` | `RoguelikeConfig` | `RoguelikeModule` |
 
 Adding a new module: add a DTO config type, add `ConfigKey` in the module, create `<Module>.rc` with that key, deploy.
 
@@ -32,6 +33,7 @@ Adding a new module: add a DTO config type, add `ConfigKey` in the module, creat
 | `CardConfig` | `catalog` (string ids), `baseCost`, `costPerPurchaseGrowth`. Purchases always spend **`gold`** (no `currencyId`). |
 | `InventoryConfig` | `baseSlots` (int default for client + docs). |
 | `LoadoutConfig` | `baseSlots` (int). |
+| `RoguelikeConfig` | `gearPool` (string gear ids), `optionsPerRoll` (int). |
 
 ## Packages
 

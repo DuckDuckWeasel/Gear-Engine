@@ -55,6 +55,9 @@ namespace GearEngine.App.Bootstrap.Layers
             builder.Register<CampaignGearPersistenceHookup>(Lifetime.Singleton)
                 .As<IAsyncInitializable>()
                 .As<IDisposable>();
+
+            builder.Register<RoguelikeRollService>(Lifetime.Singleton)
+                .As<IRoguelikeRollService>();
         }
     }
 }

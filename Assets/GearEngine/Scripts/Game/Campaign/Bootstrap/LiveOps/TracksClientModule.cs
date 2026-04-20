@@ -116,7 +116,10 @@ namespace GearEngine.Campaign.Bootstrap.LiveOps
             return catalog.OrderedEntries(ids ?? Array.Empty<string>());
         }
 
-        public IReadOnlyList<GearConfig> GetRoguelikeCardOptions() => catalog.GetRoguelikeCardOptions();
+        public IReadOnlyList<GearConfig> GetRoguelikeCardOptions()
+        {
+            return catalog.GetRoguelikeCardOptions();
+        }
 
         public async Task RecordResultAsync(RaceResultModel result)
         {

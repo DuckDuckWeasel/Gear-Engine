@@ -13,6 +13,7 @@ using GameModule.Modules.Tracks;
 using GameModule.Modules.Loadout;
 using GameModule.Modules.Inventory;
 using GameModule.Modules.Cards;
+using GameModule.Modules.Roguelike;
 using GameModuleDTO.ModuleRequests;
 
 /// <summary>
@@ -60,6 +61,7 @@ public partial class ModuleConfig : ICloudCodeSetup
         RegisterModuleScoped<LoadoutModule>(config);
         RegisterModuleScoped<InventoryModule>(config);
         RegisterModuleScoped<CardsModule>(config);
+        RegisterModuleScoped<RoguelikeModule>(config);
     }
 
     private void RegisterScoped<T>(ICloudCodeConfig config) where T : class

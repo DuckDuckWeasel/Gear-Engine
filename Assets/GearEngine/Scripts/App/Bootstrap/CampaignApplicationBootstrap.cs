@@ -75,7 +75,8 @@ namespace GearEngine.App.Bootstrap
                 new CampaignGearCatalogInstaller(gearCatalog),
                 new CampaignLoadoutInstaller(),
                 new CampaignInventoryInstaller(),
-                new CardsClientInstaller());
+                new CardsClientInstaller(),
+                new CampaignRoguelikeInstaller());
             yield return new CampaignLayer(
                 boardRules,
                 featureToggle,

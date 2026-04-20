@@ -6,6 +6,7 @@ using GameModuleDTO.Modules.Cards;
 using GameModuleDTO.Modules.Currency;
 using GameModuleDTO.Modules.Inventory;
 using GameModuleDTO.Modules.Loadout;
+using GameModuleDTO.Modules.Roguelike;
 using GameModuleDTO.Modules.Tracks;
 using GearEngine.App.Bootstrap.Layers;
 using GearEngine.Campaign.Bootstrap.Cards;
@@ -64,7 +65,8 @@ namespace GearEngine.App.Bootstrap
                 new CampaignGearCatalogInstaller(emptyGear),
                 new CampaignLoadoutInstaller(),
                 new CampaignInventoryInstaller(),
-                new CardsClientInstaller());
+                new CardsClientInstaller(),
+                new CampaignRoguelikeInstaller());
         }
 
         protected override Task OnReadyAsync(CancellationToken ct)
@@ -77,7 +79,8 @@ namespace GearEngine.App.Bootstrap
                 LoadoutGameData loadoutData = liveOps.GetModuleData<LoadoutGameData>();
                 InventoryGameData inventoryData = liveOps.GetModuleData<InventoryGameData>();
                 CardGameData cardData = liveOps.GetModuleData<CardGameData>();
-                Debug.Log($"[Meta] LiveOps raw payloads: CurrencyGameData wallets={(currencyData != null ? currencyData.Wallets.Count : 0)}, TrackGameData={(trackData != null)}, LoadoutGameData={(loadoutData != null)}, InventoryGameData={(inventoryData != null)}, CardGameData={(cardData != null)}.");
+                RoguelikeGameData roguelikeData = liveOps.GetModuleData<RoguelikeGameData>();
+                Debug.Log($"[Meta] LiveOps raw payloads: CurrencyGameData wallets={(currencyData != null ? currencyData.Wallets.Count : 0)}, TrackGameData={(trackData != null)}, LoadoutGameData={(loadoutData != null)}, InventoryGameData={(inventoryData != null)}, CardGameData={(cardData != null)}, RoguelikeGameData={(roguelikeData != null)}.");
 
                 TracksClientModule tracksClient = Host.Resolve<TracksClientModule>();
                 LoadoutClientModule loadoutClient = Host.Resolve<LoadoutClientModule>();
