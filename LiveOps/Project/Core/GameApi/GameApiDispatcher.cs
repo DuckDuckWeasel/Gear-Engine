@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Reflection;
 using System.Threading.Tasks;
 using GameModule.ModuleFetchData;
 using GameModule.Signal;
@@ -58,7 +57,7 @@ namespace GameModule.GameApi
                 return GameApiEnvelopeResponse.Exception("<unknown>", new ArgumentException("Missing RequestKey."));
             }
 
-            if (!_registry.TryResolve(request.RequestKey, out Type reqType, out Type resType))
+            if (!_registry.TryGet(request.RequestKey, out HandlerEntry entry))
             {
                 return GameApiEnvelopeResponse.Exception(request.RequestKey, new InvalidOperationException($"Unknown RequestKey '{request.RequestKey}'."));
             }
@@ -66,33 +65,20 @@ namespace GameModule.GameApi
             try
             {
                 object requestObj = request.Payload != null
-                    ? request.Payload.ToObject(reqType, _serializer)
-                    : Activator.CreateInstance(reqType);
+                    ? request.Payload.ToObject(entry.RequestType, _serializer)
+                    : Activator.CreateInstance(entry.RequestType);
 
-                var session = new GameApiSession(_services, context, player, gameState, remoteConfig);
+                var session = new GameApiSession(_services, _registry, context, player, gameState, remoteConfig);
 
-                Type handlerIface = typeof(IGameApiHandler<,>).MakeGenericType(reqType, resType);
-                object handler = _services.GetService(handlerIface);
-                if (handler == null)
+                object handlerObj = _services.GetService(entry.HandlerType);
+                if (handlerObj is not IGameApiHandler handler)
                 {
-                    throw new InvalidOperationException($"No handler registered for {reqType.Name}.");
+                    throw new InvalidOperationException($"No handler registered for {entry.RequestType.Name}.");
                 }
 
-                MethodInfo handle = handlerIface.GetMethod("HandleAsync", new[] { typeof(GameApiSession), reqType });
-                if (handle == null)
-                {
-                    throw new InvalidOperationException($"HandleAsync not found for {handlerIface}.");
-                }
+                ModuleResponse result = await handler.HandleAsync(session, requestObj).ConfigureAwait(false);
 
-                Task task = (Task)handle.Invoke(handler, new[] { session, requestObj });
-                await task.ConfigureAwait(false);
-                PropertyInfo resultProp = task.GetType().GetProperty("Result");
-                ModuleResponse result = (ModuleResponse)resultProp?.GetValue(task);
-
-                if (player is UnityDataCache cache)
-                {
-                    await cache.FlushDirtyAsync(context).ConfigureAwait(false);
-                }
+                await player.FlushDirtyAsync(context).ConfigureAwait(false);
 
                 _signals.Push(requestObj);
 

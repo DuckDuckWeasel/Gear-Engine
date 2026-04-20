@@ -18,6 +18,7 @@ using GameModule.Modules.Tracks;
 using GameModule.Modules.Loadout;
 using GameModule.Modules.Inventory;
 using GameModule.Modules.Cards;
+using GameModuleDTO.ModuleRequests;
 
 /// <summary>
 /// Configures the dependency injection container for cloud code execution.
@@ -42,7 +43,8 @@ public partial class ModuleConfig : ICloudCodeSetup
         RegisterScoped<SignalModule>(config);
 
         Assembly gameApiAssembly = typeof(GameApiDispatcher).Assembly;
-        config.Dependencies.AddSingleton(new GameApiRegistry(gameApiAssembly));
+        GameApiRegistry gameApiRegistry = new GameApiRegistry(gameApiAssembly);
+        config.Dependencies.AddSingleton(gameApiRegistry);
         RegisterScoped<GameApiDispatcher>(config);
 
         foreach (Type type in gameApiAssembly.GetTypes())
@@ -52,15 +54,12 @@ public partial class ModuleConfig : ICloudCodeSetup
                 continue;
             }
 
-            foreach (Type iface in type.GetInterfaces())
+            if (!typeof(IGameApiHandler).IsAssignableFrom(type))
             {
-                if (!iface.IsGenericType || iface.GetGenericTypeDefinition() != typeof(IGameApiHandler<,>))
-                {
-                    continue;
-                }
-
-                config.Dependencies.AddScoped(iface, type);
+                continue;
             }
+
+            config.Dependencies.AddScoped(type);
         }
 
         RegisterModuleScoped<AdsService>(config);
@@ -90,5 +89,17 @@ public partial class ModuleConfig : ICloudCodeSetup
     {
         config.Dependencies.AddScoped<IGameModule, T>();
         RegisterScoped<T>(config);
+    }
+
+    /// <summary>
+    /// Optional explicit GameApi handler registration (e.g. handlers outside the scanned assembly or tests).
+    /// </summary>
+    public static void RegisterGameApiHandler<TReq, TRes, THandler>(ICloudCodeConfig config, GameApiRegistry registry)
+        where TReq : ModuleRequest<TRes>
+        where TRes : ModuleResponse
+        where THandler : class, IGameApiHandler<TReq, TRes>
+    {
+        config.Dependencies.AddScoped<THandler>();
+        registry.Register(typeof(THandler));
     }
 }

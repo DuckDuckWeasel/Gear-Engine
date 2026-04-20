@@ -5,11 +5,23 @@ using System.Reflection;
 namespace GameModule.GameApi
 {
     /// <summary>
-    /// Maps <c>RequestKey</c> strings to request/response CLR types for all registered handlers.
+    /// Maps <c>RequestKey</c> strings to handler metadata for all registered handlers.
+    /// </summary>
+    public sealed class HandlerEntry
+    {
+        public Type RequestType { get; set; } = null!;
+
+        public Type ResponseType { get; set; } = null!;
+
+        public Type HandlerType { get; set; } = null!;
+    }
+
+    /// <summary>
+    /// Maps <c>RequestKey</c> strings to request/response CLR types and concrete handler types.
     /// </summary>
     public sealed class GameApiRegistry
     {
-        private readonly Dictionary<string, (Type Req, Type Res)> _map = new Dictionary<string, (Type Req, Type Res)>();
+        private readonly Dictionary<string, HandlerEntry> _map = new Dictionary<string, HandlerEntry>();
 
         public GameApiRegistry(params Assembly[] assemblies)
         {
@@ -22,28 +34,66 @@ namespace GameModule.GameApi
             {
                 foreach (Type type in assembly.GetTypes())
                 {
-                    foreach (Type iface in type.GetInterfaces())
+                    if (type.IsAbstract || type.IsInterface)
                     {
-                        if (!iface.IsGenericType)
-                        {
-                            continue;
-                        }
-
-                        if (iface.GetGenericTypeDefinition() != typeof(IGameApiHandler<,>))
-                        {
-                            continue;
-                        }
-
-                        Type[] args = iface.GetGenericArguments();
-                        string key = args[0].Name;
-                        if (_map.ContainsKey(key))
-                        {
-                            throw new InvalidOperationException($"Duplicate GameApi handler for request key '{key}'.");
-                        }
-
-                        _map[key] = (args[0], args[1]);
+                        continue;
                     }
+
+                    RegisterHandlerType(type);
                 }
+            }
+        }
+
+        /// <summary>
+        /// Registers a concrete handler type (same logic as assembly scan). Use with explicit registration in <see cref="ModuleConfig"/>.
+        /// </summary>
+        public void Register(Type handlerType)
+        {
+            if (handlerType == null)
+            {
+                throw new ArgumentNullException(nameof(handlerType));
+            }
+
+            if (handlerType.IsAbstract || handlerType.IsInterface)
+            {
+                throw new ArgumentException("Handler type must be a concrete class.", nameof(handlerType));
+            }
+
+            RegisterHandlerType(handlerType);
+        }
+
+        private void RegisterHandlerType(Type type)
+        {
+            foreach (Type iface in type.GetInterfaces())
+            {
+                if (!iface.IsGenericType)
+                {
+                    continue;
+                }
+
+                if (iface.GetGenericTypeDefinition() != typeof(IGameApiHandler<,>))
+                {
+                    continue;
+                }
+
+                Type[] args = iface.GetGenericArguments();
+                string key = args[0].Name;
+                if (_map.TryGetValue(key, out HandlerEntry existing))
+                {
+                    if (existing.HandlerType == type)
+                    {
+                        continue;
+                    }
+
+                    throw new InvalidOperationException($"Duplicate GameApi handler for request key '{key}'.");
+                }
+
+                _map[key] = new HandlerEntry
+                {
+                    RequestType = args[0],
+                    ResponseType = args[1],
+                    HandlerType = type,
+                };
             }
         }
 
@@ -52,17 +102,29 @@ namespace GameModule.GameApi
             return !string.IsNullOrEmpty(requestKey) && _map.ContainsKey(requestKey);
         }
 
+        public bool TryGet(string requestKey, out HandlerEntry? entry)
+        {
+            if (string.IsNullOrEmpty(requestKey) || !_map.TryGetValue(requestKey, out HandlerEntry? found))
+            {
+                entry = null;
+                return false;
+            }
+
+            entry = found;
+            return true;
+        }
+
         public bool TryResolve(string requestKey, out Type requestType, out Type responseType)
         {
-            if (string.IsNullOrEmpty(requestKey) || !_map.TryGetValue(requestKey, out (Type Req, Type Res) pair))
+            if (!TryGet(requestKey, out HandlerEntry e))
             {
                 requestType = null;
                 responseType = null;
                 return false;
             }
 
-            requestType = pair.Req;
-            responseType = pair.Res;
+            requestType = e.RequestType;
+            responseType = e.ResponseType;
             return true;
         }
     }

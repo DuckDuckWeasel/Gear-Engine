@@ -12,11 +12,11 @@ When a call can return a **deterministic** `TResponse` before the server respond
 
 ## Server
 
-- **`GameApiDispatcher.Invoke`** dispatches to `IGameApiHandler<TRequest, TResponse>` implementations registered in `ModuleConfig`.
-- **`GameApiSession`** exposes context, `IPlayerData`, `IGameState`, `IRemoteConfig`, and `InvokeAsync` for nested calls (e.g. level completion awarding gold).
-- After a successful handler, **`UnityDataCache.FlushDirtyAsync`** persists keys whose in-memory JSON differs from the loaded snapshot (replaces the old `AddToCache` / `SaveCache` pattern).
+- **`GameApiDispatcher.Invoke`** looks up a **`HandlerEntry`** (request type, response type, **concrete handler type**) in **`GameApiRegistry`**, deserializes the payload with `JObject.ToObject(requestType, …)`, resolves the handler by **concrete `Type`** from DI, and calls the non-generic **`IGameApiHandler.HandleAsync(session, object)`**. The typed **`IGameApiHandler<TRequest, TResponse>`** implements that via a default interface method that casts once to `TRequest` — no per-request `MakeGenericType` / `MethodInfo.Invoke` / `Task.Result` reflection.
+- **`GameApiSession`** exposes context, `IPlayerData`, `IGameState`, `IRemoteConfig`, and `InvokeAsync` for nested calls (e.g. level completion awarding gold). Nested calls resolve the handler via the same registry + concrete type + cast to **`IGameApiHandler<TReq, TRes>`**.
+- After a successful handler, **`IPlayerData.FlushDirtyAsync`** persists keys whose in-memory JSON differs from the loaded snapshot (replaces the old `AddToCache` / `SaveCache` pattern).
 
 ## Adding a handler
 
 1. Add `[UsesGameApi]` on the request DTO in `Scaffold.LiveOps.DTO`.
-2. Implement `IGameApiHandler<TRequest, TResponse>` in `LiveOps/Project` (handlers are picked up by assembly scan in `ModuleConfig`).
+2. Implement `IGameApiHandler<TRequest, TResponse>` in `LiveOps/Project` (handlers are picked up by assembly scan in `ModuleConfig`). Optionally register explicitly with **`ModuleConfig.RegisterGameApiHandler<TReq, TRes, THandler>(config, registry)`** (e.g. handlers in another assembly).

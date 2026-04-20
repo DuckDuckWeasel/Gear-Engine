@@ -83,12 +83,12 @@ Reference: [CurrencyClientModule.cs](../../Assets/GearEngine/Scripts/App/Bootstr
 
 You **do not** register each handler in a central dictionary by hand. Two pieces work together:
 
-### 3.1 `GameApiRegistry` (request key → CLR types)
+### 3.1 `GameApiRegistry` (request key → handler metadata)
 
 At startup, a singleton `**GameApiRegistry`** scans the **same assembly as `GameApiDispatcher`** (`LiveOps.dll`) for every concrete type that implements `**IGameApiHandler<TRequest, TResponse>**`. For each handler it records:
 
 - **Key** = `typeof(TRequest).Name` (e.g. `"AddGoldRequest"`)
-- **Value** = the request and response CLR types
+- **Value** = **`HandlerEntry`**: request type, response type, and **concrete handler `Type`**
 
 That key must match what the client sends in `**GameApiEnvelopeRequest.RequestKey`** (typically `request.GetType().Name`).
 
@@ -96,11 +96,12 @@ Implementation: `[GameApiRegistry.cs](../../LiveOps/Project/Core/GameApi/GameApi
 
 ### 3.2 Dependency injection (resolve the handler instance)
 
-Still in `**ModuleConfig.Setup`**, a loop registers **every** `IGameApiHandler<,>` implementation with the Cloud Code DI container as **scoped**:
+Still in `**ModuleConfig.Setup`**, a loop registers **every concrete handler class** (types assignable from **`IGameApiHandler`**, which includes all `IGameApiHandler<,>` implementations) with the Cloud Code DI container as **scoped** — **by concrete `Type`**, not by closed generic interface:
 
-```40:60:LiveOps/Project/Core/Initialize/ModuleConfig.cs
+```44:64:LiveOps/Project/Core/Initialize/ModuleConfig.cs
         Assembly gameApiAssembly = typeof(GameApiDispatcher).Assembly;
-        config.Dependencies.AddSingleton(new GameApiRegistry(gameApiAssembly));
+        GameApiRegistry gameApiRegistry = new GameApiRegistry(gameApiAssembly);
+        config.Dependencies.AddSingleton(gameApiRegistry);
         RegisterScoped<GameApiDispatcher>(config);
 
         foreach (Type type in gameApiAssembly.GetTypes())
@@ -110,31 +111,29 @@ Still in `**ModuleConfig.Setup`**, a loop registers **every** `IGameApiHandler<,
                 continue;
             }
 
-            foreach (Type iface in type.GetInterfaces())
+            if (!typeof(IGameApiHandler).IsAssignableFrom(type))
             {
-                if (!iface.IsGenericType || iface.GetGenericTypeDefinition() != typeof(IGameApiHandler<,>))
-                {
-                    continue;
-                }
-
-                config.Dependencies.AddScoped(iface, type);
+                continue;
             }
+
+            config.Dependencies.AddScoped(type);
         }
 ```
 
 When `**GameApiDispatcher.Invoke**` runs, it:
 
-1. Uses `**GameApiRegistry.TryResolve(requestKey, …)**` to get `TRequest` / `TResponse`.
-2. Deserializes the payload into `TRequest`.
-3. Resolves `**IGameApiHandler<TRequest, TResponse>**` from `**IServiceProvider**` (same scoped provider as the rest of the Cloud Code request).
-4. Calls `**HandleAsync(session, request)**`.
+1. Uses `**GameApiRegistry.TryGet(requestKey, …)**` (or `**TryResolve**` for request/response types only) to get the **`HandlerEntry`**.
+2. Deserializes the payload into the request type via `**JObject.ToObject(requestType, …)**`.
+3. Resolves the handler with `**GetService(entry.HandlerType)**` and calls **`IGameApiHandler.HandleAsync(session, requestObj)`** (reflection-free; the typed handler’s default interface implementation performs the cast).
 
 So your **only** obligation for registration is:
 
 - Implement `**YourHandler : IGameApiHandler<YourRequest, YourResponse>`**.
 - Put the class in `**LiveOps/Project`** so it is compiled into `**LiveOps.dll`** (the assembly passed to `GameApiRegistry`).
 
-**If you add handlers in another assembly**, you must extend `**ModuleConfig`** (e.g. pass more assemblies into `GameApiRegistry` and duplicate or generalize the `foreach` registration loop). Today everything is assumed to live in the `**LiveOps`** project assembly.
+**Explicit registration:** call **`ModuleConfig.RegisterGameApiHandler<TReq, TRes, THandler>(config, registry)`** to register a concrete handler and merge it into the same registry (idempotent if the handler was already scanned).
+
+**If you add handlers in another assembly**, pass that assembly into **`new GameApiRegistry(...)`** and call **`RegisterGameApiHandler`** (or add a similar scan) so both the registry and DI know the concrete handler type.
 
 ---
 
