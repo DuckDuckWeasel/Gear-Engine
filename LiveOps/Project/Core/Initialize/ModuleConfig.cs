@@ -8,12 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Unity.Services.CloudCode.Apis;
 using Unity.Services.CloudCode.Core;
 using GameModule.Signal;
-using GameModule.Modules.Ads;
 using GameModule.Modules.Currency;
-using GameModule.Modules.Gold;
-using GameModule.Modules.Level;
-using GameModule.ModuleFetchData.Http;
-using GameModule.Modules.Global;
 using GameModule.Modules.Tracks;
 using GameModule.Modules.Loadout;
 using GameModule.Modules.Inventory;
@@ -33,8 +28,6 @@ public partial class ModuleConfig : ICloudCodeSetup
     {
         IGameApiClient gameApiClient = GameApiClient.Create();
         config.Dependencies.AddSingleton(gameApiClient);
-        PushClient pushClient = PushClient.Create();
-        config.Dependencies.AddSingleton(pushClient);
 
         RegisterScoped<IPlayerData, UnityPlayerData>(config);
         RegisterScoped<IGameState, UnityGameState>(config);
@@ -62,11 +55,7 @@ public partial class ModuleConfig : ICloudCodeSetup
             config.Dependencies.AddScoped(type);
         }
 
-        RegisterModuleScoped<AdsService>(config);
-        RegisterModuleScoped<GoldModule>(config);
         RegisterModuleScoped<CurrencyModule>(config);
-        RegisterModuleScoped<LevelService>(config);
-        RegisterModuleScoped<GlobalConfigModule>(config);
         RegisterModuleScoped<TracksModule>(config);
         RegisterModuleScoped<LoadoutModule>(config);
         RegisterModuleScoped<InventoryModule>(config);

@@ -16,13 +16,11 @@ Each `.rc` file should expose **one** top-level Remote Config key that matches t
 
 | File | Remote Config key | Cloud Code consumer |
 |------|---------------------|------------------------|
-| `Ads.rc` | `AdsConfig` | `AdsService` |
 | `Currency.rc` | `CurrencyConfig` | `CurrencyModule` |
-| `Global.rc` | `GlobalConfigData` | `GlobalConfigModule` |
-| `Gold.rc` | `GoldConfig` | `GoldModule` |
-| `Level.rc` | `LevelConfig` | `LevelService` |
 | `Track.rc` | `TrackConfig` | `TracksModule` |
 | `Card.rc` | `CardConfig` | `CardsModule` |
+| `Loadout.rc` | `LoadoutConfig` | `LoadoutModule` |
+| `Inventory.rc` | `InventoryConfig` | `InventoryModule` |
 
 Adding a new module: add a DTO config type, add `ConfigKey` in the module, create `<Module>.rc` with that key, deploy.
 
@@ -48,7 +46,7 @@ Environment selection follows the linked UGS project/environment in the Editor, 
 After deploy:
 
 1. Optional: confirm keys in the Unity Dashboard (Remote Config) for that environment.
-2. Open [Meta.unity](../../Assets/GearEngine/Scenes/Meta.unity) and press Play. A successful init logs `[Meta] LiveOps ready…` with module payloads driven by Remote Config.
+2. Open [Meta.unity](../../Assets/GearEngine/Scenes/Meta.unity) and press Play. A successful init logs `[Meta] LiveOps raw payloads: …` with module payloads driven by Remote Config.
 
 ## CI / CLI (optional)
 

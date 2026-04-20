@@ -2,10 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using GameModuleDTO.Modules.Ads;
 using GameModuleDTO.Modules.Cards;
 using GameModuleDTO.Modules.Currency;
-using GameModuleDTO.Modules.Gold;
 using GameModuleDTO.Modules.Inventory;
 using GameModuleDTO.Modules.Loadout;
 using GameModuleDTO.Modules.Tracks;
@@ -57,14 +55,12 @@ namespace GearEngine.App.Bootstrap
             try
             {
                 ILiveOpsService liveOps = Host.Resolve<ILiveOpsService>();
-                GoldGameData goldData = liveOps.GetModuleData<GoldGameData>();
-                AdData adData = liveOps.GetModuleData<AdData>();
                 CurrencyGameData currencyData = liveOps.GetModuleData<CurrencyGameData>();
                 TrackGameData trackData = liveOps.GetModuleData<TrackGameData>();
                 LoadoutGameData loadoutData = liveOps.GetModuleData<LoadoutGameData>();
                 InventoryGameData inventoryData = liveOps.GetModuleData<InventoryGameData>();
                 CardGameData cardData = liveOps.GetModuleData<CardGameData>();
-                Debug.Log($"[Meta] LiveOps raw payloads: GoldGameData={(goldData != null)}, AdData={(adData != null)}, CurrencyGameData wallets={(currencyData != null ? currencyData.Wallets.Count : 0)}, TrackGameData={(trackData != null)}, LoadoutGameData={(loadoutData != null)}, InventoryGameData={(inventoryData != null)}, CardGameData={(cardData != null)}.");
+                Debug.Log($"[Meta] LiveOps raw payloads: CurrencyGameData wallets={(currencyData != null ? currencyData.Wallets.Count : 0)}, TrackGameData={(trackData != null)}, LoadoutGameData={(loadoutData != null)}, InventoryGameData={(inventoryData != null)}, CardGameData={(cardData != null)}.");
 
                 TracksClientModule tracksClient = Host.Resolve<TracksClientModule>();
                 LoadoutClientModule loadoutClient = Host.Resolve<LoadoutClientModule>();

@@ -10,6 +10,7 @@ namespace GameModule.Modules.Inventory
     public class InventoryModule : GameModule<InventoryGameData>
     {
         public const string PersistenceKey = nameof(InventoryPersistence);
+        public const string ConfigKey = nameof(InventoryConfig);
 
         public InventoryModule()
         {
@@ -17,6 +18,7 @@ namespace GameModule.Modules.Inventory
 
         public override async Task<IGameModuleData> Initialize(IExecutionContext context, IPlayerData player, IGameState gameState, IRemoteConfig remoteConfig)
         {
+            _ = await remoteConfig.Get(context, ConfigKey, new InventoryConfig()).ConfigureAwait(false);
             InventoryPersistence persistence = await player.Get(context, PersistenceKey, new InventoryPersistence()).ConfigureAwait(false);
             return new InventoryGameData(persistence);
         }

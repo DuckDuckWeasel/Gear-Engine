@@ -13,7 +13,7 @@ When a call can return a **deterministic** `TResponse` before the server respond
 ## Server
 
 - **`GameApiDispatcher.Invoke`** looks up a **`HandlerEntry`** (request type, response type, **concrete handler type**) in **`GameApiRegistry`**, deserializes the payload with `JObject.ToObject(requestType, …)`, resolves the handler by **concrete `Type`** from DI, and calls the non-generic **`IGameApiHandler.HandleAsync(session, object)`**. The typed **`IGameApiHandler<TRequest, TResponse>`** implements that via a default interface method that casts once to `TRequest` — no per-request `MakeGenericType` / `MethodInfo.Invoke` / `Task.Result` reflection.
-- **`GameApiSession`** exposes context, `IPlayerData`, `IGameState`, `IRemoteConfig`, and `InvokeAsync` for nested calls (e.g. level completion awarding gold). Nested calls resolve the handler via the same registry + concrete type + cast to **`IGameApiHandler<TReq, TRes>`**.
+- **`GameApiSession`** exposes context, `IPlayerData`, `IGameState`, `IRemoteConfig`, and `InvokeAsync` for nested calls (e.g. spending currency from a handler that then triggers another GameApi operation). Nested calls resolve the handler via the same registry + concrete type + cast to **`IGameApiHandler<TReq, TRes>`**.
 - After a successful handler, **`IPlayerData.FlushDirtyAsync`** persists keys whose in-memory JSON differs from the loaded snapshot (replaces the old `AddToCache` / `SaveCache` pattern).
 
 ## Adding a handler

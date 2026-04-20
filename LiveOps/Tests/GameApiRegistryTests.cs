@@ -1,8 +1,8 @@
 using System;
 using GameModule.GameApi;
-using GameModule.Modules.Gold;
+using GameModule.Modules.Currency;
 using GameModuleDTO.ModuleRequests;
-using GameModuleDTO.Modules.Gold;
+using GameModuleDTO.Modules.Currency;
 using Xunit;
 
 namespace LiveOps.Tests
@@ -10,30 +10,30 @@ namespace LiveOps.Tests
     public sealed class GameApiRegistryTests
     {
         [Fact]
-        public void TryGet_FindsAddGoldRequest_WithHandlerType()
+        public void TryGet_FindsAddCurrencyRequest_WithHandlerType()
         {
-            GameApiRegistry registry = new GameApiRegistry(typeof(AddGoldHandler).Assembly);
-            Assert.True(registry.Contains("AddGoldRequest"));
-            Assert.True(registry.TryGet("AddGoldRequest", out HandlerEntry? entry));
+            GameApiRegistry registry = new GameApiRegistry(typeof(AddCurrencyHandler).Assembly);
+            Assert.True(registry.Contains("AddCurrencyRequest"));
+            Assert.True(registry.TryGet("AddCurrencyRequest", out HandlerEntry? entry));
             Assert.NotNull(entry);
-            Assert.Equal(typeof(AddGoldRequest), entry!.RequestType);
-            Assert.Equal(typeof(GoldChangedResponse), entry.ResponseType);
-            Assert.Equal(typeof(AddGoldHandler), entry.HandlerType);
+            Assert.Equal(typeof(AddCurrencyRequest), entry!.RequestType);
+            Assert.Equal(typeof(AddCurrencyResponse), entry.ResponseType);
+            Assert.Equal(typeof(AddCurrencyHandler), entry.HandlerType);
         }
 
         [Fact]
-        public void TryResolve_FindsAddGoldRequest()
+        public void TryResolve_FindsAddCurrencyRequest()
         {
-            GameApiRegistry registry = new GameApiRegistry(typeof(AddGoldHandler).Assembly);
-            Assert.True(registry.TryResolve("AddGoldRequest", out Type reqType, out Type resType));
-            Assert.Equal(typeof(AddGoldRequest), reqType);
-            Assert.Equal(typeof(GoldChangedResponse), resType);
+            GameApiRegistry registry = new GameApiRegistry(typeof(AddCurrencyHandler).Assembly);
+            Assert.True(registry.TryResolve("AddCurrencyRequest", out Type reqType, out Type resType));
+            Assert.Equal(typeof(AddCurrencyRequest), reqType);
+            Assert.Equal(typeof(AddCurrencyResponse), resType);
         }
 
         [Fact]
         public void TryGet_UnknownKey_ReturnsFalse()
         {
-            GameApiRegistry registry = new GameApiRegistry(typeof(AddGoldHandler).Assembly);
+            GameApiRegistry registry = new GameApiRegistry(typeof(AddCurrencyHandler).Assembly);
             Assert.False(registry.TryGet("NonExistentRequest", out HandlerEntry? entry));
             Assert.Null(entry);
         }

@@ -42,7 +42,7 @@ Not every feature needs every row. Use this as a checklist.
 | Artifact            | Location                                      | Role                                                                                                                                                           |
 | ------------------- | --------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Persistence DTO** | `LiveOps/LiveOps.DTO/.../YourPersistence.cs`  | Loaded/stored via `IPlayerData` (Cloud Save). Often mutated in the handler; **dirty flush** runs automatically after `GameApi` (see [GameApi.md](GameApi.md)). |
-| **Storage key**     | Usually `typeof(T).Name` or a string constant | `Get` / `GetOrSet` / `Set` on `IPlayerData` (see existing **Currency** vs **Gold** patterns).                                                                  |
+| **Storage key**     | Usually `typeof(T).Name` or a string constant | `Get` / `GetOrSet` / `Set` on `IPlayerData` (see existing **Currency** / **Tracks** patterns).                                                                  |
 
 
 ### 2.3 If the feature uses **Remote Config**
@@ -63,7 +63,7 @@ Not every feature needs every row. Use this as a checklist.
 | **Register module** | [ModuleConfig.cs](../../LiveOps/Project/Core/Initialize/ModuleConfig.cs) | `RegisterModuleScoped<YourModule>(config);`                                                                             |
 
 
-`GameModule<T>.Key` is `**typeof(T).Name`** (the **game data** type name, e.g. `GoldGameData`). Keep that consistent with `IGameModuleData.Key` on your DTO.
+`GameModule<T>.Key` is `**typeof(T).Name`** (the **game data** type name, e.g. `CurrencyGameData`). Keep that consistent with `IGameModuleData.Key` on your DTO.
 
 ### 2.5 Client-side (optional but typical)
 
@@ -87,7 +87,7 @@ You **do not** register each handler in a central dictionary by hand. Two pieces
 
 At startup, a singleton `**GameApiRegistry`** scans the **same assembly as `GameApiDispatcher`** (`LiveOps.dll`) for every concrete type that implements `**IGameApiHandler<TRequest, TResponse>**`. For each handler it records:
 
-- **Key** = `typeof(TRequest).Name` (e.g. `"AddGoldRequest"`)
+- **Key** = `typeof(TRequest).Name` (e.g. `"AddCurrencyRequest"`)
 - **Value** = **`HandlerEntry`**: request type, response type, and **concrete handler `Type`**
 
 That key must match what the client sends in `**GameApiEnvelopeRequest.RequestKey`** (typically `request.GetType().Name`).
@@ -98,26 +98,21 @@ Implementation: `[GameApiRegistry.cs](../../LiveOps/Project/Core/GameApi/GameApi
 
 Still in `**ModuleConfig.Setup`**, a loop registers **every concrete handler class** (types assignable from **`IGameApiHandler`**, which includes all `IGameApiHandler<,>` implementations) with the Cloud Code DI container as **scoped** — **by concrete `Type`**, not by closed generic interface:
 
-```44:64:LiveOps/Project/Core/Initialize/ModuleConfig.cs
-        Assembly gameApiAssembly = typeof(GameApiDispatcher).Assembly;
-        GameApiRegistry gameApiRegistry = new GameApiRegistry(gameApiAssembly);
-        config.Dependencies.AddSingleton(gameApiRegistry);
-        RegisterScoped<GameApiDispatcher>(config);
+```csharp
+// LiveOps/Project/Core/Initialize/ModuleConfig.cs — handler DI loop (excerpt)
+Assembly gameApiAssembly = typeof(GameApiDispatcher).Assembly;
+GameApiRegistry gameApiRegistry = new GameApiRegistry(gameApiAssembly);
+config.Dependencies.AddSingleton(gameApiRegistry);
+RegisterScoped<GameApiDispatcher>(config);
 
-        foreach (Type type in gameApiAssembly.GetTypes())
-        {
-            if (type.IsAbstract || type.IsInterface)
-            {
-                continue;
-            }
-
-            if (!typeof(IGameApiHandler).IsAssignableFrom(type))
-            {
-                continue;
-            }
-
-            config.Dependencies.AddScoped(type);
-        }
+foreach (Type type in gameApiAssembly.GetTypes())
+{
+    if (type.IsAbstract || type.IsInterface)
+        continue;
+    if (!typeof(IGameApiHandler).IsAssignableFrom(type))
+        continue;
+    config.Dependencies.AddScoped(type);
+}
 ```
 
 When `**GameApiDispatcher.Invoke**` runs, it:
@@ -160,9 +155,9 @@ So your **only** obligation for registration is:
 1. Add `**YourHandler : IGameApiHandler<YourRequest, YourResponse>**` with:
   `public async Task<YourResponse> HandleAsync(GameApiSession session, YourRequest request)`
 2. Use `session.Context`, `session.Player`, `session.GameState`, `session.RemoteConfig` inside the handler.
-3. For **nested** operations (e.g. award gold from another handler), use:
-  `await session.InvokeAsync<AddGoldRequest, GoldChangedResponse>(new AddGoldRequest(amount));`
-   (See `CompleteLevelHandler` / `WatchAdHandler`.)
+3. For **nested** operations (e.g. award currency from another handler), use:
+  `await session.InvokeAsync<AddCurrencyRequest, AddCurrencyResponse>(new AddCurrencyRequest(currencyId, amount));`
+   (Pattern: any handler can invoke another registered `IGameApiHandler` via `GameApiSession.InvokeAsync`.)
 
 See **§3** above for how handlers are wired into `**GameApiRegistry`** and DI.
 

@@ -1,9 +1,6 @@
 {
   "$schema": "https://ugs-config-schemas.unity3d.com/v1/remote-config.schema.json",
   "entries": {
-    "GoldConfig": {
-      "_min": 0,
-      "_max": 0
-    }
+    "LoadoutConfig": {}
   }
 }

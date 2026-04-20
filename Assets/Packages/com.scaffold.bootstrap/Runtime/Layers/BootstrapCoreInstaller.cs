@@ -1,4 +1,3 @@
-using Scaffold.DirectPush;
 using Scaffold.LiveOps.Container;
 using Scaffold.Scope;
 using System;
@@ -17,9 +16,6 @@ namespace Scaffold.Bootstrap.Layers
 
             var liveOpsInstaller = new LiveOpsInstaller();
             BuildInstaller(builder, liveOpsInstaller);
-
-            var directPushInstaller = new DirectPushInstaller();
-            BuildInstaller(builder, directPushInstaller);
         }
     }
 }

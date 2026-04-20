@@ -1,6 +1,6 @@
 # LiveOps backend bootstrap (Gear-Engine)
 
-This document describes how the **Cloud Code backend**, **shared DTO DLL**, **Unity module reference (`.ccmr`)**, and **Meta** startup harness fit together. Currency payloads are documented in [Currency.md](Currency.md) (alongside legacy Gold until migration).
+This document describes how the **Cloud Code backend**, **shared DTO DLL**, **Unity module reference (`.ccmr`)**, and **Meta** startup harness fit together. Currency payloads are documented in [Currency.md](Currency.md).
 
 ## TL;DR
 
@@ -58,7 +58,7 @@ sequenceDiagram
     Boot->>Lo: Push + LiveOps IAsyncInitializable
     Lo->>Server: GameDataRequest via LiveOpsService
     Server-->>Lo: GameDataResponse
-    Boot->>Boot: OnReadyAsync (log Gold / Ad / Currency probe)
+    Boot->>Boot: OnReadyAsync (log Currency / Tracks / Loadout probe)
 ```
 
 ## Building the backend
@@ -87,10 +87,10 @@ Publish to your UGS Cloud Code environment using the Unity **Services → Cloud 
 
 - Project linked to a **Unity Gaming Services** project / environment.
 - **Cloud Code** module built from [LiveOps/LiveOps.sln](../../LiveOps/LiveOps.sln) and deployed to that environment.
-- **Remote Config** keys for LiveOps (`AdsConfig`, `CurrencyConfig`, `GlobalConfigData`, `GoldConfig`, `LevelConfig`) authored under [Assets/LiveOps/RemoteConfig/](../../Assets/LiveOps/RemoteConfig/) and deployed to that environment with **Window → Deployment** (see [RemoteConfig.md](RemoteConfig.md) for the workflow).
+- **Remote Config** keys for LiveOps (see [RemoteConfig.md](RemoteConfig.md) — e.g. `CurrencyConfig`, `TrackConfig`, `CardConfig`, `LoadoutConfig`, `InventoryConfig`) authored under [Assets/LiveOps/RemoteConfig/](../../Assets/LiveOps/RemoteConfig/) and deployed to that environment with **Window → Deployment**.
 - Without a deployed module, the initial `GameDataRequest` from `LiveOpsService` will fail (expected).
 
-On success, the console should show `[Meta] LiveOps ready. GoldGameData=…, AdData=…, CurrencyGameData wallets=…` (exact module payloads depend on server `ModuleConfig` and Remote Config).
+On success, the console should show `[Meta] LiveOps raw payloads: …` with `CurrencyGameData`, `TrackGameData`, and other active modules (exact payloads depend on server `ModuleConfig` and Remote Config).
 
 ## Disabling Meta as entry
 

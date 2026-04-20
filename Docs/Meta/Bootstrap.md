@@ -6,7 +6,7 @@ The [Meta scene](../../Assets/GearEngine/Scenes/Meta.unity) uses **[`MetaApplica
 2. **[`UgsLayer`](../../Assets/GearEngine/Scripts/App/Bootstrap/Layers/UgsLayer.cs)** — `UgsInstaller`; [`Ugs`](../../Assets/Packages/com.scaffold.ugs/Runtime/Ugs.cs) implements [`IAsyncInitializable`](../../Assets/GearEngine/Scripts/Core/LayeredScope/Runtime/Contracts/IAsyncInitializable.cs) and initializes Unity Gaming Services plus anonymous sign-in.
 3. **[`LiveOpsLayer`](../../Assets/GearEngine/Scripts/App/Bootstrap/Layers/LiveOpsLayer.cs)** — `CloudCodeInstaller` + `LiveOpsInstaller`; [`LiveOpsService`](../../Assets/Packages/com.scaffold.liveops/Runtime/LiveOpsService.cs) implements `IAsyncInitializable` and runs the initial `GameDataRequest`.
 
-After `InstallAllAsync` completes, **`OnReadyAsync`** resolves [`ILiveOpsService`](../../Assets/Packages/com.scaffold.liveops/Runtime/ILiveOpsService.cs) from the top scope and logs presence of `GoldGameData` / `AdData` via the `GameModuleDTO` assemblies (server-dependent).
+After `InstallAllAsync` completes, **`OnReadyAsync`** resolves [`ILiveOpsService`](../../Assets/Packages/com.scaffold.liveops/Runtime/ILiveOpsService.cs) from the top scope and logs presence of active module payloads (e.g. `CurrencyGameData`, `TrackGameData`) via the `GameModuleDTO` assemblies (server-dependent).
 
 ## Adding a layer
 

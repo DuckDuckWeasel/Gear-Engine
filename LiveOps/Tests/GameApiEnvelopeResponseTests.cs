@@ -1,7 +1,7 @@
 using System;
 using GameModuleDTO.GameApi;
 using GameModuleDTO.ModuleRequests;
-using GameModuleDTO.Modules.Gold;
+using GameModuleDTO.Modules.Currency;
 using Xunit;
 
 namespace LiveOps.Tests
@@ -11,8 +11,8 @@ namespace LiveOps.Tests
         [Fact]
         public void Exception_SetsStatusAndMessage()
         {
-            GameApiEnvelopeResponse envelope = GameApiEnvelopeResponse.Exception("AddGoldRequest", new InvalidOperationException("test failure"));
-            Assert.Equal("AddGoldRequest", envelope.RequestKey);
+            GameApiEnvelopeResponse envelope = GameApiEnvelopeResponse.Exception("AddCurrencyRequest", new InvalidOperationException("test failure"));
+            Assert.Equal("AddCurrencyRequest", envelope.RequestKey);
             Assert.Equal(ResponseStatusType.Exception, envelope.StatusType);
             Assert.Equal("test failure", envelope.Message);
         }
@@ -20,8 +20,8 @@ namespace LiveOps.Tests
         [Fact]
         public void Success_CopiesResultAndNested()
         {
-            GoldChangedResponse result = new GoldChangedResponse(10, 2);
-            GameApiEnvelopeResponse envelope = GameApiEnvelopeResponse.Success("AddGoldRequest", result, null);
+            AddCurrencyResponse result = new AddCurrencyResponse("gold", 10, 2);
+            GameApiEnvelopeResponse envelope = GameApiEnvelopeResponse.Success("AddCurrencyRequest", result, null);
             Assert.Equal(ResponseStatusType.Success, envelope.StatusType);
             Assert.Same(result, envelope.Result);
             Assert.NotNull(envelope.NestedResponses);

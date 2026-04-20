@@ -1,9 +1,6 @@
 {
   "$schema": "https://ugs-config-schemas.unity3d.com/v1/remote-config.schema.json",
   "entries": {
-    "LevelConfig": {
-      "_levels": [1, 2],
-      "_rewardPerLevel": 10
-    }
+    "InventoryConfig": {}
   }
 }

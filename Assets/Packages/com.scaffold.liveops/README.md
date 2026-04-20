@@ -30,11 +30,11 @@
 
 ## Registration
 
-`LiveOpsInstaller` registers `LiveOpsService` as `ILiveOpsService` and `IAsyncLayerInitializable` (scoped). Register it from your application composition root alongside other installers (for example `AdsInstaller`). UGS and Cloud Code should be registered on the same main scope per your startup plan.
+`LiveOpsInstaller` registers `LiveOpsService` as `ILiveOpsService` and `IAsyncLayerInitializable` (scoped). Register it from your application composition root alongside other installers (for example [`CurrencyClientInstaller`](../../GearEngine/Scripts/Game/Campaign/Bootstrap/Currency/CurrencyClientInstaller.cs) when you use currency client modules). UGS and Cloud Code should be registered on the same main scope per your startup plan.
 
 Register each concrete handler with `AsImplementedInterfaces()` so `IResponseHandler` and `IResponseHandler<T>` are both registered (for example `builder.Register<MyHandler>(Lifetime.Scoped).AsImplementedInterfaces()` or `builder.RegisterInstance(handler).AsImplementedInterfaces()`). Multiple handlers for the same nested response type are all invoked. Dispatch resolves the handler collection from the current scope’s `IObjectResolver` when a response is handled, which avoids constructor ordering issues between `LiveOpsService` and handler registration.
 
-Register concrete feature modules as `IGameClientModule` and `IAsyncLayerInitializable` when they should hydrate during bootstrap (see `AdsInstaller`). `LiveOpsService` does not enumerate client modules; it only stores `GameData` from the initial `GameDataRequest`.
+Register concrete feature modules as `IGameClientModule` and `IAsyncLayerInitializable` when they should hydrate during bootstrap (see [`LiveOpsLayer`](../../GearEngine/Scripts/App/Bootstrap/Layers/LiveOpsLayer.cs) / `MetaLiveOpsClientInstaller`). `LiveOpsService` does not enumerate client modules; it only stores `GameData` from the initial `GameDataRequest`.
 
 ## Tests
 

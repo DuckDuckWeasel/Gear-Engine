@@ -7,7 +7,7 @@ namespace GameModuleDTO.GameApi
     /// </summary>
     public sealed class GameApiEnvelopeRequest
     {
-        /// <summary>Discriminator matching <see cref="ModuleRequest"/> concrete type name (e.g. <c>AddGoldRequest</c>).</summary>
+        /// <summary>Discriminator matching <see cref="ModuleRequest"/> concrete type name (e.g. <c>AddCurrencyRequest</c>).</summary>
         public string RequestKey { get; set; }
 
         /// <summary>Typed request body; deserialized using <c>RequestKey</c> on the server.</summary>
