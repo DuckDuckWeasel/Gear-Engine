@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Reflection;
+using GameModuleDTO.ModuleRequests;
 using Newtonsoft.Json.Serialization;
 
 namespace GameModuleDTO.Json
@@ -9,9 +11,12 @@ namespace GameModuleDTO.Json
     /// <remarks>
     /// Deserialization: Converts Backend types to Unity types.
     /// Serialization: Converts Unity types to Backend types.
+    /// Game DTO types are resolved only from the LiveOps DTO assembly for safer polymorphic deserialization.
     /// </remarks>
     public class CrossPlatformTypeBinder : ISerializationBinder
     {
+        private static readonly Assembly DtoAssembly = typeof(ModuleResponse).Assembly;
+
         /// <summary>
         /// Reads JSON from the backend resolving standard runtime components.
         /// </summary>
@@ -20,7 +25,18 @@ namespace GameModuleDTO.Json
         /// <returns>A mapped execution type reference.</returns>
         public Type BindToType(string assemblyName, string typeName)
         {
-            // If the JSON contains "System.Private.CoreLib" (from the Server), 
+            if (!string.IsNullOrEmpty(typeName))
+            {
+                foreach (Type candidate in DtoAssembly.GetTypes())
+                {
+                    if (candidate.FullName == typeName)
+                    {
+                        return candidate;
+                    }
+                }
+            }
+
+            // If the JSON contains "System.Private.CoreLib" (from the Server),
             // swap it to "mscorlib" so Unity/Mono can resolve it.
             string targetAssembly = assemblyName?.Replace("mscorlib", "System.Private.CoreLib");
 
@@ -39,7 +55,7 @@ namespace GameModuleDTO.Json
             // Get the current local assembly name (likely mscorlib in Unity)
             string currentAssembly = serializedType.Assembly.FullName;
 
-            // Swap "mscorlib" out for "System.Private.CoreLib" so the server 
+            // Swap "mscorlib" out for "System.Private.CoreLib" so the server
             // recognizes it as a standard .NET type.
             assemblyName = currentAssembly.Replace("System.Private.CoreLib", "mscorlib");
             typeName = serializedType.FullName;

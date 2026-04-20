@@ -132,13 +132,11 @@ INPUT: WatchAdRequest { PlacementId }
    IF HasReachedMaxViews → log warning, skip reward
    ELSE IF IsCooldownElapsed → ✓ valid
      a. RecordAdWatched(placementId)        → WatchCount++, LastWatched = now
-     b. AddToCache(persistence)
-     c. GrantReward(placementConfig)         → dispatch to correct module
+     b. GrantReward(placementConfig)         → nested GameApi invoke (e.g. AddGoldRequest)
    ELSE → log warning (still on cooldown), skip reward
 
 5. Build fresh AdData(persistence, config)
-6. Return WatchAdResponse(adData) via ResolveResponse
-   → automatically merges any nested responses (GoldChangedResponse)
+6. Return WatchAdResponse(adData) from `WatchAdHandler`; `GameApiDispatcher` flushes dirty player keys and attaches nested responses to the envelope (e.g. GoldChangedResponse)
 
 OUTPUT: WatchAdResponse { Data: AdData, Responses: [GoldChangedResponse?] }
 ```

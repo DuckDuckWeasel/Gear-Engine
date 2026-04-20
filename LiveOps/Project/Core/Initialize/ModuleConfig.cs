@@ -1,5 +1,7 @@
+using System;
+using System.Reflection;
+using GameModule.GameApi;
 using GameModule.GameModule;
-using GameModule.Response;
 using GameModule.ModuleFetchData;
 using GameModule.ModuleFetchData.Unity;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,7 +14,6 @@ using GameModule.Modules.Gold;
 using GameModule.Modules.Level;
 using GameModule.ModuleFetchData.Http;
 using GameModule.Modules.Global;
-using GameModule.Modules.DirectPush;
 
 /// <summary>
 /// Configures the dependency injection container for cloud code execution.
@@ -35,14 +36,34 @@ public partial class ModuleConfig : ICloudCodeSetup
         RegisterScoped<IRemoteConfig, UnityRemoteConfig>(config);
 
         RegisterScoped<SignalModule>(config);
-        RegisterScoped<ModuleRequestHandler>(config);
+
+        Assembly gameApiAssembly = typeof(GameApiDispatcher).Assembly;
+        config.Dependencies.AddSingleton(new GameApiRegistry(gameApiAssembly));
+        RegisterScoped<GameApiDispatcher>(config);
+
+        foreach (Type type in gameApiAssembly.GetTypes())
+        {
+            if (type.IsAbstract || type.IsInterface)
+            {
+                continue;
+            }
+
+            foreach (Type iface in type.GetInterfaces())
+            {
+                if (!iface.IsGenericType || iface.GetGenericTypeDefinition() != typeof(IGameApiHandler<,>))
+                {
+                    continue;
+                }
+
+                config.Dependencies.AddScoped(iface, type);
+            }
+        }
 
         RegisterModuleScoped<AdsService>(config);
         RegisterModuleScoped<GoldModule>(config);
         RegisterModuleScoped<CurrencyModule>(config);
         RegisterModuleScoped<LevelService>(config);
         RegisterModuleScoped<GlobalConfigModule>(config);
-        RegisterScoped<DirectPushService>(config);
     }
 
     private void RegisterScoped<T>(ICloudCodeConfig config) where T : class

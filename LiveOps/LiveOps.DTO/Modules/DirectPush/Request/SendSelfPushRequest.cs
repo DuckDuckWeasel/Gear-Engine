@@ -1,8 +1,11 @@
+using GameModuleDTO.GameApi;
+
 namespace GameModuleDTO.ModuleRequests
 {
     /// <summary>
     /// Request to send a push notification to the calling player (self-push).
     /// </summary>
+    [UsesGameApi]
     public class SendSelfPushRequest : ModuleRequest<SendPushResponse>
     {
         public string Message { get; set; }

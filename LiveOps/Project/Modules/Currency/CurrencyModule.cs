@@ -2,10 +2,8 @@ using System;
 using System.Threading.Tasks;
 using GameModule.GameModule;
 using GameModule.ModuleFetchData;
-using GameModule.Response;
 using GameModuleDTO.GameModule;
 using GameModuleDTO.Modules.Currency;
-using GameModuleDTO.ModuleRequests;
 using Microsoft.Extensions.Logging;
 using Unity.Services.CloudCode.Core;
 
@@ -17,12 +15,10 @@ namespace GameModule.Modules.Currency
         private const string ConfigKey = nameof(CurrencyConfig);
 
         private readonly ILogger<CurrencyModule> _logger;
-        private readonly ModuleRequestHandler _handler;
 
-        public CurrencyModule(ILogger<CurrencyModule> logger, ModuleRequestHandler handler)
+        public CurrencyModule(ILogger<CurrencyModule> logger)
         {
             _logger = logger;
-            _handler = handler;
         }
 
         public override async Task<IGameModuleData> Initialize(IExecutionContext context, IPlayerData Player, IGameState gameState, IRemoteConfig remoteConfig)
@@ -39,27 +35,7 @@ namespace GameModule.Modules.Currency
             return new CurrencyGameData(persistence, config);
         }
 
-        [CloudCodeFunction(nameof(AddCurrencyRequest))]
-        public async Task<AddCurrencyResponse> AddCurrency(IExecutionContext context, IPlayerData Player, IRemoteConfig remoteConfig, AddCurrencyRequest request)
-        {
-            string id = request?.CurrencyId ?? string.Empty;
-            long amount = request?.Amount ?? 0;
-            CurrencyChangedResponse change = await AddToPlayer(context, Player, remoteConfig, id, amount, enqueueNestedResponse: false);
-            AddCurrencyResponse response = new AddCurrencyResponse(change.CurrencyId, change.NewAmount, change.Diff);
-            return await _handler.ResolveResponse(context, request, response);
-        }
-
-        [CloudCodeFunction(nameof(SpendCurrencyRequest))]
-        public async Task<SpendCurrencyResponse> SpendCurrency(IExecutionContext context, IPlayerData Player, IRemoteConfig remoteConfig, SpendCurrencyRequest request)
-        {
-            string id = request?.CurrencyId ?? string.Empty;
-            long amount = request?.Amount ?? 0;
-            (bool ok, CurrencyChangedResponse change) = await TrySpendFromPlayer(context, Player, remoteConfig, id, amount, enqueueNestedResponse: false);
-            SpendCurrencyResponse response = new SpendCurrencyResponse(id, change.NewAmount, ok ? amount : 0, ok);
-            return await _handler.ResolveResponse(context, request, response);
-        }
-
-        public async Task<CurrencyChangedResponse> AddToPlayer(IExecutionContext context, IPlayerData Player, IRemoteConfig remoteConfig, string id, long amount, bool enqueueNestedResponse)
+        public async Task<CurrencyChangedResponse> AddToPlayer(IExecutionContext context, IPlayerData Player, IRemoteConfig remoteConfig, string id, long amount)
         {
             CurrencyConfig config = await remoteConfig.Get(context, ConfigKey, new CurrencyConfig());
             CurrencyPersistence persistence = await Player.Get(context, PersistenceKey, new CurrencyPersistence());
@@ -82,18 +58,11 @@ namespace GameModule.Modules.Currency
             long previous = persistence.TryGet(id, out long pv) ? pv : entry.Initial;
             long next = entry.Max.HasValue ? Math.Min(previous + amount, entry.Max.Value) : previous + amount;
             persistence.Set(id, next);
-            Player.AddToCache(PersistenceKey);
 
-            CurrencyChangedResponse resp = new CurrencyChangedResponse(id, next, next - previous);
-            if (enqueueNestedResponse)
-            {
-                _handler.AddResponse(resp);
-            }
-
-            return resp;
+            return new CurrencyChangedResponse(id, next, next - previous);
         }
 
-        public async Task<(bool ok, CurrencyChangedResponse resp)> TrySpendFromPlayer(IExecutionContext context, IPlayerData Player, IRemoteConfig remoteConfig, string id, long amount, bool enqueueNestedResponse)
+        public async Task<(bool ok, CurrencyChangedResponse resp)> TrySpendFromPlayer(IExecutionContext context, IPlayerData Player, IRemoteConfig remoteConfig, string id, long amount)
         {
             CurrencyConfig config = await remoteConfig.Get(context, ConfigKey, new CurrencyConfig());
             CurrencyPersistence persistence = await Player.Get(context, PersistenceKey, new CurrencyPersistence());
@@ -113,18 +82,11 @@ namespace GameModule.Modules.Currency
             }
 
             persistence.Set(id, next);
-            Player.AddToCache(PersistenceKey);
 
-            CurrencyChangedResponse resp = new CurrencyChangedResponse(id, next, next - previous);
-            if (enqueueNestedResponse)
-            {
-                _handler.AddResponse(resp);
-            }
-
-            return (true, resp);
+            return (true, new CurrencyChangedResponse(id, next, next - previous));
         }
 
-        public async Task<CurrencyChangedResponse> SetForPlayer(IExecutionContext context, IPlayerData Player, IRemoteConfig remoteConfig, string id, long value, bool enqueueNestedResponse)
+        public async Task<CurrencyChangedResponse> SetForPlayer(IExecutionContext context, IPlayerData Player, IRemoteConfig remoteConfig, string id, long value)
         {
             CurrencyConfig config = await remoteConfig.Get(context, ConfigKey, new CurrencyConfig());
             CurrencyPersistence persistence = await Player.Get(context, PersistenceKey, new CurrencyPersistence());
@@ -148,15 +110,8 @@ namespace GameModule.Modules.Currency
             }
 
             persistence.Set(id, clamped);
-            Player.AddToCache(PersistenceKey);
 
-            CurrencyChangedResponse resp = new CurrencyChangedResponse(id, clamped, clamped - previous);
-            if (enqueueNestedResponse)
-            {
-                _handler.AddResponse(resp);
-            }
-
-            return resp;
+            return new CurrencyChangedResponse(id, clamped, clamped - previous);
         }
     }
 }

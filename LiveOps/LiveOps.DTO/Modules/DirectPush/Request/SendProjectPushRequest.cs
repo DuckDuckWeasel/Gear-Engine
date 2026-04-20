@@ -1,9 +1,12 @@
+using GameModuleDTO.GameApi;
+
 namespace GameModuleDTO.ModuleRequests
 {
     /// <summary>
     /// Request to broadcast a push notification to the entire project.
     /// Requires AccessKey validation via <see cref="Guid"/>.
     /// </summary>
+    [UsesGameApi]
     public class SendProjectPushRequest : ModuleRequest<SendPushResponse>
     {
         public string Message { get; set; }

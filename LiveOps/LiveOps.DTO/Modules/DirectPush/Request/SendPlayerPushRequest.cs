@@ -1,9 +1,12 @@
+using GameModuleDTO.GameApi;
+
 namespace GameModuleDTO.ModuleRequests
 {
     /// <summary>
     /// Request to send a push notification to a specific player.
     /// Requires AccessKey validation via <see cref="Guid"/>.
     /// </summary>
+    [UsesGameApi]
     public class SendPlayerPushRequest : ModuleRequest<SendPushResponse>
     {
         public string Message { get; set; }

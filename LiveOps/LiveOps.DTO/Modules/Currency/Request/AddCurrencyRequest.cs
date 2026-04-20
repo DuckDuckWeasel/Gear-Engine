@@ -1,8 +1,10 @@
+using GameModuleDTO.GameApi;
 using GameModuleDTO.Modules.Currency;
 using Newtonsoft.Json;
 
 namespace GameModuleDTO.ModuleRequests
 {
+    [UsesGameApi]
     public sealed class AddCurrencyRequest : ModuleRequest<AddCurrencyResponse>
     {
         public AddCurrencyRequest()

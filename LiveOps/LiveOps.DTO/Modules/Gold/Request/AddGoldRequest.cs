@@ -1,7 +1,9 @@
+using GameModuleDTO.GameApi;
 using Newtonsoft.Json;
 
 namespace GameModuleDTO.ModuleRequests
 {
+    [UsesGameApi]
     public class AddGoldRequest : ModuleRequest<GameModuleDTO.Modules.Gold.GoldChangedResponse>
     {
         public AddGoldRequest()
