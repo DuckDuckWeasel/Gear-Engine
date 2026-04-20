@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using System.Threading;
 using System.Threading.Tasks;
-using GearEngine.App.Bootstrap.Cards;
+using GearEngine.Campaign.Bootstrap.Cards;
 using GearEngine.Campaign.Bootstrap.LiveOps;
 using GearEngine.Campaign.Presentation;
 using Scaffold.Navigation.Contracts;

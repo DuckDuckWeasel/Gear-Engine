@@ -8,7 +8,7 @@ using Scaffold.LiveOps;
 using UnityEngine;
 using VContainer;
 
-namespace GearEngine.App.Bootstrap.Cards
+namespace GearEngine.Campaign.Bootstrap.Cards
 {
     public sealed class CardsClientModule : GameClientModuleBase<CardGameData>
     {

@@ -3,7 +3,7 @@ using Scaffold.LiveOps;
 using VContainer;
 using VContainer.Unity;
 
-namespace GearEngine.App.Bootstrap.Cards
+namespace GearEngine.Campaign.Bootstrap.Cards
 {
     public sealed class CardsClientInstaller : IInstaller
     {

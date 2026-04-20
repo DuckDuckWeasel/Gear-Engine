@@ -4,7 +4,6 @@
     "references": [
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner",
-        "Game.App.Bootstrap",
         "Game.Campaign",
         "Game.CarSimulation",
         "Game.GearEngine",

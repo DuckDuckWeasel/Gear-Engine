@@ -2,7 +2,7 @@
     "name": "Game.Cards",
     "rootNamespace": "GearEngine.Cards",
     "references": [
-        "Game.App.Bootstrap",
+        "Game.Campaign",
         "Game.SceneFoundation",
         "Scaffold.LiveOps",
         "VContainer",

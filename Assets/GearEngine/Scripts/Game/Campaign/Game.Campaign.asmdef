@@ -2,7 +2,6 @@
     "name": "Game.Campaign",
     "rootNamespace": "GearEngine.Campaign",
     "references": [
-        "Game.App.Bootstrap",
         "Game.SceneFoundation",
         "Game.GearEngine",
         "Game.GearEngine.FrustumFit",

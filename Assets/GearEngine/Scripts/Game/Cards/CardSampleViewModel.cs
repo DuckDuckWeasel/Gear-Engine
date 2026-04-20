@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using GameModuleDTO.ModuleRequests;
-using GearEngine.App.Bootstrap.Cards;
+using GearEngine.Campaign.Bootstrap.Cards;
 using GearEngine.Currency;
 using Scaffold.MVVM;
 using UnityEngine;

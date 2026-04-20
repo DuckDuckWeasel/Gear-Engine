@@ -5,7 +5,7 @@ using GameModuleDTO.GameModule;
 using GameModuleDTO.Modules.Cards;
 using GameModuleDTO.Modules.Currency;
 using GameModuleDTO.ModuleRequests;
-using GearEngine.App.Bootstrap.Cards;
+using GearEngine.Campaign.Bootstrap.Cards;
 using Newtonsoft.Json;
 using NUnit.Framework;
 using Scaffold.LiveOps;

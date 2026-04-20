@@ -10,6 +10,8 @@ using GameModuleDTO.Modules.Inventory;
 using GameModuleDTO.Modules.Loadout;
 using GameModuleDTO.Modules.Tracks;
 using GearEngine.App.Bootstrap.Layers;
+using GearEngine.Campaign.Bootstrap.Cards;
+using GearEngine.Campaign.Bootstrap.LiveOps;
 using GearEngine.LayeredScope;
 using Scaffold.LiveOps;
 using Scaffold.Navigation;
@@ -62,7 +64,22 @@ namespace GearEngine.App.Bootstrap
                 LoadoutGameData loadoutData = liveOps.GetModuleData<LoadoutGameData>();
                 InventoryGameData inventoryData = liveOps.GetModuleData<InventoryGameData>();
                 CardGameData cardData = liveOps.GetModuleData<CardGameData>();
-                Debug.Log($"[Meta] LiveOps ready. GoldGameData={(goldData != null)}, AdData={(adData != null)}, CurrencyGameData wallets={(currencyData != null ? currencyData.Wallets.Count : 0)}, TrackGameData={(trackData != null)}, LoadoutGameData={(loadoutData != null)}, InventoryGameData={(inventoryData != null)}, CardGameData={(cardData != null)}.");
+                Debug.Log($"[Meta] LiveOps raw payloads: GoldGameData={(goldData != null)}, AdData={(adData != null)}, CurrencyGameData wallets={(currencyData != null ? currencyData.Wallets.Count : 0)}, TrackGameData={(trackData != null)}, LoadoutGameData={(loadoutData != null)}, InventoryGameData={(inventoryData != null)}, CardGameData={(cardData != null)}.");
+
+                TracksClientModule tracksClient = Host.Resolve<TracksClientModule>();
+                LoadoutClientModule loadoutClient = Host.Resolve<LoadoutClientModule>();
+                InventoryClientModule inventoryClient = Host.Resolve<InventoryClientModule>();
+                CardsClientModule cardsClient = Host.Resolve<CardsClientModule>();
+
+                Debug.Log(
+                    $"[Meta] Tracks: client hydrated, progressIndex={tracksClient.GetTrackProgress().CurrentTrackIndex}, " +
+                    $"currentTrackId='{trackData?.CurrentTrackId ?? string.Empty}', orderedCount={trackData?.OrderedTrackIds?.Count ?? 0}, bestScoreEntries={trackData?.BestScores?.Count ?? 0}.");
+                Debug.Log(
+                    $"[Meta] Loadout: hasSaved={loadoutClient.HasSavedLoadout}, boardPlacements={(loadoutData != null ? loadoutData.Board.Count : 0)}.");
+                Debug.Log(
+                    $"[Meta] Inventory: hasSaved={inventoryClient.HasSavedInventory}, gearIdCount={(inventoryData != null ? inventoryData.GearIds.Count : 0)}.");
+                Debug.Log(
+                    $"[Meta] Cards: unlockedCount={cardsClient.Unlocked?.Count ?? 0}, nextCost={cardsClient.NextCost}, currencyId='{cardsClient.CurrencyId}'.");
             }
             catch (Exception ex)
             {

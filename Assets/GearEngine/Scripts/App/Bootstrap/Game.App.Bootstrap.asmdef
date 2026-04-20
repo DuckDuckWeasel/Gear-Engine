@@ -3,6 +3,7 @@
   "rootNamespace": "GearEngine.App.Bootstrap",
     "references": [
         "Core.LayeredScope",
+    "Game.Campaign",
     "Scaffold.Scope",
     "Scaffold.Addressables.Container",
     "Scaffold.Events.Container",
