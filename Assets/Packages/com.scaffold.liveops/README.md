@@ -34,7 +34,7 @@
 
 Register each concrete handler with `AsImplementedInterfaces()` so `IResponseHandler` and `IResponseHandler<T>` are both registered (for example `builder.Register<MyHandler>(Lifetime.Scoped).AsImplementedInterfaces()` or `builder.RegisterInstance(handler).AsImplementedInterfaces()`). Multiple handlers for the same nested response type are all invoked. Dispatch resolves the handler collection from the current scope’s `IObjectResolver` when a response is handled, which avoids constructor ordering issues between `LiveOpsService` and handler registration.
 
-Register concrete feature modules as `IGameClientModule` and `IAsyncLayerInitializable` when they should hydrate during bootstrap (see [`LiveOpsLayer`](../../GearEngine/Scripts/App/Bootstrap/Layers/LiveOpsLayer.cs) / `MetaLiveOpsClientInstaller`). `LiveOpsService` does not enumerate client modules; it only stores `GameData` from the initial `GameDataRequest`.
+Register concrete feature modules as `IGameClientModule` and `IAsyncInitializable` when they should hydrate during bootstrap (see [`LiveOpsLayer`](../../GearEngine/Scripts/App/Bootstrap/Layers/LiveOpsLayer.cs) and the `Campaign*Installer` types under `Game.Campaign`). `LiveOpsService` does not enumerate client modules; it only stores `GameData` from the initial `GameDataRequest`.
 
 ## Tests
 

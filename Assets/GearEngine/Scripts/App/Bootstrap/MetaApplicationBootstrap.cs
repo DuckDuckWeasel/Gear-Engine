@@ -10,6 +10,8 @@ using GameModuleDTO.Modules.Tracks;
 using GearEngine.App.Bootstrap.Layers;
 using GearEngine.Campaign.Bootstrap.Cards;
 using GearEngine.Campaign.Bootstrap.LiveOps;
+using GearEngine.Campaign.Services;
+using GearEngine.GearEngine.Config;
 using GearEngine.LayeredScope;
 using Scaffold.LiveOps;
 using Scaffold.Navigation;
@@ -47,7 +49,22 @@ namespace GearEngine.App.Bootstrap
 
             yield return new FoundationLayer(navigationSettings, navigationViewHolder);
             yield return new UgsLayer();
-            yield return new LiveOpsLayer();
+            yield return new LiveOpsServiceLayer();
+            yield return CreateMetaLiveOpsClientModulesLayer();
+        }
+
+        private static LiveOpsClientModulesLayer CreateMetaLiveOpsClientModulesLayer()
+        {
+            TrackCatalogSO emptyTrack = ScriptableObject.CreateInstance<TrackCatalogSO>();
+            emptyTrack.SetRuntimeEntries(Array.Empty<TrackEntry>(), Array.Empty<GearConfig>());
+            GearCatalogSO emptyGear = ScriptableObject.CreateInstance<GearCatalogSO>();
+            emptyGear.SetRuntimeEntries(Array.Empty<GearConfig>());
+            return new LiveOpsClientModulesLayer(
+                new CampaignTracksInstaller(emptyTrack),
+                new CampaignGearCatalogInstaller(emptyGear),
+                new CampaignLoadoutInstaller(),
+                new CampaignInventoryInstaller(),
+                new CardsClientInstaller());
         }
 
         protected override Task OnReadyAsync(CancellationToken ct)

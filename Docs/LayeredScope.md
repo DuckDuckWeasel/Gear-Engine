@@ -84,3 +84,7 @@ Add a new scope when you need a **feature or infrastructure boundary** (e.g. ass
 ## Real-world example: Meta scene
 
 The Meta smoke-test scene ([`Assets/GearEngine/Scenes/Meta.unity`](../Assets/GearEngine/Scenes/Meta.unity)) uses [`MetaApplicationBootstrap`](../Assets/GearEngine/Scripts/App/Bootstrap/MetaApplicationBootstrap.cs): foundation (Addressables, navigation, events) → UGS → Cloud Code + LiveOps. [`Scaffold.Ugs`](../Assets/Packages/com.scaffold.ugs/Runtime/Ugs.cs) and [`LiveOpsService`](../Assets/Packages/com.scaffold.liveops/Runtime/LiveOpsService.cs) implement `IAsyncInitializable` so each layer’s init wave completes before the next scope is pushed. See [`Docs/Meta/Bootstrap.md`](Meta/Bootstrap.md) for the layer list and extension points.
+
+## Real-world example: Main / Campaign scene
+
+The campaign scene ([`Assets/GearEngine/Scenes/Main Scene.unity`](../Assets/GearEngine/Scenes/Main%20Scene.unity)) uses [`CampaignApplicationBootstrap`](../Assets/GearEngine/Scripts/App/Bootstrap/CampaignApplicationBootstrap.cs): the same **Foundation → UGS → LiveOps** stack as Meta, then **[`CampaignLayer`](../Assets/GearEngine/Scripts/App/Bootstrap/Layers/CampaignLayer.cs)** for gear mechanics, car/track simulation, and race session defaults. LiveOps registers Tracks / Loadout / Inventory / Cards client modules via per-feature installers; see [`Docs/Game/Campaign.md`](Game/Campaign.md).

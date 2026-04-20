@@ -4,7 +4,8 @@
     "references": [
         "Core.LayeredScope",
     "Game.Campaign",
-    "Scaffold.Scope",
+    "Game.CarSimulation",
+    "Game.GearEngine",
     "Scaffold.Addressables.Container",
     "Scaffold.Events.Container",
     "Scaffold.Ugs",

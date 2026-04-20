@@ -52,7 +52,7 @@ namespace GearEngine.Cards.Bootstrap
             if (TryResolveParentLiveOps() == null)
             {
                 throw new InvalidOperationException(
-                    "[CardsScope] No ILiveOpsService in parent LifetimeScope. Set this scope's Parent to the Meta application root (or any scope that registered LiveOps + LiveOpsLayer).");
+                    "[CardsScope] No ILiveOpsService in parent LifetimeScope. Set this scope's Parent to the Meta application root (or any scope that registered LiveOps service + client layers).");
             }
         }
 

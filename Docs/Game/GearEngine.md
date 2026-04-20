@@ -8,7 +8,7 @@
 
 ## Scopes
 
-`CampaignScope`, `RaceScope`, and `GearMechanicsScope` pass inventory and board loadout data into `GearMechanicsInstaller` so services are constructed before any gear UI view model runs.
+`CampaignLayer` (Main scene layered bootstrap), `RaceScope`, and `GearMechanicsScope` pass inventory and board loadout data into `GearMechanicsInstaller` so services are constructed before any gear UI view model runs.
 
 ## Drag presentation
 

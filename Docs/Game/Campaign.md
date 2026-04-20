@@ -5,13 +5,14 @@ The **Game.Campaign** assembly implements a five-screen flow in a single scene: 
 ## Responsibilities
 
 - **`ITrackService` / `TracksClientModule`** — Current track and car, the active `LapRaceSession`, roguelike card pool, and server-backed race results via `RecordResultAsync`. Exposes **`TrackProgressModel`** via `GetTrackProgress()` and ordered `TrackEntry` list via `GetOrderedTracks()`.
-- **`CurrencyClientModule`** (parent / Meta `LiveOps` scope) — Server-backed gold via `AddAsync("gold", amount)` / `GetWallet("gold")`; see [Currency.md](../LiveOps/Currency.md).
-- **`CampaignScope`** — Extends `SceneFoundationScope`, installs `GearMechanicsInstaller`, `CarTrackInstaller`, registers track/loadout/inventory LiveOps client modules (parent scope provides `CurrencyClientModule` / shared `CardsClientModule`), and registers `CampaignBootstrap`.
-- **`CampaignBootstrap`** — On startup, creates the initial `LapRaceSession` via `TrackSimulationFactory`, assigns it to `ITrackService` and `IRaceSessionRunner`, then opens `MainViewModel`.
+- **`CurrencyClientModule`** (LiveOps layer) — Server-backed gold via `AddAsync("gold", amount)` / `GetWallet("gold")`; see [Currency.md](../LiveOps/Currency.md).
+- **`CampaignApplicationBootstrap`** ([`Assets/GearEngine/Scripts/App/Bootstrap/CampaignApplicationBootstrap.cs`](../../Assets/GearEngine/Scripts/App/Bootstrap/CampaignApplicationBootstrap.cs)) — Root `ApplicationBootstrap` for the Main scene: **Foundation → UGS → LiveOps → Campaign** layers. References catalog and start-data **assets** (`TrackCatalogSO`, `GearCatalogSO`, `GearEngineStartDataSO`, `RaceSessionDefaultsSO`, board rules, feature toggles, spline config). After startup, opens **`MainViewModel`** from `OnReadyAsync`.
+- **`CampaignLayer`** — Installs `GearMechanicsInstaller`, `CarTrackInstaller`, and `CampaignRaceSessionInstaller` after LiveOps client modules have registered.
+- **LiveOps client installers** — `CampaignTracksInstaller`, `CampaignGearCatalogInstaller`, `CampaignLoadoutInstaller`, `CampaignInventoryInstaller`, plus `CardsClientInstaller`, run inside **`LiveOpsLayer`** so `IAsyncInitializable` hydration shares the same stack as `LiveOpsService`.
 
 ## Simulation wiring
 
-`IRaceSessionRunner` must receive the same `LapRaceSession` instance as `ITrackService.CurrentSession` so `Update()` ticks the session (see `CampaignBootstrap` and `ActiveRaceViewModel`).
+`IRaceSessionRunner` must receive the same `LapRaceSession` instance as `ITrackService.CurrentSession` so `Update()` ticks the session (see `ActiveRaceViewModel`).
 
 ## Tests
 
@@ -19,14 +20,15 @@ Edit Mode tests live under `Assets/GearEngine/Scripts/Game/Campaign/Tests/Editor
 
 ## Scene setup (editor)
 
-1. Duplicate **Race Scene** (or create a new scene with a root object that hosts the scope).
-2. Replace **RaceScope** with **CampaignScope** on the scene root (or add `CampaignScope` and remove the old scope).
-3. Assign **Navigation Settings**, **navigation view holder**, **BoardConfigSO**, optional **GearEngineFeatureToggleSO**, **CampaignBootstrap**, **TrackEntry** array (each entry: `TrackDefinition` + `CarDefinition`), and optional **roguelike card pool** (`GearConfig[]`).
-4. Register **ViewConfig** assets for `MainView`, `SetupView`, `ActiveRaceView`, `ResultPopupView`, and `RoguelikeView` in **Navigation Settings** (same pattern as `RaceViewConfig`).
-5. Point each ViewConfig at a prefab that has the matching `View` component and wire serialized references (track, buttons, HUD, board, inventory, etc.).
+1. Use **Main Scene** with a root **`CampaignApplicationBootstrap`** (see [`Main Scene.unity`](../../Assets/GearEngine/Scenes/Main%20Scene.unity)).
+2. Assign **Navigation Settings**, **navigation view holder**, **Track Catalog**, **Gear Catalog**, **Gear Engine Start Data** (`GearEngineStartDataSO`), **Race Session Defaults** (`RaceSessionDefaultsSO`), **BoardRulesSO**, optional **GearEngineFeatureToggleSO**, and **SplineCarRunnerConfigSO** (all asset references on the bootstrap component).
+3. Register **ViewConfig** assets for `MainView`, `SetupView`, `ActiveRaceView`, `ResultPopupView`, and `RoguelikeView` in **Navigation Settings** (same pattern as `RaceViewConfig`).
+4. Point each ViewConfig at a prefab that has the matching `View` component and wire serialized references (track, buttons, HUD, board, inventory, etc.).
 
 Stub prefabs and ViewConfigs are under `Assets/GearEngine/Prefabs/Campaign/` and `Assets/GearEngine/Data/Campaign/` for reference; replace or extend them for production UI.
 
+Campaign catalog/start-data samples: `Assets/GearEngine/Data/Campaign/CampaignTrackCatalog.asset`, `CampaignGearCatalog.asset`, `CampaignGearStartData.asset`, `CampaignRaceSessionDefaults.asset`.
+
 ## LiveOps coupling
 
-Campaign progression, gold, gear inventory, board loadout, and card unlocks are backed by LiveOps modules when the scene’s `CampaignScope` parent provides `ILiveOpsService`. `LocalTrackService` remains available for isolated tests.
+Campaign progression, gold, gear inventory, board loadout, and card unlocks are backed by LiveOps modules inside the layered bootstrap (`ILiveOpsService` is registered before the Campaign layer). `LocalTrackService` / `LocalGearLoadoutService` remain available for isolated tests only.

@@ -11,7 +11,7 @@
     "com.scaffold.maps": "https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.maps#main",
     "com.scaffold.model": "https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.model#main",
     "com.scaffold.mvvm": "https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.mvvm#main",
-    "com.scaffold.navigation": "https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.navigation#main",
+    "com.scaffold.navigation": "file:../Assets/Packages/com.scaffold.navigation",
     "com.scaffold.records": "https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.records#main",
     "com.scaffold.sceneflow": "https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.sceneflow#main",
     "com.scaffold.schemas": "https://github.com/ScaffoldLibrary/Schemas.git",

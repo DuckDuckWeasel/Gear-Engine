@@ -6,6 +6,7 @@ using GameModuleDTO.Modules.Currency;
 using GameModuleDTO.ModuleRequests;
 using GearEngine.Campaign.Bootstrap;
 using GearEngine.Campaign.Presentation;
+using GearEngine.Campaign.Services;
 using GearEngine.Currency;
 using GearEngine.GearEngine;
 using GearEngine.CarSimulation;

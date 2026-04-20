@@ -123,7 +123,8 @@ namespace GearEngine.App.Bootstrap.Tests.Editor
         }
 
         /// <summary>
-        /// Mirrors <see cref="GearEngine.App.Bootstrap.Layers.LiveOpsLayer"/> registration order for EditMode:
+        /// Mirrors <see cref="GearEngine.App.Bootstrap.Layers.LiveOpsServiceLayer"/> then
+        /// <see cref="GearEngine.App.Bootstrap.Layers.LiveOpsClientModulesLayer"/> registration order for EditMode:
         /// Cloud Code client + optimistic registry + LiveOps (real <see cref="LiveOpsService"/>), with a fake <see cref="ICloudCodeService"/> so no network/SDK call runs.
         /// </summary>
         private static ILiveOpsService BuildLiveOpsLayerStyleContainer(

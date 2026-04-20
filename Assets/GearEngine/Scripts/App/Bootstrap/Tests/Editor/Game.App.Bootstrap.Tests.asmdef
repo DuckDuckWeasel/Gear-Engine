@@ -8,6 +8,7 @@
         "Scaffold.CloudCode",
         "Scaffold.LiveOps",
         "Scaffold.LiveOps.Container",
+        "Scaffold.Navigation",
         "VContainer",
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner",

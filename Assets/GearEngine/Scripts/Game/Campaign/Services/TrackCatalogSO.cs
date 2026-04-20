@@ -26,7 +26,7 @@ namespace GearEngine.Campaign.Services
         }
 
         /// <summary>
-        /// Replaces catalog data at runtime (e.g. from <see cref="CampaignScope"/> serialized arrays).
+        /// Replaces catalog data at runtime (e.g. from tests or dynamic content).
         /// </summary>
         public void SetRuntimeEntries(TrackEntry[] entries, GearConfig[] roguelikeCards)
         {
@@ -58,6 +58,35 @@ namespace GearEngine.Campaign.Services
 
                 _byTrackId[id] = entry;
             }
+        }
+
+        /// <summary>
+        /// First stable track id present in the catalog, or null when the catalog has no usable entries.
+        /// </summary>
+        public string GetFirstResolvableTrackId()
+        {
+            if (trackEntries == null)
+            {
+                return null;
+            }
+
+            foreach (TrackEntry entry in trackEntries)
+            {
+                if (entry?.Track == null)
+                {
+                    continue;
+                }
+
+                string id = entry.TrackId;
+                if (string.IsNullOrEmpty(id))
+                {
+                    continue;
+                }
+
+                return id;
+            }
+
+            return null;
         }
 
         public TrackDefinition GetTrack(string trackId)

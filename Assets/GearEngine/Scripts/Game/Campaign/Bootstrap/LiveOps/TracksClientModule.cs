@@ -28,7 +28,67 @@ namespace GearEngine.Campaign.Bootstrap.LiveOps
         protected override Task OnInitializedAsync(TrackGameData moduleData)
         {
             progress.CurrentTrackIndex = Math.Max(0, IndexOfCurrentTrack(moduleData));
+            TryRepairCurrentTrackId(moduleData);
             return Task.CompletedTask;
+        }
+
+        private void TryRepairCurrentTrackId(TrackGameData moduleData)
+        {
+            if (moduleData == null)
+            {
+                return;
+            }
+
+            string id = moduleData.CurrentTrackId ?? string.Empty;
+            if (!string.IsNullOrEmpty(id) && catalog.GetTrack(id) != null)
+            {
+                return;
+            }
+
+            string repaired = PickFirstResolvableOrderedTrackId(moduleData) ?? catalog.GetFirstResolvableTrackId();
+            if (string.IsNullOrEmpty(repaired))
+            {
+                Debug.LogError(
+                    "[TracksClientModule] No track id could be resolved from LiveOps data or the track catalog; assign tracks on CampaignTrackCatalog / Remote Config.");
+                return;
+            }
+
+            moduleData.CurrentTrackId = repaired;
+            List<string> orderedIds = moduleData.OrderedTrackIds;
+            if (orderedIds != null)
+            {
+                int idx = orderedIds.IndexOf(repaired);
+                if (idx >= 0)
+                {
+                    progress.CurrentTrackIndex = idx;
+                }
+            }
+        }
+
+        private string PickFirstResolvableOrderedTrackId(TrackGameData moduleData)
+        {
+            List<string> ordered = moduleData.OrderedTrackIds;
+            if (ordered == null || ordered.Count == 0)
+            {
+                return null;
+            }
+
+            int start = Math.Clamp(progress.CurrentTrackIndex, 0, ordered.Count - 1);
+            for (int i = 0; i < ordered.Count; i++)
+            {
+                string candidate = ordered[(start + i) % ordered.Count];
+                if (string.IsNullOrEmpty(candidate))
+                {
+                    continue;
+                }
+
+                if (catalog.GetTrack(candidate) != null)
+                {
+                    return candidate;
+                }
+            }
+
+            return null;
         }
 
         private static int IndexOfCurrentTrack(TrackGameData moduleData)

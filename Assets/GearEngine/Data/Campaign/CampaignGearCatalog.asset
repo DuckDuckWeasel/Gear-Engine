@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eafa1697e733c4244af5eb2da7d88bbe, type: 3}
+  m_Name: CampaignGearCatalog
+  m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Config.GearCatalogSO
+  gears:
+  - {fileID: 11400000, guid: 39144108699f44d10b422acf50e748ba, type: 2}
+  - {fileID: 11400000, guid: 3783c6d85510a4bf6b4f879d30ef249b, type: 2}
+  - {fileID: 11400000, guid: b642772cacb3f48d7870118c94a3e3a0, type: 2}
+  - {fileID: 11400000, guid: 9f0ce76835399481e9aaf8f8af8f41ca, type: 2}
