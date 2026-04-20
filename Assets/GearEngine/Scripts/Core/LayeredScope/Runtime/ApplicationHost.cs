@@ -143,7 +143,9 @@ namespace GearEngine.LayeredScope
 
         private LifetimeScope BuildChildScope(IScopeLayer layer)
         {
-            return stack.Peek().Scope.CreateChild(layer.Install);
+            LifetimeScope child = stack.Peek().Scope.CreateChild(layer.Install);
+            child.name = layer.Name;
+            return child;
         }
 
         private async Task AttemptPushAsync(IScopeLayer layer, LifetimeScope child, CancellationToken ct)

@@ -1,3 +1,4 @@
+using GearEngine.Currency.Bootstrap;
 using GearEngine.LayeredScope;
 using Scaffold.CloudCode.Container;
 using Scaffold.LiveOps.Container;
@@ -11,6 +12,7 @@ namespace GearEngine.App.Bootstrap.Layers
         {
             new CloudCodeInstaller().Install(builder);
             new LiveOpsInstaller().Install(builder);
+            new CurrencyClientInstaller().Install(builder);
         }
     }
 }

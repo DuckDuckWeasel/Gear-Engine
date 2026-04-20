@@ -4,6 +4,7 @@
   "references": [
     "Game.App.Bootstrap",
     "Core.LayeredScope",
+    "Scaffold.LiveOps",
     "VContainer",
     "VContainer.Unity"
   ],
@@ -13,7 +14,11 @@
   "excludePlatforms": [],
   "allowUnsafeCode": false,
   "overrideReferences": true,
-  "precompiledReferences": [],
+  "precompiledReferences": [
+    "nunit.framework.dll",
+    "Newtonsoft.Json.dll",
+    "Scaffold.LiveOps.DTO.dll"
+  ],
   "autoReferenced": false,
   "defineConstraints": [],
   "versionDefines": [],

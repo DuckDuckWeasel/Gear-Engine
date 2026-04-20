@@ -1,6 +1,6 @@
 # LiveOps backend bootstrap (Gear-Engine)
 
-This document describes how the **Cloud Code backend**, **shared DTO DLL**, **Unity module reference (`.ccmr`)**, and **Meta** startup harness fit together. It stops short of gameplay economy (e.g. Gold wallet); see a future Gold plan for that layer.
+This document describes how the **Cloud Code backend**, **shared DTO DLL**, **Unity module reference (`.ccmr`)**, and **Meta** startup harness fit together. Currency payloads are documented in [Currency.md](Currency.md) (alongside legacy Gold until migration).
 
 ## TL;DR
 
@@ -57,7 +57,7 @@ sequenceDiagram
     Boot->>Lo: Push + LiveOps IAsyncInitializable
     Lo->>Server: GameDataRequest via LiveOpsService
     Server-->>Lo: GameDataResponse
-    Boot->>Boot: OnReadyAsync (log Gold / Ad module probe)
+    Boot->>Boot: OnReadyAsync (log Gold / Ad / Currency probe)
 ```
 
 ## Building the backend
@@ -88,7 +88,7 @@ Publish to your UGS Cloud Code environment using the Unity **Services → Cloud 
 - **Cloud Code** module built from [LiveOps/LiveOps.sln](../../LiveOps/LiveOps.sln) and deployed to that environment.
 - Without a deployed module, the initial `GameDataRequest` from `LiveOpsService` will fail (expected).
 
-On success, the console should show `[Meta] LiveOps ready. GoldGameData=True, AdData=True.` (exact module payloads depend on server `ModuleConfig` and Remote Config).
+On success, the console should show `[Meta] LiveOps ready. GoldGameData=…, AdData=…, CurrencyGameData wallets=…` (exact module payloads depend on server `ModuleConfig` and Remote Config).
 
 ## Disabling Meta as entry
 
@@ -100,3 +100,4 @@ To return to another default scene, open **File → Build Settings**, disable **
 - 2026-04-19: Moved `Meta.unity` to `Assets/GearEngine/Scenes/` (same GUID) so it appears with other Gear Engine scenes in the Project window.
 - 2026-04-19: Register Unity `ICloudCodeService` in `MetaScope` so Scaffold `CloudCodeSdkCallHandler` resolves under VContainer.
 - 2026-04-19: Replaced `MetaScope` / `MetaBootstrap` with `MetaApplicationBootstrap` + LayeredScope layers (`FoundationLayer`, `UgsLayer`, `LiveOpsLayer`); vendored `com.scaffold.ugs`, `com.scaffold.liveops`, `com.scaffold.cloudcode` under `Assets/Packages/` with `IAsyncInitializable` from `Core.LayeredScope`.
+- 2026-04-19: Added Currency module (`CurrencyConfig` / `CurrencyPersistence` / `CurrencyGameData` + `CurrencyClientModule`) alongside the existing Gold module; `LiveOpsLayer` installs `CurrencyClientInstaller`; `MetaApplicationBootstrap` smoke log includes `CurrencyGameData` wallet count. See [Currency.md](Currency.md).

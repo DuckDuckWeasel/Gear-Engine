@@ -4,8 +4,7 @@
     "references": [
         "Unity.Services.Core",
         "Unity.Services.Authentication",
-        "Unity.Services.CloudCode",
-        "Scaffold.Maps"
+        "Unity.Services.CloudCode"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

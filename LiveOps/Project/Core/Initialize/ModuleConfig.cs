@@ -7,6 +7,7 @@ using Unity.Services.CloudCode.Apis;
 using Unity.Services.CloudCode.Core;
 using GameModule.Signal;
 using GameModule.Modules.Ads;
+using GameModule.Modules.Currency;
 using GameModule.Modules.Gold;
 using GameModule.Modules.Level;
 using GameModule.ModuleFetchData.Http;
@@ -38,6 +39,7 @@ public partial class ModuleConfig : ICloudCodeSetup
 
         RegisterModuleScoped<AdsService>(config);
         RegisterModuleScoped<GoldModule>(config);
+        RegisterModuleScoped<CurrencyModule>(config);
         RegisterModuleScoped<LevelService>(config);
         RegisterModuleScoped<GlobalConfigModule>(config);
         RegisterScoped<DirectPushService>(config);

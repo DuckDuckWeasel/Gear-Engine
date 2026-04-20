@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using GameModuleDTO.Modules.Ads;
+using GameModuleDTO.Modules.Currency;
 using GameModuleDTO.Modules.Gold;
 using GearEngine.App.Bootstrap.Layers;
 using GearEngine.LayeredScope;
@@ -52,7 +53,8 @@ namespace GearEngine.App.Bootstrap
                 ILiveOpsService liveOps = Host.Resolve<ILiveOpsService>();
                 GoldGameData goldData = liveOps.GetModuleData<GoldGameData>();
                 AdData adData = liveOps.GetModuleData<AdData>();
-                Debug.Log($"[Meta] LiveOps ready. GoldGameData={(goldData != null)}, AdData={(adData != null)}.");
+                CurrencyGameData currencyData = liveOps.GetModuleData<CurrencyGameData>();
+                Debug.Log($"[Meta] LiveOps ready. GoldGameData={(goldData != null)}, AdData={(adData != null)}, CurrencyGameData wallets={(currencyData != null ? currencyData.Wallets.Count : 0)}.");
             }
             catch (Exception ex)
             {
