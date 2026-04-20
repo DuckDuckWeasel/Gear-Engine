@@ -88,11 +88,11 @@ namespace Scaffold.LiveOps
             cancellationToken.ThrowIfCancellationRequested();
             if (RequestUsesGameApi(request))
             {
-                return await CallGameApiAsync(request, cancellationToken).ConfigureAwait(false);
+                return await CallGameApiAsync(request, cancellationToken);
             }
 
             Task<TResponse> endpointCall = cloudCodeService.CallEndpointAsync<TResponse>(request.ModuleName, request.FunctionName, payload: request, cancellationToken: cancellationToken);
-            TResponse response = await endpointCall.ConfigureAwait(false);
+            TResponse response = await endpointCall;
             moduleResponseDispatchService.DispatchNestedResponses(response);
             return response;
         }
@@ -119,7 +119,7 @@ namespace Scaffold.LiveOps
                 return optimistic;
             }
 
-            GameApiEnvelopeResponse resp = await serverTask.ConfigureAwait(false);
+            GameApiEnvelopeResponse resp = await serverTask;
             return UnwrapAndDispatch<TResponse>(resp);
         }
 
@@ -160,7 +160,7 @@ namespace Scaffold.LiveOps
         {
             try
             {
-                GameApiEnvelopeResponse resp = await serverTask.ConfigureAwait(false);
+                GameApiEnvelopeResponse resp = await serverTask;
                 TResponse server = UnwrapAndDispatch<TResponse>(resp);
                 handler.Validate(server, optimistic);
             }
