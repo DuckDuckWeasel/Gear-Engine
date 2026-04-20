@@ -26,6 +26,7 @@
     "overrideReferences": true,
     "precompiledReferences": [
         "CommunityToolkit.Mvvm.dll",
+        "DOTween.dll",
         "Sirenix.OdinInspector.Attributes.dll",
         "Sirenix.Serialization.dll",
         "Sirenix.Serialization.Config.dll",

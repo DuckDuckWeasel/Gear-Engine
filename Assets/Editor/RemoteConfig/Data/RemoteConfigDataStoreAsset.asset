@@ -12,41 +12,41 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 469c24fdb3bd6431b92cc1465bd9166b, type: 3}
   m_Name: RemoteConfigDataStoreAsset
   m_EditorClassIdentifier: Unity.RemoteConfig.Editor::Unity.RemoteConfig.Editor.RemoteConfigDataStore
-  _rsKeyList: "[\r\n  {\r\n    \"metadata\": {\r\n      \"entityId\": \"594e3e46-b70f-45bf-b8fc-bb19c1c25882\"\r\n   
+  _rsKeyList: "[\r\n  {\r\n    \"metadata\": {\r\n      \"entityId\": \"9e287713-9c74-414c-8db6-8b12255aafe4\"\r\n   
     },\r\n    \"rs\": {\r\n      \"key\": \"CardConfig\",\r\n      \"type\": \"json\",\r\n     
     \"schemaId\": null,\r\n      \"value\": {\r\n        \"catalog\": [],\r\n       
     \"baseCost\": 100,\r\n        \"costPerPurchaseGrowth\": 50\r\n      }\r\n   
-    }\r\n  },\r\n  {\r\n    \"metadata\": {\r\n      \"entityId\": \"263cbffc-a894-421b-89f2-c59b2301bc76\"\r\n   
+    }\r\n  },\r\n  {\r\n    \"metadata\": {\r\n      \"entityId\": \"696d4ea5-72f6-4436-8705-0de2571f898a\"\r\n   
     },\r\n    \"rs\": {\r\n      \"key\": \"CurrencyConfig\",\r\n      \"type\":
     \"json\",\r\n      \"schemaId\": null,\r\n      \"value\": {\r\n        \"entries\":
     [\r\n          {\r\n            \"id\": \"gold\",\r\n            \"initial\":
     0\r\n          }\r\n        ]\r\n      }\r\n    }\r\n  },\r\n  {\r\n    \"metadata\":
-    {\r\n      \"entityId\": \"b5183b17-4e90-4898-80cc-dcc8ff4ca865\"\r\n    },\r\n   
+    {\r\n      \"entityId\": \"cc46b155-5b23-4f6a-8aa3-ad33776b7ad3\"\r\n    },\r\n   
     \"rs\": {\r\n      \"key\": \"InventoryConfig\",\r\n      \"type\": \"json\",\r\n     
     \"schemaId\": null,\r\n      \"value\": {\r\n        \"baseSlots\": 8\r\n     
-    }\r\n    }\r\n  },\r\n  {\r\n    \"metadata\": {\r\n      \"entityId\": \"f2457141-f2e4-4dd3-96ca-868559a67060\"\r\n   
+    }\r\n    }\r\n  },\r\n  {\r\n    \"metadata\": {\r\n      \"entityId\": \"b563d675-e422-41de-a1f6-904eb55fbc9e\"\r\n   
     },\r\n    \"rs\": {\r\n      \"key\": \"LoadoutConfig\",\r\n      \"type\": \"json\",\r\n     
     \"schemaId\": null,\r\n      \"value\": {\r\n        \"baseSlots\": 6\r\n     
-    }\r\n    }\r\n  },\r\n  {\r\n    \"metadata\": {\r\n      \"entityId\": \"17e7c4d0-1a01-484c-97aa-66ec520c62c1\"\r\n   
+    }\r\n    }\r\n  },\r\n  {\r\n    \"metadata\": {\r\n      \"entityId\": \"d47b9ec4-19cd-4082-8e09-ca1c77b989c5\"\r\n   
     },\r\n    \"rs\": {\r\n      \"key\": \"TrackConfig\",\r\n      \"type\": \"json\",\r\n     
     \"schemaId\": null,\r\n      \"value\": {\r\n        \"entries\": []\r\n     
     }\r\n    }\r\n  }\r\n]"
-  _rsLastCachedKeyList: "[\r\n  {\r\n    \"metadata\": {\r\n      \"entityId\": \"594e3e46-b70f-45bf-b8fc-bb19c1c25882\"\r\n   
+  _rsLastCachedKeyList: "[\r\n  {\r\n    \"metadata\": {\r\n      \"entityId\": \"9e287713-9c74-414c-8db6-8b12255aafe4\"\r\n   
     },\r\n    \"rs\": {\r\n      \"key\": \"CardConfig\",\r\n      \"type\": \"json\",\r\n     
     \"schemaId\": null,\r\n      \"value\": {\r\n        \"catalog\": [],\r\n       
     \"baseCost\": 100,\r\n        \"costPerPurchaseGrowth\": 50\r\n      }\r\n   
-    }\r\n  },\r\n  {\r\n    \"metadata\": {\r\n      \"entityId\": \"263cbffc-a894-421b-89f2-c59b2301bc76\"\r\n   
+    }\r\n  },\r\n  {\r\n    \"metadata\": {\r\n      \"entityId\": \"696d4ea5-72f6-4436-8705-0de2571f898a\"\r\n   
     },\r\n    \"rs\": {\r\n      \"key\": \"CurrencyConfig\",\r\n      \"type\":
     \"json\",\r\n      \"schemaId\": null,\r\n      \"value\": {\r\n        \"entries\":
     [\r\n          {\r\n            \"id\": \"gold\",\r\n            \"initial\":
     0\r\n          }\r\n        ]\r\n      }\r\n    }\r\n  },\r\n  {\r\n    \"metadata\":
-    {\r\n      \"entityId\": \"b5183b17-4e90-4898-80cc-dcc8ff4ca865\"\r\n    },\r\n   
+    {\r\n      \"entityId\": \"cc46b155-5b23-4f6a-8aa3-ad33776b7ad3\"\r\n    },\r\n   
     \"rs\": {\r\n      \"key\": \"InventoryConfig\",\r\n      \"type\": \"json\",\r\n     
     \"schemaId\": null,\r\n      \"value\": {\r\n        \"baseSlots\": 8\r\n     
-    }\r\n    }\r\n  },\r\n  {\r\n    \"metadata\": {\r\n      \"entityId\": \"f2457141-f2e4-4dd3-96ca-868559a67060\"\r\n   
+    }\r\n    }\r\n  },\r\n  {\r\n    \"metadata\": {\r\n      \"entityId\": \"b563d675-e422-41de-a1f6-904eb55fbc9e\"\r\n   
     },\r\n    \"rs\": {\r\n      \"key\": \"LoadoutConfig\",\r\n      \"type\": \"json\",\r\n     
     \"schemaId\": null,\r\n      \"value\": {\r\n        \"baseSlots\": 6\r\n     
-    }\r\n    }\r\n  },\r\n  {\r\n    \"metadata\": {\r\n      \"entityId\": \"17e7c4d0-1a01-484c-97aa-66ec520c62c1\"\r\n   
+    }\r\n    }\r\n  },\r\n  {\r\n    \"metadata\": {\r\n      \"entityId\": \"d47b9ec4-19cd-4082-8e09-ca1c77b989c5\"\r\n   
     },\r\n    \"rs\": {\r\n      \"key\": \"TrackConfig\",\r\n      \"type\": \"json\",\r\n     
     \"schemaId\": null,\r\n      \"value\": {\r\n        \"entries\": []\r\n     
     }\r\n    }\r\n  }\r\n]"
