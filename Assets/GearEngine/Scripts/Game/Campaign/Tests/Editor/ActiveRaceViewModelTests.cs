@@ -1,3 +1,4 @@
+using GearEngine.GearEngine.Nodes;
 using GearEngine.Campaign.Bootstrap;
 using GearEngine.Campaign.Presentation;
 using GearEngine.GearEngine;
@@ -21,6 +22,7 @@ namespace GearEngine.Campaign.Tests.Editor
 
             public void Stop() => IsRunning = false;
 
+            public System.Collections.Generic.IEnumerable<IGridNode> GetAllNodes() => new System.Collections.Generic.List<IGridNode>();
             public void ResetGridSimulationState() => Stop();
         }
 
@@ -51,7 +53,7 @@ namespace GearEngine.Campaign.Tests.Editor
             ViewModelTestInject.InjectPrivateField(vm, "trackFactory", factory);
             ViewModelTestInject.InjectPrivateField(vm, "raceManager", raceManager);
             ViewModelTestInject.InjectPrivateField(vm, "aiRunner", carRunner);
-            ViewModelTestInject.InjectPrivateField(vm, "raceSessionDefaults", new CampaignRaceSessionDefaults(new RaceSessionConfig()));
+            ViewModelTestInject.InjectPrivateField(vm, "raceSessionDefaults", new CampaignRaceSessionDefaults(new RaceSessionConfig(), null));
             ViewModelTestInject.InjectNavigation(vm, navigation);
 
             ViewModelTestInject.InvokeInitialize(vm);
@@ -92,7 +94,7 @@ namespace GearEngine.Campaign.Tests.Editor
             ViewModelTestInject.InjectPrivateField(vm, "trackFactory", factory);
             ViewModelTestInject.InjectPrivateField(vm, "raceManager", raceManager);
             ViewModelTestInject.InjectPrivateField(vm, "aiRunner", carRunner);
-            ViewModelTestInject.InjectPrivateField(vm, "raceSessionDefaults", new CampaignRaceSessionDefaults(new RaceSessionConfig()));
+            ViewModelTestInject.InjectPrivateField(vm, "raceSessionDefaults", new CampaignRaceSessionDefaults(new RaceSessionConfig(), null));
             ViewModelTestInject.InjectNavigation(vm, navigation);
 
             ViewModelTestInject.InvokeInitialize(vm);

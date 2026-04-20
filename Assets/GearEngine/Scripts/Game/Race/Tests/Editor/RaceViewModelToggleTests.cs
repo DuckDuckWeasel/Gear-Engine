@@ -1,3 +1,4 @@
+using GearEngine.GearEngine.Nodes;
 using System;
 using System.Reflection;
 using GearEngine.CarSimulation;
@@ -47,6 +48,7 @@ namespace GearEngine.Race.Tests.Editor
 
             public void Play() => IsRunning = true;
 
+            public System.Collections.Generic.IEnumerable<IGridNode> GetAllNodes() => new System.Collections.Generic.List<IGridNode>();
             public void ResetGridSimulationState()
             {
                 throw new NotImplementedException();

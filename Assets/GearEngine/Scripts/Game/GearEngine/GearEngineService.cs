@@ -28,5 +28,10 @@ namespace GearEngine.GearEngine
             gridManager.Stop();
             gridManager.ResetAllNodeSimulationState();
         }
+
+        public System.Collections.Generic.IEnumerable<Nodes.IGridNode> GetAllNodes()
+        {
+            return gridManager.GetAllNodes();
+        }
     }
 }

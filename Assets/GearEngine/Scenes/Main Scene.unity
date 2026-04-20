@@ -1468,7 +1468,6 @@ MonoBehaviour:
   featureToggle: {fileID: 11400000, guid: e8f9a0b1c2d34432bcdef01234567891, type: 2}
   splineCarRunnerConfig: {fileID: 11400000, guid: 6a9994ce6517e413a8373080e0b14bbb, type: 2}
   campaignRaceSession:
-    variables: {fileID: 11400000, guid: f6cfd8fa3fbb61843b66534996d0329d, type: 2}
     totalLaps: 3
     roguelikeStats:
       statTopSpeed: 50

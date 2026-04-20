@@ -85,7 +85,13 @@ namespace GearEngine.Campaign.Bootstrap
             new CarTrackInstaller().Install(builder);
 
             RaceSessionConfig raceSessionTemplate = campaignRaceSession ?? new RaceSessionConfig();
-            builder.RegisterInstance(new CampaignRaceSessionDefaults(raceSessionTemplate));
+            
+            builder.Register<CampaignStatsService>(Lifetime.Singleton)
+                   .WithParameter(raceSessionTemplate)
+                   .AsImplementedInterfaces();
+            
+            builder.Register<CampaignRaceSessionDefaults>(Lifetime.Singleton)
+                   .WithParameter(raceSessionTemplate);
 
             LocalTrackService trackService = new LocalTrackService(tracks, roguelikeCardPool);
             builder.RegisterInstance<ITrackService>(trackService);
@@ -104,10 +110,12 @@ namespace GearEngine.Campaign.Bootstrap
     public sealed class CampaignRaceSessionDefaults
     {
         private readonly RaceSessionConfig template;
+        private readonly ICampaignStatsService statsService;
 
-        public CampaignRaceSessionDefaults(RaceSessionConfig template)
+        public CampaignRaceSessionDefaults(RaceSessionConfig template, ICampaignStatsService statsService)
         {
             this.template = template ?? new RaceSessionConfig();
+            this.statsService = statsService;
         }
 
         public RaceSessionConfig CreateForTrack(TrackDefinition track)
@@ -119,6 +127,12 @@ namespace GearEngine.Campaign.Bootstrap
 
             RaceSessionConfig config = template.CloneForNewRace();
             config.ApplyFromTrack(track);
+
+            if (statsService != null)
+            {
+                config.SetRoguelikeStats(statsService.GetCalculatedStats());
+            }
+
             return config;
         }
     }

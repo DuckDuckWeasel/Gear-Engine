@@ -8,5 +8,7 @@ namespace GearEngine.GearEngine
 
         /// <summary>Stops the engine and clears per-run gear simulation state (rotation, charge, etc.).</summary>
         void ResetGridSimulationState();
+
+        System.Collections.Generic.IEnumerable<Nodes.IGridNode> GetAllNodes();
     }
 }

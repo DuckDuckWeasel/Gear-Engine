@@ -135,6 +135,12 @@ namespace GearEngine.GearEngine.Nodes
             }
         }
 
+        public void SetCharge(float amount)
+        {
+            if (ConfigData == null) return;
+            CurrentCharge = Mathf.Clamp(amount, 0f, ConfigData.MaxCharge);
+        }
+
         private void CheckAndExecute()
         {
             if (CurrentCharge >= ConfigData.MaxCharge && ConfigData.MaxCharge > 0)

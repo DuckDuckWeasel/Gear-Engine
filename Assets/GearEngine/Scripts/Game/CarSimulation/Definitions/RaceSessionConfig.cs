@@ -14,6 +14,8 @@ namespace GearEngine.CarSimulation.Definitions
 
         [SerializeField] private RoguelikeCarStats roguelikeStats = RoguelikeCarStats.Default;
 
+        public void SetRoguelikeStats(RoguelikeCarStats stats) { roguelikeStats = stats; }
+
         internal void SetTotalLapsForTests(int value)
         {
             totalLaps = value;
