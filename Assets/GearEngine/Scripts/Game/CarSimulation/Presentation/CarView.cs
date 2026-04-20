@@ -57,7 +57,7 @@ namespace GearEngine.CarSimulation.Presentation
 
             if (viewModel.RunnerService != null)
             {
-                viewModel.RunnerService.InitializeRun(prometeoController, SplineContainer, viewModel.Stats, viewModel.Car);
+                viewModel.RunnerService.InitializeRun(prometeoController, SplineContainer, viewModel.Session.Config.RoguelikeStats, viewModel.Car);
             }
 
             runnerAttached = true;

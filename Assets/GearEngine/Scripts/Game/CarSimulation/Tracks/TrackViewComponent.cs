@@ -2,6 +2,7 @@ using System;
 using GearEngine.CarSimulation.Definitions;
 using GearEngine.CarSimulation.Presentation;
 using Scaffold.MVVM;
+using GearEngine.CarSimulation.Simulation;
 using UnityEngine;
 using UnityEngine.Splines;
 
@@ -43,12 +44,30 @@ namespace GearEngine.CarSimulation.Tracks
             {
                 Debug.LogError("[Track] ViewModel must implement ITrackDefinitionSource.");
             }
+
+            if (viewModel is TrackViewModel trackVm)
+            {
+                trackVm.PropertyChanged += OnViewModelPropertyChanged;
+            }
+        }
+
+        private void OnViewModelPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(TrackViewModel.State))
+            {
+                var trackVm = (TrackViewModel)sender;
+                if (trackVm.State == SimulationLifecycleState.Running)
+                {
+                    SendMessage("Generate", SendMessageOptions.DontRequireReceiver);
+                }
+            }
         }
 
         protected override void OnUnbind()
         {
             if (viewModel is TrackViewModel trackVm)
             {
+                trackVm.PropertyChanged -= OnViewModelPropertyChanged;
                 trackVm.TearDown();
             }
 

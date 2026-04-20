@@ -7,7 +7,8 @@ using UnityEngine;
 
 namespace GearEngine.CarSimulation.Debug
 {
-    public sealed class CarSimulationDebug : MonoBehaviour
+    [RequireComponent(typeof(CarSimulationUIDebug))]
+    public sealed class CarSimulationDebug : SerializedMonoBehaviour
     {
         [SerializeField]
         private VariableSO targetAttribute;
@@ -17,27 +18,27 @@ namespace GearEngine.CarSimulation.Debug
 
         private EntityModifierEntry activeModifier;
 
-        [ShowInInspector, ReadOnly, BoxGroup("Race")]
+        [ShowInInspector, BoxGroup("Race")]
         public RaceState Session { get; private set; }
 
         private CarEntity Car => Session?.Car;
 
-        [ShowInInspector, ReadOnly, BoxGroup("Race")]
+        [ShowInInspector, BoxGroup("Race")]
         private float CurrentSpeed => Session?.CurrentSpeed ?? 0f;
 
-        [ShowInInspector, ReadOnly, BoxGroup("Race")]
+        [ShowInInspector, BoxGroup("Race")]
         private float NormalizedProgress => Session?.NormalizedProgress ?? 0f;
 
-        [ShowInInspector, ReadOnly, BoxGroup("Race")]
+        [ShowInInspector, BoxGroup("Race")]
         private int CurrentLap => Session?.CurrentLap ?? 0;
 
-        [ShowInInspector, ReadOnly, BoxGroup("Race")]
+        [ShowInInspector, BoxGroup("Race")]
         private float RaceTime => Session?.RaceTime ?? 0f;
 
-        [ShowInInspector, ReadOnly, BoxGroup("Race")]
+        [ShowInInspector, BoxGroup("Race")]
         private SimulationLifecycleState Phase => Session?.Phase ?? SimulationLifecycleState.Created;
 
-        [ShowInInspector, ReadOnly, BoxGroup("Attribute")]
+        [ShowInInspector, BoxGroup("Attribute")]
         private float CurrentAttributeValue
         {
             get
@@ -53,30 +54,50 @@ namespace GearEngine.CarSimulation.Debug
 
         private SplineCarRunnerService runner;
 
-        private SplineCarRunnerContext Context => runner?.GetDebugContext(Car);
+        public SplineCarRunnerService Runner => runner;
+        public SplineCarRunnerContext Context => runner?.GetDebugContext(Car);
 
-        [ShowInInspector, ReadOnly, BoxGroup("Progression Stats")]
-        public RoguelikeCarStats SourceStats => Context?.sourceStats ?? RoguelikeCarStats.Default;
+        // [ShowInInspector, BoxGroup("Progression Stats")]
+        // public RoguelikeCarStats SourceStats => Context?.sourceStats ?? RoguelikeCarStats.Default;
 
-        [ShowInInspector, ReadOnly, BoxGroup("Runtime Mechanics")]
+        [ShowInInspector, BoxGroup("Effective Stats")]
+        private float StatTopSpeed => ExtractEntityStat(Context?.Variables?.Speed);
+        [ShowInInspector, BoxGroup("Effective Stats")]
+        private float StatAcceleration => ExtractEntityStat(Context?.Variables?.Acceleration);
+        [ShowInInspector, BoxGroup("Effective Stats")]
+        private float StatSteeringGrip => ExtractEntityStat(Context?.Variables?.Handling);
+        [ShowInInspector, BoxGroup("Effective Stats")]
+        private float StatRacingLine => ExtractEntityStat(Context?.Variables?.Stability);
+        [ShowInInspector, BoxGroup("Effective Stats")]
+        private float StatDriverReflexes => ExtractEntityStat(Context?.Variables?.Recovery);
+        [ShowInInspector, BoxGroup("Effective Stats")]
+        private float StatDriftControl => ExtractEntityStat(Context?.Variables?.DriftPenalty);
+
+        private float ExtractEntityStat(VariableSO varSo)
+        {
+            if (varSo == null || Car == null) return 0f;
+            return Car.TryGetValue(varSo, out float v) ? v : 0f;
+        }
+
+        [ShowInInspector, BoxGroup("Runtime Mechanics")]
         private float MaxSimulationSpeed => Context?.maxSimulationSpeed ?? 0f;
 
-        [ShowInInspector, ReadOnly, BoxGroup("Runtime Mechanics")]
+        [ShowInInspector, BoxGroup("Runtime Mechanics")]
         private float SafeCornerSpeed => Context?.safeCornerSpeed ?? 0f;
 
-        [ShowInInspector, ReadOnly, BoxGroup("Runtime Mechanics")]
+        [ShowInInspector, BoxGroup("Runtime Mechanics")]
         private float ArcadeSteerAssist => Context?.arcadeSteerAssist ?? 0f;
 
-        [ShowInInspector, ReadOnly, BoxGroup("Runtime Mechanics")]
+        [ShowInInspector, BoxGroup("Runtime Mechanics")]
         private int CalculatedAcceleration => Context?.calculatedAcceleration ?? 0;
 
-        [ShowInInspector, ReadOnly, BoxGroup("Runtime Mechanics")]
+        [ShowInInspector, BoxGroup("Runtime Mechanics")]
         private int CalculatedBrakeForce => Context?.calculatedBrakeForce ?? 0;
 
-        [ShowInInspector, ReadOnly, BoxGroup("Runtime Mechanics")]
+        [ShowInInspector, BoxGroup("Runtime Mechanics")]
         private int CalculatedDriftGrip => Context?.calculatedDriftGrip ?? 0;
 
-        [ShowInInspector, ReadOnly, BoxGroup("Runtime Mechanics")]
+        [ShowInInspector, BoxGroup("Runtime Mechanics")]
         private float CurrentSimulationMultiplier => Context?.currentSimulationMultiplier ?? 0f;
 
         public void Setup(RaceState session, SplineCarRunnerService runner)

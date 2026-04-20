@@ -12,3 +12,31 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ba712c3859cc1489e8dc1a0996eb86c6, type: 3}
   m_Name: DefaultSplineCarRunnerConfig
   m_EditorClassIdentifier: Game.CarSimulation::GearEngine.CarSimulation.Definitions.SplineCarRunnerConfigSO
+  variables: {fileID: 11400000, guid: f6cfd8fa3fbb61843b66534996d0329d, type: 2}
+  baseMaxSpeed: 160
+  baseAcceleration: 22
+  baseBrakeForce: 600
+  minSpeedPercentage: 0.4
+  baseSimulationMultiplier: 1.35
+  boundsDriftAccMult: {x: 1.1, y: 2.5}
+  boundsDriftSteerMult: {x: 1, y: 2}
+  boundsHairpinAccBoost: {x: 1.5, y: 4}
+  boundsHairpinSteerBoost: {x: 1.2, y: 3}
+  waypointCount: 7
+  boundsBaseWaypointDist: {x: 4, y: 8}
+  boundsDistSpeedMult: {x: 0.1, y: 0.2}
+  waypointSpacingMultiplier: 1.35
+  boundsArrivalRangeBase: {x: 4, y: 8}
+  boundsArrivalSpeedMult: {x: 0.1, y: 0.2}
+  waypointMaxLateralOffset: 0.7
+  laneChangeVariationSpeed: 0.25
+  maxDeviationDistance: 7
+  boundsPreCurveOffset: {x: 1, y: 8}
+  boundsPostCurveOffset: {x: 0.5, y: 4}
+  boundsSteerDeadzone: {x: 0.1, y: 0.02}
+  boundsCurveAngle: {x: 15, y: 25}
+  boundsHandbrakeAngle: {x: 30, y: 45}
+  boundsHairpinAngle: {x: 60, y: 85}
+  boundsMacroCurveAngle: {x: 35, y: 50}
+  boundsSafeCornerSpeed: {x: 60, y: 130}
+  boundsArcadeSteerAssist: {x: 0.2, y: 3.5}

@@ -30,11 +30,11 @@ namespace GearEngine.CarSimulation.Simulation
             }
         }
 
-        public void InitializeRun(PrometeoCarController car, SplineContainer trackContainer, RoguelikeCarStats stats, GearEngine.CarSimulation.Entity.CarEntity entity = null)
+        public void InitializeRun(PrometeoCarController car, SplineContainer trackContainer, RoguelikeCarStats stats, GearEngine.CarSimulation.Entity.CarEntity entity)
         {
-            if (trackContainer == null || trackContainer.Spline.Count == 0 || car == null)
+            if (trackContainer == null || trackContainer.Spline.Count == 0 || car == null || entity == null)
             {
-                Debug.LogError("[SplineCarRunnerService] Missing car or track references on initialization.");
+                Debug.LogError("[SplineCarRunnerService] Missing parameters on initialization.");
                 return;
             }
 
@@ -46,6 +46,7 @@ namespace GearEngine.CarSimulation.Simulation
                 targetCarRb = car.GetComponent<Rigidbody>(),
                 splineLength = trackContainer.Spline.GetLength(),
                 upcomingWaypoints = new Vector3[config.waypointCount],
+                Variables = config.variables,
                 sourceStats = stats
             };
 
@@ -53,25 +54,74 @@ namespace GearEngine.CarSimulation.Simulation
             sensor.service = this;
             sensor.car = car;
             
-            EvaluateProgressionStats(ctx, stats);
+            EvaluateProgressionStats(ctx);
             SetupPrometeoTouchOverride(ctx);
             ApplyPhysicalStatsToCar(ctx);
             
             activeRunners.Add(ctx);
+
+            if (config.variables != null)
+            {
+                SetEntityVariable(entity, config.variables.Speed, stats.statTopSpeed);
+                SetEntityVariable(entity, config.variables.Acceleration, stats.statAcceleration);
+                SetEntityVariable(entity, config.variables.Handling, stats.statSteeringGrip);
+                SetEntityVariable(entity, config.variables.Stability, stats.statRacingLine);
+                SetEntityVariable(entity, config.variables.Recovery, stats.statDriverReflexes);
+                SetEntityVariable(entity, config.variables.DriftPenalty, stats.statDriftControl);
+
+                Action<Scaffold.Entities.VariableValue> onVarChanged = _ => ReevaluateStats(ctx);
+                entity.Subscribe(config.variables.Speed, onVarChanged);
+                entity.Subscribe(config.variables.Acceleration, onVarChanged);
+                entity.Subscribe(config.variables.Handling, onVarChanged);
+                entity.Subscribe(config.variables.Stability, onVarChanged);
+                entity.Subscribe(config.variables.Recovery, onVarChanged);
+                entity.Subscribe(config.variables.DriftPenalty, onVarChanged);
+            }
         }
 
-        private void EvaluateProgressionStats(SplineCarRunnerContext ctx, RoguelikeCarStats stats)
+        private void SetEntityVariable(CarEntity entity, Scaffold.Entities.VariableSO variable, float value)
         {
-            if (config == null) return;
+            if (variable == null) return;
+            entity.AddVariable(variable, new Scaffold.Entities.FloatVariableValue { Value = value });
+        }
 
-            float normTopSpeed = stats.statTopSpeed / 100f;
-            float normAcceleration = stats.statAcceleration / 100f;
-            float normBrakingSystem = stats.statBrakingSystem / 100f;
-            float normDriftControl = stats.statDriftControl / 100f;
-            float normNitrousBoost = stats.statNitrousBoost / 100f;
-            float normSteeringGrip = stats.statSteeringGrip / 100f;
-            float normRacingLine = stats.statRacingLine / 100f;
-            float normDriverReflexes = stats.statDriverReflexes / 100f;
+        public void ReevaluateStats(SplineCarRunnerContext ctx)
+        {
+            if (ctx == null || ctx.targetCar == null || ctx.entity == null) return;
+            EvaluateProgressionStats(ctx);
+            ApplyPhysicalStatsToCar(ctx);
+        }
+
+        private void EvaluateProgressionStats(SplineCarRunnerContext ctx)
+        {
+            if (config == null || ctx.entity == null) return;
+
+            RoguelikeCarStats baseStats = ctx.sourceStats;
+            float s = baseStats.statTopSpeed;
+            float a = baseStats.statAcceleration;
+            float h = baseStats.statSteeringGrip;
+            float st = baseStats.statRacingLine;
+            float r = baseStats.statDriverReflexes;
+            float d = baseStats.statDriftControl;
+            
+            if (ctx.Variables != null)
+            {
+                ctx.entity.TryGetValue(ctx.Variables.Speed, out s);
+                ctx.entity.TryGetValue(ctx.Variables.Acceleration, out a);
+                ctx.entity.TryGetValue(ctx.Variables.Handling, out h);
+                ctx.entity.TryGetValue(ctx.Variables.Stability, out st);
+                ctx.entity.TryGetValue(ctx.Variables.Recovery, out r);
+                ctx.entity.TryGetValue(ctx.Variables.DriftPenalty, out d);
+            }
+
+            float normTopSpeed = s / 100f;
+            float normAcceleration = a / 100f;
+            float normBrakingSystem = baseStats.statBrakingSystem / 100f; // Braking handles independently for now
+            float normDriftControl = d / 100f;
+            float normNitrousBoost = baseStats.statNitrousBoost / 100f;
+            float normSteeringGrip = h / 100f;
+            float normRacingLine = st / 100f;
+            float normDriverReflexes = r / 100f;
 
             float effectiveSimulationStat = Mathf.Clamp01(normNitrousBoost + (normTopSpeed * 0.3f));
             ctx.currentSimulationMultiplier = Mathf.Lerp(1f, config.baseSimulationMultiplier, effectiveSimulationStat);

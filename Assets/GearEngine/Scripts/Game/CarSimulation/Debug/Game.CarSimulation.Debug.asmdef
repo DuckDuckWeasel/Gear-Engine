@@ -4,14 +4,16 @@
     "references": [
         "Game.CarSimulation",
         "Scaffold.Entities",
-        "VContainer"
+        "VContainer",
+        "PROMETEO"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": true,
     "precompiledReferences": [
-        "Sirenix.OdinInspector.Attributes.dll"
+        "Sirenix.OdinInspector.Attributes.dll",
+        "Sirenix.Serialization.dll"
     ],
     "autoReferenced": true,
     "defineConstraints": [],

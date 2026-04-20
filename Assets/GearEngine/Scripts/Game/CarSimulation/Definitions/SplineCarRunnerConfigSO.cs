@@ -1,4 +1,3 @@
-using System;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -7,6 +6,10 @@ namespace GearEngine.CarSimulation.Definitions
     [CreateAssetMenu(fileName = "SplineCarRunnerConfig", menuName = "GearEngine/Car Simulation/Spline Car Runner Config")]
     public class SplineCarRunnerConfigSO : ScriptableObject
     {
+        [FoldoutGroup("Simulation Global Settings", expanded: true)]
+        [InfoBox("Variables map definitions that this runner will attempt to read natively from Car Entities.")]
+        public CarVariableSet variables;
+
         [FoldoutGroup("Simulation Hardware Constraints", expanded: true)]
         [InfoBox("Limits max scaling for the simulation limits.")]
         public float baseMaxSpeed = 160f;

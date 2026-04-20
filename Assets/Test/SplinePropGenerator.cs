@@ -147,14 +147,20 @@ public class SplinePropGenerator : MonoBehaviour
     {
         foreach (var obj in generatedProps)
         {
-            if (obj != null) DestroyImmediate(obj);
+            if (obj != null)
+            {
+                if (Application.isPlaying) Destroy(obj);
+                else DestroyImmediate(obj);
+            }
         }
         generatedProps.Clear();
 
         Transform container = transform.Find("Generated Props");
         if (container != null)
         {
-            DestroyImmediate(container.gameObject);
+            container.name = "DELETED_PROPS"; // Rename to avoid finding it again before it gets collected
+            if (Application.isPlaying) Destroy(container.gameObject);
+            else DestroyImmediate(container.gameObject);
         }
     }
 }
