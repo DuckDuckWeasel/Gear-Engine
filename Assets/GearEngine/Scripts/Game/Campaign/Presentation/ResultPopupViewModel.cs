@@ -1,6 +1,7 @@
 using System;
 using GearEngine.Campaign;
 using GearEngine.Campaign.Services;
+using GearEngine.Currency;
 using Scaffold.MVVM;
 using Scaffold.Navigation.Contracts;
 using UnityEngine;
@@ -20,12 +21,11 @@ namespace GearEngine.Campaign.Presentation
         public int Score => result.Score;
         public int GoldAmount => result.Gold.Amount;
 
-        public int CurrentGold => walletService.GetWallet().Gold;
+        public long CurrentGold => currencyClient.GetWallet("gold")?.Current ?? 0;
 
         private readonly RaceResultModel result;
 
-        [Inject] private ITrackService trackService;
-        [Inject] private IWalletService walletService;
+        [Inject] private CurrencyClientModule currencyClient;
 
         public void Upgrade()
         {
@@ -43,12 +43,7 @@ namespace GearEngine.Campaign.Presentation
         {
             try
             {
-                if (result.IsGoodResult)
-                {
-                    trackService.AdvanceToNextTrack();
-                }
-
-                navigation.Open(new MainViewModel(), true, new NavigationOptions() { CloseAllViews = true});
+                navigation.Open(new MainViewModel(), true, new NavigationOptions() { CloseAllViews = true });
             }
             catch (Exception ex)
             {

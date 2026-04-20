@@ -35,7 +35,7 @@ namespace GearEngine.Campaign.Presentation
         [Inject] private IBoardService boardService;
         [Inject] private GearEngineFeatureToggleSO featureToggle;
         [Inject] private IDragService dragService;
-        [Inject] private IInventoryService inventoryService;
+        [Inject] private IRaceInventoryService inventoryService;
         [Inject] private IGearPresentationTransferService presentationTransferService;
 
         protected override void Initialize()

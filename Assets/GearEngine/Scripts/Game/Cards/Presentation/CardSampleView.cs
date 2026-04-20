@@ -14,26 +14,44 @@ namespace GearEngine.Cards.Presentation
         private TextMeshProUGUI goldLabel;
 
         [SerializeField]
-        private RectTransform slotsContainer;
+        private TextMeshProUGUI nextCostLabel;
 
         [SerializeField]
-        private TextMeshProUGUI slotRowTemplate;
+        private Button purchaseButton;
 
-        private readonly List<GameObject> slotRowInstances = new List<GameObject>();
+        [SerializeField]
+        private RectTransform unlockedListContainer;
+
+        [SerializeField]
+        private TextMeshProUGUI unlockedRowTemplate;
+
+        private readonly List<GameObject> unlockedRowInstances = new List<GameObject>();
 
         protected override void OnBind()
         {
             ValidateHierarchy();
-            EnsureSlotsLayout();
+            EnsureListLayout();
+            if (purchaseButton != null)
+            {
+                purchaseButton.onClick.AddListener(OnPurchaseClicked);
+            }
+
             Bind<long, long>(() => viewModel.Gold, OnGoldChanged);
-            Bind<int, int>(() => viewModel.InventoryRevision, OnInventoryRevisionChanged);
+            Bind<long, long>(() => viewModel.NextCost, OnNextCostChanged);
+            Bind<int, int>(() => viewModel.CardsRevision, OnCardsRevisionChanged);
             OnGoldChanged(viewModel.Gold);
-            RefreshSlotRows();
+            OnNextCostChanged(viewModel.NextCost);
+            RefreshUnlockedRows();
         }
 
         protected override void OnUnbind()
         {
-            ClearSlotRows();
+            if (purchaseButton != null)
+            {
+                purchaseButton.onClick.RemoveListener(OnPurchaseClicked);
+            }
+
+            ClearUnlockedRows();
             base.OnUnbind();
         }
 
@@ -44,22 +62,27 @@ namespace GearEngine.Cards.Presentation
                 throw new InvalidOperationException("[CardSampleView] Assign goldLabel.");
             }
 
-            if (slotsContainer == null)
+            if (nextCostLabel == null)
             {
-                throw new InvalidOperationException("[CardSampleView] Assign slotsContainer.");
+                throw new InvalidOperationException("[CardSampleView] Assign nextCostLabel.");
+            }
+
+            if (unlockedListContainer == null)
+            {
+                throw new InvalidOperationException("[CardSampleView] Assign unlockedListContainer.");
             }
         }
 
-        private void EnsureSlotsLayout()
+        private void EnsureListLayout()
         {
-            VerticalLayoutGroup layout = slotsContainer.GetComponent<VerticalLayoutGroup>();
+            VerticalLayoutGroup layout = unlockedListContainer.GetComponent<VerticalLayoutGroup>();
             if (layout != null)
             {
                 return;
             }
 
-            layout = slotsContainer.gameObject.AddComponent<VerticalLayoutGroup>();
-            layout.spacing = 10f;
+            layout = unlockedListContainer.gameObject.AddComponent<VerticalLayoutGroup>();
+            layout.spacing = 8f;
             layout.childAlignment = TextAnchor.UpperLeft;
             layout.childControlWidth = true;
             layout.childControlHeight = false;
@@ -72,57 +95,60 @@ namespace GearEngine.Cards.Presentation
             goldLabel.text = $"Gold: {value}";
         }
 
-        private void OnInventoryRevisionChanged(int _)
+        private void OnNextCostChanged(long value)
         {
-            RefreshSlotRows();
+            string cur = string.IsNullOrEmpty(viewModel.CurrencyId) ? "gold" : viewModel.CurrencyId;
+            nextCostLabel.text = $"Next card ({cur}): {value}";
         }
 
-        private void RefreshSlotRows()
+        private void OnCardsRevisionChanged(int _)
         {
-            ClearSlotRows();
-            IReadOnlyList<CardSlotSnapshot> slots = viewModel.Slots;
-            for (var i = 0; i < slots.Count; i++)
+            RefreshUnlockedRows();
+        }
+
+        private void OnPurchaseClicked()
+        {
+            try
             {
-                CreateSlotRow(i, slots[i]);
+                viewModel?.TryPurchaseRandomCard();
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"[CardSampleView] Purchase click failed: {ex.Message}\n{ex.StackTrace}");
             }
         }
 
-        private void CreateSlotRow(int index, CardSlotSnapshot slot)
+        private void RefreshUnlockedRows()
         {
-            var row = new GameObject($"SlotRow_{index}", typeof(RectTransform));
+            ClearUnlockedRows();
+            IReadOnlyList<string> ids = viewModel.UnlockedCardIds;
+            for (var i = 0; i < ids.Count; i++)
+            {
+                CreateUnlockedRow(i, ids[i]);
+            }
+        }
+
+        private void CreateUnlockedRow(int index, string cardId)
+        {
+            var row = new GameObject($"UnlockedRow_{index}", typeof(RectTransform));
             RectTransform rowRect = row.GetComponent<RectTransform>();
-            rowRect.SetParent(slotsContainer, false);
+            rowRect.SetParent(unlockedListContainer, false);
             rowRect.localScale = Vector3.one;
 
-            var horizontal = row.AddComponent<HorizontalLayoutGroup>();
-            horizontal.childAlignment = TextAnchor.MiddleLeft;
-            horizontal.spacing = 12f;
-            horizontal.childControlWidth = true;
-            horizontal.childForceExpandWidth = true;
-
             var rowLayout = row.AddComponent<LayoutElement>();
-            rowLayout.minHeight = 40f;
+            rowLayout.minHeight = 32f;
 
-            TextMeshProUGUI label = CreateLabelForRow(slot, index);
-            label.rectTransform.SetParent(rowRect, false);
-
-            if (slot.State == CardSlotState.Uncollected)
-            {
-                Button buy = CreateBuyButton(index);
-                buy.transform.SetParent(rowRect, false);
-            }
-
-            slotRowInstances.Add(row);
+            string label = viewModel.GetDisplayLabelForCard(cardId);
+            TextMeshProUGUI tmp = CreateUnlockedLabel($"{index + 1}. {label}");
+            tmp.rectTransform.SetParent(rowRect, false);
+            unlockedRowInstances.Add(row);
         }
 
-        private TextMeshProUGUI CreateLabelForRow(CardSlotSnapshot slot, int index)
+        private TextMeshProUGUI CreateUnlockedLabel(string text)
         {
-            string cardDisplay = string.IsNullOrEmpty(slot.CardId) ? "-" : slot.CardId;
-            string text = $"Slot {index}: {slot.State} | Card: {cardDisplay}";
-
-            if (slotRowTemplate != null)
+            if (unlockedRowTemplate != null)
             {
-                TextMeshProUGUI instance = Instantiate(slotRowTemplate);
+                TextMeshProUGUI instance = Instantiate(unlockedRowTemplate);
                 instance.gameObject.SetActive(true);
                 instance.text = text;
                 return instance;
@@ -131,66 +157,23 @@ namespace GearEngine.Cards.Presentation
             var go = new GameObject("Label", typeof(RectTransform));
             var tmp = go.AddComponent<TextMeshProUGUI>();
             tmp.text = text;
-            tmp.fontSize = 28;
+            tmp.fontSize = 26;
             tmp.color = Color.white;
             tmp.raycastTarget = false;
             return tmp;
         }
 
-        private Button CreateBuyButton(int slotIndex)
+        private void ClearUnlockedRows()
         {
-            var go = new GameObject("BuyButton", typeof(RectTransform), typeof(Image), typeof(Button));
-            var image = go.GetComponent<Image>();
-            image.color = new Color(0.2f, 0.45f, 0.85f, 1f);
-
-            var btn = go.GetComponent<Button>();
-            btn.onClick.AddListener(() => HandlePurchaseClicked(slotIndex));
-
-            var labelGo = new GameObject("Text", typeof(RectTransform));
-            labelGo.transform.SetParent(go.transform, false);
-            var tmp = labelGo.AddComponent<TextMeshProUGUI>();
-            tmp.text = "Buy";
-            tmp.fontSize = 24;
-            tmp.alignment = TextAlignmentOptions.Center;
-            tmp.color = Color.white;
-
-            RectTransform labelRect = labelGo.GetComponent<RectTransform>();
-            labelRect.anchorMin = Vector2.zero;
-            labelRect.anchorMax = Vector2.one;
-            labelRect.offsetMin = Vector2.zero;
-            labelRect.offsetMax = Vector2.zero;
-
-            LayoutElement layout = go.AddComponent<LayoutElement>();
-            layout.minWidth = 100f;
-            layout.preferredWidth = 120f;
-            layout.flexibleWidth = 0f;
-
-            return btn;
-        }
-
-        private void HandlePurchaseClicked(int slotIndex)
-        {
-            try
+            for (var i = 0; i < unlockedRowInstances.Count; i++)
             {
-                viewModel?.TryPurchaseSlot(slotIndex);
-            }
-            catch (Exception ex)
-            {
-                Debug.LogError($"[CardSampleView] Purchase click failed: {ex.Message}\n{ex.StackTrace}");
-            }
-        }
-
-        private void ClearSlotRows()
-        {
-            for (var i = 0; i < slotRowInstances.Count; i++)
-            {
-                if (slotRowInstances[i] != null)
+                if (unlockedRowInstances[i] != null)
                 {
-                    Destroy(slotRowInstances[i]);
+                    Destroy(unlockedRowInstances[i]);
                 }
             }
 
-            slotRowInstances.Clear();
+            unlockedRowInstances.Clear();
         }
     }
 }

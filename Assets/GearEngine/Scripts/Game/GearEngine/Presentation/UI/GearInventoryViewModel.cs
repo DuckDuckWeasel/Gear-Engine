@@ -10,7 +10,7 @@ namespace GearEngine.GearEngine.Presentation.UI
 {
     public partial class GearInventoryViewModel : ViewModel
     {
-        public GearInventoryViewModel(IGearEngineService engineService, IInventoryService inventoryService)
+        public GearInventoryViewModel(IGearEngineService engineService, IRaceInventoryService inventoryService)
         {
             this.engineService = engineService ?? throw new ArgumentNullException(nameof(engineService));
             this.inventoryService = inventoryService ?? throw new ArgumentNullException(nameof(inventoryService));
@@ -31,7 +31,7 @@ namespace GearEngine.GearEngine.Presentation.UI
         public bool CanDrag => engineService != null && !engineService.IsRunning;
 
         private readonly IGearEngineService engineService;
-        private readonly IInventoryService inventoryService;
+        private readonly IRaceInventoryService inventoryService;
 
         [ObservableProperty] private IItem selectedItem;
 

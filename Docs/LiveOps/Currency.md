@@ -16,7 +16,7 @@
 
 - Removing or migrating the legacy `GoldModule` / `GoldGameData` (parallel until a later milestone).
 - Editor asset authoring for currency icons.
-- Local `Campaign` `LocalWalletService` integration.
+- Local `Campaign` `LocalWalletService` (removed — campaign uses `CurrencyClientModule`).
 
 ## References
 

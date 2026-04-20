@@ -6,7 +6,7 @@ using GearEngine.GearEngine;
 
 namespace GearEngine.GearEngine.Services.Inventory
 {
-    public sealed class InventoryService : IInventoryService
+    public sealed class InventoryService : IRaceInventoryService
     {
         private readonly InventoryModel model;
 

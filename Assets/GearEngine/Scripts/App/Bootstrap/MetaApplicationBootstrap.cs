@@ -3,8 +3,12 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using GameModuleDTO.Modules.Ads;
+using GameModuleDTO.Modules.Cards;
 using GameModuleDTO.Modules.Currency;
 using GameModuleDTO.Modules.Gold;
+using GameModuleDTO.Modules.Inventory;
+using GameModuleDTO.Modules.Loadout;
+using GameModuleDTO.Modules.Tracks;
 using GearEngine.App.Bootstrap.Layers;
 using GearEngine.LayeredScope;
 using Scaffold.LiveOps;
@@ -54,7 +58,11 @@ namespace GearEngine.App.Bootstrap
                 GoldGameData goldData = liveOps.GetModuleData<GoldGameData>();
                 AdData adData = liveOps.GetModuleData<AdData>();
                 CurrencyGameData currencyData = liveOps.GetModuleData<CurrencyGameData>();
-                Debug.Log($"[Meta] LiveOps ready. GoldGameData={(goldData != null)}, AdData={(adData != null)}, CurrencyGameData wallets={(currencyData != null ? currencyData.Wallets.Count : 0)}.");
+                TrackGameData trackData = liveOps.GetModuleData<TrackGameData>();
+                LoadoutGameData loadoutData = liveOps.GetModuleData<LoadoutGameData>();
+                InventoryGameData inventoryData = liveOps.GetModuleData<InventoryGameData>();
+                CardGameData cardData = liveOps.GetModuleData<CardGameData>();
+                Debug.Log($"[Meta] LiveOps ready. GoldGameData={(goldData != null)}, AdData={(adData != null)}, CurrencyGameData wallets={(currencyData != null ? currencyData.Wallets.Count : 0)}, TrackGameData={(trackData != null)}, LoadoutGameData={(loadoutData != null)}, InventoryGameData={(inventoryData != null)}, CardGameData={(cardData != null)}.");
             }
             catch (Exception ex)
             {

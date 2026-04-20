@@ -1,6 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
+using GameModuleDTO.ModuleRequests;
+using GearEngine.App.Bootstrap.Cards;
+using GearEngine.Currency;
 using Scaffold.MVVM;
 using UnityEngine;
 
@@ -8,66 +12,72 @@ namespace GearEngine.Cards
 {
     public sealed partial class CardSampleViewModel : ViewModel
     {
-        public CardSampleViewModel(CardCatalogSO catalog)
+        public CardSampleViewModel(CardCatalogSO catalog, CurrencyClientModule currencyClient, CardsClientModule cardsClient)
         {
-            if (catalog == null)
-            {
-                throw new ArgumentNullException(nameof(catalog));
-            }
-
-            purchaseService = new LocalCardSlotPurchaseService(catalog, () => Gold, v => Gold = v);
-            SeedSlots();
+            this.catalog = catalog ?? throw new ArgumentNullException(nameof(catalog));
+            this.currencyClient = currencyClient ?? throw new ArgumentNullException(nameof(currencyClient));
+            this.cardsClient = cardsClient ?? throw new ArgumentNullException(nameof(cardsClient));
         }
 
-        public IReadOnlyList<CardSlotSnapshot> Slots => inventory.Slots;
-        
-        private readonly PlayerCardInventoryState inventory = new PlayerCardInventoryState();
-        private readonly LocalCardSlotPurchaseService purchaseService;
-        private readonly System.Random rng = new System.Random();
+        private readonly CardCatalogSO catalog;
+        private readonly CurrencyClientModule currencyClient;
+        private readonly CardsClientModule cardsClient;
 
         [ObservableProperty]
-        private long gold = 1000;
+        private long gold;
 
         [ObservableProperty]
-        private int inventoryRevision;
+        private long nextCost;
 
-        public void TryPurchaseSlot(int slotIndex)
+        [ObservableProperty]
+        private int cardsRevision;
+
+        public string CurrencyId => cardsClient.CurrencyId;
+
+        public IReadOnlyList<string> UnlockedCardIds => cardsClient.Unlocked ?? Array.Empty<string>();
+
+        /// <summary>Call after LiveOps client modules have completed <see cref="Scaffold.LiveOps.IAsyncInitializable.InitializeAsync"/>.</summary>
+        public void RefreshDisplay()
+        {
+            Gold = currencyClient.GetWallet("gold")?.Current ?? 0;
+            NextCost = cardsClient.NextCost;
+            CardsRevision++;
+        }
+
+        public string GetDisplayLabelForCard(string cardId)
+        {
+            if (string.IsNullOrEmpty(cardId) || catalog == null)
+            {
+                return cardId ?? string.Empty;
+            }
+
+            return catalog.TryGet(cardId, out CardDefinition def) && def != null && !string.IsNullOrEmpty(def.Id)
+                ? def.Id
+                : cardId;
+        }
+
+        public async void TryPurchaseRandomCard()
         {
             try
             {
-                if (!purchaseService.TryPurchaseSlot(inventory, slotIndex, rng, out string error))
+                PurchaseCardResponse response = await cardsClient.PurchaseAsync();
+                if (response == null)
                 {
-                    if (!string.IsNullOrEmpty(error))
-                    {
-                        Debug.LogError($"[CardSampleViewModel] Purchase failed: {error}");
-                    }
-
                     return;
                 }
 
-                InventoryRevision++;
+                if (!response.Success && !string.IsNullOrEmpty(response.UnlockedCardId))
+                {
+                    Debug.LogWarning("[CardSampleViewModel] Purchase reported failure but returned a card id.");
+                }
+
+                RefreshDisplay();
             }
             catch (Exception ex)
             {
-                Debug.LogError($"[CardSampleViewModel] TryPurchaseSlot failed: {ex.Message}\n{ex.StackTrace}");
+                Debug.LogError($"[CardSampleViewModel] TryPurchaseRandomCard failed: {ex.Message}\n{ex.StackTrace}");
                 throw;
             }
-        }
-
-        private void SeedSlots()
-        {
-            inventory.Slots.Clear();
-            for (var i = 0; i < 3; i++)
-            {
-                inventory.Slots.Add(new CardSlotSnapshot
-                {
-                    SlotIndex = i,
-                    State = CardSlotState.Uncollected,
-                    CardId = null,
-                });
-            }
-
-            InventoryRevision++;
         }
     }
 }

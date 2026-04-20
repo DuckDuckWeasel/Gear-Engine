@@ -29,8 +29,11 @@ This document captures **decided behavior**, **reconciliation + error flow**, an
 
 ### DI
 
-- `CloudCodeInstaller` registers **`CloudCodeOptimisticHandlerRegistry`** (singleton), **`CloudCodeErrorHandler`** (singleton), and **`ICloudCodeService` → `CloudCodeService`**. Subclass **`CloudCodeErrorHandler`** and register your subclass as **`CloudCodeErrorHandler`** if you need custom behavior.
+- `CloudCodeInstaller` registers **`CloudCodeOptimisticHandlerRegistry`** (singleton; ctor receives **`IObjectResolver`** for container discovery), **`CloudCodeErrorHandler`** (singleton), and **`ICloudCodeService` → `CloudCodeService`**. Subclass **`CloudCodeErrorHandler`** and register your subclass as **`CloudCodeErrorHandler`** if you need custom behavior.
+- **`CloudCodeOptimisticHandlerRegistry`**: internal dictionary keyed by **`(request CLR type, response CLR type)`**. **`TryResolve`** checks the dictionary first; on miss, resolves **`IEnumerable<IOptimisticCloudCodeHandler>`** from the container, finds a matching **`RequestClrType` / `ResponseClrType`** and **`TryMatch`**, then **`as`** to **`IRequestHandler<TResponse>`**. Successful container hits are **cached** in the same dictionary. **`Register<TRequest, TResponse>(...)`** remains the override (checked before container; also used in tests).
+- Handlers registered for discovery must implement **`IOptimisticCloudCodeHandler`** (marker with type identity) and **`IRequestHandler<TRequest, TResponse>`**. Prefer **`singleton`** registrations; caching a non-singleton instance on the registry would be incorrect.
 - `LiveOpsService` takes **`CloudCodeOptimisticHandlerRegistry`** and **`CloudCodeErrorHandler`** in addition to **`ICloudCodeService`** and **`IObjectResolver`**.
+- **`LiveOpsOptimisticRegistrationExtensions.RegisterOptimisticCloudCodeHandler<TImplementation>`** in `Scaffold.LiveOps.Container` registers **`As<IOptimisticCloudCodeHandler>().AsImplementedInterfaces()`**.
 
 ---
 
@@ -38,7 +41,7 @@ This document captures **decided behavior**, **reconciliation + error flow**, an
 
 | Piece | Decision |
 |--------|-----------|
-| **Registry** | **`(TRequest, TResponse)`** — `Register<TRequest, TResponse>(IRequestHandler<TRequest, TResponse>)`; lookup uses **`request.GetType()`** and **`typeof(TResponse)`** via **`TryResolve<TResponse>(module, endpoint, request, ...)`** (null request → no optimistic path). Direct `CallEndpointAsync` uses the **call payload** as `request`; GameApi uses the **typed `ModuleRequest<TResponse>`** (not the envelope). |
+| **Registry** | **`(TRequest, TResponse)`** — explicit `Register<TRequest, TResponse>(IRequestHandler<TRequest, TResponse>)` **or** DI discovery via **`IOptimisticCloudCodeHandler`** + **`IEnumerable<IOptimisticCloudCodeHandler>`** (no `MakeGenericType`; type pair from marker properties). Dictionary checked first; container hits cached. |
 | **`IRequestHandler`** | **`TryMatch` only** — non-generic registry slot. |
 | **`IRequestHandler<TResponse>`** | **`GetOptimisticResponse`**, **`Validate(server, optimistic)`** only. |
 | **`IRequestHandler<TRequest, TResponse>`** | App implements typed **`TryMatch`**, **`GetOptimisticResponse(TRequest)`**; inherits **`Validate`**. |
@@ -163,6 +166,7 @@ public interface IRequestHandler<TRequest, TResponse> : IRequestHandler<TRespons
 | 2026-04-01 | **`CloudCodeErrorHandler`** concrete, all Cloud Code failures | No optimistic-only interface; same hook for direct and trailing paths. |
 | 2026-04-01 | Null payload skips optimistic | Avoid `GetType()` on null. |
 | 2026-04-20 | **GameApi optimistic gate in `LiveOpsService` (Option A)** | Envelope breaks `(payload.GetType(), T)` lookup in `CloudCodeService`; keep **`(TRequest, TResponse)`** registry aligned with **`IGameApiHandler<TRequest, TResponse>`**; nested dispatch only after real envelope. |
+| 2026-04-21 | **Container discovery for optimistic handlers** | **`IOptimisticCloudCodeHandler`** marker; registry injects **`IObjectResolver`**; dict-first + cache; explicit **`Register`** overrides. |
 
 ---
 
@@ -178,7 +182,9 @@ public interface IRequestHandler<TRequest, TResponse> : IRequestHandler<TRespons
 
 - `Assets/Packages/com.scaffold.cloudcode/Runtime/CloudCodeService.cs` — `CallEndpointAsync`, `TryGetOptimisticResponse` → `CloudCodeOptimisticHandlerRegistry.TryResolve`, `RunReconciliationInTheBackground`.
 - `Assets/Packages/com.scaffold.cloudcode/Runtime/CloudCodeErrorHandler.cs` — error hook.
-- `Assets/Packages/com.scaffold.cloudcode/Runtime/Optimistic/CloudCodeOptimisticHandlerRegistry.cs` — `Register<TRequest, TResponse>`, **`TryResolve<TResponse>`**.
+- `Assets/Packages/com.scaffold.cloudcode/Runtime/Optimistic/CloudCodeOptimisticHandlerRegistry.cs` — `Register<TRequest, TResponse>`, **`TryResolve<TResponse>`**, container scan + cache.
+- `Assets/Packages/com.scaffold.cloudcode/Runtime/Optimistic/IOptimisticCloudCodeHandler.cs` — DI discovery marker.
+- `Assets/Packages/com.scaffold.liveops/Container/LiveOpsOptimisticRegistrationExtensions.cs` — optional **`RegisterOptimisticCloudCodeHandler<TImplementation>`**.
 - `Assets/Packages/com.scaffold.liveops/Runtime/LiveOpsService.cs` — **`CallGameApiAsync`**, **`UnwrapAndDispatch`**, **`RunGameApiReconciliationInTheBackground`**.
 - `Assets/Packages/com.scaffold.cloudcode/Runtime/Optimistic/IRequestHandler.cs` — handler contracts (`IRequestHandler`, `IRequestHandler<TResponse>`, `IRequestHandler<TRequest,TResponse>`).
 - `Assets/Packages/com.scaffold.cloudcode/Runtime/Handlers/` — `ICloudCodeCallHandler` and decorator implementations (including single-flight).

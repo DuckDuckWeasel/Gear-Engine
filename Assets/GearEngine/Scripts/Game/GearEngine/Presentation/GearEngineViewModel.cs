@@ -21,7 +21,7 @@ namespace GearEngine.GearEngine.Presentation
 
         [Inject] private IGearEngineService engineService;
         [Inject] private IBoardService boardService;
-        [Inject] private IInventoryService inventoryService;
+        [Inject] private IRaceInventoryService inventoryService;
         [Inject] private IGearPresentationTransferService presentationTransferService;
         [Inject] private IDragService dragService;
         [Inject] private GearEngineFeatureToggleSO featureToggle;

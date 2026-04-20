@@ -30,14 +30,11 @@ namespace Scaffold.LiveOps.Tests
                 ValidateCallback = (server, optimistic) => validateTcs.TrySetResult((server.Id, optimistic.Id)),
             };
 
-            var registry = new CloudCodeOptimisticHandlerRegistry();
-            registry.Register(handler);
-
             var fakeCloud = new FakeCloudCodeService(
                 onGameApi: () => serverGate.Task,
                 onLegacy: null);
 
-            ILiveOpsService sut = BuildSut(fakeCloud, registry, new CloudCodeErrorHandler());
+            ILiveOpsService sut = BuildSut(fakeCloud, new CloudCodeErrorHandler(), handler);
 
             Task<OptimisticGameApiResponse> call = sut.CallAsync(new OptimisticGameApiRequest { Marker = "x" }, CancellationToken.None);
             OptimisticGameApiResponse returned = await call.ConfigureAwait(false);
@@ -64,14 +61,11 @@ namespace Scaffold.LiveOps.Tests
                 OptimisticValue = new OptimisticGameApiResponse { Id = 7 },
             };
 
-            var registry = new CloudCodeOptimisticHandlerRegistry();
-            registry.Register(handler);
-
             var fakeCloud = new FakeCloudCodeService(
                 onGameApi: () => Task.FromResult(GameApiEnvelopeResponse.Exception(nameof(OptimisticGameApiRequest), new InvalidOperationException("server failed"))),
                 onLegacy: null);
 
-            ILiveOpsService sut = BuildSut(fakeCloud, registry, recordingErrors);
+            ILiveOpsService sut = BuildSut(fakeCloud, recordingErrors, handler);
 
             OptimisticGameApiResponse returned = await sut.CallAsync(new OptimisticGameApiRequest(), CancellationToken.None).ConfigureAwait(false);
             Assert.That(returned.Id, Is.EqualTo(7));
@@ -97,14 +91,11 @@ namespace Scaffold.LiveOps.Tests
                 ValidateCallback = (_, _) => throw new InvalidOperationException("validate failed"),
             };
 
-            var registry = new CloudCodeOptimisticHandlerRegistry();
-            registry.Register(handler);
-
             var fakeCloud = new FakeCloudCodeService(
                 onGameApi: () => Task.FromResult(GameApiEnvelopeResponse.Success(nameof(OptimisticGameApiRequest), new OptimisticGameApiResponse { Id = 99 }, null)),
                 onLegacy: null);
 
-            ILiveOpsService sut = BuildSut(fakeCloud, registry, recordingErrors);
+            ILiveOpsService sut = BuildSut(fakeCloud, recordingErrors, handler);
 
             OptimisticGameApiResponse returned = await sut.CallAsync(new OptimisticGameApiRequest(), CancellationToken.None).ConfigureAwait(false);
             Assert.That(returned.Id, Is.EqualTo(11));
@@ -131,14 +122,11 @@ namespace Scaffold.LiveOps.Tests
                 ValidateCallback = (_, _) => validateTcs.TrySetResult(true),
             };
 
-            var registry = new CloudCodeOptimisticHandlerRegistry();
-            registry.Register(handler);
-
             var fakeCloud = new FakeCloudCodeService(
                 onGameApi: () => serverGate.Task,
                 onLegacy: null);
 
-            ILiveOpsService sut = BuildSut(fakeCloud, registry, new CloudCodeErrorHandler(), nestedHandler);
+            ILiveOpsService sut = BuildSut(fakeCloud, new CloudCodeErrorHandler(), handler, nestedHandler);
 
             Task<OptimisticGameApiResponse> call = sut.CallAsync(new OptimisticGameApiRequest(), CancellationToken.None);
             _ = await call.ConfigureAwait(false);
@@ -154,12 +142,11 @@ namespace Scaffold.LiveOps.Tests
         [Test]
         public async Task GameApi_WithoutRegisteredHandler_AwaitsEnvelopeAndReturnsServerResult()
         {
-            var registry = new CloudCodeOptimisticHandlerRegistry();
             var fakeCloud = new FakeCloudCodeService(
                 onGameApi: () => Task.FromResult(GameApiEnvelopeResponse.Success(nameof(OptimisticGameApiRequest), new OptimisticGameApiResponse { Id = 55 }, null)),
                 onLegacy: null);
 
-            ILiveOpsService sut = BuildSut(fakeCloud, registry, new CloudCodeErrorHandler());
+            ILiveOpsService sut = BuildSut(fakeCloud, new CloudCodeErrorHandler(), optimisticHandler: null);
 
             OptimisticGameApiResponse returned = await sut.CallAsync(new OptimisticGameApiRequest(), CancellationToken.None).ConfigureAwait(false);
             Assert.That(returned.Id, Is.EqualTo(55));
@@ -168,7 +155,6 @@ namespace Scaffold.LiveOps.Tests
         [Test]
         public async Task LegacyPath_WithoutUsesGameApi_DoesNotUseGameApiEnvelope()
         {
-            var registry = new CloudCodeOptimisticHandlerRegistry();
             var fakeCloud = new FakeCloudCodeService(
                 onGameApi: null,
                 onLegacy: (module, endpoint, payload) =>
@@ -179,24 +165,56 @@ namespace Scaffold.LiveOps.Tests
                     return Task.FromResult<object>(new LegacyTestResponse { Value = 42 });
                 });
 
-            ILiveOpsService sut = BuildSut(fakeCloud, registry, new CloudCodeErrorHandler());
+            ILiveOpsService sut = BuildSut(fakeCloud, new CloudCodeErrorHandler(), optimisticHandler: null);
 
             LegacyTestResponse returned = await sut.CallAsync(new LegacyTestRequest(), CancellationToken.None).ConfigureAwait(false);
             Assert.That(returned.Value, Is.EqualTo(42));
             Assert.That(fakeCloud.GameApiCallCount, Is.EqualTo(0));
         }
 
+        [Test]
+        public async Task GameApiOptimistic_ExplicitRegisterOverridesContainerDiscovery()
+        {
+            var fakeCloud = new FakeCloudCodeService(
+                onGameApi: () => Task.FromResult(GameApiEnvelopeResponse.Success(nameof(OptimisticGameApiRequest), new OptimisticGameApiResponse { Id = 42 }, null)),
+                onLegacy: null);
+
+            var containerHandler = new TestOptimisticHandler
+            {
+                ExpectedModule = LiveOpsModule,
+                ExpectedEndpoint = "GameApi",
+                OptimisticValue = new OptimisticGameApiResponse { Id = 1 },
+            };
+
+            var explicitHandler = new TestOptimisticHandler
+            {
+                ExpectedModule = LiveOpsModule,
+                ExpectedEndpoint = "GameApi",
+                OptimisticValue = new OptimisticGameApiResponse { Id = 999 },
+            };
+
+            ILiveOpsService sut = BuildSutWithExplicitRegistryOverride(fakeCloud, new CloudCodeErrorHandler(), containerHandler, explicitHandler);
+
+            OptimisticGameApiResponse returned = await sut.CallAsync(new OptimisticGameApiRequest(), CancellationToken.None).ConfigureAwait(false);
+            Assert.That(returned.Id, Is.EqualTo(999));
+        }
+
         private static ILiveOpsService BuildSut(
             ICloudCodeService cloudCode,
-            CloudCodeOptimisticHandlerRegistry registry,
             CloudCodeErrorHandler errorHandler,
+            IOptimisticCloudCodeHandler optimisticHandler,
             params IResponseHandler[] nestedHandlers)
         {
             var builder = new ContainerBuilder();
             builder.RegisterInstance(cloudCode).As<ICloudCodeService>();
-            builder.RegisterInstance(registry);
+            builder.Register<CloudCodeOptimisticHandlerRegistry>(Lifetime.Singleton);
             builder.RegisterInstance(errorHandler);
             builder.RegisterInstance(NoMatchResponseHandler.Instance).As<IResponseHandler>();
+            if (optimisticHandler != null)
+            {
+                builder.RegisterInstance(optimisticHandler).As<IOptimisticCloudCodeHandler>().AsImplementedInterfaces();
+            }
+
             foreach (IResponseHandler h in nestedHandlers)
             {
                 if (h != null)
@@ -208,6 +226,27 @@ namespace Scaffold.LiveOps.Tests
             new LiveOpsInstaller().Install(builder);
             IObjectResolver container = builder.Build();
             return container.Resolve<ILiveOpsService>();
+        }
+
+        private static ILiveOpsService BuildSutWithExplicitRegistryOverride(
+            ICloudCodeService cloudCode,
+            CloudCodeErrorHandler errorHandler,
+            IOptimisticCloudCodeHandler containerHandler,
+            IRequestHandler<OptimisticGameApiRequest, OptimisticGameApiResponse> explicitHandler)
+        {
+            var builder = new ContainerBuilder();
+            builder.RegisterInstance(cloudCode).As<ICloudCodeService>();
+            builder.Register<CloudCodeOptimisticHandlerRegistry>(Lifetime.Singleton);
+            builder.RegisterInstance(errorHandler);
+            builder.RegisterInstance(NoMatchResponseHandler.Instance).As<IResponseHandler>();
+            builder.RegisterInstance(containerHandler).As<IOptimisticCloudCodeHandler>().AsImplementedInterfaces();
+            builder.RegisterBuildCallback(resolver =>
+            {
+                CloudCodeOptimisticHandlerRegistry registry = resolver.Resolve<CloudCodeOptimisticHandlerRegistry>();
+                registry.Register(explicitHandler);
+            });
+            new LiveOpsInstaller().Install(builder);
+            return builder.Build().Resolve<ILiveOpsService>();
         }
 
         [UsesGameApi]
@@ -236,8 +275,12 @@ namespace Scaffold.LiveOps.Tests
             public int Value { get; set; }
         }
 
-        private sealed class TestOptimisticHandler : IRequestHandler<OptimisticGameApiRequest, OptimisticGameApiResponse>
+        private sealed class TestOptimisticHandler : IRequestHandler<OptimisticGameApiRequest, OptimisticGameApiResponse>, IOptimisticCloudCodeHandler
         {
+            public Type RequestClrType => typeof(OptimisticGameApiRequest);
+
+            public Type ResponseClrType => typeof(OptimisticGameApiResponse);
+
             public string ExpectedModule { get; init; }
             public string ExpectedEndpoint { get; init; }
             public OptimisticGameApiResponse OptimisticValue { get; init; }

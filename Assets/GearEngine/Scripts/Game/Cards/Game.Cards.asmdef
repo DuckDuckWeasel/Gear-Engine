@@ -2,7 +2,9 @@
     "name": "Game.Cards",
     "rootNamespace": "GearEngine.Cards",
     "references": [
+        "Game.App.Bootstrap",
         "Game.SceneFoundation",
+        "Scaffold.LiveOps",
         "VContainer",
         "Scaffold.MVVM",
         "Scaffold.MVVM.View",
@@ -18,7 +20,8 @@
     "allowUnsafeCode": false,
     "overrideReferences": true,
     "precompiledReferences": [
-        "CommunityToolkit.Mvvm.dll"
+        "CommunityToolkit.Mvvm.dll",
+        "Scaffold.LiveOps.DTO.dll"
     ],
     "autoReferenced": true,
     "defineConstraints": [],

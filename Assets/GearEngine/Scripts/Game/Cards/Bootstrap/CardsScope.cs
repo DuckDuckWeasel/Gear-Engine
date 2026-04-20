@@ -1,5 +1,6 @@
 using System;
 using GearEngine.SceneFoundation.Bootstrap;
+using Scaffold.LiveOps;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
@@ -20,11 +21,13 @@ namespace GearEngine.Cards.Bootstrap
         {
             RequireCatalog();
             RequireSceneBootstrap();
+            RequireParentLiveOps();
         }
 
         protected override void InstallFeatureServices(IContainerBuilder builder)
         {
             builder.RegisterInstance(catalog);
+            builder.Register<CardSampleViewModel>(Lifetime.Transient);
             builder.RegisterComponent(sceneBootstrap).AsImplementedInterfaces().AsSelf();
         }
 
@@ -42,6 +45,37 @@ namespace GearEngine.Cards.Bootstrap
             {
                 throw new InvalidOperationException("[CardsScope] Assign sceneBootstrap.");
             }
+        }
+
+        private void RequireParentLiveOps()
+        {
+            if (TryResolveParentLiveOps() == null)
+            {
+                throw new InvalidOperationException(
+                    "[CardsScope] No ILiveOpsService in parent LifetimeScope. Set this scope's Parent to the Meta application root (or any scope that registered LiveOps + LiveOpsLayer).");
+            }
+        }
+
+        private ILiveOpsService TryResolveParentLiveOps()
+        {
+            for (LifetimeScope p = Parent; p != null; p = p.Parent)
+            {
+                if (p.Container == null)
+                {
+                    continue;
+                }
+
+                try
+                {
+                    return p.Container.Resolve<ILiveOpsService>();
+                }
+                catch (VContainerException)
+                {
+                    // Parent chain continues
+                }
+            }
+
+            return null;
         }
     }
 }

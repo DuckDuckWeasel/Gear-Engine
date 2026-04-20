@@ -201,20 +201,26 @@ Use this when the client can infer `**TResponse`** deterministically before Clou
 | ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | **Bootstrap order** | Install `**CloudCodeInstaller`** before `**LiveOpsInstaller**` so `**CloudCodeOptimisticHandlerRegistry**` and `**CloudCodeErrorHandler**` exist when `**LiveOpsService**` is resolved. Example: [LiveOpsLayer.cs](../../Assets/GearEngine/Scripts/App/Bootstrap/Layers/LiveOpsLayer.cs).                                                                                                                          |
 | **Implement**       | A class implementing `**IRequestHandler<TRequest, TResponse>`** (`Scaffold.CloudCode`) with the **same** `TRequest` / `TResponse` as your GameApi operation. Implement `**TryMatch(module, endpoint, request)`** (typically `endpoint == "GameApi"` and `module` matches `**ModuleRequest.ModuleName**`, usually `**"LiveOps"**`), `**GetOptimisticResponse**`, and `**Validate(server, optimistic)**`.            |
-| **Wire**            | From an `**IInstaller`** that is installed **on the same `IContainerBuilder` after** `**CloudCodeInstaller`** (see [LiveOpsLayer.cs](../../Assets/GearEngine/Scripts/App/Bootstrap/Layers/LiveOpsLayer.cs)), register handlers **after** the container is built via `**RegisterBuildCallback`**, or from an `**IAsyncInitializable**` that receives `**CloudCodeOptimisticHandlerRegistry**` (see snippets below). |
+| **Wire (preferred)** | Register the handler as a **singleton** with **`IOptimisticCloudCodeHandler`** so **`CloudCodeOptimisticHandlerRegistry`** can resolve **`IEnumerable<IOptimisticCloudCodeHandler>`** on first **`TryResolve`** and **cache** the handler. Use **[`LiveOpsOptimisticRegistrationExtensions`](../../Assets/Packages/com.scaffold.liveops/Container/LiveOpsOptimisticRegistrationExtensions.cs)** or `Register<THandler>(Lifetime.Singleton).As<IOptimisticCloudCodeHandler>().AsImplementedInterfaces()`. |
+| **Wire (override)** | Call **`registry.Register<TRequest, TResponse>(handler)`** (e.g. `RegisterBuildCallback` or `IAsyncInitializable`) when you need an explicit entry that **wins over** container discovery for the same type pair. |
 | **Errors**          | Optionally subclass `**CloudCodeErrorHandler`** and register that concrete type as `**CloudCodeErrorHandler**` for logging, invalidation, or telemetry when reconciliation fails.                                                                                                                                                                                                                                  |
 
 
 #### Example: where and how to register (VContainer)
 
-**1. Handler** — same `YourRequest` / `YourResponse` types as the server `IGameApiHandler<,>` (DTOs in `Scaffold.LiveOps.DTO`):
+**1. Handler** — same `YourRequest` / `YourResponse` as the server `IGameApiHandler<,>` (DTOs in `Scaffold.LiveOps.DTO`). Implement **`IOptimisticCloudCodeHandler`** so the registry can match types without reflection beyond `typeof`:
 
 ```csharp
+using System;
 using GameModuleDTO.ModuleRequests;
 using Scaffold.CloudCode;
 
-public sealed class YourRequestOptimisticHandler : IRequestHandler<YourRequest, YourResponse>
+public sealed class YourRequestOptimisticHandler : IRequestHandler<YourRequest, YourResponse>, IOptimisticCloudCodeHandler
 {
+    public Type RequestClrType => typeof(YourRequest);
+
+    public Type ResponseClrType => typeof(YourResponse);
+
     public bool TryMatch(string module, string endpoint, YourRequest request)
     {
         return module == request.ModuleName && endpoint == "GameApi";
@@ -232,29 +238,33 @@ public sealed class YourRequestOptimisticHandler : IRequestHandler<YourRequest, 
 }
 ```
 
-**2. Registration** — add an installer **after** `CloudCodeInstaller` on the same builder (e.g. append to `LiveOpsLayer.Install` or add a dedicated layer). Use `**RegisterBuildCallback`** so the singleton registry from `CloudCodeInstaller` already exists:
+Optional: subclass **`OptimisticHandlerBase<YourRequest, YourResponse>`** to supply **`RequestClrType`** / **`ResponseClrType`** and only implement **`TryMatch`**, **`GetOptimisticResponse`**, **`Validate`**.
+
+**2. Registration (preferred)** — same `IContainerBuilder` as **`CloudCodeInstaller`** / **`LiveOpsInstaller`** ([`LiveOpsLayer.cs`](../../Assets/GearEngine/Scripts/App/Bootstrap/Layers/LiveOpsLayer.cs)):
 
 ```csharp
-using Scaffold.CloudCode;
+using Scaffold.LiveOps.Container;
 using VContainer;
 using VContainer.Unity;
 
-public sealed class YourFeatureOptimisticInstaller : IInstaller
+public sealed class YourFeatureInstaller : IInstaller
 {
     public void Install(IContainerBuilder builder)
     {
-        builder.RegisterBuildCallback(resolver =>
-        {
-            CloudCodeOptimisticHandlerRegistry registry = resolver.Resolve<CloudCodeOptimisticHandlerRegistry>();
-            registry.Register(new YourRequestOptimisticHandler());
-        });
+        builder.RegisterOptimisticCloudCodeHandler<YourRequestOptimisticHandler>(Lifetime.Singleton);
     }
 }
 ```
 
-Then ensure `**new YourFeatureOptimisticInstaller().Install(builder)**` runs **after** `**new CloudCodeInstaller().Install(builder)`** (and before or after `**LiveOpsInstaller**` is fine, as long as the callback runs at `**Build()**` when all registrations are present).
+Equivalent manual registration:
 
-**Alternative:** inject `**CloudCodeOptimisticHandlerRegistry`** into a small `**IAsyncInitializable**` registered in your app scope and call `**Register(...)**` once in `**InitializeAsync**` (order: after Cloud Code types are registered, before you rely on optimism for that request type).
+```csharp
+builder.Register<YourRequestOptimisticHandler>(Lifetime.Singleton)
+    .As<IOptimisticCloudCodeHandler>()
+    .AsImplementedInterfaces();
+```
+
+**Override:** call **`CloudCodeOptimisticHandlerRegistry.Register<YourRequest, YourResponse>(handler)`** from `RegisterBuildCallback` or `IAsyncInitializable` when an explicit instance must win over a DI-registered handler for the same type pair.
 
 **Manual check:** Breakpoint in `**Validate`** or your error handler should run **after** the optimistic `**CallAsync`** has already completed to the caller; nested `**ModuleResponse**` side effects (via `**IResponseHandler**`) should run **only** after the real envelope is unwrapped, not on the optimistic value alone.
 

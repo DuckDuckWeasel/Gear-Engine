@@ -14,6 +14,10 @@ using GameModule.Modules.Gold;
 using GameModule.Modules.Level;
 using GameModule.ModuleFetchData.Http;
 using GameModule.Modules.Global;
+using GameModule.Modules.Tracks;
+using GameModule.Modules.Loadout;
+using GameModule.Modules.Inventory;
+using GameModule.Modules.Cards;
 
 /// <summary>
 /// Configures the dependency injection container for cloud code execution.
@@ -64,6 +68,10 @@ public partial class ModuleConfig : ICloudCodeSetup
         RegisterModuleScoped<CurrencyModule>(config);
         RegisterModuleScoped<LevelService>(config);
         RegisterModuleScoped<GlobalConfigModule>(config);
+        RegisterModuleScoped<TracksModule>(config);
+        RegisterModuleScoped<LoadoutModule>(config);
+        RegisterModuleScoped<InventoryModule>(config);
+        RegisterModuleScoped<CardsModule>(config);
     }
 
     private void RegisterScoped<T>(ICloudCodeConfig config) where T : class

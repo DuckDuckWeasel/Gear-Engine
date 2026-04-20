@@ -12,43 +12,43 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 469c24fdb3bd6431b92cc1465bd9166b, type: 3}
   m_Name: RemoteConfigDataStoreAsset
   m_EditorClassIdentifier: Unity.RemoteConfig.Editor::Unity.RemoteConfig.Editor.RemoteConfigDataStore
-  _rsKeyList: "[\r\n  {\r\n    \"metadata\": {\r\n      \"entityId\": \"c709e41f-746b-4f1d-afff-04d8bd1dc010\"\r\n   
+  _rsKeyList: "[\r\n  {\r\n    \"metadata\": {\r\n      \"entityId\": \"ad79c630-df20-40f6-a388-b148bd040194\"\r\n   
     },\r\n    \"rs\": {\r\n      \"key\": \"AdsConfig\",\r\n      \"type\": \"json\",\r\n     
     \"schemaId\": null,\r\n      \"value\": {\r\n        \"_cooldown\": 0\r\n     
-    }\r\n    }\r\n  },\r\n  {\r\n    \"metadata\": {\r\n      \"entityId\": \"d9857666-04dc-4a0a-bdb7-cca7ef88e93f\"\r\n   
+    }\r\n    }\r\n  },\r\n  {\r\n    \"metadata\": {\r\n      \"entityId\": \"578764b3-b546-4ca3-b49e-3199daac5a3d\"\r\n   
     },\r\n    \"rs\": {\r\n      \"key\": \"LevelConfig\",\r\n      \"type\": \"json\",\r\n     
     \"schemaId\": null,\r\n      \"value\": {\r\n        \"_levels\": [\r\n         
     1,\r\n          2\r\n        ],\r\n        \"_rewardPerLevel\": 10\r\n      }\r\n   
-    }\r\n  },\r\n  {\r\n    \"metadata\": {\r\n      \"entityId\": \"b879b090-e432-4bca-8592-1bf1304fd88f\"\r\n   
+    }\r\n  },\r\n  {\r\n    \"metadata\": {\r\n      \"entityId\": \"217c8142-2e17-4c3a-986f-46560860ca3e\"\r\n   
     },\r\n    \"rs\": {\r\n      \"key\": \"CurrencyConfig\",\r\n      \"type\":
     \"json\",\r\n      \"schemaId\": null,\r\n      \"value\": {\r\n        \"entries\":
     [\r\n          {\r\n            \"id\": \"gold\",\r\n            \"initial\":
     0\r\n          }\r\n        ]\r\n      }\r\n    }\r\n  },\r\n  {\r\n    \"metadata\":
-    {\r\n      \"entityId\": \"3937cb0d-bf37-4451-b7fe-c7d35a377831\"\r\n    },\r\n   
+    {\r\n      \"entityId\": \"8978fb7f-5d5e-4fc3-8ad4-b3682726630f\"\r\n    },\r\n   
     \"rs\": {\r\n      \"key\": \"GoldConfig\",\r\n      \"type\": \"json\",\r\n     
     \"schemaId\": null,\r\n      \"value\": {\r\n        \"_min\": 0,\r\n       
     \"_max\": 0\r\n      }\r\n    }\r\n  },\r\n  {\r\n    \"metadata\": {\r\n     
-    \"entityId\": \"879d9b91-4420-42fc-b6c4-d98729b8d440\"\r\n    },\r\n    \"rs\":
+    \"entityId\": \"3e111b7a-2aad-4ab5-bf4f-abce12ea5d7c\"\r\n    },\r\n    \"rs\":
     {\r\n      \"key\": \"GlobalConfigData\",\r\n      \"type\": \"json\",\r\n     
     \"schemaId\": null,\r\n      \"value\": {\r\n        \"_values\": {}\r\n     
     }\r\n    }\r\n  }\r\n]"
-  _rsLastCachedKeyList: "[\r\n  {\r\n    \"metadata\": {\r\n      \"entityId\": \"c709e41f-746b-4f1d-afff-04d8bd1dc010\"\r\n   
+  _rsLastCachedKeyList: "[\r\n  {\r\n    \"metadata\": {\r\n      \"entityId\": \"ad79c630-df20-40f6-a388-b148bd040194\"\r\n   
     },\r\n    \"rs\": {\r\n      \"key\": \"AdsConfig\",\r\n      \"type\": \"json\",\r\n     
     \"schemaId\": null,\r\n      \"value\": {\r\n        \"_cooldown\": 0\r\n     
-    }\r\n    }\r\n  },\r\n  {\r\n    \"metadata\": {\r\n      \"entityId\": \"d9857666-04dc-4a0a-bdb7-cca7ef88e93f\"\r\n   
+    }\r\n    }\r\n  },\r\n  {\r\n    \"metadata\": {\r\n      \"entityId\": \"578764b3-b546-4ca3-b49e-3199daac5a3d\"\r\n   
     },\r\n    \"rs\": {\r\n      \"key\": \"LevelConfig\",\r\n      \"type\": \"json\",\r\n     
     \"schemaId\": null,\r\n      \"value\": {\r\n        \"_levels\": [\r\n         
     1,\r\n          2\r\n        ],\r\n        \"_rewardPerLevel\": 10\r\n      }\r\n   
-    }\r\n  },\r\n  {\r\n    \"metadata\": {\r\n      \"entityId\": \"b879b090-e432-4bca-8592-1bf1304fd88f\"\r\n   
+    }\r\n  },\r\n  {\r\n    \"metadata\": {\r\n      \"entityId\": \"217c8142-2e17-4c3a-986f-46560860ca3e\"\r\n   
     },\r\n    \"rs\": {\r\n      \"key\": \"CurrencyConfig\",\r\n      \"type\":
     \"json\",\r\n      \"schemaId\": null,\r\n      \"value\": {\r\n        \"entries\":
     [\r\n          {\r\n            \"id\": \"gold\",\r\n            \"initial\":
     0\r\n          }\r\n        ]\r\n      }\r\n    }\r\n  },\r\n  {\r\n    \"metadata\":
-    {\r\n      \"entityId\": \"3937cb0d-bf37-4451-b7fe-c7d35a377831\"\r\n    },\r\n   
+    {\r\n      \"entityId\": \"8978fb7f-5d5e-4fc3-8ad4-b3682726630f\"\r\n    },\r\n   
     \"rs\": {\r\n      \"key\": \"GoldConfig\",\r\n      \"type\": \"json\",\r\n     
     \"schemaId\": null,\r\n      \"value\": {\r\n        \"_min\": 0,\r\n       
     \"_max\": 0\r\n      }\r\n    }\r\n  },\r\n  {\r\n    \"metadata\": {\r\n     
-    \"entityId\": \"879d9b91-4420-42fc-b6c4-d98729b8d440\"\r\n    },\r\n    \"rs\":
+    \"entityId\": \"3e111b7a-2aad-4ab5-bf4f-abce12ea5d7c\"\r\n    },\r\n    \"rs\":
     {\r\n      \"key\": \"GlobalConfigData\",\r\n      \"type\": \"json\",\r\n     
     \"schemaId\": null,\r\n      \"value\": {\r\n        \"_values\": {}\r\n     
     }\r\n    }\r\n  }\r\n]"

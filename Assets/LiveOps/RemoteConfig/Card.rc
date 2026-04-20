@@ -1,0 +1,11 @@
+{
+  "$schema": "https://ugs-config-schemas.unity3d.com/v1/remote-config.schema.json",
+  "entries": {
+    "CardConfig": {
+      "catalog": [],
+      "currencyId": "gold",
+      "baseCost": 100,
+      "costPerPurchaseGrowth": 50
+    }
+  }
+}

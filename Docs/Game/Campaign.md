@@ -1,12 +1,12 @@
 # Campaign (Game.Campaign)
 
-The **Game.Campaign** assembly implements a five-screen flow in a single scene: **Main → Setup → Active race → Result popup → Roguelike card pick → Main**. Root view models resolve shared services from VContainer (`ITrackService`, `IWalletService`, gear engine, car simulation) instead of passing a hand-built data bag between screens.
+The **Game.Campaign** assembly implements a five-screen flow in a single scene: **Main → Setup → Active race → Result popup → Roguelike card pick → Main**. Root view models resolve shared services from VContainer (`ITrackService`, `CurrencyClientModule` / LiveOps gold, `IOwnedGearInventoryService`, gear engine, car simulation) instead of passing a hand-built data bag between screens.
 
 ## Responsibilities
 
-- **`ITrackService` / `LocalTrackService`** — Current track and car, the active `LapRaceSession`, roguelike card pool, result recording (stub log), and campaign progression (stub index). Exposes **`TrackProgressModel`** via `GetTrackProgress()` and ordered `TrackEntry` list via `GetOrderedTracks()`.
-- **`IWalletService` / `LocalWalletService`** — In-memory gold; credited after each race. Exposes **`WalletModel`** via `GetWallet()`; spending uses `TrySpendGold(int)` (returns `false` when insufficient).
-- **`CampaignScope`** — Extends `SceneFoundationScope`, installs `GearMechanicsInstaller`, `CarTrackInstaller`, registers track and wallet services, and registers `CampaignBootstrap`.
+- **`ITrackService` / `TracksClientModule`** — Current track and car, the active `LapRaceSession`, roguelike card pool, and server-backed race results via `RecordResultAsync`. Exposes **`TrackProgressModel`** via `GetTrackProgress()` and ordered `TrackEntry` list via `GetOrderedTracks()`.
+- **`CurrencyClientModule`** (parent / Meta `LiveOps` scope) — Server-backed gold via `AddAsync("gold", amount)` / `GetWallet("gold")`; see [Currency.md](../LiveOps/Currency.md).
+- **`CampaignScope`** — Extends `SceneFoundationScope`, installs `GearMechanicsInstaller`, `CarTrackInstaller`, registers track/loadout/inventory LiveOps client modules (parent scope provides `CurrencyClientModule` / shared `CardsClientModule`), and registers `CampaignBootstrap`.
 - **`CampaignBootstrap`** — On startup, creates the initial `LapRaceSession` via `TrackSimulationFactory`, assigns it to `ITrackService` and `IRaceSessionRunner`, then opens `MainViewModel`.
 
 ## Simulation wiring
@@ -27,6 +27,6 @@ Edit Mode tests live under `Assets/GearEngine/Scripts/Game/Campaign/Tests/Editor
 
 Stub prefabs and ViewConfigs are under `Assets/GearEngine/Prefabs/Campaign/` and `Assets/GearEngine/Data/Campaign/` for reference; replace or extend them for production UI.
 
-## Stubs vs. future LiveOps
+## LiveOps coupling
 
-`LocalTrackService` and `LocalWalletService` are intentionally in-memory and logging-only where persistence would go, so they can be swapped for LiveOps-backed implementations without changing the view models.
+Campaign progression, gold, gear inventory, board loadout, and card unlocks are backed by LiveOps modules when the scene’s `CampaignScope` parent provides `ILiveOpsService`. `LocalTrackService` remains available for isolated tests.

@@ -5,33 +5,39 @@ using Newtonsoft.Json;
 
 namespace GameModuleDTO.Modules.Cards
 {
-    /// <summary>
-    /// Client-facing cards payload (stub until module merges persistence + config like gold).
-    /// </summary>
     public sealed class CardGameData : IGameModuleData
     {
-        /// <inheritdoc />
-        public string Key => typeof(CardGameData).Name;
+        public string Key => nameof(CardGameData);
 
-        [JsonProperty("slots")]
-        private List<CardSlotEntry> _slots = new List<CardSlotEntry>();
+        [JsonProperty("unlocked")]
+        public List<string> Unlocked { get; set; } = new List<string>();
 
-        [JsonIgnore]
-        public IReadOnlyList<CardSlotEntry> Slots => _slots;
+        [JsonProperty("nextCost")]
+        public long NextCost { get; set; }
+
+        [JsonProperty("currencyId")]
+        public string CurrencyId { get; set; } = string.Empty;
 
         [JsonConstructor]
         private CardGameData()
         {
         }
 
-        public CardGameData(IEnumerable<CardSlotEntry> slots)
+        public CardGameData(CardPersistence persistence, CardConfig config)
         {
-            if (slots == null)
+            if (persistence == null)
             {
-                throw new ArgumentNullException(nameof(slots));
+                throw new ArgumentNullException(nameof(persistence));
             }
 
-            _slots = new List<CardSlotEntry>(slots);
+            if (config == null)
+            {
+                throw new ArgumentNullException(nameof(config));
+            }
+
+            Unlocked = new List<string>(persistence.Unlocked);
+            NextCost = config.CostFor(Unlocked.Count);
+            CurrencyId = config.CurrencyId;
         }
     }
 }

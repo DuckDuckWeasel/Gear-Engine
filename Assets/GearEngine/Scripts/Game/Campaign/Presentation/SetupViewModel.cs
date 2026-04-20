@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using GearEngine.Campaign.Services;
 using GearEngine.GearEngine;
 using GearEngine.GearEngine.Config;
@@ -31,9 +32,10 @@ namespace GearEngine.Campaign.Presentation
         [Inject] private IEventBus eventBus;
         [Inject] private GearEngineFeatureToggleSO featureToggle;
         [Inject] private IDragService dragService;
-        [Inject] private IInventoryService inventoryService;
+        [Inject] private IRaceInventoryService inventoryService;
         [Inject] private IGearPresentationTransferService presentationTransferService;
         [Inject] private IGearLoadoutService loadoutService;
+        [Inject] private IOwnedGearInventoryService ownedGearInventoryService;
 
         protected override void Initialize()
         {
@@ -61,11 +63,16 @@ namespace GearEngine.Campaign.Presentation
 
         public void GoToRace()
         {
+            _ = GoToRaceAsync();
+        }
+
+        private async Task GoToRaceAsync()
+        {
             try
             {
                 BoardLayoutData snapshot = BoardLayoutData.FromNodes(boardService.GetAllNodes());
                 loadoutService.SaveBoardLayout(snapshot);
-                loadoutService.SaveInventoryGearConfigs(SnapshotInventoryGearConfigs());
+                await ownedGearInventoryService.SaveOwnedGearConfigsAsync(SnapshotInventoryGearConfigs());
 
                 navigation.Open(new ActiveRaceViewModel(), closeCurrent: true);
             }

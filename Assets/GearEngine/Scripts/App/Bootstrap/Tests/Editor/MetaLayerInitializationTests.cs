@@ -58,12 +58,9 @@ namespace GearEngine.App.Bootstrap.Tests.Editor
                 ValidateCallback = (server, optimistic) => validateTcs.TrySetResult((server.Id, optimistic.Id)),
             };
 
-            var registry = new CloudCodeOptimisticHandlerRegistry();
-            registry.Register(optimisticHandler);
-
             var fakeCloud = new MetaFakeCloudCodeService(() => serverGate.Task);
 
-            ILiveOpsService liveOps = BuildLiveOpsLayerStyleContainer(fakeCloud, registry);
+            ILiveOpsService liveOps = BuildLiveOpsLayerStyleContainer(fakeCloud, optimisticHandler);
 
             Task<MetaOptimisticResponse> call = liveOps.CallAsync(new MetaOptimisticRequest { Marker = "meta-test" }, CancellationToken.None);
             MetaOptimisticResponse returned = await call.ConfigureAwait(false);
@@ -131,13 +128,14 @@ namespace GearEngine.App.Bootstrap.Tests.Editor
         /// </summary>
         private static ILiveOpsService BuildLiveOpsLayerStyleContainer(
             ICloudCodeService cloudCode,
-            CloudCodeOptimisticHandlerRegistry optimisticRegistry)
+            IOptimisticCloudCodeHandler optimisticHandler)
         {
             var builder = new ContainerBuilder();
             builder.RegisterInstance(cloudCode).As<ICloudCodeService>();
-            builder.RegisterInstance(optimisticRegistry);
+            builder.Register<CloudCodeOptimisticHandlerRegistry>(Lifetime.Singleton);
             builder.RegisterInstance(new CloudCodeErrorHandler());
             builder.RegisterInstance(MetaNoMatchResponseHandler.Instance).As<IResponseHandler>();
+            builder.RegisterInstance(optimisticHandler).As<IOptimisticCloudCodeHandler>().AsImplementedInterfaces();
             new LiveOpsInstaller().Install(builder);
             IObjectResolver container = builder.Build();
             return container.Resolve<ILiveOpsService>();
@@ -154,8 +152,12 @@ namespace GearEngine.App.Bootstrap.Tests.Editor
             public int Id { get; set; }
         }
 
-        private sealed class MetaOptimisticHandler : IRequestHandler<MetaOptimisticRequest, MetaOptimisticResponse>
+        private sealed class MetaOptimisticHandler : IRequestHandler<MetaOptimisticRequest, MetaOptimisticResponse>, IOptimisticCloudCodeHandler
         {
+            public Type RequestClrType => typeof(MetaOptimisticRequest);
+
+            public Type ResponseClrType => typeof(MetaOptimisticResponse);
+
             public MetaOptimisticResponse OptimisticValue { get; init; }
 
             public Action<MetaOptimisticResponse, MetaOptimisticResponse> ValidateCallback { get; init; }

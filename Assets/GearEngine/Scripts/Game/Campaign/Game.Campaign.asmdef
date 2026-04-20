@@ -2,6 +2,7 @@
     "name": "Game.Campaign",
     "rootNamespace": "GearEngine.Campaign",
     "references": [
+        "Game.App.Bootstrap",
         "Game.SceneFoundation",
         "Game.GearEngine",
         "Game.GearEngine.FrustumFit",
@@ -19,6 +20,8 @@
         "Scaffold.Navigation",
         "Scaffold.Navigation.Container",
         "Scaffold.Scope",
+        "Scaffold.LiveOps",
+        "Core.LayeredScope",
         "Unity.Splines",
         "Unity.TextMeshPro",
         "UnityEngine.UI"
@@ -29,7 +32,8 @@
     "overrideReferences": true,
     "precompiledReferences": [
         "CommunityToolkit.Mvvm.dll",
-        "DOTween.dll"
+        "DOTween.dll",
+        "Scaffold.LiveOps.DTO.dll"
     ],
     "autoReferenced": true,
     "defineConstraints": [],

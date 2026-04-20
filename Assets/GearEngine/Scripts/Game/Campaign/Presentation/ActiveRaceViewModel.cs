@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using GearEngine.Campaign;
 using GearEngine.Campaign.Bootstrap;
@@ -7,6 +8,7 @@ using GearEngine.CarSimulation;
 using GearEngine.CarSimulation.Definitions;
 using GearEngine.CarSimulation.Presentation;
 using GearEngine.CarSimulation.Simulation;
+using GearEngine.Currency;
 using GearEngine.GearEngine;
 using Scaffold.MVVM;
 using Scaffold.Navigation.Contracts;
@@ -23,7 +25,7 @@ namespace GearEngine.Campaign.Presentation
         public CarViewModel Car { get; private set; }
 
         [Inject] private ITrackService trackService;
-        [Inject] private IWalletService walletService;
+        [Inject] private CurrencyClientModule currencyClient;
         [Inject] private IGearEngineService engineService;
         [Inject] private TrackSimulationFactory trackFactory;
         [Inject] private RaceManagerService raceManager;
@@ -94,14 +96,23 @@ namespace GearEngine.Campaign.Presentation
 
         private void OnRaceCompleted()
         {
+            _ = OnRaceCompletedAsync();
+        }
+
+        private async Task OnRaceCompletedAsync()
+        {
             try
             {
                 engineService.ResetGridSimulationState();
 
                 RaceState session = Track.Session;
                 RaceResultModel result = new RaceResultModel(session.RaceTime, session.CurrentLap, trackService.CurrentTrack);
-                walletService.AddGold(result.Gold.Amount);
-                trackService.RecordResult(result);
+                if (result.Gold.Amount > 0)
+                {
+                    await currencyClient.AddAsync("gold", result.Gold.Amount);
+                }
+
+                await trackService.RecordResultAsync(result);
                 navigation.Open(new ResultPopupViewModel(result));
             }
             catch (Exception ex)

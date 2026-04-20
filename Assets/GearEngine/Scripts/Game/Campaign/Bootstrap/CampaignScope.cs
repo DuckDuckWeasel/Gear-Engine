@@ -1,4 +1,9 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using GameModuleDTO.Modules.Inventory;
+using GameModuleDTO.Modules.Loadout;
+using GearEngine.Campaign.Bootstrap.LiveOps;
 using GearEngine.Campaign.Services;
 using GearEngine.CarSimulation.Bootstrap;
 using GearEngine.CarSimulation.Definitions;
@@ -6,6 +11,7 @@ using GearEngine.GearEngine;
 using GearEngine.GearEngine.Bootstrap;
 using GearEngine.GearEngine.Config;
 using GearEngine.SceneFoundation.Bootstrap;
+using Scaffold.LiveOps;
 using UnityEngine;
 using UnityEngine.Serialization;
 using VContainer;
@@ -69,34 +75,156 @@ namespace GearEngine.Campaign.Bootstrap
         protected override void InstallFeatureServices(IContainerBuilder builder)
         {
             GearEngineStartData gearStart = campaignGearStartData;
-
-            LocalGearLoadoutService loadoutService = new LocalGearLoadoutService();
-            if (gearStart.BoardLoadout.BoardLayout != null)
+            ILiveOpsService liveOps = TryResolveParentLiveOps();
+            if (liveOps == null)
             {
-                loadoutService.SaveBoardLayout(gearStart.BoardLoadout.BoardLayout);
+                throw new InvalidOperationException(
+                    "[CampaignScope] No ILiveOpsService in parent LifetimeScope. Assign this scope's Parent to the Meta application root (or any scope that registered LiveOps).");
             }
 
-            GearInventoryLoadoutData inventoryLoadout = loadoutService.HasSavedInventory
-                ? GearInventoryLoadoutData.FromGearConfigs(gearStart.InventoryLoadout.MaxSlots, loadoutService.GetInventoryGearConfigs())
-                : gearStart.GetInventoryLoadoutData();
+            TrackCatalogSO trackCatalog = ScriptableObject.CreateInstance<TrackCatalogSO>();
+            trackCatalog.SetRuntimeEntries(tracks, roguelikeCardPool);
 
-            new GearMechanicsInstaller(boardRules, featureToggle, inventoryLoadout, gearStart.GetBoardLoadoutData()).Install(builder);
+            BoardLayoutData initialBoard = gearStart.BoardLoadout.BoardLayout;
+            GearCatalogSO gearCatalog = BuildGearCatalog(gearStart, roguelikeCardPool, initialBoard);
+
+            GearInventoryLoadoutData inventoryLoadout = ResolveInventorySeed(gearStart, gearCatalog, liveOps);
+            GearBoardLoadoutData boardLoadout = ResolveBoardSeed(gearStart, gearCatalog, liveOps);
+
+            new GearMechanicsInstaller(boardRules, featureToggle, inventoryLoadout, boardLoadout).Install(builder);
             builder.RegisterInstance(splineCarRunnerConfig);
             new CarTrackInstaller().Install(builder);
 
             RaceSessionConfig raceSessionTemplate = campaignRaceSession ?? new RaceSessionConfig();
             builder.RegisterInstance(new CampaignRaceSessionDefaults(raceSessionTemplate));
 
-            LocalTrackService trackService = new LocalTrackService(tracks, roguelikeCardPool);
-            builder.RegisterInstance<ITrackService>(trackService);
+            builder.RegisterInstance(trackCatalog);
+            builder.RegisterInstance(gearCatalog);
+            builder.Register<TracksClientModule>(Lifetime.Singleton).As<ITrackService>().AsSelf();
+            builder.Register<LoadoutClientModule>(Lifetime.Singleton).As<IGearLoadoutService>().AsSelf();
+            builder.Register<InventoryClientModule>(Lifetime.Singleton).As<IOwnedGearInventoryService>().AsSelf();
 
             builder.RegisterInstance(gearStart);
-
-            LocalWalletService walletService = new LocalWalletService(initialGold: 0);
-            builder.RegisterInstance<IWalletService>(walletService);
-
-            builder.RegisterInstance<IGearLoadoutService>(loadoutService);
             builder.RegisterComponent(sceneBootstrap).AsImplementedInterfaces().AsSelf();
+        }
+
+        private ILiveOpsService TryResolveParentLiveOps()
+        {
+            for (LifetimeScope p = Parent; p != null; p = p.Parent)
+            {
+                if (p.Container == null)
+                {
+                    continue;
+                }
+
+                try
+                {
+                    return p.Container.Resolve<ILiveOpsService>();
+                }
+                catch (VContainerException)
+                {
+                    // Parent chain continues
+                }
+            }
+
+            return null;
+        }
+
+        private static GearCatalogSO BuildGearCatalog(GearEngineStartData gearStart, GearConfig[] roguelike, BoardLayoutData boardLayout)
+        {
+            var set = new HashSet<GearConfig>();
+            if (roguelike != null)
+            {
+                foreach (GearConfig g in roguelike)
+                {
+                    if (g != null)
+                    {
+                        set.Add(g);
+                    }
+                }
+            }
+
+            if (gearStart?.GetInventoryLoadoutData()?.StartingItems != null)
+            {
+                foreach (GearConfig g in gearStart.GetInventoryLoadoutData().StartingItems)
+                {
+                    if (g != null)
+                    {
+                        set.Add(g);
+                    }
+                }
+            }
+
+            if (boardLayout?.Placements != null)
+            {
+                foreach (BoardGearPlacementData p in boardLayout.Placements)
+                {
+                    if (p?.GearConfig != null)
+                    {
+                        set.Add(p.GearConfig);
+                    }
+                }
+            }
+
+            GearCatalogSO catalog = ScriptableObject.CreateInstance<GearCatalogSO>();
+            catalog.SetRuntimeEntries(set.Count > 0 ? set.ToArray() : Array.Empty<GearConfig>());
+            return catalog;
+        }
+
+        private static GearInventoryLoadoutData ResolveInventorySeed(
+            GearEngineStartData gearStart,
+            GearCatalogSO gearCatalog,
+            ILiveOpsService liveOps)
+        {
+            InventoryGameData cloud = liveOps.GetModuleData<InventoryGameData>();
+            if (cloud != null && cloud.GearIds.Count > 0)
+            {
+                var configs = new List<GearConfig>();
+                foreach (string id in cloud.GearIds)
+                {
+                    GearConfig g = gearCatalog.Get(id);
+                    if (g != null)
+                    {
+                        configs.Add(g);
+                    }
+                }
+
+                if (configs.Count > 0)
+                {
+                    return GearInventoryLoadoutData.FromGearConfigs(gearStart.InventoryLoadout.MaxSlots, configs);
+                }
+            }
+
+            return gearStart.GetInventoryLoadoutData();
+        }
+
+        private static GearBoardLoadoutData ResolveBoardSeed(
+            GearEngineStartData gearStart,
+            GearCatalogSO gearCatalog,
+            ILiveOpsService liveOps)
+        {
+            LoadoutGameData cloud = liveOps.GetModuleData<LoadoutGameData>();
+            if (cloud != null && cloud.Board.Count > 0)
+            {
+                var items = new List<BoardGearPlacementData>();
+                foreach (LoadoutPlacement p in cloud.Board)
+                {
+                    GearConfig g = gearCatalog.Get(p.GearId);
+                    if (g != null)
+                    {
+                        items.Add(new BoardGearPlacementData(new Vector2Int(p.X, p.Y), g));
+                    }
+                }
+
+                if (items.Count > 0)
+                {
+                    var boardData = new GearBoardLoadoutData();
+                    boardData.BoardLayout = new BoardLayoutData(items);
+                    return boardData;
+                }
+            }
+
+            return gearStart.GetBoardLoadoutData();
         }
     }
 

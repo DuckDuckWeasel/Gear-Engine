@@ -1,15 +1,25 @@
+using System;
+using System.Threading;
+using System.Threading.Tasks;
+using GameModuleDTO.GameModule;
+using GameModuleDTO.Modules.Currency;
+using GameModuleDTO.ModuleRequests;
 using GearEngine.Campaign;
 using GearEngine.Campaign.Presentation;
 using GearEngine.CarSimulation.Definitions;
+using GearEngine.Currency;
+using Newtonsoft.Json;
 using NUnit.Framework;
+using Scaffold.LiveOps;
 using UnityEngine;
+using VContainer;
 
 namespace GearEngine.Campaign.Tests.Editor
 {
     public sealed class ResultPopupViewModelTests
     {
         [Test]
-        public void Continue_WhenGoodResult_AdvancesTrackAndOpensMain()
+        public void Continue_WhenGoodResult_OpensMain()
         {
             TrackDefinition track = CampaignTestUtilities.CreateTrackWithScoreBandsForTests(
                 new TrackScoreBand(50f, 800),
@@ -17,26 +27,28 @@ namespace GearEngine.Campaign.Tests.Editor
             var good = new RaceResultModel(raceTime: 0f, lapCount: 1, track);
             Assert.That(good.IsGoodResult, Is.True);
 
-            var trackService = new FakeTrackService(null, null);
-            var wallet = new FakeWalletService();
             var navigation = new RecordingNavigation();
 
-            var vm = new ResultPopupViewModel(good);
-            ViewModelTestInject.InjectPrivateField(vm, "trackService", trackService);
-            ViewModelTestInject.InjectPrivateField(vm, "walletService", wallet);
-            ViewModelTestInject.InjectNavigation(vm, navigation);
+            using (IObjectResolver container = BuildCurrencyContainer(100))
+            {
+                CurrencyClientModule currency = container.Resolve<CurrencyClientModule>();
+                currency.InitializeAsync(CancellationToken.None).GetAwaiter().GetResult();
 
-            vm.Continue();
+                var vm = new ResultPopupViewModel(good);
+                ViewModelTestInject.InjectPrivateField(vm, "currencyClient", currency);
+                ViewModelTestInject.InjectNavigation(vm, navigation);
 
-            Assert.That(trackService.AdvanceCallCount, Is.EqualTo(1));
-            Assert.That(navigation.OpenedControllers.Count, Is.EqualTo(1));
-            Assert.That(navigation.OpenedControllers[0], Is.InstanceOf<MainViewModel>());
+                vm.Continue();
 
-            Object.DestroyImmediate(track);
+                Assert.That(navigation.OpenedControllers.Count, Is.EqualTo(1));
+                Assert.That(navigation.OpenedControllers[0], Is.InstanceOf<MainViewModel>());
+            }
+
+            UnityEngine.Object.DestroyImmediate(track);
         }
 
         [Test]
-        public void Continue_WhenPoorResult_DoesNotAdvanceTrack()
+        public void Continue_WhenPoorResult_OpensMain()
         {
             TrackDefinition track = CampaignTestUtilities.CreateTrackWithScoreBandsForTests(
                 new TrackScoreBand(50f, 800),
@@ -45,22 +57,24 @@ namespace GearEngine.Campaign.Tests.Editor
             var poor = new RaceResultModel(raceTime: 100f, lapCount: 1, track);
             Assert.That(poor.IsGoodResult, Is.False);
 
-            var trackService = new FakeTrackService(null, null);
-            var wallet = new FakeWalletService();
             var navigation = new RecordingNavigation();
 
-            var vm = new ResultPopupViewModel(poor);
-            ViewModelTestInject.InjectPrivateField(vm, "trackService", trackService);
-            ViewModelTestInject.InjectPrivateField(vm, "walletService", wallet);
-            ViewModelTestInject.InjectNavigation(vm, navigation);
+            using (IObjectResolver container = BuildCurrencyContainer(0))
+            {
+                CurrencyClientModule currency = container.Resolve<CurrencyClientModule>();
+                currency.InitializeAsync(CancellationToken.None).GetAwaiter().GetResult();
 
-            vm.Continue();
+                var vm = new ResultPopupViewModel(poor);
+                ViewModelTestInject.InjectPrivateField(vm, "currencyClient", currency);
+                ViewModelTestInject.InjectNavigation(vm, navigation);
 
-            Assert.That(trackService.AdvanceCallCount, Is.EqualTo(0));
-            Assert.That(navigation.OpenedControllers.Count, Is.EqualTo(1));
-            Assert.That(navigation.OpenedControllers[0], Is.InstanceOf<MainViewModel>());
+                vm.Continue();
 
-            Object.DestroyImmediate(track);
+                Assert.That(navigation.OpenedControllers.Count, Is.EqualTo(1));
+                Assert.That(navigation.OpenedControllers[0], Is.InstanceOf<MainViewModel>());
+            }
+
+            UnityEngine.Object.DestroyImmediate(track);
         }
 
         [Test]
@@ -70,21 +84,67 @@ namespace GearEngine.Campaign.Tests.Editor
                 new TrackScoreBand(50f, 800),
                 new TrackScoreBand(9999f, 100));
             var result = new RaceResultModel(raceTime: 0f, lapCount: 1, track);
-            var trackService = new FakeTrackService(null, null);
-            var wallet = new FakeWalletService();
             var navigation = new RecordingNavigation();
 
-            var vm = new ResultPopupViewModel(result);
-            ViewModelTestInject.InjectPrivateField(vm, "trackService", trackService);
-            ViewModelTestInject.InjectPrivateField(vm, "walletService", wallet);
-            ViewModelTestInject.InjectNavigation(vm, navigation);
+            using (IObjectResolver container = BuildCurrencyContainer(0))
+            {
+                CurrencyClientModule currency = container.Resolve<CurrencyClientModule>();
+                currency.InitializeAsync(CancellationToken.None).GetAwaiter().GetResult();
 
-            vm.Upgrade();
+                var vm = new ResultPopupViewModel(result);
+                ViewModelTestInject.InjectPrivateField(vm, "currencyClient", currency);
+                ViewModelTestInject.InjectNavigation(vm, navigation);
 
-            Assert.That(navigation.OpenedControllers.Count, Is.EqualTo(1));
-            Assert.That(navigation.OpenedControllers[0], Is.InstanceOf<RoguelikeViewModel>());
+                vm.Upgrade();
 
-            Object.DestroyImmediate(track);
+                Assert.That(navigation.OpenedControllers.Count, Is.EqualTo(1));
+                Assert.That(navigation.OpenedControllers[0], Is.InstanceOf<RoguelikeViewModel>());
+            }
+
+            UnityEngine.Object.DestroyImmediate(track);
+        }
+
+        private static CurrencyGameData BuildGameData(long gold)
+        {
+            var persistence = new CurrencyPersistence();
+            persistence.Set("gold", gold);
+            CurrencyConfig config = JsonConvert.DeserializeObject<CurrencyConfig>(
+                "{\"entries\":[{\"id\":\"gold\",\"initial\":0}]}");
+            return new CurrencyGameData(persistence, config);
+        }
+
+        private static IObjectResolver BuildCurrencyContainer(long initialGold)
+        {
+            var fake = new FakeLiveOpsService
+            {
+                ModuleData = BuildGameData(initialGold),
+                CallImpl = (_, _) => new AddCurrencyResponse("gold", 0, 0),
+            };
+
+            var builder = new ContainerBuilder();
+            builder.RegisterInstance<ILiveOpsService>(fake);
+            builder.Register<CurrencyClientModule>(Lifetime.Singleton);
+            return builder.Build();
+        }
+
+        private sealed class FakeLiveOpsService : ILiveOpsService
+        {
+            public CurrencyGameData ModuleData { get; set; }
+
+            public Func<object, CancellationToken, ModuleResponse> CallImpl { get; set; }
+
+            public T GetModuleData<T>()
+                where T : class, IGameModuleData
+            {
+                return ModuleData as T;
+            }
+
+            public Task<TResponse> CallAsync<TResponse>(ModuleRequest<TResponse> request, CancellationToken cancellationToken = default)
+                where TResponse : ModuleResponse
+            {
+                ModuleResponse result = CallImpl((object)request, cancellationToken);
+                return Task.FromResult((TResponse)result);
+            }
         }
     }
 
@@ -107,7 +167,7 @@ namespace GearEngine.Campaign.Tests.Editor
             }
             finally
             {
-                Object.DestroyImmediate(track);
+                UnityEngine.Object.DestroyImmediate(track);
             }
         }
 
@@ -125,7 +185,7 @@ namespace GearEngine.Campaign.Tests.Editor
             }
             finally
             {
-                Object.DestroyImmediate(track);
+                UnityEngine.Object.DestroyImmediate(track);
             }
         }
     }

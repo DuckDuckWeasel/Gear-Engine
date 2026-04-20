@@ -39,7 +39,7 @@ namespace GearEngine.Campaign.Tests.Editor
             DragService = container.Resolve<IDragService>();
             SwapService = container.Resolve<IGridSwapService>();
             MergeService = container.Resolve<IGridMergeService>();
-            InventoryService = container.Resolve<IInventoryService>();
+            InventoryService = container.Resolve<IRaceInventoryService>();
             PresentationTransfer = container.Resolve<IGearPresentationTransferService>();
             BoardService = container.Resolve<IBoardService>();
         }
@@ -53,7 +53,7 @@ namespace GearEngine.Campaign.Tests.Editor
         public IDragService DragService { get; }
         public IGridSwapService SwapService { get; }
         public IGridMergeService MergeService { get; }
-        public IInventoryService InventoryService { get; }
+        public IRaceInventoryService InventoryService { get; }
         public IGearPresentationTransferService PresentationTransfer { get; }
         public IBoardService BoardService { get; }
 
@@ -124,7 +124,6 @@ namespace GearEngine.Campaign.Tests.Editor
 
         private readonly IReadOnlyList<GearConfig> roguelikeOptions;
         private readonly TrackProgressModel trackProgress = new TrackProgressModel();
-        public int AdvanceCallCount { get; private set; }
         public int RecordResultCallCount { get; private set; }
 
         public TrackProgressModel GetTrackProgress() => trackProgress;
@@ -133,7 +132,7 @@ namespace GearEngine.Campaign.Tests.Editor
 
         public IReadOnlyList<GearConfig> GetRoguelikeCardOptions() => roguelikeOptions;
 
-        public void RecordResult(RaceResultModel result)
+        public System.Threading.Tasks.Task RecordResultAsync(RaceResultModel result)
         {
             if (result == null)
             {
@@ -141,38 +140,11 @@ namespace GearEngine.Campaign.Tests.Editor
             }
 
             RecordResultCallCount++;
-        }
-
-        public void AdvanceToNextTrack()
-        {
-            AdvanceCallCount++;
+            return System.Threading.Tasks.Task.CompletedTask;
         }
     }
 
-    internal sealed class FakeWalletService : IWalletService
-    {
-        private readonly WalletModel wallet = new WalletModel();
-
-        public WalletModel GetWallet() => wallet;
-
-        public void AddGold(int amount)
-        {
-            wallet.Gold += amount;
-        }
-
-        public bool TrySpendGold(int amount)
-        {
-            if (amount < 0 || amount > wallet.Gold)
-            {
-                return false;
-            }
-
-            wallet.Gold -= amount;
-            return true;
-        }
-    }
-
-    internal sealed class RecordingInventoryService : IInventoryService
+    internal sealed class RecordingInventoryService : IRaceInventoryService
     {
         public readonly List<IItem> AddedItems = new List<IItem>();
         private readonly InventoryModel model = new InventoryModel();

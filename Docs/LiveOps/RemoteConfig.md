@@ -21,6 +21,8 @@ Each `.rc` file should expose **one** top-level Remote Config key that matches t
 | `Global.rc` | `GlobalConfigData` | `GlobalConfigModule` |
 | `Gold.rc` | `GoldConfig` | `GoldModule` |
 | `Level.rc` | `LevelConfig` | `LevelService` |
+| `Track.rc` | `TrackConfig` | `TracksModule` |
+| `Card.rc` | `CardConfig` | `CardsModule` |
 
 Adding a new module: add a DTO config type, add `ConfigKey` in the module, create `<Module>.rc` with that key, deploy.
 

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using GearEngine.CarSimulation.Definitions;
 using GearEngine.GearEngine.Config;
 using UnityEngine;
@@ -38,7 +39,7 @@ namespace GearEngine.Campaign.Services
             return roguelikeCardPool;
         }
 
-        public void RecordResult(RaceResultModel result)
+        public Task RecordResultAsync(RaceResultModel result)
         {
             if (result == null)
             {
@@ -46,19 +47,7 @@ namespace GearEngine.Campaign.Services
             }
 
             Debug.Log($"[LocalTrackService] Result recorded — Score: {result.Score}, Gold: {result.Gold.Amount} (stub, not persisted).");
-        }
-
-        public void AdvanceToNextTrack()
-        {
-            if (trackProgress.CurrentTrackIndex < tracks.Count - 1)
-            {
-                trackProgress.CurrentTrackIndex++;
-                Debug.Log($"[LocalTrackService] Advanced to track {trackProgress.CurrentTrackIndex}: {CurrentTrack.name}");
-            }
-            else
-            {
-                Debug.Log("[LocalTrackService] Already on the last track — no advancement (stub).");
-            }
+            return Task.CompletedTask;
         }
     }
 }

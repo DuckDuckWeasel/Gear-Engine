@@ -13,7 +13,7 @@ namespace GearEngine.GearEngine.Presentation.UI
 {
     public partial class BoardViewModel : ViewModel
     {
-        public BoardViewModel(IBoardService boardService, IInventoryService inventoryService, IGearEngineService engineService)
+        public BoardViewModel(IBoardService boardService, IRaceInventoryService inventoryService, IGearEngineService engineService)
         {
             this.boardService = boardService ?? throw new ArgumentNullException(nameof(boardService));
             this.inventoryService = inventoryService ?? throw new ArgumentNullException(nameof(inventoryService));
@@ -40,7 +40,7 @@ namespace GearEngine.GearEngine.Presentation.UI
         public int MaxAllowedBoardGears => boardService.MaxAllowedBoardGears;
 
         private readonly IBoardService boardService;
-        private readonly IInventoryService inventoryService;
+        private readonly IRaceInventoryService inventoryService;
         private readonly IGearEngineService engineService;
 
         [ObservableProperty] private bool interactable = true;
