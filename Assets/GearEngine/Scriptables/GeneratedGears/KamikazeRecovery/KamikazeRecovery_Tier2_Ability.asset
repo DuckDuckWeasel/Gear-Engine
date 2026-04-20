@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fdfb7162ae4d240daab3abccce4e788e, type: 3}
+  m_Name: KamikazeRecovery_Tier2_Ability
+  m_EditorClassIdentifier: Game.Campaign::GearEngine.Campaign.Gear.KamikazeRecoveryGearAbilitySO
+  targetVariable: {fileID: 11400000, guid: c0806bf40ec902d4a8ab2ca98623f1d9, type: 2}
+  thrustValue: 225
+  thrustDurationSeconds: 1.3333334
+  crashSpeedThreshold: 0.06666667
+  idleGracePeriod: 3
