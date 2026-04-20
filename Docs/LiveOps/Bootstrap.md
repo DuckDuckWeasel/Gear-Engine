@@ -9,7 +9,7 @@ This document describes how the **Cloud Code backend**, **shared DTO DLL**, **Un
 | Backend solution | [LiveOps/LiveOps.sln](../../LiveOps/LiveOps.sln) | Builds `LiveOps` (net6.0 Cloud Code module) + `Scaffold.LiveOps.DTO` (netstandard2.1) |
 | DTO project | [LiveOps/LiveOps.DTO/Scaffold.LiveOps.DTO.csproj](../../LiveOps/LiveOps.DTO/Scaffold.LiveOps.DTO.csproj) | After **Build**, copies `Scaffold.LiveOps.DTO.dll` into [Assets/Plugins/Scaffold.LiveOps.DTO/](../../Assets/Plugins/Scaffold.LiveOps.DTO/) |
 | Cloud Code module ref | [Assets/CloudCode/LiveOps.ccmr](../../Assets/CloudCode/LiveOps.ccmr) | Points Unity Cloud Code at `LiveOps.sln` for **Build** / publish |
-| Meta harness | [Assets/GearEngine/Scenes/Meta.unity](../../Assets/GearEngine/Scenes/Meta.unity) + [MetaScope.cs](../../Assets/GearEngine/Scripts/App/Bootstrap/MetaScope.cs) | Standalone **UGS → Cloud Code → LiveOps** init (no Campaign / navigation) |
+| Meta harness | [Assets/GearEngine/Scenes/Meta.unity](../../Assets/GearEngine/Scenes/Meta.unity) + [`MetaApplicationBootstrap`](../../Assets/GearEngine/Scripts/App/Bootstrap/MetaApplicationBootstrap.cs) | Standalone **UGS → Cloud Code → LiveOps** init via **LayeredScope** (see [Meta bootstrap](../Meta/Bootstrap.md)) |
 | Build order (Editor) | [ProjectSettings/EditorBuildSettings.asset](../../ProjectSettings/EditorBuildSettings.asset) | `Meta.unity` is **enabled** at index **0** for backend smoke tests |
 
 ## Flow (Meta scene)
@@ -26,7 +26,7 @@ flowchart LR
         ccmr[Assets/CloudCode/LiveOps.ccmr]
         dll[Assets/Plugins/Scaffold.LiveOps.DTO/Scaffold.LiveOps.DTO.dll]
         meta[Assets/GearEngine/Scenes/Meta.unity]
-        host[Game.App.Bootstrap MetaScope]
+        host[MetaApplicationBootstrap]
     end
 
     csdto -->|post-build copy| dll
@@ -34,31 +34,30 @@ flowchart LR
     sln --> csdto
     ccmr -.->|modulePath| sln
     meta --> host
-    host --> Ugs[UgsInstaller]
+    host --> Ugs[UgsInstaller / Ugs layer]
     host --> Cc[CloudCodeInstaller]
-    host --> Lo[LiveOpsInstaller]
+    host --> Lo[LiveOpsInstaller / LiveOps layer]
 ```
 
 ```mermaid
 sequenceDiagram
     participant Player
     participant Meta as Meta scene
-    participant Host as MetaScope
-    participant Base as Base scope Addressables
-    participant Main as Main scope UGS CC LiveOps
-    participant UGS as Unity Services
+    participant Boot as MetaApplicationBootstrap
+    participant Found as FoundationLayer
+    participant UGS as Ugs layer
+    participant Lo as LiveOps layer
     participant Server as Cloud Code LiveOps.dll
 
     Player->>Meta: Press Play
-    Meta->>Host: Start
-    Host->>Base: InstallBaseScope plus IAsyncInitializable
-    Host->>Main: InstallMainScope plus IAsyncLayerInitializable parallel
-    par Parallel layer init
-        Main->>UGS: InitializeAsync plus anonymous sign-in
-        Main->>Server: GameDataRequest via LiveOpsService
-    end
-    Server-->>Main: GameDataResponse
-    Host->>Player: Log module probe
+    Meta->>Boot: Start / InstallAllAsync
+    Boot->>Found: Push (Addressables, Nav, Events)
+    Boot->>UGS: Push + Ugs IAsyncInitializable
+    UGS->>UGS: UnityServices + anonymous sign-in
+    Boot->>Lo: Push + LiveOps IAsyncInitializable
+    Lo->>Server: GameDataRequest via LiveOpsService
+    Server-->>Lo: GameDataResponse
+    Boot->>Boot: OnReadyAsync (log Gold / Ad module probe)
 ```
 
 ## Building the backend
@@ -77,11 +76,11 @@ Expect:
 
 Publish to your UGS Cloud Code environment using the Unity **Services → Cloud Code** workflow; the `.ccmr` file tells the editor which solution to build.
 
-## Unity packages (already in manifest)
+## Unity packages (manifest)
 
-No extra UPM entries were required for this milestone. [Packages/manifest.json](../../Packages/manifest.json) already includes `com.scaffold.cloudcode`, `com.scaffold.liveops`, `com.scaffold.ugs`, `com.scaffold.scope`, and `com.unity.services.cloudcode`.
+[Packages/manifest.json](../../Packages/manifest.json) references `com.scaffold.cloudcode`, `com.scaffold.liveops`, and `com.scaffold.ugs` as **embedded** packages under [Assets/Packages/](../../Assets/Packages/) (vendored for `IAsyncInitializable` integration with LayeredScope). `com.scaffold.scope`, `com.unity.services.cloudcode`, and other Scaffold modules remain as git or registry dependencies as listed.
 
-[`MetaScope`](../../Assets/GearEngine/Scripts/App/Bootstrap/MetaScope.cs) registers `Unity.Services.CloudCode.ICloudCodeService` from `CloudCodeService.Instance` before `CloudCodeInstaller`, because VContainer otherwise resolves `CloudCodeSdkCallHandler` with the SDK ctor and nothing registered that interface.
+[`CloudCodeSdkCallHandler`](../../Assets/Packages/com.scaffold.cloudcode/Runtime/Handlers/CloudCodeSdkCallHandler.cs) binds to `Unity.Services.CloudCode.CloudCodeService.Instance` by default; the Meta [`LiveOpsLayer`](../../Assets/GearEngine/Scripts/App/Bootstrap/Layers/LiveOpsLayer.cs) runs `CloudCodeInstaller` without a separate Unity SDK registration.
 
 ## Meta scene prerequisites (Play Mode)
 
@@ -89,7 +88,7 @@ No extra UPM entries were required for this milestone. [Packages/manifest.json](
 - **Cloud Code** module built from [LiveOps/LiveOps.sln](../../LiveOps/LiveOps.sln) and deployed to that environment.
 - Without a deployed module, the initial `GameDataRequest` from `LiveOpsService` will fail (expected).
 
-On success, the console should show `[MetaScope] Backend initialized. GoldGameData=present, AdData=present.` (module payloads depend on server `ModuleConfig` and Remote Config).
+On success, the console should show `[Meta] LiveOps ready. GoldGameData=True, AdData=True.` (exact module payloads depend on server `ModuleConfig` and Remote Config).
 
 ## Disabling Meta as entry
 
@@ -100,3 +99,4 @@ To return to another default scene, open **File → Build Settings**, disable **
 - 2026-04-19: Initial LiveOps `.sln` / `.csproj`, `LiveOps.ccmr`, `Game.App.Bootstrap` + `MetaScope`, `Meta.unity` as first enabled build scene.
 - 2026-04-19: Moved `Meta.unity` to `Assets/GearEngine/Scenes/` (same GUID) so it appears with other Gear Engine scenes in the Project window.
 - 2026-04-19: Register Unity `ICloudCodeService` in `MetaScope` so Scaffold `CloudCodeSdkCallHandler` resolves under VContainer.
+- 2026-04-19: Replaced `MetaScope` / `MetaBootstrap` with `MetaApplicationBootstrap` + LayeredScope layers (`FoundationLayer`, `UgsLayer`, `LiveOpsLayer`); vendored `com.scaffold.ugs`, `com.scaffold.liveops`, `com.scaffold.cloudcode` under `Assets/Packages/` with `IAsyncInitializable` from `Core.LayeredScope`.

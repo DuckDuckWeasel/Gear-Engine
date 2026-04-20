@@ -53,14 +53,13 @@
       "hash": "860e911f95667b852750fe02ec25a38f00ee8266"
     },
     "com.scaffold.cloudcode": {
-      "version": "https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.cloudcode#main",
+      "version": "file:../Assets/Packages/com.scaffold.cloudcode",
       "depth": 0,
-      "source": "git",
+      "source": "local",
       "dependencies": {
         "com.unity.services.cloudcode": "2.10.2",
         "com.unity.nuget.newtonsoft-json": "3.2.1"
-      },
-      "hash": "860e911f95667b852750fe02ec25a38f00ee8266"
+      }
     },
     "com.scaffold.directpush": {
       "version": "https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.directpush#main",
@@ -88,14 +87,12 @@
       "hash": "860e911f95667b852750fe02ec25a38f00ee8266"
     },
     "com.scaffold.liveops": {
-      "version": "https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.liveops#main",
+      "version": "file:../Assets/Packages/com.scaffold.liveops",
       "depth": 0,
-      "source": "git",
+      "source": "local",
       "dependencies": {
-        "com.scaffold.cloudcode": "0.1.0",
-        "com.scaffold.scope": "0.1.0"
-      },
-      "hash": "860e911f95667b852750fe02ec25a38f00ee8266"
+        "com.scaffold.cloudcode": "0.1.0"
+      }
     },
     "com.scaffold.maps": {
       "version": "https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.maps#main",
@@ -176,13 +173,10 @@
       "hash": "860e911f95667b852750fe02ec25a38f00ee8266"
     },
     "com.scaffold.ugs": {
-      "version": "https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.ugs#main",
+      "version": "file:../Assets/Packages/com.scaffold.ugs",
       "depth": 0,
-      "source": "git",
-      "dependencies": {
-        "com.scaffold.scope": "0.1.0"
-      },
-      "hash": "860e911f95667b852750fe02ec25a38f00ee8266"
+      "source": "local",
+      "dependencies": {}
     },
     "com.scaffold.view": {
       "version": "https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.view#main",

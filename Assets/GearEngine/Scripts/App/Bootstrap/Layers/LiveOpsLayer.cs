@@ -1,0 +1,16 @@
+using GearEngine.LayeredScope;
+using Scaffold.CloudCode.Container;
+using Scaffold.LiveOps.Container;
+using VContainer;
+
+namespace GearEngine.App.Bootstrap.Layers
+{
+    public sealed class LiveOpsLayer : IScopeLayer
+    {
+        public void Install(IContainerBuilder builder)
+        {
+            new CloudCodeInstaller().Install(builder);
+            new LiveOpsInstaller().Install(builder);
+        }
+    }
+}

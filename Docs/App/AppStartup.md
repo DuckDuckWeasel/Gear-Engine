@@ -1,8 +1,8 @@
 # Application startup (composition root)
 
-A minimal **two-scope** host for **UGS + Cloud Code + LiveOps** (no gameplay) lives in [`MetaScope`](../../Assets/GearEngine/Scripts/App/Bootstrap/MetaScope.cs) (`Game.App.Bootstrap`), used by [`Assets/GearEngine/Scenes/Meta.unity`](../../Assets/GearEngine/Scenes/Meta.unity). See [LiveOps bootstrap](../LiveOps/Bootstrap.md) for build / `.ccmr` / Play Mode notes.
+A minimal **UGS + Cloud Code + LiveOps** host (no gameplay) lives in [`MetaApplicationBootstrap`](../../Assets/GearEngine/Scripts/App/Bootstrap/MetaApplicationBootstrap.cs) (`Game.App.Bootstrap`), used by [`Assets/GearEngine/Scenes/Meta.unity`](../../Assets/GearEngine/Scenes/Meta.unity). It is built on **`Core.LayeredScope`** ([`ApplicationBootstrap`](../../Assets/GearEngine/Scripts/Core/LayeredScope/Runtime/ApplicationBootstrap.cs)). See [Meta bootstrap](../Meta/Bootstrap.md) and [LiveOps bootstrap](../LiveOps/Bootstrap.md) for layer order, build, `.ccmr`, and Play Mode notes.
 
-There is a partial `com.scaffold.bootstrap` tree under `Assets/Packages/com.scaffold.bootstrap/` (not a full UPM package in this repo); prefer **`MetaScope`** or your own `TwoScopeApplicationHost` subclass for app wiring.
+There is a partial `com.scaffold.bootstrap` tree under `Assets/Packages/com.scaffold.bootstrap/` (not a full UPM package in this repo); for new scenes prefer **`MetaApplicationBootstrap`**-style wiring with explicit [`IScopeLayer`](../../Assets/GearEngine/Scripts/Core/LayeredScope/Runtime/Contracts/IScopeLayer.cs) types, or your own [`TwoScopeApplicationHost`](../../Assets/Packages/com.scaffold.scope/Runtime/Host/TwoScopeApplicationHost.cs) subclass if you need the older Scaffold host.
 
 Wire your full game by **subclassing** [`TwoScopeApplicationHost`](../../Assets/Packages/com.scaffold.scope/Runtime/Host/TwoScopeApplicationHost.cs) in **your** assembly: implement `InstallBaseScope` (e.g. Addressables), `PrepareMainScopeAsync` (preload), and `InstallMainScope` (infra modules, navigation, UGS, scene flow, LiveOps, etc.). See [`Startup-Two-Scope-Preload.md`](../../Plans/Startup-Two-Scope-Preload.md).
 

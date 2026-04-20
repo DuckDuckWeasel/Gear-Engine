@@ -80,3 +80,7 @@ This demonstrates ordered layers, async in-layer init, deduplication of initiali
 ## When to add a new layer
 
 Add a new scope when you need a **feature or infrastructure boundary** (e.g. assets, configs, a race or lobby context) — not per UI widget. Prefer registering shared singletons in the lowest layer that truly owns them; use `IAsyncScopeLayer.PrepareAsync` to resolve from the parent and `RegisterInstance` on the child when you need a concrete instance baked into that layer's container, or use the warmer-plus-factory pattern when many descendants will share it.
+
+## Real-world example: Meta scene
+
+The Meta smoke-test scene ([`Assets/GearEngine/Scenes/Meta.unity`](../Assets/GearEngine/Scenes/Meta.unity)) uses [`MetaApplicationBootstrap`](../Assets/GearEngine/Scripts/App/Bootstrap/MetaApplicationBootstrap.cs): foundation (Addressables, navigation, events) → UGS → Cloud Code + LiveOps. [`Scaffold.Ugs`](../Assets/Packages/com.scaffold.ugs/Runtime/Ugs.cs) and [`LiveOpsService`](../Assets/Packages/com.scaffold.liveops/Runtime/LiveOpsService.cs) implement `IAsyncInitializable` so each layer’s init wave completes before the next scope is pushed. See [`Docs/Meta/Bootstrap.md`](Meta/Bootstrap.md) for the layer list and extension points.

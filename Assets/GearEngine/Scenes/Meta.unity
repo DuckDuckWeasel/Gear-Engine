@@ -129,7 +129,6 @@ GameObject:
   m_Component:
   - component: {fileID: 960000001}
   - component: {fileID: 960000003}
-  - component: {fileID: 960000004}
   m_Layer: 0
   m_Name: Meta_Root
   m_TagString: Untagged
@@ -161,28 +160,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 960000000}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe0dc9b8a7f6e5d4c3b2a19876543210, type: 3}
+  m_Script: {fileID: 11500000, guid: f8e7d6c5b4a39281706155443322110a, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Game.App.Bootstrap::GearEngine.App.Bootstrap.MetaScope
+  m_EditorClassIdentifier: Game.App.Bootstrap::GearEngine.App.Bootstrap.MetaApplicationBootstrap
   parentReference:
     TypeName: 
   autoRun: 1
   autoInjectGameObjects: []
   navigationSettings: {fileID: 11400000, guid: 137da207fe7ec1345a5d209afdac17bd, type: 2}
   navigationViewHolder: {fileID: 960000001}
-  sceneBootstrap: {fileID: 960000004}
---- !u!114 &960000004
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 960000000}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2c540203448819b4aaf5a3875d8651a1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Game.App.Bootstrap::GearEngine.App.Bootstrap.MetaBootstrap
 --- !u!1 &1027166358
 GameObject:
   m_ObjectHideFlags: 0
