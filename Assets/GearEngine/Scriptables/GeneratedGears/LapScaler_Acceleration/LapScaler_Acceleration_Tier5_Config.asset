@@ -17,9 +17,9 @@ MonoBehaviour:
     id: lapscaler_acceleration_tier5
     rarity: 4
     Category: 0
-    BaseRotationSpeed: 175
+    BaseRotationSpeed: 0
     ViewPrefab: {fileID: 8811223344556677001, guid: 16426345c7f1e4cfcbe7499d444b3f6d, type: 3}
-    UIIcon: {fileID: -1078806869439273028, guid: 30f2e0d4c7f444e9d848f7850da085f7, type: 3}
+    UIIcon: {fileID: -424839471606051656, guid: 648c3baaca21c4fea9fdbf58f5fc4640, type: 3}
     RelativeScaleMultiplier: 1
     TriggerPattern: 4
     IsInteractable: 1

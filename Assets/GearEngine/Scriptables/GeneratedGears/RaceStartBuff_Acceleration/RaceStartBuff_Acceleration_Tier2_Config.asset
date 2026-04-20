@@ -17,9 +17,9 @@ MonoBehaviour:
     id: racestartbuff_acceleration_tier2
     rarity: 1
     Category: 0
-    BaseRotationSpeed: 130
+    BaseRotationSpeed: 0
     ViewPrefab: {fileID: 8811223344556677001, guid: 16426345c7f1e4cfcbe7499d444b3f6d, type: 3}
-    UIIcon: {fileID: -1078806869439273028, guid: 30f2e0d4c7f444e9d848f7850da085f7, type: 3}
+    UIIcon: {fileID: -7704486634247314759, guid: 03f65dc4c2b234ba2a311dfc81c43e6b, type: 3}
     RelativeScaleMultiplier: 1
     TriggerPattern: 4
     IsInteractable: 1

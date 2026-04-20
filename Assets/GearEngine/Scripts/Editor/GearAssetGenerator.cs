@@ -16,10 +16,18 @@ namespace GearEngine.Editor
     {
         private const string GENERATION_PATH = "Assets/GearEngine/Scriptables/GeneratedGears";
         private const string VARIABLES_PATH  = "Assets/GearEngine/Data/Cars/Variables";
+        private const string SPRITES_PATH    = "Assets/GearEngine/Art/Sprites";
+        private const string PREFAB_PATH     = "Assets/GearEngine/Prefabs/Gears/Gears/BaseGear1View.prefab";
         private const int MAX_TIERS = 5;
 
         // Cached VariableSO assets loaded from the project
         private static Dictionary<string, ScriptableObject> _variableCache;
+
+        // Cached rarity sprites (number-1 to number-5)
+        private static Sprite[] _spriteCache;
+
+        // Cached gear view prefab
+        private static GameObject _gearViewPrefab;
 
         // Base abilities that are debug stubs with no real logic — skip generating tiered variants
         private static readonly HashSet<string> SkipTypes = new HashSet<string>
@@ -132,8 +140,17 @@ namespace GearEngine.Editor
                 dataProp.FindPropertyRelative("id").stringValue = itemName.ToLower();
                 dataProp.FindPropertyRelative("rarity").enumValueIndex = GetRarityForTier(tier);
                 dataProp.FindPropertyRelative("Category").enumValueIndex = 0;
-                dataProp.FindPropertyRelative("BaseRotationSpeed").floatValue = 100f + (tier * 15f);
+                dataProp.FindPropertyRelative("BaseRotationSpeed").floatValue = 0f;
                 dataProp.FindPropertyRelative("MaxCharge").floatValue = 100f;
+
+                // Assign view prefab
+                if (_gearViewPrefab != null)
+                    dataProp.FindPropertyRelative("ViewPrefab").objectReferenceValue = _gearViewPrefab.GetComponent<global::GearEngine.GearEngine.Visuals.GearView>();
+
+                // Assign rarity sprite
+                Sprite raritySprite = GetRaritySprite(tier);
+                if (raritySprite != null)
+                    dataProp.FindPropertyRelative("UIIcon").objectReferenceValue = raritySprite;
 
                 // Inject Ability
                 SerializedProperty abilitiesArray = serializedConfig.FindProperty("abilities");
@@ -161,7 +178,7 @@ namespace GearEngine.Editor
         }
 
         // ──────────────────────────────────────────────
-        //  VariableSO Loading & Assignment
+        //  VariableSO & Sprite Loading
         // ──────────────────────────────────────────────
 
         private static void LoadVariableCache()
@@ -181,6 +198,27 @@ namespace GearEngine.Editor
 
             if (_variableCache.Count == 0)
                 Debug.LogWarning("[Forge] No VariableSO assets found! Gear stat targets will be null.");
+
+            // Load rarity sprites (number-1 = Common, number-5 = Legendary)
+            _spriteCache = new Sprite[MAX_TIERS];
+            for (int i = 0; i < MAX_TIERS; i++)
+            {
+                string spritePath = $"{SPRITES_PATH}/number-{i + 1}.png";
+                _spriteCache[i] = AssetDatabase.LoadAssetAtPath<Sprite>(spritePath);
+                if (_spriteCache[i] == null)
+                    Debug.LogWarning($"[Forge] Rarity sprite not found: {spritePath}");
+            }
+
+            // Load gear view prefab
+            _gearViewPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(PREFAB_PATH);
+            if (_gearViewPrefab == null)
+                Debug.LogWarning($"[Forge] Gear view prefab not found: {PREFAB_PATH}");
+        }
+
+        private static Sprite GetRaritySprite(int tier)
+        {
+            int idx = Math.Clamp(tier - 1, 0, _spriteCache.Length - 1);
+            return _spriteCache[idx];
         }
 
         private static ScriptableObject GetVariable(string name)

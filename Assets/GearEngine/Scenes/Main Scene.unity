@@ -1482,14 +1482,12 @@ MonoBehaviour:
     inventoryLoadout:
       maxSlots: 5
       startingItems:
-      - {fileID: 11400000, guid: 6e736437dd0754c95a616bd251e748fd, type: 2}
-      - {fileID: 11400000, guid: a72f3ab4a7349450a9a39a30259d5ac0, type: 2}
-      - {fileID: 11400000, guid: 9f0ce76835399481e9aaf8f8af8f41ca, type: 2}
-      - {fileID: 11400000, guid: 4d6adaa53b65049ae9f6d081da5539bb, type: 2}
+      - {fileID: 0}
+      - {fileID: 0}
     boardLoadout:
       boardLayout:
         placements:
-        - position: {x: 1, y: 1}
+        - position: {x: 2, y: 1}
           gearConfig: {fileID: 11400000, guid: 39144108699f44d10b422acf50e748ba, type: 2}
   roguelikeCardPool:
   - {fileID: 11400000, guid: 39144108699f44d10b422acf50e748ba, type: 2}
