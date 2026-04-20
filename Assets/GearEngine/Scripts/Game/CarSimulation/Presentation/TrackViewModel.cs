@@ -39,7 +39,7 @@ namespace GearEngine.CarSimulation.Presentation
         {
             base.Initialize();
             Session.PresentationChanged += OnSessionPresentationChanged;
-            CarViewModels = System.Array.Empty<CarViewModel>();
+            CarViewModels = Array.Empty<CarViewModel>();
 
             RefreshUiState();
         }

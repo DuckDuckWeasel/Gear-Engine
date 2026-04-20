@@ -12,19 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ba712c3859cc1489e8dc1a0996eb86c6, type: 3}
   m_Name: CarConfig
   m_EditorClassIdentifier: 
+  variables: {fileID: 11400000, guid: f6cfd8fa3fbb61843b66534996d0329d, type: 2}
   baseMaxSpeed: 190
   baseAcceleration: 10
   baseBrakeForce: 350
   minSpeedPercentage: 0.4
   baseSimulationMultiplier: 1
-  statTopSpeed: 50
-  statAcceleration: 50
-  statBrakingSystem: 50
-  statDriftControl: 50
-  statNitrousBoost: 50
-  statSteeringGrip: 50
-  statRacingLine: 10
-  statDriverReflexes: 10
   boundsDriftAccMult: {x: 1.1, y: 2.5}
   boundsDriftSteerMult: {x: 1, y: 2}
   boundsHairpinAccBoost: {x: 1.5, y: 4}
