@@ -3,8 +3,13 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using GameModuleDTO.GameApi;
+using GameModuleDTO.ModuleRequests;
 using GearEngine.LayeredScope;
 using NUnit.Framework;
+using Scaffold.CloudCode;
+using Scaffold.LiveOps;
+using Scaffold.LiveOps.Container;
 using UnityEngine;
 using UnityEngine.TestTools;
 using VContainer;
@@ -38,6 +43,39 @@ namespace GearEngine.App.Bootstrap.Tests.Editor
                     UnityEngine.Object.DestroyImmediate(go);
                 }
             }
+        }
+
+        [Test]
+        [Timeout(10000)]
+        public async Task LiveOpsLayerComposition_GameApiOptimistic_ReturnsBeforeSlowServerCompletes()
+        {
+            var serverGate = new TaskCompletionSource<GameApiEnvelopeResponse>(TaskCreationOptions.RunContinuationsAsynchronously);
+            var validateTcs = new TaskCompletionSource<(int ServerId, int OptimisticId)>(TaskCreationOptions.RunContinuationsAsynchronously);
+
+            var optimisticHandler = new MetaOptimisticHandler
+            {
+                OptimisticValue = new MetaOptimisticResponse { Id = 1 },
+                ValidateCallback = (server, optimistic) => validateTcs.TrySetResult((server.Id, optimistic.Id)),
+            };
+
+            var registry = new CloudCodeOptimisticHandlerRegistry();
+            registry.Register(optimisticHandler);
+
+            var fakeCloud = new MetaFakeCloudCodeService(() => serverGate.Task);
+
+            ILiveOpsService liveOps = BuildLiveOpsLayerStyleContainer(fakeCloud, registry);
+
+            Task<MetaOptimisticResponse> call = liveOps.CallAsync(new MetaOptimisticRequest { Marker = "meta-test" }, CancellationToken.None);
+            MetaOptimisticResponse returned = await call.ConfigureAwait(false);
+            Assert.That(returned.Id, Is.EqualTo(1));
+            Assert.That(validateTcs.Task.IsCompleted, Is.False, "Validate must run only after the GameApi envelope completes.");
+
+            serverGate.TrySetResult(
+                GameApiEnvelopeResponse.Success(nameof(MetaOptimisticRequest), new MetaOptimisticResponse { Id = 99 }, null));
+
+            (int serverId, int optimisticId) = await validateTcs.Task.ConfigureAwait(false);
+            Assert.That(serverId, Is.EqualTo(99));
+            Assert.That(optimisticId, Is.EqualTo(1));
         }
 
         [Test]
@@ -85,6 +123,97 @@ namespace GearEngine.App.Bootstrap.Tests.Editor
                 BindingFlags.Instance | BindingFlags.NonPublic);
             Assert.That(start, Is.Not.Null);
             start.Invoke(bootstrap, Array.Empty<object>());
+        }
+
+        /// <summary>
+        /// Mirrors <see cref="GearEngine.App.Bootstrap.Layers.LiveOpsLayer"/> registration order for EditMode:
+        /// Cloud Code client + optimistic registry + LiveOps (real <see cref="LiveOpsService"/>), with a fake <see cref="ICloudCodeService"/> so no network/SDK call runs.
+        /// </summary>
+        private static ILiveOpsService BuildLiveOpsLayerStyleContainer(
+            ICloudCodeService cloudCode,
+            CloudCodeOptimisticHandlerRegistry optimisticRegistry)
+        {
+            var builder = new ContainerBuilder();
+            builder.RegisterInstance(cloudCode).As<ICloudCodeService>();
+            builder.RegisterInstance(optimisticRegistry);
+            builder.RegisterInstance(new CloudCodeErrorHandler());
+            builder.RegisterInstance(MetaNoMatchResponseHandler.Instance).As<IResponseHandler>();
+            new LiveOpsInstaller().Install(builder);
+            IObjectResolver container = builder.Build();
+            return container.Resolve<ILiveOpsService>();
+        }
+
+        [UsesGameApi]
+        private sealed class MetaOptimisticRequest : ModuleRequest<MetaOptimisticResponse>
+        {
+            public string Marker { get; set; }
+        }
+
+        private sealed class MetaOptimisticResponse : ModuleResponse
+        {
+            public int Id { get; set; }
+        }
+
+        private sealed class MetaOptimisticHandler : IRequestHandler<MetaOptimisticRequest, MetaOptimisticResponse>
+        {
+            public MetaOptimisticResponse OptimisticValue { get; init; }
+
+            public Action<MetaOptimisticResponse, MetaOptimisticResponse> ValidateCallback { get; init; }
+
+            public bool TryMatch(string module, string endpoint, MetaOptimisticRequest request)
+            {
+                return module == "LiveOps" && endpoint == "GameApi";
+            }
+
+            public MetaOptimisticResponse GetOptimisticResponse(MetaOptimisticRequest request)
+            {
+                return OptimisticValue;
+            }
+
+            public void Validate(MetaOptimisticResponse serverResponse, MetaOptimisticResponse optimisticResponse)
+            {
+                ValidateCallback?.Invoke(serverResponse, optimisticResponse);
+            }
+        }
+
+        private sealed class MetaNoMatchResponseStub : ModuleResponse
+        {
+        }
+
+        private sealed class MetaNoMatchResponseHandler : IResponseHandler
+        {
+            internal static readonly MetaNoMatchResponseHandler Instance = new MetaNoMatchResponseHandler();
+
+            private MetaNoMatchResponseHandler()
+            {
+            }
+
+            public Type HandledResponseType => typeof(MetaNoMatchResponseStub);
+
+            public void Handle(ModuleResponse response)
+            {
+            }
+        }
+
+        private sealed class MetaFakeCloudCodeService : ICloudCodeService
+        {
+            private readonly Func<Task<GameApiEnvelopeResponse>> onGameApi;
+
+            public MetaFakeCloudCodeService(Func<Task<GameApiEnvelopeResponse>> onGameApi)
+            {
+                this.onGameApi = onGameApi ?? throw new ArgumentNullException(nameof(onGameApi));
+            }
+
+            public async Task<T> CallEndpointAsync<T>(string module, string endpoint, object payload = null, CancellationToken cancellationToken = default)
+            {
+                if (endpoint == "GameApi")
+                {
+                    GameApiEnvelopeResponse envelope = await onGameApi().ConfigureAwait(false);
+                    return (T)(object)envelope;
+                }
+
+                throw new InvalidOperationException($"Unexpected endpoint '{endpoint}' in meta optimistic test fake.");
+            }
         }
 
         private sealed class OrderRecorder

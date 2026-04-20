@@ -3,12 +3,12 @@ using System.Collections.Generic;
 
 namespace Scaffold.CloudCode
 {
-    internal sealed class CloudCodeOptimisticHandlerRegistry
+    public sealed class CloudCodeOptimisticHandlerRegistry
     {
         private readonly Dictionary<(Type Request, Type Response), IRequestHandler> handlers =
             new Dictionary<(Type Request, Type Response), IRequestHandler>();
 
-        internal void Register<TRequest, TResponse>(IRequestHandler<TRequest, TResponse> handler) where TRequest : class
+        public void Register<TRequest, TResponse>(IRequestHandler<TRequest, TResponse> handler) where TRequest : class
         {
             if (handler == null)
             {
@@ -27,9 +27,33 @@ namespace Scaffold.CloudCode
             handlers.Add(key, handler);
         }
 
-        internal bool TryGetHandler(Type requestType, Type responseType, out IRequestHandler handler)
+        public bool TryResolve<TResponse>(string module, string endpoint, object request, out IRequestHandler<TResponse> handler, out TResponse optimisticResponse)
         {
-            return handlers.TryGetValue((requestType, responseType), out handler);
+            handler = null;
+            optimisticResponse = default;
+            if (request == null)
+            {
+                return false;
+            }
+
+            if (!handlers.TryGetValue((request.GetType(), typeof(TResponse)), out IRequestHandler found) || found == null)
+            {
+                return false;
+            }
+
+            if (found is not IRequestHandler<TResponse> typedHandler)
+            {
+                return false;
+            }
+
+            if (!found.TryMatch(module, endpoint, request))
+            {
+                return false;
+            }
+
+            handler = typedHandler;
+            optimisticResponse = typedHandler.GetOptimisticResponse(request);
+            return true;
         }
     }
 }

@@ -9,6 +9,7 @@ This document describes how the **Cloud Code backend**, **shared DTO DLL**, **Un
 | Backend solution | [LiveOps/LiveOps.sln](../../LiveOps/LiveOps.sln) | Builds `LiveOps` (net6.0 Cloud Code module) + `Scaffold.LiveOps.DTO` (netstandard2.1) |
 | DTO project | [LiveOps/LiveOps.DTO/Scaffold.LiveOps.DTO.csproj](../../LiveOps/LiveOps.DTO/Scaffold.LiveOps.DTO.csproj) | After **Build**, copies `Scaffold.LiveOps.DTO.dll` into [Assets/Plugins/Scaffold.LiveOps.DTO/](../../Assets/Plugins/Scaffold.LiveOps.DTO/) |
 | Cloud Code module ref | [Assets/CloudCode/LiveOps.ccmr](../../Assets/CloudCode/LiveOps.ccmr) | Points Unity Cloud Code at `LiveOps.sln` for **Build** / publish |
+| Remote Config (`.rc`) | [Assets/LiveOps/RemoteConfig/](../../Assets/LiveOps/RemoteConfig/) | Per-module keys deployed via **Window → Deployment**; see [RemoteConfig.md](RemoteConfig.md) |
 | Meta harness | [Assets/GearEngine/Scenes/Meta.unity](../../Assets/GearEngine/Scenes/Meta.unity) + [`MetaApplicationBootstrap`](../../Assets/GearEngine/Scripts/App/Bootstrap/MetaApplicationBootstrap.cs) | Standalone **UGS → Cloud Code → LiveOps** init via **LayeredScope** (see [Meta bootstrap](../Meta/Bootstrap.md)) |
 | Build order (Editor) | [ProjectSettings/EditorBuildSettings.asset](../../ProjectSettings/EditorBuildSettings.asset) | `Meta.unity` is **enabled** at index **0** for backend smoke tests |
 
@@ -78,7 +79,7 @@ Publish to your UGS Cloud Code environment using the Unity **Services → Cloud 
 
 ## Unity packages (manifest)
 
-[Packages/manifest.json](../../Packages/manifest.json) references `com.scaffold.cloudcode`, `com.scaffold.liveops`, and `com.scaffold.ugs` as **embedded** packages under [Assets/Packages/](../../Assets/Packages/) (vendored for `IAsyncInitializable` integration with LayeredScope). `com.scaffold.scope`, `com.unity.services.cloudcode`, and other Scaffold modules remain as git or registry dependencies as listed.
+[Packages/manifest.json](../../Packages/manifest.json) references `com.scaffold.cloudcode`, `com.scaffold.liveops`, and `com.scaffold.ugs` as **embedded** packages under [Assets/Packages/](../../Assets/Packages/) (vendored for `IAsyncInitializable` integration with LayeredScope). `com.scaffold.scope`, `com.unity.services.cloudcode`, `com.unity.remote-config`, `com.unity.services.deployment`, and other Scaffold modules remain as git or registry dependencies as listed.
 
 [`CloudCodeSdkCallHandler`](../../Assets/Packages/com.scaffold.cloudcode/Runtime/Handlers/CloudCodeSdkCallHandler.cs) binds to `Unity.Services.CloudCode.CloudCodeService.Instance` by default; the Meta [`LiveOpsLayer`](../../Assets/GearEngine/Scripts/App/Bootstrap/Layers/LiveOpsLayer.cs) runs `CloudCodeInstaller` without a separate Unity SDK registration.
 
@@ -86,6 +87,7 @@ Publish to your UGS Cloud Code environment using the Unity **Services → Cloud 
 
 - Project linked to a **Unity Gaming Services** project / environment.
 - **Cloud Code** module built from [LiveOps/LiveOps.sln](../../LiveOps/LiveOps.sln) and deployed to that environment.
+- **Remote Config** keys for LiveOps (`AdsConfig`, `CurrencyConfig`, `GlobalConfigData`, `GoldConfig`, `LevelConfig`) authored under [Assets/LiveOps/RemoteConfig/](../../Assets/LiveOps/RemoteConfig/) and deployed to that environment with **Window → Deployment** (see [RemoteConfig.md](RemoteConfig.md) for the workflow).
 - Without a deployed module, the initial `GameDataRequest` from `LiveOpsService` will fail (expected).
 
 On success, the console should show `[Meta] LiveOps ready. GoldGameData=…, AdData=…, CurrencyGameData wallets=…` (exact module payloads depend on server `ModuleConfig` and Remote Config).
@@ -101,3 +103,4 @@ To return to another default scene, open **File → Build Settings**, disable **
 - 2026-04-19: Register Unity `ICloudCodeService` in `MetaScope` so Scaffold `CloudCodeSdkCallHandler` resolves under VContainer.
 - 2026-04-19: Replaced `MetaScope` / `MetaBootstrap` with `MetaApplicationBootstrap` + LayeredScope layers (`FoundationLayer`, `UgsLayer`, `LiveOpsLayer`); vendored `com.scaffold.ugs`, `com.scaffold.liveops`, `com.scaffold.cloudcode` under `Assets/Packages/` with `IAsyncInitializable` from `Core.LayeredScope`.
 - 2026-04-19: Added Currency module (`CurrencyConfig` / `CurrencyPersistence` / `CurrencyGameData` + `CurrencyClientModule`) alongside the existing Gold module; `LiveOpsLayer` installs `CurrencyClientInstaller`; `MetaApplicationBootstrap` smoke log includes `CurrencyGameData` wallet count. See [Currency.md](Currency.md).
+- 2026-04-19: Remote Config authoring moved to per-module `.rc` files under `Assets/LiveOps/RemoteConfig/` with `com.unity.services.deployment`; removed legacy `LiveOps/LiveOps.DTO/config/` CSV/JSON. See [RemoteConfig.md](RemoteConfig.md).

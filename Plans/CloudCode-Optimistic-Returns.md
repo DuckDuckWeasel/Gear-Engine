@@ -1,7 +1,7 @@
 # Cloud Code optimistic returns — design notes
 
-**Status:** Implemented (registry + optimistic path + `CloudCodeErrorHandler` in `CloudCodeService` + DI)  
-**Related code:** `Assets/Packages/com.scaffold.cloudcode/` (`ICloudCodeService`, `ICloudCodeCallHandler`, `CloudCodeService`, `CloudCodeOptimisticHandlerRegistry`, `IRequestHandler*.cs`, `CloudCodeErrorHandler`)
+**Status:** Implemented (registry + optimistic path + `CloudCodeErrorHandler` + DI; **GameApi** optimistic gate in `LiveOpsService`)  
+**Related code:** `Assets/Packages/com.scaffold.cloudcode/` (`ICloudCodeService`, `ICloudCodeCallHandler`, `CloudCodeService`, `CloudCodeOptimisticHandlerRegistry`, `IRequestHandler*.cs`, `CloudCodeErrorHandler`); `Assets/Packages/com.scaffold.liveops/` (`LiveOpsService` GameApi path)
 
 ## Purpose
 
@@ -13,11 +13,24 @@ This document captures **decided behavior**, **reconciliation + error flow**, an
 
 ## Current architecture (2026-04 snapshot)
 
+### Direct Cloud Code calls (`CallEndpointAsync` payload is the typed request)
+
 - `ICloudCodeService.CallEndpointAsync<T>(module, endpoint, payload, ct)` validates input, wraps the request as **`{ "request", payload }`** (or empty dict when `payload` is null), starts **`Task<string> serverTask = callHandler.InvokeAsync(...)`**, then:
-  - If **`TryGetOptimisticResponse<T>`** resolves a registered handler and **`TryMatch(module, endpoint, payload)`** succeeds: returns the **optimistic `T`** immediately and schedules **background reconciliation** on the **same** `serverTask` (no second network call).
+  - If **`CloudCodeOptimisticHandlerRegistry.TryResolve<T>`** (used from `CloudCodeService`) finds a handler and **`TryMatch(module, endpoint, payload)`** succeeds: returns the **optimistic `T`** immediately and schedules **background reconciliation** on the **same** `serverTask` (no second network call).
   - Otherwise **awaits** `serverTask` and deserializes to `T` — failures go through **`CloudCodeErrorHandler.Handle`** then **rethrow**.
-- Handler order (innermost → outermost): **SDK** → timeout → response logging → **retry** → **single-flight (per module)**. Optimistic logic is **not** an `ICloudCodeCallHandler`; it lives **inside** `CloudCodeService`.
+- Handler order (innermost → outermost): **SDK** → timeout → response logging → **retry** → **single-flight (per module)**. Optimistic logic is **not** an `ICloudCodeCallHandler`; it lives **inside** `CloudCodeService` for this path.
+
+### GameApi envelope calls (`[UsesGameApi]` → `GameApiEnvelopeRequest` / `GameApiEnvelopeResponse`)
+
+- `LiveOpsService.CallGameApiAsync` starts **`Task<GameApiEnvelopeResponse> serverTask = cloudCodeService.CallEndpointAsync<GameApiEnvelopeResponse>(module, "GameApi", envelope, ct)`**.
+- The registry key for Cloud Code is always **`(GameApiEnvelopeRequest, GameApiEnvelopeResponse)`**, so the **optimistic gate inside `CloudCodeService` does not match** per-operation request types.
+- **`LiveOpsService`** resolves optimism with **`CloudCodeOptimisticHandlerRegistry.TryResolve<TResponse>(module, "GameApi", typedRequest, ...)`** using the **concrete `ModuleRequest<TResponse>`** and **`TResponse`**. On success it returns the optimistic **`TResponse`** immediately and runs **background reconciliation**: await the same `serverTask`, **unwrap** the envelope (**`UnwrapAndDispatch`**: merge nested responses, **`DispatchNestedResponses`**), then **`Validate(server, optimistic)`**. Failures call **`CloudCodeErrorHandler.Handle`** with the **typed request** as `requestPayload` and the **optimistic `TResponse`** when applicable (no rethrow on the background path).
+- **Nested `ModuleResponse` dispatch** runs **only after** the real envelope is unwrapped (same as the non-optimistic GameApi path), not on the optimistic value alone.
+
+### DI
+
 - `CloudCodeInstaller` registers **`CloudCodeOptimisticHandlerRegistry`** (singleton), **`CloudCodeErrorHandler`** (singleton), and **`ICloudCodeService` → `CloudCodeService`**. Subclass **`CloudCodeErrorHandler`** and register your subclass as **`CloudCodeErrorHandler`** if you need custom behavior.
+- `LiveOpsService` takes **`CloudCodeOptimisticHandlerRegistry`** and **`CloudCodeErrorHandler`** in addition to **`ICloudCodeService`** and **`IObjectResolver`**.
 
 ---
 
@@ -25,7 +38,7 @@ This document captures **decided behavior**, **reconciliation + error flow**, an
 
 | Piece | Decision |
 |--------|-----------|
-| **Registry** | **`(TRequest, TResponse)`** — `Register<TRequest, TResponse>(IRequestHandler<TRequest, TResponse>)`; lookup uses **`payload.GetType()`** (null payload → no optimistic path) and **`typeof(T)`** from `CallEndpointAsync<T>`. |
+| **Registry** | **`(TRequest, TResponse)`** — `Register<TRequest, TResponse>(IRequestHandler<TRequest, TResponse>)`; lookup uses **`request.GetType()`** and **`typeof(TResponse)`** via **`TryResolve<TResponse>(module, endpoint, request, ...)`** (null request → no optimistic path). Direct `CallEndpointAsync` uses the **call payload** as `request`; GameApi uses the **typed `ModuleRequest<TResponse>`** (not the envelope). |
 | **`IRequestHandler`** | **`TryMatch` only** — non-generic registry slot. |
 | **`IRequestHandler<TResponse>`** | **`GetOptimisticResponse`**, **`Validate(server, optimistic)`** only. |
 | **`IRequestHandler<TRequest, TResponse>`** | App implements typed **`TryMatch`**, **`GetOptimisticResponse(TRequest)`**; inherits **`Validate`**. |
@@ -108,7 +121,7 @@ public interface IRequestHandler<TRequest, TResponse> : IRequestHandler<TRespons
 
 ## Resolver safety (implemented)
 
-- **`payload == null`** → optimistic path skipped (`TryResolveOptimisticHandler` returns false).
+- **`request == null`** → optimistic path skipped (`TryResolve` returns false).
 - **Registry entry must implement `IRequestHandler<TResponse>`** — if not, skip; **`TryMatch`** runs only after a successful typed reference.
 
 ---
@@ -149,22 +162,24 @@ public interface IRequestHandler<TRequest, TResponse> : IRequestHandler<TRespons
 | 2026-03-31 | Payload = `object`; internal `{ "request", payload }` | Type-based routing; keeps wire format. |
 | 2026-04-01 | **`CloudCodeErrorHandler`** concrete, all Cloud Code failures | No optimistic-only interface; same hook for direct and trailing paths. |
 | 2026-04-01 | Null payload skips optimistic | Avoid `GetType()` on null. |
+| 2026-04-20 | **GameApi optimistic gate in `LiveOpsService` (Option A)** | Envelope breaks `(payload.GetType(), T)` lookup in `CloudCodeService`; keep **`(TRequest, TResponse)`** registry aligned with **`IGameApiHandler<TRequest, TResponse>`**; nested dispatch only after real envelope. |
 
 ---
 
 ## Next steps
 
 1. Implement or subclass **`CloudCodeErrorHandler`** for global Cloud Code error behavior.
-2. Concrete **`IRequestHandler<TRequest, TResponse>`** implementations (**`Validate`** for success-path reconciliation).
-3. Optional: unit tests for null payload, failed cast guard, and **`Handle`** invocation.
+2. Concrete **`IRequestHandler<TRequest, TResponse>`** implementations for **direct** and/or **GameApi** requests (**`Validate`** for success-path reconciliation).
+3. Optional: guard or document against registering **`(GameApiEnvelopeRequest, GameApiEnvelopeResponse)`** optimistic handlers (would stack with `LiveOpsService`).
 
 ---
 
 ## References (local)
 
-- `Assets/Packages/com.scaffold.cloudcode/Runtime/CloudCodeService.cs` — `CallEndpointAsync`, `TryResolveOptimisticHandler`, `RunReconciliationInTheBackground`.
+- `Assets/Packages/com.scaffold.cloudcode/Runtime/CloudCodeService.cs` — `CallEndpointAsync`, `TryGetOptimisticResponse` → `CloudCodeOptimisticHandlerRegistry.TryResolve`, `RunReconciliationInTheBackground`.
 - `Assets/Packages/com.scaffold.cloudcode/Runtime/CloudCodeErrorHandler.cs` — error hook.
-- `Assets/Packages/com.scaffold.cloudcode/Runtime/Optimistic/CloudCodeOptimisticHandlerRegistry.cs` — `Register<TRequest, TResponse>`.
+- `Assets/Packages/com.scaffold.cloudcode/Runtime/Optimistic/CloudCodeOptimisticHandlerRegistry.cs` — `Register<TRequest, TResponse>`, **`TryResolve<TResponse>`**.
+- `Assets/Packages/com.scaffold.liveops/Runtime/LiveOpsService.cs` — **`CallGameApiAsync`**, **`UnwrapAndDispatch`**, **`RunGameApiReconciliationInTheBackground`**.
 - `Assets/Packages/com.scaffold.cloudcode/Runtime/Optimistic/IRequestHandler.cs` — handler contracts (`IRequestHandler`, `IRequestHandler<TResponse>`, `IRequestHandler<TRequest,TResponse>`).
 - `Assets/Packages/com.scaffold.cloudcode/Runtime/Handlers/` — `ICloudCodeCallHandler` and decorator implementations (including single-flight).
 - `Assets/Packages/com.scaffold.cloudcode/Container/CloudCodeInstaller.cs` — DI registration.

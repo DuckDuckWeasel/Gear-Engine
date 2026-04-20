@@ -11,7 +11,7 @@
 
 ## Responsibilities
 
-- `ILiveOpsService` / `LiveOpsService`: `CallAsync`, `GetModuleData<T>()` (reads from the last successful initial `GameDataRequest` stored on the service).
+- `ILiveOpsService` / `LiveOpsService`: `CallAsync`, `GetModuleData<T>()` (reads from the last successful initial `GameDataRequest` stored on the service). **`LiveOpsService`** depends on **`CloudCodeOptimisticHandlerRegistry`** and **`CloudCodeErrorHandler`** (from **`CloudCodeInstaller`**) for optional **GameApi** optimistic responses; register **`CloudCodeInstaller`** before or with **`LiveOpsInstaller`** so those singletons exist.
 - After each `CallAsync`, an internal `ModuleResponseDispatchService` considers only the **direct** entries in `ModuleResponse.Responses` on the returned root (no deeper traversal), resolves `IEnumerable<IResponseHandler>` from `IObjectResolver` at dispatch time, and invokes handlers whose `HandledResponseType` matches each item’s runtime type (see `IResponseHandler` / `IResponseHandler<T>`).
 - `LiveOpsService` implements `IAsyncLayerInitializable`: performs the initial `GameDataRequest` and stores aggregated `GameData` internally. It does not coordinate other services; callers use `GetModuleData<T>()` when their layer runs after LiveOps has initialized.
 - `GameClientModuleBase<T>` implements `IAsyncLayerInitializable`: resolves `ILiveOpsService` and assigns `protected data` from `GetModuleData<T>()`. Bootstrap layer ordering should run `LiveOpsService` before these modules when they need `GameData` populated. `IGameClientModule` exposes `Key` only; typed payload lives on the concrete type as `protected T data`.

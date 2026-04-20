@@ -16,7 +16,11 @@ namespace Scaffold.LiveOps
 {
     internal sealed class LiveOpsService : ILiveOpsService, IAsyncInitializable
     {
-        public LiveOpsService(ICloudCodeService cloudCodeService, IObjectResolver objectResolver)
+        public LiveOpsService(
+            ICloudCodeService cloudCodeService,
+            IObjectResolver objectResolver,
+            CloudCodeOptimisticHandlerRegistry optimisticRegistry,
+            CloudCodeErrorHandler cloudCodeErrorHandler)
         {
             if (cloudCodeService == null)
             {
@@ -28,12 +32,26 @@ namespace Scaffold.LiveOps
                 throw new ArgumentNullException(nameof(objectResolver));
             }
 
+            if (optimisticRegistry == null)
+            {
+                throw new ArgumentNullException(nameof(optimisticRegistry));
+            }
+
+            if (cloudCodeErrorHandler == null)
+            {
+                throw new ArgumentNullException(nameof(cloudCodeErrorHandler));
+            }
+
             this.cloudCodeService = cloudCodeService;
             this.moduleResponseDispatchService = new ModuleResponseDispatchService(objectResolver);
+            this.optimisticRegistry = optimisticRegistry;
+            this.cloudCodeErrorHandler = cloudCodeErrorHandler;
         }
 
         private readonly ICloudCodeService cloudCodeService;
         private readonly ModuleResponseDispatchService moduleResponseDispatchService;
+        private readonly CloudCodeOptimisticHandlerRegistry optimisticRegistry;
+        private readonly CloudCodeErrorHandler cloudCodeErrorHandler;
         private GameData gameData;
 
         private static readonly JsonSerializerSettings LiveOpsJsonSettings = new JsonSerializerSettings
@@ -92,8 +110,22 @@ namespace Scaffold.LiveOps
                 RequestKey = request.GetType().Name,
                 Payload = JObject.FromObject(request, JsonSerializer.Create(LiveOpsJsonSettings)),
             };
-            GameApiEnvelopeResponse resp = await cloudCodeService.CallEndpointAsync<GameApiEnvelopeResponse>(
-                request.ModuleName, "GameApi", envelope, cancellationToken).ConfigureAwait(false);
+            Task<GameApiEnvelopeResponse> serverTask = cloudCodeService.CallEndpointAsync<GameApiEnvelopeResponse>(
+                request.ModuleName, "GameApi", envelope, cancellationToken);
+
+            if (optimisticRegistry.TryResolve(request.ModuleName, "GameApi", request, out IRequestHandler<TResponse> handler, out TResponse optimistic))
+            {
+                RunGameApiReconciliationInTheBackground(serverTask, handler, optimistic, request);
+                return optimistic;
+            }
+
+            GameApiEnvelopeResponse resp = await serverTask.ConfigureAwait(false);
+            return UnwrapAndDispatch<TResponse>(resp);
+        }
+
+        private TResponse UnwrapAndDispatch<TResponse>(GameApiEnvelopeResponse resp)
+            where TResponse : ModuleResponse
+        {
             if (resp == null)
             {
                 throw new InvalidOperationException("GameApi returned null response.");
@@ -117,6 +149,25 @@ namespace Scaffold.LiveOps
 
             moduleResponseDispatchService.DispatchNestedResponses(typed);
             return typed;
+        }
+
+        private async void RunGameApiReconciliationInTheBackground<TResponse>(
+            Task<GameApiEnvelopeResponse> serverTask,
+            IRequestHandler<TResponse> handler,
+            TResponse optimistic,
+            ModuleRequest<TResponse> request)
+            where TResponse : ModuleResponse
+        {
+            try
+            {
+                GameApiEnvelopeResponse resp = await serverTask.ConfigureAwait(false);
+                TResponse server = UnwrapAndDispatch<TResponse>(resp);
+                handler.Validate(server, optimistic);
+            }
+            catch (Exception ex)
+            {
+                cloudCodeErrorHandler.Handle(ex, request.ModuleName, "GameApi", request, optimistic);
+            }
         }
     }
 }
