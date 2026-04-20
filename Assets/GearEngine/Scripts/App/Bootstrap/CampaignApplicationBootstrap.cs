@@ -10,7 +10,7 @@ using GearEngine.Campaign.Services;
 using GearEngine.CarSimulation.Definitions;
 using GearEngine.GearEngine;
 using GearEngine.GearEngine.Config;
-using GearEngine.LayeredScope;
+using Scaffold.LayeredScope;
 using Scaffold.Navigation;
 using Scaffold.Navigation.Contracts;
 using UnityEngine;

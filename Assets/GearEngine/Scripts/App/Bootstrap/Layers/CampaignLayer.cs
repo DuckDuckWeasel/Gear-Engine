@@ -6,7 +6,7 @@ using GearEngine.CarSimulation.Definitions;
 using GearEngine.GearEngine;
 using GearEngine.GearEngine.Bootstrap;
 using GearEngine.GearEngine.Config;
-using GearEngine.LayeredScope;
+using Scaffold.LayeredScope;
 using VContainer;
 
 namespace GearEngine.App.Bootstrap.Layers

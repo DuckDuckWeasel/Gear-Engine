@@ -18,9 +18,8 @@
         "Scaffold.MVVM.Model",
         "Scaffold.Navigation",
         "Scaffold.Navigation.Container",
-        "Scaffold.Scope",
         "Scaffold.LiveOps",
-        "Core.LayeredScope",
+        "Scaffold.LayeredScope",
         "Unity.Splines",
         "Unity.TextMeshPro",
         "UnityEngine.UI"

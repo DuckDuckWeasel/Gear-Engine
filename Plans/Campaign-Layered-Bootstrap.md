@@ -2,7 +2,7 @@
 
 ## Summary
 
-Main Scene no longer uses `CampaignScope` (`SceneFoundationScope`) or `CampaignBootstrap`. It now boots with **`CampaignApplicationBootstrap`** (`Core.LayeredScope.ApplicationBootstrap`): **Foundation → UGS → LiveOps → Campaign**, matching the Meta pattern.
+Main Scene no longer uses `CampaignScope` (`SceneFoundationScope`) or `CampaignBootstrap`. It now boots with **`CampaignApplicationBootstrap`** (`Scaffold.LayeredScope.ApplicationBootstrap`): **Foundation → UGS → LiveOps → Campaign**, matching the Meta pattern.
 
 ## Key changes
 

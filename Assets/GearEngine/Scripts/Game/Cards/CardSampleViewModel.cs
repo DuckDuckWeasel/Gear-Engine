@@ -36,7 +36,7 @@ namespace GearEngine.Cards
 
         public IReadOnlyList<string> UnlockedCardIds => cardsClient.Unlocked ?? Array.Empty<string>();
 
-        /// <summary>Call after LiveOps client modules have completed <see cref="Scaffold.LiveOps.IAsyncInitializable.InitializeAsync"/>.</summary>
+        /// <summary>Call after LiveOps client modules have completed <see cref="Scaffold.LayeredScope.IAsyncInitializable.InitializeAsync"/>.</summary>
         public void RefreshDisplay()
         {
             Gold = currencyClient.GetWallet("gold")?.Current ?? 0;

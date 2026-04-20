@@ -1,6 +1,6 @@
 using System;
 using GearEngine.Campaign.Services;
-using GearEngine.LayeredScope;
+using Scaffold.LayeredScope;
 using Scaffold.LiveOps;
 using VContainer;
 using VContainer.Unity;

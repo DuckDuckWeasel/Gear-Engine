@@ -12,41 +12,41 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 469c24fdb3bd6431b92cc1465bd9166b, type: 3}
   m_Name: RemoteConfigDataStoreAsset
   m_EditorClassIdentifier: Unity.RemoteConfig.Editor::Unity.RemoteConfig.Editor.RemoteConfigDataStore
-  _rsKeyList: "[\r\n  {\r\n    \"metadata\": {\r\n      \"entityId\": \"71b5394c-c5ff-4f0b-a88f-b6fb39ff8937\"\r\n   
+  _rsKeyList: "[\r\n  {\r\n    \"metadata\": {\r\n      \"entityId\": \"5d351af1-ec26-480e-ae40-8639fbc3df48\"\r\n   
     },\r\n    \"rs\": {\r\n      \"key\": \"CardConfig\",\r\n      \"type\": \"json\",\r\n     
     \"schemaId\": null,\r\n      \"value\": {\r\n        \"catalog\": [],\r\n       
     \"currencyId\": \"gold\",\r\n        \"baseCost\": 100,\r\n        \"costPerPurchaseGrowth\":
     50\r\n      }\r\n    }\r\n  },\r\n  {\r\n    \"metadata\": {\r\n      \"entityId\":
-    \"f2656905-e0a3-47ab-87ad-be66179158af\"\r\n    },\r\n    \"rs\": {\r\n     
+    \"77f4909d-8a9c-4448-ba7f-ce6c28341e8e\"\r\n    },\r\n    \"rs\": {\r\n     
     \"key\": \"CurrencyConfig\",\r\n      \"type\": \"json\",\r\n      \"schemaId\":
     null,\r\n      \"value\": {\r\n        \"entries\": [\r\n          {\r\n           
     \"id\": \"gold\",\r\n            \"initial\": 0\r\n          }\r\n        ]\r\n     
-    }\r\n    }\r\n  },\r\n  {\r\n    \"metadata\": {\r\n      \"entityId\": \"be7a20b8-94f8-4717-bb74-9e2daa05a411\"\r\n   
+    }\r\n    }\r\n  },\r\n  {\r\n    \"metadata\": {\r\n      \"entityId\": \"fc75b947-3290-4198-83d3-733db6f59bb8\"\r\n   
     },\r\n    \"rs\": {\r\n      \"key\": \"InventoryConfig\",\r\n      \"type\":
     \"json\",\r\n      \"schemaId\": null,\r\n      \"value\": {}\r\n    }\r\n  },\r\n 
-    {\r\n    \"metadata\": {\r\n      \"entityId\": \"806be8dd-13d4-43fd-ab4a-66a99d35bfa2\"\r\n   
+    {\r\n    \"metadata\": {\r\n      \"entityId\": \"c343e809-5fc2-496e-9f86-f34dc1193f84\"\r\n   
     },\r\n    \"rs\": {\r\n      \"key\": \"LoadoutConfig\",\r\n      \"type\": \"json\",\r\n     
     \"schemaId\": null,\r\n      \"value\": {}\r\n    }\r\n  },\r\n  {\r\n    \"metadata\":
-    {\r\n      \"entityId\": \"ba5325ab-c2f4-413c-9ccd-97a0f03aba17\"\r\n    },\r\n   
+    {\r\n      \"entityId\": \"26b6f317-8a5e-426e-962c-0a84d41e9594\"\r\n    },\r\n   
     \"rs\": {\r\n      \"key\": \"TrackConfig\",\r\n      \"type\": \"json\",\r\n     
     \"schemaId\": null,\r\n      \"value\": {\r\n        \"entries\": []\r\n     
     }\r\n    }\r\n  }\r\n]"
-  _rsLastCachedKeyList: "[\r\n  {\r\n    \"metadata\": {\r\n      \"entityId\": \"71b5394c-c5ff-4f0b-a88f-b6fb39ff8937\"\r\n   
+  _rsLastCachedKeyList: "[\r\n  {\r\n    \"metadata\": {\r\n      \"entityId\": \"5d351af1-ec26-480e-ae40-8639fbc3df48\"\r\n   
     },\r\n    \"rs\": {\r\n      \"key\": \"CardConfig\",\r\n      \"type\": \"json\",\r\n     
     \"schemaId\": null,\r\n      \"value\": {\r\n        \"catalog\": [],\r\n       
     \"currencyId\": \"gold\",\r\n        \"baseCost\": 100,\r\n        \"costPerPurchaseGrowth\":
     50\r\n      }\r\n    }\r\n  },\r\n  {\r\n    \"metadata\": {\r\n      \"entityId\":
-    \"f2656905-e0a3-47ab-87ad-be66179158af\"\r\n    },\r\n    \"rs\": {\r\n     
+    \"77f4909d-8a9c-4448-ba7f-ce6c28341e8e\"\r\n    },\r\n    \"rs\": {\r\n     
     \"key\": \"CurrencyConfig\",\r\n      \"type\": \"json\",\r\n      \"schemaId\":
     null,\r\n      \"value\": {\r\n        \"entries\": [\r\n          {\r\n           
     \"id\": \"gold\",\r\n            \"initial\": 0\r\n          }\r\n        ]\r\n     
-    }\r\n    }\r\n  },\r\n  {\r\n    \"metadata\": {\r\n      \"entityId\": \"be7a20b8-94f8-4717-bb74-9e2daa05a411\"\r\n   
+    }\r\n    }\r\n  },\r\n  {\r\n    \"metadata\": {\r\n      \"entityId\": \"fc75b947-3290-4198-83d3-733db6f59bb8\"\r\n   
     },\r\n    \"rs\": {\r\n      \"key\": \"InventoryConfig\",\r\n      \"type\":
     \"json\",\r\n      \"schemaId\": null,\r\n      \"value\": {}\r\n    }\r\n  },\r\n 
-    {\r\n    \"metadata\": {\r\n      \"entityId\": \"806be8dd-13d4-43fd-ab4a-66a99d35bfa2\"\r\n   
+    {\r\n    \"metadata\": {\r\n      \"entityId\": \"c343e809-5fc2-496e-9f86-f34dc1193f84\"\r\n   
     },\r\n    \"rs\": {\r\n      \"key\": \"LoadoutConfig\",\r\n      \"type\": \"json\",\r\n     
     \"schemaId\": null,\r\n      \"value\": {}\r\n    }\r\n  },\r\n  {\r\n    \"metadata\":
-    {\r\n      \"entityId\": \"ba5325ab-c2f4-413c-9ccd-97a0f03aba17\"\r\n    },\r\n   
+    {\r\n      \"entityId\": \"26b6f317-8a5e-426e-962c-0a84d41e9594\"\r\n    },\r\n   
     \"rs\": {\r\n      \"key\": \"TrackConfig\",\r\n      \"type\": \"json\",\r\n     
     \"schemaId\": null,\r\n      \"value\": {\r\n        \"entries\": []\r\n     
     }\r\n    }\r\n  }\r\n]"

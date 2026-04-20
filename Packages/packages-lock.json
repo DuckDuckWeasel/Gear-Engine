@@ -24,30 +24,31 @@
         "com.scaffold.scope": "0.1.0",
         "com.unity.addressables": "2.9.1"
       },
-      "hash": "860e911f95667b852750fe02ec25a38f00ee8266"
+      "hash": "0c8347ca980c1a8cfe6d9140e067adf045207d1f"
     },
     "com.scaffold.autopacker": {
       "version": "https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.autopacker#main",
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "860e911f95667b852750fe02ec25a38f00ee8266"
+      "hash": "0c8347ca980c1a8cfe6d9140e067adf045207d1f"
     },
     "com.scaffold.cloudcode": {
-      "version": "file:../Assets/Packages/com.scaffold.cloudcode",
+      "version": "https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.cloudcode#main",
       "depth": 0,
-      "source": "local",
+      "source": "git",
       "dependencies": {
         "com.unity.services.cloudcode": "2.10.2",
         "com.unity.nuget.newtonsoft-json": "3.2.1"
-      }
+      },
+      "hash": "0c8347ca980c1a8cfe6d9140e067adf045207d1f"
     },
     "com.scaffold.entities": {
       "version": "https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.entities#main",
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "44156f6de3294cdea08e40455378317f9ca4d5a0"
+      "hash": "0c8347ca980c1a8cfe6d9140e067adf045207d1f"
     },
     "com.scaffold.events": {
       "version": "https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.events#main",
@@ -56,15 +57,26 @@
       "dependencies": {
         "com.scaffold.types": "0.1.0"
       },
-      "hash": "860e911f95667b852750fe02ec25a38f00ee8266"
+      "hash": "0c8347ca980c1a8cfe6d9140e067adf045207d1f"
+    },
+    "com.scaffold.layeredscope": {
+      "version": "https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.layeredscope#main",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {
+        "jp.hadashikick.vcontainer": "https://github.com/hadashiA/VContainer.git?path=VContainer/Assets/VContainer#1.17.0"
+      },
+      "hash": "0c8347ca980c1a8cfe6d9140e067adf045207d1f"
     },
     "com.scaffold.liveops": {
-      "version": "file:../Assets/Packages/com.scaffold.liveops",
+      "version": "https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.liveops#main",
       "depth": 0,
-      "source": "local",
+      "source": "git",
       "dependencies": {
-        "com.scaffold.cloudcode": "0.1.0"
-      }
+        "com.scaffold.cloudcode": "0.1.0",
+        "com.scaffold.layeredscope": "0.1.0"
+      },
+      "hash": "0c8347ca980c1a8cfe6d9140e067adf045207d1f"
     },
     "com.scaffold.maps": {
       "version": "https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.maps#main",
@@ -73,7 +85,7 @@
       "dependencies": {
         "com.scaffold.records": "0.1.0"
       },
-      "hash": "860e911f95667b852750fe02ec25a38f00ee8266"
+      "hash": "0c8347ca980c1a8cfe6d9140e067adf045207d1f"
     },
     "com.scaffold.model": {
       "version": "https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.model#main",
@@ -82,7 +94,7 @@
       "dependencies": {
         "com.scaffold.mvvm": "0.1.0"
       },
-      "hash": "1ec1e560974c8fc232588dc54d8175ec42414f43"
+      "hash": "0c8347ca980c1a8cfe6d9140e067adf045207d1f"
     },
     "com.scaffold.mvvm": {
       "version": "https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.mvvm#main",
@@ -92,35 +104,27 @@
         "com.scaffold.maps": "0.1.0",
         "com.scaffold.records": "0.1.0"
       },
-      "hash": "860e911f95667b852750fe02ec25a38f00ee8266"
+      "hash": "0c8347ca980c1a8cfe6d9140e067adf045207d1f"
     },
     "com.scaffold.navigation": {
-      "version": "file:../Assets/Packages/com.scaffold.navigation",
+      "version": "https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.navigation#main",
       "depth": 0,
-      "source": "local",
+      "source": "git",
       "dependencies": {
         "com.scaffold.types": "0.1.0",
         "com.scaffold.schemas": "0.1.0",
         "com.scaffold.events": "0.1.0",
         "com.unity.addressables": "2.9.1",
         "com.scaffold.addressables": "0.1.0"
-      }
+      },
+      "hash": "0c8347ca980c1a8cfe6d9140e067adf045207d1f"
     },
     "com.scaffold.records": {
       "version": "https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.records#main",
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "860e911f95667b852750fe02ec25a38f00ee8266"
-    },
-    "com.scaffold.sceneflow": {
-      "version": "https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.sceneflow#main",
-      "depth": 0,
-      "source": "git",
-      "dependencies": {
-        "com.unity.addressables": "2.9.1"
-      },
-      "hash": "860e911f95667b852750fe02ec25a38f00ee8266"
+      "hash": "0c8347ca980c1a8cfe6d9140e067adf045207d1f"
     },
     "com.scaffold.schemas": {
       "version": "https://github.com/ScaffoldLibrary/Schemas.git",
@@ -134,20 +138,23 @@
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "860e911f95667b852750fe02ec25a38f00ee8266"
+      "hash": "0c8347ca980c1a8cfe6d9140e067adf045207d1f"
     },
     "com.scaffold.types": {
       "version": "https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.types#main",
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "860e911f95667b852750fe02ec25a38f00ee8266"
+      "hash": "0c8347ca980c1a8cfe6d9140e067adf045207d1f"
     },
     "com.scaffold.ugs": {
-      "version": "file:../Assets/Packages/com.scaffold.ugs",
+      "version": "https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.ugs#main",
       "depth": 0,
-      "source": "local",
-      "dependencies": {}
+      "source": "git",
+      "dependencies": {
+        "com.scaffold.layeredscope": "0.1.0"
+      },
+      "hash": "0c8347ca980c1a8cfe6d9140e067adf045207d1f"
     },
     "com.scaffold.view": {
       "version": "https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.view#main",
@@ -160,7 +167,7 @@
         "com.scaffold.mvvm": "0.1.0",
         "com.scaffold.viewmodel": "0.1.0"
       },
-      "hash": "860e911f95667b852750fe02ec25a38f00ee8266"
+      "hash": "0c8347ca980c1a8cfe6d9140e067adf045207d1f"
     },
     "com.scaffold.viewmodel": {
       "version": "https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.viewmodel#main",
@@ -170,7 +177,7 @@
         "com.scaffold.navigation": "0.1.0",
         "com.scaffold.mvvm": "0.1.0"
       },
-      "hash": "860e911f95667b852750fe02ec25a38f00ee8266"
+      "hash": "0c8347ca980c1a8cfe6d9140e067adf045207d1f"
     },
     "com.unity.2d.animation": {
       "version": "13.0.4",

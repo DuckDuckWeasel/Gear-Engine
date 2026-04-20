@@ -15,7 +15,6 @@
         "Scaffold.Navigation",
         "Scaffold.Navigation.Container",
         "Scaffold.Records",
-        "Scaffold.Scope",
         "Unity.TextMeshPro",
         "UnityEngine.UI",
         "Unity.InputSystem",

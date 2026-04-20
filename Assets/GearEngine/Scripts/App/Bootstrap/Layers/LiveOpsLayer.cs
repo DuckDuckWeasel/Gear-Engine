@@ -1,6 +1,6 @@
 using System;
 using GearEngine.Currency.Bootstrap;
-using GearEngine.LayeredScope;
+using Scaffold.LayeredScope;
 using Scaffold.CloudCode.Container;
 using Scaffold.LiveOps.Container;
 using VContainer;

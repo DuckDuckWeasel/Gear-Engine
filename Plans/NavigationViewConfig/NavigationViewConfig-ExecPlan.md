@@ -45,11 +45,11 @@ After this change, a designer can choose per `ViewConfig` whether the view comes
 
 ## Context and Orientation
 
-**ViewConfig** (`Assets/Packages/com.scaffold.navigation/Runtime/Implementation/ViewConfig.cs`) is a `SchemaObject` with a private serialized `AssetReference asset`, `TypeReference` fields for view and controller types, and editor-only `OnValidate` that resolves types from `asset.editorAsset` when it is a `GameObject` with `IView`.
+**ViewConfig** ([`ViewConfig.cs`](https://github.com/MgCohen/Scaffold/blob/main/Assets/Packages/com.scaffold.navigation/Runtime/Implementation/ViewConfig.cs)) is a `SchemaObject` with a private serialized `AssetReference asset`, `TypeReference` fields for view and controller types, and editor-only `OnValidate` that resolves types from `asset.editorAsset` when it is a `GameObject` with `IView`.
 
-**NavigationProvider** (`.../NavigationProvider.cs`) builds a list of `INavigationPointStrategy` implementations. Order today: `ContextNavigationPointStrategy` (reuse a view already under the holder), then `AddressablesNavigationPointStrategy` (`.../AddressablesNavigationPointStrategy.cs`), which loads `config.Asset` through `IAddressablesGateway`, optionally reuses `NavigationAssetHandleBuffer`, instantiates under `viewHolder`, and completes `NavigationPoint` asynchronously.
+**NavigationProvider** ([`NavigationProvider.cs`](https://github.com/MgCohen/Scaffold/blob/main/Assets/Packages/com.scaffold.navigation/Runtime/Implementation/NavigationProvider.cs)) builds a list of `INavigationPointStrategy` implementations. Order today: `ContextNavigationPointStrategy` (reuse a view already under the holder), then `AddressablesNavigationPointStrategy` ([`AddressablesNavigationPointStrategy.cs`](https://github.com/MgCohen/Scaffold/blob/main/Assets/Packages/com.scaffold.navigation/Runtime/Implementation/AddressablesNavigationPointStrategy.cs)), which loads `config.Asset` through `IAddressablesGateway`, optionally reuses `NavigationAssetHandleBuffer`, instantiates under `viewHolder`, and completes `NavigationPoint` asynchronously.
 
-**SchemaObject editor** (`Assets/Packages/com.scaffold.schemas/Editor/SchemaObjectEditor.cs`) draws default properties via `DrawPropertiesExcluding(serializedObject, PropertiesToIgnore)` where `PropertiesToIgnore` includes `m_Script` and `schemas`. Subclasses can override `DrawDefaultProperties` and/or `PropertiesToIgnore` to customize the inspector while preserving schema list UI.
+**SchemaObject editor** (`SchemaObjectEditor` in package [`com.scaffold.schemas`](https://github.com/ScaffoldLibrary/Schemas)) draws default properties via `DrawPropertiesExcluding(serializedObject, PropertiesToIgnore)` where `PropertiesToIgnore` includes `m_Script` and `schemas`. Subclasses can override `DrawDefaultProperties` and/or `PropertiesToIgnore` to customize the inspector while preserving schema list UI.
 
 **Term:** “Non-addressable” here means a normal Unity asset reference (e.g. drag a prefab from the Project window) that is **not** loaded through the Addressables API for that navigation path.
 
@@ -63,13 +63,13 @@ After this change, a designer can choose per `ViewConfig` whether the view comes
 
 2. **Inspector (Editor assembly)**
 
-   Create `Assets/Packages/com.scaffold.navigation/Editor/Scaffold.Navigation.Editor.asmdef` referencing `Scaffold.Navigation`, `Scaffold.Schemas.Editor` (for `SchemaObjectEditor`), Unity Editor assemblies, and any packages needed for drawing `AssetReference` fields (e.g. Addressables editor support if required at compile time). Follow the same Editor-folder pattern as `Assets/Packages/com.scaffold.schemas/Editor/Scaffold.Schemas.Editor.asmdef` (`includePlatforms`: Editor only).
+   In the [Scaffold](https://github.com/MgCohen/Scaffold) repo, under `Assets/Packages/com.scaffold.navigation/Editor/`, create `Scaffold.Navigation.Editor.asmdef` referencing `Scaffold.Navigation`, `Scaffold.Schemas.Editor` (for `SchemaObjectEditor`), Unity Editor assemblies, and any packages needed for drawing `AssetReference` fields (e.g. Addressables editor support if required at compile time). Follow the same Editor-folder pattern as in [`com.scaffold.schemas`](https://github.com/ScaffoldLibrary/Schemas) (`includePlatforms`: Editor only).
 
    Implement `[CustomEditor(typeof(ViewConfig))] public class ViewConfigEditor : SchemaObjectEditor`. Override `PropertiesToIgnore` to exclude the serialized names of: the enum, the `AssetReference` field, and the direct prefab field, so the default pass does not duplicate them. Override `DrawDefaultProperties`: draw the enum with `EditorGUILayout.PropertyField`, then draw **either** the `AssetReference` property **or** the direct prefab property based on the enum value (read the enum from `SerializedProperty` with `serializedObject.Update` / `ApplyModifiedProperties` in mind). Then call `DrawPropertiesExcluding` with the base ignore list plus those three property names, or call the base implementation with the extended ignore list—whichever keeps `viewType` / `controllerType` / other fields appearing once in a sensible order. The goal is: one mode selector, one asset field visible, then remaining fields and schemas as today.
 
 3. **Runtime: direct prefab strategy**
 
-   Add a new internal class implementing `INavigationPointStrategy` (see `Assets/Packages/com.scaffold.navigation/Runtime/Implementation/INavigationPointStrategy.cs`). In `TryCreate`, return `false` unless `ViewConfig` is in direct-prefab mode and the prefab reference is non-null; otherwise build a `NavigationPoint` similar to `AddressablesNavigationPointStrategy` but **synchronously**: `Instantiate` the prefab under `viewHolder`, resolve `IView`, deactivate the instance if that matches existing behavior, call `CompleteReady`, and register disposal that destroys the instance (reuse the same destroy helper pattern as in `AddressablesNavigationPointStrategy` for play vs edit mode). Do not push `IAssetHandle` through `NavigationAssetHandleBuffer` for this path.
+   Add a new internal class implementing `INavigationPointStrategy` (see [`INavigationPointStrategy.cs`](https://github.com/MgCohen/Scaffold/blob/main/Assets/Packages/com.scaffold.navigation/Runtime/Implementation/INavigationPointStrategy.cs)). In `TryCreate`, return `false` unless `ViewConfig` is in direct-prefab mode and the prefab reference is non-null; otherwise build a `NavigationPoint` similar to `AddressablesNavigationPointStrategy` but **synchronously**: `Instantiate` the prefab under `viewHolder`, resolve `IView`, deactivate the instance if that matches existing behavior, call `CompleteReady`, and register disposal that destroys the instance (reuse the same destroy helper pattern as in `AddressablesNavigationPointStrategy` for play vs edit mode). Do not push `IAssetHandle` through `NavigationAssetHandleBuffer` for this path.
 
    Register this strategy in `NavigationProvider`’s constructor list in the order: context views, **direct prefab**, addressables. That way scene/context wins first; then direct prefab; then Addressables.
 
@@ -110,14 +110,14 @@ Changes are additive (new enum value default preserves old assets). If a mistake
 
 ## Artifacts and Notes
 
-Key files to touch (exact names may vary slightly during implementation):
+Key files to touch in [Scaffold `com.scaffold.navigation`](https://github.com/MgCohen/Scaffold/tree/main/Assets/Packages/com.scaffold.navigation) (exact names may vary slightly during implementation):
 
-- `Assets/Packages/com.scaffold.navigation/Runtime/Implementation/ViewConfig.cs`
-- `Assets/Packages/com.scaffold.navigation/Runtime/Implementation/NavigationProvider.cs`
-- `Assets/Packages/com.scaffold.navigation/Runtime/Implementation/AddressablesNavigationPointStrategy.cs`
-- New: `Assets/Packages/com.scaffold.navigation/Runtime/Implementation/DirectPrefabNavigationPointStrategy.cs` (or similar)
-- New: `Assets/Packages/com.scaffold.navigation/Editor/ViewConfigEditor.cs`
-- New: `Assets/Packages/com.scaffold.navigation/Editor/Scaffold.Navigation.Editor.asmdef`
+- [`ViewConfig.cs`](https://github.com/MgCohen/Scaffold/blob/main/Assets/Packages/com.scaffold.navigation/Runtime/Implementation/ViewConfig.cs)
+- [`NavigationProvider.cs`](https://github.com/MgCohen/Scaffold/blob/main/Assets/Packages/com.scaffold.navigation/Runtime/Implementation/NavigationProvider.cs)
+- [`AddressablesNavigationPointStrategy.cs`](https://github.com/MgCohen/Scaffold/blob/main/Assets/Packages/com.scaffold.navigation/Runtime/Implementation/AddressablesNavigationPointStrategy.cs)
+- New: `DirectPrefabNavigationPointStrategy.cs` (or similar) under `Runtime/Implementation/`
+- New: `ViewConfigEditor.cs` under `Editor/`
+- New: `Scaffold.Navigation.Editor.asmdef` under `Editor/`
 - Module doc under `Docs/` for navigation (update only)
 
 ## Interfaces and Dependencies

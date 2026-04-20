@@ -5,7 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using GameModuleDTO.GameApi;
 using GameModuleDTO.ModuleRequests;
-using GearEngine.LayeredScope;
+using Scaffold.LayeredScope;
 using NUnit.Framework;
 using Scaffold.CloudCode;
 using Scaffold.LiveOps;

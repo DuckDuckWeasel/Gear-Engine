@@ -1,6 +1,6 @@
 # LayeredScope
 
-`Core.LayeredScope` is a small VContainer helper for **stacked `LifetimeScope` layers**: install scopes in order, run async initialization per layer, optionally `PrepareAsync` against the parent resolver, and pop layers with `IAsyncDisposable` teardown. Cross-layer consumers use `ILayerResolver` (bound to the current top scope); vanilla `IObjectResolver` injection stays scoped per layer as usual.
+`Scaffold.LayeredScope` (`com.scaffold.layeredscope`) is a small VContainer helper for **stacked `LifetimeScope` layers**: install scopes in order, run async initialization per layer, optionally `PrepareAsync` against the parent resolver, and pop layers with `IAsyncDisposable` teardown. Cross-layer consumers use `ILayerResolver` (bound to the current top scope); vanilla `IObjectResolver` injection stays scoped per layer as usual.
 
 ## Three roles
 
@@ -52,7 +52,7 @@ Pattern 2 is the right tool when many descendants need the asset and the parent 
 
 ## Sample scene
 
-The sample is checked in at [Assets/GearEngine/Scripts/Core/LayeredScope/Sample/Scenes/LayeredScopeSample.unity](Assets/GearEngine/Scripts/Core/LayeredScope/Sample/Scenes/LayeredScopeSample.unity). Hierarchy:
+The sample scene lives in the Scaffold package: [`LayeredScopeSample.unity`](https://github.com/MgCohen/Scaffold/blob/main/Assets/Packages/com.scaffold.layeredscope/Samples/Scenes/LayeredScopeSample.unity) (import `com.scaffold.layeredscope` via UPM, then open from `Packages/` in the Project window). Hierarchy:
 
 - **LayeredScope_Root** — `SampleApplicationBootstrap` (root `LifetimeScope` + bootstrap in one component).
 
@@ -83,7 +83,7 @@ Add a new scope when you need a **feature or infrastructure boundary** (e.g. ass
 
 ## Real-world example: Meta scene
 
-The Meta smoke-test scene ([`Assets/GearEngine/Scenes/Meta.unity`](../Assets/GearEngine/Scenes/Meta.unity)) uses [`MetaApplicationBootstrap`](../Assets/GearEngine/Scripts/App/Bootstrap/MetaApplicationBootstrap.cs): foundation (Addressables, navigation, events) → UGS → Cloud Code + LiveOps. [`Scaffold.Ugs`](../Assets/Packages/com.scaffold.ugs/Runtime/Ugs.cs) and [`LiveOpsService`](../Assets/Packages/com.scaffold.liveops/Runtime/LiveOpsService.cs) implement `IAsyncInitializable` so each layer’s init wave completes before the next scope is pushed. See [`Docs/Meta/Bootstrap.md`](Meta/Bootstrap.md) for the layer list and extension points.
+The Meta smoke-test scene ([`Assets/GearEngine/Scenes/Meta.unity`](../Assets/GearEngine/Scenes/Meta.unity)) uses [`MetaApplicationBootstrap`](../Assets/GearEngine/Scripts/App/Bootstrap/MetaApplicationBootstrap.cs): foundation (Addressables, navigation, events) → UGS → Cloud Code + LiveOps. [`Ugs`](https://github.com/MgCohen/Scaffold/blob/main/Assets/Packages/com.scaffold.ugs/Runtime/Ugs.cs) and [`LiveOpsService`](https://github.com/MgCohen/Scaffold/blob/main/Assets/Packages/com.scaffold.liveops/Runtime/LiveOpsService.cs) implement `IAsyncInitializable` so each layer’s init wave completes before the next scope is pushed. See [`Docs/Meta/Bootstrap.md`](Meta/Bootstrap.md) for the layer list and extension points.
 
 ## Real-world example: Main / Campaign scene
 

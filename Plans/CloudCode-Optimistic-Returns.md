@@ -1,7 +1,7 @@
 # Cloud Code optimistic returns — design notes
 
 **Status:** Implemented (registry + optimistic path + `CloudCodeErrorHandler` + DI; **GameApi** optimistic gate in `LiveOpsService`)  
-**Related code:** `Assets/Packages/com.scaffold.cloudcode/` (`ICloudCodeService`, `ICloudCodeCallHandler`, `CloudCodeService`, `CloudCodeOptimisticHandlerRegistry`, `IRequestHandler*.cs`, `CloudCodeErrorHandler`); `Assets/Packages/com.scaffold.liveops/` (`LiveOpsService` GameApi path)
+**Related code:** [`com.scaffold.cloudcode`](https://github.com/MgCohen/Scaffold/tree/main/Assets/Packages/com.scaffold.cloudcode) (`ICloudCodeService`, `ICloudCodeCallHandler`, `CloudCodeService`, `CloudCodeOptimisticHandlerRegistry`, `IRequestHandler*.cs`, `CloudCodeErrorHandler`); [`com.scaffold.liveops`](https://github.com/MgCohen/Scaffold/tree/main/Assets/Packages/com.scaffold.liveops) (`LiveOpsService` GameApi path). Consumer projects resolve these under `Library/PackageCache/`.
 
 ## Purpose
 
@@ -178,14 +178,14 @@ public interface IRequestHandler<TRequest, TResponse> : IRequestHandler<TRespons
 
 ---
 
-## References (local)
+## References (Scaffold repo)
 
-- `Assets/Packages/com.scaffold.cloudcode/Runtime/CloudCodeService.cs` — `CallEndpointAsync`, `TryGetOptimisticResponse` → `CloudCodeOptimisticHandlerRegistry.TryResolve`, `RunReconciliationInTheBackground`.
-- `Assets/Packages/com.scaffold.cloudcode/Runtime/CloudCodeErrorHandler.cs` — error hook.
-- `Assets/Packages/com.scaffold.cloudcode/Runtime/Optimistic/CloudCodeOptimisticHandlerRegistry.cs` — `Register<TRequest, TResponse>`, **`TryResolve<TResponse>`**, container scan + cache.
-- `Assets/Packages/com.scaffold.cloudcode/Runtime/Optimistic/IOptimisticCloudCodeHandler.cs` — DI discovery marker.
-- `Assets/Packages/com.scaffold.liveops/Container/LiveOpsOptimisticRegistrationExtensions.cs` — optional **`RegisterOptimisticCloudCodeHandler<TImplementation>`**.
-- `Assets/Packages/com.scaffold.liveops/Runtime/LiveOpsService.cs` — **`CallGameApiAsync`**, **`UnwrapAndDispatch`**, **`RunGameApiReconciliationInTheBackground`**.
-- `Assets/Packages/com.scaffold.cloudcode/Runtime/Optimistic/IRequestHandler.cs` — handler contracts (`IRequestHandler`, `IRequestHandler<TResponse>`, `IRequestHandler<TRequest,TResponse>`).
-- `Assets/Packages/com.scaffold.cloudcode/Runtime/Handlers/` — `ICloudCodeCallHandler` and decorator implementations (including single-flight).
-- `Assets/Packages/com.scaffold.cloudcode/Container/CloudCodeInstaller.cs` — DI registration.
+- [`CloudCodeService.cs`](https://github.com/MgCohen/Scaffold/blob/main/Assets/Packages/com.scaffold.cloudcode/Runtime/CloudCodeService.cs) — `CallEndpointAsync`, `TryGetOptimisticResponse` → `CloudCodeOptimisticHandlerRegistry.TryResolve`, `RunReconciliationInTheBackground`.
+- [`CloudCodeErrorHandler.cs`](https://github.com/MgCohen/Scaffold/blob/main/Assets/Packages/com.scaffold.cloudcode/Runtime/CloudCodeErrorHandler.cs) — error hook.
+- [`CloudCodeOptimisticHandlerRegistry.cs`](https://github.com/MgCohen/Scaffold/blob/main/Assets/Packages/com.scaffold.cloudcode/Runtime/Optimistic/CloudCodeOptimisticHandlerRegistry.cs) — `Register<TRequest, TResponse>`, **`TryResolve<TResponse>`**, container scan + cache.
+- [`IOptimisticCloudCodeHandler.cs`](https://github.com/MgCohen/Scaffold/blob/main/Assets/Packages/com.scaffold.cloudcode/Runtime/Optimistic/IOptimisticCloudCodeHandler.cs) — DI discovery marker.
+- [`LiveOpsOptimisticRegistrationExtensions.cs`](https://github.com/MgCohen/Scaffold/blob/main/Assets/Packages/com.scaffold.liveops/Container/LiveOpsOptimisticRegistrationExtensions.cs) — optional **`RegisterOptimisticCloudCodeHandler<TImplementation>`**.
+- [`LiveOpsService.cs`](https://github.com/MgCohen/Scaffold/blob/main/Assets/Packages/com.scaffold.liveops/Runtime/LiveOpsService.cs) — **`CallGameApiAsync`**, **`UnwrapAndDispatch`**, **`RunGameApiReconciliationInTheBackground`**.
+- [`IRequestHandler.cs`](https://github.com/MgCohen/Scaffold/blob/main/Assets/Packages/com.scaffold.cloudcode/Runtime/Optimistic/IRequestHandler.cs) — handler contracts (`IRequestHandler`, `IRequestHandler<TResponse>`, `IRequestHandler<TRequest,TResponse>`).
+- [`Runtime/Handlers/`](https://github.com/MgCohen/Scaffold/tree/main/Assets/Packages/com.scaffold.cloudcode/Runtime/Handlers) — `ICloudCodeCallHandler` and decorator implementations (including single-flight).
+- [`CloudCodeInstaller.cs`](https://github.com/MgCohen/Scaffold/blob/main/Assets/Packages/com.scaffold.cloudcode/Container/CloudCodeInstaller.cs) — DI registration.

@@ -4,7 +4,7 @@
     "references": [
         "Game.App.Bootstrap",
         "Game.Campaign",
-        "Core.LayeredScope",
+        "Scaffold.LayeredScope",
         "Scaffold.CloudCode",
         "Scaffold.LiveOps",
         "Scaffold.LiveOps.Container",

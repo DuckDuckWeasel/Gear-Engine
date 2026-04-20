@@ -2,7 +2,7 @@
   "name": "Game.App.Bootstrap",
   "rootNamespace": "GearEngine.App.Bootstrap",
     "references": [
-        "Core.LayeredScope",
+        "Scaffold.LayeredScope",
     "Game.Campaign",
     "Game.CarSimulation",
     "Game.GearEngine",

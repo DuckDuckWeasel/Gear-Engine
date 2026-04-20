@@ -12,7 +12,7 @@ using GearEngine.Campaign.Bootstrap.Cards;
 using GearEngine.Campaign.Bootstrap.LiveOps;
 using GearEngine.Campaign.Services;
 using GearEngine.GearEngine.Config;
-using GearEngine.LayeredScope;
+using Scaffold.LayeredScope;
 using Scaffold.LiveOps;
 using Scaffold.Navigation;
 using UnityEngine;
