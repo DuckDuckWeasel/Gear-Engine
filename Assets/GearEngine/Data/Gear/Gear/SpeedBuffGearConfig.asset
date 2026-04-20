@@ -15,10 +15,11 @@ MonoBehaviour:
   nextLevel: {fileID: 0}
   data:
     id: gear_speed
+    rarity: 0
     Category: 0
     BaseRotationSpeed: 0
-    ViewPrefab: {fileID: 8811223344556677004, guid: ebb38bb653ba849e198cb9b2cfa7687f, type: 3}
-    UIIcon: {fileID: -3201335710889687837, guid: 753bec22852b34aeda2e0e40d56cf429, type: 3}
+    ViewPrefab: {fileID: 8811223344556677001, guid: 16426345c7f1e4cfcbe7499d444b3f6d, type: 3}
+    UIIcon: {fileID: -1078806869439273028, guid: 30f2e0d4c7f444e9d848f7850da085f7, type: 3}
     RelativeScaleMultiplier: 1
     TriggerPattern: 4
     IsInteractable: 1

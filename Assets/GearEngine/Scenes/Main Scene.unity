@@ -1482,9 +1482,10 @@ MonoBehaviour:
     inventoryLoadout:
       maxSlots: 5
       startingItems:
-      - {fileID: 11400000, guid: 3783c6d85510a4bf6b4f879d30ef249b, type: 2}
-      - {fileID: 11400000, guid: b642772cacb3f48d7870118c94a3e3a0, type: 2}
+      - {fileID: 11400000, guid: 6e736437dd0754c95a616bd251e748fd, type: 2}
+      - {fileID: 11400000, guid: a72f3ab4a7349450a9a39a30259d5ac0, type: 2}
       - {fileID: 11400000, guid: 9f0ce76835399481e9aaf8f8af8f41ca, type: 2}
+      - {fileID: 11400000, guid: 4d6adaa53b65049ae9f6d081da5539bb, type: 2}
     boardLoadout:
       boardLayout:
         placements:

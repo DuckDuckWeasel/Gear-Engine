@@ -15,9 +15,10 @@ MonoBehaviour:
   nextLevel: {fileID: 0}
   data:
     id: gear_base_2
+    rarity: 0
     Category: 0
     BaseRotationSpeed: 0
-    ViewPrefab: {fileID: 8811223344556677003, guid: d4ae7c8518bc94a9bb6a319c6a6902b6, type: 3}
+    ViewPrefab: {fileID: 8811223344556677001, guid: 16426345c7f1e4cfcbe7499d444b3f6d, type: 3}
     UIIcon: {fileID: 1124818141672353582, guid: 9b1842a1b3639426a87c3413c3d92a06, type: 3}
     RelativeScaleMultiplier: 1
     TriggerPattern: 4
