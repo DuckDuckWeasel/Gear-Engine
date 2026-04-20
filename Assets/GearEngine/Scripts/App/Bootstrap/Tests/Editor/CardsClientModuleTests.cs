@@ -92,7 +92,7 @@ namespace GearEngine.App.Bootstrap.Tests.Editor
             var persistence = new CardPersistence();
             persistence.Unlocked.AddRange(unlocked);
             CardConfig config = JsonConvert.DeserializeObject<CardConfig>(
-                $"{{\"catalog\":{JsonConvert.SerializeObject(catalog)},\"currencyId\":\"gold\",\"baseCost\":100,\"costPerPurchaseGrowth\":50}}");
+                $"{{\"catalog\":{JsonConvert.SerializeObject(catalog)},\"baseCost\":100,\"costPerPurchaseGrowth\":50}}");
             return new CardGameData(persistence, config);
         }
 

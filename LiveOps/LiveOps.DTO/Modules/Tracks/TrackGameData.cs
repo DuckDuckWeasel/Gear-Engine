@@ -15,8 +15,8 @@ namespace GameModuleDTO.Modules.Tracks
         [JsonProperty("orderedTrackIds")]
         public List<string> OrderedTrackIds { get; set; } = new List<string>();
 
-        [JsonProperty("bestScores")]
-        public Dictionary<string, int> BestScores { get; set; } = new Dictionary<string, int>();
+        [JsonProperty("bestTimeSec")]
+        public Dictionary<string, float> BestTimeSec { get; set; } = new Dictionary<string, float>();
 
         [JsonConstructor]
         private TrackGameData()
@@ -44,7 +44,7 @@ namespace GameModuleDTO.Modules.Tracks
                 }
             }
 
-            BestScores = new Dictionary<string, int>(persistence.BestScores);
+            BestTimeSec = new Dictionary<string, float>(persistence.BestTimeSec);
         }
     }
 }

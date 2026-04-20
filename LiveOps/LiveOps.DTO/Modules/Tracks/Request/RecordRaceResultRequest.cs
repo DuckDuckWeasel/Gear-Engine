@@ -10,16 +10,16 @@ namespace GameModuleDTO.ModuleRequests
         {
         }
 
-        public RecordRaceResultRequest(string trackId, int score)
+        public RecordRaceResultRequest(string trackId, float raceTimeSec)
         {
             TrackId = trackId;
-            Score = score;
+            RaceTimeSec = raceTimeSec;
         }
 
         [JsonProperty]
         public string TrackId { get; set; } = string.Empty;
 
         [JsonProperty]
-        public int Score { get; set; }
+        public float RaceTimeSec { get; set; }
     }
 }

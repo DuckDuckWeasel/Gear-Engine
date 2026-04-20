@@ -8,7 +8,7 @@ namespace GameModuleDTO.Modules.Tracks
         [JsonProperty("currentTrackId")]
         public string CurrentTrackId { get; set; } = string.Empty;
 
-        [JsonProperty("bestScores")]
-        public Dictionary<string, int> BestScores { get; set; } = new Dictionary<string, int>();
+        [JsonProperty("bestTimeSec")]
+        public Dictionary<string, float> BestTimeSec { get; set; } = new Dictionary<string, float>();
     }
 }

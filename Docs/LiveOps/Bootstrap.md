@@ -13,6 +13,8 @@ This document describes how the **Cloud Code backend**, **shared DTO DLL**, **Un
 | Meta harness | [Assets/GearEngine/Scenes/Meta.unity](../../Assets/GearEngine/Scenes/Meta.unity) + [`MetaApplicationBootstrap`](../../Assets/GearEngine/Scripts/App/Bootstrap/MetaApplicationBootstrap.cs) | Standalone **UGS → Cloud Code → LiveOps** init via **LayeredScope** (see [Meta bootstrap](../Meta/Bootstrap.md)) |
 | Build order (Editor) | [ProjectSettings/EditorBuildSettings.asset](../../ProjectSettings/EditorBuildSettings.asset) | `Meta.unity` is **enabled** at index **0** for backend smoke tests |
 
+**Campaign (Main scene):** `ITrackService` is **`TracksClientModule` only**. Expect **UGS** + **Cloud Code** + deployed **Remote Config** (`TrackConfig` entry ids must match `TrackDefinition` asset names) for track progression and race rewards.
+
 ## Flow (Meta scene)
 
 ```mermaid

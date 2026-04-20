@@ -3,7 +3,6 @@
   "entries": {
     "CardConfig": {
       "catalog": [],
-      "currencyId": "gold",
       "baseCost": 100,
       "costPerPurchaseGrowth": 50
     }

@@ -1,7 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using GameModuleDTO.ModuleRequests;
+using GameModuleDTO.Modules.Currency;
 using GearEngine.Campaign;
+using GearEngine.Currency;
 using GearEngine.Campaign.Services;
 using GearEngine.CarSimulation;
 using GearEngine.CarSimulation.Definitions;
@@ -109,14 +112,18 @@ namespace GearEngine.Campaign.Tests.Editor
 
     internal sealed class FakeTrackService : ITrackService
     {
+        private readonly CurrencyClientModule currencyClient;
+
         public FakeTrackService(
             TrackDefinition track,
             CarDefinition car,
-            IReadOnlyList<GearConfig> roguelikePool = null)
+            IReadOnlyList<GearConfig> roguelikePool = null,
+            CurrencyClientModule currencyClient = null)
         {
             CurrentTrack = track;
             CurrentCar = car;
             roguelikeOptions = roguelikePool ?? Array.Empty<GearConfig>();
+            this.currencyClient = currencyClient;
         }
 
         public TrackDefinition CurrentTrack { get; }
@@ -140,12 +147,29 @@ namespace GearEngine.Campaign.Tests.Editor
             }
 
             RecordResultCallCount++;
+            int reward = result.Gold.Amount;
+            result.ServerOutcome = new RecordRaceResultResponse
+            {
+                Reward = reward,
+                NewBestTimeSec = result.RaceTime,
+                MatchedBandIndex = reward > 0 ? 0 : -1,
+                Advanced = false,
+            };
+
+            if (currencyClient != null && reward > 0)
+            {
+                long cur = currencyClient.GetWallet("gold")?.Current ?? 0;
+                currencyClient.ApplyNestedAddCurrency(new AddCurrencyResponse("gold", cur + reward, reward));
+            }
+
             return System.Threading.Tasks.Task.CompletedTask;
         }
     }
 
     internal sealed class RecordingInventoryService : IRaceInventoryService
     {
+        public event Action ItemsChanged;
+
         public readonly List<IItem> AddedItems = new List<IItem>();
         private readonly InventoryModel model = new InventoryModel();
 
@@ -165,6 +189,7 @@ namespace GearEngine.Campaign.Tests.Editor
 
             AddedItems.Add(item);
             model.Items.Add(item);
+            ItemsChanged?.Invoke();
             return true;
         }
 
@@ -180,6 +205,7 @@ namespace GearEngine.Campaign.Tests.Editor
                 if (ReferenceEquals(model.Items[i], item))
                 {
                     model.Items.RemoveAt(i);
+                    ItemsChanged?.Invoke();
                     return true;
                 }
             }

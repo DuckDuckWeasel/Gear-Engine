@@ -12,19 +12,28 @@ namespace GameModuleDTO.Modules.Inventory
         [JsonProperty("gearIds")]
         public List<string> GearIds { get; set; } = new List<string>();
 
+        [JsonProperty("baseSlots")]
+        public int BaseSlots { get; set; }
+
         [JsonConstructor]
         private InventoryGameData()
         {
         }
 
-        public InventoryGameData(InventoryPersistence persistence)
+        public InventoryGameData(InventoryPersistence persistence, InventoryConfig config)
         {
             if (persistence == null)
             {
                 throw new ArgumentNullException(nameof(persistence));
             }
 
+            if (config == null)
+            {
+                throw new ArgumentNullException(nameof(config));
+            }
+
             GearIds = new List<string>(persistence.GearIds);
+            BaseSlots = config.BaseSlots;
         }
     }
 }

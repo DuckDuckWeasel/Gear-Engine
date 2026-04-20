@@ -1,12 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using GameModuleDTO.Modules.Inventory;
 using GameModuleDTO.ModuleRequests;
 using GearEngine.Campaign.Services;
+using GearEngine.GearEngine;
 using GearEngine.GearEngine.Config;
+using GearEngine.GearEngine.Services.Inventory;
 using Scaffold.LiveOps;
 using UnityEngine;
 using VContainer;
@@ -47,26 +48,46 @@ namespace GearEngine.Campaign.Bootstrap.LiveOps
             return list;
         }
 
-        public async Task SaveOwnedGearConfigsAsync(IReadOnlyList<GearConfig> gears, CancellationToken cancellationToken = default)
+        /// <summary>Called when the race inventory tray changes; persists optimistically and fires LiveOps in the background.</summary>
+        public void PersistOwnedGearFromRaceInventory(IRaceInventoryService raceInventory)
         {
-            if (gears == null)
+            if (raceInventory == null)
             {
-                throw new ArgumentNullException(nameof(gears));
+                throw new ArgumentNullException(nameof(raceInventory));
             }
 
+            List<string> ids = SnapshotGearIds(raceInventory);
+            if (data != null)
+            {
+                data.GearIds = new List<string>(ids);
+            }
+
+            _ = SendInventoryAsync(ids);
+        }
+
+        private static List<string> SnapshotGearIds(IRaceInventoryService raceInventory)
+        {
+            var list = new List<string>();
+            foreach (IItem item in raceInventory.GetInventory().Items)
+            {
+                if (item is GearConfigData cfgData && cfgData.SourceGearConfig != null && !string.IsNullOrEmpty(cfgData.SourceGearConfig.Id))
+                {
+                    list.Add(cfgData.SourceGearConfig.Id);
+                }
+            }
+
+            return list;
+        }
+
+        private async Task SendInventoryAsync(List<string> ids)
+        {
             try
             {
-                List<string> ids = gears.Where(g => g != null && !string.IsNullOrEmpty(g.Id)).Select(g => g.Id).ToList();
-                SetInventoryResponse resp = await liveOpsService.CallAsync(new SetInventoryRequest(ids), cancellationToken);
-                if (resp != null && data != null)
-                {
-                    data.GearIds = new List<string>(resp.GearIds);
-                }
+                await liveOpsService.CallAsync(new SetInventoryRequest(ids));
             }
             catch (Exception ex)
             {
-                Debug.LogError($"[InventoryClientModule] SaveOwnedGearConfigsAsync failed: {ex.Message}\n{ex.StackTrace}");
-                throw;
+                Debug.LogError($"[InventoryClientModule] PersistOwnedGearFromRaceInventory failed: {ex.Message}\n{ex.StackTrace}");
             }
         }
     }

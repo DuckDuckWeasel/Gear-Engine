@@ -5,7 +5,7 @@ The **Game.Campaign** assembly implements a five-screen flow in a single scene: 
 ## Responsibilities
 
 - **`ITrackService` / `TracksClientModule`** — Current track and car, the active `LapRaceSession`, roguelike card pool, and server-backed race results via `RecordResultAsync`. Exposes **`TrackProgressModel`** via `GetTrackProgress()` and ordered `TrackEntry` list via `GetOrderedTracks()`.
-- **`CurrencyClientModule`** (LiveOps layer) — Server-backed gold via `AddAsync("gold", amount)` / `GetWallet("gold")`; see [Currency.md](../LiveOps/Currency.md).
+- **`CurrencyClientModule`** (LiveOps layer) — Server-backed gold via `GetWallet("gold")` and GameApi flows that return nested `AddCurrencyResponse` / direct currency calls; see [Currency.md](../LiveOps/Currency.md). Race completion does **not** call client `AddAsync` for rewards (server grants gold in `RecordRaceResultHandler`).
 - **`CampaignApplicationBootstrap`** ([`Assets/GearEngine/Scripts/App/Bootstrap/CampaignApplicationBootstrap.cs`](../../Assets/GearEngine/Scripts/App/Bootstrap/CampaignApplicationBootstrap.cs)) — Root `ApplicationBootstrap` for the Main scene: **Foundation → UGS → LiveOps → Campaign** layers. References catalog and start-data **assets** (`TrackCatalogSO`, `GearCatalogSO`, `GearEngineStartDataSO`, `RaceSessionDefaultsSO`, board rules, feature toggles, spline config). After startup, opens **`MainViewModel`** from `OnReadyAsync`.
 - **`CampaignLayer`** — Installs `GearMechanicsInstaller`, `CarTrackInstaller`, and `CampaignRaceSessionInstaller` after LiveOps client modules have registered.
 - **LiveOps client installers** — `CampaignTracksInstaller`, `CampaignGearCatalogInstaller`, `CampaignLoadoutInstaller`, `CampaignInventoryInstaller`, plus `CardsClientInstaller`, run inside **`LiveOpsLayer`** so `IAsyncInitializable` hydration shares the same stack as `LiveOpsService`.
@@ -31,4 +31,4 @@ Campaign catalog/start-data samples: `Assets/GearEngine/Data/Campaign/CampaignTr
 
 ## LiveOps coupling
 
-Campaign progression, gold, gear inventory, board loadout, and card unlocks are backed by LiveOps modules inside the layered bootstrap (`ILiveOpsService` is registered before the Campaign layer). `LocalTrackService` / `LocalGearLoadoutService` remain available for isolated tests only.
+Campaign progression, gold, gear inventory, board loadout, and card unlocks are backed by LiveOps modules inside the layered bootstrap (`ILiveOpsService` is registered before the Campaign layer). **`ITrackService`** is **`TracksClientModule` only** (cloud). `LocalGearLoadoutService` may remain for isolated gear tests where noted.

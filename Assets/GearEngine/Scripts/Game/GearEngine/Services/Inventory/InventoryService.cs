@@ -8,6 +8,8 @@ namespace GearEngine.GearEngine.Services.Inventory
 {
     public sealed class InventoryService : IRaceInventoryService
     {
+        public event Action ItemsChanged;
+
         private readonly InventoryModel model;
 
         public InventoryService(GearInventoryLoadoutData loadout)
@@ -44,6 +46,7 @@ namespace GearEngine.GearEngine.Services.Inventory
             }
 
             model.Items.Add(item);
+            ItemsChanged?.Invoke();
             return true;
         }
 
@@ -62,6 +65,7 @@ namespace GearEngine.GearEngine.Services.Inventory
             }
 
             model.Items.RemoveAt(index);
+            ItemsChanged?.Invoke();
             return true;
         }
 

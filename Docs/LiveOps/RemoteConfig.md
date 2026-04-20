@@ -24,6 +24,15 @@ Each `.rc` file should expose **one** top-level Remote Config key that matches t
 
 Adding a new module: add a DTO config type, add `ConfigKey` in the module, create `<Module>.rc` with that key, deploy.
 
+## Payload shapes (minimal server-authoritative fields)
+
+| Key | JSON shape (under the config key) |
+|-----|-------------------------------------|
+| `TrackConfig` | `entries[]`: `{ "id", "baseReward", "bands": [{ "maxSec", "r" }] }`. Race time is **seconds**; first band with `raceTime <= maxSec` (after sorting by `maxSec`) sets reward; `baseReward` when no band matches. |
+| `CardConfig` | `catalog` (string ids), `baseCost`, `costPerPurchaseGrowth`. Purchases always spend **`gold`** (no `currencyId`). |
+| `InventoryConfig` | `baseSlots` (int default for client + docs). |
+| `LoadoutConfig` | `baseSlots` (int). |
+
 ## Packages
 
 - `com.unity.remote-config` — authoring and Deployment integration.

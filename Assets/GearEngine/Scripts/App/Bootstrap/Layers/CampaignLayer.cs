@@ -51,6 +51,10 @@ namespace GearEngine.App.Bootstrap.Layers
             new CarTrackInstaller().Install(builder);
             new CampaignRaceSessionInstaller(raceSessionDefaults).Install(builder);
             builder.RegisterInstance(start);
+
+            builder.Register<CampaignGearPersistenceHookup>(Lifetime.Singleton)
+                .As<IAsyncInitializable>()
+                .As<IDisposable>();
         }
     }
 }

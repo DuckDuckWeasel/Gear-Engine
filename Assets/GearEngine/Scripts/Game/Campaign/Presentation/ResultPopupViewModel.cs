@@ -19,7 +19,9 @@ namespace GearEngine.Campaign.Presentation
         public float RaceTime => result.RaceTime;
         public int LapCount => result.LapCount;
         public int Score => result.Score;
-        public int GoldAmount => result.Gold.Amount;
+
+        /// <summary>Server band reward (gold) when LiveOps completed the race; otherwise local estimate.</summary>
+        public int GoldAmount => result.ServerOutcome != null ? result.ServerOutcome.Reward : result.Gold.Amount;
 
         public long CurrentGold => currencyClient.GetWallet("gold")?.Current ?? 0;
 

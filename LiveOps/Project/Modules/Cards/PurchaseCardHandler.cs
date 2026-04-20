@@ -14,8 +14,8 @@ namespace GameModule.Modules.Cards
     {
         public async Task<PurchaseCardResponse> HandleAsync(GameApiSession session, PurchaseCardRequest request)
         {
-            CardConfig config = await session.RemoteConfig.Get(session.Context, CardsModule.ConfigKey, new CardConfig()).ConfigureAwait(false);
-            CardPersistence persistence = await session.Player.Get(session.Context, CardsModule.PersistenceKey, new CardPersistence()).ConfigureAwait(false);
+            CardConfig config = await session.RemoteConfig.Get(session.Context, CardsModule.ConfigKey, new CardConfig());
+            CardPersistence persistence = await session.Player.Get(session.Context, CardsModule.PersistenceKey, new CardPersistence());
 
             long cost = config.CostFor(persistence.Unlocked.Count);
             List<string> available = config.Catalog
@@ -27,7 +27,7 @@ namespace GameModule.Modules.Cards
             }
 
             SpendCurrencyResponse spend = await session.InvokeAsync<SpendCurrencyRequest, SpendCurrencyResponse>(
-                new SpendCurrencyRequest(config.CurrencyId, cost)).ConfigureAwait(false);
+                new SpendCurrencyRequest("gold", cost));
             if (spend == null || !spend.Succeeded)
             {
                 return new PurchaseCardResponse { Success = false, NextCost = cost, Cost = cost };

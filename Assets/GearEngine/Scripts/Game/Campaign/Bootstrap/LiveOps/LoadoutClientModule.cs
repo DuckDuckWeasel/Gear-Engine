@@ -47,28 +47,36 @@ namespace GearEngine.Campaign.Bootstrap.LiveOps
             return new BoardLayoutData(items);
         }
 
-        public async void SaveBoardLayout(BoardLayoutData layout)
+        /// <summary>Called when the local board layout changes; persists optimistically and fires LiveOps in the background.</summary>
+        public void PersistBoardLayout(BoardLayoutData layout)
         {
             if (layout == null)
             {
                 throw new ArgumentNullException(nameof(layout));
             }
 
+            List<LoadoutPlacement> placements = layout.Placements
+                .Where(p => p?.GearConfig != null && !string.IsNullOrEmpty(p.GearConfig.Id))
+                .Select(p => new LoadoutPlacement { GearId = p.GearConfig.Id, X = p.Position.x, Y = p.Position.y })
+                .ToList();
+
+            if (data != null)
+            {
+                data.Board = placements;
+            }
+
+            _ = SendBoardLayoutAsync(placements);
+        }
+
+        private async Task SendBoardLayoutAsync(List<LoadoutPlacement> placements)
+        {
             try
             {
-                List<LoadoutPlacement> placements = layout.Placements
-                    .Where(p => p?.GearConfig != null && !string.IsNullOrEmpty(p.GearConfig.Id))
-                    .Select(p => new LoadoutPlacement { GearId = p.GearConfig.Id, X = p.Position.x, Y = p.Position.y })
-                    .ToList();
-                SaveBoardLayoutResponse resp = await liveOpsService.CallAsync(new SaveBoardLayoutRequest(placements));
-                if (resp != null && data != null)
-                {
-                    data.Board = placements;
-                }
+                await liveOpsService.CallAsync(new SaveBoardLayoutRequest(placements));
             }
             catch (Exception ex)
             {
-                Debug.LogError($"[LoadoutClientModule] SaveBoardLayout failed: {ex.Message}\n{ex.StackTrace}");
+                Debug.LogError($"[LoadoutClientModule] PersistBoardLayout failed: {ex.Message}\n{ex.StackTrace}");
             }
         }
     }

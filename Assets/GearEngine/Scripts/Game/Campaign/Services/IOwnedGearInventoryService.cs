@@ -1,6 +1,4 @@
 using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 using GearEngine.GearEngine.Config;
 
 namespace GearEngine.Campaign.Services
@@ -13,7 +11,5 @@ namespace GearEngine.Campaign.Services
         bool HasSavedInventory { get; }
 
         IReadOnlyList<GearConfig> GetOwnedGearConfigs();
-
-        Task SaveOwnedGearConfigsAsync(IReadOnlyList<GearConfig> gears, CancellationToken cancellationToken = default);
     }
 }

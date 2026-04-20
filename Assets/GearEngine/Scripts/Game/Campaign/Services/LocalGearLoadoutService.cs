@@ -1,4 +1,3 @@
-using System;
 using GearEngine.GearEngine;
 
 namespace GearEngine.Campaign.Services
@@ -10,10 +9,5 @@ namespace GearEngine.Campaign.Services
         public bool HasSavedLoadout => current != null;
 
         public BoardLayoutData GetBoardLayout() => current;
-
-        public void SaveBoardLayout(BoardLayoutData layout)
-        {
-            current = layout ?? throw new ArgumentNullException(nameof(layout));
-        }
     }
 }

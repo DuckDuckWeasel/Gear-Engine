@@ -24,7 +24,7 @@ namespace GearEngine.Campaign.Bootstrap.Cards
 
         public long NextCost => data?.NextCost ?? 0;
 
-        public string CurrencyId => data?.CurrencyId ?? string.Empty;
+        public string CurrencyId => "gold";
 
         public async Task<PurchaseCardResponse> PurchaseAsync(CancellationToken cancellationToken = default)
         {

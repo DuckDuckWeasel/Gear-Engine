@@ -61,7 +61,6 @@ namespace GearEngine.Campaign.Tests.Editor
 
                 var vm = new ActiveRaceViewModel();
                 ViewModelTestInject.InjectPrivateField(vm, "trackService", trackService);
-                ViewModelTestInject.InjectPrivateField(vm, "currencyClient", currency);
                 ViewModelTestInject.InjectPrivateField(vm, "engineService", engine);
                 ViewModelTestInject.InjectPrivateField(vm, "trackFactory", factory);
                 ViewModelTestInject.InjectPrivateField(vm, "raceManager", raceManager);
@@ -91,7 +90,6 @@ namespace GearEngine.Campaign.Tests.Editor
             trackDef.SetScoreBandsForTests(new[] { new TrackScoreBand(9999f, 200) });
 
             RaceState initialSession = CampaignTestUtilities.CreateMinimalSession(carDef, trackDef);
-            var trackService = new FakeTrackService(trackDef, carDef);
             var engine = new FakeEngine();
             var factory = new TrackSimulationFactory();
             var navigation = new RecordingNavigation();
@@ -113,9 +111,10 @@ namespace GearEngine.Campaign.Tests.Editor
                 CurrencyClientModule currency = container.Resolve<CurrencyClientModule>();
                 currency.InitializeAsync(CancellationToken.None).GetAwaiter().GetResult();
 
+                var trackService = new FakeTrackService(trackDef, carDef, currencyClient: currency);
+
                 var vm = new ActiveRaceViewModel();
                 ViewModelTestInject.InjectPrivateField(vm, "trackService", trackService);
-                ViewModelTestInject.InjectPrivateField(vm, "currencyClient", currency);
                 ViewModelTestInject.InjectPrivateField(vm, "engineService", engine);
                 ViewModelTestInject.InjectPrivateField(vm, "trackFactory", factory);
                 ViewModelTestInject.InjectPrivateField(vm, "raceManager", raceManager);

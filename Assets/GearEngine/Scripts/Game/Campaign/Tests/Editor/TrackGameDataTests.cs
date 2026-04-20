@@ -6,6 +6,7 @@ using GameModuleDTO.ModuleRequests;
 using GameModuleDTO.Modules.Tracks;
 using GearEngine.Campaign.Bootstrap.LiveOps;
 using GearEngine.Campaign.Services;
+using GearEngine.Currency;
 using GearEngine.CarSimulation.Definitions;
 using GearEngine.GearEngine.Config;
 using Newtonsoft.Json;
@@ -23,7 +24,7 @@ namespace GearEngine.Campaign.Tests.Editor
         public void Ctor_CopiesOrderedTrackIdsFromConfig()
         {
             TrackConfig config = JsonConvert.DeserializeObject<TrackConfig>(
-                "{\"entries\":[{\"id\":\"a\",\"advanceScore\":100},{\"id\":\"b\",\"advanceScore\":200}]}");
+                "{\"entries\":[{\"id\":\"a\",\"baseReward\":0,\"bands\":[]},{\"id\":\"b\",\"baseReward\":0,\"bands\":[]}]}");
             var persistence = new TrackPersistence { CurrentTrackId = "a" };
 
             var data = new TrackGameData(persistence, config);
@@ -45,15 +46,17 @@ namespace GearEngine.Campaign.Tests.Editor
 
             var persistence = new TrackPersistence { CurrentTrackId = string.Empty };
             TrackConfig config = JsonConvert.DeserializeObject<TrackConfig>(
-                "{\"entries\":[{\"id\":\"track_alpha\",\"advanceScore\":1}]}");
+                "{\"entries\":[{\"id\":\"track_alpha\",\"baseReward\":0,\"bands\":[]}]}");
             var gameData = new TrackGameData(persistence, config);
 
             var liveOps = new StubLiveOps(gameData);
             var builder = new ContainerBuilder();
             builder.RegisterInstance<ILiveOpsService>(liveOps);
+            builder.Register<CurrencyClientModule>(Lifetime.Singleton);
             using IObjectResolver resolver = builder.Build();
 
-            var module = new TracksClientModule(resolver, liveOps, catalog);
+            CurrencyClientModule currency = resolver.Resolve<CurrencyClientModule>();
+            var module = new TracksClientModule(resolver, liveOps, currency, catalog);
             await module.InitializeAsync(CancellationToken.None);
 
             Assert.That(module.CurrentTrack, Is.SameAs(trackDef));

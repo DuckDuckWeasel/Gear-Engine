@@ -1,7 +1,5 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using GearEngine.Campaign.Services;
 using GearEngine.GearEngine;
 using GearEngine.GearEngine.Config;
@@ -35,7 +33,6 @@ namespace GearEngine.Campaign.Presentation
         [Inject] private IRaceInventoryService inventoryService;
         [Inject] private IGearPresentationTransferService presentationTransferService;
         [Inject] private IGearLoadoutService loadoutService;
-        [Inject] private IOwnedGearInventoryService ownedGearInventoryService;
 
         protected override void Initialize()
         {
@@ -63,17 +60,8 @@ namespace GearEngine.Campaign.Presentation
 
         public void GoToRace()
         {
-            _ = GoToRaceAsync();
-        }
-
-        private async Task GoToRaceAsync()
-        {
             try
             {
-                BoardLayoutData snapshot = BoardLayoutData.FromNodes(boardService.GetAllNodes());
-                loadoutService.SaveBoardLayout(snapshot);
-                await ownedGearInventoryService.SaveOwnedGearConfigsAsync(SnapshotInventoryGearConfigs());
-
                 navigation.Open(new ActiveRaceViewModel(), closeCurrent: true);
             }
             catch (Exception ex)
@@ -92,20 +80,6 @@ namespace GearEngine.Campaign.Presentation
             {
                 Debug.LogError($"[SetupViewModel] ReturnToMainMenu failed: {ex.Message}\n{ex.StackTrace}");
             }
-        }
-
-        private IReadOnlyList<GearConfig> SnapshotInventoryGearConfigs()
-        {
-            var list = new List<GearConfig>();
-            foreach (IItem item in inventoryService.GetInventory().Items)
-            {
-                if (item is GearConfigData data && data.SourceGearConfig != null)
-                {
-                    list.Add(data.SourceGearConfig);
-                }
-            }
-
-            return list;
         }
     }
 }

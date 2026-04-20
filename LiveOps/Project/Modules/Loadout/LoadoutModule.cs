@@ -18,9 +18,9 @@ namespace GameModule.Modules.Loadout
 
         public override async Task<IGameModuleData> Initialize(IExecutionContext context, IPlayerData player, IGameState gameState, IRemoteConfig remoteConfig)
         {
-            _ = await remoteConfig.Get(context, ConfigKey, new LoadoutConfig()).ConfigureAwait(false);
+            LoadoutConfig config = await remoteConfig.Get(context, ConfigKey, new LoadoutConfig()).ConfigureAwait(false);
             LoadoutPersistence persistence = await player.Get(context, PersistenceKey, new LoadoutPersistence()).ConfigureAwait(false);
-            return new LoadoutGameData(persistence);
+            return new LoadoutGameData(persistence, config);
         }
     }
 }

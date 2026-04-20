@@ -56,7 +56,7 @@ namespace GearEngine.Cards.Tests.Editor
             var persistence = new CardPersistence();
             persistence.Unlocked.AddRange(unlocked);
             CardConfig config = JsonConvert.DeserializeObject<CardConfig>(
-                "{\"catalog\":[\"a\"],\"currencyId\":\"gold\",\"baseCost\":10,\"costPerPurchaseGrowth\":5}");
+                "{\"catalog\":[\"a\"],\"baseCost\":10,\"costPerPurchaseGrowth\":5}");
             return new CardGameData(persistence, config);
         }
 

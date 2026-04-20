@@ -5,7 +5,13 @@ namespace GameModuleDTO.ModuleRequests
     public sealed class RecordRaceResultResponse : ModuleResponse
     {
         [JsonProperty]
-        public int NewBestScore { get; set; }
+        public float NewBestTimeSec { get; set; }
+
+        [JsonProperty]
+        public int MatchedBandIndex { get; set; } = -1;
+
+        [JsonProperty]
+        public int Reward { get; set; }
 
         [JsonProperty]
         public bool Advanced { get; set; }

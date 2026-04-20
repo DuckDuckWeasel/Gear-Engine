@@ -5,6 +5,7 @@ using GameModuleDTO.Modules.Tracks;
 using GameModuleDTO.ModuleRequests;
 using GearEngine.Campaign.Services;
 using GearEngine.CarSimulation.Definitions;
+using GearEngine.Currency;
 using GearEngine.GearEngine.Config;
 using Scaffold.LiveOps;
 using UnityEngine;
@@ -15,13 +16,15 @@ namespace GearEngine.Campaign.Bootstrap.LiveOps
     public sealed class TracksClientModule : GameClientModuleBase<TrackGameData>, ITrackService
     {
         private readonly ILiveOpsService liveOpsService;
+        private readonly CurrencyClientModule currencyClient;
         private readonly TrackCatalogSO catalog;
         private readonly TrackProgressModel progress = new TrackProgressModel();
 
-        public TracksClientModule(IObjectResolver resolver, ILiveOpsService liveOps, TrackCatalogSO catalog)
+        public TracksClientModule(IObjectResolver resolver, ILiveOpsService liveOps, CurrencyClientModule currencyClient, TrackCatalogSO catalog)
             : base(resolver)
         {
             liveOpsService = liveOps ?? throw new ArgumentNullException(nameof(liveOps));
+            this.currencyClient = currencyClient ?? throw new ArgumentNullException(nameof(currencyClient));
             this.catalog = catalog ?? throw new ArgumentNullException(nameof(catalog));
         }
 
@@ -130,13 +133,26 @@ namespace GearEngine.Campaign.Bootstrap.LiveOps
                     return;
                 }
 
-                RecordRaceResultResponse resp = await liveOpsService.CallAsync(new RecordRaceResultRequest(trackId, result.Score));
+                RecordRaceResultResponse resp = await liveOpsService.CallAsync(new RecordRaceResultRequest(trackId, result.RaceTime));
                 if (resp == null || data == null)
                 {
                     return;
                 }
 
-                data.BestScores[trackId] = resp.NewBestScore;
+                result.ServerOutcome = resp;
+
+                if (resp.Responses != null)
+                {
+                    for (int i = 0; i < resp.Responses.Count; i++)
+                    {
+                        if (resp.Responses[i] is GameModuleDTO.Modules.Currency.AddCurrencyResponse add)
+                        {
+                            currencyClient.ApplyNestedAddCurrency(add);
+                        }
+                    }
+                }
+
+                data.BestTimeSec[trackId] = resp.NewBestTimeSec;
                 if (resp.Advanced && !string.IsNullOrEmpty(resp.NextTrackId))
                 {
                     data.CurrentTrackId = resp.NextTrackId;

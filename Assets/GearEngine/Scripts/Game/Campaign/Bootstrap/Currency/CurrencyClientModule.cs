@@ -76,6 +76,16 @@ namespace GearEngine.Currency
             return response;
         }
 
+        public void ApplyNestedAddCurrency(AddCurrencyResponse response)
+        {
+            if (response == null)
+            {
+                return;
+            }
+
+            ApplyServerSnapshot(response.CurrencyId, response.NewAmount);
+        }
+
         private void ApplyServerSnapshot(string currencyId, long? newAmount)
         {
             if (data == null || !newAmount.HasValue)

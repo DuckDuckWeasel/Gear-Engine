@@ -86,13 +86,13 @@ namespace GearEngine.App.Bootstrap
 
                 Debug.Log(
                     $"[Meta] Tracks: client hydrated, progressIndex={tracksClient.GetTrackProgress().CurrentTrackIndex}, " +
-                    $"currentTrackId='{trackData?.CurrentTrackId ?? string.Empty}', orderedCount={trackData?.OrderedTrackIds?.Count ?? 0}, bestScoreEntries={trackData?.BestScores?.Count ?? 0}.");
+                    $"currentTrackId='{trackData?.CurrentTrackId ?? string.Empty}', orderedCount={trackData?.OrderedTrackIds?.Count ?? 0}, bestTimeEntries={trackData?.BestTimeSec?.Count ?? 0}.");
                 Debug.Log(
                     $"[Meta] Loadout: hasSaved={loadoutClient.HasSavedLoadout}, boardPlacements={(loadoutData != null ? loadoutData.Board.Count : 0)}.");
                 Debug.Log(
                     $"[Meta] Inventory: hasSaved={inventoryClient.HasSavedInventory}, gearIdCount={(inventoryData != null ? inventoryData.GearIds.Count : 0)}.");
                 Debug.Log(
-                    $"[Meta] Cards: unlockedCount={cardsClient.Unlocked?.Count ?? 0}, nextCost={cardsClient.NextCost}, currencyId='{cardsClient.CurrencyId}'.");
+                    $"[Meta] Cards: unlockedCount={cardsClient.Unlocked?.Count ?? 0}, nextCost={cardsClient.NextCost} (gold).");
             }
             catch (Exception ex)
             {

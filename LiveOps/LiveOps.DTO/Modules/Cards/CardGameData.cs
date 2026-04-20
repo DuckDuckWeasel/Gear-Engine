@@ -15,9 +15,6 @@ namespace GameModuleDTO.Modules.Cards
         [JsonProperty("nextCost")]
         public long NextCost { get; set; }
 
-        [JsonProperty("currencyId")]
-        public string CurrencyId { get; set; } = string.Empty;
-
         [JsonConstructor]
         private CardGameData()
         {
@@ -37,7 +34,6 @@ namespace GameModuleDTO.Modules.Cards
 
             Unlocked = new List<string>(persistence.Unlocked);
             NextCost = config.CostFor(Unlocked.Count);
-            CurrencyId = config.CurrencyId;
         }
     }
 }

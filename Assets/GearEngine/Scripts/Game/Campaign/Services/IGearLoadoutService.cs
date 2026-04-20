@@ -7,7 +7,5 @@ namespace GearEngine.Campaign.Services
         bool HasSavedLoadout { get; }
 
         BoardLayoutData GetBoardLayout();
-
-        void SaveBoardLayout(BoardLayoutData layout);
     }
 }
