@@ -12,49 +12,49 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 469c24fdb3bd6431b92cc1465bd9166b, type: 3}
   m_Name: RemoteConfigDataStoreAsset
   m_EditorClassIdentifier: Unity.RemoteConfig.Editor::Unity.RemoteConfig.Editor.RemoteConfigDataStore
-  _rsKeyList: "[\r\n  {\r\n    \"metadata\": {\r\n      \"entityId\": \"732da4e7-0faa-4b20-b80f-806ba1d25cd1\"\r\n   
+  _rsKeyList: "[\r\n  {\r\n    \"metadata\": {\r\n      \"entityId\": \"a5a1b3d5-0a8d-4606-8c1b-087010234713\"\r\n   
     },\r\n    \"rs\": {\r\n      \"key\": \"RoguelikeConfig\",\r\n      \"type\":
     \"json\",\r\n      \"schemaId\": null,\r\n      \"value\": {\r\n        \"gearPool\":
     [],\r\n        \"optionsPerRoll\": 3\r\n      }\r\n    }\r\n  },\r\n  {\r\n   
-    \"metadata\": {\r\n      \"entityId\": \"ad152ac1-6be1-4301-b2e2-db6c6a333dc7\"\r\n   
+    \"metadata\": {\r\n      \"entityId\": \"1b12a585-05d2-46c9-9f02-0cabeaf58ca5\"\r\n   
     },\r\n    \"rs\": {\r\n      \"key\": \"CardConfig\",\r\n      \"type\": \"json\",\r\n     
     \"schemaId\": null,\r\n      \"value\": {\r\n        \"catalog\": [],\r\n       
     \"baseCost\": 100,\r\n        \"costPerPurchaseGrowth\": 50\r\n      }\r\n   
-    }\r\n  },\r\n  {\r\n    \"metadata\": {\r\n      \"entityId\": \"4d1a5094-657c-4574-8da0-8a6671d1995f\"\r\n   
+    }\r\n  },\r\n  {\r\n    \"metadata\": {\r\n      \"entityId\": \"e4c47600-254b-4345-88c4-e85fdbca277c\"\r\n   
     },\r\n    \"rs\": {\r\n      \"key\": \"CurrencyConfig\",\r\n      \"type\":
     \"json\",\r\n      \"schemaId\": null,\r\n      \"value\": {\r\n        \"entries\":
     [\r\n          {\r\n            \"id\": \"gold\",\r\n            \"initial\":
     0\r\n          }\r\n        ]\r\n      }\r\n    }\r\n  },\r\n  {\r\n    \"metadata\":
-    {\r\n      \"entityId\": \"b2633b5b-9120-4465-8954-908f04e30408\"\r\n    },\r\n   
+    {\r\n      \"entityId\": \"fbdd5bd8-b83f-489e-8794-bb28792f7262\"\r\n    },\r\n   
     \"rs\": {\r\n      \"key\": \"InventoryConfig\",\r\n      \"type\": \"json\",\r\n     
     \"schemaId\": null,\r\n      \"value\": {\r\n        \"baseSlots\": 8\r\n     
-    }\r\n    }\r\n  },\r\n  {\r\n    \"metadata\": {\r\n      \"entityId\": \"9314596f-e1a2-41a6-a3a0-dca3828cc459\"\r\n   
+    }\r\n    }\r\n  },\r\n  {\r\n    \"metadata\": {\r\n      \"entityId\": \"442f2e79-dd11-4e60-b710-232fc43a1a6a\"\r\n   
     },\r\n    \"rs\": {\r\n      \"key\": \"LoadoutConfig\",\r\n      \"type\": \"json\",\r\n     
     \"schemaId\": null,\r\n      \"value\": {\r\n        \"baseSlots\": 6\r\n     
-    }\r\n    }\r\n  },\r\n  {\r\n    \"metadata\": {\r\n      \"entityId\": \"65f6d069-3d91-4843-bb64-21028ea268f1\"\r\n   
+    }\r\n    }\r\n  },\r\n  {\r\n    \"metadata\": {\r\n      \"entityId\": \"d15b3e76-62b0-416b-8d21-7e5b7c6a6ab8\"\r\n   
     },\r\n    \"rs\": {\r\n      \"key\": \"TrackConfig\",\r\n      \"type\": \"json\",\r\n     
     \"schemaId\": null,\r\n      \"value\": {\r\n        \"entries\": []\r\n     
     }\r\n    }\r\n  }\r\n]"
-  _rsLastCachedKeyList: "[\r\n  {\r\n    \"metadata\": {\r\n      \"entityId\": \"732da4e7-0faa-4b20-b80f-806ba1d25cd1\"\r\n   
+  _rsLastCachedKeyList: "[\r\n  {\r\n    \"metadata\": {\r\n      \"entityId\": \"a5a1b3d5-0a8d-4606-8c1b-087010234713\"\r\n   
     },\r\n    \"rs\": {\r\n      \"key\": \"RoguelikeConfig\",\r\n      \"type\":
     \"json\",\r\n      \"schemaId\": null,\r\n      \"value\": {\r\n        \"gearPool\":
     [],\r\n        \"optionsPerRoll\": 3\r\n      }\r\n    }\r\n  },\r\n  {\r\n   
-    \"metadata\": {\r\n      \"entityId\": \"ad152ac1-6be1-4301-b2e2-db6c6a333dc7\"\r\n   
+    \"metadata\": {\r\n      \"entityId\": \"1b12a585-05d2-46c9-9f02-0cabeaf58ca5\"\r\n   
     },\r\n    \"rs\": {\r\n      \"key\": \"CardConfig\",\r\n      \"type\": \"json\",\r\n     
     \"schemaId\": null,\r\n      \"value\": {\r\n        \"catalog\": [],\r\n       
     \"baseCost\": 100,\r\n        \"costPerPurchaseGrowth\": 50\r\n      }\r\n   
-    }\r\n  },\r\n  {\r\n    \"metadata\": {\r\n      \"entityId\": \"4d1a5094-657c-4574-8da0-8a6671d1995f\"\r\n   
+    }\r\n  },\r\n  {\r\n    \"metadata\": {\r\n      \"entityId\": \"e4c47600-254b-4345-88c4-e85fdbca277c\"\r\n   
     },\r\n    \"rs\": {\r\n      \"key\": \"CurrencyConfig\",\r\n      \"type\":
     \"json\",\r\n      \"schemaId\": null,\r\n      \"value\": {\r\n        \"entries\":
     [\r\n          {\r\n            \"id\": \"gold\",\r\n            \"initial\":
     0\r\n          }\r\n        ]\r\n      }\r\n    }\r\n  },\r\n  {\r\n    \"metadata\":
-    {\r\n      \"entityId\": \"b2633b5b-9120-4465-8954-908f04e30408\"\r\n    },\r\n   
+    {\r\n      \"entityId\": \"fbdd5bd8-b83f-489e-8794-bb28792f7262\"\r\n    },\r\n   
     \"rs\": {\r\n      \"key\": \"InventoryConfig\",\r\n      \"type\": \"json\",\r\n     
     \"schemaId\": null,\r\n      \"value\": {\r\n        \"baseSlots\": 8\r\n     
-    }\r\n    }\r\n  },\r\n  {\r\n    \"metadata\": {\r\n      \"entityId\": \"9314596f-e1a2-41a6-a3a0-dca3828cc459\"\r\n   
+    }\r\n    }\r\n  },\r\n  {\r\n    \"metadata\": {\r\n      \"entityId\": \"442f2e79-dd11-4e60-b710-232fc43a1a6a\"\r\n   
     },\r\n    \"rs\": {\r\n      \"key\": \"LoadoutConfig\",\r\n      \"type\": \"json\",\r\n     
     \"schemaId\": null,\r\n      \"value\": {\r\n        \"baseSlots\": 6\r\n     
-    }\r\n    }\r\n  },\r\n  {\r\n    \"metadata\": {\r\n      \"entityId\": \"65f6d069-3d91-4843-bb64-21028ea268f1\"\r\n   
+    }\r\n    }\r\n  },\r\n  {\r\n    \"metadata\": {\r\n      \"entityId\": \"d15b3e76-62b0-416b-8d21-7e5b7c6a6ab8\"\r\n   
     },\r\n    \"rs\": {\r\n      \"key\": \"TrackConfig\",\r\n      \"type\": \"json\",\r\n     
     \"schemaId\": null,\r\n      \"value\": {\r\n        \"entries\": []\r\n     
     }\r\n    }\r\n  }\r\n]"
