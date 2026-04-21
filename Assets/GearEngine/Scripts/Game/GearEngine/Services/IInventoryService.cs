@@ -18,5 +18,8 @@ namespace GearEngine.GearEngine.Services
         bool TryAdd(GearConfig gear);
 
         bool TryRemove(GearConfig gear);
+
+        /// <summary>Clears all owned gear and persists an empty inventory in one request (LiveOps implementations).</summary>
+        void Clear();
     }
 }

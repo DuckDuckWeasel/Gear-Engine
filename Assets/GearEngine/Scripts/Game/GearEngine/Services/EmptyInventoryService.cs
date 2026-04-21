@@ -18,5 +18,9 @@ namespace GearEngine.GearEngine.Services
         public bool TryAdd(GearConfig gear) => gear != null;
 
         public bool TryRemove(GearConfig gear) => false;
+
+        public void Clear()
+        {
+        }
     }
 }

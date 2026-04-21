@@ -108,6 +108,115 @@ namespace GearEngine.Campaign.Tests.Editor
             }
         }
 
+        [Test]
+        public void Clear_RemovesAllOwned_AndSendsEmptySetInventoryRequest()
+        {
+            GearConfig g1 = CampaignTestUtilities.CreateGearConfigWithData("g1");
+            GearConfig g2 = CampaignTestUtilities.CreateGearConfigWithData("g2");
+            GearCatalogSO catalog = null;
+            try
+            {
+                catalog = ScriptableObject.CreateInstance<GearCatalogSO>();
+                catalog.SetRuntimeEntries(new[] { g1, g2 });
+
+                var moduleData = new InventoryGameData(new InventoryPersistence(), new InventoryConfig());
+                var fake = new FakeLiveOpsService { ModuleData = moduleData };
+
+                var builder = new ContainerBuilder();
+                builder.RegisterInstance<ILiveOpsService>(fake);
+                builder.RegisterInstance(catalog);
+                builder.Register<InventoryClientModule>(Lifetime.Singleton);
+
+                IObjectResolver container = builder.Build();
+                try
+                {
+                    InventoryClientModule module = container.Resolve<InventoryClientModule>();
+                    module.InitializeAsync(CancellationToken.None).GetAwaiter().GetResult();
+
+                    Assert.That(module.TryAdd(g1), Is.True);
+                    Assert.That(module.TryAdd(g2), Is.True);
+                    Assert.That(module.Owned.Count, Is.EqualTo(2));
+
+                    int callsBeforeClear = fake.SetInventoryCalls.Count;
+                    int events = 0;
+                    module.InventoryChanged += () => events++;
+
+                    module.Clear();
+
+                    Assert.That(module.Owned.Count, Is.EqualTo(0));
+                    Assert.That(events, Is.EqualTo(1));
+                    Assert.That(fake.SetInventoryCalls.Count, Is.EqualTo(callsBeforeClear + 1));
+                    Assert.That(fake.SetInventoryCalls[^1].Count, Is.EqualTo(0));
+                }
+                finally
+                {
+                    (container as IDisposable)?.Dispose();
+                }
+            }
+            finally
+            {
+                if (catalog != null)
+                {
+                    UnityEngine.Object.DestroyImmediate(catalog);
+                }
+
+                CampaignTestUtilities.DestroyGearConfig(g1);
+                CampaignTestUtilities.DestroyGearConfig(g2);
+            }
+        }
+
+        [Test]
+        public void Clear_WhenAlreadyEmpty_StillSendsRequest_AndRaisesEvent()
+        {
+            GearConfig g1 = CampaignTestUtilities.CreateGearConfigWithData("g1");
+            GearCatalogSO catalog = null;
+            try
+            {
+                catalog = ScriptableObject.CreateInstance<GearCatalogSO>();
+                catalog.SetRuntimeEntries(new[] { g1 });
+
+                var moduleData = new InventoryGameData(new InventoryPersistence(), new InventoryConfig());
+                var fake = new FakeLiveOpsService { ModuleData = moduleData };
+
+                var builder = new ContainerBuilder();
+                builder.RegisterInstance<ILiveOpsService>(fake);
+                builder.RegisterInstance(catalog);
+                builder.Register<InventoryClientModule>(Lifetime.Singleton);
+
+                IObjectResolver container = builder.Build();
+                try
+                {
+                    InventoryClientModule module = container.Resolve<InventoryClientModule>();
+                    module.InitializeAsync(CancellationToken.None).GetAwaiter().GetResult();
+
+                    Assert.That(module.Owned.Count, Is.EqualTo(0));
+
+                    int events = 0;
+                    module.InventoryChanged += () => events++;
+                    int callsBefore = fake.SetInventoryCalls.Count;
+
+                    module.Clear();
+
+                    Assert.That(events, Is.EqualTo(1));
+                    Assert.That(fake.SetInventoryCalls.Count, Is.EqualTo(callsBefore + 1));
+                    Assert.That(fake.SetInventoryCalls[^1].Count, Is.EqualTo(0));
+                }
+                finally
+                {
+                    (container as IDisposable)?.Dispose();
+                }
+            }
+            finally
+            {
+                if (catalog != null)
+                {
+                    UnityEngine.Object.DestroyImmediate(catalog);
+                }
+
+                CampaignTestUtilities.DestroyGearConfig(g1);
+            }
+        }
+
         private sealed class FakeLiveOpsService : ILiveOpsService
         {
             public InventoryGameData ModuleData { get; set; }

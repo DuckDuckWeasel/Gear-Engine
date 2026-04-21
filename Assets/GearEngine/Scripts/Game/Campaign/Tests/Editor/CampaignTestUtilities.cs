@@ -203,5 +203,11 @@ namespace GearEngine.Campaign.Tests.Editor
             InventoryChanged?.Invoke();
             return true;
         }
+
+        public void Clear()
+        {
+            owned.Clear();
+            InventoryChanged?.Invoke();
+        }
     }
 }

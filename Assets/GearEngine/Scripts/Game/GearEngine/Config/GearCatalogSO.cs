@@ -26,6 +26,9 @@ namespace GearEngine.GearEngine.Config
             RebuildLookup();
         }
 
+        /// <summary>Serialized catalog entries (may contain nulls or entries without ids; callers should filter).</summary>
+        public IReadOnlyList<GearConfig> All => gears != null ? gears : Array.Empty<GearConfig>();
+
         private void RebuildLookup()
         {
             _byId.Clear();
