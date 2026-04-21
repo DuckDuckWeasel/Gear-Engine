@@ -11,6 +11,16 @@ namespace GameModuleDTO.Modules.Tracks
         [JsonIgnore]
         public IReadOnlyList<TrackConfigEntry> Entries => _entries;
 
+        public void Clear() => _entries.Clear();
+
+        public void AddEntry(TrackConfigEntry entry)
+        {
+            if (entry != null)
+            {
+                _entries.Add(entry);
+            }
+        }
+
         public bool TryGet(string id, out TrackConfigEntry entry)
         {
             for (int i = 0; i < _entries.Count; i++)

@@ -1,0 +1,7 @@
+{
+  "name": "com.scaffold.liveops.authoring",
+  "version": "1.0.0",
+  "displayName": "Scaffold LiveOps Authoring",
+  "unity": "6000.0",
+  "description": "ConfigBuilderSO base types and Remote Config .rc authoring tools for LiveOps modules."
+}

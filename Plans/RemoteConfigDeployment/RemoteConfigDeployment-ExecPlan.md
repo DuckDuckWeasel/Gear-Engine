@@ -6,6 +6,8 @@ This ExecPlan is a living document.
 
 Move LiveOps Remote Config authoring from ad-hoc CSV/JSON under `LiveOps/LiveOps.DTO/config/` to per-module `.rc` files under `Assets/LiveOps/RemoteConfig/`, deployed with `com.unity.services.deployment` via **Window → Deployment**, keeping the same Remote Config keys consumed by Cloud Code (see [Docs/LiveOps/RemoteConfig.md](../../Docs/LiveOps/RemoteConfig.md) for the current key list).
 
+**Update:** Hand-editing JSON under `Assets/LiveOps/RemoteConfig/` for content is superseded by **`com.scaffold.liveops.authoring`** — **Window → LiveOps → Config Deployment** + `ConfigBuilderSO` assets (see [Docs/LiveOps/AuthoringPipeline.md](../../Docs/LiveOps/AuthoringPipeline.md)). This ExecPlan remains valid for **Deployment** (link project → Window → Deployment → smoke-test Meta).
+
 ## Progress
 
 - [x] Add `com.unity.services.deployment` to `Packages/manifest.json` and align `packages-lock.json`.

@@ -42,7 +42,7 @@ namespace GearEngine.Campaign.Tests.Editor
             var carDef = ScriptableObject.CreateInstance<CarDefinition>();
 
             var catalog = ScriptableObject.CreateInstance<TrackCatalogSO>();
-            catalog.SetRuntimeEntries(new[] { CreateTrackEntry(trackDef, carDef) }, System.Array.Empty<GearConfig>());
+            catalog.SetRuntimeEntries(new[] { CreateTrackEntry(trackDef, carDef) });
 
             var persistence = new TrackPersistence { CurrentTrackId = string.Empty };
             TrackConfig config = JsonConvert.DeserializeObject<TrackConfig>(
@@ -68,13 +68,46 @@ namespace GearEngine.Campaign.Tests.Editor
         }
 
         [Test]
+        public async Task TracksClientModule_InitializeAsync_WhenRemoteTrackListEmpty_RepairsToFirstCatalogTrack()
+        {
+            var trackDef = ScriptableObject.CreateInstance<TrackDefinition>();
+            trackDef.name = "local_only";
+            var carDef = ScriptableObject.CreateInstance<CarDefinition>();
+
+            var catalog = ScriptableObject.CreateInstance<TrackCatalogSO>();
+            catalog.SetRuntimeEntries(new[] { CreateTrackEntry(trackDef, carDef) });
+
+            var persistence = new TrackPersistence { CurrentTrackId = string.Empty };
+            TrackConfig config = JsonConvert.DeserializeObject<TrackConfig>(
+                "{\"entries\":[]}");
+            var gameData = new TrackGameData(persistence, config);
+
+            var liveOps = new StubLiveOps(gameData);
+            var builder = new ContainerBuilder();
+            builder.RegisterInstance<ILiveOpsService>(liveOps);
+            builder.Register<CurrencyClientModule>(Lifetime.Singleton);
+            using IObjectResolver resolver = builder.Build();
+
+            CurrencyClientModule currency = resolver.Resolve<CurrencyClientModule>();
+            var module = new TracksClientModule(resolver, liveOps, currency, catalog);
+            await module.InitializeAsync(CancellationToken.None);
+
+            Assert.That(module.CurrentTrack, Is.SameAs(trackDef));
+            Assert.That(gameData.CurrentTrackId, Is.EqualTo("local_only"));
+
+            Object.DestroyImmediate(trackDef);
+            Object.DestroyImmediate(carDef);
+            Object.DestroyImmediate(catalog);
+        }
+
+        [Test]
         public void TrackCatalogSO_GetFirstResolvableTrackId_ReturnsFirstValidEntryId()
         {
             var trackDef = ScriptableObject.CreateInstance<TrackDefinition>();
             trackDef.name = "only_track";
             var carDef = ScriptableObject.CreateInstance<CarDefinition>();
             var catalog = ScriptableObject.CreateInstance<TrackCatalogSO>();
-            catalog.SetRuntimeEntries(new[] { CreateTrackEntry(trackDef, carDef) }, System.Array.Empty<GearConfig>());
+            catalog.SetRuntimeEntries(new[] { CreateTrackEntry(trackDef, carDef) });
 
             Assert.That(catalog.GetFirstResolvableTrackId(), Is.EqualTo("only_track"));
 

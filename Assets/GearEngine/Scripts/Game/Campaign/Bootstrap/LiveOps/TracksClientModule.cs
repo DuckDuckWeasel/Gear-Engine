@@ -6,7 +6,6 @@ using GameModuleDTO.ModuleRequests;
 using GearEngine.Campaign.Services;
 using GearEngine.CarSimulation.Definitions;
 using GearEngine.Currency;
-using GearEngine.GearEngine.Config;
 using Scaffold.LiveOps;
 using UnityEngine;
 using VContainer;
@@ -20,7 +19,11 @@ namespace GearEngine.Campaign.Bootstrap.LiveOps
         private readonly TrackCatalogSO catalog;
         private readonly TrackProgressModel progress = new TrackProgressModel();
 
-        public TracksClientModule(IObjectResolver resolver, ILiveOpsService liveOps, CurrencyClientModule currencyClient, TrackCatalogSO catalog)
+        public TracksClientModule(
+            IObjectResolver resolver,
+            ILiveOpsService liveOps,
+            CurrencyClientModule currencyClient,
+            TrackCatalogSO catalog)
             : base(resolver)
         {
             liveOpsService = liveOps ?? throw new ArgumentNullException(nameof(liveOps));
@@ -30,68 +33,64 @@ namespace GearEngine.Campaign.Bootstrap.LiveOps
 
         protected override Task OnInitializedAsync(TrackGameData moduleData)
         {
-            progress.CurrentTrackIndex = Math.Max(0, IndexOfCurrentTrack(moduleData));
-            TryRepairCurrentTrackId(moduleData);
-            return Task.CompletedTask;
-        }
-
-        private void TryRepairCurrentTrackId(TrackGameData moduleData)
-        {
             if (moduleData == null)
             {
-                return;
+                return Task.CompletedTask;
             }
 
-            string id = moduleData.CurrentTrackId ?? string.Empty;
-            if (!string.IsNullOrEmpty(id) && catalog.GetTrack(id) != null)
-            {
-                return;
-            }
+            TrackGameData data = moduleData;
 
-            string repaired = PickFirstResolvableOrderedTrackId(moduleData) ?? catalog.GetFirstResolvableTrackId();
-            if (string.IsNullOrEmpty(repaired))
+            List<string> ordered = data.OrderedTrackIds;
+            if (catalog.GetTrack(data.CurrentTrackId) == null)
             {
-                Debug.LogError(
-                    "[TracksClientModule] No track id could be resolved from LiveOps data or the track catalog; assign tracks on CampaignTrackCatalog / Remote Config.");
-                return;
-            }
-
-            moduleData.CurrentTrackId = repaired;
-            List<string> orderedIds = moduleData.OrderedTrackIds;
-            if (orderedIds != null)
-            {
-                int idx = orderedIds.IndexOf(repaired);
-                if (idx >= 0)
+                string resolved = null;
+                if (ordered != null)
                 {
-                    progress.CurrentTrackIndex = idx;
-                }
-            }
-        }
-
-        private string PickFirstResolvableOrderedTrackId(TrackGameData moduleData)
-        {
-            List<string> ordered = moduleData.OrderedTrackIds;
-            if (ordered == null || ordered.Count == 0)
-            {
-                return null;
-            }
-
-            int start = Math.Clamp(progress.CurrentTrackIndex, 0, ordered.Count - 1);
-            for (int i = 0; i < ordered.Count; i++)
-            {
-                string candidate = ordered[(start + i) % ordered.Count];
-                if (string.IsNullOrEmpty(candidate))
-                {
-                    continue;
+                    foreach (string id in ordered)
+                    {
+                        if (!string.IsNullOrEmpty(id) && catalog.GetTrack(id) != null)
+                        {
+                            resolved = id;
+                            break;
+                        }
+                    }
                 }
 
-                if (catalog.GetTrack(candidate) != null)
+                if (resolved == null)
                 {
-                    return candidate;
+                    resolved = catalog.GetFirstResolvableTrackId();
+                }
+
+                if (!string.IsNullOrEmpty(resolved))
+                {
+                    data.CurrentTrackId = resolved;
+                }
+                else
+                {
+                    Debug.LogWarning(
+                        "[TracksClientModule] No track id resolves in TrackCatalogSO (check Remote Config track list vs catalog TrackIds).");
                 }
             }
 
-            return null;
+            if (ordered != null)
+            {
+                for (int i = 0; i < ordered.Count; i++)
+                {
+                    string id = ordered[i];
+                    if (string.IsNullOrEmpty(id))
+                    {
+                        continue;
+                    }
+
+                    if (catalog.GetTrack(id) == null)
+                    {
+                        Debug.LogWarning($"[TracksClientModule] Config id '{id}' has no asset in TrackCatalogSO.");
+                    }
+                }
+            }
+
+            progress.CurrentTrackIndex = Math.Max(0, IndexOfCurrentTrack(data));
+            return Task.CompletedTask;
         }
 
         private static int IndexOfCurrentTrack(TrackGameData moduleData)
@@ -114,11 +113,6 @@ namespace GearEngine.Campaign.Bootstrap.LiveOps
         {
             IReadOnlyList<string> ids = data?.OrderedTrackIds;
             return catalog.OrderedEntries(ids ?? Array.Empty<string>());
-        }
-
-        public IReadOnlyList<GearConfig> GetRoguelikeCardOptions()
-        {
-            return catalog.GetRoguelikeCardOptions();
         }
 
         public async Task RecordResultAsync(RaceResultModel result)

@@ -1,8 +1,30 @@
 {
-  "$schema": "https://ugs-config-schemas.unity3d.com/v1/remote-config.schema.json",
   "entries": {
     "TrackConfig": {
-      "entries": []
+      "entries": [
+        {
+          "id": "CircleTrack",
+          "baseReward": 10,
+          "bands": [
+            {
+              "maxSec": 40.0,
+              "r": 900
+            },
+            {
+              "maxSec": 55.0,
+              "r": 650
+            },
+            {
+              "maxSec": 75.0,
+              "r": 400
+            },
+            {
+              "maxSec": 99999.0,
+              "r": 150
+            }
+          ]
+        }
+      ]
     }
   }
 }

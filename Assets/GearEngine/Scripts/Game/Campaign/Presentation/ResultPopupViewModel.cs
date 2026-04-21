@@ -49,7 +49,7 @@ namespace GearEngine.Campaign.Presentation
         {
             try
             {
-                navigation.Open(new RoguelikeViewModel());
+                navigation.Open(new RoguelikeViewModel(), true, new NavigationOptions() { CloseAllViews = true });
             }
             catch (Exception ex)
             {

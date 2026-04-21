@@ -32,6 +32,9 @@ namespace GearEngine.App.Bootstrap
         private TrackCatalogSO trackCatalog;
 
         [SerializeField]
+        private RoguelikeGearPoolSO roguelikeGearPool;
+
+        [SerializeField]
         private GearCatalogSO gearCatalog;
 
         [Header("Gear Engine")]
@@ -61,6 +64,7 @@ namespace GearEngine.App.Bootstrap
             Require(navigationSettings, nameof(navigationSettings));
             Require(navigationViewHolder, nameof(navigationViewHolder));
             Require(trackCatalog, nameof(trackCatalog));
+            Require(roguelikeGearPool, nameof(roguelikeGearPool));
             Require(gearCatalog, nameof(gearCatalog));
             Require(boardRules, nameof(boardRules));
             Require(gearStartData, nameof(gearStartData));
@@ -76,7 +80,7 @@ namespace GearEngine.App.Bootstrap
                 new CampaignLoadoutInstaller(),
                 new CampaignInventoryInstaller(),
                 new CardsClientInstaller(),
-                new CampaignRoguelikeInstaller());
+                new CampaignRoguelikeInstaller(roguelikeGearPool));
             yield return new CampaignLayer(
                 boardRules,
                 featureToggle,

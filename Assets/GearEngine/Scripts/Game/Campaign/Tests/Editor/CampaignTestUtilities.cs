@@ -117,27 +117,22 @@ namespace GearEngine.Campaign.Tests.Editor
         public FakeTrackService(
             TrackDefinition track,
             CarDefinition car,
-            IReadOnlyList<GearConfig> roguelikePool = null,
             CurrencyClientModule currencyClient = null)
         {
             CurrentTrack = track;
             CurrentCar = car;
-            roguelikeOptions = roguelikePool ?? Array.Empty<GearConfig>();
             this.currencyClient = currencyClient;
         }
 
         public TrackDefinition CurrentTrack { get; }
         public CarDefinition CurrentCar { get; }
 
-        private readonly IReadOnlyList<GearConfig> roguelikeOptions;
         private readonly TrackProgressModel trackProgress = new TrackProgressModel();
         public int RecordResultCallCount { get; private set; }
 
         public TrackProgressModel GetTrackProgress() => trackProgress;
 
         public IReadOnlyList<TrackEntry> GetOrderedTracks() => Array.Empty<TrackEntry>();
-
-        public IReadOnlyList<GearConfig> GetRoguelikeCardOptions() => roguelikeOptions;
 
         public System.Threading.Tasks.Task RecordResultAsync(RaceResultModel result)
         {

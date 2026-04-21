@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using GearEngine.Campaign;
 using GearEngine.CarSimulation.Definitions;
-using GearEngine.GearEngine.Config;
 
 namespace GearEngine.Campaign.Services
 {
@@ -15,8 +14,6 @@ namespace GearEngine.Campaign.Services
         TrackProgressModel GetTrackProgress();
 
         IReadOnlyList<TrackEntry> GetOrderedTracks();
-
-        IReadOnlyList<GearConfig> GetRoguelikeCardOptions();
 
         Task RecordResultAsync(RaceResultModel result);
     }

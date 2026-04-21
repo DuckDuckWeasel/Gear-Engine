@@ -1,8 +1,11 @@
 {
-  "$schema": "https://ugs-config-schemas.unity3d.com/v1/remote-config.schema.json",
   "entries": {
     "RoguelikeConfig": {
-      "gearPool": [],
+      "gearPool": [
+        "bipolar_tier1",
+        "bipolar_tier2",
+        "bipolar_tier3"
+      ],
       "optionsPerRoll": 3
     }
   }

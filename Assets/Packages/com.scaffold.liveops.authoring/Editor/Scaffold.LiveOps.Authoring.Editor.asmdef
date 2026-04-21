@@ -1,0 +1,21 @@
+{
+  "name": "Scaffold.LiveOps.Authoring.Editor",
+  "rootNamespace": "Scaffold.LiveOps.Authoring.Editor",
+  "references": [
+    "GUID:7d9c2f1a8b4e5c6d7890abcd1234ef56"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": true,
+  "precompiledReferences": [
+    "Newtonsoft.Json.dll",
+    "Scaffold.LiveOps.DTO.dll"
+  ],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}

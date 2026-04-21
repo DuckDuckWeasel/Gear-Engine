@@ -1460,6 +1460,7 @@ MonoBehaviour:
   navigationSettings: {fileID: 11400000, guid: 137da207fe7ec1345a5d209afdac17bd, type: 2}
   navigationViewHolder: {fileID: 500010001}
   trackCatalog: {fileID: 11400000, guid: f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1, type: 2}
+  roguelikeGearPool: {fileID: 11400000, guid: d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1, type: 2}
   gearCatalog: {fileID: 11400000, guid: f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2, type: 2}
   boardRules: {fileID: 11400000, guid: c8936b7a974414cf6aba78a5ac6be445, type: 2}
   featureToggle: {fileID: 11400000, guid: e8f9a0b1c2d34432bcdef01234567891, type: 2}

@@ -57,7 +57,9 @@ namespace GearEngine.App.Bootstrap
         private static LiveOpsClientModulesLayer CreateMetaLiveOpsClientModulesLayer()
         {
             TrackCatalogSO emptyTrack = ScriptableObject.CreateInstance<TrackCatalogSO>();
-            emptyTrack.SetRuntimeEntries(Array.Empty<TrackEntry>(), Array.Empty<GearConfig>());
+            emptyTrack.SetRuntimeEntries(Array.Empty<TrackEntry>());
+            RoguelikeGearPoolSO emptyRoguelikePool = ScriptableObject.CreateInstance<RoguelikeGearPoolSO>();
+            emptyRoguelikePool.SetRuntimeEntries(Array.Empty<GearConfig>());
             GearCatalogSO emptyGear = ScriptableObject.CreateInstance<GearCatalogSO>();
             emptyGear.SetRuntimeEntries(Array.Empty<GearConfig>());
             return new LiveOpsClientModulesLayer(
@@ -66,7 +68,7 @@ namespace GearEngine.App.Bootstrap
                 new CampaignLoadoutInstaller(),
                 new CampaignInventoryInstaller(),
                 new CardsClientInstaller(),
-                new CampaignRoguelikeInstaller());
+                new CampaignRoguelikeInstaller(emptyRoguelikePool));
         }
 
         protected override Task OnReadyAsync(CancellationToken ct)

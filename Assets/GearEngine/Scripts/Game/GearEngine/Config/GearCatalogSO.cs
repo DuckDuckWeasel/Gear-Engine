@@ -54,5 +54,16 @@ namespace GearEngine.GearEngine.Config
 
             return _byId.TryGetValue(gearId, out GearConfig g) ? g : null;
         }
+
+        public bool TryGet(string gearId, out GearConfig gear)
+        {
+            if (string.IsNullOrEmpty(gearId))
+            {
+                gear = null;
+                return false;
+            }
+
+            return _byId.TryGetValue(gearId, out gear);
+        }
     }
 }

@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using GearEngine.CarSimulation.Definitions;
-using GearEngine.GearEngine.Config;
 using UnityEngine;
 
 namespace GearEngine.Campaign.Services
@@ -15,9 +14,6 @@ namespace GearEngine.Campaign.Services
         [SerializeField]
         private TrackEntry[] trackEntries = Array.Empty<TrackEntry>();
 
-        [SerializeField]
-        private GearConfig[] roguelikeCardPool = Array.Empty<GearConfig>();
-
         private readonly Dictionary<string, TrackEntry> _byTrackId = new Dictionary<string, TrackEntry>(StringComparer.Ordinal);
 
         private void OnEnable()
@@ -28,10 +24,9 @@ namespace GearEngine.Campaign.Services
         /// <summary>
         /// Replaces catalog data at runtime (e.g. from tests or dynamic content).
         /// </summary>
-        public void SetRuntimeEntries(TrackEntry[] entries, GearConfig[] roguelikeCards)
+        public void SetRuntimeEntries(TrackEntry[] entries)
         {
             trackEntries = entries != null ? entries : Array.Empty<TrackEntry>();
-            roguelikeCardPool = roguelikeCards != null ? roguelikeCards : Array.Empty<GearConfig>();
             RebuildLookup();
         }
 
@@ -89,6 +84,22 @@ namespace GearEngine.Campaign.Services
             return null;
         }
 
+        /// <summary>
+        /// Authoritative ordered list of track entries (Remote Config ids align with <see cref="TrackEntry.TrackId"/>).
+        /// </summary>
+        public IReadOnlyList<TrackEntry> Entries => trackEntries ?? Array.Empty<TrackEntry>();
+
+        public bool TryGetEntry(string trackId, out TrackEntry entry)
+        {
+            if (string.IsNullOrEmpty(trackId))
+            {
+                entry = null;
+                return false;
+            }
+
+            return _byTrackId.TryGetValue(trackId, out entry);
+        }
+
         public TrackDefinition GetTrack(string trackId)
         {
             if (string.IsNullOrEmpty(trackId) || !_byTrackId.TryGetValue(trackId, out TrackEntry entry))
@@ -126,11 +137,6 @@ namespace GearEngine.Campaign.Services
             }
 
             return list;
-        }
-
-        public IReadOnlyList<GearConfig> GetRoguelikeCardOptions()
-        {
-            return roguelikeCardPool ?? Array.Empty<GearConfig>();
         }
     }
 }
