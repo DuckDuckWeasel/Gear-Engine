@@ -1,6 +1,6 @@
 # Campaign (Game.Campaign)
 
-The **Game.Campaign** assembly implements a five-screen flow in a single scene: **Main → Setup → Active race → Result popup → Roguelike card pick → Main**. Root view models resolve shared services from VContainer (`ITrackService`, `CurrencyClientModule` / LiveOps gold, `IOwnedGearInventoryService`, gear engine, car simulation) instead of passing a hand-built data bag between screens.
+The **Game.Campaign** assembly implements a five-screen flow in a single scene: **Main → Setup → Active race → Result popup → Roguelike card pick → Main**. Root view models resolve shared services from VContainer (`ITrackService`, `CurrencyClientModule` / LiveOps gold, **`IInventoryService`** (via `InventoryClientModule`), gear engine, car simulation) instead of passing a hand-built data bag between screens.
 
 ## Responsibilities
 

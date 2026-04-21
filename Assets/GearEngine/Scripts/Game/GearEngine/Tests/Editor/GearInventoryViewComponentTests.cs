@@ -1,9 +1,12 @@
-using GearEngine.GearEngine.Nodes;
+using System;
+using System.Collections.Generic;
 using System.Reflection;
 using GearEngine.GearEngine;
 using GearEngine.GearEngine.Config;
+using GearEngine.GearEngine.Nodes;
 using GearEngine.GearEngine.Presentation.UI;
-using GearEngine.GearEngine.Services.Inventory;
+using GearEngine.GearEngine.Services;
+using GearEngine.GearEngine.Services.Board;
 using NUnit.Framework;
 using TMPro;
 using UnityEngine;
@@ -25,9 +28,94 @@ namespace GearEngine.GearEngine.Tests.Editor
             {
             }
 
-            public System.Collections.Generic.IEnumerable<IGridNode> GetAllNodes() => new System.Collections.Generic.List<IGridNode>();
+            public IEnumerable<IGridNode> GetAllNodes() => new List<IGridNode>();
+
             public void ResetGridSimulationState()
             {
+            }
+        }
+
+        private sealed class TrayTestBoardService : IBoardService
+        {
+            public event Action<IGridNode> GearPlaced;
+
+            public event Action<IGridNode> GearRemoved;
+
+            public event Action BoardLayoutChanged;
+
+            public BoardModel GetBoard() => null;
+
+            public BoardRulesSO BoardRules => null;
+
+            public bool IsSimulationRunning => false;
+
+            public int CurrentBoardGearCount => 0;
+
+            public int MaxAllowedBoardGears => 99;
+
+            public IGridNode GetNode(Vector2Int coord) => null;
+
+            public IEnumerable<IGridNode> GetAllNodes() => Array.Empty<IGridNode>();
+
+            public void ToggleSimulation()
+            {
+            }
+
+            public void LoadLayout(BoardLayoutData layout)
+            {
+            }
+
+            public bool TryMoveBoardGear(IGridNode node, Vector2Int toPos, Vector2Int fromPos) => false;
+
+            public bool TryPlace(Vector2Int targetDropPos, GearConfigData gearData) => false;
+
+            public bool TryRemoveBoardGear(IGridNode node) => false;
+
+            public bool TryDeleteBoardGear(IGridNode node) => false;
+
+            public void SnapNodeBackToOriginal(IGridNode node, Vector2Int originalPos)
+            {
+            }
+        }
+
+        private sealed class ListInventoryService : IInventoryService
+        {
+            private readonly List<GearConfig> owned = new List<GearConfig>();
+
+            public event Action InventoryChanged;
+
+            public bool HasSavedInventory => owned.Count > 0;
+
+            public IReadOnlyList<GearConfig> Owned => owned;
+
+            public bool TryAdd(GearConfig gear)
+            {
+                if (gear == null)
+                {
+                    return false;
+                }
+
+                owned.Add(gear);
+                InventoryChanged?.Invoke();
+                return true;
+            }
+
+            public bool TryRemove(GearConfig gear)
+            {
+                if (gear == null)
+                {
+                    return false;
+                }
+
+                int i = owned.FindIndex(g => g.Id == gear.Id);
+                if (i < 0)
+                {
+                    return false;
+                }
+
+                owned.RemoveAt(i);
+                InventoryChanged?.Invoke();
+                return true;
             }
         }
 
@@ -58,14 +146,18 @@ namespace GearEngine.GearEngine.Tests.Editor
             out RectTransform itemsContainerOut,
             out GearInventoryViewModel viewModel)
         {
-            var loadout = GearInventoryLoadoutData.FromGearConfigs(10, System.Array.Empty<GearConfig>());
-            var inventory = new InventoryService(loadout);
+            var inventory = new ListInventoryService();
             var engine = new FakeEngine();
-            inventory.TryAdd(new GearConfigData { Id = "g0" });
-            inventory.TryAdd(new GearConfigData { Id = "g1" });
-            inventory.TryAdd(new GearConfigData { Id = "g2" });
+            var board = new TrayTestBoardService();
 
-            viewModel = new GearInventoryViewModel(engine, inventory);
+            GearConfig g0 = CreateGearConfig("g0");
+            GearConfig g1 = CreateGearConfig("g1");
+            GearConfig g2 = CreateGearConfig("g2");
+            inventory.TryAdd(g0);
+            inventory.TryAdd(g1);
+            inventory.TryAdd(g2);
+
+            viewModel = new GearInventoryViewModel(engine, board, inventory);
 
             var root = new GameObject("InventoryRoot");
             var containerGo = new GameObject("ItemsContainer", typeof(RectTransform));
@@ -92,6 +184,18 @@ namespace GearEngine.GearEngine.Tests.Editor
 
             itemsContainerOut = containerRect;
             return component;
+        }
+
+        private static GearConfig CreateGearConfig(string id)
+        {
+            var gc = ScriptableObject.CreateInstance<GearConfig>();
+            var so = new UnityEditor.SerializedObject(gc);
+            var dp = so.FindProperty("data");
+            Assert.IsNotNull(dp);
+            dp.FindPropertyRelative("Id").stringValue = id;
+            dp.FindPropertyRelative("Category").enumValueIndex = (int)GearCategory.Base;
+            so.ApplyModifiedProperties();
+            return gc;
         }
 
         private static void SetPrivateField(object target, string name, object value)

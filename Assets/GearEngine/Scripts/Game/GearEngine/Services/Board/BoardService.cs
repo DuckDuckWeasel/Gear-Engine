@@ -6,6 +6,7 @@ using GearEngine.GearEngine.Config;
 using GearEngine.GearEngine.Manager;
 using GearEngine.GearEngine.Merge;
 using GearEngine.GearEngine.Nodes;
+using GearEngine.GearEngine.Services;
 using Scaffold.Events.Contracts;
 using UnityEngine;
 
@@ -22,7 +23,8 @@ namespace GearEngine.GearEngine.Services.Board
             IGridMergeService mergeService,
             GearEngineFeatureToggleSO featureToggle,
             IEventBus eventBus,
-            GearBoardLoadoutData boardLoadout)
+            GearBoardLoadoutData boardLoadout,
+            IInventoryService inventoryService)
         {
             this.gridManager = gridManager ?? throw new ArgumentNullException(nameof(gridManager));
             this.nodeFactory = nodeFactory ?? throw new ArgumentNullException(nameof(nodeFactory));
@@ -32,6 +34,7 @@ namespace GearEngine.GearEngine.Services.Board
             this.mergeService = mergeService;
             this.featureToggle = featureToggle;
             this.eventBus = eventBus;
+            this.inventoryService = inventoryService ?? throw new ArgumentNullException(nameof(inventoryService));
 
             boardModel = new BoardModel
             {
@@ -70,6 +73,7 @@ namespace GearEngine.GearEngine.Services.Board
         private readonly GearEngineFeatureToggleSO featureToggle;
         private readonly IEventBus eventBus;
         private readonly BoardModel boardModel;
+        private readonly IInventoryService inventoryService;
 
         public IGridNode GetNode(Vector2Int coord) => gridManager.GetNode(coord);
 
@@ -343,6 +347,12 @@ namespace GearEngine.GearEngine.Services.Board
                         gridManager.AddNode(extracted);
                         extracted = node;
                     }
+                }
+
+                GearConfig owned = extracted?.ConfigData?.SourceGearConfig;
+                if (owned != null)
+                {
+                    inventoryService.TryRemove(owned);
                 }
 
                 RemoveGear(extracted);

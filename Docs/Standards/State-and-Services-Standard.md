@@ -20,7 +20,7 @@ Keywords: services, models, repository, MVVM, observables, EventBus, batching, p
 
 ## TL;DR
 
-- **One canonical representation per piece of state.** No parallel models, no shadow copies, no `Sync*` methods.
+- **One canonical representation per piece of state.** No parallel models, no shadow copies, no `Sync`* methods.
 - **Models are observable but externally read-only.** Writes happen through services or self-persisting setters; never through caller-supplied payload objects.
 - **Services expose intent, not payloads.** `TryEquip(gearId, slot)`, never `Save(inventory)` or `Set(field, value)`.
 - **Repositories own persistence shape.** Whether a write becomes 0, 1, or N network calls is a repository concern, not a caller concern.
@@ -130,12 +130,14 @@ The size of the model is irrelevant. A wallet with three fields can be Tier 2 be
 
 Pick per service. The caller never sees the pattern; only the repository does.
 
-| # | Pattern | When to use | Cost |
-|---|---|---|---|
-| 1 | **Write-through, coalesced** | Single-blob state where intermediate states don't matter (inventory layout, board, settings). Default for Tier 1+2 client-authoritative state. | Loses per-change auditability on the server. |
-| 2 | **Per-command server** | Server-authoritative transactions (currency, purchases, anti-cheat). | One round-trip per command unless paired with #3. |
-| 3 | **Explicit unit-of-work** | Caller knows multiple writes are coming and wants atomicity (deserialization, scripted sequences, bulk operations). | Caller must remember to open the scope. |
-| 4 | **Cadence-based** | High-frequency, low-stakes state (preferences, last-viewed). | Up to N seconds of writes can be lost on crash. |
+
+| #   | Pattern                      | When to use                                                                                                                                    | Cost                                              |
+| --- | ---------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------- |
+| 1   | **Write-through, coalesced** | Single-blob state where intermediate states don't matter (inventory layout, board, settings). Default for Tier 1+2 client-authoritative state. | Loses per-change auditability on the server.      |
+| 2   | **Per-command server**       | Server-authoritative transactions (currency, purchases, anti-cheat).                                                                           | One round-trip per command unless paired with #3. |
+| 3   | **Explicit unit-of-work**    | Caller knows multiple writes are coming and wants atomicity (deserialization, scripted sequences, bulk operations).                            | Caller must remember to open the scope.           |
+| 4   | **Cadence-based**            | High-frequency, low-stakes state (preferences, last-viewed).                                                                                   | Up to N seconds of writes can be lost on crash.   |
+
 
 ### Decision flow
 
@@ -152,6 +154,8 @@ flowchart TD
     P1 --> E[Add Pattern 3 batch scope<br/>if bulk writes are common]
     P2 --> F[Add batch endpoint on server<br/>if bulk writes are common]
 ```
+
+
 
 ---
 
@@ -219,6 +223,8 @@ sequenceDiagram
     S-->>R: ok
 ```
 
+
+
 ### Interaction 2 — Player spends 50 coins
 
 - **Tier**: 2. Server-authoritative rule.
@@ -283,6 +289,8 @@ sequenceDiagram
     SVC-->>U: true
 ```
 
+
+
 ### Interaction 3 — Player rearranges 8 gears on the board in 2 seconds
 
 - **Tier**: 2. Client-authoritative with rules (movability, merge, capacity).
@@ -334,6 +342,8 @@ sequenceDiagram
     REPO->>SRV: SetBoardLayoutRequest(snapshot)
     SRV-->>REPO: ok
 ```
+
+
 
 ### Interaction 4 — Deserialize a saved loadout (10 gears at once)
 
@@ -401,6 +411,8 @@ sequenceDiagram
     SRV-->>REPO: ok
     REPO-->>C: complete
 ```
+
+
 
 ### Interaction 5 — Race ends, board is cleared, gears return to inventory
 
@@ -474,6 +486,8 @@ sequenceDiagram
     IR->>S: SetInventoryRequest
 ```
 
+
+
 ### Interaction 6 — Achievement system reacts to "first epic gear merged"
 
 - **Tier**: 2. Cross-system listener.
@@ -526,6 +540,8 @@ sequenceDiagram
     A->>AR: Unlock("first_epic_merge")
 ```
 
+
+
 ### Interaction 7 — UI selects an inventory item
 
 - **Tier**: 0.
@@ -559,6 +575,8 @@ sequenceDiagram
     VM-->>V: PropertyChanged(SelectedItem)
     V->>V: Re-render details panel
 ```
+
+
 
 No service. No repository. No event bus. No persistence. This is the entire interaction.
 
@@ -614,6 +632,8 @@ flowchart LR
         V2[View] --> M2
     end
 ```
+
+
 
 ### Rule 2 — Models do not validate
 
@@ -791,6 +811,8 @@ flowchart LR
     R -. "Pattern 1: debounce<br/>Pattern 2: per-call<br/>Pattern 3: batch<br/>Pattern 4: cadence" .-> SRV[Server]
 ```
 
+
+
 ### Rule 8 — Tier 1 is a real option
 
 Bad: ceremony for a flag.
@@ -818,15 +840,17 @@ public partial class TutorialModel : Model
 
 ## Smell catalog (current code → fix)
 
-| Call site | Smell | Rule violated | Fix |
-|---|---|---|---|
-| `BoardService.SyncBoardModel` | Two state stores kept in agreement | 1 | Collapse `IGridManager` and `BoardModel` into one canonical store. |
-| `BoardService.GearPlaced/GearRemoved/BoardLayoutChanged` | Per-instance events; two duplicate the observable model | 6 | Move to `IEventBus` (`GearPlacedEvent`, `GearRemovedEvent`); delete `BoardLayoutChanged` (consumers bind to `Board.Nodes`). |
-| `InventoryService.ItemsChanged` | Duplicates `ObservableCollection<IItem>.CollectionChanged` | 6 | Delete; consumers bind to `InventoryModel.Items`. |
-| `InventoryModel.Items` (public `ObservableCollection`) | Externally writable Tier 2 model | 4 | Expose `ReadOnlyObservableCollection<IItem>`; keep writable handle internal. |
-| `InventoryClientModule.PersistOwnedGearFromRaceInventory` | Caller-supplied domain payload | 3, 5 | Replace with `EquipAsync(gearId)` / `UnequipAsync(gearId)` typed intents on a real `OwnedGearService`. |
-| `InventoryClientModule.SnapshotGearIds` | Snapshot exists because state lives in two places | 1 | Remove once Rule 1 is applied to owned gear. |
-| `BoardService` does its own dirty-tracking implicitly via `SyncBoardModel` | No clean persistence seam | 7 | Introduce `IBoardRepository.MarkDirty()` with a debounce. |
+
+| Call site                                                                  | Smell                                                      | Rule violated | Fix                                                                                                                         |
+| -------------------------------------------------------------------------- | ---------------------------------------------------------- | ------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| `BoardService.SyncBoardModel`                                              | Two state stores kept in agreement                         | 1             | Collapse `IGridManager` and `BoardModel` into one canonical store.                                                          |
+| `BoardService.GearPlaced/GearRemoved/BoardLayoutChanged`                   | Per-instance events; two duplicate the observable model    | 6             | Move to `IEventBus` (`GearPlacedEvent`, `GearRemovedEvent`); delete `BoardLayoutChanged` (consumers bind to `Board.Nodes`). |
+| `InventoryService.ItemsChanged`                                            | Duplicates `ObservableCollection<IItem>.CollectionChanged` | 6             | Delete; consumers bind to `InventoryModel.Items`.                                                                           |
+| `InventoryModel.Items` (public `ObservableCollection`)                     | Externally writable Tier 2 model                           | 4             | Expose `ReadOnlyObservableCollection<IItem>`; keep writable handle internal.                                                |
+| `InventoryClientModule.PersistOwnedGearFromRaceInventory`                  | Caller-supplied domain payload                             | 3, 5          | Replace with `EquipAsync(gearId)` / `UnequipAsync(gearId)` typed intents on a real `OwnedGearService`.                      |
+| `InventoryClientModule.SnapshotGearIds`                                    | Snapshot exists because state lives in two places          | 1             | Remove once Rule 1 is applied to owned gear.                                                                                |
+| `BoardService` does its own dirty-tracking implicitly via `SyncBoardModel` | No clean persistence seam                                  | 7             | Introduce `IBoardRepository.MarkDirty()` with a debounce.                                                                   |
+
 
 ---
 
@@ -883,27 +907,23 @@ When creating or modifying a stateful type, verify in order:
 
 Apply in this order to minimize churn.
 
-1. **`InventoryService` (race inventory)**
-   - Wrap `InventoryModel.Items` in `ReadOnlyObservableCollection<IItem>`; move the writable handle to `internal`.
-   - Delete `event Action ItemsChanged`. Update `GearInventoryViewModel.OnAvailableItemsChanged` to keep binding to `InventoryModel.Items.CollectionChanged` (already does).
-
-2. **`BoardService`**
-   - Choose: `BoardModel` owns the collection (preferred) or `IGridManager` does. Delete the loser.
-   - Delete `SyncBoardModel`. Replace internal calls with direct mutations on the canonical store.
-   - Delete `event Action BoardLayoutChanged`. Update `BoardViewComponent` to bind to `BoardModel.Nodes`.
-   - Move `GearPlaced` / `GearRemoved` to `IEventBus` (`GearPlacedEvent { Vector2Int Position, string GearId }`).
-
-3. **`InventoryClientModule` → `OwnedGearService` + `OwnedGearRepository`**
-   - Introduce `EquipGearRequest(string gearId)` and `UnequipGearRequest(string gearId)` typed DTOs and matching server handlers.
-   - Move `IOwnedGearInventoryService` implementation off the `*ClientModule`. The `*ClientModule` becomes `OwnedGearRepository` and only does `Initialize`/`ApplyServerSnapshot`.
-   - Delete `PersistOwnedGearFromRaceInventory` and `SnapshotGearIds`. Callers invoke `ownedGearService.EquipAsync(id)` / `UnequipAsync(id)` directly.
-
-4. **`CurrencyClientModule` → `CurrencyService` + `CurrencyRepository`**
-   - Rename `CurrencyClientModule` to `CurrencyRepository`. It already follows Pattern 2 cleanly.
-   - Add a thin `CurrencyService` that owns the `CanSpend` rule and raises `CurrencySpentEvent` / `CurrencyAddedEvent` on the EventBus after a successful response.
-
+1. `**InventoryService` (race inventory)**
+  - Wrap `InventoryModel.Items` in `ReadOnlyObservableCollection<IItem>`; move the writable handle to `internal`.
+  - Delete `event Action ItemsChanged`. Update `GearInventoryViewModel.OnAvailableItemsChanged` to keep binding to `InventoryModel.Items.CollectionChanged` (already does).
+2. `**BoardService`**
+  - Choose: `BoardModel` owns the collection (preferred) or `IGridManager` does. Delete the loser.
+  - Delete `SyncBoardModel`. Replace internal calls with direct mutations on the canonical store.
+  - Delete `event Action BoardLayoutChanged`. Update `BoardViewComponent` to bind to `BoardModel.Nodes`.
+  - Move `GearPlaced` / `GearRemoved` to `IEventBus` (`GearPlacedEvent { Vector2Int Position, string GearId }`).
+3. `**InventoryClientModule` → `OwnedGearService` + `OwnedGearRepository`**
+  - Introduce `EquipGearRequest(string gearId)` and `UnequipGearRequest(string gearId)` typed DTOs and matching server handlers.
+  - Move `IOwnedGearInventoryService` implementation off the `*ClientModule`. The `*ClientModule` becomes `OwnedGearRepository` and only does `Initialize`/`ApplyServerSnapshot`.
+  - Delete `PersistOwnedGearFromRaceInventory` and `SnapshotGearIds`. Callers invoke `ownedGearService.EquipAsync(id)` / `UnequipAsync(id)` directly.
+4. `**CurrencyClientModule` → `CurrencyService` + `CurrencyRepository`**
+  - Rename `CurrencyClientModule` to `CurrencyRepository`. It already follows Pattern 2 cleanly.
+  - Add a thin `CurrencyService` that owns the `CanSpend` rule and raises `CurrencySpentEvent` / `CurrencyAddedEvent` on the EventBus after a successful response.
 5. **Settings / preferences (when introduced)**
-   - Tier 1 with a persistence hook (`partial void OnXChanged` calling `repo.MarkDirty()`). No service.
+  - Tier 1 with a persistence hook (`partial void OnXChanged` calling `repo.MarkDirty()`). No service.
 
 Each step ships independently with regression tests per `AGENTS.md` rule 10.
 
@@ -911,14 +931,15 @@ Each step ships independently with regression tests per `AGENTS.md` rule 10.
 
 ## Related
 
-- [`AGENTS.md`](../../AGENTS.md) — primary agent operating policy.
-- [`Architecture.md`](../../Architecture.md) — module boundaries and runtime flows.
-- [`Docs/Infra/MVVM.md`](../Infra/MVVM.md) — `ViewModel` / `Model` base types and `[ObservableProperty]` source generator.
-- [`Docs/Infra/Events.md`](../Infra/Events.md) — `IEventBus` contract and event conventions.
-- [`Docs/LiveOps/NewApiAndServices.md`](../LiveOps/NewApiAndServices.md) — how to add typed request/response DTOs and Cloud Code handlers.
-- [`Docs/LiveOps/Currency.md`](../LiveOps/Currency.md) — canonical Pattern 2 example.
-- [`Docs/LiveOps/Inventory.md`](../LiveOps/Inventory.md) — current owned-gear flow (target of migration step 3).
+- `[AGENTS.md](../../AGENTS.md)` — primary agent operating policy.
+- `[Architecture.md](../../Architecture.md)` — module boundaries and runtime flows.
+- `[Docs/Infra/MVVM.md](../Infra/MVVM.md)` — `ViewModel` / `Model` base types and `[ObservableProperty]` source generator.
+- `[Docs/Infra/Events.md](../Infra/Events.md)` — `IEventBus` contract and event conventions.
+- `[Docs/LiveOps/NewApiAndServices.md](../LiveOps/NewApiAndServices.md)` — how to add typed request/response DTOs and Cloud Code handlers.
+- `[Docs/LiveOps/Currency.md](../LiveOps/Currency.md)` — canonical Pattern 2 example.
+- `[Docs/LiveOps/Inventory.md](../LiveOps/Inventory.md)` — current owned-gear flow (target of migration step 3).
 
 ## Changelog
 
 - 2026-04-20 — Initial standard. Defines Model/Service/Repository roles, eight rules, three tiers, four persistence patterns, sample interactions with snippets and sequence diagrams, good/bad examples per rule, smell catalog, and migration notes for `InventoryService`, `BoardService`, `InventoryClientModule`, and `CurrencyClientModule`.
+

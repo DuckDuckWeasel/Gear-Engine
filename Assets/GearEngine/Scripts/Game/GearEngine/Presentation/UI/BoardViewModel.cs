@@ -1,11 +1,10 @@
 using System;
 using System.Collections.Generic;
+using GearEngine.GearEngine;
 using GearEngine.GearEngine.Nodes;
 using CommunityToolkit.Mvvm.ComponentModel;
 using GearEngine.GearEngine.Config;
-using GearEngine.GearEngine.Services;
 using GearEngine.GearEngine.Services.Board;
-using GearEngine.GearEngine.Services.Inventory;
 using Scaffold.MVVM;
 using UnityEngine;
 
@@ -13,10 +12,9 @@ namespace GearEngine.GearEngine.Presentation.UI
 {
     public partial class BoardViewModel : ViewModel
     {
-        public BoardViewModel(IBoardService boardService, IRaceInventoryService inventoryService, IGearEngineService engineService)
+        public BoardViewModel(IBoardService boardService, IGearEngineService engineService)
         {
             this.boardService = boardService ?? throw new ArgumentNullException(nameof(boardService));
-            this.inventoryService = inventoryService ?? throw new ArgumentNullException(nameof(inventoryService));
             this.engineService = engineService ?? throw new ArgumentNullException(nameof(engineService));
 
             boardService.GearPlaced += OnBoardGearPlaced;
@@ -40,7 +38,6 @@ namespace GearEngine.GearEngine.Presentation.UI
         public int MaxAllowedBoardGears => boardService.MaxAllowedBoardGears;
 
         private readonly IBoardService boardService;
-        private readonly IRaceInventoryService inventoryService;
         private readonly IGearEngineService engineService;
 
         [ObservableProperty] private bool interactable = true;
@@ -81,13 +78,9 @@ namespace GearEngine.GearEngine.Presentation.UI
 
         public void CompleteBoardGearReturnToInventory(IGridNode node, GearConfigData config)
         {
+            _ = config;
             try
             {
-                if (!inventoryService.TryAdd(config))
-                {
-                    return;
-                }
-
                 boardService.TryRemoveBoardGear(node);
             }
             catch (Exception ex)

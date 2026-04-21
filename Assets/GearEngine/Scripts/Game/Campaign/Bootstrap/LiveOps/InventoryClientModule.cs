@@ -1,20 +1,17 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using GameModuleDTO.Modules.Inventory;
 using GameModuleDTO.ModuleRequests;
-using GearEngine.Campaign.Services;
-using GearEngine.GearEngine;
 using GearEngine.GearEngine.Config;
-using GearEngine.GearEngine.Services.Inventory;
+using GearEngine.GearEngine.Services;
 using Scaffold.LiveOps;
 using UnityEngine;
 using VContainer;
 
 namespace GearEngine.Campaign.Bootstrap.LiveOps
 {
-    public sealed class InventoryClientModule : GameClientModuleBase<InventoryGameData>, IOwnedGearInventoryService
+    public sealed class InventoryClientModule : GameClientModuleBase<InventoryGameData>, IInventoryService
     {
         private readonly ILiveOpsService liveOpsService;
         private readonly GearCatalogSO catalog;
@@ -26,9 +23,13 @@ namespace GearEngine.Campaign.Bootstrap.LiveOps
             this.catalog = catalog ?? throw new ArgumentNullException(nameof(catalog));
         }
 
+        public event Action InventoryChanged;
+
         public bool HasSavedInventory => data != null && data.GearIds.Count > 0;
 
-        public IReadOnlyList<GearConfig> GetOwnedGearConfigs()
+        public IReadOnlyList<GearConfig> Owned => BuildOwnedList();
+
+        private IReadOnlyList<GearConfig> BuildOwnedList()
         {
             if (data == null)
             {
@@ -48,35 +49,53 @@ namespace GearEngine.Campaign.Bootstrap.LiveOps
             return list;
         }
 
-        /// <summary>Called when the race inventory tray changes; persists optimistically and fires LiveOps in the background.</summary>
-        public void PersistOwnedGearFromRaceInventory(IRaceInventoryService raceInventory)
+        public bool TryAdd(GearConfig gear)
         {
-            if (raceInventory == null)
+            if (gear == null)
             {
-                throw new ArgumentNullException(nameof(raceInventory));
+                return false;
             }
 
-            List<string> ids = SnapshotGearIds(raceInventory);
-            if (data != null)
+            if (data == null)
             {
-                data.GearIds = new List<string>(ids);
+                Debug.LogError("[InventoryClientModule] TryAdd: module data is not initialized.");
+                return false;
             }
 
-            _ = SendInventoryAsync(ids);
+            if (string.IsNullOrEmpty(gear.Id))
+            {
+                Debug.LogError("[InventoryClientModule] TryAdd: gear has no Id.");
+                return false;
+            }
+
+            data.GearIds.Add(gear.Id);
+            InventoryChanged?.Invoke();
+            _ = SendInventoryAsync(new List<string>(data.GearIds));
+            return true;
         }
 
-        private static List<string> SnapshotGearIds(IRaceInventoryService raceInventory)
+        public bool TryRemove(GearConfig gear)
         {
-            var list = new List<string>();
-            foreach (IItem item in raceInventory.GetInventory().Items)
+            if (gear == null)
             {
-                if (item is GearConfigData cfgData && cfgData.SourceGearConfig != null && !string.IsNullOrEmpty(cfgData.SourceGearConfig.Id))
-                {
-                    list.Add(cfgData.SourceGearConfig.Id);
-                }
+                return false;
             }
 
-            return list;
+            if (data?.GearIds == null)
+            {
+                return false;
+            }
+
+            int idx = data.GearIds.FindIndex(id => id == gear.Id);
+            if (idx < 0)
+            {
+                return false;
+            }
+
+            data.GearIds.RemoveAt(idx);
+            InventoryChanged?.Invoke();
+            _ = SendInventoryAsync(new List<string>(data.GearIds));
+            return true;
         }
 
         private async Task SendInventoryAsync(List<string> ids)
@@ -87,7 +106,7 @@ namespace GearEngine.Campaign.Bootstrap.LiveOps
             }
             catch (Exception ex)
             {
-                Debug.LogError($"[InventoryClientModule] PersistOwnedGearFromRaceInventory failed: {ex.Message}\n{ex.StackTrace}");
+                Debug.LogError($"[InventoryClientModule] SendInventoryAsync failed: {ex.Message}\n{ex.StackTrace}");
             }
         }
     }

@@ -6,7 +6,6 @@ using GearEngine.GearEngine.Config;
 using GearEngine.GearEngine.Presentation.UI;
 using GearEngine.GearEngine.Services;
 using GearEngine.GearEngine.Services.Board;
-using GearEngine.GearEngine.Services.Inventory;
 using Scaffold.Events.Contracts;
 using Scaffold.MVVM;
 using Scaffold.Navigation.Contracts;
@@ -30,7 +29,7 @@ namespace GearEngine.Campaign.Presentation
         [Inject] private IEventBus eventBus;
         [Inject] private GearEngineFeatureToggleSO featureToggle;
         [Inject] private IDragService dragService;
-        [Inject] private IRaceInventoryService inventoryService;
+        [Inject] private IInventoryService inventoryService;
         [Inject] private IGearPresentationTransferService presentationTransferService;
         [Inject] private IGearLoadoutService loadoutService;
 
@@ -43,7 +42,7 @@ namespace GearEngine.Campaign.Presentation
             Track = new CampaignTrackPreviewViewModel(trackService.CurrentTrack);
             BindChildViewModel(Track);
 
-            Board = new BoardViewModel(boardService, inventoryService, engineService);
+            Board = new BoardViewModel(boardService, engineService);
             BindChildViewModel(Board);
 
             if (loadoutService.HasSavedLoadout && !boardService.GetAllNodes().Any())
@@ -51,7 +50,7 @@ namespace GearEngine.Campaign.Presentation
                 Board.LoadLayout(loadoutService.GetBoardLayout());
             }
 
-            Inventory = new GearInventoryViewModel(engineService, inventoryService);
+            Inventory = new GearInventoryViewModel(engineService, boardService, inventoryService);
             BindChildViewModel(Inventory);
 
             TrashZone = new TrashZoneViewModel(engineService, Board, presentationTransferService, featureToggle);

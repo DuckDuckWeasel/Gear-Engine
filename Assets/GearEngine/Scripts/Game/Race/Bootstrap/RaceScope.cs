@@ -5,6 +5,7 @@ using GearEngine.CarSimulation.Simulation;
 using GearEngine.GearEngine;
 using GearEngine.GearEngine.Bootstrap;
 using GearEngine.GearEngine.Config;
+using GearEngine.GearEngine.Services;
 using GearEngine.SceneFoundation.Bootstrap;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -54,10 +55,10 @@ namespace GearEngine.Race.Bootstrap
 
         protected override void InstallFeatureServices(IContainerBuilder builder)
         {
+            builder.Register<EmptyInventoryService>(Lifetime.Singleton).As<IInventoryService>();
             new GearMechanicsInstaller(
                 boardRules,
                 featureToggle,
-                gearStartData.GetInventoryLoadoutData(),
                 gearStartData.GetBoardLoadoutData()).Install(builder);
             
             builder.RegisterInstance(splineCarRunnerConfig);

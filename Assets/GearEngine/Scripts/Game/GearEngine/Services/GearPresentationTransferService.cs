@@ -1,6 +1,6 @@
 using System;
 using GearEngine.GearEngine.Config;
-using GearEngine.GearEngine.Services.Inventory;
+using GearEngine.GearEngine.Events;
 using Scaffold.Events.Contracts;
 using UnityEngine;
 
@@ -8,31 +8,14 @@ namespace GearEngine.GearEngine.Services
 {
     public sealed class GearPresentationTransferService : IGearPresentationTransferService
     {
-        public GearPresentationTransferService(IRaceInventoryService inventoryService, IEventBus eventBus)
+        public GearPresentationTransferService(IInventoryService inventoryService, IEventBus eventBus)
         {
             this.inventoryService = inventoryService ?? throw new ArgumentNullException(nameof(inventoryService));
             this.eventBus = eventBus;
         }
 
-        private readonly IRaceInventoryService inventoryService;
+        private readonly IInventoryService inventoryService;
         private readonly IEventBus eventBus;
-
-        public void AddReturnedBoardGearToInventory(GearConfigData config)
-        {
-            if (config == null)
-            {
-                return;
-            }
-
-            try
-            {
-                inventoryService.TryAdd(config);
-            }
-            catch (Exception ex)
-            {
-                Debug.LogError($"[GearPresentationTransferService] AddReturnedBoardGearToInventory failed: {ex.Message}\n{ex.StackTrace}");
-            }
-        }
 
         public void TrashInventoryGear(GearConfigData gear)
         {
@@ -53,7 +36,14 @@ namespace GearEngine.GearEngine.Services
 
         private void ApplyInventoryTrash(GearConfigData gear)
         {
-            inventoryService.TryConsume(gear);
+            GearConfig source = gear.SourceGearConfig;
+            if (source == null)
+            {
+                Debug.LogWarning("[GearPresentationTransferService] TrashInventoryGear: gear has no SourceGearConfig.");
+                return;
+            }
+
+            inventoryService.TryRemove(source);
             RaiseTrashReward(gear.DeleteRewardAmount);
         }
 

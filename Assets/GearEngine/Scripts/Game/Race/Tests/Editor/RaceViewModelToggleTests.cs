@@ -9,7 +9,6 @@ using GearEngine.GearEngine.Bootstrap;
 using GearEngine.GearEngine.Config;
 using GearEngine.GearEngine.Services;
 using GearEngine.GearEngine.Services.Board;
-using GearEngine.GearEngine.Services.Inventory;
 using NUnit.Framework;
 using Scaffold.MVVM;
 using Scaffold.Navigation.Contracts;
@@ -189,13 +188,13 @@ namespace GearEngine.Race.Tests.Editor
 
             var builder = new ContainerBuilder();
             new EventsInstaller().Install(builder);
+            builder.RegisterInstance<IInventoryService>(new EmptyInventoryService());
             new GearMechanicsInstaller(
                 boardRules,
                 null,
-                GearInventoryLoadoutData.Empty(),
                 new GearBoardLoadoutData()).Install(builder);
             IObjectResolver scope = builder.Build();
-            IRaceInventoryService inventoryService = scope.Resolve<IRaceInventoryService>();
+            IInventoryService inventoryService = scope.Resolve<IInventoryService>();
             IBoardService boardService = scope.Resolve<IBoardService>();
             IDragService dragService = scope.Resolve<IDragService>();
 

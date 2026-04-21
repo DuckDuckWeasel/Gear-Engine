@@ -7,7 +7,6 @@ using GearEngine.GearEngine;
 using GearEngine.GearEngine.Presentation.UI;
 using GearEngine.GearEngine.Services;
 using GearEngine.GearEngine.Services.Board;
-using GearEngine.GearEngine.Services.Inventory;
 using Scaffold.MVVM;
 using VContainer;
 
@@ -40,7 +39,7 @@ namespace GearEngine.Race
         private RaceManagerService raceManager;
 
         [Inject]
-        private IRaceInventoryService inventoryService;
+        private IInventoryService inventoryService;
 
         [Inject]
         private IBoardService boardService;
@@ -52,8 +51,8 @@ namespace GearEngine.Race
         {
             base.Initialize();
             ValidateStartData();
-            SetupInventory();
             SetupBoard();
+            SetupInventory();
             SetupTrack();
         }
 
@@ -89,16 +88,16 @@ namespace GearEngine.Race
             }
         }
 
-        private void SetupInventory()
-        {
-            Inventory = new GearInventoryViewModel(engineService, inventoryService);
-            BindChildViewModel(Inventory);
-        }
-
         private void SetupBoard()
         {
-            Board = new BoardViewModel(boardService, inventoryService, engineService);
+            Board = new BoardViewModel(boardService, engineService);
             BindChildViewModel(Board);
+        }
+
+        private void SetupInventory()
+        {
+            Inventory = new GearInventoryViewModel(engineService, boardService, inventoryService);
+            BindChildViewModel(Inventory);
         }
 
         private void SetupTrack()

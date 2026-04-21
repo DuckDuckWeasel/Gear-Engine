@@ -1,12 +1,13 @@
-using GearEngine.GearEngine.Nodes;
 using System;
+using System.Collections.Generic;
 using GearEngine.GearEngine;
 using GearEngine.GearEngine.Config;
+using GearEngine.GearEngine.Nodes;
 using GearEngine.GearEngine.Presentation.UI;
-using GearEngine.GearEngine.Services.Inventory;
+using GearEngine.GearEngine.Services;
+using GearEngine.GearEngine.Services.Board;
 using NUnit.Framework;
 using UnityEngine;
-using UnityEngine.TestTools;
 
 namespace GearEngine.GearEngine.Tests.Editor
 {
@@ -25,44 +26,137 @@ namespace GearEngine.GearEngine.Tests.Editor
             {
             }
 
-            public System.Collections.Generic.IEnumerable<IGridNode> GetAllNodes() => new System.Collections.Generic.List<IGridNode>();
+            public IEnumerable<IGridNode> GetAllNodes() => new List<IGridNode>();
+
             public void ResetGridSimulationState()
             {
             }
         }
 
+        private sealed class TrayTestBoardService : IBoardService
+        {
+            public event Action<IGridNode> GearPlaced;
+
+            public event Action<IGridNode> GearRemoved;
+
+            public event Action BoardLayoutChanged;
+
+            public BoardModel GetBoard() => null;
+
+            public BoardRulesSO BoardRules => null;
+
+            public bool IsSimulationRunning => false;
+
+            public int CurrentBoardGearCount => 0;
+
+            public int MaxAllowedBoardGears => 99;
+
+            public IGridNode GetNode(Vector2Int coord) => null;
+
+            public IEnumerable<IGridNode> GetAllNodes() => Array.Empty<IGridNode>();
+
+            public void ToggleSimulation()
+            {
+            }
+
+            public void LoadLayout(BoardLayoutData layout)
+            {
+            }
+
+            public bool TryMoveBoardGear(IGridNode node, Vector2Int toPos, Vector2Int fromPos) => false;
+
+            public bool TryPlace(Vector2Int targetDropPos, GearConfigData gearData) => false;
+
+            public bool TryRemoveBoardGear(IGridNode node) => false;
+
+            public bool TryDeleteBoardGear(IGridNode node) => false;
+
+            public void SnapNodeBackToOriginal(IGridNode node, Vector2Int originalPos)
+            {
+            }
+        }
+
+        private sealed class ListInventoryService : IInventoryService
+        {
+            private readonly List<GearConfig> owned = new List<GearConfig>();
+
+            public event Action InventoryChanged;
+
+            public bool HasSavedInventory => owned.Count > 0;
+
+            public IReadOnlyList<GearConfig> Owned => owned;
+
+            public void Seed(params GearConfig[] gears)
+            {
+                owned.AddRange(gears);
+            }
+
+            public bool TryAdd(GearConfig gear)
+            {
+                if (gear == null)
+                {
+                    return false;
+                }
+
+                owned.Add(gear);
+                InventoryChanged?.Invoke();
+                return true;
+            }
+
+            public bool TryRemove(GearConfig gear)
+            {
+                if (gear == null)
+                {
+                    return false;
+                }
+
+                int i = owned.FindIndex(g => g.Id == gear.Id);
+                if (i < 0)
+                {
+                    return false;
+                }
+
+                owned.RemoveAt(i);
+                InventoryChanged?.Invoke();
+                return true;
+            }
+        }
+
         [Test]
-        public void Constructor_BindsToExistingInventoryModel_FromService()
+        public void Constructor_BuildsTray_FromOwnedWhenBoardEmpty()
         {
             GearConfig cfg = CreateGearConfig("seed");
-            var loadout = GearInventoryLoadoutData.FromGearConfigs(7, new[] { cfg });
-            var inventory = new InventoryService(loadout);
+            var inventory = new ListInventoryService();
+            inventory.Seed(cfg);
             var engine = new FakeEngine();
+            var board = new TrayTestBoardService();
 
-            var vm = new GearInventoryViewModel(engine, inventory);
+            var vm = new GearInventoryViewModel(engine, board, inventory);
 
-            Assert.AreEqual(7, vm.MaxSlots);
-            Assert.AreSame(inventory.GetInventory(), vm.InventoryModel);
-            Assert.AreEqual(1, vm.InventoryModel.Items.Count);
+            Assert.AreEqual(1, vm.TrayItems.Count);
+            Assert.AreEqual("seed", vm.TrayItems[0].Id);
 
             UnityEngine.Object.DestroyImmediate(cfg);
         }
 
         [Test]
-        public void RecreatingViewModel_DoesNotResetInventoryOwnedByService()
+        public void RecreatingViewModel_DoesNotResetSharedInventory()
         {
-            var loadout = GearInventoryLoadoutData.FromGearConfigs(10, Array.Empty<GearConfig>());
-            var inventory = new InventoryService(loadout);
+            var inventory = new ListInventoryService();
             var engine = new FakeEngine();
+            var board = new TrayTestBoardService();
 
-            inventory.TryAdd(new GearConfigData { Id = "persist" });
+            GearConfig persist = CreateGearConfig("persist");
+            inventory.TryAdd(persist);
 
-            _ = new GearInventoryViewModel(engine, inventory);
+            _ = new GearInventoryViewModel(engine, board, inventory);
 
-            var second = new GearInventoryViewModel(engine, inventory);
+            var second = new GearInventoryViewModel(engine, board, inventory);
 
-            Assert.AreEqual(1, second.InventoryModel.Items.Count);
-            Assert.AreEqual("persist", second.InventoryModel.Items[0].Id);
+            Assert.AreEqual(1, second.TrayItems.Count);
+            Assert.AreEqual("persist", second.TrayItems[0].Id);
+
+            UnityEngine.Object.DestroyImmediate(persist);
         }
 
         private static GearConfig CreateGearConfig(string id)

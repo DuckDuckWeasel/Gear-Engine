@@ -1,5 +1,5 @@
 using System;
-using GearEngine.Campaign.Services;
+using GearEngine.GearEngine.Services;
 using Scaffold.LayeredScope;
 using Scaffold.LiveOps;
 using VContainer;
@@ -18,7 +18,7 @@ namespace GearEngine.Campaign.Bootstrap.LiveOps
             }
 
             builder.Register<InventoryClientModule>(Lifetime.Singleton)
-                .As<IOwnedGearInventoryService>()
+                .As<IInventoryService>()
                 .AsSelf()
                 .As<IGameClientModule>()
                 .As<IAsyncInitializable>();

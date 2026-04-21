@@ -6,7 +6,6 @@ using GearEngine.Campaign.Presentation;
 using GearEngine.Campaign.Services;
 using GearEngine.GearEngine;
 using GearEngine.GearEngine.Config;
-using GearEngine.GearEngine.Services.Inventory;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
@@ -58,7 +57,7 @@ namespace GearEngine.Campaign.Tests.Editor
         }
 
         [Test]
-        public void SelectCard_CanConfirmFalseWhenInventoryFull_RecomputesWhenSpaceFreed()
+        public void SelectCard_CanConfirmTrueWhenCardSelected()
         {
             LogAssert.Expect(LogType.Warning, "[GearMechanicsInstaller] No GearEngineFeatureToggleSO provided. Using runtime default.");
 
@@ -70,47 +69,25 @@ namespace GearEngine.Campaign.Tests.Editor
                 boardConfig.GridWidth = 5;
                 boardConfig.GridHeight = 5;
 
-                var fillerConfigs = new List<GearConfig>();
-                try
+                using (var gear = new GearMechanicsTestContext(boardConfig))
                 {
-                    using (var gear = new GearMechanicsTestContext(boardConfig))
-                    {
-                        for (int i = 0; i < 5; i++)
-                        {
-                            GearConfig filler = CampaignTestUtilities.CreateGearConfigWithData($"fill{i}");
-                            fillerConfigs.Add(filler);
-                            Assert.That(gear.InventoryService.TryAdd(filler.CreateRuntimeData()), Is.True);
-                        }
+                    var vm = new RoguelikeViewModel();
+                    ViewModelTestInject.InjectPrivateField(vm, "rollService", roll);
+                    ViewModelTestInject.InjectPrivateField(vm, "engineService", gear.Engine);
+                    ViewModelTestInject.InjectPrivateField(vm, "boardService", gear.BoardService);
+                    ViewModelTestInject.InjectPrivateField(vm, "featureToggle", gear.FeatureToggle);
+                    ViewModelTestInject.InjectPrivateField(vm, "dragService", gear.DragService);
+                    ViewModelTestInject.InjectPrivateField(vm, "inventoryService", gear.InventoryService);
+                    ViewModelTestInject.InjectPrivateField(vm, "presentationTransferService", gear.PresentationTransfer);
+                    ViewModelTestInject.InjectNavigation(vm, new RecordingNavigation());
 
-                        var vm = new RoguelikeViewModel();
-                        ViewModelTestInject.InjectPrivateField(vm, "rollService", roll);
-                        ViewModelTestInject.InjectPrivateField(vm, "engineService", gear.Engine);
-                        ViewModelTestInject.InjectPrivateField(vm, "boardService", gear.BoardService);
-                        ViewModelTestInject.InjectPrivateField(vm, "featureToggle", gear.FeatureToggle);
-                        ViewModelTestInject.InjectPrivateField(vm, "dragService", gear.DragService);
-                        ViewModelTestInject.InjectPrivateField(vm, "inventoryService", gear.InventoryService);
-                        ViewModelTestInject.InjectPrivateField(vm, "presentationTransferService", gear.PresentationTransfer);
-                        ViewModelTestInject.InjectNavigation(vm, new RecordingNavigation());
+                    ViewModelTestInject.InvokeInitialize(vm);
 
-                        ViewModelTestInject.InvokeInitialize(vm);
-
-                        vm.SelectCard(vm.CardOptions[0]);
-                        Assert.That(vm.CanConfirm, Is.False);
-
-                        IItem toRemove = gear.InventoryService.GetInventory().Items[0];
-                        Assert.That(gear.InventoryService.TryConsume(toRemove), Is.True);
-                        Assert.That(vm.CanConfirm, Is.True);
-                    }
-
-                    Object.DestroyImmediate(boardConfig);
+                    vm.SelectCard(vm.CardOptions[0]);
+                    Assert.That(vm.CanConfirm, Is.True);
                 }
-                finally
-                {
-                    foreach (GearConfig c in fillerConfigs)
-                    {
-                        CampaignTestUtilities.DestroyGearConfig(c);
-                    }
-                }
+
+                Object.DestroyImmediate(boardConfig);
             }
             finally
             {
@@ -151,7 +128,7 @@ namespace GearEngine.Campaign.Tests.Editor
 
                     vm.Confirm();
 
-                    Assert.That(gear.InventoryService.GetInventory().Items.Count, Is.EqualTo(1));
+                    Assert.That(gear.InventoryService.Owned.Count, Is.EqualTo(1));
                     Assert.That(roll.Consumed, Has.Count.EqualTo(1));
                     Assert.That(roll.Consumed[0], Is.SameAs(g1));
                     Assert.That(navigation.OpenedControllers.Count, Is.EqualTo(1));

@@ -41,12 +41,10 @@ Gear mechanics are wired for reuse inside larger scenes:
 * **`IGearEngineService` / `GearEngineService`**: External integration surface for simulation control (`Play` / `Stop` / `IsRunning`). Inject this from other modules instead of `IGridManager`.
 * **`GearMechanicsInstaller`**: Plain C# installer constructed by `GearMechanicsScope`. Registers **`BoardRulesSO`**, grid/simulation services, and node factories. Does **not** register view factories; **`BoardViewComponent`** instantiates **`GearView`** prefabs from gear data.
 * **`GearMechanicsScope`**: `LifetimeScope` with **`NavigationSettings`**, **`navigationViewHolder`** (transform that parents the context `GearEngineView`), **`BoardRulesSO`**, and optional **`GearTestSceneBootstrap`**. Installs **`NavigationInstaller`** (with the default single-scope view-model injector), **`AddressablesInstaller`**, and **`GearMechanicsInstaller`**. The screen is opened from **`GearTestSceneBootstrap`** (`INavigation.Open(new GearEngineViewModel(startData))`) or from any host that supplies **`GearEngineStartData`**. Board presentation layout uses **`BoardLayoutSO`** on the board view (not in DI).
-* **`GearEngineStartData` / `BoardLayoutData`**: Serializable startup payload for initial board placements (`BoardGearPlacementData`: grid position + **`GearConfig`**) and optional starting inventory (`List<GearConfig>`). Hydration runs in **`GearEngineViewModel`** via **`BoardViewModel.LoadLayout`** and **`GearInventoryViewModel.LoadInventory`**.
+* **`GearEngineStartData`**: Serializable startup payload for initial **board** placements only (`BoardGearPlacementData`: grid position + **`GearConfig`** via **`GearBoardLoadoutData`**). Hydration runs in **`GearEngineViewModel`** via **`BoardViewModel.LoadLayout`**. Tray contents come from **`IInventoryService.Owned`** minus placed gears (**`GearInventoryViewModel`** rebuilds **`TrayItems`** from inventory + board events).
 * **`GearTestSceneBootstrap`**: Thin scene `MonoBehaviour` with serialized **`GearEngineStartData`**; after DI, calls **`INavigation`** to open **`GearEngineViewModel`**. Does not spawn nodes or gear views.
 * **`BoardView`**: **`ViewComponent<BoardViewModel>`**. Call **`BindBoard(BoardViewModel, interactable)`** / **`Unbind()`** (or let **`GearInteractionBinder`** bind the board once with **`interactable: true`** alongside inventory). Use **`interactable: false`** for read-only boards. Inventory bridging stays in **`GearEngineView.OnBind`** via the binder.
 * **`GearEngineView`**: Parent **`View<GearEngineViewModel>`**; sub-widgets have **no `[Inject]`** fields. **`GearInventoryView`** builds slots without **`IObjectResolver`**. **`GearInventorySlotView`** notifies **`GearInventoryViewModel.NotifyGearDropped`**, which raises **`OnGearDraggedToBoard`** for the screen to call **`BoardViewModel.HandleInventoryDrop`** and **`ConsumeSpecificGear`** on success.
-* **`GearInventoryLoadoutSO`**: Still used by editor tooling to populate test **`GearEngineStartData`** inventory when regenerating scenes; it is **not** registered with the mechanics installer.
-
 **Scenes**
 
 * [`Assets/Scenes/GearEngine_TestScene.unity`](../../../../Scenes/GearEngine_TestScene.unity) — full test layout (`TestCanvas`).
@@ -54,7 +52,7 @@ Gear mechanics are wired for reuse inside larger scenes:
 
 **Editor menu**
 
-* **GearEngine → Step 1: Generate Basic Setup Configs** — creates board, gear, tag, ability assets and **`GearInventoryLoadout.asset`**.
+* **GearEngine → Step 1: Generate Basic Setup Configs** — creates board, gear, tag, and ability assets (starting inventory for tests is owned **`IInventoryService`** / LiveOps data, not **`GearEngineStartData`**).
 * **GearEngine → Generate Navigation Assets** — creates **`GearEngineView_NavigationStub.prefab`**, **`GearEngineViewConfig.asset`**, and registers the config on **`Assets/Data/Navigation/Navigation Settings.asset`** (required for `INavigation` context views).
 * **GearEngine → Step 2: Generate VContainer Test Scene** — regenerates `GearEngine_TestScene.unity` (runs navigation generation first).
 * **GearEngine → Create Gear_Clean Scene** — overwrites `Gear_Clean.unity` with the composable hierarchy.

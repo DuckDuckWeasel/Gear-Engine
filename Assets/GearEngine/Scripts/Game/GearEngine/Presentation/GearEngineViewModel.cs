@@ -3,7 +3,6 @@ using GearEngine.GearEngine;
 using GearEngine.GearEngine.Presentation.UI;
 using GearEngine.GearEngine.Services;
 using GearEngine.GearEngine.Services.Board;
-using GearEngine.GearEngine.Services.Inventory;
 using Scaffold.MVVM;
 using VContainer;
 
@@ -21,7 +20,7 @@ namespace GearEngine.GearEngine.Presentation
 
         [Inject] private IGearEngineService engineService;
         [Inject] private IBoardService boardService;
-        [Inject] private IRaceInventoryService inventoryService;
+        [Inject] private IInventoryService inventoryService;
         [Inject] private IGearPresentationTransferService presentationTransferService;
         [Inject] private IDragService dragService;
         [Inject] private GearEngineFeatureToggleSO featureToggle;
@@ -40,12 +39,12 @@ namespace GearEngine.GearEngine.Presentation
 
         private BoardViewModel CreateBoard()
         {
-            return new BoardViewModel(boardService, inventoryService, engineService);
+            return new BoardViewModel(boardService, engineService);
         }
 
         private GearInventoryViewModel CreateInventory()
         {
-            return new GearInventoryViewModel(engineService, inventoryService);
+            return new GearInventoryViewModel(engineService, boardService, inventoryService);
         }
 
         private TrashZoneViewModel CreateTrashZone()

@@ -43,7 +43,6 @@ namespace GearEngine.App.Bootstrap.Layers
             new GearMechanicsInstaller(
                     boardRules,
                     featureToggle,
-                    start.GetInventoryLoadoutData(),
                     start.GetBoardLoadoutData())
                 .Install(builder);
 

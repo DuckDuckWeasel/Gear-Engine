@@ -4,8 +4,8 @@ using System.Reflection;
 using GameModuleDTO.ModuleRequests;
 using GameModuleDTO.Modules.Currency;
 using GearEngine.Campaign;
-using GearEngine.Currency;
 using GearEngine.Campaign.Services;
+using GearEngine.Currency;
 using GearEngine.CarSimulation;
 using GearEngine.CarSimulation.Definitions;
 using GearEngine.CarSimulation.Simulation;
@@ -16,7 +16,6 @@ using GearEngine.GearEngine.Config;
 using GearEngine.GearEngine.Merge;
 using GearEngine.GearEngine.Manager;
 using GearEngine.GearEngine.Services;
-using GearEngine.GearEngine.Services.Inventory;
 using Scaffold.Events.Contracts;
 using Scaffold.Events.Container;
 using UnityEngine;
@@ -31,7 +30,8 @@ namespace GearEngine.Campaign.Tests.Editor
         {
             var builder = new ContainerBuilder();
             new EventsInstaller().Install(builder);
-            new GearMechanicsInstaller(boardRules, null, GearInventoryLoadoutData.Empty(), new GearBoardLoadoutData()).Install(builder);
+            builder.RegisterInstance<IInventoryService>(new RecordingInventoryService());
+            new GearMechanicsInstaller(boardRules, null, new GearBoardLoadoutData()).Install(builder);
             container = builder.Build();
             Engine = container.Resolve<IGearEngineService>();
             GridManager = container.Resolve<IGridManager>();
@@ -42,7 +42,7 @@ namespace GearEngine.Campaign.Tests.Editor
             DragService = container.Resolve<IDragService>();
             SwapService = container.Resolve<IGridSwapService>();
             MergeService = container.Resolve<IGridMergeService>();
-            InventoryService = container.Resolve<IRaceInventoryService>();
+            InventoryService = container.Resolve<IInventoryService>();
             PresentationTransfer = container.Resolve<IGearPresentationTransferService>();
             BoardService = container.Resolve<IBoardService>();
         }
@@ -56,7 +56,7 @@ namespace GearEngine.Campaign.Tests.Editor
         public IDragService DragService { get; }
         public IGridSwapService SwapService { get; }
         public IGridMergeService MergeService { get; }
-        public IRaceInventoryService InventoryService { get; }
+        public IInventoryService InventoryService { get; }
         public IGearPresentationTransferService PresentationTransfer { get; }
         public IBoardService BoardService { get; }
 
@@ -166,51 +166,47 @@ namespace GearEngine.Campaign.Tests.Editor
         }
     }
 
-    internal sealed class RecordingInventoryService : IRaceInventoryService
+    internal sealed class RecordingInventoryService : IInventoryService
     {
-        public event Action ItemsChanged;
+        public event Action InventoryChanged;
 
-        public readonly List<IItem> AddedItems = new List<IItem>();
-        private readonly InventoryModel model = new InventoryModel();
+        public readonly List<GearConfig> AddedGearConfigs = new List<GearConfig>();
 
-        public RecordingInventoryService()
+        private readonly List<GearConfig> owned = new List<GearConfig>();
+
+        public bool HasSavedInventory => owned.Count > 0;
+
+        public IReadOnlyList<GearConfig> Owned => owned;
+
+        public bool TryAdd(GearConfig gear)
         {
-            model.MaxSlots = 32;
-        }
-
-        public InventoryModel GetInventory() => model;
-
-        public bool TryAdd(IItem item)
-        {
-            if (item == null)
+            if (gear == null)
             {
                 return false;
             }
 
-            AddedItems.Add(item);
-            model.Items.Add(item);
-            ItemsChanged?.Invoke();
+            AddedGearConfigs.Add(gear);
+            owned.Add(gear);
+            InventoryChanged?.Invoke();
             return true;
         }
 
-        public bool TryConsume(IItem item)
+        public bool TryRemove(GearConfig gear)
         {
-            if (item == null)
+            if (gear == null)
             {
                 return false;
             }
 
-            for (int i = 0; i < model.Items.Count; i++)
+            int i = owned.FindIndex(g => g.Id == gear.Id);
+            if (i < 0)
             {
-                if (ReferenceEquals(model.Items[i], item))
-                {
-                    model.Items.RemoveAt(i);
-                    ItemsChanged?.Invoke();
-                    return true;
-                }
+                return false;
             }
 
-            return false;
+            owned.RemoveAt(i);
+            InventoryChanged?.Invoke();
+            return true;
         }
     }
 }

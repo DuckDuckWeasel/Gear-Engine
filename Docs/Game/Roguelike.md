@@ -4,10 +4,11 @@
 
 - **UI**: [`RoguelikeView`](../../Assets/GearEngine/Scripts/Game/Campaign/Presentation/RoguelikeView.cs) / [`RoguelikeViewModel`](../../Assets/GearEngine/Scripts/Game/Campaign/Presentation/RoguelikeViewModel.cs) with [`CampaignRoguelikeViewConfig`](../../Assets/GearEngine/Data/Campaign/CampaignRoguelikeViewConfig.asset) and prefab [`Campaign_RoguelikeView`](../../Assets/GearEngine/Prefabs/Campaign/Campaign_RoguelikeView.prefab).
 - **Roll**: Options come from `IRoguelikeRollService`, backed by LiveOps `RoguelikeClientModule` (authoritative roll persisted server-side so quitting mid-selection does not re-roll).
-- **Confirm**: Adds the chosen gear via `IRaceInventoryService.TryAdd`; [`CampaignGearPersistenceHookup`](../../Assets/GearEngine/Scripts/Game/Campaign/Bootstrap/CampaignGearPersistenceHookup.cs) mirrors race inventory to owned inventory (`InventoryClientModule`). Then `ConsumePickAsync` clears the server roll via `ClaimRoguelikePickRequest`.
-- **Capacity**: `CanConfirm` is false when the race inventory tray is full; the player can use the trash zone to free a slot before confirming.
+- **Confirm**: Adds the chosen gear via **`IInventoryService.TryAdd(selectedCard.GearConfig)`**, which updates owned inventory and persists with `SetInventoryRequest`. Then `ConsumePickAsync` clears the server roll via `ClaimRoguelikePickRequest`. **`CampaignGearPersistenceHookup`** does not mirror inventory from a race service—it only persists **loadout** when the board layout changes.
+- **Capacity**: **`CanConfirm`** is **`selectedCard != null`**. There is no inventory cap on pickup; board capacity is unchanged (`MaxAllowedBoardGears`).
 
 ## References
 
 - [Roguelike module (LiveOps)](../LiveOps/Roguelike.md)
 - [Campaign.md](Campaign.md)
+- [Inventory.md](../LiveOps/Inventory.md)

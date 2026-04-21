@@ -9,7 +9,6 @@ using GearEngine.GearEngine.Config;
 using GearEngine.GearEngine.Presentation.UI;
 using GearEngine.GearEngine.Services;
 using GearEngine.GearEngine.Services.Board;
-using GearEngine.GearEngine.Services.Inventory;
 using Scaffold.MVVM;
 using Scaffold.Navigation.Contracts;
 using UnityEngine;
@@ -53,7 +52,7 @@ namespace GearEngine.Campaign.Presentation
         private IDragService dragService;
 
         [Inject]
-        private IRaceInventoryService inventoryService;
+        private IInventoryService inventoryService;
 
         [Inject]
         private IGearPresentationTransferService presentationTransferService;
@@ -62,7 +61,6 @@ namespace GearEngine.Campaign.Presentation
         {
             base.Initialize();
             SetupGearEngineSubtree();
-            inventoryService.ItemsChanged += RecomputeCanConfirm;
             _ = LoadRollAsync(cts.Token);
         }
 
@@ -74,11 +72,6 @@ namespace GearEngine.Campaign.Presentation
             }
 
             disposed = true;
-            if (inventoryService != null)
-            {
-                inventoryService.ItemsChanged -= RecomputeCanConfirm;
-            }
-
             cts.Cancel();
             cts.Dispose();
         }
@@ -110,9 +103,9 @@ namespace GearEngine.Campaign.Presentation
 
         private void SetupGearEngineSubtree()
         {
-            Board = new BoardViewModel(boardService, inventoryService, engineService);
+            Board = new BoardViewModel(boardService, engineService);
             BindChildViewModel(Board);
-            Inventory = new GearInventoryViewModel(engineService, inventoryService);
+            Inventory = new GearInventoryViewModel(engineService, boardService, inventoryService);
             BindChildViewModel(Inventory);
             TrashZone = new TrashZoneViewModel(engineService, Board, presentationTransferService, featureToggle);
             BindChildViewModel(TrashZone);
@@ -137,8 +130,7 @@ namespace GearEngine.Campaign.Presentation
                 throw new InvalidOperationException("[RoguelikeViewModel] No card selected.");
             }
 
-            IItem runtime = selectedCard.GearConfig.CreateRuntimeData();
-            if (!inventoryService.TryAdd(runtime))
+            if (!inventoryService.TryAdd(selectedCard.GearConfig))
             {
                 return;
             }
@@ -172,8 +164,7 @@ namespace GearEngine.Campaign.Presentation
 
         private void RecomputeCanConfirm()
         {
-            InventoryModel model = inventoryService.GetInventory();
-            CanConfirm = selectedCard != null && model.Items.Count < model.MaxSlots;
+            CanConfirm = selectedCard != null;
         }
     }
 }

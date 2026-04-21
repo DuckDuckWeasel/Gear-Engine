@@ -3,7 +3,6 @@ using GearEngine.GearEngine;
 using GearEngine.GearEngine.Config;
 using GearEngine.GearEngine.Services;
 using GearEngine.GearEngine.Services.Board;
-using GearEngine.GearEngine.Services.Inventory;
 using UnityEngine;
 using VContainer;
 
@@ -14,18 +13,15 @@ namespace GearEngine.GearEngine.Bootstrap
         public GearMechanicsInstaller(
             BoardRulesSO boardRules,
             GearEngineFeatureToggleSO featureToggle,
-            GearInventoryLoadoutData inventoryLoadout,
             GearBoardLoadoutData boardLoadout)
         {
             this.boardRules = boardRules ?? throw new ArgumentNullException(nameof(boardRules));
             this.featureToggle = featureToggle;
-            this.inventoryLoadout = inventoryLoadout ?? throw new ArgumentNullException(nameof(inventoryLoadout));
             this.boardLoadout = boardLoadout ?? throw new ArgumentNullException(nameof(boardLoadout));
         }
 
         private readonly BoardRulesSO boardRules;
         private readonly GearEngineFeatureToggleSO featureToggle;
-        private readonly GearInventoryLoadoutData inventoryLoadout;
         private readonly GearBoardLoadoutData boardLoadout;
 
         public void Install(IContainerBuilder builder)
@@ -58,7 +54,6 @@ namespace GearEngine.GearEngine.Bootstrap
             builder.Register<GearNodeFactory>(Lifetime.Singleton).As<IGearNodeFactory>();
             builder.Register<DragService>(Lifetime.Singleton).As<IDragService>();
 
-            builder.RegisterInstance<IRaceInventoryService>(new InventoryService(inventoryLoadout));
             builder.Register<BoardService>(Lifetime.Singleton).As<IBoardService>();
             builder.Register<GearPresentationTransferService>(Lifetime.Singleton).As<IGearPresentationTransferService>();
         }

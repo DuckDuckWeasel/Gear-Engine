@@ -1,7 +1,6 @@
 using System.Linq;
 using GearEngine.GearEngine.Config;
 using GearEngine.GearEngine.Nodes;
-using GearEngine.GearEngine.Services.Inventory;
 using GearEngine.GearEngine.Visuals;
 using Scaffold.MVVM;
 using TMPro;
@@ -21,14 +20,18 @@ namespace GearEngine.GearEngine.Presentation.UI
         protected override void OnBind()
         {
             Assert.IsNotNull(viewModel, "[GearInventoryView] ViewModel is missing.");
-            Assert.IsNotNull(viewModel.InventoryModel?.Items, "[GearInventoryView] Inventory items collection is missing.");
+            Assert.IsNotNull(viewModel.TrayItems, "[GearInventoryView] Tray items collection is missing.");
 
             inventoryUiBinding = true;
             try
             {
-                Bind(() => viewModel.InventoryLimitText, () => inventoryLimitLabel.text);
+                if (inventoryLimitLabel != null)
+                {
+                    inventoryLimitLabel.text = string.Empty;
+                }
+
                 Bind<int, int>(() => viewModel.InventoryListRevision, OnInventoryListRevisionChanged);
-                Bind<IItem, IItem>(() => viewModel.SelectedItem, OnSelectionChanged);
+                Bind<GearConfigData, GearConfigData>(() => viewModel.SelectedItem, OnSelectionChanged);
             }
             finally
             {
@@ -46,18 +49,15 @@ namespace GearEngine.GearEngine.Presentation.UI
             RebuildUIList();
         }
 
-        private void OnSelectionChanged(IItem newItem)
+        private void OnSelectionChanged(GearConfigData newItem)
         {
-            if (newItem is GearConfigData newSelection)
+            if (newItem != null)
             {
-                if (newSelection != null)
-                {
-                    Debug.Log($"<color=#ff99aa>[GearInventoryView]</color> Highlight overlay moved onto -> {newSelection.Id}");
-                }
-                else
-                {
-                    Debug.Log($"<color=#ff99aa>[GearInventoryView]</color> Highlight overlay disabled (None selected).");
-                }
+                Debug.Log($"<color=#ff99aa>[GearInventoryView]</color> Highlight overlay moved onto -> {newItem.Id}");
+            }
+            else
+            {
+                Debug.Log($"<color=#ff99aa>[GearInventoryView]</color> Highlight overlay disabled (None selected).");
             }
         }
 
@@ -70,7 +70,7 @@ namespace GearEngine.GearEngine.Presentation.UI
         private void RebuildUIList()
         {
             ClearInventorySlots();
-            foreach (IItem item in viewModel.InventoryModel.Items)
+            foreach (GearConfigData item in viewModel.TrayItems)
             {
                 AddPresenterForItem(item);
             }
@@ -97,7 +97,7 @@ namespace GearEngine.GearEngine.Presentation.UI
             }
         }
 
-        private void AddPresenterForItem(IItem item)
+        private void AddPresenterForItem(GearConfigData item)
         {
             GameObject slotObj = CreateSlotObject(item);
             if (slotObj == null)
@@ -105,10 +105,7 @@ namespace GearEngine.GearEngine.Presentation.UI
                 return;
             }
 
-            if (item is GearConfigData gear)
-            {
-                WireGearSlot(slotObj, gear);
-            }
+            WireGearSlot(slotObj, item);
         }
 
         private void WireGearSlot(GameObject slotObj, GearConfigData gear)
@@ -172,7 +169,7 @@ namespace GearEngine.GearEngine.Presentation.UI
             return CanAccept(payload);
         }
 
-        private GameObject CreateSlotObject(IItem item)
+        private GameObject CreateSlotObject(GearConfigData item)
         {
             if (slotPrefab == null)
             {
@@ -188,9 +185,9 @@ namespace GearEngine.GearEngine.Presentation.UI
         [ContextMenu("Mock: UI Click First Available Gear")]
         public void MockClickFirstGear()
         {
-            if (viewModel.InventoryModel.Items.Count > 0)
+            if (viewModel.TrayItems.Count > 0)
             {
-                viewModel.SelectGearLocal(viewModel.InventoryModel.Items.First() as GearConfigData);
+                viewModel.SelectGearLocal(viewModel.TrayItems.First());
             }
         }
     }

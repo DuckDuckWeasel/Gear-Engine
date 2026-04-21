@@ -1,8 +1,12 @@
 using System;
-using System.Collections.Specialized;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 using GearEngine.GearEngine.Config;
-using GearEngine.GearEngine.Services.Inventory;
+using GearEngine.GearEngine.Nodes;
+using GearEngine.GearEngine.Services;
+using GearEngine.GearEngine.Services.Board;
 using Scaffold.MVVM;
 using UnityEngine;
 
@@ -10,33 +14,29 @@ namespace GearEngine.GearEngine.Presentation.UI
 {
     public partial class GearInventoryViewModel : ViewModel
     {
-        public GearInventoryViewModel(IGearEngineService engineService, IRaceInventoryService inventoryService)
+        public GearInventoryViewModel(IGearEngineService engineService, IBoardService boardService, IInventoryService inventoryService)
         {
             this.engineService = engineService ?? throw new ArgumentNullException(nameof(engineService));
+            this.boardService = boardService ?? throw new ArgumentNullException(nameof(boardService));
             this.inventoryService = inventoryService ?? throw new ArgumentNullException(nameof(inventoryService));
 
-            InventoryModel = inventoryService.GetInventory();
-            if (InventoryModel?.Items != null)
-            {
-                InventoryModel.Items.CollectionChanged += OnAvailableItemsChanged;
-            }
+            inventoryService.InventoryChanged += OnInventoryChanged;
+            boardService.GearPlaced += OnBoardGearPlaced;
+            boardService.GearRemoved += OnBoardGearRemoved;
 
-            RefreshInventoryLabel();
+            RebuildTray();
         }
 
-        public int MaxSlots => InventoryModel?.MaxSlots ?? 0;
-
-        public int CurrentCount => InventoryModel?.Items.Count ?? 0;
+        public ObservableCollection<GearConfigData> TrayItems { get; } = new ObservableCollection<GearConfigData>();
 
         public bool CanDrag => engineService != null && !engineService.IsRunning;
 
         private readonly IGearEngineService engineService;
-        private readonly IRaceInventoryService inventoryService;
+        private readonly IBoardService boardService;
+        private readonly IInventoryService inventoryService;
 
-        [ObservableProperty] private IItem selectedItem;
+        [ObservableProperty] private GearConfigData selectedItem;
 
-        [ObservableProperty] private InventoryModel inventoryModel;
-        [ObservableProperty] private string inventoryLimitText;
         [ObservableProperty] private int inventoryListRevision;
 
         public void NotifySlotDragAccepted(GearConfigData gear)
@@ -48,7 +48,17 @@ namespace GearEngine.GearEngine.Presentation.UI
                     throw new ArgumentNullException(nameof(gear));
                 }
 
-                inventoryService?.TryConsume(gear);
+                GearConfig source = gear.SourceGearConfig;
+                if (source == null)
+                {
+                    Debug.LogError("[GearInventoryViewModel] NotifySlotDragAccepted: gear has no SourceGearConfig.");
+                    return;
+                }
+
+                if (inventoryService.TryRemove(source))
+                {
+                    RebuildTray();
+                }
             }
             catch (Exception ex)
             {
@@ -58,7 +68,7 @@ namespace GearEngine.GearEngine.Presentation.UI
 
         public void SelectGearLocal(GearConfigData gear)
         {
-            if (InventoryModel.Items.Contains(gear))
+            if (gear != null && TrayItems.Contains(gear))
             {
                 SelectedItem = gear;
                 Debug.Log($"<color=#aaaaff>[UI_ViewModel]</color> Player selected: {gear.Id}");
@@ -67,23 +77,55 @@ namespace GearEngine.GearEngine.Presentation.UI
 
         protected override void OnClosed()
         {
-            if (InventoryModel?.Items != null)
-            {
-                InventoryModel.Items.CollectionChanged -= OnAvailableItemsChanged;
-            }
-
+            inventoryService.InventoryChanged -= OnInventoryChanged;
+            boardService.GearPlaced -= OnBoardGearPlaced;
+            boardService.GearRemoved -= OnBoardGearRemoved;
             base.OnClosed();
         }
 
-        private void OnAvailableItemsChanged(object sender, NotifyCollectionChangedEventArgs e)
+        private void OnInventoryChanged()
         {
-            RefreshInventoryLabel();
-            InventoryListRevision++;
+            RebuildTray();
         }
 
-        private void RefreshInventoryLabel()
+        private void OnBoardGearPlaced(IGridNode _)
         {
-            InventoryLimitText = $"Inventory: {CurrentCount}/{MaxSlots}";
+            RebuildTray();
+        }
+
+        private void OnBoardGearRemoved(IGridNode _)
+        {
+            RebuildTray();
+        }
+
+        private void RebuildTray()
+        {
+            List<GearConfig> placed = boardService.GetAllNodes()
+                .Select(n => n.ConfigData?.SourceGearConfig)
+                .Where(c => c != null)
+                .ToList();
+
+            Dictionary<GearConfig, int> ownedCounts = inventoryService.Owned
+                .GroupBy(c => c)
+                .ToDictionary(g => g.Key, g => g.Count());
+            foreach (GearConfig p in placed)
+            {
+                if (ownedCounts.TryGetValue(p, out int n) && n > 0)
+                {
+                    ownedCounts[p] = n - 1;
+                }
+            }
+
+            TrayItems.Clear();
+            foreach (KeyValuePair<GearConfig, int> kv in ownedCounts)
+            {
+                for (int i = 0; i < kv.Value; i++)
+                {
+                    TrayItems.Add(kv.Key.CreateRuntimeData());
+                }
+            }
+
+            InventoryListRevision++;
         }
     }
 }

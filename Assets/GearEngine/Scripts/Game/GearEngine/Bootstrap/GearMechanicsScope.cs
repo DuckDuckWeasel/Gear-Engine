@@ -1,6 +1,7 @@
 using System;
 using GearEngine.GearEngine;
 using GearEngine.GearEngine.Presentation;
+using GearEngine.GearEngine.Services;
 using GearEngine.SceneFoundation.Bootstrap;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -48,10 +49,10 @@ namespace GearEngine.GearEngine.Bootstrap
 
         protected override void InstallFeatureServices(IContainerBuilder builder)
         {
+            builder.Register<EmptyInventoryService>(Lifetime.Singleton).As<IInventoryService>();
             new GearMechanicsInstaller(
                 boardRules,
                 featureToggle,
-                gearStartData.GetInventoryLoadoutData(),
                 gearStartData.GetBoardLoadoutData()).Install(builder);
             builder.RegisterComponent(sceneBootstrap).AsImplementedInterfaces().AsSelf();
         }
