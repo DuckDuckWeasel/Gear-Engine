@@ -21,6 +21,9 @@ namespace GearEngine.GearEngine.Nodes
         void NodeUpdate(float deltaTime, float speedModifier);
         void WindDownUpdate(float deltaTime, float speedModifier);
 
+        /// <summary>Returns deeply cloned abilities or standard active ones attached.</summary>
+        System.Collections.Generic.IEnumerable<GearEngine.Abilities.GearAbilitySO> GetAbilities();
+
         /// <summary>Clears rotation, charge, and other per-run simulation state (layout unchanged).</summary>
         void ResetSimulationState();
     }

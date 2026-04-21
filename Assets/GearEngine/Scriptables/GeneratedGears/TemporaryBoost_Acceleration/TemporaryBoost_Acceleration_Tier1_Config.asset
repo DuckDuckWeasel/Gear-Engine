@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: faf34a39f5b75466d9fbf4f99fc70808, type: 3}
+  m_Name: TemporaryBoost_Acceleration_Tier1_Config
+  m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Config.GearConfig
+  nextLevel: {fileID: 11400000, guid: f1f2bb4de48c0477ab5df32284b2d9a9, type: 2}
+  data:
+    id: temporaryboost_acceleration_tier1
+    rarity: 0
+    Category: 0
+    BaseRotationSpeed: 0
+    ViewPrefab: {fileID: 8811223344556677001, guid: 16426345c7f1e4cfcbe7499d444b3f6d, type: 3}
+    UIIcon: {fileID: -1078806869439273028, guid: 78e190fb2677d49c98a2084be2b34dd5, type: 3}
+    RelativeScaleMultiplier: 1
+    TriggerPattern: 4
+    IsInteractable: 1
+    IsMovable: 1
+    IsReturnable: 1
+    MaxCharge: 100
+    ChargeOverTimeAmount: 10
+    ChargeOnTriggerAmount: 25
+    SnapSlowdownDuration: 0.5
+    SnapSlowdownMultiplier: 0.15
+    TriggerSpinDegrees: 45
+    IsDeletable: 0
+    DeleteRewardAmount: 0
+    Abilities: []
+  abilities:
+  - {fileID: 11400000, guid: aad14dd5967b34b398ce345e5cab3210, type: 2}

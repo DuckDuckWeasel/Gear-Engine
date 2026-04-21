@@ -10,6 +10,7 @@ global using GearEngine.GearEngine.Visuals;
 global using GearEngine.GearEngine.Presentation;
 global using GearEngine.GearEngine.Presentation.UI;
 global using GearEngine.GearEngine.Presentation.UI.Tags;
+using Scaffold.Events.Contracts;
 
 using System.Runtime.CompilerServices;
 using NUnit.Framework;

@@ -1,3 +1,4 @@
+using Scaffold.Events.Contracts;
 using UnityEngine;
 
 namespace GearEngine.GearEngine.Abilities

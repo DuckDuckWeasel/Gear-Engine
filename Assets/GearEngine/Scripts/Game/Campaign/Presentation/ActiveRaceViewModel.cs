@@ -1,3 +1,4 @@
+using GearEngine.Campaign.Gear;
 using System;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -37,6 +38,21 @@ namespace GearEngine.Campaign.Presentation
             RaceSessionConfig sessionConfig = raceSessionDefaults.CreateForTrack(trackService.CurrentTrack);
             RaceState freshSession = trackFactory.Create(trackService.CurrentCar, trackService.CurrentTrack, sessionConfig);
             raceManager.RegisterRace(freshSession);
+
+            if (engineService != null)
+            {
+                foreach (var node in engineService.GetAllNodes())
+                {
+                    if (node == null) continue;
+                    foreach (var ability in node.GetAbilities())
+                    {
+                        if (ability is ActiveRaceGearAbilitySO activeGear)
+                        {
+                            activeGear.Initialize(freshSession, engineService);
+                        }
+                    }
+                }
+            }
 
             engineService.ResetGridSimulationState();
 

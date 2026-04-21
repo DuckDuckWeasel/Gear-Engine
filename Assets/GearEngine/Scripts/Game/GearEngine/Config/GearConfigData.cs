@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Text;
 using UnityEngine;
 using GearEngine.GearEngine.Services.Inventory;
 using GearEngine.GearEngine.Visuals;
@@ -11,6 +12,35 @@ namespace GearEngine.GearEngine.Config
     {
         [SerializeField] private string id;
         public string Id { get => id; set => id = value; }
+        
+        [SerializeField] private ItemRarity rarity = ItemRarity.Common;
+        public ItemRarity Rarity { get => rarity; set => rarity = value; }
+
+        public string Description
+        {
+            get
+            {
+                var sb = new StringBuilder();
+                sb.Append($"<b><color=#{RarityColor(rarity)}>{rarity}</color></b> Gear\n");
+                foreach (var ability in Abilities)
+                {
+                    if (ability is IDescribable describable)
+                        sb.AppendLine(describable.GetRichTextDescription());
+                }
+                return sb.ToString().TrimEnd();
+            }
+        }
+
+        private static string RarityColor(ItemRarity r) => r switch
+        {
+            ItemRarity.Common => "AAAAAA",
+            ItemRarity.Uncommon => "1EFF00",
+            ItemRarity.Rare => "0070FF",
+            ItemRarity.Epic => "A335EE",
+            ItemRarity.Legendary => "FF8000",
+            _ => "FFFFFF"
+        };
+        
         public GearCategory Category = GearCategory.Base;
         public float BaseRotationSpeed;
         public GearView ViewPrefab;
@@ -36,8 +66,8 @@ namespace GearEngine.GearEngine.Config
         public bool IsDeletable = false;
         public int DeleteRewardAmount = 0;
 
-        // Abilities configured specifically for this gear
-        public List<GearAbilitySO> Abilities = new List<GearAbilitySO>();
+        // Abilities — populated at runtime by GearConfig.CreateRuntimeData(), not edited here.
+        [HideInInspector] public List<GearAbilitySO> Abilities = new List<GearAbilitySO>();
 
         // Runtime copy of the next level config
         [NonSerialized] public GearConfig NextLevelConfig;
@@ -56,6 +86,7 @@ namespace GearEngine.GearEngine.Config
             return new GearConfigData
             {
                 Id = Id,
+                Rarity = Rarity,
                 Category = Category,
                 BaseRotationSpeed = BaseRotationSpeed,
                 ViewPrefab = ViewPrefab,

@@ -24,7 +24,13 @@ namespace GearEngine.Campaign.Bootstrap
             }
 
             RaceSessionConfig template = defaultsSo.Template ?? new RaceSessionConfig();
-            builder.RegisterInstance(new CampaignRaceSessionDefaults(template));
+
+            builder.Register<CampaignStatsService>(Lifetime.Singleton)
+                   .WithParameter(template)
+                   .AsImplementedInterfaces();
+
+            builder.Register<CampaignRaceSessionDefaults>(Lifetime.Singleton)
+                   .WithParameter(template);
         }
     }
 }

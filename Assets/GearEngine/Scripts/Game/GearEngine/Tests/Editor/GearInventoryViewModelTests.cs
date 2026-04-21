@@ -1,3 +1,4 @@
+using GearEngine.GearEngine.Nodes;
 using System;
 using GearEngine.GearEngine;
 using GearEngine.GearEngine.Config;
@@ -24,6 +25,7 @@ namespace GearEngine.GearEngine.Tests.Editor
             {
             }
 
+            public System.Collections.Generic.IEnumerable<IGridNode> GetAllNodes() => new System.Collections.Generic.List<IGridNode>();
             public void ResetGridSimulationState()
             {
             }

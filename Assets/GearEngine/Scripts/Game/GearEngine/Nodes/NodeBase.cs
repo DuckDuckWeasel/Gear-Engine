@@ -99,6 +99,17 @@ namespace GearEngine.GearEngine.Nodes
             }
         }
 
+        public System.Collections.Generic.IEnumerable<GearAbilitySO> GetAbilities()
+        {
+            foreach (var runInfo in activeAbilities)
+            {
+                if (runInfo != null)
+                {
+                    yield return runInfo.AbilityDef;
+                }
+            }
+        }
+
         protected void TickAbilities(float deltaTime)
         {
             for (int i = activeAbilities.Count - 1; i >= 0; i--)

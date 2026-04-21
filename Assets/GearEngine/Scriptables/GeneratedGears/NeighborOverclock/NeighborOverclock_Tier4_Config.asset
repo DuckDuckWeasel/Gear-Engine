@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: faf34a39f5b75466d9fbf4f99fc70808, type: 3}
+  m_Name: NeighborOverclock_Tier4_Config
+  m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Config.GearConfig
+  nextLevel: {fileID: 11400000, guid: 925a33a12690349a59c4743a39709142, type: 2}
+  data:
+    id: neighboroverclock_tier4
+    rarity: 3
+    Category: 0
+    BaseRotationSpeed: 0
+    ViewPrefab: {fileID: 8811223344556677001, guid: 16426345c7f1e4cfcbe7499d444b3f6d, type: 3}
+    UIIcon: {fileID: 9063338546017850939, guid: ae3a18567ea3b4706af3a59a4aed4394, type: 3}
+    RelativeScaleMultiplier: 1
+    TriggerPattern: 4
+    IsInteractable: 1
+    IsMovable: 1
+    IsReturnable: 1
+    MaxCharge: 100
+    ChargeOverTimeAmount: 10
+    ChargeOnTriggerAmount: 25
+    SnapSlowdownDuration: 0.5
+    SnapSlowdownMultiplier: 0.15
+    TriggerSpinDegrees: 45
+    IsDeletable: 0
+    DeleteRewardAmount: 0
+    Abilities: []
+  abilities:
+  - {fileID: 11400000, guid: 92744ad15d19e43af88bb5e584db8d99, type: 2}

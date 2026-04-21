@@ -46,7 +46,7 @@ namespace GearEngine.GearEngine.Tests.Editor
             {
             }
 
-            public void Initialize(Vector2Int position, GearConfigData configData)
+            public System.Collections.Generic.IEnumerable<GearAbilitySO> GetAbilities() => new System.Collections.Generic.List<GearAbilitySO>(); public void Initialize(Vector2Int position, GearConfigData configData)
             {
             }
 
