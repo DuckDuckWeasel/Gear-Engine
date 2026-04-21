@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using GameModuleDTO.Modules.Inventory;
 using Newtonsoft.Json;
 
 namespace GameModuleDTO.ModuleRequests
@@ -6,6 +7,6 @@ namespace GameModuleDTO.ModuleRequests
     public sealed class SetInventoryResponse : ModuleResponse
     {
         [JsonProperty]
-        public List<string> GearIds { get; set; } = new List<string>();
+        public List<OwnedGearEntry> Gears { get; set; } = new List<OwnedGearEntry>();
     }
 }

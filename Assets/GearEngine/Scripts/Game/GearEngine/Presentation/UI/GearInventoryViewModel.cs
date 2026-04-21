@@ -48,17 +48,14 @@ namespace GearEngine.GearEngine.Presentation.UI
                     throw new ArgumentNullException(nameof(gear));
                 }
 
-                GearConfig source = gear.SourceGearConfig;
-                if (source == null)
+                if (gear.Owner == null)
                 {
-                    Debug.LogError("[GearInventoryViewModel] NotifySlotDragAccepted: gear has no SourceGearConfig.");
+                    Debug.LogError("[GearInventoryViewModel] NotifySlotDragAccepted: gear has no Owner.");
                     return;
                 }
 
-                if (inventoryService.TryRemove(source))
-                {
-                    RebuildTray();
-                }
+                // Keep OwnedGear in inventory while it is on the board; RebuildTray hides placed instances in the tray.
+                RebuildTray();
             }
             catch (Exception ex)
             {
@@ -100,29 +97,21 @@ namespace GearEngine.GearEngine.Presentation.UI
 
         private void RebuildTray()
         {
-            List<GearConfig> placed = boardService.GetAllNodes()
-                .Select(n => n.ConfigData?.SourceGearConfig)
-                .Where(c => c != null)
-                .ToList();
-
-            Dictionary<GearConfig, int> ownedCounts = inventoryService.Owned
-                .GroupBy(c => c)
-                .ToDictionary(g => g.Key, g => g.Count());
-            foreach (GearConfig p in placed)
-            {
-                if (ownedCounts.TryGetValue(p, out int n) && n > 0)
-                {
-                    ownedCounts[p] = n - 1;
-                }
-            }
+            var placed = new HashSet<OwnedGear>(boardService.GetAllNodes()
+                .Select(n => n.ConfigData?.Owner)
+                .Where(o => o != null));
 
             TrayItems.Clear();
-            foreach (KeyValuePair<GearConfig, int> kv in ownedCounts)
+            foreach (OwnedGear o in inventoryService.Owned)
             {
-                for (int i = 0; i < kv.Value; i++)
+                if (placed.Contains(o))
                 {
-                    TrayItems.Add(kv.Key.CreateRuntimeData());
+                    continue;
                 }
+
+                GearConfigData data = o.Config.CreateRuntimeData();
+                data.Owner = o;
+                TrayItems.Add(data);
             }
 
             InventoryListRevision++;

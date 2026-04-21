@@ -11,15 +11,25 @@ namespace GearEngine.GearEngine.Services
     {
         bool HasSavedInventory { get; }
 
-        IReadOnlyList<GearConfig> Owned { get; }
+        IReadOnlyList<OwnedGear> Owned { get; }
 
         event Action InventoryChanged;
 
-        bool TryAdd(GearConfig gear);
+        /// <summary>Mints a new InstanceId, adds the OwnedGear, schedules persistence in background. Returns the new ref.</summary>
+        OwnedGear Add(GearConfig gear);
 
-        bool TryRemove(GearConfig gear);
+        /// <summary>Removes by reference equality, schedules persistence in background.</summary>
+        bool Remove(OwnedGear gear);
 
         /// <summary>Clears all owned gear and persists an empty inventory in one request (LiveOps implementations).</summary>
         void Clear();
+    }
+
+    /// <summary>Runtime handle for one owned gear instance; <see cref="InstanceId"/> is client-minted (GUID).</summary>
+    public sealed class OwnedGear
+    {
+        public string InstanceId { get; set; }
+
+        public GearConfig Config { get; set; }
     }
 }

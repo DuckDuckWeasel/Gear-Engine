@@ -30,45 +30,46 @@ namespace GearEngine.App.Bootstrap
         [SerializeField]
         private Transform navigationViewHolder;
 
+        [Header("Catalogs")]
+        [SerializeField]
+        private TrackCatalogSO trackCatalog;
+
+        [SerializeField]
+        private RoguelikeGearPoolSO roguelikeGearPool;
+
+        [SerializeField]
+        private GearCatalogSO gearCatalog;
+
         protected override void ConfigureApplication(IContainerBuilder builder)
         {
         }
 
         protected override IEnumerable<IScopeLayer> GetInitialLayers()
         {
-            if (navigationSettings == null)
-            {
-                throw new InvalidOperationException(
-                    $"[{nameof(MetaApplicationBootstrap)}] Assign navigationSettings (e.g. Assets/Navigation/Navigation Settings.asset).");
-            }
-
-            if (navigationViewHolder == null)
-            {
-                throw new InvalidOperationException(
-                    $"[{nameof(MetaApplicationBootstrap)}] Assign navigationViewHolder to the transform that parents the scene context view.");
-            }
+            Require(navigationSettings, nameof(navigationSettings));
+            Require(navigationViewHolder, nameof(navigationViewHolder));
+            Require(trackCatalog, nameof(trackCatalog));
+            Require(roguelikeGearPool, nameof(roguelikeGearPool));
+            Require(gearCatalog, nameof(gearCatalog));
 
             yield return new FoundationLayer(navigationSettings, navigationViewHolder);
             yield return new UgsLayer();
             yield return new LiveOpsServiceLayer();
-            yield return CreateMetaLiveOpsClientModulesLayer();
-        }
-
-        private static LiveOpsClientModulesLayer CreateMetaLiveOpsClientModulesLayer()
-        {
-            TrackCatalogSO emptyTrack = ScriptableObject.CreateInstance<TrackCatalogSO>();
-            emptyTrack.SetRuntimeEntries(Array.Empty<TrackEntry>());
-            RoguelikeGearPoolSO emptyRoguelikePool = ScriptableObject.CreateInstance<RoguelikeGearPoolSO>();
-            emptyRoguelikePool.SetRuntimeEntries(Array.Empty<GearConfig>());
-            GearCatalogSO emptyGear = ScriptableObject.CreateInstance<GearCatalogSO>();
-            emptyGear.SetRuntimeEntries(Array.Empty<GearConfig>());
-            return new LiveOpsClientModulesLayer(
-                new CampaignTracksInstaller(emptyTrack),
-                new CampaignGearCatalogInstaller(emptyGear),
+            yield return new LiveOpsClientModulesLayer(
+                new CampaignTracksInstaller(trackCatalog),
+                new CampaignGearCatalogInstaller(gearCatalog),
                 new CampaignLoadoutInstaller(),
                 new CampaignInventoryInstaller(),
                 new CardsClientInstaller(),
-                new CampaignRoguelikeInstaller(emptyRoguelikePool));
+                new CampaignRoguelikeInstaller(roguelikeGearPool));
+        }
+
+        private static void Require(UnityEngine.Object value, string name)
+        {
+            if (value == null)
+            {
+                throw new InvalidOperationException($"[{nameof(MetaApplicationBootstrap)}] Assign {name}.");
+            }
         }
 
         protected override Task OnReadyAsync(CancellationToken ct)
@@ -95,7 +96,7 @@ namespace GearEngine.App.Bootstrap
                 Debug.Log(
                     $"[Meta] Loadout: hasSaved={loadoutClient.HasSavedLoadout}, boardPlacements={(loadoutData != null ? loadoutData.Board.Count : 0)}.");
                 Debug.Log(
-                    $"[Meta] Inventory: hasSaved={inventoryClient.HasSavedInventory}, gearIdCount={(inventoryData != null ? inventoryData.GearIds.Count : 0)}.");
+                    $"[Meta] Inventory: hasSaved={inventoryClient.HasSavedInventory}, gearCount={(inventoryData != null ? inventoryData.Gears.Count : 0)}.");
                 Debug.Log(
                     $"[Meta] Cards: unlockedCount={cardsClient.Unlocked?.Count ?? 0}, nextCost={cardsClient.NextCost} (gold).");
             }

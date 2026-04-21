@@ -11,13 +11,21 @@ namespace GearEngine.GearEngine.Services
     {
         public bool HasSavedInventory => false;
 
-        public IReadOnlyList<GearConfig> Owned => Array.Empty<GearConfig>();
+        public IReadOnlyList<OwnedGear> Owned => Array.Empty<OwnedGear>();
 
         public event Action InventoryChanged;
 
-        public bool TryAdd(GearConfig gear) => gear != null;
+        public OwnedGear Add(GearConfig gear)
+        {
+            if (gear == null)
+            {
+                return null;
+            }
 
-        public bool TryRemove(GearConfig gear) => false;
+            return new OwnedGear { InstanceId = Guid.NewGuid().ToString("N"), Config = gear };
+        }
+
+        public bool Remove(OwnedGear gear) => false;
 
         public void Clear()
         {

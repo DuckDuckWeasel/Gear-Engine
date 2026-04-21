@@ -1,3 +1,5 @@
+using GearEngine.GearEngine.Config;
+using GearEngine.GearEngine.Services;
 using Scaffold.Events.Contracts;
 using UnityEngine;
 
@@ -5,16 +7,22 @@ namespace GearEngine.GearEngine.Merge
 {
     public class GridMergeService : IGridMergeService
     {
-        public GridMergeService(IGridManager grid, IEventBus eventBus, Bootstrap.IGearNodeFactory nodeFactory)
+        public GridMergeService(
+            IGridManager grid,
+            IEventBus eventBus,
+            Bootstrap.IGearNodeFactory nodeFactory,
+            IInventoryService inventoryService)
         {
             this.grid = grid;
             this.eventBus = eventBus;
             this.nodeFactory = nodeFactory;
+            this.inventoryService = inventoryService;
         }
 
         private readonly IGridManager grid;
         private readonly IEventBus eventBus;
         private readonly Bootstrap.IGearNodeFactory nodeFactory;
+        private readonly IInventoryService inventoryService;
 
         public IGridNode MergeNodes(IGridNode draggedNode, IGridNode occupantNode, Vector2Int targetPos)
         {
@@ -26,9 +34,23 @@ namespace GearEngine.GearEngine.Merge
             grid.ExtractNode(draggedNode.Position);
             grid.ExtractNode(occupantNode.Position);
 
-            GearConfigData upgradedData = occupantNode.ConfigData.NextLevelConfig.CreateRuntimeData();
+            GearConfig nextConfig = occupantNode.ConfigData.NextLevelConfig;
+            GearConfigData upgradedData;
+            if (draggedNode.ConfigData?.Owner != null && occupantNode.ConfigData?.Owner != null && inventoryService != null)
+            {
+                inventoryService.Remove(draggedNode.ConfigData.Owner);
+                inventoryService.Remove(occupantNode.ConfigData.Owner);
+                OwnedGear newOwner = inventoryService.Add(nextConfig);
+                upgradedData = newOwner.Config.CreateRuntimeData();
+                upgradedData.Owner = newOwner;
+            }
+            else
+            {
+                upgradedData = nextConfig.CreateRuntimeData();
+            }
+
             IGridNode newNode = nodeFactory.CreateNode(targetPos, upgradedData);
-            
+
             grid.AddNode(newNode);
 
             return newNode;

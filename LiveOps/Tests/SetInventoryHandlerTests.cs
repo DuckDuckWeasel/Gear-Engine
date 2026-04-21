@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using GameModule.GameApi;
 using GameModule.ModuleFetchData;
@@ -37,18 +38,23 @@ namespace LiveOps.Tests
                 Mock.Of<IRemoteConfig>());
 
             SetInventoryHandler handler = new SetInventoryHandler();
-            SetInventoryRequest request = new SetInventoryRequest(new[] { "g1", "g2" });
+            var request = new SetInventoryRequest(new[]
+            {
+                new OwnedGearEntry { InstanceId = "i1", GearId = "g1" },
+                new OwnedGearEntry { InstanceId = "i2", GearId = "g2" }
+            });
 
             SetInventoryResponse response = await handler.HandleAsync(session, request).ConfigureAwait(false);
 
-            Assert.Equal(2, response.GearIds.Count);
-            Assert.Equal("g1", response.GearIds[0]);
-            Assert.Equal("g2", response.GearIds[1]);
+            Assert.Equal(2, response.Gears.Count);
+            Assert.Equal("i1", response.Gears[0].InstanceId);
+            Assert.Equal("g1", response.Gears[0].GearId);
+            Assert.Equal("i2", response.Gears[1].InstanceId);
             player.Verify(
                 p => p.Set(
                     context.Object,
                     InventoryModule.PersistenceKey,
-                    It.Is<InventoryPersistence>(pp => pp.GearIds.Count == 2 && pp.GearIds[0] == "g1" && pp.GearIds[1] == "g2"),
+                    It.Is<InventoryPersistence>(pp => pp.Gears.Count == 2 && pp.Gears[0].GearId == "g1" && pp.Gears[1].GearId == "g2"),
                     false),
                 Times.Once);
         }

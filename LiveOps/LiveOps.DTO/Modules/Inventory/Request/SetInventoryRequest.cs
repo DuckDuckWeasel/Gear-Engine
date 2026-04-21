@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using GameModuleDTO.GameApi;
+using GameModuleDTO.Modules.Inventory;
 using Newtonsoft.Json;
 
 namespace GameModuleDTO.ModuleRequests
@@ -11,12 +12,12 @@ namespace GameModuleDTO.ModuleRequests
         {
         }
 
-        public SetInventoryRequest(IEnumerable<string> gearIds)
+        public SetInventoryRequest(IEnumerable<OwnedGearEntry> gears)
         {
-            GearIds = gearIds != null ? new List<string>(gearIds) : new List<string>();
+            Gears = gears != null ? new List<OwnedGearEntry>(gears) : new List<OwnedGearEntry>();
         }
 
         [JsonProperty]
-        public List<string> GearIds { get; set; } = new List<string>();
+        public List<OwnedGearEntry> Gears { get; set; } = new List<OwnedGearEntry>();
     }
 }

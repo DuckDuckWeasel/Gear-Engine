@@ -167,39 +167,38 @@ namespace GearEngine.Campaign.Tests.Editor
 
         public readonly List<GearConfig> AddedGearConfigs = new List<GearConfig>();
 
-        private readonly List<GearConfig> owned = new List<GearConfig>();
+        private readonly List<OwnedGear> owned = new List<OwnedGear>();
 
         public bool HasSavedInventory => owned.Count > 0;
 
-        public IReadOnlyList<GearConfig> Owned => owned;
+        public IReadOnlyList<OwnedGear> Owned => owned;
 
-        public bool TryAdd(GearConfig gear)
+        public OwnedGear Add(GearConfig gear)
         {
             if (gear == null)
             {
-                return false;
+                return null;
             }
 
             AddedGearConfigs.Add(gear);
-            owned.Add(gear);
+            var o = new OwnedGear { InstanceId = Guid.NewGuid().ToString("N"), Config = gear };
+            owned.Add(o);
             InventoryChanged?.Invoke();
-            return true;
+            return o;
         }
 
-        public bool TryRemove(GearConfig gear)
+        public bool Remove(OwnedGear gear)
         {
             if (gear == null)
             {
                 return false;
             }
 
-            int i = owned.FindIndex(g => g.Id == gear.Id);
-            if (i < 0)
+            if (!owned.Remove(gear))
             {
                 return false;
             }
 
-            owned.RemoveAt(i);
             InventoryChanged?.Invoke();
             return true;
         }

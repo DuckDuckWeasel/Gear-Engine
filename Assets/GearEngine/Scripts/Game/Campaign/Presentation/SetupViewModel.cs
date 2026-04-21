@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using GearEngine.Campaign.Services;
 using GearEngine.GearEngine;
 using GearEngine.GearEngine.Config;
@@ -45,9 +44,13 @@ namespace GearEngine.Campaign.Presentation
             Board = new BoardViewModel(boardService, engineService);
             BindChildViewModel(Board);
 
-            if (loadoutService.HasSavedLoadout && !boardService.GetAllNodes().Any())
+            if (loadoutService.HasSavedLoadout)
             {
-                Board.LoadLayout(loadoutService.GetBoardLayout());
+                BoardLayoutData savedLayout = loadoutService.GetBoardLayout();
+                if (savedLayout != null)
+                {
+                    Board.LoadLayout(savedLayout);
+                }
             }
 
             Inventory = new GearInventoryViewModel(engineService, boardService, inventoryService);

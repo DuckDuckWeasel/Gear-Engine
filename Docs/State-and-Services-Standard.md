@@ -143,16 +143,16 @@ Pick per service. The caller never sees the pattern; only the repository does.
 
 ```mermaid
 flowchart TD
-    A["New piece of state"] --> B{"Persisted?"}
-    B -->|no| T0["Tier 0: ViewModel<br/>with public setters"]
-    B -->|yes| C{"Has any rule, ordering<br/>constraint, or side effect?"}
-    C -->|no| T1["Tier 1: Model with public setters<br/>+ persistence hook"]
-    C -->|yes| T2["Tier 2: Service + read-only Model<br/>+ Repository"]
-    T2 --> D{"Server is authoritative<br/>on the rule?"}
-    D -->|yes| P2["Pattern 2: per-command server call"]
-    D -->|no| P1["Pattern 1: debounced write-through"]
-    P1 --> E["Add Pattern 3 batch scope<br/>if bulk writes are common"]
-    P2 --> F["Add batch endpoint on server<br/>if bulk writes are common"]
+    A[New piece of state] --> B{Persisted?}
+    B -- no --> T0[Tier 0: ViewModel<br/>with public setters]
+    B -- yes --> C{Has any rule, ordering<br/>constraint, or side effect?}
+    C -- no --> T1[Tier 1: Model with public setters<br/>+ persistence hook]
+    C -- yes --> T2[Tier 2: Service + read-only Model<br/>+ Repository]
+    T2 --> D{Server is authoritative<br/>on the rule?}
+    D -- yes --> P2[Pattern 2: per-command server call]
+    D -- no --> P1[Pattern 1: debounced write-through]
+    P1 --> E[Add Pattern 3 batch scope<br/>if bulk writes are common]
+    P2 --> F[Add batch endpoint on server<br/>if bulk writes are common]
 ```
 
 

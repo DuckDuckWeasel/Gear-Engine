@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using GearEngine.GearEngine;
 using GearEngine.GearEngine.Config;
 using GearEngine.GearEngine.Nodes;
@@ -78,45 +79,42 @@ namespace GearEngine.GearEngine.Tests.Editor
 
         private sealed class ListInventoryService : IInventoryService
         {
-            private readonly List<GearConfig> owned = new List<GearConfig>();
+            private readonly List<OwnedGear> owned = new List<OwnedGear>();
 
             public event Action InventoryChanged;
 
             public bool HasSavedInventory => owned.Count > 0;
 
-            public IReadOnlyList<GearConfig> Owned => owned;
+            public IReadOnlyList<OwnedGear> Owned => owned;
 
             public void Seed(params GearConfig[] gears)
             {
-                owned.AddRange(gears);
+                foreach (GearConfig g in gears.Where(x => x != null))
+                {
+                    owned.Add(new OwnedGear { InstanceId = Guid.NewGuid().ToString("N"), Config = g });
+                }
             }
 
-            public bool TryAdd(GearConfig gear)
+            public OwnedGear Add(GearConfig gear)
             {
                 if (gear == null)
                 {
-                    return false;
+                    return null;
                 }
 
-                owned.Add(gear);
+                var o = new OwnedGear { InstanceId = Guid.NewGuid().ToString("N"), Config = gear };
+                owned.Add(o);
                 InventoryChanged?.Invoke();
-                return true;
+                return o;
             }
 
-            public bool TryRemove(GearConfig gear)
+            public bool Remove(OwnedGear gear)
             {
-                if (gear == null)
+                if (gear == null || !owned.Remove(gear))
                 {
                     return false;
                 }
 
-                int i = owned.FindIndex(g => g.Id == gear.Id);
-                if (i < 0)
-                {
-                    return false;
-                }
-
-                owned.RemoveAt(i);
                 InventoryChanged?.Invoke();
                 return true;
             }
@@ -126,6 +124,29 @@ namespace GearEngine.GearEngine.Tests.Editor
                 owned.Clear();
                 InventoryChanged?.Invoke();
             }
+        }
+
+        [Test]
+        public void NotifySlotDragAccepted_DoesNotRemoveGearFromInventory()
+        {
+            GearConfig cfg = CreateGearConfig("onboard");
+            var inventory = new ListInventoryService();
+            inventory.Seed(cfg);
+            var engine = new FakeEngine();
+            var board = new TrayTestBoardService();
+
+            var vm = new GearInventoryViewModel(engine, board, inventory);
+            Assert.AreEqual(1, inventory.Owned.Count);
+
+            GearConfigData runtime = cfg.CreateRuntimeData();
+            runtime.Owner = inventory.Owned[0];
+
+            vm.NotifySlotDragAccepted(runtime);
+
+            Assert.AreEqual(1, inventory.Owned.Count);
+            Assert.AreEqual(1, vm.TrayItems.Count);
+
+            UnityEngine.Object.DestroyImmediate(cfg);
         }
 
         [Test]
@@ -141,6 +162,7 @@ namespace GearEngine.GearEngine.Tests.Editor
 
             Assert.AreEqual(1, vm.TrayItems.Count);
             Assert.AreEqual("seed", vm.TrayItems[0].Id);
+            Assert.IsNotNull(vm.TrayItems[0].Owner);
 
             UnityEngine.Object.DestroyImmediate(cfg);
         }
@@ -153,7 +175,7 @@ namespace GearEngine.GearEngine.Tests.Editor
             var board = new TrayTestBoardService();
 
             GearConfig persist = CreateGearConfig("persist");
-            inventory.TryAdd(persist);
+            inventory.Add(persist);
 
             _ = new GearInventoryViewModel(engine, board, inventory);
 

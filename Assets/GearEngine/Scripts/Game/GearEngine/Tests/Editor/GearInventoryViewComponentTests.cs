@@ -80,40 +80,34 @@ namespace GearEngine.GearEngine.Tests.Editor
 
         private sealed class ListInventoryService : IInventoryService
         {
-            private readonly List<GearConfig> owned = new List<GearConfig>();
+            private readonly List<OwnedGear> owned = new List<OwnedGear>();
 
             public event Action InventoryChanged;
 
             public bool HasSavedInventory => owned.Count > 0;
 
-            public IReadOnlyList<GearConfig> Owned => owned;
+            public IReadOnlyList<OwnedGear> Owned => owned;
 
-            public bool TryAdd(GearConfig gear)
+            public OwnedGear Add(GearConfig gear)
             {
                 if (gear == null)
                 {
-                    return false;
+                    return null;
                 }
 
-                owned.Add(gear);
+                var o = new OwnedGear { InstanceId = Guid.NewGuid().ToString("N"), Config = gear };
+                owned.Add(o);
                 InventoryChanged?.Invoke();
-                return true;
+                return o;
             }
 
-            public bool TryRemove(GearConfig gear)
+            public bool Remove(OwnedGear gear)
             {
-                if (gear == null)
+                if (gear == null || !owned.Remove(gear))
                 {
                     return false;
                 }
 
-                int i = owned.FindIndex(g => g.Id == gear.Id);
-                if (i < 0)
-                {
-                    return false;
-                }
-
-                owned.RemoveAt(i);
                 InventoryChanged?.Invoke();
                 return true;
             }
@@ -159,9 +153,9 @@ namespace GearEngine.GearEngine.Tests.Editor
             GearConfig g0 = CreateGearConfig("g0");
             GearConfig g1 = CreateGearConfig("g1");
             GearConfig g2 = CreateGearConfig("g2");
-            inventory.TryAdd(g0);
-            inventory.TryAdd(g1);
-            inventory.TryAdd(g2);
+            inventory.Add(g0);
+            inventory.Add(g1);
+            inventory.Add(g2);
 
             viewModel = new GearInventoryViewModel(engine, board, inventory);
 

@@ -130,7 +130,7 @@ namespace GearEngine.Campaign.Presentation
                 throw new InvalidOperationException("[RoguelikeViewModel] No card selected.");
             }
 
-            if (!inventoryService.TryAdd(selectedCard.GearConfig))
+            if (inventoryService.Add(selectedCard.GearConfig) == null)
             {
                 return;
             }

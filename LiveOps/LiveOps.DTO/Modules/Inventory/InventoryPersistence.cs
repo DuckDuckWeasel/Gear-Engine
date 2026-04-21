@@ -5,7 +5,7 @@ namespace GameModuleDTO.Modules.Inventory
 {
     public sealed class InventoryPersistence
     {
-        [JsonProperty("gearIds")]
-        public List<string> GearIds { get; set; } = new List<string>();
+        [JsonProperty("gears")]
+        public List<OwnedGearEntry> Gears { get; set; } = new List<OwnedGearEntry>();
     }
 }

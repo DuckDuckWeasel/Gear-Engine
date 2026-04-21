@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using GameModuleDTO.Modules.Inventory;
 using GameModuleDTO.ModuleRequests;
@@ -19,68 +20,93 @@ namespace GearEngine.Campaign.Bootstrap.LiveOps
             this.catalog = catalog ?? throw new ArgumentNullException(nameof(catalog));
         }
 
-        public bool HasSavedInventory => data != null && data.GearIds.Count > 0;
+        public bool HasSavedInventory => ownedRefs.Count > 0;
 
-        public IReadOnlyList<GearConfig> Owned => BuildOwnedList();
+        public IReadOnlyList<OwnedGear> Owned => ownedRefs;
 
         private readonly ILiveOpsService liveOpsService;
         private readonly GearCatalogSO catalog;
+        private readonly List<OwnedGear> ownedRefs = new List<OwnedGear>();
 
         public event Action InventoryChanged;
 
-        public bool TryAdd(GearConfig gear)
+        public OwnedGear Add(GearConfig gear)
         {
             if (!TryValidateGearForAdd(gear))
             {
-                return false;
+                return null;
             }
 
-            data.GearIds.Add(gear.Id);
-            PublishInventoryUpdated();
-            return true;
+            var owned = new OwnedGear { InstanceId = Guid.NewGuid().ToString("N"), Config = gear };
+            ownedRefs.Add(owned);
+            SyncModuleDataFromOwnedRefs();
+            InventoryChanged?.Invoke();
+            SchedulePersist();
+            return owned;
         }
 
-        public bool TryRemove(GearConfig gear)
+        public bool Remove(OwnedGear gear)
         {
-            if (!TryResolveRemovalIndex(gear, out int idx))
+            if (gear == null || !ownedRefs.Remove(gear))
             {
                 return false;
             }
 
-            data.GearIds.RemoveAt(idx);
-            PublishInventoryUpdated();
+            SyncModuleDataFromOwnedRefs();
+            InventoryChanged?.Invoke();
+            SchedulePersist();
             return true;
         }
 
         public void Clear()
         {
-            if (!EnsureInitialized("Clear"))
+            if (ownedRefs.Count == 0)
             {
                 return;
             }
 
-            data.GearIds.Clear();
-            PublishInventoryUpdated();
+            ownedRefs.Clear();
+            SyncModuleDataFromOwnedRefs();
+            InventoryChanged?.Invoke();
+            SchedulePersist();
         }
 
-        private IReadOnlyList<GearConfig> BuildOwnedList()
+        protected override Task OnInitializedAsync(InventoryGameData moduleData)
         {
-            if (data == null)
+            ownedRefs.Clear();
+            if (moduleData?.Gears != null)
             {
-                return Array.Empty<GearConfig>();
-            }
-
-            var list = new List<GearConfig>(data.GearIds.Count);
-            foreach (string id in data.GearIds)
-            {
-                GearConfig g = catalog.Get(id);
-                if (g != null)
+                foreach (OwnedGearEntry entry in moduleData.Gears)
                 {
-                    list.Add(g);
+                    if (entry == null || string.IsNullOrEmpty(entry.GearId) || string.IsNullOrEmpty(entry.InstanceId))
+                    {
+                        continue;
+                    }
+
+                    GearConfig cfg = catalog.Get(entry.GearId);
+                    if (cfg == null)
+                    {
+                        Debug.LogError($"[InventoryClientModule] Unknown gear id in saved inventory: '{entry.GearId}'.");
+                        continue;
+                    }
+
+                    ownedRefs.Add(new OwnedGear { InstanceId = entry.InstanceId, Config = cfg });
                 }
             }
 
-            return list;
+            return base.OnInitializedAsync(moduleData);
+        }
+
+        private void SyncModuleDataFromOwnedRefs()
+        {
+            if (data == null)
+            {
+                return;
+            }
+
+            data.Gears = ownedRefs
+                .Select(o => new OwnedGearEntry { InstanceId = o.InstanceId, GearId = o.Config.Id })
+                .ToList();
         }
 
         private bool TryValidateGearForAdd(GearConfig gear)
@@ -90,30 +116,18 @@ namespace GearEngine.Campaign.Bootstrap.LiveOps
                 return false;
             }
 
-            if (!EnsureInitialized("TryAdd"))
+            if (!EnsureInitialized("Add"))
             {
                 return false;
             }
 
             if (string.IsNullOrEmpty(gear.Id))
             {
-                Debug.LogError("[InventoryClientModule] TryAdd: gear has no Id.");
+                Debug.LogError("[InventoryClientModule] Add: gear has no Id.");
                 return false;
             }
 
             return true;
-        }
-
-        private bool TryResolveRemovalIndex(GearConfig gear, out int idx)
-        {
-            idx = -1;
-            if (gear == null || data?.GearIds == null)
-            {
-                return false;
-            }
-
-            idx = data.GearIds.FindIndex(id => id == gear.Id);
-            return idx >= 0;
         }
 
         private bool EnsureInitialized(string operationLabel)
@@ -127,23 +141,25 @@ namespace GearEngine.Campaign.Bootstrap.LiveOps
             return false;
         }
 
-        private void PublishInventoryUpdated()
+        private void SchedulePersist()
         {
-            InventoryChanged?.Invoke();
-            _ = SendInventoryAsync(new List<string>(data.GearIds));
+            List<OwnedGearEntry> snapshot = ownedRefs
+                .Select(o => new OwnedGearEntry { InstanceId = o.InstanceId, GearId = o.Config.Id })
+                .ToList();
+            _ = SendInventoryAsync(snapshot);
         }
 
-        private async Task SendInventoryAsync(List<string> ids)
+        private async Task SendInventoryAsync(List<OwnedGearEntry> snapshot)
         {
 #if UNITY_EDITOR
-            int n = ids != null ? ids.Count : 0;
-            Debug.Log($"[InventoryClientModule] SetInventoryRequest starting ({n} id(s))...");
+            int n = snapshot != null ? snapshot.Count : 0;
+            Debug.Log($"[InventoryClientModule] SetInventoryRequest starting ({n} gear(s))...");
 #endif
             try
             {
-                await liveOpsService.CallAsync(new SetInventoryRequest(ids));
+                await liveOpsService.CallAsync(new SetInventoryRequest(snapshot));
 #if UNITY_EDITOR
-                Debug.Log($"[InventoryClientModule] SetInventoryRequest finished OK ({n} id(s)).");
+                Debug.Log($"[InventoryClientModule] SetInventoryRequest finished OK ({n} gear(s)).");
 #endif
             }
             catch (Exception ex)

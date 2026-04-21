@@ -1,19 +1,13 @@
 using Newtonsoft.Json;
 
-namespace GameModuleDTO.Modules.Loadout
+namespace GameModuleDTO.Modules.Inventory
 {
-    public sealed class LoadoutPlacement
+    public sealed class OwnedGearEntry
     {
         [JsonProperty("instanceId")]
         public string InstanceId { get; set; } = string.Empty;
 
         [JsonProperty("gearId")]
         public string GearId { get; set; } = string.Empty;
-
-        [JsonProperty("x")]
-        public int X { get; set; }
-
-        [JsonProperty("y")]
-        public int Y { get; set; }
     }
 }

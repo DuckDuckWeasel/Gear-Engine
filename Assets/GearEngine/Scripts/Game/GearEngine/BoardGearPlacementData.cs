@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using GearEngine.GearEngine.Config;
+using GearEngine.GearEngine.Services;
 
 namespace GearEngine.GearEngine
 {
@@ -11,18 +12,30 @@ namespace GearEngine.GearEngine
         {
         }
 
+        /// <summary>Authoring / test layout without inventory (Owner null).</summary>
         public BoardGearPlacementData(Vector2Int position, GearConfig gearConfig)
         {
             this.position = position;
-            this.gearConfig = gearConfig;
+            gearConfigField = gearConfig;
+        }
+
+        /// <summary>Campaign loadout: ties placement to a live <see cref="OwnedGear"/>.</summary>
+        public BoardGearPlacementData(Vector2Int position, OwnedGear owner)
+        {
+            this.position = position;
+            Owner = owner;
+            gearConfigField = owner?.Config;
         }
 
         public Vector2Int Position => position;
 
         [SerializeField] private Vector2Int position;
 
-        public GearConfig GearConfig => gearConfig;
+        /// <summary>Non-null when loaded from LiveOps inventory.</summary>
+        [NonSerialized] public OwnedGear Owner;
 
-        [SerializeField] private GearConfig gearConfig;
+        [SerializeField] private GearConfig gearConfigField;
+
+        public GearConfig GearConfig => Owner?.Config ?? gearConfigField;
     }
 }

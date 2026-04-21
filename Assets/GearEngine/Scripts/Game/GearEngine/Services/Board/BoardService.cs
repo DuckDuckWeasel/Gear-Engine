@@ -152,6 +152,11 @@ namespace GearEngine.GearEngine.Services.Board
                 }
 
                 GearConfigData runtimeData = placement.GearConfig.CreateRuntimeData();
+                if (placement.Owner != null)
+                {
+                    runtimeData.Owner = placement.Owner;
+                }
+
                 IGridNode node = nodeFactory.CreateNode(pos, runtimeData);
                 gridManager.AddNode(node);
             }
@@ -264,7 +269,21 @@ namespace GearEngine.GearEngine.Services.Board
 
                     RemoveGear(occupant);
 
-                    GearConfigData upgradedData = occupantData.NextLevelConfig.CreateRuntimeData();
+                    GearConfig upgradedConfig = occupantData.NextLevelConfig;
+                    GearConfigData upgradedData;
+                    if (gearData.Owner != null && occupantData.Owner != null)
+                    {
+                        inventoryService.Remove(gearData.Owner);
+                        inventoryService.Remove(occupantData.Owner);
+                        OwnedGear newOwner = inventoryService.Add(upgradedConfig);
+                        upgradedData = newOwner.Config.CreateRuntimeData();
+                        upgradedData.Owner = newOwner;
+                    }
+                    else
+                    {
+                        upgradedData = upgradedConfig.CreateRuntimeData();
+                    }
+
                     IGridNode newNode = nodeFactory.CreateNode(targetDropPos, upgradedData);
                     gridManager.AddNode(newNode);
                     PlaceGear(newNode);
@@ -349,10 +368,10 @@ namespace GearEngine.GearEngine.Services.Board
                     }
                 }
 
-                GearConfig owned = extracted?.ConfigData?.SourceGearConfig;
-                if (owned != null)
+                OwnedGear owner = extracted?.ConfigData?.Owner;
+                if (owner != null)
                 {
-                    inventoryService.TryRemove(owned);
+                    inventoryService.Remove(owner);
                 }
 
                 RemoveGear(extracted);

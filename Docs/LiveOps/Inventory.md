@@ -1,10 +1,10 @@
-# Inventory module (LiveOps) — owned gear ids
+# Inventory module (LiveOps) — owned gear instances
 
 ## TL;DR
 
-- **DTO**: `InventoryPersistence` / `InventoryGameData` (`gearIds`), `SetInventoryRequest` / `SetInventoryResponse` (`[UsesGameApi]`).
-- **Cloud Code**: `InventoryModule` (`Initialize`); `SetInventoryHandler`.
-- **Unity**: `InventoryClientModule` implements **`IInventoryService`** (`Owned`, `TryAdd`, `TryRemove`, `Clear`, `InventoryChanged`). Mutations persist via `SetInventoryRequest` in the background. The gear-engine **tray** is a derived view (`Owned` minus placed board gears); there is no client-side inventory slot cap—only **`BoardRulesSO.MaxAllowedBoardGears`** limits placements.
+- **DTO**: `InventoryPersistence` / `InventoryGameData` (`gears`: list of `{ instanceId, gearId }`), `SetInventoryRequest` / `SetInventoryResponse` (`[UsesGameApi]`). `instanceId` is a client-minted GUID (string); `gearId` is the catalog key.
+- **Cloud Code**: `InventoryModule` (`Initialize`); `SetInventoryHandler` (stores the list, dedupes by `instanceId`).
+- **Unity**: `InventoryClientModule` implements **`IInventoryService`** (`Owned` as `IReadOnlyList<OwnedGear>`, `Add`, `Remove`, `Clear`, `InventoryChanged`). Each `OwnedGear` holds `InstanceId` + `GearConfig`. Mutations persist via fire-and-forget `SetInventoryRequest` (full snapshot); ordering is handled by the Cloud Code single-flight-per-module policy. The gear-engine **tray** is a derived view (`Owned` minus placed board gears, matched by `OwnedGear` reference on `GearConfigData.Owner`); there is no client-side inventory slot cap—only **`BoardRulesSO.MaxAllowedBoardGears`** limits placements.
 
 ## Editor cheats (Play mode)
 

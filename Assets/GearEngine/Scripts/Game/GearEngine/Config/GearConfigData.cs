@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
+using GearEngine.GearEngine.Services;
 using GearEngine.GearEngine.Services.Inventory;
 using GearEngine.GearEngine.Visuals;
 
@@ -75,6 +76,9 @@ namespace GearEngine.GearEngine.Config
         /// <summary>ScriptableObject this runtime row was created from (set by <see cref="GearConfig.CreateRuntimeData"/>).</summary>
         [NonSerialized] private GearConfig sourceGearConfig;
 
+        /// <summary>LiveOps inventory instance this runtime row represents (tray / owned board gear).</summary>
+        [NonSerialized] public OwnedGear Owner;
+
         public GearConfig SourceGearConfig
         {
             get => sourceGearConfig;
@@ -106,7 +110,8 @@ namespace GearEngine.GearEngine.Config
                 DeleteRewardAmount = DeleteRewardAmount,
                 NextLevelConfig = nextLevelConfig,
                 Abilities = new List<GearAbilitySO>(abilities ?? new List<GearAbilitySO>()),
-                SourceGearConfig = SourceGearConfig
+                SourceGearConfig = SourceGearConfig,
+                Owner = Owner
             };
         }
     }

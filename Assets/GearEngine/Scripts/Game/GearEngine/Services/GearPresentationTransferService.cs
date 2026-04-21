@@ -36,14 +36,13 @@ namespace GearEngine.GearEngine.Services
 
         private void ApplyInventoryTrash(GearConfigData gear)
         {
-            GearConfig source = gear.SourceGearConfig;
-            if (source == null)
+            if (gear.Owner == null)
             {
-                Debug.LogWarning("[GearPresentationTransferService] TrashInventoryGear: gear has no SourceGearConfig.");
+                Debug.LogWarning("[GearPresentationTransferService] TrashInventoryGear: gear has no Owner.");
                 return;
             }
 
-            inventoryService.TryRemove(source);
+            inventoryService.Remove(gear.Owner);
             RaiseTrashReward(gear.DeleteRewardAmount);
         }
 

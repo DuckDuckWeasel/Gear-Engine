@@ -9,8 +9,8 @@ namespace GameModuleDTO.Modules.Inventory
     {
         public string Key => nameof(InventoryGameData);
 
-        [JsonProperty("gearIds")]
-        public List<string> GearIds { get; set; } = new List<string>();
+        [JsonProperty("gears")]
+        public List<OwnedGearEntry> Gears { get; set; } = new List<OwnedGearEntry>();
 
         [JsonProperty("baseSlots")]
         public int BaseSlots { get; set; }
@@ -32,7 +32,7 @@ namespace GameModuleDTO.Modules.Inventory
                 throw new ArgumentNullException(nameof(config));
             }
 
-            GearIds = new List<string>(persistence.GearIds);
+            Gears = new List<OwnedGearEntry>(persistence.Gears);
             BaseSlots = config.BaseSlots;
         }
     }

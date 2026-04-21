@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using GearEngine.GearEngine.Config;
 using GearEngine.GearEngine.Nodes;
+using GearEngine.GearEngine.Services;
 using UnityEngine;
 
 namespace GearEngine.GearEngine
@@ -46,7 +47,10 @@ namespace GearEngine.GearEngine
                     continue;
                 }
 
-                items.Add(new BoardGearPlacementData(node.Position, source));
+                OwnedGear owner = node.ConfigData.Owner;
+                items.Add(owner != null
+                    ? new BoardGearPlacementData(node.Position, owner)
+                    : new BoardGearPlacementData(node.Position, source));
             }
 
             return new BoardLayoutData(items);

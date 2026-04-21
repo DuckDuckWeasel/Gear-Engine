@@ -32,13 +32,14 @@ namespace GearEngine.GearEngine.Editor.Cheats
             }
 
             GearConfig pick = valid[UnityEngine.Random.Range(0, valid.Count)];
-            if (inventory.TryAdd(pick))
+            OwnedGear added = inventory.Add(pick);
+            if (added != null)
             {
-                Debug.Log($"[InventoryCheats] Added gear '{pick.Id}'.");
+                Debug.Log($"[InventoryCheats] Added gear '{pick.Id}' instance '{added.InstanceId}'.");
             }
             else
             {
-                Debug.LogError($"[InventoryCheats] TryAdd failed for '{pick?.Id}'.");
+                Debug.LogError($"[InventoryCheats] Add failed for '{pick?.Id}'.");
             }
         }
 
@@ -64,7 +65,7 @@ namespace GearEngine.GearEngine.Editor.Cheats
                     continue;
                 }
 
-                if (inventory.TryAdd(g))
+                if (inventory.Add(g) != null)
                 {
                     added++;
                 }
