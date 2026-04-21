@@ -7,27 +7,21 @@ using UnityEngine;
 
 namespace GearEngine.GearEngine.Presentation.UI
 {
-    /// <summary>
-    /// Single-instance per-board orchestrator. Drives rotation, charge fill, and reparenting for tracked gears.
-    /// </summary>
     public class BoardGearAnimator : MonoBehaviour
     {
-        private struct Entry
-        {
-            public GearView View;
-            public Vector2Int LastPos;
-            public float StaggerOffset;
-        }
-
         private readonly Dictionary<IGridNode, Entry> entries = new Dictionary<IGridNode, Entry>();
 
         private Func<Vector2Int, Transform> slotFn;
         private BoardLayoutSO layout;
+        private string motorCogGearId = string.Empty;
+        private Vector2Int? lastMotorPos;
 
-        public void Configure(Func<Vector2Int, Transform> getSlot, BoardLayoutSO boardLayout)
+        public void Configure(Func<Vector2Int, Transform> getSlot, BoardLayoutSO boardLayout, string motorCogGearId = null)
         {
             slotFn = getSlot;
             layout = boardLayout;
+            this.motorCogGearId = motorCogGearId ?? string.Empty;
+            lastMotorPos = null;
         }
 
         public void Track(IGridNode node, GearView view)
@@ -37,24 +31,11 @@ namespace GearEngine.GearEngine.Presentation.UI
                 return;
             }
 
-            float stagger = ComputeStagger(node.Position);
-            entries[node] = new Entry
-            {
-                View = view,
-                LastPos = node.Position,
-                StaggerOffset = stagger,
-            };
-
+            PrimeEntrySlot(node, view);
+            float stagger = ComputeStagger(node.Position, FindMotorPosition());
+            CommitEntry(node, view, node.Position, stagger);
             view.SetRotationTarget(-node.CurrentRotation + stagger);
-
-            if (node is BaseGearNode baseGear && baseGear.ConfigData != null && baseGear.ConfigData.MaxCharge > 0f)
-            {
-                view.SetChargeFillTarget(baseGear.CurrentCharge / baseGear.ConfigData.MaxCharge, snap: true);
-            }
-            else
-            {
-                view.ClearChargeFillTarget();
-            }
+            ApplyChargeVisual(node, view, snap: true);
         }
 
         public void Untrack(IGridNode node)
@@ -68,6 +49,7 @@ namespace GearEngine.GearEngine.Presentation.UI
         public void Clear()
         {
             entries.Clear();
+            lastMotorPos = null;
         }
 
         private void Update()
@@ -77,41 +59,116 @@ namespace GearEngine.GearEngine.Presentation.UI
                 return;
             }
 
-            foreach (KeyValuePair<IGridNode, Entry> kvp in entries)
+            Vector2Int? motor = FindMotorPosition();
+            bool motorMoved = motor != lastMotorPos;
+            lastMotorPos = motor;
+            List<IGridNode> nodes = new List<IGridNode>(entries.Keys);
+            foreach (IGridNode node in nodes)
             {
-                IGridNode node = kvp.Key;
-                Entry e = kvp.Value;
-
-                if (node.Position != e.LastPos)
-                {
-                    e.LastPos = node.Position;
-                    e.StaggerOffset = ComputeStagger(node.Position);
-                    Transform p = slotFn?.Invoke(node.Position);
-                    if (p != null)
-                    {
-                        e.View.SetReparent(p);
-                    }
-
-                    entries[node] = e;
-                }
-
-                e.View.SetRotationTarget(-node.CurrentRotation + e.StaggerOffset);
-
-                if (node is BaseGearNode baseGear && baseGear.ConfigData != null && baseGear.ConfigData.MaxCharge > 0f)
-                {
-                    e.View.SetChargeFillTarget(baseGear.CurrentCharge / baseGear.ConfigData.MaxCharge);
-                }
+                TickOneNode(node, motor, motorMoved);
             }
         }
 
-        private float ComputeStagger(Vector2Int pos)
+        private void PrimeEntrySlot(IGridNode node, GearView view)
         {
-            if (layout == null)
+            entries[node] = new Entry
+            {
+                View = view,
+                LastPos = node.Position,
+                StaggerOffset = 0f,
+            };
+        }
+
+        private void CommitEntry(IGridNode node, GearView view, Vector2Int lastPos, float stagger)
+        {
+            entries[node] = new Entry
+            {
+                View = view,
+                LastPos = lastPos,
+                StaggerOffset = stagger,
+            };
+        }
+
+        private void TickOneNode(IGridNode node, Vector2Int? motor, bool motorMoved)
+        {
+            if (!entries.TryGetValue(node, out Entry e))
+            {
+                return;
+            }
+
+            if (node.Position != e.LastPos || motorMoved)
+            {
+                RefreshReparentAndStagger(node, ref e, motor);
+            }
+
+            if (!entries.TryGetValue(node, out e))
+            {
+                return;
+            }
+
+            e.View.SetRotationTarget(-node.CurrentRotation + e.StaggerOffset);
+            ApplyChargeVisual(node, e.View, snap: false);
+        }
+
+        private void RefreshReparentAndStagger(IGridNode node, ref Entry e, Vector2Int? motor)
+        {
+            e.LastPos = node.Position;
+            e.StaggerOffset = ComputeStagger(node.Position, motor);
+            Transform p = slotFn?.Invoke(node.Position);
+            if (p != null)
+            {
+                e.View.SetReparent(p);
+            }
+
+            entries[node] = e;
+        }
+
+        private void ApplyChargeVisual(IGridNode node, GearView view, bool snap)
+        {
+            if (node is BaseGearNode baseGear && baseGear.ConfigData != null && baseGear.ConfigData.MaxCharge > 0f)
+            {
+                view.SetChargeFillTarget(baseGear.CurrentCharge / baseGear.ConfigData.MaxCharge, snap: snap);
+            }
+            else
+            {
+                view.ClearChargeFillTarget();
+            }
+        }
+
+        private Vector2Int? FindMotorPosition()
+        {
+            if (string.IsNullOrEmpty(motorCogGearId))
+            {
+                return null;
+            }
+
+            foreach (KeyValuePair<IGridNode, Entry> kvp in entries)
+            {
+                if (kvp.Key?.ConfigData?.Id == motorCogGearId)
+                {
+                    return kvp.Key.Position;
+                }
+            }
+
+            return null;
+        }
+
+        private float ComputeStagger(Vector2Int pos, Vector2Int? motorPos)
+        {
+            if (layout == null || !motorPos.HasValue)
             {
                 return 0f;
             }
 
-            return ((pos.x + pos.y) % 2 == 0) ? layout.StaggeredRotationOffset : 0f;
+            int distance = Mathf.Abs(pos.x - motorPos.Value.x) + Mathf.Abs(pos.y - motorPos.Value.y);
+            return (distance % 2 == 0) ? 0f : layout.StaggeredRotationOffset;
+        }
+
+        private struct Entry
+        {
+            public GearView View;
+            public Vector2Int LastPos;
+            public float StaggerOffset;
         }
     }
 }

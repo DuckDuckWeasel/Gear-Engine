@@ -22,8 +22,8 @@ MonoBehaviour:
     UIIcon: {fileID: 0}
     RelativeScaleMultiplier: 1
     TriggerPattern: 4
-    IsInteractable: 0
-    IsMovable: 0
+    IsInteractable: 1
+    IsMovable: 1
     IsReturnable: 0
     MaxCharge: 0
     ChargeOverTimeAmount: 0

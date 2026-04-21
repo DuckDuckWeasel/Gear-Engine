@@ -7,7 +7,7 @@ using VContainer.Unity;
 
 namespace GearEngine.Campaign.Bootstrap.LiveOps
 {
-    /// <summary>Registers <see cref="LoadoutClientModule"/>; requires <see cref="GearEngine.GearEngine.Config.GearCatalogSO"/> from <see cref="CampaignGearCatalogInstaller"/>.</summary>
+    /// <summary>Registers <see cref="LoadoutClientModule"/>; requires <see cref="IInventoryService"/> (e.g. <see cref="InventoryClientModule"/> from <see cref="CampaignInventoryInstaller"/>).</summary>
     public sealed class CampaignLoadoutInstaller : IInstaller
     {
         public void Install(IContainerBuilder builder)

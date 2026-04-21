@@ -4,6 +4,7 @@ using GearEngine.GearEngine;
 using GearEngine.GearEngine.Nodes;
 using CommunityToolkit.Mvvm.ComponentModel;
 using GearEngine.GearEngine.Config;
+using GearEngine.GearEngine.Services;
 using GearEngine.GearEngine.Services.Board;
 using Scaffold.MVVM;
 using UnityEngine;
@@ -12,10 +13,11 @@ namespace GearEngine.GearEngine.Presentation.UI
 {
     public partial class BoardViewModel : ViewModel
     {
-        public BoardViewModel(IBoardService boardService, IGearEngineService engineService)
+        public BoardViewModel(IBoardService boardService, IGearEngineService engineService, IInventoryService inventoryService)
         {
             this.boardService = boardService ?? throw new ArgumentNullException(nameof(boardService));
             this.engineService = engineService ?? throw new ArgumentNullException(nameof(engineService));
+            this.inventoryService = inventoryService ?? throw new ArgumentNullException(nameof(inventoryService));
 
             boardService.GearPlaced += OnBoardGearPlaced;
             boardService.GearRemoved += OnBoardGearRemoved;
@@ -34,11 +36,14 @@ namespace GearEngine.GearEngine.Presentation.UI
 
         public BoardModel Board => boardService.GetBoard();
 
+        public string MotorCogGearId => inventoryService.MotorCogGearId;
+
         public int CurrentBoardGearCount => boardService.CurrentBoardGearCount;
         public int MaxAllowedBoardGears => boardService.MaxAllowedBoardGears;
 
         private readonly IBoardService boardService;
         private readonly IGearEngineService engineService;
+        private readonly IInventoryService inventoryService;
 
         [ObservableProperty] private bool interactable = true;
         [ObservableProperty] private string boardLimitText = string.Empty;

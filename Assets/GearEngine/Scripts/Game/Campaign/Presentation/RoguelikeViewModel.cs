@@ -103,7 +103,7 @@ namespace GearEngine.Campaign.Presentation
 
         private void SetupGearEngineSubtree()
         {
-            Board = new BoardViewModel(boardService, engineService);
+            Board = new BoardViewModel(boardService, engineService, inventoryService);
             BindChildViewModel(Board);
             Inventory = new GearInventoryViewModel(engineService, boardService, inventoryService);
             BindChildViewModel(Inventory);

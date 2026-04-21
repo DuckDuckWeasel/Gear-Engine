@@ -64,6 +64,10 @@ namespace GearEngine.GearEngine.Services.Board
 
         public int MaxAllowedBoardGears => boardRules != null ? boardRules.MaxAllowedBoardGears : int.MaxValue;
 
+        public bool ContainsMotorCog =>
+            string.IsNullOrEmpty(inventoryService.MotorCogGearId) ||
+            boardModel.Nodes.Any(n => n?.ConfigData?.Id == inventoryService.MotorCogGearId);
+
         private readonly IGridManager gridManager;
         private readonly IGearNodeFactory nodeFactory;
         private readonly BoardRulesSO boardRules;

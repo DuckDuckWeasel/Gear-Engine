@@ -53,6 +53,8 @@ namespace GearEngine.GearEngine.Tests.Editor
 
             public int MaxAllowedBoardGears => 99;
 
+            public bool ContainsMotorCog => true;
+
             public IGridNode GetNode(Vector2Int coord) => null;
 
             public IEnumerable<IGridNode> GetAllNodes() => Array.Empty<IGridNode>();
@@ -83,6 +85,10 @@ namespace GearEngine.GearEngine.Tests.Editor
             private readonly List<OwnedGear> owned = new List<OwnedGear>();
 
             public event Action InventoryChanged;
+
+            public string MotorCogGearId => string.Empty;
+
+            public Vector2Int MotorCogStartCell => new Vector2Int(2, 2);
 
             public bool HasSavedInventory => owned.Count > 0;
 

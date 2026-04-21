@@ -15,6 +15,15 @@ namespace GameModuleDTO.Modules.Inventory
         [JsonProperty("baseSlots")]
         public int BaseSlots { get; set; }
 
+        [JsonProperty("motorCogGearId")]
+        public string MotorCogGearId { get; set; } = string.Empty;
+
+        [JsonProperty("motorCogStartX")]
+        public int MotorCogStartX { get; set; } = 2;
+
+        [JsonProperty("motorCogStartY")]
+        public int MotorCogStartY { get; set; } = 2;
+
         [JsonConstructor]
         private InventoryGameData()
         {
@@ -34,6 +43,9 @@ namespace GameModuleDTO.Modules.Inventory
 
             Gears = new List<OwnedGearEntry>(persistence.Gears);
             BaseSlots = config.BaseSlots;
+            MotorCogGearId = config.MotorCogGearId ?? string.Empty;
+            MotorCogStartX = config.MotorCogStartX;
+            MotorCogStartY = config.MotorCogStartY;
         }
     }
 }

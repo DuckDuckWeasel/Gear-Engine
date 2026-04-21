@@ -18,6 +18,9 @@ namespace GearEngine.GearEngine.Services.Board
 
         int MaxAllowedBoardGears { get; }
 
+        /// <summary>True when a motor (Core) gear is on the board and <see cref="IInventoryService.MotorCogGearId"/> is set, or when motor id is not configured (tests / empty inventory).</summary>
+        bool ContainsMotorCog { get; }
+
         IGridNode GetNode(Vector2Int coord);
 
         IEnumerable<IGridNode> GetAllNodes();

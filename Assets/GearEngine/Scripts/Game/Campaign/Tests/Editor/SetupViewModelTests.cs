@@ -101,6 +101,52 @@ namespace GearEngine.Campaign.Tests.Editor
         }
 
         [Test]
+        public void GoToRace_DoesNotOpen_WhenMotorCogMissingFromBoard()
+        {
+            LogAssert.Expect(LogType.Warning, "[GearMechanicsInstaller] No GearEngineFeatureToggleSO provided. Using runtime default.");
+            LogAssert.Expect(LogType.Error, "[SetupViewModel] Cannot start race: motor cog missing from loadout.");
+
+            var carDef = ScriptableObject.CreateInstance<CarDefinition>();
+            var trackDef = ScriptableObject.CreateInstance<TrackDefinition>();
+            trackDef.Spline.Knots = new[] { new BezierKnot(Vector3.zero), new BezierKnot(Vector3.right * 10f) };
+            trackDef.Spline.Closed = false;
+
+            var trackService = new FakeTrackService(trackDef, carDef);
+
+            var boardConfig = ScriptableObject.CreateInstance<BoardRulesSO>();
+            boardConfig.GridWidth = 5;
+            boardConfig.GridHeight = 5;
+
+            using (var gear = new GearMechanicsTestContext(boardConfig))
+            {
+                var recordingInventory = (RecordingInventoryService)gear.InventoryService;
+                recordingInventory.MotorCogGearId = "gear_core";
+
+                var navigation = new RecordingNavigation();
+                var vm = new SetupViewModel();
+                ViewModelTestInject.InjectPrivateField(vm, "trackService", trackService);
+                ViewModelTestInject.InjectPrivateField(vm, "engineService", gear.Engine);
+                ViewModelTestInject.InjectPrivateField(vm, "boardService", gear.BoardService);
+                ViewModelTestInject.InjectPrivateField(vm, "eventBus", gear.EventBus);
+                ViewModelTestInject.InjectPrivateField(vm, "featureToggle", gear.FeatureToggle);
+                ViewModelTestInject.InjectPrivateField(vm, "dragService", gear.DragService);
+                ViewModelTestInject.InjectPrivateField(vm, "inventoryService", recordingInventory);
+                ViewModelTestInject.InjectPrivateField(vm, "presentationTransferService", gear.PresentationTransfer);
+                ViewModelTestInject.InjectPrivateField(vm, "loadoutService", new LocalGearLoadoutService());
+                ViewModelTestInject.InjectNavigation(vm, navigation);
+
+                ViewModelTestInject.InvokeInitialize(vm);
+                vm.GoToRace();
+
+                Assert.That(navigation.OpenedControllers.Count, Is.EqualTo(0));
+            }
+
+            Object.DestroyImmediate(boardConfig);
+            Object.DestroyImmediate(carDef);
+            Object.DestroyImmediate(trackDef);
+        }
+
+        [Test]
         public void ReturnToMainMenu_CallsNavigationReturn()
         {
             LogAssert.Expect(LogType.Warning, "[GearMechanicsInstaller] No GearEngineFeatureToggleSO provided. Using runtime default.");

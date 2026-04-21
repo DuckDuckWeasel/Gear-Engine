@@ -6,5 +6,11 @@ namespace GameModuleDTO.ModuleRequests
     {
         [JsonProperty]
         public long SavedAtUtcTicks { get; set; }
+
+        [JsonProperty("rejected")]
+        public bool Rejected { get; set; }
+
+        [JsonProperty("reason")]
+        public string Reason { get; set; } = string.Empty;
     }
 }

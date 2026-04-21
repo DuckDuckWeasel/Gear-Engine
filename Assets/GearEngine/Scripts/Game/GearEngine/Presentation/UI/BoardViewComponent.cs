@@ -42,7 +42,7 @@ namespace GearEngine.GearEngine.Presentation.UI
             // IBeginDragHandler to them via Physics2DRaycaster on the rendering camera.
             EnsureBoardCameraPhysics2DRaycaster();
 
-            animator.Configure(GetSlotTransform, boardLayout);
+            animator.Configure(GetSlotTransform, boardLayout, viewModel.MotorCogGearId);
 
             viewModel.OnGearPlaced += HandleGearPlaced;
             viewModel.OnGearRemoved += HandleGearRemoved;

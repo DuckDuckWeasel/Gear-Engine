@@ -90,7 +90,7 @@ namespace GearEngine.Race
 
         private void SetupBoard()
         {
-            Board = new BoardViewModel(boardService, engineService);
+            Board = new BoardViewModel(boardService, engineService, inventoryService);
             BindChildViewModel(Board);
         }
 

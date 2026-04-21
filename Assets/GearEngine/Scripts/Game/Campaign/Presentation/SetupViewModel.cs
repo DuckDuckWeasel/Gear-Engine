@@ -41,16 +41,13 @@ namespace GearEngine.Campaign.Presentation
             Track = new CampaignTrackPreviewViewModel(trackService.CurrentTrack);
             BindChildViewModel(Track);
 
-            Board = new BoardViewModel(boardService, engineService);
+            Board = new BoardViewModel(boardService, engineService, inventoryService);
             BindChildViewModel(Board);
 
-            if (loadoutService.HasSavedLoadout)
+            BoardLayoutData savedLayout = loadoutService.GetBoardLayout();
+            if (savedLayout != null)
             {
-                BoardLayoutData savedLayout = loadoutService.GetBoardLayout();
-                if (savedLayout != null)
-                {
-                    Board.LoadLayout(savedLayout);
-                }
+                Board.LoadLayout(savedLayout);
             }
 
             Inventory = new GearInventoryViewModel(engineService, boardService, inventoryService);
@@ -64,6 +61,12 @@ namespace GearEngine.Campaign.Presentation
         {
             try
             {
+                if (!boardService.ContainsMotorCog)
+                {
+                    Debug.LogError("[SetupViewModel] Cannot start race: motor cog missing from loadout.");
+                    return;
+                }
+
                 navigation.Open(new ActiveRaceViewModel(), closeCurrent: true);
             }
             catch (Exception ex)

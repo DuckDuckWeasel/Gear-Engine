@@ -39,7 +39,7 @@ namespace GearEngine.GearEngine.Presentation
 
         private BoardViewModel CreateBoard()
         {
-            return new BoardViewModel(boardService, engineService);
+            return new BoardViewModel(boardService, engineService, inventoryService);
         }
 
         private GearInventoryViewModel CreateInventory()

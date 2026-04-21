@@ -77,8 +77,8 @@ namespace GearEngine.App.Bootstrap
             yield return new LiveOpsClientModulesLayer(
                 new CampaignTracksInstaller(trackCatalog),
                 new CampaignGearCatalogInstaller(gearCatalog),
-                new CampaignLoadoutInstaller(),
                 new CampaignInventoryInstaller(),
+                new CampaignLoadoutInstaller(),
                 new CardsClientInstaller(),
                 new CampaignRoguelikeInstaller(roguelikeGearPool));
             yield return new CampaignLayer(
