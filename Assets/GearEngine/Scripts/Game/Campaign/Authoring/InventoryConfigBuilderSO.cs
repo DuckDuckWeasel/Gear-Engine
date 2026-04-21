@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using GameModuleDTO.Modules.Inventory;
 using Scaffold.LiveOps.Authoring;
 using UnityEngine;
@@ -19,6 +20,10 @@ namespace GearEngine.Campaign.Authoring
         [SerializeField]
         private int motorCogStartY = 2;
 
+        [SerializeField]
+        [Tooltip("Catalog gear ids granted to brand-new players in addition to the motor cog. Seeded once per account.")]
+        private List<string> startingGearIds = new List<string>();
+
         public override string ConfigKey => nameof(InventoryConfig);
 
         public override InventoryConfig Build()
@@ -29,6 +34,7 @@ namespace GearEngine.Campaign.Authoring
                 MotorCogGearId = motorCogGearId,
                 MotorCogStartX = motorCogStartX,
                 MotorCogStartY = motorCogStartY,
+                StartingGearIds = startingGearIds != null ? new List<string>(startingGearIds) : new List<string>(),
             };
         }
 
@@ -43,6 +49,7 @@ namespace GearEngine.Campaign.Authoring
             motorCogGearId = pulled.MotorCogGearId;
             motorCogStartX = pulled.MotorCogStartX;
             motorCogStartY = pulled.MotorCogStartY;
+            startingGearIds = pulled.StartingGearIds != null ? new List<string>(pulled.StartingGearIds) : new List<string>();
         }
     }
 }

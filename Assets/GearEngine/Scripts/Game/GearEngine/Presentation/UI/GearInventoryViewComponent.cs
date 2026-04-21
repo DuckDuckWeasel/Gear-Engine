@@ -156,7 +156,27 @@ namespace GearEngine.GearEngine.Presentation.UI
             view.SetChargeFillTarget(0f, snap: true);
             view.SettleNow();
 
+            // Gear prefabs ship with physics colliders for board-side raycasting
+            // (PhysicsRaycaster / Physics2DRaycaster). Inside an inventory slot the gear
+            // visual sits in front of the slot's UI Image, and those colliders steal the
+            // pointer from the GraphicRaycaster - so OnBeginDrag never reaches the slot's
+            // Draggable. The slot is the drag source here, not the gear visual.
+            DisableInteractionColliders(view.gameObject);
+
             slotView.Bind(gear, viewModel);
+        }
+
+        private static void DisableInteractionColliders(GameObject root)
+        {
+            foreach (Collider c in root.GetComponentsInChildren<Collider>(true))
+            {
+                c.enabled = false;
+            }
+
+            foreach (Collider2D c in root.GetComponentsInChildren<Collider2D>(true))
+            {
+                c.enabled = false;
+            }
         }
 
         public bool CanAccept(DragPayload payload)

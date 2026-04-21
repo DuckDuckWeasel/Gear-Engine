@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Newtonsoft.Json;
 
 namespace GameModuleDTO.Modules.Inventory
@@ -15,5 +16,11 @@ namespace GameModuleDTO.Modules.Inventory
 
         [JsonProperty("motorCogStartY")]
         public int MotorCogStartY { get; set; } = 2;
+
+        // Catalog ids handed to brand-new players in addition to the motor cog.
+        // Seeded once on first Initialize (gated by InventoryPersistence.StartingGearsSeeded)
+        // so removed gears do not respawn on subsequent logins.
+        [JsonProperty("startingGearIds")]
+        public List<string> StartingGearIds { get; set; } = new List<string>();
     }
 }

@@ -315,6 +315,18 @@ namespace GearEngine.GearEngine.Services.Board
 
             try
             {
+                // Evict from the grid first; otherwise the node stays in
+                // gridManager.GetAllNodes() and RebuildTray() keeps treating its OwnedGear
+                // as "placed", so the gear disappears from both the board and the inventory
+                // tray when a player drags it back to inventory.
+                IGridNode extracted = gridManager.ExtractNode(node.Position);
+                if (extracted != null && extracted != node)
+                {
+                    gridManager.AddNode(extracted);
+                    Debug.LogWarning($"[BoardService] TryRemoveBoardGear aborted: grid at {node.Position} held a different node ('{extracted.ConfigData?.Id}').");
+                    return false;
+                }
+
                 GearRemoved?.Invoke(node);
                 node.Dispose();
                 SyncBoardModel();

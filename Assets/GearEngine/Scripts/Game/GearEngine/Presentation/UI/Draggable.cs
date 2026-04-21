@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -34,7 +35,7 @@ namespace GearEngine.GearEngine.Presentation.UI
         }
 
         private GameObject preview;
-        private bool wasActive;
+        private readonly List<Renderer> hiddenRenderers = new List<Renderer>();
 
         public void OnBeginDrag(PointerEventData e)
         {
@@ -50,8 +51,13 @@ namespace GearEngine.GearEngine.Presentation.UI
             DragPreview.MoveTo(preview, e);
             if (hideSourceWhileDragging)
             {
-                wasActive = gameObject.activeSelf;
-                gameObject.SetActive(false);
+                // Hiding via Renderer.enabled (rather than GameObject.SetActive(false))
+                // keeps this Draggable Behaviour active so EventSystem still dispatches
+                // OnDrag / OnEndDrag to it. Disabling the GameObject would also disable
+                // this component (isActiveAndEnabled == false), and Unity's
+                // ExecuteEvents.ShouldSendToComponent would silently drop those events,
+                // leaving the preview stranded and the source forever hidden.
+                HideSourceRenderers();
             }
 
             if (DragServiceRegistry.Instance == null)
@@ -98,6 +104,16 @@ namespace GearEngine.GearEngine.Presentation.UI
             bool consumed = target != null && target.OnDrop(payload);
             if (consumed)
             {
+                // Hand the source visual the preview's last world position before the
+                // listener reparents/animates it. Otherwise (e.g. swap) the source stays
+                // pinned to its old slot, gets reparented worldPositionStays=true, and the
+                // settle lerp slides it from old slot -> new slot, which reads as a snap.
+                // Starting from the cursor keeps the motion continuous with the preview.
+                if (hideSourceWhileDragging && preview != null)
+                {
+                    transform.position = preview.transform.position;
+                }
+
                 OnDropAccepted?.Invoke(target);
             }
             else
@@ -133,12 +149,41 @@ namespace GearEngine.GearEngine.Presentation.UI
             }
 
             preview = null;
-            if (hideSourceWhileDragging && gameObject != null)
+            if (hideSourceWhileDragging)
             {
-                gameObject.SetActive(wasActive);
+                RestoreSourceRenderers();
             }
 
             DragServiceRegistry.Instance?.EndDrag();
+        }
+
+        private void HideSourceRenderers()
+        {
+            hiddenRenderers.Clear();
+            Renderer[] renderers = GetComponentsInChildren<Renderer>(true);
+            for (int i = 0; i < renderers.Length; i++)
+            {
+                Renderer r = renderers[i];
+                if (r != null && r.enabled)
+                {
+                    hiddenRenderers.Add(r);
+                    r.enabled = false;
+                }
+            }
+        }
+
+        private void RestoreSourceRenderers()
+        {
+            for (int i = 0; i < hiddenRenderers.Count; i++)
+            {
+                Renderer r = hiddenRenderers[i];
+                if (r != null)
+                {
+                    r.enabled = true;
+                }
+            }
+
+            hiddenRenderers.Clear();
         }
     }
 }

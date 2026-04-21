@@ -39,8 +39,9 @@ namespace GearEngine.GearEngine.Presentation.UI
             Assert.IsNotNull(animator, "[BoardView] BoardGearAnimator is missing.");
 
             // Board gears are world-space colliders; the EventSystem only dispatches
-            // IBeginDragHandler to them via Physics2DRaycaster on the rendering camera.
-            EnsureBoardCameraPhysics2DRaycaster();
+            // IBeginDragHandler to them via PhysicsRaycaster (3D) / Physics2DRaycaster
+            // on the rendering camera. We add both so future gear prefabs can use either.
+            EnsureBoardCameraRaycasters();
 
             animator.Configure(GetSlotTransform, boardLayout, viewModel.MotorCogGearId);
 
@@ -197,9 +198,10 @@ namespace GearEngine.GearEngine.Presentation.UI
         {
             GameObject go = view.gameObject;
             Draggable drag = go.GetComponent<Draggable>();
-            if (go.GetComponent<Collider2D>() == null || drag == null)
+            bool hasCollider = go.GetComponent<Collider2D>() != null || go.GetComponent<Collider>() != null;
+            if (!hasCollider || drag == null)
             {
-                Debug.LogError($"[BoardView] Gear '{node.ConfigData?.Id}' ViewPrefab must include Draggable and Collider2D on the root.");
+                Debug.LogError($"[BoardView] Gear '{node.ConfigData?.Id}' ViewPrefab must include Draggable and a Collider (2D or 3D) on the root.");
                 return;
             }
 
@@ -243,15 +245,22 @@ namespace GearEngine.GearEngine.Presentation.UI
             }
         }
 
-        private static void EnsureBoardCameraPhysics2DRaycaster()
+        private static void EnsureBoardCameraRaycasters()
         {
             Camera cam = Camera.main;
             if (cam == null)
             {
+                Debug.LogError("[BoardView] Camera.main is null; board gears will not receive drag events.");
                 return;
             }
 
-            Type raycasterType = Type.GetType("UnityEngine.UI.Physics2DRaycaster, UnityEngine.UI");
+            EnsureCameraComponent(cam, "UnityEngine.EventSystems.PhysicsRaycaster, UnityEngine.UI");
+            EnsureCameraComponent(cam, "UnityEngine.EventSystems.Physics2DRaycaster, UnityEngine.UI");
+        }
+
+        private static void EnsureCameraComponent(Camera cam, string assemblyQualifiedName)
+        {
+            Type raycasterType = Type.GetType(assemblyQualifiedName);
             if (raycasterType != null && cam.GetComponent(raycasterType) == null)
             {
                 cam.gameObject.AddComponent(raycasterType);
