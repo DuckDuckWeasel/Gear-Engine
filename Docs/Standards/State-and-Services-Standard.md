@@ -22,13 +22,14 @@ Keywords: services, models, MVVM, observables, EventBus, intent, deltas, batchin
 
 - **Two roles, not three.** Model holds state. Service owns rules and calls `liveOps.CallAsync(intentRequest)` directly. There is no "Repository" layer; the LiveOps boundary is the persistence seam.
 - **One canonical representation per piece of state.** No parallel models, no shadow copies, no `Sync`* methods.
-- **Models are observable but externally read-only above Tier 0.** Writes happen through service intent methods or, for Tier 1, through self-persisting setters.
-- **Services expose intent, not payloads.** `TryEquip(gearId)`, never `Save(inventory)` or `Set(field, value)`.
-- **Requests are deltas by default.** `EquipGearRequest(gearId)`, not `SetInventoryRequest(everyOwnedGear)`. Whole-blob replace requests require an explicit waiver (see ["Blob requests require a waiver"](#blob-requests-require-a-waiver)).
-- **Persistence is one method call.** `await liveOps.CallAsync(intentRequest)`. No debounce timers, no dirty flags, no `Schedule`.
+- **Models are observable but externally read-only above Tier 0.** Writes happen through service intent methods or, for Tier 1, through self-persisting setters. Read-only collections wrap an `ObservableCollection<T>` in a `ReadOnlyObservableCollection<T>`, which is fully bind-API compatible.
+- **Services expose intent, not payloads.** `EquipAsync(owned)`, never `Save(inventory)` or `Set(field, value)`. Service signatures take **typed references** (`OwnedGear`, `GearConfig`, `IGridNode`); the wire DTO carries an id.
+- **Requests are deltas by default.** `EquipGearRequest(instanceId)`, not `SetInventoryRequest(everyOwnedGear)`. Whole-blob replace requests require an explicit waiver (see ["Blob requests require a waiver"](#blob-requests-require-a-waiver)).
+- **Persistence is one method call.** `await liveOps.CallAsync(intentRequest)`. No service-owned debounce timers, no dirty flags, no `Schedule`.
 - **Atomic multi-step operations use `BeginBatch`.** The LiveOps boundary collects deltas inside the scope and the server applies them as one transaction on `CommitAsync`.
+- **Same-key high-frequency deltas may declare a debounce policy on the DTO.** A narrow per-DTO `[LiveOpsRequest(DebounceMs, CoalesceBy)]` exists for slider/toggle-style updates (see ["Debounced single-key deltas"](#debounced-single-key-deltas)). It is *not* the default and never permits a blob payload.
 - **Optimistic UI is the default for high-frequency interactions.** Apply locally → fire the call → roll back local state on failure. The pattern is documented; do not invent new ones.
-- **EventBus for cross-system signals; observable models for state binding.** Per-instance `event Action` is the exception, not the default.
+- **Bind for state, EventBus for cross-system events.** Views bind to observable models. EventBus is for events a listener cannot infer from any model. Per-instance `event Action` is the rare exception.
 - **Three tiers of state:** Tier 0 local UI, Tier 1 self-persisting model, Tier 2 service-gated domain. Promote upward when rules appear.
 
 ---
@@ -49,10 +50,14 @@ State container. Observable. **No business rules**. Lives next to its owning ser
 
 Command surface. Owns the rules. Stateless from the outside — the model is the state.
 
-- Methods are named for intent: `TryEquip`, `SpendAsync`, `PlaceAsync`, `MergeAtAsync`.
-- Methods take **identifiers and primitives**, never whole domain objects.
-- Returns `bool` / typed result for synchronous commands; returns `UniTask<TResponse>` for async commands.
-- Exposes its model **read-only** (`InventoryModel Inventory { get; }` where setters on the model are `private`/`internal` or projected through `IReadOnlyList<T>`).
+- Methods are named for intent: `EquipAsync`, `SpendAsync`, `PlaceAsync`, `MergeAtAsync`.
+- Methods take **typed references and primitives**, never blob payloads. C# is a typed language; ids are a wire concern.
+  - `EquipAsync(OwnedGear owned)`, not `EquipAsync(string instanceId)`.
+  - `PlaceAsync(Vector2Int pos, GearConfig gear)`, not `PlaceAsync(Vector2Int pos, string gearId)`.
+  - The exception is `Add`-style commands where the live reference does not yet exist; those take the catalog ref (`AddAsync(GearConfig gear)`) and return the new live ref the server hands back.
+- Inside the method body, **unwrap to the id only when constructing the wire DTO**: `liveOps.CallAsync(new EquipGearRequest(owned.InstanceId), ct)`. The DTO is the boundary; everything inside the service holds typed refs.
+- Returns `bool` / typed result for synchronous commands; returns `Task<TResponse>` for async commands.
+- Exposes its model **read-only** (`InventoryModel Inventory { get; }` where setters on the model are `private`/`internal` or projected through `IReadOnlyList<T>` / `ReadOnlyObservableCollection<T>`).
 - Calls `ILiveOpsService.CallAsync(intentRequest)` directly. There is no repository between the service and the LiveOps boundary.
 - For initial state, owns an `OnInitialized` hook that consumes the server-provided snapshot DTO and populates the model. This is the **only** "blob in" path and is unavoidable because bootstrap has no prior state to delta against.
 
@@ -67,11 +72,12 @@ The boundary owns retries, timeouts, error normalization, and (for batches) atom
 
 ### EventBus event
 
-Cross-system notification. "X happened, with these consequences." Used by listeners that don't want to diff observable collections to infer a domain event.
+Cross-system notification for things a listener **cannot infer from any model**. "X happened, with these consequences."
 
 - Published with `IEventBus.Raise(new GearAcquiredEvent(instanceId, gearId))`.
-- Carries primitive payloads, not references to live model instances.
-- Used for analytics, achievements, audio, popups, and any cross-system reaction that does not fit a model binding.
+- **Carries primitives, never live model references.** The EventBus is an internal wire boundary; payloads must be safe to log, replay, and serialize. Listeners that need a live reference do an explicit lookup (`inventoryService.TryGetById(instanceId, out var owned)`).
+- Used for analytics, achievements, audio, popups, and any cross-system reaction whose signal is not just "the model changed".
+- **Not** for state changes a View can see by binding (see Rule 6 and the bind-vs-EventBus table).
 
 ### Per-instance C# `event Action`
 
@@ -91,14 +97,14 @@ Numbered for reference in PRs and analyzer messages.
 
 1. **One canonical representation.** Each piece of state has exactly one writable owner. Projections for views are fine; second writable copies are forbidden.
 2. **Models are observable, never validating.** Validation, gating, and rule enforcement live in the service.
-3. **Services expose intent, not payloads.** Commands take identifiers and primitives; never `Save(domainObject)` or `Set(field, value)`.
-4. **Models are externally read-only above Tier 0.** Public mutators on Tier 1+ models are a violation. Tier 1 setters are public but their only side effect is persistence.
-5. **Requests are deltas, not blobs.** Wire requests describe the operation (`EquipGearRequest(id)`, `PlaceGearRequest(pos, id)`), not the full resulting state. Whole-state-replace requests require a waiver comment (see [Blob requests require a waiver](#blob-requests-require-a-waiver)).
-6. **Cross-system notifications use `IEventBus`.** Per-instance `event Action` requires the three-condition justification above.
+3. **Services expose intent on typed references.** Commands take live references and primitives (`EquipAsync(OwnedGear owned)`, `PlaceAsync(Vector2Int pos, GearConfig gear)`); never `Save(domainObject)`, `Set(field, value)`, or stringly-typed ids in place of a ref the caller already holds. Ids appear only inside the service body when constructing the wire DTO.
+4. **Models are externally read-only above Tier 0.** Public mutators on Tier 1+ models are a violation. Collections are exposed as `ReadOnlyObservableCollection<T>` (still bind-API compatible — see Rule 4 example). Tier 1 setters are public but their only side effect is persistence.
+5. **Wire requests are deltas with primitive ids.** Request DTOs describe one operation and carry identifiers, not live object graphs (`EquipGearRequest(string instanceId)`, `PlaceGearRequest(Vector2Int pos, string gearId)`). Whole-state-replace requests require a waiver comment (see [Blob requests require a waiver](#blob-requests-require-a-waiver)).
+6. **Bind for state, EventBus for cross-system events.** Views bind to observable models. Use `IEventBus` only when a listener cannot get the signal by reading any model. Per-instance `event Action` requires the three-condition justification above.
 
 Two corollaries fall out of the six rules and need no separate numbering:
 
-- **Persistence is the LiveOps boundary's concern.** Services call `liveOps.CallAsync` and do not own debounce timers, dirty flags, or batch state.
+- **Persistence is the LiveOps boundary's concern.** Services call `liveOps.CallAsync` and do not own debounce timers, dirty flags, or batch state. The single sanctioned exception is per-DTO debounce policy declared via attribute (see "Debounced single-key deltas").
 - **Tier 1 exists.** Persisted-but-ruleless state is a model with public setters and an `OnPropertyChanged` hook, not a service.
 
 ---
@@ -179,16 +185,52 @@ Inside the scope, `CallAsync` calls do not hit the network individually. The bou
 
 The caller who *opens* the batch is the one who knows the gesture boundary. Services never open batches on their own behalf.
 
+### Debounced single-key deltas
+
+A small, narrow exception to "one call → one network send" exists for deltas that are **all of**:
+
+- the same DTO type repeated, and
+- carrying a single semantic key (a setting name, a preference id, a screen id, …), and
+- where only the latest value matters (volume slider, brightness, last-viewed screen, search-as-you-type).
+
+For these, the DTO declares a debounce policy and the LiveOps boundary handles coalescing. The service still makes a single `CallAsync`; nothing about the service or the call site changes.
+
+```csharp
+[LiveOpsRequest(
+    DebounceMs = 100,
+    CoalesceBy = nameof(UpdateSettingRequest.Key))]
+public sealed record UpdateSettingRequest(string Key, JsonElement Value);
+
+[LiveOpsRequest(DebounceMs = 200)] // no CoalesceBy → all queued instances of this DTO collapse to the latest
+public sealed record UpdateLastViewedScreenRequest(string ScreenId);
+```
+
+Boundary behavior:
+
+- No attribute → send immediately on `CallAsync` (the default; covers nearly all delta requests).
+- `DebounceMs = N` present → wait N ms idle before sending; latest payload wins per `CoalesceBy` key (or globally if omitted).
+- Inside `BeginBatch` → debounce is suppressed; the queued call is included in the batch envelope on `CommitAsync`.
+- All awaiters of coalesced calls share the eventual response (success or failure).
+- On app shutdown, the boundary flushes pending debounced calls synchronously.
+
+What this is **not**:
+
+- It is not permission to ship a blob payload. The DTO still carries one operation with one key/value.
+- It is not a generic "fire-and-forget" — `CallAsync` still returns a typed response; if you don't want it, `_ = liveOps.CallAsync(...)`.
+- It is not a per-service or per-call-site decision. The policy lives on the DTO contract so all call sites get the same behavior.
+
+Use the attribute only when **single-key, latest-wins** describes the user-visible semantics. Discrete actions (`SpendCurrencyRequest`, `EquipGearRequest`, `PlaceGearRequest`, `AddOwnedGearRequest`) stay immediate.
+
 ### What's deliberately not here
 
 You will not find:
 
 - a `Schedule` / fire-and-forget primitive,
-- a `MarkDirty` / debounce timer,
-- per-request "coalesce" or "send mode" attributes,
+- a service-owned `MarkDirty` / debounce timer,
+- per-call-site "coalesce" or "send mode" options,
 - a Repository class.
 
-Each of those existed in earlier drafts to manage the costs of **blob requests**. Once requests are deltas (Rule 5), none of them are needed: a delta is cheap, descriptive, and naturally one-to-one with a server call. If you find yourself wanting one of them, the request shape is wrong.
+Each of those existed in earlier drafts to manage the costs of **blob requests**. Once requests are deltas (Rule 5), none of them are needed: a delta is cheap, descriptive, and naturally one-to-one with a server call. The single narrow exception above (per-DTO debounce attribute) covers the legitimate "scrub a slider" use case without bringing back fire-and-forget plumbing.
 
 ### Optimistic UI for high-frequency interactions
 
@@ -200,7 +242,7 @@ Awaiting every `CallAsync` before updating the model gives correct behavior but 
 4. On failure, **roll back the local change** and surface an error.
 
 ```csharp
-public async UniTask<bool> PlaceAsync(Vector2Int pos, string gearId, CancellationToken ct = default)
+public async Task<bool> PlaceAsync(Vector2Int pos, string gearId, CancellationToken ct = default)
 {
     var node = nodeFactory.Create(pos, gearId);
     Board.WritableNodes.Add(node);
@@ -254,7 +296,16 @@ Each interaction shows: the user-visible action, the tier that applies, working 
 ### Interaction 1 — Player toggles music volume
 
 - **Tier**: 1. Persisted, no rules.
-- **Why**: No rule, no validation. Caller writes directly. The model's `OnPropertyChanged` ships a delta.
+- **Why**: No rule, no validation. Caller writes directly. The model's `OnPropertyChanged` ships a delta. Because slider scrubbing is high-frequency same-key, the DTO declares a debounce policy.
+
+DTO (per-key debounce):
+
+```csharp
+[LiveOpsRequest(
+    DebounceMs = 100,
+    CoalesceBy = nameof(UpdateSettingRequest.Key))]
+public sealed record UpdateSettingRequest(string Key, JsonElement Value);
+```
 
 Model (Tier 1, public setter, `OnPropertyChanged` hook):
 
@@ -290,15 +341,19 @@ sequenceDiagram
     participant L as ILiveOpsService
     participant S as Cloud Code
 
-    V->>M: MusicVolume = 0.7
-    M->>L: CallAsync(UpdateSettingRequest("MusicVolume", 0.7))
-    L->>S: UpdateSetting
+    loop 60 setter calls in 1s
+        V->>M: MusicVolume = v
+        M->>L: CallAsync(UpdateSettingRequest("MusicVolume", v))
+        Note right of L: Coalesce by Key<br/>(latest wins)
+    end
+    Note right of L: 100 ms idle
+    L->>S: UpdateSetting("MusicVolume", 0.7)
     S-->>L: ok
 ```
 
 
 
-If the user wiggles the slider 60 times per second, you do get 60 calls. That is fine for a single-value setting; if it ever isn't, wrap the gesture (mouse-down → mouse-up) in `BeginBatch`.
+The service code is unchanged — the boundary handles the debounce because the DTO declared it. A discrete settings change (`Language`) coalesces independently of `MusicVolume` because `CoalesceBy = Key`.
 
 ### Interaction 2 — Player spends 50 coins
 
@@ -314,7 +369,7 @@ public sealed class CurrencyService : ICurrencyService
     private readonly ILiveOpsService liveOps;
     private readonly IEventBus eventBus;
 
-    public async UniTask<bool> TrySpendAsync(string id, long amount, CancellationToken ct = default)
+    public async Task<bool> TrySpendAsync(string id, long amount, CancellationToken ct = default)
     {
         if (string.IsNullOrEmpty(id)) throw new ArgumentException(nameof(id));
         if (amount <= 0) throw new ArgumentOutOfRangeException(nameof(amount));
@@ -375,26 +430,26 @@ sequenceDiagram
 ### Interaction 3 — Player drops a gear on the board
 
 - **Tier**: 2. Client-authoritative with rules.
-- **Why**: One drop = one delta. Optimistic: apply locally, fire `PlaceGearRequest`, roll back on failure.
+- **Why**: One drop = one delta. Optimistic: apply locally, fire `PlaceGearRequest`, roll back on failure. Service signature takes typed refs; the wire DTO carries ids.
 
 Service:
 
 ```csharp
-public async UniTask<bool> PlaceAsync(Vector2Int pos, string gearId, CancellationToken ct = default)
+public async Task<bool> PlaceAsync(Vector2Int pos, GearConfig gear, CancellationToken ct = default)
 {
-    if (string.IsNullOrEmpty(gearId)) throw new ArgumentException(nameof(gearId));
-    if (!CanPlace(pos, gearId)) return false;
+    if (gear == null) throw new ArgumentNullException(nameof(gear));
+    if (!CanPlace(pos, gear)) return false;
 
-    var node = nodeFactory.Create(pos, gearId);
+    var node = nodeFactory.Create(pos, gear);
     Board.WritableNodes.Add(node);
-    eventBus.Raise(new GearPlacedEvent(pos, gearId));
+    eventBus.Raise(new GearPlacedEvent(pos, gear.Id));
 
     try
     {
-        var resp = await liveOps.CallAsync(new PlaceGearRequest(pos, gearId), ct);
+        var resp = await liveOps.CallAsync(new PlaceGearRequest(pos, gear.Id), ct);
         if (resp.Succeeded) return true;
         Board.WritableNodes.Remove(node);
-        eventBus.Raise(new GearPlacementRejectedEvent(pos, gearId, resp.ErrorCode));
+        eventBus.Raise(new GearPlacementRejectedEvent(pos, gear.Id, resp.ErrorCode));
         return false;
     }
     catch
@@ -408,8 +463,10 @@ public async UniTask<bool> PlaceAsync(Vector2Int pos, string gearId, Cancellatio
 Caller (drag-drop handler):
 
 ```csharp
-slot.onDrop = (pos, gearId) => _ = boardService.PlaceAsync(pos, gearId);
+slot.onDrop = (pos, gear) => _ = boardService.PlaceAsync(pos, gear);
 ```
+
+The drag handler already holds the live `GearConfig` from the tray — no `inventoryService.GetById(id)` lookup is needed. The DTO `PlaceGearRequest(pos, gearId)` carries the id because that's the wire boundary; the EventBus payload also carries `gear.Id` because the EventBus is an internal wire boundary (Vocabulary → EventBus event).
 
 Flow:
 
@@ -442,15 +499,20 @@ If 8 drops happen in 2 seconds, that is 8 independent calls. Each is small (`{ p
 Caller:
 
 ```csharp
-public async UniTask<bool> ApplySavedLayoutAsync(SavedLayout saved, CancellationToken ct)
+public async Task<bool> ApplySavedLayoutAsync(SavedLayout saved, CancellationToken ct)
 {
     using var batch = liveOps.BeginBatch();
     foreach (var p in saved.Placements)
-        await boardService.PlaceAsync(p.Pos, p.GearId);
+    {
+        var gear = catalog.Get(p.GearId);  // hydrate id → live ref at the boundary
+        await boardService.PlaceAsync(p.Pos, gear);
+    }
     await batch.CommitAsync(ct);
     return true;
 }
 ```
+
+`SavedLayout` came off the wire so it carries ids; the caller hydrates them to live `GearConfig` refs before invoking the service. After this point, no string id appears in any service call.
 
 Inside the batch scope, each `PlaceAsync` mutates the local model optimistically and queues its `PlaceGearRequest` instead of sending. On `CommitAsync`, the LiveOps boundary ships one envelope to the server, which applies all 10 deltas atomically. If any single delta is rejected, the boundary returns failure and the caller (or the service) rolls back local state.
 
@@ -466,9 +528,9 @@ sequenceDiagram
 
     C->>L: BeginBatch()
     loop 10 placements
-        C->>SVC: PlaceAsync(p)
+        C->>SVC: PlaceAsync(pos, gear)
         SVC->>M: WritableNodes.Add(node)
-        SVC->>L: CallAsync(PlaceGearRequest)  [queued]
+        SVC->>L: CallAsync(PlaceGearRequest(pos, gear.Id))  [queued]
     end
     C->>L: CommitAsync()
     L->>S: Batch(PlaceGear x10)
@@ -486,7 +548,7 @@ sequenceDiagram
 Producer:
 
 ```csharp
-public async UniTask EndRaceAsync(CancellationToken ct)
+public async Task EndRaceAsync(CancellationToken ct)
 {
     using var batch = liveOps.BeginBatch();
     raceModel.IsActive = false;
@@ -506,7 +568,7 @@ public sealed class BoardService : IBoardService, IDisposable
         raceEndedSub = eventBus.Subscribe<RaceEndedEvent>(_ => _ = ClearAsync());
     }
 
-    private async UniTask ClearAsync()
+    private async Task ClearAsync()
     {
         var snapshot = Board.Nodes.ToList();
         Board.WritableNodes.Clear();
@@ -570,7 +632,7 @@ public sealed class AchievementService : IDisposable
         sub = eventBus.Subscribe<GearMergedEvent>(e => _ = OnGearMergedAsync(e));
     }
 
-    private async UniTask OnGearMergedAsync(GearMergedEvent e)
+    private async Task OnGearMergedAsync(GearMergedEvent e)
     {
         if (e.Rarity != GearRarity.Epic) return;
         await liveOps.CallAsync(new UnlockAchievementRequest("first_epic_merge"));
@@ -668,7 +730,7 @@ public sealed class BoardService : IBoardService
 {
     public BoardModel Board { get; }
 
-    public async UniTask<bool> PlaceAsync(Vector2Int pos, string gearId, CancellationToken ct = default)
+    public async Task<bool> PlaceAsync(Vector2Int pos, string gearId, CancellationToken ct = default)
     {
         if (!CanPlace(pos, gearId)) return false;
         var node = nodeFactory.Create(pos, gearId);
@@ -710,9 +772,19 @@ public sealed class CurrencyWallet
 }
 ```
 
-### Rule 3 — Intent, not payload
+### Rule 3 — Intent on typed references
 
-Bad (current `InventoryClientModule.SchedulePersist`): caller prepares a snapshot the module ships verbatim.
+Bad (stringly-typed signature): caller has the live `OwnedGear` but is forced to pass an id.
+
+```csharp
+public Task<bool> EquipAsync(string instanceId, CancellationToken ct = default);
+
+// Caller:
+await inventoryService.EquipAsync(owned.InstanceId, ct);
+// Inside service: re-find the OwnedGear by id, even though the caller had it.
+```
+
+Worse (caller-supplied snapshot): the current `InventoryClientModule.SchedulePersist`.
 
 ```csharp
 private void SchedulePersist()
@@ -724,30 +796,39 @@ private void SchedulePersist()
 }
 ```
 
-Good: typed intent commands; the wire payload describes the operation, not the world.
+Good: signature takes the live ref; the wire DTO carries an id. `Add`-style commands (no existing ref) take the catalog ref and return the new live ref.
 
 ```csharp
-public async UniTask<OwnedGear> AddAsync(string gearId, CancellationToken ct = default)
+public async Task<bool> EquipAsync(OwnedGear owned, CancellationToken ct = default)
 {
-    if (string.IsNullOrEmpty(gearId)) throw new ArgumentException(nameof(gearId));
-    var resp = await liveOps.CallAsync(new AddOwnedGearRequest(gearId), ct);
+    if (owned == null) throw new ArgumentNullException(nameof(owned));
+    var resp = await liveOps.CallAsync(new EquipGearRequest(owned.InstanceId), ct);
+    if (!resp.Succeeded) return false;
+    model.WritableEquipped.Add(owned);
+    return true;
+}
+
+public async Task<OwnedGear> AddAsync(GearConfig gear, CancellationToken ct = default)
+{
+    if (gear == null) throw new ArgumentNullException(nameof(gear));
+    var resp = await liveOps.CallAsync(new AddOwnedGearRequest(gear.Id), ct);
     if (!resp.Succeeded) return null;
-    var owned = new OwnedGear { InstanceId = resp.InstanceId, Config = catalog.Get(gearId) };
+    var owned = new OwnedGear { InstanceId = resp.InstanceId, Config = gear };
     model.WritableOwned.Add(owned);
     return owned;
 }
 
-public async UniTask<bool> RemoveAsync(string instanceId, CancellationToken ct = default)
+public async Task<bool> RemoveAsync(OwnedGear owned, CancellationToken ct = default)
 {
-    if (string.IsNullOrEmpty(instanceId)) throw new ArgumentException(nameof(instanceId));
-    var resp = await liveOps.CallAsync(new RemoveOwnedGearRequest(instanceId), ct);
+    if (owned == null) throw new ArgumentNullException(nameof(owned));
+    var resp = await liveOps.CallAsync(new RemoveOwnedGearRequest(owned.InstanceId), ct);
     if (!resp.Succeeded) return false;
-    model.WritableOwned.RemoveAll(o => o.InstanceId == instanceId);
+    model.WritableOwned.Remove(owned);
     return true;
 }
 ```
 
-The wire payload is `{ gearId }` or `{ instanceId }`, not the full inventory. The server controls instance ids. A tampered client cannot ship `{ ownedGears: [everything in the catalog] }`.
+The wire payload is `{ gearId }` or `{ instanceId }`, never the full inventory. The server controls instance ids. The caller never re-looks-up something it already has. A tampered client cannot ship `{ ownedGears: [everything in the catalog] }`.
 
 ### Rule 4 — Read-only above Tier 0
 
@@ -778,7 +859,19 @@ public partial class InventoryModel : Model
 
 The View binds to `Items` for change notifications. Only the service can mutate.
 
-### Rule 5 — Deltas, not blobs
+#### Why the bind API still works
+
+`ReadOnlyObservableCollection<T>` is not a passive wrapper — it implements:
+
+- `INotifyCollectionChanged` (forwarded from the underlying `ObservableCollection<T>`),
+- `INotifyPropertyChanged` (forwards `Count` / `Item[]`),
+- `IReadOnlyList<T>`, `IReadOnlyCollection<T>`, `IEnumerable<T>`.
+
+`Scaffold.MVVM`'s `IBindedCollection<,>` and `TreeBinding` operate against those interfaces, not against the concrete `ObservableCollection<T>`. Binding to `model.Items` works identically to binding to a writable collection: the View still receives `CollectionChanged` notifications when the service mutates `WritableItems`. No bind-side migration is needed when wrapping a previously-public collection.
+
+For scalar `[ObservableProperty]` fields the source generator already emits a private setter and public getter, so the read-only contract is enforced at compile time without any wrapper.
+
+### Rule 5 — Deltas with primitive ids
 
 Bad: blob-replace request.
 
@@ -788,12 +881,24 @@ await liveOps.CallAsync(new SetInventoryRequest(model.Items.Select(i => i.Instan
 
 Server cannot tell whether a gear was added, removed, or nothing happened. Anti-cheat reduces to "is the resulting list legal?". Multi-device sync becomes silent last-write-wins.
 
-Good: delta requests with named operations.
+Also bad: a delta DTO that ships a live object graph.
 
 ```csharp
-await liveOps.CallAsync(new AddOwnedGearRequest(gearId), ct);
-await liveOps.CallAsync(new RemoveOwnedGearRequest(instanceId), ct);
-await liveOps.CallAsync(new EquipGearRequest(instanceId), ct);
+public sealed record EquipGearRequest(OwnedGear Owned);
+```
+
+DTOs are a wire boundary. A live `OwnedGear` carries `Config` (a ScriptableObject reference) and other engine-side state that does not serialize. Inside the service: typed refs. Crossing the boundary: ids.
+
+Good: delta DTOs with primitive ids; service signatures still take typed refs.
+
+```csharp
+public sealed record AddOwnedGearRequest(string GearId);
+public sealed record AddOwnedGearResponse(bool Succeeded, string InstanceId);
+public sealed record RemoveOwnedGearRequest(string InstanceId);
+public sealed record EquipGearRequest(string InstanceId);
+
+// Service body unwraps refs to ids only at the CallAsync site:
+await liveOps.CallAsync(new EquipGearRequest(owned.InstanceId), ct);
 ```
 
 The server logs an action per call, validates per-operation, and can reject a single delta without forcing a full reconcile.
@@ -803,11 +908,21 @@ If a single user gesture genuinely needs N deltas to be atomic, wrap it:
 ```csharp
 using var batch = liveOps.BeginBatch();
 foreach (var p in saved.Placements)
-    await boardService.PlaceAsync(p.Pos, p.GearId);
+    await boardService.PlaceAsync(p.Pos, catalog.Get(p.GearId));
 await batch.CommitAsync(ct);
 ```
 
-### Rule 6 — EventBus over instance events
+### Rule 6 — Bind for state, EventBus for cross-system events
+
+The acid test: **"Can the listener see what happened just by reading the model?"**
+
+
+| Listener wants to react to…                                                                      | Use                                                |
+| ------------------------------------------------------------------------------------------------ | -------------------------------------------------- |
+| A state value (current coins, current board contents, IsEnabled flag)                            | **Bind API**                                       |
+| A momentary event that isn't expressible as state, fired in one system and consumed in another   | **EventBus**                                       |
+| A momentary event consumed by the same ViewModel that issued the command, where ordering matters | `**event Action`** (the three-condition exception) |
+
 
 Bad (current `BoardService` and `InventoryService`):
 
@@ -818,33 +933,54 @@ public event Action BoardLayoutChanged;
 public event Action ItemsChanged;
 ```
 
-Three problems: every consumer must subscribe and unsubscribe; events leak live model instances; `BoardLayoutChanged` and `ItemsChanged` duplicate the observable collection.
+Three problems:
 
-Good:
+- `BoardLayoutChanged` / `ItemsChanged` **duplicate the observable collection** — the View should bind to `Board.Nodes` / `Inventory.Items`, not subscribe to a parallel "something changed" event.
+- `GearPlaced` / `GearRemoved` **leak live model instances** through their payload — payloads should be primitives.
+- Per-instance subscription/unsubscription ceremony for things that are either state (use bind) or cross-system (use EventBus).
+
+Good — split by audience:
 
 ```csharp
-boardViewModel.Board.Nodes
-eventBus.Raise(new GearPlacedEvent(node.Position, node.ConfigData.Id));
-eventBus.Raise(new GearRemovedEvent(node.Position, node.ConfigData.Id));
+// State changes the View needs:
+boardView.BindCollection(boardModel.Nodes, RenderNode, UnrenderNode);
+
+// Cross-system signals carrying context the model doesn't keep:
+eventBus.Raise(new GearMergedEvent(pos, newGearId, rarity));
+eventBus.Raise(new CurrencySpentEvent(walletId, amount));
 ```
 
-`BoardLayoutChanged` and `ItemsChanged` cease to exist.
+`GearPlacedEvent` / `GearRemovedEvent` are **not** raised "for the View" — the View binds to `Board.Nodes` and sees the change there. They are raised only when a cross-system listener needs them (audio for placement sound, telemetry for placement counts, etc.). If no such listener exists today, do not raise the event speculatively.
+
+`BoardLayoutChanged` and `ItemsChanged` cease to exist; their consumers bind directly to the collection.
+
+When a listener does need a live ref off an EventBus event (which carries a primitive id), it does an explicit lookup:
+
+```csharp
+private void OnGearMerged(GearMergedEvent e)
+{
+    if (!boardService.TryGetNodeAt(e.Position, out var node)) return;
+    // ... use node ...
+}
+```
 
 ---
 
 ## Smell catalog (current code → fix)
 
 
-| Call site                                                                  | Smell                                                      | Rule violated | Fix                                                                                                                         |
-| -------------------------------------------------------------------------- | ---------------------------------------------------------- | ------------- | --------------------------------------------------------------------------------------------------------------------------- |
-| `BoardService.SyncBoardModel`                                              | Two state stores kept in agreement                         | 1             | Collapse `IGridManager` and `BoardModel` into one canonical store.                                                          |
-| `BoardService.GearPlaced` / `GearRemoved` / `BoardLayoutChanged`           | Per-instance events; two duplicate the observable model    | 6             | Move to `IEventBus` (`GearPlacedEvent`, `GearRemovedEvent`); delete `BoardLayoutChanged` (consumers bind to `Board.Nodes`). |
-| `InventoryService.ItemsChanged`                                            | Duplicates `ObservableCollection<IItem>.CollectionChanged` | 6             | Delete; consumers bind to `InventoryModel.Items`.                                                                           |
-| `InventoryModel.Items` (public `ObservableCollection`)                     | Externally writable Tier 2 model                           | 4             | Expose `ReadOnlyObservableCollection<IItem>`; keep writable handle internal.                                                |
-| `InventoryClientModule.SchedulePersist` + `SetInventoryRequest`            | Whole-blob replace; snapshot + send-the-world              | 3, 5          | Replace with `AddOwnedGearRequest(gearId)` / `RemoveOwnedGearRequest(instanceId)` typed intents.                            |
-| `LoadoutClientModule.SaveBoardLayout` + `SetBoardLayoutRequest`            | Whole-blob replace                                         | 5             | Replace with `PlaceGearRequest` / `RemoveGearRequest` deltas; for save-loadout flows, wrap in `liveOps.BeginBatch()`.       |
-| `BoardService` does its own dirty-tracking implicitly via `SyncBoardModel` | Service owning persistence timing                          | corollary     | Service calls `liveOps.CallAsync` per intent; remove implicit dirty tracking.                                               |
-| Any `SchedulePersist` / `MarkDirty` style helper                           | Service owning persistence timing                          | corollary     | Delete; the LiveOps boundary is the seam.                                                                                   |
+| Call site                                                                    | Smell                                                                 | Rule violated | Fix                                                                                                                                                |
+| ---------------------------------------------------------------------------- | --------------------------------------------------------------------- | ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `BoardService.SyncBoardModel`                                                | Two state stores kept in agreement                                    | 1             | Collapse `IGridManager` and `BoardModel` into one canonical store.                                                                                 |
+| `BoardService.BoardLayoutChanged` / `InventoryService.ItemsChanged`          | Duplicate the observable collection — re-publishing what binding sees | 6             | Delete; consumers bind to `Board.Nodes` / `Inventory.Items` directly.                                                                              |
+| `BoardService.GearPlaced` / `GearRemoved` (`event Action<IGridNode>`)        | Per-instance events that leak live model instances                    | 6             | Move to `IEventBus` (`GearPlacedEvent { Vector2Int Position, string GearId }`) — primitive payload, only raised if a cross-system listener exists. |
+| Service method signatures taking `string instanceId` when caller has the ref | Stringly-typed where a typed ref is available                         | 3             | Change signature to take the live ref (`OwnedGear`, `GearConfig`, `IGridNode`); unwrap to id only when constructing the wire DTO.                  |
+| `InventoryModel.Items` (public `ObservableCollection`)                       | Externally writable Tier 2 model                                      | 4             | Expose `ReadOnlyObservableCollection<IItem>`; keep writable handle internal. View binding is unchanged (see Rule 4 example).                       |
+| `InventoryClientModule.SchedulePersist` + `SetInventoryRequest`              | Whole-blob replace; snapshot + send-the-world                         | 3, 5          | Replace with `AddOwnedGearRequest(gearId)` / `RemoveOwnedGearRequest(instanceId)` typed intents on a real `OwnedGearService`.                      |
+| `LoadoutClientModule.SaveBoardLayout` + `SetBoardLayoutRequest`              | Whole-blob replace                                                    | 5             | Replace with `PlaceGearRequest` / `RemoveGearRequest` deltas; for save-loadout flows, wrap in `liveOps.BeginBatch()`.                              |
+| `BoardService` does its own dirty-tracking implicitly via `SyncBoardModel`   | Service owning persistence timing                                     | corollary     | Service calls `liveOps.CallAsync` per intent; remove implicit dirty tracking.                                                                      |
+| Any `SchedulePersist` / `MarkDirty` style helper                             | Service owning persistence timing                                     | corollary     | Delete. If the underlying need is "high-frequency same-key delta", attribute the DTO with `[LiveOpsRequest(DebounceMs, CoalesceBy)]` instead.      |
+| EventBus event payload carrying `IGridNode` / `OwnedGear` / live refs        | Live model leaking through the wire boundary                          | 6 (vocab)     | Replace ref fields with primitive ids; listeners that need the live ref do an explicit `TryGetById` lookup.                                        |
 
 
 ---
@@ -867,15 +1003,19 @@ When creating or modifying a stateful type, verify in order:
 
 1. Identify the **tier** (0, 1, or 2). If unsure, default to Tier 2.
 2. If Tier 2, confirm the **canonical representation** is the model and nothing else holds a parallel writable copy.
-3. Confirm the model is **externally read-only** (collections wrapped, fields with `internal`/`private` setters).
-4. Confirm service methods take **identifiers and primitives**, not domain objects.
-5. Confirm every request DTO is a **delta** (operation + ids/primitives). If it's a blob, attach a `// WAIVER: Rule 5 — <reason>` comment with an issue link.
-6. Confirm the service calls `liveOps.CallAsync` directly. There is no repository, no `MarkDirty`, no `Schedule`, no debounce timer.
+3. Confirm the model is **externally read-only** (collections wrapped in `ReadOnlyObservableCollection<T>`, fields with `internal`/`private` setters). Verify View bindings still work — they should, with no changes.
+4. Confirm service methods take **typed references and primitives** (`OwnedGear owned`, `GearConfig gear`, `Vector2Int pos`), not stringly-typed ids when the caller already holds the ref. Add-style methods that create the ref take the catalog ref and return the new live ref.
+5. Confirm every request DTO is a **delta with primitive ids** (operation + `string`/`int`/`Vector2Int`). DTOs do not carry live object refs. If the DTO is a blob, attach a `// WAIVER: Rule 5 — <reason>` comment with an issue link.
+6. Confirm the service calls `liveOps.CallAsync` directly. There is no repository, no `MarkDirty`, no service-owned `Schedule` or debounce timer.
 7. If a single user gesture issues multiple deltas that must succeed-or-fail together, wrap the gesture in `liveOps.BeginBatch()` / `CommitAsync()`.
-8. For high-frequency interactions (drag-drop, sliders), apply the change to the model first, fire the call, and **roll back on failure**. Document the rollback path.
-9. Replace any `event Action` with **EventBus events** unless the three-condition exception is documented.
-10. Add a unit test that asserts: (a) a write through the service updates the model, (b) the typed request is sent, (c) a server failure rolls the model back, (d) the EventBus receives the expected event.
-11. Run `.agents/scripts/validate-changes.cmd`.
+8. If the DTO is a high-frequency same-key update (slider, toggle, scrub), attribute it with `[LiveOpsRequest(DebounceMs = N, CoalesceBy = nameof(...))]`. Otherwise leave it immediate.
+9. For high-frequency interactions (drag-drop, sliders), apply the change to the model first, fire the call, and **roll back on failure**. Document the rollback path.
+10. For each new notification, decide bind vs EventBus vs `event Action`:
+  - State change → bind (do not raise an event).
+    - Cross-system signal a listener cannot infer from any model → `IEventBus` with primitive payload.
+    - Same-ViewModel ordered command-completion signal → `event Action` (with the three-condition justification documented).
+11. Add a unit test that asserts: (a) a write through the service updates the model, (b) the typed request is sent, (c) a server failure rolls the model back, (d) the EventBus receives the expected event (if one is raised).
+12. Run `.agents/scripts/validate-changes.cmd`.
 
 ---
 
@@ -883,17 +1023,22 @@ When creating or modifying a stateful type, verify in order:
 
 - **Invariants**:
   - Rules 1 through 6 are non-negotiable. Violations require an explicit waiver comment with `// WAIVER: <rule-number> — <reason>` and an issue link.
-  - Tier 2 models never expose public setters on domain fields.
-  - Services never reach for `Schedule`, `MarkDirty`, or per-service debounce timers. The transport seam is `ILiveOpsService` and only its `CallAsync` / `BeginBatch` primitives.
-  - Wire requests are deltas; whole-state-replace requests require a Rule 5 waiver.
+  - Tier 2 models never expose public setters on domain fields. Collections are wrapped in `ReadOnlyObservableCollection<T>` (bind-API compatible).
+  - Service signatures take typed references; ids only appear inside the service body when constructing wire DTOs.
+  - Services never own `Schedule`, `MarkDirty`, or debounce timers. Coalescing for high-frequency same-key deltas is declared on the **DTO** via `[LiveOpsRequest(DebounceMs, CoalesceBy)]` and handled by the LiveOps boundary.
+  - Wire requests are deltas with primitive ids; whole-state-replace requests require a Rule 5 waiver.
+  - EventBus payloads are primitives; live model refs never cross the EventBus.
+  - Views bind to observable models for state. EventBus is for signals a listener cannot infer from any model.
 - **Allowed Dependencies**:
   - Service → Model, `ILiveOpsService`, `IEventBus`, catalog/config SOs.
   - LiveOps client modules → `ILiveOpsService`, persistence APIs, request/response DTOs (initial-load only).
-  - ViewModel → Service, Model (read-only).
+  - ViewModel → Service, Model (read-only). View → ViewModel (binds to its observable surface).
 - **Forbidden Dependencies**:
-  - ViewModel → `ILiveOpsService` directly (always go through a service).
+  - ViewModel / View → `ILiveOpsService` directly (always go through a service).
+  - View → `IEventBus` for signals it could get by binding to a model (use binding instead).
   - Model → Service or `ILiveOpsService` (Tier 1 is the **only** exception, and only via its `OnPropertyChanged` hook).
-  - Any service introducing its own debounce / dirty-tracking layer.
+  - Any service introducing its own debounce / dirty-tracking layer (use the per-DTO attribute instead).
+  - Any DTO whose fields hold live object references (must be primitives).
 - **Change Checklist**: see "Change checklist for AI agents" above.
 - **Known Tricky Areas**:
   - `BoardService` currently mixes service and transport concerns and keeps a parallel `IGridManager` store. Refactor requires collapsing the dual representation before splitting deltas out.
@@ -915,17 +1060,18 @@ Apply in this order to minimize churn.
   - Delete `event Action BoardLayoutChanged`. `BoardViewComponent` binds to `BoardModel.Nodes`.
   - Move `GearPlaced` / `GearRemoved` to `IEventBus` (`GearPlacedEvent { Vector2Int Position, string GearId }`).
 3. `**InventoryClientModule` → `OwnedGearService` + slim `OwnedGearClientModule`**
-  - Add `AddOwnedGearRequest(string gearId)` / `AddOwnedGearResponse(string instanceId)` and `RemoveOwnedGearRequest(string instanceId)` typed DTOs and matching server handlers.
-  - Move the `IOwnedGearInventoryService` implementation off the `*ClientModule` into a real `OwnedGearService` that calls `liveOps.CallAsync` directly.
+  - Add `AddOwnedGearRequest(string gearId)` / `AddOwnedGearResponse(bool succeeded, string instanceId)` and `RemoveOwnedGearRequest(string instanceId)` / `EquipGearRequest(string instanceId)` typed DTOs and matching server handlers. DTOs carry primitive ids only.
+  - Move the `IOwnedGearInventoryService` implementation off the `*ClientModule` into a real `OwnedGearService` that calls `liveOps.CallAsync` directly. **Service signatures take live refs** (`AddAsync(GearConfig gear)`, `RemoveAsync(OwnedGear owned)`, `EquipAsync(OwnedGear owned)`); the service unwraps to id only at the `CallAsync` site.
   - The `*ClientModule` retains only `OnInitializedAsync(InventoryGameData)` to seed the model from the bootstrap snapshot.
   - Delete `SchedulePersist` and `SendInventoryAsync`. Delete `SetInventoryRequest` once no callers remain.
 4. `**LoadoutClientModule`**
-  - Same shape as #3: `PlaceGearRequest(pos, gearId)` / `RemoveGearRequest(pos)` deltas; the client module shrinks to `OnInitializedAsync(LoadoutGameData)` plus a thin façade that exposes the bootstrap snapshot.
+  - Same shape as #3: `PlaceGearRequest(Vector2Int pos, string gearId)` / `RemoveGearRequest(Vector2Int pos)` delta DTOs; service signatures take `(Vector2Int pos, GearConfig gear)` / `(IGridNode node)`. The client module shrinks to `OnInitializedAsync(LoadoutGameData)` plus a thin façade that exposes the bootstrap snapshot.
   - "Save current layout" flows wrap the per-cell deltas in `liveOps.BeginBatch()`.
 5. `**CurrencyClientModule` → `CurrencyService`**
-  - Rename `CurrencyClientModule` to retain only the bootstrap role; move the `TrySpendAsync`/`AddAsync` rules into a real `CurrencyService` that calls `liveOps.CallAsync(new SpendCurrencyRequest(...))` directly and raises `CurrencySpentEvent` / `CurrencyAddedEvent` on the EventBus after success.
+  - Rename `CurrencyClientModule` to retain only the bootstrap role; move the `TrySpendAsync`/`AddAsync` rules into a real `CurrencyService` that calls `liveOps.CallAsync(new SpendCurrencyRequest(walletId, amount))` directly and raises `CurrencySpentEvent` / `CurrencyAddedEvent` (primitive payloads) on the EventBus after success.
 6. **Settings / preferences (when introduced)**
   - Tier 1 model with an `OnPropertyChanged` override that calls `liveOps.CallAsync(new UpdateSettingRequest(name, value))`. No service.
+  - Attribute the DTO with `[LiveOpsRequest(DebounceMs = 100, CoalesceBy = nameof(UpdateSettingRequest.Key))]` so slider scrubs collapse per key.
 
 Each step ships independently with regression tests per `AGENTS.md` rule 10.
 
@@ -943,6 +1089,8 @@ Each step ships independently with regression tests per `AGENTS.md` rule 10.
 
 ## Changelog
 
+- 2026-04-21 (evening) — Replaced all `UniTask` / `UniTask<T>` references with `System.Threading.Tasks.Task` / `Task<T>` across vocabulary, sample interactions, and good/bad examples. Async surfaces and `CancellationToken` semantics are unchanged.
+- 2026-04-21 (afternoon) — Refinement pass. (a) Rule 3 now requires service signatures to take typed references; ids appear only inside the service body when constructing the wire DTO. (b) Rule 4 example expanded with an explicit "why the bind API still works" note covering `ReadOnlyObservableCollection<T>` and `Scaffold.MVVM`'s bind interfaces. (c) Rule 5 split visibly into "DTOs are deltas" + "DTOs carry primitive ids, not live refs". (d) Rule 6 reframed around the bind-vs-EventBus-vs-instance-event acid test; `BoardLayoutChanged` / `ItemsChanged` reclassified as "redundant with binding" rather than "use EventBus". (e) Added a "Debounced single-key deltas" subsection introducing the per-DTO `[LiveOpsRequest(DebounceMs, CoalesceBy)]` attribute as a narrow, blob-free exception for slider/toggle-style updates. (f) Updated TL;DR, sample interactions (1 and 3), smell catalog, change checklist, and AI Agent Context to match.
 - 2026-04-21 — Major revision. Removed the Repository role; collapsed roles to Model + Service. Replaced the four persistence patterns with a single transport seam (`ILiveOpsService.CallAsync` + `BeginBatch`). Made delta requests the default and required a waiver for blob requests. Made optimistic-update + rollback the documented pattern for high-frequency interactions. Reduced the rule set from eight to six. Updated sample interactions, smell catalog, and migration notes to match.
 - 2026-04-20 — Initial standard. Defines Model/Service/Repository roles, eight rules, three tiers, four persistence patterns, sample interactions with snippets and sequence diagrams, good/bad examples per rule, smell catalog, and migration notes for `InventoryService`, `BoardService`, `InventoryClientModule`, and `CurrencyClientModule`.
 
