@@ -8,13 +8,13 @@ namespace GearEngine.GearEngine.Services
 {
     public sealed class GearPresentationTransferService : IGearPresentationTransferService
     {
-        public GearPresentationTransferService(IInventoryService inventoryService, IEventBus eventBus)
+        public GearPresentationTransferService(IRaceInventoryService inventoryService, IEventBus eventBus)
         {
             this.inventoryService = inventoryService ?? throw new ArgumentNullException(nameof(inventoryService));
             this.eventBus = eventBus;
         }
 
-        private readonly IInventoryService inventoryService;
+        private readonly IRaceInventoryService inventoryService;
         private readonly IEventBus eventBus;
 
         public void AddReturnedBoardGearToInventory(GearConfigData config)

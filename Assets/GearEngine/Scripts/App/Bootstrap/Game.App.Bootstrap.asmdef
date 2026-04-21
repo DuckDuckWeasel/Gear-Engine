@@ -1,0 +1,38 @@
+{
+  "name": "Game.App.Bootstrap",
+  "rootNamespace": "GearEngine.App.Bootstrap",
+    "references": [
+        "Scaffold.LayeredScope",
+    "Game.Campaign",
+    "Game.CarSimulation",
+    "Game.GearEngine",
+    "Scaffold.Addressables.Container",
+    "Scaffold.Events.Container",
+    "Scaffold.Ugs",
+    "Scaffold.Ugs.Container",
+    "Scaffold.CloudCode.Container",
+    "Scaffold.LiveOps",
+    "Scaffold.LiveOps.Container",
+    "Scaffold.MVVM",
+    "Scaffold.MVVM.View",
+    "Scaffold.MVVM.ViewModel",
+    "Scaffold.Navigation",
+    "Scaffold.Navigation.Container",
+    "Unity.Services.CloudCode",
+    "Unity.TextMeshPro",
+    "UnityEngine.UI",
+    "VContainer"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": true,
+  "precompiledReferences": [
+    "CommunityToolkit.Mvvm.dll",
+    "Scaffold.LiveOps.DTO.dll"
+  ],
+  "autoReferenced": false,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}

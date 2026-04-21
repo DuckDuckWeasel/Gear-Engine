@@ -33,6 +33,7 @@ Directory layout, module relationships, and architectural structure are document
 10. **Bugfixes require regression tests**: Every bug fix must add or update an automated test that fails before the fix and passes after it.
 11. **Pragma suppression approval**: Never introduce a new `#pragma warning disable` unless the user explicitly approves it.
 12. **Error Handling**: Always use try/catch in async operations and service methods. Use `Debug.LogError` for Unity-side errors, never `Debug.Log` for error conditions. Validate inputs and null-check injected dependencies. Never swallow exceptions silently — at minimum log them. Prefer guard clauses (`if (x == null) throw ...`) over deep nesting.
+13. **Never use `ConfigureAwait`:** Do not call `ConfigureAwait` on `Task` / `Task<T>` (or any awaitable) in this codebase. Unity and Unity Gaming Services rely on the Unity synchronization context; `ConfigureAwait(false)` resumes on thread pool threads and breaks main-thread-only APIs (for example `Application.get_cloudProjectId` inside UGS). Do not add `ConfigureAwait(true)` either—it is redundant with the default and adds noise.
 
 ## Error Handling Standards
 

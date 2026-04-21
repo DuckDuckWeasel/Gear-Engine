@@ -39,5 +39,8 @@ namespace GearEngine.GearEngine.Services.Board
         event Action<IGridNode> GearPlaced;
 
         event Action<IGridNode> GearRemoved;
+
+        /// <summary>Fired when board node positions or count change (not when only simulation run state toggles).</summary>
+        event Action BoardLayoutChanged;
     }
 }

@@ -37,6 +37,15 @@ if (Test-Path $assetsPackagesRoot) {
     }
 }
 
+# Git/UPM-resolved Scaffold packages (consumer projects often have no embedded com.scaffold.* under Assets/Packages).
+$packageCacheRoot = Join-Path $resolvedProjectPath "Library/PackageCache"
+if (Test-Path $packageCacheRoot) {
+    $cacheScaffoldDirs = @(Get-ChildItem -Path $packageCacheRoot -Directory -ErrorAction SilentlyContinue | Where-Object { $_.Name -like "com.scaffold.*" })
+    foreach ($dir in $cacheScaffoldDirs) {
+        $resolvedScriptsRoots += $dir.FullName
+    }
+}
+
 if ($resolvedScriptsRoots.Count -eq 0) {
     Write-Output ("SCRIPTS_ROOTS_NOT_FOUND:{0}" -f ($ScriptsRoots -join ";"))
     Write-Output "TOTAL:0"
@@ -100,7 +109,7 @@ foreach ($asmdef in $asmdefs) {
                         Type      = "MissingScriptsGuidReference"
                         Assembly  = $asmdef.FullName
                         Reference = $referenceValue
-                        Detail    = "GUID does not match an asmdef under Assets/Scripts, Assets/Packages/com.scaffold.*, or Packages."
+                        Detail    = "GUID does not match an asmdef under Assets/Scripts, Assets/Packages/com.scaffold.*, Library/PackageCache/com.scaffold.*, or Packages."
                     })
             }
 
@@ -121,7 +130,7 @@ foreach ($asmdef in $asmdefs) {
                     Type      = "MissingScriptsAssemblyName"
                     Assembly  = $asmdef.FullName
                     Reference = $referenceValue
-                    Detail    = "Assembly name does not match any asmdef under Assets/Scripts, Assets/Packages/com.scaffold.*, or Packages."
+                    Detail    = "Assembly name does not match any asmdef under Assets/Scripts, Assets/Packages/com.scaffold.*, Library/PackageCache/com.scaffold.*, or Packages."
                 })
         }
     }

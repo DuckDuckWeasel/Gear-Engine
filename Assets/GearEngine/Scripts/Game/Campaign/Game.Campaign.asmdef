@@ -18,7 +18,8 @@
         "Scaffold.MVVM.Model",
         "Scaffold.Navigation",
         "Scaffold.Navigation.Container",
-        "Scaffold.Scope",
+        "Scaffold.LiveOps",
+        "Scaffold.LayeredScope",
         "Unity.Splines",
         "Unity.TextMeshPro",
         "UnityEngine.UI"
@@ -28,7 +29,9 @@
     "allowUnsafeCode": false,
     "overrideReferences": true,
     "precompiledReferences": [
-        "CommunityToolkit.Mvvm.dll"
+        "CommunityToolkit.Mvvm.dll",
+        "DOTween.dll",
+        "Scaffold.LiveOps.DTO.dll"
     ],
     "autoReferenced": true,
     "defineConstraints": [],

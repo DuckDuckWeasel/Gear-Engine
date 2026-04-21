@@ -1,6 +1,6 @@
 using System;
+using DG.Tweening;
 using Scaffold.MVVM;
-using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -8,17 +8,20 @@ namespace GearEngine.Campaign.Presentation
 {
     public sealed class ResultPopupView : View<ResultPopupViewModel>
     {
-        [SerializeField] private TextMeshProUGUI raceTimeLabel;
-        [SerializeField] private TextMeshProUGUI lapCountLabel;
-        [SerializeField] private TextMeshProUGUI scoreLabel;
-        [SerializeField] private TextMeshProUGUI goldLabel;
+        [SerializeField] private RectTransform statsContainer;
+        [SerializeField] private ResultStatSlotView statSlotPrefab;
+        [SerializeField] private float popDuration = 0.25f;
+        [SerializeField] private float stagger = 0.08f;
+        [SerializeField] private Ease popEase = Ease.OutBack;
         [SerializeField] private Button upgradeButton;
         [SerializeField] private Button continueButton;
+
+        private Sequence statsSequence;
 
         protected override void OnBind()
         {
             ValidateHierarchy();
-            ApplyResultLabels();
+            RebuildStatSlots();
             upgradeButton.onClick.AddListener(OnUpgradeClicked);
             continueButton.onClick.AddListener(OnContinueClicked);
         }
@@ -27,39 +30,73 @@ namespace GearEngine.Campaign.Presentation
         {
             upgradeButton.onClick.RemoveListener(OnUpgradeClicked);
             continueButton.onClick.RemoveListener(OnContinueClicked);
+            KillStatsSequence();
+            ClearStatSlots();
             base.OnUnbind();
         }
 
-        private void ApplyResultLabels()
+        private void OnDisable()
         {
-            ApplyRaceTimingLabels();
-            ApplyScoreAndGoldLabels();
+            KillStatsSequence();
         }
 
-        private void ApplyRaceTimingLabels()
+        private void RebuildStatSlots()
         {
-            if (raceTimeLabel != null)
+            if (statsContainer == null || statSlotPrefab == null)
             {
-                raceTimeLabel.text = $"{viewModel.RaceTime:F2}s";
+                Debug.LogError("[ResultPopupView] statsContainer/statSlotPrefab missing; cannot render stats.");
+                return;
             }
 
-            if (lapCountLabel != null)
+            ClearStatSlots();
+            KillStatsSequence();
+            statsSequence = DOTween.Sequence();
+            RunSpawnStatTweens();
+        }
+
+        private void ClearStatSlots()
+        {
+            for (int i = statsContainer.childCount - 1; i >= 0; i--)
             {
-                lapCountLabel.text = $"Laps: {viewModel.LapCount}";
+                Transform child = statsContainer.GetChild(i);
+                if (Application.isPlaying)
+                {
+                    Destroy(child.gameObject);
+                }
+                else
+                {
+                    DestroyImmediate(child.gameObject);
+                }
             }
         }
 
-        private void ApplyScoreAndGoldLabels()
+        private void KillStatsSequence()
         {
-            if (scoreLabel != null)
+            if (statsSequence != null && statsSequence.IsActive())
             {
-                scoreLabel.text = $"Score: {viewModel.Score}";
+                statsSequence.Kill();
+                statsSequence = null;
             }
+        }
 
-            if (goldLabel != null)
+        private void RunSpawnStatTweens()
+        {
+            int index = 0;
+            foreach (ResultStatSlotViewModel row in viewModel.Stats)
             {
-                goldLabel.text = $"+{viewModel.GoldAmount} gold (total: {viewModel.CurrentGold})";
+                AddStatSlotTween(row, index++);
             }
+        }
+
+        private void AddStatSlotTween(ResultStatSlotViewModel rowVm, int slotIndex)
+        {
+            ResultStatSlotView slot = Instantiate(statSlotPrefab, statsContainer);
+            slot.gameObject.name = $"StatSlot_{slotIndex}";
+            slot.transform.localScale = Vector3.zero;
+            slot.Bind(rowVm);
+            statsSequence.Insert(
+                slotIndex * stagger,
+                slot.transform.DOScale(Vector3.one, popDuration).SetEase(popEase));
         }
 
         private void OnUpgradeClicked()
@@ -88,6 +125,8 @@ namespace GearEngine.Campaign.Presentation
 
         private void ValidateHierarchy()
         {
+            RequireReference(statsContainer, nameof(statsContainer));
+            RequireReference(statSlotPrefab, nameof(statSlotPrefab));
             RequireReference(upgradeButton, nameof(upgradeButton));
             RequireReference(continueButton, nameof(continueButton));
         }

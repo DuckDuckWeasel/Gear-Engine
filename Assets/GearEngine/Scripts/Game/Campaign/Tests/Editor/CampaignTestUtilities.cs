@@ -1,7 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using GameModuleDTO.ModuleRequests;
+using GameModuleDTO.Modules.Currency;
 using GearEngine.Campaign;
+using GearEngine.Currency;
 using GearEngine.Campaign.Services;
 using GearEngine.CarSimulation;
 using GearEngine.CarSimulation.Definitions;
@@ -39,7 +42,7 @@ namespace GearEngine.Campaign.Tests.Editor
             DragService = container.Resolve<IDragService>();
             SwapService = container.Resolve<IGridSwapService>();
             MergeService = container.Resolve<IGridMergeService>();
-            InventoryService = container.Resolve<IInventoryService>();
+            InventoryService = container.Resolve<IRaceInventoryService>();
             PresentationTransfer = container.Resolve<IGearPresentationTransferService>();
             BoardService = container.Resolve<IBoardService>();
         }
@@ -53,7 +56,7 @@ namespace GearEngine.Campaign.Tests.Editor
         public IDragService DragService { get; }
         public IGridSwapService SwapService { get; }
         public IGridMergeService MergeService { get; }
-        public IInventoryService InventoryService { get; }
+        public IRaceInventoryService InventoryService { get; }
         public IGearPresentationTransferService PresentationTransfer { get; }
         public IBoardService BoardService { get; }
 
@@ -109,14 +112,18 @@ namespace GearEngine.Campaign.Tests.Editor
 
     internal sealed class FakeTrackService : ITrackService
     {
+        private readonly CurrencyClientModule currencyClient;
+
         public FakeTrackService(
             TrackDefinition track,
             CarDefinition car,
-            IReadOnlyList<GearConfig> roguelikePool = null)
+            IReadOnlyList<GearConfig> roguelikePool = null,
+            CurrencyClientModule currencyClient = null)
         {
             CurrentTrack = track;
             CurrentCar = car;
             roguelikeOptions = roguelikePool ?? Array.Empty<GearConfig>();
+            this.currencyClient = currencyClient;
         }
 
         public TrackDefinition CurrentTrack { get; }
@@ -124,7 +131,6 @@ namespace GearEngine.Campaign.Tests.Editor
 
         private readonly IReadOnlyList<GearConfig> roguelikeOptions;
         private readonly TrackProgressModel trackProgress = new TrackProgressModel();
-        public int AdvanceCallCount { get; private set; }
         public int RecordResultCallCount { get; private set; }
 
         public TrackProgressModel GetTrackProgress() => trackProgress;
@@ -133,7 +139,7 @@ namespace GearEngine.Campaign.Tests.Editor
 
         public IReadOnlyList<GearConfig> GetRoguelikeCardOptions() => roguelikeOptions;
 
-        public void RecordResult(RaceResultModel result)
+        public System.Threading.Tasks.Task RecordResultAsync(RaceResultModel result)
         {
             if (result == null)
             {
@@ -141,39 +147,29 @@ namespace GearEngine.Campaign.Tests.Editor
             }
 
             RecordResultCallCount++;
-        }
-
-        public void AdvanceToNextTrack()
-        {
-            AdvanceCallCount++;
-        }
-    }
-
-    internal sealed class FakeWalletService : IWalletService
-    {
-        private readonly WalletModel wallet = new WalletModel();
-
-        public WalletModel GetWallet() => wallet;
-
-        public void AddGold(int amount)
-        {
-            wallet.Gold += amount;
-        }
-
-        public bool TrySpendGold(int amount)
-        {
-            if (amount < 0 || amount > wallet.Gold)
+            int reward = result.Gold.Amount;
+            result.ServerOutcome = new RecordRaceResultResponse
             {
-                return false;
+                Reward = reward,
+                NewBestTimeSec = result.RaceTime,
+                MatchedBandIndex = reward > 0 ? 0 : -1,
+                Advanced = false,
+            };
+
+            if (currencyClient != null && reward > 0)
+            {
+                long cur = currencyClient.GetWallet("gold")?.Current ?? 0;
+                currencyClient.ApplyNestedAddCurrency(new AddCurrencyResponse("gold", cur + reward, reward));
             }
 
-            wallet.Gold -= amount;
-            return true;
+            return System.Threading.Tasks.Task.CompletedTask;
         }
     }
 
-    internal sealed class RecordingInventoryService : IInventoryService
+    internal sealed class RecordingInventoryService : IRaceInventoryService
     {
+        public event Action ItemsChanged;
+
         public readonly List<IItem> AddedItems = new List<IItem>();
         private readonly InventoryModel model = new InventoryModel();
 
@@ -193,6 +189,7 @@ namespace GearEngine.Campaign.Tests.Editor
 
             AddedItems.Add(item);
             model.Items.Add(item);
+            ItemsChanged?.Invoke();
             return true;
         }
 
@@ -208,6 +205,7 @@ namespace GearEngine.Campaign.Tests.Editor
                 if (ReferenceEquals(model.Items[i], item))
                 {
                     model.Items.RemoveAt(i);
+                    ItemsChanged?.Invoke();
                     return true;
                 }
             }

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Splines;
 
@@ -24,6 +25,8 @@ namespace GearEngine.CarSimulation.Definitions
         [SerializeField] private Spline spline = new Spline();
 
         public bool HasConfiguredScoreBands => scoreBands != null && scoreBands.Length > 0;
+
+        public IReadOnlyList<TrackScoreBand> ScoreBands => scoreBands;
 
         [SerializeField] private TrackScoreBand[] scoreBands = Array.Empty<TrackScoreBand>();
 

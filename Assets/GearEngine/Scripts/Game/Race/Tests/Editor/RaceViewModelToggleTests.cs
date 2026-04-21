@@ -195,7 +195,7 @@ namespace GearEngine.Race.Tests.Editor
                 GearInventoryLoadoutData.Empty(),
                 new GearBoardLoadoutData()).Install(builder);
             IObjectResolver scope = builder.Build();
-            IInventoryService inventoryService = scope.Resolve<IInventoryService>();
+            IRaceInventoryService inventoryService = scope.Resolve<IRaceInventoryService>();
             IBoardService boardService = scope.Resolve<IBoardService>();
             IDragService dragService = scope.Resolve<IDragService>();
 

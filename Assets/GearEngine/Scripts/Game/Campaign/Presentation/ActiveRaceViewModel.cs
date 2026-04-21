@@ -1,5 +1,6 @@
 using GearEngine.Campaign.Gear;
 using System;
+using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using GearEngine.Campaign;
 using GearEngine.Campaign.Bootstrap;
@@ -24,7 +25,6 @@ namespace GearEngine.Campaign.Presentation
         public CarViewModel Car { get; private set; }
 
         [Inject] private ITrackService trackService;
-        [Inject] private IWalletService walletService;
         [Inject] private IGearEngineService engineService;
         [Inject] private TrackSimulationFactory trackFactory;
         [Inject] private RaceManagerService raceManager;
@@ -110,14 +110,18 @@ namespace GearEngine.Campaign.Presentation
 
         private void OnRaceCompleted()
         {
+            _ = OnRaceCompletedAsync();
+        }
+
+        private async Task OnRaceCompletedAsync()
+        {
             try
             {
                 engineService.ResetGridSimulationState();
 
                 RaceState session = Track.Session;
                 RaceResultModel result = new RaceResultModel(session.RaceTime, session.CurrentLap, trackService.CurrentTrack);
-                walletService.AddGold(result.Gold.Amount);
-                trackService.RecordResult(result);
+                await trackService.RecordResultAsync(result);
                 navigation.Open(new ResultPopupViewModel(result));
             }
             catch (Exception ex)

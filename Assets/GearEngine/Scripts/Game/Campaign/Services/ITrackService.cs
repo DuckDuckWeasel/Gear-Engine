@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using GearEngine.Campaign;
 using GearEngine.CarSimulation.Definitions;
 using GearEngine.GearEngine.Config;
@@ -17,8 +18,7 @@ namespace GearEngine.Campaign.Services
 
         IReadOnlyList<GearConfig> GetRoguelikeCardOptions();
 
-        void RecordResult(RaceResultModel result);
-
-        void AdvanceToNextTrack();
+        Task RecordResultAsync(RaceResultModel result);
     }
 }
+

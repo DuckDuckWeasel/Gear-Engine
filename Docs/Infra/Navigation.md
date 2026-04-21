@@ -1,3 +1,3 @@
 # Scaffold Infra Navigation
 
-Authoritative module documentation: [`Assets/Packages/com.scaffold.navigation/README.md`](../../Assets/Packages/com.scaffold.navigation/README.md).
+Authoritative module documentation: [`com.scaffold.navigation` README](https://github.com/MgCohen/Scaffold/blob/main/Assets/Packages/com.scaffold.navigation/README.md).

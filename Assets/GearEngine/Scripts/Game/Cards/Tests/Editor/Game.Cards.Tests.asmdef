@@ -4,9 +4,12 @@
     "references": [
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner",
+        "Game.Campaign",
         "Game.Cards",
+        "Scaffold.LiveOps",
         "Scaffold.MVVM.ViewModel",
-        "Scaffold.MVVM"
+        "Scaffold.MVVM",
+        "VContainer"
     ],
     "includePlatforms": [
         "Editor"
@@ -16,7 +19,9 @@
     "overrideReferences": true,
     "precompiledReferences": [
         "nunit.framework.dll",
-        "CommunityToolkit.Mvvm.dll"
+        "CommunityToolkit.Mvvm.dll",
+        "Scaffold.LiveOps.DTO.dll",
+        "Newtonsoft.Json.dll"
     ],
     "autoReferenced": false,
     "defineConstraints": [

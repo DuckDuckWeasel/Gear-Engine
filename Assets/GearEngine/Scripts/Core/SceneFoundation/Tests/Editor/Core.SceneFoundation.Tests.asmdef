@@ -9,8 +9,7 @@
         "Scaffold.Navigation",
         "Scaffold.Addressables.Container",
         "Scaffold.Events.Container",
-        "Scaffold.Navigation.Container",
-        "Scaffold.Scope"
+        "Scaffold.Navigation.Container"
     ],
     "includePlatforms": [
         "Editor"

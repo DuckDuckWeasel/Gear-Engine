@@ -1,4 +1,5 @@
 using System;
+using GameModuleDTO.ModuleRequests;
 using GearEngine.CarSimulation.Definitions;
 using UnityEngine;
 
@@ -38,6 +39,9 @@ namespace GearEngine.Campaign
         public int Score { get; }
         public GoldReward Gold { get; }
         public bool IsGoodResult { get; }
+
+        /// <summary>Populated after <see cref="Services.ITrackService.RecordResultAsync"/> when using LiveOps.</summary>
+        public RecordRaceResultResponse ServerOutcome { get; set; }
 
         private static int ComputeLegacyScore(float raceTime, int lapCount)
         {

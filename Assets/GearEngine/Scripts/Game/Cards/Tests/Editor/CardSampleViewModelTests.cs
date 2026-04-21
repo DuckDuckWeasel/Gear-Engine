@@ -1,57 +1,112 @@
-using System.Collections.Generic;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
+using GameModuleDTO.GameModule;
+using GameModuleDTO.Modules.Cards;
+using GameModuleDTO.Modules.Currency;
+using GameModuleDTO.ModuleRequests;
+using GearEngine.Campaign.Bootstrap.Cards;
 using GearEngine.Cards;
+using GearEngine.Currency;
+using Newtonsoft.Json;
 using NUnit.Framework;
-using UnityEditor;
+using Scaffold.LiveOps;
 using UnityEngine;
+using VContainer;
 
 namespace GearEngine.Cards.Tests.Editor
 {
     public sealed class CardSampleViewModelTests
     {
         [Test]
-        public void TryPurchaseSlot_WhenSlotUncollected_CollectsCardAndDeductsGold()
+        public void RefreshDisplay_UsesCurrencyWalletGold()
         {
-            var catalog = ScriptableObject.CreateInstance<CardCatalogSO>();
-            var card = ScriptableObject.CreateInstance<CardDefinition>();
-            SetId(card, "card_sample");
-            SetCardsList(catalog, new List<CardDefinition> { card });
+            CardCatalogSO catalog = ScriptableObject.CreateInstance<CardCatalogSO>();
+            CardGameData cardGameData = BuildCardGameData(Array.Empty<string>());
+            CurrencyGameData currencyGameData = BuildCurrencyGameData(77);
+            var fake = new FakeLiveOpsService
+            {
+                CardGameData = cardGameData,
+                CurrencyGameData = currencyGameData,
+            };
 
+            IObjectResolver container = BuildContainer(fake, catalog);
             try
             {
-                var viewModel = new CardSampleViewModel(catalog);
-                viewModel.TryPurchaseSlot(0);
+                CurrencyClientModule currency = container.Resolve<CurrencyClientModule>();
+                CardsClientModule cards = container.Resolve<CardsClientModule>();
+                currency.InitializeAsync(CancellationToken.None).GetAwaiter().GetResult();
+                cards.InitializeAsync(CancellationToken.None).GetAwaiter().GetResult();
 
-                Assert.That(viewModel.Slots[0].State, Is.EqualTo(CardSlotState.Collected));
-                Assert.That(viewModel.Slots[0].CardId, Is.EqualTo("card_sample"));
-                long expectedGold = 1000 - CardCostCurve.GoldCostForSlot(0);
-                Assert.That(viewModel.Gold, Is.EqualTo(expectedGold));
+                var viewModel = container.Resolve<CardSampleViewModel>();
+                viewModel.RefreshDisplay();
+
+                Assert.That(viewModel.Gold, Is.EqualTo(77));
+                Assert.That(viewModel.NextCost, Is.EqualTo(cardGameData.NextCost));
             }
             finally
             {
-                Object.DestroyImmediate(card);
-                Object.DestroyImmediate(catalog);
+                (container as IDisposable)?.Dispose();
+                UnityEngine.Object.DestroyImmediate(catalog);
             }
         }
 
-        private static void SetId(CardDefinition card, string id)
+        private static CardGameData BuildCardGameData(string[] unlocked)
         {
-            var so = new SerializedObject(card);
-            so.FindProperty("id").stringValue = id;
-            so.ApplyModifiedPropertiesWithoutUndo();
+            var persistence = new CardPersistence();
+            persistence.Unlocked.AddRange(unlocked);
+            CardConfig config = JsonConvert.DeserializeObject<CardConfig>(
+                "{\"catalog\":[\"a\"],\"baseCost\":10,\"costPerPurchaseGrowth\":5}");
+            return new CardGameData(persistence, config);
         }
 
-        private static void SetCardsList(CardCatalogSO catalog, List<CardDefinition> list)
+        private static CurrencyGameData BuildCurrencyGameData(long gold)
         {
-            var so = new SerializedObject(catalog);
-            SerializedProperty prop = so.FindProperty("cards");
-            prop.ClearArray();
-            for (var i = 0; i < list.Count; i++)
+            var persistence = new CurrencyPersistence();
+            persistence.Set("gold", gold);
+            CurrencyConfig config = JsonConvert.DeserializeObject<CurrencyConfig>(
+                "{\"entries\":[{\"id\":\"gold\",\"initial\":0}]}");
+            return new CurrencyGameData(persistence, config);
+        }
+
+        private static IObjectResolver BuildContainer(FakeLiveOpsService fake, CardCatalogSO catalog)
+        {
+            var builder = new ContainerBuilder();
+            builder.RegisterInstance<ILiveOpsService>(fake);
+            builder.RegisterInstance(catalog);
+            builder.Register<CurrencyClientModule>(Lifetime.Singleton);
+            builder.Register<CardsClientModule>(Lifetime.Singleton);
+            builder.Register<CardSampleViewModel>(Lifetime.Transient);
+            return builder.Build();
+        }
+
+        private sealed class FakeLiveOpsService : ILiveOpsService
+        {
+            public CardGameData CardGameData { get; set; }
+
+            public CurrencyGameData CurrencyGameData { get; set; }
+
+            public T GetModuleData<T>()
+                where T : class, IGameModuleData
             {
-                prop.InsertArrayElementAtIndex(i);
-                prop.GetArrayElementAtIndex(i).objectReferenceValue = list[i];
+                if (typeof(T) == typeof(CardGameData))
+                {
+                    return CardGameData as T;
+                }
+
+                if (typeof(T) == typeof(CurrencyGameData))
+                {
+                    return CurrencyGameData as T;
+                }
+
+                return null;
             }
 
-            so.ApplyModifiedPropertiesWithoutUndo();
+            public Task<TResponse> CallAsync<TResponse>(ModuleRequest<TResponse> request, CancellationToken cancellationToken = default)
+                where TResponse : ModuleResponse
+            {
+                throw new InvalidOperationException("Not used in this test.");
+            }
         }
     }
 }

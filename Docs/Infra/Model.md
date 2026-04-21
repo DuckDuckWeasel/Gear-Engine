@@ -1,3 +1,3 @@
 # Scaffold.MVVM.Model
 
-Authoritative module documentation: [`Assets/Packages/com.scaffold.model/README.md`](../../Assets/Packages/com.scaffold.model/README.md).
+Authoritative module documentation: [`com.scaffold.model` README](https://github.com/MgCohen/Scaffold/blob/main/Assets/Packages/com.scaffold.model/README.md).

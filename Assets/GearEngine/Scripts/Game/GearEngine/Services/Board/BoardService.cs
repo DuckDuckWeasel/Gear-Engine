@@ -44,11 +44,12 @@ namespace GearEngine.GearEngine.Services.Board
                 LoadLayout(boardLoadout.BoardLayout);
             }
 
-            SyncBoardModel();
+            SyncBoardModel(publishLayoutChanged: false);
         }
 
         public event Action<IGridNode> GearPlaced;
         public event Action<IGridNode> GearRemoved;
+        public event Action BoardLayoutChanged;
 
         public BoardModel GetBoard() => boardModel;
 
@@ -92,7 +93,7 @@ namespace GearEngine.GearEngine.Services.Board
                     gridManager.Play();
                 }
 
-                SyncBoardModel();
+                SyncBoardModel(publishLayoutChanged: false);
             }
             catch (Exception ex)
             {
@@ -151,7 +152,7 @@ namespace GearEngine.GearEngine.Services.Board
                 gridManager.AddNode(node);
             }
 
-            SyncBoardModel();
+            SyncBoardModel(publishLayoutChanged: false);
         }
 
         public bool TryMoveBoardGear(IGridNode node, Vector2Int toPos, Vector2Int fromPos)
@@ -428,7 +429,7 @@ namespace GearEngine.GearEngine.Services.Board
             }
         }
 
-        private void SyncBoardModel()
+        private void SyncBoardModel(bool publishLayoutChanged = true)
         {
             boardModel.Nodes.Clear();
             foreach (IGridNode node in gridManager.GetAllNodes())
@@ -437,6 +438,11 @@ namespace GearEngine.GearEngine.Services.Board
             }
 
             boardModel.IsSimulationRunning = gridManager.IsRunning;
+
+            if (publishLayoutChanged)
+            {
+                BoardLayoutChanged?.Invoke();
+            }
         }
     }
 }

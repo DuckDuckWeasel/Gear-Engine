@@ -8,8 +8,7 @@
         "Scaffold.Events",
         "Scaffold.Events.Container",
         "Scaffold.Navigation",
-        "Scaffold.Navigation.Container",
-        "Scaffold.Scope"
+        "Scaffold.Navigation.Container"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

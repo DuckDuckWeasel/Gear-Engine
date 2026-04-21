@@ -1,3 +1,3 @@
 # Scaffold Tools Types
 
-Authoritative module documentation: [`Assets/Packages/com.scaffold.types/README.md`](../../Assets/Packages/com.scaffold.types/README.md).
+Authoritative module documentation: [`com.scaffold.types` README](https://github.com/MgCohen/Scaffold/blob/main/Assets/Packages/com.scaffold.types/README.md).

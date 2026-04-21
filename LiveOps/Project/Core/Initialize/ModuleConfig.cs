@@ -1,17 +1,20 @@
+using System;
+using System.Reflection;
+using GameModule.GameApi;
 using GameModule.GameModule;
-using GameModule.Response;
 using GameModule.ModuleFetchData;
 using GameModule.ModuleFetchData.Unity;
 using Microsoft.Extensions.DependencyInjection;
 using Unity.Services.CloudCode.Apis;
 using Unity.Services.CloudCode.Core;
 using GameModule.Signal;
-using GameModule.Modules.Ads;
-using GameModule.Modules.Gold;
-using GameModule.Modules.Level;
-using GameModule.ModuleFetchData.Http;
-using GameModule.Modules.Global;
-using GameModule.Modules.DirectPush;
+using GameModule.Modules.Currency;
+using GameModule.Modules.Tracks;
+using GameModule.Modules.Loadout;
+using GameModule.Modules.Inventory;
+using GameModule.Modules.Cards;
+using GameModule.Modules.Roguelike;
+using GameModuleDTO.ModuleRequests;
 
 /// <summary>
 /// Configures the dependency injection container for cloud code execution.
@@ -26,21 +29,39 @@ public partial class ModuleConfig : ICloudCodeSetup
     {
         IGameApiClient gameApiClient = GameApiClient.Create();
         config.Dependencies.AddSingleton(gameApiClient);
-        PushClient pushClient = PushClient.Create();
-        config.Dependencies.AddSingleton(pushClient);
 
         RegisterScoped<IPlayerData, UnityPlayerData>(config);
         RegisterScoped<IGameState, UnityGameState>(config);
-        RegisterScoped<IRemoteConfig, HttpRemoteConfig>(config);
+        RegisterScoped<IRemoteConfig, UnityRemoteConfig>(config);
 
         RegisterScoped<SignalModule>(config);
-        RegisterScoped<ModuleRequestHandler>(config);
 
-        RegisterModuleScoped<AdsService>(config);
-        RegisterModuleScoped<GoldModule>(config);
-        RegisterModuleScoped<LevelService>(config);
-        RegisterModuleScoped<GlobalConfigModule>(config);
-        RegisterScoped<DirectPushService>(config);
+        Assembly gameApiAssembly = typeof(GameApiDispatcher).Assembly;
+        GameApiRegistry gameApiRegistry = new GameApiRegistry(gameApiAssembly);
+        config.Dependencies.AddSingleton(gameApiRegistry);
+        RegisterScoped<GameApiDispatcher>(config);
+
+        foreach (Type type in gameApiAssembly.GetTypes())
+        {
+            if (type.IsAbstract || type.IsInterface)
+            {
+                continue;
+            }
+
+            if (!typeof(IGameApiHandler).IsAssignableFrom(type))
+            {
+                continue;
+            }
+
+            config.Dependencies.AddScoped(type);
+        }
+
+        RegisterModuleScoped<CurrencyModule>(config);
+        RegisterModuleScoped<TracksModule>(config);
+        RegisterModuleScoped<LoadoutModule>(config);
+        RegisterModuleScoped<InventoryModule>(config);
+        RegisterModuleScoped<CardsModule>(config);
+        RegisterModuleScoped<RoguelikeModule>(config);
     }
 
     private void RegisterScoped<T>(ICloudCodeConfig config) where T : class
@@ -59,5 +80,17 @@ public partial class ModuleConfig : ICloudCodeSetup
     {
         config.Dependencies.AddScoped<IGameModule, T>();
         RegisterScoped<T>(config);
+    }
+
+    /// <summary>
+    /// Optional explicit GameApi handler registration (e.g. handlers outside the scanned assembly or tests).
+    /// </summary>
+    public static void RegisterGameApiHandler<TReq, TRes, THandler>(ICloudCodeConfig config, GameApiRegistry registry)
+        where TReq : ModuleRequest<TRes>
+        where TRes : ModuleResponse
+        where THandler : class, IGameApiHandler<TReq, TRes>
+    {
+        config.Dependencies.AddScoped<THandler>();
+        registry.Register(typeof(THandler));
     }
 }

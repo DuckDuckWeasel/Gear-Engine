@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using GearEngine.Campaign.Services;
 using GearEngine.GearEngine;
@@ -31,7 +30,7 @@ namespace GearEngine.Campaign.Presentation
         [Inject] private IEventBus eventBus;
         [Inject] private GearEngineFeatureToggleSO featureToggle;
         [Inject] private IDragService dragService;
-        [Inject] private IInventoryService inventoryService;
+        [Inject] private IRaceInventoryService inventoryService;
         [Inject] private IGearPresentationTransferService presentationTransferService;
         [Inject] private IGearLoadoutService loadoutService;
 
@@ -63,10 +62,6 @@ namespace GearEngine.Campaign.Presentation
         {
             try
             {
-                BoardLayoutData snapshot = BoardLayoutData.FromNodes(boardService.GetAllNodes());
-                loadoutService.SaveBoardLayout(snapshot);
-                loadoutService.SaveInventoryGearConfigs(SnapshotInventoryGearConfigs());
-
                 navigation.Open(new ActiveRaceViewModel(), closeCurrent: true);
             }
             catch (Exception ex)
@@ -85,20 +80,6 @@ namespace GearEngine.Campaign.Presentation
             {
                 Debug.LogError($"[SetupViewModel] ReturnToMainMenu failed: {ex.Message}\n{ex.StackTrace}");
             }
-        }
-
-        private IReadOnlyList<GearConfig> SnapshotInventoryGearConfigs()
-        {
-            var list = new List<GearConfig>();
-            foreach (IItem item in inventoryService.GetInventory().Items)
-            {
-                if (item is GearConfigData data && data.SourceGearConfig != null)
-                {
-                    list.Add(data.SourceGearConfig);
-                }
-            }
-
-            return list;
         }
     }
 }

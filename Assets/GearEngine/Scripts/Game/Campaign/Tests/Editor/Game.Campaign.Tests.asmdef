@@ -7,6 +7,7 @@
         "Game.Campaign",
         "Game.CarSimulation",
         "Game.GearEngine",
+        "Scaffold.LiveOps",
         "Scaffold.Entities",
         "Scaffold.MVVM.ViewModel",
         "Scaffold.Navigation",
@@ -27,7 +28,9 @@
     "overrideReferences": true,
     "precompiledReferences": [
         "nunit.framework.dll",
-        "CommunityToolkit.Mvvm.dll"
+        "CommunityToolkit.Mvvm.dll",
+        "Newtonsoft.Json.dll",
+        "Scaffold.LiveOps.DTO.dll"
     ],
     "autoReferenced": false,
     "defineConstraints": [

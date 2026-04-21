@@ -40,7 +40,7 @@ namespace GearEngine.Race
         private RaceManagerService raceManager;
 
         [Inject]
-        private IInventoryService inventoryService;
+        private IRaceInventoryService inventoryService;
 
         [Inject]
         private IBoardService boardService;

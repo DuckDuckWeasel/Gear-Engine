@@ -58,7 +58,7 @@ namespace GearEngine.GearEngine.Bootstrap
             builder.Register<GearNodeFactory>(Lifetime.Singleton).As<IGearNodeFactory>();
             builder.Register<DragService>(Lifetime.Singleton).As<IDragService>();
 
-            builder.RegisterInstance<IInventoryService>(new InventoryService(inventoryLoadout));
+            builder.RegisterInstance<IRaceInventoryService>(new InventoryService(inventoryLoadout));
             builder.Register<BoardService>(Lifetime.Singleton).As<IBoardService>();
             builder.Register<GearPresentationTransferService>(Lifetime.Singleton).As<IGearPresentationTransferService>();
         }

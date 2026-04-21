@@ -1,3 +1,3 @@
 # Scaffold Infra Addressables
 
-Authoritative module documentation: [`Assets/Packages/com.scaffold.addressables/README.md`](../../Assets/Packages/com.scaffold.addressables/README.md).
+Authoritative module documentation: [`com.scaffold.addressables` README](https://github.com/MgCohen/Scaffold/blob/main/Assets/Packages/com.scaffold.addressables/README.md).

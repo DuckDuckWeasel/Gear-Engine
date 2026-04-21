@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using GearEngine.Campaign.Services;
 using GearEngine.GearEngine;
@@ -8,7 +10,6 @@ using GearEngine.GearEngine.Presentation.UI;
 using GearEngine.GearEngine.Services;
 using GearEngine.GearEngine.Services.Board;
 using GearEngine.GearEngine.Services.Inventory;
-using Scaffold.Events.Contracts;
 using Scaffold.MVVM;
 using Scaffold.Navigation.Contracts;
 using UnityEngine;
@@ -16,7 +17,7 @@ using VContainer;
 
 namespace GearEngine.Campaign.Presentation
 {
-    public sealed partial class RoguelikeViewModel : ViewModel
+    public sealed partial class RoguelikeViewModel : ViewModel, IDisposable
     {
         public BoardViewModel Board { get; private set; }
         public GearInventoryViewModel Inventory { get; private set; }
@@ -25,24 +26,61 @@ namespace GearEngine.Campaign.Presentation
 
         internal IDragService DragService => dragService;
 
-        [ObservableProperty] private bool canConfirm;
+        [ObservableProperty]
+        private bool canConfirm;
+
+        [ObservableProperty]
+        private int cardOptionsRevision;
 
         private readonly List<CardOptionViewModel> cardOptions = new List<CardOptionViewModel>();
         private CardOptionViewModel selectedCard;
+        private readonly CancellationTokenSource cts = new CancellationTokenSource();
+        private bool disposed;
 
-        [Inject] private ITrackService trackService;
-        [Inject] private IGearEngineService engineService;
-        [Inject] private IBoardService boardService;
-        [Inject] private GearEngineFeatureToggleSO featureToggle;
-        [Inject] private IDragService dragService;
-        [Inject] private IInventoryService inventoryService;
-        [Inject] private IGearPresentationTransferService presentationTransferService;
+        [Inject]
+        private IRoguelikeRollService rollService;
+
+        [Inject]
+        private IGearEngineService engineService;
+
+        [Inject]
+        private IBoardService boardService;
+
+        [Inject]
+        private GearEngineFeatureToggleSO featureToggle;
+
+        [Inject]
+        private IDragService dragService;
+
+        [Inject]
+        private IRaceInventoryService inventoryService;
+
+        [Inject]
+        private IGearPresentationTransferService presentationTransferService;
 
         protected override void Initialize()
         {
             base.Initialize();
             SetupGearEngineSubtree();
-            AddRoguelikeCardsFromTrackService();
+            inventoryService.ItemsChanged += RecomputeCanConfirm;
+            _ = LoadRollAsync(cts.Token);
+        }
+
+        public void Dispose()
+        {
+            if (disposed)
+            {
+                return;
+            }
+
+            disposed = true;
+            if (inventoryService != null)
+            {
+                inventoryService.ItemsChanged -= RecomputeCanConfirm;
+            }
+
+            cts.Cancel();
+            cts.Dispose();
         }
 
         public void SelectCard(CardOptionViewModel card)
@@ -55,20 +93,14 @@ namespace GearEngine.Campaign.Presentation
             selectedCard?.Deselect();
             selectedCard = card;
             selectedCard.Select();
-            CanConfirm = true;
+            RecomputeCanConfirm();
         }
 
-        public void Confirm()
+        public async void Confirm()
         {
             try
             {
-                if (selectedCard == null)
-                {
-                    throw new InvalidOperationException("[RoguelikeViewModel] No card selected.");
-                }
-
-                inventoryService.TryAdd(selectedCard.GearConfig.CreateRuntimeData());
-                navigation.Open(new MainViewModel());
+                await ConfirmPickAsync();
             }
             catch (Exception ex)
             {
@@ -86,19 +118,62 @@ namespace GearEngine.Campaign.Presentation
             BindChildViewModel(TrashZone);
         }
 
-        private void AddRoguelikeCardsFromTrackService()
+        private async Task LoadRollAsync(CancellationToken ct)
         {
-            foreach (GearConfig config in trackService.GetRoguelikeCardOptions())
+            try
             {
-                if (config == null)
-                {
-                    continue;
-                }
-
-                CardOptionViewModel card = new CardOptionViewModel(config);
-                BindChildViewModel(card);
-                cardOptions.Add(card);
+                await AppendRollOptionsAsync(ct);
             }
+            catch (Exception ex)
+            {
+                Debug.LogError($"[RoguelikeViewModel] LoadRollAsync failed: {ex.Message}\n{ex.StackTrace}");
+            }
+        }
+
+        private async Task ConfirmPickAsync()
+        {
+            if (selectedCard == null)
+            {
+                throw new InvalidOperationException("[RoguelikeViewModel] No card selected.");
+            }
+
+            IItem runtime = selectedCard.GearConfig.CreateRuntimeData();
+            if (!inventoryService.TryAdd(runtime))
+            {
+                return;
+            }
+
+            await rollService.ConsumePickAsync(selectedCard.GearConfig, cts.Token);
+            navigation.Open(new MainViewModel());
+        }
+
+        private async Task AppendRollOptionsAsync(CancellationToken ct)
+        {
+            IReadOnlyList<GearConfig> options = await rollService.GetCurrentRollAsync(ct);
+            foreach (GearConfig config in options)
+            {
+                AddCardOption(config);
+            }
+
+            CardOptionsRevision++;
+        }
+
+        private void AddCardOption(GearConfig config)
+        {
+            if (config == null)
+            {
+                return;
+            }
+
+            CardOptionViewModel card = new CardOptionViewModel(config);
+            BindChildViewModel(card);
+            cardOptions.Add(card);
+        }
+
+        private void RecomputeCanConfirm()
+        {
+            InventoryModel model = inventoryService.GetInventory();
+            CanConfirm = selectedCard != null && model.Items.Count < model.MaxSlots;
         }
     }
 }
