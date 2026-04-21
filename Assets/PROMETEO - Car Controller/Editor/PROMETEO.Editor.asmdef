@@ -1,13 +1,11 @@
 {
-    "name": "Game.Test.Prototype",
+    "name": "PROMETEO.Editor",
     "references": [
-        "Game.CarSimulation",
-        "Unity.Mathematics",
-        "Unity.Splines",
-        "PROMETEO",
-        "Scaffold.MVVM.View"
+        "PROMETEO"
     ],
-    "includePlatforms": [],
+    "includePlatforms": [
+        "Editor"
+    ],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,

@@ -186,7 +186,7 @@ public class SplinePropGenerator : MonoBehaviour
     public List<PropRule> propRules = new List<PropRule>();
 
     [Tooltip("Automatically generate props on Start.")]
-    public bool generateOnStart = true;
+    public bool generateOnStart = false;
 
     [FoldoutGroup("Generated Objects"), ReadOnly]
     public List<GameObject> generatedProps = new List<GameObject>();
@@ -257,7 +257,13 @@ public class SplinePropGenerator : MonoBehaviour
 
     private void Start()
     {
-        if (generateOnStart) Generate();
+        // When driven by a TrackViewComponent, generation is triggered by
+        // BroadcastMessage("Generate") at the right time (after FrustumFit).
+        // Skip automatic Start() generation in that case.
+        if (generateOnStart && GetComponentInParent<GearEngine.CarSimulation.Tracks.TrackViewComponent>() == null)
+        {
+            Generate();
+        }
     }
 
     // ──────────────────────────────────────────────

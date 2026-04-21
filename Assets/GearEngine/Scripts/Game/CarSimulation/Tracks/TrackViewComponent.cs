@@ -54,14 +54,6 @@ namespace GearEngine.CarSimulation.Tracks
 
         private void OnViewModelPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(TrackViewModel.State))
-            {
-                var trackVm = (TrackViewModel)sender;
-                if (trackVm.State == SimulationLifecycleState.Running)
-                {
-                    SendMessage("Generate", SendMessageOptions.DontRequireReceiver);
-                }
-            }
         }
 
         protected override void OnUnbind()

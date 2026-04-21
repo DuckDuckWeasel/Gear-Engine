@@ -2566,7 +2566,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2590981144284363586, guid: a6f20e9e09e7715449856810b9a31e98, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4493629028657937679, guid: a6f20e9e09e7715449856810b9a31e98, type: 3}
       propertyPath: m_Splines.Array.data[0].m_Closed
