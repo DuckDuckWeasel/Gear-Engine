@@ -6,7 +6,7 @@ This document is **documentation only**: illustrative snippets, not shipped code
 
 **Bind API:** List rows should be **`Scaffold.MVVM.Model`** instances (same base as `BoardModel` and other game models) so UI binding targets the same **`Model` / `ViewModel`** types the Bind API expects — see [`Docs/Infra/MVVM.md`](../Infra/MVVM.md).
 
-**Normative reference (LiveOps API):** [`Docs/LiveOps/NewApiAndServices.md`](../LiveOps/NewApiAndServices.md) — shared DTOs, `[UsesGameApi]`, `IGameApiHandler`, `GameModule<T>` snapshots.
+**Normative reference (LiveOps API):** [`Docs/LiveOps/NewApiAndServices.md`](../LiveOps/NewApiAndServices.md) — shared DTOs, `[UsesGameApi]`, `IGameApiHandler`, `GameModule<T>` snapshots, and **`GameClientModuleBase<TGameData>`** for client bootstrap + commands (see [`CurrencyClientModule.cs`](../../Assets/GearEngine/Scripts/Game/Campaign/Bootstrap/Currency/CurrencyClientModule.cs), [`InventoryClientModule.cs`](../../Assets/GearEngine/Scripts/Game/Campaign/Bootstrap/LiveOps/InventoryClientModule.cs)).
 
 **Normative reference (config authoring):** [`Docs/LiveOps/AuthoringPipeline.md`](../LiveOps/AuthoringPipeline.md), [`Docs/LiveOps/RemoteConfig.md`](../LiveOps/RemoteConfig.md), [`Assets/Packages/com.scaffold.liveops.authoring/README.md`](../../Assets/Packages/com.scaffold.liveops.authoring/README.md).
 
@@ -24,7 +24,9 @@ This document is **documentation only**: illustrative snippets, not shipped code
 
 **Typed reference (client):** per Rule 3 in the standard, **`MarkReadAsync`** takes the live row type the UI already has (**`NewsItemModel`**), not a bare string. The **wire DTO** carries **`newsId`** only inside `CallAsync`.
 
-**Read state on the row:** expose **`NewsItemModel.IsRead`** so lists and badges bind per row without calling back into the service for “is this id read?”. The **service** still performs the command and, on success, tells the **aggregate model** to apply the local flip (Tier 2: callers outside the feature assembly do not assign **`IsRead`** — **`internal`** setter).
+**Read state on the row:** expose **`NewsItemModel.IsRead`** so lists and badges bind per row without calling back into the module for “is this id read?”. The **client module** (Tier 2 command surface) performs **`CallAsync`**, then updates the model on success (Tier 2: callers outside the feature assembly do not assign **`IsRead`** — **`internal`** setter).
+
+**Client shape:** use **`NewsClientModule : GameClientModuleBase<NewsGameData>, INewsService`** — one type owns LiveOps bootstrap (**`OnInitializedAsync`**) and remote intents, matching existing campaign modules. Avoid a separate “apply game data” API on a thin service that only forwards into the model; that duplicates the bootstrap seam the base class already defines.
 
 ---
 
@@ -33,7 +35,7 @@ This document is **documentation only**: illustrative snippets, not shipped code
 [`RelayCommand`](https://learn.microsoft.com/en-us/dotnet/communitytoolkit/mvvm/generators) is optional **CommunityToolkit.Mvvm** sugar. It is **not** part of the State and Services standard. The standard cares that:
 
 - **State** flows through observable models (bind `IsRead`, `Active`, aggregates).
-- **Intents** go through the service (`MarkReadAsync`).
+- **Intents** go through the client module (`MarkReadAsync` on **`INewsService`** / **`NewsClientModule`**).
 
 A Unity **View** can use a plain click handler that `await`s the service, or a small ViewModel method without `[RelayCommand]`. Below we use a **normal async method** on the ViewModel so the sample stays free of generator attributes while still separating Tier 0 focus state from Tier 2 commands.
 
@@ -143,7 +145,7 @@ namespace GameModuleDTO.ModuleRequests
 ## 4. Client models (Tier 2 — observable, read-only to external callers)
 
 - **`NewsItemModel`** (one row) and **`NewsModel`** (aggregate) both derive from **`Scaffold.MVVM.Model`** so list rows participate in the same **Bind API** surface as the rest of the game (for example `BoardModel` in `GearEngine`).
-- **`IsRead`** lives on the row model with an **`internal`** setter that uses **`SetProperty`** from **`CommunityToolkit.Mvvm.ComponentModel.ObservableObject`** (the same notification path `[ObservableProperty]` uses). That keeps Tier 2 **externally read-only** from other assemblies (Rule 4) while still allowing **`NewsModel` + `NewsService`** in the feature assembly to apply hydration and successful commands.
+- **`IsRead`** lives on the row model with an **`internal`** setter that uses **`SetProperty`** from **`CommunityToolkit.Mvvm.ComponentModel.ObservableObject`** (the same notification path `[ObservableProperty]` uses). That keeps Tier 2 **externally read-only** from other assemblies (Rule 4) while still allowing **`NewsModel` + `NewsClientModule`** in the feature assembly to apply bootstrap hydration and successful commands.
 - **No `IsRead` lookup on the service** — bind **`NewsItemModel.IsRead`** per row and **`NewsModel.HasUnread`** for badges.
 
 ```csharp
@@ -192,18 +194,21 @@ namespace YourGame.News
 
         public NewsModel() => Active = new ReadOnlyObservableCollection<NewsItemModel>(active);
 
-        /// <summary>Replaces rows and read flags from the bootstrap snapshot.</summary>
-        internal void ReplaceFromGameData(NewsGameData data, HashSet<string>? readLookup = null)
+        /// <summary>
+        /// Single entry point for “server snapshot → observable rows”. Called only from
+        /// <see cref="NewsClientModule.OnInitializedAsync"/> when LiveOps delivers <see cref="NewsGameData"/>.
+        /// </summary>
+        internal void HydrateFromBootstrapSnapshot(NewsGameData snapshot)
         {
-            readLookup ??= new HashSet<string>(StringComparer.Ordinal);
-            if (data?.ReadNewsIds != null)
-                foreach (var id in data.ReadNewsIds)
+            var readLookup = new HashSet<string>(StringComparer.Ordinal);
+            if (snapshot?.ReadNewsIds != null)
+                foreach (var id in snapshot.ReadNewsIds)
                     if (!string.IsNullOrEmpty(id)) readLookup.Add(id);
 
             active.Clear();
-            if (data?.ActiveNews == null) return;
+            if (snapshot?.ActiveNews == null) return;
 
-            foreach (var dto in data.ActiveNews)
+            foreach (var dto in snapshot.ActiveNews)
             {
                 if (dto == null || string.IsNullOrEmpty(dto.Id)) continue;
                 var item = new NewsItemModel(dto);
@@ -212,17 +217,15 @@ namespace YourGame.News
             }
         }
 
-        /// <summary>Apply authoritative read after a successful <c>MarkNewsReadRequest</c>.</summary>
-        internal void ApplyMarkRead(NewsItemModel item)
+        /// <summary>Local projection after a successful <c>MarkNewsReadRequest</c>; only same-assembly module calls this.</summary>
+        internal void MarkAsRead(NewsItemModel item)
         {
             if (item == null) return;
             for (int i = 0; i < active.Count; i++)
             {
-                if (ReferenceEquals(active[i], item))
-                {
-                    item.IsRead = true;
-                    return;
-                }
+                if (!ReferenceEquals(active[i], item)) continue;
+                item.IsRead = true;
+                return;
             }
         }
 
@@ -257,11 +260,14 @@ namespace YourGame.News
 
 ---
 
-## 5. Client service (Tier 2 — rules, `CallAsync`, no repository)
+## 5. Client module — `GameClientModuleBase<NewsGameData>` (bootstrap + commands)
 
-- **`ApplyGameData`** delegates to **`NewsModel.ReplaceFromGameData`** (snapshot in only).
-- **`MarkReadAsync(NewsItemModel item)`** validates, calls **`CallAsync(new MarkNewsReadRequest(item.Id))`**, then **`model.ApplyMarkRead(item)`** on success (pessimistic local update, same family as currency spend in the standard).
-- Optional **`IEventBus`**: only if a listener cannot use **`HasUnread`** / per-row **`IsRead`** binding (Rule 6).
+Per [`Docs/LiveOps/NewApiAndServices.md`](../LiveOps/NewApiAndServices.md) §2.5, the **client** owns:
+
+1. **`OnInitializedAsync(NewsGameData)`** — the standard’s **only** “blob in” path: map the server snapshot into **`NewsModel`** once after LiveOps init (same pattern as **`InventoryClientModule.OnInitializedAsync`** building **`ownedRefs`** from **`InventoryGameData`**).
+2. **`CallAsync`** for intents — same module type implements **`INewsService`** so UI and other systems resolve one registration.
+
+There is **no** separate `ApplyGameData` / `ReplaceFromGameData` pipeline: those names implied an extra public hop and duplicated responsibility. **`NewsModel.HydrateFromBootstrapSnapshot`** stays **`internal`** and is invoked **only** from **`NewsClientModule.OnInitializedAsync`**.
 
 ```csharp
 using System;
@@ -270,49 +276,54 @@ using System.Threading.Tasks;
 using GameModuleDTO.ModuleRequests;
 using GameModuleDTO.Modules.News;
 using Scaffold.LiveOps;
+using VContainer;
 
 namespace YourGame.News
 {
     public interface INewsService
     {
         NewsModel News { get; }
-        void ApplyGameData(NewsGameData data);
         Task<bool> MarkReadAsync(NewsItemModel item, DateTime utcNow, CancellationToken ct = default);
     }
 
-    public sealed class NewsService : INewsService
+    public sealed class NewsClientModule : GameClientModuleBase<NewsGameData>, INewsService
     {
-        private readonly NewsModel model;
-        private readonly ILiveOpsService liveOps;
+        private readonly ILiveOpsService liveOpsService;
+        private readonly NewsModel newsModel = new NewsModel();
 
-        public NewsService(NewsModel model, ILiveOpsService liveOps)
+        public NewsClientModule(IObjectResolver resolver, ILiveOpsService liveOps) : base(resolver)
         {
-            this.model = model;
-            this.liveOps = liveOps;
+            liveOpsService = liveOps ?? throw new ArgumentNullException(nameof(liveOps));
         }
 
-        public NewsModel News => model;
+        public NewsModel News => newsModel;
 
-        public void ApplyGameData(NewsGameData data) => model.ReplaceFromGameData(data);
+        protected override Task OnInitializedAsync(NewsGameData moduleData)
+        {
+            newsModel.HydrateFromBootstrapSnapshot(moduleData);
+            return base.OnInitializedAsync(moduleData);
+        }
 
         public async Task<bool> MarkReadAsync(NewsItemModel item, DateTime utcNow, CancellationToken ct = default)
         {
             if (item == null) throw new ArgumentNullException(nameof(item));
             if (utcNow < item.StartUtc || utcNow > item.EndUtc) return false;
 
-            var resp = await liveOps.CallAsync(new MarkNewsReadRequest(item.Id), ct);
+            var resp = await liveOpsService.CallAsync(new MarkNewsReadRequest(item.Id), ct);
             if (!resp.Succeeded) return false;
 
-            model.ApplyMarkRead(item);
+            newsModel.MarkAsRead(item);
             return true;
         }
     }
 }
 ```
 
+Register **`NewsClientModule`** as **`INewsService`** (and **`IGameClientModule`** if your bootstrap discovers modules that way). Optional **`IEventBus`**: only if a listener cannot use **`HasUnread`** / **`IsRead`** binding (Rule 6).
+
 ---
 
-## 6. Usage (ViewModel: Tier 0 focus + bind; service for intents)
+## 6. Usage (ViewModel: Tier 0 focus + bind; `INewsService` for intents)
 
 - **Tier 0:** `Focused` (which row is expanded) — public setter on the ViewModel.
 - **Tier 2 state:** bind list cells to **`News.Active`** and **`NewsItemModel.IsRead`**; bind badge to **`News.HasUnread(DateTime.UtcNow)`** (refresh `PropertyChanged` for aggregates when a read completes, as below).
@@ -382,7 +393,7 @@ namespace YourGame.News.Ui
 }
 ```
 
-**View (Unity):** `button.onClick.AddListener(() => _ = viewModel.AcknowledgeAsync(row.Item, destroyCancellationToken));` — or call **`INewsService.MarkReadAsync`** directly from the View if you have no Tier 0 state to hold.
+**View (Unity):** `button.onClick.AddListener(() => _ = viewModel.AcknowledgeAsync(row.Item, destroyCancellationToken));` — or call **`INewsService.MarkReadAsync`** (implemented by **`NewsClientModule`**) directly from the View if you have no Tier 0 state to hold.
 
 ---
 
@@ -524,21 +535,21 @@ namespace GameModule.Modules.News
 ```mermaid
 sequenceDiagram
     participant RC as Remote Config (News.rc)
-    participant Mod as NewsModule
-    participant Svc as NewsService
+    participant SMod as NewsModule (server)
+    participant Client as NewsClientModule
     participant L as ILiveOpsService
     participant H as MarkNewsReadHandler
     participant UI as View / ViewModel
 
-    RC->>Mod: Get(NewsCatalogConfig)
-    Mod-->>UI: NewsGameData (bootstrap)
-    Svc->>Svc: ReplaceFromGameData
+    RC->>SMod: Get(NewsCatalogConfig)
+    SMod-->>Client: NewsGameData (GameDataRequest)
+    Client->>Client: OnInitializedAsync → HydrateFromBootstrapSnapshot
     UI->>UI: bind NewsItemModel.IsRead, HasUnread
-    UI->>Svc: MarkReadAsync(item)
-    Svc->>L: CallAsync(MarkNewsReadRequest)
+    UI->>Client: MarkReadAsync(item)
+    Client->>L: CallAsync(MarkNewsReadRequest)
     L->>H: HandleAsync
     H-->>L: MarkNewsReadResponse
-    Svc->>Svc: ApplyMarkRead(item)
+    Client->>Client: MarkAsRead(item)
 ```
 
 ---
