@@ -221,7 +221,7 @@ namespace LiveOps.Tests
                 {
                     MotorCogGearId = "gear_core",
                     BaseSlots = 8,
-                    StartingGearIds = new List<string> { "gear_speed", string.Empty, null, "gear_score" },
+                    StartingGearIds = new List<string> { "gear_speed", string.Empty, (string)null, "gear_score" },
                 });
 
             InventoryPersistence persistence = new InventoryPersistence
