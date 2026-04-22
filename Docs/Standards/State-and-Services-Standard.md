@@ -1,5 +1,7 @@
 # State and Services Standard (AI-First)
 
+**Canonical location:** [`Docs/Standards/State-and-Services-Standard.md`](State-and-Services-Standard.md). An older duplicate at `Docs/State-and-Services-Standard.md` was removed; update any bookmarks or links to this path.
+
 ## Why this standard exists
 
 This repository keeps growing types that are partly model, partly service, and partly transport. The result is inconsistent shapes (`Save(thing)` vs `AddAsync(id, amount)`), parallel state representations (`BoardModel` + `IGridManager`), per-instance C# events that duplicate observable models, and whole-state-replace requests (`SetInventoryRequest(everything)`) that hide what actually changed from the server.
@@ -1089,6 +1091,7 @@ Each step ships independently with regression tests per `AGENTS.md` rule 10.
 
 ## Changelog
 
+- 2026-04-22 — Removed legacy duplicate `Docs/State-and-Services-Standard.md`; this file under `Docs/Standards/` is the only copy. Added a short note under the title for discoverability.
 - 2026-04-21 (evening) — Replaced all `UniTask` / `UniTask<T>` references with `System.Threading.Tasks.Task` / `Task<T>` across vocabulary, sample interactions, and good/bad examples. Async surfaces and `CancellationToken` semantics are unchanged.
 - 2026-04-21 (afternoon) — Refinement pass. (a) Rule 3 now requires service signatures to take typed references; ids appear only inside the service body when constructing the wire DTO. (b) Rule 4 example expanded with an explicit "why the bind API still works" note covering `ReadOnlyObservableCollection<T>` and `Scaffold.MVVM`'s bind interfaces. (c) Rule 5 split visibly into "DTOs are deltas" + "DTOs carry primitive ids, not live refs". (d) Rule 6 reframed around the bind-vs-EventBus-vs-instance-event acid test; `BoardLayoutChanged` / `ItemsChanged` reclassified as "redundant with binding" rather than "use EventBus". (e) Added a "Debounced single-key deltas" subsection introducing the per-DTO `[LiveOpsRequest(DebounceMs, CoalesceBy)]` attribute as a narrow, blob-free exception for slider/toggle-style updates. (f) Updated TL;DR, sample interactions (1 and 3), smell catalog, change checklist, and AI Agent Context to match.
 - 2026-04-21 — Major revision. Removed the Repository role; collapsed roles to Model + Service. Replaced the four persistence patterns with a single transport seam (`ILiveOpsService.CallAsync` + `BeginBatch`). Made delta requests the default and required a waiver for blob requests. Made optimistic-update + rollback the documented pattern for high-frequency interactions. Reduced the rule set from eight to six. Updated sample interactions, smell catalog, and migration notes to match.
