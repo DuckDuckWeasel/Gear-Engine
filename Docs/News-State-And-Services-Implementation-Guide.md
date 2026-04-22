@@ -1,6 +1,6 @@
 # News system — end-to-end sample (State & Services)
 
-This guide is a **walkthrough with snippets only** (no production implementation). It follows the conventions in [`Docs/Standards/State-and-Services-Standard.md`](Standards/State-and-Services-Standard.md) and the LiveOps wiring in [`Docs/LiveOps/NewApiAndServices.md`](LiveOps/NewApiAndServices.md).
+This guide is a **walkthrough with snippets only** (no production implementation). It follows the conventions in **[`Docs/Standards/State-and-Services-Standard.md`](Standards/State-and-Services-Standard.md)** (the authoritative standard under `Docs/Standards/`; not the separate legacy copy at `Docs/State-and-Services-Standard.md`) and the LiveOps wiring in [`Docs/LiveOps/NewApiAndServices.md`](LiveOps/NewApiAndServices.md).
 
 ## What we are modeling
 
@@ -397,5 +397,5 @@ Pick **per-id** vs **revision** based on product UX, not on convenience of the f
 
 ## Related
 
-- [`Docs/Standards/State-and-Services-Standard.md`](Standards/State-and-Services-Standard.md) — Model / Service roles, tiers, delta requests, `CallAsync` / `BeginBatch`.
+- [`Docs/Standards/State-and-Services-Standard.md`](Standards/State-and-Services-Standard.md) — Model / Service roles, tiers, delta requests, `CallAsync` / `BeginBatch` (canonical).
 - [`Docs/LiveOps/NewApiAndServices.md`](LiveOps/NewApiAndServices.md) — `[UsesGameApi]`, DTO layout, handler registration, `GameModule` snapshots.
