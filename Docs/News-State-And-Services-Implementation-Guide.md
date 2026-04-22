@@ -28,6 +28,8 @@ This document is **documentation only**: illustrative snippets, not shipped code
 
 **Client shape:** use **`NewsClientModule : GameClientModuleBase<NewsGameData>, INewsService`** — one type owns LiveOps bootstrap (**`OnInitializedAsync`**) and remote intents, matching existing campaign modules. Avoid a separate “apply game data” API on a thin service that only forwards into the model; that duplicates the bootstrap seam the base class already defines.
 
+**Why not “just assign an internal field” on a pre-created model?** You could **`active.Clear()`** then repopulate in **`OnInitializedAsync`**, but that is still “re-bootstrap” logic living on the module while the collection and row types live on **`NewsModel`**. Putting **`NewsGameData → rows`** in **`internal NewsModel(NewsGameData)`** keeps **one canonical object graph**: the aggregate model **is** the snapshot materialization; the module only assigns **`newsModel = new NewsModel(moduleData)`** once.
+
 ---
 
 ## UI commands vs binding (why not `RelayCommand`)
@@ -145,7 +147,8 @@ namespace GameModuleDTO.ModuleRequests
 ## 4. Client models (Tier 2 — observable, read-only to external callers)
 
 - **`NewsItemModel`** (one row) and **`NewsModel`** (aggregate) both derive from **`Scaffold.MVVM.Model`** so list rows participate in the same **Bind API** surface as the rest of the game (for example `BoardModel` in `GearEngine`).
-- **`IsRead`** lives on the row model with an **`internal`** setter that uses **`SetProperty`** from **`CommunityToolkit.Mvvm.ComponentModel.ObservableObject`** (the same notification path `[ObservableProperty]` uses). That keeps Tier 2 **externally read-only** from other assemblies (Rule 4) while still allowing **`NewsModel` + `NewsClientModule`** in the feature assembly to apply bootstrap hydration and successful commands.
+- **`IsRead`** lives on the row model with an **`internal`** setter that uses **`SetProperty`** from **`CommunityToolkit.Mvvm.ComponentModel.ObservableObject`** (the same notification path `[ObservableProperty]` uses). That keeps Tier 2 **externally read-only** from other assemblies (Rule 4) while still allowing **`NewsModel` + `NewsClientModule`** in the feature assembly to apply successful commands.
+- **Bootstrap is construction, not a method:** **`NewsGameData`** is a wire snapshot; **`NewsModel`** is the client bind surface. Converting snapshot → rows is the same job as **`new NewsItemModel(NewsItemDto)`** — do it in **`internal NewsModel(NewsGameData snapshot)`** so there is no extra “hydrate” verb on the model. The module assigns **`newsModel = new NewsModel(moduleData)`** once inside **`OnInitializedAsync`** (same spirit as building a structure from **`InventoryGameData`** in that module’s init).
 - **No `IsRead` lookup on the service** — bind **`NewsItemModel.IsRead`** per row and **`NewsModel.HasUnread`** for badges.
 
 ```csharp
@@ -192,21 +195,20 @@ namespace YourGame.News
 
         internal ObservableCollection<NewsItemModel> WritableActive => active;
 
-        public NewsModel() => Active = new ReadOnlyObservableCollection<NewsItemModel>(active);
-
         /// <summary>
-        /// Single entry point for “server snapshot → observable rows”. Called only from
-        /// <see cref="NewsClientModule.OnInitializedAsync"/> when LiveOps delivers <see cref="NewsGameData"/>.
+        /// Snapshot → observable rows. <c>internal</c> so only <see cref="NewsClientModule"/> in this assembly can construct from LiveOps data.
         /// </summary>
-        internal void HydrateFromBootstrapSnapshot(NewsGameData snapshot)
+        internal NewsModel(NewsGameData? snapshot)
         {
+            Active = new ReadOnlyObservableCollection<NewsItemModel>(active);
+            if (snapshot == null) return;
+
             var readLookup = new HashSet<string>(StringComparer.Ordinal);
-            if (snapshot?.ReadNewsIds != null)
+            if (snapshot.ReadNewsIds != null)
                 foreach (var id in snapshot.ReadNewsIds)
                     if (!string.IsNullOrEmpty(id)) readLookup.Add(id);
 
-            active.Clear();
-            if (snapshot?.ActiveNews == null) return;
+            if (snapshot.ActiveNews == null) return;
 
             foreach (var dto in snapshot.ActiveNews)
             {
@@ -264,10 +266,10 @@ namespace YourGame.News
 
 Per [`Docs/LiveOps/NewApiAndServices.md`](../LiveOps/NewApiAndServices.md) §2.5, the **client** owns:
 
-1. **`OnInitializedAsync(NewsGameData)`** — the standard’s **only** “blob in” path: map the server snapshot into **`NewsModel`** once after LiveOps init (same pattern as **`InventoryClientModule.OnInitializedAsync`** building **`ownedRefs`** from **`InventoryGameData`**).
+1. **`OnInitializedAsync(NewsGameData)`** — the standard’s **only** “blob in” path: **`newsModel = new NewsModel(moduleData)`** once after LiveOps init (conversion lives in the **`NewsModel`** constructor, not a second-phase API).
 2. **`CallAsync`** for intents — same module type implements **`INewsService`** so UI and other systems resolve one registration.
 
-There is **no** separate `ApplyGameData` / `ReplaceFromGameData` pipeline: those names implied an extra public hop and duplicated responsibility. **`NewsModel.HydrateFromBootstrapSnapshot`** stays **`internal`** and is invoked **only** from **`NewsClientModule.OnInitializedAsync`**.
+There is **no** separate `ApplyGameData` / `ReplaceFromGameData` / `Hydrate…` pipeline: the DTO→model boundary is **`new NewsModel(NewsGameData)`**, same idea as **`new NewsItemModel(NewsItemDto)`**.
 
 ```csharp
 using System;
@@ -289,7 +291,7 @@ namespace YourGame.News
     public sealed class NewsClientModule : GameClientModuleBase<NewsGameData>, INewsService
     {
         private readonly ILiveOpsService liveOpsService;
-        private readonly NewsModel newsModel = new NewsModel();
+        private NewsModel newsModel = null!;
 
         public NewsClientModule(IObjectResolver resolver, ILiveOpsService liveOps) : base(resolver)
         {
@@ -300,7 +302,7 @@ namespace YourGame.News
 
         protected override Task OnInitializedAsync(NewsGameData moduleData)
         {
-            newsModel.HydrateFromBootstrapSnapshot(moduleData);
+            newsModel = new NewsModel(moduleData);
             return base.OnInitializedAsync(moduleData);
         }
 
@@ -543,7 +545,7 @@ sequenceDiagram
 
     RC->>SMod: Get(NewsCatalogConfig)
     SMod-->>Client: NewsGameData (GameDataRequest)
-    Client->>Client: OnInitializedAsync → HydrateFromBootstrapSnapshot
+    Client->>Client: OnInitializedAsync → new NewsModel(moduleData)
     UI->>UI: bind NewsItemModel.IsRead, HasUnread
     UI->>Client: MarkReadAsync(item)
     Client->>L: CallAsync(MarkNewsReadRequest)
