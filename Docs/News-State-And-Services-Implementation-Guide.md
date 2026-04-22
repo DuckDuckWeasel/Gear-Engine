@@ -1,23 +1,30 @@
-# News system — end-to-end sample (State & Services)
+# Implementing a News feature (snippet guide)
 
-This guide is a **walkthrough with snippets only** (no production implementation). It follows the conventions in **[`Docs/Standards/State-and-Services-Standard.md`](Standards/State-and-Services-Standard.md)** (the authoritative standard under `Docs/Standards/`; not the separate legacy copy at `Docs/State-and-Services-Standard.md`) and the LiveOps wiring in [`Docs/LiveOps/NewApiAndServices.md`](LiveOps/NewApiAndServices.md).
+This document is **documentation only**: illustrative snippets, not shipped code.
 
-## What we are modeling
+**Normative reference (state and services):** [`Docs/Standards/State-and-Services-Standard.md`](Standards/State-and-Services-Standard.md) — two roles (Model, Service), three tiers, `ILiveOpsService.CallAsync` / `BeginBatch`, delta-first wire requests, no repository layer, bind vs EventBus.
 
-- A **news item** is a short **message** with a **visible window** `[StartUtc, EndUtc]`.
-- The client needs to know:
-  - whether there is **unread** news (something active the player has not acknowledged), and
-  - what counts as **recent** active news (in-window items, optionally sorted by start or publish time).
-
-**Minimal data rule:** keep **player persistence** tiny: only what you cannot infer from the catalog + clock. Here we store **read state as a set of news ids** (small cardinality; if you have hundreds of items, prefer a single monotonic `LastAcknowledgedRevision` from the server instead — see the note at the end).
-
-**Tier choice:** Tier 2 **service-gated domain** — visibility depends on time window, reads are ordered intents, and you may want `IEventBus` signals (for example `NewsMarkedReadEvent`) that views cannot infer without scanning lists.
+**Normative reference (LiveOps API):** [`Docs/LiveOps/NewApiAndServices.md`](../LiveOps/NewApiAndServices.md) — shared DTOs, `[UsesGameApi]`, `IGameApiHandler`, `GameModule<T>` snapshots.
 
 ---
 
-## 1. Shared DTOs (catalog shape, snapshot, persistence wire)
+## Problem shape
 
-Keep transport shapes **primitive** and **stable**. The catalog body can live in Remote Config on the server; the snapshot only ships **active** rows the player should see right now.
+- **News item:** a **message** plus a visibility window **`[StartUtc, EndUtc]`**.
+- **Unread:** at least one in-window item the player has not acknowledged.
+- **Recent:** in-window items the UI can surface (for example sorted by `StartUtc` descending).
+
+**Minimal player data:** persist only what you cannot derive from catalog + server clock + snapshot. A small set of **read news ids** is enough at low cardinality; at scale, prefer a single **acknowledged revision** (see end).
+
+**Tier:** **Tier 2** (service-gated): time-window visibility and “mark read” are intents with rules; server may be authoritative on validity of ids.
+
+**Typed reference (client):** per the standard, the service command surface should take a **live client ref** (here a thin `NewsItem`), not a bare string id, when the caller already has the row from the model. The **wire DTO** still carries **`newsId`** only.
+
+---
+
+## 1. Wire DTOs (shared assembly)
+
+Shapes both client and server serialize. Keep fields primitive and stable.
 
 ```csharp
 using System;
@@ -26,7 +33,6 @@ using Newtonsoft.Json;
 
 namespace GameModuleDTO.Modules.News
 {
-    /// <summary>One row of news as seen by clients after server filtering.</summary>
     public sealed class NewsItemDto
     {
         [JsonProperty("id")] public string Id { get; set; } = string.Empty;
@@ -35,7 +41,7 @@ namespace GameModuleDTO.Modules.News
         [JsonProperty("endUtc")] public DateTime EndUtc { get; set; }
     }
 
-    /// <summary>Player-owned persistence; keep this as small as possible.</summary>
+    /// <summary>Cloud Save payload — keep small.</summary>
     public sealed class NewsPersistence
     {
         [JsonProperty("readNewsIds")] public List<string> ReadNewsIds { get; set; } = new();
@@ -43,16 +49,34 @@ namespace GameModuleDTO.Modules.News
 }
 ```
 
+Bootstrap snapshot module (optional but typical for inbox-style UI):
+
+```csharp
+using System.Collections.Generic;
+using GameModuleDTO.GameModule;
+using Newtonsoft.Json;
+
+namespace GameModuleDTO.Modules.News
+{
+    public sealed class NewsGameData : IGameModuleData
+    {
+        public string Key => nameof(NewsGameData);
+
+        [JsonProperty("activeNews")] public List<NewsItemDto> ActiveNews { get; set; } = new();
+        [JsonProperty("readNewsIds")] public List<string> ReadNewsIds { get; set; } = new();
+    }
+}
+```
+
 ---
 
-## 2. Requests and responses (delta-first GameApi)
+## 2. GameApi requests and responses
 
-Use **one intent per request**. Marking read is a single id. Avoid `SetAllNewsRequest(fullSnapshot)` unless you have an explicit waiver (see Rule 5 in the standard).
+One **intent** per request (`MarkNewsReadRequest`). Do not add `SetNewsReadStateRequest(entireList)` as a default write; that is a blob and needs a waiver under Rule 5 in the standard.
 
 ```csharp
 using GameModuleDTO.GameApi;
 using GameModuleDTO.ModuleRequests;
-using GameModuleDTO.Modules.News;
 using Newtonsoft.Json;
 
 namespace GameModuleDTO.Modules.News
@@ -77,203 +101,185 @@ namespace GameModuleDTO.ModuleRequests
 }
 ```
 
-**Bootstrap snapshot** (optional but typical): merge catalog + persistence into one module payload so the client hydrates once during LiveOps init.
-
-```csharp
-using System.Collections.Generic;
-using GameModuleDTO.GameModule;
-using Newtonsoft.Json;
-
-namespace GameModuleDTO.Modules.News
-{
-    public sealed class NewsGameData : IGameModuleData
-    {
-        public string Key => nameof(NewsGameData);
-
-        [JsonProperty("activeNews")] public List<NewsItemDto> ActiveNews { get; set; } = new();
-
-        [JsonProperty("readNewsIds")] public List<string> ReadNewsIds { get; set; } = new();
-    }
-}
-```
-
 ---
 
-## 3. Client model (observable, read-only to callers, no rules)
+## 3. Client model (Tier 2 — observable, read-only to external callers)
 
-The model holds **canonical client state** after hydration and successful commands. It does **not** decide if a row is “legal” to show; it only exposes what the service last applied.
-
-Pure **queries** like `HasUnread` are allowed (no side effects, depend only on model fields).
+No validation of “can mark read” here; only state and **pure queries** (`HasUnread`, `RecentActive`) that depend on this model’s fields and `utcNow`.
 
 ```csharp
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
+using GameModuleDTO.Modules.News;
 using Scaffold.Core.Model;
 
-namespace GearEngine.News
+namespace YourGame.News
 {
-    public partial class NewsModel : Model
+    /// <summary>Live row in the client snapshot (typed ref tier for the service).</summary>
+    public sealed class NewsItem
     {
-        private readonly ObservableCollection<NewsItemDto> activeNews = new();
-        private readonly HashSet<string> readNewsIds = new(StringComparer.Ordinal);
-
-        public ReadOnlyObservableCollection<NewsItemDto> ActiveNews { get; }
-
-        public NewsModel()
+        public NewsItem(NewsItemDto dto)
         {
-            ActiveNews = new ReadOnlyObservableCollection<NewsItemDto>(activeNews);
+            Id = dto.Id;
+            Message = dto.Message;
+            StartUtc = dto.StartUtc;
+            EndUtc = dto.EndUtc;
         }
 
-        /// <summary>Writable surface stays internal to the feature assembly.</summary>
-        internal ObservableCollection<NewsItemDto> WritableActiveNews => activeNews;
+        public string Id { get; }
+        public string Message { get; }
+        public DateTime StartUtc { get; }
+        public DateTime EndUtc { get; }
+    }
 
-        internal HashSet<string> WritableReadNewsIds => readNewsIds;
+    public partial class NewsModel : Model
+    {
+        private readonly ObservableCollection<NewsItem> active = new();
+        private readonly HashSet<string> readIds = new(StringComparer.Ordinal);
 
-        public bool IsRead(string newsId) => readNewsIds.Contains(newsId);
+        public ReadOnlyObservableCollection<NewsItem> Active { get; }
+
+        internal ObservableCollection<NewsItem> WritableActive => active;
+        internal HashSet<string> WritableReadIds => readIds;
+
+        public NewsModel() => Active = new ReadOnlyObservableCollection<NewsItem>(active);
+
+        public bool IsRead(NewsItem item) => item != null && readIds.Contains(item.Id);
 
         public bool HasUnread(DateTime utcNow)
         {
-            for (int i = 0; i < activeNews.Count; i++)
+            for (int i = 0; i < active.Count; i++)
             {
-                NewsItemDto n = activeNews[i];
-                if (n == null || string.IsNullOrEmpty(n.Id)) continue;
-                if (utcNow < n.StartUtc || utcNow > n.EndUtc) continue;
-                if (!readNewsIds.Contains(n.Id)) return true;
+                NewsItem n = active[i];
+                if (IsActive(n, utcNow) && !readIds.Contains(n.Id)) return true;
             }
-
             return false;
         }
 
-        /// <summary>In-window items, newest first (example policy).</summary>
-        public IReadOnlyList<NewsItemDto> RecentActive(DateTime utcNow, int maxCount = 8)
+        public IReadOnlyList<NewsItem> RecentActive(DateTime utcNow, int max = 8)
         {
-            List<NewsItemDto> list = new();
-            for (int i = 0; i < activeNews.Count; i++)
+            var list = new List<NewsItem>();
+            for (int i = 0; i < active.Count; i++)
             {
-                NewsItemDto n = activeNews[i];
-                if (n == null || string.IsNullOrEmpty(n.Id)) continue;
-                if (utcNow < n.StartUtc || utcNow > n.EndUtc) continue;
-                list.Add(n);
+                NewsItem n = active[i];
+                if (IsActive(n, utcNow)) list.Add(n);
             }
-
             list.Sort((a, b) => b.StartUtc.CompareTo(a.StartUtc));
-            if (list.Count > maxCount) list.RemoveRange(maxCount, list.Count - maxCount);
+            if (list.Count > max) list.RemoveRange(max, list.Count - max);
             return list;
         }
+
+        private static bool IsActive(NewsItem n, DateTime utcNow)
+            => n != null && utcNow >= n.StartUtc && utcNow <= n.EndUtc;
     }
 }
 ```
 
 ---
 
-## 4. Client service (intent, rules, `ILiveOpsService`)
+## 4. Client service (Tier 2 — rules, `CallAsync`, no repository)
 
-- **Hydrate** from `NewsGameData` on bootstrap (only “blob in” path).
-- **`MarkReadAsync`** sends `MarkNewsReadRequest` and mutates the model only on success (pessimistic is fine for a tap).
-- Optionally raise **`NewsMarkedReadEvent`** on `IEventBus` if another system (badge, analytics) cannot rely on binding alone.
+- Hydrate from `NewsGameData` once (the standard’s allowed **snapshot in** path).
+- **`MarkReadAsync(NewsItem item)`** — service validates (non-null, in-window if you enforce client-side), then builds **`MarkNewsReadRequest(item.Id)`** only at the wire boundary.
+- Persisted server rule path: **pessimistic** update after success is appropriate (same idea as currency spend in the standard).
+- Optional **`IEventBus`**: raise an event only if another system cannot rely on binding to `NewsModel` (primitive payload, no live refs).
 
 ```csharp
 using System;
 using System.Threading;
 using System.Threading.Tasks;
 using GameModuleDTO.ModuleRequests;
-using GearEngine.Events;
+using GameModuleDTO.Modules.News;
 using Scaffold.LiveOps;
+// using YourApp.IEventBus;
 
-namespace GearEngine.News
+namespace YourGame.News
 {
     public interface INewsService
     {
         NewsModel News { get; }
-
-        void ApplySnapshot(/* NewsGameData */ object snapshot, DateTime utcNow);
-
-        Task<bool> MarkReadAsync(string newsId, CancellationToken ct = default);
+        void ApplyGameData(NewsGameData data);
+        Task<bool> MarkReadAsync(NewsItem item, DateTime utcNow, CancellationToken ct = default);
     }
 
     public sealed class NewsService : INewsService
     {
         private readonly NewsModel model;
         private readonly ILiveOpsService liveOps;
-        private readonly IEventBus eventBus;
 
-        public NewsService(NewsModel model, ILiveOpsService liveOps, IEventBus eventBus)
+        public NewsService(NewsModel model, ILiveOpsService liveOps)
         {
             this.model = model;
             this.liveOps = liveOps;
-            this.eventBus = eventBus;
         }
 
         public NewsModel News => model;
 
-        public void ApplySnapshot(object snapshot, DateTime utcNow)
+        public void ApplyGameData(NewsGameData data)
         {
-            // Deserialize NewsGameData from snapshot in real code.
-            // model.WritableActiveNews.Clear(); add rows…
-            // model.WritableReadNewsIds.Clear(); union read ids…
+            model.WritableActive.Clear();
+            if (data?.ActiveNews != null)
+            {
+                foreach (var dto in data.ActiveNews)
+                    if (dto != null && !string.IsNullOrEmpty(dto.Id))
+                        model.WritableActive.Add(new NewsItem(dto));
+            }
+            model.WritableReadIds.Clear();
+            if (data?.ReadNewsIds != null)
+                foreach (var id in data.ReadNewsIds)
+                    if (!string.IsNullOrEmpty(id)) model.WritableReadIds.Add(id);
         }
 
-        public async Task<bool> MarkReadAsync(string newsId, CancellationToken ct = default)
+        public async Task<bool> MarkReadAsync(NewsItem item, DateTime utcNow, CancellationToken ct = default)
         {
-            if (string.IsNullOrEmpty(newsId)) throw new ArgumentException(nameof(newsId));
+            if (item == null) throw new ArgumentNullException(nameof(item));
+            if (utcNow < item.StartUtc || utcNow > item.EndUtc) return false;
 
-            MarkNewsReadResponse resp = await liveOps.CallAsync(new MarkNewsReadRequest(newsId), ct);
+            var resp = await liveOps.CallAsync(new MarkNewsReadRequest(item.Id), ct);
             if (!resp.Succeeded) return false;
 
-            model.WritableReadNewsIds.Add(newsId);
-            eventBus.Raise(new NewsMarkedReadEvent(newsId));
+            model.WritableReadIds.Add(item.Id);
+            // eventBus.Raise(new NewsMarkedReadEvent(item.Id));
             return true;
         }
-    }
-
-    public readonly struct NewsMarkedReadEvent
-    {
-        public NewsMarkedReadEvent(string newsId) => NewsId = newsId;
-        public string NewsId { get; }
     }
 }
 ```
 
 ---
 
-## 5. Usage (ViewModel binds to model; commands call service)
+## 5. Usage (ViewModel: Tier 0 selection + Tier 2 commands)
 
-Tier 0 selection (which row is expanded) stays on the ViewModel. **Read state** comes from the service + model.
+Bind UI to **`NewsModel`** for lists and read state. Keep **expanded row** (or carousel index) on the ViewModel as Tier 0.
 
 ```csharp
 using System;
-using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Scaffold.Core.ViewModel;
 
-namespace GearEngine.News.Ui
+namespace YourGame.News.Ui
 {
-    public partial class NewsBannerViewModel : ViewModel
+    public partial class NewsInboxViewModel : ViewModel
     {
-        private readonly INewsService newsService;
+        private readonly INewsService news;
 
-        public NewsBannerViewModel(INewsService newsService) => this.newsService = newsService;
+        public NewsInboxViewModel(INewsService news) => this.news = news;
 
-        /// <summary>Tier 0 — local only.</summary>
-        [ObservableProperty] private string? expandedNewsId;
+        public NewsModel News => news.News;
 
-        public bool HasUnread => newsService.News.HasUnread(DateTime.UtcNow);
+        [ObservableProperty] private NewsItem? focused;
 
-        public bool TryGetRecent(out GameModuleDTO.Modules.News.NewsItemDto? first)
-        {
-            var list = newsService.News.RecentActive(DateTime.UtcNow, 1);
-            first = list.Count > 0 ? list[0] : null;
-            return first != null;
-        }
+        public bool HasUnread => news.News.HasUnread(DateTime.UtcNow);
 
         [RelayCommand]
-        private async Task MarkReadAsync(string newsId, CancellationToken ct)
+        private async Task AcknowledgeAsync(NewsItem? item)
         {
-            await newsService.MarkReadAsync(newsId, ct);
+            if (item == null) return;
+            await news.MarkReadAsync(item, DateTime.UtcNow);
             OnPropertyChanged(nameof(HasUnread));
         }
     }
@@ -282,9 +288,9 @@ namespace GearEngine.News.Ui
 
 ---
 
-## 6. Backend — `GameModule` snapshot (optional)
+## 6. Backend — `GameModule` snapshot
 
-Build **`NewsGameData`** from Remote Config (catalog) + `NewsPersistence` (read ids). Only include rows whose window overlaps “now” on the server.
+Build **`NewsGameData`** from Remote Config (catalog) + **`NewsPersistence`**. Include only rows whose window overlaps server UTC “now”. Register the module in `ModuleConfig` when implemented (see NewApiAndServices).
 
 ```csharp
 using System;
@@ -308,12 +314,11 @@ namespace GameModule.Modules.News
             IGameState gameState,
             IRemoteConfig remoteConfig)
         {
-            NewsPersistence persistence = await player.Get(context, PersistenceKey, new NewsPersistence());
-            DateTime now = DateTime.UtcNow;
+            var persistence = await player.Get(context, PersistenceKey, new NewsPersistence());
             var active = new List<NewsItemDto>();
             // var catalog = await remoteConfig.Get(context, nameof(NewsCatalogConfig), new NewsCatalogConfig());
-            // foreach catalog row: if now in [StartUtc, EndUtc] add to active
-
+            // filter catalog rows where now ∈ [StartUtc, EndUtc]
+            await Task.CompletedTask;
             return new NewsGameData
             {
                 ActiveNews = active,
@@ -324,13 +329,11 @@ namespace GameModule.Modules.News
 }
 ```
 
-Register the module in `ModuleConfig` when you add it for real (`RegisterModuleScoped<NewsModule>(config);` per NewApiAndServices).
-
 ---
 
-## 7. Backend — GameApi handler (authoritative write)
+## 7. Backend — GameApi handler
 
-The handler validates the id against the **same catalog rules** the module used, appends to read ids idempotently, and relies on the framework’s **post-GameApi flush** to persist `NewsPersistence`.
+Validate **`request.NewsId`** against the same catalog rules, update **`NewsPersistence`**, persist via **`IPlayerData.Set`**. Handler lives under `LiveOps/Project` so it is compiled into `LiveOps.dll` (see NewApiAndServices).
 
 ```csharp
 using System.Threading.Tasks;
@@ -342,14 +345,13 @@ namespace GameModule.Modules.News
 {
     public sealed class MarkNewsReadHandler : IGameApiHandler<MarkNewsReadRequest, MarkNewsReadResponse>
     {
-        private readonly NewsModule newsModule;
+        private readonly NewsModule module;
 
-        public MarkNewsReadHandler(NewsModule newsModule) => this.newsModule = newsModule;
+        public MarkNewsReadHandler(NewsModule module) => this.module = module;
 
         public async Task<MarkNewsReadResponse> HandleAsync(GameApiSession session, MarkNewsReadRequest request)
         {
-            // Delegate to newsModule.TryMarkReadAsync(session, request.NewsId) in real code:
-            // load NewsPersistence, validate id + window against catalog, persist, return Succeeded.
+            // await module.TryMarkReadAsync(session, request.NewsId);
             await Task.CompletedTask;
             return new MarkNewsReadResponse { Succeeded = true };
         }
@@ -357,45 +359,40 @@ namespace GameModule.Modules.News
 }
 ```
 
-Handlers are discovered from `LiveOps.dll` as described in [`Docs/LiveOps/NewApiAndServices.md`](LiveOps/NewApiAndServices.md); add the handler class under `LiveOps/Project` and rebuild.
-
 ---
 
-## Flow (read path)
+## End-to-end flow
 
 ```mermaid
 sequenceDiagram
+    participant Boot as LiveOps bootstrap
+    participant Mod as NewsModule
+    participant Svc as NewsService
     participant L as ILiveOpsService
-    participant M as NewsModule
-    participant S as NewsService
-    participant V as NewsBannerViewModel
+    participant H as MarkNewsReadHandler
+    participant UI as NewsInboxViewModel
 
-    L->>M: Initialize (bootstrap)
-    M-->>L: NewsGameData snapshot
-    L->>S: ApplySnapshot
-    V->>V: Bind HasUnread / Recent list
-    V->>S: MarkReadAsync(id)
-    S->>L: CallAsync(MarkNewsReadRequest)
-    L->>M: MarkNewsReadHandler
-    M-->>L: MarkNewsReadResponse
-    S->>S: mutate NewsModel + EventBus
+    Boot->>Mod: Initialize
+    Mod-->>Boot: NewsGameData
+    Boot->>Svc: ApplyGameData
+    UI->>UI: bind News.Active, HasUnread
+    UI->>Svc: MarkReadAsync(item)
+    Svc->>L: CallAsync(MarkNewsReadRequest)
+    L->>H: HandleAsync
+    H-->>L: MarkNewsReadResponse
+    L-->>Svc: response
+    Svc->>Svc: update NewsModel read set
 ```
 
 ---
 
-## Minimalism note
+## Scaling read state
 
-If read-state grows too large for Cloud Save, replace `ReadNewsIds` with a **single server-maintained revision**:
-
-- bump **`NewsCatalogRevision`** whenever the active set changes;
-- store **`LastAcknowledgedRevision`** on the player;
-- **`HasUnread`** becomes `serverRevision > LastAcknowledgedRevision` for “there is something new since you last opened the inbox,” at the cost of per-item unread granularity.
-
-Pick **per-id** vs **revision** based on product UX, not on convenience of the first implementation.
+If **`readNewsIds`** grows too large, replace it with **`LastAcknowledgedCatalogRevision`** (server bumps revision when the active set changes). **`HasUnread`** becomes “revision not yet acknowledged,” which is coarser than per-item unread but minimal on the wire and in storage.
 
 ---
 
 ## Related
 
-- [`Docs/Standards/State-and-Services-Standard.md`](Standards/State-and-Services-Standard.md) — Model / Service roles, tiers, delta requests, `CallAsync` / `BeginBatch` (canonical).
-- [`Docs/LiveOps/NewApiAndServices.md`](LiveOps/NewApiAndServices.md) — `[UsesGameApi]`, DTO layout, handler registration, `GameModule` snapshots.
+- [`Docs/Standards/State-and-Services-Standard.md`](Standards/State-and-Services-Standard.md)
+- [`Docs/LiveOps/NewApiAndServices.md`](../LiveOps/NewApiAndServices.md)
