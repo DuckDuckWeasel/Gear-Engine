@@ -4,6 +4,8 @@ This document is **documentation only**: illustrative snippets, not shipped code
 
 **Normative reference (state and services):** [`Docs/Standards/State-and-Services-Standard.md`](Standards/State-and-Services-Standard.md) — two roles (Model, Service), three tiers, `ILiveOpsService.CallAsync` / `BeginBatch`, delta-first wire requests, no repository layer, **bind for state** (Rule 6), EventBus only when a listener cannot infer the signal from any model.
 
+**Bind API:** List rows should be **`Scaffold.MVVM.Model`** instances (same base as `BoardModel` and other game models) so UI binding targets the same **`Model` / `ViewModel`** types the Bind API expects — see [`Docs/Infra/MVVM.md`](../Infra/MVVM.md).
+
 **Normative reference (LiveOps API):** [`Docs/LiveOps/NewApiAndServices.md`](../LiveOps/NewApiAndServices.md) — shared DTOs, `[UsesGameApi]`, `IGameApiHandler`, `GameModule<T>` snapshots.
 
 **Normative reference (config authoring):** [`Docs/LiveOps/AuthoringPipeline.md`](../LiveOps/AuthoringPipeline.md), [`Docs/LiveOps/RemoteConfig.md`](../LiveOps/RemoteConfig.md), [`Assets/Packages/com.scaffold.liveops.authoring/README.md`](../../Assets/Packages/com.scaffold.liveops.authoring/README.md).
@@ -20,9 +22,9 @@ This document is **documentation only**: illustrative snippets, not shipped code
 
 **Tier:** **Tier 2** (service-gated): “mark read” is an intent with rules; server is authoritative on whether the id is valid and in-window.
 
-**Typed reference (client):** per Rule 3 in the standard, **`MarkReadAsync`** takes the live row type the UI already has (**`NewsItem`**), not a bare string. The **wire DTO** carries **`newsId`** only inside `CallAsync`.
+**Typed reference (client):** per Rule 3 in the standard, **`MarkReadAsync`** takes the live row type the UI already has (**`NewsItemModel`**), not a bare string. The **wire DTO** carries **`newsId`** only inside `CallAsync`.
 
-**Read state on the row:** expose **`NewsItem.IsRead`** so lists and badges bind per row without calling back into the service for “is this id read?”. The **service** still performs the command and, on success, tells the **model** to apply the local flip (Tier 2: callers do not mutate `NewsItem` from the View).
+**Read state on the row:** expose **`NewsItemModel.IsRead`** so lists and badges bind per row without calling back into the service for “is this id read?”. The **service** still performs the command and, on success, tells the **aggregate model** to apply the local flip (Tier 2: callers outside the feature assembly do not assign **`IsRead`** — **`internal`** setter).
 
 ---
 
@@ -138,28 +140,28 @@ namespace GameModuleDTO.ModuleRequests
 
 ---
 
-## 4. Client model (Tier 2 — observable, read-only to external callers)
+## 4. Client models (Tier 2 — observable, read-only to external callers)
 
-- **`NewsItem`** carries **`IsRead`** for binding. Mutations use **`internal SetRead`**: only the owning **`NewsModel`** (same assembly) applies flips after the service succeeds or when hydrating from **`NewsGameData`**.
-- **No `IsRead` lookup on the service** — the View binds to **`item.IsRead`** and to **`NewsModel.HasUnread`** (pure query over the collection).
+- **`NewsItemModel`** (one row) and **`NewsModel`** (aggregate) both derive from **`Scaffold.MVVM.Model`** so list rows participate in the same **Bind API** surface as the rest of the game (for example `BoardModel` in `GearEngine`).
+- **`IsRead`** lives on the row model with an **`internal`** setter that uses **`SetProperty`** from **`CommunityToolkit.Mvvm.ComponentModel.ObservableObject`** (the same notification path `[ObservableProperty]` uses). That keeps Tier 2 **externally read-only** from other assemblies (Rule 4) while still allowing **`NewsModel` + `NewsService`** in the feature assembly to apply hydration and successful commands.
+- **No `IsRead` lookup on the service** — bind **`NewsItemModel.IsRead`** per row and **`NewsModel.HasUnread`** for badges.
 
 ```csharp
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using GameModuleDTO.Modules.News;
-using Scaffold.Core.Model;
+using Scaffold.MVVM;
 
 namespace YourGame.News
 {
     /// <summary>Live row in the client snapshot (typed ref for <see cref="INewsService.MarkReadAsync"/>).</summary>
-    public sealed class NewsItem : INotifyPropertyChanged
+    public sealed class NewsItemModel : Model
     {
         private bool isRead;
 
-        public NewsItem(NewsItemDto dto)
+        public NewsItemModel(NewsItemDto dto)
         {
             Id = dto.Id;
             Message = dto.Message;
@@ -172,32 +174,23 @@ namespace YourGame.News
         public DateTime StartUtc { get; }
         public DateTime EndUtc { get; }
 
+        /// <summary>Bind one-way from UI; only same-assembly code assigns.</summary>
         public bool IsRead
         {
             get => isRead;
-            private set
-            {
-                if (isRead == value) return;
-                isRead = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsRead)));
-            }
+            internal set => SetProperty(ref isRead, value);
         }
-
-        public event PropertyChangedEventHandler? PropertyChanged;
-
-        /// <summary>Called only from <see cref="NewsModel"/> in the same assembly.</summary>
-        internal void SetRead(bool value) => IsRead = value;
     }
 
-    public partial class NewsModel : Model
+    public class NewsModel : Model
     {
-        private readonly ObservableCollection<NewsItem> active = new();
+        private readonly ObservableCollection<NewsItemModel> active = new();
 
-        public ReadOnlyObservableCollection<NewsItem> Active { get; }
+        public ReadOnlyObservableCollection<NewsItemModel> Active { get; }
 
-        internal ObservableCollection<NewsItem> WritableActive => active;
+        internal ObservableCollection<NewsItemModel> WritableActive => active;
 
-        public NewsModel() => Active = new ReadOnlyObservableCollection<NewsItem>(active);
+        public NewsModel() => Active = new ReadOnlyObservableCollection<NewsItemModel>(active);
 
         /// <summary>Replaces rows and read flags from the bootstrap snapshot.</summary>
         internal void ReplaceFromGameData(NewsGameData data, HashSet<string>? readLookup = null)
@@ -213,21 +206,21 @@ namespace YourGame.News
             foreach (var dto in data.ActiveNews)
             {
                 if (dto == null || string.IsNullOrEmpty(dto.Id)) continue;
-                var item = new NewsItem(dto);
-                if (readLookup.Contains(item.Id)) item.SetRead(true);
+                var item = new NewsItemModel(dto);
+                if (readLookup.Contains(item.Id)) item.IsRead = true;
                 active.Add(item);
             }
         }
 
         /// <summary>Apply authoritative read after a successful <c>MarkNewsReadRequest</c>.</summary>
-        internal void ApplyMarkRead(NewsItem item)
+        internal void ApplyMarkRead(NewsItemModel item)
         {
             if (item == null) return;
             for (int i = 0; i < active.Count; i++)
             {
                 if (ReferenceEquals(active[i], item))
                 {
-                    item.SetRead(true);
+                    item.IsRead = true;
                     return;
                 }
             }
@@ -237,18 +230,18 @@ namespace YourGame.News
         {
             for (int i = 0; i < active.Count; i++)
             {
-                NewsItem n = active[i];
+                NewsItemModel n = active[i];
                 if (IsActive(n, utcNow) && !n.IsRead) return true;
             }
             return false;
         }
 
-        public IReadOnlyList<NewsItem> RecentActive(DateTime utcNow, int max = 8)
+        public IReadOnlyList<NewsItemModel> RecentActive(DateTime utcNow, int max = 8)
         {
-            var list = new List<NewsItem>();
+            var list = new List<NewsItemModel>();
             for (int i = 0; i < active.Count; i++)
             {
-                NewsItem n = active[i];
+                NewsItemModel n = active[i];
                 if (IsActive(n, utcNow)) list.Add(n);
             }
             list.Sort((a, b) => b.StartUtc.CompareTo(a.StartUtc));
@@ -256,7 +249,7 @@ namespace YourGame.News
             return list;
         }
 
-        private static bool IsActive(NewsItem n, DateTime utcNow)
+        private static bool IsActive(NewsItemModel n, DateTime utcNow)
             => n != null && utcNow >= n.StartUtc && utcNow <= n.EndUtc;
     }
 }
@@ -267,7 +260,7 @@ namespace YourGame.News
 ## 5. Client service (Tier 2 — rules, `CallAsync`, no repository)
 
 - **`ApplyGameData`** delegates to **`NewsModel.ReplaceFromGameData`** (snapshot in only).
-- **`MarkReadAsync(NewsItem item)`** validates, calls **`CallAsync(new MarkNewsReadRequest(item.Id))`**, then **`model.ApplyMarkRead(item)`** on success (pessimistic local update, same family as currency spend in the standard).
+- **`MarkReadAsync(NewsItemModel item)`** validates, calls **`CallAsync(new MarkNewsReadRequest(item.Id))`**, then **`model.ApplyMarkRead(item)`** on success (pessimistic local update, same family as currency spend in the standard).
 - Optional **`IEventBus`**: only if a listener cannot use **`HasUnread`** / per-row **`IsRead`** binding (Rule 6).
 
 ```csharp
@@ -284,7 +277,7 @@ namespace YourGame.News
     {
         NewsModel News { get; }
         void ApplyGameData(NewsGameData data);
-        Task<bool> MarkReadAsync(NewsItem item, DateTime utcNow, CancellationToken ct = default);
+        Task<bool> MarkReadAsync(NewsItemModel item, DateTime utcNow, CancellationToken ct = default);
     }
 
     public sealed class NewsService : INewsService
@@ -302,7 +295,7 @@ namespace YourGame.News
 
         public void ApplyGameData(NewsGameData data) => model.ReplaceFromGameData(data);
 
-        public async Task<bool> MarkReadAsync(NewsItem item, DateTime utcNow, CancellationToken ct = default)
+        public async Task<bool> MarkReadAsync(NewsItemModel item, DateTime utcNow, CancellationToken ct = default)
         {
             if (item == null) throw new ArgumentNullException(nameof(item));
             if (utcNow < item.StartUtc || utcNow > item.EndUtc) return false;
@@ -322,7 +315,7 @@ namespace YourGame.News
 ## 6. Usage (ViewModel: Tier 0 focus + bind; service for intents)
 
 - **Tier 0:** `Focused` (which row is expanded) — public setter on the ViewModel.
-- **Tier 2 state:** bind list cells to **`News.Active`** and **`NewsItem.IsRead`**; bind badge to **`News.HasUnread(DateTime.UtcNow)`** (refresh `PropertyChanged` for aggregates when a read completes, as below).
+- **Tier 2 state:** bind list cells to **`News.Active`** and **`NewsItemModel.IsRead`**; bind badge to **`News.HasUnread(DateTime.UtcNow)`** (refresh `PropertyChanged` for aggregates when a read completes, as below).
 
 ```csharp
 using System;
@@ -330,7 +323,7 @@ using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
-using Scaffold.Core.ViewModel;
+using Scaffold.MVVM;
 
 namespace YourGame.News.Ui
 {
@@ -348,12 +341,12 @@ namespace YourGame.News.Ui
         public NewsModel News => news.News;
 
         /// <summary>Tier 0 — local only.</summary>
-        [ObservableProperty] private NewsItem? focused;
+        [ObservableProperty] private NewsItemModel? focused;
 
         public bool HasUnread => news.News.HasUnread(DateTime.UtcNow);
 
         /// <summary>Plain method — no RelayCommand required by the standard.</summary>
-        public async Task AcknowledgeAsync(NewsItem? item, CancellationToken ct = default)
+        public async Task AcknowledgeAsync(NewsItemModel? item, CancellationToken ct = default)
         {
             if (item == null) return;
             await news.MarkReadAsync(item, DateTime.UtcNow, ct);
@@ -363,27 +356,27 @@ namespace YourGame.News.Ui
         private void OnActiveCollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             if (e.OldItems != null)
-                foreach (NewsItem o in e.OldItems) o.PropertyChanged -= OnItemPropertyChanged;
+                foreach (NewsItemModel o in e.OldItems) o.PropertyChanged -= OnItemPropertyChanged;
             WireItemPropertyChanged();
         }
 
         private void WireItemPropertyChanged()
         {
-            foreach (NewsItem it in news.News.Active)
+            foreach (NewsItemModel it in news.News.Active)
                 it.PropertyChanged -= OnItemPropertyChanged;
-            foreach (NewsItem it in news.News.Active)
+            foreach (NewsItemModel it in news.News.Active)
                 it.PropertyChanged += OnItemPropertyChanged;
         }
 
         private void OnItemPropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(NewsItem.IsRead)) OnPropertyChanged(nameof(HasUnread));
+            if (e.PropertyName == nameof(NewsItemModel.IsRead)) OnPropertyChanged(nameof(HasUnread));
         }
 
         public void Dispose()
         {
             news.News.Active.CollectionChanged -= OnActiveCollectionChanged;
-            foreach (NewsItem it in news.News.Active) it.PropertyChanged -= OnItemPropertyChanged;
+            foreach (NewsItemModel it in news.News.Active) it.PropertyChanged -= OnItemPropertyChanged;
         }
     }
 }
@@ -540,7 +533,7 @@ sequenceDiagram
     RC->>Mod: Get(NewsCatalogConfig)
     Mod-->>UI: NewsGameData (bootstrap)
     Svc->>Svc: ReplaceFromGameData
-    UI->>UI: bind NewsItem.IsRead, HasUnread
+    UI->>UI: bind NewsItemModel.IsRead, HasUnread
     UI->>Svc: MarkReadAsync(item)
     Svc->>L: CallAsync(MarkNewsReadRequest)
     L->>H: HandleAsync
