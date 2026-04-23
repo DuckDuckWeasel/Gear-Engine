@@ -4,7 +4,7 @@
 
 ## Why this standard exists
 
-This repository keeps growing types that are partly model, partly service, and partly transport. The result is inconsistent shapes (`Save(thing)` vs `AddAsync(id, amount)`), parallel state representations (`BoardModel` + `IGridManager`), per-instance C# events that duplicate observable models, and whole-state-replace requests (`SetInventoryRequest(everything)`) that hide what actually changed from the server.
+Stateful code drifts when there is no shared rule for what state owes the system. The result is inconsistent shapes (`Save(thing)` vs `AddAsync(id, amount)`), parallel state representations kept in agreement by hand, per-instance C# events that duplicate observable models, and whole-state-replace requests that hide what actually changed from the server.
 
 This document fixes that by defining:
 
@@ -12,7 +12,7 @@ This document fixes that by defining:
 - the **three tiers** of state and when to use each
 - the **delta-first transport model** (`ILiveOpsService.CallAsync` + `BeginBatch`) that replaces the previous "four persistence patterns" framing
 - the rule set that AI agents and humans must follow when introducing or refactoring stateful code
-- worked good/bad examples drawn from the current codebase (`InventoryService`, `BoardService`, `CurrencyClientModule`, `InventoryClientModule`)
+- worked good/bad examples that illustrate each rule with concrete snippets and sequence diagrams
 
 Every rule and every sample interaction carries either a working code snippet or a mermaid sequence diagram (most carry both).
 
@@ -22,7 +22,7 @@ Keywords: services, models, MVVM, observables, EventBus, intent, deltas, batchin
 
 ## TL;DR
 
-- **Two roles, not three.** Model holds state. Service owns rules and calls `liveOps.CallAsync(intentRequest)` directly. There is no "Repository" layer; the LiveOps boundary is the persistence seam.
+- **Two roles, not three.** Model holds state. Service owns rules and calls `liveOps.CallAsync(intentRequest)` directly. There is no "Repository" layer; the LiveOps boundary is the persistence seam. A small Tier 2 feature that needs both bootstrap snapshot and a command surface may merge them into one type that inherits `GameClientModuleBase<TGameData>` and implements `IXxxService` — see Vocabulary → Service.
 - **One canonical representation per piece of state.** No parallel models, no shadow copies, no `Sync`* methods.
 - **Models are observable but externally read-only above Tier 0.** Writes happen through service intent methods or, for Tier 1, through self-persisting setters. Read-only collections wrap an `ObservableCollection<T>` in a `ReadOnlyObservableCollection<T>`, which is fully bind-API compatible.
 - **Services expose intent, not payloads.** `EquipAsync(owned)`, never `Save(inventory)` or `Set(field, value)`. Service signatures take **typed references** (`OwnedGear`, `GearConfig`, `IGridNode`); the wire DTO carries an id.
@@ -62,6 +62,7 @@ Command surface. Owns the rules. Stateless from the outside — the model is the
 - Exposes its model **read-only** (`InventoryModel Inventory { get; }` where setters on the model are `private`/`internal` or projected through `IReadOnlyList<T>` / `ReadOnlyObservableCollection<T>`).
 - Calls `ILiveOpsService.CallAsync(intentRequest)` directly. There is no repository between the service and the LiveOps boundary.
 - For initial state, owns an `OnInitialized` hook that consumes the server-provided snapshot DTO and populates the model. This is the **only** "blob in" path and is unavoidable because bootstrap has no prior state to delta against.
+- **Merged module + service is sanctioned.** When the feature has exactly one command surface and exactly one observable graph, the service may inherit `GameClientModuleBase<TGameData>` and implement `IXxxService` on the same type. The merged type owns: bootstrap (`OnInitializedAsync(TGameData)` constructs the model), the read-only model (`Model SomeModel { get; }`), and the intent commands (`await liveOps.CallAsync(...)`). Split into two types only when (a) two distinct services would share the same bootstrap snapshot, or (b) the command surface is large enough that bootstrap and commands no longer fit in one cohesive class. Default to merged.
 
 ### LiveOps boundary (`ILiveOpsService`)
 
@@ -288,6 +289,60 @@ A blob request is permitted only when **all of**:
 3. the call site carries a `// WAIVER: Rule 5 — <reason>` comment with an issue link.
 
 **Read** snapshots are not write blobs. `GetInventoryResponse(allOwnedGears)` at bootstrap is fine and unavoidable; that is how the model is initially populated. The rule applies only to client→server writes.
+
+---
+
+## DTO ↔ Model duplication
+
+Rules 4 and 5 push the wire shape and the bind shape into different types whenever a View binds per-field on rows of that data. The cause is the assembly boundary, not the standard:
+
+- The DTO assembly (`Scaffold.LiveOps.DTO`) compiles for both Cloud Code and Unity. It cannot reference `Scaffold.MVVM` / `CommunityToolkit.Mvvm`. So DTOs cannot be observable.
+- Bind targets must be observable (Rule 4) and may carry engine-side fields (live config refs, runtime-only flags) that have no place on the wire.
+
+Result: for any data the View binds per-field, you have at least two types — an inert serializable DTO and an observable runtime model. This is **not** a duplication smell; it is the boundary made visible. Treat it the same way you treat the Tier promotion rule: pick the smallest shape that works, promote when a new requirement appears.
+
+### The four shapes, ranked
+
+| Shape | When it fits | When it breaks |
+|---|---|---|
+| **A. DTO + Model wrapper with a bridge ctor** — `internal Model(Dto dto)` for the row, `internal Aggregate(GameData snapshot)` for the collection. | Default. Anything bound per-field. Anything where the runtime row needs a field the DTO does not carry (merged client-only state, cross-referenced state from a second DTO). | Manual ctor must consume new DTO fields — drift risk. Mitigated by a per-feature unit test. |
+| **B. DTO is the row** — no wrapper; the runtime collection holds DTO instances directly. | When no per-field binding exists and no client-only field is needed. The View only repaints on screen change. | Any per-cell binding, any field-level `INotifyPropertyChanged`, any need for an extra runtime-only field. **Promote to A** the moment any of these appears. |
+| **C. Generate the Model from the DTO** | When many paired types exist and the bridge ctors become rote. Generator can also emit "extra fields" via partial classes. | Generator complexity is paid forever. Does not help features that need merge logic at construction (e.g. joining two DTOs into one model). Defer until friction is real. |
+| **D. One observable type in the shared assembly** | — | Closed for this repo. Mvvm libraries cannot live in the Cloud Code assembly. |
+
+### The bridge-ctor convention (Shape A)
+
+When `XxxModel` exists and `XxxDto` exists, the model exposes exactly one bridge ctor:
+
+```csharp
+internal XxxModel(XxxDto dto) { /* copy primitives, hold engine refs */ }
+```
+
+When `XxxModel` is the aggregate and `XxxGameData` is the snapshot DTO, the aggregate exposes exactly one snapshot ctor:
+
+```csharp
+internal XxxModel(XxxGameData snapshot) { /* construct rows, merge cross-cut state */ }
+```
+
+The merged client module's `OnInitializedAsync` does exactly one thing:
+
+```csharp
+protected override Task OnInitializedAsync(XxxGameData moduleData)
+{
+    xxxModel = new XxxModel(moduleData);
+    return base.OnInitializedAsync(moduleData);
+}
+```
+
+No second `Apply` / `Hydrate` / `ReplaceFromGameData` step. The DTO → Model conversion *is* the constructor.
+
+### When Shape A is mandatory
+
+If the runtime row needs **any** field the DTO does not carry — a flag merged from a second DTO, a live config ref resolved through a catalog, a runtime-only computed cache — Shape A is mandatory. Do not push that field into the DTO to "save a type": you would either widen the wire payload with state the server does not own, or split the field's lifecycle across two assemblies.
+
+### Drift control
+
+For every paired `XxxDto` / `XxxModel`, add an EditMode test that asserts every public property on `XxxDto` is consumed by `XxxModel(XxxDto)`. Adding a field to the DTO then breaks the test, not a View later.
 
 ---
 
@@ -710,7 +765,7 @@ No service. No transport. No event bus. No persistence. This is the entire inter
 
 ### Rule 1 — One canonical representation
 
-Bad (current `BoardService`): two parallel state stores kept in sync.
+Bad: two parallel state stores kept in sync via a manual `Sync*` method.
 
 ```csharp
 private readonly IGridManager gridManager;
@@ -786,7 +841,7 @@ await inventoryService.EquipAsync(owned.InstanceId, ct);
 // Inside service: re-find the OwnedGear by id, even though the caller had it.
 ```
 
-Worse (caller-supplied snapshot): the current `InventoryClientModule.SchedulePersist`.
+Worse (caller-supplied snapshot): the service rebuilds an entire collection of DTOs and ships it on every mutation.
 
 ```csharp
 private void SchedulePersist()
@@ -873,6 +928,25 @@ The View binds to `Items` for change notifications. Only the service can mutate.
 
 For scalar `[ObservableProperty]` fields the source generator already emits a private setter and public getter, so the read-only contract is enforced at compile time without any wrapper.
 
+#### Per-field properties writable from same-assembly code only
+
+`[ObservableProperty]` always emits a **public** setter on the generated property — fine when only the model itself writes the field, useless when the same-assembly Tier 2 service needs to assign it after a successful command. For that case (the common one for "did this row reach a terminal state?" flags such as `IsRead`, `IsClaimed`, `IsCompleted`), hand-write the property using the same `SetProperty` notification path the generator uses:
+
+```csharp
+public sealed class FooRowModel : Model
+{
+    private bool isRead;
+
+    public bool IsRead
+    {
+        get => isRead;
+        internal set => SetProperty(ref isRead, value);
+    }
+}
+```
+
+The View binds to `IsRead` exactly as it would for `[ObservableProperty]`. Only same-assembly code (the owning service or aggregate model) can call the setter. `SetProperty` is inherited from `Scaffold.MVVM.Model` (which derives from `CommunityToolkit.Mvvm.ComponentModel.ObservableObject`), so no extra `using` is needed.
+
 ### Rule 5 — Deltas with primitive ids
 
 Bad: blob-replace request.
@@ -926,7 +1000,7 @@ The acid test: **"Can the listener see what happened just by reading the model?"
 | A momentary event consumed by the same ViewModel that issued the command, where ordering matters | `**event Action`** (the three-condition exception) |
 
 
-Bad (current `BoardService` and `InventoryService`):
+Bad: per-instance C# events on a service that either duplicate observable collections or leak live model instances.
 
 ```csharp
 public event Action<IGridNode> GearPlaced;
@@ -968,25 +1042,6 @@ private void OnGearMerged(GearMergedEvent e)
 
 ---
 
-## Smell catalog (current code → fix)
-
-
-| Call site                                                                    | Smell                                                                 | Rule violated | Fix                                                                                                                                                |
-| ---------------------------------------------------------------------------- | --------------------------------------------------------------------- | ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `BoardService.SyncBoardModel`                                                | Two state stores kept in agreement                                    | 1             | Collapse `IGridManager` and `BoardModel` into one canonical store.                                                                                 |
-| `BoardService.BoardLayoutChanged` / `InventoryService.ItemsChanged`          | Duplicate the observable collection — re-publishing what binding sees | 6             | Delete; consumers bind to `Board.Nodes` / `Inventory.Items` directly.                                                                              |
-| `BoardService.GearPlaced` / `GearRemoved` (`event Action<IGridNode>`)        | Per-instance events that leak live model instances                    | 6             | Move to `IEventBus` (`GearPlacedEvent { Vector2Int Position, string GearId }`) — primitive payload, only raised if a cross-system listener exists. |
-| Service method signatures taking `string instanceId` when caller has the ref | Stringly-typed where a typed ref is available                         | 3             | Change signature to take the live ref (`OwnedGear`, `GearConfig`, `IGridNode`); unwrap to id only when constructing the wire DTO.                  |
-| `InventoryModel.Items` (public `ObservableCollection`)                       | Externally writable Tier 2 model                                      | 4             | Expose `ReadOnlyObservableCollection<IItem>`; keep writable handle internal. View binding is unchanged (see Rule 4 example).                       |
-| `InventoryClientModule.SchedulePersist` + `SetInventoryRequest`              | Whole-blob replace; snapshot + send-the-world                         | 3, 5          | Replace with `AddOwnedGearRequest(gearId)` / `RemoveOwnedGearRequest(instanceId)` typed intents on a real `OwnedGearService`.                      |
-| `LoadoutClientModule.SaveBoardLayout` + `SetBoardLayoutRequest`              | Whole-blob replace                                                    | 5             | Replace with `PlaceGearRequest` / `RemoveGearRequest` deltas; for save-loadout flows, wrap in `liveOps.BeginBatch()`.                              |
-| `BoardService` does its own dirty-tracking implicitly via `SyncBoardModel`   | Service owning persistence timing                                     | corollary     | Service calls `liveOps.CallAsync` per intent; remove implicit dirty tracking.                                                                      |
-| Any `SchedulePersist` / `MarkDirty` style helper                             | Service owning persistence timing                                     | corollary     | Delete. If the underlying need is "high-frequency same-key delta", attribute the DTO with `[LiveOpsRequest(DebounceMs, CoalesceBy)]` instead.      |
-| EventBus event payload carrying `IGridNode` / `OwnedGear` / live refs        | Live model leaking through the wire boundary                          | 6 (vocab)     | Replace ref fields with primitive ids; listeners that need the live ref do an explicit `TryGetById` lookup.                                        |
-
-
----
-
 ## Naming conventions
 
 - Service interface: `I<Domain>Service` (`IInventoryService`, `ICurrencyService`, `IBoardService`).
@@ -995,7 +1050,7 @@ private void OnGearMerged(GearMergedEvent e)
 - EventBus events: `<Domain><PastTenseVerb>Event` (`GearPlacedEvent`, `CurrencySpentEvent`, `GearAcquiredEvent`).
 - Command DTOs: `<Verb><Domain>Request` / `<Verb><Domain>Response` (`EquipGearRequest`, `SpendCurrencyResponse`, `AddOwnedGearRequest`).
 - Atomic group: `using var batch = liveOps.BeginBatch();` … `await batch.CommitAsync(ct);`.
-- LiveOps client modules (where they remain) own only `OnInitializedAsync(snapshotDto)` to seed the model at bootstrap. They do **not** persist runtime mutations; services do that via `liveOps.CallAsync`.
+- Merged module + service type: `<Domain>ClientModule : GameClientModuleBase<<Domain>GameData>, I<Domain>Service`. The `ClientModule` suffix marks bootstrap participation; the `IService` interface marks the command surface. Resolve callers against `I<Domain>Service`.
 
 ---
 
@@ -1033,7 +1088,7 @@ When creating or modifying a stateful type, verify in order:
   - Views bind to observable models for state. EventBus is for signals a listener cannot infer from any model.
 - **Allowed Dependencies**:
   - Service → Model, `ILiveOpsService`, `IEventBus`, catalog/config SOs.
-  - LiveOps client modules → `ILiveOpsService`, persistence APIs, request/response DTOs (initial-load only).
+  - Merged client module + service → `ILiveOpsService`, persistence APIs, request/response DTOs, plus everything a Service is allowed to depend on.
   - ViewModel → Service, Model (read-only). View → ViewModel (binds to its observable surface).
 - **Forbidden Dependencies**:
   - ViewModel / View → `ILiveOpsService` directly (always go through a service).
@@ -1042,40 +1097,8 @@ When creating or modifying a stateful type, verify in order:
   - Any service introducing its own debounce / dirty-tracking layer (use the per-DTO attribute instead).
   - Any DTO whose fields hold live object references (must be primitives).
 - **Change Checklist**: see "Change checklist for AI agents" above.
-- **Known Tricky Areas**:
-  - `BoardService` currently mixes service and transport concerns and keeps a parallel `IGridManager` store. Refactor requires collapsing the dual representation before splitting deltas out.
-  - `InventoryClientModule` currently doubles as `IOwnedGearInventoryService` and ships blob `SetInventoryRequest`. Splitting requires introducing typed `AddOwnedGearRequest` / `RemoveOwnedGearRequest` server endpoints first; the client module's role then shrinks to `OnInitializedAsync(snapshot)`.
-  - `LoadoutClientModule` ships blob `SetBoardLayoutRequest`. Migration plan mirrors inventory: typed deltas + `BeginBatch` for save-loadout flows.
 
----
-
-## Migration notes for current code
-
-Apply in this order to minimize churn.
-
-1. `**InventoryService` (race inventory)**
-  - Wrap `InventoryModel.Items` in `ReadOnlyObservableCollection<IItem>`; move the writable handle to `internal`.
-  - Delete `event Action ItemsChanged`. View binds to `InventoryModel.Items.CollectionChanged` (already does).
-2. `**BoardService`**
-  - Choose: `BoardModel` owns the collection (preferred) or `IGridManager` does. Delete the loser.
-  - Delete `SyncBoardModel`. Replace internal calls with direct mutations on the canonical store.
-  - Delete `event Action BoardLayoutChanged`. `BoardViewComponent` binds to `BoardModel.Nodes`.
-  - Move `GearPlaced` / `GearRemoved` to `IEventBus` (`GearPlacedEvent { Vector2Int Position, string GearId }`).
-3. `**InventoryClientModule` → `OwnedGearService` + slim `OwnedGearClientModule`**
-  - Add `AddOwnedGearRequest(string gearId)` / `AddOwnedGearResponse(bool succeeded, string instanceId)` and `RemoveOwnedGearRequest(string instanceId)` / `EquipGearRequest(string instanceId)` typed DTOs and matching server handlers. DTOs carry primitive ids only.
-  - Move the `IOwnedGearInventoryService` implementation off the `*ClientModule` into a real `OwnedGearService` that calls `liveOps.CallAsync` directly. **Service signatures take live refs** (`AddAsync(GearConfig gear)`, `RemoveAsync(OwnedGear owned)`, `EquipAsync(OwnedGear owned)`); the service unwraps to id only at the `CallAsync` site.
-  - The `*ClientModule` retains only `OnInitializedAsync(InventoryGameData)` to seed the model from the bootstrap snapshot.
-  - Delete `SchedulePersist` and `SendInventoryAsync`. Delete `SetInventoryRequest` once no callers remain.
-4. `**LoadoutClientModule`**
-  - Same shape as #3: `PlaceGearRequest(Vector2Int pos, string gearId)` / `RemoveGearRequest(Vector2Int pos)` delta DTOs; service signatures take `(Vector2Int pos, GearConfig gear)` / `(IGridNode node)`. The client module shrinks to `OnInitializedAsync(LoadoutGameData)` plus a thin façade that exposes the bootstrap snapshot.
-  - "Save current layout" flows wrap the per-cell deltas in `liveOps.BeginBatch()`.
-5. `**CurrencyClientModule` → `CurrencyService`**
-  - Rename `CurrencyClientModule` to retain only the bootstrap role; move the `TrySpendAsync`/`AddAsync` rules into a real `CurrencyService` that calls `liveOps.CallAsync(new SpendCurrencyRequest(walletId, amount))` directly and raises `CurrencySpentEvent` / `CurrencyAddedEvent` (primitive payloads) on the EventBus after success.
-6. **Settings / preferences (when introduced)**
-  - Tier 1 model with an `OnPropertyChanged` override that calls `liveOps.CallAsync(new UpdateSettingRequest(name, value))`. No service.
-  - Attribute the DTO with `[LiveOpsRequest(DebounceMs = 100, CoalesceBy = nameof(UpdateSettingRequest.Key))]` so slider scrubs collapse per key.
-
-Each step ships independently with regression tests per `AGENTS.md` rule 10.
+> **Migrating existing code:** this document is the standard, not a migration plan. When existing code does not yet match these rules, capture the work in a dedicated plan under `Plans/` rather than amending this file.
 
 ---
 
@@ -1086,11 +1109,10 @@ Each step ships independently with regression tests per `AGENTS.md` rule 10.
 - `[Docs/Infra/MVVM.md](../Infra/MVVM.md)` — `ViewModel` / `Model` base types and `[ObservableProperty]` source generator.
 - `[Docs/Infra/Events.md](../Infra/Events.md)` — `IEventBus` contract and event conventions.
 - `[Docs/LiveOps/NewApiAndServices.md](../LiveOps/NewApiAndServices.md)` — how to add typed request/response DTOs and Cloud Code handlers.
-- `[Docs/LiveOps/Currency.md](../LiveOps/Currency.md)` — canonical delta-request example.
-- `[Docs/LiveOps/Inventory.md](../LiveOps/Inventory.md)` — current owned-gear flow (target of migration step 3).
 
 ## Changelog
 
+- 2026-04-23 — Refocus on standard-only content. (a) Sanctioned the merged `<Domain>ClientModule : GameClientModuleBase<TGameData>, IXxxService` shape in TL;DR + Vocabulary → Service and added the matching naming convention. (b) Added per-field `internal set + SetProperty` snippet under Rule 4 → "Why the bind API still works". (c) Added a "DTO ↔ Model duplication" subsection with the A/B/C/D table and the bridge-ctor convention. (d) Removed the smell catalog, "Migration notes for current code", and "Known Tricky Areas"; migration of existing code now belongs in dedicated `Plans/` documents. (e) Removed the bootstrap-only sentence from Naming conventions and dropped Inventory/Currency cross-links from Related; "Bad" examples no longer name current concrete classes.
 - 2026-04-22 — Removed legacy duplicate `Docs/State-and-Services-Standard.md`; this file under `Docs/Standards/` is the only copy. Added a short note under the title for discoverability.
 - 2026-04-21 (evening) — Replaced all `UniTask` / `UniTask<T>` references with `System.Threading.Tasks.Task` / `Task<T>` across vocabulary, sample interactions, and good/bad examples. Async surfaces and `CancellationToken` semantics are unchanged.
 - 2026-04-21 (afternoon) — Refinement pass. (a) Rule 3 now requires service signatures to take typed references; ids appear only inside the service body when constructing the wire DTO. (b) Rule 4 example expanded with an explicit "why the bind API still works" note covering `ReadOnlyObservableCollection<T>` and `Scaffold.MVVM`'s bind interfaces. (c) Rule 5 split visibly into "DTOs are deltas" + "DTOs carry primitive ids, not live refs". (d) Rule 6 reframed around the bind-vs-EventBus-vs-instance-event acid test; `BoardLayoutChanged` / `ItemsChanged` reclassified as "redundant with binding" rather than "use EventBus". (e) Added a "Debounced single-key deltas" subsection introducing the per-DTO `[LiveOpsRequest(DebounceMs, CoalesceBy)]` attribute as a narrow, blob-free exception for slider/toggle-style updates. (f) Updated TL;DR, sample interactions (1 and 3), smell catalog, change checklist, and AI Agent Context to match.
