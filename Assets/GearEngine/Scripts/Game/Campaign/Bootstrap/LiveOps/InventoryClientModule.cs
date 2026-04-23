@@ -14,9 +14,8 @@ namespace GearEngine.Campaign.Bootstrap.LiveOps
 {
     public sealed class InventoryClientModule : GameClientModuleBase<InventoryGameData>, IInventoryService
     {
-        public InventoryClientModule(IObjectResolver resolver, ILiveOpsService liveOps, GearCatalogSO catalog) : base(resolver)
+        public InventoryClientModule(ILiveOpsService liveOps, GearCatalogSO catalog) : base(liveOps)
         {
-            liveOpsService = liveOps ?? throw new ArgumentNullException(nameof(liveOps));
             this.catalog = catalog ?? throw new ArgumentNullException(nameof(catalog));
         }
 
@@ -29,7 +28,6 @@ namespace GearEngine.Campaign.Bootstrap.LiveOps
 
         public IReadOnlyList<OwnedGear> Owned => ownedRefs;
 
-        private readonly ILiveOpsService liveOpsService;
         private readonly GearCatalogSO catalog;
         private readonly List<OwnedGear> ownedRefs = new List<OwnedGear>();
 
@@ -162,7 +160,7 @@ namespace GearEngine.Campaign.Bootstrap.LiveOps
 #endif
             try
             {
-                await liveOpsService.CallAsync(new SetInventoryRequest(snapshot));
+                await liveOps.CallAsync(new SetInventoryRequest(snapshot));
 #if UNITY_EDITOR
                 Debug.Log($"[InventoryClientModule] SetInventoryRequest finished OK ({n} gear(s)).");
 #endif

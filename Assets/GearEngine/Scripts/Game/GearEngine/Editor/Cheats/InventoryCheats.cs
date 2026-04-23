@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using GearEngine.GearEngine.Config;
 using GearEngine.GearEngine.Services;
-using Scaffold.LayeredScope;
+using Scaffold.AppFlow;
 using UnityEditor;
 using UnityEngine;
 
@@ -110,16 +110,16 @@ namespace GearEngine.GearEngine.Editor.Cheats
                 return false;
             }
 
-            ApplicationBootstrap bootstrap = UnityEngine.Object.FindFirstObjectByType<ApplicationBootstrap>(FindObjectsInactive.Exclude);
+            AppFlowRoot bootstrap = UnityEngine.Object.FindFirstObjectByType<AppFlowRoot>(FindObjectsInactive.Exclude);
             if (bootstrap == null)
             {
-                Debug.LogError("[InventoryCheats] No ApplicationBootstrap found in the scene.");
+                Debug.LogError("[InventoryCheats] No AppFlowRoot found in the scene.");
                 return false;
             }
 
-            if (!TryGetApplicationHost(bootstrap, out ApplicationHost host))
+            if (!TryGetAppFlowHost(bootstrap, out AppFlowHost host))
             {
-                Debug.LogError("[InventoryCheats] Could not resolve ApplicationHost (startup may not have finished).");
+                Debug.LogError("[InventoryCheats] Could not resolve AppFlowHost (startup may not have finished).");
                 return false;
             }
 
@@ -157,12 +157,12 @@ namespace GearEngine.GearEngine.Editor.Cheats
         }
 
         /// <summary>
-        /// <see cref="ApplicationBootstrap.Host"/> is protected; use reflection so editor code can resolve from the live scope.
+        /// <see cref="AppFlowRoot.Host"/> is protected; use reflection so editor code can resolve from the live scope.
         /// </summary>
-        private static bool TryGetApplicationHost(ApplicationBootstrap bootstrap, out ApplicationHost host)
+        private static bool TryGetAppFlowHost(AppFlowRoot bootstrap, out AppFlowHost host)
         {
             host = null;
-            PropertyInfo prop = typeof(ApplicationBootstrap).GetProperty(
+            PropertyInfo prop = typeof(AppFlowRoot).GetProperty(
                 "Host",
                 BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
             if (prop == null)
@@ -170,7 +170,7 @@ namespace GearEngine.GearEngine.Editor.Cheats
                 return false;
             }
 
-            host = prop.GetValue(bootstrap) as ApplicationHost;
+            host = prop.GetValue(bootstrap) as AppFlowHost;
             return host != null;
         }
 

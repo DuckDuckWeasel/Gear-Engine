@@ -12,12 +12,9 @@ namespace GearEngine.Campaign.Bootstrap.Cards
 {
     public sealed class CardsClientModule : GameClientModuleBase<CardGameData>
     {
-        private readonly ILiveOpsService liveOpsService;
-
-        public CardsClientModule(IObjectResolver resolver, ILiveOpsService liveOps)
-            : base(resolver)
+        public CardsClientModule(ILiveOpsService liveOps)
+            : base(liveOps)
         {
-            liveOpsService = liveOps ?? throw new ArgumentNullException(nameof(liveOps));
         }
 
         public IReadOnlyList<string> Unlocked => data?.Unlocked;
@@ -30,7 +27,7 @@ namespace GearEngine.Campaign.Bootstrap.Cards
         {
             try
             {
-                PurchaseCardResponse resp = await liveOpsService.CallAsync(new PurchaseCardRequest(), cancellationToken);
+                PurchaseCardResponse resp = await liveOps.CallAsync(new PurchaseCardRequest(), cancellationToken);
                 if (resp == null || data == null)
                 {
                     return resp;

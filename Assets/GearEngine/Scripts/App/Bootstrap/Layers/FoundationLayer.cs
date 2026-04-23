@@ -1,5 +1,5 @@
 using System;
-using Scaffold.LayeredScope;
+using Scaffold.AppFlow;
 using Scaffold.Addressables.Container;
 using Scaffold.Events.Container;
 using Scaffold.Navigation;
@@ -25,9 +25,17 @@ namespace GearEngine.App.Bootstrap.Layers
         {
             new AddressablesInstaller().Install(builder);
             builder.RegisterInstance(navigationSettings);
-            builder.Register<LayerTopNavigationViewModelInjector>(Lifetime.Singleton).As<INavigationViewModelInjector>();
-            new NavigationInstaller(navigationViewHolder, registerDefaultViewModelInjector: false).Install(builder);
+            new NavigationInstaller(navigationViewHolder).Install(builder);
+            builder.Register<NoViewControllerDependencyInjector>(Lifetime.Singleton)
+                .As<IViewControllerDependencyInjector>();
             new EventsInstaller().Install(builder);
+        }
+
+        private sealed class NoViewControllerDependencyInjector : IViewControllerDependencyInjector
+        {
+            public void Inject(IViewController controller)
+            {
+            }
         }
     }
 }

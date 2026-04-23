@@ -12,14 +12,11 @@ namespace GearEngine.Campaign.Bootstrap.LiveOps
 {
     public sealed class RoguelikeClientModule : GameClientModuleBase<RoguelikeGameData>
     {
-        public RoguelikeClientModule(IObjectResolver resolver, ILiveOpsService liveOps) : base(resolver)
+        public RoguelikeClientModule(ILiveOpsService liveOps) : base(liveOps)
         {
-            liveOpsService = liveOps ?? throw new ArgumentNullException(nameof(liveOps));
         }
 
         public IReadOnlyList<string> CurrentRollIds => data?.CurrentRollIds;
-
-        private readonly ILiveOpsService liveOpsService;
 
         public async Task<IReadOnlyList<string>> EnsureCurrentRollAsync(CancellationToken cancellationToken = default)
         {
@@ -59,7 +56,7 @@ namespace GearEngine.Campaign.Bootstrap.LiveOps
 
         private async Task<IReadOnlyList<string>> FetchAndApplyDrawAsync(CancellationToken cancellationToken)
         {
-            DrawRoguelikeRollResponse resp = await liveOpsService.CallAsync(new DrawRoguelikeRollRequest(), cancellationToken);
+            DrawRoguelikeRollResponse resp = await liveOps.CallAsync(new DrawRoguelikeRollRequest(), cancellationToken);
             if (resp != null && data != null)
             {
                 data.CurrentRollIds = new List<string>(resp.CurrentRollIds);
@@ -70,7 +67,7 @@ namespace GearEngine.Campaign.Bootstrap.LiveOps
 
         private async Task<bool> SendClaimAsync(string pickedGearId, CancellationToken cancellationToken)
         {
-            ClaimRoguelikePickResponse resp = await liveOpsService.CallAsync(new ClaimRoguelikePickRequest(pickedGearId), cancellationToken);
+            ClaimRoguelikePickResponse resp = await liveOps.CallAsync(new ClaimRoguelikePickRequest(pickedGearId), cancellationToken);
             if (resp != null && resp.Success && data != null)
             {
                 data.CurrentRollIds = new List<string>();

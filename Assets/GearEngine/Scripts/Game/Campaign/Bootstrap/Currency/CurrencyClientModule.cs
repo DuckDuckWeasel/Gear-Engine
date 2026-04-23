@@ -12,11 +12,11 @@ namespace GearEngine.Currency
 {
     public sealed class CurrencyClientModule : GameClientModuleBase<CurrencyGameData>
     {
-        public CurrencyClientModule(IObjectResolver resolver, ILiveOpsService liveOps) : base(resolver) { liveOpsService = liveOps ?? throw new ArgumentNullException(nameof(liveOps)); }
+        public CurrencyClientModule(ILiveOpsService liveOps) : base(liveOps)
+        {
+        }
 
         public IReadOnlyList<CurrencyWallet> Wallets => data?.Wallets;
-
-        private readonly ILiveOpsService liveOpsService;
 
         public CurrencyWallet GetWallet(string currencyId)
         {
@@ -64,14 +64,14 @@ namespace GearEngine.Currency
 
         private async Task<AddCurrencyResponse> AddCurrencyCoreAsync(string currencyId, long amount, CancellationToken ct)
         {
-            AddCurrencyResponse response = await liveOpsService.CallAsync(new AddCurrencyRequest(currencyId, amount), ct);
+            AddCurrencyResponse response = await liveOps.CallAsync(new AddCurrencyRequest(currencyId, amount), ct);
             ApplyServerSnapshot(currencyId, response?.NewAmount);
             return response;
         }
 
         private async Task<SpendCurrencyResponse> SpendCurrencyCoreAsync(string currencyId, long amount, CancellationToken ct)
         {
-            SpendCurrencyResponse response = await liveOpsService.CallAsync(new SpendCurrencyRequest(currencyId, amount), ct);
+            SpendCurrencyResponse response = await liveOps.CallAsync(new SpendCurrencyRequest(currencyId, amount), ct);
             ApplyServerSnapshot(currencyId, response?.NewAmount);
             return response;
         }

@@ -40,9 +40,9 @@ namespace GearEngine.Campaign.Presentation
             trashDropZone.ApplyInitialPlacement();
         }
 
-        protected override void OnOpen()
+        protected override void OnOpen(bool wasHidden)
         {
-            base.OnOpen();
+            base.OnOpen(wasHidden);
             track.gameObject.SetActive(true);
             boardView.gameObject.SetActive(true);
             inventoryView.gameObject.SetActive(true);
@@ -60,9 +60,14 @@ namespace GearEngine.Campaign.Presentation
                 onComplete: () => inventoryView.RebuildAndFit());
         }
 
-        protected override void OnClose()
+        protected override void OnClose(bool hiding)
         {
-            base.OnClose();
+            base.OnClose(hiding);
+            if (hiding)
+            {
+                return;
+            }
+
             raceButton.onClick.RemoveListener(OnRaceClicked);
             returnToMainButton.onClick.RemoveListener(OnReturnClicked);
             if (trashDropZone != null)

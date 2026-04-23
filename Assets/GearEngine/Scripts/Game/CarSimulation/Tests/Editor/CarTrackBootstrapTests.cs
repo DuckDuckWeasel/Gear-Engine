@@ -91,6 +91,15 @@ namespace GearEngine.CarSimulation.Tests
                 LastOpened = controller;
             }
 
+            public void Open<TViewController>(TViewController controller, NavigationOptions options) where TViewController : IViewController
+            {
+                LastOpened = controller;
+            }
+
+            public void PrepareDependencies(IViewController controller)
+            {
+            }
+
             public void Close<TViewController>(TViewController controller) where TViewController : IViewController
             {
             }

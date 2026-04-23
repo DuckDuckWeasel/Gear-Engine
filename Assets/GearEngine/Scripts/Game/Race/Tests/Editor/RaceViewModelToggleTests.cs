@@ -31,6 +31,14 @@ namespace GearEngine.Race.Tests.Editor
             {
             }
 
+            public void Open<TViewController>(TViewController controller, NavigationOptions options) where TViewController : IViewController
+            {
+            }
+
+            public void PrepareDependencies(IViewController controller)
+            {
+            }
+
             public void Close<TViewController>(TViewController controller) where TViewController : IViewController
             {
             }

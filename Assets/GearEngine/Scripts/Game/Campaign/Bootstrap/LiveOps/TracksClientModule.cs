@@ -14,19 +14,16 @@ namespace GearEngine.Campaign.Bootstrap.LiveOps
 {
     public sealed class TracksClientModule : GameClientModuleBase<TrackGameData>, ITrackService
     {
-        private readonly ILiveOpsService liveOpsService;
         private readonly CurrencyClientModule currencyClient;
         private readonly TrackCatalogSO catalog;
         private readonly TrackProgressModel progress = new TrackProgressModel();
 
         public TracksClientModule(
-            IObjectResolver resolver,
             ILiveOpsService liveOps,
             CurrencyClientModule currencyClient,
             TrackCatalogSO catalog)
-            : base(resolver)
+            : base(liveOps)
         {
-            liveOpsService = liveOps ?? throw new ArgumentNullException(nameof(liveOps));
             this.currencyClient = currencyClient ?? throw new ArgumentNullException(nameof(currencyClient));
             this.catalog = catalog ?? throw new ArgumentNullException(nameof(catalog));
         }
@@ -130,7 +127,7 @@ namespace GearEngine.Campaign.Bootstrap.LiveOps
                     return;
                 }
 
-                RecordRaceResultResponse resp = await liveOpsService.CallAsync(new RecordRaceResultRequest(trackId, result.RaceTime));
+                RecordRaceResultResponse resp = await liveOps.CallAsync(new RecordRaceResultRequest(trackId, result.RaceTime));
                 if (resp == null || data == null)
                 {
                     return;

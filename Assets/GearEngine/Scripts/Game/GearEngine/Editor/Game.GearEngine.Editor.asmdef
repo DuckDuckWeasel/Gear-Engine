@@ -7,7 +7,7 @@
         "VContainer",
         "Scaffold.MVVM.View",
         "Scaffold.Navigation",
-        "Scaffold.LayeredScope",
+        "Scaffold.AppFlow",
         "Scaffold.Schemas",
         "Unity.Addressables.Editor",
         "Unity.InputSystem",

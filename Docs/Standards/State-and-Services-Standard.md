@@ -1,6 +1,6 @@
 # State and Services Standard (AI-First)
 
-**Canonical location:** [`Docs/Standards/State-and-Services-Standard.md`](State-and-Services-Standard.md). An older duplicate at `Docs/State-and-Services-Standard.md` was removed; update any bookmarks or links to this path.
+**Canonical location:** `[Docs/Standards/State-and-Services-Standard.md](State-and-Services-Standard.md)`. An older duplicate at `Docs/State-and-Services-Standard.md` was removed; update any bookmarks or links to this path.
 
 ## Why this standard exists
 
@@ -303,12 +303,14 @@ Result: for any data the View binds per-field, you have at least two types — a
 
 ### The four shapes, ranked
 
-| Shape | When it fits | When it breaks |
-|---|---|---|
-| **A. DTO + Model wrapper with a bridge ctor** — `internal Model(Dto dto)` for the row, `internal Aggregate(GameData snapshot)` for the collection. | Default. Anything bound per-field. Anything where the runtime row needs a field the DTO does not carry (merged client-only state, cross-referenced state from a second DTO). | Manual ctor must consume new DTO fields — drift risk. Mitigated by a per-feature unit test. |
-| **B. DTO is the row** — no wrapper; the runtime collection holds DTO instances directly. | When no per-field binding exists and no client-only field is needed. The View only repaints on screen change. | Any per-cell binding, any field-level `INotifyPropertyChanged`, any need for an extra runtime-only field. **Promote to A** the moment any of these appears. |
-| **C. Generate the Model from the DTO** | When many paired types exist and the bridge ctors become rote. Generator can also emit "extra fields" via partial classes. | Generator complexity is paid forever. Does not help features that need merge logic at construction (e.g. joining two DTOs into one model). Defer until friction is real. |
-| **D. One observable type in the shared assembly** | — | Closed for this repo. Mvvm libraries cannot live in the Cloud Code assembly. |
+
+| Shape                                                                                                                                              | When it fits                                                                                                                                                                 | When it breaks                                                                                                                                                           |
+| -------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **A. DTO + Model wrapper with a bridge ctor** — `internal Model(Dto dto)` for the row, `internal Aggregate(GameData snapshot)` for the collection. | Default. Anything bound per-field. Anything where the runtime row needs a field the DTO does not carry (merged client-only state, cross-referenced state from a second DTO). | Manual ctor must consume new DTO fields — drift risk. Mitigated by a per-feature unit test.                                                                              |
+| **B. DTO is the row** — no wrapper; the runtime collection holds DTO instances directly.                                                           | When no per-field binding exists and no client-only field is needed. The View only repaints on screen change.                                                                | Any per-cell binding, any field-level `INotifyPropertyChanged`, any need for an extra runtime-only field. **Promote to A** the moment any of these appears.              |
+| **C. Generate the Model from the DTO**                                                                                                             | When many paired types exist and the bridge ctors become rote. Generator can also emit "extra fields" via partial classes.                                                   | Generator complexity is paid forever. Does not help features that need merge logic at construction (e.g. joining two DTOs into one model). Defer until friction is real. |
+| **D. One observable type in the shared assembly**                                                                                                  | —                                                                                                                                                                            | Closed for this repo. Mvvm libraries cannot live in the Cloud Code assembly.                                                                                             |
+
 
 ### The bridge-ctor convention (Shape A)
 

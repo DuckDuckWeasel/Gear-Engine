@@ -74,16 +74,9 @@ namespace GearEngine.Campaign.Presentation
             spawnedCars.Add(carView);
         }
 
-        protected override void OnOpen()
+        protected override void OnOpen(bool wasHidden)
         {
-            base.OnOpen();
-            SetRaceSceneRootsActive(true);
-            PlayFrustumTransitionThenStartRace();
-        }
-
-        protected override void OnFocus()
-        {
-            base.OnFocus();
+            base.OnOpen(wasHidden);
             SetRaceSceneRootsActive(true);
             PlayFrustumTransitionThenStartRace();
         }
@@ -119,9 +112,14 @@ namespace GearEngine.Campaign.Presentation
             viewModel.StartRaceAfterCarReady();
         }
 
-        protected override void OnClose()
+        protected override void OnClose(bool hiding)
         {
-            base.OnClose();
+            base.OnClose(hiding);
+            if (hiding)
+            {
+                return;
+            }
+
             SetRaceSceneRootsActive(false);
         }
 

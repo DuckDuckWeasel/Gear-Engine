@@ -28,27 +28,23 @@ namespace GearEngine.Campaign.Presentation
             statsPanel.Bind(viewModel.Stats);
         }
 
-        protected override void OnOpen()
+        protected override void OnOpen(bool wasHidden)
         {
-            base.OnOpen();
+            base.OnOpen(wasHidden);
             playButton.onClick.RemoveListener(OnPlayClicked);
             playButton.onClick.AddListener(OnPlayClicked);
             track.gameObject.SetActive(true);
             FrustumFitAnchorOpenTransition.PlayAfterCanvasLayout(this, openTransitionAnchors, openTransitionDurationSeconds);
         }
 
-        protected override void OnFocus()
+        protected override void OnClose(bool hiding)
         {
-            base.OnFocus();
-            playButton.onClick.RemoveListener(OnPlayClicked);
-            playButton.onClick.AddListener(OnPlayClicked);
-            track.gameObject.SetActive(true);
-            FrustumFitAnchorOpenTransition.PlayAfterCanvasLayout(this, openTransitionAnchors, openTransitionDurationSeconds);
-        }
+            base.OnClose(hiding);
+            if (hiding)
+            {
+                return;
+            }
 
-        protected override void OnClose()
-        {
-            base.OnClose();
             playButton.onClick.RemoveListener(OnPlayClicked);
             if (track != null)
             {

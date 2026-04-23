@@ -10,7 +10,7 @@ using GearEngine.Campaign.Services;
 using GearEngine.CarSimulation.Definitions;
 using GearEngine.GearEngine;
 using GearEngine.GearEngine.Config;
-using Scaffold.LayeredScope;
+using Scaffold.AppFlow;
 using Scaffold.Navigation;
 using Scaffold.Navigation.Contracts;
 using UnityEngine;
@@ -18,7 +18,7 @@ using VContainer;
 
 namespace GearEngine.App.Bootstrap
 {
-    public sealed class CampaignApplicationBootstrap : ApplicationBootstrap
+    public sealed class CampaignApplicationBootstrap : AppFlowRoot
     {
         [Header("Navigation")]
         [SerializeField]

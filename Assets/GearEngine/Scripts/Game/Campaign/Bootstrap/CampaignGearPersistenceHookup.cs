@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using GearEngine.Campaign.Bootstrap.LiveOps;
 using GearEngine.GearEngine;
 using GearEngine.GearEngine.Services.Board;
-using Scaffold.LayeredScope;
+using Scaffold.AppFlow;
 
 namespace GearEngine.Campaign.Bootstrap
 {

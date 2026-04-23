@@ -15,15 +15,13 @@ namespace GearEngine.Campaign.Bootstrap.LiveOps
 {
     public sealed class LoadoutClientModule : GameClientModuleBase<LoadoutGameData>, IGearLoadoutService
     {
-        public LoadoutClientModule(IObjectResolver resolver, ILiveOpsService liveOps, IInventoryService inventoryService) : base(resolver)
+        public LoadoutClientModule(ILiveOpsService liveOps, IInventoryService inventoryService) : base(liveOps)
         {
-            liveOpsService = liveOps ?? throw new ArgumentNullException(nameof(liveOps));
             this.inventoryService = inventoryService ?? throw new ArgumentNullException(nameof(inventoryService));
         }
 
         public bool HasSavedLoadout => true;
 
-        private readonly ILiveOpsService liveOpsService;
         private readonly IInventoryService inventoryService;
 
         public BoardLayoutData GetBoardLayout()
@@ -147,7 +145,7 @@ namespace GearEngine.Campaign.Bootstrap.LiveOps
             try
             {
                 SaveBoardLayoutRequest request = new SaveBoardLayoutRequest(placements);
-                SaveBoardLayoutResponse response = await liveOpsService.CallAsync(request);
+                SaveBoardLayoutResponse response = await liveOps.CallAsync(request);
                 RollbackIfRejected(response, previous);
             }
             catch (Exception ex)

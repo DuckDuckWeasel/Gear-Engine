@@ -56,7 +56,7 @@ namespace GearEngine.Campaign.Tests.Editor
             using IObjectResolver resolver = builder.Build();
 
             CurrencyClientModule currency = resolver.Resolve<CurrencyClientModule>();
-            var module = new TracksClientModule(resolver, liveOps, currency, catalog);
+            var module = new TracksClientModule(liveOps, currency, catalog);
             await module.InitializeAsync(CancellationToken.None);
 
             Assert.That(module.CurrentTrack, Is.SameAs(trackDef));
@@ -89,7 +89,7 @@ namespace GearEngine.Campaign.Tests.Editor
             using IObjectResolver resolver = builder.Build();
 
             CurrencyClientModule currency = resolver.Resolve<CurrencyClientModule>();
-            var module = new TracksClientModule(resolver, liveOps, currency, catalog);
+            var module = new TracksClientModule(liveOps, currency, catalog);
             await module.InitializeAsync(CancellationToken.None);
 
             Assert.That(module.CurrentTrack, Is.SameAs(trackDef));

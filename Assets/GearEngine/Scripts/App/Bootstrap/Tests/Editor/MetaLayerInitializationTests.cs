@@ -5,7 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using GameModuleDTO.GameApi;
 using GameModuleDTO.ModuleRequests;
-using Scaffold.LayeredScope;
+using Scaffold.AppFlow;
 using NUnit.Framework;
 using Scaffold.CloudCode;
 using Scaffold.LiveOps;
@@ -85,8 +85,8 @@ namespace GearEngine.App.Bootstrap.Tests.Editor
                 var bootstrap = go.AddComponent<FailingLiveOpsBootstrap>();
                 go.SetActive(true);
 
-                LogAssert.Expect(LogType.Error, new System.Text.RegularExpressions.Regex("Push failed for 'ThrowingLiveOpsLayer'"));
-                LogAssert.Expect(LogType.Error, new System.Text.RegularExpressions.Regex("\\[ApplicationBootstrap\\] Startup failed"));
+                LogAssert.Expect(LogType.Error, new System.Text.RegularExpressions.Regex("\\[AppFlow\\] Init layer 'ThrowingLiveOpsLayer'"));
+                LogAssert.Expect(LogType.Error, new System.Text.RegularExpressions.Regex("\\[AppFlow\\] Startup AppFlowRoot"));
 
                 InvokeStart(bootstrap);
 
@@ -113,9 +113,9 @@ namespace GearEngine.App.Bootstrap.Tests.Editor
             }
         }
 
-        private static void InvokeStart(ApplicationBootstrap bootstrap)
+        private static void InvokeStart(AppFlowRoot bootstrap)
         {
-            MethodInfo start = typeof(ApplicationBootstrap).GetMethod(
+            MethodInfo start = typeof(AppFlowRoot).GetMethod(
                 "Start",
                 BindingFlags.Instance | BindingFlags.NonPublic);
             Assert.That(start, Is.Not.Null);
@@ -224,7 +224,7 @@ namespace GearEngine.App.Bootstrap.Tests.Editor
             public List<string> Order { get; } = new();
         }
 
-        private sealed class OrderRecordingBootstrap : ApplicationBootstrap
+        private sealed class OrderRecordingBootstrap : AppFlowRoot
         {
             private readonly OrderRecorder ledger = new();
 
@@ -338,7 +338,7 @@ namespace GearEngine.App.Bootstrap.Tests.Editor
             }
         }
 
-        private sealed class FailingLiveOpsBootstrap : ApplicationBootstrap
+        private sealed class FailingLiveOpsBootstrap : AppFlowRoot
         {
             public bool StartupFailureCalled { get; private set; }
             public Exception StartupFailureException { get; private set; }

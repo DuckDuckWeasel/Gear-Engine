@@ -20,6 +20,18 @@ namespace GearEngine.Campaign.Tests.Editor
             }
         }
 
+        public void Open<TViewController>(TViewController controller, NavigationOptions options) where TViewController : IViewController
+        {
+            if (controller != null)
+            {
+                OpenedControllers.Add(controller);
+            }
+        }
+
+        public void PrepareDependencies(IViewController controller)
+        {
+        }
+
         public void Close<TViewController>(TViewController controller) where TViewController : IViewController
         {
         }

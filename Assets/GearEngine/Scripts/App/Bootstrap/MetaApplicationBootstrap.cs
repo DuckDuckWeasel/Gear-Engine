@@ -13,7 +13,7 @@ using GearEngine.Campaign.Bootstrap.Cards;
 using GearEngine.Campaign.Bootstrap.LiveOps;
 using GearEngine.Campaign.Services;
 using GearEngine.GearEngine.Config;
-using Scaffold.LayeredScope;
+using Scaffold.AppFlow;
 using Scaffold.LiveOps;
 using Scaffold.Navigation;
 using UnityEngine;
@@ -21,7 +21,7 @@ using VContainer;
 
 namespace GearEngine.App.Bootstrap
 {
-    public sealed class MetaApplicationBootstrap : ApplicationBootstrap
+    public sealed class MetaApplicationBootstrap : AppFlowRoot
     {
         [Header("Navigation")]
         [SerializeField]
