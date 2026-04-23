@@ -41,6 +41,7 @@ namespace GearEngine.CarSimulation.Debug
 
         private void OnGUI()
         {
+            return;
             if (simulationDebug == null || simulationDebug.Session == null)
             {
                 GUI.Label(new Rect(10, 10, 300, 30), "Car UIDebug: Aguardando Corrida...");

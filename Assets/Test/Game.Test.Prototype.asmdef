@@ -4,7 +4,8 @@
         "Game.CarSimulation",
         "Unity.Mathematics",
         "Unity.Splines",
-        "PROMETEO"
+        "PROMETEO",
+        "Scaffold.MVVM.View"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

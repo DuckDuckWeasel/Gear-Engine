@@ -18,6 +18,7 @@ namespace GearEngine.Campaign.Presentation
         [SerializeField] private float openTransitionDurationSeconds = 0.35f;
 
         private readonly List<CarView> spawnedCars = new List<CarView>();
+        private bool raceStartPending;
 
         protected override void OnBind()
         {
@@ -29,7 +30,10 @@ namespace GearEngine.Campaign.Presentation
 
             track.Bind(viewModel.Track);
             SpawnAndBindCar();
-            viewModel.StartRaceAfterCarReady();
+
+            // Defer race start (and prop generation) until after the FrustumFit
+            // open transition has positioned the track at its final screen location.
+            raceStartPending = true;
         }
 
         private void LateUpdate()
@@ -74,14 +78,45 @@ namespace GearEngine.Campaign.Presentation
         {
             base.OnOpen();
             SetRaceSceneRootsActive(true);
-            FrustumFitAnchorOpenTransition.PlayAfterCanvasLayout(this, openTransitionAnchors, openTransitionDurationSeconds);
+            PlayFrustumTransitionThenStartRace();
         }
 
         protected override void OnFocus()
         {
             base.OnFocus();
             SetRaceSceneRootsActive(true);
-            FrustumFitAnchorOpenTransition.PlayAfterCanvasLayout(this, openTransitionAnchors, openTransitionDurationSeconds);
+            PlayFrustumTransitionThenStartRace();
+        }
+
+        /// <summary>
+        /// Plays the FrustumFit open transition and, once the track is at its
+        /// final screen-space position, starts the race (which triggers prop generation).
+        /// </summary>
+        private void PlayFrustumTransitionThenStartRace()
+        {
+            FrustumFitAnchorOpenTransition.PlayAfterCanvasLayout(
+                this,
+                openTransitionAnchors,
+                openTransitionDurationSeconds,
+                onComplete: OnFrustumTransitionComplete);
+        }
+
+        private void OnFrustumTransitionComplete()
+        {
+            if (!raceStartPending)
+            {
+                return;
+            }
+
+            raceStartPending = false;
+
+            // Generate props now that the track is at its final position.
+            if (track != null)
+            {
+                track.BroadcastMessage("Generate", SendMessageOptions.DontRequireReceiver);
+            }
+
+            viewModel.StartRaceAfterCarReady();
         }
 
         protected override void OnClose()
@@ -92,6 +127,7 @@ namespace GearEngine.Campaign.Presentation
 
         protected override void OnUnbind()
         {
+            raceStartPending = false;
             DestroySpawnedCars();
             if (track != null)
             {

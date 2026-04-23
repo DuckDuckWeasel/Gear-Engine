@@ -32,6 +32,7 @@ Transform:
   m_Children:
   - {fileID: 893777420287832912}
   - {fileID: 6797588645402631771}
+  - {fileID: 4497160251264081}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1133858145817991951
@@ -92,34 +93,326 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d32f34181d0b441738f4fa67b5edc1a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Game.Test.Prototype::SplinePropGenerator
-  track: {fileID: 0}
+  track: {fileID: 4493629028657937679}
   propRules:
-  - prefabs:
-    - {fileID: 1951466408381339306, guid: f2ad49960953b4806a6242c16590434f, type: 3}
-    side: 0
-    lateralDistance: 3
-    randomOffsetRange: {x: 1, y: 1}
-    chancePerCurve: 0.3
-    minAmount: 1
-    maxAmount: 4
-  - prefabs:
-    - {fileID: 1951466408381339306, guid: f2ad49960953b4806a6242c16590434f, type: 3}
-    side: 1
-    lateralDistance: 3
-    randomOffsetRange: {x: 1, y: 1}
-    chancePerCurve: 0.7
-    minAmount: 5
-    maxAmount: 10
-  - prefabs:
-    - {fileID: 8940077666693441932, guid: f7ae8739f888645ef9f9118defc5103d, type: 3}
-    side: 2
-    lateralDistance: 0
-    randomOffsetRange: {x: 1, y: 1}
-    chancePerCurve: 0.2
-    minAmount: 1
-    maxAmount: 2
+  - rid: 6246091839138168839
+  - rid: 6246091839138168841
+  - rid: 6246091839138168842
+  - rid: 6246091839138168844
+  - rid: 6246091839138169112
+  - rid: 6246091839138169113
   generateOnStart: 1
   generatedProps: []
+  references:
+    version: 2
+    RefIds:
+    - rid: 6246091839138168839
+      type: {class: SplinePropGenerator/Curves, ns: , asm: Game.Test.Prototype}
+      data:
+        enabled: 1
+        prefabs:
+        - {fileID: 1951466408381339306, guid: f2ad49960953b4806a6242c16590434f, type: 3}
+        chancePerSegment: 0.8
+        minAmount: 5
+        maxAmount: 10
+        randomOffsetRange: {x: 2, y: 2}
+        randomYRotation: 1
+        minSeparation: 0.5
+        curvatureThreshold: 5
+        side: 2
+        leftDistance: 3
+        rightDistance: 3
+        insideMaxDistance: 20
+        outsideMaxDistance: 20
+        minSplineDistance: 1.5
+    - rid: 6246091839138168841
+      type: {class: SplinePropGenerator/All, ns: , asm: Game.Test.Prototype}
+      data:
+        enabled: 1
+        prefabs:
+        - {fileID: 7731688802911425094, guid: 9a50f1c99ed67415ca85e3eabafeb7e5, type: 3}
+        - {fileID: 7731688802911425094, guid: 604b923ff1f3444a29103efb4e3935f4, type: 3}
+        chancePerSegment: 0.8
+        minAmount: 10
+        maxAmount: 20
+        randomOffsetRange: {x: 2, y: 2}
+        randomYRotation: 1
+        minSeparation: 1
+        side: 2
+        leftDistance: 7
+        rightDistance: 7
+        insideMaxDistance: 20
+        outsideMaxDistance: 20
+        minSplineDistance: 1.5
+    - rid: 6246091839138168842
+      type: {class: SplinePropGenerator/All, ns: , asm: Game.Test.Prototype}
+      data:
+        enabled: 1
+        prefabs:
+        - {fileID: 1614357560030355675, guid: 94154469a51b4418d81997296ca66ae8, type: 3}
+        - {fileID: 1614357560030355675, guid: 0ca588fc5f13840b88ede1242afdb9de, type: 3}
+        chancePerSegment: 0.8
+        minAmount: 10
+        maxAmount: 20
+        randomOffsetRange: {x: 2, y: 2}
+        randomYRotation: 1
+        minSeparation: 1
+        side: 2
+        leftDistance: 8
+        rightDistance: 8
+        insideMaxDistance: 20
+        outsideMaxDistance: 20
+        minSplineDistance: 1.5
+    - rid: 6246091839138168844
+      type: {class: SplinePropGenerator/Outside, ns: , asm: Game.Test.Prototype}
+      data:
+        enabled: 1
+        prefabs:
+        - {fileID: 1614357560030355675, guid: 0ca588fc5f13840b88ede1242afdb9de, type: 3}
+        - {fileID: 1614357560030355675, guid: e27a01388222a4cac9b6801ce672d67c, type: 3}
+        - {fileID: 1614357560030355675, guid: 9ae47c9962e8944bfa1b95c8cc5e3dfb, type: 3}
+        - {fileID: 7731688802911425094, guid: 9a50f1c99ed67415ca85e3eabafeb7e5, type: 3}
+        - {fileID: 7731688802911425094, guid: 604b923ff1f3444a29103efb4e3935f4, type: 3}
+        chancePerSegment: 1
+        minAmount: 10
+        maxAmount: 20
+        randomOffsetRange: {x: 2, y: 2}
+        randomYRotation: 1
+        minSeparation: 1
+        maxDistance: 50
+        minSplineDistance: 10
+    - rid: 6246091839138169112
+      type: {class: SplinePropGenerator/Inside, ns: , asm: Game.Test.Prototype}
+      data:
+        enabled: 1
+        prefabs:
+        - {fileID: 7731688802911425094, guid: 9a50f1c99ed67415ca85e3eabafeb7e5, type: 3}
+        - {fileID: 7731688802911425094, guid: 604b923ff1f3444a29103efb4e3935f4, type: 3}
+        chancePerSegment: 0.8
+        minAmount: 3
+        maxAmount: 10
+        randomOffsetRange: {x: 2, y: 2}
+        randomYRotation: 1
+        minSeparation: 1
+        maxDistance: 20
+        minSplineDistance: 10
+    - rid: 6246091839138169113
+      type: {class: SplinePropGenerator/Inside, ns: , asm: Game.Test.Prototype}
+      data:
+        enabled: 1
+        prefabs:
+        - {fileID: 1614357560030355675, guid: 94154469a51b4418d81997296ca66ae8, type: 3}
+        - {fileID: 1614357560030355675, guid: 0ca588fc5f13840b88ede1242afdb9de, type: 3}
+        - {fileID: 1614357560030355675, guid: e27a01388222a4cac9b6801ce672d67c, type: 3}
+        - {fileID: 1614357560030355675, guid: 9ae47c9962e8944bfa1b95c8cc5e3dfb, type: 3}
+        chancePerSegment: 0.8
+        minAmount: 3
+        maxAmount: 10
+        randomOffsetRange: {x: 2, y: 2}
+        randomYRotation: 1
+        minSeparation: 1
+        maxDistance: 20
+        minSplineDistance: 10
+--- !u!1 &4911468195009971436
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4497160251264081}
+  - component: {fileID: 4301293432989808040}
+  - component: {fileID: 8336973063334862391}
+  - component: {fileID: 5120397685293210988}
+  - component: {fileID: 3491049939188769267}
+  - component: {fileID: 7185598080605435716}
+  - component: {fileID: 70660517028626888}
+  - component: {fileID: 594783843338195866}
+  m_Layer: 0
+  m_Name: Floor
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4497160251264081
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4911468195009971436}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: -4.6}
+  m_LocalScale: {x: 30, y: 30, z: 30}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8298623856469553584}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!33 &4301293432989808040
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4911468195009971436}
+  m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!23 &8336973063334862391
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4911468195009971436}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: c638afabe43e54590b83e65a317dfe7c, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_MaskInteraction: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!65 &5120397685293210988
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4911468195009971436}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 280, y: 1, z: 280}
+  m_Center: {x: 0, y: -0.5, z: 0}
+--- !u!65 &3491049939188769267
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4911468195009971436}
+  m_Material: {fileID: 13400000, guid: b36e29e623ce9b5468984c4324503438, type: 2}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 3, y: 1.5, z: 170}
+  m_Center: {x: -81, y: 0.5, z: 0}
+--- !u!65 &7185598080605435716
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4911468195009971436}
+  m_Material: {fileID: 13400000, guid: b36e29e623ce9b5468984c4324503438, type: 2}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 3, y: 1.5, z: 170}
+  m_Center: {x: 81, y: 0.5, z: 0}
+--- !u!65 &70660517028626888
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4911468195009971436}
+  m_Material: {fileID: 13400000, guid: b36e29e623ce9b5468984c4324503438, type: 2}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 170, y: 1.5, z: 3}
+  m_Center: {x: 0, y: 0.5, z: -81}
+--- !u!65 &594783843338195866
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4911468195009971436}
+  m_Material: {fileID: 13400000, guid: b36e29e623ce9b5468984c4324503438, type: 2}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 170, y: 1.5, z: 3}
+  m_Center: {x: 0, y: 0.5, z: 81}
 --- !u!1 &5656383149569711307
 GameObject:
   m_ObjectHideFlags: 0
@@ -382,7 +675,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 0.1, z: 1}
+  m_LocalScale: {x: 1, y: 0.02, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 893777420287832912}
@@ -456,7 +749,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 222dc08d484f16869bdd89edd9d368fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Splines::UnityEngine.Splines.SplineExtrude
-  m_Container: {fileID: 4493629028657937679}
+  m_Container: {fileID: 0}
   m_TargetMesh: {fileID: 0}
   m_RebuildOnSplineChange: 0
   m_RebuildFrequency: 30
