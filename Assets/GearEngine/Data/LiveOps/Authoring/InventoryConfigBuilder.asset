@@ -13,3 +13,10 @@ MonoBehaviour:
   m_Name: InventoryConfigBuilder
   m_EditorClassIdentifier: Game.Campaign::GearEngine.Campaign.Authoring.InventoryConfigBuilderSO
   baseSlots: 8
+  motorCogGearId: gear_core
+  motorCogStartX: 2
+  motorCogStartY: 2
+  startingGearIds:
+  - gear_base_1
+  - gear_speed
+  - gear_score

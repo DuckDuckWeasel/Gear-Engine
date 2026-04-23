@@ -1,7 +1,15 @@
 {
   "entries": {
     "InventoryConfig": {
-      "baseSlots": 8
+      "baseSlots": 8,
+      "motorCogGearId": "gear_core",
+      "motorCogStartX": 2,
+      "motorCogStartY": 2,
+      "startingGearIds": [
+        "gear_base_1",
+        "gear_speed",
+        "gear_score"
+      ]
     }
   }
 }

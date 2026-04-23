@@ -22,7 +22,12 @@ namespace GearEngine.Campaign.Authoring
 
         [SerializeField]
         [Tooltip("Catalog gear ids granted to brand-new players in addition to the motor cog. Seeded once per account.")]
-        private List<string> startingGearIds = new List<string>();
+        private List<string> startingGearIds = new List<string>
+        {
+            "gear_base_1",
+            "gear_speed",
+            "gear_score",
+        };
 
         public override string ConfigKey => nameof(InventoryConfig);
 
