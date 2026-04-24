@@ -89,11 +89,6 @@ namespace LiveOps.GameApi
             }
         }
 
-        public bool Contains(string requestKey)
-        {
-            return !string.IsNullOrEmpty(requestKey) && _map.ContainsKey(requestKey);
-        }
-
         public bool TryGet(string requestKey, out HandlerEntry? entry)
         {
             if (string.IsNullOrEmpty(requestKey) || !_map.TryGetValue(requestKey, out HandlerEntry? found))
@@ -103,20 +98,6 @@ namespace LiveOps.GameApi
             }
 
             entry = found;
-            return true;
-        }
-
-        public bool TryResolve(string requestKey, out Type? requestType, out Type? responseType)
-        {
-            if (!TryGet(requestKey, out HandlerEntry? e) || e == null)
-            {
-                requestType = null;
-                responseType = null;
-                return false;
-            }
-
-            requestType = e.RequestType;
-            responseType = e.ResponseType;
             return true;
         }
     }
