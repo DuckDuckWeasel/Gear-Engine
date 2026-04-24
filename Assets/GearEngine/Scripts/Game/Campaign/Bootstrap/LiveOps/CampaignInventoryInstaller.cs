@@ -7,7 +7,7 @@ using VContainer.Unity;
 
 namespace GearEngine.Campaign.Bootstrap.LiveOps
 {
-    /// <summary>Registers <see cref="InventoryClientModule"/>; requires <see cref="GearEngine.GearEngine.Config.GearCatalogSO"/> from <see cref="CampaignGearCatalogInstaller"/>.</summary>
+    /// <summary>Registers <see cref="InventoryClientModule"/>; requires <see cref="GearEngine.GearEngine.Config.GearCatalogSO"/> in the container (registered by <see cref="GearEngine.App.Bootstrap.Layers.LiveOpsLayer"/>).</summary>
     public sealed class CampaignInventoryInstaller : IInstaller
     {
         public void Install(IContainerBuilder builder)

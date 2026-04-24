@@ -31,7 +31,10 @@ namespace GearEngine.Campaign.Tests.Editor
             var builder = new ContainerBuilder();
             new EventsInstaller().Install(builder);
             builder.RegisterInstance<IInventoryService>(new RecordingInventoryService());
-            new GearMechanicsInstaller(boardRules, null, new GearBoardLoadoutData()).Install(builder);
+            builder.RegisterInstance<IBoardSlotCapacityProvider>(new UnlimitedBoardSlotCapacityProvider());
+            builder.RegisterInstance(boardRules);
+            builder.RegisterInstance(ScriptableObject.CreateInstance<GearEngineFeatureToggleSO>());
+            new GearMechanicsInstaller().Install(builder);
             container = builder.Build();
             Engine = container.Resolve<IGearEngineService>();
             GridManager = container.Resolve<IGridManager>();

@@ -23,8 +23,8 @@ namespace GearEngine.GearEngine.Services.Board
             IGridMergeService mergeService,
             GearEngineFeatureToggleSO featureToggle,
             IEventBus eventBus,
-            GearBoardLoadoutData boardLoadout,
-            IInventoryService inventoryService)
+            IInventoryService inventoryService,
+            IBoardSlotCapacityProvider boardSlotCapacity)
         {
             this.gridManager = gridManager ?? throw new ArgumentNullException(nameof(gridManager));
             this.nodeFactory = nodeFactory ?? throw new ArgumentNullException(nameof(nodeFactory));
@@ -35,17 +35,12 @@ namespace GearEngine.GearEngine.Services.Board
             this.featureToggle = featureToggle;
             this.eventBus = eventBus;
             this.inventoryService = inventoryService ?? throw new ArgumentNullException(nameof(inventoryService));
+            this.boardSlotCapacity = boardSlotCapacity ?? throw new ArgumentNullException(nameof(boardSlotCapacity));
 
             boardModel = new BoardModel
             {
                 BoardRules = boardRules
             };
-
-            boardLoadout ??= new GearBoardLoadoutData();
-            if (boardLoadout.BoardLayout != null)
-            {
-                LoadLayout(boardLoadout.BoardLayout);
-            }
 
             SyncBoardModel(publishLayoutChanged: false);
         }
@@ -62,7 +57,20 @@ namespace GearEngine.GearEngine.Services.Board
 
         public int CurrentBoardGearCount => gridManager?.GetAllNodes().Count() ?? 0;
 
-        public int MaxAllowedBoardGears => boardRules != null ? boardRules.MaxAllowedBoardGears : int.MaxValue;
+        public int MaxAllowedBoardGears
+        {
+            get
+            {
+                if (boardRules == null)
+                {
+                    return int.MaxValue;
+                }
+
+                int fromLoadout = boardSlotCapacity.BoardSlotCapacity;
+                int cap = fromLoadout > 0 ? fromLoadout : boardRules.MaxBoardGears;
+                return Math.Min(cap, boardRules.MaxBoardGears);
+            }
+        }
 
         public bool ContainsMotorCog =>
             string.IsNullOrEmpty(inventoryService.MotorCogGearId) ||
@@ -78,6 +86,7 @@ namespace GearEngine.GearEngine.Services.Board
         private readonly IEventBus eventBus;
         private readonly BoardModel boardModel;
         private readonly IInventoryService inventoryService;
+        private readonly IBoardSlotCapacityProvider boardSlotCapacity;
 
         public IGridNode GetNode(Vector2Int coord) => gridManager.GetNode(coord);
 
@@ -247,9 +256,9 @@ namespace GearEngine.GearEngine.Services.Board
 
                 if (occupant == null)
                 {
-                    if (CurrentBoardGearCount >= boardRules.MaxAllowedBoardGears)
+                    if (CurrentBoardGearCount >= MaxAllowedBoardGears)
                     {
-                        Debug.LogWarning($"<color=#ff5555>[BoardService]</color> Board limit reached ({CurrentBoardGearCount}/{boardRules.MaxAllowedBoardGears}). Cannot place gear.");
+                        Debug.LogWarning($"<color=#ff5555>[BoardService]</color> Board limit reached ({CurrentBoardGearCount}/{MaxAllowedBoardGears}). Cannot place gear.");
                         return false;
                     }
 

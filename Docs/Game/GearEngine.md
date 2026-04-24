@@ -3,9 +3,10 @@
 ## Ownership and initialization
 
 - **`IInventoryService`** — Persisted, server-authoritative list of owned gears (`Owned`, `TryAdd`, `TryRemove`, `InventoryChanged`). In Campaign this is **`InventoryClientModule`** (LiveOps). In race/test scopes without LiveOps, register **`EmptyInventoryService`**. **`GearMechanicsInstaller` does not register** `IInventoryService`; the host scope must register it **before** the installer runs.
-- **`IBoardService` / `BoardService`** — Owns **`BoardModel`** (board config reference, simulation flag, and a synced node collection) and all grid mutations (`TryPlace`, `TryMoveBoardGear`, `TryRemoveBoardGear`, `TryDeleteBoardGear`, `LoadLayout`). Seeded from **`GearBoardLoadoutData`** at installer time. **`TryDeleteBoardGear`** also removes the gear from **`IInventoryService`** (destroyed, not returned). Capacity is enforced only here via **`BoardRulesSO.MaxAllowedBoardGears`** (`TryPlace`).
-- **`IGearLoadoutService`** — Persisted board layout `(gearId, x, y)`; **`LoadoutClientModule`** in Campaign. **`CampaignGearPersistenceHookup`** forwards **`BoardLayoutChanged`** to persist layout only (no inventory bridging).
-- **`GearEngineStartData`** — Adapter exposing **`GetBoardLoadoutData()`** for scopes. Initial tray contents come from **`IInventoryService.Owned`**, not start data.
+- **`IBoardService` / `BoardService`** — Owns **`BoardModel`** (board config reference, simulation flag, and a synced node collection) and all grid mutations (`TryPlace`, `TryMoveBoardGear`, `TryRemoveBoardGear`, `TryDeleteBoardGear`, `LoadLayout`). There is no construction-time seed: **`SetupViewModel`** (Campaign) calls **`LoadLayout`** from **`IGearLoadoutService.GetBoardLayout()`**; **`GearTestSceneBootstrap`** (Gear test scene) calls **`LoadLayout`** from its serialized **`boardSeed`**; **`BoardViewModel.LoadLayout`** is driven from **`RaceStartData.GearEngineData.BoardLayout`** in the race flow. **`TryDeleteBoardGear`** also removes the gear from **`IInventoryService`** (destroyed, not returned). Max placed gears (`TryPlace`) is capped by **`IBoardSlotCapacityProvider.BoardSlotCapacity`** when that value is positive (LiveOps **`LoadoutGameData.BaseSlots`** via **`LoadoutClientModule`**), otherwise by the grid size (**`BoardRulesSO.MaxBoardGears`**).
+- **`IBoardSlotCapacityProvider`** — Implemented by **`LoadoutClientModule`** (Campaign) and **`UnlimitedBoardSlotCapacityProvider`** (sandbox **`GearMechanicsScope`** / **`RaceScope`**). Registered before **`GearMechanicsInstaller`**.
+- **`IGearLoadoutService`** — Persisted board layout `(gearId, x, y)` plus **`BoardSlotCapacity`** (loadout `baseSlots`); **`LoadoutClientModule`** in Campaign. **`CampaignGearPersistenceHookup`** forwards **`BoardLayoutChanged`** to persist layout only (no inventory bridging).
+- **`GearEngineStartData`** — Serializable payload with **`BoardLayoutData`** (e.g. **`RaceStartData.GearEngineData`**). Initial tray contents come from **`IInventoryService.Owned`**, not start data.
 
 ## Tray (derived UI)
 
@@ -13,7 +14,7 @@
 
 ## Scopes
 
-`CampaignLayer` registers inventory + loadout via LiveOps installers, then passes **board loadout only** into `GearMechanicsInstaller`. `RaceScope` and `GearMechanicsScope` register **`EmptyInventoryService`** as `IInventoryService` before the installer.
+`CampaignLayer` registers inventory + loadout via LiveOps installers, then registers **`IBoardSlotCapacityProvider`** (via **`LoadoutClientModule`**) before `GearMechanicsInstaller`. `RaceScope` and `GearMechanicsScope` register **`EmptyInventoryService`** and **`UnlimitedBoardSlotCapacityProvider`** before the installer.
 
 ## Drag presentation
 

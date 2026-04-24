@@ -12,11 +12,6 @@ namespace GearEngine.GearEngine.Config
         [Min(1)]
         public int GridHeight = 5;
 
-        [Header("Limits")]
-        [Tooltip("Gameplay limit for dynamic board control. Must be ≤ MaxBoardGears.")]
-        [Min(1)]
-        public int MaxAllowedBoardGears = 5;
-
         [Header("Motor Cog")]
         [Tooltip("Authoring reference: cell where CoreGear is auto-placed when missing from loadout. Keep aligned with Loadout remote config motor start.")]
         public Vector2Int MotorCogStartCell = new Vector2Int(2, 2);
@@ -27,7 +22,6 @@ namespace GearEngine.GearEngine.Config
         {
             GridWidth = Mathf.Max(1, GridWidth);
             GridHeight = Mathf.Max(1, GridHeight);
-            MaxAllowedBoardGears = Mathf.Clamp(MaxAllowedBoardGears, 1, MaxBoardGears);
         }
     }
 }

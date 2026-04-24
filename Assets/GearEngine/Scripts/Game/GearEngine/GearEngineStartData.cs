@@ -1,15 +1,18 @@
 using System;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace GearEngine.GearEngine
 {
     [Serializable]
     public sealed class GearEngineStartData
     {
-        [SerializeField] private GearBoardLoadoutData boardLoadout = new GearBoardLoadoutData();
+        [FormerlySerializedAs("boardLoadout")]
+        [SerializeField]
+        private BoardLayoutData boardLayout = new BoardLayoutData();
 
-        public GearBoardLoadoutData BoardLoadout => boardLoadout;
+        public BoardLayoutData BoardLayout => boardLayout;
 
-        public GearBoardLoadoutData GetBoardLoadoutData() => boardLoadout;
+        public BoardLayoutData GetBoardLayout() => boardLayout;
     }
 }

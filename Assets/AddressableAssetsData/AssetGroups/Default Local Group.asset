@@ -65,6 +65,21 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1
+    m_Address: Catalogs/Track
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2
+    m_Address: Catalogs/Gear
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1
+    m_Address: Catalogs/RoguelikeGearPool
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: fbb208bb5aa7a441d95f8c927490d368, type: 2}
   m_SchemaSet:

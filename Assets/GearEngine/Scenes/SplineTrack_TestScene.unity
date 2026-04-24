@@ -280,7 +280,6 @@ MonoBehaviour:
   - {fileID: 11400000, guid: b4e1eaf4e8dd58b418b4e6efc603f72e, type: 2}
   sessionConfig:
     variables: {fileID: 11400000, guid: f6cfd8fa3fbb61843b66534996d0329d, type: 2}
-    totalLaps: 3
     roguelikeStats:
       statTopSpeed: 50
       statAcceleration: 50

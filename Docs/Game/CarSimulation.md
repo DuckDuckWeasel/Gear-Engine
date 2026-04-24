@@ -4,7 +4,7 @@ Runtime code lives in `Assets/GearEngine/Scripts/Game/CarSimulation/` (`Game.Car
 
 ## Race session (spline + AI runner)
 
-- **`RaceState`** holds race progress: **`RaceTime`**, **`CurrentLap`**, **`LapTimes`**, **`Phase`** (**`SimulationLifecycleState`**: Created / Running / Paused / Completed), plus references to **`CarEntity`** and **`TrackDefinition`**. **`RaceSessionConfig`** (including **`TotalLaps`**) is applied when the session is created via **`TrackSimulationFactory`**.
+- **`RaceState`** holds race progress: **`RaceTime`**, **`CurrentLap`**, **`LapTimes`**, **`Phase`** (**`SimulationLifecycleState`**: Created / Running / Paused / Completed), plus references to **`CarEntity`**, **`TrackDefinition`**, and **`RaceSessionConfig`** (roguelike car stats template). **`TotalLaps`** on the session comes from **`TrackDefinition.TotalLaps`** when the session is created via **`TrackSimulationFactory`**.
 - **`TrackViewComponent`** owns the scene **`SplineContainer`**, copies **`TrackDefinition`** into the container on bind, and rebuilds extruded visuals.
 - **`TrackViewModel`** mirrors **`RaceState`** into observable HUD fields and forwards start/stop to **`RaceManagerService`**.
 - **`SplineCarRunnerService`** drives **`PrometeoCarController`** along the spline; **`CarView`** may place the car at the spline start without attaching the runner until **`CarView.AttachRunner()`** (used by the spline test scene preview vs race flow).

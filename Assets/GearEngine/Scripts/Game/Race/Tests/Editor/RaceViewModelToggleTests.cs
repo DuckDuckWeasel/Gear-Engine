@@ -197,10 +197,10 @@ namespace GearEngine.Race.Tests.Editor
             var builder = new ContainerBuilder();
             new EventsInstaller().Install(builder);
             builder.RegisterInstance<IInventoryService>(new EmptyInventoryService());
-            new GearMechanicsInstaller(
-                boardRules,
-                null,
-                new GearBoardLoadoutData()).Install(builder);
+            builder.RegisterInstance<IBoardSlotCapacityProvider>(new UnlimitedBoardSlotCapacityProvider());
+            builder.RegisterInstance(boardRules);
+            builder.RegisterInstance(ScriptableObject.CreateInstance<GearEngineFeatureToggleSO>());
+            new GearMechanicsInstaller().Install(builder);
             IObjectResolver scope = builder.Build();
             IInventoryService inventoryService = scope.Resolve<IInventoryService>();
             IBoardService boardService = scope.Resolve<IBoardService>();

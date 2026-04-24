@@ -4,7 +4,7 @@ using UnityEngine;
 namespace GearEngine.Campaign.Services
 {
     /// <summary>
-    /// Authoring asset for default <see cref="RaceSessionConfig"/> used when starting a campaign race.
+    /// Authoring asset for default roguelike car stats (<see cref="RaceSessionConfig"/>) when starting a campaign race. Lap count comes from <see cref="TrackDefinition.TotalLaps"/>.
     /// </summary>
     [CreateAssetMenu(fileName = "RaceSessionDefaults", menuName = "GearEngine/Campaign/Race Session Defaults")]
     public sealed class RaceSessionDefaultsSO : ScriptableObject

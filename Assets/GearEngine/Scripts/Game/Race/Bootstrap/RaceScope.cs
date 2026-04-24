@@ -2,10 +2,10 @@ using System;
 using GearEngine.CarSimulation;
 using GearEngine.CarSimulation.Definitions;
 using GearEngine.CarSimulation.Simulation;
-using GearEngine.GearEngine;
 using GearEngine.GearEngine.Bootstrap;
 using GearEngine.GearEngine.Config;
 using GearEngine.GearEngine.Services;
+using GearEngine.GearEngine.Services.Board;
 using GearEngine.SceneFoundation.Bootstrap;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -21,10 +21,6 @@ namespace GearEngine.Race.Bootstrap
         [SerializeField]
         private BoardRulesSO boardRules;
 
-        [Header("Gear loadout")]
-        [SerializeField]
-        private GearEngineStartData gearStartData;
-
         [Header("Bootstrap")]
         [SerializeField]
         private RaceBootstrap sceneBootstrap;
@@ -32,7 +28,7 @@ namespace GearEngine.Race.Bootstrap
         [Header("Feature Toggles")]
         [SerializeField]
         private GearEngineFeatureToggleSO featureToggle;
-        
+
         [Header("Simulation")]
         [SerializeField]
         private SplineCarRunnerConfigSO splineCarRunnerConfig;
@@ -41,31 +37,31 @@ namespace GearEngine.Race.Bootstrap
         {
             RequireBoardConfig();
             RequireSceneBootstrap();
-            
+
             if (splineCarRunnerConfig == null)
             {
                 throw new InvalidOperationException("[RaceScope] Assign SplineCarRunnerConfigSO.");
             }
 
-            if (gearStartData == null)
+            if (featureToggle == null)
             {
-                throw new InvalidOperationException("[RaceScope] Assign gearStartData.");
+                throw new InvalidOperationException("[RaceScope] Assign featureToggle.");
             }
         }
 
         protected override void InstallFeatureServices(IContainerBuilder builder)
         {
             builder.Register<EmptyInventoryService>(Lifetime.Singleton).As<IInventoryService>();
-            new GearMechanicsInstaller(
-                boardRules,
-                featureToggle,
-                gearStartData.GetBoardLoadoutData()).Install(builder);
-            
+            builder.RegisterInstance<IBoardSlotCapacityProvider>(new UnlimitedBoardSlotCapacityProvider());
+            builder.RegisterInstance(boardRules);
+            builder.RegisterInstance(featureToggle);
+            new GearMechanicsInstaller().Install(builder);
+
             builder.RegisterInstance(splineCarRunnerConfig);
             builder.Register<TrackSimulationFactory>(Lifetime.Singleton);
             builder.RegisterEntryPoint<RaceManagerService>(Lifetime.Singleton).AsSelf();
             builder.RegisterEntryPoint<SplineCarRunnerService>(Lifetime.Singleton).AsSelf();
-            
+
             builder.RegisterComponent(sceneBootstrap).AsImplementedInterfaces().AsSelf();
         }
 

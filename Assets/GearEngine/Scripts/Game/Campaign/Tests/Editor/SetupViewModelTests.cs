@@ -17,8 +17,6 @@ namespace GearEngine.Campaign.Tests.Editor
         [Test]
         public void Initialize_CreatesBoardInventoryTrashAndTrack()
         {
-            LogAssert.Expect(LogType.Warning, "[GearMechanicsInstaller] No GearEngineFeatureToggleSO provided. Using runtime default.");
-
             var carDef = ScriptableObject.CreateInstance<CarDefinition>();
             var trackDef = ScriptableObject.CreateInstance<TrackDefinition>();
             trackDef.Spline.Knots = new[] { new BezierKnot(Vector3.zero), new BezierKnot(Vector3.right * 10f) };
@@ -60,8 +58,6 @@ namespace GearEngine.Campaign.Tests.Editor
         [Test]
         public void GoToRace_OpensActiveRaceViewModel()
         {
-            LogAssert.Expect(LogType.Warning, "[GearMechanicsInstaller] No GearEngineFeatureToggleSO provided. Using runtime default.");
-
             var carDef = ScriptableObject.CreateInstance<CarDefinition>();
             var trackDef = ScriptableObject.CreateInstance<TrackDefinition>();
             trackDef.Spline.Knots = new[] { new BezierKnot(Vector3.zero), new BezierKnot(Vector3.right * 10f) };
@@ -103,7 +99,6 @@ namespace GearEngine.Campaign.Tests.Editor
         [Test]
         public void GoToRace_DoesNotOpen_WhenMotorCogMissingFromBoard()
         {
-            LogAssert.Expect(LogType.Warning, "[GearMechanicsInstaller] No GearEngineFeatureToggleSO provided. Using runtime default.");
             LogAssert.Expect(LogType.Error, "[SetupViewModel] Cannot start race: motor cog missing from loadout.");
 
             var carDef = ScriptableObject.CreateInstance<CarDefinition>();
@@ -149,8 +144,6 @@ namespace GearEngine.Campaign.Tests.Editor
         [Test]
         public void ReturnToMainMenu_CallsNavigationReturn()
         {
-            LogAssert.Expect(LogType.Warning, "[GearMechanicsInstaller] No GearEngineFeatureToggleSO provided. Using runtime default.");
-
             var carDef = ScriptableObject.CreateInstance<CarDefinition>();
             var trackDef = ScriptableObject.CreateInstance<TrackDefinition>();
             trackDef.Spline.Knots = new[] { new BezierKnot(Vector3.zero), new BezierKnot(Vector3.right * 10f) };
@@ -192,8 +185,6 @@ namespace GearEngine.Campaign.Tests.Editor
         [Test]
         public void Initialize_WithSavedLoadout_ReplacesExistingBoardPlacements()
         {
-            LogAssert.Expect(LogType.Warning, "[GearMechanicsInstaller] No GearEngineFeatureToggleSO provided. Using runtime default.");
-
             var carDef = ScriptableObject.CreateInstance<CarDefinition>();
             var trackDef = ScriptableObject.CreateInstance<TrackDefinition>();
             trackDef.Spline.Knots = new[] { new BezierKnot(Vector3.zero), new BezierKnot(Vector3.right * 10f) };
@@ -261,6 +252,8 @@ namespace GearEngine.Campaign.Tests.Editor
         }
 
         public bool HasSavedLoadout => saved != null && saved.Placements.Count > 0;
+
+        public int BoardSlotCapacity => int.MaxValue;
 
         public BoardLayoutData GetBoardLayout() => saved;
     }

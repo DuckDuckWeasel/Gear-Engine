@@ -1,46 +1,18 @@
 using System;
-using GearEngine.GearEngine;
-using GearEngine.GearEngine.Config;
 using GearEngine.GearEngine.Services;
 using GearEngine.GearEngine.Services.Board;
-using UnityEngine;
 using VContainer;
 
 namespace GearEngine.GearEngine.Bootstrap
 {
     public sealed class GearMechanicsInstaller
     {
-        public GearMechanicsInstaller(
-            BoardRulesSO boardRules,
-            GearEngineFeatureToggleSO featureToggle,
-            GearBoardLoadoutData boardLoadout)
-        {
-            this.boardRules = boardRules ?? throw new ArgumentNullException(nameof(boardRules));
-            this.featureToggle = featureToggle;
-            this.boardLoadout = boardLoadout ?? throw new ArgumentNullException(nameof(boardLoadout));
-        }
-
-        private readonly BoardRulesSO boardRules;
-        private readonly GearEngineFeatureToggleSO featureToggle;
-        private readonly GearBoardLoadoutData boardLoadout;
-
         public void Install(IContainerBuilder builder)
         {
             if (builder == null)
             {
                 throw new ArgumentNullException(nameof(builder));
             }
-
-            GearEngineFeatureToggleSO toggle = featureToggle;
-            if (toggle == null)
-            {
-                Debug.LogWarning("[GearMechanicsInstaller] No GearEngineFeatureToggleSO provided. Using runtime default.");
-                toggle = ScriptableObject.CreateInstance<GearEngineFeatureToggleSO>();
-            }
-
-            builder.RegisterInstance(boardRules);
-            builder.RegisterInstance(toggle);
-            builder.RegisterInstance(boardLoadout);
 
             builder.Register<GridManager>(Lifetime.Singleton).As<IGridManager, VContainer.Unity.ITickable>();
             builder.Register<GearEngineService>(Lifetime.Singleton).As<IGearEngineService>();

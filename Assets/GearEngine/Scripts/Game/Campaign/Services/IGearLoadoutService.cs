@@ -6,6 +6,8 @@ namespace GearEngine.Campaign.Services
     {
         bool HasSavedLoadout { get; }
 
+        int BoardSlotCapacity { get; }
+
         BoardLayoutData GetBoardLayout();
     }
 }

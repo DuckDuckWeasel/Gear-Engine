@@ -7,13 +7,14 @@ using LiveOps.Modules.DTO.ModuleRequests;
 using GearEngine.Campaign.Services;
 using GearEngine.GearEngine;
 using GearEngine.GearEngine.Services;
+using GearEngine.GearEngine.Services.Board;
 using Scaffold.LiveOps;
 using UnityEngine;
 using VContainer;
 
 namespace GearEngine.Campaign.Bootstrap.LiveOps
 {
-    public sealed class LoadoutClientModule : GameClientModuleBase<LoadoutGameData>, IGearLoadoutService
+    public sealed class LoadoutClientModule : GameClientModuleBase<LoadoutGameData>, IGearLoadoutService, IBoardSlotCapacityProvider
     {
         public LoadoutClientModule(ILiveOpsService liveOps, IInventoryService inventoryService) : base(liveOps)
         {
@@ -21,6 +22,8 @@ namespace GearEngine.Campaign.Bootstrap.LiveOps
         }
 
         public bool HasSavedLoadout => true;
+
+        public int BoardSlotCapacity => data?.BaseSlots ?? 0;
 
         private readonly IInventoryService inventoryService;
 

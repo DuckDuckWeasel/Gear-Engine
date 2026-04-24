@@ -6,16 +6,9 @@ using VContainer.Unity;
 
 namespace GearEngine.Campaign.Bootstrap
 {
-    /// <summary>Registers <see cref="CampaignRaceSessionDefaults"/> from a <see cref="RaceSessionDefaultsSO"/> asset.</summary>
+    /// <summary>Registers <see cref="CampaignRaceSessionDefaults"/> and <see cref="CampaignStatsService"/>; requires <see cref="RaceSessionConfig"/> and <see cref="GearEngine.GearEngine.IGearEngineService"/> in the container.</summary>
     public sealed class CampaignRaceSessionInstaller : IInstaller
     {
-        private readonly RaceSessionDefaultsSO defaultsSo;
-
-        public CampaignRaceSessionInstaller(RaceSessionDefaultsSO defaultsSo)
-        {
-            this.defaultsSo = defaultsSo ?? throw new ArgumentNullException(nameof(defaultsSo));
-        }
-
         public void Install(IContainerBuilder builder)
         {
             if (builder == null)
@@ -23,14 +16,10 @@ namespace GearEngine.Campaign.Bootstrap
                 throw new ArgumentNullException(nameof(builder));
             }
 
-            RaceSessionConfig template = defaultsSo.Template ?? new RaceSessionConfig();
-
             builder.Register<CampaignStatsService>(Lifetime.Singleton)
-                   .WithParameter(template)
                    .AsImplementedInterfaces();
 
-            builder.Register<CampaignRaceSessionDefaults>(Lifetime.Singleton)
-                   .WithParameter(template);
+            builder.Register<CampaignRaceSessionDefaults>(Lifetime.Singleton);
         }
     }
 }

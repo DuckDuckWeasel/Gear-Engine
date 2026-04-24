@@ -1448,14 +1448,14 @@ MonoBehaviour:
   autoInjectGameObjects: []
   navigationSettings: {fileID: 11400000, guid: 137da207fe7ec1345a5d209afdac17bd, type: 2}
   navigationViewHolder: {fileID: 500010001}
-  trackCatalog: {fileID: 11400000, guid: f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1, type: 2}
-  roguelikeGearPool: {fileID: 11400000, guid: d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1, type: 2}
-  gearCatalog: {fileID: 11400000, guid: f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2, type: 2}
   boardRules: {fileID: 11400000, guid: c8936b7a974414cf6aba78a5ac6be445, type: 2}
   featureToggle: {fileID: 11400000, guid: e8f9a0b1c2d34432bcdef01234567891, type: 2}
-  gearStartData: {fileID: 11400000, guid: f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3, type: 2}
   splineCarRunnerConfig: {fileID: 11400000, guid: 6a9994ce6517e413a8373080e0b14bbb, type: 2}
   raceSessionDefaults: {fileID: 11400000, guid: f4f4f4f4f4f4f4f4f4f4f4f4f4f4f4f4, type: 2}
+  addressableCatalogPublishers:
+  - {fileID: 11400000, guid: f47ac10b58cc4372a5670e02b2c3d47a, type: 2}
+  - {fileID: 11400000, guid: f47ac10b58cc4372a5670e02b2c3d47b, type: 2}
+  - {fileID: 11400000, guid: f47ac10b58cc4372a5670e02b2c3d47c, type: 2}
 --- !u!1 &500010010
 GameObject:
   m_ObjectHideFlags: 0

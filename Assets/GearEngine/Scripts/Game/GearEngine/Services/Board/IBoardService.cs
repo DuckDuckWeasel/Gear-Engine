@@ -46,4 +46,21 @@ namespace GearEngine.GearEngine.Services.Board
         /// <summary>Fired when board node positions or count change (not when only simulation run state toggles).</summary>
         event Action BoardLayoutChanged;
     }
+
+    /// <summary>
+    /// When <see cref="BoardSlotCapacity"/> is greater than zero, caps how many gears may be placed on the board
+    /// (e.g. LiveOps loadout baseSlots). Otherwise <see cref="BoardService"/> falls back to <see cref="BoardRulesSO.MaxBoardGears"/>.
+    /// </summary>
+    public interface IBoardSlotCapacityProvider
+    {
+        int BoardSlotCapacity { get; }
+    }
+
+    /// <summary>
+    /// Sandbox / non-LiveOps scopes: no stricter cap than the grid fallback in <see cref="BoardService"/>.
+    /// </summary>
+    public sealed class UnlimitedBoardSlotCapacityProvider : IBoardSlotCapacityProvider
+    {
+        public int BoardSlotCapacity => int.MaxValue;
+    }
 }

@@ -3,17 +3,16 @@ using GearEngine.CarSimulation.Definitions;
 
 namespace GearEngine.Campaign.Services
 {
-    /// <summary>Builds per-race <see cref="RaceSessionConfig"/> from campaign defaults and the current track.</summary>
     public sealed class CampaignRaceSessionDefaults
     {
-        private readonly RaceSessionConfig template;
-        private readonly ICampaignStatsService statsService;
-
         public CampaignRaceSessionDefaults(RaceSessionConfig template, ICampaignStatsService statsService)
         {
             this.template = template ?? new RaceSessionConfig();
             this.statsService = statsService;
         }
+
+        private readonly RaceSessionConfig template;
+        private readonly ICampaignStatsService statsService;
 
         public RaceSessionConfig CreateForTrack(TrackDefinition track)
         {
@@ -23,7 +22,6 @@ namespace GearEngine.Campaign.Services
             }
 
             RaceSessionConfig config = template.CloneForNewRace();
-            config.ApplyFromTrack(track);
 
             if (statsService != null)
             {

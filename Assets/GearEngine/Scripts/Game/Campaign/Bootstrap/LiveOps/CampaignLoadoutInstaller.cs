@@ -1,5 +1,6 @@
 using System;
 using GearEngine.Campaign.Services;
+using GearEngine.GearEngine.Services.Board;
 using Scaffold.AppFlow;
 using Scaffold.LiveOps;
 using VContainer;
@@ -19,6 +20,7 @@ namespace GearEngine.Campaign.Bootstrap.LiveOps
 
             builder.Register<LoadoutClientModule>(Lifetime.Singleton)
                 .As<IGearLoadoutService>()
+                .As<IBoardSlotCapacityProvider>()
                 .AsSelf()
                 .As<IGameClientModule>()
                 .As<IAsyncInitializable>();

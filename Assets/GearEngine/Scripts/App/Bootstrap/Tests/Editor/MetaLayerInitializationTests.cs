@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using LiveOps.DTO.GameApi;
 using LiveOps.DTO.ModuleRequest;
 using LiveOps.Modules.DTO.ModuleRequests;
+using GearEngine.App.Bootstrap;
 using Scaffold.AppFlow;
 using NUnit.Framework;
 using Scaffold.CloudCode;
@@ -35,7 +36,7 @@ namespace GearEngine.App.Bootstrap.Tests.Editor
                 Assert.That(
                     bootstrap.Order,
                     Is.EqualTo(new[] { "foundation", "ugs_done", "liveops_done", "on_ready" }),
-                    "Init waves must complete in stack order before OnReadyAsync.");
+                    "Init waves must complete in stack order before OnReadyAsync (sequential scheduler within the LiveOps stack layer).");
             }
             finally
             {
@@ -64,14 +65,14 @@ namespace GearEngine.App.Bootstrap.Tests.Editor
             ILiveOpsService liveOps = BuildLiveOpsLayerStyleContainer(fakeCloud, optimisticHandler);
 
             Task<MetaOptimisticResponse> call = liveOps.CallAsync(new MetaOptimisticRequest { Marker = "meta-test" }, CancellationToken.None);
-            MetaOptimisticResponse returned = await call.ConfigureAwait(false);
+            MetaOptimisticResponse returned = await call;
             Assert.That(returned.Id, Is.EqualTo(1));
             Assert.That(validateTcs.Task.IsCompleted, Is.False, "Validate must run only after the GameApi envelope completes.");
 
             serverGate.TrySetResult(
                 GameApiEnvelopeResponse.Success(nameof(MetaOptimisticRequest), new MetaOptimisticResponse { Id = 99 }, null));
 
-            (int serverId, int optimisticId) = await validateTcs.Task.ConfigureAwait(false);
+            (int serverId, int optimisticId) = await validateTcs.Task;
             Assert.That(serverId, Is.EqualTo(99));
             Assert.That(optimisticId, Is.EqualTo(1));
         }
@@ -124,9 +125,8 @@ namespace GearEngine.App.Bootstrap.Tests.Editor
         }
 
         /// <summary>
-        /// Mirrors <see cref="GearEngine.App.Bootstrap.Layers.LiveOpsServiceLayer"/> then
-        /// <see cref="GearEngine.App.Bootstrap.Layers.LiveOpsClientModulesLayer"/> registration order for EditMode:
-        /// Cloud Code client + optimistic registry + LiveOps (real <see cref="LiveOpsService"/>), with a fake <see cref="ICloudCodeService"/> so no network/SDK call runs.
+        /// Mirrors merged <see cref="GearEngine.App.Bootstrap.Layers.LiveOpsLayer"/> registration order for EditMode:
+        /// Cloud Code client + optimistic registry + LiveOps (<see cref="ILiveOpsService"/>), with a fake <see cref="ICloudCodeService"/> so no network/SDK call runs.
         /// </summary>
         private static ILiveOpsService BuildLiveOpsLayerStyleContainer(
             ICloudCodeService cloudCode,
@@ -212,7 +212,7 @@ namespace GearEngine.App.Bootstrap.Tests.Editor
             {
                 if (endpoint == "GameApi")
                 {
-                    GameApiEnvelopeResponse envelope = await onGameApi().ConfigureAwait(false);
+                    GameApiEnvelopeResponse envelope = await onGameApi();
                     return (T)(object)envelope;
                 }
 
@@ -231,11 +231,15 @@ namespace GearEngine.App.Bootstrap.Tests.Editor
 
             public List<string> Order => ledger.Order;
 
+            protected override IInLayerScheduler CreateScheduler()
+            {
+                return new SequentialInLayerScheduler();
+            }
+
             protected override IEnumerable<IScopeLayer> GetInitialLayers()
             {
                 yield return new FoundationStubLayer(ledger);
-                yield return new UgsStubLayer(ledger);
-                yield return new LiveOpsStubLayer(ledger);
+                yield return new LiveOpsStackStubLayer(ledger);
             }
 
             protected override Task OnReadyAsync(CancellationToken ct)
@@ -277,11 +281,11 @@ namespace GearEngine.App.Bootstrap.Tests.Editor
             }
         }
 
-        private sealed class UgsStubLayer : IScopeLayer
+        private sealed class LiveOpsStackStubLayer : IScopeLayer
         {
             private readonly OrderRecorder ledger;
 
-            public UgsStubLayer(OrderRecorder ledger)
+            public LiveOpsStackStubLayer(OrderRecorder ledger)
             {
                 this.ledger = ledger;
             }
@@ -289,6 +293,7 @@ namespace GearEngine.App.Bootstrap.Tests.Editor
             public void Install(IContainerBuilder builder)
             {
                 builder.Register<UgsMarker>(Lifetime.Singleton).As<IAsyncInitializable>();
+                builder.Register<LiveOpsMarker>(Lifetime.Singleton).As<IAsyncInitializable>();
             }
 
             private sealed class UgsMarker : IAsyncInitializable
@@ -305,21 +310,6 @@ namespace GearEngine.App.Bootstrap.Tests.Editor
                     ledger.Order.Add("ugs_done");
                     return Task.CompletedTask;
                 }
-            }
-        }
-
-        private sealed class LiveOpsStubLayer : IScopeLayer
-        {
-            private readonly OrderRecorder ledger;
-
-            public LiveOpsStubLayer(OrderRecorder ledger)
-            {
-                this.ledger = ledger;
-            }
-
-            public void Install(IContainerBuilder builder)
-            {
-                builder.Register<LiveOpsMarker>(Lifetime.Singleton).As<IAsyncInitializable>();
             }
 
             private sealed class LiveOpsMarker : IAsyncInitializable

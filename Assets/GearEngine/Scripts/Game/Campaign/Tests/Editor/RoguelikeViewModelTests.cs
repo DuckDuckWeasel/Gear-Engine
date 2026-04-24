@@ -8,7 +8,6 @@ using GearEngine.GearEngine;
 using GearEngine.GearEngine.Config;
 using NUnit.Framework;
 using UnityEngine;
-using UnityEngine.TestTools;
 using Object = UnityEngine.Object;
 
 namespace GearEngine.Campaign.Tests.Editor
@@ -18,8 +17,6 @@ namespace GearEngine.Campaign.Tests.Editor
         [Test]
         public void LoadRoll_PopulatesCardOptions()
         {
-            LogAssert.Expect(LogType.Warning, "[GearMechanicsInstaller] No GearEngineFeatureToggleSO provided. Using runtime default.");
-
             GearConfig g1 = CampaignTestUtilities.CreateGearConfigWithData("g1");
             GearConfig g2 = CampaignTestUtilities.CreateGearConfigWithData("g2");
             try
@@ -59,8 +56,6 @@ namespace GearEngine.Campaign.Tests.Editor
         [Test]
         public void SelectCard_CanConfirmTrueWhenCardSelected()
         {
-            LogAssert.Expect(LogType.Warning, "[GearMechanicsInstaller] No GearEngineFeatureToggleSO provided. Using runtime default.");
-
             GearConfig g1 = CampaignTestUtilities.CreateGearConfigWithData("g1");
             try
             {
@@ -98,8 +93,6 @@ namespace GearEngine.Campaign.Tests.Editor
         [Test]
         public void Confirm_AddsItem_ConsumesRoll_OpensMain()
         {
-            LogAssert.Expect(LogType.Warning, "[GearMechanicsInstaller] No GearEngineFeatureToggleSO provided. Using runtime default.");
-
             GearConfig g1 = CampaignTestUtilities.CreateGearConfigWithData("g1");
             try
             {

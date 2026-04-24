@@ -149,6 +149,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 09db16d650f962147be1c55e31818886, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Presentation.GearTestSceneBootstrap
+  boardSeed:
+    placements:
+    - position: {x: 1, y: 1}
+      gearConfig: {fileID: 11400000, guid: 39144108699f44d10b422acf50e748ba, type: 2}
 --- !u!114 &475139377
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -168,17 +172,6 @@ MonoBehaviour:
   navigationSettings: {fileID: 11400000, guid: 137da207fe7ec1345a5d209afdac17bd, type: 2}
   navigationViewHolder: {fileID: 475139378}
   boardRules: {fileID: 11400000, guid: c8936b7a974414cf6aba78a5ac6be445, type: 2}
-  gearStartData:
-    inventoryLoadout:
-      maxSlots: 5
-      startingItems:
-      - {fileID: 11400000, guid: 3783c6d85510a4bf6b4f879d30ef249b, type: 2}
-      - {fileID: 11400000, guid: b642772cacb3f48d7870118c94a3e3a0, type: 2}
-    boardLoadout:
-      boardLayout:
-        placements:
-        - position: {x: 1, y: 1}
-          gearConfig: {fileID: 11400000, guid: 39144108699f44d10b422acf50e748ba, type: 2}
   featureToggle: {fileID: 11400000, guid: e8f9a0b1c2d34432bcdef01234567891, type: 2}
   sceneBootstrap: {fileID: 475139376}
 --- !u!4 &475139378

@@ -1,0 +1,19 @@
+{
+    "name": "Game.App.Bootstrap.Editor",
+    "rootNamespace": "GearEngine.App.Bootstrap.Editor",
+    "references": [
+        "Game.App.Bootstrap",
+        "Unity.Addressables"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

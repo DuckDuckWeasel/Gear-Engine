@@ -13,7 +13,6 @@ MonoBehaviour:
   m_Name: CampaignRaceSessionDefaults
   m_EditorClassIdentifier: Game.Campaign::GearEngine.Campaign.Services.RaceSessionDefaultsSO
   template:
-    totalLaps: 3
     roguelikeStats:
       statTopSpeed: 50
       statAcceleration: 50

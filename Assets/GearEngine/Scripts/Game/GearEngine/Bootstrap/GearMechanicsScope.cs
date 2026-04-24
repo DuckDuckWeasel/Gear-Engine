@@ -1,7 +1,7 @@
 using System;
-using GearEngine.GearEngine;
 using GearEngine.GearEngine.Presentation;
 using GearEngine.GearEngine.Services;
+using GearEngine.GearEngine.Services.Board;
 using GearEngine.SceneFoundation.Bootstrap;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -16,10 +16,6 @@ namespace GearEngine.GearEngine.Bootstrap
         [FormerlySerializedAs("boardConfig")]
         [SerializeField]
         private BoardRulesSO boardRules;
-
-        [Header("Gear start (inventory + board seed for tests)")]
-        [SerializeField]
-        private GearEngineStartData gearStartData;
 
         [Header("Feature Toggles")]
         [SerializeField]
@@ -41,19 +37,19 @@ namespace GearEngine.GearEngine.Bootstrap
                 throw new InvalidOperationException("GearMechanicsScope: assign sceneBootstrap.");
             }
 
-            if (gearStartData == null)
+            if (featureToggle == null)
             {
-                throw new InvalidOperationException("GearMechanicsScope: assign gearStartData.");
+                throw new InvalidOperationException("GearMechanicsScope: assign featureToggle.");
             }
         }
 
         protected override void InstallFeatureServices(IContainerBuilder builder)
         {
             builder.Register<EmptyInventoryService>(Lifetime.Singleton).As<IInventoryService>();
-            new GearMechanicsInstaller(
-                boardRules,
-                featureToggle,
-                gearStartData.GetBoardLoadoutData()).Install(builder);
+            builder.RegisterInstance<IBoardSlotCapacityProvider>(new UnlimitedBoardSlotCapacityProvider());
+            builder.RegisterInstance(boardRules);
+            builder.RegisterInstance(featureToggle);
+            new GearMechanicsInstaller().Install(builder);
             builder.RegisterComponent(sceneBootstrap).AsImplementedInterfaces().AsSelf();
         }
     }

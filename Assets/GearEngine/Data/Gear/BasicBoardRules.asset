@@ -14,4 +14,3 @@ MonoBehaviour:
   m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Config.BoardRulesSO
   GridWidth: 7
   GridHeight: 4
-  MaxAllowedBoardGears: 5
