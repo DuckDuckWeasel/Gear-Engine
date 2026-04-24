@@ -1,64 +1,29 @@
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using GearEngine.App.Bootstrap.Editor;
 using GearEngine.App.Bootstrap;
-using GearEngine.App.Bootstrap.Publishers.DataDriven;
 using GearEngine.GearEngine.Config;
 using NUnit.Framework;
 using Scaffold.Addressables.Contracts;
 using Scaffold.AppFlow;
+using Scaffold.AppFlow.Publishers.DataDriven;
+using Scaffold.AppFlow.Publishers.Editor;
 using UnityEditor;
 using UnityEngine;
 using VContainer;
 
 namespace GearEngine.App.Bootstrap.Tests.Editor
 {
+    /// <summary>
+    /// Host integration tests for <see cref="AddressableScriptableObjectPublisherSO"/> against the real Addressable
+    /// catalog assets in this project. Contract-level coverage (no rebake required) lives in
+    /// <c>Scaffold.AppFlow.Publishers.Tests</c>.
+    /// </summary>
     [TestFixture]
     public sealed class AddressableScriptableObjectPublisherSOTests
     {
         private const string GearCatalogAddressableGuid = "f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2";
-
-        [Test]
-        public void Register_WithoutBake_ThrowsInvalidOperationException()
-        {
-            AddressableScriptableObjectPublisherSO so = ScriptableObject.CreateInstance<AddressableScriptableObjectPublisherSO>();
-            try
-            {
-                var builder = new ContainerBuilder();
-                Assert.Throws<InvalidOperationException>(() => so.Register(builder));
-            }
-            finally
-            {
-                UnityEngine.Object.DestroyImmediate(so);
-            }
-        }
-
-        [Test]
-        public void Register_WithBakedRegistrar_RegistersPublisherResolvableFromContainer()
-        {
-            AddressableScriptableObjectPublisherSO so = ScriptableObject.CreateInstance<AddressableScriptableObjectPublisherSO>();
-            try
-            {
-                so.SetBakedRegistrarForTests(new AddressableScriptableObjectPublisherRegistrar<GearCatalogSO>(AddressableCatalogAddresses.Gear));
-
-                var builder = new ContainerBuilder();
-                var layerPublisher = new NoOpLayerPublisher();
-                var client = new NoOpAddressablesClient();
-                builder.RegisterInstance(layerPublisher).As<ILayerPublisher>();
-                builder.RegisterInstance(client).As<IAddressablesAssetClient>();
-                so.Register(builder);
-
-                IObjectResolver container = builder.Build();
-                DataDrivenAddressableScriptableObjectPublisher<GearCatalogSO> publisher =
-                    container.Resolve<DataDrivenAddressableScriptableObjectPublisher<GearCatalogSO>>();
-                Assert.That(publisher, Is.Not.Null);
-            }
-            finally
-            {
-                UnityEngine.Object.DestroyImmediate(so);
-            }
-        }
 
         [Test]
         public void Rebake_WithAddressableGearCatalog_ProducesClosedGenericRegistrar()
@@ -76,10 +41,9 @@ namespace GearEngine.App.Bootstrap.Tests.Editor
 
                 AddressableScriptableObjectPublisherSORebaker.Rebake(so);
 
-                Assert.That(so.BakedRegistrarForTests, Is.Not.Null);
-                Assert.That(
-                    so.BakedRegistrarForTests.GetType(),
-                    Is.EqualTo(typeof(AddressableScriptableObjectPublisherRegistrar<GearCatalogSO>)));
+                Type bakedType = ReadBakedRegistrarType(so);
+                Assert.That(bakedType, Is.Not.Null);
+                Assert.That(bakedType, Is.EqualTo(typeof(AddressableScriptableObjectPublisherRegistrar<GearCatalogSO>)));
             }
             finally
             {
@@ -105,8 +69,8 @@ namespace GearEngine.App.Bootstrap.Tests.Editor
                 var layerPublisher = new RecordingLayerPublisher();
                 var client = new StubAddressablesAssetClient();
                 client.Register(AddressableCatalogAddresses.Gear, asset);
-                builder.RegisterInstance(layerPublisher).As<ILayerPublisher>();
-                builder.RegisterInstance(client).As<IAddressablesAssetClient>();
+                builder.RegisterInstance<ILayerPublisher>(layerPublisher);
+                builder.RegisterInstance<IAddressablesAssetClient>(client);
                 so.Register(builder);
 
                 IObjectResolver container = builder.Build();
@@ -136,7 +100,7 @@ namespace GearEngine.App.Bootstrap.Tests.Editor
                 serializedObject.ApplyModifiedProperties();
 
                 AddressableScriptableObjectPublisherSORebaker.Rebake(so);
-                Assert.That(so.BakedRegistrarForTests, Is.Not.Null, "Rebake must produce a registrar before disk round-trip.");
+                Assert.That(ReadBakedRegistrarType(so), Is.Not.Null, "Rebake must produce a registrar before disk round-trip.");
 
                 AssetDatabase.CreateAsset(so, tempPath);
                 AssetDatabase.SaveAssets();
@@ -144,10 +108,9 @@ namespace GearEngine.App.Bootstrap.Tests.Editor
                 AddressableScriptableObjectPublisherSO reloaded =
                     AssetDatabase.LoadAssetAtPath<AddressableScriptableObjectPublisherSO>(tempPath);
                 Assert.That(reloaded, Is.Not.Null);
-                Assert.That(reloaded.BakedRegistrarForTests, Is.Not.Null);
-                Assert.That(
-                    reloaded.BakedRegistrarForTests.GetType(),
-                    Is.EqualTo(typeof(AddressableScriptableObjectPublisherRegistrar<GearCatalogSO>)));
+                Type reloadedType = ReadBakedRegistrarType(reloaded);
+                Assert.That(reloadedType, Is.Not.Null);
+                Assert.That(reloadedType, Is.EqualTo(typeof(AddressableScriptableObjectPublisherRegistrar<GearCatalogSO>)));
             }
             finally
             {
@@ -155,56 +118,16 @@ namespace GearEngine.App.Bootstrap.Tests.Editor
             }
         }
 
-        private sealed class NoOpLayerPublisher : ILayerPublisher
+        private static Type ReadBakedRegistrarType(AddressableScriptableObjectPublisherSO so)
         {
-            public void Publish<T>(T item) where T : class
-            {
-            }
-
-            public void Publish<TInterface, TImpl>(TImpl item) where TImpl : class, TInterface
-            {
-            }
-
-            public void PublishMany<T>(System.Collections.Generic.IReadOnlyList<T> items) where T : class
-            {
-            }
-        }
-
-        private sealed class NoOpAddressablesClient : IAddressablesAssetClient
-        {
-            public Task SyncCatalogAndContentAsync(CancellationToken cancellationToken)
-            {
-                return Task.CompletedTask;
-            }
-
-            public Task<T> LoadAssetAsync<T>(string key, CancellationToken cancellationToken) where T : UnityEngine.Object
-            {
-                throw new NotSupportedException();
-            }
-
-            public Task<System.Collections.Generic.IReadOnlyList<T>> LoadAssetsByLabelAsync<T>(
-                UnityEngine.AddressableAssets.AssetLabelReference label,
-                CancellationToken cancellationToken) where T : UnityEngine.Object
-            {
-                throw new NotSupportedException();
-            }
-
-            public Task<System.Collections.Generic.IReadOnlyList<string>> ResolveLabelAsync<T>(
-                UnityEngine.AddressableAssets.AssetLabelReference label,
-                CancellationToken cancellationToken) where T : UnityEngine.Object
-            {
-                throw new NotSupportedException();
-            }
-
-            public void Release(UnityEngine.Object asset)
-            {
-            }
+            SerializedObject serialized = new SerializedObject(so);
+            SerializedProperty baked = serialized.FindProperty("bakedRegistrar");
+            return baked?.managedReferenceValue?.GetType();
         }
 
         private sealed class RecordingLayerPublisher : ILayerPublisher
         {
-            public System.Collections.Generic.Dictionary<Type, object> PublishedByType { get; } =
-                new System.Collections.Generic.Dictionary<Type, object>();
+            public Dictionary<Type, object> PublishedByType { get; } = new Dictionary<Type, object>();
 
             public void Publish<T>(T item) where T : class
             {
@@ -217,16 +140,16 @@ namespace GearEngine.App.Bootstrap.Tests.Editor
                 PublishedByType[typeof(TImpl)] = item;
             }
 
-            public void PublishMany<T>(System.Collections.Generic.IReadOnlyList<T> items) where T : class
+            public void PublishMany<T>(IReadOnlyList<T> items) where T : class
             {
-                PublishedByType[typeof(System.Collections.Generic.IReadOnlyList<T>)] = items;
+                PublishedByType[typeof(IReadOnlyList<T>)] = items;
             }
         }
 
         private sealed class StubAddressablesAssetClient : IAddressablesAssetClient
         {
-            private readonly System.Collections.Generic.Dictionary<string, UnityEngine.Object> assets =
-                new System.Collections.Generic.Dictionary<string, UnityEngine.Object>(StringComparer.Ordinal);
+            private readonly Dictionary<string, UnityEngine.Object> assets =
+                new Dictionary<string, UnityEngine.Object>(StringComparer.Ordinal);
 
             public void Register<T>(string key, T asset) where T : UnityEngine.Object
             {
@@ -248,14 +171,14 @@ namespace GearEngine.App.Bootstrap.Tests.Editor
                 throw new InvalidOperationException($"No stub asset for key '{key}' and type {typeof(T).Name}.");
             }
 
-            public Task<System.Collections.Generic.IReadOnlyList<T>> LoadAssetsByLabelAsync<T>(
+            public Task<IReadOnlyList<T>> LoadAssetsByLabelAsync<T>(
                 UnityEngine.AddressableAssets.AssetLabelReference label,
                 CancellationToken cancellationToken) where T : UnityEngine.Object
             {
                 throw new NotSupportedException();
             }
 
-            public Task<System.Collections.Generic.IReadOnlyList<string>> ResolveLabelAsync<T>(
+            public Task<IReadOnlyList<string>> ResolveLabelAsync<T>(
                 UnityEngine.AddressableAssets.AssetLabelReference label,
                 CancellationToken cancellationToken) where T : UnityEngine.Object
             {

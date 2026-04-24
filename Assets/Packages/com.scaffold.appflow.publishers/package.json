@@ -1,0 +1,7 @@
+{
+  "name": "com.scaffold.appflow.publishers",
+  "version": "1.0.0",
+  "displayName": "Scaffold AppFlow Publishers",
+  "unity": "6000.0",
+  "description": "Data-driven Addressables ScriptableObject publishers for Scaffold AppFlow. Bake an Addressable ScriptableObject reference at edit time into a closed-generic registrar so runtime registration is reflection-free."
+}

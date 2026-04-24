@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using GearEngine.App.Bootstrap;
-using GearEngine.App.Bootstrap.Publishers.DataDriven;
 using GearEngine.Campaign.Services;
 using GearEngine.GearEngine.Config;
 using NUnit.Framework;
 using Scaffold.Addressables.Contracts;
 using Scaffold.AppFlow;
+using Scaffold.AppFlow.Publishers.DataDriven;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 

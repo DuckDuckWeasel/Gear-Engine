@@ -1,23 +1,15 @@
 {
-    "name": "Game.App.Bootstrap.Tests",
-    "rootNamespace": "GearEngine.App.Bootstrap.Tests.Editor",
+    "name": "Scaffold.AppFlow.Publishers.Tests",
+    "rootNamespace": "Scaffold.AppFlow.Publishers.Tests.Editor",
     "references": [
-        "Game.App.Bootstrap",
-        "Game.Campaign",
-        "Game.GearEngine",
-        "Scaffold.Addressables",
-        "Scaffold.AppFlow",
         "Scaffold.AppFlow.Publishers",
         "Scaffold.AppFlow.Publishers.Editor",
-        "Scaffold.CloudCode",
-        "Scaffold.LiveOps",
-        "Scaffold.LiveOps.Container",
-        "Scaffold.Navigation",
+        "Scaffold.AppFlow",
+        "Scaffold.Addressables",
         "Unity.Addressables",
         "VContainer",
         "UnityEngine.TestRunner",
-        "UnityEditor.TestRunner",
-        "Scaffold.Records"
+        "UnityEditor.TestRunner"
     ],
     "includePlatforms": [
         "Editor"
@@ -26,10 +18,6 @@
     "allowUnsafeCode": false,
     "overrideReferences": true,
     "precompiledReferences": [
-        "nunit.framework.dll",
-        "Newtonsoft.Json.dll",
-        "LiveOps.DTO.dll",
-        "LiveOps.Modules.DTO.dll",
         "nunit.framework.dll"
     ],
     "autoReferenced": false,
