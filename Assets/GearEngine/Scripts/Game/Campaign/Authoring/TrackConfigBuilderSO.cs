@@ -26,7 +26,7 @@ namespace GearEngine.Campaign.Authoring
             {
 #if UNITY_EDITOR
                 Debug.LogWarning(
-                    "[TrackConfigBuilder] Catalog is not assigned. Assign `CampaignTrackCatalog` (or your `TrackCatalogSO`) on this asset, then use Window → LiveOps → Config Deployment → Sync.",
+                    "[TrackConfigBuilder] Catalog is not assigned. Assign `CampaignTrackCatalog` (or your `TrackCatalogSO`) on this asset, then use Window → LiveOps → Configs → Sync.",
                     this);
 #endif
                 return cfg;
@@ -81,7 +81,7 @@ namespace GearEngine.Campaign.Authoring
             if (cfg.Entries.Count == 0 && catalog.Entries.Count > 0)
             {
                 Debug.LogWarning(
-                    "[TrackConfigBuilder] Catalog lists track rows but none were exported to TrackConfig (missing Track refs or empty ids). Fix the catalog, then Sync `Track.rc`.",
+                    "[TrackConfigBuilder] Catalog lists track rows but none were exported to TrackConfig (missing Track refs or empty ids). Fix the catalog, then Sync in Window → LiveOps → Configs.",
                     this);
             }
 #endif

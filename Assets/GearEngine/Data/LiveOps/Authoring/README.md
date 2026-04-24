@@ -1,6 +1,6 @@
 # LiveOps config builders (defaults)
 
-These `*ConfigBuilder` assets drive **Window → LiveOps → Config Deployment** (sync to `Assets/LiveOps/RemoteConfig/*.rc`).
+These `*ConfigBuilder` assets are edited and synced from **Window → LiveOps → Configs** (writes `Assets/LiveOps/RemoteConfig/*.rc`).
 
 | Asset | Catalog / notes |
 |-------|------------------|

@@ -3,7 +3,7 @@
     "TrackConfig": {
       "entries": [
         {
-          "id": "CircleTrack",
+          "id": "OvalTrack",
           "baseReward": 10,
           "bands": [
             {

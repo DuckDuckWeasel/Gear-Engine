@@ -9,7 +9,7 @@ This document describes how the **Cloud Code backend**, **shared DTO DLL**, **Un
 | Backend solution | [LiveOps/LiveOps.sln](../../LiveOps/LiveOps.sln) | Builds `LiveOps` (net6.0 Cloud Code module) + `Scaffold.LiveOps.DTO` (netstandard2.1) |
 | DTO project | [LiveOps/LiveOps.DTO/Scaffold.LiveOps.DTO.csproj](../../LiveOps/LiveOps.DTO/Scaffold.LiveOps.DTO.csproj) | After **Build**, copies `Scaffold.LiveOps.DTO.dll` into [Assets/Plugins/Scaffold.LiveOps.DTO/](../../Assets/Plugins/Scaffold.LiveOps.DTO/) |
 | Cloud Code module ref | [Assets/CloudCode/LiveOps.ccmr](../../Assets/CloudCode/LiveOps.ccmr) | Points Unity Cloud Code at `LiveOps.sln` for **Build** / publish |
-| Remote Config (`.rc`) | [Assets/LiveOps/RemoteConfig/](../../Assets/LiveOps/RemoteConfig/) | Per-module keys deployed via **Window → Deployment**; see [RemoteConfig.md](RemoteConfig.md) |
+| Remote Config (`.rc`) | [Assets/LiveOps/RemoteConfig/](../../Assets/LiveOps/RemoteConfig/) | Per-module keys synced and deployed from **Window → LiveOps → Configs**; see [RemoteConfig.md](RemoteConfig.md) |
 | Meta harness | [Assets/GearEngine/Scenes/Meta.unity](../../Assets/GearEngine/Scenes/Meta.unity) + [`MetaApplicationBootstrap`](../../Assets/GearEngine/Scripts/App/Bootstrap/MetaApplicationBootstrap.cs) | Standalone **UGS → Cloud Code → LiveOps** init via **LayeredScope** (see [Meta bootstrap](../Meta/Bootstrap.md)) |
 | Build order (Editor) | [ProjectSettings/EditorBuildSettings.asset](../../ProjectSettings/EditorBuildSettings.asset) | `Meta.unity` is **enabled** at index **0** for backend smoke tests |
 
@@ -89,7 +89,7 @@ Publish to your UGS Cloud Code environment using the Unity **Services → Cloud 
 
 - Project linked to a **Unity Gaming Services** project / environment.
 - **Cloud Code** module built from [LiveOps/LiveOps.sln](../../LiveOps/LiveOps.sln) and deployed to that environment.
-- **Remote Config** keys for LiveOps (see [RemoteConfig.md](RemoteConfig.md) — e.g. `CurrencyConfig`, `TrackConfig`, `CardConfig`, `LoadoutConfig`, `InventoryConfig`) authored under [Assets/LiveOps/RemoteConfig/](../../Assets/LiveOps/RemoteConfig/) and deployed to that environment with **Window → Deployment**.
+- **Remote Config** keys for LiveOps (see [RemoteConfig.md](RemoteConfig.md) — e.g. `CurrencyConfig`, `TrackConfig`, `CardConfig`, `LoadoutConfig`, `InventoryConfig`) authored under [Assets/LiveOps/RemoteConfig/](../../Assets/LiveOps/RemoteConfig/) and deployed to that environment from **Window → LiveOps → Configs** (or `ugs deploy`).
 - Without a deployed module, the initial `GameDataRequest` from `LiveOpsService` will fail (expected).
 
 On success, the console should show `[Meta] LiveOps raw payloads: …` with `CurrencyGameData`, `TrackGameData`, and other active modules (exact payloads depend on server `ModuleConfig` and Remote Config).

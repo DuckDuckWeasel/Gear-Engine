@@ -6,15 +6,15 @@ This ExecPlan is a living document.
 
 Move LiveOps Remote Config authoring from ad-hoc CSV/JSON under `LiveOps/LiveOps.DTO/config/` to per-module `.rc` files under `Assets/LiveOps/RemoteConfig/`, deployed with `com.unity.services.deployment` via **Window → Deployment**, keeping the same Remote Config keys consumed by Cloud Code (see [Docs/LiveOps/RemoteConfig.md](../../Docs/LiveOps/RemoteConfig.md) for the current key list).
 
-**Update:** Hand-editing JSON under `Assets/LiveOps/RemoteConfig/` for content is superseded by **`com.scaffold.liveops.authoring`** — **Window → LiveOps → Config Deployment** + `ConfigBuilderSO` assets (see [Docs/LiveOps/AuthoringPipeline.md](../../Docs/LiveOps/AuthoringPipeline.md)). This ExecPlan remains valid for **Deployment** (link project → Window → Deployment → smoke-test Meta).
+**Update:** Hand-editing JSON under `Assets/LiveOps/RemoteConfig/` for content is superseded by **`com.scaffold.liveops.authoring`** — **Window → LiveOps → Configs** + `ConfigBuilderSO` assets (see [Docs/LiveOps/AuthoringPipeline.md](../../Docs/LiveOps/AuthoringPipeline.md)). The standard editor flow no longer uses **Window → Deployment**; see [Plans/UnifiedConfigEditor/UnifiedConfigEditor-ExecPlan.md](../UnifiedConfigEditor/UnifiedConfigEditor-ExecPlan.md). This ExecPlan remains a historical record of per-module `.rc` adoption and `com.unity.services.deployment`.
 
 ## Progress
 
-- [x] Add `com.unity.services.deployment` to `Packages/manifest.json` and align `packages-lock.json`.
-- [x] Create `Assets/LiveOps/RemoteConfig/` with per-module `.rc` files and Unity-compatible `.meta` (ScriptedImporter).
-- [x] Remove legacy `LiveOps/LiveOps.DTO/config/` sources.
-- [x] Document workflow in `Docs/LiveOps/RemoteConfig.md` and update `Docs/LiveOps/Bootstrap.md`.
-- [ ] **Manual:** Deploy `.rc` files from **Window → Deployment** to the target UGS environment and smoke-test Meta scene (requires Editor + linked project).
+- Add `com.unity.services.deployment` to `Packages/manifest.json` and align `packages-lock.json`.
+- Create `Assets/LiveOps/RemoteConfig/` with per-module `.rc` files and Unity-compatible `.meta` (ScriptedImporter).
+- Remove legacy `LiveOps/LiveOps.DTO/config/` sources.
+- Document workflow in `Docs/LiveOps/RemoteConfig.md` and update `Docs/LiveOps/Bootstrap.md`.
+- **Manual:** Deploy `.rc` files from **Window → Deployment** to the target UGS environment and smoke-test Meta scene (requires Editor + linked project).
 
 ## Surprises & Discoveries
 
@@ -49,10 +49,10 @@ See git history and [Docs/LiveOps/RemoteConfig.md](../../Docs/LiveOps/RemoteConf
 
 ## Validation and Acceptance
 
-- [ ] `Window → Deployment` lists all five `.rc` files without import errors.
-- [ ] Deploy succeeds for the linked environment.
-- [ ] Meta scene Play Mode shows `[Meta] LiveOps ready…` with expected payloads.
-- [ ] `.agents/scripts/validate-changes.cmd` passes (when run locally).
+- `Window → Deployment` lists all five `.rc` files without import errors.
+- Deploy succeeds for the linked environment.
+- Meta scene Play Mode shows `[Meta] LiveOps ready…` with expected payloads.
+- `.agents/scripts/validate-changes.cmd` passes (when run locally).
 
 ## Idempotence and Recovery
 

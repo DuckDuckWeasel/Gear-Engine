@@ -11,7 +11,7 @@ namespace GearEngine.Campaign.Tests.Editor
 {
     /// <summary>
     /// Ensures default <see cref="Scaffold.LiveOps.Authoring.ConfigBuilderSO{TConfig}"/> output matches committed
-    /// <c>Assets/LiveOps/RemoteConfig/*.rc</c> (use <i>Window → LiveOps → Config Deployment → Sync All</i> to refresh).
+    /// <c>Assets/LiveOps/RemoteConfig/*.rc</c> (refresh via <i>Window → LiveOps → Configs</i> → Deploy, or <c>RcSyncService.Sync</c> in editor code).
     /// </summary>
     public sealed class LiveOpsConfigBuilderAndRcTests
     {
@@ -28,7 +28,7 @@ namespace GearEngine.Campaign.Tests.Editor
             var diskToken = JObject.Parse(disk);
             Assert.IsTrue(
                 JToken.DeepEquals(expectedToken, diskToken),
-                $"Run Window → LiveOps → Config Deployment → Sync for {builder.ConfigKey}. Expected:\n{expected}\n\nDisk:\n{disk}");
+                $"Run Window → LiveOps → Configs → Sync for {builder.ConfigKey}. Expected:\n{expected}\n\nDisk:\n{disk}");
         }
 
         [Test]

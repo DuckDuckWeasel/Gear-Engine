@@ -12,7 +12,7 @@ flowchart LR
     builderSO --> dto[(DTO payload)]
   end
   subgraph publish [Publish]
-    window[Window / LiveOps / Config Deployment]
+    window[Window / LiveOps / Configs]
     rc[Assets/LiveOps/RemoteConfig/*.rc]
     ugs[(UGS Remote Config)]
     dto --> window
@@ -30,7 +30,7 @@ flowchart LR
 ```
 
 1. **Author** — Designers maintain ScriptableObject catalogs (e.g. `TrackCatalogSO`, `CardCatalogSO`) and one `ConfigBuilderSO<TConfig>` per Remote Config key. The builder reads asset-backed entries plus any **asset-independent** fields (e.g. card base cost) and builds the DTO.
-2. **Publish** — **Window → LiveOps → Config Deployment** runs `Build()` and writes `Assets/LiveOps/RemoteConfig/<Name>.rc` (no `$schema` line; `entries` wrapper only). Then **Window → Deployment** pushes to UGS ([RemoteConfig.md](RemoteConfig.md)).
+2. **Publish** — **Window → LiveOps → Configs** runs `Build()` and writes `Assets/LiveOps/RemoteConfig/<Name>.rc` (no `$schema` line; `entries` wrapper only). Use **Deploy** (or **Deploy All**) in the same window to push to UGS, or fall back to `ugs deploy` if the Deployment API is unavailable ([RemoteConfig.md](RemoteConfig.md)).
 3. **Download** — Unchanged: Cloud Code `GameModule` types call `remoteConfig.Get(context, ConfigKey, new TConfig())`.
 4. **Match config to assets** — Client modules keep an **injected** catalog (`TrackCatalogSO`, etc.) and resolve config ids with the catalog’s existing APIs (`GetTrack`, `TryGet`, …). There is no shared engine `IAssetResolver` type; the pattern is convention-only (see `TracksClientModule`).
 
@@ -40,20 +40,20 @@ flowchart LR
 2. Add `ConfigKey` (usually `nameof(MyConfig)`) on the Cloud Code `GameModule` implementation.
 3. Add `public const string ConfigKey` in the client if you expose it.
 4. Create `MyConfigBuilderSO : ConfigBuilderSO<MyConfig>` in the appropriate game assembly (`Game.Campaign`, `Game.Cards`, …) and a **Create Asset Menu** entry.
-5. Open **Window → LiveOps → Config Deployment** → **Sync** for that row, then commit the updated `.rc`.
-6. Add **Window → Deployment** step for your environment when promoting.
+5. Open **Window → LiveOps → Configs** → **Deploy** for that row (writes `.rc` then uploads), or call `RcSyncService.Sync` if you only need the `.rc` on disk for commits/CI.
+6. Commit the updated `.rc` when promoting changes through source control.
 
 ## Package reference
 
-Implementation lives in [com.scaffold.liveops.authoring](../../Assets/Packages/com.scaffold.liveops.authoring/README.md) (`ConfigBuilderSO`, `RcEnvelope`, deployment window).
+Implementation lives in [com.scaffold.liveops.authoring](../../Assets/Packages/com.scaffold.liveops.authoring/README.md) (`ConfigBuilderSO`, `RcEnvelope`, **Window → LiveOps → Configs**).
 
 ## Default builder assets (repo)
 
-Checked-in defaults live under [Assets/GearEngine/Data/LiveOps/Authoring/](../../Assets/GearEngine/Data/LiveOps/Authoring/) (see `README.md` there). **Window → LiveOps → Config Deployment** discovers all `ConfigBuilderSOBase` assets project-wide, including these.
+Checked-in defaults live under [Assets/GearEngine/Data/LiveOps/Authoring/](../../Assets/GearEngine/Data/LiveOps/Authoring/) (see `README.md` there). **Window → LiveOps → Configs** discovers all `ConfigBuilderSOBase` assets project-wide, including these.
 
 ## Tests
 
 - **dotnet**: `LiveOps.Tests` — `ConfigModuleKeyContractTests` (server `ConfigKey` vs DTO name).
-- **Unity EditMode**: `Game.Campaign.Tests` — `LiveOpsConfigBuilderAndRcTests` (default builder output matches committed `.rc` JSON via `JToken.DeepEquals`).
+- **Unity EditMode**: `Game.Campaign.Tests` — `LiveOpsConfigBuilderAndRcTests` (default builder output matches committed `.rc` JSON via `JToken.DeepEquals`); `RcSyncServiceAndDiscoveryTests` (disk drift, duplicate `ConfigKey`, cloud JSON extraction, deployer interface).
 
-Regenerate `.rc` files after changing defaults in a builder (`Sync All Out-of-Sync`).
+Regenerate `.rc` files after changing defaults in a builder (**Deploy** from **Window → LiveOps → Configs**, or `RcSyncService.Sync` for disk-only).

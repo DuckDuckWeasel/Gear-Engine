@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Game.Campaign::GearEngine.Campaign.Authoring.CurrencyConfigBuilderSO
   entries:
   - id: gold
-    initial: 0
+    initial: 15
     hasMin: 0
     min: 0
     hasMax: 0
