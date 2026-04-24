@@ -12,10 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f70225e243e5fd74897e7c2c893c44dc, type: 3}
   m_Name: CurrencyConfigBuilder
   m_EditorClassIdentifier: Game.Campaign::GearEngine.Campaign.Authoring.CurrencyConfigBuilderSO
-  entries:
-  - id: gold
-    initial: 15
-    hasMin: 0
-    min: 0
-    hasMax: 0
-    max: 0
+  currencies:
+  - {fileID: 11400000, guid: ddeeff00112233445566778899aabbc0, type: 2}

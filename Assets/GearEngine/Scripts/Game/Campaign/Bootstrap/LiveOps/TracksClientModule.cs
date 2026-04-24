@@ -103,7 +103,7 @@ namespace GearEngine.Campaign.Bootstrap.LiveOps
 
         public TrackDefinition CurrentTrack => catalog.GetTrack(data?.CurrentTrackId ?? string.Empty);
 
-        public CarDefinition CurrentCar => catalog.GetCarFor(data?.CurrentTrackId ?? string.Empty);
+        public CarDefinition CurrentCar => catalog.DefaultCar;
 
         public TrackProgressModel GetTrackProgress() => progress;
 

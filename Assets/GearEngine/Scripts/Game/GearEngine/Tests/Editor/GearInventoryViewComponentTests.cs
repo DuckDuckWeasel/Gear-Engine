@@ -88,8 +88,6 @@ namespace GearEngine.GearEngine.Tests.Editor
 
             public string MotorCogGearId => string.Empty;
 
-            public Vector2Int MotorCogStartCell => new Vector2Int(2, 2);
-
             public bool HasSavedInventory => owned.Count > 0;
 
             public IReadOnlyList<OwnedGear> Owned => owned;

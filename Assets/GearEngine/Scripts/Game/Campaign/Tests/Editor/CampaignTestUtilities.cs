@@ -171,8 +171,6 @@ namespace GearEngine.Campaign.Tests.Editor
 
         public string MotorCogGearId { get; set; } = string.Empty;
 
-        public Vector2Int MotorCogStartCell { get; set; } = new Vector2Int(2, 2);
-
         public bool HasSavedInventory => owned.Count > 0;
 
         public IReadOnlyList<OwnedGear> Owned => owned;

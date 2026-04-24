@@ -15,6 +15,12 @@ namespace LiveOps.Modules.DTO.Loadout
         [JsonProperty("baseSlots")]
         public int BaseSlots { get; set; }
 
+        [JsonProperty("motorCogStartX")]
+        public int MotorCogStartX { get; set; } = 2;
+
+        [JsonProperty("motorCogStartY")]
+        public int MotorCogStartY { get; set; } = 2;
+
         [JsonConstructor]
         private LoadoutGameData()
         {
@@ -34,6 +40,8 @@ namespace LiveOps.Modules.DTO.Loadout
 
             Board = new List<LoadoutPlacement>(persistence.Board);
             BaseSlots = config.BaseSlots;
+            MotorCogStartX = config.MotorCogStartX;
+            MotorCogStartY = config.MotorCogStartY;
         }
     }
 }

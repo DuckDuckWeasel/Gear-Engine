@@ -3,6 +3,9 @@ using Newtonsoft.Json;
 
 namespace LiveOps.Modules.DTO.Currency
 {
+    /// <summary>
+    /// Remote Config wire shape (numeric entries only). In Unity, use the Currency Config Builder with CurrencySO assets.
+    /// </summary>
     public sealed class CurrencyConfig
     {
         [JsonProperty("entries")]

@@ -12,9 +12,12 @@
 - **Persistence JSON**: `{ "balances": { "gold": 123 } }` — only stores amounts; server seeds missing keys on `Initialize`.
 - **GameData**: `CurrencyGameData` with `wallets` array; each wallet has no `initial` (that stays in config only).
 
+## Unity authoring
+
+- **`CurrencySO`**: per-currency ScriptableObject (id, numeric defaults for Remote Config export, optional **display name / icon / color** for client UI). **`CurrencyConfigBuilderSO`** references an array of `CurrencySO` assets; **`Build()`** still emits plain `CurrencyConfig` / `CurrencyConfigEntry` JSON (no sprites on the wire). **`Apply()`** updates each `CurrencySO`’s numeric fields from a pulled config.
+
 ## Non-goals (this milestone)
 
-- Editor asset authoring for currency icons.
 - Local `Campaign` `LocalWalletService` (removed — campaign uses `CurrencyClientModule`).
 
 ## References

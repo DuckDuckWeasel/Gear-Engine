@@ -6,15 +6,22 @@ using UnityEngine;
 namespace GearEngine.Campaign.Services
 {
     /// <summary>
-    /// Resolves track ids (Remote Config / LiveOps) to scene <see cref="TrackDefinition"/> and <see cref="CarDefinition"/> assets.
+    /// Resolves track ids (Remote Config / LiveOps) to scene <see cref="TrackDefinition"/> assets.
+    /// A single <see cref="DefaultCar"/> is used for racing (not tied to a specific track row).
     /// </summary>
     [CreateAssetMenu(fileName = "TrackCatalog", menuName = "GearEngine/Campaign/Track Catalog")]
     public sealed class TrackCatalogSO : ScriptableObject
     {
         [SerializeField]
+        private CarDefinition defaultCar;
+
+        [SerializeField]
         private TrackEntry[] trackEntries = Array.Empty<TrackEntry>();
 
         private readonly Dictionary<string, TrackEntry> _byTrackId = new Dictionary<string, TrackEntry>(StringComparer.Ordinal);
+
+        /// <summary>Car used for the active race session; configured once on this catalog.</summary>
+        public CarDefinition DefaultCar => defaultCar;
 
         private void OnEnable()
         {
@@ -28,6 +35,14 @@ namespace GearEngine.Campaign.Services
         {
             trackEntries = entries != null ? entries : Array.Empty<TrackEntry>();
             RebuildLookup();
+        }
+
+        /// <summary>
+        /// Replaces the default car at runtime (e.g. from tests).
+        /// </summary>
+        public void SetRuntimeDefaultCar(CarDefinition car)
+        {
+            defaultCar = car;
         }
 
         private void RebuildLookup()
@@ -108,16 +123,6 @@ namespace GearEngine.Campaign.Services
             }
 
             return entry.Track;
-        }
-
-        public CarDefinition GetCarFor(string trackId)
-        {
-            if (string.IsNullOrEmpty(trackId) || !_byTrackId.TryGetValue(trackId, out TrackEntry entry))
-            {
-                return null;
-            }
-
-            return entry.Car;
         }
 
         public IReadOnlyList<TrackEntry> OrderedEntries(IReadOnlyList<string> orderedTrackIds)

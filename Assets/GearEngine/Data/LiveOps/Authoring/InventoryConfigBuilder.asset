@@ -13,10 +13,9 @@ MonoBehaviour:
   m_Name: InventoryConfigBuilder
   m_EditorClassIdentifier: Game.Campaign::GearEngine.Campaign.Authoring.InventoryConfigBuilderSO
   baseSlots: 8
-  motorCogGearId: gear_core
-  motorCogStartX: 2
-  motorCogStartY: 2
-  startingGearIds:
-  - gear_base_1
-  - gear_speed
-  - gear_score
+  motorCogGear: {fileID: 11400000, guid: 39144108699f44d10b422acf50e748ba, type: 2}
+  additionalStartingGears:
+  - {fileID: 11400000, guid: 3783c6d85510a4bf6b4f879d30ef249b, type: 2}
+  - {fileID: 11400000, guid: 69e686b79377d4526aa5270b340e53a2, type: 2}
+  - {fileID: 11400000, guid: 9f0ce76835399481e9aaf8f8af8f41ca, type: 2}
+  gearCatalogForApply: {fileID: 11400000, guid: f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2, type: 2}

@@ -1,7 +1,9 @@
 {
   "entries": {
     "LoadoutConfig": {
-      "baseSlots": 6
+      "baseSlots": 6,
+      "motorCogStartX": 2,
+      "motorCogStartY": 2
     }
   }
 }

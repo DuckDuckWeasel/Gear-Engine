@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using GearEngine.GearEngine.Config;
-using UnityEngine;
 
 namespace GearEngine.GearEngine.Services
 {
@@ -11,8 +10,6 @@ namespace GearEngine.GearEngine.Services
     public sealed class EmptyInventoryService : IInventoryService
     {
         public string MotorCogGearId => string.Empty;
-
-        public Vector2Int MotorCogStartCell => new Vector2Int(2, 2);
 
         public bool HasSavedInventory => false;
 

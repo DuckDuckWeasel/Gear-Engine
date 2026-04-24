@@ -27,8 +27,9 @@ namespace LiveOps.Modules.Loadout
                 .Where(x => x != null && !string.IsNullOrEmpty(x.InstanceId) && owned.Contains(x.InstanceId))
                 .ToList();
 
-            if (!string.IsNullOrEmpty(invConfig.MotorCogGearId) &&
-                !placements.Any(p => p.GearId == invConfig.MotorCogGearId))
+            string coreGearId = invConfig.GetCoreGearCatalogId();
+            if (!string.IsNullOrEmpty(coreGearId) &&
+                !placements.Any(p => p.GearId == coreGearId))
             {
                 return new SaveBoardLayoutResponse
                 {

@@ -43,7 +43,8 @@ namespace GearEngine.Campaign.Tests.Editor
             var carDef = ScriptableObject.CreateInstance<CarDefinition>();
 
             var catalog = ScriptableObject.CreateInstance<TrackCatalogSO>();
-            catalog.SetRuntimeEntries(new[] { CreateTrackEntry(trackDef, carDef) });
+            catalog.SetRuntimeDefaultCar(carDef);
+            catalog.SetRuntimeEntries(new[] { CreateTrackEntry(trackDef) });
 
             var persistence = new TrackPersistence { CurrentTrackId = string.Empty };
             TrackConfig config = JsonConvert.DeserializeObject<TrackConfig>(
@@ -61,6 +62,7 @@ namespace GearEngine.Campaign.Tests.Editor
             await module.InitializeAsync(CancellationToken.None);
 
             Assert.That(module.CurrentTrack, Is.SameAs(trackDef));
+            Assert.That(module.CurrentCar, Is.SameAs(carDef));
             Assert.That(gameData.CurrentTrackId, Is.EqualTo("track_alpha"));
 
             Object.DestroyImmediate(trackDef);
@@ -76,7 +78,8 @@ namespace GearEngine.Campaign.Tests.Editor
             var carDef = ScriptableObject.CreateInstance<CarDefinition>();
 
             var catalog = ScriptableObject.CreateInstance<TrackCatalogSO>();
-            catalog.SetRuntimeEntries(new[] { CreateTrackEntry(trackDef, carDef) });
+            catalog.SetRuntimeDefaultCar(carDef);
+            catalog.SetRuntimeEntries(new[] { CreateTrackEntry(trackDef) });
 
             var persistence = new TrackPersistence { CurrentTrackId = string.Empty };
             TrackConfig config = JsonConvert.DeserializeObject<TrackConfig>(
@@ -94,6 +97,7 @@ namespace GearEngine.Campaign.Tests.Editor
             await module.InitializeAsync(CancellationToken.None);
 
             Assert.That(module.CurrentTrack, Is.SameAs(trackDef));
+            Assert.That(module.CurrentCar, Is.SameAs(carDef));
             Assert.That(gameData.CurrentTrackId, Is.EqualTo("local_only"));
 
             Object.DestroyImmediate(trackDef);
@@ -108,7 +112,8 @@ namespace GearEngine.Campaign.Tests.Editor
             trackDef.name = "only_track";
             var carDef = ScriptableObject.CreateInstance<CarDefinition>();
             var catalog = ScriptableObject.CreateInstance<TrackCatalogSO>();
-            catalog.SetRuntimeEntries(new[] { CreateTrackEntry(trackDef, carDef) });
+            catalog.SetRuntimeDefaultCar(carDef);
+            catalog.SetRuntimeEntries(new[] { CreateTrackEntry(trackDef) });
 
             Assert.That(catalog.GetFirstResolvableTrackId(), Is.EqualTo("only_track"));
 
@@ -117,15 +122,12 @@ namespace GearEngine.Campaign.Tests.Editor
             Object.DestroyImmediate(catalog);
         }
 
-        private static TrackEntry CreateTrackEntry(TrackDefinition track, CarDefinition car)
+        private static TrackEntry CreateTrackEntry(TrackDefinition track)
         {
             var entry = new TrackEntry();
             FieldInfo trackField = typeof(TrackEntry).GetField("track", BindingFlags.Instance | BindingFlags.NonPublic);
-            FieldInfo carField = typeof(TrackEntry).GetField("car", BindingFlags.Instance | BindingFlags.NonPublic);
             Assert.That(trackField, Is.Not.Null);
-            Assert.That(carField, Is.Not.Null);
             trackField.SetValue(entry, track);
-            carField.SetValue(entry, car);
             return entry;
         }
 

@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using LiveOps.GameApi;
@@ -36,29 +35,20 @@ namespace LiveOps.Modules.Inventory
 
             bool mutated = false;
 
-            bool hasMotorGear = persistence.Gears.Any(g => g != null && g.GearId == config.MotorCogGearId);
-            if (!string.IsNullOrEmpty(config.MotorCogGearId) && !hasMotorGear)
-            {
-                persistence.Gears.Insert(0, new OwnedGearEntry
-                {
-                    InstanceId = "motor",
-                    GearId = config.MotorCogGearId,
-                });
-                mutated = true;
-            }
-
             if (!persistence.StartingGearsSeeded && config.StartingGearIds != null && config.StartingGearIds.Count > 0)
             {
-                foreach (string gearId in config.StartingGearIds)
+                for (int i = 0; i < config.StartingGearIds.Count; i++)
                 {
+                    string gearId = config.StartingGearIds[i];
                     if (string.IsNullOrEmpty(gearId))
                     {
                         continue;
                     }
 
+                    string instanceId = i == 0 ? "motor" : $"start_{Guid.NewGuid():N}";
                     persistence.Gears.Add(new OwnedGearEntry
                     {
-                        InstanceId = $"start_{Guid.NewGuid():N}",
+                        InstanceId = instanceId,
                         GearId = gearId,
                     });
                 }

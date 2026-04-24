@@ -13,3 +13,5 @@ MonoBehaviour:
   m_Name: LoadoutConfigBuilder
   m_EditorClassIdentifier: Game.Campaign::GearEngine.Campaign.Authoring.LoadoutConfigBuilderSO
   baseSlots: 6
+  motorCogStartX: 2
+  motorCogStartY: 2

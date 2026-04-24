@@ -15,14 +15,9 @@ namespace LiveOps.Modules.DTO.Inventory
         [JsonProperty("baseSlots")]
         public int BaseSlots { get; set; }
 
+        /// <summary>Derived from <c>InventoryConfig.StartingGearIds[0]</c> (core/motor catalog id).</summary>
         [JsonProperty("motorCogGearId")]
         public string MotorCogGearId { get; set; } = string.Empty;
-
-        [JsonProperty("motorCogStartX")]
-        public int MotorCogStartX { get; set; } = 2;
-
-        [JsonProperty("motorCogStartY")]
-        public int MotorCogStartY { get; set; } = 2;
 
         [JsonConstructor]
         private InventoryGameData()
@@ -43,9 +38,7 @@ namespace LiveOps.Modules.DTO.Inventory
 
             Gears = new List<OwnedGearEntry>(persistence.Gears);
             BaseSlots = config.BaseSlots;
-            MotorCogGearId = config.MotorCogGearId ?? string.Empty;
-            MotorCogStartX = config.MotorCogStartX;
-            MotorCogStartY = config.MotorCogStartY;
+            MotorCogGearId = config.GetCoreGearCatalogId();
         }
     }
 }

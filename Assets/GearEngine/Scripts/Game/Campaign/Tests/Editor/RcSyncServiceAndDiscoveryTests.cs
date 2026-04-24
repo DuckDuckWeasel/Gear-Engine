@@ -115,7 +115,8 @@ namespace GearEngine.Campaign.Tests.Editor
 
             public Task<DeployOutcome> DeployAsync(
                 IReadOnlyList<string> rcPaths,
-                CancellationToken cancellationToken = default)
+                CancellationToken cancellationToken = default,
+                System.IProgress<string> statusProgress = null)
             {
                 Paths.AddRange(rcPaths);
                 return Task.FromResult(new DeployOutcome(true, "test", DeployTransport.Api));

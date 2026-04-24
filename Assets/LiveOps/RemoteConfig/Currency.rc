@@ -4,7 +4,8 @@
       "entries": [
         {
           "id": "gold",
-          "initial": 15
+          "initial": 15,
+          "min": 0
         }
       ]
     }

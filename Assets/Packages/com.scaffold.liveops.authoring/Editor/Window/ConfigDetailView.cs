@@ -33,9 +33,19 @@ namespace Scaffold.LiveOps.Authoring.Editor.Window
 
         private Image _titleStatusLight;
 
+        private Button _findButton;
+
+        private Button _pullButton;
+
+        private Button _deployButton;
+
+        private Button _compareCloudButton;
+
         private Button _tabConfigButton;
 
         private Button _tabDiffButton;
+
+        private bool _rowActionsEnabled;
 
         private VisualElement _tabConfigPage;
 
@@ -58,6 +68,10 @@ namespace Scaffold.LiveOps.Authoring.Editor.Window
             Clear();
             _localDiffField = null;
             _remoteDiffField = null;
+            _findButton = null;
+            _pullButton = null;
+            _deployButton = null;
+            _compareCloudButton = null;
             _tabConfigButton = null;
             _tabDiffButton = null;
             _tabConfigPage = null;
@@ -77,6 +91,7 @@ namespace Scaffold.LiveOps.Authoring.Editor.Window
 
             RowStatus disk = RcSyncService.GetStatus(row.Builder);
             bool dup = row.IsDuplicateConfigKey;
+            _rowActionsEnabled = actionsEnabled && !dup;
 
             Add(BuildTitleBar(row, disk, dup, actionsEnabled));
             if (dup)
@@ -184,17 +199,16 @@ namespace Scaffold.LiveOps.Authoring.Editor.Window
                 return b;
             }
 
-            var findBtn = new Button(() => PingConfigAsset(row))
+            _findButton = new Button(() => PingConfigAsset(row))
             {
                 text = "Find",
                 tooltip = "Select and highlight this config asset in the Project window",
             };
-            findBtn.style.height = 22;
-            findBtn.style.marginLeft = 0;
-            actions.Add(findBtn);
+            _findButton.style.height = 22;
+            _findButton.style.marginLeft = 0;
+            actions.Add(_findButton);
 
-            actions.Add(
-                makeAction(
+            _pullButton = makeAction(
                     "Pull",
                     () =>
                     {
@@ -211,16 +225,17 @@ namespace Scaffold.LiveOps.Authoring.Editor.Window
                             Debug.LogError($"[LiveOps Config] Pull failed: {ex.Message}\n{ex.StackTrace}");
                         }
                     },
-                    "Read this config’s entry from the local .rc file and apply it back onto the builder asset (updates fields the builder supports in Apply)."));
+                    "Read this config’s entry from the local .rc file and apply it back onto the builder asset (updates fields the builder supports in Apply).");
+            actions.Add(_pullButton);
 
-            actions.Add(
-                makeAction(
+            _deployButton = makeAction(
                     "Deploy",
                     () =>
                     {
                         _ = DeployOneAsync(row);
                     },
-                    "Regenerate this builder’s .rc from the asset, then upload that file to the current UGS environment (Deployment API, with CLI fallback). Use Pull to revert the builder from disk if needed."));
+                    "Regenerate this builder’s .rc, then ugs deploy. CLI uses its own login: ugs login in a terminal (service account) or UGS_CLI_SERVICE_KEY_ID/SECRET. npm i -g ugs. Use Pull to revert the builder from disk if needed.");
+            actions.Add(_deployButton);
 
             bar.Add(actions);
             return bar;
@@ -393,17 +408,45 @@ namespace Scaffold.LiveOps.Authoring.Editor.Window
         private void BuildConfigTabContent(LiveOpsConfigDiscovery.Row row)
         {
             var wrap = new VisualElement { style = { paddingLeft = 8, paddingRight = 8, paddingTop = 8, paddingBottom = 12 } };
+            bool pro = EditorGUIUtility.isProSkin;
+            Color configBlockBg = pro ? new Color(0.19f, 0.19f, 0.19f) : new Color(0.95f, 0.95f, 0.95f);
+            Color configBorder = pro ? new Color(0.11f, 0.11f, 0.11f) : new Color(0.78f, 0.78f, 0.78f);
+            Color refsBlockBg = pro ? new Color(0.15f, 0.17f, 0.19f) : new Color(0.91f, 0.93f, 0.96f);
+            Color refsBorder = pro ? new Color(0.12f, 0.14f, 0.16f) : new Color(0.72f, 0.76f, 0.82f);
 
-            var builderHeader = new Label("Builder")
+            var configBlock = new VisualElement
+            {
+                style =
+                {
+                    backgroundColor = configBlockBg,
+                    borderLeftWidth = 1,
+                    borderRightWidth = 1,
+                    borderTopWidth = 1,
+                    borderBottomWidth = 1,
+                    borderLeftColor = configBorder,
+                    borderRightColor = configBorder,
+                    borderTopColor = configBorder,
+                    borderBottomColor = configBorder,
+                    borderTopLeftRadius = 4,
+                    borderTopRightRadius = 4,
+                    borderBottomLeftRadius = 4,
+                    borderBottomRightRadius = 4,
+                    paddingLeft = 8,
+                    paddingRight = 8,
+                    paddingTop = 8,
+                    paddingBottom = 10,
+                },
+            };
+
+            var builderHeader = new Label("Config builder")
             {
                 style =
                 {
                     unityFontStyleAndWeight = FontStyle.Bold,
-                    marginBottom = 4,
-                    marginTop = 4,
+                    marginBottom = 6,
                 },
             };
-            wrap.Add(builderHeader);
+            configBlock.Add(builderHeader);
 
             UnityEditor.Editor builderEditor = UnityEditor.Editor.CreateEditor(row.Builder);
             _editors.Add(builderEditor);
@@ -419,39 +462,136 @@ namespace Scaffold.LiveOps.Authoring.Editor.Window
             {
                 style = { minHeight = 120f },
             };
-            wrap.Add(builderImgui);
+            configBlock.Add(builderImgui);
+            wrap.Add(configBlock);
 
             IReadOnlyList<ScriptableObject> refs = ConfigReferencedScriptableObjects.Enumerate(row.Builder);
             if (refs.Count > 0)
             {
-                var refsHeader = new Label("Referenced assets")
+                var refsIntro = new VisualElement
                 {
                     style =
                     {
-                        unityFontStyleAndWeight = FontStyle.Bold,
-                        marginBottom = 4,
-                        marginTop = 12,
+                        marginTop = 18,
+                        paddingTop = 14,
+                        borderTopWidth = 1,
+                        borderTopColor = configBorder,
                     },
                 };
-                wrap.Add(refsHeader);
+
+                refsIntro.Add(
+                    new Label("Referenced assets")
+                    {
+                        style =
+                        {
+                            unityFontStyleAndWeight = FontStyle.Bold,
+                            fontSize = 12,
+                            marginBottom = 2,
+                        },
+                    });
+
+                refsIntro.Add(
+                    new Label(
+                        "Each reference is its own card: the top row is the read-only object field (click to select in the Project window) and expand/collapse; the full inspector is below when expanded.")
+                    {
+                        style =
+                        {
+                            fontSize = 11,
+                            whiteSpace = WhiteSpace.Normal,
+                            color = pro ? new Color(0.65f, 0.65f, 0.65f) : new Color(0.38f, 0.38f, 0.38f),
+                            marginBottom = 8,
+                        },
+                    });
 
                 foreach (ScriptableObject sob in refs)
                 {
-                    var rowBox = new VisualElement { style = { marginBottom = 8 } };
-                    var hdr = new VisualElement { style = { flexDirection = FlexDirection.Row, alignItems = Align.Center } };
-                    hdr.Add(
-                        new Label($"{sob.name} ({sob.GetType().Name})")
-                        {
-                            style = { flexGrow = 1 },
-                        });
-                    var ping = new Button(() => EditorGUIUtility.PingObject(sob))
+                    Type refType = sob.GetType();
+
+                    var card = new VisualElement
                     {
-                        text = "Ping",
-                        tooltip = "Select and highlight this referenced asset in the Project window.",
+                        style =
+                        {
+                            backgroundColor = refsBlockBg,
+                            borderLeftWidth = 1,
+                            borderRightWidth = 1,
+                            borderTopWidth = 1,
+                            borderBottomWidth = 1,
+                            borderLeftColor = refsBorder,
+                            borderRightColor = refsBorder,
+                            borderTopColor = refsBorder,
+                            borderBottomColor = refsBorder,
+                            borderTopLeftRadius = 6,
+                            borderTopRightRadius = 6,
+                            borderBottomLeftRadius = 6,
+                            borderBottomRightRadius = 6,
+                            marginBottom = 10,
+                            overflow = Overflow.Hidden,
+                        },
                     };
-                    ping.style.height = 20;
-                    hdr.Add(ping);
-                    rowBox.Add(hdr);
+
+                    var headerRow = new VisualElement
+                    {
+                        style =
+                        {
+                            flexDirection = FlexDirection.Row,
+                            alignItems = Align.Center,
+                            paddingLeft = 4,
+                            paddingRight = 6,
+                            paddingTop = 4,
+                            paddingBottom = 4,
+                            backgroundColor = pro
+                                ? new Color(0.12f, 0.14f, 0.16f)
+                                : new Color(0.86f, 0.88f, 0.9f),
+                            borderBottomWidth = 0,
+                        },
+                    };
+
+                    var body = new VisualElement
+                    {
+                        style =
+                        {
+                            paddingLeft = 6,
+                            paddingRight = 6,
+                            paddingTop = 4,
+                            paddingBottom = 8,
+                            borderTopWidth = 1,
+                            borderTopColor = pro ? new Color(0.2f, 0.22f, 0.25f) : new Color(0.82f, 0.85f, 0.88f),
+                        },
+                    };
+
+                    bool expanded = true;
+                    var chevron = new Button
+                    {
+                        text = "\u25bc",
+                        tooltip = "Show or hide the full inspector for this reference.",
+                    };
+                    chevron.style.width = 28;
+                    chevron.style.minWidth = 28;
+                    chevron.style.height = 20;
+                    chevron.style.flexShrink = 0;
+                    chevron.clicked += () =>
+                    {
+                        expanded = !expanded;
+                        body.style.display = expanded ? DisplayStyle.Flex : DisplayStyle.None;
+                        chevron.text = expanded ? "\u25bc" : "\u25b6";
+                    };
+
+                    Type objectFieldType = refType.IsAbstract ? typeof(ScriptableObject) : refType;
+                    var objField = new ObjectField
+                    {
+                        label = string.Empty,
+                        objectType = objectFieldType,
+                        value = sob,
+                        allowSceneObjects = false,
+                    };
+                    objField.tooltip =
+                        $"{refType.Name} — {AssetDatabase.GetAssetPath(sob)} — click the field to select this asset in the Project window.";
+                    objField.style.flexGrow = 1;
+                    objField.SetEnabled(false);
+
+                    headerRow.Add(chevron);
+                    headerRow.Add(objField);
+                    card.Add(headerRow);
 
                     UnityEditor.Editor catEditor = UnityEditor.Editor.CreateEditor(sob);
                     _editors.Add(catEditor);
@@ -464,11 +604,13 @@ namespace Scaffold.LiveOps.Authoring.Editor.Window
                             }
                         })
                     {
-                        style = { minHeight = 80f },
+                        style = { minHeight = 60f },
                     };
-                    rowBox.Add(catImgui);
-                    wrap.Add(rowBox);
+                    body.Add(catImgui);
+                    card.Add(body);
+                    refsIntro.Add(card);
                 }
+                wrap.Add(refsIntro);
             }
 
             _tabConfigPage.Add(wrap);
@@ -491,7 +633,7 @@ namespace Scaffold.LiveOps.Authoring.Editor.Window
             };
             wrap.Add(hint);
 
-            var compareBtn = new Button(
+            _compareCloudButton = new Button(
                 () =>
                 {
                     _ = CompareCloudAsync(row.Builder);
@@ -500,10 +642,10 @@ namespace Scaffold.LiveOps.Authoring.Editor.Window
                 text = "Compare with cloud",
                 tooltip = "Fetch the current Remote Config value for this key from UGS and show it next to the local generated JSON.",
             };
-            compareBtn.SetEnabled(actionsEnabled && !isDuplicate);
-            compareBtn.style.height = 24;
-            compareBtn.style.marginBottom = 8;
-            wrap.Add(compareBtn);
+            _compareCloudButton.SetEnabled(actionsEnabled && !isDuplicate);
+            _compareCloudButton.style.height = 24;
+            _compareCloudButton.style.marginBottom = 8;
+            wrap.Add(_compareCloudButton);
 
             _localDiffField = new TextField("Local (generated)") { isReadOnly = true, multiline = true };
             _remoteDiffField = new TextField("Remote (dashboard)") { isReadOnly = true, multiline = true };
@@ -567,10 +709,36 @@ namespace Scaffold.LiveOps.Authoring.Editor.Window
             }
         }
 
+        internal void SetDeployChromeLocked(bool locked)
+        {
+            _findButton?.SetEnabled(!locked);
+            _pullButton?.SetEnabled(_rowActionsEnabled && !locked);
+            _deployButton?.SetEnabled(_rowActionsEnabled && !locked);
+            _compareCloudButton?.SetEnabled(_rowActionsEnabled && !locked);
+            _tabConfigButton?.SetEnabled(!locked);
+            _tabDiffButton?.SetEnabled(!locked);
+        }
+
         private async Task DeployOneAsync(LiveOpsConfigDiscovery.Row row)
         {
             if (_deployer == null || row?.Builder == null)
             {
+                return;
+            }
+
+            string path = RcSyncService.GetRcPath(row.Builder);
+            if (_host is LiveOpsConfigsWindow win)
+            {
+                await win.RunDeployWorkflowAsync(
+                    () =>
+                    {
+                        AssetDatabase.SaveAssets();
+                        RcSyncService.Sync(row.Builder);
+                        RefreshLocalDiffPayload();
+                        RebindTitleStatusOnly(row);
+                        _host?.Repaint();
+                    },
+                    new[] { path });
                 return;
             }
 
@@ -591,7 +759,6 @@ namespace Scaffold.LiveOps.Authoring.Editor.Window
 
             try
             {
-                string path = RcSyncService.GetRcPath(row.Builder);
                 DeployOutcome outcome = await _deployer.DeployAsync(
                     new[] { path },
                     CancellationToken.None);

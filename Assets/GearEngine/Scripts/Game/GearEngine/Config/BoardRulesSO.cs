@@ -18,7 +18,7 @@ namespace GearEngine.GearEngine.Config
         public int MaxAllowedBoardGears = 5;
 
         [Header("Motor Cog")]
-        [Tooltip("Authoring reference: cell where CoreGear is auto-placed when missing from loadout. Keep aligned with Inventory remote config motor start.")]
+        [Tooltip("Authoring reference: cell where CoreGear is auto-placed when missing from loadout. Keep aligned with Loadout remote config motor start.")]
         public Vector2Int MotorCogStartCell = new Vector2Int(2, 2);
 
         public int MaxBoardGears => GridWidth * GridHeight;

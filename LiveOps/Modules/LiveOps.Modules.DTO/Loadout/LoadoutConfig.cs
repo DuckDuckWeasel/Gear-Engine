@@ -6,5 +6,11 @@ namespace LiveOps.Modules.DTO.Loadout
     {
         [JsonProperty("baseSlots")]
         public int BaseSlots { get; set; } = 6;
+
+        [JsonProperty("motorCogStartX")]
+        public int MotorCogStartX { get; set; } = 2;
+
+        [JsonProperty("motorCogStartY")]
+        public int MotorCogStartY { get; set; } = 2;
     }
 }

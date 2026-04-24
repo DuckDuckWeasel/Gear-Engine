@@ -110,7 +110,9 @@ namespace GearEngine.Campaign.Bootstrap.LiveOps
                 return;
             }
 
-            Vector2Int cell = inventoryService.MotorCogStartCell;
+            Vector2Int cell = data != null
+                ? new Vector2Int(data.MotorCogStartX, data.MotorCogStartY)
+                : new Vector2Int(2, 2);
             items.RemoveAll(p => p.Position == cell);
             BoardGearPlacementData motorPlacement = new BoardGearPlacementData(cell, motor);
             items.Add(motorPlacement);

@@ -21,9 +21,6 @@ namespace GearEngine.Campaign.Bootstrap.LiveOps
 
         public string MotorCogGearId => data?.MotorCogGearId ?? string.Empty;
 
-        public Vector2Int MotorCogStartCell =>
-            data != null ? new Vector2Int(data.MotorCogStartX, data.MotorCogStartY) : new Vector2Int(2, 2);
-
         public bool HasSavedInventory => ownedRefs.Count > 0;
 
         public IReadOnlyList<OwnedGear> Owned => ownedRefs;

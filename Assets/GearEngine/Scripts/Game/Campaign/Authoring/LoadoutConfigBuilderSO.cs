@@ -10,6 +10,12 @@ namespace GearEngine.Campaign.Authoring
         [SerializeField]
         private int baseSlots = 6;
 
+        [SerializeField]
+        private int motorCogStartX = 2;
+
+        [SerializeField]
+        private int motorCogStartY = 2;
+
         public override string ConfigKey => nameof(LoadoutConfig);
 
         public override LoadoutConfig Build()
@@ -17,6 +23,8 @@ namespace GearEngine.Campaign.Authoring
             return new LoadoutConfig
             {
                 BaseSlots = baseSlots,
+                MotorCogStartX = motorCogStartX,
+                MotorCogStartY = motorCogStartY,
             };
         }
 
@@ -28,6 +36,8 @@ namespace GearEngine.Campaign.Authoring
             }
 
             baseSlots = pulled.BaseSlots;
+            motorCogStartX = pulled.MotorCogStartX;
+            motorCogStartY = pulled.MotorCogStartY;
         }
     }
 }

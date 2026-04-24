@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using GearEngine.GearEngine.Config;
-using UnityEngine;
 
 namespace GearEngine.GearEngine.Services
 {
@@ -10,11 +9,8 @@ namespace GearEngine.GearEngine.Services
     /// </summary>
     public interface IInventoryService
     {
-        /// <summary>Catalog id for the motor (Core) gear from LiveOps <c>InventoryConfig</c>; empty when not using LiveOps inventory.</summary>
+        /// <summary>Catalog id for the motor (Core) gear from LiveOps inventory config (<c>startingGearIds[0]</c>); empty when not using LiveOps inventory.</summary>
         string MotorCogGearId { get; }
-
-        /// <summary>Grid cell from LiveOps <c>InventoryConfig</c> where the motor cog is placed when missing from loadout.</summary>
-        Vector2Int MotorCogStartCell { get; }
 
         bool HasSavedInventory { get; }
 

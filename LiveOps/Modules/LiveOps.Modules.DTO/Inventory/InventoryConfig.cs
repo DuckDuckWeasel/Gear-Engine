@@ -3,24 +3,31 @@ using Newtonsoft.Json;
 
 namespace LiveOps.Modules.DTO.Inventory
 {
+    /// <summary>
+    /// Remote Config / Cloud Code wire shape (plain string ids). In Unity, use the Inventory Config Builder asset
+    /// (GearConfig references); its Build output populates this DTO for sync/deploy.
+    /// </summary>
     public sealed class InventoryConfig
     {
         [JsonProperty("baseSlots")]
         public int BaseSlots { get; set; } = 8;
 
-        [JsonProperty("motorCogGearId")]
-        public string MotorCogGearId { get; set; } = "gear_core";
-
-        [JsonProperty("motorCogStartX")]
-        public int MotorCogStartX { get; set; } = 2;
-
-        [JsonProperty("motorCogStartY")]
-        public int MotorCogStartY { get; set; } = 2;
-
-        // Catalog ids handed to brand-new players in addition to the motor cog.
-        // Seeded once on first Initialize (gated by InventoryPersistence.StartingGearsSeeded)
-        // so removed gears do not respawn on subsequent logins.
+        /// <summary>
+        /// Ordered catalog ids for brand-new players. Index <c>0</c> is the core/motor gear id.
+        /// Seeded once (gated by <see cref="InventoryPersistence.StartingGearsSeeded"/>).
+        /// </summary>
         [JsonProperty("startingGearIds")]
         public List<string> StartingGearIds { get; set; } = new List<string>();
+
+        /// <summary>Core/motor catalog id from remote config; same as <c>StartingGearIds[0]</c> when present.</summary>
+        public string GetCoreGearCatalogId()
+        {
+            if (StartingGearIds == null || StartingGearIds.Count == 0)
+            {
+                return string.Empty;
+            }
+
+            return StartingGearIds[0] ?? string.Empty;
+        }
     }
 }

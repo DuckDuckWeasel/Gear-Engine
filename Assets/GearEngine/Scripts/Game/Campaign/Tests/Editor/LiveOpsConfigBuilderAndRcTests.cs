@@ -5,6 +5,7 @@ using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 using Scaffold.LiveOps.Authoring;
 using Scaffold.LiveOps.Authoring.Editor.Deployment;
+using UnityEditor;
 using UnityEngine;
 
 namespace GearEngine.Campaign.Tests.Editor
@@ -16,6 +17,13 @@ namespace GearEngine.Campaign.Tests.Editor
     public sealed class LiveOpsConfigBuilderAndRcTests
     {
         private const string RemoteConfigDir = "Assets/LiveOps/RemoteConfig";
+
+        private static T LoadAuthoringAsset<T>(string assetPath) where T : ScriptableObject
+        {
+            T asset = AssetDatabase.LoadAssetAtPath<T>(assetPath);
+            Assert.IsNotNull(asset, $"Missing authoring asset at {assetPath}");
+            return asset;
+        }
 
         private static void AssertRcMatchesInstance(ConfigBuilderSOBase builder, string rcFileName)
         {
@@ -62,43 +70,25 @@ namespace GearEngine.Campaign.Tests.Editor
         [Test]
         public void CurrencyConfigBuilderSO_Default_Build_Matches_CurrencyRc()
         {
-            CurrencyConfigBuilderSO b = ScriptableObject.CreateInstance<CurrencyConfigBuilderSO>();
-            try
-            {
-                AssertRcMatchesInstance(b, "Currency.rc");
-            }
-            finally
-            {
-                Object.DestroyImmediate(b);
-            }
+            CurrencyConfigBuilderSO b = LoadAuthoringAsset<CurrencyConfigBuilderSO>(
+                "Assets/GearEngine/Data/LiveOps/Authoring/CurrencyConfigBuilder.asset");
+            AssertRcMatchesInstance(b, "Currency.rc");
         }
 
         [Test]
         public void InventoryConfigBuilderSO_Default_Build_Matches_InventoryRc()
         {
-            InventoryConfigBuilderSO b = ScriptableObject.CreateInstance<InventoryConfigBuilderSO>();
-            try
-            {
-                AssertRcMatchesInstance(b, "Inventory.rc");
-            }
-            finally
-            {
-                Object.DestroyImmediate(b);
-            }
+            InventoryConfigBuilderSO b = LoadAuthoringAsset<InventoryConfigBuilderSO>(
+                "Assets/GearEngine/Data/LiveOps/Authoring/InventoryConfigBuilder.asset");
+            AssertRcMatchesInstance(b, "Inventory.rc");
         }
 
         [Test]
         public void LoadoutConfigBuilderSO_Default_Build_Matches_LoadoutRc()
         {
-            LoadoutConfigBuilderSO b = ScriptableObject.CreateInstance<LoadoutConfigBuilderSO>();
-            try
-            {
-                AssertRcMatchesInstance(b, "Loadout.rc");
-            }
-            finally
-            {
-                Object.DestroyImmediate(b);
-            }
+            LoadoutConfigBuilderSO b = LoadAuthoringAsset<LoadoutConfigBuilderSO>(
+                "Assets/GearEngine/Data/LiveOps/Authoring/LoadoutConfigBuilder.asset");
+            AssertRcMatchesInstance(b, "Loadout.rc");
         }
 
         [Test]

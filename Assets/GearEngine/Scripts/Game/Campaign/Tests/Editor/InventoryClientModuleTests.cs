@@ -222,6 +222,17 @@ namespace GearEngine.Campaign.Tests.Editor
             }
         }
 
+        [Test]
+        public void InventoryGameData_SetsMotorCogGearId_FromStartingGearIdsFirstEntry()
+        {
+            var config = new InventoryConfig
+            {
+                StartingGearIds = new List<string> { "gear_core", "gear_base_1" },
+            };
+            var data = new InventoryGameData(new InventoryPersistence(), config);
+            Assert.That(data.MotorCogGearId, Is.EqualTo("gear_core"));
+        }
+
         private sealed class FakeLiveOpsService : ILiveOpsService
         {
             public InventoryGameData ModuleData { get; set; }

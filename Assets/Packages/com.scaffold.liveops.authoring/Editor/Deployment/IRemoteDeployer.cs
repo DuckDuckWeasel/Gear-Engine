@@ -1,18 +1,25 @@
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Scaffold.LiveOps.Authoring.Editor.Deployment
 {
-    /// <summary>Deploys <c>.rc</c> assets to UGS without opening the Deployment window.</summary>
+    /// <summary>Deploys <c>.rc</c> assets to UGS with the <c>ugs deploy</c> CLI (see <c>Scaffold.LiveOps.Authoring.Editor.Deployment.RemoteDeployer</c>).</summary>
     public interface IRemoteDeployer
     {
-        Task<DeployOutcome> DeployAsync(IReadOnlyList<string> rcPaths, CancellationToken cancellationToken = default);
+        Task<DeployOutcome> DeployAsync(
+            IReadOnlyList<string> rcPaths,
+            CancellationToken cancellationToken = default,
+            IProgress<string> statusProgress = null);
     }
 
     public enum DeployTransport
     {
+        /// <summary>No external deploy (e.g. no paths).</summary>
         Api,
+
+        /// <summary><c>ugs deploy</c> CLI.</summary>
         Cli,
     }
 
