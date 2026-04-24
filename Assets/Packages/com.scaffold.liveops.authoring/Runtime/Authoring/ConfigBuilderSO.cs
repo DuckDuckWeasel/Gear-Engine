@@ -1,5 +1,5 @@
 using System;
-using GameModuleDTO.Authoring;
+using LiveOps.DTO.Authoring;
 using UnityEngine;
 
 namespace Scaffold.LiveOps.Authoring

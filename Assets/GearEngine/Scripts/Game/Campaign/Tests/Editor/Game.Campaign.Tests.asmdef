@@ -33,7 +33,8 @@
         "nunit.framework.dll",
         "CommunityToolkit.Mvvm.dll",
         "Newtonsoft.Json.dll",
-        "Scaffold.LiveOps.DTO.dll"
+        "LiveOps.DTO.dll",
+        "LiveOps.Modules.DTO.dll"
     ],
     "autoReferenced": false,
     "defineConstraints": [

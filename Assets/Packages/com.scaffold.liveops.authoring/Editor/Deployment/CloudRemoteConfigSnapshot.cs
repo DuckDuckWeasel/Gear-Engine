@@ -34,14 +34,14 @@ namespace Scaffold.LiveOps.Authoring.Editor.Deployment
                         "Project is not linked to Unity Gaming Services (Edit → Project Settings → Services)."));
             }
 
-            string envId = Unity.Services.DeploymentApi.Editor.Deployments.Instance?.EnvironmentProvider?.Current;
+            string envId = ResolveRemoteConfigEnvironmentId();
             if (string.IsNullOrEmpty(envId))
             {
                 return Task.FromResult(
                     new CloudFetchResult(
                         false,
                         null,
-                        "No deployment environment selected (Project Settings → Services → Environments)."));
+                        "No Remote Config environment id. Open **Window → Remote Config** and load environments (or pick an environment in Project Settings → Services so Deployment and RC stay aligned)."));
             }
 
             var tcs = new TaskCompletionSource<CloudFetchResult>();
@@ -65,6 +65,16 @@ namespace Scaffold.LiveOps.Authoring.Editor.Deployment
                 try
                 {
                     cancellationToken.ThrowIfCancellationRequested();
+                    if (config == null || !config.TryGetValue("value", out JToken valueProbe) || valueProbe is not JArray)
+                    {
+                        Complete(
+                            new CloudFetchResult(
+                                false,
+                                null,
+                                "Remote Config returned no settings payload for this environment (nothing to compare). Open **Window → Remote Config** and confirm this environment has settings."));
+                        return;
+                    }
+
                     string extracted = ExtractJsonValueForKey(config, configKey);
                     if (extracted == null)
                     {
@@ -72,7 +82,7 @@ namespace Scaffold.LiveOps.Authoring.Editor.Deployment
                             new CloudFetchResult(
                                 false,
                                 null,
-                                $"Remote has no setting with key '{configKey}' (or the dashboard response shape changed)."));
+                                $"Remote has no setting with key '{configKey}'. Add or deploy that key in this environment, or verify the Remote Config environment matches the one you use for deploy."));
                     }
                     else
                     {
@@ -122,6 +132,26 @@ namespace Scaffold.LiveOps.Authoring.Editor.Deployment
             return tcs.Task;
         }
 
+        /// <summary>
+        /// Prefer the environment id from Unity’s Remote Config datastore (same as **Window → Remote Config**),
+        /// then fall back to the Deployment API current environment.
+        /// </summary>
+        private static string ResolveRemoteConfigEnvironmentId()
+        {
+            string[] guids = AssetDatabase.FindAssets("t:RemoteConfigDataStore");
+            foreach (string guid in guids)
+            {
+                string path = AssetDatabase.GUIDToAssetPath(guid);
+                var ds = AssetDatabase.LoadAssetAtPath<RemoteConfigDataStore>(path);
+                if (ds != null && !string.IsNullOrEmpty(ds.currentEnvironmentId))
+                {
+                    return ds.currentEnvironmentId;
+                }
+            }
+
+            return Unity.Services.DeploymentApi.Editor.Deployments.Instance?.EnvironmentProvider?.Current;
+        }
+
         /// <summary>For tests and tooling: reads a setting value from a dashboard-style config object.</summary>
         public static string ExtractJsonValueForKey(JObject settingsConfig, string configKey)
         {
@@ -137,7 +167,7 @@ namespace Scaffold.LiveOps.Authoring.Editor.Deployment
 
             foreach (JToken item in arr)
             {
-                JObject rs = item["rs"] as JObject;
+                JObject rs = GetRsObjectFromSettingItem(item);
                 if (rs == null)
                 {
                     continue;
@@ -176,6 +206,25 @@ namespace Scaffold.LiveOps.Authoring.Editor.Deployment
             }
 
             return null;
+        }
+
+        /// <summary>
+        /// <see cref="RemoteConfigWebApiClient"/> returns each entry in <c>value</c> as a flat
+        /// <c>{ "key", "type", "value" }</c> object. The in-editor datastore wraps that as <c>{ "rs": … }</c>.
+        /// </summary>
+        private static JObject GetRsObjectFromSettingItem(JToken item)
+        {
+            if (item is not JObject jo)
+            {
+                return null;
+            }
+
+            if (jo["rs"] is JObject wrapped)
+            {
+                return wrapped;
+            }
+
+            return jo["key"] != null ? jo : null;
         }
     }
 

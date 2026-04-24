@@ -1,4 +1,4 @@
-using GameModuleDTO.Modules.Cards;
+using LiveOps.Modules.DTO.Cards;
 using Scaffold.LiveOps.Authoring;
 using UnityEngine;
 

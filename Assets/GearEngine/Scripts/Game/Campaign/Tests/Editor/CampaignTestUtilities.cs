@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using GameModuleDTO.ModuleRequests;
-using GameModuleDTO.Modules.Currency;
+using LiveOps.Modules.DTO.ModuleRequests;
+using LiveOps.Modules.DTO.Currency;
 using GearEngine.Campaign;
 using GearEngine.Campaign.Services;
 using GearEngine.Currency;

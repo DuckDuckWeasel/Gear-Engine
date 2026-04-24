@@ -1,5 +1,5 @@
 using System;
-using GameModuleDTO.ModuleRequests;
+using LiveOps.Modules.DTO.ModuleRequests;
 using GearEngine.CarSimulation.Definitions;
 using UnityEngine;
 

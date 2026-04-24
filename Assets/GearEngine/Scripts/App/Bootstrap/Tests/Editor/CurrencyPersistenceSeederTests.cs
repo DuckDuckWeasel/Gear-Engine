@@ -1,4 +1,4 @@
-using GameModuleDTO.Modules.Currency;
+using LiveOps.Modules.DTO.Currency;
 using Newtonsoft.Json;
 using NUnit.Framework;
 

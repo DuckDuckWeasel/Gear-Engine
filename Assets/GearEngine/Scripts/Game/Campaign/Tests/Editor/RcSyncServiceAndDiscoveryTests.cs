@@ -64,7 +64,7 @@ namespace GearEngine.Campaign.Tests.Editor
         }
 
         [Test]
-        public void CloudRemoteConfigSnapshot_ExtractJsonValueForKey_FindsSetting()
+        public void CloudRemoteConfigSnapshot_ExtractJsonValueForKey_FindsSetting_WrappedRsShape()
         {
             var settings = new JObject
             {
@@ -78,6 +78,28 @@ namespace GearEngine.Campaign.Tests.Editor
                             ["type"] = "json",
                             ["value"] = new JObject { ["entries"] = new JArray() },
                         },
+                    },
+                },
+            };
+
+            string json = CloudRemoteConfigSnapshot.ExtractJsonValueForKey(settings, "CurrencyConfig");
+            Assert.IsNotNull(json);
+            Assert.IsTrue(json.Contains("entries", System.StringComparison.Ordinal));
+        }
+
+        [Test]
+        public void CloudRemoteConfigSnapshot_ExtractJsonValueForKey_FindsSetting_FlatApiShape()
+        {
+            // Shape returned by RemoteConfigWebApiClient before the editor wraps entries in { "rs": ... }.
+            var settings = new JObject
+            {
+                ["value"] = new JArray
+                {
+                    new JObject
+                    {
+                        ["key"] = "CurrencyConfig",
+                        ["type"] = "json",
+                        ["value"] = new JObject { ["entries"] = new JArray() },
                     },
                 },
             };

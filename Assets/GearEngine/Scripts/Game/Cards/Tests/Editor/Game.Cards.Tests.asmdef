@@ -20,7 +20,8 @@
     "precompiledReferences": [
         "nunit.framework.dll",
         "CommunityToolkit.Mvvm.dll",
-        "Scaffold.LiveOps.DTO.dll",
+        "LiveOps.DTO.dll",
+        "LiveOps.Modules.DTO.dll",
         "Newtonsoft.Json.dll"
     ],
     "autoReferenced": false,

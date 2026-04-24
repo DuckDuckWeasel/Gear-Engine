@@ -1,9 +1,10 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using GameModuleDTO.GameModule;
-using GameModuleDTO.Modules.Currency;
-using GameModuleDTO.ModuleRequests;
+using LiveOps.DTO.GameModule;
+using LiveOps.DTO.ModuleRequest;
+using LiveOps.Modules.DTO.Currency;
+using LiveOps.Modules.DTO.ModuleRequests;
 using GearEngine.Currency;
 using Newtonsoft.Json;
 using NUnit.Framework;

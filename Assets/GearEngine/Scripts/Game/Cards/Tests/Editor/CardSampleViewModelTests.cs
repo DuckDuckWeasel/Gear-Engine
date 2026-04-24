@@ -1,10 +1,11 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using GameModuleDTO.GameModule;
-using GameModuleDTO.Modules.Cards;
-using GameModuleDTO.Modules.Currency;
-using GameModuleDTO.ModuleRequests;
+using LiveOps.DTO.GameModule;
+using LiveOps.DTO.ModuleRequest;
+using LiveOps.Modules.DTO.Cards;
+using LiveOps.Modules.DTO.Currency;
+using LiveOps.Modules.DTO.ModuleRequests;
 using GearEngine.Campaign.Bootstrap.Cards;
 using GearEngine.Cards;
 using GearEngine.Currency;

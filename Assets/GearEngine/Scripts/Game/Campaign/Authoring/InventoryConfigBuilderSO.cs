@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using GameModuleDTO.Modules.Inventory;
+using LiveOps.Modules.DTO.Inventory;
 using Scaffold.LiveOps.Authoring;
 using UnityEngine;
 

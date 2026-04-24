@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using GameModuleDTO.Modules.Roguelike;
+using LiveOps.Modules.DTO.Roguelike;
 using GearEngine.Campaign.Services;
 using GearEngine.GearEngine.Config;
 using Scaffold.LiveOps.Authoring;

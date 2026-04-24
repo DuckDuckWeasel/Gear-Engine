@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
-using GameModuleDTO.ModuleRequests;
+using LiveOps.Modules.DTO.ModuleRequests;
 using GearEngine.Campaign.Bootstrap.Cards;
 using GearEngine.Currency;
 using Scaffold.MVVM;

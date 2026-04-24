@@ -1,9 +1,10 @@
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
-using GameModuleDTO.GameModule;
-using GameModuleDTO.ModuleRequests;
-using GameModuleDTO.Modules.Tracks;
+using LiveOps.DTO.GameModule;
+using LiveOps.DTO.ModuleRequest;
+using LiveOps.Modules.DTO.ModuleRequests;
+using LiveOps.Modules.DTO.Tracks;
 using GearEngine.Campaign.Bootstrap.LiveOps;
 using GearEngine.Campaign.Services;
 using GearEngine.Currency;

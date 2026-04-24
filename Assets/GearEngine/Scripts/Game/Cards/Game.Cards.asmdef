@@ -21,7 +21,8 @@
     "overrideReferences": true,
     "precompiledReferences": [
         "CommunityToolkit.Mvvm.dll",
-        "Scaffold.LiveOps.DTO.dll"
+        "LiveOps.DTO.dll",
+        "LiveOps.Modules.DTO.dll"
     ],
     "autoReferenced": true,
     "defineConstraints": [],

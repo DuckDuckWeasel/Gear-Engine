@@ -1,4 +1,4 @@
-using GameModuleDTO.Modules.Loadout;
+using LiveOps.Modules.DTO.Loadout;
 using Scaffold.LiveOps.Authoring;
 using UnityEngine;
 

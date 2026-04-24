@@ -1,8 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using GameModuleDTO.Modules.Tracks;
-using GameModuleDTO.ModuleRequests;
+using LiveOps.Modules.DTO.Currency;
+using LiveOps.Modules.DTO.Tracks;
+using LiveOps.Modules.DTO.ModuleRequests;
 using GearEngine.Campaign.Services;
 using GearEngine.CarSimulation.Definitions;
 using GearEngine.Currency;
@@ -139,7 +140,7 @@ namespace GearEngine.Campaign.Bootstrap.LiveOps
                 {
                     for (int i = 0; i < resp.Responses.Count; i++)
                     {
-                        if (resp.Responses[i] is GameModuleDTO.Modules.Currency.AddCurrencyResponse add)
+                        if (resp.Responses[i] is AddCurrencyResponse add)
                         {
                             currencyClient.ApplyNestedAddCurrency(add);
                         }

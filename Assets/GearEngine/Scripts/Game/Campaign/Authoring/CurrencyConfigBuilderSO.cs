@@ -1,5 +1,5 @@
 using System;
-using GameModuleDTO.Modules.Currency;
+using LiveOps.Modules.DTO.Currency;
 using Scaffold.LiveOps.Authoring;
 using UnityEngine;
 
