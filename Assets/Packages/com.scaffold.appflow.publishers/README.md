@@ -1,31 +1,36 @@
 # com.scaffold.appflow.publishers
 
-Data-driven **Addressables ScriptableObject publishers** for Scaffold AppFlow. Bake an Addressable `ScriptableObject` reference at edit time into a closed-generic registrar so runtime registration uses **no reflection**, then register the publisher on a layer's container.
+Data-driven **asset publishers** for Scaffold AppFlow. A row (`AssetPublisherDefinition`) holds a `SerializeReference` `IAssetPublisherSource` and an edit-time-baked `IPublisherRegistrar` so the owning layer can call `def.Register(builder)` with minimal reflection in production.
 
-## Contents
+## Runtime (`Scaffold.AppFlow.Publishers`)
 
-- **Runtime** (`Scaffold.AppFlow.Publishers`):
-  - `IPublisherRegistrar` — edit-time baked registration for one Addressable SO publisher.
-  - `AddressableScriptableObjectPublisherSO` — authoring asset that holds the `AssetReferenceT<ScriptableObject>` and the baked registrar.
-  - `AddressableScriptableObjectPublisherRegistrar<T>` — closed-generic registrar baked into the SO via `[SerializeReference]`.
-  - `DataDrivenAddressableScriptableObjectPublisher<T>` — runtime publisher that loads the addressable and pushes it to `ILayerPublisher` via `AssetPublisherBase<T>`.
-- **Editor** (`Scaffold.AppFlow.Publishers.Editor`):
-  - `AddressableScriptableObjectPublisherSOEditor` — custom inspector with **Rebuild** button.
-  - `AddressableScriptableObjectPublisherSORebaker` — bake helper invoked by the inspector, the asset post-processor, and the menu.
-  - `PublisherSOAssetPostprocessor` — rebakes stale assets after import.
-  - `PublisherSORebakeMenu` — `Tools → Scaffold → AppFlow → Rebake All Publisher SOs`.
+- `IAssetPublisherDefinitionHost` / `IAssetPublisherSource` / `IPublisherRegistrar` / `AssetPublisherDefinition`
+- **Direct** sources: `DirectAssetSource`, `DirectAssetListSource` and matching publishers + registrars (in-process lists or single assets)
+
+**Editor** (`Scaffold.AppFlow.Publishers.Editor`):
+
+- `AssetPublisherDefinitionDrawer` — type dropdown for `IAssetPublisherSource`, per-row rebake
+- `AssetPublisherRebakeMenu` — **Tools → Scaffold → AppFlow → Rebake all publishers** (walks `GearAppFlowRoot` hosts in consuming projects)
+
+## Addressables add-on
+
+Use `com.scaffold.appflow.publishers.addressables` for:
+
+- `AddressableSingleSource` + `AddressableSinglePublisher` / `AddressableSinglePublisherRegistrar<T>`
+- `AddressableLabelSource` + `AddressableLabelPublisher<T>` / `AddressableLabelPublisherRegistrar<T>` (typed `PublishMany` by label)
+- `Editor/AddressableBakeUtility` — group entry validation and bake
+
+`Scaffold.AppFlow.Publishers` has **no** reference to Unity Addressables; the Addressables package references this assembly.
 
 ## Workflow
 
-1. Create the asset: **Assets → Create → Scaffold → AppFlow → Addressable ScriptableObject Publisher**.
-2. Assign an Addressable `ScriptableObject` to **Asset Reference**, then click **Rebuild** (or run **Tools → Scaffold → AppFlow → Rebake All Publisher SOs**).
-3. Add the rebaked asset to the bootstrap's publisher list. The owning layer calls `publisherSo.Register(builder)` so descendants resolve the loaded asset via `ILayerPublisher` once the layer's `IAsyncInitializable` wave completes.
-
-Publish-to-descendants rule from AppFlow still applies: the layer that publishes cannot consume in the same wave.
+1. On your `IAssetPublisherDefinitionHost` (e.g. `GearAppFlowRoot`), add `AssetPublisherDefinition` rows, pick a source, **Rebake** (or use **Rebake all**).
+2. The baked registrar is embedded; at runtime, `Register` can fall back to `IAssetPublisherSource.TryCreateRuntimeBakedRegistrar()` when a scene was not saved with a bake.
+3. `FoundationLayer` (or your layer) iterates `layerAssetPublishers` and calls `def.Register(builder)`.
 
 ## Dependencies
 
-- `com.scaffold.appflow` — `AssetPublisherBase<T>`, `ILayerPublisher`, `IAsyncInitializable`.
-- `com.scaffold.addressables` — `IAddressablesAssetClient` for the runtime load.
-- `com.unity.addressables` — `AssetReferenceT<ScriptableObject>` and group lookup at edit time.
-- `jp.hadashikick.vcontainer` — `IContainerBuilder` for registration.
+- `com.scaffold.appflow` — `ILayerPublisher`, `IAsyncInitializable`, `ILayerPublisher` integration
+- `jp.hadashikick.vcontainer` — `IContainerBuilder`
+
+For Addressables support, add `com.scaffold.appflow.publishers.addressables`, `com.scaffold.addressables`, and `com.unity.addressables`.

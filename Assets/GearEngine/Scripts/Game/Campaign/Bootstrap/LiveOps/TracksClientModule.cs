@@ -16,17 +16,17 @@ namespace GearEngine.Campaign.Bootstrap.LiveOps
     public sealed class TracksClientModule : GameClientModuleBase<TrackGameData>, ITrackService
     {
         private readonly CurrencyClientModule currencyClient;
-        private readonly TrackCatalogSO catalog;
+        private readonly TrackAssetIndex index;
         private readonly TrackProgressModel progress = new TrackProgressModel();
 
         public TracksClientModule(
             ILiveOpsService liveOps,
             CurrencyClientModule currencyClient,
-            TrackCatalogSO catalog)
+            TrackAssetIndex index)
             : base(liveOps)
         {
             this.currencyClient = currencyClient ?? throw new ArgumentNullException(nameof(currencyClient));
-            this.catalog = catalog ?? throw new ArgumentNullException(nameof(catalog));
+            this.index = index ?? throw new ArgumentNullException(nameof(index));
         }
 
         protected override Task OnInitializedAsync(TrackGameData moduleData)
@@ -39,14 +39,14 @@ namespace GearEngine.Campaign.Bootstrap.LiveOps
             TrackGameData data = moduleData;
 
             List<string> ordered = data.OrderedTrackIds;
-            if (catalog.GetTrack(data.CurrentTrackId) == null)
+            if (index.GetTrack(data.CurrentTrackId) == null)
             {
                 string resolved = null;
                 if (ordered != null)
                 {
                     foreach (string id in ordered)
                     {
-                        if (!string.IsNullOrEmpty(id) && catalog.GetTrack(id) != null)
+                        if (!string.IsNullOrEmpty(id) && index.GetTrack(id) != null)
                         {
                             resolved = id;
                             break;
@@ -56,7 +56,7 @@ namespace GearEngine.Campaign.Bootstrap.LiveOps
 
                 if (resolved == null)
                 {
-                    resolved = catalog.GetFirstResolvableTrackId();
+                    resolved = index.GetFirstResolvableTrackId();
                 }
 
                 if (!string.IsNullOrEmpty(resolved))
@@ -66,7 +66,7 @@ namespace GearEngine.Campaign.Bootstrap.LiveOps
                 else
                 {
                     Debug.LogWarning(
-                        "[TracksClientModule] No track id resolves in TrackCatalogSO (check Remote Config track list vs catalog TrackIds).");
+                        "[TracksClientModule] No track id resolves in the track index (check Remote Config track list vs TrackDefinition.name ids).");
                 }
             }
 
@@ -80,9 +80,9 @@ namespace GearEngine.Campaign.Bootstrap.LiveOps
                         continue;
                     }
 
-                    if (catalog.GetTrack(id) == null)
+                    if (index.GetTrack(id) == null)
                     {
-                        Debug.LogWarning($"[TracksClientModule] Config id '{id}' has no asset in TrackCatalogSO.");
+                        Debug.LogWarning($"[TracksClientModule] Config id '{id}' has no matching TrackDefinition in the index.");
                     }
                 }
             }
@@ -101,16 +101,16 @@ namespace GearEngine.Campaign.Bootstrap.LiveOps
             return moduleData.OrderedTrackIds.IndexOf(moduleData.CurrentTrackId);
         }
 
-        public TrackDefinition CurrentTrack => catalog.GetTrack(data?.CurrentTrackId ?? string.Empty);
+        public TrackDefinition CurrentTrack => index.GetTrack(data?.CurrentTrackId ?? string.Empty);
 
-        public CarDefinition CurrentCar => catalog.DefaultCar;
+        public CarDefinition CurrentCar => index.DefaultCar;
 
         public TrackProgressModel GetTrackProgress() => progress;
 
         public IReadOnlyList<TrackEntry> GetOrderedTracks()
         {
             IReadOnlyList<string> ids = data?.OrderedTrackIds;
-            return catalog.OrderedEntries(ids ?? Array.Empty<string>());
+            return index.OrderedEntries(ids ?? Array.Empty<string>());
         }
 
         public async Task RecordResultAsync(RaceResultModel result)

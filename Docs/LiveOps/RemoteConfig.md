@@ -58,9 +58,9 @@ Environment selection follows the linked UGS project/environment in the Editor, 
 
 ## Troubleshooting: `TrackConfig` has 0 entries
 
-Editing **`CampaignTrackCatalog`** (or any `TrackCatalogSO`) does **not** update UGS by itself. The pipeline is: catalog → **`TrackConfigBuilder`** asset → **Deploy** in **Window → LiveOps → Configs** regenerates `Track.rc` from the builder, then pushes it to Remote Config.
+Editing track **`TrackDefinition`** assets (or the `trackDefinitions` list on `TrackConfigBuilder`) does **not** update UGS by itself. The pipeline is: those assets → **`TrackConfigBuilder`** asset → **Deploy** in **Window → LiveOps → Configs** regenerates `Track.rc` from the builder, then pushes it to Remote Config.
 
-1. Select **`Assets/GearEngine/Data/LiveOps/Authoring/TrackConfigBuilder.asset`** and confirm **Catalog** references your catalog (e.g. `Assets/GearEngine/Data/Campaign/Catalogs/CampaignTrackCatalog`).
+1. Select **`Assets/GearEngine/Data/LiveOps/Authoring/TrackConfigBuilder.asset`** and confirm **`trackDefinitions`** lists the same `TrackDefinition` assets you publish with the `liveops.tracks` label.
 2. Each catalog row must have a **Track** reference. The exported id is the **track asset name** (`TrackDefinition.name`).
 3. Run **Window → LiveOps → Configs** → **Deploy** for `TrackConfig` (writes `Track.rc`, then uploads). Open `Assets/LiveOps/RemoteConfig/Track.rc` to confirm `entries.TrackConfig.entries` is non-empty; the Dashboard should show the same payload after a successful deploy (stale environments look like 0 tracks until then). To refresh only the file on disk without UGS, use `RcSyncService.Sync` instead.
 

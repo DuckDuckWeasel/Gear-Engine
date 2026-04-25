@@ -29,10 +29,10 @@ flowchart LR
   end
 ```
 
-1. **Author** — Designers maintain ScriptableObject catalogs (e.g. `TrackCatalogSO`, `CardCatalogSO`) and one `ConfigBuilderSO<TConfig>` per Remote Config key. The builder reads asset-backed entries plus any **asset-independent** fields (e.g. card base cost) and builds the DTO.
+1. **Author** — Designers maintain ScriptableObject content (e.g. `TrackDefinition` lists / labels, `CardCatalogSO`) and one `ConfigBuilderSO<TConfig>` per Remote Config key. The builder reads asset-backed entries plus any **asset-independent** fields (e.g. card base cost) and builds the DTO.
 2. **Publish** — **Window → LiveOps → Configs** runs `Build()` and writes `Assets/LiveOps/RemoteConfig/<Name>.rc` (no `$schema` line; `entries` wrapper only). Use **Deploy** (or **Deploy All**) in the same window to push to UGS, or fall back to `ugs deploy` if the Deployment API is unavailable ([RemoteConfig.md](RemoteConfig.md)).
 3. **Download** — Unchanged: Cloud Code `GameModule` types call `remoteConfig.Get(context, ConfigKey, new TConfig())`.
-4. **Match config to assets** — Client modules keep an **injected** catalog (`TrackCatalogSO`, etc.) and resolve config ids with the catalog’s existing APIs (`GetTrack`, `TryGet`, …). There is no shared engine `IAssetResolver` type; the pattern is convention-only (see `TracksClientModule`).
+4. **Match config to assets** — Client modules keep an **injected** index (e.g. `TrackAssetIndex` for tracks) and resolve config ids with that type’s APIs (`GetTrack`, …). There is no shared engine `IAssetResolver` type; the pattern is convention-only (see `TracksClientModule`).
 
 ## Add a new module
 

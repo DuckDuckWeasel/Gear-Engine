@@ -3,8 +3,6 @@
     "rootNamespace": "Scaffold.AppFlow.Publishers",
     "references": [
         "Scaffold.AppFlow",
-        "Scaffold.Addressables",
-        "Unity.Addressables",
         "VContainer"
     ],
     "includePlatforms": [],

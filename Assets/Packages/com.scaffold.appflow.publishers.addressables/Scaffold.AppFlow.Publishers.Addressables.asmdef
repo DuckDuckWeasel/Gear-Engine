@@ -1,0 +1,20 @@
+{
+    "name": "Scaffold.AppFlow.Publishers.Addressables",
+    "rootNamespace": "Scaffold.AppFlow.Publishers.Addressables",
+    "references": [
+        "Scaffold.AppFlow",
+        "Scaffold.AppFlow.Publishers",
+        "Scaffold.Addressables",
+        "Unity.Addressables",
+        "VContainer"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

@@ -4,6 +4,7 @@
     "references": [
         "Scaffold.AppFlow.Publishers",
         "Scaffold.AppFlow.Publishers.Editor",
+        "Scaffold.AppFlow.Publishers.Addressables",
         "Scaffold.AppFlow",
         "Scaffold.Addressables",
         "Unity.Addressables",

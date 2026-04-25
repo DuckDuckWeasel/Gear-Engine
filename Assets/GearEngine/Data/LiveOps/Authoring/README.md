@@ -4,7 +4,7 @@ These `*ConfigBuilder` assets are edited and synced from **Window → LiveOps �
 
 | Asset | Catalog / notes |
 |-------|------------------|
-| `TrackConfigBuilder` | References `CampaignTrackCatalog` under `Data/Campaign/Catalogs/` (same as scenes). |
+| `TrackConfigBuilder` | `trackDefinitions` list — assign the same `TrackDefinition` assets you tag with `liveops.tracks`. |
 | `RoguelikeConfigBuilder` | References `CampaignRoguelikeGearPool` (gear roll pool; separate from track routing). |
 | `CardConfigBuilder` | References `Example_CardCatalog` under `Data/Cards/Examples/`. |
 | `CurrencyConfigBuilder` | Inline currency rows (default: `gold`). |

@@ -1,0 +1,7 @@
+{
+  "name": "com.scaffold.appflow.publishers.addressables",
+  "version": "1.0.0",
+  "displayName": "Scaffold AppFlow Publishers (Addressables)",
+  "unity": "6000.0",
+  "description": "IAssetPublisherSource implementations and publishers that load from Unity Addressables (label or single key). Add this package to resolve AddressableSingleSource and AddressableLabelSource on app flows."
+}

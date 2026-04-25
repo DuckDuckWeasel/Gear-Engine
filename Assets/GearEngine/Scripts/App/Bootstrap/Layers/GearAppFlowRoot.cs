@@ -1,14 +1,15 @@
 using System;
 using System.Collections.Generic;
+using GearEngine.App.Bootstrap.Layers;
+using GearEngine.CarSimulation.Definitions;
 using Scaffold.AppFlow;
 using Scaffold.AppFlow.Publishers.DataDriven;
 using Scaffold.Navigation;
 using UnityEngine;
-using GearEngine.App.Bootstrap.Layers;
 
 namespace GearEngine.App.Bootstrap
 {
-    public abstract class GearAppFlowRoot : AppFlowRoot
+    public abstract class GearAppFlowRoot : AppFlowRoot, IAssetPublisherDefinitionHost
     {
         [Header("Navigation")]
         [SerializeField]
@@ -17,10 +18,36 @@ namespace GearEngine.App.Bootstrap
         [SerializeField]
         private Transform navigationViewHolder;
 
-        [Header("Addressable catalog publishers")]
-        [Tooltip("Rebaked AddressableScriptableObjectPublisherSO assets (Track / Gear / Roguelike). Registered in FoundationLayer before UGS/LiveOps. Campaign: assign all catalogs. Meta: use the same set as campaign when probing client data.")]
+        [Header("Racing defaults")]
+        [Tooltip("Default car for track services and LiveOps modules (same as former TrackCatalogSO.defaultCar).")]
         [SerializeField]
-        private List<AddressableScriptableObjectPublisherSO> addressableCatalogPublishers = new List<AddressableScriptableObjectPublisherSO>();
+        private CarDefinition defaultRaceCar;
+
+        [Header("Layer asset publishers")]
+        [Tooltip("Optional: shared profile (tracks + gear catalogs). When set, inline rows below are ignored for registration and for Rebake All.")]
+        [SerializeField]
+        private LayerBootstrapPublishersProfile layerPublishersProfile;
+
+        [Tooltip("Edit-time baked asset publishers (direct or Addressables). Used when no profile is assigned. Campaign: assign track/gear. Meta: same as campaign when probing client data.")]
+        [SerializeField]
+        private List<AssetPublisherDefinition> layerAssetPublishers = new List<AssetPublisherDefinition>();
+
+        IReadOnlyList<AssetPublisherDefinition> IAssetPublisherDefinitionHost.AssetPublisherDefinitions =>
+            GetEffectiveLayerAssetPublishers();
+
+        private IReadOnlyList<AssetPublisherDefinition> GetEffectiveLayerAssetPublishers()
+        {
+            if (layerPublishersProfile != null)
+            {
+                IReadOnlyList<AssetPublisherDefinition> from = layerPublishersProfile.AssetPublisherDefinitions;
+                if (from != null && from.Count > 0)
+                {
+                    return from;
+                }
+            }
+
+            return layerAssetPublishers;
+        }
 
         protected sealed override IInLayerScheduler CreateScheduler()
         {
@@ -29,7 +56,7 @@ namespace GearEngine.App.Bootstrap
 
         protected sealed override IEnumerable<IScopeLayer> GetInitialLayers()
         {
-            yield return new FoundationLayer(navigationSettings, navigationViewHolder, addressableCatalogPublishers);
+            yield return new FoundationLayer(navigationSettings, navigationViewHolder, GetEffectiveLayerAssetPublishers(), defaultRaceCar);
             foreach (IScopeLayer layer in GetGameLayers())
             {
                 yield return layer;

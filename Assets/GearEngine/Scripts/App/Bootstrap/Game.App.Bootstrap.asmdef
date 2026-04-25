@@ -3,10 +3,12 @@
   "rootNamespace": "GearEngine.App.Bootstrap",
     "references": [
         "Scaffold.AppFlow",
-    "Scaffold.AppFlow.Publishers",
+        "Scaffold.AppFlow.Publishers",
+        "Scaffold.AppFlow.Publishers.Addressables",
     "Unity.Addressables",
     "Game.Campaign",
     "Game.CarSimulation",
+    "Scaffold.Entities",
     "Game.GearEngine",
     "Scaffold.Addressables.Container",
     "Scaffold.Events.Container",

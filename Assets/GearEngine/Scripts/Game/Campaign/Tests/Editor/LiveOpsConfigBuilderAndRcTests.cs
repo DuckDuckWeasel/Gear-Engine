@@ -42,29 +42,17 @@ namespace GearEngine.Campaign.Tests.Editor
         [Test]
         public void TrackConfigBuilderSO_Default_Build_Matches_TrackRc()
         {
-            TrackConfigBuilderSO b = ScriptableObject.CreateInstance<TrackConfigBuilderSO>();
-            try
-            {
-                AssertRcMatchesInstance(b, "Track.rc");
-            }
-            finally
-            {
-                Object.DestroyImmediate(b);
-            }
+            TrackConfigBuilderSO b = LoadAuthoringAsset<TrackConfigBuilderSO>(
+                "Assets/GearEngine/Data/LiveOps/Authoring/TrackConfigBuilder.asset");
+            AssertRcMatchesInstance(b, "Track.rc");
         }
 
         [Test]
         public void CardConfigBuilderSO_Default_Build_Matches_CardRc()
         {
-            CardConfigBuilderSO b = ScriptableObject.CreateInstance<CardConfigBuilderSO>();
-            try
-            {
-                AssertRcMatchesInstance(b, "Card.rc");
-            }
-            finally
-            {
-                Object.DestroyImmediate(b);
-            }
+            CardConfigBuilderSO b = LoadAuthoringAsset<CardConfigBuilderSO>(
+                "Assets/GearEngine/Data/LiveOps/Authoring/CardConfigBuilder.asset");
+            AssertRcMatchesInstance(b, "Card.rc");
         }
 
         [Test]
@@ -94,15 +82,9 @@ namespace GearEngine.Campaign.Tests.Editor
         [Test]
         public void RoguelikeConfigBuilderSO_Default_Build_Matches_RoguelikeRc()
         {
-            RoguelikeConfigBuilderSO b = ScriptableObject.CreateInstance<RoguelikeConfigBuilderSO>();
-            try
-            {
-                AssertRcMatchesInstance(b, "Roguelike.rc");
-            }
-            finally
-            {
-                Object.DestroyImmediate(b);
-            }
+            RoguelikeConfigBuilderSO b = LoadAuthoringAsset<RoguelikeConfigBuilderSO>(
+                "Assets/GearEngine/Data/LiveOps/Authoring/RoguelikeConfigBuilder.asset");
+            AssertRcMatchesInstance(b, "Roguelike.rc");
         }
 
         [Test]

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using GearEngine.CarSimulation.Definitions;
 using Scaffold.Addressables.Container;
 using Scaffold.AppFlow;
 using Scaffold.AppFlow.Publishers.DataDriven;
@@ -13,32 +14,43 @@ namespace GearEngine.App.Bootstrap.Layers
 {
     public sealed class FoundationLayer : IScopeLayer
     {
-        public FoundationLayer(NavigationSettings navigationSettings, Transform navigationViewHolder, IReadOnlyList<AddressableScriptableObjectPublisherSO> addressableCatalogPublishers = null)
+        public FoundationLayer(
+            NavigationSettings navigationSettings,
+            Transform navigationViewHolder,
+            IReadOnlyList<AssetPublisherDefinition> layerAssetPublishers = null,
+            CarDefinition defaultRaceCar = null)
         {
             this.navigationSettings = navigationSettings ?? throw new ArgumentNullException(nameof(navigationSettings));
             this.navigationViewHolder = navigationViewHolder ?? throw new ArgumentNullException(nameof(navigationViewHolder));
-            this.addressableCatalogPublishers = addressableCatalogPublishers ?? Array.Empty<AddressableScriptableObjectPublisherSO>();
+            this.layerAssetPublishers = layerAssetPublishers ?? Array.Empty<AssetPublisherDefinition>();
+            this.defaultRaceCar = defaultRaceCar;
         }
 
         private readonly NavigationSettings navigationSettings;
         private readonly Transform navigationViewHolder;
-        private readonly IReadOnlyList<AddressableScriptableObjectPublisherSO> addressableCatalogPublishers;
+        private readonly IReadOnlyList<AssetPublisherDefinition> layerAssetPublishers;
+        private readonly CarDefinition defaultRaceCar;
 
         public void Install(IContainerBuilder builder)
         {
+            if (defaultRaceCar != null)
+            {
+                builder.RegisterInstance(defaultRaceCar);
+            }
+
             new AddressablesInstaller().Install(builder);
             new NavigationInstaller(navigationViewHolder, navigationSettings).Install(builder);
             new EventsInstaller().Install(builder);
 
-            for (int i = 0; i < addressableCatalogPublishers.Count; i++)
+            for (int i = 0; i < layerAssetPublishers.Count; i++)
             {
-                AddressableScriptableObjectPublisherSO publisherSo = addressableCatalogPublishers[i];
-                if (publisherSo == null)
+                AssetPublisherDefinition def = layerAssetPublishers[i];
+                if (def == null)
                 {
                     continue;
                 }
 
-                publisherSo.Register(builder);
+                def.Register(builder);
             }
         }
     }

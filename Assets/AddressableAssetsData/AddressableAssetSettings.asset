@@ -15,7 +15,7 @@ MonoBehaviour:
   m_DefaultGroup: 0bdbf61a5d37c41ee95db94752ea759c
   m_currentHash:
     serializedVersion: 2
-    Hash: 9705ed20f4185dc6657fbe830e5d3504
+    Hash: 4ed18b24e94ca3ef44496c97e3daf43a
   m_OptimizeCatalogSize: 0
   m_BuildRemoteCatalog: 1
   m_CatalogRequestsTimeout: 0
@@ -109,6 +109,8 @@ MonoBehaviour:
   m_LabelTable:
     m_LabelNames:
     - default
+    - Sample
+    - liveops.tracks
   m_SchemaTemplates: []
   m_GroupTemplateObjects:
   - {fileID: 11400000, guid: da1f7b4a41ef346579981132f8ed19a1, type: 2}

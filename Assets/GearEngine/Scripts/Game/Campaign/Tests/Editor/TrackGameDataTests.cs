@@ -1,4 +1,4 @@
-using System.Reflection;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using LiveOps.DTO.GameModule;
@@ -42,9 +42,9 @@ namespace GearEngine.Campaign.Tests.Editor
             trackDef.name = "track_alpha";
             var carDef = ScriptableObject.CreateInstance<CarDefinition>();
 
-            var catalog = ScriptableObject.CreateInstance<TrackCatalogSO>();
-            catalog.SetRuntimeDefaultCar(carDef);
-            catalog.SetRuntimeEntries(new[] { CreateTrackEntry(trackDef) });
+            var index = new TrackAssetIndex(
+                new List<TrackDefinition> { trackDef },
+                carDef);
 
             var persistence = new TrackPersistence { CurrentTrackId = string.Empty };
             TrackConfig config = JsonConvert.DeserializeObject<TrackConfig>(
@@ -58,7 +58,7 @@ namespace GearEngine.Campaign.Tests.Editor
             using IObjectResolver resolver = builder.Build();
 
             CurrencyClientModule currency = resolver.Resolve<CurrencyClientModule>();
-            var module = new TracksClientModule(liveOps, currency, catalog);
+            var module = new TracksClientModule(liveOps, currency, index);
             await module.InitializeAsync(CancellationToken.None);
 
             Assert.That(module.CurrentTrack, Is.SameAs(trackDef));
@@ -67,7 +67,6 @@ namespace GearEngine.Campaign.Tests.Editor
 
             Object.DestroyImmediate(trackDef);
             Object.DestroyImmediate(carDef);
-            Object.DestroyImmediate(catalog);
         }
 
         [Test]
@@ -77,9 +76,9 @@ namespace GearEngine.Campaign.Tests.Editor
             trackDef.name = "local_only";
             var carDef = ScriptableObject.CreateInstance<CarDefinition>();
 
-            var catalog = ScriptableObject.CreateInstance<TrackCatalogSO>();
-            catalog.SetRuntimeDefaultCar(carDef);
-            catalog.SetRuntimeEntries(new[] { CreateTrackEntry(trackDef) });
+            var index = new TrackAssetIndex(
+                new List<TrackDefinition> { trackDef },
+                carDef);
 
             var persistence = new TrackPersistence { CurrentTrackId = string.Empty };
             TrackConfig config = JsonConvert.DeserializeObject<TrackConfig>(
@@ -93,7 +92,7 @@ namespace GearEngine.Campaign.Tests.Editor
             using IObjectResolver resolver = builder.Build();
 
             CurrencyClientModule currency = resolver.Resolve<CurrencyClientModule>();
-            var module = new TracksClientModule(liveOps, currency, catalog);
+            var module = new TracksClientModule(liveOps, currency, index);
             await module.InitializeAsync(CancellationToken.None);
 
             Assert.That(module.CurrentTrack, Is.SameAs(trackDef));
@@ -102,33 +101,22 @@ namespace GearEngine.Campaign.Tests.Editor
 
             Object.DestroyImmediate(trackDef);
             Object.DestroyImmediate(carDef);
-            Object.DestroyImmediate(catalog);
         }
 
         [Test]
-        public void TrackCatalogSO_GetFirstResolvableTrackId_ReturnsFirstValidEntryId()
+        public void TrackAssetIndex_GetFirstResolvableTrackId_ReturnsFirstValidEntryId()
         {
             var trackDef = ScriptableObject.CreateInstance<TrackDefinition>();
             trackDef.name = "only_track";
             var carDef = ScriptableObject.CreateInstance<CarDefinition>();
-            var catalog = ScriptableObject.CreateInstance<TrackCatalogSO>();
-            catalog.SetRuntimeDefaultCar(carDef);
-            catalog.SetRuntimeEntries(new[] { CreateTrackEntry(trackDef) });
+            var index = new TrackAssetIndex(
+                new List<TrackDefinition> { trackDef },
+                carDef);
 
-            Assert.That(catalog.GetFirstResolvableTrackId(), Is.EqualTo("only_track"));
+            Assert.That(index.GetFirstResolvableTrackId(), Is.EqualTo("only_track"));
 
             Object.DestroyImmediate(trackDef);
             Object.DestroyImmediate(carDef);
-            Object.DestroyImmediate(catalog);
-        }
-
-        private static TrackEntry CreateTrackEntry(TrackDefinition track)
-        {
-            var entry = new TrackEntry();
-            FieldInfo trackField = typeof(TrackEntry).GetField("track", BindingFlags.Instance | BindingFlags.NonPublic);
-            Assert.That(trackField, Is.Not.Null);
-            trackField.SetValue(entry, track);
-            return entry;
         }
 
         private sealed class StubLiveOps : ILiveOpsService

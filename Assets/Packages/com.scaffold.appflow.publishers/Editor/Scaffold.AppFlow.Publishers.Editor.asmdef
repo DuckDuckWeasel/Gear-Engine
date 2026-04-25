@@ -3,7 +3,7 @@
     "rootNamespace": "Scaffold.AppFlow.Publishers.Editor",
     "references": [
         "Scaffold.AppFlow.Publishers",
-        "Unity.Addressables"
+        "Scaffold.AppFlow.Publishers.Addressables"
     ],
     "includePlatforms": [
         "Editor"

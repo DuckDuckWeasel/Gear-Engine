@@ -1,0 +1,52 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7e8a9b0c1d2e3f405162738495a6b7c8, type: 3}
+  m_Name: LayerPublishers_Campaign
+  m_EditorClassIdentifier: Game.App.Bootstrap::GearEngine.App.Bootstrap.LayerBootstrapPublishersProfile
+  definitions:
+  - source:
+      rid: 4306785432327684276
+    bakedRegistrar:
+      rid: 4306785432327684277
+  - source:
+      rid: 4306785432327684278
+    bakedRegistrar:
+      rid: 4306785432327684279
+  references:
+    version: 2
+    RefIds:
+    - rid: 4306785432327684276
+      type: {class: AddressableLabelSource, ns: Scaffold.AppFlow.Publishers.Addressables, asm: Scaffold.AppFlow.Publishers.Addressables}
+      data:
+        label:
+          m_LabelString: liveops.tracks
+        typeAqn: GearEngine.CarSimulation.Definitions.TrackDefinition, Game.CarSimulation,
+          Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+    - rid: 4306785432327684277
+      type: {class: 'AddressableLabelPublisherRegistrar`1[[GearEngine.CarSimulation.Definitions.TrackDefinition, Game.CarSimulation]]', ns: Scaffold.AppFlow.Publishers.Addressables, asm: Scaffold.AppFlow.Publishers.Addressables}
+      data:
+        labelString: liveops.tracks
+    - rid: 4306785432327684278
+      type: {class: AddressableSingleSource, ns: Scaffold.AppFlow.Publishers.Addressables, asm: Scaffold.AppFlow.Publishers.Addressables}
+      data:
+        assetReference:
+          m_AssetGUID: f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2
+          m_SubObjectName: 
+          m_SubObjectType: 
+          m_SubObjectGUID: 
+          m_EditorAssetChanged: 0
+        bakedAssetTypeAqn: GearEngine.GearEngine.Config.GearCatalogSO, Game.GearEngine,
+          Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+    - rid: 4306785432327684279
+      type: {class: 'AddressableSinglePublisherRegistrar`1[[GearEngine.GearEngine.Config.GearCatalogSO, Game.GearEngine]]', ns: Scaffold.AppFlow.Publishers.Addressables, asm: Scaffold.AppFlow.Publishers.Addressables}
+      data:
+        addressableKey: Catalogs/Gear

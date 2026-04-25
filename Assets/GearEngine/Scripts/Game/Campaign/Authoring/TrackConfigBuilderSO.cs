@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using LiveOps.Modules.DTO.Tracks;
 using GearEngine.Campaign.Services;
 using GearEngine.CarSimulation.Definitions;
@@ -9,9 +11,10 @@ namespace GearEngine.Campaign.Authoring
     [CreateAssetMenu(menuName = "LiveOps/Authoring/Track Config Builder", fileName = "TrackConfigBuilder")]
     public sealed class TrackConfigBuilderSO : ConfigBuilderSO<TrackConfig>
     {
-        [Header("Asset source")]
+        [Header("Asset source (same tracks as the liveops.tracks addressable label at runtime)")]
+        [Tooltip("Assign the track definitions to export (Oval, Circle, …). Must match the label-driven TrackDefinition list in Addressables / Asset publishers.")]
         [SerializeField]
-        private TrackCatalogSO catalog;
+        private List<TrackDefinition> trackDefinitions = new();
 
         [Header("Asset-independent fields")]
         [SerializeField]
@@ -22,35 +25,35 @@ namespace GearEngine.Campaign.Authoring
         public override TrackConfig Build()
         {
             var cfg = new TrackConfig();
-            if (catalog == null)
+            if (trackDefinitions == null || trackDefinitions.Count == 0)
             {
 #if UNITY_EDITOR
                 Debug.LogWarning(
-                    "[TrackConfigBuilder] Catalog is not assigned. Assign `CampaignTrackCatalog` (or your `TrackCatalogSO`) on this asset, then use Window → LiveOps → Configs → Sync.",
+                    "[TrackConfigBuilder] No `trackDefinitions` assigned. Add your `TrackDefinition` assets (the same as under label liveops.tracks), then use Window → LiveOps → Configs → Sync.",
                     this);
 #endif
                 return cfg;
             }
 
             int index = 0;
-            foreach (TrackEntry entry in catalog.Entries)
+            foreach (TrackDefinition track in trackDefinitions)
             {
-                if (entry?.Track == null)
+                if (track == null)
                 {
 #if UNITY_EDITOR
                     Debug.LogWarning(
-                        $"[TrackConfigBuilder] Catalog row {index}: TrackDefinition reference is missing — skipped for Remote Config.",
+                        $"[TrackConfigBuilder] List row {index}: TrackDefinition reference is missing — skipped for Remote Config.",
                         this);
 #endif
                     index++;
                     continue;
                 }
 
-                if (string.IsNullOrEmpty(entry.TrackId))
+                if (string.IsNullOrEmpty(track.name))
                 {
 #if UNITY_EDITOR
                     Debug.LogWarning(
-                        $"[TrackConfigBuilder] Catalog row {index}: Track id is empty (rename the track asset so `TrackDefinition.name` is set) — skipped.",
+                        $"[TrackConfigBuilder] List row {index}: Track id is empty (asset `name` must be set) — skipped.",
                         this);
 #endif
                     index++;
@@ -59,18 +62,21 @@ namespace GearEngine.Campaign.Authoring
 
                 var dtoEntry = new TrackConfigEntry
                 {
-                    Id = entry.TrackId,
+                    Id = track.name,
                     BaseReward = defaultBaseReward,
                 };
 
-                foreach (TrackScoreBand band in entry.Track.ScoreBands)
+                if (track.ScoreBands != null)
                 {
-                    dtoEntry.Bands.Add(
-                        new TrackScoreBandConfig
-                        {
-                            MaxRaceTimeSeconds = band.MaxRaceTimeSeconds,
-                            Reward = band.RewardValue,
-                        });
+                    foreach (TrackScoreBand band in track.ScoreBands)
+                    {
+                        dtoEntry.Bands.Add(
+                            new TrackScoreBandConfig
+                            {
+                                MaxRaceTimeSeconds = band.MaxRaceTimeSeconds,
+                                Reward = band.RewardValue,
+                            });
+                    }
                 }
 
                 cfg.AddEntry(dtoEntry);
@@ -78,10 +84,10 @@ namespace GearEngine.Campaign.Authoring
             }
 
 #if UNITY_EDITOR
-            if (cfg.Entries.Count == 0 && catalog.Entries.Count > 0)
+            if (cfg.Entries.Count == 0 && trackDefinitions.Count > 0)
             {
                 Debug.LogWarning(
-                    "[TrackConfigBuilder] Catalog lists track rows but none were exported to TrackConfig (missing Track refs or empty ids). Fix the catalog, then Sync in Window → LiveOps → Configs.",
+                    "[TrackConfigBuilder] Lists track rows but none were exported to TrackConfig (missing `TrackDefinition` or empty names). Fix the list, then Sync in Window → LiveOps → Configs.",
                     this);
             }
 #endif
@@ -91,19 +97,32 @@ namespace GearEngine.Campaign.Authoring
 
         public override void Apply(TrackConfig pulled)
         {
-            if (pulled == null || catalog == null)
+            if (pulled == null)
             {
                 return;
             }
 
+            var byId = new Dictionary<string, TrackDefinition>(StringComparer.Ordinal);
+            if (trackDefinitions != null)
+            {
+                foreach (TrackDefinition t in trackDefinitions)
+                {
+                    if (t == null || string.IsNullOrEmpty(t.name) || byId.ContainsKey(t.name))
+                    {
+                        continue;
+                    }
+
+                    byId[t.name] = t;
+                }
+            }
+
             foreach (TrackConfigEntry entry in pulled.Entries)
             {
-                if (catalog.GetTrack(entry.Id) == null)
+                if (byId.TryGetValue(entry.Id, out TrackDefinition t))
                 {
-                    continue;
+                    _ = t;
+                    defaultBaseReward = entry.BaseReward;
                 }
-
-                defaultBaseReward = entry.BaseReward;
             }
         }
     }
