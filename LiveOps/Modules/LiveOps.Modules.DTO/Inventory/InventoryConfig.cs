@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using LiveOps.DTO.Keys;
 
 namespace LiveOps.Modules.DTO.Inventory
 {
@@ -7,6 +8,7 @@ namespace LiveOps.Modules.DTO.Inventory
     /// Remote Config / Cloud Code wire shape (plain string ids). In Unity, use the Inventory Config Builder asset
     /// (GearConfig references); its Build output populates this DTO for sync/deploy.
     /// </summary>
+    [LiveOpsKey(nameof(InventoryConfig))]
     public sealed class InventoryConfig
     {
         [JsonProperty("baseSlots")]

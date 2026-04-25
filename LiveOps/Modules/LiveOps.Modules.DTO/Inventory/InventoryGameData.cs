@@ -2,9 +2,11 @@ using System;
 using System.Collections.Generic;
 using LiveOps.DTO.GameModule;
 using Newtonsoft.Json;
+using LiveOps.DTO.Keys;
 
 namespace LiveOps.Modules.DTO.Inventory
 {
+    [LiveOpsKey(nameof(InventoryGameData))]
     public sealed class InventoryGameData : IGameModuleData
     {
         public string Key => nameof(InventoryGameData);

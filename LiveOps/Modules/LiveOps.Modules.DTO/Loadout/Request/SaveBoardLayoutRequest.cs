@@ -1,13 +1,12 @@
 using System.Collections.Generic;
-using LiveOps.DTO.GameApi;
 using LiveOps.DTO.ModuleRequest;
 using LiveOps.Modules.DTO.Loadout;
 using Newtonsoft.Json;
+using LiveOps.DTO.Keys;
 
 namespace LiveOps.Modules.DTO.ModuleRequests
 {
-    [UsesGameApi]
-    [GameApiKey("SaveBoardLayoutRequest")]
+    [LiveOpsKey(nameof(SaveBoardLayoutRequest))]
     public sealed class SaveBoardLayoutRequest : ModuleRequest<SaveBoardLayoutResponse>
     {
         public SaveBoardLayoutRequest()

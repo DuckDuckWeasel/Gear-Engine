@@ -2,9 +2,11 @@ using System;
 using System.Collections.Generic;
 using LiveOps.DTO.GameModule;
 using Newtonsoft.Json;
+using LiveOps.DTO.Keys;
 
 namespace LiveOps.Modules.DTO.Currency
 {
+    [LiveOpsKey(nameof(CurrencyGameData))]
     public sealed class CurrencyGameData : IGameModuleData
     {
         public string Key => nameof(CurrencyGameData);

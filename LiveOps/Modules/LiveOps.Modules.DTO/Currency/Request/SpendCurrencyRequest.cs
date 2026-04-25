@@ -1,12 +1,11 @@
-using LiveOps.DTO.GameApi;
 using LiveOps.DTO.ModuleRequest;
 using LiveOps.Modules.DTO.Currency;
 using Newtonsoft.Json;
+using LiveOps.DTO.Keys;
 
 namespace LiveOps.Modules.DTO.ModuleRequests
 {
-    [UsesGameApi]
-    [GameApiKey("SpendCurrencyRequest")]
+    [LiveOpsKey(nameof(SpendCurrencyRequest))]
     public sealed class SpendCurrencyRequest : ModuleRequest<SpendCurrencyResponse>
     {
         public SpendCurrencyRequest()

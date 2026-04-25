@@ -1,8 +1,10 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using LiveOps.DTO.Keys;
 
 namespace LiveOps.Modules.DTO.Currency
 {
+    [LiveOpsKey(nameof(CurrencyPersistence))]
     public sealed class CurrencyPersistence
     {
         [JsonProperty("balances")]

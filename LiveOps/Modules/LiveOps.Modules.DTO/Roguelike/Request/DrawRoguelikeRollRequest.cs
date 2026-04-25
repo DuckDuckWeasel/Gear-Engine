@@ -1,10 +1,9 @@
-using LiveOps.DTO.GameApi;
 using LiveOps.DTO.ModuleRequest;
+using LiveOps.DTO.Keys;
 
 namespace LiveOps.Modules.DTO.ModuleRequests
 {
-    [UsesGameApi]
-    [GameApiKey("DrawRoguelikeRollRequest")]
+    [LiveOpsKey(nameof(DrawRoguelikeRollRequest))]
     public sealed class DrawRoguelikeRollRequest : ModuleRequest<DrawRoguelikeRollResponse>
     {
     }

@@ -1,8 +1,10 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using LiveOps.DTO.Keys;
 
 namespace LiveOps.Modules.DTO.Cards
 {
+    [LiveOpsKey(nameof(CardConfig))]
     public sealed class CardConfig
     {
         [JsonProperty("catalog")]

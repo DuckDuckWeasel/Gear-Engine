@@ -1,13 +1,12 @@
 using System.Collections.Generic;
-using LiveOps.DTO.GameApi;
 using LiveOps.DTO.ModuleRequest;
 using LiveOps.Modules.DTO.Inventory;
 using Newtonsoft.Json;
+using LiveOps.DTO.Keys;
 
 namespace LiveOps.Modules.DTO.ModuleRequests
 {
-    [UsesGameApi]
-    [GameApiKey("SetInventoryRequest")]
+    [LiveOpsKey(nameof(SetInventoryRequest))]
     public sealed class SetInventoryRequest : ModuleRequest<SetInventoryResponse>
     {
         public SetInventoryRequest()

@@ -2,9 +2,11 @@ using System;
 using System.Collections.Generic;
 using LiveOps.DTO.GameModule;
 using Newtonsoft.Json;
+using LiveOps.DTO.Keys;
 
 namespace LiveOps.Modules.DTO.Cards
 {
+    [LiveOpsKey(nameof(CardGameData))]
     public sealed class CardGameData : IGameModuleData
     {
         public string Key => nameof(CardGameData);

@@ -1,11 +1,10 @@
-using LiveOps.DTO.GameApi;
 using LiveOps.DTO.ModuleRequest;
 using Newtonsoft.Json;
+using LiveOps.DTO.Keys;
 
 namespace LiveOps.Modules.DTO.ModuleRequests
 {
-    [UsesGameApi]
-    [GameApiKey("RecordRaceResultRequest")]
+    [LiveOpsKey(nameof(RecordRaceResultRequest))]
     public sealed class RecordRaceResultRequest : ModuleRequest<RecordRaceResultResponse>
     {
         public RecordRaceResultRequest()

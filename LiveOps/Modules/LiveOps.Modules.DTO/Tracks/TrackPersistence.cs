@@ -1,8 +1,10 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using LiveOps.DTO.Keys;
 
 namespace LiveOps.Modules.DTO.Tracks
 {
+    [LiveOpsKey(nameof(TrackPersistence))]
     public sealed class TrackPersistence
     {
         [JsonProperty("currentTrackId")]

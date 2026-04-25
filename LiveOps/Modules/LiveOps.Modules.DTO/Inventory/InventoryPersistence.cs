@@ -1,8 +1,10 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using LiveOps.DTO.Keys;
 
 namespace LiveOps.Modules.DTO.Inventory
 {
+    [LiveOpsKey(nameof(InventoryPersistence))]
     public sealed class InventoryPersistence
     {
         [JsonProperty("gears")]

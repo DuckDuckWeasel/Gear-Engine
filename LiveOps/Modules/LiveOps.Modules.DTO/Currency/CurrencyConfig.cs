@@ -1,11 +1,13 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using LiveOps.DTO.Keys;
 
 namespace LiveOps.Modules.DTO.Currency
 {
     /// <summary>
     /// Remote Config wire shape (numeric entries only). In Unity, use the Currency Config Builder with CurrencySO assets.
     /// </summary>
+    [LiveOpsKey(nameof(CurrencyConfig))]
     public sealed class CurrencyConfig
     {
         [JsonProperty("entries")]

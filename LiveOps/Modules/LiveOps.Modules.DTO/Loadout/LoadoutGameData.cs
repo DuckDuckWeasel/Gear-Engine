@@ -2,9 +2,11 @@ using System;
 using System.Collections.Generic;
 using LiveOps.DTO.GameModule;
 using Newtonsoft.Json;
+using LiveOps.DTO.Keys;
 
 namespace LiveOps.Modules.DTO.Loadout
 {
+    [LiveOpsKey(nameof(LoadoutGameData))]
     public sealed class LoadoutGameData : IGameModuleData
     {
         public string Key => nameof(LoadoutGameData);

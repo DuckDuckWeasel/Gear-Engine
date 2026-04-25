@@ -1,11 +1,10 @@
-using LiveOps.DTO.GameApi;
 using LiveOps.DTO.ModuleRequest;
 using Newtonsoft.Json;
+using LiveOps.DTO.Keys;
 
 namespace LiveOps.Modules.DTO.ModuleRequests
 {
-    [UsesGameApi]
-    [GameApiKey("ClaimRoguelikePickRequest")]
+    [LiveOpsKey(nameof(ClaimRoguelikePickRequest))]
     public sealed class ClaimRoguelikePickRequest : ModuleRequest<ClaimRoguelikePickResponse>
     {
         public ClaimRoguelikePickRequest()

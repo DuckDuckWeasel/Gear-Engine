@@ -13,9 +13,7 @@ using Unity.Services.CloudCode.Core;
 
 namespace LiveOps.GameApi
 {
-    /// <summary>
-    /// Single Cloud Code entry point that dispatches <see cref="GameApiEnvelopeRequest"/> to typed handlers.
-    /// </summary>
+
     public class GameApiDispatcher
     {
         private readonly ILogger<GameApiDispatcher> _logger;
@@ -72,7 +70,8 @@ namespace LiveOps.GameApi
 
                 await Task.WhenAll(
                     player.WarmupAsync(context, playerKeys),
-                    remoteConfig.WarmupAsync(context, configKeys));
+                    remoteConfig.WarmupAsync(context, configKeys)
+                ).ConfigureAwait(false);
 
                 ModuleResponse result;
                 List<ModuleResponse> nestedResponses;
@@ -80,7 +79,7 @@ namespace LiveOps.GameApi
                 await using (gameState.BeginBatch())
                 {
                     GameApiSession session = new GameApiSession(_services, _registry, context, player, gameState, remoteConfig);
-                    result = await handler.HandleAsync(session, requestObj);
+                    result = await handler.HandleAsync(session, requestObj).ConfigureAwait(false);
                     nestedResponses = new List<ModuleResponse>(session.Nested);
                 }
 

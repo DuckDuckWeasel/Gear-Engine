@@ -2,9 +2,11 @@ using System;
 using System.Collections.Generic;
 using LiveOps.DTO.GameModule;
 using Newtonsoft.Json;
+using LiveOps.DTO.Keys;
 
 namespace LiveOps.Modules.DTO.Tracks
 {
+    [LiveOpsKey(nameof(TrackGameData))]
     public sealed class TrackGameData : IGameModuleData
     {
         public string Key => nameof(TrackGameData);

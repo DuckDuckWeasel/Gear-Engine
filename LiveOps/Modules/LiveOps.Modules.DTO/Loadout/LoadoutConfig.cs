@@ -1,7 +1,9 @@
 using Newtonsoft.Json;
+using LiveOps.DTO.Keys;
 
 namespace LiveOps.Modules.DTO.Loadout
 {
+    [LiveOpsKey(nameof(LoadoutConfig))]
     public sealed class LoadoutConfig
     {
         [JsonProperty("baseSlots")]

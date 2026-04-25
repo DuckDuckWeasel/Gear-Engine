@@ -2,9 +2,11 @@ using System;
 using System.Collections.Generic;
 using LiveOps.DTO.GameModule;
 using Newtonsoft.Json;
+using LiveOps.DTO.Keys;
 
 namespace LiveOps.Modules.DTO.Roguelike
 {
+    [LiveOpsKey(nameof(RoguelikeGameData))]
     public sealed class RoguelikeGameData : IGameModuleData
     {
         public string Key => nameof(RoguelikeGameData);
