@@ -1,13 +1,11 @@
 using System;
 using System.Collections.Generic;
-using Scaffold.Addressables;
-using Scaffold.Addressables.Contracts;
+using Scaffold.Addressables.Container;
 using Scaffold.AppFlow;
 using Scaffold.AppFlow.Publishers.DataDriven;
 using Scaffold.Events.Container;
 using Scaffold.Navigation;
 using Scaffold.Navigation.Container;
-using Scaffold.Navigation.Contracts;
 using UnityEngine;
 using VContainer;
 
@@ -28,20 +26,8 @@ namespace GearEngine.App.Bootstrap.Layers
 
         public void Install(IContainerBuilder builder)
         {
-            var assetClient = new AddressablesAssetClient();
-            var refHandler = new AddressablesAssetReferenceHandler(assetClient);
-            builder.RegisterInstance<IAddressablesAssetClient>(assetClient);
-            builder.RegisterInstance<IAssetReferenceHandler>(refHandler);
-            builder.Register<AddressablesGateway>(Lifetime.Singleton)
-                .WithParameter<IAddressablesAssetClient>(assetClient)
-                .WithParameter<IAssetReferenceHandler>(refHandler)
-                .As<IAddressablesGateway>()
-                .As<IAsyncInitializable>();
-
-            builder.RegisterInstance(navigationSettings);
-            new NavigationInstaller(navigationViewHolder).Install(builder);
-            builder.Register<NoViewControllerDependencyInjector>(Lifetime.Singleton)
-                .As<IViewControllerDependencyInjector>();
+            new AddressablesInstaller().Install(builder);
+            new NavigationInstaller(navigationViewHolder, navigationSettings).Install(builder);
             new EventsInstaller().Install(builder);
 
             for (int i = 0; i < addressableCatalogPublishers.Count; i++)
@@ -53,13 +39,6 @@ namespace GearEngine.App.Bootstrap.Layers
                 }
 
                 publisherSo.Register(builder);
-            }
-        }
-
-        private sealed class NoViewControllerDependencyInjector : IViewControllerDependencyInjector
-        {
-            public void Inject(IViewController controller)
-            {
             }
         }
     }

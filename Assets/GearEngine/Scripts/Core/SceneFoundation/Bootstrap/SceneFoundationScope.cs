@@ -59,8 +59,7 @@ namespace GearEngine.SceneFoundation.Bootstrap
         private void InstallFoundation(IContainerBuilder builder)
         {
             new AddressablesInstaller().Install(builder);
-            builder.RegisterInstance(navigationSettings);
-            new NavigationInstaller(navigationViewHolder).Install(builder);
+            new NavigationInstaller(navigationViewHolder, navigationSettings).Install(builder);
             new EventsInstaller().Install(builder);
         }
     }

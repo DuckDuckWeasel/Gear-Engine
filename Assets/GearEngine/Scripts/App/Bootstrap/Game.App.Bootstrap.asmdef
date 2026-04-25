@@ -4,7 +4,6 @@
     "references": [
         "Scaffold.AppFlow",
     "Scaffold.AppFlow.Publishers",
-    "Scaffold.Addressables",
     "Unity.Addressables",
     "Game.Campaign",
     "Game.CarSimulation",
