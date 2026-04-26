@@ -1,0 +1,9 @@
+{
+  "templateVersion": "0.1.0",
+  "installedRoots": [
+    "LiveOps/Deploy",
+    "LiveOps/Scaffold"
+  ],
+  "lastUpdate": "2026-04-26T00:40:54.7385537Z",
+  "notes": "Merged from package Backend~ (Assets/Packages and UPM; host: com.scaffold.liveops)"
+}
