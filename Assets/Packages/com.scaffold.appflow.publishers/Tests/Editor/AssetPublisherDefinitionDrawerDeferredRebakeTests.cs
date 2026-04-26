@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using NUnit.Framework;
 using Scaffold.AppFlow.Publishers.DataDriven;
+using Scaffold.AppFlow.Publishers.Editor;
 using UnityEditor;
 using UnityEngine;
 
@@ -40,7 +41,7 @@ namespace Scaffold.AppFlow.Publishers.Tests.Editor
         private sealed class TestPublisherHost : ScriptableObject, IAssetPublisherDefinitionHost
         {
             [SerializeField]
-            private AssetPublisherDefinition definition;
+            internal AssetPublisherDefinition definition;
 
             public IReadOnlyList<AssetPublisherDefinition> AssetPublisherDefinitions =>
                 new[] { definition };
