@@ -9,7 +9,30 @@ namespace Scaffold.LiveOps.Authoring
     /// </summary>
     public abstract class ConfigBuilderSOBase : ScriptableObject
     {
+        [Header("Profile")]
+        [Tooltip("Omit for the default (Settings) variant. Assign a non-default profile to publish a Game Override.")]
+        [SerializeField]
+        private ConfigProfileSO profile;
+
         public abstract string ConfigKey { get; }
+
+        public ConfigProfileSO Profile => profile;
+
+        public string ProfileId
+        {
+            get
+            {
+                if (profile == null)
+                {
+                    return "default";
+                }
+
+                return string.IsNullOrEmpty(profile.ProfileId) ? "default" : profile.ProfileId;
+            }
+        }
+
+        /// <summary>True when this builder writes the environment Settings (legacy path), not a Game Override file.</summary>
+        public bool IsDefaultVariant => profile == null || profile.IsDefault;
 
         public abstract object BuildBoxed();
 

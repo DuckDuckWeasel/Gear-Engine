@@ -1,4 +1,6 @@
 {
+  "_contentHash": "8b4c42ed46fa8cd0ffa7e394ad4ab5c90e04f605561babc0317ac7aeb2882fd9",
+  "_deployedAt": "2020-01-01T00:00:00.0000000Z",
   "entries": {
     "InventoryConfig": {
       "baseSlots": 8,

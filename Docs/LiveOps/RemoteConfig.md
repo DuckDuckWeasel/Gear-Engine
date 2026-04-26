@@ -1,20 +1,21 @@
 # LiveOps Remote Config (`.rc` authoring)
 
-Server modules read Remote Config keys via `IRemoteConfig` (see [UnityRemoteConfig.cs](../../LiveOps/Project/Core/ModuleFetchData/Implementation/Unity/UnityRemoteConfig.cs)). This document is the **source-of-truth** for how those keys are deployed from the Unity Editor.
+Server modules read Remote Config keys via `IRemoteConfig` (see [UnityRemoteConfig.cs](../../LiveOps/Deploy/Core/LiveOps.Core/DataCache/Implementation/Unity/UnityRemoteConfig.cs)). This document is the **source-of-truth** for how those keys are deployed from the Unity Editor.
 
 Authoring workflow (builders, deploy, runtime matching) is summarized in [AuthoringPipeline.md](AuthoringPipeline.md).
 
 ## Location
 
-Per-module Remote Config files live under:
+Authoring files live under:
 
-- [Assets/LiveOps/RemoteConfig/](../../Assets/LiveOps/RemoteConfig/)
+- [Assets/LiveOps/RemoteConfig/](../../Assets/LiveOps/RemoteConfig/) — default **Settings** per key: `<Stem>.rc`
+- `Assets/LiveOps/RemoteConfig/_overrides/` — **Game Overrides** (one `.gor` per non-default profile, schema `game-overrides.schema.json`)
 
-Each file uses the `.rc` extension and follows the Unity Remote Config authoring shape: a single top-level JSON object with an `entries` map (see the `com.unity.remote-config` / Deployment samples). **Do not hand-edit** these files for content changes — use **Window → LiveOps → Configs** → **Deploy** (which regenerates `.rc` from builders before upload) so tests and deploys stay aligned. For file-only refresh without calling UGS, use `RcSyncService.Sync` from editor code. The historical `$schema` URL is omitted in generated files; Deployment does not require it.
+Each `.rc` follows the Unity Remote Config shape: top-level `_contentHash`, `_deployedAt` (authoring metadata), and an `entries` map (see `com.unity.services.deployment`). **Do not hand-edit** content — use **Window → LiveOps → Configs** → **Deploy** (regenerates from builders) so tests and deploys stay aligned. For file-only refresh without UGS, use `RcSyncService.SyncForBuilder` / `SyncAll`. The historical `$schema` URL is omitted for `.rc`; `.gor` includes the official Game Overrides schema URL.
 
 ## Key naming
 
-Each `.rc` file should expose **one** top-level Remote Config key under `entries` that matches the DTO / module name:
+Each default **Settings** `.rc` exposes **one** key under `entries` that matches the DTO / module name. Multiple **Variants** of the same key are allowed if they use different **profiles** (see **Profiles** tab in the window); non-default Variants do not get their own `.rc` — they are merged into that profile’s `.gor`.
 
 | File | Remote Config key | Cloud Code consumer |
 |------|---------------------|------------------------|
@@ -25,7 +26,7 @@ Each `.rc` file should expose **one** top-level Remote Config key under `entries
 | `Inventory.rc` | `InventoryConfig` | `InventoryModule` |
 | `Roguelike.rc` | `RoguelikeConfig` | `RoguelikeModule` |
 
-Adding a new module: add a DTO config type, add `ConfigKey` in the module, add a `ConfigBuilderSO<TConfig>` asset, then **Deploy** (or `RcSyncService.Sync`) to regenerate `<Module>.rc`.
+Adding a new module: add a DTO config type, add `ConfigKey` in the module, add a `ConfigBuilderSO<TConfig>` asset, then **Deploy** (or `RcSyncService`) to regenerate `<Module>.rc`.
 
 ## Payload shapes (minimal server-authoritative fields)
 
@@ -77,6 +78,12 @@ After deploy:
 
 The Unity Gaming Services CLI (`ugs deploy`) can deploy the same `.rc` files; this repo uses Editor-first workflow. Add a scripted step later if you need non-Editor promotion (e.g. staging → production).
 
-## Format note
+## Game Overrides (`.gor`)
+
+- Create **LiveOps → Authoring → Config Profile**, uncheck **Is default**, set **Profile id**, and **Targeting** (platforms, app version, tags, schedule, raw JEXL, optional **Audience targets** for schema).
+- On each `ConfigBuilderSO` for that slice, assign the same **Config Profile** (non-default Variants are listed under the config key in **Window → LiveOps → Configs**).
+- **Deploy** writes `RemoteConfig.Entries` with JSON **values as strings** (per UGS Game Overrides schema). Server-side JEXL uses `app.version`, `unity.platform`, `user.*` custom keys (`user.tag`, `user.bucket` for rollout), etc. Cloud Code requests settings with `RequestAttributes` so rules can run.
+
+## Format note (`.rc`)
 
 Author `entries` as in the official sample (object values for JSON blobs). Do **not** use a nested `{ "type": "json", "value": … }` wrapper unless your pipeline explicitly expects that schema; the built-in importer derives `JSON` type from object values.

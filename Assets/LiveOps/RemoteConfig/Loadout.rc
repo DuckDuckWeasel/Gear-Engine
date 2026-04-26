@@ -1,4 +1,6 @@
 {
+  "_contentHash": "51100977607ffaf0332e907fd13aa2c64fa157757f5059e53aac30269e6fe478",
+  "_deployedAt": "2020-01-01T00:00:00.0000000Z",
   "entries": {
     "LoadoutConfig": {
       "baseSlots": 6,

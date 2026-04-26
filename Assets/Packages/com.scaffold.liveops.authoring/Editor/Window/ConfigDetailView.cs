@@ -98,8 +98,8 @@ namespace Scaffold.LiveOps.Authoring.Editor.Window
             {
                 Add(
                     new HelpBox(
-                        $"Duplicate ConfigKey '{row.Builder.ConfigKey}'. Another builder asset uses the same key. "
-                        + $"Fix before Deploy.\nAsset: {row.AssetPath}",
+                        $"Duplicate variant '{row.Builder.ConfigKey}' / profile '{row.Builder.ProfileId}'. "
+                        + $"Another builder uses the same (ConfigKey, Profile) pair. Fix before Deploy.\nAsset: {row.AssetPath}",
                         HelpBoxMessageType.Error)
                     {
                         style = { marginTop = 6, marginBottom = 4 },
@@ -151,7 +151,7 @@ namespace Scaffold.LiveOps.Authoring.Editor.Window
                 },
             };
 
-            var nameLabel = new Label(row.Builder.ConfigKey)
+            var nameLabel = new Label($"{row.Builder.ConfigKey}  ·  {row.Builder.ProfileId}")
             {
                 style =
                 {
@@ -162,7 +162,7 @@ namespace Scaffold.LiveOps.Authoring.Editor.Window
             };
             titleBlock.Add(nameLabel);
 
-            string statusText = isDuplicate ? "Duplicate key" : LiveOpsConfigStatusLights.ShortStatusLabel(disk);
+            string statusText = isDuplicate ? "Duplicate variant" : LiveOpsConfigStatusLights.ShortStatusLabel(disk);
             Color statusColor = isDuplicate ? new Color(1f, 0.45f, 0.45f) : StatusToTextColor(disk, pro);
             _titleStatusLabel = new Label($"·  {statusText}")
             {
@@ -225,7 +225,7 @@ namespace Scaffold.LiveOps.Authoring.Editor.Window
                             Debug.LogError($"[LiveOps Config] Pull failed: {ex.Message}\n{ex.StackTrace}");
                         }
                     },
-                    "Read this config’s entry from the local .rc file and apply it back onto the builder asset (updates fields the builder supports in Apply).");
+                    "Read this variant from the local .rc or _overrides .gor and apply it back onto the builder (Apply() fields only).");
             actions.Add(_pullButton);
 
             _deployButton = makeAction(
@@ -234,7 +234,7 @@ namespace Scaffold.LiveOps.Authoring.Editor.Window
                     {
                         _ = DeployOneAsync(row);
                     },
-                    "Regenerate this builder’s .rc, then ugs deploy. CLI uses its own login: ugs login in a terminal (service account) or UGS_CLI_SERVICE_KEY_ID/SECRET. npm i -g ugs. Use Pull to revert the builder from disk if needed.");
+                    "Sync, then ugs deploy the .rc (default profile) or the profile’s .gor (non-default).");
             actions.Add(_deployButton);
 
             bar.Add(actions);
@@ -274,7 +274,7 @@ namespace Scaffold.LiveOps.Authoring.Editor.Window
             RowStatus disk = RcSyncService.GetStatus(row.Builder);
             bool dup = row.IsDuplicateConfigKey;
             LiveOpsConfigStatusLights.ApplyToImage(_titleStatusLight, disk, dup);
-            _titleStatusLabel.text = dup ? "·  Duplicate key" : $"·  {LiveOpsConfigStatusLights.ShortStatusLabel(disk)}";
+            _titleStatusLabel.text = dup ? "·  Duplicate variant" : $"·  {LiveOpsConfigStatusLights.ShortStatusLabel(disk)}";
             bool pro = EditorGUIUtility.isProSkin;
             _titleStatusLabel.style.color = dup ? new Color(1f, 0.45f, 0.45f) : StatusToTextColor(disk, pro);
         }
@@ -621,7 +621,7 @@ namespace Scaffold.LiveOps.Authoring.Editor.Window
             var wrap = new VisualElement { style = { paddingLeft = 8, paddingRight = 8, paddingTop = 8, paddingBottom = 12 } };
 
             var hint = new Label(
-                "Local payload is the generated JSON for this Remote Config key. Use Compare with cloud to fetch the live dashboard value.")
+                "Local: generated JSON for this ConfigKey (default = Settings; non-default = value inside the profile’s Game Override). Use Compare with cloud to fetch the live value for this key.")
             {
                 style =
                 {
@@ -668,10 +668,17 @@ namespace Scaffold.LiveOps.Authoring.Editor.Window
 
             try
             {
-                string envText = RcSyncService.RenderEnvelopeJson(_row.Builder);
-                var root = JObject.Parse(envText);
-                JToken inner = root["entries"]?[_row.Builder.ConfigKey];
-                _localDiffField.value = inner?.ToString(Formatting.Indented) ?? "(empty)";
+                if (_row.Builder.IsDefaultVariant)
+                {
+                    string envText = RcSyncService.RenderEnvelopeJson(_row.Builder);
+                    var root = JObject.Parse(envText);
+                    JToken inner = root["entries"]?[_row.Builder.ConfigKey];
+                    _localDiffField.value = inner?.ToString(Formatting.Indented) ?? "(empty)";
+                }
+                else
+                {
+                    _localDiffField.value = RcSyncService.RenderLocalConfigPayloadJson(_row.Builder);
+                }
             }
             catch (Exception ex)
             {
@@ -726,26 +733,26 @@ namespace Scaffold.LiveOps.Authoring.Editor.Window
                 return;
             }
 
-            string path = RcSyncService.GetRcPath(row.Builder);
+            IReadOnlyList<string> paths = RcSyncService.CollectDeployPathsForVariant(row.Builder);
             if (_host is LiveOpsConfigsWindow win)
             {
                 await win.RunDeployWorkflowAsync(
                     () =>
                     {
                         AssetDatabase.SaveAssets();
-                        RcSyncService.Sync(row.Builder);
+                        RcSyncService.SyncForBuilder(row.Builder);
                         RefreshLocalDiffPayload();
                         RebindTitleStatusOnly(row);
                         _host?.Repaint();
                     },
-                    new[] { path });
+                    paths);
                 return;
             }
 
             try
             {
                 AssetDatabase.SaveAssets();
-                RcSyncService.Sync(row.Builder);
+                RcSyncService.SyncForBuilder(row.Builder);
                 RefreshLocalDiffPayload();
                 RebindTitleStatusOnly(row);
                 _refreshChrome?.Invoke();
@@ -760,7 +767,7 @@ namespace Scaffold.LiveOps.Authoring.Editor.Window
             try
             {
                 DeployOutcome outcome = await _deployer.DeployAsync(
-                    new[] { path },
+                    paths,
                     CancellationToken.None);
                 if (outcome.AllSucceeded)
                 {

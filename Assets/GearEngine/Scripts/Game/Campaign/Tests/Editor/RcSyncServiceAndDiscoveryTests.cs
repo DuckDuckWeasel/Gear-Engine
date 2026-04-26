@@ -64,6 +64,67 @@ namespace GearEngine.Campaign.Tests.Editor
         }
 
         [Test]
+        public void ApplyDuplicateFlags_DoesNotMark_WhenSameConfigKeyButDifferentProfile()
+        {
+            var rows = new List<LiveOpsConfigDiscovery.Row>();
+            var profA = ScriptableObject.CreateInstance<ConfigProfileSO>();
+            var profB = ScriptableObject.CreateInstance<ConfigProfileSO>();
+            TrackConfigBuilderSO a = ScriptableObject.CreateInstance<TrackConfigBuilderSO>();
+            TrackConfigBuilderSO b = ScriptableObject.CreateInstance<TrackConfigBuilderSO>();
+            try
+            {
+                profA.name = "testProfA";
+                profB.name = "testProfB";
+                typeof(ConfigProfileSO).GetField("profileId", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+                    ?.SetValue(profA, "a");
+                typeof(ConfigProfileSO).GetField("isDefault", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+                    ?.SetValue(profA, false);
+                typeof(ConfigProfileSO).GetField("profileId", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+                    ?.SetValue(profB, "b");
+                typeof(ConfigProfileSO).GetField("isDefault", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+                    ?.SetValue(profB, false);
+                typeof(ConfigBuilderSOBase).GetField("profile", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+                    ?.SetValue(a, profA);
+                typeof(ConfigBuilderSOBase).GetField("profile", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+                    ?.SetValue(b, profB);
+                rows.Add(new LiveOpsConfigDiscovery.Row { Builder = a, AssetPath = "a" });
+                rows.Add(new LiveOpsConfigDiscovery.Row { Builder = b, AssetPath = "b" });
+                LiveOpsConfigDiscovery.ApplyDuplicateFlags(rows);
+                Assert.IsFalse(rows.Any(r => r.IsDuplicateConfigKey));
+            }
+            finally
+            {
+                Object.DestroyImmediate(a);
+                Object.DestroyImmediate(b);
+                Object.DestroyImmediate(profA);
+                Object.DestroyImmediate(profB);
+            }
+        }
+
+        [Test]
+        public void TargetingJexlEmitter_IncludesPlatformAndAppVersion()
+        {
+            var p = ScriptableObject.CreateInstance<ConfigProfileSO>();
+            try
+            {
+                var rule = p.Targeting;
+                typeof(TargetingRule).GetField("platforms", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+                    ?.SetValue(rule, new[] { "iOS" });
+                typeof(AppVersionRange).GetField("min", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+                    ?.SetValue(p.Targeting.AppVersion, "1.0.0");
+                typeof(ConfigProfileSO).GetField("isDefault", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+                    ?.SetValue(p, false);
+                string j = TargetingJexlEmitter.Emit(p);
+                StringAssert.Contains("unity.platform", j);
+                StringAssert.Contains("app.version", j);
+            }
+            finally
+            {
+                Object.DestroyImmediate(p);
+            }
+        }
+
+        [Test]
         public void CloudRemoteConfigSnapshot_ExtractJsonValueForKey_FindsSetting_WrappedRsShape()
         {
             var settings = new JObject

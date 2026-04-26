@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Com.Unity.Services.Apis" Version="1.1.0" />
     <PackageReference Include="Com.Unity.Services.CloudCode.Apis" Version="0.0.9" />
     <PackageReference Include="Com.Unity.Services.CloudCode.Core" Version="0.0.1" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />

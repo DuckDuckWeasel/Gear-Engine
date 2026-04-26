@@ -23,8 +23,13 @@ namespace LiveOps.ModuleFetchData.Unity
             try
             {
                 _logger.LogDebug("[UnityRemoteConfig] Fetching via SDK. PlayerId: {PlayerId}", context.PlayerId);
-                ApiResponse<SettingsDeliveryResponse> result = await _gameApiClient.RemoteConfigSettings.AssignSettingsGetAsync(
-                    context, context.AccessToken, context.ProjectId, context.EnvironmentId);
+                ApiResponse<SettingsDeliveryResponse> result = await RemoteConfigSettingsFetch.FetchAsync(
+                    _gameApiClient,
+                    context,
+                    context.AccessToken,
+                    context.ProjectId,
+                    context.EnvironmentId,
+                    context.PlayerId);
 
                 if (result.Data?.Configs?.Settings is { } settings)
                 {

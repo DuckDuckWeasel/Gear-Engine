@@ -5,7 +5,8 @@ using UnityEditor;
 namespace Scaffold.LiveOps.Authoring.Editor.Window
 {
     /// <summary>
-    /// Discovers all <see cref="ConfigBuilderSOBase"/> assets and flags duplicate <see cref="ConfigBuilderSOBase.ConfigKey"/> groups.
+    /// Discovers all <see cref="ConfigBuilderSOBase"/> assets and flags duplicate
+    /// <see cref="ConfigBuilderSOBase"/>(<see cref="ConfigBuilderSOBase.ConfigKey"/>, <see cref="ConfigBuilderSOBase.ProfileId"/>) groups.
     /// </summary>
     public static class LiveOpsConfigDiscovery
     {
@@ -15,7 +16,23 @@ namespace Scaffold.LiveOps.Authoring.Editor.Window
 
             public string AssetPath { get; set; }
 
-            public bool IsDuplicateConfigKey { get; set; }
+            public bool IsDuplicateVariant { get; set; }
+
+            /// <summary>Compatibility name for the same check (duplicate <c>(ConfigKey, ProfileId)</c>).</summary>
+            public bool IsDuplicateConfigKey
+            {
+                get => IsDuplicateVariant;
+                set => IsDuplicateVariant = value;
+            }
+        }
+
+        public sealed class VariantListItem
+        {
+            public bool IsGroup { get; set; }
+
+            public string GroupConfigKey { get; set; }
+
+            public Row VariantRow { get; set; }
         }
 
         public static List<Row> DiscoverAllRows()
@@ -31,7 +48,12 @@ namespace Scaffold.LiveOps.Authoring.Editor.Window
                 }
             }
 
-            list.Sort((a, b) => string.CompareOrdinal(a.Builder.ConfigKey, b.Builder.ConfigKey));
+            list.Sort(
+                (a, b) =>
+                {
+                    int c = string.CompareOrdinal(a.Builder.ConfigKey, b.Builder.ConfigKey);
+                    return c != 0 ? c : string.CompareOrdinal(a.Builder.ProfileId, b.Builder.ProfileId);
+                });
             ApplyDuplicateFlags(list);
             return list;
         }
@@ -45,10 +67,10 @@ namespace Scaffold.LiveOps.Authoring.Editor.Window
 
             foreach (Row r in rows)
             {
-                r.IsDuplicateConfigKey = false;
+                r.IsDuplicateVariant = false;
             }
 
-            foreach (IGrouping<string, Row> g in rows.GroupBy(r => r.Builder.ConfigKey))
+            foreach (IGrouping<string, Row> g in rows.GroupBy(r => VariantKey(r)))
             {
                 if (g.Count() <= 1)
                 {
@@ -57,9 +79,41 @@ namespace Scaffold.LiveOps.Authoring.Editor.Window
 
                 foreach (Row r in g)
                 {
-                    r.IsDuplicateConfigKey = true;
+                    r.IsDuplicateVariant = true;
                 }
             }
+        }
+
+        private static string VariantKey(Row r) => r.Builder.ConfigKey + "\u0001" + r.Builder.ProfileId;
+
+        public static List<VariantListItem> BuildVariantListItems(IReadOnlyList<Row> rows)
+        {
+            var result = new List<VariantListItem>();
+            if (rows == null || rows.Count == 0)
+            {
+                return result;
+            }
+
+            foreach (IGrouping<string, Row> g in rows.GroupBy(r => r.Builder.ConfigKey).OrderBy(x => x.Key, System.StringComparer.Ordinal))
+            {
+                result.Add(
+                    new VariantListItem
+                    {
+                        IsGroup = true,
+                        GroupConfigKey = g.Key,
+                    });
+                foreach (Row r in g.OrderBy(x => x.Builder.ProfileId, System.StringComparer.Ordinal))
+                {
+                    result.Add(
+                        new VariantListItem
+                        {
+                            IsGroup = false,
+                            VariantRow = r,
+                        });
+                }
+            }
+
+            return result;
         }
     }
 }

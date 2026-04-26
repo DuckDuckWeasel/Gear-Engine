@@ -11,8 +11,9 @@ using UnityEngine;
 namespace GearEngine.Campaign.Tests.Editor
 {
     /// <summary>
-    /// Ensures default <see cref="Scaffold.LiveOps.Authoring.ConfigBuilderSO{TConfig}"/> output matches committed
-    /// <c>Assets/LiveOps/RemoteConfig/*.rc</c> (refresh via <i>Window → LiveOps → Configs</i> → Deploy, or <c>RcSyncService.Sync</c> in editor code).
+    /// Ensures default <see cref="Scaffold.LiveOps.Authoring.ConfigBuilderSO{TConfig}"/> DTO in <c>entries</c> matches committed
+    /// <c>Assets/LiveOps/RemoteConfig/*.rc</c> (top-level <c>_contentHash</c> / <c>_deployedAt</c> ignored; refresh via
+    /// <i>Window → LiveOps → Configs</i> or <c>RcSyncService</c> in editor).
     /// </summary>
     public sealed class LiveOpsConfigBuilderAndRcTests
     {
@@ -28,15 +29,16 @@ namespace GearEngine.Campaign.Tests.Editor
         private static void AssertRcMatchesInstance(ConfigBuilderSOBase builder, string rcFileName)
         {
             object dto = builder.BuildBoxed();
-            string expected = RcEnvelope.Render(builder.ConfigKey, dto);
+            JToken expectedConfig = RcEnvelope.GetConfigToken(dto);
             string path = Path.Combine(RemoteConfigDir, rcFileName);
             Assert.IsTrue(File.Exists(path), $"Missing {path}");
             string disk = File.ReadAllText(path);
-            var expectedToken = JObject.Parse(expected);
-            var diskToken = JObject.Parse(disk);
+            var diskRoot = JObject.Parse(disk);
+            JToken diskConfig = diskRoot["entries"]?[builder.ConfigKey];
+            Assert.IsNotNull(diskConfig, $"Commit {rcFileName} missing entries.{builder.ConfigKey}");
             Assert.IsTrue(
-                JToken.DeepEquals(expectedToken, diskToken),
-                $"Run Window → LiveOps → Configs → Sync for {builder.ConfigKey}. Expected:\n{expected}\n\nDisk:\n{disk}");
+                JToken.DeepEquals(expectedConfig, diskConfig),
+                $"Run Window → LiveOps → Configs → Sync for {builder.ConfigKey}. Expected DTO JSON does not match disk entry.");
         }
 
         [Test]

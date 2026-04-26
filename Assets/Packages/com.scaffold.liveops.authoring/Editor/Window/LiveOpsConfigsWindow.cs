@@ -15,11 +15,14 @@ using UnityEngine.UIElements;
 namespace Scaffold.LiveOps.Authoring.Editor.Window
 {
     /// <summary>
-    /// Unified LiveOps config editor: list builders, edit inline, sync <c>.rc</c>, deploy to UGS.
+    /// Unified LiveOps config editor: list builders, edit inline, sync <c>.rc</c> / <c>.gor</c>, deploy to UGS.
     /// </summary>
     public sealed class LiveOpsConfigsWindow : EditorWindow
     {
-        /// <summary>Created in <see cref="CreateGUI"/> — must not be constructed in field initializers (EditorWindow is a ScriptableObject).</summary>
+        private const int MainTabConfigs = 0;
+
+        private const int MainTabProfiles = 1;
+
         private ConfigDetailView _detailView;
 
         private IRemoteDeployer _deployer;
@@ -32,7 +35,33 @@ namespace Scaffold.LiveOps.Authoring.Editor.Window
 
         private List<LiveOpsConfigDiscovery.Row> _rows = new List<LiveOpsConfigDiscovery.Row>();
 
-        private ListView _listView;
+        private List<LiveOpsConfigDiscovery.VariantListItem> _variantListItems = new List<LiveOpsConfigDiscovery.VariantListItem>();
+
+        private List<ConfigProfileDiscovery.Row> _profileRows = new List<ConfigProfileDiscovery.Row>();
+
+        private int _mainTabIndex;
+
+        private Button _mainTabConfigsButton;
+
+        private Button _mainTabProfilesButton;
+
+        private VisualElement _configTabRoot;
+
+        private VisualElement _profileTabRoot;
+
+        private ListView _configListView;
+
+        private ListView _profileListView;
+
+        private TwoPaneSplitView _configSplit;
+
+        private TwoPaneSplitView _profileSplit;
+
+        private VisualElement _profileDetailHost;
+
+        private TextField _profileJexlPreview;
+
+        private readonly List<UnityEditor.Editor> _profileEditors = new List<UnityEditor.Editor>();
 
         private Toolbar _toolbar;
 
@@ -42,7 +71,6 @@ namespace Scaffold.LiveOps.Authoring.Editor.Window
 
         private bool _isDeployBusy;
 
-        /// <summary>For tests: replace the default deployer.</summary>
         internal IRemoteDeployer DeployerOverride
         {
             set => _deployer = value ?? new RemoteDeployer();
@@ -59,6 +87,7 @@ namespace Scaffold.LiveOps.Authoring.Editor.Window
         public void CreateGUI()
         {
             _deployer ??= new RemoteDeployer();
+            _mainTabIndex = MainTabConfigs;
 
             rootVisualElement.style.flexGrow = 1;
             rootVisualElement.style.position = Position.Relative;
@@ -109,51 +138,99 @@ namespace Scaffold.LiveOps.Authoring.Editor.Window
                     style = { flexGrow = 1, flexShrink = 1 },
                 });
 
+            _mainTabConfigsButton = new ToolbarButton(() => SelectMainTab(MainTabConfigs)) { text = "Configs" };
+            _mainTabProfilesButton = new ToolbarButton(() => SelectMainTab(MainTabProfiles)) { text = "Profiles" };
+            StyleMainTabButton(_mainTabConfigsButton, true);
+            StyleMainTabButton(_mainTabProfilesButton, false);
+            _mainTabConfigsButton.style.marginRight = 2;
+            _mainTabProfilesButton.style.marginLeft = 2;
+            _toolbar.Add(_mainTabConfigsButton);
+            _toolbar.Add(_mainTabProfilesButton);
+
+            _toolbar.Add(
+                new ToolbarSpacer
+                {
+                    style = { width = 8, flexShrink = 0 },
+                });
+
             _toolbar.Add(
                 new ToolbarButton(RefreshAll)
                 {
                     text = "Refresh",
-                    tooltip = "Rescan the project for config builder assets and refresh sync status in the list.",
+                    tooltip = "Rescan the project for config builder and profile assets and refresh status.",
                 });
 
             _toolbar.Add(
                 new ToolbarButton(PullAll)
                 {
                     text = "Pull All",
-                    tooltip = "Run Pull on every builder from its local .rc file (skipped when duplicate ConfigKeys exist).",
+                    tooltip = "Run Pull on every builder variant (skipped when duplicate (ConfigKey, Profile) exist).",
                 });
 
             _toolbar.Add(
                 new ToolbarButton(() => _ = DeploySelectedAsync())
                 {
                     text = "Deploy Selected",
-                    tooltip = "Save, regenerate .rc from the selected builder, then run ugs deploy. CLI auth is separate from the Editor: run ugs login once in a terminal (service account), or set UGS_CLI_SERVICE_KEY_ID / UGS_CLI_SERVICE_SECRET_KEY. Linked project + environment: Project Settings → Services.",
+                    tooltip = "Sync then ugs deploy for the selected variant or profile. CLI auth: ugs login or UGS_CLI_SERVICE_KEY_* .",
                 });
 
             _toolbar.Add(
                 new ToolbarButton(() => _ = DeployAllAsync())
                 {
                     text = "Deploy All",
-                    tooltip = "Save, regenerate every builder’s .rc, then run ugs deploy for each (same CLI auth as Deploy Selected). Skipped when duplicate ConfigKeys exist.",
+                    tooltip = "Sync all local files, then ugs deploy each .rc and .gor (skipped on duplicate variants).",
                 });
 
             rootVisualElement.Add(_toolbar);
 
-            var split = new TwoPaneSplitView(0, 280, TwoPaneSplitViewOrientation.Horizontal)
+            _configTabRoot = new VisualElement { style = { flexGrow = 1, flexDirection = FlexDirection.Column } };
+            _profileTabRoot = new VisualElement
+            {
+                style =
+                {
+                    flexGrow = 1,
+                    flexDirection = FlexDirection.Column,
+                    display = DisplayStyle.None,
+                },
+            };
+
+            _configSplit = new TwoPaneSplitView(0, 280, TwoPaneSplitViewOrientation.Horizontal)
             {
                 style = { flexGrow = 1 },
             };
 
-            _listView = new ListView
+            _configListView = new ListView
             {
                 selectionType = SelectionType.Single,
                 fixedItemHeight = 24,
                 style = { flexGrow = 1 },
             };
 
-            _listView.makeItem = () =>
+            _configListView.makeItem = MakeConfigListItem;
+            _configListView.bindItem = BindConfigListItem;
+            _configListView.itemsSource = _variantListItems;
+            _configListView.selectionChanged += _ => RebindConfigDetailIfNeeded();
+
+            _detailView = new ConfigDetailView();
+            _configSplit.Add(_configListView);
+            _configSplit.Add(_detailView);
+            _configTabRoot.Add(_configSplit);
+
+            _profileSplit = new TwoPaneSplitView(0, 220, TwoPaneSplitViewOrientation.Horizontal)
             {
-                var rowEl = new VisualElement
+                style = { flexGrow = 1, display = DisplayStyle.None },
+            };
+
+            _profileListView = new ListView
+            {
+                selectionType = SelectionType.Single,
+                fixedItemHeight = 24,
+                style = { flexGrow = 1 },
+            };
+
+            _profileListView.makeItem = () =>
+            {
+                var el = new VisualElement
                 {
                     style =
                     {
@@ -163,63 +240,54 @@ namespace Scaffold.LiveOps.Authoring.Editor.Window
                         paddingRight = 4,
                     },
                 };
-                var light = new Image { name = "list-status-light" };
-                light.style.width = 14;
-                light.style.height = 14;
-                light.style.marginRight = 6;
-                light.style.flexShrink = 0;
-                light.scaleMode = ScaleMode.ScaleToFit;
-                var nameLabel = new Label { name = "list-config-name", style = { flexGrow = 1 } };
-                rowEl.Add(light);
-                rowEl.Add(nameLabel);
-                return rowEl;
+                el.Add(
+                    new Label
+                    {
+                        name = "profile-id-label",
+                        style = { flexGrow = 1 },
+                    });
+                return el;
             };
-            _listView.bindItem = (element, index) =>
+            _profileListView.bindItem = (el, i) =>
             {
-                var rowEl = (VisualElement)element;
-                Image light = rowEl.Q<Image>("list-status-light");
-                Label nameLabel = rowEl.Q<Label>("list-config-name");
-                if (index < 0 || index >= _rows.Count)
+                var lab = el.Q<Label>("profile-id-label");
+                if (lab == null || i < 0 || i >= _profileRows.Count)
                 {
-                    if (light != null)
+                    if (lab != null)
                     {
-                        light.image = null;
-                        light.tooltip = string.Empty;
-                    }
-
-                    if (nameLabel != null)
-                    {
-                        nameLabel.text = string.Empty;
-                        nameLabel.tooltip = string.Empty;
+                        lab.text = string.Empty;
                     }
 
                     return;
                 }
 
-                LiveOpsConfigDiscovery.Row row = _rows[index];
-                RowStatus st = RcSyncService.GetStatus(row.Builder);
-                bool dup = row.IsDuplicateConfigKey;
-                if (light != null)
+                ConfigProfileDiscovery.Row r = _profileRows[i];
+                if (r.Profile == null)
                 {
-                    LiveOpsConfigStatusLights.ApplyToImage(light, st, dup);
+                    lab.text = "(null)";
+                    return;
                 }
 
-                if (nameLabel != null)
-                {
-                    nameLabel.text = row.Builder.ConfigKey;
-                    nameLabel.tooltip = LiveOpsConfigStatusLights.StatusTooltip(st, dup);
-                }
+                string suffix = r.Profile.IsDefault ? "  (default)" : string.Empty;
+                lab.text = r.Profile.ProfileId + suffix;
+                lab.tooltip = r.AssetPath;
             };
+            _profileListView.itemsSource = _profileRows;
+            _profileListView.selectionChanged += _ => RebindProfileDetailIfNeeded();
 
-            _listView.itemsSource = _rows;
-            _listView.selectionChanged += _ => RebindDetail();
+            _profileDetailHost = new ScrollView { style = { flexGrow = 1 } };
+            _profileJexlPreview = new TextField("JEXL (preview)")
+            {
+                multiline = true,
+                isReadOnly = true,
+            };
+            _profileJexlPreview.style.minHeight = 120;
+            _profileSplit.Add(_profileListView);
+            _profileSplit.Add(_profileDetailHost);
+            _profileTabRoot.Add(_profileSplit);
 
-            _detailView = new ConfigDetailView();
-
-            split.Add(_listView);
-            split.Add(_detailView);
-
-            rootVisualElement.Add(split);
+            rootVisualElement.Add(_configTabRoot);
+            rootVisualElement.Add(_profileTabRoot);
 
             _busyOverlay = new VisualElement
             {
@@ -303,6 +371,177 @@ namespace Scaffold.LiveOps.Authoring.Editor.Window
             RefreshAll();
         }
 
+        private static void StyleMainTabButton(Button b, bool active)
+        {
+            b.style.height = 22;
+            b.style.paddingLeft = 10;
+            b.style.paddingRight = 10;
+            b.style.borderTopLeftRadius = 3;
+            b.style.borderTopRightRadius = 3;
+            b.style.unityFontStyleAndWeight = active ? FontStyle.Bold : FontStyle.Normal;
+            bool pro = EditorGUIUtility.isProSkin;
+            b.style.backgroundColor = active
+                ? (pro ? new Color(0.22f, 0.22f, 0.22f) : new Color(0.9f, 0.9f, 0.9f))
+                : (pro ? new Color(0.16f, 0.16f, 0.16f) : new Color(0.82f, 0.82f, 0.82f));
+        }
+
+        private void SelectMainTab(int tab)
+        {
+            _mainTabIndex = tab;
+            bool isConfigs = tab == MainTabConfigs;
+            if (_configTabRoot != null)
+            {
+                _configTabRoot.style.display = isConfigs ? DisplayStyle.Flex : DisplayStyle.None;
+            }
+
+            if (_profileTabRoot != null)
+            {
+                _profileTabRoot.style.display = isConfigs ? DisplayStyle.None : DisplayStyle.Flex;
+            }
+
+            if (_mainTabConfigsButton != null)
+            {
+                StyleMainTabButton(_mainTabConfigsButton, isConfigs);
+            }
+
+            if (_mainTabProfilesButton != null)
+            {
+                StyleMainTabButton(_mainTabProfilesButton, !isConfigs);
+            }
+
+            if (isConfigs)
+            {
+                if (_profileSplit != null)
+                {
+                    _profileSplit.style.display = DisplayStyle.None;
+                }
+
+                RebindConfigDetailIfNeeded();
+            }
+            else
+            {
+                if (_profileSplit != null)
+                {
+                    _profileSplit.style.display = DisplayStyle.Flex;
+                }
+
+                _detailView?.Rebind(null, false, _deployer ?? new RemoteDeployer(), RefreshAll, this);
+                RebindProfileDetailIfNeeded();
+            }
+        }
+
+        private static VisualElement MakeConfigListItem()
+        {
+            var rowEl = new VisualElement
+            {
+                name = "variant-row",
+                style =
+                {
+                    flexDirection = FlexDirection.Row,
+                    alignItems = Align.Center,
+                    paddingLeft = 4,
+                    paddingRight = 4,
+                },
+            };
+            var light = new Image { name = "list-status-light" };
+            light.style.width = 14;
+            light.style.height = 14;
+            light.style.marginRight = 6;
+            light.style.flexShrink = 0;
+            light.scaleMode = ScaleMode.ScaleToFit;
+            var nameLabel = new Label { name = "list-config-name", style = { flexGrow = 1 } };
+            rowEl.Add(light);
+            rowEl.Add(nameLabel);
+            return rowEl;
+        }
+
+        private void BindConfigListItem(VisualElement element, int index)
+        {
+            var rowEl = (VisualElement)element;
+            Image light = rowEl.Q<Image>("list-status-light");
+            Label nameLabel = rowEl.Q<Label>("list-config-name");
+            if (index < 0 || index >= _variantListItems.Count)
+            {
+                if (light != null)
+                {
+                    light.image = null;
+                    light.tooltip = string.Empty;
+                    light.style.display = DisplayStyle.Flex;
+                }
+
+                if (nameLabel != null)
+                {
+                    nameLabel.text = string.Empty;
+                    nameLabel.tooltip = string.Empty;
+                }
+
+                return;
+            }
+
+            LiveOpsConfigDiscovery.VariantListItem item = _variantListItems[index];
+            if (item.IsGroup)
+            {
+                if (light != null)
+                {
+                    light.image = null;
+                    light.style.display = DisplayStyle.None;
+                }
+
+                if (nameLabel != null)
+                {
+                    nameLabel.text = item.GroupConfigKey;
+                    nameLabel.unityFontStyleAndWeight = FontStyle.Bold;
+                    nameLabel.style.paddingLeft = 0;
+                    nameLabel.style.color = Color.white;
+                    if (!EditorGUIUtility.isProSkin)
+                    {
+                        nameLabel.style.color = new Color(0.12f, 0.12f, 0.14f);
+                    }
+
+                    nameLabel.tooltip = "Config key group";
+                }
+
+                return;
+            }
+
+            if (light != null)
+            {
+                light.style.display = DisplayStyle.Flex;
+            }
+
+            LiveOpsConfigDiscovery.Row vRow = item.VariantRow;
+            if (vRow == null || vRow.Builder == null)
+            {
+                if (light != null)
+                {
+                    light.image = null;
+                }
+
+                if (nameLabel != null)
+                {
+                    nameLabel.text = string.Empty;
+                }
+
+                return;
+            }
+
+            RowStatus st = RcSyncService.GetStatus(vRow.Builder);
+            bool dup = vRow.IsDuplicateVariant;
+            if (light != null)
+            {
+                LiveOpsConfigStatusLights.ApplyToImage(light, st, dup);
+            }
+
+            if (nameLabel != null)
+            {
+                nameLabel.unityFontStyleAndWeight = FontStyle.Normal;
+                nameLabel.style.paddingLeft = 12;
+                nameLabel.text = vRow.Builder.ProfileId
+                    + (vRow.Builder.IsDefaultVariant ? "  (default)" : string.Empty);
+                nameLabel.tooltip = LiveOpsConfigStatusLights.StatusTooltip(st, dup) + "\n" + vRow.AssetPath;
+            }
+        }
+
         private float _spinnerAngle;
 
         private void RotateBusySpinner()
@@ -337,7 +576,7 @@ namespace Scaffold.LiveOps.Authoring.Editor.Window
         private void OnEnable()
         {
             SubscribeEnvironmentApi();
-            if (_listView == null)
+            if (_configListView == null)
             {
                 return;
             }
@@ -353,14 +592,18 @@ namespace Scaffold.LiveOps.Authoring.Editor.Window
         internal void RefreshAll()
         {
             _rows = LiveOpsConfigDiscovery.DiscoverAllRows();
-            int dup = _rows.Count(r => r.IsDuplicateConfigKey);
+            _variantListItems = LiveOpsConfigDiscovery.BuildVariantListItems(_rows);
+            _profileRows = ConfigProfileDiscovery.DiscoverAll();
+            int dup = _rows.Count(r => r.IsDuplicateVariant);
             if (_duplicateBanner != null)
             {
                 if (dup > 0)
                 {
-                    int keys = _rows.GroupBy(r => r.Builder.ConfigKey).Count(g => g.Count() > 1);
+                    int keyGroups = _rows
+                        .GroupBy(r => r.Builder.ConfigKey + "\u0001" + r.Builder.ProfileId)
+                        .Count(g => g.Count() > 1);
                     _duplicateBanner.text =
-                        $"{keys} duplicate ConfigKey group(s) ({dup} assets) — fix before Deploy.";
+                        $"{keyGroups} duplicate (ConfigKey, Profile) group(s) ({dup} assets) — fix before Deploy.";
                     _duplicateBanner.style.display = DisplayStyle.Flex;
                 }
                 else
@@ -371,16 +614,41 @@ namespace Scaffold.LiveOps.Authoring.Editor.Window
 
             ApplyEnvironmentLabel();
 
-            if (_listView != null)
+            if (_configListView != null)
             {
-                _listView.itemsSource = _rows;
-                _listView.RefreshItems();
-                if (_rows.Count > 0 && GetSelectedRowIndex() < 0)
+                _configListView.itemsSource = _variantListItems;
+                _configListView.RefreshItems();
+                if (GetSelectedVariantRow() == null && _variantListItems.Count > 0)
                 {
-                    _listView.SetSelectionWithoutNotify(new[] { 0 });
+                    int firstVariant = 0;
+                    for (int i = 0; i < _variantListItems.Count; i++)
+                    {
+                        if (!_variantListItems[i].IsGroup)
+                        {
+                            firstVariant = i;
+                            break;
+                        }
+                    }
+
+                    _configListView.SetSelectionWithoutNotify(new[] { firstVariant });
                 }
 
-                RebindDetail();
+                RebindConfigDetailIfNeeded();
+            }
+
+            if (_profileListView != null)
+            {
+                _profileListView.itemsSource = _profileRows;
+                _profileListView.RefreshItems();
+                if (_profileRows.Count > 0 && _profileListView.selectedIndex < 0)
+                {
+                    _profileListView.SetSelectionWithoutNotify(new[] { 0 });
+                }
+
+                if (_mainTabIndex == MainTabProfiles)
+                {
+                    RebindProfileDetailIfNeeded();
+                }
             }
 
             ApplyToolbarEnabledState();
@@ -388,7 +656,7 @@ namespace Scaffold.LiveOps.Authoring.Editor.Window
 
         private void ApplyToolbarEnabledState()
         {
-            bool hasDup = _rows.Any(r => r.IsDuplicateConfigKey);
+            bool hasDup = _rows.Any(r => r.IsDuplicateVariant);
             if (_toolbar == null)
             {
                 return;
@@ -418,9 +686,14 @@ namespace Scaffold.LiveOps.Authoring.Editor.Window
             }
 
             ApplyToolbarEnabledState();
-            if (_listView != null)
+            if (_configListView != null)
             {
-                _listView.SetEnabled(!busy);
+                _configListView.SetEnabled(!busy);
+            }
+
+            if (_profileListView != null)
+            {
+                _profileListView.SetEnabled(!busy);
             }
 
             _detailView?.SetDeployChromeLocked(busy);
@@ -499,26 +772,37 @@ namespace Scaffold.LiveOps.Authoring.Editor.Window
             }
         }
 
-        private int GetSelectedRowIndex()
+        private int GetConfigListSelectedIndex()
         {
-            if (_listView == null)
-            {
-                return -1;
-            }
-
-            return _listView.selectedIndex;
+            return _configListView != null ? _configListView.selectedIndex : -1;
         }
 
-        private void RebindDetail()
+        private int GetProfileListSelectedIndex()
         {
-            if (_detailView == null)
+            return _profileListView != null ? _profileListView.selectedIndex : -1;
+        }
+
+        private LiveOpsConfigDiscovery.Row GetSelectedVariantRow()
+        {
+            int i = GetConfigListSelectedIndex();
+            if (i < 0 || i >= _variantListItems.Count)
+            {
+                return null;
+            }
+
+            LiveOpsConfigDiscovery.VariantListItem it = _variantListItems[i];
+            return it.IsGroup ? null : it.VariantRow;
+        }
+
+        private void RebindConfigDetailIfNeeded()
+        {
+            if (_mainTabIndex != MainTabConfigs || _detailView == null)
             {
                 return;
             }
 
-            int i = GetSelectedRowIndex();
-            LiveOpsConfigDiscovery.Row row = i >= 0 && i < _rows.Count ? _rows[i] : null;
-            bool actionsOk = row != null && !row.IsDuplicateConfigKey;
+            LiveOpsConfigDiscovery.Row row = GetSelectedVariantRow();
+            bool actionsOk = row != null && !row.IsDuplicateVariant;
             _deployer ??= new RemoteDeployer();
             _detailView.Rebind(row, actionsOk, _deployer, RefreshAll, this);
             if (_isDeployBusy)
@@ -526,43 +810,100 @@ namespace Scaffold.LiveOps.Authoring.Editor.Window
                 _detailView.SetDeployChromeLocked(true);
             }
 
-            SynchronizeListViewStatusLights();
+            SynchronizeConfigListViewStatusLights();
         }
 
-        /// <summary>
-        /// <see cref="ListView"/> can leave recycled rows showing stale data after
-        /// <see cref="ListView.RefreshItems()"/>; per-index <see cref="ListView.RefreshItem(int)"/>
-        /// forces <c>bindItem</c> to run with the current <see cref="RcSyncService.GetStatus"/>,
-        /// so list lights match the detail title.
-        /// </summary>
-        private void SynchronizeListViewStatusLights()
+        private void RebindProfileDetailIfNeeded()
         {
-            RefreshListViewItemBindings();
-
-            if (rootVisualElement != null && rootVisualElement.panel != null)
-            {
-                rootVisualElement.schedule.Execute(RefreshListViewItemBindings).ExecuteLater(0L);
-            }
-        }
-
-        private void RefreshListViewItemBindings()
-        {
-            if (_listView == null || _rows == null)
+            if (_mainTabIndex != MainTabProfiles || _profileDetailHost == null)
             {
                 return;
             }
 
-            for (int j = 0; j < _rows.Count; j++)
+            ClearProfileEditors();
+            _profileDetailHost.Clear();
+            int i = GetProfileListSelectedIndex();
+            if (i < 0 || i >= _profileRows.Count)
             {
-                _listView.RefreshItem(j);
+                if (_profileJexlPreview != null)
+                {
+                    _profileJexlPreview.value = string.Empty;
+                }
+
+                return;
+            }
+
+            ConfigProfileSO prof = _profileRows[i].Profile;
+            if (prof == null)
+            {
+                return;
+            }
+
+            if (_profileJexlPreview != null)
+            {
+                _profileJexlPreview.value = prof.IsDefault
+                    ? "Default profile has no JEXL (Settings only)."
+                    : TargetingJexlEmitter.Emit(prof);
+                _profileDetailHost.Add(_profileJexlPreview);
+            }
+
+            UnityEditor.Editor e = UnityEditor.Editor.CreateEditor(prof);
+            _profileEditors.Add(e);
+            var imgui = new IMGUIContainer(
+                () =>
+                {
+                    if (e != null && e.target != null)
+                    {
+                        e.OnInspectorGUI();
+                    }
+                })
+            {
+                style = { minHeight = 200f, marginTop = 6 },
+            };
+            _profileDetailHost.Add(imgui);
+        }
+
+        private void ClearProfileEditors()
+        {
+            foreach (UnityEditor.Editor ed in _profileEditors)
+            {
+                if (ed != null)
+                {
+                    UnityEngine.Object.DestroyImmediate(ed);
+                }
+            }
+
+            _profileEditors.Clear();
+        }
+
+        private void SynchronizeConfigListViewStatusLights()
+        {
+            RefreshConfigListViewItemBindings();
+
+            if (rootVisualElement != null && rootVisualElement.panel != null)
+            {
+                rootVisualElement.schedule.Execute(RefreshConfigListViewItemBindings).ExecuteLater(0L);
+            }
+        }
+
+        private void RefreshConfigListViewItemBindings()
+        {
+            if (_configListView == null || _variantListItems == null)
+            {
+                return;
+            }
+
+            for (int j = 0; j < _variantListItems.Count; j++)
+            {
+                _configListView.RefreshItem(j);
             }
         }
 
         private void PullAll()
         {
-            if (_rows.Any(r => r.IsDuplicateConfigKey))
+            if (_rows.Any(r => r.IsDuplicateVariant))
             {
-                Debug.LogError("[LiveOps Config] Resolve duplicate ConfigKey assets before Pull All.");
+                Debug.LogError("[LiveOps Config] Resolve duplicate (ConfigKey, Profile) before Pull All.");
                 return;
             }
 
@@ -584,47 +925,85 @@ namespace Scaffold.LiveOps.Authoring.Editor.Window
 
         private async Task DeploySelectedAsync()
         {
-            int i = GetSelectedRowIndex();
-            if (i < 0 || i >= _rows.Count)
+            if (_mainTabIndex == MainTabConfigs)
             {
-                Debug.LogWarning("[LiveOps Config] Select a row to deploy.");
-                return;
-            }
-
-            LiveOpsConfigDiscovery.Row row = _rows[i];
-            if (row.IsDuplicateConfigKey)
-            {
-                Debug.LogError("[LiveOps Config] Cannot deploy a duplicate ConfigKey row.");
-                return;
-            }
-
-            string path = RcSyncService.GetRcPath(row.Builder);
-            await RunDeployWorkflowAsync(
-                () =>
+                LiveOpsConfigDiscovery.Row row = GetSelectedVariantRow();
+                if (row == null)
                 {
-                    AssetDatabase.SaveAssets();
-                    RcSyncService.Sync(row.Builder);
-                },
-                new[] { path });
+                    Debug.LogWarning("[LiveOps Config] Select a variant row (not a group header) to deploy.");
+                    return;
+                }
+
+                if (row.IsDuplicateVariant)
+                {
+                    Debug.LogError("[LiveOps Config] Cannot deploy a duplicate variant row.");
+                    return;
+                }
+
+                IReadOnlyList<string> paths = RcSyncService.CollectDeployPathsForVariant(row.Builder);
+                await RunDeployWorkflowAsync(
+                    () =>
+                    {
+                        AssetDatabase.SaveAssets();
+                        RcSyncService.SyncForBuilder(row.Builder);
+                    },
+                    paths);
+            }
+            else
+            {
+                int pi = GetProfileListSelectedIndex();
+                if (pi < 0 || pi >= _profileRows.Count)
+                {
+                    Debug.LogWarning("[LiveOps Config] Select a profile to deploy.");
+                    return;
+                }
+
+                ConfigProfileSO p = _profileRows[pi].Profile;
+                if (p == null)
+                {
+                    return;
+                }
+
+                IReadOnlyList<string> paths = RcSyncService.CollectDeployPathsForProfile(
+                    p,
+                    out bool skipProfileOnly);
+                if (skipProfileOnly)
+                {
+                    Debug.Log(
+                        "[LiveOps Config] This profile is default Settings only — use Variant deploy from the Configs tab, or Deploy All.");
+                    return;
+                }
+
+                if (paths.Count == 0)
+                {
+                    Debug.LogWarning("[LiveOps Config] No .gor file for this profile (no non-default variants reference it).");
+                    return;
+                }
+
+                await RunDeployWorkflowAsync(
+                    () =>
+                    {
+                        AssetDatabase.SaveAssets();
+                        RcSyncService.SyncProfileOverride(p, LiveOpsConfigDiscovery.DiscoverAllRows());
+                    },
+                    paths);
+            }
         }
 
         private async Task DeployAllAsync()
         {
-            if (_rows.Any(r => r.IsDuplicateConfigKey))
+            if (_rows.Any(r => r.IsDuplicateVariant))
             {
-                Debug.LogError("[LiveOps Config] Resolve duplicate ConfigKey assets before Deploy All.");
+                Debug.LogError("[LiveOps Config] Resolve duplicate (ConfigKey, Profile) before Deploy All.");
                 return;
             }
 
-            List<string> paths = _rows.Select(r => RcSyncService.GetRcPath(r.Builder)).ToList();
+            IReadOnlyList<string> paths = RcSyncService.CollectAllDeployPaths(LiveOpsConfigDiscovery.DiscoverAllRows());
             await RunDeployWorkflowAsync(
                 () =>
                 {
                     AssetDatabase.SaveAssets();
-                    foreach (LiveOpsConfigDiscovery.Row r in _rows)
-                    {
-                        RcSyncService.Sync(r.Builder);
-                    }
+                    RcSyncService.SyncAll(_rows);
                 },
                 paths);
         }
@@ -643,7 +1022,6 @@ namespace Scaffold.LiveOps.Authoring.Editor.Window
             }
             catch
             {
-                // Services may not be initialized yet (e.g. first frame).
             }
         }
 
@@ -756,6 +1134,11 @@ namespace Scaffold.LiveOps.Authoring.Editor.Window
             }
 
             return ($"Environment: {displayName}", defaultTip);
+        }
+
+        private void OnDestroy()
+        {
+            ClearProfileEditors();
         }
     }
 }
