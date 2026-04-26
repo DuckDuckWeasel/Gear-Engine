@@ -10,10 +10,9 @@ namespace GearEngine.App.Bootstrap.Editor
     /// <summary>Default <see cref="AssetPublisherDefinition"/> rows: label-driven <see cref="TrackDefinition"/> (liveops.tracks) + single-address <see cref="GearEngine.GearEngine.Config.GearCatalogSO"/>.</summary>
     public static class LayerPublishersBuildUtility
     {
-        public const string DefaultProfileAssetPath = "Assets/GearEngine/Data/Bootstrap/LayerPublishers_Campaign.asset";
         public const string CampaignGearAddressableGuid = "f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2";
         public const string TracksAddressableLabel = "liveops.tracks";
-        public const string PlayerPrefScenesLinked = "GearEngine.LayerProfileLinkedToScenesV1";
+        public const string PlayerPrefInlineSeeded = "GearEngine.LayerInlinePublishersSeededV2";
 
         public static List<AssetPublisherDefinition> CreateDefaultCampaignDefinitions()
         {

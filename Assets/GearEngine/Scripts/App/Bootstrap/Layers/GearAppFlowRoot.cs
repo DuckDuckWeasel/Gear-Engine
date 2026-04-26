@@ -9,7 +9,7 @@ using UnityEngine;
 
 namespace GearEngine.App.Bootstrap
 {
-    public abstract class GearAppFlowRoot : AppFlowRoot, IAssetPublisherDefinitionHost
+    public abstract class GearAppFlowRoot : AppFlowRoot
     {
         [Header("Navigation")]
         [SerializeField]
@@ -24,30 +24,9 @@ namespace GearEngine.App.Bootstrap
         private CarDefinition defaultRaceCar;
 
         [Header("Layer asset publishers")]
-        [Tooltip("Optional: shared profile (tracks + gear catalogs). When set, inline rows below are ignored for registration and for Rebake All.")]
-        [SerializeField]
-        private LayerBootstrapPublishersProfile layerPublishersProfile;
-
-        [Tooltip("Edit-time baked asset publishers (direct or Addressables). Used when no profile is assigned. Campaign: assign track/gear. Meta: same as campaign when probing client data.")]
+        [Tooltip("Edit-time baked asset publishers (direct or Addressables). Campaign: track/gear (and related). Meta: same defaults as campaign when probing client data.")]
         [SerializeField]
         private List<AssetPublisherDefinition> layerAssetPublishers = new List<AssetPublisherDefinition>();
-
-        IReadOnlyList<AssetPublisherDefinition> IAssetPublisherDefinitionHost.AssetPublisherDefinitions =>
-            GetEffectiveLayerAssetPublishers();
-
-        private IReadOnlyList<AssetPublisherDefinition> GetEffectiveLayerAssetPublishers()
-        {
-            if (layerPublishersProfile != null)
-            {
-                IReadOnlyList<AssetPublisherDefinition> from = layerPublishersProfile.AssetPublisherDefinitions;
-                if (from != null && from.Count > 0)
-                {
-                    return from;
-                }
-            }
-
-            return layerAssetPublishers;
-        }
 
         protected sealed override IInLayerScheduler CreateScheduler()
         {
@@ -56,7 +35,7 @@ namespace GearEngine.App.Bootstrap
 
         protected sealed override IEnumerable<IScopeLayer> GetInitialLayers()
         {
-            yield return new FoundationLayer(navigationSettings, navigationViewHolder, GetEffectiveLayerAssetPublishers(), defaultRaceCar);
+            yield return new FoundationLayer(navigationSettings, navigationViewHolder, layerAssetPublishers, defaultRaceCar);
             foreach (IScopeLayer layer in GetGameLayers())
             {
                 yield return layer;

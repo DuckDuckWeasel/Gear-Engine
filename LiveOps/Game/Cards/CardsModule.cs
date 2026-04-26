@@ -4,6 +4,7 @@ using LiveOps.GameApi;
 using LiveOps.GameModule;
 using LiveOps.ModuleFetchData;
 using LiveOps.DTO.GameModule;
+using LiveOps.DTO.Keys;
 using LiveOps.Modules.DTO.Cards;
 using Unity.Services.CloudCode.Core;
 
@@ -11,8 +12,8 @@ namespace LiveOps.Modules.Cards
 {
     public class CardsModule : GameModule<CardGameData>
     {
-        public const string PersistenceKey = nameof(CardPersistence);
-        public const string ConfigKey = nameof(CardConfig);
+        public static readonly string PersistenceKey = KeyOf<CardPersistence>.Module;
+        public static readonly string ConfigKey = KeyOf<CardConfig>.Module;
 
         public CardsModule()
         {

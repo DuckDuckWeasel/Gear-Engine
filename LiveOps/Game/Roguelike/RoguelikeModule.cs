@@ -4,6 +4,7 @@ using LiveOps.GameApi;
 using LiveOps.GameModule;
 using LiveOps.ModuleFetchData;
 using LiveOps.DTO.GameModule;
+using LiveOps.DTO.Keys;
 using LiveOps.Modules.DTO.Roguelike;
 using Unity.Services.CloudCode.Core;
 
@@ -11,8 +12,8 @@ namespace LiveOps.Modules.Roguelike
 {
     public class RoguelikeModule : GameModule<RoguelikeGameData>
     {
-        public const string PersistenceKey = nameof(RoguelikePersistence);
-        public const string ConfigKey = nameof(RoguelikeConfig);
+        public static readonly string PersistenceKey = KeyOf<RoguelikePersistence>.Module;
+        public static readonly string ConfigKey = KeyOf<RoguelikeConfig>.Module;
 
         public RoguelikeModule()
         {

@@ -1449,7 +1449,6 @@ MonoBehaviour:
   navigationSettings: {fileID: 11400000, guid: 137da207fe7ec1345a5d209afdac17bd, type: 2}
   navigationViewHolder: {fileID: 500010001}
   defaultRaceCar: {fileID: 11400000, guid: b4e1eaf4e8dd58b418b4e6efc603f72e, type: 2}
-  layerPublishersProfile: {fileID: 0}
   layerAssetPublishers:
   - source:
       rid: 4306785432327684280

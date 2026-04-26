@@ -7,8 +7,6 @@
     <RootNamespace>LiveOps</RootNamespace>
     <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
     <CompilerGeneratedFilesOutputPath>$(BaseIntermediateOutputPath)Generated</CompilerGeneratedFilesOutputPath>
-    <LiveOpsRoot>$(MSBuildThisFileDirectory)..\..\</LiveOpsRoot>
-    <RepositoryRoot>$(MSBuildThisFileDirectory)..\..\..\</RepositoryRoot>
   </PropertyGroup>
 
   <ItemGroup>
@@ -24,7 +22,6 @@
     <ProjectReference Include="..\Core\LiveOps.Core\LiveOps.Core.csproj" />
   </ItemGroup>
 
-  <Import Project="$(LiveOpsRoot)Deploy\Build\Scaffold.LiveOps.Common.props" />
   <Import Project="$(LiveOpsRoot)Deploy\Build\Scaffold.LiveOps.Deploy.targets" />
   <Import Project="$(LiveOpsRoot)Deploy\Build\Scaffold.LiveOps.TemplateSync.targets" />
 

@@ -6,6 +6,7 @@ using LiveOps.GameApi;
 using LiveOps.GameModule;
 using LiveOps.ModuleFetchData;
 using LiveOps.DTO.GameModule;
+using LiveOps.DTO.Keys;
 using LiveOps.Modules.DTO.Inventory;
 using Unity.Services.CloudCode.Core;
 
@@ -13,8 +14,8 @@ namespace LiveOps.Modules.Inventory
 {
     public class InventoryModule : GameModule<InventoryGameData>
     {
-        public const string PersistenceKey = nameof(InventoryPersistence);
-        public const string ConfigKey = nameof(InventoryConfig);
+        public static readonly string PersistenceKey = KeyOf<InventoryPersistence>.Module;
+        public static readonly string ConfigKey = KeyOf<InventoryConfig>.Module;
 
         public InventoryModule()
         {

@@ -5,6 +5,7 @@ using LiveOps.GameApi;
 using LiveOps.GameModule;
 using LiveOps.ModuleFetchData;
 using LiveOps.DTO.GameModule;
+using LiveOps.DTO.Keys;
 using LiveOps.Modules.DTO.Currency;
 using Microsoft.Extensions.Logging;
 using Unity.Services.CloudCode.Core;
@@ -13,8 +14,8 @@ namespace LiveOps.Modules.Currency
 {
     public class CurrencyModule : GameModule<CurrencyGameData>
     {
-        private const string PersistenceKey = nameof(CurrencyPersistence);
-        private const string ConfigKey = nameof(CurrencyConfig);
+        private static readonly string PersistenceKey = KeyOf<CurrencyPersistence>.Module;
+        private static readonly string ConfigKey = KeyOf<CurrencyConfig>.Module;
 
         private readonly ILogger<CurrencyModule> _logger;
 

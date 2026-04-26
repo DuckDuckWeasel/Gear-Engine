@@ -670,6 +670,13 @@ namespace Scaffold.LiveOps.Bootstrap.Generators
                 return false;
             }
 
+            // Game feature assemblies use AssemblyName Game.LiveOps.* (see LiveOps/Game/**/*.csproj).
+            // They must be scanned so IGameModule implementations appear in LiveOpsManifest and register in DI.
+            if (n.StartsWith("Game.LiveOps.", StringComparison.Ordinal))
+            {
+                return true;
+            }
+
             if (!n.StartsWith("LiveOps", StringComparison.Ordinal))
             {
                 return false;

@@ -4,6 +4,7 @@ using LiveOps.GameApi;
 using LiveOps.GameModule;
 using LiveOps.ModuleFetchData;
 using LiveOps.DTO.GameModule;
+using LiveOps.DTO.Keys;
 using LiveOps.Modules.DTO.Loadout;
 using Unity.Services.CloudCode.Core;
 
@@ -11,8 +12,8 @@ namespace LiveOps.Modules.Loadout
 {
     public class LoadoutModule : GameModule<LoadoutGameData>
     {
-        public const string PersistenceKey = nameof(LoadoutPersistence);
-        public const string ConfigKey = nameof(LoadoutConfig);
+        public static readonly string PersistenceKey = KeyOf<LoadoutPersistence>.Module;
+        public static readonly string ConfigKey = KeyOf<LoadoutConfig>.Module;
 
         public LoadoutModule()
         {

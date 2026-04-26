@@ -1,5 +1,4 @@
 using System;
-using System.IO;
 using System.Linq;
 using UnityEditor;
 using UnityEditor.SceneManagement;
@@ -8,7 +7,7 @@ using UnityEngine.SceneManagement;
 
 namespace GearEngine.App.Bootstrap.Editor
 {
-    /// <summary>Creates/updates the default layer publishers profile and links it to campaign/meta bootstrap roots in build settings.</summary>
+    /// <summary>Fills empty inline layer publisher lists on bootstrap roots in build settings scenes.</summary>
     public static class LayerPublishersProjectSetup
     {
         private const int DelayCallBudget = 6;
@@ -22,8 +21,9 @@ namespace GearEngine.App.Bootstrap.Editor
         [MenuItem("GearEngine/Bootstrap/Create or Update Layer Publishers & Assign to Scenes", priority = 0)]
         public static void CreateUpdateAndAssignFromMenu()
         {
-            CreateOrUpdateProfileAsset(overwriteDefinitions: true);
-            AssignProfileToOpenBuildScenes(force: true);
+            FillEmptyInlinePublishersInBuildScenes();
+            PlayerPrefs.SetInt(LayerPublishersBuildUtility.PlayerPrefInlineSeeded, 1);
+            PlayerPrefs.Save();
         }
 
         private static int _delayCount;
@@ -41,70 +41,18 @@ namespace GearEngine.App.Bootstrap.Editor
             }
 
             _delayCount = 0;
-            bool hasProfile = File.Exists(LayerPublishersBuildUtility.DefaultProfileAssetPath) &&
-                AssetDatabase.LoadAssetAtPath<LayerBootstrapPublishersProfile>(LayerPublishersBuildUtility.DefaultProfileAssetPath) != null;
-            if (!hasProfile)
+            if (PlayerPrefs.GetInt(LayerPublishersBuildUtility.PlayerPrefInlineSeeded, 0) != 0)
             {
-                CreateOrUpdateProfileAsset(overwriteDefinitions: true);
-            }
-            else
-            {
-                var p = AssetDatabase.LoadAssetAtPath<LayerBootstrapPublishersProfile>(LayerPublishersBuildUtility.DefaultProfileAssetPath);
-                if (p != null && (p.AssetPublisherDefinitions == null || p.AssetPublisherDefinitions.Count == 0))
-                {
-                    CreateOrUpdateProfileAsset(overwriteDefinitions: true);
-                }
+                return;
             }
 
-            if (PlayerPrefs.GetInt(LayerPublishersBuildUtility.PlayerPrefScenesLinked, 0) == 0)
-            {
-                AssignProfileToOpenBuildScenes(force: false);
-            }
+            FillEmptyInlinePublishersInBuildScenes();
+            PlayerPrefs.SetInt(LayerPublishersBuildUtility.PlayerPrefInlineSeeded, 1);
+            PlayerPrefs.Save();
         }
 
-        private static void CreateOrUpdateProfileAsset(bool overwriteDefinitions)
+        private static void FillEmptyInlinePublishersInBuildScenes()
         {
-            string dir = Path.GetDirectoryName(LayerPublishersBuildUtility.DefaultProfileAssetPath);
-            if (dir == null)
-            {
-                return;
-            }
-
-            if (!Directory.Exists(dir))
-            {
-                Directory.CreateDirectory(dir);
-            }
-
-            var profile = AssetDatabase.LoadAssetAtPath<LayerBootstrapPublishersProfile>(LayerPublishersBuildUtility.DefaultProfileAssetPath);
-            if (profile == null)
-            {
-                profile = ScriptableObject.CreateInstance<LayerBootstrapPublishersProfile>();
-                AssetDatabase.CreateAsset(profile, LayerPublishersBuildUtility.DefaultProfileAssetPath);
-            }
-
-            if (overwriteDefinitions || profile.AssetPublisherDefinitions == null || profile.AssetPublisherDefinitions.Count == 0)
-            {
-                profile.ReplaceDefinitionsForEditor(LayerPublishersBuildUtility.CreateDefaultCampaignDefinitions());
-                EditorUtility.SetDirty(profile);
-            }
-
-            AssetDatabase.SaveAssetIfDirty(profile);
-            AssetDatabase.Refresh();
-        }
-
-        private static void AssignProfileToOpenBuildScenes(bool force)
-        {
-            LayerBootstrapPublishersProfile prof = AssetDatabase.LoadAssetAtPath<LayerBootstrapPublishersProfile>(LayerPublishersBuildUtility.DefaultProfileAssetPath);
-            if (prof == null)
-            {
-                return;
-            }
-
-            if (!force && PlayerPrefs.GetInt(LayerPublishersBuildUtility.PlayerPrefScenesLinked, 0) != 0)
-            {
-                return;
-            }
-
             var scenes = EditorBuildSettings.scenes.Where(s => s.enabled).ToArray();
             if (scenes.Length == 0)
             {
@@ -132,14 +80,11 @@ namespace GearEngine.App.Bootstrap.Editor
                 for (int r = 0; r < roots.Length; r++)
                 {
                     SerializedObject so = new SerializedObject(roots[r]);
-                    SerializedProperty prop = so.FindProperty("layerPublishersProfile");
-                    if (prop == null)
+                    SerializedProperty listProp = so.FindProperty("layerAssetPublishers");
+                    if (listProp == null || listProp.arraySize > 0)
                     {
                         continue;
                     }
-
-                    prop.objectReferenceValue = prof;
-                    so.ApplyModifiedPropertiesWithoutUndo();
                     EditorUtility.SetDirty(roots[r]);
                 }
 
@@ -153,9 +98,6 @@ namespace GearEngine.App.Bootstrap.Editor
             {
                 EditorSceneManager.OpenScene(startPath, OpenSceneMode.Single);
             }
-
-            PlayerPrefs.SetInt(LayerPublishersBuildUtility.PlayerPrefScenesLinked, 1);
-            PlayerPrefs.Save();
         }
     }
 }

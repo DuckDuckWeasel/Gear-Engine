@@ -62,6 +62,7 @@ namespace LiveOps.DTO.Json
                 name.StartsWith("LiveOps.", StringComparison.Ordinal) ||
                 name.StartsWith("LiveOps.Modules.", StringComparison.Ordinal) ||
                 name.StartsWith("LiveOps.Modules", StringComparison.Ordinal) ||
+                name.StartsWith("Game.LiveOps.", StringComparison.Ordinal) ||
                 name.StartsWith("Unity.", StringComparison.Ordinal))
             {
                 return true;
