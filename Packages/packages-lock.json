@@ -76,7 +76,7 @@
         "com.scaffold.cloudcode": "0.1.0",
         "com.scaffold.appflow": "0.1.0"
       },
-      "hash": "bfbace5b1c20a7d704462fc87848a123e4ea9343"
+      "hash": "9f2d6ad523412369203e12c6732410f5e3b68712"
     },
     "com.scaffold.maps": {
       "version": "https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.maps#main",
