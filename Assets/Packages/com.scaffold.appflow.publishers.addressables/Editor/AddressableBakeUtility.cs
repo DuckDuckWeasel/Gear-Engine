@@ -10,6 +10,27 @@ namespace Scaffold.AppFlow.Publishers.Addressables.Editor
     /// <summary>Edit-time address resolution and validation. Mirrors the former AddressableScriptableObjectPublisherSORebaker.</summary>
     public static class AddressableBakeUtility
     {
+        private static readonly IReadOnlyList<Type> EmptyTypeList = Array.Empty<Type>();
+
+        private static readonly Dictionary<string, IReadOnlyList<Type>> LabelEntryTypesCache = new Dictionary<string, IReadOnlyList<Type>>(StringComparer.Ordinal);
+
+        /// <summary>Incremented each time <see cref="CollectLabelEntryTypes"/> runs a full scan (not a cache hit). For tests only.</summary>
+        internal static int CollectLabelEntryTypesScanCount;
+
+        /// <summary>Incremented each time <see cref="ValidateLabelEntries"/> runs a full pass (not skipped by early exit). For tests only.</summary>
+        internal static int ValidateLabelEntriesPassCount;
+
+        private static readonly Dictionary<string, Type> LastValidatedLabelType = new Dictionary<string, Type>(StringComparer.Ordinal);
+
+        /// <summary>Clears caches of label entry types and validation; call when addressable groups change or after domain reload.</summary>
+        internal static void InvalidateCache()
+        {
+            LabelEntryTypesCache.Clear();
+            LastValidatedLabelType.Clear();
+            CollectLabelEntryTypesScanCount = 0;
+            ValidateLabelEntriesPassCount = 0;
+        }
+
         public static (string key, Type type)? ResolveSingle(AssetReference assetReference)
         {
             if (assetReference == null || string.IsNullOrEmpty(assetReference.AssetGUID))
@@ -111,12 +132,18 @@ namespace Scaffold.AppFlow.Publishers.Addressables.Editor
         /// <summary>Distinct concrete asset types tagged with <paramref name="labelString"/> across all Addressable groups.</summary>
         public static IReadOnlyList<Type> CollectLabelEntryTypes(string labelString)
         {
-            var seen = new HashSet<Type>();
-            var ordered = new List<Type>();
             if (string.IsNullOrEmpty(labelString))
             {
-                return ordered;
+                return EmptyTypeList;
             }
+
+            if (LabelEntryTypesCache.TryGetValue(labelString, out IReadOnlyList<Type> cached))
+            {
+                return cached;
+            }
+
+            var seen = new HashSet<Type>();
+            var ordered = new List<Type>();
 
             foreach (string groupGuid in AssetDatabase.FindAssets("t:AddressableAssetGroup"))
             {
@@ -168,6 +195,8 @@ namespace Scaffold.AppFlow.Publishers.Addressables.Editor
                 }
             }
 
+            CollectLabelEntryTypesScanCount++;
+            LabelEntryTypesCache[labelString] = ordered;
             return ordered;
         }
 
@@ -178,6 +207,12 @@ namespace Scaffold.AppFlow.Publishers.Addressables.Editor
                 return;
             }
 
+            if (LastValidatedLabelType.TryGetValue(label, out Type prev) && prev == expectedType)
+            {
+                return;
+            }
+
+            ValidateLabelEntriesPassCount++;
             foreach (string groupGuid in AssetDatabase.FindAssets("t:AddressableAssetGroup"))
             {
                 string path = AssetDatabase.GUIDToAssetPath(groupGuid);
@@ -228,6 +263,8 @@ namespace Scaffold.AppFlow.Publishers.Addressables.Editor
                     }
                 }
             }
+
+            LastValidatedLabelType[label] = expectedType;
         }
 
         private static string GetEntryGuid(SerializedProperty el)

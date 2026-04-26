@@ -1,0 +1,30 @@
+{
+    "name": "Scaffold.AppFlow.Publishers.Addressables.Tests",
+    "rootNamespace": "Scaffold.AppFlow.Publishers.Addressables.Tests.Editor",
+    "references": [
+        "Scaffold.AppFlow.Publishers",
+        "Scaffold.AppFlow.Publishers.Addressables",
+        "Scaffold.AppFlow.Publishers.Editor",
+        "Scaffold.AppFlow",
+        "Scaffold.Addressables",
+        "Unity.Addressables",
+        "VContainer",
+        "UnityEngine.TestRunner",
+        "UnityEditor.TestRunner"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "nunit.framework.dll"
+    ],
+    "autoReferenced": false,
+    "defineConstraints": [
+        "UNITY_INCLUDE_TESTS"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

@@ -32,6 +32,47 @@ namespace Scaffold.AppFlow.Publishers.Editor
         /// <summary>Do not use <see cref="EditorGUIUtility.labelWidth"/> for the list row: it is often 40–50% of the inspector, while "Element 0" only needs a few pixels — the rest was dead space.</summary>
         private const float MaxPrefixLabelColumnPx = 160f;
 
+        private static Type[] s_SourceTypes;
+        private static string[] s_PopupTypeNames;
+        private static int s_SourceTypeCacheRebuilds;
+
+        /// <summary>Number of times the static source-type list was built. Exposed for tests.</summary>
+        internal static int SourceTypeCacheRebuilds => s_SourceTypeCacheRebuilds;
+
+        private static readonly Dictionary<int, (UnityEngine.Object target, string defPath)> s_PendingRebake = new();
+
+        private static bool s_PendingRebakeRegistered;
+
+        private static readonly GUIContent s_StatusLightTooltip = new();
+
+        private static string s_LastStatusTooltip = string.Empty;
+
+        /// <summary>Full serialized property paths for <c>source</c> child fields, keyed to avoid re-walking the tree. Values are <see cref="string"/>-only so they stay valid after layout.</summary>
+        private static readonly Dictionary<string, List<string>> s_ChildPropertyPaths = new();
+
+        [InitializeOnLoadMethod]
+        private static void OnEditorLoad()
+        {
+            AssemblyReloadEvents.afterAssemblyReload += ClearSourceTypeCache;
+        }
+
+        private static void ClearSourceTypeCache()
+        {
+            s_SourceTypes = null;
+            s_PopupTypeNames = null;
+            s_ChildPropertyPaths.Clear();
+        }
+
+        /// <summary>Clears the static type cache. For tests; domain reload also clears via <see cref="AssemblyReloadEvents.afterAssemblyReload"/>.</summary>
+        internal static void ResetSourceTypeCacheForTests()
+        {
+            s_SourceTypeCacheRebuilds = 0;
+            ClearSourceTypeCache();
+        }
+
+        /// <summary>Populates the static type popup cache if needed. Exposed for tests.</summary>
+        internal static void EnsureSourceTypeCacheForTests() => EnsureSourceTypeCache();
+
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
             float line = EditorGUIUtility.singleLineHeight;
@@ -49,18 +90,21 @@ namespace Scaffold.AppFlow.Publishers.Editor
             SerializedProperty sourceProp = property.FindPropertyRelative("source");
             SerializedProperty bakedProp = property.FindPropertyRelative("bakedRegistrar");
 
-            Type[] types = GetSourceTypes();
-            var names = new string[types.Length + 1];
-            names[0] = "None";
-            for (int i = 0; i < types.Length; i++)
+            EnsureSourceTypeCache();
+            Type[] types = s_SourceTypes;
+            string[] names = s_PopupTypeNames;
+            if (sourceProp == null)
             {
-                names[i + 1] = types[i].Name;
+                EditorGUI.indentLevel = oldIndent;
+                EditorGUI.EndProperty();
+                return;
             }
 
             int current = 0;
-            if (sourceProp.managedReferenceValue != null)
+            object sourceValue = sourceProp.managedReferenceValue;
+            if (sourceValue != null)
             {
-                Type vt = sourceProp.managedReferenceValue.GetType();
+                Type vt = sourceValue.GetType();
                 for (int i = 0; i < types.Length; i++)
                 {
                     if (types[i] == vt)
@@ -92,10 +136,13 @@ namespace Scaffold.AppFlow.Publishers.Editor
 
             var firstRowFields = new Rect(fieldsLeft, rowY, fieldsW, line);
 
+            int oldPopup = current;
             EditorGUI.BeginChangeCheck();
             int next = EditorGUI.Popup(popupR, current, names);
-            if (next != current)
+            bool typeChanged = false;
+            if (EditorGUI.EndChangeCheck() && next != oldPopup)
             {
+                s_ChildPropertyPaths.Remove(MakeChildPathsCacheKey(property, sourceProp));
                 if (next == 0)
                 {
                     sourceProp.managedReferenceValue = null;
@@ -104,37 +151,124 @@ namespace Scaffold.AppFlow.Publishers.Editor
                 {
                     sourceProp.managedReferenceValue = Activator.CreateInstance(types[next - 1]);
                 }
+
+                typeChanged = true;
+                property.serializedObject.ApplyModifiedProperties();
+                sourceProp = property.FindPropertyRelative("source");
+                bakedProp = property.FindPropertyRelative("bakedRegistrar");
+            }
+            if (typeChanged)
+            {
+                RunBakeFromProps(sourceProp, bakedProp, property);
+                sourceProp = property.FindPropertyRelative("source");
+                bakedProp = property.FindPropertyRelative("bakedRegistrar");
             }
 
             if (sourceProp.managedReferenceValue != null)
             {
                 using (new LabelWidthScope(0f))
                 {
+                    EditorGUI.BeginChangeCheck();
                     DrawSourceFields(
                         position,
                         labelW,
                         line,
                         vspace,
                         firstRowFields,
-                        sourceProp);
+                        sourceProp,
+                        property);
+                    if (EditorGUI.EndChangeCheck())
+                    {
+                        property.serializedObject.ApplyModifiedProperties();
+                        sourceProp = property.FindPropertyRelative("source");
+                        bakedProp = property.FindPropertyRelative("bakedRegistrar");
+                        ScheduleDeferredRebake(property.serializedObject, property.propertyPath);
+                    }
                 }
             }
 
-            if (EditorGUI.EndChangeCheck())
-            {
-                property.serializedObject.ApplyModifiedProperties();
-                sourceProp = property.FindPropertyRelative("source");
-                bakedProp = property.FindPropertyRelative("bakedRegistrar");
-                RunBakeFromProps(sourceProp, bakedProp, property);
-                sourceProp = property.FindPropertyRelative("source");
-                bakedProp = property.FindPropertyRelative("bakedRegistrar");
-            }
-
-            DrawStatusLightIcon(lightSlot, sourceProp, bakedProp);
+            sourceValue = sourceProp.managedReferenceValue;
+            DrawStatusLightIcon(lightSlot, sourceValue, sourceProp, bakedProp);
 
             EditorGUI.indentLevel = oldIndent;
             EditorGUI.EndProperty();
         }
+
+        private static void ScheduleDeferredRebake(SerializedObject serializedObject, string definitionPropertyPath)
+        {
+            if (serializedObject == null)
+            {
+                return;
+            }
+
+            int id = GetDefinitionRebakeKey(serializedObject.targetObject, definitionPropertyPath);
+            s_PendingRebake[id] = (serializedObject.targetObject, definitionPropertyPath);
+            if (s_PendingRebakeRegistered)
+            {
+                return;
+            }
+
+            s_PendingRebakeRegistered = true;
+            EditorApplication.delayCall += RunPendingRebakes;
+        }
+
+        private static int GetDefinitionRebakeKey(UnityEngine.Object target, string definitionPropertyPath)
+        {
+            if (string.IsNullOrEmpty(definitionPropertyPath))
+            {
+                return 0;
+            }
+
+            int targetId = target != null ? target.GetInstanceID() : 0;
+            return (targetId * 397) ^ (definitionPropertyPath.GetHashCode(StringComparison.Ordinal) * 397);
+        }
+
+        private static void RunPendingRebakes()
+        {
+            s_PendingRebakeRegistered = false;
+            if (s_PendingRebake.Count == 0)
+            {
+                return;
+            }
+
+            var work = new List<(UnityEngine.Object target, string defPath)>(s_PendingRebake.Values);
+            s_PendingRebake.Clear();
+            DeferredRebakeWorkItemCount = work.Count;
+            for (int i = 0; i < work.Count; i++)
+            {
+                (UnityEngine.Object target, string defPath) = work[i];
+                if (target == null)
+                {
+                    continue;
+                }
+
+                var so = new SerializedObject(target);
+                SerializedProperty def = so.FindProperty(defPath);
+                if (def == null)
+                {
+                    continue;
+                }
+
+                SerializedProperty s = def.FindPropertyRelative("source");
+                SerializedProperty b = def.FindPropertyRelative("bakedRegistrar");
+                if (s == null || b == null)
+                {
+                    continue;
+                }
+
+                RunBakeFromProps(s, b, def);
+            }
+        }
+
+        /// <summary>Work items processed in the last <see cref="RunPendingRebakes"/> call. Exposed for tests.</summary>
+        internal static int DeferredRebakeWorkItemCount { get; private set; }
+
+        /// <summary>Enqueues a deferred rebake (same path as an inner-field change). Exposed for tests.</summary>
+        internal static void EnqueueDeferredRebakeForTests(SerializedObject serializedObject, string definitionPropertyPath) =>
+            ScheduleDeferredRebake(serializedObject, definitionPropertyPath);
+
+        /// <summary>Runs the pending-rebake queue without waiting for <c>EditorApplication.delayCall</c>. Exposed for tests.</summary>
+        internal static void FlushPendingRebakesForTests() => RunPendingRebakes();
 
         private readonly struct LabelWidthScope : IDisposable
         {
@@ -149,9 +283,9 @@ namespace Scaffold.AppFlow.Publishers.Editor
             public void Dispose() => EditorGUIUtility.labelWidth = _previous;
         }
 
-        private static void DrawStatusLightIcon(Rect r, SerializedProperty sourceProp, SerializedProperty bakedProp)
+        private static void DrawStatusLightIcon(Rect r, object sourceValue, SerializedProperty sourceProp, SerializedProperty bakedProp)
         {
-            string iconId = StatusIconId(sourceProp, bakedProp);
+            string iconId = StatusIconId(sourceValue, sourceProp, bakedProp);
             GUIContent g = EditorGUIUtility.IconContent(iconId);
             if (g == null || g.image == null)
             {
@@ -164,17 +298,25 @@ namespace Scaffold.AppFlow.Publishers.Editor
                 LightSize,
                 LightSize);
             GUI.DrawTexture(textureRect, g.image, ScaleMode.ScaleToFit);
-            GUI.Label(r, new GUIContent(string.Empty, StatusTooltip(sourceProp, bakedProp)));
+            string tip = StatusTooltip(sourceValue, sourceProp, bakedProp);
+            if (s_LastStatusTooltip != tip)
+            {
+                s_StatusLightTooltip.text = string.Empty;
+                s_StatusLightTooltip.tooltip = tip;
+                s_LastStatusTooltip = tip;
+            }
+
+            GUI.Label(r, s_StatusLightTooltip);
         }
 
-        private static string StatusIconId(SerializedProperty sourceProp, SerializedProperty bakedProp)
+        private static string StatusIconId(object sourceValue, SerializedProperty sourceProp, SerializedProperty bakedProp)
         {
             if (sourceProp == null)
             {
                 return IconNeutral;
             }
 
-            if (sourceProp.managedReferenceValue is IAssetPublisherSource s)
+            if (sourceValue is IAssetPublisherSource s)
             {
                 if (s.IsConfigured)
                 {
@@ -184,7 +326,7 @@ namespace Scaffold.AppFlow.Publishers.Editor
                 return IconMissing;
             }
 
-            if (sourceProp.managedReferenceValue == null)
+            if (sourceValue == null)
             {
                 return IconNeutral;
             }
@@ -192,14 +334,14 @@ namespace Scaffold.AppFlow.Publishers.Editor
             return IconMissing;
         }
 
-        private static string StatusTooltip(SerializedProperty sourceProp, SerializedProperty bakedProp)
+        private static string StatusTooltip(object sourceValue, SerializedProperty sourceProp, SerializedProperty bakedProp)
         {
             if (sourceProp == null)
             {
                 return string.Empty;
             }
 
-            if (sourceProp.managedReferenceValue is IAssetPublisherSource s)
+            if (sourceValue is IAssetPublisherSource s)
             {
                 if (s.IsConfigured)
                 {
@@ -209,7 +351,7 @@ namespace Scaffold.AppFlow.Publishers.Editor
                 return "Source incomplete (cannot bake)";
             }
 
-            if (sourceProp.managedReferenceValue == null)
+            if (sourceValue == null)
             {
                 return "No source";
             }
@@ -223,28 +365,44 @@ namespace Scaffold.AppFlow.Publishers.Editor
             float line,
             float vspace,
             Rect firstRowFields,
-            SerializedProperty sourceRoot)
+            SerializedProperty sourceRoot,
+            SerializedProperty definitionProperty)
         {
             if (sourceRoot == null || sourceRoot.managedReferenceValue == null)
             {
                 return;
             }
 
-            if (!TryCollectSourceChildren(sourceRoot, out List<SerializedProperty> children) || children.Count == 0)
+            if (!TryGetChildPropertyPathsForSource(sourceRoot, definitionProperty, out List<string> pathList) || pathList.Count == 0)
             {
                 return;
             }
 
+            var children = new List<SerializedProperty>(pathList.Count);
+            for (int i = 0; i < pathList.Count; i++)
+            {
+                string childPath = GetRelativePathUnderSource(sourceRoot, pathList[i]);
+                SerializedProperty p = !string.IsNullOrEmpty(childPath)
+                    ? sourceRoot.FindPropertyRelative(childPath)
+                    : sourceRoot;
+                if (p == null)
+                {
+                    s_ChildPropertyPaths.Remove(MakeChildPathsCacheKey(definitionProperty, sourceRoot));
+                    return;
+                }
+
+                children.Add(p);
+            }
+
             bool allSingleLine = true;
-            float maxH = 0f;
             for (int i = 0; i < children.Count; i++)
             {
-                var p = children[i].Copy();
+                SerializedProperty p = children[i];
                 float h = EditorGUI.GetPropertyHeight(p, true);
-                maxH = Mathf.Max(maxH, h);
                 if (h > line + 0.1f)
                 {
                     allSingleLine = false;
+                    break;
                 }
             }
 
@@ -254,7 +412,7 @@ namespace Scaffold.AppFlow.Publishers.Editor
                 float x = firstRowFields.x;
                 for (int i = 0; i < n; i++)
                 {
-                    var p = children[i].Copy();
+                    SerializedProperty p = children[i];
                     float h = EditorGUI.GetPropertyHeight(p, true);
                     float w = n == 1
                         ? firstRowFields.width
@@ -272,7 +430,7 @@ namespace Scaffold.AppFlow.Publishers.Editor
                 float y = firstRowFields.y + line + vspace;
                 for (int i = 0; i < children.Count; i++)
                 {
-                    var p = children[i].Copy();
+                    SerializedProperty p = children[i];
                     float h = EditorGUI.GetPropertyHeight(p, true);
                     var row = new Rect(position.x + labelW, y, position.width - labelW, h);
                     EditorGUI.PropertyField(row, p, GUIContent.none, true);
@@ -281,9 +439,57 @@ namespace Scaffold.AppFlow.Publishers.Editor
             }
         }
 
-        private static bool TryCollectSourceChildren(SerializedProperty sourceRoot, out List<SerializedProperty> children)
+        private static string MakeChildPathsCacheKey(SerializedProperty definitionProperty, SerializedProperty sourceProp)
         {
-            children = new List<SerializedProperty>();
+            UnityEngine.Object t = definitionProperty.serializedObject.targetObject;
+            int id = t != null ? t.GetInstanceID() : 0;
+            return $"{id}:{definitionProperty.propertyPath}|{sourceProp.managedReferenceFullTypename ?? "null"}";
+        }
+
+        private static string GetRelativePathUnderSource(SerializedProperty sourceRoot, string childFullPath)
+        {
+            if (sourceRoot == null || string.IsNullOrEmpty(childFullPath))
+            {
+                return null;
+            }
+
+            if (string.Equals(childFullPath, sourceRoot.propertyPath, StringComparison.Ordinal))
+            {
+                return string.Empty;
+            }
+
+            string root = sourceRoot.propertyPath;
+            if (!childFullPath.StartsWith(root + ".", StringComparison.Ordinal))
+            {
+                return null;
+            }
+
+            return childFullPath.Length > root.Length + 1 ? childFullPath[(root.Length + 1)..] : null;
+        }
+
+        private static bool TryGetChildPropertyPathsForSource(
+            SerializedProperty sourceRoot,
+            SerializedProperty definitionProperty,
+            out List<string> pathList)
+        {
+            string key = MakeChildPathsCacheKey(definitionProperty, sourceRoot);
+            if (s_ChildPropertyPaths.TryGetValue(key, out pathList) && pathList != null)
+            {
+                return pathList.Count > 0;
+            }
+
+            if (!TryCollectSourceChildPropertyPaths(sourceRoot, out pathList) || pathList == null)
+            {
+                return false;
+            }
+
+            s_ChildPropertyPaths[key] = pathList;
+            return pathList.Count > 0;
+        }
+
+        private static bool TryCollectSourceChildPropertyPaths(SerializedProperty sourceRoot, out List<string> paths)
+        {
+            paths = new List<string>();
             if (sourceRoot == null)
             {
                 return false;
@@ -303,7 +509,7 @@ namespace Scaffold.AppFlow.Publishers.Editor
                     continue;
                 }
 
-                children.Add(it.Copy());
+                paths.Add(it.propertyPath);
             } while (it.NextVisible(false) && !SerializedProperty.EqualContents(it, end));
 
             return true;
@@ -319,16 +525,29 @@ namespace Scaffold.AppFlow.Publishers.Editor
                 return line;
             }
 
-            if (!TryCollectSourceChildren(sourceProp, out List<SerializedProperty> children) || children.Count == 0)
+            if (!TryGetChildPropertyPathsForSource(sourceProp, property, out List<string> pathList) || pathList.Count == 0)
             {
                 return line;
+            }
+
+            var children = new List<SerializedProperty>(pathList.Count);
+            for (int i = 0; i < pathList.Count; i++)
+            {
+                string rel = GetRelativePathUnderSource(sourceProp, pathList[i]);
+                SerializedProperty p = !string.IsNullOrEmpty(rel) ? sourceProp.FindPropertyRelative(rel) : sourceProp;
+                if (p == null)
+                {
+                    s_ChildPropertyPaths.Remove(MakeChildPathsCacheKey(property, sourceProp));
+                    return line;
+                }
+
+                children.Add(p);
             }
 
             bool allSingle = true;
             for (int i = 0; i < children.Count; i++)
             {
-                var p = children[i].Copy();
-                if (EditorGUI.GetPropertyHeight(p, true) > line + 0.1f)
+                if (EditorGUI.GetPropertyHeight(children[i], true) > line + 0.1f)
                 {
                     allSingle = false;
                     break;
@@ -343,8 +562,7 @@ namespace Scaffold.AppFlow.Publishers.Editor
             float h = line + vspace;
             for (int i = 0; i < children.Count; i++)
             {
-                var p = children[i].Copy();
-                h += EditorGUI.GetPropertyHeight(p, true) + vspace;
+                h += EditorGUI.GetPropertyHeight(children[i], true) + vspace;
             }
 
             return h;
@@ -374,8 +592,13 @@ namespace Scaffold.AppFlow.Publishers.Editor
             defProperty.serializedObject.ApplyModifiedProperties();
         }
 
-        private static Type[] GetSourceTypes()
+        private static void EnsureSourceTypeCache()
         {
+            if (s_SourceTypes != null && s_PopupTypeNames != null)
+            {
+                return;
+            }
+
             TypeCache.TypeCollection fromCache = TypeCache.GetTypesDerivedFrom<IAssetPublisherSource>();
             var list = new List<Type>();
             foreach (Type t in fromCache)
@@ -390,7 +613,15 @@ namespace Scaffold.AppFlow.Publishers.Editor
             }
 
             list.Sort(CompareTypeNames);
-            return list.ToArray();
+            s_SourceTypes = list.ToArray();
+            s_PopupTypeNames = new string[s_SourceTypes.Length + 1];
+            s_PopupTypeNames[0] = "None";
+            for (int i = 0; i < s_SourceTypes.Length; i++)
+            {
+                s_PopupTypeNames[i + 1] = s_SourceTypes[i].Name;
+            }
+
+            s_SourceTypeCacheRebuilds++;
         }
 
         private static int CompareTypeNames(Type a, Type b)
