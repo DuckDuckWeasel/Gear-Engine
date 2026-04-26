@@ -5,9 +5,10 @@
     <Configurations>Debug;Release</Configurations>
     <AssemblyName>LiveOps</AssemblyName>
     <RootNamespace>LiveOps</RootNamespace>
-    <!-- Writes Roslyn output under obj/Generated/Scaffold.LiveOps.Bootstrap.Generators/.../ (LiveOpsKeys.g.cs, LiveOpsManifest.g.cs). -->
     <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
     <CompilerGeneratedFilesOutputPath>$(BaseIntermediateOutputPath)Generated</CompilerGeneratedFilesOutputPath>
+    <LiveOpsRoot>$(MSBuildThisFileDirectory)..\..\</LiveOpsRoot>
+    <RepositoryRoot>$(MSBuildThisFileDirectory)..\..\..\</RepositoryRoot>
   </PropertyGroup>
 
   <ItemGroup>
@@ -20,10 +21,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Core\LiveOps.Core\LiveOps.Core.csproj" />
-    <ProjectReference Include="..\..\Modules\LiveOps.Modules\LiveOps.Modules.csproj" />
-    <ProjectReference Include="..\..\..\Generators\Scaffold.LiveOps.Bootstrap.Generators\Scaffold.LiveOps.Bootstrap.Generators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\Core\LiveOps.Core\LiveOps.Core.csproj" />
   </ItemGroup>
+
+  <Import Project="$(LiveOpsRoot)Deploy\Build\Scaffold.LiveOps.Common.props" />
+  <Import Project="$(LiveOpsRoot)Deploy\Build\Scaffold.LiveOps.Deploy.targets" />
+  <Import Project="$(LiveOpsRoot)Deploy\Build\Scaffold.LiveOps.TemplateSync.targets" />
 
   <PropertyGroup>
     <PublishReadyToRunComposite>true</PublishReadyToRunComposite>
