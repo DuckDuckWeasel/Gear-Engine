@@ -1,0 +1,26 @@
+{
+    "name": "Game.SplineEvaluate.Editor",
+    "rootNamespace": "GearEngine.SplineEvaluate.Editor",
+    "references": [
+        "Game.SplineEvaluate",
+        "Game.CarSimulation",
+        "Game.SceneFoundation",
+        "Scaffold.Entities",
+        "Scaffold.Navigation",
+        "VContainer",
+        "Unity.Splines",
+        "Unity.Splines.Editor",
+        "Unity.Mathematics"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

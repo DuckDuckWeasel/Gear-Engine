@@ -1,0 +1,168 @@
+using System;
+using System.Collections.Generic;
+using GearEngine.CarSimulation.Entity;
+using GearEngine.CarSimulation.Simulation;
+using GearEngine.SplineEvaluate.Definitions;
+using UnityEngine;
+using UnityEngine.Splines;
+using VContainer.Unity;
+
+namespace GearEngine.SplineEvaluate.Simulation
+{
+    /// <summary>
+    /// Service that manages multiple <see cref="SplineEvaluateDriver"/> instances and
+    /// ticks them each frame. Drop-in replacement for
+    /// <see cref="GearEngine.CarSimulation.Simulation.SplineCarRunnerService"/> but
+    /// without any physics or PrometeoCarController dependency.
+    /// </summary>
+    public sealed class SplineEvaluateRunnerService : ITickable
+    {
+        /// <summary>Fired when a car completes a lap — mirrors <see cref="SplineCarRunnerService.OnLapCompleted"/>.</summary>
+        public event Action<CarEntity> OnLapCompleted;
+
+        private readonly SplineDriverConfig config;
+        private readonly LaneProfile defaultLaneProfile;
+        private readonly List<SplineEvaluateDriver> activeDrivers = new List<SplineEvaluateDriver>();
+
+        public SplineEvaluateRunnerService(SplineDriverConfig config, LaneProfile defaultLaneProfile = null)
+        {
+            this.config = config ?? throw new ArgumentNullException(nameof(config));
+            this.defaultLaneProfile = defaultLaneProfile;
+        }
+
+        /// <summary>
+        /// Creates and registers a new driver for the given car on the given track spline.
+        /// </summary>
+        public SplineEvaluateDriver InitializeRun(
+            SplineContainer trackContainer,
+            Transform carTransform,
+            CarEntity carEntity,
+            DriverPersonality personality,
+            LaneProfile laneProfile = null)
+        {
+            if (trackContainer == null || trackContainer.Spline == null || trackContainer.Spline.Count < 2)
+            {
+                Debug.LogError("[SplineEvaluateRunnerService] Invalid SplineContainer.");
+                return null;
+            }
+            if (carTransform == null)
+            {
+                Debug.LogError("[SplineEvaluateRunnerService] carTransform is null.");
+                return null;
+            }
+            if (carEntity == null)
+            {
+                Debug.LogError("[SplineEvaluateRunnerService] carEntity is null.");
+                return null;
+            }
+
+            LaneProfile profile = laneProfile != null ? laneProfile : defaultLaneProfile;
+            var driver = new SplineEvaluateDriver(config, profile);
+            driver.Initialize(trackContainer, carTransform, carEntity, personality);
+            driver.OnLapCompleted += HandleLapCompleted;
+            activeDrivers.Add(driver);
+
+            return driver;
+        }
+
+        /// <summary>Pauses or resumes a specific car.</summary>
+        public void SetPaused(CarEntity entity, bool paused)
+        {
+            SplineEvaluateDriver driver = FindDriver(entity);
+            if (driver != null)
+            {
+                driver.SetPaused(paused);
+            }
+        }
+
+        /// <summary>
+        /// Returns telemetry data compatible with the existing
+        /// <see cref="CarTelemetryData"/> struct.
+        /// </summary>
+        public bool GetTelemetry(CarEntity entity, out CarTelemetryData data)
+        {
+            SplineEvaluateDriver driver = FindDriver(entity);
+            if (driver != null)
+            {
+                SplineMotionState s = driver.State;
+                data = new CarTelemetryData
+                {
+                    Speed = s.Speed * 3.6f, // m/s → km/h for display
+                    Progress = s.T,
+                    IsBraking = s.IsBraking,
+                    IsDrifting = s.IsDrifting,
+                    IsAccelerating = s.IsAccelerating,
+                    CurrentAcceleration = s.IsAccelerating ? config.accelerationRate : 0f
+                };
+                return true;
+            }
+
+            data = default;
+            return false;
+        }
+
+        /// <summary>Returns the driver for a given entity, or null.</summary>
+        public SplineEvaluateDriver GetDriver(CarEntity entity)
+        {
+            return FindDriver(entity);
+        }
+
+        /// <summary>Removes a driver from the active list.</summary>
+        public void RemoveDriver(CarEntity entity)
+        {
+            for (int i = activeDrivers.Count - 1; i >= 0; i--)
+            {
+                if (activeDrivers[i].CarEntity == entity)
+                {
+                    activeDrivers[i].OnLapCompleted -= HandleLapCompleted;
+                    activeDrivers.RemoveAt(i);
+                }
+            }
+        }
+
+        public void Tick()
+        {
+            float dt = Time.deltaTime;
+
+            for (int i = activeDrivers.Count - 1; i >= 0; i--)
+            {
+                SplineEvaluateDriver driver = activeDrivers[i];
+                if (!driver.IsInitialized)
+                {
+                    activeDrivers.RemoveAt(i);
+                    continue;
+                }
+
+                try
+                {
+                    driver.Tick(dt);
+                }
+                catch (Exception ex)
+                {
+                    Debug.LogError($"[SplineEvaluateRunnerService] Tick failed for driver {i}: {ex.Message}\n{ex.StackTrace}");
+                }
+            }
+        }
+
+        private void HandleLapCompleted(CarEntity entity)
+        {
+            try
+            {
+                OnLapCompleted?.Invoke(entity);
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"[SplineEvaluateRunnerService] OnLapCompleted handler error: {ex.Message}\n{ex.StackTrace}");
+            }
+        }
+
+        private SplineEvaluateDriver FindDriver(CarEntity entity)
+        {
+            for (int i = 0; i < activeDrivers.Count; i++)
+            {
+                if (activeDrivers[i].CarEntity == entity) return activeDrivers[i];
+            }
+            return null;
+        }
+    }
+}

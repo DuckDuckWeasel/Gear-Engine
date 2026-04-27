@@ -1,0 +1,32 @@
+{
+    "name": "Game.SplineEvaluate",
+    "rootNamespace": "GearEngine.SplineEvaluate",
+    "references": [
+        "Game.CarSimulation",
+        "Game.SceneFoundation",
+        "Scaffold.Entities",
+        "Scaffold.MVVM",
+        "Scaffold.MVVM.Model",
+        "Scaffold.MVVM.View",
+        "Scaffold.MVVM.ViewModel",
+        "Scaffold.Navigation",
+        "Scaffold.Navigation.Container",
+        "VContainer",
+        "Unity.Mathematics",
+        "Unity.Splines",
+        "Scaffold.Events.Container",
+        "Unity.TextMeshPro"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "CommunityToolkit.Mvvm.dll",
+        "Sirenix.OdinInspector.Attributes.dll"
+    ],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
