@@ -93,23 +93,36 @@ namespace GearEngine.SplineEvaluate.Bootstrap
 
             if (carDefinition == null)
             {
-                throw new InvalidOperationException("[SplineEvaluateBootstrap] CarDefinition is missing.");
-            }
-
-            if (carDefinition.CarPrefab == null)
-            {
-                throw new InvalidOperationException("[SplineEvaluateBootstrap] CarDefinition.CarPrefab is missing.");
+                Debug.LogWarning("[SplineEvaluateBootstrap] No CarDefinition assigned — using debug placeholder.");
             }
         }
 
         private void SpawnAndStart()
         {
-            // Create runtime entity
-            var factory = new CarEntityFactory();
-            CarEntity entity = factory.Create(carDefinition);
+            CarEntity entity;
+            if (carDefinition != null)
+            {
+                var factory = new CarEntityFactory();
+                entity = factory.Create(carDefinition);
 
-            // Spawn visual prefab (mesh only — no Rigidbody, no PrometeoCarController)
-            spawnedCar = Instantiate(carDefinition.CarPrefab, transform);
+                if (carDefinition.CarPrefab != null)
+                {
+                    spawnedCar = Instantiate(carDefinition.CarPrefab, transform);
+                }
+                else
+                {
+                    Debug.LogWarning("[SplineEvaluateBootstrap] CarDefinition has no CarPrefab — using debug cube.");
+                    spawnedCar = CreateDebugCube();
+                }
+            }
+            else
+            {
+                // Create a minimal entity + placeholder visual
+                var dummyDef = ScriptableObject.CreateInstance<CarDefinition>();
+                var factory = new CarEntityFactory();
+                entity = factory.Create(dummyDef);
+                spawnedCar = CreateDebugCube();
+            }
 
             // Initialize the driver
             LaneProfile profile = laneProfileOverride;
@@ -128,6 +141,29 @@ namespace GearEngine.SplineEvaluate.Bootstrap
 
             // Start paused — user or code calls StartRace()
             activeDriver.SetPaused(true);
+        }
+
+        private GameObject CreateDebugCube()
+        {
+            var cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            cube.name = "DebugCar";
+            cube.transform.SetParent(transform, false);
+            cube.transform.localScale = new Vector3(2f, 1f, 4f);
+
+            // Remove collider to avoid physics interference
+            var collider = cube.GetComponent<Collider>();
+            if (collider != null) Destroy(collider);
+
+            // Give it a visible color
+            var renderer = cube.GetComponent<Renderer>();
+            if (renderer != null)
+            {
+                var mat = new Material(Shader.Find("Universal Render Pipeline/Lit"));
+                mat.color = new Color(1f, 0.3f, 0.1f);
+                renderer.sharedMaterial = mat;
+            }
+
+            return cube;
         }
 
         private void OnDestroy()

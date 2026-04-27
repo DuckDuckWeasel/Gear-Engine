@@ -6,10 +6,8 @@
         "Game.CarSimulation",
         "Game.SceneFoundation",
         "Scaffold.Entities",
-        "Scaffold.Navigation",
         "VContainer",
         "Unity.Splines",
-        "Unity.Splines.Editor",
         "Unity.Mathematics"
     ],
     "includePlatforms": [

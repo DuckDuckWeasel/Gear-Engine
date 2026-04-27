@@ -1,6 +1,7 @@
 using System;
 using GearEngine.SceneFoundation.Bootstrap;
 using GearEngine.SplineEvaluate.Definitions;
+using GearEngine.SplineEvaluate.Simulation;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
@@ -40,13 +41,19 @@ namespace GearEngine.SplineEvaluate.Bootstrap
         {
             builder.RegisterInstance(driverConfig);
 
-            if (defaultLaneProfile != null)
-            {
-                builder.RegisterInstance(defaultLaneProfile);
-            }
-
             new SplineEvaluateInstaller().Install(builder);
             builder.RegisterComponent(sceneBootstrap).AsImplementedInterfaces().AsSelf();
+
+            // Wire optional lane profile after container build
+            LaneProfile capturedProfile = defaultLaneProfile;
+            if (capturedProfile != null)
+            {
+                builder.RegisterBuildCallback(resolver =>
+                {
+                    var service = resolver.Resolve<SplineEvaluateRunnerService>();
+                    service.SetDefaultLaneProfile(capturedProfile);
+                });
+            }
         }
     }
 }

@@ -120,7 +120,7 @@ namespace GearEngine.SplineEvaluate.Tests
             SplineContainer container = CreateCircleSpline();
             float length = container.Spline.GetLength();
 
-            float curvature = SplineCurvatureHelper.SampleCurvatureAt(container.Spline, length, 0.25f);
+            float curvature = SplineCurvatureHelper.SampleCurvatureAt(container.Spline, length, 0.25f, out _);
             Assert.Greater(curvature, 0f, "A circle should have positive curvature.");
 
             Object.DestroyImmediate(container.gameObject);
@@ -132,7 +132,7 @@ namespace GearEngine.SplineEvaluate.Tests
             SplineContainer container = CreateCircleSpline();
             float length = container.Spline.GetLength();
 
-            float maxCurv = SplineCurvatureHelper.SampleMaxCurvature(container.Spline, length, 0f, 30f, 6);
+            float maxCurv = SplineCurvatureHelper.SampleMaxCurvature(container.Spline, length, 0f, 30f, 6, out _);
             Assert.GreaterOrEqual(maxCurv, 0f);
 
             Object.DestroyImmediate(container.gameObject);

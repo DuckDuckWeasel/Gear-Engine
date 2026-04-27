@@ -23,7 +23,10 @@
     "overrideReferences": true,
     "precompiledReferences": [
         "CommunityToolkit.Mvvm.dll",
-        "Sirenix.OdinInspector.Attributes.dll"
+        "Sirenix.OdinInspector.Attributes.dll",
+        "Sirenix.Serialization.dll",
+        "Sirenix.Serialization.Config.dll",
+        "Sirenix.Utilities.dll"
     ],
     "autoReferenced": true,
     "defineConstraints": [],

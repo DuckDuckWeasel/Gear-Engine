@@ -21,13 +21,18 @@ namespace GearEngine.SplineEvaluate.Simulation
         public event Action<CarEntity> OnLapCompleted;
 
         private readonly SplineDriverConfig config;
-        private readonly LaneProfile defaultLaneProfile;
         private readonly List<SplineEvaluateDriver> activeDrivers = new List<SplineEvaluateDriver>();
+        private LaneProfile defaultLaneProfile;
 
-        public SplineEvaluateRunnerService(SplineDriverConfig config, LaneProfile defaultLaneProfile = null)
+        public SplineEvaluateRunnerService(SplineDriverConfig config)
         {
             this.config = config ?? throw new ArgumentNullException(nameof(config));
-            this.defaultLaneProfile = defaultLaneProfile;
+        }
+
+        /// <summary>Sets the fallback lane profile used when no per-car profile is given.</summary>
+        public void SetDefaultLaneProfile(LaneProfile laneProfile)
+        {
+            defaultLaneProfile = laneProfile;
         }
 
         /// <summary>

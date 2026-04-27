@@ -39,8 +39,14 @@ namespace GearEngine.SplineEvaluate.Simulation
         /// <summary>Unsigned curvature magnitude at the current <see cref="T"/> position.</summary>
         public float Curvature;
 
-        /// <summary>Maximum curvature found in the lookahead window (used for speed decisions).</summary>
+        /// <summary>Signed curvature at the current <see cref="T"/> position (positive = right turn, negative = left turn).</summary>
+        public float SignedCurvature;
+
+        /// <summary>Maximum curvature magnitude found in the lookahead window (used for speed decisions).</summary>
         public float LookaheadMaxCurvature;
+
+        /// <summary>Signed curvature of the maximum curvature point found in the lookahead window.</summary>
+        public float SignedLookaheadMaxCurvature;
 
         /// <summary>Completed laps (incremented when <see cref="T"/> wraps past 1.0).</summary>
         public int CompletedLaps;

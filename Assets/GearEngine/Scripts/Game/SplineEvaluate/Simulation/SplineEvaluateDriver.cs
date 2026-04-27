@@ -141,9 +141,9 @@ namespace GearEngine.SplineEvaluate.Simulation
             float effectiveLookahead = config.curvatureLookaheadMeters * lookaheadMult;
 
             // Sample curvature in the forward window
-            State.Curvature = SplineCurvatureHelper.SampleCurvatureAt(spline, splineLength, State.T);
+            State.Curvature = SplineCurvatureHelper.SampleCurvatureAt(spline, splineLength, State.T, out State.SignedCurvature);
             State.LookaheadMaxCurvature = SplineCurvatureHelper.SampleMaxCurvature(
-                spline, splineLength, State.T, effectiveLookahead, config.curvatureSampleCount);
+                spline, splineLength, State.T, effectiveLookahead, config.curvatureSampleCount, out State.SignedLookaheadMaxCurvature);
 
             // Map curvature to speed cap
             float curvatureSeverity = Mathf.Clamp01(
@@ -199,26 +199,41 @@ namespace GearEngine.SplineEvaluate.Simulation
 
         private void TickLateralOffset(float dt)
         {
-            if (laneProfile == null)
+            float t = State.T;
+            float rawOffset = 0f;
+
+            // ── Auto Racing Line (Out-In-Out) ───────────────────────────
+            float currentSeverity = Mathf.InverseLerp(0.01f, config.maxCurvatureReference, State.Curvature);
+            float lookaheadSeverity = Mathf.InverseLerp(0.01f, config.maxCurvatureReference, State.LookaheadMaxCurvature);
+
+            // Move towards the inside of the *current* curve (Apex)
+            float insideOffset = Mathf.Sign(State.SignedCurvature) * currentSeverity * config.maxLateralOffset;
+
+            // Move towards the outside of the *upcoming* curve (Entry)
+            float upcomingSeverity = Mathf.Max(0f, lookaheadSeverity - currentSeverity);
+            float outsideOffset = -Mathf.Sign(State.SignedLookaheadMaxCurvature) * upcomingSeverity * config.maxLateralOffset;
+
+            // Base dynamic offset based on curves
+            float dynamicRacingLine = insideOffset + outsideOffset;
+            
+            // Scale by LineWidth personality stat (0 = drive in center, 10 = use full width)
+            rawOffset += dynamicRacingLine * (personality.LineWidth / 10f);
+
+            // ── Authored Lane Profile (optional overrides) ──────────────
+            if (laneProfile != null)
             {
-                State.LateralOffset = 0f;
-                State.RawLateralOffset = 0f;
-                return;
+                float aggression = laneProfile.AggressionCurve.Evaluate(t) * (personality.Aggression / 10f);
+                float drift = laneProfile.DriftCurve.Evaluate(t) * (personality.DriftTendency / 10f);
+                float width = laneProfile.WidthCurve.Evaluate(t) * (personality.LineWidth / 10f);
+                float riskEntry = laneProfile.RiskEntryCurve.Evaluate(t) * (personality.Risk / 10f);
+                rawOffset += aggression + drift + width + riskEntry;
             }
 
-            float t = State.T;
-
-            // Each curve is evaluated and scaled by the personality stat (0–10) → (0–1)
-            float aggression = laneProfile.AggressionCurve.Evaluate(t) * (personality.Aggression / 10f);
-            float drift = laneProfile.DriftCurve.Evaluate(t) * (personality.DriftTendency / 10f);
-            float width = laneProfile.WidthCurve.Evaluate(t) * (personality.LineWidth / 10f);
-            float riskEntry = laneProfile.RiskEntryCurve.Evaluate(t) * (personality.Risk / 10f);
-
-            // Perlin noise contribution — reduced by high Consistency
+            // ── Noise (Consistency) ─────────────────────────────────────
             float consistencyDamp = 1f - (personality.Consistency / 10f);
-            float noise = ((Mathf.PerlinNoise(t * laneProfile.NoiseFrequency, noiseSeed) * 2f) - 1f) * consistencyDamp;
+            float noise = ((Mathf.PerlinNoise(t * 50f, noiseSeed) * 2f) - 1f) * consistencyDamp * 0.5f;
+            rawOffset += noise;
 
-            float rawOffset = aggression + drift + width + riskEntry + noise;
             State.RawLateralOffset = Mathf.Clamp(rawOffset, -config.maxLateralOffset, config.maxLateralOffset);
 
             // Smooth the transition
@@ -239,15 +254,21 @@ namespace GearEngine.SplineEvaluate.Simulation
             float targetRoll = -centripetalAccel * config.bodyRollScale;
             State.BodyRoll = Mathf.Clamp(targetRoll, -config.maxBodyRollDeg, config.maxBodyRollDeg);
 
-            // Slip angle from rate of change of lateral offset
+            // Slip angle from rate of change of lateral offset + explicit drift curve
             float offsetRate = (dt > 0f)
                 ? (State.LateralOffset - State.PreviousLateralOffset) / dt
                 : 0f;
             float targetSlip = offsetRate * config.slipAngleScale;
+
+            // Add explicit drift based on Drift Tendency and current curve
+            // If turning right (SignedCurvature > 0), drift makes rear step out left (positive slip angle)
+            float explicitDrift = State.SignedCurvature * 150f * (personality.DriftTendency / 10f);
+            targetSlip += explicitDrift;
+
             targetSlip = Mathf.Clamp(targetSlip, -config.maxSlipAngleDeg, config.maxSlipAngleDeg);
             State.SlipAngle = Mathf.Lerp(State.SlipAngle, targetSlip, dt * config.slipAngleSmoothRate);
 
-            State.IsDrifting = Mathf.Abs(State.SlipAngle) > 2f;
+            State.IsDrifting = Mathf.Abs(State.SlipAngle) > 4f;
 
             // Suspension bob
             float speedNorm = (config.maxSpeed > 0f) ? State.Speed / config.maxSpeed : 0f;

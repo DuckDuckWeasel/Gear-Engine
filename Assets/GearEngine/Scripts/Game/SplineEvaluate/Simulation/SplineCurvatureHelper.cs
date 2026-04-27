@@ -28,8 +28,10 @@ namespace GearEngine.SplineEvaluate.Simulation
             float splineLength,
             float fromT,
             float lookaheadMeters,
-            int sampleCount)
+            int sampleCount,
+            out float signedMaxCurvature)
         {
+            signedMaxCurvature = 0f;
             if (spline == null || spline.Count < 2 || sampleCount < 2 || splineLength <= 0f)
             {
                 return 0f;
@@ -50,6 +52,11 @@ namespace GearEngine.SplineEvaluate.Simulation
                 if (curvature > maxCurvature)
                 {
                     maxCurvature = curvature;
+                    // Compute sign
+                    Vector3 up = ((Vector3)SplineUtility.EvaluateUpVector(spline, t)).normalized;
+                    Vector3 right = Vector3.Cross(up, tangent).normalized;
+                    float sign = Mathf.Sign(Vector3.Dot((tangent - prevTangent) / stepMeters, right));
+                    signedMaxCurvature = curvature * sign;
                 }
 
                 prevTangent = tangent;
@@ -62,8 +69,9 @@ namespace GearEngine.SplineEvaluate.Simulation
         /// Computes the unsigned curvature at a single point on the spline using a
         /// small finite-difference step.
         /// </summary>
-        public static float SampleCurvatureAt(Spline spline, float splineLength, float t, float epsilonMeters = 0.5f)
+        public static float SampleCurvatureAt(Spline spline, float splineLength, float t, out float signedCurvature, float epsilonMeters = 0.5f)
         {
+            signedCurvature = 0f;
             if (spline == null || spline.Count < 2 || splineLength <= 0f)
             {
                 return 0f;
@@ -72,8 +80,17 @@ namespace GearEngine.SplineEvaluate.Simulation
             float epsilonT = epsilonMeters / splineLength;
             Vector3 tangentA = ((Vector3)SplineUtility.EvaluateTangent(spline, WrapT(t - epsilonT * 0.5f))).normalized;
             Vector3 tangentB = ((Vector3)SplineUtility.EvaluateTangent(spline, WrapT(t + epsilonT * 0.5f))).normalized;
+            
+            float curvature = (tangentB - tangentA).magnitude / epsilonMeters;
 
-            return (tangentB - tangentA).magnitude / epsilonMeters;
+            Vector3 tangent = ((Vector3)SplineUtility.EvaluateTangent(spline, WrapT(t))).normalized;
+            Vector3 up = ((Vector3)SplineUtility.EvaluateUpVector(spline, WrapT(t))).normalized;
+            Vector3 right = Vector3.Cross(up, tangent).normalized;
+            
+            float sign = Mathf.Sign(Vector3.Dot((tangentB - tangentA) / epsilonMeters, right));
+            signedCurvature = curvature * sign;
+
+            return curvature;
         }
 
         /// <summary>Wraps t into [0, 1) for closed-loop splines.</summary>
