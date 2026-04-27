@@ -3,6 +3,7 @@ using GearEngine.SplineEvaluate.Definitions;
 using GearEngine.SplineEvaluate.Simulation;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 namespace GearEngine.SplineEvaluate.Presentation
@@ -21,13 +22,23 @@ namespace GearEngine.SplineEvaluate.Presentation
         [SerializeField] private TextMeshProUGUI speedLabel;
         [SerializeField] private TextMeshProUGUI lapLabel;
         [SerializeField] private TextMeshProUGUI stateLabel;
+        [SerializeField] private TextMeshProUGUI curveModeLabel;
 
         [Header("Stat Sliders")]
-        [SerializeField] private Slider aggressionSlider;
-        [SerializeField] private Slider driftTendencySlider;
-        [SerializeField] private Slider lineWidthSlider;
-        [SerializeField] private Slider consistencySlider;
-        [SerializeField] private Slider riskSlider;
+        [FormerlySerializedAs("topSpeedSlider")]
+        [SerializeField] private Slider speedCapabilitySlider;
+
+        [FormerlySerializedAs("perfectCurveChanceSlider")]
+        [SerializeField] private Slider corneringSkillSlider;
+
+        [FormerlySerializedAs("driftChanceSlider")]
+        [SerializeField] private Slider tractionSlider;
+
+        [FormerlySerializedAs("curveOffsetSlider")]
+        [SerializeField] private Slider precisionSlider;
+
+        [FormerlySerializedAs("recklessnessSlider")]
+        [SerializeField] private Slider smoothnessSlider;
 
         [Header("Controls")]
         [SerializeField] private Button startStopButton;
@@ -66,6 +77,18 @@ namespace GearEngine.SplineEvaluate.Presentation
                 string mode = state.IsDrifting ? "DRIFT" : state.IsBraking ? "BRAKE" : state.IsAccelerating ? "ACCEL" : "COAST";
                 stateLabel.text = mode;
             }
+
+            if (curveModeLabel != null)
+            {
+                if (state.IsInCurveSequence)
+                {
+                    curveModeLabel.text = $"Curve Mode: {state.ActiveCurveMode}";
+                }
+                else
+                {
+                    curveModeLabel.text = "Curve Mode: None";
+                }
+            }
         }
 
         private void ToggleRace()
@@ -90,24 +113,24 @@ namespace GearEngine.SplineEvaluate.Presentation
 
         private void SetupSliders()
         {
-            SetupSlider(aggressionSlider, 5f);
-            SetupSlider(driftTendencySlider, 5f);
-            SetupSlider(lineWidthSlider, 5f);
-            SetupSlider(consistencySlider, 5f);
-            SetupSlider(riskSlider, 5f);
+            SetupSlider(speedCapabilitySlider, 5f, 0f, 10f);
+            SetupSlider(corneringSkillSlider, 5f, 0f, 10f);
+            SetupSlider(tractionSlider, 5f, 0f, 10f);
+            SetupSlider(precisionSlider, 5f, 0f, 10f);
+            SetupSlider(smoothnessSlider, 5f, 0f, 10f);
 
-            if (aggressionSlider != null) aggressionSlider.onValueChanged.AddListener(_ => PushPersonality());
-            if (driftTendencySlider != null) driftTendencySlider.onValueChanged.AddListener(_ => PushPersonality());
-            if (lineWidthSlider != null) lineWidthSlider.onValueChanged.AddListener(_ => PushPersonality());
-            if (consistencySlider != null) consistencySlider.onValueChanged.AddListener(_ => PushPersonality());
-            if (riskSlider != null) riskSlider.onValueChanged.AddListener(_ => PushPersonality());
+            if (speedCapabilitySlider != null) speedCapabilitySlider.onValueChanged.AddListener(_ => PushPersonality());
+            if (corneringSkillSlider != null) corneringSkillSlider.onValueChanged.AddListener(_ => PushPersonality());
+            if (tractionSlider != null) tractionSlider.onValueChanged.AddListener(_ => PushPersonality());
+            if (precisionSlider != null) precisionSlider.onValueChanged.AddListener(_ => PushPersonality());
+            if (smoothnessSlider != null) smoothnessSlider.onValueChanged.AddListener(_ => PushPersonality());
         }
 
-        private static void SetupSlider(Slider slider, float defaultValue)
+        private static void SetupSlider(Slider slider, float defaultValue, float min, float max)
         {
             if (slider == null) return;
-            slider.minValue = 0f;
-            slider.maxValue = 10f;
+            slider.minValue = min;
+            slider.maxValue = max;
             slider.value = defaultValue;
         }
 
@@ -117,11 +140,11 @@ namespace GearEngine.SplineEvaluate.Presentation
 
             var p = new DriverPersonality
             {
-                Aggression = aggressionSlider != null ? aggressionSlider.value : 5f,
-                DriftTendency = driftTendencySlider != null ? driftTendencySlider.value : 5f,
-                LineWidth = lineWidthSlider != null ? lineWidthSlider.value : 5f,
-                Consistency = consistencySlider != null ? consistencySlider.value : 5f,
-                Risk = riskSlider != null ? riskSlider.value : 5f
+                SpeedCapability = speedCapabilitySlider != null ? speedCapabilitySlider.value : 5f,
+                CorneringSkill = corneringSkillSlider != null ? corneringSkillSlider.value : 5f,
+                Traction = tractionSlider != null ? tractionSlider.value : 5f,
+                Precision = precisionSlider != null ? precisionSlider.value : 5f,
+                Smoothness = smoothnessSlider != null ? smoothnessSlider.value : 5f
             };
 
             bootstrap.UpdatePersonality(p);
@@ -130,11 +153,11 @@ namespace GearEngine.SplineEvaluate.Presentation
         private void OnDestroy()
         {
             if (startStopButton != null) startStopButton.onClick.RemoveListener(ToggleRace);
-            if (aggressionSlider != null) aggressionSlider.onValueChanged.RemoveAllListeners();
-            if (driftTendencySlider != null) driftTendencySlider.onValueChanged.RemoveAllListeners();
-            if (lineWidthSlider != null) lineWidthSlider.onValueChanged.RemoveAllListeners();
-            if (consistencySlider != null) consistencySlider.onValueChanged.RemoveAllListeners();
-            if (riskSlider != null) riskSlider.onValueChanged.RemoveAllListeners();
+            if (speedCapabilitySlider != null) speedCapabilitySlider.onValueChanged.RemoveAllListeners();
+            if (corneringSkillSlider != null) corneringSkillSlider.onValueChanged.RemoveAllListeners();
+            if (tractionSlider != null) tractionSlider.onValueChanged.RemoveAllListeners();
+            if (precisionSlider != null) precisionSlider.onValueChanged.RemoveAllListeners();
+            if (smoothnessSlider != null) smoothnessSlider.onValueChanged.RemoveAllListeners();
         }
     }
 }

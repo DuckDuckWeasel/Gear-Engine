@@ -65,5 +65,23 @@ namespace GearEngine.SplineEvaluate.Simulation
 
         /// <summary>Previous frame's T, used for lap-wrap detection.</summary>
         public float PreviousT;
+
+        /// <summary>The currently active trajectory strategy for a curve sequence.</summary>
+        public CurveMode ActiveCurveMode;
+
+        /// <summary>Sign (+1 or -1) of the current curve sequence. Determines inside/outside directions.</summary>
+        public float CurrentCurveSign;
+
+        /// <summary>True when the driver is actively navigating a curve sequence (entry, apex, or exit).</summary>
+        public bool IsInCurveSequence;
+
+        /// <summary>True if the driver decided to drift during the current curve sequence.</summary>
+        public bool WillDriftCurrentCurve;
+
+        /// <summary>True if the driver has already executed a wobble during the current curve sequence.</summary>
+        public bool HasWobbledThisCurve;
+
+        /// <summary>The Unity Time.time when the wobble was triggered.</summary>
+        public float WobbleTriggerTime;
     }
 }

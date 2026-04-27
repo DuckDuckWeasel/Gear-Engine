@@ -12,29 +12,29 @@ namespace GearEngine.SplineEvaluate.Definitions
     [Serializable]
     public struct DriverPersonality
     {
-        [Range(0f, 10f), Tooltip("How early and deep the car cuts into corners (inside offset at apex).")]
-        public float Aggression;
+        [Range(0f, 10f), Tooltip("10 = max speed (200 km/h), 0 = slow (10 km/h).")]
+        public float SpeedCapability;
 
-        [Range(0f, 10f), Tooltip("How wide the exit line is through corners (outside offset post-apex, simulates controlled oversteer).")]
-        public float DriftTendency;
+        [Range(0f, 10f), Tooltip("10 = always take the perfect racing line, 0 = always take invalid lines.")]
+        public float CorneringSkill;
 
-        [Range(0f, 10f), Tooltip("General lane variation amplitude on straights (Perlin-based wandering).")]
-        public float LineWidth;
+        [Range(0f, 10f), Tooltip("10 = perfect grip (no drift), 0 = always drifts in curves.")]
+        public float Traction;
 
-        [Range(0f, 10f), Tooltip("Reduces random variation. 10 = robotic precision, 0 = human-like inconsistency.")]
-        public float Consistency;
+        [Range(0f, 10f), Tooltip("10 = extremely precise even on bad lines, 0 = hugs the absolute wrong edge of the track.")]
+        public float Precision;
 
-        [Range(0f, 10f), Tooltip("Late braking + tighter entry. Affects both speed model (shorter lookahead) and lateral entry offset.")]
-        public float Risk;
+        [Range(0f, 10f), Tooltip("10 = perfectly smooth ride, 0 = weaves on straights and suspension bounces heavily.")]
+        public float Smoothness;
 
-        /// <summary>Default middle-of-the-road personality (all stats at 5).</summary>
+        /// <summary>Default middle-of-the-road personality.</summary>
         public static DriverPersonality Default => new DriverPersonality
         {
-            Aggression = 5f,
-            DriftTendency = 5f,
-            LineWidth = 5f,
-            Consistency = 5f,
-            Risk = 5f
+            SpeedCapability = 5f,
+            CorneringSkill = 5f,
+            Traction = 5f,
+            Precision = 5f,
+            Smoothness = 5f
         };
     }
 }

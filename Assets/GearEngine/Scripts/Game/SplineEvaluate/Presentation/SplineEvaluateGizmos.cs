@@ -77,7 +77,7 @@ namespace GearEngine.SplineEvaluate.Presentation
 
                 if (showLateralPath)
                 {
-                    DrawLateralOffsetPath(spline, splineTr, splineLength, state);
+                    DrawEvaluatedCurve(spline, splineTr, splineLength, driver);
                 }
 
                 DrawStateLabels(spline, splineTr, state);
@@ -285,18 +285,32 @@ namespace GearEngine.SplineEvaluate.Presentation
         }
 
         // ================================================================
-        // Lateral Offset Path (personality-driven racing line preview)
+        // Trajectory Preview (Draws the calculated racing line ahead of the car)
         // ================================================================
 
-        private void DrawLateralOffsetPath(Spline spline, Transform splineTr, float splineLength, SplineMotionState state)
+        private void DrawEvaluatedCurve(Spline spline, Transform splineTr, float splineLength, SplineEvaluateDriver driver)
         {
-            int samples = 80;
+            SplineMotionState state = driver.State;
+            
+            // Determine color based on curve success/failure (use current curve)
+            Color curveColor = (int)state.ActiveCurveMode >= 5 
+                ? new Color(1f, 0.2f, 0.2f, 0.8f)  // Failed -> Red
+                : new Color(0.2f, 1f, 0.2f, 0.8f); // Perfect -> Green
+
+            float curveLookaheadT = 60f / splineLength; // Draw the trajectory ahead for 60 meters
+            float unWrappedStartT = state.T + state.CompletedLaps;
+
+            int samples = 60;
             Vector3 prevPos = Vector3.zero;
 
             for (int i = 0; i <= samples; i++)
             {
-                float t = (float)i / samples;
+                float interp = (float)i / samples;
+                float unWrappedT = unWrappedStartT + curveLookaheadT * interp;
+                int lap = Mathf.FloorToInt(unWrappedT);
+                float t = unWrappedT - lap;
 
+                // 1. Evaluate world position and directions at future T
                 Vector3 localPos = SplineUtility.EvaluatePosition(spline, t);
                 Vector3 localTangent = SplineUtility.EvaluateTangent(spline, t);
                 Vector3 localUp = SplineUtility.EvaluateUpVector(spline, t);
@@ -306,17 +320,66 @@ namespace GearEngine.SplineEvaluate.Presentation
                 Vector3 worldUp = splineTr.TransformDirection(localUp).normalized;
                 Vector3 worldRight = Vector3.Cross(worldUp, worldTangent).normalized;
 
-                // Apply current lateral offset value (if near car, use actual; otherwise show raw)
-                float offset = state.LateralOffset;
-                Vector3 offsetPos = worldPos + worldRight * offset + worldUp * 0.15f;
+                // Use the TrackPlanner to get the deterministically planned curve for this future T and Lap!
+                SplineEvaluateDriver.TrackCurveEvent futureEvent = driver.GetActiveCurve(t, lap);
 
-                if (i > 0)
+                // 2. Simulate the math that evaluates the curve severities at future T
+                driver.CalculateCurveSeverities(t, futureEvent, out float currentSeverity, out float upcomingSeverity, out float exitSeverity);
+
+                float dynamicRacingLine = 0f;
+                float insideDirection = futureEvent.Sign;
+                float outsideDirection = -futureEvent.Sign;
+
+                switch (futureEvent.ActiveMode)
                 {
-                    Gizmos.color = lateralPathColor;
-                    Gizmos.DrawLine(prevPos, offsetPos);
+                    case CurveMode.PerfectOutInOut:
+                        dynamicRacingLine = outsideDirection * upcomingSeverity + insideDirection * currentSeverity + outsideDirection * exitSeverity;
+                        break;
+                    case CurveMode.PerfectLateApex:
+                        dynamicRacingLine = outsideDirection * upcomingSeverity + (outsideDirection * 0.5f) * currentSeverity + insideDirection * exitSeverity;
+                        break;
+                    case CurveMode.PerfectEarlyApex:
+                        dynamicRacingLine = insideDirection * upcomingSeverity + (outsideDirection * 0.5f) * currentSeverity + outsideDirection * exitSeverity;
+                        break;
+                    case CurveMode.PerfectCenter:
+                        dynamicRacingLine = 0f;
+                        break;
+                    case CurveMode.PerfectHugInside:
+                        dynamicRacingLine = insideDirection * (currentSeverity + upcomingSeverity * 0.5f + exitSeverity * 0.5f);
+                        break;
+                    case CurveMode.FailedInOutIn:
+                        dynamicRacingLine = insideDirection * upcomingSeverity + outsideDirection * currentSeverity + insideDirection * exitSeverity;
+                        break;
+                    case CurveMode.FailedHugOutside:
+                        dynamicRacingLine = outsideDirection * (currentSeverity + upcomingSeverity * 0.5f + exitSeverity * 0.5f);
+                        break;
+                    case CurveMode.FailedWobble:
+                        dynamicRacingLine = outsideDirection * currentSeverity * 0.8f + insideDirection * upcomingSeverity * 0.5f;
+                        break;
+                    case CurveMode.FailedBalk:
+                        dynamicRacingLine = outsideDirection * currentSeverity + insideDirection * exitSeverity;
+                        break;
+                    case CurveMode.FailedOvershoot:
+                        dynamicRacingLine = insideDirection * currentSeverity + outsideDirection * exitSeverity;
+                        break;
                 }
 
-                prevPos = offsetPos;
+
+                // 3. Apply the offset to the world position (maxLateralOffset is roughly 2.2f by default)
+                float maxLateralOffset = 2.2f; 
+                Vector3 projectedPos = worldPos + worldRight * (dynamicRacingLine * maxLateralOffset) + worldUp * 0.2f;
+
+                // 4. Draw the line
+                if (i > 0)
+                {
+                    Gizmos.color = curveColor;
+                    // Draw a thick line by drawing multiple slightly offset lines
+                    Gizmos.DrawLine(prevPos, projectedPos);
+                    Gizmos.DrawLine(prevPos + worldUp * 0.05f, projectedPos + worldUp * 0.05f);
+                    Gizmos.DrawLine(prevPos - worldUp * 0.05f, projectedPos - worldUp * 0.05f);
+                }
+
+                prevPos = projectedPos;
             }
         }
 

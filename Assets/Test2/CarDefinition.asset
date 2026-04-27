@@ -23,7 +23,7 @@ MonoBehaviour:
     - variable: {fileID: 11400000, guid: 254e57d3d7dc4874586b6c74096bdb82, type: 2}
       baseValue:
         rid: 4306785165221036293
-  carPrefab: {fileID: 2482284025406797222, guid: 6f783d67944439c419e90723e4e9cbc3, type: 3}
+  carPrefab: {fileID: 2482284025406797222, guid: 1bfb39f4a957f4a4caba117496817699, type: 3}
   references:
     version: 2
     RefIds:

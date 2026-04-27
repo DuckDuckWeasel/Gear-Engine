@@ -72,11 +72,11 @@ namespace GearEngine.SplineEvaluate.Tests
         public void DriverPersonality_Default_AllStatsAreFive()
         {
             DriverPersonality p = DriverPersonality.Default;
-            Assert.AreEqual(5f, p.Aggression);
-            Assert.AreEqual(5f, p.DriftTendency);
-            Assert.AreEqual(5f, p.LineWidth);
-            Assert.AreEqual(5f, p.Consistency);
-            Assert.AreEqual(5f, p.Risk);
+            Assert.AreEqual(5f, p.SpeedCapability);
+            Assert.AreEqual(5f, p.CorneringSkill);
+            Assert.AreEqual(5f, p.Traction);
+            Assert.AreEqual(5f, p.Precision);
+            Assert.AreEqual(5f, p.Smoothness);
         }
 
         [Test]
@@ -272,11 +272,11 @@ namespace GearEngine.SplineEvaluate.Tests
 
             var allZero = new DriverPersonality
             {
-                Aggression = 0f,
-                DriftTendency = 0f,
-                LineWidth = 0f,
-                Consistency = 10f, // Max consistency → no noise
-                Risk = 0f
+                SpeedCapability = 0f,
+                CorneringSkill = 0f,
+                Traction = 10f,
+                Precision = 10f, // 10 precision -> 0 error offset
+                Smoothness = 10f // 10 smoothness -> no noise
             };
 
             var driver = new SplineEvaluateDriver(config, profile);

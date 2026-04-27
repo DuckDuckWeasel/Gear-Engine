@@ -326,6 +326,10 @@ namespace GearEngine.SplineEvaluate.Editor
             var stateGo = CreateTMPLabel(telemetryPanel.transform, "StateLabel", "COAST", 18);
             SetField(hudSo, "stateLabel", stateGo);
 
+            // Curve Mode label
+            var curveModeGo = CreateTMPLabel(telemetryPanel.transform, "CurveModeLabel", "Curve Mode: None", 16);
+            SetField(hudSo, "curveModeLabel", curveModeGo);
+
             // ── Start/Stop button (bottom-center) ───────────────────────
             var buttonGo = CreateUIButton(canvasGo.transform, "StartStopButton", "Start",
                 new Vector2(0.5f, 0f), new Vector2(0f, 60f), new Vector2(200f, 50f));
@@ -355,8 +359,8 @@ namespace GearEngine.SplineEvaluate.Editor
             layoutGroup.spacing = 8f;
             layoutGroup.padding = new RectOffset(10, 10, 10, 10);
 
-            string[] sliderNames = { "Aggression", "Drift Tendency", "Line Width", "Consistency", "Risk" };
-            string[] sliderFields = { "aggressionSlider", "driftTendencySlider", "lineWidthSlider", "consistencySlider", "riskSlider" };
+            string[] sliderNames = { "Speed Capability", "Cornering Skill", "Traction", "Precision", "Smoothness" };
+            string[] sliderFields = { "speedCapabilitySlider", "corneringSkillSlider", "tractionSlider", "precisionSlider", "smoothnessSlider" };
 
             for (int i = 0; i < sliderNames.Length; i++)
             {

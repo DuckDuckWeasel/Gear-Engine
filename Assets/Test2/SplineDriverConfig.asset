@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b0f1df9247540468aa06b72ed1d0aefa, type: 3}
   m_Name: SplineDriverConfig
   m_EditorClassIdentifier: Game.SplineEvaluate::GearEngine.SplineEvaluate.Definitions.SplineDriverConfig
-  maxSpeed: 55
+  maxSpeed: 200
   minCurveSpeed: 12
   accelerationRate: 18
   brakeRate: 35
@@ -20,7 +20,7 @@ MonoBehaviour:
   curvatureSampleCount: 10
   maxCurvatureReference: 0.15
   riskLookaheadMultiplier: {x: 1.2, y: 0.6}
-  maxLateralOffset: 4
+  maxLateralOffset: 2
   lateralSmoothRate: 6
   bodyRollScale: 0.08
   maxBodyRollDeg: 8
