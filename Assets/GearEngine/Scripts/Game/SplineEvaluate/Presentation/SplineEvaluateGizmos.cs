@@ -320,56 +320,14 @@ namespace GearEngine.SplineEvaluate.Presentation
                 Vector3 worldUp = splineTr.TransformDirection(localUp).normalized;
                 Vector3 worldRight = Vector3.Cross(worldUp, worldTangent).normalized;
 
-                // Use the TrackPlanner to get the deterministically planned curve for this future T and Lap!
-                SplineEvaluateDriver.TrackCurveEvent futureEvent = driver.GetActiveCurve(t, lap);
+                // Query the exact trajectory math from the driver to get a perfect 1:1 visualization
+                float rawOffset = driver.GetPredictedLateralOffset(t, lap);
+                
+                // Allow Gizmos to slide outside track bounds (1.5x) to preview failures accurately
+                float maxLateralOffset = 2.2f * 1.5f; 
+                rawOffset = Mathf.Clamp(rawOffset, -maxLateralOffset, maxLateralOffset);
 
-                // 2. Simulate the math that evaluates the curve severities at future T
-                driver.CalculateCurveSeverities(t, futureEvent, out float currentSeverity, out float upcomingSeverity, out float exitSeverity);
-
-                float dynamicRacingLine = 0f;
-                float insideDirection = futureEvent.Sign;
-                float outsideDirection = -futureEvent.Sign;
-
-                switch (futureEvent.ActiveMode)
-                {
-                    case CurveMode.PerfectOutInOut:
-                        dynamicRacingLine = outsideDirection * upcomingSeverity + insideDirection * currentSeverity + outsideDirection * exitSeverity;
-                        break;
-                    case CurveMode.PerfectLateApex:
-                        dynamicRacingLine = outsideDirection * upcomingSeverity + (outsideDirection * 0.5f) * currentSeverity + insideDirection * exitSeverity;
-                        break;
-                    case CurveMode.PerfectEarlyApex:
-                        dynamicRacingLine = insideDirection * upcomingSeverity + (outsideDirection * 0.5f) * currentSeverity + outsideDirection * exitSeverity;
-                        break;
-                    case CurveMode.PerfectCenter:
-                        dynamicRacingLine = 0f;
-                        break;
-                    case CurveMode.PerfectHugInside:
-                        dynamicRacingLine = insideDirection * (currentSeverity + upcomingSeverity * 0.5f + exitSeverity * 0.5f);
-                        break;
-                    case CurveMode.FailedInOutIn:
-                        dynamicRacingLine = insideDirection * upcomingSeverity + outsideDirection * currentSeverity + insideDirection * exitSeverity;
-                        break;
-                    case CurveMode.FailedHugOutside:
-                        dynamicRacingLine = outsideDirection * (currentSeverity + upcomingSeverity * 0.5f + exitSeverity * 0.5f);
-                        break;
-                    case CurveMode.FailedWobble:
-                        dynamicRacingLine = outsideDirection * currentSeverity * 0.8f + insideDirection * upcomingSeverity * 0.5f;
-                        break;
-                    case CurveMode.FailedBalk:
-                        dynamicRacingLine = outsideDirection * currentSeverity + insideDirection * exitSeverity;
-                        break;
-                    case CurveMode.FailedOvershoot:
-                        dynamicRacingLine = insideDirection * currentSeverity + outsideDirection * exitSeverity;
-                        break;
-                }
-
-
-                // 3. Apply the offset to the world position (maxLateralOffset is roughly 2.2f by default)
-                float maxLateralOffset = 2.2f; 
-                Vector3 projectedPos = worldPos + worldRight * (dynamicRacingLine * maxLateralOffset) + worldUp * 0.2f;
-
-                // 4. Draw the line
+                Vector3 projectedPos = worldPos + worldRight * rawOffset + worldUp * 0.2f;
                 if (i > 0)
                 {
                     Gizmos.color = curveColor;

@@ -72,6 +72,8 @@ namespace GearEngine.SplineEvaluate.Simulation
             public int CurveIndex;
             public CurveMode ActiveMode;
             public bool WillDrift;
+            public float DynamicEntryDist;
+            public float DynamicExitDist;
         }
 
         private List<TrackCurveEvent> precalculatedCurves = new List<TrackCurveEvent>();
@@ -173,6 +175,7 @@ namespace GearEngine.SplineEvaluate.Simulation
             float currentPeak = 0f;
             float peakT = 0f;
             float peakSign = 1f;
+            float startT = 0f;
 
             int curveIndex = 0;
 
@@ -181,7 +184,11 @@ namespace GearEngine.SplineEvaluate.Simulation
                 float curvature = SplineCurvatureHelper.SampleCurvatureAt(spline, splineLength, t, out float sign);
                 if (curvature > 0.04f)
                 {
-                    inCurve = true;
+                    if (!inCurve)
+                    {
+                        inCurve = true;
+                        startT = t;
+                    }
                     if (curvature > currentPeak)
                     {
                         currentPeak = curvature;
@@ -191,20 +198,34 @@ namespace GearEngine.SplineEvaluate.Simulation
                 }
                 else if (inCurve && curvature < 0.02f)
                 {
-                    AddCurveEvent(peakT, peakSign, curveIndex++);
+                    AddCurveEvent(peakT, peakSign, curveIndex++, startT, t);
                     inCurve = false;
                     currentPeak = 0f;
                 }
             }
-            if (inCurve) AddCurveEvent(peakT, peakSign, curveIndex++);
+            if (inCurve) AddCurveEvent(peakT, peakSign, curveIndex++, startT, 1f);
         }
 
-        private void AddCurveEvent(float t, float sign, int curveIndex)
+        private void AddCurveEvent(float t, float sign, int curveIndex, float startT, float endT)
         {
             TrackCurveEvent ev = new TrackCurveEvent();
             ev.T = t;
             ev.Sign = sign;
             ev.CurveIndex = curveIndex;
+
+            // Calculate physical distance from start of curve to apex, and apex to end
+            float distStart = t - startT;
+            if (distStart < 0f) distStart += 1f;
+            
+            float distEnd = endT - t;
+            if (distEnd < 0f) distEnd += 1f;
+
+            // The preparation distance is relative to the curve's actual entry size + a baseline reaction time
+            ev.DynamicEntryDist = Mathf.Max((distStart * splineLength) + 15f, 20f); 
+            
+            // The exit distance is exactly the curve's actual physical exit length
+            ev.DynamicExitDist = Mathf.Max(distEnd * splineLength, 5f);
+
             precalculatedCurves.Add(ev);
         }
 
@@ -218,6 +239,36 @@ namespace GearEngine.SplineEvaluate.Simulation
             hash = hash * 0x27d4eb2d;
             hash = hash ^ (hash >> 15);
             return (hash % 10000) / 10000f;
+        }
+
+        public TrackCurveEvent EvaluateCurveForLap(TrackCurveEvent baseCurve, float currentT, int currentLap)
+        {
+            int evaluateLap = currentLap;
+            if (baseCurve.T < 0.2f && currentT > 0.8f) evaluateLap++;
+            else if (baseCurve.T > 0.8f && currentT < 0.2f) evaluateLap--;
+            
+            int seed = baseCurve.CurveIndex * 1337 + evaluateLap * 73;
+            
+            // Use Unity's Random generator for high-quality, perfectly deterministic rolls
+            UnityEngine.Random.State oldState = UnityEngine.Random.state;
+            UnityEngine.Random.InitState(seed);
+            float rollPerfect = UnityEngine.Random.value;
+            float rollMode = UnityEngine.Random.value;
+            float rollDrift = UnityEngine.Random.value;
+            UnityEngine.Random.state = oldState;
+
+            float perfectChance = personality.CorneringSkill / 10f;
+            
+            TrackCurveEvent ev = baseCurve;
+            ev.ActiveMode = (rollPerfect <= perfectChance) ? 
+                (CurveMode)Mathf.Clamp(Mathf.FloorToInt(rollMode * 5), 0, 4) : 
+                (CurveMode)Mathf.Clamp(5 + Mathf.FloorToInt(rollMode * 5), 5, 9);
+            
+            float traction = personality.Traction / 10f;
+            float maxDriftChance = 1.0f; 
+            ev.WillDrift = rollDrift <= (1f - traction) * maxDriftChance;
+
+            return ev;
         }
 
         public TrackCurveEvent GetActiveCurve(float currentT, int currentLap)
@@ -236,29 +287,7 @@ namespace GearEngine.SplineEvaluate.Simulation
                     best = c;
                 }
             }
-            // Evaluate Entry and Exit modes deterministically based on Lap and CurveIndex
-            int evaluateLap = currentLap;
-            // If the curve peak is across the start/finish line relative to our currentT
-            if (best.T < 0.2f && currentT > 0.8f) evaluateLap++;
-            else if (best.T > 0.8f && currentT < 0.2f) evaluateLap--;
-            
-            int seed = evaluateLap * 1000 + best.CurveIndex;
-            float rollPerfect = Hash(seed + 1);
-            float rollMode = Hash(seed + 2);
-            float rollDrift = Hash(seed + 3);
-
-            float perfectChance = personality.CorneringSkill / 10f;
-            
-            // Randomly select one of the 5 Perfect modes or 5 Failed modes
-            best.ActiveMode = (rollPerfect <= perfectChance) ? 
-                (CurveMode)Mathf.Clamp(Mathf.FloorToInt(rollMode * 5), 0, 4) : 
-                (CurveMode)Mathf.Clamp(5 + Mathf.FloorToInt(rollMode * 5), 5, 9);
-            
-            float traction = personality.Traction / 10f;
-            float maxDriftChance = 0.4f;
-            best.WillDrift = rollDrift <= (1f - traction) * maxDriftChance;
-
-            return best;
+            return EvaluateCurveForLap(best, currentT, currentLap);
         }
 
         public void CalculateCurveSeverities(float t, TrackCurveEvent activeCurve, out float currentSeverity, out float upcomingSeverity, out float exitSeverity)
@@ -268,36 +297,22 @@ namespace GearEngine.SplineEvaluate.Simulation
             if (signedDistToPeak < -0.5f) signedDistToPeak += 1f;
             float distMetersToPeak = signedDistToPeak * splineLength;
 
-            float setupDistance = 20f;
-            float currentSpread = 10f;
-
-            // currentSeverity: Peaks at 0m. Starts at currentSpread, ends at -currentSpread.
-            currentSeverity = Mathf.InverseLerp(currentSpread, 0f, Mathf.Abs(distMetersToPeak));
-
-            upcomingSeverity = 0f;
-            exitSeverity = 0f;
-
-            if (distMetersToPeak > 0f)
-            {
-                float halfSetup = setupDistance * 0.5f;
-                if (distMetersToPeak > halfSetup)
-                    upcomingSeverity = Mathf.InverseLerp(setupDistance, halfSetup, distMetersToPeak);
-                else
-                    upcomingSeverity = Mathf.InverseLerp(0f, halfSetup, distMetersToPeak);
-            }
-            else
-            {
-                float halfSetup = -setupDistance * 0.5f;
-                if (distMetersToPeak > halfSetup)
-                    exitSeverity = Mathf.InverseLerp(0f, halfSetup, distMetersToPeak);
-                else
-                    exitSeverity = Mathf.InverseLerp(-setupDistance, halfSetup, distMetersToPeak);
-            }
+            // Calculate ONE time for the entire curve (entry to exit) to prevent overlapping bumps
+            float totalRadius = (distMetersToPeak > 0f) ? activeCurve.DynamicEntryDist : activeCurve.DynamicExitDist;
             
-            // Apply smoothstep to remove sharp linear peaks and guarantee zero squiggles
-            currentSeverity = Mathf.SmoothStep(0f, 1f, currentSeverity);
-            upcomingSeverity = Mathf.SmoothStep(0f, 1f, upcomingSeverity);
-            exitSeverity = Mathf.SmoothStep(0f, 1f, exitSeverity);
+            // Normalize the distance based on the physical size of the curve side (1 = edge, 0 = apex)
+            float normalizedDist = Mathf.Clamp(Mathf.Abs(distMetersToPeak) / totalRadius, 0f, 1f);
+            
+            // Calculate a single perfect curve. 1 at the apex, 0 at the extreme edges.
+            float baseSeverity = 1f - normalizedDist;
+            
+            // "Dá um smooth dos 80% pro fim porque tá dando uma batidinha"
+            // SmoothStep guarantees that the curve approaches 0 perfectly horizontally, preventing any hard snaps or bumps at the edges!
+            currentSeverity = Mathf.SmoothStep(0f, 1f, baseSeverity);
+
+            // Upcoming and exit are just contextual halves of the same perfect curve
+            upcomingSeverity = (distMetersToPeak > 0f) ? currentSeverity : 0f;
+            exitSeverity = (distMetersToPeak < 0f) ? currentSeverity : 0f;
         }
 
         public void SetPaused(bool paused)
@@ -355,19 +370,43 @@ namespace GearEngine.SplineEvaluate.Simulation
             TrackCurveEvent activeCurve = GetActiveCurve(State.T, State.CompletedLaps);
             CalculateCurveSeverities(State.T, activeCurve, out float currentSeverity, out float upcomingSeverity, out float exitSeverity);
             
-            // The speed limit is dictated by how deep we are into the curve OR how close we are to entering it!
             float speedSeverity = Mathf.Max(currentSeverity, upcomingSeverity);
             
-            // Map curvature to speed cap. We heavily penalize the minCurveSpeed so the slowdown is very noticeable.
-            float noticeableMinSpeed = config.minCurveSpeed * 0.5f; // Drop to 50% of the config's min speed!
-            State.TargetSpeed = Mathf.Lerp(maxSpeed, noticeableMinSpeed, speedSeverity);
-
-            // Penalize speed if we are in a failed curve mode (loss of control/momentum)
+            // "faz perder pouca velocidade nas curvas pra ficar realista"
+            // Perfect curves lose a tiny 5% of their speed naturally due to physical friction.
+            State.TargetSpeed = Mathf.Lerp(maxSpeed, maxSpeed * 0.95f, speedSeverity);
+            
+            float signedDistToPeak = (activeCurve.T - State.T);
+            if (signedDistToPeak > 0.5f) signedDistToPeak -= 1f;
+            if (signedDistToPeak < -0.5f) signedDistToPeak += 1f;
+            
             if (State.IsInCurveSequence && (int)State.ActiveCurveMode >= 5)
             {
-                float errorMagnitude = 1f - (personality.Precision / 10f);
-                float speedPenalty = Mathf.Lerp(1f, 0.45f, errorMagnitude); // Lose up to 55% of target speed if precision is 0
-                State.TargetSpeed *= speedPenalty;
+                // "perder um pouco mais de velocidade na curva errada"
+                // Failed curves force a hard brake: dropping target speed by 30%.
+                State.TargetSpeed = Mathf.Lerp(maxSpeed, maxSpeed * 0.70f, currentSeverity);
+            }
+
+            // ── DELAYED EXIT EFFECTS (PENALTY) ──
+            if (signedDistToPeak > 0f && currentSeverity < 0.2f)
+            {
+                // Entering a new curve (far from apex on the entry side), reset flags!
+                State.HasFailedThisCurve = false;
+            }
+
+            // Trigger end-of-curve effects during the final 20% of the exit
+            bool isAtEndOfExit = State.IsInCurveSequence && signedDistToPeak < 0f && currentSeverity < 0.2f;
+
+            if (isAtEndOfExit)
+            {
+                bool isFailure = (int)State.ActiveCurveMode >= 5;
+                
+                if (isFailure && !State.HasFailedThisCurve)
+                {
+                    // "perder um pouco mais de velocidade" -> 10% speed drop at the physical exit!
+                    State.Speed *= 0.90f; 
+                    State.HasFailedThisCurve = true;
+                }
             }
 
             // Integrate speed toward target
@@ -417,67 +456,158 @@ namespace GearEngine.SplineEvaluate.Simulation
         // Lateral Offset (M4)
         // ====================================================================
 
-        private float GetRacingLineOffset(float t, TrackCurveEvent curve)
+        private float GetRacingLineOffset(float t, TrackCurveEvent curve, float cur)
         {
-            CalculateCurveSeverities(t, curve, out float cur, out float up, out float ex);
             float inside = curve.Sign;
             float outsd = -curve.Sign;
             float line = 0f;
 
+            float signedDistToPeak = (curve.T - t);
+            if (signedDistToPeak > 0.5f) signedDistToPeak -= 1f;
+            if (signedDistToPeak < -0.5f) signedDistToPeak += 1f;
+            float distMetersToPeak = signedDistToPeak * splineLength;
+
+            float totalRadius = (distMetersToPeak > 0f) ? curve.DynamicEntryDist : curve.DynamicExitDist;
+            // n is +1 at Start(Entry), 0 at Apex, -1 at End(Exit)
+            float n = Mathf.Clamp(distMetersToPeak / totalRadius, -1f, 1f);
+
             switch (curve.ActiveMode)
             {
-                case CurveMode.PerfectOutInOut: line = outsd * up + inside * cur + outsd * ex; break;
-                case CurveMode.PerfectLateApex: line = outsd * up + inside * cur; break;
-                case CurveMode.PerfectEarlyApex: line = inside * cur + outsd * ex; break;
-                case CurveMode.PerfectCenter: line = 0f; break;
-                case CurveMode.PerfectHugInside: line = inside * (up * 0.5f + cur + ex * 0.5f); break;
+                // Hug Inside: dives to the inside at the apex.
+                case CurveMode.PerfectHugInside: 
+                    line = inside * cur; 
+                    break;
+                
+                // Out-In-Out: Starts center, goes heavily outside during entry, dives inside at apex, heavily outside during exit.
+                case CurveMode.PerfectOutInOut: 
+                    line = inside * cur + outsd * (n * n * cur * 5f); 
+                    break;
 
-                case CurveMode.FailedInOutIn: line = inside * up + outsd * cur; break;
-                case CurveMode.FailedHugOutside: line = outsd * (up * 0.5f + cur + ex * 0.5f); break;
-                case CurveMode.FailedWobble: line = outsd * up + inside * cur; break;
-                case CurveMode.FailedBalk: line = outsd * cur; break;
-                case CurveMode.FailedOvershoot: line = outsd * (cur + ex); break;
+                // Late Apex: Exaggerated outside line during entry, cuts inside.
+                case CurveMode.PerfectLateApex:
+                    if (n > 0f) line = outsd * cur * n * 4f;
+                    else line = inside * cur * -n * 4f;
+                    break;
+
+                // Early Apex: Exaggerated inside dive during entry, drifts outside.
+                case CurveMode.PerfectEarlyApex:
+                    if (n > 0f) line = inside * cur * n * 4f;
+                    else line = outsd * cur * -n * 4f;
+                    break;
+
+                case CurveMode.PerfectCenter: 
+                    line = 0f; 
+                    break;
+
+                // Failed Modes
+                case CurveMode.FailedInOutIn: 
+                    line = inside * cur + outsd * (n * n * cur * 6f);
+                    break;
+                
+                case CurveMode.FailedHugOutside: 
+                    line = outsd * cur * 2f; 
+                    break;
+                
+                case CurveMode.FailedWobble: 
+                    // Wobble rapidly between inside and outside heavily
+                    line = Mathf.Sin(n * Mathf.PI * 4f) * cur * outsd * 3f; 
+                    break;
+                
+                case CurveMode.FailedBalk: 
+                    // Sudden violent jerk outside precisely at the apex
+                    line = outsd * Mathf.Pow(cur, 3f) * 3f; 
+                    break;
+                
+                case CurveMode.FailedOvershoot: 
+                    // Misses the apex entirely and drifts massively outside during the exit
+                    if (n < 0f) line = outsd * cur * -n * 6f;
+                    else line = outsd * cur * n * 2f;
+                    break;
             }
             return line * config.maxLateralOffset;
+        }
+
+        public float GetPredictedLateralOffset(float t, int currentLap)
+        {
+            if (precalculatedCurves == null || precalculatedCurves.Count == 0) return 0f;
+            
+            float totalDynamicOffset = 0f;
+            foreach (var baseCurve in precalculatedCurves)
+            {
+                TrackCurveEvent evaluatedCurve = EvaluateCurveForLap(baseCurve, t, currentLap);
+                CalculateCurveSeverities(t, evaluatedCurve, out float cur, out float up, out float ex);
+                
+                float severitySum = cur + up + ex;
+                if (severitySum <= 0f) continue;
+
+                float line = GetRacingLineOffset(t, evaluatedCurve, cur);
+                
+                float lineMultiplier = 1f;
+                if ((int)evaluatedCurve.ActiveMode >= 5) 
+                {
+                    float errorMagnitude = 1f - (personality.Precision / 10f);
+                    // "sair um pouquinho mais da curva ao errar"
+                    lineMultiplier = 1f + (errorMagnitude * 4f); 
+                }
+                
+                totalDynamicOffset += line * lineMultiplier;
+            }
+
+            return totalDynamicOffset;
         }
 
         private void TickLateralOffset(float dt)
         {
             float t = State.T;
-            float rawOffset = 0f;
-
-            TrackCurveEvent activeCurve = GetActiveCurve(t, State.CompletedLaps);
-            State.ActiveCurveMode = activeCurve.ActiveMode;
-            State.CurrentCurveSign = activeCurve.Sign;
-            State.WillDriftCurrentCurve = activeCurve.WillDrift;
             
-            CalculateCurveSeverities(t, activeCurve, out float currentSeverity, out float upcomingSeverity, out float exitSeverity);
-            State.IsInCurveSequence = (currentSeverity > 0f || upcomingSeverity > 0f || exitSeverity > 0f);
+            // Blend all overlapping curves smoothly instead of snapping when the closest curve changes
+            float totalDynamicOffset = 0f;
+            State.IsInCurveSequence = false;
+            State.WillDriftCurrentCurve = false;
+            
+            float maxSeverity = 0f;
+            TrackCurveEvent dominantCurve = default;
 
-            float dynamicRacingLineOffset = 0f;
+            foreach (var baseCurve in precalculatedCurves)
+            {
+                TrackCurveEvent evaluatedCurve = EvaluateCurveForLap(baseCurve, t, State.CompletedLaps);
+                CalculateCurveSeverities(t, evaluatedCurve, out float cur, out float up, out float ex);
+                
+                float severitySum = cur + up + ex;
+                if (severitySum <= 0f) continue;
+
+                State.IsInCurveSequence = true;
+                
+                float line = GetRacingLineOffset(t, evaluatedCurve, cur);
+                
+                float lineMultiplier = 1f;
+                if ((int)evaluatedCurve.ActiveMode >= 5) // Failed modes
+                {
+                    float errorMagnitude = 1f - (personality.Precision / 10f);
+                    // "sair um pouquinho mais da curva ao errar"
+                    lineMultiplier = 1f + (errorMagnitude * 4f); 
+                }
+                
+                totalDynamicOffset += line * lineMultiplier;
+                
+                if (severitySum > maxSeverity)
+                {
+                    maxSeverity = severitySum;
+                    dominantCurve = evaluatedCurve;
+                }
+            }
 
             if (State.IsInCurveSequence)
             {
-                dynamicRacingLineOffset = GetRacingLineOffset(t, activeCurve);
-            }
-
-            // Scale the line magnitude
-            // If it's a perfect curve, we execute it precisely (multiplier 1.0)
-            // If it's a failed curve, we scale the severity of the mistake by how low Precision is.
-            float lineMultiplier = 1f;
-            if ((int)State.ActiveCurveMode >= 5) // Failed modes
-            {
-                float errorMagnitude = 1f - (personality.Precision / 10f);
-                // Exaggerate the visual error by up to 2.5x to make the mistake extremely visible
-                lineMultiplier = errorMagnitude * 2.5f;
+                State.ActiveCurveMode = dominantCurve.ActiveMode;
+                State.CurrentCurveSign = dominantCurve.Sign;
+                State.WillDriftCurrentCurve = dominantCurve.WillDrift;
             }
 
             // Smooth the racing line calculation.
-            // Even if the threshold triggers late and dynamicRacingLineOffset jumps,
-            // this MoveTowards will ramp it up naturally over ~0.2s, simulating the driver steering in.
-            smoothedRacingLine = Mathf.MoveTowards(smoothedRacingLine, dynamicRacingLineOffset, dt * 10f); // Max 10m/s lateral shift
+            smoothedRacingLine = Mathf.MoveTowards(smoothedRacingLine, totalDynamicOffset, dt * 10f); // Max 10m/s lateral shift
 
-            rawOffset = smoothedRacingLine * lineMultiplier;
+            float rawOffset = smoothedRacingLine;
 
             // ── Authored Lane Profile ───────────────────────────────────────────
             if (State.IsInCurveSequence && laneProfile != null)
@@ -489,7 +619,11 @@ namespace GearEngine.SplineEvaluate.Simulation
                 rawOffset += aggression + drift + width + riskEntry;
             }
 
-            State.RawLateralOffset = Mathf.Clamp(rawOffset, -config.maxLateralOffset, config.maxLateralOffset);
+            // Clamp the offset. If they failed the curve, allow them to slide up to 50% OUTSIDE the track bounds!
+            float maxBounds = config.maxLateralOffset;
+            if ((int)State.ActiveCurveMode >= 5) maxBounds *= 1.5f; 
+
+            State.RawLateralOffset = Mathf.Clamp(rawOffset, -maxBounds, maxBounds);
 
             float targetSmoothRate = config.lateralSmoothRate;
             if (!State.IsInCurveSequence)
@@ -558,17 +692,27 @@ namespace GearEngine.SplineEvaluate.Simulation
             targetSlip = Mathf.Clamp(targetSlip, -maxAllowedSlip, maxAllowedSlip);
             State.SlipAngle = Mathf.Lerp(State.SlipAngle, targetSlip, dt * config.slipAngleSmoothRate);
 
-            // Trigger IsDrifting based on severity (which triggers early in the setup distance)
-            // instead of waiting for the smoothed SlipAngle to catch up, fixing the "late VFX" issue.
-            State.IsDrifting = Mathf.Abs(State.SlipAngle) > 2f || driftSeverityForVFX > 0.2f;
+            // Trigger IsDrifting purely based on explicit curve drift intent and depth
+            // This prevents lateral lane shifts on straightaways from faking a drift
+            State.IsDrifting = false;
+            if (State.IsInCurveSequence && State.WillDriftCurrentCurve)
+            {
+                State.IsDrifting = driftSeverityForVFX > 0.05f; 
+            }
 
             // Handle Prometeo VFX via cached reflection fields
             if (hasPrometeoEffects)
             {
-                // Drift VFX triggers if slip angle is high enough, or if we are in a wobble/drift trajectory
-                bool isLateralDrift = Mathf.Abs(velocityAngle) > 1.5f;
-                bool showDriftVfx = (State.IsDrifting || isLateralDrift) && State.Speed > 5f;
+                // Drift VFX strictly triggers only when performing a designated curve drift
+                bool showDriftVfx = State.IsDrifting && State.Speed > 5f;
                 
+                // Panic brake lockup VFX when failing a curve!
+                bool isFailingCurve = State.IsInCurveSequence && (int)State.ActiveCurveMode >= 5;
+                if (isFailingCurve && State.IsBraking && State.Speed > 10f)
+                {
+                    showDriftVfx = true; // Emit concentrated smoke as the car violently brakes to recover!
+                }
+
                 // Particle Systems
                 if (rlParticle != null)
                 {

@@ -83,5 +83,11 @@ namespace GearEngine.SplineEvaluate.Simulation
 
         /// <summary>The Unity Time.time when the wobble was triggered.</summary>
         public float WobbleTriggerTime;
+
+        /// <summary>True if the driver already received their drift boost at the end of this curve.</summary>
+        public bool HasBoostedThisCurve;
+
+        /// <summary>True if the driver already received their failure penalty for this curve.</summary>
+        public bool HasFailedThisCurve;
     }
 }
