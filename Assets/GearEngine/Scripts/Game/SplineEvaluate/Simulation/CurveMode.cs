@@ -17,6 +17,22 @@ namespace GearEngine.SplineEvaluate.Simulation
         FailedHugOutside = 6,
         FailedWobble = 7,
         FailedBalk = 8,
-        FailedOvershoot = 9
+        FailedOvershoot = 9,
+
+        // ── SIMPLE MODES (Used when NOT drifting to avoid weird snappy visuals) ──
+        SimpleCenter = 10,
+        SimpleInside = 11,
+        SimpleOutside = 12,
+        SimpleFailedOutside = 13,
+        SimpleFailedInside = 14
+    }
+
+    public static class CurveModeExtensions
+    {
+        public static bool IsFailedMode(this CurveMode mode)
+        {
+            int m = (int)mode;
+            return (m >= 5 && m <= 9) || m == 13 || m == 14;
+        }
     }
 }
