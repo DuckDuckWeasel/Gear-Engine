@@ -81,18 +81,18 @@ namespace GearEngine.CarSimulation.Debug
         {
             if (variable == null) return;
             
-            ctx.entity.TryGetValue(variable, out float currentValue);
+            ctx.entity.TryGetVariable(variable, out float currentValue);
 
             GUILayout.BeginHorizontal();
             GUILayout.Label($"{label}: {currentValue:F1}", GUILayout.Width(130));
             
             if (GUILayout.Button("- 10", GUILayout.Width(50)))
             {
-                ctx.entity.AddModifier(new EntityModifierEntry(variable, new FloatVariableValue { Value = -10f }));
+                ctx.entity.AddModifier(new EntityModifierEntry(variable, new FloatAddModifier(-10f)));
             }
             if (GUILayout.Button("+ 10", GUILayout.Width(50)))
             {
-                ctx.entity.AddModifier(new EntityModifierEntry(variable, new FloatVariableValue { Value = 10f }));
+                ctx.entity.AddModifier(new EntityModifierEntry(variable, new FloatAddModifier(10f)));
             }
             GUILayout.EndHorizontal();
         }

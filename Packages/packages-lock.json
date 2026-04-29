@@ -53,11 +53,18 @@
       "hash": "d0ff9f487444dfee57e732bcb5e61f77275a00eb"
     },
     "com.scaffold.entities": {
-      "version": "https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.entities#main",
+      "version": "https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.entities#feature/entities-state-bridge",
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "d0ff9f487444dfee57e732bcb5e61f77275a00eb"
+      "hash": "059db733c79fdc0201b0ce57e5203917d93abc67"
+    },
+    "com.scaffold.entities.states": {
+      "version": "https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.entities.states#feature/entities-state-bridge",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "059db733c79fdc0201b0ce57e5203917d93abc67"
     },
     "com.scaffold.events": {
       "version": "https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.events#main",
@@ -120,6 +127,13 @@
       },
       "hash": "f79dcd2609c5e6a25026507bb68813e02ee3b902"
     },
+    "com.scaffold.pooling": {
+      "version": "https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.pooling#feature/entities-state-bridge",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "059db733c79fdc0201b0ce57e5203917d93abc67"
+    },
     "com.scaffold.records": {
       "version": "https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.records#main",
       "depth": 0,
@@ -142,6 +156,16 @@
       "source": "git",
       "dependencies": {},
       "hash": "09b1ce52e83c7ca53985081a3ab0d601c2d22bb3"
+    },
+    "com.scaffold.states": {
+      "version": "https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.states#feature/entities-state-bridge",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {
+        "com.scaffold.records": "0.1.0",
+        "com.scaffold.maps": "0.1.0"
+      },
+      "hash": "059db733c79fdc0201b0ce57e5203917d93abc67"
     },
     "com.scaffold.types": {
       "version": "https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.types#main",
