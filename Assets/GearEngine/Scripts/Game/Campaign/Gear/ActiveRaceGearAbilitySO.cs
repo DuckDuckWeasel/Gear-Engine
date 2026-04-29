@@ -1,8 +1,9 @@
+using System.Collections.Generic;
 using GearEngine.GearEngine;
-using GearEngine.CarSimulation;
 using GearEngine.CarSimulation.Simulation;
 using GearEngine.GearEngine.Abilities;
 using GearEngine.GearEngine.Nodes;
+using Scaffold.Entities;
 
 namespace GearEngine.Campaign.Gear
 {
@@ -13,10 +14,25 @@ namespace GearEngine.Campaign.Gear
     public abstract class ActiveRaceGearAbilitySO : GearAbilitySO
     {
         protected RaceState RaceContext { get; private set; }
-        private readonly System.Collections.Generic.Dictionary<IGridNode, System.Collections.Generic.List<Scaffold.Entities.EntityModifierEntry>> nodeModifiers = new System.Collections.Generic.Dictionary<IGridNode, System.Collections.Generic.List<Scaffold.Entities.EntityModifierEntry>>();
-        private readonly System.Collections.Generic.Dictionary<Scaffold.Entities.EntityModifierEntry, float> temporaryModifiers = new System.Collections.Generic.Dictionary<Scaffold.Entities.EntityModifierEntry, float>();
+
+        private readonly Dictionary<IGridNode, List<AppliedRaceModifier>> nodeModifiers =
+            new Dictionary<IGridNode, List<AppliedRaceModifier>>();
+
+        private readonly Dictionary<ModifierId, float> temporaryModifiers = new Dictionary<ModifierId, float>();
 
         protected IGearEngineService GearEngineContext { get; private set; }
+
+        private readonly struct AppliedRaceModifier
+        {
+            public AppliedRaceModifier(Variable key, ModifierId id)
+            {
+                Key = key;
+                Id = id;
+            }
+
+            public Variable Key { get; }
+            public ModifierId Id { get; }
+        }
 
         public virtual void Initialize(RaceState state, IGearEngineService gearEngine)
         {
@@ -26,49 +42,52 @@ namespace GearEngine.Campaign.Gear
             temporaryModifiers.Clear();
         }
 
-        protected void ApplyModifier(IGridNode owner, Scaffold.Entities.VariableSO variable, float value, float duration = -1f)
+        protected void ApplyModifier(IGridNode owner, VariableSO variable, float value, float duration = -1f)
         {
-            if (RaceContext?.Car == null || variable == null) return;
-            
-            var entry = new Scaffold.Entities.EntityModifierEntry(
-                variable, 
-                new Scaffold.Entities.FloatVariableValue { Value = value }
-            );
-            
-            RaceContext.Car.AddModifier(entry);
-
-            if (!nodeModifiers.ContainsKey(owner))
+            if (RaceContext?.Car == null || variable == null)
             {
-                nodeModifiers[owner] = new System.Collections.Generic.List<Scaffold.Entities.EntityModifierEntry>();
+                return;
             }
-            nodeModifiers[owner].Add(entry);
+
+            var entry = new EntityModifierEntry(variable, new FloatAddModifier(value));
+            ModifierId modifierId = RaceContext.Car.AddModifier(entry);
+
+            if (!nodeModifiers.TryGetValue(owner, out List<AppliedRaceModifier>? list))
+            {
+                list = new List<AppliedRaceModifier>();
+                nodeModifiers[owner] = list;
+            }
+
+            list.Add(new AppliedRaceModifier(variable, modifierId));
 
             if (duration > 0f)
             {
-                temporaryModifiers[entry] = duration;
+                temporaryModifiers[modifierId] = duration;
             }
         }
 
         public override void Tick(IGridNode owner, float deltaTime)
         {
-            if (RaceContext?.Car == null || temporaryModifiers.Count == 0 || !nodeModifiers.ContainsKey(owner)) return;
+            if (RaceContext?.Car == null || temporaryModifiers.Count == 0 || !nodeModifiers.TryGetValue(owner, out List<AppliedRaceModifier>? modsForNode))
+            {
+                return;
+            }
 
-            var modsForNode = nodeModifiers[owner];
             for (int i = modsForNode.Count - 1; i >= 0; i--)
             {
-                var mod = modsForNode[i];
-                if (temporaryModifiers.TryGetValue(mod, out float timeLeft))
+                AppliedRaceModifier applied = modsForNode[i];
+                if (temporaryModifiers.TryGetValue(applied.Id, out float timeLeft))
                 {
                     timeLeft -= deltaTime;
                     if (timeLeft <= 0f)
                     {
-                        RaceContext.Car.RemoveModifier(mod);
-                        temporaryModifiers.Remove(mod);
+                        RaceContext.Car.RemoveModifier(applied.Key, applied.Id);
+                        temporaryModifiers.Remove(applied.Id);
                         modsForNode.RemoveAt(i);
                     }
                     else
                     {
-                        temporaryModifiers[mod] = timeLeft;
+                        temporaryModifiers[applied.Id] = timeLeft;
                     }
                 }
             }
@@ -77,13 +96,14 @@ namespace GearEngine.Campaign.Gear
         public override void OnDeactive(IGridNode owner)
         {
             base.OnDeactive(owner);
-            if (RaceContext?.Car != null && nodeModifiers.TryGetValue(owner, out var activeModifiers))
+            if (RaceContext?.Car != null && nodeModifiers.TryGetValue(owner, out List<AppliedRaceModifier>? activeModifiers))
             {
-                foreach (var mod in activeModifiers)
+                foreach (AppliedRaceModifier applied in activeModifiers)
                 {
-                    RaceContext.Car.RemoveModifier(mod);
-                    temporaryModifiers.Remove(mod);
+                    RaceContext.Car.RemoveModifier(applied.Key, applied.Id);
+                    temporaryModifiers.Remove(applied.Id);
                 }
+
                 nodeModifiers.Remove(owner);
             }
         }

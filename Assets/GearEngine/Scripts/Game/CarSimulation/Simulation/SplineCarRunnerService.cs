@@ -106,12 +106,12 @@ namespace GearEngine.CarSimulation.Simulation
             
             if (ctx.Variables != null)
             {
-                ctx.entity.TryGetValue(ctx.Variables.Speed, out s);
-                ctx.entity.TryGetValue(ctx.Variables.Acceleration, out a);
-                ctx.entity.TryGetValue(ctx.Variables.Handling, out h);
-                ctx.entity.TryGetValue(ctx.Variables.Stability, out st);
-                ctx.entity.TryGetValue(ctx.Variables.Recovery, out r);
-                ctx.entity.TryGetValue(ctx.Variables.DriftPenalty, out d);
+                ctx.entity.TryGetVariable(ctx.Variables.Speed, out s);
+                ctx.entity.TryGetVariable(ctx.Variables.Acceleration, out a);
+                ctx.entity.TryGetVariable(ctx.Variables.Handling, out h);
+                ctx.entity.TryGetVariable(ctx.Variables.Stability, out st);
+                ctx.entity.TryGetVariable(ctx.Variables.Recovery, out r);
+                ctx.entity.TryGetVariable(ctx.Variables.DriftPenalty, out d);
             }
 
             float normTopSpeed = s / 100f;

@@ -4,7 +4,7 @@ using UnityEngine;
 namespace GearEngine.CarSimulation.Definitions
 {
     [CreateAssetMenu(menuName = "Game/Car/Car Definition", fileName = "CarDefinition")]
-    public sealed class CarDefinition : EntityDefinition
+    public sealed class CarDefinition : EntityDefinitionAsset
     {
         public GameObject CarPrefab => carPrefab;
 
