@@ -4256,7 +4256,7 @@ GameObject:
   - component: {fileID: 236178453}
   - component: {fileID: 236178452}
   m_Layer: 0
-  m_Name: SplineEvaluateBootstrap
+  m_Name: Test2Bootstrap
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4271,17 +4271,18 @@ MonoBehaviour:
   m_GameObject: {fileID: 236178451}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a58a0767309a34d9aa7a0a718578889e, type: 3}
+  m_Script: {fileID: 11500000, guid: 42cfe6d2f1227426e96f5ab7e0c98e71, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Game.SplineEvaluate::GearEngine.SplineEvaluate.Bootstrap.SplineEvaluateBootstrap
+  m_EditorClassIdentifier: 
   splineContainer: {fileID: 1807121482}
-  carDefinition: {fileID: 11400000, guid: 59b8ad03ed6294eed9d09acaaf13bdea, type: 2}
+  carPrefab: {fileID: 2482284025406797222, guid: 1bfb39f4a957f4a4caba117496817699, type: 3}
   personality:
     SpeedCapability: 5
     CorneringSkill: 5
-    Traction: 5
+    Drift: 5
     Precision: 5
     Smoothness: 5
+  driverConfig: {fileID: 11400000, guid: b393ad173435d4319bc006db49840689, type: 2}
   laneProfileOverride: {fileID: 11400000, guid: 3ce3dbdd04583490e89761024df826c5, type: 2}
 --- !u!4 &236178453
 Transform:
@@ -6547,7 +6548,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 2093082549}
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &323495962
 GameObject:
@@ -40146,7 +40147,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Traction
+  m_text: Drift
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -44022,9 +44023,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 1807121481}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9a6cfda16da2742389a8fb72cb737dd6, type: 3}
+  m_Script: {fileID: 11500000, guid: df66f9e5be1234ad780d8c053c1f8068, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Game.SplineEvaluate::GearEngine.SplineEvaluate.Presentation.SplineEvaluateGizmos
+  m_EditorClassIdentifier: 
   splineContainer: {fileID: 1807121482}
   bootstrap: {fileID: 236178452}
   trackSampleCount: 200
@@ -44554,7 +44555,7 @@ GameObject:
   - component: {fileID: 1834224367}
   - component: {fileID: 1834224366}
   m_Layer: 0
-  m_Name: SplineEvaluateHUD_Canvas
+  m_Name: Test2HUD_Canvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -44569,9 +44570,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 1834224365}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8e6ba912170704117a43ffaf68b68a80, type: 3}
+  m_Script: {fileID: 11500000, guid: 6fd9b6b773c1846d1a2458bf7211f7be, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Game.SplineEvaluate::GearEngine.SplineEvaluate.Presentation.SplineEvaluateHUD
+  m_EditorClassIdentifier: 
   bootstrap: {fileID: 236178452}
   speedLabel: {fileID: 101524313}
   lapLabel: {fileID: 1458138067}
@@ -44579,7 +44580,7 @@ MonoBehaviour:
   curveModeLabel: {fileID: 2022717818}
   speedCapabilitySlider: {fileID: 2061086399}
   corneringSkillSlider: {fileID: 1853754926}
-  tractionSlider: {fileID: 588630876}
+  driftSlider: {fileID: 588630876}
   precisionSlider: {fileID: 1889606943}
   smoothnessSlider: {fileID: 1559845970}
   startStopButton: {fileID: 857961723}
@@ -51890,9 +51891,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2093082549}
-  - component: {fileID: 2093082550}
   m_Layer: 0
-  m_Name: SplineEvaluateScope
+  m_Name: Test2Root
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -51911,31 +51911,10 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 322529550}
   - {fileID: 236178453}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2093082550
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2093082548}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9949746b1951842f6bf51e3c0bfc5b17, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Game.SplineEvaluate::GearEngine.SplineEvaluate.Bootstrap.SplineEvaluateScope
-  parentReference:
-    TypeName: 
-  autoRun: 1
-  autoInjectGameObjects: []
-  navigationSettings: {fileID: 11400000, guid: 137da207fe7ec1345a5d209afdac17bd, type: 2}
-  navigationViewHolder: {fileID: 322529550}
-  sceneBootstrap: {fileID: 236178452}
-  driverConfig: {fileID: 11400000, guid: b393ad173435d4319bc006db49840689, type: 2}
-  defaultLaneProfile: {fileID: 11400000, guid: 3ce3dbdd04583490e89761024df826c5, type: 2}
+
 --- !u!1 &2096206253
 GameObject:
   m_ObjectHideFlags: 0
