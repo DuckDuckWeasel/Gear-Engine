@@ -74,7 +74,7 @@ namespace GearEngine.SplineEvaluate.Tests
             DriverPersonality p = DriverPersonality.Default;
             Assert.AreEqual(5f, p.SpeedCapability);
             Assert.AreEqual(5f, p.CorneringSkill);
-            Assert.AreEqual(5f, p.Traction);
+            Assert.AreEqual(5f, p.Drift);
             Assert.AreEqual(5f, p.Precision);
             Assert.AreEqual(5f, p.Smoothness);
         }
@@ -274,7 +274,7 @@ namespace GearEngine.SplineEvaluate.Tests
             {
                 SpeedCapability = 0f,
                 CorneringSkill = 0f,
-                Traction = 10f,
+                Drift = 10f,
                 Precision = 10f, // 10 precision -> 0 error offset
                 Smoothness = 10f // 10 smoothness -> no noise
             };

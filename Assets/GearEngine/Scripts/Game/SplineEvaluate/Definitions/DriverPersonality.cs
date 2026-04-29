@@ -18,8 +18,8 @@ namespace GearEngine.SplineEvaluate.Definitions
         [Range(0f, 10f), Tooltip("10 = always take the perfect racing line, 0 = always take invalid lines.")]
         public float CorneringSkill;
 
-        [Range(0f, 10f), Tooltip("10 = perfect grip (no drift), 0 = always drifts in curves.")]
-        public float Traction;
+        [Range(0f, 10f), Tooltip("10 = always drifts in curves, 0 = perfect grip (no drift).")]
+        public float Drift;
 
         [Range(0f, 10f), Tooltip("10 = extremely precise even on bad lines, 0 = hugs the absolute wrong edge of the track.")]
         public float Precision;
@@ -32,7 +32,7 @@ namespace GearEngine.SplineEvaluate.Definitions
         {
             SpeedCapability = 5f,
             CorneringSkill = 5f,
-            Traction = 5f,
+            Drift = 5f,
             Precision = 5f,
             Smoothness = 5f
         };

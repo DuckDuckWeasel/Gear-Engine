@@ -359,8 +359,8 @@ namespace GearEngine.SplineEvaluate.Editor
             layoutGroup.spacing = 8f;
             layoutGroup.padding = new RectOffset(10, 10, 10, 10);
 
-            string[] sliderNames = { "Speed Capability", "Cornering Skill", "Traction", "Precision", "Smoothness" };
-            string[] sliderFields = { "speedCapabilitySlider", "corneringSkillSlider", "tractionSlider", "precisionSlider", "smoothnessSlider" };
+            string[] sliderNames = { "Speed Capability", "Cornering Skill", "Drift", "Precision", "Smoothness" };
+            string[] sliderFields = { "speedCapabilitySlider", "corneringSkillSlider", "driftSlider", "precisionSlider", "smoothnessSlider" };
 
             for (int i = 0; i < sliderNames.Length; i++)
             {

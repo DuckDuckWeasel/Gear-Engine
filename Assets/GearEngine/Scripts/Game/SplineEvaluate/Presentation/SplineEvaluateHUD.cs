@@ -31,8 +31,8 @@ namespace GearEngine.SplineEvaluate.Presentation
         [FormerlySerializedAs("perfectCurveChanceSlider")]
         [SerializeField] private Slider corneringSkillSlider;
 
-        [FormerlySerializedAs("driftChanceSlider")]
-        [SerializeField] private Slider tractionSlider;
+        [FormerlySerializedAs("tractionSlider")]
+        [SerializeField] private Slider driftSlider;
 
         [FormerlySerializedAs("curveOffsetSlider")]
         [SerializeField] private Slider precisionSlider;
@@ -115,13 +115,13 @@ namespace GearEngine.SplineEvaluate.Presentation
         {
             SetupSlider(speedCapabilitySlider, 5f, 0f, 10f);
             SetupSlider(corneringSkillSlider, 5f, 0f, 10f);
-            SetupSlider(tractionSlider, 5f, 0f, 10f);
+            SetupSlider(driftSlider, 5f, 0f, 10f);
             SetupSlider(precisionSlider, 5f, 0f, 10f);
             SetupSlider(smoothnessSlider, 5f, 0f, 10f);
 
             if (speedCapabilitySlider != null) speedCapabilitySlider.onValueChanged.AddListener(_ => PushPersonality());
             if (corneringSkillSlider != null) corneringSkillSlider.onValueChanged.AddListener(_ => PushPersonality());
-            if (tractionSlider != null) tractionSlider.onValueChanged.AddListener(_ => PushPersonality());
+            if (driftSlider != null) driftSlider.onValueChanged.AddListener(_ => PushPersonality());
             if (precisionSlider != null) precisionSlider.onValueChanged.AddListener(_ => PushPersonality());
             if (smoothnessSlider != null) smoothnessSlider.onValueChanged.AddListener(_ => PushPersonality());
         }
@@ -142,7 +142,7 @@ namespace GearEngine.SplineEvaluate.Presentation
             {
                 SpeedCapability = speedCapabilitySlider != null ? speedCapabilitySlider.value : 5f,
                 CorneringSkill = corneringSkillSlider != null ? corneringSkillSlider.value : 5f,
-                Traction = tractionSlider != null ? tractionSlider.value : 5f,
+                Drift = driftSlider != null ? driftSlider.value : 5f,
                 Precision = precisionSlider != null ? precisionSlider.value : 5f,
                 Smoothness = smoothnessSlider != null ? smoothnessSlider.value : 5f
             };
@@ -155,7 +155,7 @@ namespace GearEngine.SplineEvaluate.Presentation
             if (startStopButton != null) startStopButton.onClick.RemoveListener(ToggleRace);
             if (speedCapabilitySlider != null) speedCapabilitySlider.onValueChanged.RemoveAllListeners();
             if (corneringSkillSlider != null) corneringSkillSlider.onValueChanged.RemoveAllListeners();
-            if (tractionSlider != null) tractionSlider.onValueChanged.RemoveAllListeners();
+            if (driftSlider != null) driftSlider.onValueChanged.RemoveAllListeners();
             if (precisionSlider != null) precisionSlider.onValueChanged.RemoveAllListeners();
             if (smoothnessSlider != null) smoothnessSlider.onValueChanged.RemoveAllListeners();
         }
