@@ -1,4 +1,5 @@
 using System;
+using GearEngine.CarSimulation.PhysicsSimulation;
 using System.Threading;
 using System.Threading.Tasks;
 using LiveOps.DTO.GameModule;
@@ -53,7 +54,7 @@ namespace GearEngine.Campaign.Tests.Editor
             var factory = new TrackSimulationFactory();
             var navigation = new RecordingNavigation();
 
-            var carRunnerConfig = ScriptableObject.CreateInstance<SplineCarRunnerConfigSO>();
+            var carRunnerConfig = ScriptableObject.CreateInstance<PhysicsSimulationConfig>();
             var carRunner = new SplineCarRunnerService(carRunnerConfig);
             var raceManager = new RaceManagerService(carRunner);
 
@@ -97,7 +98,7 @@ namespace GearEngine.Campaign.Tests.Editor
             var factory = new TrackSimulationFactory();
             var navigation = new RecordingNavigation();
 
-            var carRunnerConfig = ScriptableObject.CreateInstance<SplineCarRunnerConfigSO>();
+            var carRunnerConfig = ScriptableObject.CreateInstance<PhysicsSimulationConfig>();
             var carRunner = new SplineCarRunnerService(carRunnerConfig);
             var raceManager = new RaceManagerService(carRunner);
 

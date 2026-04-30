@@ -1,4 +1,5 @@
 using GearEngine.CarSimulation.Definitions;
+using GearEngine.CarSimulation.PhysicsSimulation;
 using GearEngine.GearEngine;
 using GearEngine.GearEngine.Abilities;
 using GearEngine.GearEngine.Nodes;

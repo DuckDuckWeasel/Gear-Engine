@@ -1,4 +1,5 @@
 using System.Reflection;
+using GearEngine.CarSimulation.PhysicsSimulation;
 using GearEngine.CarSimulation;
 using GearEngine.CarSimulation.Bootstrap;
 using GearEngine.CarSimulation.Definitions;
@@ -63,7 +64,7 @@ namespace GearEngine.CarSimulation.Tests
             bSo.ApplyModifiedPropertiesWithoutUndo();
             var factory = new TrackSimulationFactory();
             var nav = new CapturingNavigation();
-            var aiRunner = new SplineCarRunnerService(ScriptableObject.CreateInstance<SplineCarRunnerConfigSO>());
+            var aiRunner = new SplineCarRunnerService(ScriptableObject.CreateInstance<PhysicsSimulationConfig>());
             var raceManager = new RaceManagerService(aiRunner);
             
             InjectPrivateField(bootstrap, "factory", factory);

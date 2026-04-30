@@ -1,12 +1,15 @@
 using System;
 using GearEngine.CarSimulation;
+using GearEngine.CarSimulation.Bootstrap;
 using GearEngine.CarSimulation.Definitions;
+using GearEngine.CarSimulation.PhysicsSimulation;
 using GearEngine.CarSimulation.Simulation;
 using GearEngine.GearEngine.Bootstrap;
 using GearEngine.GearEngine.Config;
 using GearEngine.GearEngine.Services;
 using GearEngine.GearEngine.Services.Board;
 using GearEngine.SceneFoundation.Bootstrap;
+using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.Serialization;
 using VContainer;
@@ -29,18 +32,19 @@ namespace GearEngine.Race.Bootstrap
         [SerializeField]
         private GearEngineFeatureToggleSO featureToggle;
 
-        [Header("Simulation")]
+        [Header("Simulation Config (determines pipeline)")]
+        [InlineEditor]
         [SerializeField]
-        private SplineCarRunnerConfigSO splineCarRunnerConfig;
+        private SimulationConfigBase simulationConfig;
 
         protected override void ValidateSceneAssignments()
         {
             RequireBoardConfig();
             RequireSceneBootstrap();
 
-            if (splineCarRunnerConfig == null)
+            if (simulationConfig == null)
             {
-                throw new InvalidOperationException("[RaceScope] Assign SplineCarRunnerConfigSO.");
+                throw new InvalidOperationException("[RaceScope] Assign a SimulationConfigBase asset.");
             }
 
             if (featureToggle == null)
@@ -57,10 +61,7 @@ namespace GearEngine.Race.Bootstrap
             builder.RegisterInstance(featureToggle);
             new GearMechanicsInstaller().Install(builder);
 
-            builder.RegisterInstance(splineCarRunnerConfig);
-            builder.Register<TrackSimulationFactory>(Lifetime.Singleton);
-            builder.RegisterEntryPoint<RaceManagerService>(Lifetime.Singleton).AsSelf();
-            builder.RegisterEntryPoint<SplineCarRunnerService>(Lifetime.Singleton).AsSelf();
+            new CarTrackInstaller().Install(builder, simulationConfig);
 
             builder.RegisterComponent(sceneBootstrap).AsImplementedInterfaces().AsSelf();
         }

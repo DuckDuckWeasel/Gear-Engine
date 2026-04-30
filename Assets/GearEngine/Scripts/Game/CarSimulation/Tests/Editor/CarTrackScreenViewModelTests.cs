@@ -1,4 +1,5 @@
 using GearEngine.CarSimulation;
+using GearEngine.CarSimulation.PhysicsSimulation;
 using System.Collections.Generic;
 using System.Reflection;
 using GearEngine.CarSimulation.Definitions;
@@ -22,7 +23,7 @@ namespace GearEngine.CarSimulation.Tests
             trackDef.Spline.Knots = new[] { new BezierKnot(Vector3.zero), new BezierKnot(Vector3.right * 10f) };
             trackDef.Spline.Closed = false;
 
-            var carRunnerConfig = ScriptableObject.CreateInstance<SplineCarRunnerConfigSO>();
+            var carRunnerConfig = ScriptableObject.CreateInstance<PhysicsSimulationConfig>();
             var aiRunner = new SplineCarRunnerService(carRunnerConfig);
             var raceManager = new RaceManagerService(aiRunner);
             var factory = new TrackSimulationFactory();
@@ -57,7 +58,7 @@ namespace GearEngine.CarSimulation.Tests
             trackDef.Spline.Knots = new[] { new BezierKnot(Vector3.zero), new BezierKnot(Vector3.right * 10f) };
             trackDef.Spline.Closed = false;
 
-            var carRunnerConfig = ScriptableObject.CreateInstance<SplineCarRunnerConfigSO>();
+            var carRunnerConfig = ScriptableObject.CreateInstance<PhysicsSimulationConfig>();
             var aiRunner = new SplineCarRunnerService(carRunnerConfig);
             var raceManager = new RaceManagerService(aiRunner);
             var factory = new TrackSimulationFactory();

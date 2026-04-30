@@ -1,4 +1,5 @@
 using GearEngine.CarSimulation;
+using GearEngine.CarSimulation.PhysicsSimulation;
 using GearEngine.CarSimulation.Entity;
 using GearEngine.CarSimulation.Simulation;
 using GearEngine.CarSimulation.Definitions;

@@ -6,6 +6,7 @@ using GearEngine.App.Bootstrap.Layers;
 using GearEngine.Campaign.Presentation;
 using GearEngine.Campaign.Services;
 using GearEngine.CarSimulation.Definitions;
+using GearEngine.CarSimulation.PhysicsSimulation;
 using GearEngine.GearEngine.Config;
 using Scaffold.AppFlow;
 using Scaffold.Navigation.Contracts;
@@ -24,7 +25,7 @@ namespace GearEngine.App.Bootstrap
 
         [Header("Simulation")]
         [SerializeField]
-        private SplineCarRunnerConfigSO splineCarRunnerConfig;
+        private SimulationConfigBase simulationConfig;
 
         [Header("Race session defaults")]
         [SerializeField]
@@ -38,7 +39,7 @@ namespace GearEngine.App.Bootstrap
                 boardRules,
                 featureToggle,
                 raceSessionDefaults,
-                splineCarRunnerConfig);
+                simulationConfig);
         }
 
         protected override Task OnReadyAsync(CancellationToken ct)

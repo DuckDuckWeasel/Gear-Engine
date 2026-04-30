@@ -1,4 +1,5 @@
 using System.Linq;
+using GearEngine.CarSimulation.PhysicsSimulation;
 using GearEngine.Campaign.Gear;
 using GearEngine.CarSimulation.Definitions;
 using GearEngine.GearEngine;

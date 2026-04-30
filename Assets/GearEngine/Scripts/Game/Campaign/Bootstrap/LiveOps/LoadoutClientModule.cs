@@ -51,9 +51,15 @@ namespace GearEngine.Campaign.Bootstrap.LiveOps
 
         private Dictionary<string, OwnedGear> BuildOwnedByInstanceId()
         {
-            return inventoryService.Owned
-                .Where(o => o != null && !string.IsNullOrEmpty(o.InstanceId))
-                .ToDictionary(o => o.InstanceId, o => o);
+            Dictionary<string, OwnedGear> dict = new Dictionary<string, OwnedGear>(StringComparer.Ordinal);
+            foreach (var o in inventoryService.Owned)
+            {
+                if (o != null && !string.IsNullOrEmpty(o.InstanceId))
+                {
+                    dict[o.InstanceId] = o;
+                }
+            }
+            return dict;
         }
 
         private bool AppendPlacementsFromLoadout(Dictionary<string, OwnedGear> byInstanceId, out List<BoardGearPlacementData> items)

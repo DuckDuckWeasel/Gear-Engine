@@ -1,4 +1,5 @@
 using System;
+using GearEngine.CarSimulation.PhysicsSimulation;
 using GearEngine.CarSimulation;
 using GearEngine.CarSimulation.Definitions;
 using GearEngine.CarSimulation.Presentation;
@@ -45,7 +46,7 @@ namespace GearEngine.Race
         private IBoardService boardService;
 
         [Inject]
-        private SplineCarRunnerService aiRunner;
+        private ISimulationRunnerService aiRunner;
 
         protected override void Initialize()
         {

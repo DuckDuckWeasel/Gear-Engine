@@ -1,6 +1,7 @@
 using System;
 using GearEngine.SceneFoundation.Bootstrap;
 using GearEngine.CarSimulation.Definitions;
+using Sirenix.OdinInspector;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
@@ -12,24 +13,25 @@ namespace GearEngine.CarSimulation.Bootstrap
         [Header("Optional test launcher")]
         [SerializeField]
         private CarTrackBootstrap sceneBootstrap;
-        
-        [Header("Simulation Config")]
+
+        [Header("Simulation Config (determines pipeline)")]
+        [InlineEditor]
         [SerializeField]
-        private SplineCarRunnerConfigSO splineCarRunnerConfig;
+        private SimulationConfigBase simulationConfig;
 
         protected override void ValidateSceneAssignments()
         {
             RequireSceneBootstrap();
-            if (splineCarRunnerConfig == null)
+            if (simulationConfig == null)
             {
-                throw new InvalidOperationException("[CarTrackScope] Assign SplineCarRunnerConfigSO.");
+                throw new InvalidOperationException("[CarTrackScope] Assign a SimulationConfigBase asset.");
             }
         }
 
         protected override void InstallFeatureServices(IContainerBuilder builder)
         {
-            builder.RegisterInstance(splineCarRunnerConfig);
-            new CarTrackInstaller().Install(builder);
+            builder.RegisterInstance(simulationConfig);
+            new CarTrackInstaller().Install(builder, simulationConfig);
             builder.RegisterComponent(sceneBootstrap).AsImplementedInterfaces().AsSelf();
         }
 

@@ -1,4 +1,5 @@
 using GearEngine.CarSimulation.Definitions;
+using GearEngine.CarSimulation.PhysicsSimulation;
 using GearEngine.CarSimulation.Presentation;
 using GearEngine.CarSimulation.Simulation;
 using GearEngine.CarSimulation.Tracks;
@@ -26,7 +27,7 @@ namespace GearEngine.CarSimulation.Tests
                 {
                     SeedOpenSpline(trackDef);
 
-                    var carRunnerConfig = ScriptableObject.CreateInstance<SplineCarRunnerConfigSO>();
+                    var carRunnerConfig = ScriptableObject.CreateInstance<PhysicsSimulationConfig>();
                     var carRunner = new SplineCarRunnerService(carRunnerConfig);
                     var raceManager = new RaceManagerService(carRunner);
                     var factory = new TrackSimulationFactory();
