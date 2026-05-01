@@ -7,7 +7,7 @@ namespace GearEngine.GearEngine.Visuals
     /// Board-agnostic gear visual. Board-side BoardGearAnimator pushes rotation, charge fill, and reparent;
     /// inventory only calls <see cref="ApplyConfig"/> and optional fill preview.
     /// </summary>
-    public class GearView : MonoBehaviour
+    public class GearView : ItemView
     {
         [SerializeField]
         private Transform gearVisual;

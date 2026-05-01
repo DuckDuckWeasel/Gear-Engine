@@ -22,7 +22,7 @@ namespace GearEngine.Campaign.Services
         public async Task<IReadOnlyList<GearConfig>> GetCurrentRollAsync(CancellationToken cancellationToken = default)
         {
             IReadOnlyList<string> ids = await module.EnsureCurrentRollAsync(cancellationToken);
-            return MapIdsToConfigs(ids);
+            return GenerateFallbackIfNeeded(ids);
         }
 
         public Task ConsumePickAsync(GearConfig picked, CancellationToken cancellationToken = default)
@@ -33,6 +33,46 @@ namespace GearEngine.Campaign.Services
             }
 
             return module.ClaimAsync(picked.Id, cancellationToken);
+        }
+
+        public Task SkipPickAsync(CancellationToken cancellationToken = default)
+        {
+            return module.SkipAsync(cancellationToken);
+        }
+
+        public async Task<IReadOnlyList<GearConfig>> RerollAsync(CancellationToken cancellationToken = default)
+        {
+            IReadOnlyList<string> ids = await module.RerollAsync(cancellationToken);
+            return GenerateFallbackIfNeeded(ids);
+        }
+
+        private IReadOnlyList<GearConfig> GenerateFallbackIfNeeded(IReadOnlyList<string> ids)
+        {
+            if (ids == null || ids.Count == 0)
+            {
+                // Fallback: mock a random roll locally.
+                List<GearConfig> validConfigs = new List<GearConfig>();
+                foreach (GearConfig gear in catalog.All)
+                {
+                    if (gear != null && !string.IsNullOrEmpty(gear.Id))
+                    {
+                        validConfigs.Add(gear);
+                    }
+                }
+
+                if (validConfigs.Count > 0)
+                {
+                    List<GearConfig> fallbackRoll = new List<GearConfig>(3);
+                    System.Random rng = new System.Random();
+                    for (int i = 0; i < 3; i++)
+                    {
+                        fallbackRoll.Add(validConfigs[rng.Next(validConfigs.Count)]);
+                    }
+                    return fallbackRoll;
+                }
+            }
+
+            return MapIdsToConfigs(ids);
         }
 
         private List<GearConfig> MapIdsToConfigs(IReadOnlyList<string> ids)

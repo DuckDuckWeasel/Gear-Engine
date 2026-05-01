@@ -1,29 +1,30 @@
 using System;
-using CommunityToolkit.Mvvm.ComponentModel;
 using GearEngine.GearEngine.Config;
 using Scaffold.MVVM;
+
+using Scaffold.MVVM;
+using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace GearEngine.Campaign.Presentation
 {
     public sealed partial class CardOptionViewModel : ViewModel
     {
-        public CardOptionViewModel(GearConfig gearConfig)
+        private readonly Action<CardOptionViewModel> onPick;
+
+        public CardOptionViewModel(GearConfig config, Action<CardOptionViewModel> onPick)
         {
-            GearConfig = gearConfig ?? throw new ArgumentNullException(nameof(gearConfig));
+            Config = config ?? throw new ArgumentNullException(nameof(config));
+            this.onPick = onPick;
         }
 
-        public GearConfig GearConfig { get; }
+        public GearConfig Config { get; }
 
-        [ObservableProperty] private bool isSelected;
+        [ObservableProperty]
+        private bool canPick = true;
 
-        internal void Select()
+        internal void Pick()
         {
-            IsSelected = true;
-        }
-
-        internal void Deselect()
-        {
-            IsSelected = false;
+            onPick?.Invoke(this);
         }
     }
 }

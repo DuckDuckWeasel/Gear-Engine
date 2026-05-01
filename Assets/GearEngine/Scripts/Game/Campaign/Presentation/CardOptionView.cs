@@ -1,4 +1,5 @@
 using System;
+using GearEngine.GearEngine.Visuals;
 using Scaffold.MVVM;
 using TMPro;
 using UnityEngine;
@@ -8,16 +9,18 @@ namespace GearEngine.Campaign.Presentation
 {
     public sealed class CardOptionView : ViewComponent<CardOptionViewModel>
     {
-        [SerializeField] private TextMeshProUGUI gearNameLabel;
-        [SerializeField] private GameObject selectedHighlight;
+        [SerializeField] private TextMeshProUGUI nameLabel;
         [SerializeField] private Button selectButton;
+        [SerializeField] private Transform visualContainer;
+
+        private ItemView spawnedVisual;
 
         protected override void OnBind()
         {
             base.OnBind();
-            ApplyGearNameLabel();
-            BindSelectionHighlight();
+            ApplyNameLabel();
             SubscribeSelectButton();
+            SpawnVisual();
         }
 
         protected override void OnUnbind()
@@ -27,35 +30,26 @@ namespace GearEngine.Campaign.Presentation
                 selectButton.onClick.RemoveListener(OnSelectClicked);
             }
 
+            ClearVisual();
             base.OnUnbind();
         }
 
-        private void ApplyGearNameLabel()
+        private void ApplyNameLabel()
         {
-            if (gearNameLabel != null)
+            if (nameLabel != null)
             {
-                gearNameLabel.text = viewModel.GearConfig.name;
+                nameLabel.text = viewModel.Config.name;
             }
         }
 
-        private void BindSelectionHighlight()
-        {
-            Bind<bool, bool>(() => viewModel.IsSelected, UpdateHighlight);
-        }
 
-        private void UpdateHighlight(bool isSelected)
-        {
-            if (selectedHighlight != null)
-            {
-                selectedHighlight.SetActive(isSelected);
-            }
-        }
 
         private void SubscribeSelectButton()
         {
             if (selectButton != null)
             {
                 selectButton.onClick.AddListener(OnSelectClicked);
+                Bind<bool, bool>(() => viewModel.CanPick, interactable => selectButton.interactable = interactable);
             }
         }
 
@@ -63,11 +57,30 @@ namespace GearEngine.Campaign.Presentation
         {
             try
             {
-                viewModel?.Select();
+                viewModel?.Pick();
             }
             catch (Exception ex)
             {
                 Debug.LogError($"[CardOptionView] OnSelectClicked failed: {ex.Message}\n{ex.StackTrace}");
+            }
+        }
+
+        private void SpawnVisual()
+        {
+            if (visualContainer != null && viewModel?.Config != null)
+            {
+                ClearVisual();
+                var runtimeData = viewModel.Config.CreateRuntimeData();
+                spawnedVisual = GearViewSpawner.Spawn(runtimeData, visualContainer);
+            }
+        }
+
+        private void ClearVisual()
+        {
+            if (spawnedVisual != null)
+            {
+                Destroy(spawnedVisual.gameObject);
+                spawnedVisual = null;
             }
         }
     }

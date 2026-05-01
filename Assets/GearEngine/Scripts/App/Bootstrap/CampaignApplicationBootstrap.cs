@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using GearEngine.App.Bootstrap.Layers;
+using GearEngine.Campaign.Authoring;
 using GearEngine.Campaign.Presentation;
 using GearEngine.Campaign.Services;
 using GearEngine.CarSimulation.Definitions;
@@ -23,6 +24,10 @@ namespace GearEngine.App.Bootstrap
         [SerializeField]
         private GearEngineFeatureToggleSO featureToggle;
 
+        [Header("Campaign")]
+        [SerializeField]
+        private RoguelikeGearPoolSO roguelikeGearPool;
+
         [Header("Simulation")]
         [SerializeField]
         private SimulationConfigBase simulationConfig;
@@ -39,7 +44,8 @@ namespace GearEngine.App.Bootstrap
                 boardRules,
                 featureToggle,
                 raceSessionDefaults,
-                simulationConfig);
+                simulationConfig,
+                roguelikeGearPool);
         }
 
         protected override Task OnReadyAsync(CancellationToken ct)

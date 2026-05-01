@@ -18,6 +18,8 @@ namespace GearEngine.Campaign.Presentation
 {
     public sealed partial class RoguelikeViewModel : ViewModel, IDisposable
     {
+        private const int MaxInventoryCapacity = 10; // TODO: Move to config
+
         public BoardViewModel Board { get; private set; }
         public GearInventoryViewModel Inventory { get; private set; }
         public TrashZoneViewModel TrashZone { get; private set; }
@@ -26,13 +28,12 @@ namespace GearEngine.Campaign.Presentation
         internal IDragService DragService => dragService;
 
         [ObservableProperty]
-        private bool canConfirm;
-
-        [ObservableProperty]
         private int cardOptionsRevision;
 
+        [ObservableProperty]
+        private bool canReroll = true;
+
         private readonly List<CardOptionViewModel> cardOptions = new List<CardOptionViewModel>();
-        private CardOptionViewModel selectedCard;
         private readonly CancellationTokenSource cts = new CancellationTokenSource();
         private bool disposed;
 
@@ -60,7 +61,9 @@ namespace GearEngine.Campaign.Presentation
         protected override void Initialize()
         {
             base.Initialize();
+            CanReroll = true;
             SetupGearEngineSubtree();
+            inventoryService.InventoryChanged += UpdateCardOptionsInteractability;
             _ = LoadRollAsync(cts.Token);
         }
 
@@ -72,32 +75,74 @@ namespace GearEngine.Campaign.Presentation
             }
 
             disposed = true;
+            inventoryService.InventoryChanged -= UpdateCardOptionsInteractability;
             cts.Cancel();
             cts.Dispose();
         }
 
-        public void SelectCard(CardOptionViewModel card)
+        private void UpdateCardOptionsInteractability()
+        {
+            bool hasSpace = inventoryService.Owned.Count < MaxInventoryCapacity;
+            foreach (CardOptionViewModel card in cardOptions)
+            {
+                card.CanPick = hasSpace;
+            }
+        }
+
+        public async void PickCard(CardOptionViewModel card)
         {
             if (card == null)
             {
                 return;
             }
 
-            selectedCard?.Deselect();
-            selectedCard = card;
-            selectedCard.Select();
-            RecomputeCanConfirm();
-        }
+            if (inventoryService.Owned.Count >= MaxInventoryCapacity)
+            {
+                Debug.LogWarning("TODO: Show visual warning - Inventory Full");
+                return;
+            }
 
-        public async void Confirm()
-        {
             try
             {
-                await ConfirmPickAsync();
+                if (inventoryService.Add(card.Config) == null)
+                {
+                    return;
+                }
+
+                await rollService.ConsumePickAsync(card.Config, cts.Token);
+                navigation.Open(new MainViewModel());
             }
             catch (Exception ex)
             {
-                Debug.LogError($"[RoguelikeViewModel] Confirm failed: {ex.Message}\n{ex.StackTrace}");
+                Debug.LogError($"[RoguelikeViewModel] PickCard failed: {ex.Message}\n{ex.StackTrace}");
+            }
+        }
+
+        public async void Continue()
+        {
+            try
+            {
+                await SkipPickAsync();
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"[RoguelikeViewModel] Continue failed: {ex.Message}\n{ex.StackTrace}");
+            }
+        }
+
+        public async void Reroll()
+        {
+            if (!CanReroll) return;
+
+            try
+            {
+                CanReroll = false;
+                Debug.LogWarning("TODO: Trigger ad");
+                await ReRerollAsync();
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"[RoguelikeViewModel] Reroll failed: {ex.Message}\n{ex.StackTrace}");
             }
         }
 
@@ -123,20 +168,25 @@ namespace GearEngine.Campaign.Presentation
             }
         }
 
-        private async Task ConfirmPickAsync()
+
+
+        private async Task SkipPickAsync()
         {
-            if (selectedCard == null)
-            {
-                throw new InvalidOperationException("[RoguelikeViewModel] No card selected.");
-            }
-
-            if (inventoryService.Add(selectedCard.GearConfig) == null)
-            {
-                return;
-            }
-
-            await rollService.ConsumePickAsync(selectedCard.GearConfig, cts.Token);
+            await rollService.SkipPickAsync(cts.Token);
             navigation.Open(new MainViewModel());
+        }
+        
+        private async Task ReRerollAsync()
+        {
+            cardOptions.Clear();
+
+            IReadOnlyList<GearConfig> options = await rollService.RerollAsync(cts.Token);
+            foreach (GearConfig config in options)
+            {
+                AddCardOption(config);
+            }
+
+            CardOptionsRevision++;
         }
 
         private async Task AppendRollOptionsAsync(CancellationToken ct)
@@ -157,14 +207,10 @@ namespace GearEngine.Campaign.Presentation
                 return;
             }
 
-            CardOptionViewModel card = new CardOptionViewModel(config);
+            CardOptionViewModel card = new CardOptionViewModel(config, PickCard);
+            card.CanPick = inventoryService.Owned.Count < MaxInventoryCapacity;
             BindChildViewModel(card);
             cardOptions.Add(card);
-        }
-
-        private void RecomputeCanConfirm()
-        {
-            CanConfirm = selectedCard != null;
         }
     }
 }

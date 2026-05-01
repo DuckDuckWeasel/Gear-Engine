@@ -54,44 +54,7 @@ namespace GearEngine.Campaign.Tests.Editor
         }
 
         [Test]
-        public void SelectCard_CanConfirmTrueWhenCardSelected()
-        {
-            GearConfig g1 = CampaignTestUtilities.CreateGearConfigWithData("g1");
-            try
-            {
-                var roll = new FakeRoguelikeRollService { ToReturn = new[] { g1 } };
-                var boardConfig = ScriptableObject.CreateInstance<BoardRulesSO>();
-                boardConfig.GridWidth = 5;
-                boardConfig.GridHeight = 5;
-
-                using (var gear = new GearMechanicsTestContext(boardConfig))
-                {
-                    var vm = new RoguelikeViewModel();
-                    ViewModelTestInject.InjectPrivateField(vm, "rollService", roll);
-                    ViewModelTestInject.InjectPrivateField(vm, "engineService", gear.Engine);
-                    ViewModelTestInject.InjectPrivateField(vm, "boardService", gear.BoardService);
-                    ViewModelTestInject.InjectPrivateField(vm, "featureToggle", gear.FeatureToggle);
-                    ViewModelTestInject.InjectPrivateField(vm, "dragService", gear.DragService);
-                    ViewModelTestInject.InjectPrivateField(vm, "inventoryService", gear.InventoryService);
-                    ViewModelTestInject.InjectPrivateField(vm, "presentationTransferService", gear.PresentationTransfer);
-                    ViewModelTestInject.InjectNavigation(vm, new RecordingNavigation());
-
-                    ViewModelTestInject.InvokeInitialize(vm);
-
-                    vm.SelectCard(vm.CardOptions[0]);
-                    Assert.That(vm.CanConfirm, Is.True);
-                }
-
-                Object.DestroyImmediate(boardConfig);
-            }
-            finally
-            {
-                CampaignTestUtilities.DestroyGearConfig(g1);
-            }
-        }
-
-        [Test]
-        public void Confirm_AddsItem_ConsumesRoll_OpensMain()
+        public void PickCard_AddsItem_ConsumesRoll_OpensMain()
         {
             GearConfig g1 = CampaignTestUtilities.CreateGearConfigWithData("g1");
             try
@@ -116,10 +79,7 @@ namespace GearEngine.Campaign.Tests.Editor
 
                     ViewModelTestInject.InvokeInitialize(vm);
 
-                    vm.SelectCard(vm.CardOptions[0]);
-                    Assert.That(vm.CanConfirm, Is.True);
-
-                    vm.Confirm();
+                    vm.PickCard(vm.CardOptions[0]);
 
                     Assert.That(gear.InventoryService.Owned.Count, Is.EqualTo(1));
                     Assert.That(roll.Consumed, Has.Count.EqualTo(1));
@@ -151,6 +111,16 @@ namespace GearEngine.Campaign.Tests.Editor
             {
                 Consumed.Add(picked);
                 return Task.CompletedTask;
+            }
+
+            public Task SkipPickAsync(CancellationToken cancellationToken = default)
+            {
+                return Task.CompletedTask;
+            }
+
+            public Task<IReadOnlyList<GearConfig>> RerollAsync(CancellationToken cancellationToken = default)
+            {
+                return Task.FromResult(ToReturn);
             }
         }
     }

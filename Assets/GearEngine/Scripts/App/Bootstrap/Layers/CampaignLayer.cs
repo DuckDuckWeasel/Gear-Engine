@@ -1,4 +1,5 @@
 using System;
+using GearEngine.Campaign.Authoring;
 using GearEngine.Campaign.Bootstrap;
 using GearEngine.Campaign.Bootstrap.Cards;
 using GearEngine.Campaign.Bootstrap.LiveOps;
@@ -16,18 +17,20 @@ namespace GearEngine.App.Bootstrap.Layers
 {
     public sealed class CampaignLayer : IScopeLayer
     {
-        public CampaignLayer(BoardRulesSO boardRules, GearEngineFeatureToggleSO featureToggle, RaceSessionDefaultsSO raceSessionDefaults, SimulationConfigBase simulationConfig)
+        public CampaignLayer(BoardRulesSO boardRules, GearEngineFeatureToggleSO featureToggle, RaceSessionDefaultsSO raceSessionDefaults, SimulationConfigBase simulationConfig, RoguelikeGearPoolSO roguelikeGearPool = null)
         {
             this.boardRules = boardRules ?? throw new ArgumentNullException(nameof(boardRules));
             this.raceSessionDefaults = raceSessionDefaults ?? throw new ArgumentNullException(nameof(raceSessionDefaults));
             this.simulationConfig = simulationConfig ?? throw new ArgumentNullException(nameof(simulationConfig));
             this.featureToggle = featureToggle ?? throw new ArgumentNullException(nameof(featureToggle));
+            this.roguelikeGearPool = roguelikeGearPool ?? throw new ArgumentNullException(nameof(roguelikeGearPool));
         }
 
         private readonly BoardRulesSO boardRules;
         private readonly GearEngineFeatureToggleSO featureToggle;
         private readonly RaceSessionDefaultsSO raceSessionDefaults;
         private readonly SimulationConfigBase simulationConfig;
+        private readonly RoguelikeGearPoolSO roguelikeGearPool;
 
         public void Install(IContainerBuilder builder)
         {
