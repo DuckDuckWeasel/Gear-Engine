@@ -35,5 +35,17 @@ namespace GearEngine.Campaign.Presentation
                 Debug.LogError($"[MainViewModel] GoToSetup failed: {ex.Message}\n{ex.StackTrace}");
             }
         }
+
+        public void ClickedTalentPerks()
+        {
+            try
+            {
+                navigation.Open(new TalentPerksViewModel(), true, new NavigationOptions() { CloseAllViews = true });
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"[MainViewModel] ClickedTalentPerks failed: {ex.Message}\n{ex.StackTrace}");
+            }
+        }
     }
 }

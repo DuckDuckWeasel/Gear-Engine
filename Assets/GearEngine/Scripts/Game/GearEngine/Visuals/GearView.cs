@@ -35,7 +35,7 @@ namespace GearEngine.GearEngine.Visuals
             chargeFillRenderer = chargeRef;
         }
 
-        public void ApplyConfig(GearConfigData config)
+        public void ApplyConfig(GearItemData config)
         {
             if (config == null)
             {

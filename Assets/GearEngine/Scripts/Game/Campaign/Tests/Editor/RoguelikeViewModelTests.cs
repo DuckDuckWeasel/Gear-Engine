@@ -6,6 +6,7 @@ using GearEngine.Campaign.Presentation;
 using GearEngine.Campaign.Services;
 using GearEngine.GearEngine;
 using GearEngine.GearEngine.Config;
+using GearEngine.GearEngine.Services.Inventory;
 using NUnit.Framework;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -15,13 +16,13 @@ namespace GearEngine.Campaign.Tests.Editor
     public sealed class RoguelikeViewModelTests
     {
         [Test]
-        public void LoadRoll_PopulatesCardOptions()
+        public void LoadRoll_PopulatesPerkOptions()
         {
-            GearConfig g1 = CampaignTestUtilities.CreateGearConfigWithData("g1");
-            GearConfig g2 = CampaignTestUtilities.CreateGearConfigWithData("g2");
+            GearItem g1 = CampaignTestUtilities.CreateGearConfigWithData("g1");
+            GearItem g2 = CampaignTestUtilities.CreateGearConfigWithData("g2");
             try
             {
-                var roll = new FakeRoguelikeRollService { ToReturn = new[] { g1, g2 } };
+                var roll = new FakeRoguelikeRollService { ToReturn = new[] { g1.CreateRuntimeData(), g2.CreateRuntimeData() } };
                 var boardConfig = ScriptableObject.CreateInstance<BoardRulesSO>();
                 boardConfig.GridWidth = 5;
                 boardConfig.GridHeight = 5;
@@ -40,8 +41,8 @@ namespace GearEngine.Campaign.Tests.Editor
 
                     ViewModelTestInject.InvokeInitialize(vm);
 
-                    Assert.That(vm.CardOptions.Count, Is.EqualTo(2));
-                    Assert.That(vm.CardOptionsRevision, Is.GreaterThan(0));
+                    Assert.That(vm.PerkOptions.Count, Is.EqualTo(2));
+                    Assert.That(vm.PerkOptionsRevision, Is.GreaterThan(0));
                 }
 
                 Object.DestroyImmediate(boardConfig);
@@ -54,12 +55,12 @@ namespace GearEngine.Campaign.Tests.Editor
         }
 
         [Test]
-        public void PickCard_AddsItem_ConsumesRoll_OpensMain()
+        public void PickPerk_AddsItem_ConsumesRoll_OpensMain()
         {
-            GearConfig g1 = CampaignTestUtilities.CreateGearConfigWithData("g1");
+            GearItem g1 = CampaignTestUtilities.CreateGearConfigWithData("g1");
             try
             {
-                var roll = new FakeRoguelikeRollService { ToReturn = new[] { g1 } };
+                var roll = new FakeRoguelikeRollService { ToReturn = new[] { g1.CreateRuntimeData() } };
                 var navigation = new RecordingNavigation();
                 var boardConfig = ScriptableObject.CreateInstance<BoardRulesSO>();
                 boardConfig.GridWidth = 5;
@@ -79,11 +80,11 @@ namespace GearEngine.Campaign.Tests.Editor
 
                     ViewModelTestInject.InvokeInitialize(vm);
 
-                    vm.PickCard(vm.CardOptions[0]);
+                    vm.PickPerk(vm.PerkOptions[0]);
 
                     Assert.That(gear.InventoryService.Owned.Count, Is.EqualTo(1));
                     Assert.That(roll.Consumed, Has.Count.EqualTo(1));
-                    Assert.That(roll.Consumed[0], Is.SameAs(g1));
+                    Assert.That(roll.Consumed[0], Is.EqualTo(g1.Id));
                     Assert.That(navigation.OpenedControllers.Count, Is.EqualTo(1));
                     Assert.That(navigation.OpenedControllers[0], Is.InstanceOf<MainViewModel>());
                 }
@@ -98,18 +99,18 @@ namespace GearEngine.Campaign.Tests.Editor
 
         private sealed class FakeRoguelikeRollService : IRoguelikeRollService
         {
-            public IReadOnlyList<GearConfig> ToReturn = Array.Empty<GearConfig>();
+            public IReadOnlyList<IItem> ToReturn = Array.Empty<IItem>();
 
-            public List<GearConfig> Consumed { get; } = new List<GearConfig>();
+            public List<string> Consumed { get; } = new List<string>();
 
-            public Task<IReadOnlyList<GearConfig>> GetCurrentRollAsync(CancellationToken cancellationToken = default)
+            public Task<IReadOnlyList<IItem>> GetCurrentRollAsync(CancellationToken cancellationToken = default)
             {
                 return Task.FromResult(ToReturn);
             }
 
-            public Task ConsumePickAsync(GearConfig picked, CancellationToken cancellationToken = default)
+            public Task ConsumePickAsync(string pickedId, CancellationToken cancellationToken = default)
             {
-                Consumed.Add(picked);
+                Consumed.Add(pickedId);
                 return Task.CompletedTask;
             }
 
@@ -118,7 +119,7 @@ namespace GearEngine.Campaign.Tests.Editor
                 return Task.CompletedTask;
             }
 
-            public Task<IReadOnlyList<GearConfig>> RerollAsync(CancellationToken cancellationToken = default)
+            public Task<IReadOnlyList<IItem>> RerollAsync(CancellationToken cancellationToken = default)
             {
                 return Task.FromResult(ToReturn);
             }

@@ -73,11 +73,11 @@ namespace GearEngine.Campaign.Tests.Editor
 
     internal static class CampaignTestUtilities
     {
-        public static GearConfig CreateGearConfigWithData(string id)
+        public static GearItem CreateGearConfigWithData(string id)
         {
-            var config = ScriptableObject.CreateInstance<GearConfig>();
-            var data = new GearConfigData { Id = id };
-            FieldInfo field = typeof(GearConfig).GetField("data", BindingFlags.Instance | BindingFlags.NonPublic);
+            var config = ScriptableObject.CreateInstance<GearItem>();
+            var data = new GearItemData { Id = id };
+            FieldInfo field = typeof(GearItem).GetField("data", BindingFlags.Instance | BindingFlags.NonPublic);
             AssertFieldFound(field);
             field.SetValue(config, data);
             return config;
@@ -96,7 +96,7 @@ namespace GearEngine.Campaign.Tests.Editor
             return track;
         }
 
-        public static void DestroyGearConfig(GearConfig config)
+        public static void DestroyGearConfig(GearItem config)
         {
             if (config != null)
             {
@@ -108,7 +108,7 @@ namespace GearEngine.Campaign.Tests.Editor
         {
             if (field == null)
             {
-                throw new InvalidOperationException("GearConfig 'data' field not found.");
+                throw new InvalidOperationException("GearItem 'data' field not found.");
             }
         }
     }
@@ -168,7 +168,7 @@ namespace GearEngine.Campaign.Tests.Editor
     {
         public event Action InventoryChanged;
 
-        public readonly List<GearConfig> AddedGearConfigs = new List<GearConfig>();
+        public readonly List<GearItem> AddedGearConfigs = new List<GearItem>();
 
         private readonly List<OwnedGear> owned = new List<OwnedGear>();
 
@@ -178,7 +178,7 @@ namespace GearEngine.Campaign.Tests.Editor
 
         public IReadOnlyList<OwnedGear> Owned => owned;
 
-        public OwnedGear Add(GearConfig gear)
+        public OwnedGear Add(GearItem gear)
         {
             if (gear == null)
             {

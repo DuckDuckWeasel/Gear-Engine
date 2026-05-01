@@ -1,16 +1,15 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using GearEngine.GearEngine.Config;
+using GearEngine.GearEngine.Services.Inventory;
 
 namespace GearEngine.Campaign.Services
 {
     public interface IRoguelikeRollService
     {
-        Task<IReadOnlyList<GearConfig>> GetCurrentRollAsync(CancellationToken cancellationToken = default);
-
-        Task ConsumePickAsync(GearConfig picked, CancellationToken cancellationToken = default);
+        Task<IReadOnlyList<IItem>> GetCurrentRollAsync(CancellationToken cancellationToken = default);
+        Task ConsumePickAsync(string pickedId, CancellationToken cancellationToken = default);
         Task SkipPickAsync(CancellationToken cancellationToken = default);
-        Task<IReadOnlyList<GearConfig>> RerollAsync(CancellationToken cancellationToken = default);
+        Task<IReadOnlyList<IItem>> RerollAsync(CancellationToken cancellationToken = default);
     }
 }

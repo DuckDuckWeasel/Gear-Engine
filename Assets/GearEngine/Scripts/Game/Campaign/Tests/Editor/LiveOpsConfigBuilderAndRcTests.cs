@@ -1,6 +1,6 @@
 using System.IO;
 using GearEngine.Campaign.Authoring;
-using GearEngine.Cards.Authoring;
+using GearEngine.Perks.Authoring;
 using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 using Scaffold.LiveOps.Authoring;
@@ -48,11 +48,11 @@ namespace GearEngine.Campaign.Tests.Editor
         }
 
         [Test]
-        public void CardConfigBuilderSO_Default_Build_Matches_CardRc()
+        public void PerkConfigBuilderSO_Default_Build_Matches_PerkRc()
         {
-            CardConfigBuilderSO b = LoadAuthoringAsset<CardConfigBuilderSO>(
-                "Assets/GearEngine/Data/LiveOps/Authoring/CardConfigBuilder.asset");
-            AssertRcMatchesInstance(b, "Card.rc");
+            PerkConfigBuilderSO b = LoadAuthoringAsset<PerkConfigBuilderSO>(
+                "Assets/GearEngine/Data/LiveOps/Authoring/PerkConfigBuilder.asset");
+            AssertRcMatchesInstance(b, "Perk.rc");
         }
 
         [Test]
@@ -91,7 +91,7 @@ namespace GearEngine.Campaign.Tests.Editor
         public void Builder_ConfigKeys_Match_ServerModule_Contract()
         {
             TrackConfigBuilderSO t = ScriptableObject.CreateInstance<TrackConfigBuilderSO>();
-            CardConfigBuilderSO c = ScriptableObject.CreateInstance<CardConfigBuilderSO>();
+            PerkConfigBuilderSO c = ScriptableObject.CreateInstance<PerkConfigBuilderSO>();
             CurrencyConfigBuilderSO y = ScriptableObject.CreateInstance<CurrencyConfigBuilderSO>();
             InventoryConfigBuilderSO i = ScriptableObject.CreateInstance<InventoryConfigBuilderSO>();
             LoadoutConfigBuilderSO l = ScriptableObject.CreateInstance<LoadoutConfigBuilderSO>();
@@ -99,7 +99,7 @@ namespace GearEngine.Campaign.Tests.Editor
             try
             {
                 Assert.AreEqual("TrackConfig", t.ConfigKey);
-                Assert.AreEqual("CardConfig", c.ConfigKey);
+                Assert.AreEqual("PerkItem", c.ConfigKey);
                 Assert.AreEqual("CurrencyConfig", y.ConfigKey);
                 Assert.AreEqual("InventoryConfig", i.ConfigKey);
                 Assert.AreEqual("LoadoutConfig", l.ConfigKey);

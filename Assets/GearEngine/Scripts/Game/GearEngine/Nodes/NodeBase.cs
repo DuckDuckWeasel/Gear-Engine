@@ -33,7 +33,7 @@ namespace GearEngine.GearEngine.Nodes
         private float currentRotation;
 
         public float LastRotationDelta { get; private set; }
-        public GearConfigData ConfigData { get; private set; }
+        public GearItemData ConfigData { get; private set; }
         public float LocalSpeedMultiplier { get; set; } = 1.0f;
         public bool IsActive { get; set; } = true;
         public bool IsInteractable { get; private set; } = true;
@@ -45,7 +45,7 @@ namespace GearEngine.GearEngine.Nodes
 
         private readonly System.Collections.Generic.List<RuntimeAbility> activeAbilities = new System.Collections.Generic.List<RuntimeAbility>();
 
-        public virtual void Initialize(Vector2Int position, GearConfigData configData)
+        public virtual void Initialize(Vector2Int position, GearItemData configData)
         {
             Position = position;
             ConfigData = configData;

@@ -31,7 +31,7 @@ namespace GearEngine.GearEngine.Presentation.UI
                 }
 
                 Bind<int, int>(() => viewModel.InventoryListRevision, OnInventoryListRevisionChanged);
-                Bind<GearConfigData, GearConfigData>(() => viewModel.SelectedItem, OnSelectionChanged);
+                Bind<GearItemData, GearItemData>(() => viewModel.SelectedItem, OnSelectionChanged);
             }
             finally
             {
@@ -49,7 +49,7 @@ namespace GearEngine.GearEngine.Presentation.UI
             RebuildUIList();
         }
 
-        private void OnSelectionChanged(GearConfigData newItem)
+        private void OnSelectionChanged(GearItemData newItem)
         {
             if (newItem != null)
             {
@@ -70,7 +70,7 @@ namespace GearEngine.GearEngine.Presentation.UI
         private void RebuildUIList()
         {
             ClearInventorySlots();
-            foreach (GearConfigData item in viewModel.TrayItems)
+            foreach (GearItemData item in viewModel.TrayItems)
             {
                 AddPresenterForItem(item);
             }
@@ -97,7 +97,7 @@ namespace GearEngine.GearEngine.Presentation.UI
             }
         }
 
-        private void AddPresenterForItem(GearConfigData item)
+        private void AddPresenterForItem(GearItemData item)
         {
             GameObject slotObj = CreateSlotObject(item);
             if (slotObj == null)
@@ -108,7 +108,7 @@ namespace GearEngine.GearEngine.Presentation.UI
             WireGearSlot(slotObj, item);
         }
 
-        private void WireGearSlot(GameObject slotObj, GearConfigData gear)
+        private void WireGearSlot(GameObject slotObj, GearItemData gear)
         {
             GearInventorySlotView slotView = slotObj.GetComponent<GearInventorySlotView>();
             if (slotView == null)
@@ -125,7 +125,7 @@ namespace GearEngine.GearEngine.Presentation.UI
             }
 
             drag.SetHideSourceWhileDragging(false);
-            GearConfigData capturedGear = gear;
+            GearItemData capturedGear = gear;
             drag.BuildPayload = e =>
             {
                 Vector3 world = DragPointerUtility.GetWorldPosition(e);
@@ -137,7 +137,7 @@ namespace GearEngine.GearEngine.Presentation.UI
             ApplyGearVisualAndDrag(slotView, gear);
         }
 
-        private void ApplyGearVisualAndDrag(GearInventorySlotView slotView, GearConfigData gear)
+        private void ApplyGearVisualAndDrag(GearInventorySlotView slotView, GearItemData gear)
         {
             if (gear.ViewPrefab == null)
             {
@@ -189,7 +189,7 @@ namespace GearEngine.GearEngine.Presentation.UI
             return CanAccept(payload);
         }
 
-        private GameObject CreateSlotObject(GearConfigData item)
+        private GameObject CreateSlotObject(GearItemData item)
         {
             if (slotPrefab == null)
             {

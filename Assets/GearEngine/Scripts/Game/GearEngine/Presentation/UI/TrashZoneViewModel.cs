@@ -33,7 +33,7 @@ namespace GearEngine.GearEngine.Presentation.UI
 
         public void HandleDragStarted(DragPayload payload)
         {
-            GearConfigData gear = payload.GetData<GearConfigData>() ?? payload.GetData<IGridNode>()?.ConfigData;
+            GearItemData gear = payload.GetData<GearItemData>() ?? payload.GetData<IGridNode>()?.ConfigData;
             if (gear != null && CanTrashAcceptGear(gear))
             {
                 RewardText = $"+{gear.DeleteRewardAmount}";
@@ -63,7 +63,7 @@ namespace GearEngine.GearEngine.Presentation.UI
             }
         }
 
-        public bool HandleInventoryGearDropped(GearConfigData gear)
+        public bool HandleInventoryGearDropped(GearItemData gear)
         {
             try
             {
@@ -76,7 +76,7 @@ namespace GearEngine.GearEngine.Presentation.UI
             }
         }
 
-        public bool CanTrashAcceptGear(GearConfigData gear)
+        public bool CanTrashAcceptGear(GearItemData gear)
         {
             if (gear == null || !gear.IsDeletable)
             {
@@ -111,7 +111,7 @@ namespace GearEngine.GearEngine.Presentation.UI
             Debug.LogError($"[TrashZoneViewModel] HandleBoardGearDropped failed: {ex.Message}\n{ex.StackTrace}");
         }
 
-        private bool TryTrashInventoryGear(GearConfigData gear)
+        private bool TryTrashInventoryGear(GearItemData gear)
         {
             if (gear == null || (engineService != null && engineService.IsRunning))
             {

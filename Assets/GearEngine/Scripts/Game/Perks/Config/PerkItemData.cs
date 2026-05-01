@@ -1,0 +1,47 @@
+using System;
+using UnityEngine;
+using GearEngine.GearEngine.Services.Inventory;
+using System.Collections.Generic;
+using GearEngine.Perks.Powerups;
+
+namespace GearEngine.Perks.Config
+{
+    [Serializable]
+    public class PerkItemData : IItem
+    {
+        [SerializeField] private string id;
+        public string Id { get => id; set => id = value; }
+        
+        [SerializeField] private string perkName;
+        public string Name { get => string.IsNullOrEmpty(perkName) ? id : perkName; set => perkName = value; }
+
+        [SerializeField] private ItemRarity rarity = ItemRarity.Common;
+        public ItemRarity Rarity { get => rarity; set => rarity = value; }
+
+        [SerializeField] [TextArea] private string description;
+        public string Description { get => description; set => description = value; }
+
+        public Sprite UIIcon;
+        public Sprite Icon => UIIcon;
+
+        [SerializeField] private List<CarPowerupModifierSO> modifiers = new List<CarPowerupModifierSO>();
+        public IReadOnlyList<CarPowerupModifierSO> ModifierAssets => modifiers;
+
+        public void CollectModifiers(List<ICarPowerupModifier> destination)
+        {
+            if (destination == null)
+            {
+                return;
+            }
+
+            for (var i = 0; i < modifiers.Count; i++)
+            {
+                CarPowerupModifierSO m = modifiers[i];
+                if (m != null)
+                {
+                    destination.Add(m);
+                }
+            }
+        }
+    }
+}

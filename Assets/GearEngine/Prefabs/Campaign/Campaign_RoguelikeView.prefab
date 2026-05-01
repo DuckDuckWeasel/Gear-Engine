@@ -120,7 +120,7 @@ MonoBehaviour:
   boardView: {fileID: 0}
   inventoryView: {fileID: 0}
   trashDropZone: {fileID: 0}
-  cardOptionViews:
+  perkOptionViews:
   - {fileID: 4924588770951724641}
   - {fileID: 8053583864429470062}
   - {fileID: 8474581516962591683}
@@ -595,7 +595,7 @@ GameObject:
   - component: {fileID: 7398030935295353849}
   - component: {fileID: 9036914224943917543}
   m_Layer: 0
-  m_Name: Card Container
+  m_Name: Perk Container
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1179,7 +1179,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8577524891781176608, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
       propertyPath: m_Name
-      value: Card_0 (1)
+      value: Perk_0 (1)
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1199,9 +1199,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e8475b31e0241084ea05f12047fac9b1, type: 3}
+  m_Script: {fileID: 11500000, guid: 7d24e883d345347ac94e8ca8632ba3b3, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Game.Campaign::GearEngine.Campaign.Presentation.CardOptionView
+  m_EditorClassIdentifier: Game.Campaign::GearEngine.Campaign.Presentation.ItemPerkView
 --- !u!1001 &1233360435930517350
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1292,7 +1292,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8577524891781176608, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
       propertyPath: m_Name
-      value: Card_0 (2)
+      value: Perk_0 (2)
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1312,9 +1312,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e8475b31e0241084ea05f12047fac9b1, type: 3}
+  m_Script: {fileID: 11500000, guid: 7d24e883d345347ac94e8ca8632ba3b3, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Game.Campaign::GearEngine.Campaign.Presentation.CardOptionView
+  m_EditorClassIdentifier: Game.Campaign::GearEngine.Campaign.Presentation.ItemPerkView
 --- !u!1001 &2364850844018000580
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1409,7 +1409,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8577524891781176608, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
       propertyPath: m_Name
-      value: Card_0
+      value: Perk_0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1429,6 +1429,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e8475b31e0241084ea05f12047fac9b1, type: 3}
+  m_Script: {fileID: 11500000, guid: 7d24e883d345347ac94e8ca8632ba3b3, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Game.Campaign::GearEngine.Campaign.Presentation.CardOptionView
+  m_EditorClassIdentifier: Game.Campaign::GearEngine.Campaign.Presentation.ItemPerkView

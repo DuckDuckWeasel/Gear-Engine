@@ -4,6 +4,6 @@ namespace GearEngine.GearEngine.Services
 {
     public interface IGearPresentationTransferService
     {
-        void TrashInventoryGear(GearConfigData gear);
+        void TrashInventoryGear(GearItemData gear);
     }
 }

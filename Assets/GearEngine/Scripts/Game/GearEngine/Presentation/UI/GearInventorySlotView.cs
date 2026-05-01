@@ -9,15 +9,15 @@ namespace GearEngine.GearEngine.Presentation.UI
         [SerializeField]
         private Transform visualContainer;
 
-        public GearConfigData BoundGearData => boundGearData;
+        public GearItemData BoundGearData => boundGearData;
 
         public Transform VisualContainer => visualContainer != null ? visualContainer : transform;
 
-        private GearConfigData boundGearData;
+        private GearItemData boundGearData;
         private GearInventoryViewModel viewModel;
         private Draggable draggable;
 
-        public void Bind(GearConfigData config, GearInventoryViewModel vm)
+        public void Bind(GearItemData config, GearInventoryViewModel vm)
         {
             boundGearData = config;
             viewModel = vm;

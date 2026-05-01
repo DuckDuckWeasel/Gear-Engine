@@ -404,7 +404,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Card Back
+      name: Perk Back
       rect:
         serializedVersion: 2
         x: 0
@@ -425,7 +425,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Card Front
+      name: Perk Front
       rect:
         serializedVersion: 2
         x: 0
@@ -530,7 +530,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Card Front no_shadow
+      name: Perk Front no_shadow
       rect:
         serializedVersion: 2
         x: 184
@@ -562,9 +562,9 @@ TextureImporter:
     secondaryTextures: []
     nameFileIdTable:
       Back: 1883213843
-      Card Back: -1255250429
-      Card Front: -1752308547
-      Card Front no_shadow: 848683404
+      Perk Back: -1255250429
+      Perk Front: -1752308547
+      Perk Front no_shadow: 848683404
       Frame 1 (7)_0: 1054271697
       Frame 1 (7)_1: 672420668
       Frame 1 (7)_11: -1225963566

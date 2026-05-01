@@ -1,7 +1,7 @@
 using System;
 using GearEngine.Campaign.Authoring;
 using GearEngine.Campaign.Bootstrap;
-using GearEngine.Campaign.Bootstrap.Cards;
+using GearEngine.Campaign.Bootstrap.Perks;
 using GearEngine.Campaign.Bootstrap.LiveOps;
 using GearEngine.Campaign.Services;
 using GearEngine.CarSimulation.Bootstrap;
@@ -10,6 +10,7 @@ using GearEngine.CarSimulation.PhysicsSimulation;
 using GearEngine.Currency.Bootstrap;
 using GearEngine.GearEngine.Bootstrap;
 using GearEngine.GearEngine.Config;
+using GearEngine.Perks.Config;
 using Scaffold.AppFlow;
 using VContainer;
 
@@ -52,7 +53,7 @@ namespace GearEngine.App.Bootstrap.Layers
             new CampaignTracksInstaller().Install(builder);
             new CampaignInventoryInstaller().Install(builder);
             new CampaignLoadoutInstaller().Install(builder);
-            new CardsClientInstaller().Install(builder);
+            new PerksClientInstaller().Install(builder);
             new CampaignRoguelikeInstaller().Install(builder);
         }
 

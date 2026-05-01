@@ -19,7 +19,7 @@ namespace GearEngine.GearEngine.Tests.Editor
 
             public float CurrentRotation { get; set; }
 
-            public GearConfigData ConfigData { get; set; } = new GearConfigData { MaxCharge = 0f };
+            public GearItemData ConfigData { get; set; } = new GearItemData { MaxCharge = 0f };
 
             public float LocalSpeedMultiplier { get; set; }
 
@@ -46,7 +46,7 @@ namespace GearEngine.GearEngine.Tests.Editor
             {
             }
 
-            public System.Collections.Generic.IEnumerable<GearAbilitySO> GetAbilities() => new System.Collections.Generic.List<GearAbilitySO>(); public void Initialize(Vector2Int position, GearConfigData configData)
+            public System.Collections.Generic.IEnumerable<GearAbilitySO> GetAbilities() => new System.Collections.Generic.List<GearAbilitySO>(); public void Initialize(Vector2Int position, GearItemData configData)
             {
             }
 
@@ -114,27 +114,27 @@ namespace GearEngine.GearEngine.Tests.Editor
             motorVisual.transform.SetParent(motorRoot.transform, false);
             var motorGearView = motorRoot.AddComponent<GearView>();
             motorGearView.WireTestReferences(motorVisual.transform);
-            motorGearView.ApplyConfig(new GearConfigData { RelativeScaleMultiplier = 1f, Id = "motor" });
+            motorGearView.ApplyConfig(new GearItemData { RelativeScaleMultiplier = 1f, Id = "motor" });
 
             var gearRoot = new GameObject("GearRoot");
             var gearVisual = new GameObject("GearVisual");
             gearVisual.transform.SetParent(gearRoot.transform, false);
             var gearView = gearRoot.AddComponent<GearView>();
             gearView.WireTestReferences(gearVisual.transform);
-            gearView.ApplyConfig(new GearConfigData { RelativeScaleMultiplier = 1f, Id = "other" });
+            gearView.ApplyConfig(new GearItemData { RelativeScaleMultiplier = 1f, Id = "other" });
 
             var motorNode = new FakeGridNode
             {
                 Position = new Vector2Int(1, 0),
                 CurrentRotation = 0f,
-                ConfigData = new GearConfigData { Id = "motor", MaxCharge = 0f },
+                ConfigData = new GearItemData { Id = "motor", MaxCharge = 0f },
             };
 
             var node = new FakeGridNode
             {
                 Position = Vector2Int.zero,
                 CurrentRotation = 0f,
-                ConfigData = new GearConfigData { Id = "other", MaxCharge = 0f },
+                ConfigData = new GearItemData { Id = "other", MaxCharge = 0f },
             };
 
             animator.Track(motorNode, motorGearView);

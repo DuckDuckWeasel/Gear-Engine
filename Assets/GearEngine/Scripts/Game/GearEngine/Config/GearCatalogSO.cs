@@ -5,29 +5,29 @@ using UnityEngine;
 namespace GearEngine.GearEngine.Config
 {
     /// <summary>
-    /// Resolves gear ids from LiveOps persistence to <see cref="GearConfig"/> assets.
+    /// Resolves gear ids from LiveOps persistence to <see cref="GearItem"/> assets.
     /// </summary>
     [CreateAssetMenu(fileName = "GearCatalog", menuName = "GearEngine/Gear Catalog")]
     public sealed class GearCatalogSO : ScriptableObject
     {
         [SerializeField]
-        private GearConfig[] gears = Array.Empty<GearConfig>();
+        private GearItem[] gears = Array.Empty<GearItem>();
 
-        private readonly Dictionary<string, GearConfig> _byId = new Dictionary<string, GearConfig>(StringComparer.Ordinal);
+        private readonly Dictionary<string, GearItem> _byId = new Dictionary<string, GearItem>(StringComparer.Ordinal);
 
         private void OnEnable()
         {
             RebuildLookup();
         }
 
-        public void SetRuntimeEntries(GearConfig[] gearConfigs)
+        public void SetRuntimeEntries(GearItem[] gearConfigs)
         {
-            gears = gearConfigs != null ? gearConfigs : Array.Empty<GearConfig>();
+            gears = gearConfigs != null ? gearConfigs : Array.Empty<GearItem>();
             RebuildLookup();
         }
 
         /// <summary>Serialized catalog entries (may contain nulls or entries without ids; callers should filter).</summary>
-        public IReadOnlyList<GearConfig> All => gears != null ? gears : Array.Empty<GearConfig>();
+        public IReadOnlyList<GearItem> All => gears != null ? gears : Array.Empty<GearItem>();
 
         private void RebuildLookup()
         {
@@ -37,7 +37,7 @@ namespace GearEngine.GearEngine.Config
                 return;
             }
 
-            foreach (GearConfig g in gears)
+            foreach (GearItem g in gears)
             {
                 if (g == null || string.IsNullOrEmpty(g.Id))
                 {
@@ -48,17 +48,17 @@ namespace GearEngine.GearEngine.Config
             }
         }
 
-        public GearConfig Get(string gearId)
+        public GearItem Get(string gearId)
         {
             if (string.IsNullOrEmpty(gearId))
             {
                 return null;
             }
 
-            return _byId.TryGetValue(gearId, out GearConfig g) ? g : null;
+            return _byId.TryGetValue(gearId, out GearItem g) ? g : null;
         }
 
-        public bool TryGet(string gearId, out GearConfig gear)
+        public bool TryGet(string gearId, out GearItem gear)
         {
             if (string.IsNullOrEmpty(gearId))
             {

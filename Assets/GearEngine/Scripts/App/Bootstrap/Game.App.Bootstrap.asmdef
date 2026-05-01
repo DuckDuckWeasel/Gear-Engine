@@ -10,6 +10,7 @@
         "Game.CarSimulation",
         "Scaffold.Entities",
         "Game.GearEngine",
+        "Game.Perks",
         "Scaffold.Addressables.Container",
         "Scaffold.Events.Container",
         "Scaffold.Ugs",
@@ -25,7 +26,8 @@
         "Unity.Services.CloudCode",
         "Unity.TextMeshPro",
         "UnityEngine.UI",
-        "VContainer"
+        "VContainer",
+        "GearEngine.Core.Config"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
@@ -36,10 +38,13 @@
         "LiveOps.DTO.dll",
         "Game.LiveOps.Currency.DTO.dll",
         "Game.LiveOps.Inventory.DTO.dll",
-        "Game.LiveOps.Cards.DTO.dll",
+        "Game.LiveOps.Perks.DTO.dll",
         "Game.LiveOps.Loadout.DTO.dll",
         "Game.LiveOps.Roguelike.DTO.dll",
-        "Game.LiveOps.Tracks.DTO.dll"
+        "Game.LiveOps.Tracks.DTO.dll",
+        "Sirenix.OdinInspector.Attributes.dll",
+        "Sirenix.Serialization.dll",
+        "Sirenix.Utilities.dll"
     ],
     "autoReferenced": false,
     "defineConstraints": [],

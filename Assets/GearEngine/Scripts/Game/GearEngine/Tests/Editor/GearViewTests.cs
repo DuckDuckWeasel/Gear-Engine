@@ -18,7 +18,7 @@ namespace GearEngine.GearEngine.Tests.Editor
             var gearView = root.AddComponent<GearView>();
             gearView.WireTestReferences(gearGo.transform);
 
-            var config = new GearConfigData { RelativeScaleMultiplier = 1f };
+            var config = new GearItemData { RelativeScaleMultiplier = 1f };
             gearView.ApplyConfig(config);
             gearView.SetRotationTarget(90f);
             gearView.SetChargeFillTarget(0.5f, snap: true);

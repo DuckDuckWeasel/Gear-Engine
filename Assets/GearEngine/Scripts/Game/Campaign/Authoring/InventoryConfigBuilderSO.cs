@@ -15,11 +15,11 @@ namespace GearEngine.Campaign.Authoring
 
         [SerializeField]
         [Tooltip("Core/motor gear (SO). Its catalog id becomes startingGearIds[0] in Remote Config.")]
-        private GearConfig motorCogGear;
+        private GearItem motorCogGear;
 
         [SerializeField]
         [Tooltip("Other starting gears (SO references). Ids are appended after the motor in Remote Config.")]
-        private List<GearConfig> additionalStartingGears = new List<GearConfig>();
+        private List<GearItem> additionalStartingGears = new List<GearItem>();
 
         [SerializeField]
         [Tooltip("Resolves Remote Config gear ids back to references when using Apply (pull from cloud).")]
@@ -38,7 +38,7 @@ namespace GearEngine.Campaign.Authoring
 
             if (additionalStartingGears != null)
             {
-                foreach (GearConfig gear in additionalStartingGears)
+                foreach (GearItem gear in additionalStartingGears)
                 {
                     if (gear == null || string.IsNullOrEmpty(gear.Id))
                     {
@@ -72,7 +72,7 @@ namespace GearEngine.Campaign.Authoring
             if (pulled.StartingGearIds == null || pulled.StartingGearIds.Count == 0)
             {
                 motorCogGear = null;
-                additionalStartingGears = new List<GearConfig>();
+                additionalStartingGears = new List<GearItem>();
                 return;
             }
 
@@ -80,7 +80,7 @@ namespace GearEngine.Campaign.Authoring
             {
 #if UNITY_EDITOR
                 Debug.LogWarning(
-                    "[InventoryConfigBuilder] Apply skipped resolving startingGearIds to GearConfig refs — assign gearCatalogForApply on this asset.",
+                    "[InventoryConfigBuilder] Apply skipped resolving startingGearIds to GearItem refs — assign gearCatalogForApply on this asset.",
                     this);
 #endif
                 return;
@@ -89,7 +89,7 @@ namespace GearEngine.Campaign.Authoring
             string coreId = pulled.GetCoreGearCatalogId();
             motorCogGear = string.IsNullOrEmpty(coreId) ? null : gearCatalogForApply.Get(coreId);
 
-            var rest = new List<GearConfig>();
+            var rest = new List<GearItem>();
             for (int i = 1; i < pulled.StartingGearIds.Count; i++)
             {
                 string id = pulled.StartingGearIds[i];
@@ -98,7 +98,7 @@ namespace GearEngine.Campaign.Authoring
                     continue;
                 }
 
-                GearConfig cfg = gearCatalogForApply.Get(id);
+                GearItem cfg = gearCatalogForApply.Get(id);
                 if (cfg != null)
                 {
                     rest.Add(cfg);
@@ -106,7 +106,7 @@ namespace GearEngine.Campaign.Authoring
 #if UNITY_EDITOR
                 else
                 {
-                    Debug.LogWarning($"[InventoryConfigBuilder] Apply: no GearConfig in catalog for id '{id}'.", this);
+                    Debug.LogWarning($"[InventoryConfigBuilder] Apply: no GearItem in catalog for id '{id}'.", this);
                 }
 #endif
             }

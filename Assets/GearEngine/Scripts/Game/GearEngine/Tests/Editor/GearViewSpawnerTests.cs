@@ -11,7 +11,7 @@ namespace GearEngine.GearEngine.Tests.Editor
         [Test]
         public void Spawn_ReturnsNull_WhenViewPrefabMissing()
         {
-            var config = new GearConfigData { Id = "x", ViewPrefab = null };
+            var config = new GearItemData { Id = "x", ViewPrefab = null };
             var parent = new GameObject("Parent").transform;
 
             GearView view = GearViewSpawner.Spawn(config, parent);
@@ -30,7 +30,7 @@ namespace GearEngine.GearEngine.Tests.Editor
             gearView.WireTestReferences(gearVisualGo.transform);
 
             var prefab = gearView;
-            var config = new GearConfigData
+            var config = new GearItemData
             {
                 Id = "test",
                 ViewPrefab = prefab,
@@ -60,7 +60,7 @@ namespace GearEngine.GearEngine.Tests.Editor
             var gearView = root.AddComponent<GearView>();
             gearView.WireTestReferences(gearVisualGo.transform);
 
-            var config = new GearConfigData { Id = "t2", ViewPrefab = gearView, RelativeScaleMultiplier = 1f };
+            var config = new GearItemData { Id = "t2", ViewPrefab = gearView, RelativeScaleMultiplier = 1f };
             var parent = new GameObject("Slot").transform;
             GearView instance = GearViewSpawner.Spawn(config, parent);
 

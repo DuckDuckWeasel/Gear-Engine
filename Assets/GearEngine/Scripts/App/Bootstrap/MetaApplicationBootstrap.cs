@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using GearEngine.App.Bootstrap.Layers;
-using LiveOps.Modules.DTO.Cards;
+using LiveOps.Modules.DTO.Perks;
 using LiveOps.Modules.DTO.Currency;
 using LiveOps.Modules.DTO.Inventory;
 using LiveOps.Modules.DTO.Loadout;
@@ -12,6 +12,7 @@ using LiveOps.Modules.DTO.Tracks;
 using Scaffold.AppFlow;
 using Scaffold.LiveOps;
 using UnityEngine;
+using PerkGameData = LiveOps.Modules.DTO.Perks.PerkGameData;
 
 namespace GearEngine.App.Bootstrap
 {
@@ -57,9 +58,9 @@ namespace GearEngine.App.Bootstrap
             TrackGameData trackData = liveOps.GetModuleData<TrackGameData>();
             LoadoutGameData loadoutData = liveOps.GetModuleData<LoadoutGameData>();
             InventoryGameData inventoryData = liveOps.GetModuleData<InventoryGameData>();
-            CardGameData cardData = liveOps.GetModuleData<CardGameData>();
+            PerkGameData perkData = liveOps.GetModuleData<PerkGameData>();
             RoguelikeGameData roguelikeData = liveOps.GetModuleData<RoguelikeGameData>();
-            Debug.Log($"[Meta] LiveOps raw payloads: CurrencyGameData wallets={(currencyData != null ? currencyData.Wallets.Count : 0)}, TrackGameData={(trackData != null)}, LoadoutGameData={(loadoutData != null)}, InventoryGameData={(inventoryData != null)}, CardGameData={(cardData != null)}, RoguelikeGameData={(roguelikeData != null)}.");
+            Debug.Log($"[Meta] LiveOps raw payloads: CurrencyGameData wallets={(currencyData != null ? currencyData.Wallets.Count : 0)}, TrackGameData={(trackData != null)}, LoadoutGameData={(loadoutData != null)}, InventoryGameData={(inventoryData != null)}, PerkGameData={(perkData != null)}, RoguelikeGameData={(roguelikeData != null)}.");
         }
     }
 }

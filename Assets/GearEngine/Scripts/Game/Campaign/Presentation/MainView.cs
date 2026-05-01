@@ -11,6 +11,7 @@ namespace GearEngine.Campaign.Presentation
     {
         [SerializeField] private TrackViewComponent track;
         [SerializeField] private Button playButton;
+        [SerializeField] private Button talentPerksButton;
         [SerializeField] private TrackStatsViewComponent statsPanel;
         [SerializeField] private FrustumFitAnchor[] openTransitionAnchors;
         [SerializeField] private float openTransitionDurationSeconds = 0.35f;
@@ -33,6 +34,11 @@ namespace GearEngine.Campaign.Presentation
             base.OnOpen(wasHidden);
             playButton.onClick.RemoveListener(OnPlayClicked);
             playButton.onClick.AddListener(OnPlayClicked);
+            if (talentPerksButton != null)
+            {
+                talentPerksButton.onClick.RemoveListener(OnTalentPerksClicked);
+                talentPerksButton.onClick.AddListener(OnTalentPerksClicked);
+            }
             track.gameObject.SetActive(true);
             FrustumFitAnchorOpenTransition.PlayAfterCanvasLayout(this, openTransitionAnchors, openTransitionDurationSeconds);
         }
@@ -46,6 +52,11 @@ namespace GearEngine.Campaign.Presentation
             }
 
             playButton.onClick.RemoveListener(OnPlayClicked);
+            if (talentPerksButton != null)
+            {
+                talentPerksButton.onClick.RemoveListener(OnTalentPerksClicked);
+            }
+
             if (track != null)
             {
                 track.gameObject.SetActive(false);
@@ -61,6 +72,18 @@ namespace GearEngine.Campaign.Presentation
             catch (Exception ex)
             {
                 Debug.LogError($"[MainView] OnPlayClicked failed: {ex.Message}\n{ex.StackTrace}");
+            }
+        }
+
+        private void OnTalentPerksClicked()
+        {
+            try
+            {
+                viewModel?.ClickedTalentPerks();
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"[MainView] OnTalentPerksClicked failed: {ex.Message}\n{ex.StackTrace}");
             }
         }
 

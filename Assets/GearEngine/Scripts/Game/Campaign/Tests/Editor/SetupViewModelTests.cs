@@ -196,7 +196,7 @@ namespace GearEngine.Campaign.Tests.Editor
             boardConfig.GridWidth = 5;
             boardConfig.GridHeight = 5;
 
-            GearConfig gearConfig = CampaignTestUtilities.CreateGearConfigWithData("loadout-test-gear");
+            GearItem gearConfig = CampaignTestUtilities.CreateGearConfigWithData("loadout-test-gear");
 
             using (var gear = new GearMechanicsTestContext(boardConfig))
             {

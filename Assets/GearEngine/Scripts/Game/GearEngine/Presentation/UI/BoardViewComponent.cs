@@ -317,12 +317,12 @@ namespace GearEngine.GearEngine.Presentation.UI
 
         public bool CanAccept(DragPayload payload)
         {
-            return payload.GetData<GearConfigData>() != null || payload.GetData<IGridNode>() != null;
+            return payload.GetData<GearItemData>() != null || payload.GetData<IGridNode>() != null;
         }
 
         public bool OnDrop(DragPayload payload)
         {
-            GearConfigData gear = payload.GetData<GearConfigData>();
+            GearItemData gear = payload.GetData<GearItemData>();
             IGridNode draggedNode = payload.GetData<IGridNode>();
             if (viewModel == null || boardLayout == null)
             {

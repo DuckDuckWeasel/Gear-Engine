@@ -41,7 +41,7 @@ namespace GearEngine.GearEngine.Tests.Editor
         [Test]
         public void Test_CoreGear_Rotates_And_Fires_Trigger_To_Neighbor()
         {
-            var coreData = new GearConfigData
+            var coreData = new GearItemData
             {
                 Id = "core_1",
                 BaseRotationSpeed = 100f,
@@ -53,7 +53,7 @@ namespace GearEngine.GearEngine.Tests.Editor
             var core = new CoreGearNode(gridManager, eventBus);
             core.Initialize(new Vector2Int(0, 0), coreData);
 
-            var baseData = new GearConfigData
+            var baseData = new GearItemData
             {
                 Id = "base_1",
                 MaxCharge = 100f,
@@ -96,9 +96,9 @@ namespace GearEngine.GearEngine.Tests.Editor
         public void Test_GridMergeService_Merges_Identical_Gears()
         {
             var mergeService = new GridMergeService(gridManager, eventBus, null, null); // Factory unused by TryMerge; inventory unused in this test.
-            var nextLvl = ScriptableObject.CreateInstance<GearConfig>();
+            var nextLvl = ScriptableObject.CreateInstance<GearItem>();
             
-            var baseDataLvl1 = new GearConfigData
+            var baseDataLvl1 = new GearItemData
             {
                 Id = "base_lvl1",
                 NextLevelConfig = nextLvl
@@ -129,7 +129,7 @@ namespace GearEngine.GearEngine.Tests.Editor
         {
             // Arrange
             // Create Aura at (1,1)
-            var auraData = new GearConfigData
+            var auraData = new GearItemData
             {
                 Id = "aura_1",
                 ChargeOverTimeAmount = 20f, // Applies extra 20 charge per second to BaseGears
@@ -139,7 +139,7 @@ namespace GearEngine.GearEngine.Tests.Editor
             auraGear.Initialize(new Vector2Int(1, 1), auraData);
 
             // Create Core at (1,0) - directly below Aura
-            var coreData = new GearConfigData
+            var coreData = new GearItemData
             {
                 Id = "core_1",
                 BaseRotationSpeed = 100f
@@ -148,7 +148,7 @@ namespace GearEngine.GearEngine.Tests.Editor
             coreGear.Initialize(new Vector2Int(1, 0), coreData);
 
             // Create Base at (2,1) - directly right of Aura
-            var baseData = new GearConfigData
+            var baseData = new GearItemData
             {
                 Id = "base_1",
                 MaxCharge = 100f,
@@ -197,7 +197,7 @@ namespace GearEngine.GearEngine.Tests.Editor
             // Arrange
             var testAbility = ScriptableObject.CreateInstance<ScoreAbility>();
             
-            var baseData = new GearConfigData
+            var baseData = new GearItemData
             {
                 Id = "base_1",
                 MaxCharge = 100f,
@@ -224,7 +224,7 @@ namespace GearEngine.GearEngine.Tests.Editor
         [Test]
         public void Test_GridManager_Stop_Triggers_WindDown()
         {
-            var coreData = new GearConfigData { Id = "test_core", BaseRotationSpeed = 100f };
+            var coreData = new GearItemData { Id = "test_core", BaseRotationSpeed = 100f };
             var coreGear = new CoreGearNode(gridManager, eventBus);
             coreGear.Initialize(Vector2Int.zero, coreData);
             gridManager.AddNode(coreGear);
@@ -248,7 +248,7 @@ namespace GearEngine.GearEngine.Tests.Editor
         [Test]
         public void Test_RuntimeAbility_Deactivates_Node_Temporarily()
         {
-            var baseData = new GearConfigData { Id = "base", BaseRotationSpeed = 50f };
+            var baseData = new GearItemData { Id = "base", BaseRotationSpeed = 50f };
             var baseGear = new BaseGearNode(gridManager, eventBus);
             baseGear.Initialize(Vector2Int.zero, baseData);
 
@@ -272,7 +272,7 @@ namespace GearEngine.GearEngine.Tests.Editor
         [Test]
         public void Test_Obstacle_Destroys_Self_On_Max_Charge()
         {
-            var breakableData = new GearConfigData 
+            var breakableData = new GearItemData 
             { 
                 Id = "stone", 
                 MaxCharge = 30f, 

@@ -22,7 +22,7 @@ namespace GearEngine.Campaign.Tests.Editor
         [Test]
         public void Add_AppendsOwned_AndSendsSetInventoryRequest()
         {
-            GearConfig g1 = CampaignTestUtilities.CreateGearConfigWithData("g1");
+            GearItem g1 = CampaignTestUtilities.CreateGearConfigWithData("g1");
             GearCatalogSO catalog = null;
             try
             {
@@ -69,7 +69,7 @@ namespace GearEngine.Campaign.Tests.Editor
         [Test]
         public void Remove_ByReference_RemovesOwned()
         {
-            GearConfig g1 = CampaignTestUtilities.CreateGearConfigWithData("g1");
+            GearItem g1 = CampaignTestUtilities.CreateGearConfigWithData("g1");
             GearCatalogSO catalog = null;
             try
             {
@@ -117,8 +117,8 @@ namespace GearEngine.Campaign.Tests.Editor
         [Test]
         public void Clear_RemovesAllOwned_AndSendsEmptySetInventoryRequest()
         {
-            GearConfig g1 = CampaignTestUtilities.CreateGearConfigWithData("g1");
-            GearConfig g2 = CampaignTestUtilities.CreateGearConfigWithData("g2");
+            GearItem g1 = CampaignTestUtilities.CreateGearConfigWithData("g1");
+            GearItem g2 = CampaignTestUtilities.CreateGearConfigWithData("g2");
             GearCatalogSO catalog = null;
             try
             {
@@ -174,7 +174,7 @@ namespace GearEngine.Campaign.Tests.Editor
         [Test]
         public void Clear_WhenAlreadyEmpty_DoesNotRaiseEvent()
         {
-            GearConfig g1 = CampaignTestUtilities.CreateGearConfigWithData("g1");
+            GearItem g1 = CampaignTestUtilities.CreateGearConfigWithData("g1");
             GearCatalogSO catalog = null;
             try
             {

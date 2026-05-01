@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using GearEngine.App.Bootstrap.Layers;
-using GearEngine.Campaign.Authoring;
 using GearEngine.Campaign.Presentation;
 using GearEngine.Campaign.Services;
 using GearEngine.CarSimulation.Definitions;
-using GearEngine.CarSimulation.PhysicsSimulation;
+using GearEngine.Perks.Config;
 using GearEngine.GearEngine.Config;
 using Scaffold.AppFlow;
 using Scaffold.Navigation.Contracts;
@@ -24,7 +23,8 @@ namespace GearEngine.App.Bootstrap
         [SerializeField]
         private GearEngineFeatureToggleSO featureToggle;
 
-        [Header("Campaign")]
+
+
         [SerializeField]
         private RoguelikeGearPoolSO roguelikeGearPool;
 

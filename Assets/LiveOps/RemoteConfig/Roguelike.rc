@@ -4,7 +4,9 @@
       "gearPool": [
         "bipolar_tier1",
         "bipolar_tier2",
-        "bipolar_tier3"
+        "bipolar_tier3",
+        "bipolar_tier4",
+        "bipolar_tier5"
       ],
       "optionsPerRoll": 3
     }

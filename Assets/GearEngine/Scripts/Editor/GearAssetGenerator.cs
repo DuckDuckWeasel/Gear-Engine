@@ -109,7 +109,7 @@ namespace GearEngine.Editor
             string archetypeFolder = $"{GENERATION_PATH}/{variantName}";
             EnsureFolder(GENERATION_PATH, variantName);
 
-            GearConfig previousConfig = null;
+            GearItem previousConfig = null;
             int count = 0;
 
             for (int tier = 1; tier <= MAX_TIERS; tier++)
@@ -130,8 +130,8 @@ namespace GearEngine.Editor
                 string abilityPath = $"{archetypeFolder}/{abilityInstance.name}.asset";
                 AssetDatabase.CreateAsset(abilityInstance, abilityPath);
 
-                // 2. Create the GearConfig
-                GearConfig configInstance = ScriptableObject.CreateInstance<GearConfig>();
+                // 2. Create the GearItem
+                GearItem configInstance = ScriptableObject.CreateInstance<GearItem>();
                 configInstance.name = $"{itemName}_Config";
 
                 SerializedObject serializedConfig = new SerializedObject(configInstance);

@@ -32,10 +32,10 @@ namespace GearEngine.Campaign.Authoring
                 return cfg;
             }
 
-            IReadOnlyList<GearConfig> pool = roguelikeGearPool.GetRoguelikeGearOptions();
+            IReadOnlyList<GearItem> pool = roguelikeGearPool.GetRoguelikeGearOptions();
             for (int i = 0; i < pool.Count; i++)
             {
-                GearConfig g = pool[i];
+                GearItem g = pool[i];
                 if (g != null && !string.IsNullOrEmpty(g.Id))
                 {
                     cfg.GearPool.Add(g.Id);

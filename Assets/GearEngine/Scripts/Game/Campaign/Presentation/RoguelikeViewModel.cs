@@ -9,6 +9,7 @@ using GearEngine.GearEngine.Config;
 using GearEngine.GearEngine.Presentation.UI;
 using GearEngine.GearEngine.Services;
 using GearEngine.GearEngine.Services.Board;
+using GearEngine.GearEngine.Services.Inventory;
 using Scaffold.MVVM;
 using Scaffold.Navigation.Contracts;
 using UnityEngine;
@@ -23,17 +24,17 @@ namespace GearEngine.Campaign.Presentation
         public BoardViewModel Board { get; private set; }
         public GearInventoryViewModel Inventory { get; private set; }
         public TrashZoneViewModel TrashZone { get; private set; }
-        public IReadOnlyList<CardOptionViewModel> CardOptions => cardOptions;
+        public IReadOnlyList<ItemPerkViewModel> PerkOptions => perkOptions;
 
         internal IDragService DragService => dragService;
 
         [ObservableProperty]
-        private int cardOptionsRevision;
+        private int perkOptionsRevision;
 
         [ObservableProperty]
         private bool canReroll = true;
 
-        private readonly List<CardOptionViewModel> cardOptions = new List<CardOptionViewModel>();
+        private readonly List<ItemPerkViewModel> perkOptions = new List<ItemPerkViewModel>();
         private readonly CancellationTokenSource cts = new CancellationTokenSource();
         private bool disposed;
 
@@ -63,7 +64,7 @@ namespace GearEngine.Campaign.Presentation
             base.Initialize();
             CanReroll = true;
             SetupGearEngineSubtree();
-            inventoryService.InventoryChanged += UpdateCardOptionsInteractability;
+            inventoryService.InventoryChanged += UpdatePerkOptionsInteractability;
             _ = LoadRollAsync(cts.Token);
         }
 
@@ -75,23 +76,23 @@ namespace GearEngine.Campaign.Presentation
             }
 
             disposed = true;
-            inventoryService.InventoryChanged -= UpdateCardOptionsInteractability;
+            inventoryService.InventoryChanged -= UpdatePerkOptionsInteractability;
             cts.Cancel();
             cts.Dispose();
         }
 
-        private void UpdateCardOptionsInteractability()
+        private void UpdatePerkOptionsInteractability()
         {
             bool hasSpace = inventoryService.Owned.Count < MaxInventoryCapacity;
-            foreach (CardOptionViewModel card in cardOptions)
+            foreach (ItemPerkViewModel perk in perkOptions)
             {
-                card.CanPick = hasSpace;
+                perk.CanPick = hasSpace;
             }
         }
 
-        public async void PickCard(CardOptionViewModel card)
+        public async void PickPerk(ItemPerkViewModel perk)
         {
-            if (card == null)
+            if (perk == null)
             {
                 return;
             }
@@ -104,17 +105,20 @@ namespace GearEngine.Campaign.Presentation
 
             try
             {
-                if (inventoryService.Add(card.Config) == null)
+                GearItemData gearData = (GearItemData)perk.Item;
+                GearItem config = gearData.SourceGearConfig;
+
+                if (inventoryService.Add(config) == null)
                 {
                     return;
                 }
 
-                await rollService.ConsumePickAsync(card.Config, cts.Token);
+                await rollService.ConsumePickAsync(config.Id, cts.Token);
                 navigation.Open(new MainViewModel());
             }
             catch (Exception ex)
             {
-                Debug.LogError($"[RoguelikeViewModel] PickCard failed: {ex.Message}\n{ex.StackTrace}");
+                Debug.LogError($"[RoguelikeViewModel] PickPerk failed: {ex.Message}\n{ex.StackTrace}");
             }
         }
 
@@ -178,39 +182,39 @@ namespace GearEngine.Campaign.Presentation
         
         private async Task ReRerollAsync()
         {
-            cardOptions.Clear();
+            perkOptions.Clear();
 
-            IReadOnlyList<GearConfig> options = await rollService.RerollAsync(cts.Token);
-            foreach (GearConfig config in options)
+            IReadOnlyList<IItem> options = await rollService.RerollAsync(cts.Token);
+            foreach (IItem config in options)
             {
-                AddCardOption(config);
+                AddPerkOption(config);
             }
 
-            CardOptionsRevision++;
+            PerkOptionsRevision++;
         }
 
         private async Task AppendRollOptionsAsync(CancellationToken ct)
         {
-            IReadOnlyList<GearConfig> options = await rollService.GetCurrentRollAsync(ct);
-            foreach (GearConfig config in options)
+            IReadOnlyList<IItem> options = await rollService.GetCurrentRollAsync(ct);
+            foreach (IItem config in options)
             {
-                AddCardOption(config);
+                AddPerkOption(config);
             }
 
-            CardOptionsRevision++;
+            PerkOptionsRevision++;
         }
 
-        private void AddCardOption(GearConfig config)
+        private void AddPerkOption(IItem config)
         {
             if (config == null)
             {
                 return;
             }
 
-            CardOptionViewModel card = new CardOptionViewModel(config, PickCard);
-            card.CanPick = inventoryService.Owned.Count < MaxInventoryCapacity;
-            BindChildViewModel(card);
-            cardOptions.Add(card);
+            ItemPerkViewModel perk = new ItemPerkViewModel(config, PickPerk);
+            perk.CanPick = inventoryService.Owned.Count < MaxInventoryCapacity;
+            BindChildViewModel(perk);
+            perkOptions.Add(perk);
         }
     }
 }

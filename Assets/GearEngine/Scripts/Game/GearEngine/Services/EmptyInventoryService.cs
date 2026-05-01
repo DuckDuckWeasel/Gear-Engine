@@ -17,7 +17,7 @@ namespace GearEngine.GearEngine.Services
 
         public event Action InventoryChanged;
 
-        public OwnedGear Add(GearConfig gear)
+        public OwnedGear Add(GearItem gear)
         {
             if (gear == null)
             {

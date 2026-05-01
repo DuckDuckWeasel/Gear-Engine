@@ -1,0 +1,40 @@
+{
+    "name": "Game.Perks",
+    "rootNamespace": "GearEngine.Perks",
+    "references": [
+        "GearEngine.Core.Config",
+        "GUID:f7e8d9c0b1a243658970615243a5b8c1",
+        "GUID:8528abb32e2825f489462c60d9d82450",
+        "GUID:7d9c2f1a8b4e5c6d7890abcd1234ef56",
+        "GUID:b0214a6008ed146ff8f122a6a9c2f6cc",
+        "GUID:d0ce54d5b1cb6484aa5753dc50e473dd",
+        "GUID:8f2a720717543f54095d5920d481db04",
+        "GUID:3b1cb374d563e4f4fa28b13989b4f86d",
+        "GUID:187850c043ab2e447bccebb00224cad7",
+        "GUID:d08ccbb8b277f2f4e97bfd88ed3578ee",
+        "GUID:6055be8ebefd69e48b49212b09b47b2f",
+        "GUID:2bafac87e7f4b9b418d9448d219b01ab",
+        "GUID:5ad7600acbaf54d2996633df50d16b7e"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "CommunityToolkit.Mvvm.dll",
+        "LiveOps.DTO.dll",
+        "Game.LiveOps.Perks.DTO.dll",
+        "Game.LiveOps.Currency.DTO.dll",
+        "Game.LiveOps.Inventory.DTO.dll",
+        "Game.LiveOps.Loadout.DTO.dll",
+        "Game.LiveOps.Roguelike.DTO.dll",
+        "Game.LiveOps.Tracks.DTO.dll",
+        "Sirenix.OdinInspector.Attributes.dll",
+        "Sirenix.Serialization.dll",
+        "Sirenix.Utilities.dll"
+    ],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

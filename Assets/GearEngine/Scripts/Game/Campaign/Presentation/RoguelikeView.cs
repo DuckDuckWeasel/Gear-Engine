@@ -18,7 +18,7 @@ namespace GearEngine.Campaign.Presentation
         private TrashDropZoneViewComponent trashDropZone;
 
         [SerializeField]
-        private CardOptionView[] cardOptionViews;
+        private ItemPerkView[] perkOptionViews;
 
         [SerializeField]
         private Button rerollButton;
@@ -29,7 +29,7 @@ namespace GearEngine.Campaign.Presentation
         {
             ValidateHierarchy();
             BindGearSubtree();
-            Bind<int, int>(() => viewModel.CardOptionsRevision, _ => RebuildCardSelection());
+            Bind<int, int>(() => viewModel.PerkOptionsRevision, _ => RebuildPerkSelection());
             BindActionUi();
         }
 
@@ -60,19 +60,21 @@ namespace GearEngine.Campaign.Presentation
             trashDropZone.ApplyInitialPlacement();
         }
 
-        private void RebuildCardSelection()
+        private void RebuildPerkSelection()
         {
-            for (int i = 0; i < cardOptionViews.Length; i++)
+            if (perkOptionViews == null) return;
+            
+            for (int i = 0; i < perkOptionViews.Length; i++)
             {
-                if (i < viewModel.CardOptions.Count)
+                if (i < viewModel.PerkOptions.Count)
                 {
-                    CardOptionViewModel option = viewModel.CardOptions[i];
-                    cardOptionViews[i].gameObject.SetActive(true);
-                    cardOptionViews[i].Bind(option);
+                    ItemPerkViewModel option = viewModel.PerkOptions[i];
+                    perkOptionViews[i].gameObject.SetActive(true);
+                    perkOptionViews[i].Bind(option);
                 }
                 else
                 {
-                    cardOptionViews[i].gameObject.SetActive(false);
+                    perkOptionViews[i].gameObject.SetActive(false);
                 }
             }
         }
@@ -119,9 +121,9 @@ namespace GearEngine.Campaign.Presentation
             RequireReference(inventoryView, nameof(inventoryView));
             RequireReference(trashDropZone, nameof(trashDropZone));
             RequireReference(continueButton, nameof(continueButton));
-            if (cardOptionViews == null)
+            if (perkOptionViews == null)
             {
-                throw new InvalidOperationException("[RoguelikeView] cardOptionViews must be assigned on the scene instance.");
+                throw new InvalidOperationException("[RoguelikeView] perkOptionViews must be assigned on the scene instance.");
             }
         }
 

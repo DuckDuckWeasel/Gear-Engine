@@ -68,7 +68,7 @@ namespace GearEngine.GearEngine.Tests.Editor
 
             public bool TryMoveBoardGear(IGridNode node, Vector2Int toPos, Vector2Int fromPos) => false;
 
-            public bool TryPlace(Vector2Int targetDropPos, GearConfigData gearData) => false;
+            public bool TryPlace(Vector2Int targetDropPos, GearItemData gearData) => false;
 
             public bool TryRemoveBoardGear(IGridNode node) => false;
 
@@ -91,15 +91,15 @@ namespace GearEngine.GearEngine.Tests.Editor
 
             public IReadOnlyList<OwnedGear> Owned => owned;
 
-            public void Seed(params GearConfig[] gears)
+            public void Seed(params GearItem[] gears)
             {
-                foreach (GearConfig g in gears.Where(x => x != null))
+                foreach (GearItem g in gears.Where(x => x != null))
                 {
                     owned.Add(new OwnedGear { InstanceId = Guid.NewGuid().ToString("N"), Config = g });
                 }
             }
 
-            public OwnedGear Add(GearConfig gear)
+            public OwnedGear Add(GearItem gear)
             {
                 if (gear == null)
                 {
@@ -133,7 +133,7 @@ namespace GearEngine.GearEngine.Tests.Editor
         [Test]
         public void NotifySlotDragAccepted_DoesNotRemoveGearFromInventory()
         {
-            GearConfig cfg = CreateGearConfig("onboard");
+            GearItem cfg = CreateGearConfig("onboard");
             var inventory = new ListInventoryService();
             inventory.Seed(cfg);
             var engine = new FakeEngine();
@@ -142,7 +142,7 @@ namespace GearEngine.GearEngine.Tests.Editor
             var vm = new GearInventoryViewModel(engine, board, inventory);
             Assert.AreEqual(1, inventory.Owned.Count);
 
-            GearConfigData runtime = cfg.CreateRuntimeData();
+            GearItemData runtime = cfg.CreateRuntimeData();
             runtime.Owner = inventory.Owned[0];
 
             vm.NotifySlotDragAccepted(runtime);
@@ -156,7 +156,7 @@ namespace GearEngine.GearEngine.Tests.Editor
         [Test]
         public void Constructor_BuildsTray_FromOwnedWhenBoardEmpty()
         {
-            GearConfig cfg = CreateGearConfig("seed");
+            GearItem cfg = CreateGearConfig("seed");
             var inventory = new ListInventoryService();
             inventory.Seed(cfg);
             var engine = new FakeEngine();
@@ -178,7 +178,7 @@ namespace GearEngine.GearEngine.Tests.Editor
             var engine = new FakeEngine();
             var board = new TrayTestBoardService();
 
-            GearConfig persist = CreateGearConfig("persist");
+            GearItem persist = CreateGearConfig("persist");
             inventory.Add(persist);
 
             _ = new GearInventoryViewModel(engine, board, inventory);
@@ -191,9 +191,9 @@ namespace GearEngine.GearEngine.Tests.Editor
             UnityEngine.Object.DestroyImmediate(persist);
         }
 
-        private static GearConfig CreateGearConfig(string id)
+        private static GearItem CreateGearConfig(string id)
         {
-            var gc = ScriptableObject.CreateInstance<GearConfig>();
+            var gc = ScriptableObject.CreateInstance<GearItem>();
             var so = new UnityEditor.SerializedObject(gc);
             var dp = so.FindProperty("data");
             Assert.IsNotNull(dp);

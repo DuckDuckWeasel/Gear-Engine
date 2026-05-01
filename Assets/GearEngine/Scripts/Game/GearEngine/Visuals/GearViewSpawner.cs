@@ -3,10 +3,10 @@ using UnityEngine;
 
 namespace GearEngine.GearEngine.Visuals
 {
-    /// <summary>Single entry point for instantiating gear visuals from <see cref="GearConfigData.ViewPrefab"/>.</summary>
+    /// <summary>Single entry point for instantiating gear visuals from <see cref="GearItemData.ViewPrefab"/>.</summary>
     public static class GearViewSpawner
     {
-        public static GearView Spawn(GearConfigData config, Transform parent)
+        public static GearView Spawn(GearItemData config, Transform parent)
         {
             if (config?.ViewPrefab == null)
             {

@@ -69,7 +69,7 @@ namespace GearEngine.GearEngine.Tests.Editor
 
             public bool TryMoveBoardGear(IGridNode node, Vector2Int toPos, Vector2Int fromPos) => false;
 
-            public bool TryPlace(Vector2Int targetDropPos, GearConfigData gearData) => false;
+            public bool TryPlace(Vector2Int targetDropPos, GearItemData gearData) => false;
 
             public bool TryRemoveBoardGear(IGridNode node) => false;
 
@@ -92,7 +92,7 @@ namespace GearEngine.GearEngine.Tests.Editor
 
             public IReadOnlyList<OwnedGear> Owned => owned;
 
-            public OwnedGear Add(GearConfig gear)
+            public OwnedGear Add(GearItem gear)
             {
                 if (gear == null)
                 {
@@ -154,9 +154,9 @@ namespace GearEngine.GearEngine.Tests.Editor
             var engine = new FakeEngine();
             var board = new TrayTestBoardService();
 
-            GearConfig g0 = CreateGearConfig("g0");
-            GearConfig g1 = CreateGearConfig("g1");
-            GearConfig g2 = CreateGearConfig("g2");
+            GearItem g0 = CreateGearConfig("g0");
+            GearItem g1 = CreateGearConfig("g1");
+            GearItem g2 = CreateGearConfig("g2");
             inventory.Add(g0);
             inventory.Add(g1);
             inventory.Add(g2);
@@ -190,9 +190,9 @@ namespace GearEngine.GearEngine.Tests.Editor
             return component;
         }
 
-        private static GearConfig CreateGearConfig(string id)
+        private static GearItem CreateGearConfig(string id)
         {
-            var gc = ScriptableObject.CreateInstance<GearConfig>();
+            var gc = ScriptableObject.CreateInstance<GearItem>();
             var so = new UnityEditor.SerializedObject(gc);
             var dp = so.FindProperty("data");
             Assert.IsNotNull(dp);

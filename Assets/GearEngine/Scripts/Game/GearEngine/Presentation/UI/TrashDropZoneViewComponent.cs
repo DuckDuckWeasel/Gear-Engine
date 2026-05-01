@@ -142,14 +142,14 @@ namespace GearEngine.GearEngine.Presentation.UI
 
         public bool CanAccept(DragPayload payload)
         {
-            GearConfigData gear = payload.GetData<GearConfigData>() ?? payload.GetData<IGridNode>()?.ConfigData;
+            GearItemData gear = payload.GetData<GearItemData>() ?? payload.GetData<IGridNode>()?.ConfigData;
             return gear != null && viewModel != null && viewModel.CanTrashAcceptGear(gear);
         }
 
         public bool OnDrop(DragPayload payload)
         {
             IGridNode node = payload.GetData<IGridNode>();
-            GearConfigData gear = payload.GetData<GearConfigData>();
+            GearItemData gear = payload.GetData<GearItemData>();
             if (node != null)
             {
                 return viewModel != null && viewModel.HandleBoardGearDropped(node);
