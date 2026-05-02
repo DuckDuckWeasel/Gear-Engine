@@ -68,14 +68,14 @@ namespace GearEngine.CarSimulation.Tests
         // ── Data Model Tests (M1) ──────────────────────────────────────
 
         [Test]
-        public void DriverPersonality_Default_AllStatsAreFive()
+        public void DriverPersonality_Default_AllStatsAreFifty()
         {
             DriverPersonality p = DriverPersonality.Default;
-            Assert.AreEqual(5f, p.SpeedCapability);
-            Assert.AreEqual(5f, p.CorneringSkill);
-            Assert.AreEqual(5f, p.Drift);
-            Assert.AreEqual(5f, p.Precision);
-            Assert.AreEqual(5f, p.Smoothness);
+            Assert.AreEqual(50f, p.SpeedCapability);
+            Assert.AreEqual(50f, p.CorneringSkill);
+            Assert.AreEqual(50f, p.Drift);
+            Assert.AreEqual(50f, p.Precision);
+            Assert.AreEqual(50f, p.Smoothness);
         }
 
         [Test]
@@ -273,9 +273,9 @@ namespace GearEngine.CarSimulation.Tests
             {
                 SpeedCapability = 0f,
                 CorneringSkill = 0f,
-                Drift = 10f,
-                Precision = 10f, // 10 precision -> 0 error offset
-                Smoothness = 10f // 10 smoothness -> no noise
+                Drift = 100f,
+                Precision = 100f, // 100 precision -> 0 error offset
+                Smoothness = 100f // 100 smoothness -> no noise
             };
 
             var driver = new SplineEvaluateDriver(config, profile);

@@ -14,11 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Game.Campaign::GearEngine.Campaign.Services.RaceSessionDefaultsSO
   template:
     roguelikeStats:
-      statTopSpeed: 50
-      statAcceleration: 50
-      statBrakingSystem: 50
-      statDriftControl: 50
-      statNitrousBoost: 50
-      statSteeringGrip: 50
-      statRacingLine: 50
-      statDriverReflexes: 50
+      SpeedCapability: 50
+      CorneringSkill: 50
+      Drift: 50
+      Precision: 50
+      Smoothness: 50

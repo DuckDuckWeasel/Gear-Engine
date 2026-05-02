@@ -130,18 +130,18 @@ namespace GearEngine.CarSimulation.PhysicsSimulation
                 ctx.entity.TryGetValue(ctx.Variables.Smoothness, out sm);
             }
 
-            // Normalizing the 0-10 stats to 0-1 for multiplier logic, assuming max was 10f.
+            // Normalizing the 0-100 stats to 0-1 for multiplier logic, assuming max was 100f.
             // (Previously 0-100f, divided by 100f).
-            float normTopSpeed = sc / 10f;
-            float normRacingLine = cs / 10f;
-            float normDriftControl = dr / 10f;
-            float normSteeringGrip = pr / 10f;
-            float normDriverReflexes = sm / 10f;
+            float normTopSpeed = sc / 100f;
+            float normRacingLine = cs / 100f;
+            float normDriftControl = dr / 100f;
+            float normSteeringGrip = pr / 100f;
+            float normDriverReflexes = sm / 100f;
             
             // Map the missing physics stats securely to the 5 Spline Modifiers
-            float normAcceleration = sc / 10f; // Linked to speed capability
-            float normBrakingSystem = sm / 10f; // Linked to smoothness/reflexes
-            float normNitrousBoost = sc / 10f; // Linked to speed capability
+            float normAcceleration = sc / 100f; // Linked to speed capability
+            float normBrakingSystem = sm / 100f; // Linked to smoothness/reflexes
+            float normNitrousBoost = sc / 100f; // Linked to speed capability
 
             float effectiveSimulationStat = Mathf.Clamp01(normNitrousBoost + (normTopSpeed * 0.3f));
             ctx.currentSimulationMultiplier = Mathf.Lerp(1f, config.baseSimulationMultiplier, effectiveSimulationStat);

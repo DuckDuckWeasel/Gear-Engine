@@ -12,29 +12,29 @@ namespace GearEngine.CarSimulation.SplineSimulation
     [Serializable]
     public struct DriverPersonality
     {
-        [Range(0f, 10f), Tooltip("10 = max speed (200 km/h), 0 = slow (10 km/h).")]
+        [Range(0f, 100f), Tooltip("100 = max speed (200 km/h), 0 = slow (10 km/h).")]
         public float SpeedCapability;
 
-        [Range(0f, 10f), Tooltip("10 = always take the perfect racing line, 0 = always take invalid lines.")]
+        [Range(0f, 100f), Tooltip("100 = always take the perfect racing line, 0 = always take invalid lines.")]
         public float CorneringSkill;
 
-        [Range(0f, 10f), Tooltip("10 = always drifts in curves, 0 = perfect grip (no drift).")]
+        [Range(0f, 100f), Tooltip("100 = always drifts in curves, 0 = perfect grip (no drift).")]
         public float Drift;
 
-        [Range(0f, 10f), Tooltip("10 = extremely precise even on bad lines, 0 = hugs the absolute wrong edge of the track.")]
+        [Range(0f, 100f), Tooltip("100 = extremely precise even on bad lines, 0 = hugs the absolute wrong edge of the track.")]
         public float Precision;
 
-        [Range(0f, 10f), Tooltip("10 = perfectly smooth ride, 0 = weaves on straights and suspension bounces heavily.")]
+        [Range(0f, 100f), Tooltip("100 = perfectly smooth ride, 0 = weaves on straights and suspension bounces heavily.")]
         public float Smoothness;
 
         /// <summary>Default middle-of-the-road personality.</summary>
         public static DriverPersonality Default => new DriverPersonality
         {
-            SpeedCapability = 5f,
-            CorneringSkill = 5f,
-            Drift = 5f,
-            Precision = 5f,
-            Smoothness = 5f
+            SpeedCapability = 50f,
+            CorneringSkill = 50f,
+            Drift = 50f,
+            Precision = 50f,
+            Smoothness = 50f
         };
     }
 }

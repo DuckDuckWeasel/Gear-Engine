@@ -227,8 +227,8 @@ namespace GearEngine.CarSimulation.SplineSimulation
             float distEnd = endT - t;
             if (distEnd < 0f) distEnd += 1f;
 
-            // Apply risk multiplier to lookahead based on CorneringSkill (10 skill = 0 risk = x mult, 0 skill = 10 risk = y mult)
-            float riskMult = Mathf.Lerp(config.riskLookaheadMultiplier.x, config.riskLookaheadMultiplier.y, (10f - personality.CorneringSkill) / 10f);
+            // Apply risk multiplier to lookahead based on CorneringSkill (100 skill = 0 risk = x mult, 0 skill = 100 risk = y mult)
+            float riskMult = Mathf.Lerp(config.riskLookaheadMultiplier.x, config.riskLookaheadMultiplier.y, (100f - personality.CorneringSkill) / 100f);
             float effectiveLookahead = config.curvatureLookaheadMeters * riskMult;
 
             // The preparation distance is relative to the curve's actual entry size + dynamic lookahead based on risk
@@ -268,14 +268,14 @@ namespace GearEngine.CarSimulation.SplineSimulation
             float rollDrift = UnityEngine.Random.value;
             UnityEngine.Random.state = oldState;
 
-            float perfectChance = personality.CorneringSkill / 10f;
+            float perfectChance = personality.CorneringSkill / 100f;
             
             TrackCurveEvent ev = baseCurve;
             ev.ActiveMode = (rollPerfect <= perfectChance) ? 
                 (CurveMode)Mathf.Clamp(Mathf.FloorToInt(rollMode * 5), 0, 4) : 
                 (CurveMode)Mathf.Clamp(5 + Mathf.FloorToInt(rollMode * 5), 5, 9);
             
-            float drift = personality.Drift / 10f;
+            float drift = personality.Drift / 100f;
             float maxDriftChance = 1.0f; 
             ev.WillDrift = rollDrift <= drift * maxDriftChance;
 
@@ -373,7 +373,7 @@ namespace GearEngine.CarSimulation.SplineSimulation
         private void TickSpeedModel(float dt)
         {
             // Calculate actual max capability based on stat and config limit (50% to 100% of max speed)
-            float maxSpeed = Mathf.Lerp(config.maxSpeed * 0.5f, config.maxSpeed, personality.SpeedCapability / 10f);
+            float maxSpeed = Mathf.Lerp(config.maxSpeed * 0.5f, config.maxSpeed, personality.SpeedCapability / 100f);
 
             // Sample current curvature
             State.Curvature = SplineCurvatureHelper.SampleCurvatureAt(spline, splineLength, State.T, out State.SignedCurvature);
@@ -556,7 +556,7 @@ namespace GearEngine.CarSimulation.SplineSimulation
                 float lineMultiplier = 1f;
                 if ((int)evaluatedCurve.ActiveMode >= 5) 
                 {
-                    float errorMagnitude = 1f - (personality.Precision / 10f);
+                    float errorMagnitude = 1f - (personality.Precision / 100f);
                     // "sair um pouquinho mais da curva ao errar"
                     lineMultiplier = 1f + (errorMagnitude * 4f); 
                 }
@@ -594,7 +594,7 @@ namespace GearEngine.CarSimulation.SplineSimulation
                 float lineMultiplier = 1f;
                 if ((int)evaluatedCurve.ActiveMode >= 5) // Failed modes
                 {
-                    float errorMagnitude = 1f - (personality.Precision / 10f);
+                    float errorMagnitude = 1f - (personality.Precision / 100f);
                     // "sair um pouquinho mais da curva ao errar"
                     lineMultiplier = 1f + (errorMagnitude * 4f); 
                 }
@@ -789,9 +789,9 @@ namespace GearEngine.CarSimulation.SplineSimulation
             }
 
             // Suspension bob (amplified by lack of Smoothness)
-            float maxSpeed = Mathf.Lerp(config.maxSpeed * 0.5f, config.maxSpeed, personality.SpeedCapability / 10f);
+            float maxSpeed = Mathf.Lerp(config.maxSpeed * 0.5f, config.maxSpeed, personality.SpeedCapability / 100f);
             float speedNorm = State.Speed / maxSpeed;
-            float recklessness = 1f - (personality.Smoothness / 10f);
+            float recklessness = 1f - (personality.Smoothness / 100f);
             float bounceMult = 1f + (recklessness * 5f);
             
             State.SuspensionOffset = Mathf.Sin(Time.time * config.suspensionBobFrequency * bounceMult * Mathf.Max(speedNorm, 0.1f))
