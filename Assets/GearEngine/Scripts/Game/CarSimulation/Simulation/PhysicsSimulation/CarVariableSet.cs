@@ -7,24 +7,21 @@ namespace GearEngine.CarSimulation.PhysicsSimulation
     [CreateAssetMenu(menuName = "Game/Car/Car Variable Set", fileName = "CarVariableSet")]
     public sealed class CarVariableSet : ScriptableObject
     {
-        [FormerlySerializedAs("maxStraightSpeed")]
-        [SerializeField] private VariableSO speed;
-        [SerializeField] private VariableSO acceleration;
-        [SerializeField] private VariableSO handling;
-        [SerializeField] private VariableSO stability;
-        [SerializeField] private VariableSO recovery;
-        [SerializeField] private VariableSO driftPenalty;
+        [SerializeField] private VariableSO speedCapability;
+        [SerializeField] private VariableSO corneringSkill;
+        [SerializeField] private VariableSO drift;
+        [SerializeField] private VariableSO precision;
+        [SerializeField] private VariableSO smoothness;
 
-        public VariableSO Speed => speed;
-        public VariableSO Acceleration => acceleration;
-        public VariableSO Handling => handling;
-        public VariableSO Stability => stability;
-        public VariableSO Recovery => recovery;
-        public VariableSO DriftPenalty => driftPenalty;
+        public VariableSO SpeedCapability => speedCapability;
+        public VariableSO CorneringSkill => corneringSkill;
+        public VariableSO Drift => drift;
+        public VariableSO Precision => precision;
+        public VariableSO Smoothness => smoothness;
 
         internal void AssignVariablesForTests(VariableSO speedVariable)
         {
-            speed = speedVariable;
+            speedCapability = speedVariable;
         }
     }
 }

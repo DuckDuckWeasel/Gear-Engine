@@ -8,14 +8,11 @@ namespace GearEngine.Campaign.Gear
 {
     public enum PassiveStatType
     {
-        TopSpeed,
-        Acceleration,
-        BrakingSystem,
-        DriftControl,
-        NitrousBoost,
-        SteeringGrip,
-        RacingLine,
-        DriverReflexes
+        SpeedCapability,
+        CorneringSkill,
+        Drift,
+        Precision,
+        Smoothness
     }
 
     [System.Serializable]
@@ -37,14 +34,11 @@ namespace GearEngine.Campaign.Gear
             {
                 switch (mod.Stat)
                 {
-                    case PassiveStatType.TopSpeed: stats.statTopSpeed += mod.Amount; break;
-                    case PassiveStatType.Acceleration: stats.statAcceleration += mod.Amount; break;
-                    case PassiveStatType.BrakingSystem: stats.statBrakingSystem += mod.Amount; break;
-                    case PassiveStatType.DriftControl: stats.statDriftControl += mod.Amount; break;
-                    case PassiveStatType.NitrousBoost: stats.statNitrousBoost += mod.Amount; break;
-                    case PassiveStatType.SteeringGrip: stats.statSteeringGrip += mod.Amount; break;
-                    case PassiveStatType.RacingLine: stats.statRacingLine += mod.Amount; break;
-                    case PassiveStatType.DriverReflexes: stats.statDriverReflexes += mod.Amount; break;
+                    case PassiveStatType.SpeedCapability: stats.SpeedCapability += mod.Amount; break;
+                    case PassiveStatType.CorneringSkill: stats.CorneringSkill += mod.Amount; break;
+                    case PassiveStatType.Drift: stats.Drift += mod.Amount; break;
+                    case PassiveStatType.Precision: stats.Precision += mod.Amount; break;
+                    case PassiveStatType.Smoothness: stats.Smoothness += mod.Amount; break;
                 }
             }
         }

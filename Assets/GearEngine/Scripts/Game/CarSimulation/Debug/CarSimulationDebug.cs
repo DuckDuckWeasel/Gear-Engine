@@ -63,17 +63,15 @@ namespace GearEngine.CarSimulation.Debug
         // public RoguelikeCarStats SourceStats => Context?.sourceStats ?? RoguelikeCarStats.Default;
 
         [ShowInInspector, BoxGroup("Effective Stats")]
-        private float StatTopSpeed => ExtractEntityStat(Context?.Variables?.Speed);
+        private float StatSpeedCapability => ExtractEntityStat(Context?.Variables?.SpeedCapability);
         [ShowInInspector, BoxGroup("Effective Stats")]
-        private float StatAcceleration => ExtractEntityStat(Context?.Variables?.Acceleration);
+        private float StatCorneringSkill => ExtractEntityStat(Context?.Variables?.CorneringSkill);
         [ShowInInspector, BoxGroup("Effective Stats")]
-        private float StatSteeringGrip => ExtractEntityStat(Context?.Variables?.Handling);
+        private float StatDrift => ExtractEntityStat(Context?.Variables?.Drift);
         [ShowInInspector, BoxGroup("Effective Stats")]
-        private float StatRacingLine => ExtractEntityStat(Context?.Variables?.Stability);
+        private float StatPrecision => ExtractEntityStat(Context?.Variables?.Precision);
         [ShowInInspector, BoxGroup("Effective Stats")]
-        private float StatDriverReflexes => ExtractEntityStat(Context?.Variables?.Recovery);
-        [ShowInInspector, BoxGroup("Effective Stats")]
-        private float StatDriftControl => ExtractEntityStat(Context?.Variables?.DriftPenalty);
+        private float StatSmoothness => ExtractEntityStat(Context?.Variables?.Smoothness);
 
         private float ExtractEntityStat(VariableSO varSo)
         {

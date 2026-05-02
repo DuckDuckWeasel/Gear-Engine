@@ -49,13 +49,14 @@ namespace LiveOps.Modules.Tracks
             persistence.BestTimeSec[trackId] = best;
 
             string nextId = string.Empty;
-            if (advanced)
+            List<TrackConfigEntry> list = config.Entries.ToList();
+            int idx = list.FindIndex(e => e != null && e.Id == trackId);
+            if (idx >= 0 && list.Count > 0)
             {
-                List<TrackConfigEntry> list = config.Entries.ToList();
-                int idx = list.FindIndex(e => e != null && e.Id == trackId);
-                if (idx >= 0 && idx + 1 < list.Count && list[idx + 1] != null)
+                int nextIdx = (idx + 1) % list.Count;
+                if (list[nextIdx] != null)
                 {
-                    nextId = list[idx + 1].Id;
+                    nextId = list[nextIdx].Id;
                     persistence.CurrentTrackId = nextId;
                 }
             }

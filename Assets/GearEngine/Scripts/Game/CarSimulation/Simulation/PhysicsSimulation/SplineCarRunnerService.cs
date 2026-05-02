@@ -82,20 +82,18 @@ namespace GearEngine.CarSimulation.PhysicsSimulation
 
             if (config.variables != null)
             {
-                SetEntityVariable(entity, config.variables.Speed, stats.statTopSpeed);
-                SetEntityVariable(entity, config.variables.Acceleration, stats.statAcceleration);
-                SetEntityVariable(entity, config.variables.Handling, stats.statSteeringGrip);
-                SetEntityVariable(entity, config.variables.Stability, stats.statRacingLine);
-                SetEntityVariable(entity, config.variables.Recovery, stats.statDriverReflexes);
-                SetEntityVariable(entity, config.variables.DriftPenalty, stats.statDriftControl);
+                SetEntityVariable(entity, config.variables.SpeedCapability, stats.SpeedCapability);
+                SetEntityVariable(entity, config.variables.CorneringSkill, stats.CorneringSkill);
+                SetEntityVariable(entity, config.variables.Drift, stats.Drift);
+                SetEntityVariable(entity, config.variables.Precision, stats.Precision);
+                SetEntityVariable(entity, config.variables.Smoothness, stats.Smoothness);
 
                 Action<Scaffold.Entities.VariableValue> onVarChanged = _ => ReevaluateStats(ctx);
-                entity.Subscribe(config.variables.Speed, onVarChanged);
-                entity.Subscribe(config.variables.Acceleration, onVarChanged);
-                entity.Subscribe(config.variables.Handling, onVarChanged);
-                entity.Subscribe(config.variables.Stability, onVarChanged);
-                entity.Subscribe(config.variables.Recovery, onVarChanged);
-                entity.Subscribe(config.variables.DriftPenalty, onVarChanged);
+                entity.Subscribe(config.variables.SpeedCapability, onVarChanged);
+                entity.Subscribe(config.variables.CorneringSkill, onVarChanged);
+                entity.Subscribe(config.variables.Drift, onVarChanged);
+                entity.Subscribe(config.variables.Precision, onVarChanged);
+                entity.Subscribe(config.variables.Smoothness, onVarChanged);
             }
         }
 
@@ -117,31 +115,33 @@ namespace GearEngine.CarSimulation.PhysicsSimulation
             if (config == null || ctx.entity == null) return;
 
             RoguelikeCarStats baseStats = ctx.sourceStats;
-            float s = baseStats.statTopSpeed;
-            float a = baseStats.statAcceleration;
-            float h = baseStats.statSteeringGrip;
-            float st = baseStats.statRacingLine;
-            float r = baseStats.statDriverReflexes;
-            float d = baseStats.statDriftControl;
+            float sc = baseStats.SpeedCapability;
+            float cs = baseStats.CorneringSkill;
+            float dr = baseStats.Drift;
+            float pr = baseStats.Precision;
+            float sm = baseStats.Smoothness;
             
             if (ctx.Variables != null)
             {
-                ctx.entity.TryGetValue(ctx.Variables.Speed, out s);
-                ctx.entity.TryGetValue(ctx.Variables.Acceleration, out a);
-                ctx.entity.TryGetValue(ctx.Variables.Handling, out h);
-                ctx.entity.TryGetValue(ctx.Variables.Stability, out st);
-                ctx.entity.TryGetValue(ctx.Variables.Recovery, out r);
-                ctx.entity.TryGetValue(ctx.Variables.DriftPenalty, out d);
+                ctx.entity.TryGetValue(ctx.Variables.SpeedCapability, out sc);
+                ctx.entity.TryGetValue(ctx.Variables.CorneringSkill, out cs);
+                ctx.entity.TryGetValue(ctx.Variables.Drift, out dr);
+                ctx.entity.TryGetValue(ctx.Variables.Precision, out pr);
+                ctx.entity.TryGetValue(ctx.Variables.Smoothness, out sm);
             }
 
-            float normTopSpeed = s / 100f;
-            float normAcceleration = a / 100f;
-            float normBrakingSystem = baseStats.statBrakingSystem / 100f; // Braking handles independently for now
-            float normDriftControl = d / 100f;
-            float normNitrousBoost = baseStats.statNitrousBoost / 100f;
-            float normSteeringGrip = h / 100f;
-            float normRacingLine = st / 100f;
-            float normDriverReflexes = r / 100f;
+            // Normalizing the 0-10 stats to 0-1 for multiplier logic, assuming max was 10f.
+            // (Previously 0-100f, divided by 100f).
+            float normTopSpeed = sc / 10f;
+            float normRacingLine = cs / 10f;
+            float normDriftControl = dr / 10f;
+            float normSteeringGrip = pr / 10f;
+            float normDriverReflexes = sm / 10f;
+            
+            // Map the missing physics stats securely to the 5 Spline Modifiers
+            float normAcceleration = sc / 10f; // Linked to speed capability
+            float normBrakingSystem = sm / 10f; // Linked to smoothness/reflexes
+            float normNitrousBoost = sc / 10f; // Linked to speed capability
 
             float effectiveSimulationStat = Mathf.Clamp01(normNitrousBoost + (normTopSpeed * 0.3f));
             ctx.currentSimulationMultiplier = Mathf.Lerp(1f, config.baseSimulationMultiplier, effectiveSimulationStat);

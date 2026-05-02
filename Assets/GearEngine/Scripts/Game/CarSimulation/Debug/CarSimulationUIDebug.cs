@@ -127,12 +127,11 @@ namespace GearEngine.CarSimulation.Debug
             if (simDebug != null && simDebug.Context?.Variables != null)
             {
                 var vars = simDebug.Context.Variables;
-                DrawNativeStat(car, vars.Speed, "Speed");
-                DrawNativeStat(car, vars.Acceleration, "Acceleration");
-                DrawNativeStat(car, vars.Handling, "Handling");
-                DrawNativeStat(car, vars.Stability, "Stability");
-                DrawNativeStat(car, vars.Recovery, "Recovery");
-                DrawNativeStat(car, vars.DriftPenalty, "Drift Penalty");
+                DrawNativeStat(car, vars.SpeedCapability, "Speed Capability");
+                DrawNativeStat(car, vars.CorneringSkill, "Cornering Skill");
+                DrawNativeStat(car, vars.Drift, "Drift");
+                DrawNativeStat(car, vars.Precision, "Precision");
+                DrawNativeStat(car, vars.Smoothness, "Smoothness");
             }
             else
             {

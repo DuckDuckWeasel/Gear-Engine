@@ -6,40 +6,28 @@ namespace GearEngine.CarSimulation.PhysicsSimulation
     [Serializable]
     public struct RoguelikeCarStats
     {
-        [Range(0f, 100f), Tooltip("Scales Car Engine Max Speed limit.")]
-        public float statTopSpeed;
+        [Range(0f, 10f), Tooltip("10 = max speed, 0 = slow.")]
+        public float SpeedCapability;
 
-        [Range(0f, 100f), Tooltip("Scales Engine raw acceleration torque.")]
-        public float statAcceleration;
+        [Range(0f, 10f), Tooltip("10 = perfect racing line, 0 = invalid lines.")]
+        public float CorneringSkill;
 
-        [Range(0f, 100f), Tooltip("Scales Physical Brake stopping power.")]
-        public float statBrakingSystem;
+        [Range(0f, 10f), Tooltip("10 = always drifts, 0 = perfect grip.")]
+        public float Drift;
 
-        [Range(0f, 100f), Tooltip("Scales physical drift grip logic.")]
-        public float statDriftControl;
+        [Range(0f, 10f), Tooltip("10 = precise, 0 = hugs wrong edge.")]
+        public float Precision;
 
-        [Range(0f, 100f), Tooltip("Scales Nitrous Oxide explosion power.")]
-        public float statNitrousBoost;
-
-        [Range(0f, 100f), Tooltip("How faithfully the AI sticks to the track limits.")]
-        public float statSteeringGrip;
-
-        [Range(0f, 100f), Tooltip("AI's ability to take Out-In-Out racing lines.")]
-        public float statRacingLine;
-
-        [Range(0f, 100f), Tooltip("AI's courage to brake late and read predictive road chords fast.")]
-        public float statDriverReflexes;
+        [Range(0f, 10f), Tooltip("10 = smooth ride, 0 = bounces heavily.")]
+        public float Smoothness;
 
         public static RoguelikeCarStats Default => new RoguelikeCarStats
         {
-            statTopSpeed = 50f,
-            statAcceleration = 50f,
-            statBrakingSystem = 50f,
-            statDriftControl = 50f,
-            statNitrousBoost = 50f,
-            statSteeringGrip = 50f,
-            statRacingLine = 50f,
-            statDriverReflexes = 50f
+            SpeedCapability = 5f,
+            CorneringSkill = 5f,
+            Drift = 5f,
+            Precision = 5f,
+            Smoothness = 5f
         };
     }
 }
