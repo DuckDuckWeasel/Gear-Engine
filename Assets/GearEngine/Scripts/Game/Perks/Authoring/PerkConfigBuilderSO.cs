@@ -33,7 +33,7 @@ namespace GearEngine.Perks.Authoring
                 return cfg;
             }
 
-            foreach (global::GearEngine.Perks.Config.PerkItem perk in catalog.All)
+            foreach (Config.PerkItem perk in catalog.All)
             {
                 if (perk != null && !string.IsNullOrEmpty(perk.Id))
                 {
