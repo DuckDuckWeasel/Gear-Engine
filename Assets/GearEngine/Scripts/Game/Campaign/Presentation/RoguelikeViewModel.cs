@@ -59,9 +59,12 @@ namespace GearEngine.Campaign.Presentation
         [Inject]
         private IGearPresentationTransferService presentationTransferService;
 
+        private bool isProcessingAction;
+
         protected override void Initialize()
         {
             base.Initialize();
+            isProcessingAction = false;
             CanReroll = true;
             SetupGearEngineSubtree();
             inventoryService.InventoryChanged += UpdatePerkOptionsInteractability;
@@ -92,7 +95,7 @@ namespace GearEngine.Campaign.Presentation
 
         public async void PickPerk(ItemSlotViewModel perk)
         {
-            if (perk == null)
+            if (isProcessingAction || perk == null)
             {
                 return;
             }
@@ -103,6 +106,8 @@ namespace GearEngine.Campaign.Presentation
                 return;
             }
 
+            isProcessingAction = true;
+
             try
             {
                 GearItemData gearData = (GearItemData)perk.Item;
@@ -110,6 +115,7 @@ namespace GearEngine.Campaign.Presentation
 
                 if (inventoryService.Add(config) == null)
                 {
+                    isProcessingAction = false;
                     return;
                 }
 
@@ -118,25 +124,31 @@ namespace GearEngine.Campaign.Presentation
             }
             catch (Exception ex)
             {
+                isProcessingAction = false;
                 Debug.LogError($"[RoguelikeViewModel] PickPerk failed: {ex.Message}\n{ex.StackTrace}");
             }
         }
 
         public async void Continue()
         {
+            if (isProcessingAction) return;
+            isProcessingAction = true;
+
             try
             {
                 await SkipPickAsync();
             }
             catch (Exception ex)
             {
+                isProcessingAction = false;
                 Debug.LogError($"[RoguelikeViewModel] Continue failed: {ex.Message}\n{ex.StackTrace}");
             }
         }
 
         public async void Reroll()
         {
-            if (!CanReroll) return;
+            if (isProcessingAction || !CanReroll) return;
+            isProcessingAction = true;
 
             try
             {
@@ -146,7 +158,12 @@ namespace GearEngine.Campaign.Presentation
             }
             catch (Exception ex)
             {
+                CanReroll = true; // allow retrying if it failed
                 Debug.LogError($"[RoguelikeViewModel] Reroll failed: {ex.Message}\n{ex.StackTrace}");
+            }
+            finally
+            {
+                isProcessingAction = false;
             }
         }
 
