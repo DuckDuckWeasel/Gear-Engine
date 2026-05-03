@@ -13,10 +13,10 @@
   </ItemGroup>
 
   <!-- Roslyn: prefer building the generator from source; consumer installs use the prebuilt Deploy/Tools copy. -->
-  <ItemGroup Condition="'$(ScaffoldLiveOpsTestProject)' != 'true' and '$(ScaffoldLiveOpsNoAnalyzer)' != 'true' and Exists('$(_ScaffoldGenProj)')">
+  <ItemGroup Condition="'$(ScaffoldLiveOpsTestProject)' != 'true' and '$(ScaffoldLiveOpsNoAnalyzer)' != 'true' and !Exists('$(_ScaffoldGenDll)') and Exists('$(_ScaffoldGenProj)')">
     <ProjectReference Include="$(_ScaffoldGenProj)" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
   </ItemGroup>
-  <ItemGroup Condition="'$(ScaffoldLiveOpsTestProject)' != 'true' and '$(ScaffoldLiveOpsNoAnalyzer)' != 'true' and !Exists('$(_ScaffoldGenProj)') and Exists('$(_ScaffoldGenDll)')">
+  <ItemGroup Condition="'$(ScaffoldLiveOpsTestProject)' != 'true' and '$(ScaffoldLiveOpsNoAnalyzer)' != 'true' and Exists('$(_ScaffoldGenDll)')">
     <Analyzer Include="$(_ScaffoldGenDll)" />
   </ItemGroup>
 </Project>
