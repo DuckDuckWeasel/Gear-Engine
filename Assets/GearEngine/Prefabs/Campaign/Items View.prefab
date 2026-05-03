@@ -135,7 +135,7 @@ GameObject:
   - component: {fileID: 5332262979486977894}
   - component: {fileID: 5566026250049367592}
   m_Layer: 0
-  m_Name: TalentPerks View
+  m_Name: Items View
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -235,10 +235,11 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 235bea3422b0649e6ac46c875a545ac9, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Game.Campaign::GearEngine.Campaign.Presentation.TalentPerksView
+  m_EditorClassIdentifier: Game.Campaign::GearEngine.Campaign.Presentation.ItemsView
   type: 0
-  perkContainer: {fileID: 868024111920319120}
-  perkPrefab: {fileID: 7243481678181416101, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
+  itemContainer: {fileID: 868024111920319120}
+  itemPrefab: {fileID: 7243481678181416101, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
+  buyButtonContainer: {fileID: 6532269304075623530}
   buyButton: {fileID: 5387278692962165194}
   buyButtonText: {fileID: 4000932734436668459}
   backButton: {fileID: 3396287576853150226}

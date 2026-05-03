@@ -12,6 +12,7 @@ namespace GearEngine.Campaign.Presentation
         [SerializeField] private TrackViewComponent track;
         [SerializeField] private Button playButton;
         [SerializeField] private Button talentPerksButton;
+        [SerializeField] private Button gearsButton;
         [SerializeField] private TrackStatsViewComponent statsPanel;
         [SerializeField] private FrustumFitAnchor[] openTransitionAnchors;
         [SerializeField] private float openTransitionDurationSeconds = 0.35f;
@@ -39,6 +40,11 @@ namespace GearEngine.Campaign.Presentation
                 talentPerksButton.onClick.RemoveListener(OnTalentPerksClicked);
                 talentPerksButton.onClick.AddListener(OnTalentPerksClicked);
             }
+            if (gearsButton != null)
+            {
+                gearsButton.onClick.RemoveListener(OnGearsClicked);
+                gearsButton.onClick.AddListener(OnGearsClicked);
+            }
             track.gameObject.SetActive(true);
             FrustumFitAnchorOpenTransition.PlayAfterCanvasLayout(this, openTransitionAnchors, openTransitionDurationSeconds);
         }
@@ -55,6 +61,10 @@ namespace GearEngine.Campaign.Presentation
             if (talentPerksButton != null)
             {
                 talentPerksButton.onClick.RemoveListener(OnTalentPerksClicked);
+            }
+            if (gearsButton != null)
+            {
+                gearsButton.onClick.RemoveListener(OnGearsClicked);
             }
 
             if (track != null)
@@ -84,6 +94,18 @@ namespace GearEngine.Campaign.Presentation
             catch (Exception ex)
             {
                 Debug.LogError($"[MainView] OnTalentPerksClicked failed: {ex.Message}\n{ex.StackTrace}");
+            }
+        }
+
+        private void OnGearsClicked()
+        {
+            try
+            {
+                viewModel?.ClickedGears();
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"[MainView] OnGearsClicked failed: {ex.Message}\n{ex.StackTrace}");
             }
         }
 

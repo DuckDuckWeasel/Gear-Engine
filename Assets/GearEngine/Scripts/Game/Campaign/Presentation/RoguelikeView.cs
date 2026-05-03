@@ -18,7 +18,7 @@ namespace GearEngine.Campaign.Presentation
         private TrashDropZoneViewComponent trashDropZone;
 
         [SerializeField]
-        private ItemPerkView[] perkOptionViews;
+        private ItemSlotView[] perkOptionViews;
 
         [SerializeField]
         private Button rerollButton;
@@ -68,7 +68,7 @@ namespace GearEngine.Campaign.Presentation
             {
                 if (i < viewModel.PerkOptions.Count)
                 {
-                    ItemPerkViewModel option = viewModel.PerkOptions[i];
+                    ItemSlotViewModel option = viewModel.PerkOptions[i];
                     perkOptionViews[i].gameObject.SetActive(true);
                     perkOptionViews[i].Bind(option);
                 }

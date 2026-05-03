@@ -24,7 +24,7 @@ namespace GearEngine.Campaign.Presentation
         public BoardViewModel Board { get; private set; }
         public GearInventoryViewModel Inventory { get; private set; }
         public TrashZoneViewModel TrashZone { get; private set; }
-        public IReadOnlyList<ItemPerkViewModel> PerkOptions => perkOptions;
+        public IReadOnlyList<ItemSlotViewModel> PerkOptions => perkOptions;
 
         internal IDragService DragService => dragService;
 
@@ -34,7 +34,7 @@ namespace GearEngine.Campaign.Presentation
         [ObservableProperty]
         private bool canReroll = true;
 
-        private readonly List<ItemPerkViewModel> perkOptions = new List<ItemPerkViewModel>();
+        private readonly List<ItemSlotViewModel> perkOptions = new List<ItemSlotViewModel>();
         private readonly CancellationTokenSource cts = new CancellationTokenSource();
         private bool disposed;
 
@@ -84,13 +84,13 @@ namespace GearEngine.Campaign.Presentation
         private void UpdatePerkOptionsInteractability()
         {
             bool hasSpace = inventoryService.Owned.Count < MaxInventoryCapacity;
-            foreach (ItemPerkViewModel perk in perkOptions)
+            foreach (ItemSlotViewModel perk in perkOptions)
             {
                 perk.CanPick = hasSpace;
             }
         }
 
-        public async void PickPerk(ItemPerkViewModel perk)
+        public async void PickPerk(ItemSlotViewModel perk)
         {
             if (perk == null)
             {
@@ -211,7 +211,7 @@ namespace GearEngine.Campaign.Presentation
                 return;
             }
 
-            ItemPerkViewModel perk = new ItemPerkViewModel(config, PickPerk);
+            ItemSlotViewModel perk = new ItemSlotViewModel(config, PickPerk);
             perk.CanPick = inventoryService.Owned.Count < MaxInventoryCapacity;
             BindChildViewModel(perk);
             perkOptions.Add(perk);

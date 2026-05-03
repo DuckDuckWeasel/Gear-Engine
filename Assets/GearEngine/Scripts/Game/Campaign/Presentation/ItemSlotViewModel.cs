@@ -5,11 +5,11 @@ using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace GearEngine.Campaign.Presentation
 {
-    public sealed partial class ItemPerkViewModel : ViewModel
+    public sealed partial class ItemSlotViewModel : ViewModel
     {
-        private readonly Action<ItemPerkViewModel> onPick;
+        private readonly Action<ItemSlotViewModel> onPick;
 
-        public ItemPerkViewModel(IItem item, Action<ItemPerkViewModel> onPick, int amount = 1)
+        public ItemSlotViewModel(IItem item, Action<ItemSlotViewModel> onPick, int amount = 1)
         {
             Item = item ?? throw new ArgumentNullException(nameof(item));
             this.onPick = onPick;
@@ -18,6 +18,8 @@ namespace GearEngine.Campaign.Presentation
 
         public IItem Item { get; }
         public int Amount { get; }
+
+        public bool IsOwned => Amount > 0;
 
         [ObservableProperty]
         private bool canPick = true;

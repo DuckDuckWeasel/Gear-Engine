@@ -4,10 +4,10 @@ using UnityEngine.UI;
 
 namespace GearEngine.Campaign.Presentation
 {
-    public sealed class PerkPopupView : View<PerkPopupViewModel>
+    public sealed class ItemPopupView : View<ItemPopupViewModel>
     {
-        [Header("Perk Viewer")]
-        [SerializeField] private ItemPerkView perkView;
+        [Header("Item Viewer")]
+        [SerializeField] private ItemSlotView itemView;
 
         [Header("Navigation")]
         [SerializeField] private Button nextButton;
@@ -24,7 +24,7 @@ namespace GearEngine.Campaign.Presentation
             if (closeButton != null) closeButton.onClick.AddListener(viewModel.Close);
             if (burnButton != null) burnButton.onClick.AddListener(viewModel.Burn);
 
-            Bind<ItemPerkViewModel, ItemPerkViewModel>(() => viewModel.CurrentPerk, UpdatePerkView);
+            Bind<ItemSlotViewModel, ItemSlotViewModel>(() => viewModel.CurrentItem, UpdateItemView);
             Bind<bool, bool>(() => viewModel.CanBurn, canBurn => 
             {
                 if (burnButton != null)
@@ -32,7 +32,7 @@ namespace GearEngine.Campaign.Presentation
                     burnButton.gameObject.SetActive(canBurn);
                 }
             });
-            Bind<bool, bool>(() => viewModel.HasMultiplePerks, hasMultiple => 
+            Bind<bool, bool>(() => viewModel.HasMultipleItems, hasMultiple => 
             {
                 if (nextButton != null) nextButton.gameObject.SetActive(hasMultiple);
                 if (previousButton != null) previousButton.gameObject.SetActive(hasMultiple);
@@ -49,11 +49,11 @@ namespace GearEngine.Campaign.Presentation
             base.OnUnbind();
         }
 
-        private void UpdatePerkView(ItemPerkViewModel perkVm)
+        private void UpdateItemView(ItemSlotViewModel itemVm)
         {
-            if (perkView != null && perkVm != null)
+            if (itemView != null && itemVm != null)
             {
-                perkView.Bind(perkVm);
+                itemView.Bind(itemVm);
             }
         }
     }

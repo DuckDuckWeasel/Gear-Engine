@@ -10,20 +10,24 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9c11d229fcf21e142bd23e7f26f19122, type: 3}
-  m_Name: CampaignTalentPerksViewConfig
+  m_Name: CampaignItemPopupViewConfig
   m_EditorClassIdentifier: Scaffold.Navigation::Scaffold.Navigation.ViewConfig
   schemas:
     rid: 4306785200000000123
+  viewAssetSource: 0
+  directPrefab: {fileID: 0}
   asset:
-    m_AssetGUID: 3b45b42660c494773ae595ffa59e54b3
+    m_AssetGUID: 2e7fb10914d4448eebd5ebf3b37d4661
     m_SubObjectName: 
     m_SubObjectType: 
     m_SubObjectGUID: 
     m_EditorAssetChanged: 0
   viewType:
-    serializedType: '"GearEngine.Campaign.Presentation.TalentPerksView, Game.Campaign, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null"'
+    serializedType: '"GearEngine.Campaign.Presentation.ItemPopupView, Game.Campaign,
+      Version=0.0.0.0, Culture=neutral, PublicKeyToken=null"'
   controllerType:
-    serializedType: '"GearEngine.Campaign.Presentation.TalentPerksViewModel, Game.Campaign, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null"'
+    serializedType: '"GearEngine.Campaign.Presentation.ItemPopupViewModel, Game.Campaign,
+      Version=0.0.0.0, Culture=neutral, PublicKeyToken=null"'
   references:
     version: 2
     RefIds:

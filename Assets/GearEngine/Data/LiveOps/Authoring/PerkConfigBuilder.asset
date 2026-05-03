@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9993587a3be93ed4388731de7fc20a28, type: 3}
-  m_Name: CardConfigBuilder
+  m_Name: PerkConfigBuilder
   m_EditorClassIdentifier: Game.Perks::GearEngine.Perks.Authoring.CardConfigBuilderSO
   catalog: {fileID: 11400000, guid: 1cdf3f9880f0e43c499fd1afae844cbc, type: 2}
   baseCost: 100

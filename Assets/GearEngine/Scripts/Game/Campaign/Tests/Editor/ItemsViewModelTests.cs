@@ -13,10 +13,10 @@ using GearEngine.Perks.Config;
 
 namespace GearEngine.Campaign.Tests.Editor
 {
-    public sealed class TalentPerksViewModelTests
+    public sealed class ItemsViewModelTests
     {
         // -----------------------------------------------------------------------
-        // TalentPerksViewModel tests
+        // ItemsViewModel tests
         // -----------------------------------------------------------------------
 
         private global::GearEngine.Perks.Config.PerkItem CreateFakePerkConfig(string id)
@@ -39,13 +39,22 @@ namespace GearEngine.Campaign.Tests.Editor
             return catalog;
         }
 
+        private ItemsScreenState CreateFakeConfig()
+        {
+            var config = UnityEngine.ScriptableObject.CreateInstance<ItemsScreenState>();
+            config.TypeToDisplay = ItemScreenType.Perks;
+            config.ShowBuyButton = true;
+            config.ShowUnownedItems = true;
+            return config;
+        }
+
         [Test]
         public void Initialize_BuildsItemListFromOwnedPerks()
         {
             var fakePerks = new FakePerksClientModule(new[] { "grip", "grip", "turbo" });
             var catalog = CreateFakeCatalog();
 
-            var vm = new TalentPerksViewModel();
+            var vm = new ItemsViewModel(CreateFakeConfig());
             ViewModelTestInject.InjectPrivateField(vm, "perksClient", fakePerks);
             ViewModelTestInject.InjectPrivateField(vm, "currencyClient", null);
             ViewModelTestInject.InjectPrivateField(vm, "perkCatalog", catalog);
@@ -63,7 +72,7 @@ namespace GearEngine.Campaign.Tests.Editor
             };
             var catalog = CreateFakeCatalog();
 
-            var vm = new TalentPerksViewModel();
+            var vm = new ItemsViewModel(CreateFakeConfig());
             ViewModelTestInject.InjectPrivateField(vm, "perksClient", fakePerks);
             ViewModelTestInject.InjectPrivateField(vm, "currencyClient", null);
             ViewModelTestInject.InjectPrivateField(vm, "perkCatalog", catalog);
@@ -84,7 +93,7 @@ namespace GearEngine.Campaign.Tests.Editor
             };
             var catalog = CreateFakeCatalog();
 
-            var vm = new TalentPerksViewModel();
+            var vm = new ItemsViewModel(CreateFakeConfig());
             ViewModelTestInject.InjectPrivateField(vm, "perksClient", fakePerks);
             ViewModelTestInject.InjectPrivateField(vm, "currencyClient", null);
             ViewModelTestInject.InjectPrivateField(vm, "perkCatalog", catalog);
@@ -104,14 +113,14 @@ namespace GearEngine.Campaign.Tests.Editor
             };
             var catalog = CreateFakeCatalog();
 
-            var vm = new TalentPerksViewModel();
+            var vm = new ItemsViewModel(CreateFakeConfig());
             ViewModelTestInject.InjectPrivateField(vm, "perksClient", fakePerks);
             ViewModelTestInject.InjectPrivateField(vm, "currencyClient", null);
             ViewModelTestInject.InjectPrivateField(vm, "perkCatalog", catalog);
             ViewModelTestInject.InvokeInitialize(vm);
 
             int initialRevision = vm.ItemsRevision;
-            await vm.BurnPerk("grip");
+            await vm.BurnItem("grip");
 
             Assert.That(vm.ItemsRevision, Is.GreaterThan(initialRevision));
         }
@@ -125,14 +134,14 @@ namespace GearEngine.Campaign.Tests.Editor
             };
             var catalog = CreateFakeCatalog();
 
-            var vm = new TalentPerksViewModel();
+            var vm = new ItemsViewModel(CreateFakeConfig());
             ViewModelTestInject.InjectPrivateField(vm, "perksClient", fakePerks);
             ViewModelTestInject.InjectPrivateField(vm, "currencyClient", null);
             ViewModelTestInject.InjectPrivateField(vm, "perkCatalog", catalog);
             ViewModelTestInject.InvokeInitialize(vm);
 
             int initialRevision = vm.ItemsRevision;
-            await vm.BurnPerk("grip");
+            await vm.BurnItem("grip");
 
             Assert.That(vm.ItemsRevision, Is.EqualTo(initialRevision));
         }

@@ -14,6 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Scaffold.Navigation::Scaffold.Navigation.ViewConfig
   schemas:
     rid: 4306785200000000456
+  viewAssetSource: 0
+  directPrefab: {fileID: 0}
   asset:
     m_AssetGUID: d4e5f60718293a4b5c6d7e8f90123456
     m_SubObjectName: 
@@ -24,8 +26,8 @@ MonoBehaviour:
     serializedType: '"GearEngine.App.Bootstrap.Presentation.MetaLoadedView, Game.App.Bootstrap,
       Version=0.0.0.0, Culture=neutral, PublicKeyToken=null"'
   controllerType:
-    serializedType: '"GearEngine.App.Bootstrap.Presentation.MetaLoadedViewModel, Game.App.Bootstrap,
-      Version=0.0.0.0, Culture=neutral, PublicKeyToken=null"'
+    serializedType: '"GearEngine.App.Bootstrap.Presentation.MetaLoadedViewModel,
+      Game.App.Bootstrap, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null"'
   references:
     version: 2
     RefIds:

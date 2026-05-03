@@ -336,9 +336,9 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: aef334bfd584246be816694db99e2365, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Game.Campaign::GearEngine.Campaign.Presentation.PerkPopupView
+  m_EditorClassIdentifier: Game.Campaign::GearEngine.Campaign.Presentation.ItemPopupView
   type: 1
-  perkView: {fileID: 386200447018654922}
+  itemView: {fileID: 386200447018654922}
   nextButton: {fileID: 4171389409927162367}
   previousButton: {fileID: 3396287576853150226}
   closeButton: {fileID: 7639321126899756971}
@@ -1233,7 +1233,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7d24e883d345347ac94e8ca8632ba3b3, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Game.Campaign::GearEngine.Campaign.Presentation.ItemPerkView
+  m_EditorClassIdentifier: Game.Campaign::GearEngine.Campaign.Presentation.ItemSlotView
 --- !u!224 &7719599597098077597 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 791381848691240434, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}

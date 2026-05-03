@@ -40,11 +40,33 @@ namespace GearEngine.Campaign.Presentation
         {
             try
             {
-                navigation.Open(new TalentPerksViewModel(), true, new NavigationOptions() { CloseAllViews = true });
+                var config = ScriptableObject.CreateInstance<ItemsScreenState>();
+                config.TypeToDisplay = ItemScreenType.Perks;
+                config.ShowBuyButton = true;
+                config.ShowUnownedItems = true;
+                
+                navigation.Open(new ItemsViewModel(config), true, new NavigationOptions() { CloseAllViews = true });
             }
             catch (Exception ex)
             {
                 Debug.LogError($"[MainViewModel] ClickedTalentPerks failed: {ex.Message}\n{ex.StackTrace}");
+            }
+        }
+
+        public void ClickedGears()
+        {
+            try
+            {
+                var config = ScriptableObject.CreateInstance<ItemsScreenState>();
+                config.TypeToDisplay = ItemScreenType.Gears;
+                config.ShowBuyButton = false;
+                config.ShowUnownedItems = true;
+                
+                navigation.Open(new ItemsViewModel(config), true, new NavigationOptions() { CloseAllViews = true });
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"[MainViewModel] ClickedGears failed: {ex.Message}\n{ex.StackTrace}");
             }
         }
     }
