@@ -21,7 +21,7 @@ namespace GearEngine.App.Bootstrap
         protected override IEnumerable<IScopeLayer> GetGameLayers()
         {
             yield return new UgsLayer();
-            yield return new LiveOpsLayer();
+            yield return new LiveOpsLayer(null);
         }
 
         protected override Task OnReadyAsync(CancellationToken ct)

@@ -10,6 +10,7 @@ using GearEngine.GearEngine.Presentation.UI;
 using GearEngine.GearEngine.Services;
 using GearEngine.GearEngine.Services.Board;
 using GearEngine.GearEngine.Services.Inventory;
+using Scaffold.Ads;
 using Scaffold.MVVM;
 using Scaffold.Navigation.Contracts;
 using UnityEngine;
@@ -58,6 +59,12 @@ namespace GearEngine.Campaign.Presentation
 
         [Inject]
         private IGearPresentationTransferService presentationTransferService;
+
+        [Inject]
+        private RewardedAdManager adManager;
+
+        [Inject]
+        private AdPlacementKeySO rerollPlacementKey;
 
         private bool isProcessingAction;
 
@@ -150,21 +157,53 @@ namespace GearEngine.Campaign.Presentation
             if (isProcessingAction || !CanReroll) return;
             isProcessingAction = true;
 
+            string placementId = rerollPlacementKey != null ? (string)rerollPlacementKey : "reroll";
+
             try
             {
                 CanReroll = false;
-                Debug.LogWarning("TODO: Trigger ad");
-                await ReRerollAsync();
+                
+                bool canShow = await adManager.CanShowAd(placementId);
+                if (!canShow)
+                {
+                    Debug.LogWarning("[RoguelikeViewModel] Ad not available or on cooldown. Reroll aborted.");
+                    CanReroll = true;
+                    isProcessingAction = false;
+                    return;
+                }
+
+                adManager.AdSuccessfullyCompleted += OnAdCompleted;
+                adManager.ClickShowAdReward(placementId);
             }
             catch (Exception ex)
             {
                 CanReroll = true; // allow retrying if it failed
+                isProcessingAction = false;
                 Debug.LogError($"[RoguelikeViewModel] Reroll failed: {ex.Message}\n{ex.StackTrace}");
             }
-            finally
+        }
+
+        private async void OnAdCompleted(bool success, string placement)
+        {
+            adManager.AdSuccessfullyCompleted -= OnAdCompleted;
+            
+            if (success)
             {
-                isProcessingAction = false;
+                try
+                {
+                    await ReRerollAsync();
+                }
+                catch (Exception ex)
+                {
+                    Debug.LogError($"[RoguelikeViewModel] ReRerollAsync failed: {ex.Message}\n{ex.StackTrace}");
+                }
             }
+            else
+            {
+                Debug.LogWarning("[RoguelikeViewModel] Ad failed or was cancelled. Reroll aborted and button removed.");
+            }
+            
+            isProcessingAction = false;
         }
 
         private void SetupGearEngineSubtree()

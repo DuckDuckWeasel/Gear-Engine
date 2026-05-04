@@ -6,8 +6,8 @@ using GearEngine.App.Bootstrap.Layers;
 using GearEngine.Campaign.Presentation;
 using GearEngine.Campaign.Services;
 using GearEngine.CarSimulation.Definitions;
-using GearEngine.Perks.Config;
 using GearEngine.GearEngine.Config;
+using Scaffold.Ads;
 using Scaffold.AppFlow;
 using Scaffold.Navigation.Contracts;
 using UnityEngine;
@@ -23,10 +23,8 @@ namespace GearEngine.App.Bootstrap
         [SerializeField]
         private GearEngineFeatureToggleSO featureToggle;
 
-
-
         [SerializeField]
-        private RoguelikeGearPoolSO roguelikeGearPool;
+        private AdPlacementKeySO rerollPlacementKey;
 
         [Header("Simulation")]
         [SerializeField]
@@ -35,17 +33,20 @@ namespace GearEngine.App.Bootstrap
         [Header("Race session defaults")]
         [SerializeField]
         private RaceSessionDefaultsSO raceSessionDefaults;
+        
+        [SerializeField]
+        private AdConfigurationSO adConfig;
 
         protected override IEnumerable<IScopeLayer> GetGameLayers()
         {
             yield return new UgsLayer();
-            yield return new LiveOpsLayer();
+            yield return new LiveOpsLayer(adConfig);
             yield return new CampaignLayer(
                 boardRules,
                 featureToggle,
                 raceSessionDefaults,
                 simulationConfig,
-                roguelikeGearPool);
+                rerollPlacementKey);
         }
 
         protected override Task OnReadyAsync(CancellationToken ct)

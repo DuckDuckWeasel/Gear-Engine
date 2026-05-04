@@ -27,7 +27,11 @@
         "Unity.TextMeshPro",
         "UnityEngine.UI",
         "VContainer",
-        "GearEngine.Core.Config"
+        "GearEngine.Core.Config",
+        "Scaffold.Ads.Runtime",
+        "Scaffold.Ads.Container",
+        "Scaffold.Ads.Levelplay.Runtime",
+        "Scaffold.Ads.Levelplay.Container"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
