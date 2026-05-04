@@ -4,19 +4,30 @@ using System.Threading.Tasks;
 using GearEngine.GearEngine.Services.Inventory;
 using Scaffold.MVVM;
 using Scaffold.Navigation.Contracts;
+using UnityEngine;
 
 namespace GearEngine.Campaign.Presentation
 {
     public sealed class ItemPopupViewModel : ViewModel
     {
         private readonly IReadOnlyList<ItemSlotViewModel> itemsList;
-        private readonly Func<string, Task<bool>> onBurn;
+        private readonly Func<string, Task<bool>> onAction;
+        private readonly bool requireMultipleForAction;
         private int currentIndex;
 
-        public ItemPopupViewModel(IReadOnlyList<ItemSlotViewModel> itemsList, int initialIndex, Func<string, Task<bool>> onBurn)
+        public string ActionName { get; }
+
+        public ItemPopupViewModel(
+            IReadOnlyList<ItemSlotViewModel> itemsList, 
+            int initialIndex, 
+            Func<string, Task<bool>> onAction, 
+            string actionName = "Burn", 
+            bool requireMultipleForAction = true)
         {
             this.itemsList = itemsList ?? throw new ArgumentNullException(nameof(itemsList));
-            this.onBurn = onBurn;
+            this.onAction = onAction;
+            this.ActionName = actionName;
+            this.requireMultipleForAction = requireMultipleForAction;
             this.currentIndex = initialIndex;
 
             if (this.itemsList.Count > 0)
@@ -39,24 +50,28 @@ namespace GearEngine.Campaign.Presentation
 
         public bool HasMultipleItems => itemsList != null && itemsList.Count > 1;
 
-        public bool CanBurn
+        public bool CanExecuteAction
         {
             get
             {
-                if (itemsList.Count == 0 || CurrentItem == null || CurrentItem.Item == null) return false;
-                return CurrentItem.Amount > 1;
+                if (onAction == null || itemsList.Count == 0 || CurrentItem == null || CurrentItem.Item == null) return false;
+                if (requireMultipleForAction) return CurrentItem.Amount > 1;
+                return true;
             }
         }
 
-        public async void Burn()
+        public async void ExecuteAction()
         {
-            if (!CanBurn) return;
+            Debug.Log($"[ItemPopupViewModel] ExecuteAction called. CanExecuteAction: {CanExecuteAction}, CurrentItemId: {CurrentItem?.Item?.Id}");
+            if (!CanExecuteAction) return;
             
             string id = CurrentItem.Item.Id;
             bool success = false;
-            if (onBurn != null)
+            if (onAction != null)
             {
-                success = await onBurn.Invoke(id);
+                Debug.Log($"[ItemPopupViewModel] Invoking onAction for id: {id}");
+                success = await onAction.Invoke(id);
+                Debug.Log($"[ItemPopupViewModel] onAction returned success: {success}");
             }
             
             if (success)
@@ -118,7 +133,7 @@ namespace GearEngine.Campaign.Presentation
             CurrentItem = new ItemSlotViewModel(itemsList[currentIndex].Item, _ => { }, itemsList[currentIndex].Amount);
             BindChildViewModel(CurrentItem);
             OnPropertyChanged(nameof(CurrentItem));
-            OnPropertyChanged(nameof(CanBurn));
+            OnPropertyChanged(nameof(CanExecuteAction));
             OnPropertyChanged(nameof(HasMultipleItems));
         }
     }

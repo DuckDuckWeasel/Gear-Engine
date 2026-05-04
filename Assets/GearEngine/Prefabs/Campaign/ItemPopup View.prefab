@@ -343,7 +343,8 @@ MonoBehaviour:
   nextButton: {fileID: 4171389409927162367}
   previousButton: {fileID: 3396287576853150226}
   closeButton: {fileID: 7639321126899756971}
-  burnButton: {fileID: 5387278692962165194}
+  actionButton: {fileID: 5387278692962165194}
+  actionButtonText: {fileID: 4000932734436668459}
 --- !u!1 &4115543207798220852
 GameObject:
   m_ObjectHideFlags: 0
@@ -752,7 +753,7 @@ GameObject:
   - component: {fileID: 232688185497209580}
   - component: {fileID: 5387278692962165194}
   m_Layer: 0
-  m_Name: Burn_Button
+  m_Name: Action_Button
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1217,6 +1218,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 791381848691240434, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3685162079972473300, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
+      propertyPath: m_RaycastTarget
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3685162079972473300, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}

@@ -16,21 +16,22 @@ namespace GearEngine.Campaign.Presentation
 
         [Header("Actions")]
         [SerializeField] private Button closeButton;
-        [SerializeField] private Button burnButton;
+        [SerializeField] private Button actionButton;
+        [SerializeField] private TMPro.TMP_Text actionButtonText;
 
         protected override void OnBind()
         {
             if (nextButton != null) nextButton.onClick.AddListener(viewModel.Next);
             if (previousButton != null) previousButton.onClick.AddListener(viewModel.Previous);
             if (closeButton != null) closeButton.onClick.AddListener(viewModel.Close);
-            if (burnButton != null) burnButton.onClick.AddListener(viewModel.Burn);
+            if (actionButton != null) actionButton.onClick.AddListener(viewModel.ExecuteAction);
 
             Bind<ItemSlotViewModel, ItemSlotViewModel>(() => viewModel.CurrentItem, UpdateItemView);
-            Bind<bool, bool>(() => viewModel.CanBurn, canBurn => 
+            Bind<bool, bool>(() => viewModel.CanExecuteAction, canExecute => 
             {
-                if (burnButton != null)
+                if (actionButton != null)
                 {
-                    burnButton.gameObject.SetActive(canBurn);
+                    actionButton.gameObject.SetActive(canExecute);
                 }
             });
             Bind<bool, bool>(() => viewModel.HasMultipleItems, hasMultiple => 
@@ -38,6 +39,11 @@ namespace GearEngine.Campaign.Presentation
                 if (nextButton != null) nextButton.gameObject.SetActive(hasMultiple);
                 if (previousButton != null) previousButton.gameObject.SetActive(hasMultiple);
             });
+            
+            if (actionButtonText != null && viewModel != null)
+            {
+                actionButtonText.text = viewModel.ActionName;
+            }
         }
 
         protected override void OnUnbind()
@@ -45,7 +51,7 @@ namespace GearEngine.Campaign.Presentation
             if (nextButton != null) nextButton.onClick.RemoveListener(viewModel.Next);
             if (previousButton != null) previousButton.onClick.RemoveListener(viewModel.Previous);
             if (closeButton != null) closeButton.onClick.RemoveListener(viewModel.Close);
-            if (burnButton != null) burnButton.onClick.RemoveListener(viewModel.Burn);
+            if (actionButton != null) actionButton.onClick.RemoveListener(viewModel.ExecuteAction);
 
             base.OnUnbind();
         }
