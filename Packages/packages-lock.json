@@ -33,7 +33,7 @@
       "dependencies": {
         "jp.hadashikick.vcontainer": "1.17.0"
       },
-      "hash": "a1fe2fa04477ac9b1e8ec72dce491dde4c35d6d9"
+      "hash": "e23b17b3e5f2365e0655eda6a042d928c96b46bd"
     },
     "com.scaffold.ads.levelplay": {
       "version": "https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.ads.levelplay#main",
@@ -43,7 +43,7 @@
         "com.scaffold.ads": "0.1.0",
         "com.unity.services.levelplay": "9.3.0"
       },
-      "hash": "a1fe2fa04477ac9b1e8ec72dce491dde4c35d6d9"
+      "hash": "e23b17b3e5f2365e0655eda6a042d928c96b46bd"
     },
     "com.scaffold.appflow": {
       "version": "https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.appflow#main",

@@ -72,7 +72,11 @@ namespace GearEngine.Campaign.Presentation
         {
             base.Initialize();
             isProcessingAction = false;
-            CanReroll = true;
+            CanReroll = false;
+            
+            adManager.AdAvailable += OnAdAvailable;
+            _ = CheckInitialAdStateAsync();
+
             SetupGearEngineSubtree();
             inventoryService.InventoryChanged += UpdatePerkOptionsInteractability;
             _ = LoadRollAsync(cts.Token);
@@ -87,8 +91,31 @@ namespace GearEngine.Campaign.Presentation
 
             disposed = true;
             inventoryService.InventoryChanged -= UpdatePerkOptionsInteractability;
+            adManager.AdAvailable -= OnAdAvailable;
             cts.Cancel();
             cts.Dispose();
+        }
+
+        private void OnAdAvailable(bool available)
+        {
+            if (!isProcessingAction)
+            {
+                CanReroll = available;
+            }
+        }
+
+        private async Task CheckInitialAdStateAsync()
+        {
+            try
+            {
+                string placementId = rerollPlacementKey != null ? (string)rerollPlacementKey : "reroll";
+                bool available = await adManager.CanShowAd(placementId);
+                OnAdAvailable(available);
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"[RoguelikeViewModel] CheckInitialAdStateAsync failed: {ex.Message}");
+            }
         }
 
         private void UpdatePerkOptionsInteractability()
@@ -161,23 +188,21 @@ namespace GearEngine.Campaign.Presentation
 
             try
             {
-                CanReroll = false;
-                
                 bool canShow = await adManager.CanShowAd(placementId);
                 if (!canShow)
                 {
                     Debug.LogWarning("[RoguelikeViewModel] Ad not available or on cooldown. Reroll aborted.");
-                    CanReroll = true;
+                    CanReroll = false;
                     isProcessingAction = false;
                     return;
                 }
 
+                CanReroll = false;
                 adManager.AdSuccessfullyCompleted += OnAdCompleted;
                 adManager.ClickShowAdReward(placementId);
             }
             catch (Exception ex)
             {
-                CanReroll = true; // allow retrying if it failed
                 isProcessingAction = false;
                 Debug.LogError($"[RoguelikeViewModel] Reroll failed: {ex.Message}\n{ex.StackTrace}");
             }
