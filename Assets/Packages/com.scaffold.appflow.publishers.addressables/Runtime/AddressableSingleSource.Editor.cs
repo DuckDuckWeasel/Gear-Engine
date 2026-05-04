@@ -1,5 +1,5 @@
+#if UNITY_EDITOR
 using Scaffold.AppFlow.Publishers.DataDriven;
-using Scaffold.AppFlow.Publishers.Addressables.Editor;
 using UnityEngine.AddressableAssets;
 
 namespace Scaffold.AppFlow.Publishers.Addressables
@@ -31,3 +31,4 @@ namespace Scaffold.AppFlow.Publishers.Addressables
         }
     }
 }
+#endif

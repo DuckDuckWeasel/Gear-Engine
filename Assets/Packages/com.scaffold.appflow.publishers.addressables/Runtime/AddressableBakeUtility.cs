@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 using System;
 using System.Collections.Generic;
 using Scaffold.AppFlow.Publishers.DataDriven;
@@ -5,7 +6,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 
-namespace Scaffold.AppFlow.Publishers.Addressables.Editor
+namespace Scaffold.AppFlow.Publishers.Addressables
 {
     /// <summary>Edit-time address resolution and validation. Mirrors the former AddressableScriptableObjectPublisherSORebaker.</summary>
     public static class AddressableBakeUtility
@@ -23,7 +24,7 @@ namespace Scaffold.AppFlow.Publishers.Addressables.Editor
         private static readonly Dictionary<string, Type> LastValidatedLabelType = new Dictionary<string, Type>(StringComparer.Ordinal);
 
         /// <summary>Clears caches of label entry types and validation; call when addressable groups change or after domain reload.</summary>
-        internal static void InvalidateCache()
+        public static void InvalidateCache()
         {
             LabelEntryTypesCache.Clear();
             LastValidatedLabelType.Clear();
@@ -347,3 +348,4 @@ namespace Scaffold.AppFlow.Publishers.Addressables.Editor
         }
     }
 }
+#endif

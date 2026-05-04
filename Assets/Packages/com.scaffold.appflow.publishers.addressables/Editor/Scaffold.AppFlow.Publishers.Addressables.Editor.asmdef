@@ -1,0 +1,19 @@
+{
+    "name": "Scaffold.AppFlow.Publishers.Addressables.Editor",
+    "rootNamespace": "Scaffold.AppFlow.Publishers.Addressables.Editor",
+    "references": [
+        "Scaffold.AppFlow.Publishers.Addressables",
+        "Unity.Addressables"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

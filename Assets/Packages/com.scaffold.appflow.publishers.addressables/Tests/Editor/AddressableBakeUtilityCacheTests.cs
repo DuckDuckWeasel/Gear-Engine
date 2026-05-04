@@ -1,5 +1,4 @@
 using NUnit.Framework;
-using Scaffold.AppFlow.Publishers.Addressables.Editor;
 using UnityEngine;
 
 namespace Scaffold.AppFlow.Publishers.Addressables.Tests.Editor
