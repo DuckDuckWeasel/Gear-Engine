@@ -1,5 +1,7 @@
+using System;
 using GearEngine.GearEngine.Config;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 namespace GearEngine.GearEngine.Visuals
 {
@@ -7,8 +9,9 @@ namespace GearEngine.GearEngine.Visuals
     /// Board-agnostic gear visual. Board-side BoardGearAnimator pushes rotation, charge fill, and reparent;
     /// inventory only calls <see cref="ApplyConfig"/> and optional fill preview.
     /// </summary>
-    public class GearView : ItemView
+    public class GearView : ItemView, IPointerClickHandler, IPointerDownHandler, IPointerUpHandler
     {
+        public event Action OnClicked;
         [SerializeField]
         private Transform gearVisual;
 
@@ -107,5 +110,17 @@ namespace GearEngine.GearEngine.Visuals
                 chargeFillRenderer.material.SetFloat("_FillAmount", currentVisualFill);
             }
         }
+
+        public void OnPointerClick(PointerEventData eventData)
+        {
+            Debug.Log($"[GearView] OnPointerClick fired! dragging={eventData.dragging}");
+            if (!eventData.dragging)
+            {
+                OnClicked?.Invoke();
+            }
+        }
+
+        public void OnPointerDown(PointerEventData eventData) { }
+        public void OnPointerUp(PointerEventData eventData) { }
     }
 }

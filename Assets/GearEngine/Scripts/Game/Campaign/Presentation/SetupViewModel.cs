@@ -5,6 +5,7 @@ using GearEngine.GearEngine.Config;
 using GearEngine.GearEngine.Presentation.UI;
 using GearEngine.GearEngine.Services;
 using GearEngine.GearEngine.Services.Board;
+using GearEngine.GearEngine.Nodes;
 using Scaffold.Events.Contracts;
 using Scaffold.MVVM;
 using Scaffold.Navigation.Contracts;
@@ -55,6 +56,39 @@ namespace GearEngine.Campaign.Presentation
 
             TrashZone = new TrashZoneViewModel(engineService, Board, presentationTransferService, featureToggle);
             BindChildViewModel(TrashZone);
+
+            Board.OnBoardClicked += ShowItemPreview;
+            Inventory.OnInventoryClicked += ShowItemPreview;
+        }
+
+        protected override void OnClosed()
+        {
+            if (Board != null)
+            {
+                Board.OnBoardClicked -= ShowItemPreview;
+            }
+            if (Inventory != null)
+            {
+                Inventory.OnInventoryClicked -= ShowItemPreview;
+            }
+            base.OnClosed();
+        }
+
+        private void ShowItemPreview(IGridNode node)
+        {
+            if (node != null && node.ConfigData != null)
+            {
+                ShowItemPreview(node.ConfigData);
+            }
+        }
+
+        private void ShowItemPreview(GearItemData gearData)
+        {
+            if (gearData == null) return;
+            
+            ItemSlotViewModel tempSlot = new ItemSlotViewModel(gearData, _ => { }, 1);
+            ItemPopupViewModel popup = new ItemPopupViewModel(new[] { tempSlot }, 0, null);
+            navigation.Open(popup);
         }
 
         public void GoToRace()

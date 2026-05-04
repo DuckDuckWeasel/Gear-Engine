@@ -10,6 +10,7 @@ using GearEngine.GearEngine.Presentation.UI;
 using GearEngine.GearEngine.Services;
 using GearEngine.GearEngine.Services.Board;
 using GearEngine.GearEngine.Services.Inventory;
+using GearEngine.GearEngine.Nodes;
 using Scaffold.Ads;
 using Scaffold.MVVM;
 using Scaffold.Navigation.Contracts;
@@ -92,6 +93,16 @@ namespace GearEngine.Campaign.Presentation
             disposed = true;
             inventoryService.InventoryChanged -= UpdatePerkOptionsInteractability;
             adManager.AdAvailable -= OnAdAvailable;
+            
+            if (Board != null)
+            {
+                Board.OnBoardClicked -= ShowItemPreview;
+            }
+            if (Inventory != null)
+            {
+                Inventory.OnInventoryClicked -= ShowItemPreview;
+            }
+
             cts.Cancel();
             cts.Dispose();
         }
@@ -234,11 +245,32 @@ namespace GearEngine.Campaign.Presentation
         private void SetupGearEngineSubtree()
         {
             Board = new BoardViewModel(boardService, engineService, inventoryService);
+            Board.OnBoardClicked += ShowItemPreview;
             BindChildViewModel(Board);
             Inventory = new GearInventoryViewModel(engineService, boardService, inventoryService);
+            Inventory.OnInventoryClicked += ShowItemPreview;
             BindChildViewModel(Inventory);
             TrashZone = new TrashZoneViewModel(engineService, Board, presentationTransferService, featureToggle);
             BindChildViewModel(TrashZone);
+        }
+
+        private void ShowItemPreview(IGridNode node)
+        {
+            Debug.Log($"[RoguelikeViewModel] ShowItemPreview called for node. ConfigData present: {node?.ConfigData != null}");
+            if (node != null && node.ConfigData != null)
+            {
+                ShowItemPreview(node.ConfigData);
+            }
+        }
+
+        private void ShowItemPreview(GearItemData gearData)
+        {
+            Debug.Log($"[RoguelikeViewModel] ShowItemPreview called for GearItemData '{gearData?.Id}'. isProcessingAction: {isProcessingAction}");
+            if (isProcessingAction || gearData == null) return;
+            
+            ItemSlotViewModel tempSlot = new ItemSlotViewModel(gearData, _ => { }, 1);
+            ItemPopupViewModel popup = new ItemPopupViewModel(new[] { tempSlot }, 0, null);
+            navigation.Open(popup);
         }
 
         private async Task LoadRollAsync(CancellationToken ct)

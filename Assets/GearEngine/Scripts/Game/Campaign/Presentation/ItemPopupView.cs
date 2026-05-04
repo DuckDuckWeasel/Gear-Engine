@@ -8,6 +8,7 @@ namespace GearEngine.Campaign.Presentation
     {
         [Header("Item Viewer")]
         [SerializeField] private ItemSlotView itemView;
+        [SerializeField] private TMPro.TMP_Text descriptionText;
 
         [Header("Navigation")]
         [SerializeField] private Button nextButton;
@@ -54,6 +55,11 @@ namespace GearEngine.Campaign.Presentation
             if (itemView != null && itemVm != null)
             {
                 itemView.Bind(itemVm);
+            }
+            
+            if (descriptionText != null)
+            {
+                descriptionText.text = itemVm?.Item?.Description ?? string.Empty;
             }
         }
     }
