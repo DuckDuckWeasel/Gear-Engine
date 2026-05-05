@@ -80,7 +80,6 @@ namespace GearEngine.Campaign.Presentation
         }
 
 
-
         private void BindActionUi()
         {
             continueButton.onClick.AddListener(OnContinueClicked);
