@@ -80,7 +80,9 @@ namespace GearEngine.Campaign.Tests.Editor
 
                     ViewModelTestInject.InvokeInitialize(vm);
 
-                    vm.PickPerk(vm.PerkOptions[0]);
+                    var confirmMethod = typeof(RoguelikeViewModel).GetMethod("ConfirmPickAsync", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+                    var task = (Task<bool>)confirmMethod.Invoke(vm, new object[] { vm.PerkOptions[0].Item.Id });
+                    task.GetAwaiter().GetResult();
 
                     Assert.That(gear.InventoryService.Owned.Count, Is.EqualTo(1));
                     Assert.That(roll.Consumed, Has.Count.EqualTo(1));

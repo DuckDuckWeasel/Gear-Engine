@@ -51,6 +51,16 @@ namespace GearEngine.GearEngine.Presentation.UI
 
         public event Action<IGridNode> OnGearPlaced;
         public event Action<IGridNode> OnGearRemoved;
+        public event Action<IGridNode> OnBoardClicked;
+
+        internal void HandleBoardClick(IGridNode node)
+        {
+            Debug.Log($"[BoardViewModel] HandleBoardClick called. Node: {node?.ConfigData?.Id}");
+            if (node != null)
+            {
+                OnBoardClicked?.Invoke(node);
+            }
+        }
 
         public void ToggleSimulation()
         {

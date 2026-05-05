@@ -23,6 +23,7 @@
         "Scaffold.MVVM.ViewModel",
         "Scaffold.Navigation",
         "Scaffold.Navigation.Container",
+        "Unity.Services.Authentication",
         "Unity.Services.CloudCode",
         "Unity.TextMeshPro",
         "UnityEngine.UI",

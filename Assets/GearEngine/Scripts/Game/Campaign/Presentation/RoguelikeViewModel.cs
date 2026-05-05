@@ -10,6 +10,7 @@ using GearEngine.GearEngine.Presentation.UI;
 using GearEngine.GearEngine.Services;
 using GearEngine.GearEngine.Services.Board;
 using GearEngine.GearEngine.Services.Inventory;
+using GearEngine.GearEngine.Nodes;
 using Scaffold.Ads;
 using Scaffold.MVVM;
 using Scaffold.Navigation.Contracts;
@@ -72,7 +73,11 @@ namespace GearEngine.Campaign.Presentation
         {
             base.Initialize();
             isProcessingAction = false;
-            CanReroll = true;
+            CanReroll = false;
+            
+            adManager.AdAvailable += OnAdAvailable;
+            _ = CheckInitialAdStateAsync();
+
             SetupGearEngineSubtree();
             inventoryService.InventoryChanged += UpdatePerkOptionsInteractability;
             _ = LoadRollAsync(cts.Token);
@@ -87,8 +92,41 @@ namespace GearEngine.Campaign.Presentation
 
             disposed = true;
             inventoryService.InventoryChanged -= UpdatePerkOptionsInteractability;
+            adManager.AdAvailable -= OnAdAvailable;
+            
+            if (Board != null)
+            {
+                Board.OnBoardClicked -= ShowItemPreview;
+            }
+            if (Inventory != null)
+            {
+                Inventory.OnInventoryClicked -= ShowItemPreview;
+            }
+
             cts.Cancel();
             cts.Dispose();
+        }
+
+        private void OnAdAvailable(bool available)
+        {
+            if (!isProcessingAction)
+            {
+                CanReroll = available;
+            }
+        }
+
+        private async Task CheckInitialAdStateAsync()
+        {
+            try
+            {
+                string placementId = rerollPlacementKey != null ? (string)rerollPlacementKey : "reroll";
+                bool available = await adManager.CanShowAd(placementId);
+                OnAdAvailable(available);
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"[RoguelikeViewModel] CheckInitialAdStateAsync failed: {ex.Message}");
+            }
         }
 
         private void UpdatePerkOptionsInteractability()
@@ -100,10 +138,12 @@ namespace GearEngine.Campaign.Presentation
             }
         }
 
-        public async void PickPerk(ItemSlotViewModel perk)
+        private async Task PickPerkAsync(ItemSlotViewModel perk)
         {
+            Debug.Log($"[RoguelikeViewModel] PickPerkAsync called for perk: {perk?.Item?.Id}");
             if (isProcessingAction || perk == null)
             {
+                Debug.LogWarning($"[RoguelikeViewModel] PickPerkAsync aborted. isProcessingAction: {isProcessingAction}, perk is null: {perk == null}");
                 return;
             }
 
@@ -120,14 +160,18 @@ namespace GearEngine.Campaign.Presentation
                 GearItemData gearData = (GearItemData)perk.Item;
                 GearItem config = gearData.SourceGearConfig;
 
+                Debug.Log($"[RoguelikeViewModel] Adding {config.Id} to inventory.");
                 if (inventoryService.Add(config) == null)
                 {
+                    Debug.LogWarning($"[RoguelikeViewModel] Failed to add {config.Id} to inventory.");
                     isProcessingAction = false;
                     return;
                 }
 
+                Debug.Log($"[RoguelikeViewModel] Consuming pick from rollService.");
                 await rollService.ConsumePickAsync(config.Id, cts.Token);
-                navigation.Open(new MainViewModel());
+                Debug.Log($"[RoguelikeViewModel] Opening MainViewModel.");
+                navigation.Open(new MainViewModel(), true, new NavigationOptions { CloseAllViews = true });
             }
             catch (Exception ex)
             {
@@ -161,23 +205,21 @@ namespace GearEngine.Campaign.Presentation
 
             try
             {
-                CanReroll = false;
-                
                 bool canShow = await adManager.CanShowAd(placementId);
                 if (!canShow)
                 {
                     Debug.LogWarning("[RoguelikeViewModel] Ad not available or on cooldown. Reroll aborted.");
-                    CanReroll = true;
+                    CanReroll = false;
                     isProcessingAction = false;
                     return;
                 }
 
+                CanReroll = false;
                 adManager.AdSuccessfullyCompleted += OnAdCompleted;
                 adManager.ClickShowAdReward(placementId);
             }
             catch (Exception ex)
             {
-                CanReroll = true; // allow retrying if it failed
                 isProcessingAction = false;
                 Debug.LogError($"[RoguelikeViewModel] Reroll failed: {ex.Message}\n{ex.StackTrace}");
             }
@@ -209,11 +251,32 @@ namespace GearEngine.Campaign.Presentation
         private void SetupGearEngineSubtree()
         {
             Board = new BoardViewModel(boardService, engineService, inventoryService);
+            Board.OnBoardClicked += ShowItemPreview;
             BindChildViewModel(Board);
             Inventory = new GearInventoryViewModel(engineService, boardService, inventoryService);
+            Inventory.OnInventoryClicked += ShowItemPreview;
             BindChildViewModel(Inventory);
             TrashZone = new TrashZoneViewModel(engineService, Board, presentationTransferService, featureToggle);
             BindChildViewModel(TrashZone);
+        }
+
+        private void ShowItemPreview(IGridNode node)
+        {
+            Debug.Log($"[RoguelikeViewModel] ShowItemPreview called for node. ConfigData present: {node?.ConfigData != null}");
+            if (node != null && node.ConfigData != null)
+            {
+                ShowItemPreview(node.ConfigData);
+            }
+        }
+
+        private void ShowItemPreview(GearItemData gearData)
+        {
+            Debug.Log($"[RoguelikeViewModel] ShowItemPreview called for GearItemData '{gearData?.Id}'. isProcessingAction: {isProcessingAction}");
+            if (isProcessingAction || gearData == null) return;
+            
+            ItemSlotViewModel tempSlot = new ItemSlotViewModel(gearData, _ => { }, 1);
+            ItemPopupViewModel popup = new ItemPopupViewModel(new[] { tempSlot }, 0, null);
+            navigation.Open(popup);
         }
 
         private async Task LoadRollAsync(CancellationToken ct)
@@ -233,7 +296,7 @@ namespace GearEngine.Campaign.Presentation
         private async Task SkipPickAsync()
         {
             await rollService.SkipPickAsync(cts.Token);
-            navigation.Open(new MainViewModel());
+            navigation.Open(new MainViewModel(), true, new NavigationOptions { CloseAllViews = true });
         }
         
         private async Task ReRerollAsync()
@@ -267,10 +330,45 @@ namespace GearEngine.Campaign.Presentation
                 return;
             }
 
-            ItemSlotViewModel perk = new ItemSlotViewModel(config, PickPerk);
+            ItemSlotViewModel perk = new ItemSlotViewModel(config, OpenPerkPreview);
             perk.CanPick = inventoryService.Owned.Count < MaxInventoryCapacity;
             BindChildViewModel(perk);
             perkOptions.Add(perk);
+        }
+
+        private void OpenPerkPreview(ItemSlotViewModel perk)
+        {
+            if (isProcessingAction || perk == null) return;
+            
+            int index = perkOptions.IndexOf(perk);
+            if (index < 0) index = 0;
+
+            ItemPopupViewModel popup = new ItemPopupViewModel(perkOptions, index, ConfirmPickAsync, "Select", false);
+            navigation.Open(popup);
+        }
+
+        private async Task<bool> ConfirmPickAsync(string itemId)
+        {
+            Debug.Log($"[RoguelikeViewModel] ConfirmPickAsync called with itemId: {itemId}");
+            ItemSlotViewModel perk = null;
+            foreach (var p in perkOptions)
+            {
+                if (p.Item.Id == itemId)
+                {
+                    perk = p;
+                    break;
+                }
+            }
+
+            if (perk == null) 
+            {
+                Debug.LogWarning($"[RoguelikeViewModel] ConfirmPickAsync failed: perk '{itemId}' not found in perkOptions.");
+                return false;
+            }
+
+            Debug.Log($"[RoguelikeViewModel] ConfirmPickAsync found perk, awaiting PickPerkAsync...");
+            await PickPerkAsync(perk);
+            return true;
         }
     }
 }

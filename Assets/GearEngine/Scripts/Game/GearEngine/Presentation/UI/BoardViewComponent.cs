@@ -189,6 +189,13 @@ namespace GearEngine.GearEngine.Presentation.UI
                 return;
             }
 
+            view.OnClicked += () => 
+            { 
+                Debug.Log($"[BoardViewComponent] view.OnClicked fired for node '{node.ConfigData?.Id}'");
+                if (viewModel != null) 
+                    viewModel.HandleBoardClick(node); 
+            };
+
             viewsByNode[node] = view;
             animator.Track(node, view);
             WireBoardDraggable(view, node);

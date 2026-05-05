@@ -72,6 +72,16 @@ namespace GearEngine.GearEngine.Presentation.UI
             }
         }
 
+        public event Action<GearItemData> OnInventoryClicked;
+
+        internal void HandleInventoryClick(GearItemData gear)
+        {
+            if (gear != null)
+            {
+                OnInventoryClicked?.Invoke(gear);
+            }
+        }
+
         protected override void OnClosed()
         {
             inventoryService.InventoryChanged -= OnInventoryChanged;

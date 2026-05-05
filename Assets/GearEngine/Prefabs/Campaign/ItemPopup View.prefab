@@ -236,7 +236,7 @@ GameObject:
   - component: {fileID: 5332262979486977894}
   - component: {fileID: 5384969765635034848}
   m_Layer: 0
-  m_Name: TalentPerks_Popup View
+  m_Name: ItemPopup View
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -339,10 +339,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Game.Campaign::GearEngine.Campaign.Presentation.ItemPopupView
   type: 1
   itemView: {fileID: 386200447018654922}
+  descriptionText: {fileID: 5980314201503488443}
   nextButton: {fileID: 4171389409927162367}
   previousButton: {fileID: 3396287576853150226}
   closeButton: {fileID: 7639321126899756971}
-  burnButton: {fileID: 5387278692962165194}
+  actionButton: {fileID: 5387278692962165194}
+  actionButtonText: {fileID: 4000932734436668459}
 --- !u!1 &4115543207798220852
 GameObject:
   m_ObjectHideFlags: 0
@@ -751,7 +753,7 @@ GameObject:
   - component: {fileID: 232688185497209580}
   - component: {fileID: 5387278692962165194}
   m_Layer: 0
-  m_Name: Burn_Button
+  m_Name: Action_Button
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1167,6 +1169,10 @@ PrefabInstance:
       value: 1.5
       objectReference: {fileID: 0}
     - target: {fileID: 791381848691240434, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 791381848691240434, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
@@ -1214,6 +1220,22 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3685162079972473300, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
+      propertyPath: m_RaycastTarget
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3685162079972473300, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
+      propertyPath: m_HorizontalAlignment
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6052519529062482123, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 6052519529062482123, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8577524891781176608, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
       propertyPath: m_Name
       value: Perk_View
@@ -1234,6 +1256,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d24e883d345347ac94e8ca8632ba3b3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Game.Campaign::GearEngine.Campaign.Presentation.ItemSlotView
+--- !u!114 &5980314201503488443 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3685162079972473300, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
+  m_PrefabInstance: {fileID: 7050960775647158383}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
 --- !u!224 &7719599597098077597 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 791381848691240434, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}

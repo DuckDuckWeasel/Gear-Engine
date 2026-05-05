@@ -8,6 +8,7 @@ using GearEngine.Campaign.Services;
 using GearEngine.CarSimulation.Definitions;
 using GearEngine.GearEngine.Config;
 using Scaffold.Ads;
+using Scaffold.Ads.Levelplay;
 using Scaffold.AppFlow;
 using Scaffold.Navigation.Contracts;
 using UnityEngine;
@@ -35,12 +36,13 @@ namespace GearEngine.App.Bootstrap
         private RaceSessionDefaultsSO raceSessionDefaults;
         
         [SerializeField]
-        private AdConfigurationSO adConfig;
+        private LevelPlayAdConfigurationSO adConfig;
 
         protected override IEnumerable<IScopeLayer> GetGameLayers()
         {
             yield return new UgsLayer();
-            yield return new LiveOpsLayer(adConfig);
+            yield return new LiveOpsLayer();
+            yield return new AdsLayer(adConfig);
             yield return new CampaignLayer(
                 boardRules,
                 featureToggle,
