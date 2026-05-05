@@ -27,7 +27,7 @@ namespace GearEngine.App.Bootstrap.Layers
             {
                 if (adConfig is LevelPlayAdConfigurationSO levelPlayConfig)
                 {
-                    new LevelPlayInstaller(levelPlayConfig).Install(builder);
+                    //new LevelPlayInstaller(levelPlayConfig).Install(builder);
                 }
                 else
                 {
