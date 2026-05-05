@@ -1,0 +1,1042 @@
+fileFormatVersion: 2
+guid: a83844f25c112764c92f68c0403d549a
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -7626544269729273687
+    second: Atlas Cog Runner_0
+  - first:
+      213: 3242239292231272789
+    second: Atlas Cog Runner_1
+  - first:
+      213: 3049273829435696635
+    second: Atlas Cog Runner_2
+  - first:
+      213: -7708968661521568392
+    second: Atlas Cog Runner_3
+  - first:
+      213: 5622315622489482809
+    second: Atlas Cog Runner_4
+  - first:
+      213: 1017677910472039194
+    second: Atlas Cog Runner_5
+  - first:
+      213: -8856565154614463652
+    second: Atlas Cog Runner_6
+  - first:
+      213: 7244646134145023678
+    second: Atlas Cog Runner_7
+  - first:
+      213: 1688699239661243921
+    second: Atlas Cog Runner_8
+  - first:
+      213: -6514306064968121148
+    second: Atlas Cog Runner_9
+  - first:
+      213: 1010765282727956541
+    second: Atlas Cog Runner_10
+  - first:
+      213: 4833926174111549726
+    second: Atlas Cog Runner_11
+  - first:
+      213: -8393463893848550460
+    second: Atlas Cog Runner_12
+  - first:
+      213: 8624820057552397839
+    second: Atlas Cog Runner_13
+  - first:
+      213: 3026939351597732411
+    second: Atlas Cog Runner_14
+  - first:
+      213: 5422456576275717284
+    second: Atlas Cog Runner_15
+  - first:
+      213: -1127825300398561007
+    second: Atlas Cog Runner_16
+  - first:
+      213: -2021184313086492795
+    second: Atlas Cog Runner_17
+  - first:
+      213: -2934790154734832227
+    second: Atlas Cog Runner_18
+  - first:
+      213: -3963619345439964734
+    second: Atlas Cog Runner_19
+  - first:
+      213: 342553223247050382
+    second: Atlas Cog Runner_20
+  - first:
+      213: -2565060037276757024
+    second: Atlas Cog Runner_21
+  - first:
+      213: 8763232851770396999
+    second: Atlas Cog Runner_22
+  - first:
+      213: 805587777473736338
+    second: Atlas Cog Runner_23
+  - first:
+      213: -5746166240221388300
+    second: Atlas Cog Runner_24
+  - first:
+      213: -9182413402804397911
+    second: Atlas Cog Runner_25
+  - first:
+      213: -2726149093261324419
+    second: Atlas Cog Runner_26
+  - first:
+      213: -4432257930878954097
+    second: Atlas Cog Runner_27
+  - first:
+      213: -7347471068946674958
+    second: Atlas Cog Runner_28
+  - first:
+      213: 8382021826105680751
+    second: Atlas Cog Runner_29
+  - first:
+      213: 6405778287882295698
+    second: Atlas Cog Runner_30
+  - first:
+      213: -5318904966224620386
+    second: Atlas Cog Runner_31
+  - first:
+      213: 8977994248254138901
+    second: Atlas Cog Runner_32
+  - first:
+      213: 7538860979935012074
+    second: Atlas Cog Runner_33
+  - first:
+      213: -3188223003255930882
+    second: Atlas Cog Runner_34
+  - first:
+      213: 6374758715558153106
+    second: Atlas Cog Runner_35
+  - first:
+      213: -7266867181390593116
+    second: Atlas Cog Runner_36
+  - first:
+      213: -629420188243048072
+    second: Atlas Cog Runner_37
+  - first:
+      213: 2257285039045665748
+    second: Atlas Cog Runner_38
+  - first:
+      213: 8904813373196925204
+    second: Atlas Cog Runner_39
+  - first:
+      213: -5957303988134252052
+    second: Atlas Cog Runner_40
+  - first:
+      213: 2240697489063309543
+    second: Atlas Cog Runner_41
+  - first:
+      213: -2829382076600113024
+    second: Atlas Cog Runner_42
+  - first:
+      213: -6297444734325656062
+    second: Atlas Cog Runner_43
+  - first:
+      213: 3119783710359754674
+    second: Atlas Cog Runner_44
+  - first:
+      213: 4583091329868339313
+    second: Atlas Cog Runner_45
+  - first:
+      213: -7692097521508318044
+    second: Atlas Cog Runner_46
+  - first:
+      213: -6937094010208867093
+    second: Atlas Cog Runner_47
+  - first:
+      213: 4933339777335199715
+    second: Atlas Cog Runner_48
+  - first:
+      213: -8797826660929755633
+    second: Atlas Cog Runner_49
+  - first:
+      213: 820066407476368126
+    second: Atlas Cog Runner_50
+  - first:
+      213: 428546776795724455
+    second: Atlas Cog Runner_51
+  - first:
+      213: 3251368023217342672
+    second: Atlas Cog Runner_52
+  - first:
+      213: -8208976075304343475
+    second: Atlas Cog Runner_53
+  - first:
+      213: 1590570429897731354
+    second: Atlas Cog Runner_54
+  - first:
+      213: 7598980234986786631
+    second: Atlas Cog Runner_55
+  - first:
+      213: -2323911280002164993
+    second: Atlas Cog Runner_56
+  - first:
+      213: 5363190789836213037
+    second: Atlas Cog Runner_57
+  - first:
+      213: -131573984764319297
+    second: Atlas Cog Runner_58
+  - first:
+      213: 8198661678502527263
+    second: Atlas Cog Runner_59
+  - first:
+      213: -8903195127910573642
+    second: Atlas Cog Runner_60
+  - first:
+      213: 6187003676222576549
+    second: Atlas Cog Runner_61
+  - first:
+      213: -5409610144002149810
+    second: Atlas Cog Runner_62
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Atlas Cog Runner_0
+      rect:
+        serializedVersion: 2
+        x: 25
+        y: 1913
+        width: 510
+        height: 96
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9a8eef2d462192690800000000000000
+      internalID: -7626544269729273687
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Atlas Cog Runner_1
+      rect:
+        serializedVersion: 2
+        x: 753
+        y: 1369
+        width: 614
+        height: 640
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 559424a457fbefc20800000000000000
+      internalID: 3242239292231272789
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Atlas Cog Runner_2
+      rect:
+        serializedVersion: 2
+        x: 1381
+        y: 1369
+        width: 614
+        height: 640
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bf5e8626462315a20800000000000000
+      internalID: 3049273829435696635
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Atlas Cog Runner_3
+      rect:
+        serializedVersion: 2
+        x: 25
+        y: 1809
+        width: 510
+        height: 96
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 87d6361a8dd340590800000000000000
+      internalID: -7708968661521568392
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Atlas Cog Runner_4
+      rect:
+        serializedVersion: 2
+        x: 51
+        y: 1751
+        width: 46
+        height: 46
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9366d95354a760e40800000000000000
+      internalID: 5622315622489482809
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Atlas Cog Runner_5
+      rect:
+        serializedVersion: 2
+        x: 107
+        y: 1751
+        width: 46
+        height: 46
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a1b927deaa48f1e00800000000000000
+      internalID: 1017677910472039194
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Atlas Cog Runner_6
+      rect:
+        serializedVersion: 2
+        x: 25
+        y: 1639
+        width: 466
+        height: 66
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c533a1d7ae8271580800000000000000
+      internalID: -8856565154614463652
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Atlas Cog Runner_7
+      rect:
+        serializedVersion: 2
+        x: 25
+        y: 1467
+        width: 510
+        height: 114
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ebefe1576472a8460800000000000000
+      internalID: 7244646134145023678
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Atlas Cog Runner_8
+      rect:
+        serializedVersion: 2
+        x: 25
+        y: 1255
+        width: 302
+        height: 144
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 11e0b78e2077f6710800000000000000
+      internalID: 1688699239661243921
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Atlas Cog Runner_9
+      rect:
+        serializedVersion: 2
+        x: 1765
+        y: 1251
+        width: 96
+        height: 100
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4c4076fe5298895a0800000000000000
+      internalID: -6514306064968121148
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Atlas Cog Runner_10
+      rect:
+        serializedVersion: 2
+        x: 1895
+        y: 1253
+        width: 96
+        height: 96
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d301c4c5ba5f60e00800000000000000
+      internalID: 1010765282727956541
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Atlas Cog Runner_11
+      rect:
+        serializedVersion: 2
+        x: 25
+        y: 1099
+        width: 302
+        height: 144
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e19c16e7e3e851340800000000000000
+      internalID: 4833926174111549726
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Atlas Cog Runner_12
+      rect:
+        serializedVersion: 2
+        x: 597
+        y: 1147
+        width: 186
+        height: 88
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4c3171c1f0d648b80800000000000000
+      internalID: -8393463893848550460
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Atlas Cog Runner_13
+      rect:
+        serializedVersion: 2
+        x: 921
+        y: 1133
+        width: 182
+        height: 102
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f062316652481b770800000000000000
+      internalID: 8624820057552397839
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Atlas Cog Runner_14
+      rect:
+        serializedVersion: 2
+        x: 25
+        y: 977
+        width: 362
+        height: 94
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b3252a88d49d10a20800000000000000
+      internalID: 3026939351597732411
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Atlas Cog Runner_15
+      rect:
+        serializedVersion: 2
+        x: 597
+        y: 1027
+        width: 186
+        height: 88
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4ac15e6d68f604b40800000000000000
+      internalID: 5422456576275717284
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Atlas Cog Runner_16
+      rect:
+        serializedVersion: 2
+        x: 921
+        y: 969
+        width: 182
+        height: 102
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 119ab016dd82950f0800000000000000
+      internalID: -1127825300398561007
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Atlas Cog Runner_17
+      rect:
+        serializedVersion: 2
+        x: 17
+        y: 829
+        width: 370
+        height: 126
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 58f33e0739f43f3e0800000000000000
+      internalID: -2021184313086492795
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Atlas Cog Runner_18
+      rect:
+        serializedVersion: 2
+        x: 607
+        y: 911
+        width: 168
+        height: 88
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d9577b847e78547d0800000000000000
+      internalID: -2934790154734832227
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Atlas Cog Runner_19
+      rect:
+        serializedVersion: 2
+        x: 25
+        y: 705
+        width: 386
+        height: 98
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2c14f2a94356ef8c0800000000000000
+      internalID: -3963619345439964734
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Atlas Cog Runner_20
+      rect:
+        serializedVersion: 2
+        x: 597
+        y: 791
+        width: 186
+        height: 80
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e863e44775ef0c400800000000000000
+      internalID: 342553223247050382
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Atlas Cog Runner_21
+      rect:
+        serializedVersion: 2
+        x: 25
+        y: 561
+        width: 342
+        height: 98
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0e391928c73176cd0800000000000000
+      internalID: -2565060037276757024
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Atlas Cog Runner_22
+      rect:
+        serializedVersion: 2
+        x: 691
+        y: 578
+        width: 89
+        height: 57
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 741decd59d14d9970800000000000000
+      internalID: 8763232851770396999
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Atlas Cog Runner_23
+      rect:
+        serializedVersion: 2
+        x: 465
+        y: 168
+        width: 114
+        height: 79
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 29ee7bfb0d50e2b00800000000000000
+      internalID: 805587777473736338
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Atlas Cog Runner_24
+      rect:
+        serializedVersion: 2
+        x: 253
+        y: 169
+        width: 114
+        height: 79
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4f1234fbf348140b0800000000000000
+      internalID: -5746166240221388300
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Atlas Cog Runner_25
+      rect:
+        serializedVersion: 2
+        x: 41
+        y: 168
+        width: 114
+        height: 79
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9a8de0129a3819080800000000000000
+      internalID: -9182413402804397911
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Atlas Cog Runner_26
+      rect:
+        serializedVersion: 2
+        x: 42
+        y: 417
+        width: 117
+        height: 55
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d7fc76be7d5ca2ad0800000000000000
+      internalID: -2726149093261324419
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Atlas Cog Runner_27
+      rect:
+        serializedVersion: 2
+        x: 252
+        y: 416
+        width: 117
+        height: 55
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f855d0d15e47d72c0800000000000000
+      internalID: -4432257930878954097
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Atlas Cog Runner_28
+      rect:
+        serializedVersion: 2
+        x: 465
+        y: 414
+        width: 117
+        height: 55
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2fa49f9cdf9880a90800000000000000
+      internalID: -7347471068946674958
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Atlas Cog Runner_41
+      rect:
+        serializedVersion: 2
+        x: 736
+        y: 259
+        width: 780
+        height: 120
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7e07abc9e7e881f10800000000000000
+      internalID: 2240697489063309543
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: ae27112ee4b7c4b4c9fe49abc58f78ff
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      Atlas Cog Runner_0: -7626544269729273687
+      Atlas Cog Runner_1: 3242239292231272789
+      Atlas Cog Runner_10: 1010765282727956541
+      Atlas Cog Runner_11: 4833926174111549726
+      Atlas Cog Runner_12: -8393463893848550460
+      Atlas Cog Runner_13: 8624820057552397839
+      Atlas Cog Runner_14: 3026939351597732411
+      Atlas Cog Runner_15: 5422456576275717284
+      Atlas Cog Runner_16: -1127825300398561007
+      Atlas Cog Runner_17: -2021184313086492795
+      Atlas Cog Runner_18: -2934790154734832227
+      Atlas Cog Runner_19: -3963619345439964734
+      Atlas Cog Runner_2: 3049273829435696635
+      Atlas Cog Runner_20: 342553223247050382
+      Atlas Cog Runner_21: -2565060037276757024
+      Atlas Cog Runner_22: 8763232851770396999
+      Atlas Cog Runner_23: 805587777473736338
+      Atlas Cog Runner_24: -5746166240221388300
+      Atlas Cog Runner_25: -9182413402804397911
+      Atlas Cog Runner_26: -2726149093261324419
+      Atlas Cog Runner_27: -4432257930878954097
+      Atlas Cog Runner_28: -7347471068946674958
+      Atlas Cog Runner_29: 8382021826105680751
+      Atlas Cog Runner_3: -7708968661521568392
+      Atlas Cog Runner_30: 6405778287882295698
+      Atlas Cog Runner_31: -5318904966224620386
+      Atlas Cog Runner_32: 8977994248254138901
+      Atlas Cog Runner_33: 7538860979935012074
+      Atlas Cog Runner_34: -3188223003255930882
+      Atlas Cog Runner_35: 6374758715558153106
+      Atlas Cog Runner_36: -7266867181390593116
+      Atlas Cog Runner_37: -629420188243048072
+      Atlas Cog Runner_38: 2257285039045665748
+      Atlas Cog Runner_39: 8904813373196925204
+      Atlas Cog Runner_4: 5622315622489482809
+      Atlas Cog Runner_40: -5957303988134252052
+      Atlas Cog Runner_41: 2240697489063309543
+      Atlas Cog Runner_42: -2829382076600113024
+      Atlas Cog Runner_43: -6297444734325656062
+      Atlas Cog Runner_44: 3119783710359754674
+      Atlas Cog Runner_45: 4583091329868339313
+      Atlas Cog Runner_46: -7692097521508318044
+      Atlas Cog Runner_47: -6937094010208867093
+      Atlas Cog Runner_48: 4933339777335199715
+      Atlas Cog Runner_49: -8797826660929755633
+      Atlas Cog Runner_5: 1017677910472039194
+      Atlas Cog Runner_50: 820066407476368126
+      Atlas Cog Runner_51: 428546776795724455
+      Atlas Cog Runner_52: 3251368023217342672
+      Atlas Cog Runner_53: -8208976075304343475
+      Atlas Cog Runner_54: 1590570429897731354
+      Atlas Cog Runner_55: 7598980234986786631
+      Atlas Cog Runner_56: -2323911280002164993
+      Atlas Cog Runner_57: 5363190789836213037
+      Atlas Cog Runner_58: -131573984764319297
+      Atlas Cog Runner_59: 8198661678502527263
+      Atlas Cog Runner_6: -8856565154614463652
+      Atlas Cog Runner_60: -8903195127910573642
+      Atlas Cog Runner_61: 6187003676222576549
+      Atlas Cog Runner_62: -5409610144002149810
+      Atlas Cog Runner_7: 7244646134145023678
+      Atlas Cog Runner_8: 1688699239661243921
+      Atlas Cog Runner_9: -6514306064968121148
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
