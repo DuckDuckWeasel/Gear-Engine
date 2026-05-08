@@ -234,7 +234,7 @@ TextureImporter:
   compressionQuality: 50
   spriteMode: 2
   spriteExtrude: 1
-  spriteMeshType: 1
+  spriteMeshType: 0
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
   spritePixelsToUnits: 100
@@ -352,7 +352,7 @@ TextureImporter:
         height: 640
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 150, y: 150, z: 150, w: 150}
       customData: 
       outline: []
       physicsShape: []
@@ -374,7 +374,7 @@ TextureImporter:
         height: 96
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 24, y: 22, z: 24, w: 17}
       customData: 
       outline: []
       physicsShape: []
@@ -396,7 +396,7 @@ TextureImporter:
         height: 46
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 11, y: 13, z: 11, w: 13}
       customData: 
       outline: []
       physicsShape: []
@@ -418,7 +418,7 @@ TextureImporter:
         height: 46
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 11, y: 13, z: 11, w: 13}
       customData: 
       outline: []
       physicsShape: []
@@ -506,7 +506,7 @@ TextureImporter:
         height: 100
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 22, y: 22, z: 22, w: 22}
       customData: 
       outline: []
       physicsShape: []
@@ -566,13 +566,13 @@ TextureImporter:
       name: Atlas Cog Runner_12
       rect:
         serializedVersion: 2
-        x: 597
+        x: 598
         y: 1147
-        width: 186
+        width: 184
         height: 88
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 60, y: 42, z: 60, w: 42}
       customData: 
       outline: []
       physicsShape: []
