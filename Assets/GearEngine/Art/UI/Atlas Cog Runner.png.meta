@@ -456,13 +456,13 @@ TextureImporter:
       name: Atlas Cog Runner_7
       rect:
         serializedVersion: 2
-        x: 25
+        x: 26
         y: 1467
-        width: 510
+        width: 508
         height: 114
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 17, y: 29, z: 17, w: 22}
       customData: 
       outline: []
       physicsShape: []
@@ -484,7 +484,7 @@ TextureImporter:
         height: 144
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 57, y: 57, z: 57, w: 57}
       customData: 
       outline: []
       physicsShape: []
@@ -544,13 +544,13 @@ TextureImporter:
       name: Atlas Cog Runner_11
       rect:
         serializedVersion: 2
-        x: 25
-        y: 1099
+        x: 26
+        y: 1098
         width: 302
         height: 144
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 55, y: 55, z: 55, w: 55}
       customData: 
       outline: []
       physicsShape: []
@@ -572,7 +572,7 @@ TextureImporter:
         height: 88
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 60, y: 42, z: 60, w: 42}
+      border: {x: 33, y: 40, z: 33, w: 35}
       customData: 
       outline: []
       physicsShape: []
@@ -632,13 +632,13 @@ TextureImporter:
       name: Atlas Cog Runner_15
       rect:
         serializedVersion: 2
-        x: 597
+        x: 598
         y: 1027
-        width: 186
+        width: 185
         height: 88
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 33, y: 40, z: 33, w: 35}
       customData: 
       outline: []
       physicsShape: []
@@ -726,7 +726,7 @@ TextureImporter:
         height: 98
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 38, y: 38, z: 38, w: 38}
       customData: 
       outline: []
       physicsShape: []

@@ -1,0 +1,787 @@
+fileFormatVersion: 2
+guid: cd2676a051546814e9ad79e79bcdeec3
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 2094430123343354773
+    second: Assets Atlas3_0
+  - first:
+      213: 999147511486061009
+    second: Assets Atlas3_1
+  - first:
+      213: -4843092369763842486
+    second: Assets Atlas3_2
+  - first:
+      213: 9081874721659750992
+    second: Assets Atlas3_3
+  - first:
+      213: -5946819405893272016
+    second: Assets Atlas3_4
+  - first:
+      213: -7983184948126542863
+    second: Assets Atlas3_5
+  - first:
+      213: 5827022280396551815
+    second: Assets Atlas3_6
+  - first:
+      213: -2370490586148660605
+    second: Assets Atlas3_7
+  - first:
+      213: 95275128101099564
+    second: Assets Atlas3_8
+  - first:
+      213: 8080634071473634971
+    second: Assets Atlas3_9
+  - first:
+      213: -5463189251871415431
+    second: Assets Atlas3_10
+  - first:
+      213: 7149198342103743274
+    second: Assets Atlas3_11
+  - first:
+      213: 2280937893426746075
+    second: Assets Atlas3_12
+  - first:
+      213: -6647339743474753054
+    second: Assets Atlas3_13
+  - first:
+      213: -5048105008288069028
+    second: Assets Atlas3_14
+  - first:
+      213: 4539062455938368377
+    second: Assets Atlas3_15
+  - first:
+      213: 7744083643691136187
+    second: Assets Atlas3_16
+  - first:
+      213: -4953342453942507834
+    second: Assets Atlas3_17
+  - first:
+      213: -4497887941811183020
+    second: Assets Atlas3_18
+  - first:
+      213: -7547379968574576072
+    second: Assets Atlas3_19
+  - first:
+      213: 678939913331419819
+    second: Assets Atlas3_20
+  - first:
+      213: 4366151049129444980
+    second: Assets Atlas3_21
+  - first:
+      213: 6208168116155992233
+    second: Assets Atlas3_22
+  - first:
+      213: -6711004351754583655
+    second: Assets Atlas3_23
+  - first:
+      213: -3735810758087941389
+    second: Assets Atlas3_24
+  - first:
+      213: 1780134062949385851
+    second: Assets Atlas3_25
+  - first:
+      213: 5096399977979256877
+    second: Assets Atlas3_26
+  - first:
+      213: -1170854572033278667
+    second: Assets Atlas3_27
+  - first:
+      213: 5407012542052766271
+    second: Assets Atlas3_28
+  - first:
+      213: -7189607005758122573
+    second: Assets Atlas3_29
+  - first:
+      213: 1499185455565963571
+    second: Assets Atlas3_30
+  - first:
+      213: 3286212969556238098
+    second: Assets Atlas3_31
+  - first:
+      213: -8470838380834166909
+    second: Assets Atlas3_32
+  - first:
+      213: 4565968397983586052
+    second: Assets Atlas3_33
+  - first:
+      213: -2005822494103362258
+    second: Assets Atlas3_34
+  - first:
+      213: -359811100286586751
+    second: Assets Atlas3_35
+  - first:
+      213: -5396243613403639303
+    second: Assets Atlas3_36
+  - first:
+      213: 1508613818960113900
+    second: Assets Atlas3_37
+  - first:
+      213: -676208657023338643
+    second: Assets Atlas3_38
+  - first:
+      213: 375979710732867203
+    second: Assets Atlas3_39
+  - first:
+      213: -4996245042671939323
+    second: Assets Atlas3_40
+  - first:
+      213: 6416071024574136836
+    second: Assets Atlas3_41
+  - first:
+      213: 8721277287956707638
+    second: Assets Atlas3_42
+  - first:
+      213: -7073231459032511256
+    second: Assets Atlas3_43
+  - first:
+      213: -4476187025878702624
+    second: Assets Atlas3_44
+  - first:
+      213: 2034240896178565410
+    second: Assets Atlas3_45
+  - first:
+      213: 2710959816354242676
+    second: Assets Atlas3_46
+  - first:
+      213: -6169616764417767921
+    second: Assets Atlas3_47
+  - first:
+      213: -2189984292360100796
+    second: Assets Atlas3_48
+  - first:
+      213: -3948158055232628121
+    second: Assets Atlas3_49
+  - first:
+      213: 4953523092434405592
+    second: Assets Atlas3_50
+  - first:
+      213: -4487076726316625106
+    second: Assets Atlas3_51
+  - first:
+      213: -16659799645515094
+    second: Assets Atlas3_52
+  - first:
+      213: 5283915670691059457
+    second: Assets Atlas3_53
+  - first:
+      213: 8367499031384287099
+    second: Assets Atlas3_54
+  - first:
+      213: 1521521893912224237
+    second: Assets Atlas3_55
+  - first:
+      213: -6988755681631413786
+    second: Assets Atlas3_56
+  - first:
+      213: 171819876971582725
+    second: Assets Atlas3_57
+  - first:
+      213: -7520151646142949805
+    second: Assets Atlas3_58
+  - first:
+      213: -698088706818136171
+    second: Assets Atlas3_59
+  - first:
+      213: 3406324403315110300
+    second: Assets Atlas3_60
+  - first:
+      213: -922487900901282059
+    second: Assets Atlas3_61
+  - first:
+      213: -6076992518401809787
+    second: Assets Atlas3_62
+  - first:
+      213: -2819552392882610998
+    second: Assets Atlas3_63
+  - first:
+      213: -7092833401102064011
+    second: Assets Atlas3_64
+  - first:
+      213: -2193401910132756625
+    second: Assets Atlas3_65
+  - first:
+      213: -2134723555986630591
+    second: Assets Atlas3_66
+  - first:
+      213: 7831109496433130101
+    second: Assets Atlas3_67
+  - first:
+      213: -2593422186608993672
+    second: Assets Atlas3_68
+  - first:
+      213: -8555715755717214727
+    second: Assets Atlas3_69
+  - first:
+      213: -193045034443253452
+    second: Assets Atlas3_70
+  - first:
+      213: 3059590273162880223
+    second: Assets Atlas3_71
+  - first:
+      213: -1107857075727320614
+    second: Assets Atlas3_72
+  - first:
+      213: -4978430335718358292
+    second: Assets Atlas3_73
+  - first:
+      213: -7990571949731494027
+    second: Assets Atlas3_74
+  - first:
+      213: -6862885776374964365
+    second: Assets Atlas3_75
+  - first:
+      213: -1650608925554138431
+    second: Assets Atlas3_76
+  - first:
+      213: -6028323820263155088
+    second: Assets Atlas3_77
+  - first:
+      213: -2479639462442538010
+    second: Assets Atlas3_78
+  - first:
+      213: 3057811388565545462
+    second: Assets Atlas3_79
+  - first:
+      213: 1639514684895203868
+    second: Assets Atlas3_80
+  - first:
+      213: 6163700254662681352
+    second: Assets Atlas3_81
+  - first:
+      213: 6363980704012776776
+    second: Assets Atlas3_82
+  - first:
+      213: -4150608028852327950
+    second: Assets Atlas3_83
+  - first:
+      213: -3902766544865472883
+    second: Assets Atlas3_84
+  - first:
+      213: -6645552378058220750
+    second: Assets Atlas3_85
+  - first:
+      213: -6068953625116203364
+    second: Assets Atlas3_86
+  - first:
+      213: -7921211575346897581
+    second: Assets Atlas3_87
+  - first:
+      213: -1783594164393962640
+    second: Assets Atlas3_88
+  - first:
+      213: 7596094167391126129
+    second: Assets Atlas3_89
+  - first:
+      213: -9014164192677611795
+    second: Assets Atlas3_90
+  - first:
+      213: 8740343260875382276
+    second: Assets Atlas3_91
+  - first:
+      213: -3474400267346868860
+    second: Assets Atlas3_92
+  - first:
+      213: 5402909359315915682
+    second: Assets Atlas3_93
+  - first:
+      213: 4028684660120181208
+    second: Assets Atlas3_94
+  - first:
+      213: -1710034526128887685
+    second: Assets Atlas3_95
+  - first:
+      213: -3514281625524071384
+    second: Assets Atlas3_96
+  - first:
+      213: -8505691569963712610
+    second: Assets Atlas3_97
+  - first:
+      213: 9075103009315269854
+    second: Assets Atlas3_98
+  - first:
+      213: 3435575281850198216
+    second: Assets Atlas3_99
+  - first:
+      213: -1356627538305167625
+    second: Assets Atlas3_100
+  - first:
+      213: -7724804581911329069
+    second: Assets Atlas3_101
+  - first:
+      213: -7037347473571473721
+    second: Assets Atlas3_102
+  - first:
+      213: 8210258369850150405
+    second: Assets Atlas3_103
+  - first:
+      213: -7709655839672230579
+    second: Assets Atlas3_104
+  - first:
+      213: -5905601146556285035
+    second: Assets Atlas3_105
+  - first:
+      213: -1976007831535919106
+    second: Assets Atlas3_106
+  - first:
+      213: -6156983560943646148
+    second: Assets Atlas3_107
+  - first:
+      213: -6678887651699112768
+    second: Assets Atlas3_108
+  - first:
+      213: -4147570398989424055
+    second: Assets Atlas3_109
+  - first:
+      213: -3725035938144446734
+    second: Assets Atlas3_110
+  - first:
+      213: 5898295387544278114
+    second: Assets Atlas3_111
+  - first:
+      213: -8484438120286104490
+    second: Assets Atlas3_112
+  - first:
+      213: 6468129555317294284
+    second: Assets Atlas3_113
+  - first:
+      213: -5889021782165359543
+    second: Assets Atlas3_114
+  - first:
+      213: -6671865118037680698
+    second: Assets Atlas3_115
+  - first:
+      213: -3467696591099764812
+    second: Assets Atlas3_116
+  - first:
+      213: 347535434689576803
+    second: Assets Atlas3_117
+  - first:
+      213: -3308091536631352122
+    second: Assets Atlas3_118
+  - first:
+      213: 9172492106728414351
+    second: Assets Atlas3_119
+  - first:
+      213: -6689286917618746948
+    second: Assets Atlas3_120
+  - first:
+      213: -6228119772893287397
+    second: Assets Atlas3_121
+  - first:
+      213: 9184100455275210427
+    second: Assets Atlas3_122
+  - first:
+      213: -8570194524131767191
+    second: Assets Atlas3_123
+  - first:
+      213: 8284165794376135213
+    second: Assets Atlas3_124
+  - first:
+      213: -4449729414938280789
+    second: Assets Atlas3_125
+  - first:
+      213: 123496432281661934
+    second: Assets Atlas3_126
+  - first:
+      213: 3031815636468723615
+    second: Assets Atlas3_127
+  - first:
+      213: -7250486744697803215
+    second: Assets Atlas3_128
+  - first:
+      213: -3910748233276058435
+    second: Assets Atlas3_129
+  - first:
+      213: -7276002013905869292
+    second: Assets Atlas3_130
+  - first:
+      213: 2027756466803990499
+    second: Assets Atlas3_131
+  - first:
+      213: 1537357682803427040
+    second: Assets Atlas3_132
+  - first:
+      213: 6881433748409115233
+    second: Assets Atlas3_133
+  - first:
+      213: 77812304572026661
+    second: Assets Atlas3_134
+  - first:
+      213: -3172474794670028126
+    second: Assets Atlas3_135
+  - first:
+      213: 8551013311216486148
+    second: Assets Atlas3_136
+  - first:
+      213: 8501575197540045686
+    second: Assets Atlas3_137
+  - first:
+      213: 2265519157596648852
+    second: Assets Atlas3_138
+  - first:
+      213: -3225284320939994780
+    second: Assets Atlas3_139
+  - first:
+      213: 1197876160905807603
+    second: Assets Atlas3_140
+  - first:
+      213: -5071801489898398091
+    second: Assets Atlas3_141
+  - first:
+      213: -4372917225632415848
+    second: Assets Atlas3_142
+  - first:
+      213: 349882750085977357
+    second: Assets Atlas3_143
+  - first:
+      213: 3382502363443057774
+    second: Assets Atlas3_144
+  - first:
+      213: 8069520614967132082
+    second: Assets Atlas3_145
+  - first:
+      213: 3497935962695348986
+    second: Assets Atlas3_146
+  - first:
+      213: 799107426349036142
+    second: Assets Atlas3_147
+  - first:
+      213: 4095594840647468410
+    second: Assets Atlas3_148
+  - first:
+      213: 5256294691244284526
+    second: Assets Atlas3_149
+  - first:
+      213: -5089052065537626518
+    second: Assets Atlas3_150
+  - first:
+      213: -6490551839929327527
+    second: Assets Atlas3_151
+  - first:
+      213: -634612994262569334
+    second: Assets Atlas3_152
+  - first:
+      213: -6271357564569947235
+    second: Assets Atlas3_153
+  - first:
+      213: -493831455065618713
+    second: Assets Atlas3_154
+  - first:
+      213: 578695910586667333
+    second: Assets Atlas3_155
+  - first:
+      213: -8325622636643906934
+    second: Assets Atlas3_156
+  - first:
+      213: 1918522324996161348
+    second: Assets Atlas3_157
+  - first:
+      213: -2444492409089219857
+    second: Assets Atlas3_158
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Assets Atlas3_0
+      rect:
+        serializedVersion: 2
+        x: 138
+        y: 943
+        width: 1169
+        height: 1135
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 120, y: 92, z: 120, w: 92}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 59b12c4b919e01d10800000000000000
+      internalID: 2094430123343354773
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Assets Atlas3_15
+      rect:
+        serializedVersion: 2
+        x: 1763
+        y: 1904
+        width: 108
+        height: 110
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 973c483314dfdfe30800000000000000
+      internalID: 4539062455938368377
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Assets Atlas3_16
+      rect:
+        serializedVersion: 2
+        x: 1952
+        y: 1914
+        width: 105
+        height: 100
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bb47f154b03887b60800000000000000
+      internalID: 7744083643691136187
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Assets Atlas3_17
+      rect:
+        serializedVersion: 2
+        x: 1624
+        y: 1624
+        width: 764
+        height: 177
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 46, y: 36, z: 46, w: 25}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6c625e53841324bb0800000000000000
+      internalID: -4953342453942507834
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Assets Atlas3_18
+      rect:
+        serializedVersion: 2
+        x: 1643
+        y: 1074
+        width: 365
+        height: 438
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 80, y: 87, z: 80, w: 87}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 452e4dc6fba4491c0800000000000000
+      internalID: -4497887941811183020
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Assets Atlas3_19
+      rect:
+        serializedVersion: 2
+        x: 2023
+        y: 1073
+        width: 366
+        height: 438
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 80, y: 87, z: 80, w: 87}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 83aa63408e1524790800000000000000
+      internalID: -7547379968574576072
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 8499446db50f76640b6fa29549b17597
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries:
+      - key: SpriteEditor.SliceSettings
+        value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":64.0,"y":64.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":0,"keepEmptyRects":false,"isAlternate":false}'
+    nameFileIdTable:
+      Assets Atlas3_0: 2094430123343354773
+      Assets Atlas3_1: 999147511486061009
+      Assets Atlas3_10: -5463189251871415431
+      Assets Atlas3_11: 7149198342103743274
+      Assets Atlas3_12: 2280937893426746075
+      Assets Atlas3_13: -6647339743474753054
+      Assets Atlas3_14: -5048105008288069028
+      Assets Atlas3_15: 4539062455938368377
+      Assets Atlas3_16: 7744083643691136187
+      Assets Atlas3_17: -4953342453942507834
+      Assets Atlas3_18: -4497887941811183020
+      Assets Atlas3_19: -7547379968574576072
+      Assets Atlas3_2: -4843092369763842486
+      Assets Atlas3_20: 678939913331419819
+      Assets Atlas3_21: 4366151049129444980
+      Assets Atlas3_22: 6208168116155992233
+      Assets Atlas3_23: -6711004351754583655
+      Assets Atlas3_24: -3735810758087941389
+      Assets Atlas3_25: 1780134062949385851
+      Assets Atlas3_26: 5096399977979256877
+      Assets Atlas3_27: -1170854572033278667
+      Assets Atlas3_28: 5407012542052766271
+      Assets Atlas3_29: -7189607005758122573
+      Assets Atlas3_3: 9081874721659750992
+      Assets Atlas3_30: 1499185455565963571
+      Assets Atlas3_31: 3286212969556238098
+      Assets Atlas3_32: -8470838380834166909
+      Assets Atlas3_33: 4565968397983586052
+      Assets Atlas3_34: -2005822494103362258
+      Assets Atlas3_35: -359811100286586751
+      Assets Atlas3_36: -5396243613403639303
+      Assets Atlas3_37: 1508613818960113900
+      Assets Atlas3_38: -676208657023338643
+      Assets Atlas3_39: 375979710732867203
+      Assets Atlas3_4: -5946819405893272016
+      Assets Atlas3_40: -4996245042671939323
+      Assets Atlas3_41: 6416071024574136836
+      Assets Atlas3_42: 8721277287956707638
+      Assets Atlas3_43: -7073231459032511256
+      Assets Atlas3_44: -4476187025878702624
+      Assets Atlas3_45: 2034240896178565410
+      Assets Atlas3_5: -7983184948126542863
+      Assets Atlas3_6: 5827022280396551815
+      Assets Atlas3_7: -2370490586148660605
+      Assets Atlas3_8: 95275128101099564
+      Assets Atlas3_9: 8080634071473634971
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
