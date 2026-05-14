@@ -786,10 +786,10 @@ TextureImporter:
       name: Atlas Cog Runner_22
       rect:
         serializedVersion: 2
-        x: 691
-        y: 578
-        width: 89
-        height: 57
+        x: 692
+        y: 579
+        width: 88
+        height: 54
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
