@@ -1,0 +1,4420 @@
+fileFormatVersion: 2
+guid: 71f09d415857d0044b2abceb484a5914
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -1257875727864010565
+    second: New Track Unlocked no txt_0
+  - first:
+      213: 3492651810295679013
+    second: New Track Unlocked no txt_1
+  - first:
+      213: 561816074934461245
+    second: New Track Unlocked no txt_2
+  - first:
+      213: 927951248809095725
+    second: New Track Unlocked no txt_3
+  - first:
+      213: 2193403404684376948
+    second: New Track Unlocked no txt_4
+  - first:
+      213: 3908387809986185837
+    second: New Track Unlocked no txt_5
+  - first:
+      213: -6267942176716658513
+    second: New Track Unlocked no txt_6
+  - first:
+      213: -4553142378689036498
+    second: New Track Unlocked no txt_7
+  - first:
+      213: 7242808837554816438
+    second: New Track Unlocked no txt_8
+  - first:
+      213: 9205461472939206553
+    second: New Track Unlocked no txt_9
+  - first:
+      213: 1390705786247297898
+    second: New Track Unlocked no txt_10
+  - first:
+      213: -1145569486037630749
+    second: New Track Unlocked no txt_11
+  - first:
+      213: -5312936804188597815
+    second: New Track Unlocked no txt_12
+  - first:
+      213: -1200971558181267856
+    second: New Track Unlocked no txt_13
+  - first:
+      213: 5095472776761811426
+    second: New Track Unlocked no txt_14
+  - first:
+      213: 1657926155403551124
+    second: New Track Unlocked no txt_15
+  - first:
+      213: 5202227392836963325
+    second: New Track Unlocked no txt_16
+  - first:
+      213: -7883646766691375318
+    second: New Track Unlocked no txt_17
+  - first:
+      213: 7632184548670184687
+    second: New Track Unlocked no txt_18
+  - first:
+      213: 3957364283027126305
+    second: New Track Unlocked no txt_19
+  - first:
+      213: 475099184594869844
+    second: New Track Unlocked no txt_20
+  - first:
+      213: 1945109432238996824
+    second: New Track Unlocked no txt_21
+  - first:
+      213: -1902797117938649987
+    second: New Track Unlocked no txt_22
+  - first:
+      213: -5939748399424807255
+    second: New Track Unlocked no txt_23
+  - first:
+      213: 6108175668705570673
+    second: New Track Unlocked no txt_24
+  - first:
+      213: -172137244319619119
+    second: New Track Unlocked no txt_25
+  - first:
+      213: -2575123737209479101
+    second: New Track Unlocked no txt_26
+  - first:
+      213: 6922220195200726849
+    second: New Track Unlocked no txt_27
+  - first:
+      213: 103625138976256350
+    second: New Track Unlocked no txt_28
+  - first:
+      213: 7222649819639931413
+    second: New Track Unlocked no txt_29
+  - first:
+      213: 941183774863687477
+    second: New Track Unlocked no txt_30
+  - first:
+      213: 3858660400416103740
+    second: New Track Unlocked no txt_31
+  - first:
+      213: -2651818737164846525
+    second: New Track Unlocked no txt_32
+  - first:
+      213: -1840232252512113912
+    second: New Track Unlocked no txt_33
+  - first:
+      213: 1032716344197422671
+    second: New Track Unlocked no txt_34
+  - first:
+      213: -5812857704439207189
+    second: New Track Unlocked no txt_35
+  - first:
+      213: 7518531369546988176
+    second: New Track Unlocked no txt_36
+  - first:
+      213: -2732255867821836353
+    second: New Track Unlocked no txt_37
+  - first:
+      213: 3028638631006108931
+    second: New Track Unlocked no txt_38
+  - first:
+      213: -2396604946626376443
+    second: New Track Unlocked no txt_39
+  - first:
+      213: 5177939981482027399
+    second: New Track Unlocked no txt_40
+  - first:
+      213: 9069753834024150592
+    second: New Track Unlocked no txt_41
+  - first:
+      213: -6345273561687389784
+    second: New Track Unlocked no txt_42
+  - first:
+      213: 3761165376888380816
+    second: New Track Unlocked no txt_43
+  - first:
+      213: 4758823884924900957
+    second: New Track Unlocked no txt_44
+  - first:
+      213: -2071866281534742564
+    second: New Track Unlocked no txt_45
+  - first:
+      213: 7435954949209286027
+    second: New Track Unlocked no txt_46
+  - first:
+      213: -1428299851426759962
+    second: New Track Unlocked no txt_47
+  - first:
+      213: 1531389576450991127
+    second: New Track Unlocked no txt_48
+  - first:
+      213: 1337472746786088657
+    second: New Track Unlocked no txt_49
+  - first:
+      213: -8609047819088498258
+    second: New Track Unlocked no txt_50
+  - first:
+      213: -2959408094432720254
+    second: New Track Unlocked no txt_51
+  - first:
+      213: 5419036719833071746
+    second: New Track Unlocked no txt_52
+  - first:
+      213: -8978507364657294710
+    second: New Track Unlocked no txt_53
+  - first:
+      213: -3685018476863401324
+    second: New Track Unlocked no txt_54
+  - first:
+      213: -855655491217918057
+    second: New Track Unlocked no txt_55
+  - first:
+      213: 2639324840248221806
+    second: New Track Unlocked no txt_56
+  - first:
+      213: 8077849524658671330
+    second: New Track Unlocked no txt_57
+  - first:
+      213: -6532101682628454482
+    second: New Track Unlocked no txt_58
+  - first:
+      213: -5354433118132981994
+    second: New Track Unlocked no txt_59
+  - first:
+      213: -6770627643399952383
+    second: New Track Unlocked no txt_60
+  - first:
+      213: -1856866356165616321
+    second: New Track Unlocked no txt_61
+  - first:
+      213: 9032500818123620743
+    second: New Track Unlocked no txt_62
+  - first:
+      213: 3909461780404360229
+    second: New Track Unlocked no txt_63
+  - first:
+      213: -1060733796024215743
+    second: New Track Unlocked no txt_64
+  - first:
+      213: -650714564401521330
+    second: New Track Unlocked no txt_65
+  - first:
+      213: -3805617633826875228
+    second: New Track Unlocked no txt_66
+  - first:
+      213: 1565346644249462506
+    second: New Track Unlocked no txt_67
+  - first:
+      213: -7914089136784515169
+    second: New Track Unlocked no txt_68
+  - first:
+      213: -6781033734510809208
+    second: New Track Unlocked no txt_69
+  - first:
+      213: 83868268089915959
+    second: New Track Unlocked no txt_70
+  - first:
+      213: 5817265563165211920
+    second: New Track Unlocked no txt_71
+  - first:
+      213: -2845953043617312221
+    second: New Track Unlocked no txt_72
+  - first:
+      213: -4931535555067338705
+    second: New Track Unlocked no txt_73
+  - first:
+      213: 282572217769554322
+    second: New Track Unlocked no txt_74
+  - first:
+      213: 5696358889968138048
+    second: New Track Unlocked no txt_75
+  - first:
+      213: -1175020160938208110
+    second: New Track Unlocked no txt_76
+  - first:
+      213: 6732873812417457589
+    second: New Track Unlocked no txt_77
+  - first:
+      213: -2940049550237512176
+    second: New Track Unlocked no txt_78
+  - first:
+      213: 5157349933595445739
+    second: New Track Unlocked no txt_79
+  - first:
+      213: -8747205774348141453
+    second: New Track Unlocked no txt_80
+  - first:
+      213: 1257081152085628947
+    second: New Track Unlocked no txt_81
+  - first:
+      213: 8099647705538273071
+    second: New Track Unlocked no txt_82
+  - first:
+      213: 2916625235818988806
+    second: New Track Unlocked no txt_83
+  - first:
+      213: 4630113357858177363
+    second: New Track Unlocked no txt_84
+  - first:
+      213: 1813757193999733735
+    second: New Track Unlocked no txt_85
+  - first:
+      213: -8496717711511789679
+    second: New Track Unlocked no txt_86
+  - first:
+      213: -396166937887088478
+    second: New Track Unlocked no txt_87
+  - first:
+      213: -4755488350473712961
+    second: New Track Unlocked no txt_88
+  - first:
+      213: -2545056179878336899
+    second: New Track Unlocked no txt_89
+  - first:
+      213: 6462456811875320772
+    second: New Track Unlocked no txt_90
+  - first:
+      213: -8094115435352297762
+    second: New Track Unlocked no txt_91
+  - first:
+      213: -5462286200145291521
+    second: New Track Unlocked no txt_92
+  - first:
+      213: -5220356290049896557
+    second: New Track Unlocked no txt_93
+  - first:
+      213: 4533746362242366529
+    second: New Track Unlocked no txt_94
+  - first:
+      213: -6617540452247906196
+    second: New Track Unlocked no txt_95
+  - first:
+      213: 8153663325193693807
+    second: New Track Unlocked no txt_96
+  - first:
+      213: -2252840413879511317
+    second: New Track Unlocked no txt_97
+  - first:
+      213: -5338363332045622601
+    second: New Track Unlocked no txt_98
+  - first:
+      213: 158875524885385666
+    second: New Track Unlocked no txt_99
+  - first:
+      213: -21917833070744974
+    second: New Track Unlocked no txt_100
+  - first:
+      213: 105408357402468241
+    second: New Track Unlocked no txt_101
+  - first:
+      213: 8118478622856466228
+    second: New Track Unlocked no txt_102
+  - first:
+      213: 985320110611447343
+    second: New Track Unlocked no txt_103
+  - first:
+      213: 3484298181348950257
+    second: New Track Unlocked no txt_104
+  - first:
+      213: 478385143515956891
+    second: New Track Unlocked no txt_105
+  - first:
+      213: 3331671008336883218
+    second: New Track Unlocked no txt_106
+  - first:
+      213: -4741123933644837934
+    second: New Track Unlocked no txt_107
+  - first:
+      213: -6772599992110797517
+    second: New Track Unlocked no txt_108
+  - first:
+      213: -4353308339455039536
+    second: New Track Unlocked no txt_109
+  - first:
+      213: 3013822676349340555
+    second: New Track Unlocked no txt_110
+  - first:
+      213: -9011934017110801785
+    second: New Track Unlocked no txt_111
+  - first:
+      213: 6614633964174103128
+    second: New Track Unlocked no txt_112
+  - first:
+      213: 143001133141453739
+    second: New Track Unlocked no txt_113
+  - first:
+      213: -1060522029659968717
+    second: New Track Unlocked no txt_114
+  - first:
+      213: -764375103240067194
+    second: New Track Unlocked no txt_115
+  - first:
+      213: -5821992792469477224
+    second: New Track Unlocked no txt_116
+  - first:
+      213: 2006174839565393367
+    second: New Track Unlocked no txt_117
+  - first:
+      213: -8983023710077143760
+    second: New Track Unlocked no txt_118
+  - first:
+      213: 1172179595306828319
+    second: New Track Unlocked no txt_119
+  - first:
+      213: -5942310148776891342
+    second: New Track Unlocked no txt_120
+  - first:
+      213: 8789240194299132780
+    second: New Track Unlocked no txt_121
+  - first:
+      213: -5511507585187959673
+    second: New Track Unlocked no txt_122
+  - first:
+      213: 2671369520951000705
+    second: New Track Unlocked no txt_123
+  - first:
+      213: 7242882615832334050
+    second: New Track Unlocked no txt_124
+  - first:
+      213: 5714753476141231656
+    second: New Track Unlocked no txt_125
+  - first:
+      213: -403133747796611212
+    second: New Track Unlocked no txt_126
+  - first:
+      213: 7074832282254529157
+    second: New Track Unlocked no txt_127
+  - first:
+      213: -5012819977840344567
+    second: New Track Unlocked no txt_128
+  - first:
+      213: 1770966366835843512
+    second: New Track Unlocked no txt_129
+  - first:
+      213: -8733979620008799101
+    second: New Track Unlocked no txt_130
+  - first:
+      213: 8100197703962904072
+    second: New Track Unlocked no txt_131
+  - first:
+      213: -596051149729617117
+    second: New Track Unlocked no txt_132
+  - first:
+      213: -5698458089847060682
+    second: New Track Unlocked no txt_133
+  - first:
+      213: -4613353674724785887
+    second: New Track Unlocked no txt_134
+  - first:
+      213: -849696864954580394
+    second: New Track Unlocked no txt_135
+  - first:
+      213: 1092302927343519083
+    second: New Track Unlocked no txt_136
+  - first:
+      213: -861592095063925215
+    second: New Track Unlocked no txt_137
+  - first:
+      213: -2000195930361544814
+    second: New Track Unlocked no txt_138
+  - first:
+      213: 2784316101932055487
+    second: New Track Unlocked no txt_139
+  - first:
+      213: -4146445764721789080
+    second: New Track Unlocked no txt_140
+  - first:
+      213: 4611846698482077814
+    second: New Track Unlocked no txt_141
+  - first:
+      213: 5244513605780748076
+    second: New Track Unlocked no txt_142
+  - first:
+      213: 2426261765641366856
+    second: New Track Unlocked no txt_143
+  - first:
+      213: -6937706935504892194
+    second: New Track Unlocked no txt_144
+  - first:
+      213: -4866051674084720771
+    second: New Track Unlocked no txt_145
+  - first:
+      213: 5000659921498726427
+    second: New Track Unlocked no txt_146
+  - first:
+      213: 1515611497214990868
+    second: New Track Unlocked no txt_147
+  - first:
+      213: -7031384836564165923
+    second: New Track Unlocked no txt_148
+  - first:
+      213: -193206686294065355
+    second: New Track Unlocked no txt_149
+  - first:
+      213: -1109347980890335949
+    second: New Track Unlocked no txt_150
+  - first:
+      213: 6292065727286363397
+    second: New Track Unlocked no txt_151
+  - first:
+      213: 2373251354337823834
+    second: New Track Unlocked no txt_152
+  - first:
+      213: 6985219082318841298
+    second: New Track Unlocked no txt_153
+  - first:
+      213: -5294582539688282533
+    second: New Track Unlocked no txt_154
+  - first:
+      213: -8935389806960657997
+    second: New Track Unlocked no txt_155
+  - first:
+      213: -950674572885720793
+    second: New Track Unlocked no txt_156
+  - first:
+      213: 6281981882454448387
+    second: New Track Unlocked no txt_157
+  - first:
+      213: -6385300746586489364
+    second: New Track Unlocked no txt_158
+  - first:
+      213: 6853789992208450449
+    second: New Track Unlocked no txt_159
+  - first:
+      213: -7302010002770471989
+    second: New Track Unlocked no txt_160
+  - first:
+      213: 7049256081234932425
+    second: New Track Unlocked no txt_161
+  - first:
+      213: -7921165058249477962
+    second: New Track Unlocked no txt_162
+  - first:
+      213: 8880516993404431162
+    second: New Track Unlocked no txt_163
+  - first:
+      213: -967108037102320142
+    second: New Track Unlocked no txt_164
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 1282
+        height: 274
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bb86415a0b02b8ee0800000000000000
+      internalID: -1257875727864010565
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_1
+      rect:
+        serializedVersion: 2
+        x: 44
+        y: 267
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5288ccc0154687030800000000000000
+      internalID: 3492651810295679013
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_2
+      rect:
+        serializedVersion: 2
+        x: 53
+        y: 266
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d33a2975eb8fbc700800000000000000
+      internalID: 561816074934461245
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_3
+      rect:
+        serializedVersion: 2
+        x: 58
+        y: 268
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d22752a8ebeb0ec00800000000000000
+      internalID: 927951248809095725
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_4
+      rect:
+        serializedVersion: 2
+        x: 78
+        y: 266
+        width: 11
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 47b385186c8807e10800000000000000
+      internalID: 2193403404684376948
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_5
+      rect:
+        serializedVersion: 2
+        x: 86
+        y: 261
+        width: 6
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d6a81b271026d3630800000000000000
+      internalID: 3908387809986185837
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_6
+      rect:
+        serializedVersion: 2
+        x: 99
+        y: 269
+        width: 6
+        height: 5
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fa86d1c9ccbc309a0800000000000000
+      internalID: -6267942176716658513
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_7
+      rect:
+        serializedVersion: 2
+        x: 110
+        y: 264
+        width: 7
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e2f7672512dffc0c0800000000000000
+      internalID: -4553142378689036498
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_8
+      rect:
+        serializedVersion: 2
+        x: 121
+        y: 264
+        width: 10
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6b5c3828340a38460800000000000000
+      internalID: 7242808837554816438
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_9
+      rect:
+        serializedVersion: 2
+        x: 137
+        y: 259
+        width: 8
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 997e510ef6e50cf70800000000000000
+      internalID: 9205461472939206553
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_10
+      rect:
+        serializedVersion: 2
+        x: 206
+        y: 267
+        width: 10
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a6bb9585b87cc4310800000000000000
+      internalID: 1390705786247297898
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_11
+      rect:
+        serializedVersion: 2
+        x: 299
+        y: 263
+        width: 6
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3e043373f9e1a10f0800000000000000
+      internalID: -1145569486037630749
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_12
+      rect:
+        serializedVersion: 2
+        x: 309
+        y: 266
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9c15d303028a446b0800000000000000
+      internalID: -5312936804188597815
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_13
+      rect:
+        serializedVersion: 2
+        x: 333
+        y: 261
+        width: 12
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 07612491bba455fe0800000000000000
+      internalID: -1200971558181267856
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_14
+      rect:
+        serializedVersion: 2
+        x: 353
+        y: 264
+        width: 8
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2e1af855e71c6b640800000000000000
+      internalID: 5095472776761811426
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_15
+      rect:
+        serializedVersion: 2
+        x: 366
+        y: 268
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 49168a4ed03220710800000000000000
+      internalID: 1657926155403551124
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_16
+      rect:
+        serializedVersion: 2
+        x: 377
+        y: 264
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dfb8ade4046023840800000000000000
+      internalID: 5202227392836963325
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_17
+      rect:
+        serializedVersion: 2
+        x: 462
+        y: 267
+        width: 10
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a2724b8f809a79290800000000000000
+      internalID: -7883646766691375318
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_18
+      rect:
+        serializedVersion: 2
+        x: 555
+        y: 263
+        width: 6
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fec16b3f867fae960800000000000000
+      internalID: 7632184548670184687
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_19
+      rect:
+        serializedVersion: 2
+        x: 565
+        y: 266
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 12876a039d16be630800000000000000
+      internalID: 3957364283027126305
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_20
+      rect:
+        serializedVersion: 2
+        x: 589
+        y: 261
+        width: 12
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 45edad2f034e79600800000000000000
+      internalID: 475099184594869844
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_21
+      rect:
+        serializedVersion: 2
+        x: 609
+        y: 264
+        width: 8
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 85dfdd519ba6efa10800000000000000
+      internalID: 1945109432238996824
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_22
+      rect:
+        serializedVersion: 2
+        x: 622
+        y: 268
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d7431a94a18e795e0800000000000000
+      internalID: -1902797117938649987
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_23
+      rect:
+        serializedVersion: 2
+        x: 633
+        y: 264
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9aed6150d46c19da0800000000000000
+      internalID: -5939748399424807255
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_24
+      rect:
+        serializedVersion: 2
+        x: 718
+        y: 267
+        width: 10
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 17f21ee786994c450800000000000000
+      internalID: 6108175668705570673
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_25
+      rect:
+        serializedVersion: 2
+        x: 811
+        y: 263
+        width: 6
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1d7e6bb96127c9df0800000000000000
+      internalID: -172137244319619119
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_26
+      rect:
+        serializedVersion: 2
+        x: 821
+        y: 266
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 340e3f6ca92534cd0800000000000000
+      internalID: -2575123737209479101
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_27
+      rect:
+        serializedVersion: 2
+        x: 845
+        y: 261
+        width: 12
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 14779ff879aa01060800000000000000
+      internalID: 6922220195200726849
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_28
+      rect:
+        serializedVersion: 2
+        x: 865
+        y: 264
+        width: 8
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e51fa7ec386207100800000000000000
+      internalID: 103625138976256350
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_29
+      rect:
+        serializedVersion: 2
+        x: 878
+        y: 268
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5126da46eb10c3460800000000000000
+      internalID: 7222649819639931413
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_30
+      rect:
+        serializedVersion: 2
+        x: 889
+        y: 264
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 53f7c1918a1cf0d00800000000000000
+      internalID: 941183774863687477
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_31
+      rect:
+        serializedVersion: 2
+        x: 974
+        y: 267
+        width: 10
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c3d1baba037bc8530800000000000000
+      internalID: 3858660400416103740
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_32
+      rect:
+        serializedVersion: 2
+        x: 1067
+        y: 263
+        width: 6
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 34a709298e8d23bd0800000000000000
+      internalID: -2651818737164846525
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_33
+      rect:
+        serializedVersion: 2
+        x: 1077
+        y: 266
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 80b6ccc248e2676e0800000000000000
+      internalID: -1840232252512113912
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_34
+      rect:
+        serializedVersion: 2
+        x: 1101
+        y: 261
+        width: 12
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f4e90a12b02f45e00800000000000000
+      internalID: 1032716344197422671
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_35
+      rect:
+        serializedVersion: 2
+        x: 1121
+        y: 264
+        width: 8
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bea220537b4945fa0800000000000000
+      internalID: -5812857704439207189
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_36
+      rect:
+        serializedVersion: 2
+        x: 1134
+        y: 264
+        width: 7
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 09aba7a1270375860800000000000000
+      internalID: 7518531369546988176
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_37
+      rect:
+        serializedVersion: 2
+        x: 1145
+        y: 264
+        width: 10
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fb7b00ba3c3151ad0800000000000000
+      internalID: -2732255867821836353
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_38
+      rect:
+        serializedVersion: 2
+        x: 1162
+        y: 265
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 30df42ad9c2e70a20800000000000000
+      internalID: 3028638631006108931
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_39
+      rect:
+        serializedVersion: 2
+        x: 1168
+        y: 265
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 50d0461bf7c8dbed0800000000000000
+      internalID: -2396604946626376443
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_40
+      rect:
+        serializedVersion: 2
+        x: 1189
+        y: 269
+        width: 9
+        height: 5
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7896780bafcbbd740800000000000000
+      internalID: 5177939981482027399
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_41
+      rect:
+        serializedVersion: 2
+        x: 1230
+        y: 268
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0462f35fe0d3edd70800000000000000
+      internalID: 9069753834024150592
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_42
+      rect:
+        serializedVersion: 2
+        x: 14
+        y: 244
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8a902f8705f01f7a0800000000000000
+      internalID: -6345273561687389784
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_43
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 218
+        width: 13
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 09d1ee69bf7523430800000000000000
+      internalID: 3761165376888380816
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_44
+      rect:
+        serializedVersion: 2
+        x: 7
+        y: 236
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d56d7992c1dba0240800000000000000
+      internalID: 4758823884924900957
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_45
+      rect:
+        serializedVersion: 2
+        x: 14
+        y: 230
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cdf130b18904f33e0800000000000000
+      internalID: -2071866281534742564
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_46
+      rect:
+        serializedVersion: 2
+        x: 1263
+        y: 233
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b856d6101a1d13760800000000000000
+      internalID: 7435954949209286027
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_47
+      rect:
+        serializedVersion: 2
+        x: 9
+        y: 221
+        width: 9
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6eaf6f24ad8ad2ce0800000000000000
+      internalID: -1428299851426759962
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_48
+      rect:
+        serializedVersion: 2
+        x: 1260
+        y: 221
+        width: 12
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 714e815c4b6904510800000000000000
+      internalID: 1531389576450991127
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_49
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 208
+        width: 9
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1d663f08068af8210800000000000000
+      internalID: 1337472746786088657
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_50
+      rect:
+        serializedVersion: 2
+        x: 14
+        y: 213
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ea1f0e80f94868880800000000000000
+      internalID: -8609047819088498258
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_51
+      rect:
+        serializedVersion: 2
+        x: 1260
+        y: 213
+        width: 9
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 28a0ce984021ee6d0800000000000000
+      internalID: -2959408094432720254
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_52
+      rect:
+        serializedVersion: 2
+        x: 1268
+        y: 213
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 280c2767f29443b40800000000000000
+      internalID: 5419036719833071746
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_53
+      rect:
+        serializedVersion: 2
+        x: 1270
+        y: 203
+        width: 8
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a829f5c3f1fe56380800000000000000
+      internalID: -8978507364657294710
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_54
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 186
+        width: 8
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4925ec7283f2cdcc0800000000000000
+      internalID: -3685018476863401324
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_55
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 200
+        width: 10
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 797f7db3dd91024f0800000000000000
+      internalID: -855655491217918057
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_56
+      rect:
+        serializedVersion: 2
+        x: 12
+        y: 199
+        width: 10
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e602cdd55f3c0a420800000000000000
+      internalID: 2639324840248221806
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_57
+      rect:
+        serializedVersion: 2
+        x: 13
+        y: 191
+        width: 12
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2ee865a28594a1070800000000000000
+      internalID: 8077849524658671330
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_58
+      rect:
+        serializedVersion: 2
+        x: 1259
+        y: 192
+        width: 10
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ea71332d0205955a0800000000000000
+      internalID: -6532101682628454482
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_59
+      rect:
+        serializedVersion: 2
+        x: 6
+        y: 188
+        width: 9
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 61fa814b27b31b5b0800000000000000
+      internalID: -5354433118132981994
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_60
+      rect:
+        serializedVersion: 2
+        x: 1269
+        y: 192
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 108a4b8d706e902a0800000000000000
+      internalID: -6770627643399952383
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_61
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 179
+        width: 11
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f3ddf5d13e51b36e0800000000000000
+      internalID: -1856866356165616321
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_62
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 173
+        width: 13
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7810fa943a3e95d70800000000000000
+      internalID: 9032500818123620743
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_63
+      rect:
+        serializedVersion: 2
+        x: 1262
+        y: 181
+        width: 9
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 524d7fba6c2314630800000000000000
+      internalID: 3909461780404360229
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_64
+      rect:
+        serializedVersion: 2
+        x: 1273
+        y: 177
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 14799b68b348741f0800000000000000
+      internalID: -1060733796024215743
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_65
+      rect:
+        serializedVersion: 2
+        x: 5
+        y: 165
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e4d9ca22d8238f6f0800000000000000
+      internalID: -650714564401521330
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_66
+      rect:
+        serializedVersion: 2
+        x: 1265
+        y: 166
+        width: 10
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4a859c0dceabf2bc0800000000000000
+      internalID: -3805617633826875228
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_67
+      rect:
+        serializedVersion: 2
+        x: 9
+        y: 153
+        width: 13
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ae6c6d8ba7a39b510800000000000000
+      internalID: 1565346644249462506
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_68
+      rect:
+        serializedVersion: 2
+        x: 11
+        y: 147
+        width: 9
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f9f5e295cd18b2290800000000000000
+      internalID: -7914089136784515169
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_69
+      rect:
+        serializedVersion: 2
+        x: 1270
+        y: 148
+        width: 10
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 88fea84febde4e1a0800000000000000
+      internalID: -6781033734510809208
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_70
+      rect:
+        serializedVersion: 2
+        x: 3
+        y: 144
+        width: 6
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 73a3d67deb5f92100800000000000000
+      internalID: 83868268089915959
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_71
+      rect:
+        serializedVersion: 2
+        x: 7
+        y: 141
+        width: 10
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 01d339065341bb050800000000000000
+      internalID: 5817265563165211920
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_72
+      rect:
+        serializedVersion: 2
+        x: 1262
+        y: 145
+        width: 9
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3229fbb09c42188d0800000000000000
+      internalID: -2845953043617312221
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_73
+      rect:
+        serializedVersion: 2
+        x: 1
+        y: 134
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f20a0038a8aaf8bb0800000000000000
+      internalID: -4931535555067338705
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_74
+      rect:
+        serializedVersion: 2
+        x: 3
+        y: 132
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2917c875fe5ebe300800000000000000
+      internalID: 282572217769554322
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_75
+      rect:
+        serializedVersion: 2
+        x: 1266
+        y: 135
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 04770b5da388d0f40800000000000000
+      internalID: 5696358889968138048
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_76
+      rect:
+        serializedVersion: 2
+        x: 1263
+        y: 128
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2941b5f936d71bfe0800000000000000
+      internalID: -1175020160938208110
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_77
+      rect:
+        serializedVersion: 2
+        x: 1270
+        y: 121
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5bd2ca26f09ff6d50800000000000000
+      internalID: 6732873812417457589
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_78
+      rect:
+        serializedVersion: 2
+        x: 3
+        y: 121
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 01ecb08d288d237d0800000000000000
+      internalID: -2940049550237512176
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_79
+      rect:
+        serializedVersion: 2
+        x: 4
+        y: 112
+        width: 6
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: be947569076929740800000000000000
+      internalID: 5157349933595445739
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_80
+      rect:
+        serializedVersion: 2
+        x: 11
+        y: 105
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 37cbbb261beab9680800000000000000
+      internalID: -8747205774348141453
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_81
+      rect:
+        serializedVersion: 2
+        x: 1263
+        y: 99
+        width: 13
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 31817e3c5ac027110800000000000000
+      internalID: 1257081152085628947
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_82
+      rect:
+        serializedVersion: 2
+        x: 7
+        y: 94
+        width: 6
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f2f9a66acaab76070800000000000000
+      internalID: 8099647705538273071
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_83
+      rect:
+        serializedVersion: 2
+        x: 1270
+        y: 85
+        width: 12
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6054ee3f23fe97820800000000000000
+      internalID: 2916625235818988806
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_84
+      rect:
+        serializedVersion: 2
+        x: 4
+        y: 74
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3518dec4197714040800000000000000
+      internalID: 4630113357858177363
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_85
+      rect:
+        serializedVersion: 2
+        x: 6
+        y: 79
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7e3d929ee82cb2910800000000000000
+      internalID: 1813757193999733735
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_86
+      rect:
+        serializedVersion: 2
+        x: 1262
+        y: 75
+        width: 14
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 19fd1984248951a80800000000000000
+      internalID: -8496717711511789679
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_87
+      rect:
+        serializedVersion: 2
+        x: 1271
+        y: 75
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2a06c7bd448808af0800000000000000
+      internalID: -396166937887088478
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_88
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 70
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fba81887a8c110eb0800000000000000
+      internalID: -4755488350473712961
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_89
+      rect:
+        serializedVersion: 2
+        x: 1
+        y: 65
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d7660f083e42eacd0800000000000000
+      internalID: -2545056179878336899
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_90
+      rect:
+        serializedVersion: 2
+        x: 1267
+        y: 65
+        width: 10
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4c3c1281b324fa950800000000000000
+      internalID: 6462456811875320772
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_91
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 43
+        width: 9
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: edee1d065ecebaf80800000000000000
+      internalID: -8094115435352297762
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_92
+      rect:
+        serializedVersion: 2
+        x: 10
+        y: 52
+        width: 10
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ff652d234af0234b0800000000000000
+      internalID: -5462286200145291521
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_93
+      rect:
+        serializedVersion: 2
+        x: 1265
+        y: 52
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 39f8992ec919d87b0800000000000000
+      internalID: -5220356290049896557
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_94
+      rect:
+        serializedVersion: 2
+        x: 1272
+        y: 54
+        width: 8
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 14cfc2fab4a1bee30800000000000000
+      internalID: 4533746362242366529
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_95
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 40
+        width: 6
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c685cf81506c924a0800000000000000
+      internalID: -6617540452247906196
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_96
+      rect:
+        serializedVersion: 2
+        x: 4
+        y: 36
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f6aec442891a72170800000000000000
+      internalID: 8153663325193693807
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_97
+      rect:
+        serializedVersion: 2
+        x: 1261
+        y: 35
+        width: 10
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: be65113649d4cb0e0800000000000000
+      internalID: -2252840413879511317
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_98
+      rect:
+        serializedVersion: 2
+        x: 1270
+        y: 36
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7b2337755d25ae5b0800000000000000
+      internalID: -5338363332045622601
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_99
+      rect:
+        serializedVersion: 2
+        x: 10
+        y: 23
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2c11c48b270743200800000000000000
+      internalID: 158875524885385666
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_100
+      rect:
+        serializedVersion: 2
+        x: 15
+        y: 28
+        width: 11
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 27a6291d8d122bff0800000000000000
+      internalID: -21917833070744974
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_101
+      rect:
+        serializedVersion: 2
+        x: 67
+        y: 3
+        width: 10
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 19fd453b75c767100800000000000000
+      internalID: 105408357402468241
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_102
+      rect:
+        serializedVersion: 2
+        x: 78
+        y: 0
+        width: 6
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 43f46ff3b41aaa070800000000000000
+      internalID: 8118478622856466228
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_103
+      rect:
+        serializedVersion: 2
+        x: 81
+        y: 4
+        width: 13
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f2e3b0f8b6f8cad00800000000000000
+      internalID: 985320110611447343
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_104
+      rect:
+        serializedVersion: 2
+        x: 86
+        y: 0
+        width: 17
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1f008de3cb6ba5030800000000000000
+      internalID: 3484298181348950257
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_105
+      rect:
+        serializedVersion: 2
+        x: 107
+        y: 0
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b96c711e0c093a600800000000000000
+      internalID: 478385143515956891
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_106
+      rect:
+        serializedVersion: 2
+        x: 131
+        y: 0
+        width: 21
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 21e236051297c3e20800000000000000
+      internalID: 3331671008336883218
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_107
+      rect:
+        serializedVersion: 2
+        x: 170
+        y: 0
+        width: 17
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2db2ff2e6e4243eb0800000000000000
+      internalID: -4741123933644837934
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_108
+      rect:
+        serializedVersion: 2
+        x: 187
+        y: 0
+        width: 12
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 33d2c60a034e202a0800000000000000
+      internalID: -6772599992110797517
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_109
+      rect:
+        serializedVersion: 2
+        x: 198
+        y: 0
+        width: 8
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0d7690d4121f593c0800000000000000
+      internalID: -4353308339455039536
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_110
+      rect:
+        serializedVersion: 2
+        x: 242
+        y: 5
+        width: 9
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b8bc1d791cf33d920800000000000000
+      internalID: 3013822676349340555
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_111
+      rect:
+        serializedVersion: 2
+        x: 247
+        y: 0
+        width: 12
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7820ada32cd2fe280800000000000000
+      internalID: -9011934017110801785
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_112
+      rect:
+        serializedVersion: 2
+        x: 262
+        y: 0
+        width: 11
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 852d4d96b86ebcb50800000000000000
+      internalID: 6614633964174103128
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_113
+      rect:
+        serializedVersion: 2
+        x: 270
+        y: 0
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: babef5fd5ca0cf100800000000000000
+      internalID: 143001133141453739
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_114
+      rect:
+        serializedVersion: 2
+        x: 293
+        y: 4
+        width: 8
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 33b24a935d44841f0800000000000000
+      internalID: -1060522029659968717
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_115
+      rect:
+        serializedVersion: 2
+        x: 323
+        y: 3
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6872938b4e46465f0800000000000000
+      internalID: -764375103240067194
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_116
+      rect:
+        serializedVersion: 2
+        x: 327
+        y: 3
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 898e8f7c660243fa0800000000000000
+      internalID: -5821992792469477224
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_117
+      rect:
+        serializedVersion: 2
+        x: 333
+        y: 5
+        width: 9
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7dd1f9d236d57db10800000000000000
+      internalID: 2006174839565393367
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_118
+      rect:
+        serializedVersion: 2
+        x: 342
+        y: 0
+        width: 21
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 035b0ff9783e55380800000000000000
+      internalID: -8983023710077143760
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_119
+      rect:
+        serializedVersion: 2
+        x: 363
+        y: 0
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f128937a12b644010800000000000000
+      internalID: 1172179595306828319
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_120
+      rect:
+        serializedVersion: 2
+        x: 381
+        y: 0
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 23c64f4476ca88da0800000000000000
+      internalID: -5942310148776891342
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_121
+      rect:
+        serializedVersion: 2
+        x: 408
+        y: 0
+        width: 13
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c6bf8caa367a9f970800000000000000
+      internalID: 8789240194299132780
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_122
+      rect:
+        serializedVersion: 2
+        x: 426
+        y: 0
+        width: 17
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 78c20007d013383b0800000000000000
+      internalID: -5511507585187959673
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_123
+      rect:
+        serializedVersion: 2
+        x: 443
+        y: 0
+        width: 12
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 18ef6100d6c921520800000000000000
+      internalID: 2671369520951000705
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_124
+      rect:
+        serializedVersion: 2
+        x: 454
+        y: 0
+        width: 8
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2eec98a5d53e38460800000000000000
+      internalID: 7242882615832334050
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_125
+      rect:
+        serializedVersion: 2
+        x: 503
+        y: 0
+        width: 12
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 82ea35c2202ee4f40800000000000000
+      internalID: 5714753476141231656
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_126
+      rect:
+        serializedVersion: 2
+        x: 518
+        y: 0
+        width: 11
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 47f6c950ef7c76af0800000000000000
+      internalID: -403133747796611212
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_127
+      rect:
+        serializedVersion: 2
+        x: 526
+        y: 0
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5825f350a7ade2260800000000000000
+      internalID: 7074832282254529157
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_128
+      rect:
+        serializedVersion: 2
+        x: 549
+        y: 4
+        width: 8
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 90248d90ac2ee6ab0800000000000000
+      internalID: -5012819977840344567
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_129
+      rect:
+        serializedVersion: 2
+        x: 579
+        y: 3
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8b12a64178cb39810800000000000000
+      internalID: 1770966366835843512
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_130
+      rect:
+        serializedVersion: 2
+        x: 583
+        y: 3
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 384dfd96fcbaac680800000000000000
+      internalID: -8733979620008799101
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_131
+      rect:
+        serializedVersion: 2
+        x: 598
+        y: 0
+        width: 21
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 806c42325eea96070800000000000000
+      internalID: 8100197703962904072
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_132
+      rect:
+        serializedVersion: 2
+        x: 619
+        y: 0
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 32b276823a66ab7f0800000000000000
+      internalID: -596051149729617117
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_133
+      rect:
+        serializedVersion: 2
+        x: 637
+        y: 0
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 637073b1f820be0b0800000000000000
+      internalID: -5698458089847060682
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_134
+      rect:
+        serializedVersion: 2
+        x: 664
+        y: 0
+        width: 13
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 12149c286431affb0800000000000000
+      internalID: -4613353674724785887
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_135
+      rect:
+        serializedVersion: 2
+        x: 682
+        y: 0
+        width: 17
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6528e9504354534f0800000000000000
+      internalID: -849696864954580394
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_136
+      rect:
+        serializedVersion: 2
+        x: 699
+        y: 0
+        width: 12
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b650e63a9b3a82f00800000000000000
+      internalID: 1092302927343519083
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_137
+      rect:
+        serializedVersion: 2
+        x: 710
+        y: 0
+        width: 8
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 12e1e60fd820b04f0800000000000000
+      internalID: -861592095063925215
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_138
+      rect:
+        serializedVersion: 2
+        x: 759
+        y: 0
+        width: 12
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 29f3e991660ed34e0800000000000000
+      internalID: -2000195930361544814
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_139
+      rect:
+        serializedVersion: 2
+        x: 774
+        y: 0
+        width: 11
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fbb7f062eb0e3a620800000000000000
+      internalID: 2784316101932055487
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_140
+      rect:
+        serializedVersion: 2
+        x: 782
+        y: 0
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 867b559bb8dd476c0800000000000000
+      internalID: -4146445764721789080
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_141
+      rect:
+        serializedVersion: 2
+        x: 805
+        y: 4
+        width: 8
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 670159d3322900040800000000000000
+      internalID: 4611846698482077814
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_142
+      rect:
+        serializedVersion: 2
+        x: 835
+        y: 3
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c27b34c765148c840800000000000000
+      internalID: 5244513605780748076
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_143
+      rect:
+        serializedVersion: 2
+        x: 839
+        y: 3
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 84d6a219830dba120800000000000000
+      internalID: 2426261765641366856
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_144
+      rect:
+        serializedVersion: 2
+        x: 854
+        y: 0
+        width: 21
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ede8779bc4058bf90800000000000000
+      internalID: -6937706935504892194
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_145
+      rect:
+        serializedVersion: 2
+        x: 875
+        y: 0
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d7f3c7ba8cf487cb0800000000000000
+      internalID: -4866051674084720771
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_146
+      rect:
+        serializedVersion: 2
+        x: 893
+        y: 0
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b10e67734b9e56540800000000000000
+      internalID: 5000659921498726427
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_147
+      rect:
+        serializedVersion: 2
+        x: 920
+        y: 0
+        width: 13
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 41a5ffc60a8880510800000000000000
+      internalID: 1515611497214990868
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_148
+      rect:
+        serializedVersion: 2
+        x: 938
+        y: 0
+        width: 17
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dda5689beb08b6e90800000000000000
+      internalID: -7031384836564165923
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_149
+      rect:
+        serializedVersion: 2
+        x: 955
+        y: 0
+        width: 12
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 53f363fda87915df0800000000000000
+      internalID: -193206686294065355
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_150
+      rect:
+        serializedVersion: 2
+        x: 966
+        y: 0
+        width: 8
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3351cb293edca90f0800000000000000
+      internalID: -1109347980890335949
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_151
+      rect:
+        serializedVersion: 2
+        x: 1015
+        y: 0
+        width: 12
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 50540523178e15750800000000000000
+      internalID: 6292065727286363397
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_152
+      rect:
+        serializedVersion: 2
+        x: 1030
+        y: 0
+        width: 11
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a5c4502688b7fe020800000000000000
+      internalID: 2373251354337823834
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_153
+      rect:
+        serializedVersion: 2
+        x: 1038
+        y: 0
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2d505effebb70f060800000000000000
+      internalID: 6985219082318841298
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_154
+      rect:
+        serializedVersion: 2
+        x: 1061
+        y: 4
+        width: 8
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b56f4e76b3dd586b0800000000000000
+      internalID: -5294582539688282533
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_155
+      rect:
+        serializedVersion: 2
+        x: 1091
+        y: 3
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3b9b672ff4e1ff380800000000000000
+      internalID: -8935389806960657997
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_156
+      rect:
+        serializedVersion: 2
+        x: 1095
+        y: 3
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 721862a43868ec2f0800000000000000
+      internalID: -950674572885720793
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_157
+      rect:
+        serializedVersion: 2
+        x: 1110
+        y: 0
+        width: 21
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 309132d1d351e2750800000000000000
+      internalID: 6281981882454448387
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_158
+      rect:
+        serializedVersion: 2
+        x: 1131
+        y: 0
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cedfcaf3dcad267a0800000000000000
+      internalID: -6385300746586489364
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_159
+      rect:
+        serializedVersion: 2
+        x: 1155
+        y: 1
+        width: 13
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 19346ba5fad8d1f50800000000000000
+      internalID: 6853789992208450449
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_160
+      rect:
+        serializedVersion: 2
+        x: 1166
+        y: 3
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bc35486179c0aaa90800000000000000
+      internalID: -7302010002770471989
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_161
+      rect:
+        serializedVersion: 2
+        x: 1176
+        y: 0
+        width: 10
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9c235ccae0df3d160800000000000000
+      internalID: 7049256081234932425
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_162
+      rect:
+        serializedVersion: 2
+        x: 1197
+        y: 0
+        width: 14
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6b0bdcff85e521290800000000000000
+      internalID: -7921165058249477962
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_163
+      rect:
+        serializedVersion: 2
+        x: 1211
+        y: 0
+        width: 12
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a3be0bd872fed3b70800000000000000
+      internalID: 8880516993404431162
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Track Unlocked no txt_164
+      rect:
+        serializedVersion: 2
+        x: 1222
+        y: 0
+        width: 13
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2f5471d3d542492f0800000000000000
+      internalID: -967108037102320142
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      New Track Unlocked no txt_0: -1257875727864010565
+      New Track Unlocked no txt_1: 3492651810295679013
+      New Track Unlocked no txt_10: 1390705786247297898
+      New Track Unlocked no txt_100: -21917833070744974
+      New Track Unlocked no txt_101: 105408357402468241
+      New Track Unlocked no txt_102: 8118478622856466228
+      New Track Unlocked no txt_103: 985320110611447343
+      New Track Unlocked no txt_104: 3484298181348950257
+      New Track Unlocked no txt_105: 478385143515956891
+      New Track Unlocked no txt_106: 3331671008336883218
+      New Track Unlocked no txt_107: -4741123933644837934
+      New Track Unlocked no txt_108: -6772599992110797517
+      New Track Unlocked no txt_109: -4353308339455039536
+      New Track Unlocked no txt_11: -1145569486037630749
+      New Track Unlocked no txt_110: 3013822676349340555
+      New Track Unlocked no txt_111: -9011934017110801785
+      New Track Unlocked no txt_112: 6614633964174103128
+      New Track Unlocked no txt_113: 143001133141453739
+      New Track Unlocked no txt_114: -1060522029659968717
+      New Track Unlocked no txt_115: -764375103240067194
+      New Track Unlocked no txt_116: -5821992792469477224
+      New Track Unlocked no txt_117: 2006174839565393367
+      New Track Unlocked no txt_118: -8983023710077143760
+      New Track Unlocked no txt_119: 1172179595306828319
+      New Track Unlocked no txt_12: -5312936804188597815
+      New Track Unlocked no txt_120: -5942310148776891342
+      New Track Unlocked no txt_121: 8789240194299132780
+      New Track Unlocked no txt_122: -5511507585187959673
+      New Track Unlocked no txt_123: 2671369520951000705
+      New Track Unlocked no txt_124: 7242882615832334050
+      New Track Unlocked no txt_125: 5714753476141231656
+      New Track Unlocked no txt_126: -403133747796611212
+      New Track Unlocked no txt_127: 7074832282254529157
+      New Track Unlocked no txt_128: -5012819977840344567
+      New Track Unlocked no txt_129: 1770966366835843512
+      New Track Unlocked no txt_13: -1200971558181267856
+      New Track Unlocked no txt_130: -8733979620008799101
+      New Track Unlocked no txt_131: 8100197703962904072
+      New Track Unlocked no txt_132: -596051149729617117
+      New Track Unlocked no txt_133: -5698458089847060682
+      New Track Unlocked no txt_134: -4613353674724785887
+      New Track Unlocked no txt_135: -849696864954580394
+      New Track Unlocked no txt_136: 1092302927343519083
+      New Track Unlocked no txt_137: -861592095063925215
+      New Track Unlocked no txt_138: -2000195930361544814
+      New Track Unlocked no txt_139: 2784316101932055487
+      New Track Unlocked no txt_14: 5095472776761811426
+      New Track Unlocked no txt_140: -4146445764721789080
+      New Track Unlocked no txt_141: 4611846698482077814
+      New Track Unlocked no txt_142: 5244513605780748076
+      New Track Unlocked no txt_143: 2426261765641366856
+      New Track Unlocked no txt_144: -6937706935504892194
+      New Track Unlocked no txt_145: -4866051674084720771
+      New Track Unlocked no txt_146: 5000659921498726427
+      New Track Unlocked no txt_147: 1515611497214990868
+      New Track Unlocked no txt_148: -7031384836564165923
+      New Track Unlocked no txt_149: -193206686294065355
+      New Track Unlocked no txt_15: 1657926155403551124
+      New Track Unlocked no txt_150: -1109347980890335949
+      New Track Unlocked no txt_151: 6292065727286363397
+      New Track Unlocked no txt_152: 2373251354337823834
+      New Track Unlocked no txt_153: 6985219082318841298
+      New Track Unlocked no txt_154: -5294582539688282533
+      New Track Unlocked no txt_155: -8935389806960657997
+      New Track Unlocked no txt_156: -950674572885720793
+      New Track Unlocked no txt_157: 6281981882454448387
+      New Track Unlocked no txt_158: -6385300746586489364
+      New Track Unlocked no txt_159: 6853789992208450449
+      New Track Unlocked no txt_16: 5202227392836963325
+      New Track Unlocked no txt_160: -7302010002770471989
+      New Track Unlocked no txt_161: 7049256081234932425
+      New Track Unlocked no txt_162: -7921165058249477962
+      New Track Unlocked no txt_163: 8880516993404431162
+      New Track Unlocked no txt_164: -967108037102320142
+      New Track Unlocked no txt_17: -7883646766691375318
+      New Track Unlocked no txt_18: 7632184548670184687
+      New Track Unlocked no txt_19: 3957364283027126305
+      New Track Unlocked no txt_2: 561816074934461245
+      New Track Unlocked no txt_20: 475099184594869844
+      New Track Unlocked no txt_21: 1945109432238996824
+      New Track Unlocked no txt_22: -1902797117938649987
+      New Track Unlocked no txt_23: -5939748399424807255
+      New Track Unlocked no txt_24: 6108175668705570673
+      New Track Unlocked no txt_25: -172137244319619119
+      New Track Unlocked no txt_26: -2575123737209479101
+      New Track Unlocked no txt_27: 6922220195200726849
+      New Track Unlocked no txt_28: 103625138976256350
+      New Track Unlocked no txt_29: 7222649819639931413
+      New Track Unlocked no txt_3: 927951248809095725
+      New Track Unlocked no txt_30: 941183774863687477
+      New Track Unlocked no txt_31: 3858660400416103740
+      New Track Unlocked no txt_32: -2651818737164846525
+      New Track Unlocked no txt_33: -1840232252512113912
+      New Track Unlocked no txt_34: 1032716344197422671
+      New Track Unlocked no txt_35: -5812857704439207189
+      New Track Unlocked no txt_36: 7518531369546988176
+      New Track Unlocked no txt_37: -2732255867821836353
+      New Track Unlocked no txt_38: 3028638631006108931
+      New Track Unlocked no txt_39: -2396604946626376443
+      New Track Unlocked no txt_4: 2193403404684376948
+      New Track Unlocked no txt_40: 5177939981482027399
+      New Track Unlocked no txt_41: 9069753834024150592
+      New Track Unlocked no txt_42: -6345273561687389784
+      New Track Unlocked no txt_43: 3761165376888380816
+      New Track Unlocked no txt_44: 4758823884924900957
+      New Track Unlocked no txt_45: -2071866281534742564
+      New Track Unlocked no txt_46: 7435954949209286027
+      New Track Unlocked no txt_47: -1428299851426759962
+      New Track Unlocked no txt_48: 1531389576450991127
+      New Track Unlocked no txt_49: 1337472746786088657
+      New Track Unlocked no txt_5: 3908387809986185837
+      New Track Unlocked no txt_50: -8609047819088498258
+      New Track Unlocked no txt_51: -2959408094432720254
+      New Track Unlocked no txt_52: 5419036719833071746
+      New Track Unlocked no txt_53: -8978507364657294710
+      New Track Unlocked no txt_54: -3685018476863401324
+      New Track Unlocked no txt_55: -855655491217918057
+      New Track Unlocked no txt_56: 2639324840248221806
+      New Track Unlocked no txt_57: 8077849524658671330
+      New Track Unlocked no txt_58: -6532101682628454482
+      New Track Unlocked no txt_59: -5354433118132981994
+      New Track Unlocked no txt_6: -6267942176716658513
+      New Track Unlocked no txt_60: -6770627643399952383
+      New Track Unlocked no txt_61: -1856866356165616321
+      New Track Unlocked no txt_62: 9032500818123620743
+      New Track Unlocked no txt_63: 3909461780404360229
+      New Track Unlocked no txt_64: -1060733796024215743
+      New Track Unlocked no txt_65: -650714564401521330
+      New Track Unlocked no txt_66: -3805617633826875228
+      New Track Unlocked no txt_67: 1565346644249462506
+      New Track Unlocked no txt_68: -7914089136784515169
+      New Track Unlocked no txt_69: -6781033734510809208
+      New Track Unlocked no txt_7: -4553142378689036498
+      New Track Unlocked no txt_70: 83868268089915959
+      New Track Unlocked no txt_71: 5817265563165211920
+      New Track Unlocked no txt_72: -2845953043617312221
+      New Track Unlocked no txt_73: -4931535555067338705
+      New Track Unlocked no txt_74: 282572217769554322
+      New Track Unlocked no txt_75: 5696358889968138048
+      New Track Unlocked no txt_76: -1175020160938208110
+      New Track Unlocked no txt_77: 6732873812417457589
+      New Track Unlocked no txt_78: -2940049550237512176
+      New Track Unlocked no txt_79: 5157349933595445739
+      New Track Unlocked no txt_8: 7242808837554816438
+      New Track Unlocked no txt_80: -8747205774348141453
+      New Track Unlocked no txt_81: 1257081152085628947
+      New Track Unlocked no txt_82: 8099647705538273071
+      New Track Unlocked no txt_83: 2916625235818988806
+      New Track Unlocked no txt_84: 4630113357858177363
+      New Track Unlocked no txt_85: 1813757193999733735
+      New Track Unlocked no txt_86: -8496717711511789679
+      New Track Unlocked no txt_87: -396166937887088478
+      New Track Unlocked no txt_88: -4755488350473712961
+      New Track Unlocked no txt_89: -2545056179878336899
+      New Track Unlocked no txt_9: 9205461472939206553
+      New Track Unlocked no txt_90: 6462456811875320772
+      New Track Unlocked no txt_91: -8094115435352297762
+      New Track Unlocked no txt_92: -5462286200145291521
+      New Track Unlocked no txt_93: -5220356290049896557
+      New Track Unlocked no txt_94: 4533746362242366529
+      New Track Unlocked no txt_95: -6617540452247906196
+      New Track Unlocked no txt_96: 8153663325193693807
+      New Track Unlocked no txt_97: -2252840413879511317
+      New Track Unlocked no txt_98: -5338363332045622601
+      New Track Unlocked no txt_99: 158875524885385666
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
