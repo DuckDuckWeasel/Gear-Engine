@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using GearEngine.App.Bootstrap.Layers;
+using GearEngine.App.Bootstrap.Offline;
 using LiveOps.Modules.DTO.Perks;
 using LiveOps.Modules.DTO.Currency;
 using LiveOps.Modules.DTO.Inventory;
@@ -20,8 +21,15 @@ namespace GearEngine.App.Bootstrap
     {
         protected override IEnumerable<IScopeLayer> GetGameLayers()
         {
-            yield return new UgsLayer();
-            yield return new LiveOpsLayer();
+            if (OfflineMode)
+            {
+                yield return new OfflineLiveOpsLayer(OfflineConfigBuilders);
+            }
+            else
+            {
+                yield return new UgsLayer();
+                yield return new LiveOpsLayer();
+            }
         }
 
         protected override Task OnReadyAsync(CancellationToken ct)

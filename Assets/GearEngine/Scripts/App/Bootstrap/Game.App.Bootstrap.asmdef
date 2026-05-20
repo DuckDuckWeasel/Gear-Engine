@@ -17,6 +17,7 @@
         "Scaffold.Ugs.Container",
         "Scaffold.CloudCode.Container",
         "Scaffold.LiveOps",
+        "Scaffold.LiveOps.Authoring",
         "Scaffold.LiveOps.Container",
         "Scaffold.MVVM",
         "Scaffold.MVVM.View",

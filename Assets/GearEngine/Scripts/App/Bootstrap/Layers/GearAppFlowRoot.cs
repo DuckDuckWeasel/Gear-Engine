@@ -4,6 +4,7 @@ using GearEngine.App.Bootstrap.Layers;
 using GearEngine.CarSimulation.Definitions;
 using Scaffold.AppFlow;
 using Scaffold.AppFlow.Publishers.DataDriven;
+using Scaffold.LiveOps.Authoring;
 using Scaffold.Navigation;
 using UnityEngine;
 
@@ -27,6 +28,19 @@ namespace GearEngine.App.Bootstrap
         [Tooltip("Edit-time baked asset publishers (direct or Addressables). Campaign: track/gear (and related). Meta: same defaults as campaign when probing client data.")]
         [SerializeField]
         private List<AssetPublisherDefinition> layerAssetPublishers = new List<AssetPublisherDefinition>();
+
+        [Header("Offline Mode")]
+        [Tooltip("Skip UGS / LiveOps init and serve LiveOps module data from the assigned ConfigBuilder assets. Use when testing without internet. No persistence between sessions.")]
+        [SerializeField]
+        private bool offlineMode;
+
+        [Tooltip("ConfigBuilder assets used to build module data when Offline Mode is on (one per module: Currency, Inventory, Loadout, Tracks, Perks, Roguelike).")]
+        [SerializeField]
+        private List<ConfigBuilderSOBase> offlineConfigBuilders = new List<ConfigBuilderSOBase>();
+
+        protected bool OfflineMode => offlineMode;
+
+        protected IReadOnlyList<ConfigBuilderSOBase> OfflineConfigBuilders => offlineConfigBuilders;
 
         protected sealed override IInLayerScheduler CreateScheduler()
         {

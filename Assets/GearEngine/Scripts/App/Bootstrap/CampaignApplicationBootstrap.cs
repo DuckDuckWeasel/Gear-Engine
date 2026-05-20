@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using GearEngine.App.Bootstrap.Layers;
+using GearEngine.App.Bootstrap.Offline;
 using GearEngine.Campaign.Presentation;
 using GearEngine.Campaign.Services;
 using GearEngine.CarSimulation.Definitions;
@@ -40,8 +41,16 @@ namespace GearEngine.App.Bootstrap
 
         protected override IEnumerable<IScopeLayer> GetGameLayers()
         {
-            yield return new UgsLayer();
-            yield return new LiveOpsLayer();
+            if (OfflineMode)
+            {
+                yield return new OfflineLiveOpsLayer(OfflineConfigBuilders);
+            }
+            else
+            {
+                yield return new UgsLayer();
+                yield return new LiveOpsLayer();
+            }
+
             yield return new AdsLayer(adConfig);
             yield return new CampaignLayer(
                 boardRules,

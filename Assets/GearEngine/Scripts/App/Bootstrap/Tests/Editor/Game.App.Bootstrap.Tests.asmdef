@@ -11,6 +11,7 @@
         "Scaffold.AppFlow.Publishers.Editor",
         "Scaffold.CloudCode",
         "Scaffold.LiveOps",
+        "Scaffold.LiveOps.Authoring",
         "Scaffold.LiveOps.Container",
         "Scaffold.Navigation",
         "Unity.Addressables",
