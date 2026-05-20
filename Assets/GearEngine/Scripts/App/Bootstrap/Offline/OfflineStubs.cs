@@ -52,8 +52,16 @@ namespace GearEngine.App.Bootstrap.Offline
                 [typeof(SpendCurrencyRequest)] = (r, s) => HandleSpendCurrency((SpendCurrencyRequest)r, s),
                 [typeof(SetInventoryRequest)] = (r, s) => HandleSetInventory((SetInventoryRequest)r, s),
                 [typeof(RecordRaceResultRequest)] = (r, s) => HandleRecordRaceResult((RecordRaceResultRequest)r, s),
+                [typeof(DrawRoguelikeRollRequest)] = (r, s) => HandleDrawRoguelikeRoll((DrawRoguelikeRollRequest)r, s),
+                [typeof(ClaimRoguelikePickRequest)] = (r, s) => HandleClaimRoguelikePick((ClaimRoguelikePickRequest)r, s),
+                [typeof(SkipRoguelikePickRequest)] = (r, s) => HandleSkipRoguelikePick((SkipRoguelikePickRequest)r, s),
+                [typeof(RerollRoguelikeRollRequest)] = (r, s) => HandleRerollRoguelikeRoll((RerollRoguelikeRollRequest)r, s),
             };
         }
+
+        // Fixed pool the Roguelike draw/reroll handlers serve. Keep this in sync with real gear ids in
+        // the catalog so the resulting picks can actually be claimed.
+        private static readonly string[] RoguelikePool = new[] { "gear_base_1", "gear_base_2", "gear_score" };
 
         private static AddCurrencyResponse HandleAddCurrency(AddCurrencyRequest request, OfflineLiveOpsService service)
         {
@@ -93,6 +101,44 @@ namespace GearEngine.App.Bootstrap.Offline
             inventory.Gears = new List<OwnedGearEntry>(gears);
 
             return new SetInventoryResponse { Gears = gears };
+        }
+
+        private static DrawRoguelikeRollResponse HandleDrawRoguelikeRoll(DrawRoguelikeRollRequest request, OfflineLiveOpsService service)
+        {
+            RoguelikeGameData roguelike = service.GetModuleData<RoguelikeGameData>();
+            var ids = new List<string>(RoguelikePool);
+            roguelike.CurrentRollIds = new List<string>(ids);
+            return new DrawRoguelikeRollResponse { CurrentRollIds = ids };
+        }
+
+        private static ClaimRoguelikePickResponse HandleClaimRoguelikePick(ClaimRoguelikePickRequest request, OfflineLiveOpsService service)
+        {
+            RoguelikeGameData roguelike = service.GetModuleData<RoguelikeGameData>();
+            bool succeeded = !string.IsNullOrEmpty(request.PickedGearId)
+                && roguelike.CurrentRollIds != null
+                && roguelike.CurrentRollIds.Contains(request.PickedGearId);
+
+            if (succeeded)
+            {
+                roguelike.CurrentRollIds = new List<string>();
+            }
+
+            return new ClaimRoguelikePickResponse { Success = succeeded };
+        }
+
+        private static SkipRoguelikePickResponse HandleSkipRoguelikePick(SkipRoguelikePickRequest request, OfflineLiveOpsService service)
+        {
+            RoguelikeGameData roguelike = service.GetModuleData<RoguelikeGameData>();
+            roguelike.CurrentRollIds = new List<string>();
+            return new SkipRoguelikePickResponse { Success = true };
+        }
+
+        private static RerollRoguelikeRollResponse HandleRerollRoguelikeRoll(RerollRoguelikeRollRequest request, OfflineLiveOpsService service)
+        {
+            RoguelikeGameData roguelike = service.GetModuleData<RoguelikeGameData>();
+            var ids = new List<string>(RoguelikePool);
+            roguelike.CurrentRollIds = new List<string>(ids);
+            return new RerollRoguelikeRollResponse { CurrentRollIds = ids };
         }
 
         private static RecordRaceResultResponse HandleRecordRaceResult(RecordRaceResultRequest request, OfflineLiveOpsService service)

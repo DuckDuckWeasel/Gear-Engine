@@ -88,6 +88,67 @@ namespace GearEngine.App.Bootstrap.Tests.Editor
         }
 
         [Test]
+        public async Task CallAsync_DrawRoguelikeRoll_PopulatesCurrentRollIdsOnModuleData()
+        {
+            var service = new OfflineLiveOpsService();
+
+            DrawRoguelikeRollResponse response = await service.CallAsync(new DrawRoguelikeRollRequest(), CancellationToken.None);
+
+            Assert.That(response.CurrentRollIds, Is.Not.Empty);
+            Assert.That(service.GetModuleData<RoguelikeGameData>().CurrentRollIds, Is.EqualTo(response.CurrentRollIds));
+        }
+
+        [Test]
+        public async Task CallAsync_ClaimRoguelikePick_SucceedsForIdInCurrentRoll_AndClearsIt()
+        {
+            var service = new OfflineLiveOpsService();
+            await service.CallAsync(new DrawRoguelikeRollRequest(), CancellationToken.None);
+            string pick = service.GetModuleData<RoguelikeGameData>().CurrentRollIds[0];
+
+            ClaimRoguelikePickResponse response = await service.CallAsync(new ClaimRoguelikePickRequest(pick), CancellationToken.None);
+
+            Assert.That(response.Success, Is.True);
+            Assert.That(service.GetModuleData<RoguelikeGameData>().CurrentRollIds, Is.Empty);
+        }
+
+        [Test]
+        public async Task CallAsync_ClaimRoguelikePick_FailsForIdNotInCurrentRoll()
+        {
+            var service = new OfflineLiveOpsService();
+            await service.CallAsync(new DrawRoguelikeRollRequest(), CancellationToken.None);
+
+            ClaimRoguelikePickResponse response = await service.CallAsync(
+                new ClaimRoguelikePickRequest("unknown_gear"), CancellationToken.None);
+
+            Assert.That(response.Success, Is.False);
+            Assert.That(service.GetModuleData<RoguelikeGameData>().CurrentRollIds, Is.Not.Empty,
+                "Claim must not consume the roll when the picked id is not in it.");
+        }
+
+        [Test]
+        public async Task CallAsync_SkipRoguelikePick_ClearsCurrentRoll()
+        {
+            var service = new OfflineLiveOpsService();
+            await service.CallAsync(new DrawRoguelikeRollRequest(), CancellationToken.None);
+
+            SkipRoguelikePickResponse response = await service.CallAsync(new SkipRoguelikePickRequest(), CancellationToken.None);
+
+            Assert.That(response.Success, Is.True);
+            Assert.That(service.GetModuleData<RoguelikeGameData>().CurrentRollIds, Is.Empty);
+        }
+
+        [Test]
+        public async Task CallAsync_RerollRoguelikeRoll_ReturnsFreshRollIds()
+        {
+            var service = new OfflineLiveOpsService();
+
+            RerollRoguelikeRollResponse response = await service.CallAsync(new RerollRoguelikeRollRequest(), CancellationToken.None);
+
+            Assert.That(response.CurrentRollIds, Is.Not.Empty);
+            Assert.That(service.GetModuleData<RoguelikeGameData>().CurrentRollIds, Is.EqualTo(response.CurrentRollIds));
+        }
+
+        [Test]
         public void CallAsync_UnknownRequest_ThrowsWithStubGuidance()
         {
             var service = new OfflineLiveOpsService();
