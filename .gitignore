@@ -202,3 +202,7 @@ Utility/Utility/bin/Release/netstandard2.1/Utility.dll
 
 # Local Scaffold mirror / vendor snapshot (not part of Gear-Engine; UPM uses git URLs)
 /_scaffold_vendor/
+
+# SRDebugger optional integration samples (not used)
+Assets/StompyRobot/SRDebugger/*Integration.unitypackage
+Assets/StompyRobot/SRDebugger/*Integration.unitypackage.meta
