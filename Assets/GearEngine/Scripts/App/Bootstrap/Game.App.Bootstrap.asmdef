@@ -17,7 +17,6 @@
         "Scaffold.Ugs.Container",
         "Scaffold.CloudCode.Container",
         "Scaffold.LiveOps",
-        "Scaffold.LiveOps.Authoring",
         "Scaffold.LiveOps.Container",
         "Scaffold.MVVM",
         "Scaffold.MVVM.View",
@@ -41,6 +40,7 @@
     "overrideReferences": true,
     "precompiledReferences": [
         "CommunityToolkit.Mvvm.dll",
+        "Newtonsoft.Json.dll",
         "LiveOps.DTO.dll",
         "Game.LiveOps.Currency.DTO.dll",
         "Game.LiveOps.Inventory.DTO.dll",

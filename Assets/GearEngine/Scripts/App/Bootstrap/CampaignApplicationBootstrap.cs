@@ -43,7 +43,7 @@ namespace GearEngine.App.Bootstrap
         {
             if (OfflineMode)
             {
-                yield return new OfflineLiveOpsLayer(OfflineConfigBuilders);
+                yield return new OfflineLiveOpsLayer();
             }
             else
             {

@@ -5,84 +5,71 @@ using System.Threading.Tasks;
 using LiveOps.DTO.GameModule;
 using LiveOps.DTO.ModuleRequest;
 using Scaffold.LiveOps;
-using UnityEngine;
 
 namespace GearEngine.App.Bootstrap.Offline
 {
     /// <summary>
-    /// In-memory <see cref="ILiveOpsService"/> used when offline mode is enabled. Returns module data
-    /// built from local <c>ConfigBuilderSO</c> assets and synthesizes responses for known requests so
-    /// the game can run without Unity Gaming Services.
+    /// Dev-only <see cref="ILiveOpsService"/> that returns hand-authored stub data from
+    /// <see cref="OfflineStubs"/>. Unknown modules or requests throw with a clear message so
+    /// the missing stub is easy to spot and fill in.
     /// </summary>
     public sealed class OfflineLiveOpsService : ILiveOpsService
     {
-        private readonly Dictionary<Type, IGameModuleData> modulesByType;
-        private readonly OfflineRequestRouter router;
+        private readonly Dictionary<Type, IGameModuleData> modules;
+        private readonly Dictionary<Type, Func<ModuleRequest, OfflineLiveOpsService, ModuleResponse>> handlers;
 
-        public OfflineLiveOpsService(Dictionary<Type, IGameModuleData> modulesByType)
+        public OfflineLiveOpsService()
+            : this(OfflineStubs.CreateModules(), OfflineStubs.CreateHandlers())
         {
-            this.modulesByType = modulesByType ?? throw new ArgumentNullException(nameof(modulesByType));
-            router = new OfflineRequestRouter(this);
+        }
+
+        public OfflineLiveOpsService(
+            Dictionary<Type, IGameModuleData> modules,
+            Dictionary<Type, Func<ModuleRequest, OfflineLiveOpsService, ModuleResponse>> handlers)
+        {
+            this.modules = modules ?? throw new ArgumentNullException(nameof(modules));
+            this.handlers = handlers ?? throw new ArgumentNullException(nameof(handlers));
         }
 
         public T GetModuleData<T>() where T : class, IGameModuleData
         {
-            if (modulesByType.TryGetValue(typeof(T), out IGameModuleData data))
+            if (modules.TryGetValue(typeof(T), out IGameModuleData data) && data is T typed)
             {
-                return data as T;
+                return typed;
             }
 
-            return null;
+            throw new InvalidOperationException(
+                $"[OfflineLiveOps] No stub registered for module '{typeof(T).Name}'. " +
+                $"Add an entry to OfflineStubs.CreateModules().");
         }
 
         public Task<TResponse> CallAsync<TResponse>(ModuleRequest<TResponse> request, CancellationToken cancellationToken = default)
             where TResponse : ModuleResponse
         {
-            try
+            if (request == null)
             {
-                if (request == null)
-                {
-                    return Task.FromResult<TResponse>(null);
-                }
-
-                cancellationToken.ThrowIfCancellationRequested();
-
-                ModuleResponse response = router.Route(request);
-                if (response is TResponse typed)
-                {
-                    return Task.FromResult(typed);
-                }
-
-                return Task.FromResult(CreateDefaultResponse<TResponse>());
+                throw new ArgumentNullException(nameof(request));
             }
-            catch (OperationCanceledException)
+
+            cancellationToken.ThrowIfCancellationRequested();
+
+            Type requestType = request.GetType();
+            if (!handlers.TryGetValue(requestType, out Func<ModuleRequest, OfflineLiveOpsService, ModuleResponse> handler))
             {
-                throw;
+                throw new InvalidOperationException(
+                    $"[OfflineLiveOps] No stub handler for request '{requestType.Name}'. " +
+                    $"Add an entry to OfflineStubs.CreateHandlers().");
             }
-            catch (Exception ex)
-            {
-                Debug.LogError($"[OfflineLiveOps] CallAsync({request?.GetType().Name}) failed: {ex.Message}\n{ex.StackTrace}");
-                return Task.FromResult(CreateDefaultResponse<TResponse>());
-            }
-        }
 
-        internal bool TryGetModule<T>(out T data) where T : class, IGameModuleData
-        {
-            data = GetModuleData<T>();
-            return data != null;
-        }
+            ModuleResponse response = handler(request, this);
+            if (response is TResponse typed)
+            {
+                return Task.FromResult(typed);
+            }
 
-        private static TResponse CreateDefaultResponse<TResponse>() where TResponse : ModuleResponse
-        {
-            try
-            {
-                return Activator.CreateInstance<TResponse>();
-            }
-            catch (Exception ex)
-            {
-                Debug.LogError($"[OfflineLiveOps] Could not construct default response for {typeof(TResponse).Name}: {ex.Message}");
-                return null;
-            }
+            throw new InvalidOperationException(
+                $"[OfflineLiveOps] Handler for '{requestType.Name}' returned '{response?.GetType().Name ?? "null"}', " +
+                $"expected '{typeof(TResponse).Name}'.");
         }
     }
 }

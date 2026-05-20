@@ -86,12 +86,26 @@ namespace GearEngine.App.Bootstrap.Layers.MockAds
 
         public Task InitializeAsync(CancellationToken ct)
         {
-            string userId = AuthenticationService.Instance.IsSignedIn ? AuthenticationService.Instance.PlayerId : "editor_user";
+            string userId = TryGetSignedInPlayerId() ?? "editor_user";
             MockRewardEndpointClient rewardClient = new MockRewardEndpointClient();
             
             adManager.InitializeAds(userId, rewardClient);
-            
+
             return Task.CompletedTask;
+        }
+
+        private static string TryGetSignedInPlayerId()
+        {
+            try
+            {
+                IAuthenticationService auth = AuthenticationService.Instance;
+                return auth.IsSignedIn ? auth.PlayerId : null;
+            }
+            catch (Exception)
+            {
+                // UGS not initialized (e.g. offline mode skips UgsLayer).
+                return null;
+            }
         }
     }
 }
