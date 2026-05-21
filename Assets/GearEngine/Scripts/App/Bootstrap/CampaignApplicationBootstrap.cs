@@ -3,10 +3,13 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using GearEngine.App.Bootstrap.Layers;
+using GearEngine.App.Bootstrap.Offline;
 using GearEngine.Campaign.Presentation;
 using GearEngine.Campaign.Services;
 using GearEngine.CarSimulation.Definitions;
 using GearEngine.GearEngine.Config;
+using Scaffold.Ads;
+using Scaffold.Ads.Levelplay;
 using Scaffold.AppFlow;
 using Scaffold.Navigation.Contracts;
 using UnityEngine;
@@ -22,23 +25,39 @@ namespace GearEngine.App.Bootstrap
         [SerializeField]
         private GearEngineFeatureToggleSO featureToggle;
 
+        [SerializeField]
+        private AdPlacementKeySO rerollPlacementKey;
+
         [Header("Simulation")]
         [SerializeField]
-        private SplineCarRunnerConfigSO splineCarRunnerConfig;
+        private SimulationConfigBase simulationConfig;
 
         [Header("Race session defaults")]
         [SerializeField]
         private RaceSessionDefaultsSO raceSessionDefaults;
+        
+        [SerializeField]
+        private LevelPlayAdConfigurationSO adConfig;
 
         protected override IEnumerable<IScopeLayer> GetGameLayers()
         {
-            yield return new UgsLayer();
-            yield return new LiveOpsLayer();
+            if (OfflineMode)
+            {
+                yield return new OfflineLiveOpsLayer();
+            }
+            else
+            {
+                yield return new UgsLayer();
+                yield return new LiveOpsLayer();
+            }
+
+            yield return new AdsLayer(adConfig);
             yield return new CampaignLayer(
                 boardRules,
                 featureToggle,
                 raceSessionDefaults,
-                splineCarRunnerConfig);
+                simulationConfig,
+                rerollPlacementKey);
         }
 
         protected override Task OnReadyAsync(CancellationToken ct)

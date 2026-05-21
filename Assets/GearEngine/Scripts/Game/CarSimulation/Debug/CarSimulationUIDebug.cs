@@ -1,99 +1,166 @@
 using UnityEngine;
 using GearEngine.CarSimulation.Entity;
-using GearEngine.CarSimulation.Simulation;
 using GearEngine.CarSimulation.Definitions;
+using GearEngine.CarSimulation.PhysicsSimulation;
+using GearEngine.CarSimulation.SplineSimulation;
+using GearEngine.CarSimulation.Simulation;
+using GearEngine.CarSimulation.Presentation;
 using Scaffold.Entities;
 
 namespace GearEngine.CarSimulation.Debug
 {
     /// <summary>
-    /// Classe de debug visual em tempo real (OnGUI) para manipular valores da CarEntity 
-    /// e forçar comandos manuais como freio e drift.
+    /// Generic OnGUI visual debugger to read stats from the active simulation (Physics or Spline).
+    /// Used for manipulating CarEntity variables, injecting stats or modifying driver behavior.
     /// </summary>
     public sealed class CarSimulationUIDebug : MonoBehaviour
     {
-        [Header("Target Configuration")]
-        [SerializeField] private VariableSO targetAttribute;
-        
-        [Header("Runtime Bindings")]
-        [SerializeField] private CarSimulationDebug simulationDebug;
+        private bool showDebug = false;
+        private Rect windowRect = new Rect(10, 10, 320, 400);
 
-        private SplineCarRunnerContext Context => simulationDebug?.Context;
-
-        private bool forceBrake = false;
-        private bool forceHandbrake = false;
-
-        private void Reset()
-        {
-            if (simulationDebug == null)
-            {
-                simulationDebug = GetComponent<CarSimulationDebug>();
-            }
-        }
-
-        private void Awake()
-        {
-            if (simulationDebug == null)
-            {
-                simulationDebug = GetComponent<CarSimulationDebug>();
-            }
-        }
+        // Spline specific
+        private float statSpeed = 5f;
+        private float statCornering = 5f;
+        private float statDrift = 5f;
+        private float statPrecision = 5f;
+        private float statSmoothness = 5f;
 
         private void OnGUI()
         {
-            return;
-            if (simulationDebug == null || simulationDebug.Session == null)
+            if (!showDebug)
             {
-                GUI.Label(new Rect(10, 10, 300, 30), "Car UIDebug: Aguardando Corrida...");
+                if (GUI.Button(new Rect(10, 10, 120, 30), "Show Debug UI"))
+                    showDebug = true;
                 return;
             }
 
-            var ctx = Context;
-            if (ctx == null) return;
-            
-            GUILayout.BeginArea(new Rect(10, 10, 300, 500), GUI.skin.box);
-            GUILayout.Label("<b>CAR SIMULATION UI DEBUG</b>", new GUIStyle(GUI.skin.label) { richText = true, alignment = TextAnchor.MiddleCenter });
-            GUILayout.Space(5);
+            if (GUI.Button(new Rect(10, 10, 120, 30), "Hide Debug UI"))
+                showDebug = false;
 
-            GUILayout.Label("<b>NATIVE ENTITY VARIABLES</b>", new GUIStyle(GUI.skin.label) { richText = true, alignment = TextAnchor.MiddleCenter });
+            windowRect = GUI.Window(0, windowRect, DrawWindow, "Car Simulation Debug");
+        }
+
+        private void DrawWindow(int windowID)
+        {
+            GUILayout.Space(10);
             
-            if (ctx.Variables != null && ctx.entity != null)
+            var splineBootstrap = Object.FindFirstObjectByType<SplineEvaluateBootstrap>();
+            if (splineBootstrap != null && splineBootstrap.ActiveDriver != null)
             {
-                DrawNativeStat(ctx, ctx.Variables.Speed, "Speed");
-                DrawNativeStat(ctx, ctx.Variables.Acceleration, "Acceleration");
-                DrawNativeStat(ctx, ctx.Variables.Handling, "Handling");
-                DrawNativeStat(ctx, ctx.Variables.Stability, "Stability");
-                DrawNativeStat(ctx, ctx.Variables.Recovery, "Recovery");
-                DrawNativeStat(ctx, ctx.Variables.DriftPenalty, "Drift Penalty");
+                DrawSplineDebug(splineBootstrap);
             }
             else
             {
-                GUILayout.Label("Nenhum VariableSet configurado no contexto.", new GUIStyle(GUI.skin.label) { normal = new GUIStyleState { textColor = Color.yellow }});
+                var trackView = Object.FindFirstObjectByType<CarTrackTestView>();
+                if (trackView != null)
+                {
+                    DrawPhysicsDebug(trackView);
+                }
+                else
+                {
+                    GUILayout.Label("Aguardando inicialização da corrida...");
+                }
             }
 
-            GUILayout.Space(15);
-            GUILayout.Label("<b>CONTROLES DE MANUAL OVERRIDE</b>", new GUIStyle(GUI.skin.label) { richText = true, alignment = TextAnchor.MiddleCenter });
-
-            GUILayout.EndArea();
+            GUI.DragWindow(new Rect(0, 0, 10000, 20));
         }
 
-        private void DrawNativeStat(SplineCarRunnerContext ctx, VariableSO variable, string label)
+        private void DrawSplineDebug(SplineEvaluateBootstrap bootstrap)
         {
-            if (variable == null) return;
+            var driver = bootstrap.ActiveDriver;
+            var state = driver.State;
             
-            ctx.entity.TryGetValue(variable, out float currentValue);
+            GUILayout.Label("<b>[ SPLINE SIMULATION ]</b>", new GUIStyle(GUI.skin.label) { richText = true, alignment = TextAnchor.MiddleCenter });
+            
+            GUILayout.Label($"Speed: {state.Speed * 3.6f:F0} km/h");
+            GUILayout.Label($"Lap: {state.CompletedLaps + 1} | {state.T * 100f:F1}%");
+            string mode = state.IsDrifting ? "DRIFT" : state.IsBraking ? "BRAKE" : state.IsAccelerating ? "ACCEL" : "COAST";
+            GUILayout.Label($"State: {mode}");
+            GUILayout.Label($"Curve Mode: {(state.IsInCurveSequence ? state.ActiveCurveMode.ToString() : "None")}");
 
-            GUILayout.BeginHorizontal();
-            GUILayout.Label($"{label}: {currentValue:F1}", GUILayout.Width(130));
+            GUILayout.Space(10);
+            GUILayout.Label("<b>STAT MODIFIERS (Personality)</b>", new GUIStyle(GUI.skin.label) { richText = true, alignment = TextAnchor.MiddleCenter });
             
-            if (GUILayout.Button("- 10", GUILayout.Width(50)))
+            DrawSlider("Speed", ref statSpeed, 0f, 10f);
+            DrawSlider("Cornering", ref statCornering, 0f, 10f);
+            DrawSlider("Drift", ref statDrift, 0f, 10f);
+            DrawSlider("Precision", ref statPrecision, 0f, 10f);
+            DrawSlider("Smoothness", ref statSmoothness, 0f, 10f);
+
+            if (GUI.changed)
             {
-                ctx.entity.AddModifier(new EntityModifierEntry(variable, new FloatVariableValue { Value = -10f }));
+                bootstrap.UpdatePersonality(new DriverPersonality
+                {
+                    SpeedCapability = statSpeed,
+                    CorneringSkill = statCornering,
+                    Drift = statDrift,
+                    Precision = statPrecision,
+                    Smoothness = statSmoothness
+                });
             }
-            if (GUILayout.Button("+ 10", GUILayout.Width(50)))
+        }
+
+        private void DrawPhysicsDebug(CarTrackTestView trackView)
+        {
+            // Access CarTrackScreenViewModel via reflection
+            var viewModelProperty = typeof(Scaffold.MVVM.View<CarTrackScreenViewModel>).GetProperty("ViewModel", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public);
+            var vm = viewModelProperty?.GetValue(trackView) as CarTrackScreenViewModel;
+            
+            if (vm == null || vm.Sessions == null || vm.Sessions.Count == 0)
             {
-                ctx.entity.AddModifier(new EntityModifierEntry(variable, new FloatVariableValue { Value = 10f }));
+                GUILayout.Label("Aguardando corrida (CarTrackScreenViewModel)...");
+                return;
             }
+
+            RaceState session = vm.Sessions[0];
+            var car = session.Car;
+            
+            GUILayout.Label("<b>[ PHYSICS SIMULATION ]</b>", new GUIStyle(GUI.skin.label) { richText = true, alignment = TextAnchor.MiddleCenter });
+            GUILayout.Label($"Speed: {session.CurrentSpeed:F0} km/h");
+            GUILayout.Label($"Lap: {session.CurrentLap} | {session.NormalizedProgress * 100f:F1}%");
+            GUILayout.Label($"Phase: {session.Phase}");
+
+            GUILayout.Space(10);
+            GUILayout.Label("<b>NATIVE ENTITY VARIABLES</b>", new GUIStyle(GUI.skin.label) { richText = true, alignment = TextAnchor.MiddleCenter });
+
+            var simDebug = Object.FindFirstObjectByType<CarSimulationDebug>();
+            if (simDebug != null && simDebug.Context?.Variables != null)
+            {
+                var vars = simDebug.Context.Variables;
+                DrawNativeStat(car, vars.SpeedCapability, "Speed Capability");
+                DrawNativeStat(car, vars.CorneringSkill, "Cornering Skill");
+                DrawNativeStat(car, vars.Drift, "Drift");
+                DrawNativeStat(car, vars.Precision, "Precision");
+                DrawNativeStat(car, vars.Smoothness, "Smoothness");
+            }
+            else
+            {
+                GUILayout.Label("Variáveis (VariableSet) não encontradas em CarSimulationDebug.");
+            }
+        }
+
+        private void DrawSlider(string label, ref float val, float min, float max)
+        {
+            GUILayout.BeginHorizontal();
+            GUILayout.Label(label, GUILayout.Width(80));
+            val = GUILayout.HorizontalSlider(val, min, max, GUILayout.Width(150));
+            GUILayout.Label(val.ToString("F1"), GUILayout.Width(30));
+            GUILayout.EndHorizontal();
+        }
+
+        private void DrawNativeStat(CarEntity car, VariableSO variable, string label)
+        {
+            if (variable == null || car == null) return;
+            
+            car.TryGetValue(variable, out float currentValue);
+            GUILayout.BeginHorizontal();
+            GUILayout.Label($"{label}: {currentValue:F1}", GUILayout.Width(120));
+            
+            if (GUILayout.Button("- 10", GUILayout.Width(40)))
+                car.AddModifier(new EntityModifierEntry(variable, new FloatVariableValue { Value = -10f }));
+            if (GUILayout.Button("+ 10", GUILayout.Width(40)))
+                car.AddModifier(new EntityModifierEntry(variable, new FloatVariableValue { Value = 10f }));
+            
             GUILayout.EndHorizontal();
         }
     }

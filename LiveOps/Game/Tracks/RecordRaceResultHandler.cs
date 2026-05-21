@@ -26,6 +26,8 @@ namespace LiveOps.Modules.Tracks
                 await session.InvokeAsync<AddCurrencyRequest, AddCurrencyResponse>(new AddCurrencyRequest("gold", response.Reward));
             }
 
+            await session.Player.Set(session.Context, TracksModule.PersistenceKey, persistence);
+
             return response;
         }
     }

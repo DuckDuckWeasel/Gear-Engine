@@ -189,6 +189,13 @@ namespace GearEngine.GearEngine.Presentation.UI
                 return;
             }
 
+            view.OnClicked += () => 
+            { 
+                Debug.Log($"[BoardViewComponent] view.OnClicked fired for node '{node.ConfigData?.Id}'");
+                if (viewModel != null) 
+                    viewModel.HandleBoardClick(node); 
+            };
+
             viewsByNode[node] = view;
             animator.Track(node, view);
             WireBoardDraggable(view, node);
@@ -317,12 +324,12 @@ namespace GearEngine.GearEngine.Presentation.UI
 
         public bool CanAccept(DragPayload payload)
         {
-            return payload.GetData<GearConfigData>() != null || payload.GetData<IGridNode>() != null;
+            return payload.GetData<GearItemData>() != null || payload.GetData<IGridNode>() != null;
         }
 
         public bool OnDrop(DragPayload payload)
         {
-            GearConfigData gear = payload.GetData<GearConfigData>();
+            GearItemData gear = payload.GetData<GearItemData>();
             IGridNode draggedNode = payload.GetData<IGridNode>();
             if (viewModel == null || boardLayout == null)
             {

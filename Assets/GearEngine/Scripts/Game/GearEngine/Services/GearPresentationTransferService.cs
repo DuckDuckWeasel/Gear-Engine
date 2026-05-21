@@ -17,7 +17,7 @@ namespace GearEngine.GearEngine.Services
         private readonly IInventoryService inventoryService;
         private readonly IEventBus eventBus;
 
-        public void TrashInventoryGear(GearConfigData gear)
+        public void TrashInventoryGear(GearItemData gear)
         {
             if (gear == null)
             {
@@ -34,7 +34,7 @@ namespace GearEngine.GearEngine.Services
             }
         }
 
-        private void ApplyInventoryTrash(GearConfigData gear)
+        private void ApplyInventoryTrash(GearItemData gear)
         {
             if (gear.Owner == null)
             {

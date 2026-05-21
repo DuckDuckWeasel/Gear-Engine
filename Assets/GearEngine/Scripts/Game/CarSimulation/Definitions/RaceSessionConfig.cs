@@ -1,4 +1,5 @@
 using System;
+using GearEngine.CarSimulation.PhysicsSimulation;
 using UnityEngine;
 
 namespace GearEngine.CarSimulation.Definitions

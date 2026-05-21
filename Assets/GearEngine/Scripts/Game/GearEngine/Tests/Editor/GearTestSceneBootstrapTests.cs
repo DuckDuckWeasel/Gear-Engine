@@ -64,7 +64,7 @@ namespace GearEngine.GearEngine.Tests.Editor
 
             public bool TryMoveBoardGear(IGridNode node, Vector2Int toPos, Vector2Int fromPos) => false;
 
-            public bool TryPlace(Vector2Int targetDropPos, GearConfigData gearData) => false;
+            public bool TryPlace(Vector2Int targetDropPos, GearItemData gearData) => false;
 
             public bool TryRemoveBoardGear(IGridNode node) => false;
 

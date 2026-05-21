@@ -10,13 +10,13 @@ namespace GearEngine.CarSimulation.Simulation
     public sealed class RaceManagerService : ITickable
     {
         private readonly List<RaceState> activeRaces = new List<RaceState>();
-        private readonly SplineCarRunnerService carRunner;
+        private readonly ISimulationRunnerService runner;
 
-        public RaceManagerService(SplineCarRunnerService carRunner)
+        public RaceManagerService(ISimulationRunnerService runner)
         {
-            this.carRunner = carRunner ?? throw new ArgumentNullException(nameof(carRunner));
-            // Subscribe to physical lap completed events from the simulation runner
-            this.carRunner.OnLapCompleted += HandlePhysicalLapCompleted;
+            this.runner = runner ?? throw new ArgumentNullException(nameof(runner));
+            // Subscribe to lap completed events from whichever runner is active
+            this.runner.OnLapCompleted += HandlePhysicalLapCompleted;
         }
 
         public void RegisterRace(RaceState state)
@@ -42,7 +42,7 @@ namespace GearEngine.CarSimulation.Simulation
             {
                 state.Phase = SimulationLifecycleState.Running;
                 state.PreviousLapStartTime = state.RaceTime;
-                carRunner.SetPaused(state.Car, false);
+                runner.SetPaused(state.Car, false);
             }
         }
 
@@ -51,7 +51,7 @@ namespace GearEngine.CarSimulation.Simulation
             if (state.Phase == SimulationLifecycleState.Running)
             {
                 state.Phase = SimulationLifecycleState.Paused;
-                carRunner.SetPaused(state.Car, true);
+                runner.SetPaused(state.Car, true);
             }
         }
 
@@ -60,7 +60,7 @@ namespace GearEngine.CarSimulation.Simulation
             if (state.Phase != SimulationLifecycleState.Completed)
             {
                 state.Phase = SimulationLifecycleState.Completed;
-                carRunner.SetPaused(state.Car, true);
+                runner.SetPaused(state.Car, true);
                 Debug.Log($"[RaceManagerService] Race Finished! Total Laps: {state.TotalLaps} | Total Time: {state.RaceTime:F2}s");
                 state.TriggerPresentationChanged();
             }

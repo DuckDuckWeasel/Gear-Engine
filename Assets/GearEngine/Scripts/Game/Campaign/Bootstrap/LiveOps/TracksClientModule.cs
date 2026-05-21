@@ -179,7 +179,7 @@ namespace GearEngine.Campaign.Bootstrap.LiveOps
 
         private void ApplyAdvanceToNextTrackIfNeeded(RecordRaceResultResponse resp)
         {
-            if (!resp.Advanced || string.IsNullOrEmpty(resp.NextTrackId))
+            if (string.IsNullOrEmpty(resp.NextTrackId))
             {
                 return;
             }

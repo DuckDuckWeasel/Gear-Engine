@@ -1,18 +1,23 @@
 {
-  "name": "Game.App.Bootstrap.Editor",
-  "rootNamespace": "GearEngine.App.Bootstrap.Editor",
-  "references": [
-    "Game.App.Bootstrap",
-    "Game.CarSimulation",
-    "Scaffold.AppFlow",
-    "Scaffold.AppFlow.Publishers",
-    "Scaffold.AppFlow.Publishers.Addressables",
-    "VContainer"
-  ],
-  "includePlatforms": [ "Editor" ],
-  "allowUnsafeCode": false,
-  "autoReferenced": true,
-  "defineConstraints": [],
-  "versionDefines": [],
-  "noEngineReferences": false
+    "name": "Game.App.Bootstrap.Editor",
+    "rootNamespace": "GearEngine.App.Bootstrap.Editor",
+    "references": [
+        "Game.App.Bootstrap",
+        "Game.CarSimulation",
+        "Scaffold.AppFlow",
+        "Scaffold.AppFlow.Publishers",
+        "Scaffold.AppFlow.Publishers.Addressables",
+        "VContainer"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
 }

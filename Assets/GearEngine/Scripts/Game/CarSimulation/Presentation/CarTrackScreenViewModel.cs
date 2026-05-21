@@ -1,4 +1,5 @@
 using GearEngine.CarSimulation;
+using GearEngine.CarSimulation.PhysicsSimulation;
 using System;
 using System.Collections.Generic;
 using GearEngine.CarSimulation.Definitions;
@@ -33,7 +34,7 @@ namespace GearEngine.CarSimulation.Presentation
 
         [Inject] private TrackSimulationFactory factory;
         [Inject] private RaceManagerService raceManager;
-        [Inject] private SplineCarRunnerService aiRunner;
+        [Inject] private ISimulationRunnerService aiRunner;
 
         /// <summary>Fired once before the first race start so views can call <see cref="CarView.AttachRunner"/> on spawned cars.</summary>
         public event Action AttachRunnersRequested;

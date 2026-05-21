@@ -1,4 +1,5 @@
 using System.Linq;
+using GearEngine.CarSimulation.PhysicsSimulation;
 using GearEngine.CarSimulation.Definitions;
 using GearEngine.GearEngine;
 using GearEngine.GearEngine.Nodes;
@@ -37,14 +38,11 @@ namespace GearEngine.Campaign.Gear
         {
             switch (statType)
             {
-                case PassiveStatType.TopSpeed: stats.statTopSpeed += amount; break;
-                case PassiveStatType.Acceleration: stats.statAcceleration += amount; break;
-                case PassiveStatType.BrakingSystem: stats.statBrakingSystem += amount; break;
-                case PassiveStatType.DriftControl: stats.statDriftControl += amount; break;
-                case PassiveStatType.NitrousBoost: stats.statNitrousBoost += amount; break;
-                case PassiveStatType.SteeringGrip: stats.statSteeringGrip += amount; break;
-                case PassiveStatType.RacingLine: stats.statRacingLine += amount; break;
-                case PassiveStatType.DriverReflexes: stats.statDriverReflexes += amount; break;
+                case PassiveStatType.SpeedCapability: stats.SpeedCapability += amount; break;
+                case PassiveStatType.CorneringSkill: stats.CorneringSkill += amount; break;
+                case PassiveStatType.Drift: stats.Drift += amount; break;
+                case PassiveStatType.Precision: stats.Precision += amount; break;
+                case PassiveStatType.Smoothness: stats.Smoothness += amount; break;
             }
         }
     }

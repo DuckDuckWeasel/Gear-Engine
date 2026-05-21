@@ -2,6 +2,7 @@
     "name": "Game.Campaign",
     "rootNamespace": "GearEngine.Campaign",
     "references": [
+        "GearEngine.Core.Config",
         "GUID:f7e8d9c0b1a243658970615243a5b8c1",
         "GUID:5ad7600acbaf54d2996633df50d16b7e",
         "GUID:d1e2f3a4b5c60718293a4b5c6d7e8f91",
@@ -23,7 +24,9 @@
         "GUID:e5161cdca45d405b983133a815e8d9d2",
         "GUID:21d1eb854b91ade49bc69a263d12bee2",
         "GUID:6055be8ebefd69e48b49212b09b47b2f",
-        "GUID:2bafac87e7f4b9b418d9448d219b01ab"
+        "GUID:2bafac87e7f4b9b418d9448d219b01ab",
+        "GUID:c1303d99d94bffe43b8082afd1573716",
+        "GUID:a17cae9fe3203457d917c88be8acb6ed"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
@@ -33,12 +36,15 @@
         "CommunityToolkit.Mvvm.dll",
         "DOTween.dll",
         "LiveOps.DTO.dll",
-        "Game.LiveOps.Cards.DTO.dll",
+        "Game.LiveOps.Perks.DTO.dll",
         "Game.LiveOps.Inventory.DTO.dll",
         "Game.LiveOps.Currency.DTO.dll",
         "Game.LiveOps.Loadout.DTO.dll",
         "Game.LiveOps.Roguelike.DTO.dll",
-        "Game.LiveOps.Tracks.DTO.dll"
+        "Game.LiveOps.Tracks.DTO.dll",
+        "Sirenix.OdinInspector.Attributes.dll",
+        "Sirenix.Serialization.dll",
+        "Sirenix.Utilities.dll"
     ],
     "autoReferenced": true,
     "defineConstraints": [],

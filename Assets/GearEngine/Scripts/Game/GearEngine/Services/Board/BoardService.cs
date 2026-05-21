@@ -144,7 +144,7 @@ namespace GearEngine.GearEngine.Services.Board
 
             foreach (BoardGearPlacementData placement in layout.Placements)
             {
-                if (placement == null || placement.GearConfig == null)
+                if (placement == null || placement.GearItem == null)
                 {
                     continue;
                 }
@@ -164,7 +164,7 @@ namespace GearEngine.GearEngine.Services.Board
                     continue;
                 }
 
-                GearConfigData runtimeData = placement.GearConfig.CreateRuntimeData();
+                GearItemData runtimeData = placement.GearItem.CreateRuntimeData();
                 if (placement.Owner != null)
                 {
                     runtimeData.Owner = placement.Owner;
@@ -214,8 +214,8 @@ namespace GearEngine.GearEngine.Services.Board
                 return true;
             }
 
-            GearConfigData draggedData = node.ConfigData;
-            GearConfigData occupantData = occupant.ConfigData;
+            GearItemData draggedData = node.ConfigData;
+            GearItemData occupantData = occupant.ConfigData;
 
             if ((occupantData != null && !occupantData.IsMovable) ||
                 (draggedData != null && !draggedData.IsMovable))
@@ -238,7 +238,7 @@ namespace GearEngine.GearEngine.Services.Board
             return true;
         }
 
-        public bool TryPlace(Vector2Int targetDropPos, GearConfigData gearData)
+        public bool TryPlace(Vector2Int targetDropPos, GearItemData gearData)
         {
             try
             {
@@ -269,7 +269,7 @@ namespace GearEngine.GearEngine.Services.Board
                     return true;
                 }
 
-                GearConfigData occupantData = occupant.ConfigData;
+                GearItemData occupantData = occupant.ConfigData;
 
                 if (occupantData.Id == gearData.Id && occupantData.NextLevelConfig != null)
                 {
@@ -282,8 +282,8 @@ namespace GearEngine.GearEngine.Services.Board
 
                     RemoveGear(occupant);
 
-                    GearConfig upgradedConfig = occupantData.NextLevelConfig;
-                    GearConfigData upgradedData;
+                    GearItem upgradedConfig = occupantData.NextLevelConfig;
+                    GearItemData upgradedData;
                     if (gearData.Owner != null && occupantData.Owner != null)
                     {
                         inventoryService.Remove(gearData.Owner);
@@ -446,7 +446,7 @@ namespace GearEngine.GearEngine.Services.Board
             PlaceGear(occupantNode, draggedNode);
         }
 
-        private void MergeBoardGearsAt(IGridNode draggedNode, IGridNode occupantNode, Vector2Int targetDropPos, GearConfigData occupantData, Vector2Int fromPos)
+        private void MergeBoardGearsAt(IGridNode draggedNode, IGridNode occupantNode, Vector2Int targetDropPos, GearItemData occupantData, Vector2Int fromPos)
         {
             if (mergeService == null)
             {

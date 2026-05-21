@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9993587a3be93ed4388731de7fc20a28, type: 3}
+  m_Name: PerkConfigBuilder
+  m_EditorClassIdentifier: Game.Perks::GearEngine.Perks.Authoring.CardConfigBuilderSO
+  catalog: {fileID: 11400000, guid: 1cdf3f9880f0e43c499fd1afae844cbc, type: 2}
+  baseCost: 100
+  costPerPurchaseGrowth: 50

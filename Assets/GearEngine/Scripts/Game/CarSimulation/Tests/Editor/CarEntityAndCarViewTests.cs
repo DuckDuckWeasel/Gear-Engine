@@ -1,4 +1,5 @@
 using GearEngine.CarSimulation.Definitions;
+using GearEngine.CarSimulation.PhysicsSimulation;
 using GearEngine.CarSimulation.Presentation;
 using GearEngine.CarSimulation.Simulation;
 using NUnit.Framework;
@@ -29,7 +30,7 @@ namespace GearEngine.CarSimulation.Tests
                 var container = go.AddComponent<SplineContainer>();
                 var session = new TrackSimulationFactory(null).Create(carDef, trackDef, null);
 
-                var runnerConfig = ScriptableObject.CreateInstance<SplineCarRunnerConfigSO>();
+                var runnerConfig = ScriptableObject.CreateInstance<PhysicsSimulationConfig>();
                 var runnerService = new SplineCarRunnerService(runnerConfig);
                 var vm = new CarViewModel(session, runnerService);
                 carView.SplineContainer = container;

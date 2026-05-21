@@ -142,14 +142,14 @@ namespace GearEngine.GearEngine.Presentation.UI
 
         public bool CanAccept(DragPayload payload)
         {
-            GearConfigData gear = payload.GetData<GearConfigData>() ?? payload.GetData<IGridNode>()?.ConfigData;
+            GearItemData gear = payload.GetData<GearItemData>() ?? payload.GetData<IGridNode>()?.ConfigData;
             return gear != null && viewModel != null && viewModel.CanTrashAcceptGear(gear);
         }
 
         public bool OnDrop(DragPayload payload)
         {
             IGridNode node = payload.GetData<IGridNode>();
-            GearConfigData gear = payload.GetData<GearConfigData>();
+            GearItemData gear = payload.GetData<GearItemData>();
             if (node != null)
             {
                 return viewModel != null && viewModel.HandleBoardGearDropped(node);
@@ -167,6 +167,11 @@ namespace GearEngine.GearEngine.Presentation.UI
         {
             isShowing = true;
             rootPanel.gameObject.SetActive(true);
+            if (canvasGroup != null)
+            {
+                canvasGroup.blocksRaycasts = true;
+                canvasGroup.interactable = true;
+            }
         }
 
         private void Hide(bool immediate)
@@ -174,11 +179,19 @@ namespace GearEngine.GearEngine.Presentation.UI
             isShowing = false;
             isHovered = false;
 
+            if (canvasGroup != null)
+            {
+                canvasGroup.blocksRaycasts = false;
+                canvasGroup.interactable = false;
+            }
+
             if (immediate)
             {
                 animationProgress = 0f;
-                canvasGroup.alpha = 0f;
-                rootPanel.gameObject.SetActive(false);
+                if (canvasGroup != null)
+                {
+                    canvasGroup.alpha = 0f;
+                }
             }
         }
 
@@ -207,10 +220,8 @@ namespace GearEngine.GearEngine.Presentation.UI
 
         private void TickAutoHideWhenFaded()
         {
-            if (!isShowing && animationProgress <= 0f && rootPanel.gameObject.activeSelf)
-            {
-                rootPanel.gameObject.SetActive(false);
-            }
+            // Removed rootPanel.gameObject.SetActive(false) 
+            // so the ViewModel bindings keep ticking during Update()
         }
 
         /// <summary>
@@ -239,7 +250,7 @@ namespace GearEngine.GearEngine.Presentation.UI
 
             Assert.IsNotNull(rootPanel, "[TrashDropZone] rootPanel is not assigned. Trash deletion will not work.");
 
-            rootPanel.gameObject.SetActive(false);
+            Hide(immediate: true);
             RepositionRelativeToBoard();
         }
 

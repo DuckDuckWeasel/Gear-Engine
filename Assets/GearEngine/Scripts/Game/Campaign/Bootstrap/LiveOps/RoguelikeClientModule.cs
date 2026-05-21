@@ -54,6 +54,32 @@ namespace GearEngine.Campaign.Bootstrap.LiveOps
             }
         }
 
+        public async Task<bool> SkipAsync(CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                return await SendSkipAsync(cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"[RoguelikeClientModule] SkipAsync failed: {ex.Message}\n{ex.StackTrace}");
+                throw;
+            }
+        }
+
+        public async Task<IReadOnlyList<string>> RerollAsync(CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                return await FetchAndApplyRerollAsync(cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"[RoguelikeClientModule] RerollAsync failed: {ex.Message}\n{ex.StackTrace}");
+                throw;
+            }
+        }
+
         private async Task<IReadOnlyList<string>> FetchAndApplyDrawAsync(CancellationToken cancellationToken)
         {
             DrawRoguelikeRollResponse resp = await liveOps.CallAsync(new DrawRoguelikeRollRequest(), cancellationToken);
@@ -74,6 +100,28 @@ namespace GearEngine.Campaign.Bootstrap.LiveOps
             }
 
             return resp != null && resp.Success;
+        }
+
+        private async Task<bool> SendSkipAsync(CancellationToken cancellationToken)
+        {
+            SkipRoguelikePickResponse resp = await liveOps.CallAsync(new SkipRoguelikePickRequest(), cancellationToken);
+            if (resp != null && resp.Success && data != null)
+            {
+                data.CurrentRollIds = new List<string>();
+            }
+
+            return resp != null && resp.Success;
+        }
+
+        private async Task<IReadOnlyList<string>> FetchAndApplyRerollAsync(CancellationToken cancellationToken)
+        {
+            RerollRoguelikeRollResponse resp = await liveOps.CallAsync(new RerollRoguelikeRollRequest(), cancellationToken);
+            if (resp != null && data != null)
+            {
+                data.CurrentRollIds = new List<string>(resp.CurrentRollIds);
+            }
+
+            return data?.CurrentRollIds ?? (IReadOnlyList<string>)Array.Empty<string>();
         }
     }
 }

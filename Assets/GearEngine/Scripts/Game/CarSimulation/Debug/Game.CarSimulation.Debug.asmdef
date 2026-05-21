@@ -4,6 +4,10 @@
     "references": [
         "Game.CarSimulation",
         "Scaffold.Entities",
+        "Scaffold.MVVM",
+        "Scaffold.MVVM.View",
+        "Scaffold.MVVM.ViewModel",
+        "Scaffold.Navigation",
         "VContainer",
         "PROMETEO"
     ],
@@ -12,6 +16,7 @@
     "allowUnsafeCode": false,
     "overrideReferences": true,
     "precompiledReferences": [
+        "CommunityToolkit.Mvvm.dll",
         "Sirenix.OdinInspector.Attributes.dll",
         "Sirenix.Serialization.dll"
     ],

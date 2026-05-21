@@ -1,0 +1,72 @@
+using System;
+using System.Collections.Generic;
+using System.Reflection;
+using GearEngine.Perks;
+using GearEngine.Perks.Config;
+using GearEngine.Perks.Powerups;
+using NUnit.Framework;
+using UnityEngine;
+
+namespace GearEngine.Perks.Tests.Editor
+{
+    public sealed class CarPowerupBuildResolverTests
+    {
+        [Test]
+        public void Resolve_SortsByPhaseThenAppliesMultipliers()
+        {
+            var catalog = ScriptableObject.CreateInstance<PerkCatalogSO>();
+            var perk = ScriptableObject.CreateInstance<PerkItem>();
+            var data = new PerkItemData();
+            var early = ScriptableObject.CreateInstance<MaxSpeedMultiplierModifierSO>();
+            var late = ScriptableObject.CreateInstance<MaxSpeedMultiplierModifierSO>();
+
+            SetField(early, "phase", CarPowerupApplyPhase.Post);
+            SetField(early, "multiplier", 2f);
+            SetField(late, "phase", CarPowerupApplyPhase.Base);
+            SetField(late, "multiplier", 3f);
+
+            SetField(data, "id", "c1");
+            SetField(data, "modifiers", new List<CarPowerupModifierSO> { early, late });
+            SetField(perk, "data", data);
+            
+            SetField(catalog, "items", new PerkItem[] { perk });
+
+            try
+            {
+                var resolver = new CarPowerupBuildResolver(catalog);
+                CarPowerupBuildContext ctx = resolver.Resolve(new[] { "c1" });
+                CarPowerupStats stats = ctx.Evaluate();
+
+                Assert.That(stats.MaxSpeedMultiplier, Is.EqualTo(6f).Within(0.001f));
+            }
+            finally
+            {
+                UnityEngine.Object.DestroyImmediate(early);
+                UnityEngine.Object.DestroyImmediate(late);
+                UnityEngine.Object.DestroyImmediate(perk);
+                UnityEngine.Object.DestroyImmediate(catalog);
+            }
+        }
+
+        private static void SetField<T>(object target, string name, T value)
+        {
+            FieldInfo field = GetInstanceField(target.GetType(), name);
+            Assert.That(field, Is.Not.Null);
+            field.SetValue(target, value);
+        }
+
+        private static FieldInfo GetInstanceField(Type type, string name)
+        {
+            for (Type t = type; t != null; t = t.BaseType)
+            {
+                FieldInfo field = t.GetField(name, BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.DeclaredOnly);
+                if (field != null)
+                {
+                    return field;
+                }
+            }
+
+            return null;
+        }
+    }
+}

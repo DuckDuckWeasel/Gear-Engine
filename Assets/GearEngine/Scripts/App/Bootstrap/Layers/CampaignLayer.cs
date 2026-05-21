@@ -1,6 +1,6 @@
 using System;
 using GearEngine.Campaign.Bootstrap;
-using GearEngine.Campaign.Bootstrap.Cards;
+using GearEngine.Campaign.Bootstrap.Perks;
 using GearEngine.Campaign.Bootstrap.LiveOps;
 using GearEngine.Campaign.Services;
 using GearEngine.CarSimulation.Bootstrap;
@@ -8,6 +8,7 @@ using GearEngine.CarSimulation.Definitions;
 using GearEngine.Currency.Bootstrap;
 using GearEngine.GearEngine.Bootstrap;
 using GearEngine.GearEngine.Config;
+using Scaffold.Ads;
 using Scaffold.AppFlow;
 using VContainer;
 
@@ -15,18 +16,20 @@ namespace GearEngine.App.Bootstrap.Layers
 {
     public sealed class CampaignLayer : IScopeLayer
     {
-        public CampaignLayer(BoardRulesSO boardRules, GearEngineFeatureToggleSO featureToggle, RaceSessionDefaultsSO raceSessionDefaults, SplineCarRunnerConfigSO splineCarRunnerConfig)
+        public CampaignLayer(BoardRulesSO boardRules, GearEngineFeatureToggleSO featureToggle, RaceSessionDefaultsSO raceSessionDefaults, SimulationConfigBase simulationConfig, Scaffold.Ads.AdPlacementKeySO rerollPlacementKey = null)
         {
             this.boardRules = boardRules ?? throw new ArgumentNullException(nameof(boardRules));
             this.raceSessionDefaults = raceSessionDefaults ?? throw new ArgumentNullException(nameof(raceSessionDefaults));
-            this.splineCarRunnerConfig = splineCarRunnerConfig ?? throw new ArgumentNullException(nameof(splineCarRunnerConfig));
+            this.simulationConfig = simulationConfig ?? throw new ArgumentNullException(nameof(simulationConfig));
             this.featureToggle = featureToggle ?? throw new ArgumentNullException(nameof(featureToggle));
+            this.rerollPlacementKey = rerollPlacementKey ?? throw new ArgumentNullException(nameof(rerollPlacementKey));
         }
 
         private readonly BoardRulesSO boardRules;
         private readonly GearEngineFeatureToggleSO featureToggle;
         private readonly RaceSessionDefaultsSO raceSessionDefaults;
-        private readonly SplineCarRunnerConfigSO splineCarRunnerConfig;
+        private readonly SimulationConfigBase simulationConfig;
+        private readonly AdPlacementKeySO rerollPlacementKey;
 
         public void Install(IContainerBuilder builder)
         {
@@ -39,8 +42,8 @@ namespace GearEngine.App.Bootstrap.Layers
         {
             builder.RegisterInstance(boardRules);
             builder.RegisterInstance(featureToggle);
-            builder.RegisterInstance(splineCarRunnerConfig);
             builder.RegisterInstance(raceSessionDefaults.Template);
+            builder.RegisterInstance(rerollPlacementKey);
         }
 
         private void RegisterLiveOpsClientModules(IContainerBuilder builder)
@@ -49,14 +52,14 @@ namespace GearEngine.App.Bootstrap.Layers
             new CampaignTracksInstaller().Install(builder);
             new CampaignInventoryInstaller().Install(builder);
             new CampaignLoadoutInstaller().Install(builder);
-            new CardsClientInstaller().Install(builder);
+            new PerksClientInstaller().Install(builder);
             new CampaignRoguelikeInstaller().Install(builder);
         }
 
         private void RegisterGameplayServices(IContainerBuilder builder)
         {
             new GearMechanicsInstaller().Install(builder);
-            new CarTrackInstaller().Install(builder);
+            new CarTrackInstaller().Install(builder, simulationConfig);
             new CampaignRaceSessionInstaller().Install(builder);
 
             builder.Register<CampaignGearPersistenceHookup>(Lifetime.Singleton)

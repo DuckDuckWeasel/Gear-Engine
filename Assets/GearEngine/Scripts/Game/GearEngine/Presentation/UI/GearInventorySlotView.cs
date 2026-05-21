@@ -1,23 +1,24 @@
 using GearEngine.GearEngine.Config;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 namespace GearEngine.GearEngine.Presentation.UI
 {
     [RequireComponent(typeof(Draggable))]
-    public class GearInventorySlotView : MonoBehaviour
+    public class GearInventorySlotView : MonoBehaviour, IPointerClickHandler, IPointerDownHandler, IPointerUpHandler
     {
         [SerializeField]
         private Transform visualContainer;
 
-        public GearConfigData BoundGearData => boundGearData;
+        public GearItemData BoundGearData => boundGearData;
 
         public Transform VisualContainer => visualContainer != null ? visualContainer : transform;
 
-        private GearConfigData boundGearData;
+        private GearItemData boundGearData;
         private GearInventoryViewModel viewModel;
         private Draggable draggable;
 
-        public void Bind(GearConfigData config, GearInventoryViewModel vm)
+        public void Bind(GearItemData config, GearInventoryViewModel vm)
         {
             boundGearData = config;
             viewModel = vm;
@@ -32,5 +33,17 @@ namespace GearEngine.GearEngine.Presentation.UI
                 draggable.IsInteractable = viewModel.CanDrag;
             }
         }
+
+        public void OnPointerClick(PointerEventData eventData)
+        {
+            Debug.Log($"[GearInventorySlotView] OnPointerClick fired! dragging={eventData.dragging}");
+            if (!eventData.dragging && viewModel != null && boundGearData != null)
+            {
+                viewModel.HandleInventoryClick(boundGearData);
+            }
+        }
+
+        public void OnPointerDown(PointerEventData eventData) { }
+        public void OnPointerUp(PointerEventData eventData) { }
     }
 }

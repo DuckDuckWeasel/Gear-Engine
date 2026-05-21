@@ -18,22 +18,28 @@ namespace GearEngine.Campaign.Presentation
         private TrashDropZoneViewComponent trashDropZone;
 
         [SerializeField]
-        private CardOptionView[] cardOptionViews;
+        private ItemSlotView[] perkOptionViews;
 
         [SerializeField]
-        private Button confirmButton;
+        private Button rerollButton;
+        [SerializeField]
+        private Button continueButton;
 
         protected override void OnBind()
         {
             ValidateHierarchy();
             BindGearSubtree();
-            Bind<int, int>(() => viewModel.CardOptionsRevision, _ => RebuildCardSelection());
-            BindConfirmUi();
+            Bind<int, int>(() => viewModel.PerkOptionsRevision, _ => RebuildPerkSelection());
+            BindActionUi();
         }
 
         protected override void OnUnbind()
         {
-            confirmButton.onClick.RemoveListener(OnConfirmClicked);
+            continueButton.onClick.RemoveListener(OnContinueClicked);
+            if (rerollButton != null)
+            {
+                rerollButton.onClick.RemoveListener(OnRerollClicked);
+            }
             DisposeViewModelIfNeeded();
             DeactivateGearPanels();
             base.OnUnbind();
@@ -54,53 +60,57 @@ namespace GearEngine.Campaign.Presentation
             trashDropZone.ApplyInitialPlacement();
         }
 
-        private void RebuildCardSelection()
+        private void RebuildPerkSelection()
         {
-            for (int i = 0; i < cardOptionViews.Length; i++)
+            if (perkOptionViews == null) return;
+            
+            for (int i = 0; i < perkOptionViews.Length; i++)
             {
-                if (i < viewModel.CardOptions.Count)
+                if (i < viewModel.PerkOptions.Count)
                 {
-                    CardOptionViewModel option = viewModel.CardOptions[i];
-                    cardOptionViews[i].gameObject.SetActive(true);
-                    cardOptionViews[i].Bind(option);
-                    Bind<bool, bool>(() => option.IsSelected, selected => OnCardOptionSelectionChanged(option, selected));
+                    ItemSlotViewModel option = viewModel.PerkOptions[i];
+                    perkOptionViews[i].gameObject.SetActive(true);
+                    perkOptionViews[i].Bind(option);
                 }
                 else
                 {
-                    cardOptionViews[i].gameObject.SetActive(false);
+                    perkOptionViews[i].gameObject.SetActive(false);
                 }
             }
         }
 
-        private void OnCardOptionSelectionChanged(CardOptionViewModel option, bool selected)
+
+        private void BindActionUi()
         {
-            if (selected)
+            continueButton.onClick.AddListener(OnContinueClicked);
+            if (rerollButton != null)
             {
-                viewModel.SelectCard(option);
+                rerollButton.onClick.AddListener(OnRerollClicked);
+                Bind<bool, bool>(() => viewModel.CanReroll, canReroll => rerollButton.gameObject.SetActive(canReroll));
             }
         }
 
-        private void BindConfirmUi()
-        {
-            Bind<bool, bool>(() => viewModel.CanConfirm, UpdateConfirmInteractable);
-            confirmButton.interactable = false;
-            confirmButton.onClick.AddListener(OnConfirmClicked);
-        }
-
-        private void UpdateConfirmInteractable(bool ready)
-        {
-            confirmButton.interactable = ready;
-        }
-
-        private void OnConfirmClicked()
+        private void OnContinueClicked()
         {
             try
             {
-                viewModel?.Confirm();
+                viewModel?.Continue();
             }
             catch (Exception ex)
             {
-                Debug.LogError($"[RoguelikeView] OnConfirmClicked failed: {ex.Message}\n{ex.StackTrace}");
+                Debug.LogError($"[RoguelikeView] OnContinueClicked failed: {ex.Message}\n{ex.StackTrace}");
+            }
+        }
+
+        private void OnRerollClicked()
+        {
+            try
+            {
+                viewModel?.Reroll();
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"[RoguelikeView] OnRerollClicked failed: {ex.Message}\n{ex.StackTrace}");
             }
         }
 
@@ -109,10 +119,10 @@ namespace GearEngine.Campaign.Presentation
             RequireReference(boardView, nameof(boardView));
             RequireReference(inventoryView, nameof(inventoryView));
             RequireReference(trashDropZone, nameof(trashDropZone));
-            RequireReference(confirmButton, nameof(confirmButton));
-            if (cardOptionViews == null)
+            RequireReference(continueButton, nameof(continueButton));
+            if (perkOptionViews == null)
             {
-                throw new InvalidOperationException("[RoguelikeView] cardOptionViews must be assigned on the scene instance.");
+                throw new InvalidOperationException("[RoguelikeView] perkOptionViews must be assigned on the scene instance.");
             }
         }
 

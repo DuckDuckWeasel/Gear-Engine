@@ -19,7 +19,7 @@ namespace GearEngine.GearEngine.Services
         event Action InventoryChanged;
 
         /// <summary>Mints a new InstanceId, adds the OwnedGear, schedules persistence in background. Returns the new ref.</summary>
-        OwnedGear Add(GearConfig gear);
+        OwnedGear Add(GearItem gear);
 
         /// <summary>Removes by reference equality, schedules persistence in background.</summary>
         bool Remove(OwnedGear gear);
@@ -33,6 +33,6 @@ namespace GearEngine.GearEngine.Services
     {
         public string InstanceId { get; set; }
 
-        public GearConfig Config { get; set; }
+        public GearItem Config { get; set; }
     }
 }

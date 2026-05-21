@@ -24,7 +24,7 @@ namespace GearEngine.GearEngine
 
         public IReadOnlyList<BoardGearPlacementData> Placements => placements;
 
-        /// <summary>Builds a layout snapshot from live grid nodes (requires <see cref="GearConfigData.SourceGearConfig"/>).</summary>
+        /// <summary>Builds a layout snapshot from live grid nodes (requires <see cref="GearItemData.SourceGearConfig"/>).</summary>
         public static BoardLayoutData FromNodes(IEnumerable<IGridNode> nodes)
         {
             if (nodes == null)
@@ -40,10 +40,10 @@ namespace GearEngine.GearEngine
                     continue;
                 }
 
-                GearConfig source = node.ConfigData.SourceGearConfig;
+                GearItem source = node.ConfigData.SourceGearConfig;
                 if (source == null)
                 {
-                    Debug.LogWarning($"[BoardLayoutData] Skipping node at {node.Position}: GearConfigData has no SourceGearConfig.");
+                    Debug.LogWarning($"[BoardLayoutData] Skipping node at {node.Position}: GearItemData has no SourceGearConfig.");
                     continue;
                 }
 

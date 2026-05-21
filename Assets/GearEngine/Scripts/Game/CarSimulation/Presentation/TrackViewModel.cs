@@ -1,4 +1,5 @@
 using System;
+using GearEngine.CarSimulation.PhysicsSimulation;
 using System.Collections.Generic;
 using CommunityToolkit.Mvvm.ComponentModel;
 using GearEngine.CarSimulation;
@@ -24,10 +25,10 @@ namespace GearEngine.CarSimulation.Presentation
         private SimulationLifecycleState state;
 
         private readonly RaceManagerService raceManager;
-        public SplineCarRunnerService AiRunner { get; }
+        public ISimulationRunnerService AiRunner { get; }
         public TrackSimulationFactory Factory { get; }
 
-        public TrackViewModel(RaceState session, RaceManagerService raceManager, SplineCarRunnerService aiRunner, TrackSimulationFactory factory)
+        public TrackViewModel(RaceState session, RaceManagerService raceManager, ISimulationRunnerService aiRunner, TrackSimulationFactory factory)
         {
             Session = session ?? throw new ArgumentNullException(nameof(session));
             this.raceManager = raceManager;

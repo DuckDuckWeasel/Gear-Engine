@@ -1,0 +1,16 @@
+{
+  "entries": {
+    "PerkConfig": {
+      "catalog": [
+        "Boost",
+        "GearSize",
+        "HotTires",
+        "MaxSpeed",
+        "Stations"
+      ],
+      "baseCost": 100,
+      "costPerPurchaseGrowth": 50,
+      "burnReward": 50
+    }
+  }
+}

@@ -51,6 +51,16 @@ namespace GearEngine.GearEngine.Presentation.UI
 
         public event Action<IGridNode> OnGearPlaced;
         public event Action<IGridNode> OnGearRemoved;
+        public event Action<IGridNode> OnBoardClicked;
+
+        internal void HandleBoardClick(IGridNode node)
+        {
+            Debug.Log($"[BoardViewModel] HandleBoardClick called. Node: {node?.ConfigData?.Id}");
+            if (node != null)
+            {
+                OnBoardClicked?.Invoke(node);
+            }
+        }
 
         public void ToggleSimulation()
         {
@@ -81,7 +91,7 @@ namespace GearEngine.GearEngine.Presentation.UI
             UpdateLabels();
         }
 
-        public void CompleteBoardGearReturnToInventory(IGridNode node, GearConfigData config)
+        public void CompleteBoardGearReturnToInventory(IGridNode node, GearItemData config)
         {
             _ = config;
             try
@@ -104,7 +114,7 @@ namespace GearEngine.GearEngine.Presentation.UI
 
         public bool DeleteGear(IGridNode node) => boardService.TryDeleteBoardGear(node);
 
-        public bool HandleInventoryDrop(Vector2Int targetDropPos, GearConfigData gearData) =>
+        public bool HandleInventoryDrop(Vector2Int targetDropPos, GearItemData gearData) =>
             boardService.TryPlace(targetDropPos, gearData);
 
         protected override void OnClosed()

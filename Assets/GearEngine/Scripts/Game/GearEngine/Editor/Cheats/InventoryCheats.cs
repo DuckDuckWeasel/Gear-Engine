@@ -24,14 +24,14 @@ namespace GearEngine.GearEngine.Editor.Cheats
                 return;
             }
 
-            IReadOnlyList<GearConfig> valid = GetValidCatalogGears(catalog);
+            IReadOnlyList<GearItem> valid = GetValidCatalogGears(catalog);
             if (valid.Count == 0)
             {
                 Debug.LogError("[InventoryCheats] Catalog has no valid gears (null entries or missing Id).");
                 return;
             }
 
-            GearConfig pick = valid[UnityEngine.Random.Range(0, valid.Count)];
+            GearItem pick = valid[UnityEngine.Random.Range(0, valid.Count)];
             OwnedGear added = inventory.Add(pick);
             if (added != null)
             {
@@ -58,7 +58,7 @@ namespace GearEngine.GearEngine.Editor.Cheats
             }
 
             int added = 0;
-            foreach (GearConfig g in catalog.All)
+            foreach (GearItem g in catalog.All)
             {
                 if (g == null || string.IsNullOrEmpty(g.Id))
                 {
@@ -174,10 +174,10 @@ namespace GearEngine.GearEngine.Editor.Cheats
             return host != null;
         }
 
-        private static IReadOnlyList<GearConfig> GetValidCatalogGears(GearCatalogSO catalog)
+        private static IReadOnlyList<GearItem> GetValidCatalogGears(GearCatalogSO catalog)
         {
-            var list = new List<GearConfig>();
-            foreach (GearConfig g in catalog.All)
+            var list = new List<GearItem>();
+            foreach (GearItem g in catalog.All)
             {
                 if (g != null && !string.IsNullOrEmpty(g.Id))
                 {

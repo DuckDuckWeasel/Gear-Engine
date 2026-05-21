@@ -1,4 +1,5 @@
 using System;
+using GearEngine.CarSimulation.PhysicsSimulation;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Scaffold.MVVM;
 using GearEngine.CarSimulation.Definitions;
@@ -11,7 +12,7 @@ namespace GearEngine.CarSimulation.Presentation
     {
         public RaceState Session { get; }
         public CarEntity Car => Session.Car;
-        public SplineCarRunnerService RunnerService { get; }
+        public ISimulationRunnerService RunnerService { get; }
 
         [ObservableProperty] private float speed;
         [ObservableProperty] private float progress;
@@ -20,7 +21,7 @@ namespace GearEngine.CarSimulation.Presentation
         [ObservableProperty] private bool isAccelerating;
         [ObservableProperty] private float currentAcceleration;
 
-        public CarViewModel(RaceState session, SplineCarRunnerService runnerService, bool attachRunnerOnBind = true)
+        public CarViewModel(RaceState session, ISimulationRunnerService runnerService, bool attachRunnerOnBind = true)
         {
             Session = session ?? throw new ArgumentNullException(nameof(session));
             RunnerService = runnerService ?? throw new ArgumentNullException(nameof(runnerService));

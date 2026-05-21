@@ -7,7 +7,7 @@ namespace GearEngine.GearEngine.Nodes
     {
         Vector2Int Position { get; }
         float CurrentRotation { get; }
-        GearConfigData ConfigData { get; }
+        GearItemData ConfigData { get; }
         float LocalSpeedMultiplier { get; set; }
         bool IsActive { get; set; }
         bool IsInteractable { get; }
@@ -17,7 +17,7 @@ namespace GearEngine.GearEngine.Nodes
         void SetPosition(Vector2Int position);
         void AddAbility(GearAbilitySO ability, float duration = -1f);
         void RemoveAbility(GearAbilitySO ability);
-        void Initialize(Vector2Int position, GearConfigData configData);
+        void Initialize(Vector2Int position, GearItemData configData);
         void NodeUpdate(float deltaTime, float speedModifier);
         void WindDownUpdate(float deltaTime, float speedModifier);
 

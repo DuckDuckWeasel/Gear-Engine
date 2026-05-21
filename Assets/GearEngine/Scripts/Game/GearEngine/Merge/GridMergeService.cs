@@ -34,8 +34,8 @@ namespace GearEngine.GearEngine.Merge
             grid.ExtractNode(draggedNode.Position);
             grid.ExtractNode(occupantNode.Position);
 
-            GearConfig nextConfig = occupantNode.ConfigData.NextLevelConfig;
-            GearConfigData upgradedData;
+            GearItem nextConfig = occupantNode.ConfigData.NextLevelConfig;
+            GearItemData upgradedData;
             if (draggedNode.ConfigData?.Owner != null && occupantNode.ConfigData?.Owner != null && inventoryService != null)
             {
                 inventoryService.Remove(draggedNode.ConfigData.Owner);
@@ -61,7 +61,7 @@ namespace GearEngine.GearEngine.Merge
             IGridNode nodeA = grid.GetNode(posA);
             IGridNode nodeB = grid.GetNode(posB);
 
-            if (!TryGetMergeablePair(nodeA, nodeB, out string configId, out GearConfig nextLevelConfig))
+            if (!TryGetMergeablePair(nodeA, nodeB, out string configId, out GearItem nextLevelConfig))
             {
                 return false;
             }
@@ -75,7 +75,7 @@ namespace GearEngine.GearEngine.Merge
             return true;
         }
 
-        private bool TryGetMergeablePair(IGridNode nodeA, IGridNode nodeB, out string configId, out GearConfig nextLevelConfig)
+        private bool TryGetMergeablePair(IGridNode nodeA, IGridNode nodeB, out string configId, out GearItem nextLevelConfig)
         {
             configId = null;
             nextLevelConfig = null;

@@ -1,4 +1,5 @@
 using GearEngine.GearEngine.Nodes;
+using GearEngine.CarSimulation.PhysicsSimulation;
 using System;
 using System.Reflection;
 using GearEngine.CarSimulation;
@@ -73,7 +74,7 @@ namespace GearEngine.Race.Tests.Editor
             IObjectResolver scope = null;
             try
             {
-                var carRunnerConfig = ScriptableObject.CreateInstance<SplineCarRunnerConfigSO>();
+                var carRunnerConfig = ScriptableObject.CreateInstance<PhysicsSimulationConfig>();
                 var carRunner = new SplineCarRunnerService(carRunnerConfig);
                 var manager = new RaceManagerService(carRunner);
 
@@ -99,7 +100,7 @@ namespace GearEngine.Race.Tests.Editor
             try
             {
                 FakeEngine engine;
-                var carRunnerConfig = ScriptableObject.CreateInstance<SplineCarRunnerConfigSO>();
+                var carRunnerConfig = ScriptableObject.CreateInstance<PhysicsSimulationConfig>();
                 var carRunner = new SplineCarRunnerService(carRunnerConfig);
                 var manager = new RaceManagerService(carRunner);
                 (vm, scope) = CreateInitializedRaceViewModel(carDef, trackDef, out engine, manager, carRunner);
@@ -130,7 +131,7 @@ namespace GearEngine.Race.Tests.Editor
             try
             {
                 FakeEngine engine;
-                var carRunnerConfig = ScriptableObject.CreateInstance<SplineCarRunnerConfigSO>();
+                var carRunnerConfig = ScriptableObject.CreateInstance<PhysicsSimulationConfig>();
                 var carRunner = new SplineCarRunnerService(carRunnerConfig);
                 var manager = new RaceManagerService(carRunner);
                 (vm, scope) = CreateInitializedRaceViewModel(carDef, trackDef, out engine, manager, carRunner);
@@ -159,7 +160,7 @@ namespace GearEngine.Race.Tests.Editor
             try
             {
                 FakeEngine engine;
-                var carRunnerConfig = ScriptableObject.CreateInstance<SplineCarRunnerConfigSO>();
+                var carRunnerConfig = ScriptableObject.CreateInstance<PhysicsSimulationConfig>();
                 var carRunner = new SplineCarRunnerService(carRunnerConfig);
                 var manager = new RaceManagerService(carRunner);
                 (vm, scope) = CreateInitializedRaceViewModel(carDef, trackDef, out engine, manager, carRunner);

@@ -28,6 +28,20 @@ namespace GearEngine.App.Bootstrap
         [SerializeField]
         private List<AssetPublisherDefinition> layerAssetPublishers = new List<AssetPublisherDefinition>();
 
+        [Header("Offline Mode")]
+        [Tooltip("Skip UGS / LiveOps init and serve hand-authored stubs from OfflineStubs.cs. Use when testing locally without internet. No persistence between sessions.")]
+        [SerializeField]
+        private bool offlineMode;
+
+        /// <summary>
+        /// Test-only override. PlayMode tests set this to force offline mode before the scene loads,
+        /// without having to mutate the serialized field on every bootstrap component. Production code
+        /// must leave this <c>null</c>.
+        /// </summary>
+        public static bool? ForceOfflineModeForTests;
+
+        protected bool OfflineMode => ForceOfflineModeForTests ?? offlineMode;
+
         protected sealed override IInLayerScheduler CreateScheduler()
         {
             return new SequentialInLayerScheduler();

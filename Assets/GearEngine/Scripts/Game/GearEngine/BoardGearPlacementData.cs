@@ -13,7 +13,7 @@ namespace GearEngine.GearEngine
         }
 
         /// <summary>Authoring / test layout without inventory (Owner null).</summary>
-        public BoardGearPlacementData(Vector2Int position, GearConfig gearConfig)
+        public BoardGearPlacementData(Vector2Int position, GearItem gearConfig)
         {
             this.position = position;
             gearConfigField = gearConfig;
@@ -34,8 +34,8 @@ namespace GearEngine.GearEngine
         /// <summary>Non-null when loaded from LiveOps inventory.</summary>
         [NonSerialized] public OwnedGear Owner;
 
-        [SerializeField] private GearConfig gearConfigField;
+        [SerializeField] private GearItem gearConfigField;
 
-        public GearConfig GearConfig => Owner?.Config ?? gearConfigField;
+        public GearItem GearItem => Owner?.Config ?? gearConfigField;
     }
 }

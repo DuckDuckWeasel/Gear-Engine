@@ -12,7 +12,7 @@ namespace GearEngine.GearEngine.Bootstrap
 
         private readonly IObjectResolver resolver;
 
-        public IGridNode CreateNode(Vector2Int position, GearConfigData configData)
+        public IGridNode CreateNode(Vector2Int position, GearItemData configData)
         {
             IGridNode node = ResolveNodeForCategory(configData.Category);
             node.Initialize(position, configData);

@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
+using GearEngine.CarSimulation.PhysicsSimulation;
 using GearEngine.CarSimulation.Presentation;
 using GearEngine.CarSimulation.Tracks;
 using GearEngine.FrustumFit;
 using GearEngine.GearEngine.Presentation.UI;
 using Scaffold.MVVM;
+using TMPro;
 using UnityEngine;
 
 namespace GearEngine.Campaign.Presentation
@@ -16,6 +18,17 @@ namespace GearEngine.Campaign.Presentation
         [SerializeField] private TrackTelemetryViewComponent telemetry;
         [SerializeField] private FrustumFitAnchor[] openTransitionAnchors;
         [SerializeField] private float openTransitionDurationSeconds = 0.35f;
+
+        [Header("Telemetry UI")]
+        [SerializeField] private TMP_Text raceTimeText;
+        [SerializeField] private TMP_Text currentVelocityText;
+
+        [Header("Roguelike Stats UI")]
+        [SerializeField] private TMP_Text speedCapabilityText;
+        [SerializeField] private TMP_Text corneringSkillText;
+        [SerializeField] private TMP_Text driftText;
+        [SerializeField] private TMP_Text precisionText;
+        [SerializeField] private TMP_Text smoothnessText;
 
         private readonly List<CarView> spawnedCars = new List<CarView>();
         private bool raceStartPending;
@@ -34,14 +47,32 @@ namespace GearEngine.Campaign.Presentation
             // Defer race start (and prop generation) until after the FrustumFit
             // open transition has positioned the track at its final screen location.
             raceStartPending = true;
+            UpdateStatsUI();
         }
 
         private void LateUpdate()
         {
-            if (telemetry != null && viewModel?.Car != null)
+            if (viewModel == null) return;
+
+            if (telemetry != null && viewModel.Car != null)
             {
                 telemetry.UpdateFrom(viewModel.Car);
             }
+
+            UpdateStatsUI();
+        }
+
+        private void UpdateStatsUI()
+        {
+            if (viewModel?.Track?.Session?.Config == null) return;
+
+            RoguelikeCarStats stats = viewModel.Track.Session.Config.RoguelikeStats;
+
+            if (speedCapabilityText != null) speedCapabilityText.text = $"Speed Cap: {stats.SpeedCapability:F0}";
+            if (corneringSkillText != null) corneringSkillText.text = $"Cornering: {stats.CorneringSkill:F0}";
+            if (driftText != null) driftText.text = $"Drift: {stats.Drift:F0}";
+            if (precisionText != null) precisionText.text = $"Precision: {stats.Precision:F0}";
+            if (smoothnessText != null) smoothnessText.text = $"Smoothness: {stats.Smoothness:F0}";
         }
 
         private void SpawnAndBindCar()

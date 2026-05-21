@@ -14,6 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Scaffold.Navigation::Scaffold.Navigation.ViewConfig
   schemas:
     rid: 4306785141663990075
+  viewAssetSource: 0
+  directPrefab: {fileID: 0}
   asset:
     m_AssetGUID: b050ac44f110045e79e6df30f00fe8d0
     m_SubObjectName: 
@@ -21,9 +23,11 @@ MonoBehaviour:
     m_SubObjectGUID: 
     m_EditorAssetChanged: 0
   viewType:
-    serializedType: '"GearEngine.CarSimulation.Presentation.CarTrackTestView, Game.CarSimulation, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null"'
+    serializedType: '"GearEngine.CarSimulation.Presentation.CarTrackTestView, Game.CarSimulation,
+      Version=0.0.0.0, Culture=neutral, PublicKeyToken=null"'
   controllerType:
-    serializedType: '"GearEngine.CarSimulation.Presentation.CarTrackScreenViewModel, Game.CarSimulation, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null"'
+    serializedType: '"GearEngine.CarSimulation.Presentation.CarTrackScreenViewModel,
+      Game.CarSimulation, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null"'
   references:
     version: 2
     RefIds:

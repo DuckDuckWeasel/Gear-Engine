@@ -15,6 +15,22 @@ MonoBehaviour:
   m_GroupName: Default Local Group
   m_GUID: 0bdbf61a5d37c41ee95db94752ea759c
   m_SerializeEntries:
+  - m_GUID: 1cdf3f9880f0e43c499fd1afae844cbc
+    m_Address: Catalogs/PerkCatalog
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Sample
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2e7fb10914d4448eebd5ebf3b37d4661
+    m_Address: Assets/GearEngine/Prefabs/Campaign/TalentCards_Popup View.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3b45b42660c494773ae595ffa59e54b3
+    m_Address: Assets/GearEngine/Prefabs/Campaign/TalentCards View.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 3baae1b6fa9ea2345a187b40f8fe60ee
     m_Address: Assets/GearEngine/Prefabs/Campaign/Main View.prefab
     m_ReadOnly: 0

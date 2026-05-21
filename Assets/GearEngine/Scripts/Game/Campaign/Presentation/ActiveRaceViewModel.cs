@@ -1,4 +1,5 @@
 using GearEngine.Campaign.Gear;
+using GearEngine.CarSimulation.PhysicsSimulation;
 using System;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -28,7 +29,7 @@ namespace GearEngine.Campaign.Presentation
         [Inject] private IGearEngineService engineService;
         [Inject] private TrackSimulationFactory trackFactory;
         [Inject] private RaceManagerService raceManager;
-        [Inject] private SplineCarRunnerService aiRunner;
+        [Inject] private ISimulationRunnerService aiRunner;
         [Inject] private CampaignRaceSessionDefaults raceSessionDefaults;
 
         protected override void Initialize()

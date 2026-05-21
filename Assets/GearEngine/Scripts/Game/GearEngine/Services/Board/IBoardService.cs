@@ -31,7 +31,7 @@ namespace GearEngine.GearEngine.Services.Board
 
         bool TryMoveBoardGear(IGridNode node, Vector2Int toPos, Vector2Int fromPos);
 
-        bool TryPlace(Vector2Int targetDropPos, GearConfigData gearData);
+        bool TryPlace(Vector2Int targetDropPos, GearItemData gearData);
 
         bool TryRemoveBoardGear(IGridNode node);
 

@@ -57,7 +57,34 @@ namespace GearEngine.CarSimulation.Presentation
 
             if (viewModel.RunnerService != null)
             {
-                viewModel.RunnerService.InitializeRun(prometeoController, SplineContainer, viewModel.Session.Config.RoguelikeStats, viewModel.Car);
+                if (viewModel.RunnerService is GearEngine.CarSimulation.PhysicsSimulation.SplineCarRunnerService)
+                {
+                    var initParams = new GearEngine.CarSimulation.PhysicsSimulation.PhysicsInitParams
+                    {
+                        Entity = viewModel.Car,
+                        Track = SplineContainer,
+                        CarTransform = prometeoController.transform,
+                        Controller = prometeoController,
+                        Stats = viewModel.Session.Config.RoguelikeStats
+                    };
+                    viewModel.RunnerService.InitializeRun(initParams);
+                }
+                else if (viewModel.RunnerService is GearEngine.CarSimulation.SplineSimulation.SplineEvaluateRunnerService)
+                {
+                    var initParams = new GearEngine.CarSimulation.SplineSimulation.SplineInitParams
+                    {
+                        Entity = viewModel.Car,
+                        Track = SplineContainer,
+                        CarTransform = prometeoController.transform,
+                        Personality = GearEngine.CarSimulation.SplineSimulation.DriverPersonality.Default,
+                        LaneProfile = null
+                    };
+                    viewModel.RunnerService.InitializeRun(initParams);
+                }
+                else
+                {
+                    Debug.LogError($"[CarView] Unknown RunnerService type: {viewModel.RunnerService.GetType().Name}");
+                }
             }
 
             runnerAttached = true;
@@ -104,7 +131,11 @@ namespace GearEngine.CarSimulation.Presentation
                 System.Reflection.MethodInfo setupMethod = debugType.GetMethod("Setup", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
                 if (setupMethod != null)
                 {
-                    setupMethod.Invoke(debugComponent, new object[] { viewModel.Session, viewModel.RunnerService });
+                    var parameters = setupMethod.GetParameters();
+                    if (parameters.Length == 2 && parameters[1].ParameterType.IsInstanceOfType(viewModel.RunnerService))
+                    {
+                        setupMethod.Invoke(debugComponent, new object[] { viewModel.Session, viewModel.RunnerService });
+                    }
                 }
             }
 #endif

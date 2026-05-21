@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e0778e9f6b02f41aa9f09c1e454cdf38, type: 3}
+  m_Name: PerkCatalog
+  m_EditorClassIdentifier: Game.Perks::GearEngine.Perks.Config.PerkCatalogSO
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects: []
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes: []
+  items:
+  - {fileID: 11400000, guid: e907bb17908354c27b4d255a4f976ce7, type: 2}
+  - {fileID: 11400000, guid: b86091288998e42fe90080da9b2c2424, type: 2}
+  - {fileID: 11400000, guid: c58800ef8fbde41fc89a83540973a536, type: 2}
+  - {fileID: 11400000, guid: 7a4613ee984c244fb8f1119ce89a5b27, type: 2}
+  - {fileID: 11400000, guid: 552a3a79427ae49c2aa0d8aa4e67927b, type: 2}

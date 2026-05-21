@@ -86,6 +86,11 @@ namespace GearEngine.Currency
             ApplyServerSnapshot(response.CurrencyId, response.NewAmount);
         }
 
+        public void SyncWalletBalance(string currencyId, long newAmount)
+        {
+            ApplyServerSnapshot(currencyId, newAmount);
+        }
+
         private void ApplyServerSnapshot(string currencyId, long? newAmount)
         {
             if (data == null || !newAmount.HasValue)

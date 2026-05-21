@@ -27,7 +27,7 @@ namespace GearEngine.GearEngine.Presentation.UI
             RebuildTray();
         }
 
-        public ObservableCollection<GearConfigData> TrayItems { get; } = new ObservableCollection<GearConfigData>();
+        public ObservableCollection<GearItemData> TrayItems { get; } = new ObservableCollection<GearItemData>();
 
         public bool CanDrag => engineService != null && !engineService.IsRunning;
 
@@ -35,11 +35,11 @@ namespace GearEngine.GearEngine.Presentation.UI
         private readonly IBoardService boardService;
         private readonly IInventoryService inventoryService;
 
-        [ObservableProperty] private GearConfigData selectedItem;
+        [ObservableProperty] private GearItemData selectedItem;
 
         [ObservableProperty] private int inventoryListRevision;
 
-        public void NotifySlotDragAccepted(GearConfigData gear)
+        public void NotifySlotDragAccepted(GearItemData gear)
         {
             try
             {
@@ -63,12 +63,22 @@ namespace GearEngine.GearEngine.Presentation.UI
             }
         }
 
-        public void SelectGearLocal(GearConfigData gear)
+        public void SelectGearLocal(GearItemData gear)
         {
             if (gear != null && TrayItems.Contains(gear))
             {
                 SelectedItem = gear;
                 Debug.Log($"<color=#aaaaff>[UI_ViewModel]</color> Player selected: {gear.Id}");
+            }
+        }
+
+        public event Action<GearItemData> OnInventoryClicked;
+
+        internal void HandleInventoryClick(GearItemData gear)
+        {
+            if (gear != null)
+            {
+                OnInventoryClicked?.Invoke(gear);
             }
         }
 
@@ -109,7 +119,7 @@ namespace GearEngine.GearEngine.Presentation.UI
                     continue;
                 }
 
-                GearConfigData data = o.Config.CreateRuntimeData();
+                GearItemData data = o.Config.CreateRuntimeData();
                 data.Owner = o;
                 TrayItems.Add(data);
             }

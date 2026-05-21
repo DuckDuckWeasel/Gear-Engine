@@ -30,7 +30,7 @@ namespace GearEngine.Campaign.Bootstrap.LiveOps
 
         public event Action InventoryChanged;
 
-        public OwnedGear Add(GearConfig gear)
+        public OwnedGear Add(GearItem gear)
         {
             if (!TryValidateGearForAdd(gear))
             {
@@ -83,7 +83,7 @@ namespace GearEngine.Campaign.Bootstrap.LiveOps
                         continue;
                     }
 
-                    GearConfig cfg = catalog.Get(entry.GearId);
+                    GearItem cfg = catalog.Get(entry.GearId);
                     if (cfg == null)
                     {
                         Debug.LogError($"[InventoryClientModule] Unknown gear id in saved inventory: '{entry.GearId}'.");
@@ -109,7 +109,7 @@ namespace GearEngine.Campaign.Bootstrap.LiveOps
                 .ToList();
         }
 
-        private bool TryValidateGearForAdd(GearConfig gear)
+        private bool TryValidateGearForAdd(GearItem gear)
         {
             if (gear == null)
             {
