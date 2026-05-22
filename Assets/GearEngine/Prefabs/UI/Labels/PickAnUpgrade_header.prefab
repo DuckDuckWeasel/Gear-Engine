@@ -87,7 +87,7 @@ GameObject:
   - component: {fileID: 7752674672932580813}
   - component: {fileID: 8299934779517011809}
   m_Layer: 0
-  m_Name: PickAnUpgrade_header
+  m_Name: pickanupgrade_header
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

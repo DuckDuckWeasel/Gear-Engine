@@ -487,7 +487,7 @@ GameObject:
   - component: {fileID: 3702537386012676731}
   - component: {fileID: 8681830875118180347}
   m_Layer: 0
-  m_Name: Toolbar_Canvas
+  m_Name: toolbar_canvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

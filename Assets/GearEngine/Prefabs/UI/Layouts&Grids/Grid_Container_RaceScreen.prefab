@@ -1786,7 +1786,7 @@ GameObject:
   - component: {fileID: 4876485104522438845}
   - component: {fileID: 3053992189791338093}
   m_Layer: 0
-  m_Name: Grid_Container_RaceScreen
+  m_Name: grid_container_racescreen
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

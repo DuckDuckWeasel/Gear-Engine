@@ -286,7 +286,7 @@ GameObject:
   - component: {fileID: 9178229649300113475}
   - component: {fileID: 5018927764995941712}
   m_Layer: 0
-  m_Name: TableScore_Panel
+  m_Name: tablescore_panel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

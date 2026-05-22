@@ -835,7 +835,7 @@ GameObject:
   - component: {fileID: 2690213117186592249}
   - component: {fileID: 5363995956588725913}
   m_Layer: 0
-  m_Name: Toolbar
+  m_Name: toolbar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

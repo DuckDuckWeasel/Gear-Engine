@@ -87,7 +87,7 @@ GameObject:
   - component: {fileID: 7599633259462857333}
   - component: {fileID: 304895421149005282}
   m_Layer: 0
-  m_Name: PlaceCogs_HidePanel
+  m_Name: placecogs_hidepanel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

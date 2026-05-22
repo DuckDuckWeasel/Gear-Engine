@@ -739,7 +739,7 @@ GameObject:
   - component: {fileID: 8425578619498475796}
   - component: {fileID: 1198184256109103969}
   m_Layer: 0
-  m_Name: Container_PainelRace
+  m_Name: container_painelrace
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

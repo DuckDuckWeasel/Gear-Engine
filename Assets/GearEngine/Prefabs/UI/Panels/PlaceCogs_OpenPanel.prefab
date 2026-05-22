@@ -444,7 +444,7 @@ GameObject:
   - component: {fileID: 1453724467717328368}
   - component: {fileID: 5282149322750645770}
   m_Layer: 0
-  m_Name: PlaceCogs_OpenPanel
+  m_Name: placecogs_openpanel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
