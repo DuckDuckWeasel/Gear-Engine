@@ -18742,6 +18742,122 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4156269089878555838, guid: b25d5030da6b3b241a90830c437854cc, type: 3}
+      propertyPath: selectedClipIndex
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4156269089878555838, guid: b25d5030da6b3b241a90830c437854cc, type: 3}
+      propertyPath: clipsManager.clips.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4156269089878555838, guid: b25d5030da6b3b241a90830c437854cc, type: 3}
+      propertyPath: 'clipsManager.clips.Array.data[1]'
+      value: 2891885256603861327
+      objectReference: {fileID: 0}
+    - target: {fileID: 4156269089878555838, guid: b25d5030da6b3b241a90830c437854cc, type: 3}
+      propertyPath: 'managedReferences[2891885256603861327]'
+      value: Assembly-CSharp OM.Animora.Modules.AnimoraClipBroAudio
+      objectReference: {fileID: 0}
+    - target: {fileID: 4156269089878555838, guid: b25d5030da6b3b241a90830c437854cc, type: 3}
+      propertyPath: managedReferences[2891885256603861327].fadeOut
+      value: -1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4156269089878555838, guid: b25d5030da6b3b241a90830c437854cc, type: 3}
+      propertyPath: managedReferences[2891885256603861327].clipName
+      value: BroAudio Play
+      objectReference: {fileID: 0}
+    - target: {fileID: 4156269089878555838, guid: b25d5030da6b3b241a90830c437854cc, type: 3}
+      propertyPath: managedReferences[2891885256603861327].duration
+      value: 0.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4156269089878555838, guid: b25d5030da6b3b241a90830c437854cc, type: 3}
+      propertyPath: managedReferences[2891885256603861327].isActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4156269089878555838, guid: b25d5030da6b3b241a90830c437854cc, type: 3}
+      propertyPath: managedReferences[2891885256603861327].startTime
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4156269089878555838, guid: b25d5030da6b3b241a90830c437854cc, type: 3}
+      propertyPath: managedReferences[2891885256603861327].debugFlags
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4156269089878555838, guid: b25d5030da6b3b241a90830c437854cc, type: 3}
+      propertyPath: managedReferences[2891885256603861327].orderIndex
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4156269089878555838, guid: b25d5030da6b3b241a90830c437854cc, type: 3}
+      propertyPath: managedReferences[2891885256603861327].playChance
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 4156269089878555838, guid: b25d5030da6b3b241a90830c437854cc, type: 3}
+      propertyPath: managedReferences[2891885256603861327].soundID.ID
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4156269089878555838, guid: b25d5030da6b3b241a90830c437854cc, type: 3}
+      propertyPath: managedReferences[2891885256603861327].stopOnExit
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4156269089878555838, guid: b25d5030da6b3b241a90830c437854cc, type: 3}
+      propertyPath: managedReferences[2891885256603861327].clipDescription
+      value: Plays a sound using BroAudio
+      objectReference: {fileID: 0}
+    - target: {fileID: 4156269089878555838, guid: b25d5030da6b3b241a90830c437854cc, type: 3}
+      propertyPath: managedReferences[2891885256603861327].soundID._entity
+      value: 
+      objectReference: {fileID: 11400000, guid: 770a129f8f65f42e3aa08870cb22eabf, type: 2}
+    - target: {fileID: 4156269089878555838, guid: b25d5030da6b3b241a90830c437854cc, type: 3}
+      propertyPath: managedReferences[2891885256603861327].events.isEnabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4156269089878555838, guid: b25d5030da6b3b241a90830c437854cc, type: 3}
+      propertyPath: managedReferences[2891885256603861327].highlightColor.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4156269089878555838, guid: b25d5030da6b3b241a90830c437854cc, type: 3}
+      propertyPath: managedReferences[2891885256603861327].highlightColor.b
+      value: 0.41
+      objectReference: {fileID: 0}
+    - target: {fileID: 4156269089878555838, guid: b25d5030da6b3b241a90830c437854cc, type: 3}
+      propertyPath: managedReferences[2891885256603861327].highlightColor.g
+      value: 0.33
+      objectReference: {fileID: 0}
+    - target: {fileID: 4156269089878555838, guid: b25d5030da6b3b241a90830c437854cc, type: 3}
+      propertyPath: managedReferences[2891885256603861327].highlightColor.r
+      value: 0.8
+      objectReference: {fileID: 0}
+    - target: {fileID: 4156269089878555838, guid: b25d5030da6b3b241a90830c437854cc, type: 3}
+      propertyPath: managedReferences[2891885256603861327].soundID.<DebugObject>k__BackingField
+      value: 
+      objectReference: {fileID: 8083085157210884695}
+    - target: {fileID: 4156269089878555838, guid: b25d5030da6b3b241a90830c437854cc, type: 3}
+      propertyPath: managedReferences[2891885256603861327].events.onExit.m_PersistentCalls.m_Calls.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4156269089878555838, guid: b25d5030da6b3b241a90830c437854cc, type: 3}
+      propertyPath: managedReferences[2891885256603861327].events.onEnter.m_PersistentCalls.m_Calls.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4156269089878555838, guid: b25d5030da6b3b241a90830c437854cc, type: 3}
+      propertyPath: managedReferences[2891885256603861327].events.onUpdate.m_PersistentCalls.m_Calls.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4156269089878555838, guid: b25d5030da6b3b241a90830c437854cc, type: 3}
+      propertyPath: managedReferences[2891885256603861327].events.onStartOneLoop.m_PersistentCalls.m_Calls.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4156269089878555838, guid: b25d5030da6b3b241a90830c437854cc, type: 3}
+      propertyPath: managedReferences[2891885256603861327].events.onStartPlaying.m_PersistentCalls.m_Calls.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4156269089878555838, guid: b25d5030da6b3b241a90830c437854cc, type: 3}
+      propertyPath: managedReferences[2891885256603861327].events.onCompleteOneLoop.m_PersistentCalls.m_Calls.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4156269089878555838, guid: b25d5030da6b3b241a90830c437854cc, type: 3}
+      propertyPath: managedReferences[2891885256603861327].events.onCompletePlaying.m_PersistentCalls.m_Calls.Array.size
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4953479163768109523, guid: b25d5030da6b3b241a90830c437854cc, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -18859,6 +18975,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b25d5030da6b3b241a90830c437854cc, type: 3}
+--- !u!1 &8083085157210884695 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6935119686615172477, guid: b25d5030da6b3b241a90830c437854cc, type: 3}
+  m_PrefabInstance: {fileID: 8083085157210884694}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &8466347406359927971
 PrefabInstance:
   m_ObjectHideFlags: 0

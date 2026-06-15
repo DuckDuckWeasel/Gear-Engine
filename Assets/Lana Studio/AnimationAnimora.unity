@@ -10096,7 +10096,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: AnimoraRuntime::OM.Animora.Runtime.AnimoraPlayer
   playerUniqueID: MainMenu
-  selectedClipIndex: 1
+  selectedClipIndex: 5
   playMode: 1
   timeMode: 1
   defaultPlayDirection: 0
@@ -10147,9 +10147,51 @@ MonoBehaviour:
     - rid: 8490313404091203739
     - rid: 8490313404091203741
     - rid: 8490313404091203742
+    - rid: 2891885256603861328
   references:
     version: 2
     RefIds:
+    - rid: 2891885256603861328
+      type: {class: AnimoraClipBroAudio, ns: OM.Animora.Modules, asm: Assembly-CSharp}
+      data:
+        clipName: BroAudio Play
+        clipDescription: Plays a sound using BroAudio
+        highlightColor: {r: 0.8, g: 0.33, b: 0.41, a: 1}
+        isActive: 1
+        startTime: 0.26050606
+        duration: 0.47249725
+        orderIndex: 5
+        debugFlags: 0
+        playChance: 100
+        events:
+          isEnabled: 0
+          onStartPlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompletePlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onStartOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompleteOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onEnter:
+            m_PersistentCalls:
+              m_Calls: []
+          onUpdate:
+            m_PersistentCalls:
+              m_Calls: []
+          onExit:
+            m_PersistentCalls:
+              m_Calls: []
+        soundID:
+          _entity: {fileID: 11400000, guid: 770a129f8f65f42e3aa08870cb22eabf, type: 2}
+          ID: 0
+          <DebugObject>k__BackingField: {fileID: 1004550213}
+        stopOnExit: 0
+        fadeOut: -1
     - rid: 8490313404091203737
       type: {class: AnimoraClipNestedPlayer, ns: OM.Animora.Modules, asm: Assembly-CSharp}
       data:
