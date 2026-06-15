@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "com.ami.broaudio": "https://github.com/man572142/Bro_Audio.git?path=/Assets/BroAudio",
     "com.dbrizov.naughtyattributes": "https://github.com/dbrizov/NaughtyAttributes.git#upm",
     "com.github-glitchenzo.nugetforunity": "https://github.com/GlitchEnzo/NuGetForUnity.git?path=/src/NuGetForUnity",
     "com.scaffold.addressables": "https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.addressables#main",

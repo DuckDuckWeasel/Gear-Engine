@@ -1,5 +1,12 @@
 {
   "dependencies": {
+    "com.ami.broaudio": {
+      "version": "https://github.com/man572142/Bro_Audio.git?path=/Assets/BroAudio",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "37a528ce8ddbb7789e68e61517cdfc489595cda1"
+    },
     "com.dbrizov.naughtyattributes": {
       "version": "https://github.com/dbrizov/NaughtyAttributes.git#upm",
       "depth": 0,
@@ -683,7 +690,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.services.wire": {
-      "version": "1.4.2",
+      "version": "1.4.1",
       "depth": 1,
       "source": "registry",
       "dependencies": {
