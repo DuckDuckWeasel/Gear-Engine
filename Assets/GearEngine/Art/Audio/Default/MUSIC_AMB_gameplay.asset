@@ -28,7 +28,7 @@ MonoBehaviour:
     Delay: 0
     StartPosition: 0
     EndPosition: 4.835
-    FadeIn: 0
+    FadeIn: 7.18
     FadeOut: 0
     Weight: 0
   <AudioAsset>k__BackingField: {fileID: 11400000, guid: a4337db4fc61b4d43a4aaf77e045bc26, type: 2}
