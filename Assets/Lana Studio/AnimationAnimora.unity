@@ -129,6 +129,29 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 7252805350081726961, guid: b25d5030da6b3b241a90830c437854cc, type: 3}
   m_PrefabInstance: {fileID: 1919347045}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &10606759 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4488029655227288582, guid: ec8446ca4d33a3346a27093f426aaec2, type: 3}
+  m_PrefabInstance: {fileID: 8466347406359927971}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &10606761
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 10606759}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 471a6f36fb0c84273965321f132ab249, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GearEngine.Core.ViewUtility.Audio.UIAudioEventTrigger
+  _triggers:
+  - eventID: 0
+    sound:
+      _entity: {fileID: 0}
+      ID: 0
+      <DebugObject>k__BackingField: {fileID: 356977516}
 --- !u!1 &19005129
 GameObject:
   m_ObjectHideFlags: 0
@@ -180,7 +203,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: AnimoraRuntime::OM.Animora.Runtime.AnimoraPlayer
   playerUniqueID: Background
-  selectedClipIndex: 1
+  selectedClipIndex: -1
   playMode: 1
   timeMode: 1
   defaultPlayDirection: 0
@@ -217,6 +240,8 @@ MonoBehaviour:
     - rid: 8490313441434927308
     - rid: 8490313441434927341
     - rid: 8490313441434927342
+    - rid: 8490313728363856072
+    - rid: 8490313728363856075
   references:
     version: 2
     RefIds:
@@ -328,6 +353,88 @@ MonoBehaviour:
             m_PersistentCalls:
               m_Calls: []
         nestedPlayer: {fileID: 1013599312}
+    - rid: 8490313728363856072
+      type: {class: AnimoraClipBroAudio, ns: OM.Animora.Modules, asm: Assembly-CSharp}
+      data:
+        clipName: BroAudio Play
+        clipDescription: Plays a sound using BroAudio
+        highlightColor: {r: 0.8, g: 0.33, b: 0.41, a: 1}
+        isActive: 1
+        startTime: 0.27
+        duration: 0.5
+        orderIndex: 3
+        debugFlags: 0
+        playChance: 100
+        events:
+          isEnabled: 0
+          onStartPlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompletePlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onStartOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompleteOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onEnter:
+            m_PersistentCalls:
+              m_Calls: []
+          onUpdate:
+            m_PersistentCalls:
+              m_Calls: []
+          onExit:
+            m_PersistentCalls:
+              m_Calls: []
+        soundID:
+          _entity: {fileID: 11400000, guid: 3675c87e6e6dac74d8ffe18743fa68aa, type: 2}
+          ID: 0
+          <DebugObject>k__BackingField: {fileID: 19005129}
+        stopOnExit: 0
+        fadeOut: -1
+    - rid: 8490313728363856075
+      type: {class: AnimoraClipBroAudio, ns: OM.Animora.Modules, asm: Assembly-CSharp}
+      data:
+        clipName: BroAudio Play
+        clipDescription: Plays a sound using BroAudio
+        highlightColor: {r: 0.4, g: 0.8, b: 0.41, a: 1}
+        isActive: 1
+        startTime: 0.5851064
+        duration: 0.3643617
+        orderIndex: 4
+        debugFlags: 0
+        playChance: 100
+        events:
+          isEnabled: 0
+          onStartPlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompletePlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onStartOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompleteOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onEnter:
+            m_PersistentCalls:
+              m_Calls: []
+          onUpdate:
+            m_PersistentCalls:
+              m_Calls: []
+          onExit:
+            m_PersistentCalls:
+              m_Calls: []
+        soundID:
+          _entity: {fileID: 11400000, guid: 19b17d8d6311a164db63114339a80816, type: 2}
+          ID: 0
+          <DebugObject>k__BackingField: {fileID: 19005129}
+        stopOnExit: 0
+        fadeOut: -1
 --- !u!1 &19589752
 GameObject:
   m_ObjectHideFlags: 0
@@ -760,6 +867,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 7833259013974841860, guid: ba79c7db93477e641ac2b9a2c3a5ce18, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1231352188}
+    - targetCorrespondingSourceObject: {fileID: 7833259013974841860, guid: ba79c7db93477e641ac2b9a2c3a5ce18, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1231352189}
   m_SourcePrefab: {fileID: 100100000, guid: ba79c7db93477e641ac2b9a2c3a5ce18, type: 3}
 --- !u!1 &41605705
 GameObject:
@@ -1071,6 +1181,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 63257156}
   m_CullTransparentMesh: 1
+--- !u!1 &70195252 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 840820844780350228, guid: 9a642d2aef75c9944a42dde9d953f316, type: 3}
+  m_PrefabInstance: {fileID: 3553165886798742969}
+  m_PrefabAsset: {fileID: 0}
 --- !u!224 &79220313 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 7962051621311891796, guid: 5662c52d876d94843a56872fba6eb77c, type: 3}
@@ -1224,6 +1339,7 @@ GameObject:
   m_Component:
   - component: {fileID: 99603527}
   - component: {fileID: 99603528}
+  - component: {fileID: 99603529}
   m_Layer: 0
   m_Name: Container
   m_TagString: Untagged
@@ -1269,7 +1385,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: AnimoraRuntime::OM.Animora.Runtime.AnimoraPlayer
   playerUniqueID: AnimoraPlayer
-  selectedClipIndex: 1
+  selectedClipIndex: 7
   playMode: 1
   timeMode: 1
   defaultPlayDirection: 0
@@ -1320,6 +1436,9 @@ MonoBehaviour:
     - rid: 8490313441434927268
     - rid: 8490313441434927271
     - rid: 8490313441434927274
+    - rid: 8490313728363856029
+    - rid: 8490313728363856030
+    - rid: 8490313728363856032
   references:
     version: 2
     RefIds:
@@ -1503,6 +1622,147 @@ MonoBehaviour:
             m_PersistentCalls:
               m_Calls: []
         nestedPlayer: {fileID: 1913052900}
+    - rid: 8490313728363856029
+      type: {class: AnimoraClipBroAudio, ns: OM.Animora.Modules, asm: Assembly-CSharp}
+      data:
+        clipName: BroAudio Play
+        clipDescription: Plays a sound using BroAudio
+        highlightColor: {r: 0.8, g: 0.33, b: 0.41, a: 1}
+        isActive: 1
+        startTime: 0.2526596
+        duration: 0.5
+        orderIndex: 5
+        debugFlags: 0
+        playChance: 100
+        events:
+          isEnabled: 0
+          onStartPlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompletePlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onStartOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompleteOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onEnter:
+            m_PersistentCalls:
+              m_Calls: []
+          onUpdate:
+            m_PersistentCalls:
+              m_Calls: []
+          onExit:
+            m_PersistentCalls:
+              m_Calls: []
+        soundID:
+          _entity: {fileID: 11400000, guid: 3675c87e6e6dac74d8ffe18743fa68aa, type: 2}
+          ID: 0
+          <DebugObject>k__BackingField: {fileID: 99603526}
+        stopOnExit: 0
+        fadeOut: -1
+    - rid: 8490313728363856030
+      type: {class: AnimoraClipBroAudio, ns: OM.Animora.Modules, asm: Assembly-CSharp}
+      data:
+        clipName: BroAudio Play
+        clipDescription: Plays a sound using BroAudio
+        highlightColor: {r: 0.8, g: 0.33, b: 0.41, a: 1}
+        isActive: 1
+        startTime: 0.05851064
+        duration: 0.19680852
+        orderIndex: 6
+        debugFlags: 0
+        playChance: 100
+        events:
+          isEnabled: 0
+          onStartPlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompletePlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onStartOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompleteOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onEnter:
+            m_PersistentCalls:
+              m_Calls: []
+          onUpdate:
+            m_PersistentCalls:
+              m_Calls: []
+          onExit:
+            m_PersistentCalls:
+              m_Calls: []
+        soundID:
+          _entity: {fileID: 11400000, guid: 260e9b9886c0cda46895212ce42b51a5, type: 2}
+          ID: 0
+          <DebugObject>k__BackingField: {fileID: 99603526}
+        stopOnExit: 0
+        fadeOut: -1
+    - rid: 8490313728363856032
+      type: {class: AnimoraClipBroAudio, ns: OM.Animora.Modules, asm: Assembly-CSharp}
+      data:
+        clipName: BroAudio Play
+        clipDescription: Plays a sound using BroAudio
+        highlightColor: {r: 0.8, g: 0.33, b: 0.41, a: 1}
+        isActive: 1
+        startTime: 0.6
+        duration: 0.4
+        orderIndex: 7
+        debugFlags: 0
+        playChance: 100
+        events:
+          isEnabled: 0
+          onStartPlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompletePlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onStartOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompleteOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onEnter:
+            m_PersistentCalls:
+              m_Calls: []
+          onUpdate:
+            m_PersistentCalls:
+              m_Calls: []
+          onExit:
+            m_PersistentCalls:
+              m_Calls: []
+        soundID:
+          _entity: {fileID: 11400000, guid: 8b809cbbcad5f3e4883f9fbf53dcf495, type: 2}
+          ID: 0
+          <DebugObject>k__BackingField: {fileID: 99603526}
+        stopOnExit: 0
+        fadeOut: -1
+--- !u!114 &99603529
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 99603526}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 471a6f36fb0c84273965321f132ab249, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GearEngine.Core.ViewUtility.Audio.UIAudioEventTrigger
+  _triggers:
+  - eventID: 0
+    sound:
+      _entity: {fileID: 11400000, guid: 7a924d2e63a3f474ea06440effe463c1, type: 2}
+      ID: 0
+      <DebugObject>k__BackingField: {fileID: 99603526}
 --- !u!1 &105868003
 GameObject:
   m_ObjectHideFlags: 0
@@ -3159,6 +3419,29 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 6245032593920697078, guid: ec8446ca4d33a3346a27093f426aaec2, type: 3}
   m_PrefabInstance: {fileID: 8466347406359927971}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &245829433 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6344466409666356902, guid: ec8446ca4d33a3346a27093f426aaec2, type: 3}
+  m_PrefabInstance: {fileID: 8466347406359927971}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &245829435
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 245829433}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 471a6f36fb0c84273965321f132ab249, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GearEngine.Core.ViewUtility.Audio.UIAudioEventTrigger
+  _triggers:
+  - eventID: 0
+    sound:
+      _entity: {fileID: 0}
+      ID: 0
+      <DebugObject>k__BackingField: {fileID: 356977516}
 --- !u!1 &246183708 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3525876139146037334, guid: ec8446ca4d33a3346a27093f426aaec2, type: 3}
@@ -3297,6 +3580,24 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 1
         m_CallState: 2
+--- !u!114 &249833184
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 249833180}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 471a6f36fb0c84273965321f132ab249, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GearEngine.Core.ViewUtility.Audio.UIAudioEventTrigger
+  _triggers:
+  - eventID: 4
+    sound:
+      _entity: {fileID: 11400000, guid: 0680a3fa16bfe944b91aaa167171683e, type: 2}
+      ID: 0
+      <DebugObject>k__BackingField: {fileID: 249833180}
 --- !u!1 &258851953 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8455389652761873624, guid: 8d29e5c4ec1f9e149a8c9fe5bc483c02, type: 3}
@@ -3488,6 +3789,7 @@ GameObject:
   m_Component:
   - component: {fileID: 270712088}
   - component: {fileID: 270712089}
+  - component: {fileID: 270712091}
   m_Layer: 0
   m_Name: Race_Button
   m_TagString: Untagged
@@ -3692,6 +3994,24 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &270712091
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 270712087}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 471a6f36fb0c84273965321f132ab249, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GearEngine.Core.ViewUtility.Audio.UIAudioEventTrigger
+  _triggers:
+  - eventID: 4
+    sound:
+      _entity: {fileID: 11400000, guid: 9602b4269b5c4074fa670f333b40dcf4, type: 2}
+      ID: 0
+      <DebugObject>k__BackingField: {fileID: 270712087}
 --- !u!224 &272006096 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 512191703873146807, guid: aee5965506c90f7428f4320b17a78ac2, type: 3}
@@ -4388,6 +4708,29 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 2637114255748611527, guid: 48d7e6e7a37829a4e96e9d3040c391bf, type: 3}
   m_PrefabInstance: {fileID: 6818804819734215112}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &356977516 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7123799451178995243, guid: 5662c52d876d94843a56872fba6eb77c, type: 3}
+  m_PrefabInstance: {fileID: 3307653206889214650}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &356977517
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 356977516}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 471a6f36fb0c84273965321f132ab249, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GearEngine.Core.ViewUtility.Audio.UIAudioEventTrigger
+  _triggers:
+  - eventID: 0
+    sound:
+      _entity: {fileID: 0}
+      ID: 0
+      <DebugObject>k__BackingField: {fileID: 356977516}
 --- !u!1 &359476031 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 4374782182724147036, guid: dcdbcd780ac0d1b4287f8be27c04e569, type: 3}
@@ -4543,6 +4886,24 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &368561213
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 368561207}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 471a6f36fb0c84273965321f132ab249, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GearEngine.Core.ViewUtility.Audio.UIAudioEventTrigger
+  _triggers:
+  - eventID: 4
+    sound:
+      _entity: {fileID: 11400000, guid: 2ddc460ea3f7a574493e4fd00e59949e, type: 2}
+      ID: 0
+      <DebugObject>k__BackingField: {fileID: 368561207}
 --- !u!1 &372469799
 GameObject:
   m_ObjectHideFlags: 0
@@ -4554,6 +4915,7 @@ GameObject:
   - component: {fileID: 372469800}
   - component: {fileID: 372469802}
   - component: {fileID: 372469801}
+  - component: {fileID: 372469803}
   m_Layer: 0
   m_Name: Background
   m_TagString: Untagged
@@ -4618,6 +4980,29 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 372469799}
   m_CullTransparentMesh: 1
+--- !u!114 &372469803
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 372469799}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 385ffc06106304cc3824d5bcf25a7037, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: BroAudio::Ami.BroAudio.SoundSource
+  _onlyPlayOnce: 0
+  _playOnEnable: 0
+  _stopOnDisable: 0
+  _overrideFadeOut: -1
+  _sound:
+    _entity: {fileID: 11400000, guid: 7a924d2e63a3f474ea06440effe463c1, type: 2}
+    ID: 0
+    <DebugObject>k__BackingField: {fileID: 372469799}
+  _overrideGroup: {fileID: 0}
+  _positionMode: 0
+  _delay: 0
 --- !u!1 &392647608 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 4613090247141241272, guid: ec8446ca4d33a3346a27093f426aaec2, type: 3}
@@ -4650,6 +5035,24 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &438404506
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 346487354}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 471a6f36fb0c84273965321f132ab249, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GearEngine.Core.ViewUtility.Audio.UIAudioEventTrigger
+  _triggers:
+  - eventID: 4
+    sound:
+      _entity: {fileID: 11400000, guid: f0b4a01782b90b04ab11de6a73dced9c, type: 2}
+      ID: 0
+      <DebugObject>k__BackingField: {fileID: 346487354}
 --- !u!1 &445704342
 GameObject:
   m_ObjectHideFlags: 0
@@ -4662,6 +5065,7 @@ GameObject:
   - component: {fileID: 445704346}
   - component: {fileID: 445704345}
   - component: {fileID: 445704344}
+  - component: {fileID: 445704348}
   m_Layer: 0
   m_Name: Garage_Button
   m_TagString: Untagged
@@ -4916,6 +5320,24 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &445704348
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 445704342}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 471a6f36fb0c84273965321f132ab249, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GearEngine.Core.ViewUtility.Audio.UIAudioEventTrigger
+  _triggers:
+  - eventID: 4
+    sound:
+      _entity: {fileID: 11400000, guid: 9602b4269b5c4074fa670f333b40dcf4, type: 2}
+      ID: 0
+      <DebugObject>k__BackingField: {fileID: 445704342}
 --- !u!1 &446839903
 GameObject:
   m_ObjectHideFlags: 0
@@ -6761,6 +7183,11 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 4444762083587527011, guid: 9f1bf343d461b304b8fb0343130eb4a8, type: 3}
   m_PrefabInstance: {fileID: 585189726}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &587340205 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5376566509599435155, guid: 4593e7dcacd1b7b4493bfb0eabd4f2e8, type: 3}
+  m_PrefabInstance: {fileID: 3804838105346493773}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &597051780 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6935119686615172477, guid: b25d5030da6b3b241a90830c437854cc, type: 3}
@@ -6904,6 +7331,24 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 1
         m_CallState: 2
+--- !u!114 &632871223
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 632871219}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 471a6f36fb0c84273965321f132ab249, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GearEngine.Core.ViewUtility.Audio.UIAudioEventTrigger
+  _triggers:
+  - eventID: 4
+    sound:
+      _entity: {fileID: 11400000, guid: 0680a3fa16bfe944b91aaa167171683e, type: 2}
+      ID: 0
+      <DebugObject>k__BackingField: {fileID: 632871219}
 --- !u!224 &640006506 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 8867612761060566318, guid: 1aa1f93a538acb041b7004151a9c2a03, type: 3}
@@ -7362,6 +7807,8 @@ GameObject:
   - component: {fileID: 699005118}
   - component: {fileID: 699005119}
   - component: {fileID: 699005120}
+  - component: {fileID: 699005121}
+  - component: {fileID: 699005122}
   m_Layer: 0
   m_Name: background_button
   m_TagString: Untagged
@@ -7790,6 +8237,37 @@ MonoBehaviour:
           randomValue1: {r: 0, g: 0, b: 0, a: 0}
           randomValue2: {r: 0, g: 0, b: 0, a: 0}
           targetTransform: {fileID: 0}
+--- !u!114 &699005121
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 699005114}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 471a6f36fb0c84273965321f132ab249, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GearEngine.Core.ViewUtility.Audio.UIAudioEventTrigger
+  _triggers:
+  - eventID: 4
+    sound:
+      _entity: {fileID: 11400000, guid: 12fcbee1234d0084fa37a9c9583b66e5, type: 2}
+      ID: 0
+      <DebugObject>k__BackingField: {fileID: 699005114}
+--- !u!114 &699005122
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 699005114}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 471a6f36fb0c84273965321f132ab249, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GearEngine.Core.ViewUtility.Audio.UIAudioEventTrigger
+  _triggers: []
 --- !u!1 &701661607
 GameObject:
   m_ObjectHideFlags: 0
@@ -8159,6 +8637,29 @@ MonoBehaviour:
             m_PostInfinity: 2
             m_RotationOrder: 4
           easeType: 11
+--- !u!1 &733345505 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4687435584237022985, guid: ec8446ca4d33a3346a27093f426aaec2, type: 3}
+  m_PrefabInstance: {fileID: 8466347406359927971}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &733345507
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 733345505}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 471a6f36fb0c84273965321f132ab249, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GearEngine.Core.ViewUtility.Audio.UIAudioEventTrigger
+  _triggers:
+  - eventID: 0
+    sound:
+      _entity: {fileID: 0}
+      ID: 0
+      <DebugObject>k__BackingField: {fileID: 356977516}
 --- !u!1 &737453456
 GameObject:
   m_ObjectHideFlags: 0
@@ -8582,6 +9083,7 @@ GameObject:
   - component: {fileID: 762289686}
   - component: {fileID: 762289685}
   - component: {fileID: 762289684}
+  - component: {fileID: 762289688}
   m_Layer: 0
   m_Name: Toolbar_Canvas
   m_TagString: Untagged
@@ -8672,6 +9174,29 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!114 &762289688
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 762289683}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 385ffc06106304cc3824d5bcf25a7037, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: BroAudio::Ami.BroAudio.SoundSource
+  _onlyPlayOnce: 0
+  _playOnEnable: 1
+  _stopOnDisable: 0
+  _overrideFadeOut: -1
+  _sound:
+    _entity: {fileID: 11400000, guid: 7a924d2e63a3f474ea06440effe463c1, type: 2}
+    ID: 0
+    <DebugObject>k__BackingField: {fileID: 762289683}
+  _overrideGroup: {fileID: 0}
+  _positionMode: 0
+  _delay: 0
 --- !u!1 &765850041
 GameObject:
   m_ObjectHideFlags: 0
@@ -8723,7 +9248,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: AnimoraRuntime::OM.Animora.Runtime.AnimoraPlayer
   playerUniqueID: GarageContainer2
-  selectedClipIndex: -1
+  selectedClipIndex: 2
   playMode: 1
   timeMode: 1
   defaultPlayDirection: 0
@@ -8759,6 +9284,7 @@ MonoBehaviour:
     clips:
     - rid: 8490313441434927238
     - rid: 8490313441434927241
+    - rid: 8490313728363856019
   references:
     version: 2
     RefIds:
@@ -8834,6 +9360,47 @@ MonoBehaviour:
             m_PersistentCalls:
               m_Calls: []
         nestedPlayer: {fileID: 699005120}
+    - rid: 8490313728363856019
+      type: {class: AnimoraClipBroAudio, ns: OM.Animora.Modules, asm: Assembly-CSharp}
+      data:
+        clipName: BroAudio Play
+        clipDescription: Plays a sound using BroAudio
+        highlightColor: {r: 0.8, g: 0.33, b: 0.41, a: 1}
+        isActive: 1
+        startTime: 0.2526596
+        duration: 0.5
+        orderIndex: 2
+        debugFlags: 0
+        playChance: 100
+        events:
+          isEnabled: 0
+          onStartPlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompletePlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onStartOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompleteOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onEnter:
+            m_PersistentCalls:
+              m_Calls: []
+          onUpdate:
+            m_PersistentCalls:
+              m_Calls: []
+          onExit:
+            m_PersistentCalls:
+              m_Calls: []
+        soundID:
+          _entity: {fileID: 11400000, guid: 3675c87e6e6dac74d8ffe18743fa68aa, type: 2}
+          ID: 0
+          <DebugObject>k__BackingField: {fileID: 765850041}
+        stopOnExit: 0
+        fadeOut: -1
 --- !u!1 &770233930
 GameObject:
   m_ObjectHideFlags: 0
@@ -8886,7 +9453,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: AnimoraRuntime::OM.Animora.Runtime.AnimoraPlayer
   playerUniqueID: AnimoraPlayer
-  selectedClipIndex: 1
+  selectedClipIndex: 4
   playMode: 1
   timeMode: 1
   defaultPlayDirection: 0
@@ -8923,6 +9490,8 @@ MonoBehaviour:
     - rid: 8490313434449576070
     - rid: 8490313434449576071
     - rid: 8490313434449576072
+    - rid: 8490313728363856003
+    - rid: 8490313728363856004
   references:
     version: 2
     RefIds:
@@ -9034,6 +9603,88 @@ MonoBehaviour:
             m_PersistentCalls:
               m_Calls: []
         nestedPlayer: {fileID: 119612804}
+    - rid: 8490313728363856003
+      type: {class: AnimoraClipBroAudio, ns: OM.Animora.Modules, asm: Assembly-CSharp}
+      data:
+        clipName: BroAudio Play
+        clipDescription: Plays a sound using BroAudio
+        highlightColor: {r: 0.8, g: 0.33, b: 0.41, a: 1}
+        isActive: 1
+        startTime: 0.30851063
+        duration: 0.536327
+        orderIndex: 3
+        debugFlags: 0
+        playChance: 100
+        events:
+          isEnabled: 0
+          onStartPlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompletePlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onStartOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompleteOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onEnter:
+            m_PersistentCalls:
+              m_Calls: []
+          onUpdate:
+            m_PersistentCalls:
+              m_Calls: []
+          onExit:
+            m_PersistentCalls:
+              m_Calls: []
+        soundID:
+          _entity: {fileID: 11400000, guid: 55f010b82f24ef845ae9b27699457854, type: 2}
+          ID: 0
+          <DebugObject>k__BackingField: {fileID: 770233930}
+        stopOnExit: 0
+        fadeOut: -1
+    - rid: 8490313728363856004
+      type: {class: AnimoraClipBroAudio, ns: OM.Animora.Modules, asm: Assembly-CSharp}
+      data:
+        clipName: BroAudio Play
+        clipDescription: Plays a sound using BroAudio
+        highlightColor: {r: 0.8, g: 0.33, b: 0.41, a: 1}
+        isActive: 1
+        startTime: 0.4202128
+        duration: 0.53
+        orderIndex: 4
+        debugFlags: 0
+        playChance: 100
+        events:
+          isEnabled: 0
+          onStartPlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompletePlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onStartOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompleteOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onEnter:
+            m_PersistentCalls:
+              m_Calls: []
+          onUpdate:
+            m_PersistentCalls:
+              m_Calls: []
+          onExit:
+            m_PersistentCalls:
+              m_Calls: []
+        soundID:
+          _entity: {fileID: 11400000, guid: 8b809cbbcad5f3e4883f9fbf53dcf495, type: 2}
+          ID: 0
+          <DebugObject>k__BackingField: {fileID: 770233930}
+        stopOnExit: 0
+        fadeOut: -1
 --- !u!224 &773236027 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 3239924457096290620, guid: c9093d51e9a113d4788a1bf3897ac4ac, type: 3}
@@ -9117,7 +9768,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: AnimoraRuntime::OM.Animora.Runtime.AnimoraPlayer
   playerUniqueID: AnimoraPlayer
-  selectedClipIndex: 1
+  selectedClipIndex: -1
   playMode: 1
   timeMode: 1
   defaultPlayDirection: 0
@@ -9153,6 +9804,7 @@ MonoBehaviour:
     clips:
     - rid: 8490313441434927375
     - rid: 8490313441434927376
+    - rid: 8490313728363856068
   references:
     version: 2
     RefIds:
@@ -9228,6 +9880,47 @@ MonoBehaviour:
             m_PersistentCalls:
               m_Calls: []
         nestedPlayer: {fileID: 1025360584}
+    - rid: 8490313728363856068
+      type: {class: AnimoraClipBroAudio, ns: OM.Animora.Modules, asm: Assembly-CSharp}
+      data:
+        clipName: BroAudio Play
+        clipDescription: Plays a sound using BroAudio
+        highlightColor: {r: 0.8, g: 0.33, b: 0.41, a: 1}
+        isActive: 1
+        startTime: 0.05851064
+        duration: 0.19680852
+        orderIndex: 2
+        debugFlags: 0
+        playChance: 100
+        events:
+          isEnabled: 0
+          onStartPlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompletePlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onStartOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompleteOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onEnter:
+            m_PersistentCalls:
+              m_Calls: []
+          onUpdate:
+            m_PersistentCalls:
+              m_Calls: []
+          onExit:
+            m_PersistentCalls:
+              m_Calls: []
+        soundID:
+          _entity: {fileID: 11400000, guid: 260e9b9886c0cda46895212ce42b51a5, type: 2}
+          ID: 0
+          <DebugObject>k__BackingField: {fileID: 1013655839}
+        stopOnExit: 0
+        fadeOut: -1
 --- !u!1 &785032774
 GameObject:
   m_ObjectHideFlags: 0
@@ -9280,7 +9973,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: AnimoraRuntime::OM.Animora.Runtime.AnimoraPlayer
   playerUniqueID: AnimoraPlayer
-  selectedClipIndex: 1
+  selectedClipIndex: 4
   playMode: 1
   timeMode: 1
   defaultPlayDirection: 0
@@ -9317,6 +10010,8 @@ MonoBehaviour:
     - rid: 8490313441434927250
     - rid: 8490313441434927255
     - rid: 8490313441434927256
+    - rid: 8490313728363856024
+    - rid: 8490313728363856027
   references:
     version: 2
     RefIds:
@@ -9428,6 +10123,111 @@ MonoBehaviour:
             m_PersistentCalls:
               m_Calls: []
         nestedPlayer: {fileID: 1158217142}
+    - rid: 8490313728363856024
+      type: {class: AnimoraClipBroAudio, ns: OM.Animora.Modules, asm: Assembly-CSharp}
+      data:
+        clipName: BroAudio Play
+        clipDescription: Plays a sound using BroAudio
+        highlightColor: {r: 0.8, g: 0.33, b: 0.41, a: 1}
+        isActive: 1
+        startTime: 0.2526596
+        duration: 0.5
+        orderIndex: 3
+        debugFlags: 0
+        playChance: 100
+        events:
+          isEnabled: 0
+          onStartPlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompletePlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onStartOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompleteOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onEnter:
+            m_PersistentCalls:
+              m_Calls: []
+          onUpdate:
+            m_PersistentCalls:
+              m_Calls: []
+          onExit:
+            m_PersistentCalls:
+              m_Calls: []
+        soundID:
+          _entity: {fileID: 11400000, guid: 3675c87e6e6dac74d8ffe18743fa68aa, type: 2}
+          ID: 0
+          <DebugObject>k__BackingField: {fileID: 785032774}
+        stopOnExit: 0
+        fadeOut: -1
+    - rid: 8490313728363856027
+      type: {class: AnimoraClipBroAudio, ns: OM.Animora.Modules, asm: Assembly-CSharp}
+      data:
+        clipName: BroAudio Play
+        clipDescription: Plays a sound using BroAudio
+        highlightColor: {r: 0.8, g: 0.33, b: 0.41, a: 1}
+        isActive: 1
+        startTime: 0.05851064
+        duration: 0.19680852
+        orderIndex: 4
+        debugFlags: 0
+        playChance: 100
+        events:
+          isEnabled: 0
+          onStartPlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompletePlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onStartOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompleteOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onEnter:
+            m_PersistentCalls:
+              m_Calls: []
+          onUpdate:
+            m_PersistentCalls:
+              m_Calls: []
+          onExit:
+            m_PersistentCalls:
+              m_Calls: []
+        soundID:
+          _entity: {fileID: 11400000, guid: 260e9b9886c0cda46895212ce42b51a5, type: 2}
+          ID: 0
+          <DebugObject>k__BackingField: {fileID: 785032774}
+        stopOnExit: 0
+        fadeOut: -1
+--- !u!1 &789609891 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6534700731392234067, guid: a1cff467a32113248aa17e6c71b9636b, type: 3}
+  m_PrefabInstance: {fileID: 1170263023}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &789609892
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 789609891}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 471a6f36fb0c84273965321f132ab249, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GearEngine.Core.ViewUtility.Audio.UIAudioEventTrigger
+  _triggers:
+  - eventID: 0
+    sound:
+      _entity: {fileID: 0}
+      ID: 0
+      <DebugObject>k__BackingField: {fileID: 356977516}
 --- !u!1 &803754578 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6587878165350236319, guid: ec8446ca4d33a3346a27093f426aaec2, type: 3}
@@ -10041,6 +10841,29 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 959114893}
   m_CullTransparentMesh: 1
+--- !u!1 &997289127 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1442062357052813261, guid: a1cff467a32113248aa17e6c71b9636b, type: 3}
+  m_PrefabInstance: {fileID: 1170263023}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &997289128
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 997289127}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 471a6f36fb0c84273965321f132ab249, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GearEngine.Core.ViewUtility.Audio.UIAudioEventTrigger
+  _triggers:
+  - eventID: 0
+    sound:
+      _entity: {fileID: 0}
+      ID: 0
+      <DebugObject>k__BackingField: {fileID: 356977516}
 --- !u!1 &1004550213
 GameObject:
   m_ObjectHideFlags: 0
@@ -10096,13 +10919,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: AnimoraRuntime::OM.Animora.Runtime.AnimoraPlayer
   playerUniqueID: MainMenu
-  selectedClipIndex: 5
+  selectedClipIndex: 7
   playMode: 1
   timeMode: 1
   defaultPlayDirection: 0
   playLoopType: 2
   debugFlags: 0
-  timelineDuration: 1.6
+  timelineDuration: 1.68
   playbackSpeed: 1
   loopCount: 1
   animoraPlayerEvents:
@@ -10148,6 +10971,8 @@ MonoBehaviour:
     - rid: 8490313404091203741
     - rid: 8490313404091203742
     - rid: 2891885256603861328
+    - rid: 8490313713437900946
+    - rid: 8490313728363856016
   references:
     version: 2
     RefIds:
@@ -10158,8 +10983,8 @@ MonoBehaviour:
         clipDescription: Plays a sound using BroAudio
         highlightColor: {r: 0.8, g: 0.33, b: 0.41, a: 1}
         isActive: 1
-        startTime: 0.26050606
-        duration: 0.47249725
+        startTime: 0.25531915
+        duration: 0.536327
         orderIndex: 5
         debugFlags: 0
         playChance: 100
@@ -10187,7 +11012,7 @@ MonoBehaviour:
             m_PersistentCalls:
               m_Calls: []
         soundID:
-          _entity: {fileID: 11400000, guid: 770a129f8f65f42e3aa08870cb22eabf, type: 2}
+          _entity: {fileID: 11400000, guid: 260e9b9886c0cda46895212ce42b51a5, type: 2}
           ID: 0
           <DebugObject>k__BackingField: {fileID: 1004550213}
         stopOnExit: 0
@@ -10372,6 +11197,88 @@ MonoBehaviour:
             m_PersistentCalls:
               m_Calls: []
         nestedPlayer: {fileID: 1236331288}
+    - rid: 8490313713437900946
+      type: {class: AnimoraClipBroAudio, ns: OM.Animora.Modules, asm: Assembly-CSharp}
+      data:
+        clipName: BroAudio Play
+        clipDescription: Plays a sound using BroAudio
+        highlightColor: {r: 0.8, g: 0.33, b: 0.41, a: 1}
+        isActive: 1
+        startTime: 0.40212765
+        duration: 0.53
+        orderIndex: 6
+        debugFlags: 0
+        playChance: 100
+        events:
+          isEnabled: 0
+          onStartPlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompletePlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onStartOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompleteOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onEnter:
+            m_PersistentCalls:
+              m_Calls: []
+          onUpdate:
+            m_PersistentCalls:
+              m_Calls: []
+          onExit:
+            m_PersistentCalls:
+              m_Calls: []
+        soundID:
+          _entity: {fileID: 11400000, guid: 19b17d8d6311a164db63114339a80816, type: 2}
+          ID: 0
+          <DebugObject>k__BackingField: {fileID: 1004550213}
+        stopOnExit: 0
+        fadeOut: -1
+    - rid: 8490313728363856016
+      type: {class: AnimoraClipBroAudio, ns: OM.Animora.Modules, asm: Assembly-CSharp}
+      data:
+        clipName: BroAudio Play
+        clipDescription: Plays a sound using BroAudio
+        highlightColor: {r: 0.8, g: 0.33, b: 0.41, a: 1}
+        isActive: 1
+        startTime: 0.4202128
+        duration: 0.53
+        orderIndex: 7
+        debugFlags: 0
+        playChance: 100
+        events:
+          isEnabled: 0
+          onStartPlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompletePlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onStartOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompleteOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onEnter:
+            m_PersistentCalls:
+              m_Calls: []
+          onUpdate:
+            m_PersistentCalls:
+              m_Calls: []
+          onExit:
+            m_PersistentCalls:
+              m_Calls: []
+        soundID:
+          _entity: {fileID: 11400000, guid: 8b809cbbcad5f3e4883f9fbf53dcf495, type: 2}
+          ID: 0
+          <DebugObject>k__BackingField: {fileID: 1004550213}
+        stopOnExit: 0
+        fadeOut: -1
 --- !u!1 &1013599307
 GameObject:
   m_ObjectHideFlags: 0
@@ -10680,7 +11587,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: AnimoraRuntime::OM.Animora.Runtime.AnimoraPlayer
   playerUniqueID: AnimoraPlayer
-  selectedClipIndex: 1
+  selectedClipIndex: 2
   playMode: 1
   timeMode: 1
   defaultPlayDirection: 0
@@ -10716,6 +11623,7 @@ MonoBehaviour:
     clips:
     - rid: 8490313441434927361
     - rid: 8490313441434927362
+    - rid: 8490313728363856067
   references:
     version: 2
     RefIds:
@@ -10791,6 +11699,47 @@ MonoBehaviour:
             m_PersistentCalls:
               m_Calls: []
         nestedPlayer: {fileID: 2031411748}
+    - rid: 8490313728363856067
+      type: {class: AnimoraClipBroAudio, ns: OM.Animora.Modules, asm: Assembly-CSharp}
+      data:
+        clipName: BroAudio Play
+        clipDescription: Plays a sound using BroAudio
+        highlightColor: {r: 0.8, g: 0.33, b: 0.41, a: 1}
+        isActive: 1
+        startTime: 0.05851064
+        duration: 0.19680852
+        orderIndex: 2
+        debugFlags: 0
+        playChance: 100
+        events:
+          isEnabled: 0
+          onStartPlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompletePlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onStartOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompleteOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onEnter:
+            m_PersistentCalls:
+              m_Calls: []
+          onUpdate:
+            m_PersistentCalls:
+              m_Calls: []
+          onExit:
+            m_PersistentCalls:
+              m_Calls: []
+        soundID:
+          _entity: {fileID: 11400000, guid: 260e9b9886c0cda46895212ce42b51a5, type: 2}
+          ID: 0
+          <DebugObject>k__BackingField: {fileID: 1013655839}
+        stopOnExit: 0
+        fadeOut: -1
 --- !u!1 &1017456938
 GameObject:
   m_ObjectHideFlags: 0
@@ -11407,6 +12356,7 @@ GameObject:
   - component: {fileID: 1035349930}
   - component: {fileID: 1035349933}
   - component: {fileID: 1035349934}
+  - component: {fileID: 1035349935}
   m_Layer: 0
   m_Name: background_button
   m_TagString: Untagged
@@ -11703,6 +12653,24 @@ MonoBehaviour:
           randomValue1: {r: 0, g: 0, b: 0, a: 0}
           randomValue2: {r: 0, g: 0, b: 0, a: 0}
           targetTransform: {fileID: 0}
+--- !u!114 &1035349935
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1035349928}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 471a6f36fb0c84273965321f132ab249, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GearEngine.Core.ViewUtility.Audio.UIAudioEventTrigger
+  _triggers:
+  - eventID: 4
+    sound:
+      _entity: {fileID: 11400000, guid: 12fcbee1234d0084fa37a9c9583b66e5, type: 2}
+      ID: 0
+      <DebugObject>k__BackingField: {fileID: 1035349928}
 --- !u!1 &1036620557
 GameObject:
   m_ObjectHideFlags: 0
@@ -11871,6 +12839,24 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 1
         m_CallState: 2
+--- !u!114 &1038413961
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1038413957}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 471a6f36fb0c84273965321f132ab249, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GearEngine.Core.ViewUtility.Audio.UIAudioEventTrigger
+  _triggers:
+  - eventID: 4
+    sound:
+      _entity: {fileID: 11400000, guid: 0680a3fa16bfe944b91aaa167171683e, type: 2}
+      ID: 0
+      <DebugObject>k__BackingField: {fileID: 1038413957}
 --- !u!1 &1064242893
 GameObject:
   m_ObjectHideFlags: 0
@@ -11927,7 +12913,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: AnimoraRuntime::OM.Animora.Runtime.AnimoraPlayer
   playerUniqueID: AnimoraPlayer
-  selectedClipIndex: 3
+  selectedClipIndex: -1
   playMode: 1
   timeMode: 1
   defaultPlayDirection: 0
@@ -11977,6 +12963,9 @@ MonoBehaviour:
     - rid: 8490313441434927296
     - rid: 8490313441434927297
     - rid: 8490313441434927332
+    - rid: 8490313728363856055
+    - rid: 8490313728363856057
+    - rid: 8490313728363856058
   references:
     version: 2
     RefIds:
@@ -12124,6 +13113,129 @@ MonoBehaviour:
             m_PersistentCalls:
               m_Calls: []
         nestedPlayer: {fileID: 551890090}
+    - rid: 8490313728363856055
+      type: {class: AnimoraClipBroAudio, ns: OM.Animora.Modules, asm: Assembly-CSharp}
+      data:
+        clipName: BroAudio Play
+        clipDescription: Plays a sound using BroAudio
+        highlightColor: {r: 0.8, g: 0.33, b: 0.41, a: 1}
+        isActive: 1
+        startTime: 0.463673
+        duration: 0.536327
+        orderIndex: 4
+        debugFlags: 0
+        playChance: 100
+        events:
+          isEnabled: 0
+          onStartPlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompletePlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onStartOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompleteOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onEnter:
+            m_PersistentCalls:
+              m_Calls: []
+          onUpdate:
+            m_PersistentCalls:
+              m_Calls: []
+          onExit:
+            m_PersistentCalls:
+              m_Calls: []
+        soundID:
+          _entity: {fileID: 11400000, guid: 260e9b9886c0cda46895212ce42b51a5, type: 2}
+          ID: 0
+          <DebugObject>k__BackingField: {fileID: 1064242893}
+        stopOnExit: 0
+        fadeOut: -1
+    - rid: 8490313728363856057
+      type: {class: AnimoraClipBroAudio, ns: OM.Animora.Modules, asm: Assembly-CSharp}
+      data:
+        clipName: BroAudio Play
+        clipDescription: Plays a sound using BroAudio
+        highlightColor: {r: 0.8, g: 0.33, b: 0.41, a: 1}
+        isActive: 1
+        startTime: 0.47000003
+        duration: 0.53
+        orderIndex: 5
+        debugFlags: 0
+        playChance: 100
+        events:
+          isEnabled: 0
+          onStartPlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompletePlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onStartOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompleteOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onEnter:
+            m_PersistentCalls:
+              m_Calls: []
+          onUpdate:
+            m_PersistentCalls:
+              m_Calls: []
+          onExit:
+            m_PersistentCalls:
+              m_Calls: []
+        soundID:
+          _entity: {fileID: 11400000, guid: 19b17d8d6311a164db63114339a80816, type: 2}
+          ID: 0
+          <DebugObject>k__BackingField: {fileID: 1064242893}
+        stopOnExit: 0
+        fadeOut: -1
+    - rid: 8490313728363856058
+      type: {class: AnimoraClipBroAudio, ns: OM.Animora.Modules, asm: Assembly-CSharp}
+      data:
+        clipName: BroAudio Play
+        clipDescription: Plays a sound using BroAudio
+        highlightColor: {r: 0.8, g: 0.33, b: 0.41, a: 1}
+        isActive: 1
+        startTime: 0.47000003
+        duration: 0.53
+        orderIndex: 6
+        debugFlags: 0
+        playChance: 100
+        events:
+          isEnabled: 0
+          onStartPlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompletePlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onStartOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompleteOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onEnter:
+            m_PersistentCalls:
+              m_Calls: []
+          onUpdate:
+            m_PersistentCalls:
+              m_Calls: []
+          onExit:
+            m_PersistentCalls:
+              m_Calls: []
+        soundID:
+          _entity: {fileID: 11400000, guid: 8b809cbbcad5f3e4883f9fbf53dcf495, type: 2}
+          ID: 0
+          <DebugObject>k__BackingField: {fileID: 1004550213}
+        stopOnExit: 0
+        fadeOut: -1
 --- !u!1 &1067537876
 GameObject:
   m_ObjectHideFlags: 0
@@ -12391,6 +13503,29 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1082774658}
   m_CullTransparentMesh: 1
+--- !u!1 &1097087586 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6181782928766158031, guid: ec8446ca4d33a3346a27093f426aaec2, type: 3}
+  m_PrefabInstance: {fileID: 8466347406359927971}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1097087588
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1097087586}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 471a6f36fb0c84273965321f132ab249, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GearEngine.Core.ViewUtility.Audio.UIAudioEventTrigger
+  _triggers:
+  - eventID: 0
+    sound:
+      _entity: {fileID: 0}
+      ID: 0
+      <DebugObject>k__BackingField: {fileID: 356977516}
 --- !u!1 &1105020496
 GameObject:
   m_ObjectHideFlags: 0
@@ -12403,6 +13538,7 @@ GameObject:
   - component: {fileID: 1105020500}
   - component: {fileID: 1105020499}
   - component: {fileID: 1105020498}
+  - component: {fileID: 1105020501}
   m_Layer: 0
   m_Name: Store_Button
   m_TagString: Untagged
@@ -12645,6 +13781,24 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &1105020501
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1105020496}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 471a6f36fb0c84273965321f132ab249, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GearEngine.Core.ViewUtility.Audio.UIAudioEventTrigger
+  _triggers:
+  - eventID: 4
+    sound:
+      _entity: {fileID: 11400000, guid: 9602b4269b5c4074fa670f333b40dcf4, type: 2}
+      ID: 0
+      <DebugObject>k__BackingField: {fileID: 1105020496}
 --- !u!1 &1111713846
 GameObject:
   m_ObjectHideFlags: 0
@@ -13011,6 +14165,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 439585222842394288, guid: e1549af7538a6f1438a8f774695ef396, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1158217142}
+    - targetCorrespondingSourceObject: {fileID: 439585222842394288, guid: e1549af7538a6f1438a8f774695ef396, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1158217143}
   m_SourcePrefab: {fileID: 100100000, guid: e1549af7538a6f1438a8f774695ef396, type: 3}
 --- !u!224 &1158217134 stripped
 RectTransform:
@@ -13193,6 +14350,47 @@ MonoBehaviour:
           randomValue1: {x: 0, y: 0, z: 0}
           randomValue2: {x: 0, y: 0, z: 0}
           targetTransform: {fileID: 0}
+--- !u!114 &1158217143
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1023909115}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 471a6f36fb0c84273965321f132ab249, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GearEngine.Core.ViewUtility.Audio.UIAudioEventTrigger
+  _triggers:
+  - eventID: 4
+    sound:
+      _entity: {fileID: 11400000, guid: 9c17d2afd4a4e5c4b95bc3c4f9c27a02, type: 2}
+      ID: 0
+      <DebugObject>k__BackingField: {fileID: 1023909115}
+--- !u!1 &1158644816 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 377389042370528848, guid: a1cff467a32113248aa17e6c71b9636b, type: 3}
+  m_PrefabInstance: {fileID: 1170263023}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1158644817
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1158644816}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 471a6f36fb0c84273965321f132ab249, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GearEngine.Core.ViewUtility.Audio.UIAudioEventTrigger
+  _triggers:
+  - eventID: 0
+    sound:
+      _entity: {fileID: 0}
+      ID: 0
+      <DebugObject>k__BackingField: {fileID: 356977516}
 --- !u!1 &1168873849
 GameObject:
   m_ObjectHideFlags: 0
@@ -13207,6 +14405,7 @@ GameObject:
   - component: {fileID: 1168873851}
   - component: {fileID: 1168873854}
   - component: {fileID: 1168873855}
+  - component: {fileID: 1168873856}
   m_Layer: 0
   m_Name: background_button
   m_TagString: Untagged
@@ -13503,6 +14702,24 @@ MonoBehaviour:
           randomValue1: {r: 0, g: 0, b: 0, a: 0}
           randomValue2: {r: 0, g: 0, b: 0, a: 0}
           targetTransform: {fileID: 0}
+--- !u!114 &1168873856
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1168873849}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 471a6f36fb0c84273965321f132ab249, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GearEngine.Core.ViewUtility.Audio.UIAudioEventTrigger
+  _triggers:
+  - eventID: 4
+    sound:
+      _entity: {fileID: 11400000, guid: 12fcbee1234d0084fa37a9c9583b66e5, type: 2}
+      ID: 0
+      <DebugObject>k__BackingField: {fileID: 1168873849}
 --- !u!1001 &1170263023
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -13939,7 +15156,34 @@ PrefabInstance:
     - {fileID: 6829192180161499792, guid: a1cff467a32113248aa17e6c71b9636b, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 6388464997231874988, guid: a1cff467a32113248aa17e6c71b9636b, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1710165735}
+    - targetCorrespondingSourceObject: {fileID: 377389042370528848, guid: a1cff467a32113248aa17e6c71b9636b, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1158644817}
+    - targetCorrespondingSourceObject: {fileID: 6154442609276273291, guid: a1cff467a32113248aa17e6c71b9636b, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2075371666}
+    - targetCorrespondingSourceObject: {fileID: 1442062357052813261, guid: a1cff467a32113248aa17e6c71b9636b, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 997289128}
+    - targetCorrespondingSourceObject: {fileID: 6534700731392234067, guid: a1cff467a32113248aa17e6c71b9636b, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 789609892}
+    - targetCorrespondingSourceObject: {fileID: 6091003740089100544, guid: a1cff467a32113248aa17e6c71b9636b, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1233496904}
+    - targetCorrespondingSourceObject: {fileID: 7515254385638952553, guid: a1cff467a32113248aa17e6c71b9636b, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1651108654}
+    - targetCorrespondingSourceObject: {fileID: 3138068625655293583, guid: a1cff467a32113248aa17e6c71b9636b, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1866316723}
+    - targetCorrespondingSourceObject: {fileID: 4823693484529694127, guid: a1cff467a32113248aa17e6c71b9636b, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1781035501}
   m_SourcePrefab: {fileID: 100100000, guid: a1cff467a32113248aa17e6c71b9636b, type: 3}
 --- !u!1 &1179524208
 GameObject:
@@ -14258,7 +15502,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 3750620080061295834, guid: aee5965506c90f7428f4320b17a78ac2, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1336973063}
   m_SourcePrefab: {fileID: 100100000, guid: aee5965506c90f7428f4320b17a78ac2, type: 3}
 --- !u!224 &1182185030 stripped
 RectTransform:
@@ -14287,6 +15534,24 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &1182185035
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 348127049}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 471a6f36fb0c84273965321f132ab249, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GearEngine.Core.ViewUtility.Audio.UIAudioEventTrigger
+  _triggers:
+  - eventID: 4
+    sound:
+      _entity: {fileID: 11400000, guid: 0fd8bf9bce3b9144b8420cf704acb255, type: 2}
+      ID: 0
+      <DebugObject>k__BackingField: {fileID: 348127049}
 --- !u!1 &1184767926
 GameObject:
   m_ObjectHideFlags: 0
@@ -15457,6 +16722,47 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &1231352189
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1197678903}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 471a6f36fb0c84273965321f132ab249, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GearEngine.Core.ViewUtility.Audio.UIAudioEventTrigger
+  _triggers:
+  - eventID: 4
+    sound:
+      _entity: {fileID: 11400000, guid: f0b4a01782b90b04ab11de6a73dced9c, type: 2}
+      ID: 0
+      <DebugObject>k__BackingField: {fileID: 1197678903}
+--- !u!1 &1233496903 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6091003740089100544, guid: a1cff467a32113248aa17e6c71b9636b, type: 3}
+  m_PrefabInstance: {fileID: 1170263023}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1233496904
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1233496903}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 471a6f36fb0c84273965321f132ab249, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GearEngine.Core.ViewUtility.Audio.UIAudioEventTrigger
+  _triggers:
+  - eventID: 0
+    sound:
+      _entity: {fileID: 0}
+      ID: 0
+      <DebugObject>k__BackingField: {fileID: 356977516}
 --- !u!1 &1236331284 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8062536421365984298, guid: 8d29e5c4ec1f9e149a8c9fe5bc483c02, type: 3}
@@ -15633,6 +16939,29 @@ MonoBehaviour:
           randomValue1: {x: 0, y: 0, z: 0}
           randomValue2: {x: 0, y: 0, z: 0}
           targetTransform: {fileID: 0}
+--- !u!1 &1274975147 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8202671225696561842, guid: ec8446ca4d33a3346a27093f426aaec2, type: 3}
+  m_PrefabInstance: {fileID: 8466347406359927971}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1274975149
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1274975147}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 471a6f36fb0c84273965321f132ab249, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GearEngine.Core.ViewUtility.Audio.UIAudioEventTrigger
+  _triggers:
+  - eventID: 0
+    sound:
+      _entity: {fileID: 0}
+      ID: 0
+      <DebugObject>k__BackingField: {fileID: 356977516}
 --- !u!1 &1275328887 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6160047506491456431, guid: a1cff467a32113248aa17e6c71b9636b, type: 3}
@@ -15857,6 +17186,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 3349186252834294066, guid: b25d5030da6b3b241a90830c437854cc, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1611223745}
+    - targetCorrespondingSourceObject: {fileID: 3349186252834294066, guid: b25d5030da6b3b241a90830c437854cc, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1611223751}
   m_SourcePrefab: {fileID: 100100000, guid: b25d5030da6b3b241a90830c437854cc, type: 3}
 --- !u!1 &1278979513
 GameObject:
@@ -15909,7 +17241,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: AnimoraRuntime::OM.Animora.Runtime.AnimoraPlayer
   playerUniqueID: AnimoraPlayer
-  selectedClipIndex: -1
+  selectedClipIndex: 2
   playMode: 1
   timeMode: 1
   defaultPlayDirection: 0
@@ -15945,6 +17277,7 @@ MonoBehaviour:
     clips:
     - rid: 8490313441434927352
     - rid: 8490313441434927353
+    - rid: 8490313728363856064
   references:
     version: 2
     RefIds:
@@ -16020,6 +17353,47 @@ MonoBehaviour:
             m_PersistentCalls:
               m_Calls: []
         nestedPlayer: {fileID: 1067537878}
+    - rid: 8490313728363856064
+      type: {class: AnimoraClipBroAudio, ns: OM.Animora.Modules, asm: Assembly-CSharp}
+      data:
+        clipName: BroAudio Play
+        clipDescription: Plays a sound using BroAudio
+        highlightColor: {r: 0.8, g: 0.33, b: 0.41, a: 1}
+        isActive: 1
+        startTime: 0.05851064
+        duration: 0.19680852
+        orderIndex: 2
+        debugFlags: 0
+        playChance: 100
+        events:
+          isEnabled: 0
+          onStartPlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompletePlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onStartOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompleteOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onEnter:
+            m_PersistentCalls:
+              m_Calls: []
+          onUpdate:
+            m_PersistentCalls:
+              m_Calls: []
+          onExit:
+            m_PersistentCalls:
+              m_Calls: []
+        soundID:
+          _entity: {fileID: 11400000, guid: 260e9b9886c0cda46895212ce42b51a5, type: 2}
+          ID: 0
+          <DebugObject>k__BackingField: {fileID: 1278979513}
+        stopOnExit: 0
+        fadeOut: -1
 --- !u!1 &1289477828
 GameObject:
   m_ObjectHideFlags: 0
@@ -16084,6 +17458,24 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &1308632477
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1308632472}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 471a6f36fb0c84273965321f132ab249, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GearEngine.Core.ViewUtility.Audio.UIAudioEventTrigger
+  _triggers:
+  - eventID: 4
+    sound:
+      _entity: {fileID: 11400000, guid: 0680a3fa16bfe944b91aaa167171683e, type: 2}
+      ID: 0
+      <DebugObject>k__BackingField: {fileID: 1308632472}
 --- !u!1 &1324152893 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6535185041382348514, guid: dcdbcd780ac0d1b4287f8be27c04e569, type: 3}
@@ -16304,6 +17696,29 @@ MonoBehaviour:
           randomValue1: {x: 0, y: 0, z: 0}
           randomValue2: {x: 0, y: 0, z: 0}
           targetTransform: {fileID: 0}
+--- !u!1 &1336973062 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3750620080061295834, guid: aee5965506c90f7428f4320b17a78ac2, type: 3}
+  m_PrefabInstance: {fileID: 1181915768}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1336973063
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1336973062}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 471a6f36fb0c84273965321f132ab249, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GearEngine.Core.ViewUtility.Audio.UIAudioEventTrigger
+  _triggers:
+  - eventID: 0
+    sound:
+      _entity: {fileID: 0}
+      ID: 0
+      <DebugObject>k__BackingField: {fileID: 356977516}
 --- !u!1 &1343182842
 GameObject:
   m_ObjectHideFlags: 0
@@ -16676,7 +18091,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: AnimoraRuntime::OM.Animora.Runtime.AnimoraPlayer
   playerUniqueID: AnimoraPlayer
-  selectedClipIndex: 1
+  selectedClipIndex: 4
   playMode: 1
   timeMode: 1
   defaultPlayDirection: 0
@@ -16712,6 +18127,9 @@ MonoBehaviour:
     clips:
     - rid: 8490313441434927293
     - rid: 8490313441434927294
+    - rid: 8490313728363856047
+    - rid: 8490313728363856052
+    - rid: 8490313728363856053
   references:
     version: 2
     RefIds:
@@ -16787,6 +18205,157 @@ MonoBehaviour:
             m_PersistentCalls:
               m_Calls: []
         nestedPlayer: {fileID: 153715008}
+    - rid: 8490313728363856047
+      type: {class: AnimoraClipBroAudio, ns: OM.Animora.Modules, asm: Assembly-CSharp}
+      data:
+        clipName: BroAudio Play
+        clipDescription: Plays a sound using BroAudio
+        highlightColor: {r: 0.8, g: 0.33, b: 0.41, a: 1}
+        isActive: 1
+        startTime: 0.05851064
+        duration: 0.19680852
+        orderIndex: 2
+        debugFlags: 0
+        playChance: 100
+        events:
+          isEnabled: 0
+          onStartPlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompletePlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onStartOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompleteOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onEnter:
+            m_PersistentCalls:
+              m_Calls: []
+          onUpdate:
+            m_PersistentCalls:
+              m_Calls: []
+          onExit:
+            m_PersistentCalls:
+              m_Calls: []
+        soundID:
+          _entity: {fileID: 11400000, guid: 260e9b9886c0cda46895212ce42b51a5, type: 2}
+          ID: 0
+          <DebugObject>k__BackingField: {fileID: 99603526}
+        stopOnExit: 0
+        fadeOut: -1
+    - rid: 8490313728363856052
+      type: {class: AnimoraClipBroAudio, ns: OM.Animora.Modules, asm: Assembly-CSharp}
+      data:
+        clipName: BroAudio Play
+        clipDescription: Plays a sound using BroAudio
+        highlightColor: {r: 0.8, g: 0.33, b: 0.41, a: 1}
+        isActive: 1
+        startTime: 0.05851064
+        duration: 0.19680852
+        orderIndex: 3
+        debugFlags: 0
+        playChance: 100
+        events:
+          isEnabled: 0
+          onStartPlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompletePlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onStartOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompleteOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onEnter:
+            m_PersistentCalls:
+              m_Calls: []
+          onUpdate:
+            m_PersistentCalls:
+              m_Calls: []
+          onExit:
+            m_PersistentCalls:
+              m_Calls: []
+        soundID:
+          _entity: {fileID: 11400000, guid: ac13c82b42599024c8354dbc3b8bdf2a, type: 2}
+          ID: 0
+          <DebugObject>k__BackingField: {fileID: 1416003950}
+        stopOnExit: 0
+        fadeOut: -1
+    - rid: 8490313728363856053
+      type: {class: AnimoraClipBroAudio, ns: OM.Animora.Modules, asm: Assembly-CSharp}
+      data:
+        clipName: BroAudio Play
+        clipDescription: Plays a sound using BroAudio
+        highlightColor: {r: 0.8, g: 0.33, b: 0.41, a: 1}
+        isActive: 1
+        startTime: 0.05851064
+        duration: 0.19680852
+        orderIndex: 4
+        debugFlags: 0
+        playChance: 100
+        events:
+          isEnabled: 0
+          onStartPlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompletePlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onStartOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompleteOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onEnter:
+            m_PersistentCalls:
+              m_Calls: []
+          onUpdate:
+            m_PersistentCalls:
+              m_Calls: []
+          onExit:
+            m_PersistentCalls:
+              m_Calls: []
+        soundID:
+          _entity: {fileID: 11400000, guid: 6281bcee21eaeab4e9af7a15dda8ed1f, type: 2}
+          ID: 0
+          <DebugObject>k__BackingField: {fileID: 1416003950}
+        stopOnExit: 0
+        fadeOut: -1
+--- !u!1 &1423750915 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5520085110839058227, guid: ec8446ca4d33a3346a27093f426aaec2, type: 3}
+  m_PrefabInstance: {fileID: 8466347406359927971}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1423750917
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1423750915}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 471a6f36fb0c84273965321f132ab249, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GearEngine.Core.ViewUtility.Audio.UIAudioEventTrigger
+  _triggers:
+  - eventID: 0
+    sound:
+      _entity: {fileID: 0}
+      ID: 0
+      <DebugObject>k__BackingField: {fileID: 356977516}
+--- !u!1 &1444866750 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8651457103083858887, guid: 9674c89c49e79c74d829bfb23324a6f4, type: 3}
+  m_PrefabInstance: {fileID: 6994653427256201952}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1448623346 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 4523512064889421906, guid: d932b1e0a0811734c907544ebd4209ef, type: 3}
@@ -17124,11 +18693,57 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 2854580327827028456, guid: a1cff467a32113248aa17e6c71b9636b, type: 3}
   m_PrefabInstance: {fileID: 1170263023}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1510737625 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1447333977742981390, guid: ec8446ca4d33a3346a27093f426aaec2, type: 3}
+  m_PrefabInstance: {fileID: 8466347406359927971}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1510737627
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1510737625}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 471a6f36fb0c84273965321f132ab249, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GearEngine.Core.ViewUtility.Audio.UIAudioEventTrigger
+  _triggers:
+  - eventID: 0
+    sound:
+      _entity: {fileID: 0}
+      ID: 0
+      <DebugObject>k__BackingField: {fileID: 356977516}
 --- !u!1 &1515504538 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 4773123680808115043, guid: ec8446ca4d33a3346a27093f426aaec2, type: 3}
   m_PrefabInstance: {fileID: 8466347406359927971}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1517329106 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2281280592281522494, guid: ec8446ca4d33a3346a27093f426aaec2, type: 3}
+  m_PrefabInstance: {fileID: 8466347406359927971}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1517329108
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1517329106}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 471a6f36fb0c84273965321f132ab249, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GearEngine.Core.ViewUtility.Audio.UIAudioEventTrigger
+  _triggers:
+  - eventID: 0
+    sound:
+      _entity: {fileID: 0}
+      ID: 0
+      <DebugObject>k__BackingField: {fileID: 356977516}
 --- !u!1001 &1534348672
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -18689,6 +20304,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+--- !u!114 &1611223751
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1611223743}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 471a6f36fb0c84273965321f132ab249, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GearEngine.Core.ViewUtility.Audio.UIAudioEventTrigger
+  _triggers:
+  - eventID: 4
+    sound:
+      _entity: {fileID: 11400000, guid: 12fcbee1234d0084fa37a9c9583b66e5, type: 2}
+      ID: 0
+      <DebugObject>k__BackingField: {fileID: 1611223743}
 --- !u!1001 &1644692380
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -18851,6 +20484,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 7833259013974841860, guid: ba79c7db93477e641ac2b9a2c3a5ce18, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1644692389}
+    - targetCorrespondingSourceObject: {fileID: 7833259013974841860, guid: ba79c7db93477e641ac2b9a2c3a5ce18, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1644692394}
   m_SourcePrefab: {fileID: 100100000, guid: ba79c7db93477e641ac2b9a2c3a5ce18, type: 3}
 --- !u!224 &1644692381 stripped
 RectTransform:
@@ -19033,6 +20669,24 @@ MonoBehaviour:
           randomValue1: {x: 0, y: 0, z: 0}
           randomValue2: {x: 0, y: 0, z: 0}
           targetTransform: {fileID: 0}
+--- !u!114 &1644692394
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 535199044}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 471a6f36fb0c84273965321f132ab249, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GearEngine.Core.ViewUtility.Audio.UIAudioEventTrigger
+  _triggers:
+  - eventID: 4
+    sound:
+      _entity: {fileID: 11400000, guid: 06f0bd5ab41869b47aac1ff9c1275199, type: 2}
+      ID: 0
+      <DebugObject>k__BackingField: {fileID: 535199044}
 --- !u!1 &1647395200
 GameObject:
   m_ObjectHideFlags: 0
@@ -19071,6 +20725,29 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 571.24}
   m_Pivot: {x: 0.5, y: 0}
+--- !u!1 &1651108653 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7515254385638952553, guid: a1cff467a32113248aa17e6c71b9636b, type: 3}
+  m_PrefabInstance: {fileID: 1170263023}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1651108654
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1651108653}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 471a6f36fb0c84273965321f132ab249, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GearEngine.Core.ViewUtility.Audio.UIAudioEventTrigger
+  _triggers:
+  - eventID: 0
+    sound:
+      _entity: {fileID: 0}
+      ID: 0
+      <DebugObject>k__BackingField: {fileID: 356977516}
 --- !u!1 &1689327370
 GameObject:
   m_ObjectHideFlags: 0
@@ -19124,7 +20801,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: AnimoraRuntime::OM.Animora.Runtime.AnimoraPlayer
   playerUniqueID: AnimoraPlayer
-  selectedClipIndex: 1
+  selectedClipIndex: 4
   playMode: 1
   timeMode: 1
   defaultPlayDirection: 0
@@ -19161,6 +20838,8 @@ MonoBehaviour:
     - rid: 8490313404091203755
     - rid: 8490313404091203756
     - rid: 8490313404091203757
+    - rid: 8490313728363856013
+    - rid: 8490313728363856014
   references:
     version: 2
     RefIds:
@@ -19272,6 +20951,111 @@ MonoBehaviour:
             m_PersistentCalls:
               m_Calls: []
         nestedPlayer: {fileID: 712262965}
+    - rid: 8490313728363856013
+      type: {class: AnimoraClipBroAudio, ns: OM.Animora.Modules, asm: Assembly-CSharp}
+      data:
+        clipName: BroAudio Play
+        clipDescription: Plays a sound using BroAudio
+        highlightColor: {r: 0.8, g: 0.33, b: 0.41, a: 1}
+        isActive: 1
+        startTime: 0.30851063
+        duration: 0.536327
+        orderIndex: 3
+        debugFlags: 0
+        playChance: 100
+        events:
+          isEnabled: 0
+          onStartPlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompletePlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onStartOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompleteOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onEnter:
+            m_PersistentCalls:
+              m_Calls: []
+          onUpdate:
+            m_PersistentCalls:
+              m_Calls: []
+          onExit:
+            m_PersistentCalls:
+              m_Calls: []
+        soundID:
+          _entity: {fileID: 11400000, guid: 55f010b82f24ef845ae9b27699457854, type: 2}
+          ID: 0
+          <DebugObject>k__BackingField: {fileID: 770233930}
+        stopOnExit: 0
+        fadeOut: -1
+    - rid: 8490313728363856014
+      type: {class: AnimoraClipBroAudio, ns: OM.Animora.Modules, asm: Assembly-CSharp}
+      data:
+        clipName: BroAudio Play
+        clipDescription: Plays a sound using BroAudio
+        highlightColor: {r: 0.8, g: 0.33, b: 0.41, a: 1}
+        isActive: 1
+        startTime: 0.4202128
+        duration: 0.53
+        orderIndex: 4
+        debugFlags: 0
+        playChance: 100
+        events:
+          isEnabled: 0
+          onStartPlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompletePlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onStartOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompleteOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onEnter:
+            m_PersistentCalls:
+              m_Calls: []
+          onUpdate:
+            m_PersistentCalls:
+              m_Calls: []
+          onExit:
+            m_PersistentCalls:
+              m_Calls: []
+        soundID:
+          _entity: {fileID: 11400000, guid: 8b809cbbcad5f3e4883f9fbf53dcf495, type: 2}
+          ID: 0
+          <DebugObject>k__BackingField: {fileID: 1689327370}
+        stopOnExit: 0
+        fadeOut: -1
+--- !u!1 &1710165734 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6388464997231874988, guid: a1cff467a32113248aa17e6c71b9636b, type: 3}
+  m_PrefabInstance: {fileID: 1170263023}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1710165735
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1710165734}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 471a6f36fb0c84273965321f132ab249, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GearEngine.Core.ViewUtility.Audio.UIAudioEventTrigger
+  _triggers:
+  - eventID: 0
+    sound:
+      _entity: {fileID: 0}
+      ID: 0
+      <DebugObject>k__BackingField: {fileID: 356977516}
 --- !u!1 &1726821002
 GameObject:
   m_ObjectHideFlags: 0
@@ -19374,6 +21158,29 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!1 &1733782931 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5666161344169293288, guid: ec8446ca4d33a3346a27093f426aaec2, type: 3}
+  m_PrefabInstance: {fileID: 8466347406359927971}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1733782933
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1733782931}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 471a6f36fb0c84273965321f132ab249, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GearEngine.Core.ViewUtility.Audio.UIAudioEventTrigger
+  _triggers:
+  - eventID: 0
+    sound:
+      _entity: {fileID: 0}
+      ID: 0
+      <DebugObject>k__BackingField: {fileID: 356977516}
 --- !u!1 &1744364013 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 5207667856367370266, guid: 8e3f902734b787b47be47c0ffb8afd87, type: 3}
@@ -19680,6 +21487,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1771219306}
   - component: {fileID: 1771219307}
+  - component: {fileID: 1771219308}
   m_Layer: 0
   m_Name: Container
   m_TagString: Untagged
@@ -19724,7 +21532,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: AnimoraRuntime::OM.Animora.Runtime.AnimoraPlayer
   playerUniqueID: AnimoraPlayer
-  selectedClipIndex: 2
+  selectedClipIndex: 0
   playMode: 1
   timeMode: 1
   defaultPlayDirection: 0
@@ -19762,6 +21570,8 @@ MonoBehaviour:
     - rid: 8490313441434927276
     - rid: 8490313441434927277
     - rid: 8490313441434927278
+    - rid: 8490313728363856042
+    - rid: 8490313728363856046
   references:
     version: 2
     RefIds:
@@ -19909,6 +21719,106 @@ MonoBehaviour:
             m_PersistentCalls:
               m_Calls: []
         nestedPlayer: {fileID: 2130419859}
+    - rid: 8490313728363856042
+      type: {class: AnimoraClipBroAudio, ns: OM.Animora.Modules, asm: Assembly-CSharp}
+      data:
+        clipName: BroAudio Play
+        clipDescription: Plays a sound using BroAudio
+        highlightColor: {r: 0.8, g: 0.33, b: 0.41, a: 1}
+        isActive: 1
+        startTime: 0.05851064
+        duration: 0.19680852
+        orderIndex: 4
+        debugFlags: 0
+        playChance: 100
+        events:
+          isEnabled: 0
+          onStartPlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompletePlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onStartOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompleteOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onEnter:
+            m_PersistentCalls:
+              m_Calls: []
+          onUpdate:
+            m_PersistentCalls:
+              m_Calls: []
+          onExit:
+            m_PersistentCalls:
+              m_Calls: []
+        soundID:
+          _entity: {fileID: 11400000, guid: 260e9b9886c0cda46895212ce42b51a5, type: 2}
+          ID: 0
+          <DebugObject>k__BackingField: {fileID: 99603526}
+        stopOnExit: 0
+        fadeOut: -1
+    - rid: 8490313728363856046
+      type: {class: AnimoraClipBroAudio, ns: OM.Animora.Modules, asm: Assembly-CSharp}
+      data:
+        clipName: BroAudio Play
+        clipDescription: Plays a sound using BroAudio
+        highlightColor: {r: 0.8, g: 0.33, b: 0.41, a: 1}
+        isActive: 1
+        startTime: 0.42021278
+        duration: 0.5
+        orderIndex: 5
+        debugFlags: 0
+        playChance: 100
+        events:
+          isEnabled: 0
+          onStartPlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompletePlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onStartOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompleteOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onEnter:
+            m_PersistentCalls:
+              m_Calls: []
+          onUpdate:
+            m_PersistentCalls:
+              m_Calls: []
+          onExit:
+            m_PersistentCalls:
+              m_Calls: []
+        soundID:
+          _entity: {fileID: 11400000, guid: 3675c87e6e6dac74d8ffe18743fa68aa, type: 2}
+          ID: 0
+          <DebugObject>k__BackingField: {fileID: 1771219305}
+        stopOnExit: 0
+        fadeOut: -1
+--- !u!114 &1771219308
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1771219305}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 471a6f36fb0c84273965321f132ab249, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GearEngine.Core.ViewUtility.Audio.UIAudioEventTrigger
+  _triggers:
+  - eventID: 0
+    sound:
+      _entity: {fileID: 11400000, guid: 5a100ca87225f284588a7ee9a2e26340, type: 2}
+      ID: 0
+      <DebugObject>k__BackingField: {fileID: 1771219305}
 --- !u!1 &1776428439
 GameObject:
   m_ObjectHideFlags: 0
@@ -20097,6 +22007,29 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 6406132854765240187, guid: dcdbcd780ac0d1b4287f8be27c04e569, type: 3}
   m_PrefabInstance: {fileID: 614803270546363407}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1781035499 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4823693484529694127, guid: a1cff467a32113248aa17e6c71b9636b, type: 3}
+  m_PrefabInstance: {fileID: 1170263023}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1781035501
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1781035499}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 471a6f36fb0c84273965321f132ab249, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GearEngine.Core.ViewUtility.Audio.UIAudioEventTrigger
+  _triggers:
+  - eventID: 0
+    sound:
+      _entity: {fileID: 0}
+      ID: 0
+      <DebugObject>k__BackingField: {fileID: 356977516}
 --- !u!1 &1782706461
 GameObject:
   m_ObjectHideFlags: 0
@@ -20700,6 +22633,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 7833259013974841860, guid: ba79c7db93477e641ac2b9a2c3a5ce18, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1990015899}
+    - targetCorrespondingSourceObject: {fileID: 7833259013974841860, guid: ba79c7db93477e641ac2b9a2c3a5ce18, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1990015900}
   m_SourcePrefab: {fileID: 100100000, guid: ba79c7db93477e641ac2b9a2c3a5ce18, type: 3}
 --- !u!224 &1808534209 stripped
 RectTransform:
@@ -20895,16 +22831,34 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: BroAudio::Ami.BroAudio.SoundSource
   _onlyPlayOnce: 0
-  _playOnEnable: 0
+  _playOnEnable: 1
   _stopOnDisable: 0
   _overrideFadeOut: -1
   _sound:
-    _entity: {fileID: 11400000, guid: 770a129f8f65f42e3aa08870cb22eabf, type: 2}
+    _entity: {fileID: 11400000, guid: 0680a3fa16bfe944b91aaa167171683e, type: 2}
     ID: 0
     <DebugObject>k__BackingField: {fileID: 106719096}
   _overrideGroup: {fileID: 0}
   _positionMode: 0
   _delay: 0
+--- !u!114 &1808534222
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 106719096}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 471a6f36fb0c84273965321f132ab249, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GearEngine.Core.ViewUtility.Audio.UIAudioEventTrigger
+  _triggers:
+  - eventID: 0
+    sound:
+      _entity: {fileID: 0}
+      ID: 0
+      <DebugObject>k__BackingField: {fileID: 356977516}
 --- !u!1 &1833041795
 GameObject:
   m_ObjectHideFlags: 0
@@ -21202,6 +23156,29 @@ MonoBehaviour:
           randomValue1: {x: 0, y: 0, z: 0}
           randomValue2: {x: 0, y: 0, z: 0}
           targetTransform: {fileID: 0}
+--- !u!1 &1866316722 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3138068625655293583, guid: a1cff467a32113248aa17e6c71b9636b, type: 3}
+  m_PrefabInstance: {fileID: 1170263023}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1866316723
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1866316722}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 471a6f36fb0c84273965321f132ab249, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GearEngine.Core.ViewUtility.Audio.UIAudioEventTrigger
+  _triggers:
+  - eventID: 0
+    sound:
+      _entity: {fileID: 0}
+      ID: 0
+      <DebugObject>k__BackingField: {fileID: 356977516}
 --- !u!1 &1913052894 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 5375401268087040501, guid: fc2deac62b72e9341b62d85cb87c0ed9, type: 3}
@@ -21445,6 +23422,24 @@ MonoBehaviour:
           randomValue1: {x: 0, y: 0, z: 0}
           randomValue2: {x: 0, y: 0, z: 0}
           targetTransform: {fileID: 0}
+--- !u!114 &1913052901
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1913052894}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 471a6f36fb0c84273965321f132ab249, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GearEngine.Core.ViewUtility.Audio.UIAudioEventTrigger
+  _triggers:
+  - eventID: 4
+    sound:
+      _entity: {fileID: 11400000, guid: 2ddc460ea3f7a574493e4fd00e59949e, type: 2}
+      ID: 0
+      <DebugObject>k__BackingField: {fileID: 1913052894}
 --- !u!1001 &1919347045
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -21615,6 +23610,7 @@ GameObject:
   - component: {fileID: 1920212820}
   - component: {fileID: 1920212819}
   - component: {fileID: 1920212817}
+  - component: {fileID: 1920212823}
   m_Layer: 0
   m_Name: background_button
   m_TagString: Untagged
@@ -21911,6 +23907,24 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 980, y: 2180}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1920212823
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1920212816}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 471a6f36fb0c84273965321f132ab249, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GearEngine.Core.ViewUtility.Audio.UIAudioEventTrigger
+  _triggers:
+  - eventID: 4
+    sound:
+      _entity: {fileID: 11400000, guid: 12fcbee1234d0084fa37a9c9583b66e5, type: 2}
+      ID: 0
+      <DebugObject>k__BackingField: {fileID: 1920212816}
 --- !u!1 &1921901064
 GameObject:
   m_ObjectHideFlags: 0
@@ -22340,6 +24354,29 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 4523512064889421906, guid: d932b1e0a0811734c907544ebd4209ef, type: 3}
   m_PrefabInstance: {fileID: 481400617}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1974048629 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6933120054254842461, guid: fc2deac62b72e9341b62d85cb87c0ed9, type: 3}
+  m_PrefabInstance: {fileID: 3871967763908100017}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1974048631
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1974048629}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 471a6f36fb0c84273965321f132ab249, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GearEngine.Core.ViewUtility.Audio.UIAudioEventTrigger
+  _triggers:
+  - eventID: 0
+    sound:
+      _entity: {fileID: 0}
+      ID: 0
+      <DebugObject>k__BackingField: {fileID: 356977516}
 --- !u!1 &1981724758 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2798451605705805581, guid: a1cff467a32113248aa17e6c71b9636b, type: 3}
@@ -22646,6 +24683,24 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &1990015900
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1990015895}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 471a6f36fb0c84273965321f132ab249, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GearEngine.Core.ViewUtility.Audio.UIAudioEventTrigger
+  _triggers:
+  - eventID: 4
+    sound:
+      _entity: {fileID: 11400000, guid: f0b4a01782b90b04ab11de6a73dced9c, type: 2}
+      ID: 0
+      <DebugObject>k__BackingField: {fileID: 1990015895}
 --- !u!1 &1993023969
 GameObject:
   m_ObjectHideFlags: 0
@@ -23512,6 +25567,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 7833259013974841860, guid: ba79c7db93477e641ac2b9a2c3a5ce18, type: 3}
       insertIndex: -1
       addedObject: {fileID: 438404505}
+    - targetCorrespondingSourceObject: {fileID: 7833259013974841860, guid: ba79c7db93477e641ac2b9a2c3a5ce18, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 438404506}
   m_SourcePrefab: {fileID: 100100000, guid: ba79c7db93477e641ac2b9a2c3a5ce18, type: 3}
 --- !u!1 &2016206442
 GameObject:
@@ -23527,6 +25585,8 @@ GameObject:
   - component: {fileID: 2016206446}
   - component: {fileID: 2016206447}
   - component: {fileID: 2016206448}
+  - component: {fileID: 2016206449}
+  - component: {fileID: 2016206450}
   m_Layer: 0
   m_Name: background_button
   m_TagString: Untagged
@@ -23955,6 +26015,42 @@ MonoBehaviour:
           randomValue1: {r: 0, g: 0, b: 0, a: 0}
           randomValue2: {r: 0, g: 0, b: 0, a: 0}
           targetTransform: {fileID: 0}
+--- !u!114 &2016206449
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2016206442}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 471a6f36fb0c84273965321f132ab249, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GearEngine.Core.ViewUtility.Audio.UIAudioEventTrigger
+  _triggers:
+  - eventID: 4
+    sound:
+      _entity: {fileID: 11400000, guid: 12fcbee1234d0084fa37a9c9583b66e5, type: 2}
+      ID: 0
+      <DebugObject>k__BackingField: {fileID: 2016206442}
+--- !u!114 &2016206450
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2016206442}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 471a6f36fb0c84273965321f132ab249, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GearEngine.Core.ViewUtility.Audio.UIAudioEventTrigger
+  _triggers: []
+--- !u!1 &2017595267 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 971051127904287501, guid: a23099818901080469557c70689565e1, type: 3}
+  m_PrefabInstance: {fileID: 4707557487478022338}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2022314920
 GameObject:
   m_ObjectHideFlags: 0
@@ -24732,6 +26828,29 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!1 &2075371665 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6154442609276273291, guid: a1cff467a32113248aa17e6c71b9636b, type: 3}
+  m_PrefabInstance: {fileID: 1170263023}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &2075371666
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2075371665}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 471a6f36fb0c84273965321f132ab249, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GearEngine.Core.ViewUtility.Audio.UIAudioEventTrigger
+  _triggers:
+  - eventID: 0
+    sound:
+      _entity: {fileID: 0}
+      ID: 0
+      <DebugObject>k__BackingField: {fileID: 356977516}
 --- !u!1 &2088052881
 GameObject:
   m_ObjectHideFlags: 0
@@ -24744,6 +26863,7 @@ GameObject:
   - component: {fileID: 2088052884}
   - component: {fileID: 2088052883}
   - component: {fileID: 2088052882}
+  - component: {fileID: 2088052886}
   m_Layer: 0
   m_Name: UpgradeScreen_Canvas
   m_TagString: Untagged
@@ -24834,6 +26954,24 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!114 &2088052886
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2088052881}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 471a6f36fb0c84273965321f132ab249, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GearEngine.Core.ViewUtility.Audio.UIAudioEventTrigger
+  _triggers:
+  - eventID: 0
+    sound:
+      _entity: {fileID: 11400000, guid: 7a924d2e63a3f474ea06440effe463c1, type: 2}
+      ID: 0
+      <DebugObject>k__BackingField: {fileID: 2088052881}
 --- !u!1 &2089129888
 GameObject:
   m_ObjectHideFlags: 0
@@ -26561,12 +28699,21 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 4481162978086205433, guid: dcdbcd780ac0d1b4287f8be27c04e569, type: 3}
       insertIndex: -1
       addedObject: {fileID: 249833182}
+    - targetCorrespondingSourceObject: {fileID: 4481162978086205433, guid: dcdbcd780ac0d1b4287f8be27c04e569, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 249833184}
     - targetCorrespondingSourceObject: {fileID: 9165275957080458106, guid: dcdbcd780ac0d1b4287f8be27c04e569, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1038413959}
+    - targetCorrespondingSourceObject: {fileID: 9165275957080458106, guid: dcdbcd780ac0d1b4287f8be27c04e569, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1038413961}
     - targetCorrespondingSourceObject: {fileID: 5553883958882404593, guid: dcdbcd780ac0d1b4287f8be27c04e569, type: 3}
       insertIndex: -1
       addedObject: {fileID: 632871221}
+    - targetCorrespondingSourceObject: {fileID: 5553883958882404593, guid: dcdbcd780ac0d1b4287f8be27c04e569, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 632871223}
   m_SourcePrefab: {fileID: 100100000, guid: dcdbcd780ac0d1b4287f8be27c04e569, type: 3}
 --- !u!1001 &1383898495144589181
 PrefabInstance:
@@ -27325,7 +29472,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 7123799451178995243, guid: 5662c52d876d94843a56872fba6eb77c, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 356977517}
   m_SourcePrefab: {fileID: 100100000, guid: 5662c52d876d94843a56872fba6eb77c, type: 3}
 --- !u!1001 &3553165886798742969
 PrefabInstance:
@@ -27490,13 +29640,34 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 840820844780350228, guid: 9a642d2aef75c9944a42dde9d953f316, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 3553165886798742971}
   m_SourcePrefab: {fileID: 100100000, guid: 9a642d2aef75c9944a42dde9d953f316, type: 3}
 --- !u!224 &3553165886798742970 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 4961771561482354113, guid: 9a642d2aef75c9944a42dde9d953f316, type: 3}
   m_PrefabInstance: {fileID: 3553165886798742969}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &3553165886798742971
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 70195252}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 471a6f36fb0c84273965321f132ab249, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GearEngine.Core.ViewUtility.Audio.UIAudioEventTrigger
+  _triggers:
+  - eventID: 4
+    sound:
+      _entity: {fileID: 11400000, guid: 2ddc460ea3f7a574493e4fd00e59949e, type: 2}
+      ID: 0
+      <DebugObject>k__BackingField: {fileID: 70195252}
 --- !u!1001 &3804838105346493773
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -27592,13 +29763,34 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 5376566509599435155, guid: 4593e7dcacd1b7b4493bfb0eabd4f2e8, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 3804838105346493775}
   m_SourcePrefab: {fileID: 100100000, guid: 4593e7dcacd1b7b4493bfb0eabd4f2e8, type: 3}
 --- !u!224 &3804838105346493774 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 427160444521004870, guid: 4593e7dcacd1b7b4493bfb0eabd4f2e8, type: 3}
   m_PrefabInstance: {fileID: 3804838105346493773}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &3804838105346493775
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 587340205}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 471a6f36fb0c84273965321f132ab249, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GearEngine.Core.ViewUtility.Audio.UIAudioEventTrigger
+  _triggers:
+  - eventID: 4
+    sound:
+      _entity: {fileID: 11400000, guid: 9c17d2afd4a4e5c4b95bc3c4f9c27a02, type: 2}
+      ID: 0
+      <DebugObject>k__BackingField: {fileID: 587340205}
 --- !u!1001 &3821755577327394737
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -27880,6 +30072,12 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 5375401268087040501, guid: fc2deac62b72e9341b62d85cb87c0ed9, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1913052900}
+    - targetCorrespondingSourceObject: {fileID: 5375401268087040501, guid: fc2deac62b72e9341b62d85cb87c0ed9, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1913052901}
+    - targetCorrespondingSourceObject: {fileID: 6933120054254842461, guid: fc2deac62b72e9341b62d85cb87c0ed9, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1974048631}
   m_SourcePrefab: {fileID: 100100000, guid: fc2deac62b72e9341b62d85cb87c0ed9, type: 3}
 --- !u!1001 &4287137791494518378
 PrefabInstance:
@@ -28141,6 +30339,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 1236317438681569173, guid: 88625698d0656be448e3acf9c0465e0d, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1308632476}
+    - targetCorrespondingSourceObject: {fileID: 1236317438681569173, guid: 88625698d0656be448e3acf9c0465e0d, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1308632477}
   m_SourcePrefab: {fileID: 100100000, guid: 88625698d0656be448e3acf9c0465e0d, type: 3}
 --- !u!1001 &4707557487478022338
 PrefabInstance:
@@ -28277,13 +30478,34 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 971051127904287501, guid: a23099818901080469557c70689565e1, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4707557487478022340}
   m_SourcePrefab: {fileID: 100100000, guid: a23099818901080469557c70689565e1, type: 3}
 --- !u!224 &4707557487478022339 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 4758386377640390104, guid: a23099818901080469557c70689565e1, type: 3}
   m_PrefabInstance: {fileID: 4707557487478022338}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &4707557487478022340
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2017595267}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 471a6f36fb0c84273965321f132ab249, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GearEngine.Core.ViewUtility.Audio.UIAudioEventTrigger
+  _triggers:
+  - eventID: 4
+    sound:
+      _entity: {fileID: 11400000, guid: 9c17d2afd4a4e5c4b95bc3c4f9c27a02, type: 2}
+      ID: 0
+      <DebugObject>k__BackingField: {fileID: 2017595267}
 --- !u!1001 &4881630771940566858
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -28898,6 +31120,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 7833259013974841860, guid: ba79c7db93477e641ac2b9a2c3a5ce18, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1808534221}
+    - targetCorrespondingSourceObject: {fileID: 7833259013974841860, guid: ba79c7db93477e641ac2b9a2c3a5ce18, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1808534222}
   m_SourcePrefab: {fileID: 100100000, guid: ba79c7db93477e641ac2b9a2c3a5ce18, type: 3}
 --- !u!1001 &6818804819734215112
 PrefabInstance:
@@ -29042,6 +31267,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 2637114255748611527, guid: 48d7e6e7a37829a4e96e9d3040c391bf, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1182185034}
+    - targetCorrespondingSourceObject: {fileID: 2637114255748611527, guid: 48d7e6e7a37829a4e96e9d3040c391bf, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1182185035}
   m_SourcePrefab: {fileID: 100100000, guid: 48d7e6e7a37829a4e96e9d3040c391bf, type: 3}
 --- !u!1001 &6896253492436553589
 PrefabInstance:
@@ -29870,13 +32098,34 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8651457103083858887, guid: 9674c89c49e79c74d829bfb23324a6f4, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6994653427256201954}
   m_SourcePrefab: {fileID: 100100000, guid: 9674c89c49e79c74d829bfb23324a6f4, type: 3}
 --- !u!224 &6994653427256201953 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 3990422976016022802, guid: 9674c89c49e79c74d829bfb23324a6f4, type: 3}
   m_PrefabInstance: {fileID: 6994653427256201952}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &6994653427256201954
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1444866750}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 471a6f36fb0c84273965321f132ab249, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GearEngine.Core.ViewUtility.Audio.UIAudioEventTrigger
+  _triggers:
+  - eventID: 4
+    sound:
+      _entity: {fileID: 11400000, guid: 0680a3fa16bfe944b91aaa167171683e, type: 2}
+      ID: 0
+      <DebugObject>k__BackingField: {fileID: 1444866750}
 --- !u!1001 &7725026874145451909
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -30489,7 +32738,34 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 6344466409666356902, guid: ec8446ca4d33a3346a27093f426aaec2, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 245829435}
+    - targetCorrespondingSourceObject: {fileID: 5520085110839058227, guid: ec8446ca4d33a3346a27093f426aaec2, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1423750917}
+    - targetCorrespondingSourceObject: {fileID: 5666161344169293288, guid: ec8446ca4d33a3346a27093f426aaec2, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1733782933}
+    - targetCorrespondingSourceObject: {fileID: 2281280592281522494, guid: ec8446ca4d33a3346a27093f426aaec2, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1517329108}
+    - targetCorrespondingSourceObject: {fileID: 4488029655227288582, guid: ec8446ca4d33a3346a27093f426aaec2, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 10606761}
+    - targetCorrespondingSourceObject: {fileID: 4687435584237022985, guid: ec8446ca4d33a3346a27093f426aaec2, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 733345507}
+    - targetCorrespondingSourceObject: {fileID: 1447333977742981390, guid: ec8446ca4d33a3346a27093f426aaec2, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1510737627}
+    - targetCorrespondingSourceObject: {fileID: 8202671225696561842, guid: ec8446ca4d33a3346a27093f426aaec2, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1274975149}
+    - targetCorrespondingSourceObject: {fileID: 6181782928766158031, guid: ec8446ca4d33a3346a27093f426aaec2, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1097087588}
   m_SourcePrefab: {fileID: 100100000, guid: ec8446ca4d33a3346a27093f426aaec2, type: 3}
 --- !u!1001 &8637515736323228467
 PrefabInstance:
@@ -30722,6 +32998,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 967607743180845853, guid: 9ebb123842357b3459a165e8ea82fa58, type: 3}
       insertIndex: -1
       addedObject: {fileID: 368561211}
+    - targetCorrespondingSourceObject: {fileID: 967607743180845853, guid: 9ebb123842357b3459a165e8ea82fa58, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 368561213}
   m_SourcePrefab: {fileID: 100100000, guid: 9ebb123842357b3459a165e8ea82fa58, type: 3}
 --- !u!1001 &8745538512326518641
 PrefabInstance:

@@ -24,7 +24,7 @@ MonoBehaviour:
       m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     AudioClip: {fileID: 8300000, guid: 0a41e1d8a851cad48bd24e975cd294bb, type: 3}
-    Volume: 1
+    Volume: 0.98117286
     Delay: 0
     StartPosition: 0.019
     EndPosition: 0.016

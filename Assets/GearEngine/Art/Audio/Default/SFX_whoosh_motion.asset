@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ad670d1adcf8be84f891f82b894c08a5, type: 3}
-  m_Name: SFX_pop_2
+  m_Name: SFX_whoosh_motion
   m_EditorClassIdentifier: BroAudio::Ami.BroAudio.Data.AudioEntity
   UseAddressables: 0
   <ID>k__BackingField: 0
@@ -23,11 +23,11 @@ MonoBehaviour:
       m_SubObjectType: 
       m_SubObjectGUID: 
       m_EditorAssetChanged: 0
-    AudioClip: {fileID: 8300000, guid: a8024c6814e089f4088f248963b6b17d, type: 3}
+    AudioClip: {fileID: 8300000, guid: 789febb90596deb43aa898bc198fa8eb, type: 3}
     Volume: 1
     Delay: 0
-    StartPosition: 0.348
-    EndPosition: 0.312
+    StartPosition: 0
+    EndPosition: 0.267
     FadeIn: 0
     FadeOut: 0
     Weight: 0
@@ -39,7 +39,7 @@ MonoBehaviour:
   <TransitionTime>k__BackingField: 0
   <SpatialSetting>k__BackingField: {fileID: 0}
   <Priority>k__BackingField: 128
-  <Pitch>k__BackingField: 1.3
+  <Pitch>k__BackingField: 1
   <PitchRandomRange>k__BackingField: 0
   <VolumeRandomRange>k__BackingField: 0
   <RandomFlags>k__BackingField: 0
