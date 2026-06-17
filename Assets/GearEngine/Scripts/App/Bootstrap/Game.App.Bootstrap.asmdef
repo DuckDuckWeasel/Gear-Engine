@@ -32,7 +32,8 @@
         "Scaffold.Ads.Runtime",
         "Scaffold.Ads.Container",
         "Scaffold.Ads.Levelplay.Runtime",
-        "Scaffold.Ads.Levelplay.Container"
+        "Scaffold.Ads.Levelplay.Container",
+        "GUID:e418286a092124ad0a7c18e51d353dc2"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

@@ -6,19 +6,23 @@ using GearEngine.Campaign.Bootstrap.LiveOps;
 using GearEngine.GearEngine.Config;
 using GearEngine.GearEngine.Services.Inventory;
 using UnityEngine;
+using Scaffold.Analytics;
+using GearEngine.Campaign.Analytics;
 
 namespace GearEngine.Campaign.Services
 {
     public sealed class RoguelikeRollService : IRoguelikeRollService
     {
-        public RoguelikeRollService(RoguelikeClientModule module, GearCatalogSO catalog)
+        public RoguelikeRollService(RoguelikeClientModule module, GearCatalogSO catalog, IAnalyticsService analytics)
         {
             this.module = module ?? throw new ArgumentNullException(nameof(module));
             this.catalog = catalog ?? throw new ArgumentNullException(nameof(catalog));
+            this.analytics = analytics;
         }
 
         private readonly RoguelikeClientModule module;
         private readonly GearCatalogSO catalog;
+        private readonly IAnalyticsService analytics;
 
         public async Task<IReadOnlyList<IItem>> GetCurrentRollAsync(CancellationToken cancellationToken = default)
         {
@@ -33,6 +37,7 @@ namespace GearEngine.Campaign.Services
                 throw new ArgumentNullException(nameof(pickedId));
             }
 
+            analytics?.Record(new RoguelikeRollEvent());
             return module.ClaimAsync(pickedId, cancellationToken);
         }
 
@@ -43,6 +48,7 @@ namespace GearEngine.Campaign.Services
 
         public async Task<IReadOnlyList<IItem>> RerollAsync(CancellationToken cancellationToken = default)
         {
+            analytics?.Record(new RoguelikeRollEvent());
             IReadOnlyList<string> ids = await module.RerollAsync(cancellationToken);
             return GenerateFallbackIfNeeded(ids);
         }

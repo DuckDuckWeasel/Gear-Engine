@@ -15,6 +15,8 @@ using Scaffold.MVVM;
 using Scaffold.Navigation.Contracts;
 using UnityEngine;
 using VContainer;
+using Scaffold.Analytics;
+using GearEngine.Campaign.Analytics;
 
 namespace GearEngine.Campaign.Presentation
 {
@@ -31,6 +33,7 @@ namespace GearEngine.Campaign.Presentation
         [Inject] private RaceManagerService raceManager;
         [Inject] private ISimulationRunnerService aiRunner;
         [Inject] private CampaignRaceSessionDefaults raceSessionDefaults;
+        [Inject] private IAnalyticsService analyticsService;
 
         protected override void Initialize()
         {
@@ -66,6 +69,7 @@ namespace GearEngine.Campaign.Presentation
             engineService.Play();
 
             Bind<SimulationLifecycleState, SimulationLifecycleState>(() => Track.State, OnTrackStateChanged);
+            analyticsService?.Record(new RaceStartedEvent(trackService.CurrentTrack.name, trackService.CurrentCar.name));
         }
 
         /// <summary>Called from <see cref="ActiveRaceView"/> after the car is spawned and <see cref="CarView.AttachRunner"/> runs.</summary>
@@ -122,6 +126,14 @@ namespace GearEngine.Campaign.Presentation
 
                 RaceState session = Track.Session;
                 RaceResultModel result = new RaceResultModel(session.RaceTime, session.CurrentLap, trackService.CurrentTrack);
+                analyticsService?.Record(new RaceFinishedEvent(
+                    trackService.CurrentTrack.name,
+                    trackService.CurrentCar.name,
+                    result.RaceTime,
+                    result.LapCount,
+                    result.Score,
+                    result.IsGoodResult
+                ));
                 await trackService.RecordResultAsync(result);
                 navigation.Open(new ResultPopupViewModel(result));
             }

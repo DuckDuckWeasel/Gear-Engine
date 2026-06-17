@@ -52,6 +52,15 @@
       },
       "hash": "e23b17b3e5f2365e0655eda6a042d928c96b46bd"
     },
+    "com.scaffold.analytics": {
+      "version": "https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.analytics#main",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {
+        "jp.hadashikick.vcontainer": "1.17.0"
+      },
+      "hash": "ae7e3492a17305f0510f8312ec7035f25721e612"
+    },
     "com.scaffold.appflow": {
       "version": "https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.appflow#main",
       "depth": 0,
@@ -582,6 +591,17 @@
       "dependencies": {},
       "url": "https://packages.unity.com"
     },
+    "com.unity.services.analytics": {
+      "version": "5.1.0",
+      "depth": 0,
+      "source": "registry",
+      "dependencies": {
+        "com.unity.ugui": "1.0.0",
+        "com.unity.services.core": "1.10.1",
+        "com.unity.modules.jsonserialize": "1.0.0"
+      },
+      "url": "https://packages.unity.com"
+    },
     "com.unity.services.authentication": {
       "version": "3.6.0",
       "depth": 1,
@@ -690,7 +710,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.services.wire": {
-      "version": "1.4.2",
+      "version": "1.4.1",
       "depth": 1,
       "source": "registry",
       "dependencies": {

@@ -7,11 +7,15 @@ using LiveOps.Modules.DTO.ModuleRequests;
 using Scaffold.LiveOps;
 using UnityEngine;
 using VContainer;
+using Scaffold.Analytics;
+using GearEngine.Campaign.Analytics;
 
 namespace GearEngine.Currency
 {
     public sealed class CurrencyClientModule : GameClientModuleBase<CurrencyGameData>
     {
+        [Inject] private IAnalyticsService analyticsService;
+        
         public CurrencyClientModule(ILiveOpsService liveOps) : base(liveOps)
         {
         }
@@ -65,6 +69,7 @@ namespace GearEngine.Currency
         private async Task<AddCurrencyResponse> AddCurrencyCoreAsync(string currencyId, long amount, CancellationToken ct)
         {
             AddCurrencyResponse response = await liveOps.CallAsync(new AddCurrencyRequest(currencyId, amount), ct);
+            RecordAnalytics(currencyId, response?.NewAmount);
             ApplyServerSnapshot(currencyId, response?.NewAmount);
             return response;
         }
@@ -72,8 +77,24 @@ namespace GearEngine.Currency
         private async Task<SpendCurrencyResponse> SpendCurrencyCoreAsync(string currencyId, long amount, CancellationToken ct)
         {
             SpendCurrencyResponse response = await liveOps.CallAsync(new SpendCurrencyRequest(currencyId, amount), ct);
+            RecordAnalytics(currencyId, response?.NewAmount);
             ApplyServerSnapshot(currencyId, response?.NewAmount);
             return response;
+        }
+
+        private void RecordAnalytics(string currencyId, long? newAmount)
+        {
+            if (!newAmount.HasValue) return;
+
+            long previousAmount = GetWallet(currencyId)?.Current ?? 0;
+            if (newAmount > previousAmount)
+            {
+                analyticsService?.Record(new CurrencyEarnedEvent(currencyId, newAmount.Value - previousAmount));
+            }
+            else if (newAmount < previousAmount)
+            {
+                analyticsService?.Record(new CurrencySpentEvent(currencyId, previousAmount - newAmount.Value));
+            }
         }
 
         public void ApplyNestedAddCurrency(AddCurrencyResponse response)
