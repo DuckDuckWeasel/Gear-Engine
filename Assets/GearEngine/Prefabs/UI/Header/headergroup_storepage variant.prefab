@@ -18,7 +18,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1828438306357118655, guid: 806b457f65cc60140ad36f87760ca35b, type: 3}
       propertyPath: m_Name
-      value: headergroup_storepage Variant
+      value: headergroup_storepage variant
       objectReference: {fileID: 0}
     - target: {fileID: 2551694215978946912, guid: 806b457f65cc60140ad36f87760ca35b, type: 3}
       propertyPath: m_Name
@@ -135,6 +135,7 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects:
     - {fileID: 7920189559108455961, guid: 806b457f65cc60140ad36f87760ca35b, type: 3}
+    - {fileID: 501687402498208663, guid: 806b457f65cc60140ad36f87760ca35b, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 806b457f65cc60140ad36f87760ca35b, type: 3}

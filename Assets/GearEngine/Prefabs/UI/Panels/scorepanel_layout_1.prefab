@@ -11,8 +11,9 @@ GameObject:
   - component: {fileID: 6080458481197340040}
   - component: {fileID: 8808244847457555871}
   - component: {fileID: 1044325188579938155}
+  - component: {fileID: 7712636100114552401}
   m_Layer: 0
-  m_Name: scorepanel_layout
+  m_Name: scorepanel_layout_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -78,6 +79,21 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &7712636100114552401
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4148975119009117544}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c8d9e0f1a2b4c6d8e0f1a2b4c6d8e0f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.Campaign::GearEngine.Campaign.Presentation.TrackScoreBandSlotView
+  positionLabel: {fileID: 6858418419560711128}
+  targetTimeLabel: {fileID: 6079230141691759046}
+  rewardLabel: {fileID: 847696592376090539}
 --- !u!1 &4518743677254402937
 GameObject:
   m_ObjectHideFlags: 0
