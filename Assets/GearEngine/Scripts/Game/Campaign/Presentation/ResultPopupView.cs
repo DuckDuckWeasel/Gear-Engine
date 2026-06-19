@@ -3,7 +3,6 @@ using DG.Tweening;
 using Scaffold.MVVM;
 using UnityEngine;
 using UnityEngine.UI;
-
 namespace GearEngine.Campaign.Presentation
 {
     public sealed class ResultPopupView : View<ResultPopupViewModel>
