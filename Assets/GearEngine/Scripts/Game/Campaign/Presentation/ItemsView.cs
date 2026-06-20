@@ -12,6 +12,10 @@ namespace GearEngine.Campaign.Presentation
         [SerializeField] private Transform itemContainer;
         [SerializeField] private ItemSlotView itemPrefab;
 
+        [Header("Titles")]
+        [SerializeField] private TMPro.TMP_Text titleText;
+        [SerializeField] private TMPro.TMP_Text subtitleText;
+
         [Header("Actions")]
         [SerializeField] private GameObject buyButtonContainer;
         [SerializeField] private Button buyButton;
@@ -27,22 +31,12 @@ namespace GearEngine.Campaign.Presentation
             if (buyButton != null) buyButton.onClick.AddListener(OnBuyClicked);
             if (backButton != null) backButton.onClick.AddListener(OnBackClicked);
 
-            if (viewModel.Config != null && !viewModel.Config.ShowBuyButton)
-            {
-                if (buyButtonContainer != null) buyButtonContainer.SetActive(false);
-                else if (buyButton != null) buyButton.gameObject.SetActive(false);
-            }
-            else
-            {
-                if (buyButtonContainer != null) buyButtonContainer.SetActive(true);
-                else if (buyButton != null) buyButton.gameObject.SetActive(true);
-                
-                Bind<bool, bool>(() => viewModel.IsBuying, _ => UpdateBuyButtonState());
-                Bind<bool, bool>(() => viewModel.CanAffordBuy, _ => UpdateBuyButtonState());
-                Bind<long, long>(() => viewModel.NextCost, _ => UpdateBuyButtonState());
-            }
-
+            Bind<bool, bool>(() => viewModel.IsBuying, _ => UpdateBuyButtonState());
+            Bind<bool, bool>(() => viewModel.CanAffordBuy, _ => UpdateBuyButtonState());
+            Bind<long, long>(() => viewModel.NextCost, _ => UpdateBuyButtonState());
             Bind<int, int>(() => viewModel.ItemsRevision, _ => RebuildItemList());
+            Bind<string, string>(() => viewModel.Title, v => { if (titleText != null) titleText.text = v; });
+            Bind<string, string>(() => viewModel.Subtitle, v => { if (subtitleText != null) subtitleText.text = v; });
             
             UpdateBuyButtonState();
         }
@@ -60,6 +54,7 @@ namespace GearEngine.Campaign.Presentation
         private void RebuildItemList()
         {
             ClearItems();
+            UpdateBuyButtonState();
 
             IReadOnlyList<ItemSlotViewModel> slotItems = viewModel.Items;
             
@@ -98,7 +93,12 @@ namespace GearEngine.Campaign.Presentation
 
         private void UpdateBuyButtonState()
         {
-            if (viewModel.Config != null && !viewModel.Config.ShowBuyButton) return;
+            bool showBuyButton = viewModel.Config != null && viewModel.Config.ShowBuyButton;
+
+            if (buyButtonContainer != null) buyButtonContainer.SetActive(showBuyButton);
+            else if (buyButton != null) buyButton.gameObject.SetActive(showBuyButton);
+
+            if (!showBuyButton) return;
 
             if (buyButtonText != null)
             {

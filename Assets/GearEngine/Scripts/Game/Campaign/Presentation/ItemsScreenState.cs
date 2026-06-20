@@ -14,5 +14,7 @@ namespace GearEngine.Campaign.Presentation
         public ItemScreenType TypeToDisplay;
         public bool ShowBuyButton = true;
         public bool ShowUnownedItems = true;
+        public string Title;
+        public string Subtitle;
     }
 }

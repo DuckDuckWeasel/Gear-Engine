@@ -44,6 +44,8 @@ namespace GearEngine.Campaign.Presentation
                 config.TypeToDisplay = ItemScreenType.Perks;
                 config.ShowBuyButton = true;
                 config.ShowUnownedItems = true;
+                config.Title = "Storage";
+                config.Subtitle = "MAX OUT YOUR GEAR";
                 
                 navigation.Open(new ItemsViewModel(config), true, new NavigationOptions() { CloseAllViews = true });
             }
@@ -61,6 +63,8 @@ namespace GearEngine.Campaign.Presentation
                 config.TypeToDisplay = ItemScreenType.Gears;
                 config.ShowBuyButton = false;
                 config.ShowUnownedItems = true;
+                config.Title = "Garage";
+                config.Subtitle = "FIX AND REPAIR";
                 
                 navigation.Open(new ItemsViewModel(config), true, new NavigationOptions() { CloseAllViews = true });
             }

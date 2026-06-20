@@ -55,6 +55,13 @@ namespace GearEngine.App.Bootstrap
         {
             try
             {
+                
+                ToolbarController toolbarController = Host.Resolve<ToolbarController>();
+                if (toolbarController != null)
+                {
+                    toolbarController.gameObject.SetActive(true);
+                }
+                
                 INavigation navigation = Host.Resolve<INavigation>();
                 navigation.Open(new MainViewModel());
             }

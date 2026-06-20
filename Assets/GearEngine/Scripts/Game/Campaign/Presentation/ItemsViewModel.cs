@@ -23,6 +23,9 @@ namespace GearEngine.Campaign.Presentation
     {
         public ItemsScreenState Config { get; }
 
+        public string Title => Config?.Title ?? string.Empty;
+        public string Subtitle => Config?.Subtitle ?? string.Empty;
+
         public IReadOnlyList<ItemSlotViewModel> Items => items;
 
         public long NextCost => perksClient?.NextCost ?? 0;
@@ -62,6 +65,13 @@ namespace GearEngine.Campaign.Presentation
         protected override void Initialize()
         {
             base.Initialize();
+            _ = LoadItemsAsync(cts.Token);
+        }
+
+        public void Refresh()
+        {
+            OnPropertyChanged(nameof(Title));
+            OnPropertyChanged(nameof(Subtitle));
             _ = LoadItemsAsync(cts.Token);
         }
 

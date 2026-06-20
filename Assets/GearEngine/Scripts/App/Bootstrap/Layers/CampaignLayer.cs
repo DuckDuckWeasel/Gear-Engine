@@ -3,7 +3,9 @@ using GearEngine.Campaign.Bootstrap;
 using GearEngine.Campaign.Bootstrap.Perks;
 using GearEngine.Campaign.Bootstrap.LiveOps;
 using GearEngine.Campaign.Services;
+using GearEngine.Campaign.Presentation;
 using GearEngine.CarSimulation.Bootstrap;
+using VContainer.Unity;
 using GearEngine.CarSimulation.Definitions;
 using GearEngine.Currency.Bootstrap;
 using GearEngine.GearEngine.Bootstrap;
@@ -36,6 +38,8 @@ namespace GearEngine.App.Bootstrap.Layers
             RegisterGameplayConfigs(builder);
             RegisterLiveOpsClientModules(builder);
             RegisterGameplayServices(builder);
+
+            builder.RegisterComponentInHierarchy<ToolbarController>();
         }
 
         private void RegisterGameplayConfigs(IContainerBuilder builder)
