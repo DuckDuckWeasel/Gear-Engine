@@ -57,6 +57,28 @@ namespace GearEngine.CarSimulation.Definitions
             return 0;
         }
 
+        public int EvaluatePositionForTotalRaceTime(float totalRaceTimeSeconds)
+        {
+            if (!HasConfiguredScoreBands)
+            {
+                return 1;
+            }
+
+            TrackScoreBand[] ordered = new TrackScoreBand[scoreBands.Length];
+            Array.Copy(scoreBands, ordered, scoreBands.Length);
+            Array.Sort(ordered, (a, b) => a.MaxRaceTimeSeconds.CompareTo(b.MaxRaceTimeSeconds));
+
+            for (int i = 0; i < ordered.Length; i++)
+            {
+                if (totalRaceTimeSeconds <= ordered[i].MaxRaceTimeSeconds)
+                {
+                    return i + 1;
+                }
+            }
+
+            return ordered.Length + 1; // Last place if failed all bands
+        }
+
         internal void SetTotalLapsForTests(int value)
         {
             totalLaps = value;

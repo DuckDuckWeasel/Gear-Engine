@@ -15,6 +15,11 @@ namespace GearEngine.Campaign.Presentation
         [SerializeField] private Button upgradeButton;
         [SerializeField] private Button continueButton;
 
+        [Header("Direct UI Binding")]
+        [SerializeField] private TMPro.TMP_Text positionText;
+        [SerializeField] private TMPro.TMP_Text totalTimeText;
+        [SerializeField] private TMPro.TMP_Text rewardText;
+
         private Sequence statsSequence;
 
         protected override void OnBind()
@@ -23,6 +28,21 @@ namespace GearEngine.Campaign.Presentation
             RebuildStatSlots();
             upgradeButton.onClick.AddListener(OnUpgradeClicked);
             continueButton.onClick.AddListener(OnContinueClicked);
+
+            if (positionText != null)
+            {
+                positionText.text = viewModel.PositionLabel;
+            }
+
+            if (totalTimeText != null)
+            {
+                totalTimeText.text = viewModel.FormattedRaceTime;
+            }
+
+            if (rewardText != null)
+            {
+                rewardText.text = $"{(viewModel.GoldAmount > 0 ? "+" : "")}{viewModel.GoldAmount} Cogs";
+            }
         }
 
         protected override void OnUnbind()
@@ -43,7 +63,6 @@ namespace GearEngine.Campaign.Presentation
         {
             if (statsContainer == null || statSlotPrefab == null)
             {
-                Debug.LogError("[ResultPopupView] statsContainer/statSlotPrefab missing; cannot render stats.");
                 return;
             }
 
@@ -55,6 +74,8 @@ namespace GearEngine.Campaign.Presentation
 
         private void ClearStatSlots()
         {
+            if (statsContainer == null) return;
+
             for (int i = statsContainer.childCount - 1; i >= 0; i--)
             {
                 Transform child = statsContainer.GetChild(i);
@@ -124,8 +145,6 @@ namespace GearEngine.Campaign.Presentation
 
         private void ValidateHierarchy()
         {
-            RequireReference(statsContainer, nameof(statsContainer));
-            RequireReference(statSlotPrefab, nameof(statSlotPrefab));
             RequireReference(upgradeButton, nameof(upgradeButton));
             RequireReference(continueButton, nameof(continueButton));
         }

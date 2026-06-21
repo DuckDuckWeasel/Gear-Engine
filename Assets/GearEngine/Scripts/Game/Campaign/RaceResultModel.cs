@@ -23,11 +23,13 @@ namespace GearEngine.Campaign
             if (track != null && track.HasConfiguredScoreBands)
             {
                 Score = track.EvaluateRewardForTotalRaceTime(raceTime);
+                Position = track.EvaluatePositionForTotalRaceTime(raceTime);
                 Gold = new GoldReward(Score);
             }
             else
             {
                 Score = ComputeLegacyScore(raceTime, lapCount);
+                Position = 1;
                 Gold = new GoldReward(Score * legacyGoldPerScorePoint);
             }
 
@@ -37,6 +39,7 @@ namespace GearEngine.Campaign
         public float RaceTime { get; }
         public int LapCount { get; }
         public int Score { get; }
+        public int Position { get; }
         public GoldReward Gold { get; }
         public bool IsGoodResult { get; }
 

@@ -22,6 +22,17 @@ namespace GearEngine.Campaign.Presentation
 
         public int Score => result.Score;
 
+        public string PositionLabel => $"{GetOrdinal(result.Position)} Place";
+        
+        public string FormattedRaceTime 
+        {
+            get
+            {
+                TimeSpan time = TimeSpan.FromSeconds(result.RaceTime);
+                return $"{(int)time.TotalSeconds:00}:{time:ff}";
+            }
+        }
+
         /// <summary>Server band reward (gold) when LiveOps completed the race; otherwise local estimate.</summary>
         public int GoldAmount => result.ServerOutcome != null ? result.ServerOutcome.Reward : result.Gold.Amount;
 
@@ -71,16 +82,40 @@ namespace GearEngine.Campaign.Presentation
 
         private List<ResultStatSlotViewModel> BuildStatsRows()
         {
-            string resultLabel = result.IsGoodResult ? "Win" : "Try again";
             string goldLine = $"+{GoldAmount} gold (total: {CurrentGold})";
             return new List<ResultStatSlotViewModel>
             {
-                new ResultStatSlotViewModel("Result", resultLabel),
-                new ResultStatSlotViewModel("Race time", $"{result.RaceTime:F1}s"),
+                new ResultStatSlotViewModel("Position", PositionLabel),
+                new ResultStatSlotViewModel("Race time", FormattedRaceTime),
                 new ResultStatSlotViewModel("Laps", result.LapCount.ToString()),
                 new ResultStatSlotViewModel("Score", result.Score.ToString()),
                 new ResultStatSlotViewModel("Gold", goldLine),
             };
+        }
+
+        private string GetOrdinal(int num)
+        {
+            if (num <= 0) return num.ToString();
+
+            switch (num % 100)
+            {
+                case 11:
+                case 12:
+                case 13:
+                    return num + "th";
+            }
+
+            switch (num % 10)
+            {
+                case 1:
+                    return num + "st";
+                case 2:
+                    return num + "nd";
+                case 3:
+                    return num + "rd";
+                default:
+                    return num + "th";
+            }
         }
     }
 }
