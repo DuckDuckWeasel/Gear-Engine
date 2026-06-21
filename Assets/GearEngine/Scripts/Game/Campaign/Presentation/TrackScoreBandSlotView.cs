@@ -21,7 +21,8 @@ namespace GearEngine.Campaign.Presentation
 
             if (targetTimeLabel != null)
             {
-                targetTimeLabel.text = $"{viewModel.MaxRaceTimeSeconds:F1}s";
+                System.TimeSpan time = System.TimeSpan.FromSeconds(viewModel.MaxRaceTimeSeconds);
+                targetTimeLabel.text = $"{(int)time.TotalSeconds:00}:{time:ff}";
             }
 
             if (rewardLabel != null)

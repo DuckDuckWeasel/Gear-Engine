@@ -41,7 +41,8 @@ namespace GearEngine.Campaign.Presentation
 
             if (targetTimeLabel != null)
             {
-                targetTimeLabel.text = $"Target: {viewModel.TargetTime:F1}s";
+                System.TimeSpan time = System.TimeSpan.FromSeconds(viewModel.TargetTime);
+                targetTimeLabel.text = $"Target: {(int)time.TotalSeconds:00}:{time:ff}";
             }
 
             RebuildBandSlots();
