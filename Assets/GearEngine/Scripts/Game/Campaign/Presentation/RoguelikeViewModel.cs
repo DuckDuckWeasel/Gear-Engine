@@ -67,12 +67,17 @@ namespace GearEngine.Campaign.Presentation
         [Inject]
         private AdPlacementKeySO rerollPlacementKey;
 
+        [Inject]
+        private ToolbarController toolbarController;
+
         private bool isProcessingAction;
+        private bool hasRerolled;
 
         protected override void Initialize()
         {
             base.Initialize();
             isProcessingAction = false;
+            hasRerolled = false;
             CanReroll = false;
             
             adManager.AdAvailable += OnAdAvailable;
@@ -109,7 +114,7 @@ namespace GearEngine.Campaign.Presentation
 
         private void OnAdAvailable(bool available)
         {
-            if (!isProcessingAction)
+            if (!isProcessingAction && !hasRerolled)
             {
                 CanReroll = available;
             }
@@ -171,6 +176,7 @@ namespace GearEngine.Campaign.Presentation
                 Debug.Log($"[RoguelikeViewModel] Consuming pick from rollService.");
                 await rollService.ConsumePickAsync(config.Id, cts.Token);
                 Debug.Log($"[RoguelikeViewModel] Opening MainViewModel.");
+                if (toolbarController != null) toolbarController.gameObject.SetActive(true);
                 navigation.Open(new MainViewModel(), true, new NavigationOptions { CloseAllViews = true });
             }
             catch (Exception ex)
@@ -296,11 +302,14 @@ namespace GearEngine.Campaign.Presentation
         private async Task SkipPickAsync()
         {
             await rollService.SkipPickAsync(cts.Token);
+            if (toolbarController != null) toolbarController.gameObject.SetActive(true);
             navigation.Open(new MainViewModel(), true, new NavigationOptions { CloseAllViews = true });
         }
         
         private async Task ReRerollAsync()
         {
+            hasRerolled = true;
+            CanReroll = false;
             perkOptions.Clear();
 
             IReadOnlyList<IItem> options = await rollService.RerollAsync(cts.Token);
