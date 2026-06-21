@@ -1,4 +1,5 @@
 using System;
+using GearEngine.GearEngine.Services.Inventory;
 using Scaffold.MVVM;
 using TMPro;
 using UnityEngine;
@@ -36,10 +37,11 @@ namespace GearEngine.Campaign.Presentation
 
             if (nameLabel != null)
             {
+                string colorHex = viewModel.Item.Rarity.GetColorHex();
                 if (viewModel.Amount > 1)
-                    nameLabel.text = $"x{viewModel.Amount} {viewModel.Item.Name}";
+                    nameLabel.text = $"<color=#{colorHex}>x{viewModel.Amount} {viewModel.Item.Name}</color>";
                 else
-                    nameLabel.text = viewModel.Item.Name;
+                    nameLabel.text = $"<color=#{colorHex}>{viewModel.Item.Name}</color>";
             }
 
             if (descriptionLabel != null)

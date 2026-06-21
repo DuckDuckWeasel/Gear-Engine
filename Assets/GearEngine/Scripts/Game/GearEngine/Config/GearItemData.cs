@@ -24,7 +24,7 @@ namespace GearEngine.GearEngine.Config
             get
             {
                 var sb = new StringBuilder();
-                sb.Append($"<b><color=#{RarityColor(rarity)}>{rarity}</color></b> Gear\n");
+                sb.Append($"<b><color=#{rarity.GetColorHex()}>{rarity}</color></b> Gear\n");
                 foreach (var ability in Abilities)
                 {
                     if (ability is IDescribable describable)
@@ -34,15 +34,6 @@ namespace GearEngine.GearEngine.Config
             }
         }
 
-        private static string RarityColor(ItemRarity r) => r switch
-        {
-            ItemRarity.Common => "AAAAAA",
-            ItemRarity.Uncommon => "1EFF00",
-            ItemRarity.Rare => "0070FF",
-            ItemRarity.Epic => "A335EE",
-            ItemRarity.Legendary => "FF8000",
-            _ => "FFFFFF"
-        };
         
         public GearCategory Category = GearCategory.Base;
         public float BaseRotationSpeed;
