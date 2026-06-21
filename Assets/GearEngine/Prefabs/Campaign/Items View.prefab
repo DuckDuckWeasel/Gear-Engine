@@ -1181,7 +1181,43 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 6935119686615172477, guid: b25d5030da6b3b241a90830c437854cc, type: 3}
       insertIndex: -1
       addedObject: {fileID: 3248838212516867131}
+    - targetCorrespondingSourceObject: {fileID: 1232350057496607557, guid: b25d5030da6b3b241a90830c437854cc, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7052217613513966928}
+    - targetCorrespondingSourceObject: {fileID: 8911928280592169631, guid: b25d5030da6b3b241a90830c437854cc, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7055905047868692846}
   m_SourcePrefab: {fileID: 100100000, guid: b25d5030da6b3b241a90830c437854cc, type: 3}
+--- !u!1 &1426959744111075336 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1232350057496607557, guid: b25d5030da6b3b241a90830c437854cc, type: 3}
+  m_PrefabInstance: {fileID: 204838512275594061}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &7052217613513966928
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1426959744111075336}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6df7edae9ad344632835c6840bbe6aef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.Campaign::GearEngine.Campaign.Presentation.CurrencyDisplayWidget
+  currencyText: {fileID: 5070727405134840085}
+  currencyId: 
+--- !u!114 &3236258413123387599 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3332316742219684738, guid: b25d5030da6b3b241a90830c437854cc, type: 3}
+  m_PrefabInstance: {fileID: 204838512275594061}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
 --- !u!114 &4285653598444201971 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 4156269089878555838, guid: b25d5030da6b3b241a90830c437854cc, type: 3}
@@ -1193,6 +1229,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a1534cbac729494f945c90efe327e10a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: AnimoraRuntime::OM.Animora.Runtime.AnimoraPlayer
+--- !u!114 &5070727405134840085 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4938597485022485080, guid: b25d5030da6b3b241a90830c437854cc, type: 3}
+  m_PrefabInstance: {fileID: 204838512275594061}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
 --- !u!114 &6531692573526894334 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 6373297437794188723, guid: b25d5030da6b3b241a90830c437854cc, type: 3}
@@ -1236,6 +1283,25 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 7252805350081726961, guid: b25d5030da6b3b241a90830c437854cc, type: 3}
   m_PrefabInstance: {fileID: 204838512275594061}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &8753374828338454994 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8911928280592169631, guid: b25d5030da6b3b241a90830c437854cc, type: 3}
+  m_PrefabInstance: {fileID: 204838512275594061}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &7055905047868692846
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8753374828338454994}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6df7edae9ad344632835c6840bbe6aef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.Campaign::GearEngine.Campaign.Presentation.CurrencyDisplayWidget
+  currencyText: {fileID: 3236258413123387599}
+  currencyId: gold
 --- !u!1001 &541353170060348928
 PrefabInstance:
   m_ObjectHideFlags: 0

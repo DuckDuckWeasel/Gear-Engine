@@ -1,6 +1,4 @@
 using System.Linq;
-using GearEngine.GearEngine.Config;
-using GearEngine.GearEngine.Nodes;
 using GearEngine.GearEngine.Visuals;
 using Scaffold.MVVM;
 using TMPro;

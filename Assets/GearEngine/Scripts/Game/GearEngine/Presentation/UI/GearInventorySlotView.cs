@@ -1,6 +1,6 @@
-using GearEngine.GearEngine.Config;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 namespace GearEngine.GearEngine.Presentation.UI
 {
@@ -9,6 +9,8 @@ namespace GearEngine.GearEngine.Presentation.UI
     {
         [SerializeField]
         private Transform visualContainer;
+        [SerializeField]
+        private Image slotImage;
 
         public GearItemData BoundGearData => boundGearData;
 
@@ -36,14 +38,29 @@ namespace GearEngine.GearEngine.Presentation.UI
 
         public void OnPointerClick(PointerEventData eventData)
         {
-            Debug.Log($"[GearInventorySlotView] OnPointerClick fired! dragging={eventData.dragging}");
-            if (!eventData.dragging && viewModel != null && boundGearData != null)
+            if (eventData.dragging || viewModel == null || boundGearData == null)
             {
-                viewModel.HandleInventoryClick(boundGearData);
+                return;
+            }
+
+            Debug.Log($"[GearInventorySlotView] OnPointerClick fired! dragging={eventData.dragging}");
+            viewModel.HandleInventoryClick(boundGearData);
+        }
+
+        public void OnPointerDown(PointerEventData eventData)
+        {
+            if (slotImage)
+            {
+                slotImage.enabled =  false;
             }
         }
 
-        public void OnPointerDown(PointerEventData eventData) { }
-        public void OnPointerUp(PointerEventData eventData) { }
+        public void OnPointerUp(PointerEventData eventData)
+        {
+            if (slotImage)
+            {
+                slotImage.enabled =  true;
+            }
+        }
     }
 }
