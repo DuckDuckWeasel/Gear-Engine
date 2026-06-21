@@ -9,12 +9,15 @@ using UnityEngine;
 using VContainer;
 using Scaffold.Analytics;
 using GearEngine.Campaign.Analytics;
+using Scaffold.Events.Contracts;
+using GearEngine.Currency.Events;
 
 namespace GearEngine.Currency
 {
     public sealed class CurrencyClientModule : GameClientModuleBase<CurrencyGameData>
     {
         [Inject] private IAnalyticsService analyticsService;
+        [Inject] private IEventBus eventBus;
         
         public CurrencyClientModule(ILiveOpsService liveOps) : base(liveOps)
         {
@@ -125,7 +128,13 @@ namespace GearEngine.Currency
                 return;
             }
 
+            long oldAmount = wallet.Current;
             wallet.Current = newAmount.Value;
+
+            if (oldAmount != newAmount.Value)
+            {
+                eventBus?.Raise(new CurrencyUpdatedEvent(currencyId, oldAmount, newAmount.Value));
+            }
         }
 
         private void ValidateCurrencyOperation(string currencyId, long amount)
