@@ -24,7 +24,7 @@ namespace GearEngine.App.Bootstrap.Layers.MockAds
         public string UserId { get; set; }
         
         public IRewardedAdService RewardedAdService { get; } = new MockRewardedAdService();
-        public IInterstitialAdService InterstitialAdService { get; } = null;
+        public IInterstitialAdService InterstitialAdService { get; } = new MockInterstitialAdService();
         public IBannerAdService BannerAdService { get; } = null;
         
         public void SetMuted(bool mute) {}
@@ -64,6 +64,29 @@ namespace GearEngine.App.Bootstrap.Layers.MockAds
             await Task.Yield();
             return true;
         }
+    }
+
+    public class MockInterstitialAdService : IInterstitialAdService
+    {
+        public event Action<bool> AdAvailable;
+        public event Action<bool, string> AdSuccessfullyCompleted;
+
+        public async void ShowAd(string placementName = null) 
+        {
+            Debug.Log($"<color=yellow>[Mock Ad]</color> Showing mock Interstitial ad for placement {placementName}. Completing in 2s...");
+            await Awaitable.WaitForSecondsAsync(2f);
+            
+            Debug.Log($"<color=green>[Mock Ad]</color> Interstitial Ad finished successfully!");
+            AdSuccessfullyCompleted?.Invoke(true, placementName);
+        }
+
+        public async Awaitable<bool> CanShowAd(string placementName = null)
+        {
+            await Task.Yield();
+            return true;
+        }
+
+        public void Dispose() {}
     }
 
     public class MockRewardEndpointClient : IRewardEndpointClient
