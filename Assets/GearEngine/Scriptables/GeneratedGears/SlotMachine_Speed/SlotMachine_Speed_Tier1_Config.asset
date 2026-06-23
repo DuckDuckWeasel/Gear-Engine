@@ -31,7 +31,7 @@ MonoBehaviour:
     SnapSlowdownDuration: 0.5
     SnapSlowdownMultiplier: 0.15
     TriggerSpinDegrees: 45
-    IsDeletable: 0
+    IsDeletable: 1
     DeleteRewardAmount: 0
     Abilities: []
   abilities:
