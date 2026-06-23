@@ -70,13 +70,15 @@ namespace GearEngine.Campaign.Presentation
         [Inject]
         private ToolbarController toolbarController;
 
+        [ObservableProperty]
         private bool isProcessingAction;
+
         private bool hasRerolled;
 
         protected override void Initialize()
         {
             base.Initialize();
-            isProcessingAction = false;
+            IsProcessingAction = false;
             hasRerolled = false;
             CanReroll = false;
             
@@ -114,7 +116,7 @@ namespace GearEngine.Campaign.Presentation
 
         private void OnAdAvailable(bool available)
         {
-            if (!isProcessingAction && !hasRerolled)
+            if (!IsProcessingAction && !hasRerolled)
             {
                 CanReroll = available;
             }
@@ -146,9 +148,9 @@ namespace GearEngine.Campaign.Presentation
         private async Task PickPerkAsync(ItemSlotViewModel perk)
         {
             Debug.Log($"[RoguelikeViewModel] PickPerkAsync called for perk: {perk?.Item?.Id}");
-            if (isProcessingAction || perk == null)
+            if (IsProcessingAction || perk == null)
             {
-                Debug.LogWarning($"[RoguelikeViewModel] PickPerkAsync aborted. isProcessingAction: {isProcessingAction}, perk is null: {perk == null}");
+                Debug.LogWarning($"[RoguelikeViewModel] PickPerkAsync aborted. isProcessingAction: {IsProcessingAction}, perk is null: {perk == null}");
                 return;
             }
 
@@ -158,7 +160,7 @@ namespace GearEngine.Campaign.Presentation
                 return;
             }
 
-            isProcessingAction = true;
+            IsProcessingAction = true;
 
             try
             {
@@ -176,20 +178,26 @@ namespace GearEngine.Campaign.Presentation
                 Debug.Log($"[RoguelikeViewModel] Consuming pick from rollService.");
                 await rollService.ConsumePickAsync(config.Id, cts.Token);
                 Debug.Log($"[RoguelikeViewModel] Opening MainViewModel.");
-                if (toolbarController != null) toolbarController.gameObject.SetActive(true);
-                navigation.Open(new MainViewModel(), true, new NavigationOptions { CloseAllViews = true });
+                if (toolbarController != null) 
+                {
+                    toolbarController.OpenMainView();
+                }
+                else
+                {
+                    navigation.Open(new MainViewModel(), true, new NavigationOptions { CloseAllViews = true });
+                }
             }
             catch (Exception ex)
             {
-                isProcessingAction = false;
+                IsProcessingAction = false;
                 Debug.LogError($"[RoguelikeViewModel] PickPerk failed: {ex.Message}\n{ex.StackTrace}");
             }
         }
 
         public async void Continue()
         {
-            if (isProcessingAction) return;
-            isProcessingAction = true;
+            if (IsProcessingAction) return;
+            IsProcessingAction = true;
 
             try
             {
@@ -197,15 +205,15 @@ namespace GearEngine.Campaign.Presentation
             }
             catch (Exception ex)
             {
-                isProcessingAction = false;
+                IsProcessingAction = false;
                 Debug.LogError($"[RoguelikeViewModel] Continue failed: {ex.Message}\n{ex.StackTrace}");
             }
         }
 
         public async void Reroll()
         {
-            if (isProcessingAction || !CanReroll) return;
-            isProcessingAction = true;
+            if (IsProcessingAction || !CanReroll) return;
+            IsProcessingAction = true;
 
             string placementId = rerollPlacementKey != null ? (string)rerollPlacementKey : "reroll";
 
@@ -216,7 +224,7 @@ namespace GearEngine.Campaign.Presentation
                 {
                     Debug.LogWarning("[RoguelikeViewModel] Ad not available or on cooldown. Reroll aborted.");
                     CanReroll = false;
-                    isProcessingAction = false;
+                    IsProcessingAction = false;
                     return;
                 }
 
@@ -226,7 +234,7 @@ namespace GearEngine.Campaign.Presentation
             }
             catch (Exception ex)
             {
-                isProcessingAction = false;
+                IsProcessingAction = false;
                 Debug.LogError($"[RoguelikeViewModel] Reroll failed: {ex.Message}\n{ex.StackTrace}");
             }
         }
@@ -251,7 +259,7 @@ namespace GearEngine.Campaign.Presentation
                 Debug.LogWarning("[RoguelikeViewModel] Ad failed or was cancelled. Reroll aborted and button removed.");
             }
             
-            isProcessingAction = false;
+            IsProcessingAction = false;
         }
 
         private void SetupGearEngineSubtree()
@@ -277,8 +285,8 @@ namespace GearEngine.Campaign.Presentation
 
         private void ShowItemPreview(GearItemData gearData)
         {
-            Debug.Log($"[RoguelikeViewModel] ShowItemPreview called for GearItemData '{gearData?.Id}'. isProcessingAction: {isProcessingAction}");
-            if (isProcessingAction || gearData == null) return;
+            Debug.Log($"[RoguelikeViewModel] ShowItemPreview called for GearItemData '{gearData?.Id}'. isProcessingAction: {IsProcessingAction}");
+            if (IsProcessingAction || gearData == null) return;
             
             ItemSlotViewModel tempSlot = new ItemSlotViewModel(gearData, _ => { }, 1);
             ItemPopupViewModel popup = new ItemPopupViewModel(new[] { tempSlot }, 0, null);
@@ -302,8 +310,14 @@ namespace GearEngine.Campaign.Presentation
         private async Task SkipPickAsync()
         {
             await rollService.SkipPickAsync(cts.Token);
-            if (toolbarController != null) toolbarController.gameObject.SetActive(true);
-            navigation.Open(new MainViewModel(), true, new NavigationOptions { CloseAllViews = true });
+            if (toolbarController != null) 
+            {
+                toolbarController.OpenMainView();
+            }
+            else
+            {
+                navigation.Open(new MainViewModel(), true, new NavigationOptions { CloseAllViews = true });
+            }
         }
         
         private async Task ReRerollAsync()
@@ -347,7 +361,7 @@ namespace GearEngine.Campaign.Presentation
 
         private void OpenPerkPreview(ItemSlotViewModel perk)
         {
-            if (isProcessingAction || perk == null) return;
+            if (IsProcessingAction || perk == null) return;
             
             int index = perkOptions.IndexOf(perk);
             if (index < 0) index = 0;

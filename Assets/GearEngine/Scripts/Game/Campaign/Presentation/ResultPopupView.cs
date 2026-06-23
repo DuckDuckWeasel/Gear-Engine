@@ -15,11 +15,6 @@ namespace GearEngine.Campaign.Presentation
         [SerializeField] private Button upgradeButton;
         [SerializeField] private Button continueButton;
 
-        [Header("Direct UI Binding")]
-        [SerializeField] private TMPro.TMP_Text positionText;
-        [SerializeField] private TMPro.TMP_Text totalTimeText;
-        [SerializeField] private TMPro.TMP_Text rewardText;
-
         private Sequence statsSequence;
 
         protected override void OnBind()
@@ -28,21 +23,6 @@ namespace GearEngine.Campaign.Presentation
             RebuildStatSlots();
             upgradeButton.onClick.AddListener(OnUpgradeClicked);
             continueButton.onClick.AddListener(OnContinueClicked);
-
-            if (positionText != null)
-            {
-                positionText.text = viewModel.PositionLabel;
-            }
-
-            if (totalTimeText != null)
-            {
-                totalTimeText.text = viewModel.FormattedRaceTime;
-            }
-
-            if (rewardText != null)
-            {
-                rewardText.text = $"{(viewModel.GoldAmount > 0 ? "+" : "")}{viewModel.GoldAmount} Cogs";
-            }
         }
 
         protected override void OnUnbind()

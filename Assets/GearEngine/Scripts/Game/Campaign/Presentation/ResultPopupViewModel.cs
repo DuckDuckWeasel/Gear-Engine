@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using GearEngine.Campaign;
 using GearEngine.Currency;
+using Scaffold.Ads;
 using Scaffold.MVVM;
 using Scaffold.Navigation.Contracts;
 using UnityEngine;
@@ -43,8 +44,11 @@ namespace GearEngine.Campaign.Presentation
         private readonly RaceResultModel result;
 
         private List<ResultStatSlotViewModel> stats;
+        private bool isProcessingAction;
 
         [Inject] private CurrencyClientModule currencyClient;
+        [Inject] private ToolbarController toolbarController;
+        [Inject] private InterstitialAdManager interstitialAdManager;
 
         protected override void Initialize()
         {
@@ -56,27 +60,69 @@ namespace GearEngine.Campaign.Presentation
             }
         }
 
-        public void Upgrade()
+        public async void Upgrade()
         {
+            if (isProcessingAction) return;
+            isProcessingAction = true;
             try
             {
+                if (interstitialAdManager != null && await interstitialAdManager.CanShowAd())
+                {
+                    var tcs = new System.Threading.Tasks.TaskCompletionSource<bool>();
+                    void OnAdCompleted(bool success, string p) => tcs.TrySetResult(true);
+                    
+                    interstitialAdManager.AdSuccessfullyCompleted += OnAdCompleted;
+                    interstitialAdManager.ShowInterstitial();
+                    
+                    await tcs.Task;
+                    interstitialAdManager.AdSuccessfullyCompleted -= OnAdCompleted;
+                }
                 navigation.Open(new RoguelikeViewModel(), true, new NavigationOptions() { CloseAllViews = true });
             }
             catch (Exception ex)
             {
                 Debug.LogError($"[ResultPopupViewModel] Upgrade failed: {ex.Message}\n{ex.StackTrace}");
             }
+            finally
+            {
+                isProcessingAction = false;
+            }
         }
 
-        public void Continue()
+        public async void Continue()
         {
+            if (isProcessingAction) return;
+            isProcessingAction = true;
             try
             {
-                navigation.Open(new MainViewModel(), true, new NavigationOptions() { CloseAllViews = true });
+                if (interstitialAdManager != null && await interstitialAdManager.CanShowAd())
+                {
+                    var tcs = new System.Threading.Tasks.TaskCompletionSource<bool>();
+                    void OnAdCompleted(bool success, string p) => tcs.TrySetResult(true);
+                    
+                    interstitialAdManager.AdSuccessfullyCompleted += OnAdCompleted;
+                    interstitialAdManager.ShowInterstitial();
+                    
+                    await tcs.Task;
+                    interstitialAdManager.AdSuccessfullyCompleted -= OnAdCompleted;
+                }
+
+                if (toolbarController != null) 
+                {
+                    toolbarController.OpenMainView();
+                }
+                else
+                {
+                    navigation.Open(new MainViewModel(), true, new NavigationOptions() { CloseAllViews = true });
+                }
             }
             catch (Exception ex)
             {
                 Debug.LogError($"[ResultPopupViewModel] Continue failed: {ex.Message}\n{ex.StackTrace}");
+            }
+            finally
+            {
+                isProcessingAction = false;
             }
         }
 

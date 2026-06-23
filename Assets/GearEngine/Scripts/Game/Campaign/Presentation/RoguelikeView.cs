@@ -30,6 +30,7 @@ namespace GearEngine.Campaign.Presentation
             ValidateHierarchy();
             BindGearSubtree();
             Bind<int, int>(() => viewModel.PerkOptionsRevision, _ => RebuildPerkSelection());
+            Bind<bool, bool>(() => viewModel.IsProcessingAction, isProcessing => ToggleGearPanels(!isProcessing));
             BindActionUi();
         }
 
@@ -41,7 +42,7 @@ namespace GearEngine.Campaign.Presentation
                 rerollButton.onClick.RemoveListener(OnRerollClicked);
             }
             DisposeViewModelIfNeeded();
-            DeactivateGearPanels();
+            ToggleGearPanels(false);
             base.OnUnbind();
         }
 
@@ -143,19 +144,11 @@ namespace GearEngine.Campaign.Presentation
             }
         }
 
-        private void DeactivateGearPanels()
+        private void ToggleGearPanels(bool isActive)
         {
-            TryDeactivatePanel(trashDropZone?.gameObject);
-            TryDeactivatePanel(inventoryView?.gameObject);
-            TryDeactivatePanel(boardView?.gameObject);
-        }
-
-        private void TryDeactivatePanel(GameObject go)
-        {
-            if (go != null)
-            {
-                go.SetActive(false);
-            }
+            if (boardView != null) boardView.gameObject.SetActive(isActive);
+            if (inventoryView != null) inventoryView.gameObject.SetActive(isActive);
+            if (trashDropZone != null) trashDropZone.gameObject.SetActive(isActive);
         }
     }
 }
