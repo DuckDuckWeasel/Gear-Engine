@@ -133,11 +133,26 @@ namespace GearEngine.GearEngine.Presentation.UI
         void IDragLifecycleListener.OnDragStarted(DragPayload payload)
         {
             viewModel?.HandleDragStarted(payload);
+            
+            if (viewModel != null && viewModel.IsActive)
+            {
+                Show();
+            }
+            else
+            {
+                isHovered = false;
+                Hide(immediate: false);
+            }
         }
 
         void IDragLifecycleListener.OnDragEnded()
         {
             viewModel?.HandleDragEnded();
+            if (viewModel == null || !viewModel.IsActive)
+            {
+                isHovered = false;
+                Hide(immediate: false);
+            }
         }
 
         public bool CanAccept(DragPayload payload)
@@ -171,6 +186,8 @@ namespace GearEngine.GearEngine.Presentation.UI
             {
                 canvasGroup.blocksRaycasts = true;
                 canvasGroup.interactable = true;
+                canvasGroup.alpha = 1f;
+                animationProgress = 1f;
             }
         }
 
@@ -204,11 +221,18 @@ namespace GearEngine.GearEngine.Presentation.UI
 
         private void TickFadeAnimation()
         {
-            float target = isShowing ? 1f : 0f;
-            float speed = isShowing ? (1f / Mathf.Max(fadeInDuration, 0.01f)) : (1f / Mathf.Max(fadeOutDuration, 0.01f));
-            animationProgress = Mathf.MoveTowards(animationProgress, target, Time.unscaledDeltaTime * speed);
-
-            canvasGroup.alpha = animationProgress;
+            if (isShowing)
+            {
+                animationProgress = 1f;
+                canvasGroup.alpha = 1f;
+            }
+            else
+            {
+                float target = 0f;
+                float speed = 1f / Mathf.Max(fadeOutDuration, 0.01f);
+                animationProgress = Mathf.MoveTowards(animationProgress, target, Time.unscaledDeltaTime * speed);
+                canvasGroup.alpha = animationProgress;
+            }
         }
 
         private void TickScaleAnimation()

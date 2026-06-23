@@ -102,7 +102,7 @@ namespace GearEngine.GearEngine.Presentation.UI
                 tagComp.AddTag(trashZoneTag);
             }
 
-            rootObj.SetActive(false);
+            // rootObj.SetActive(false); // DO NOT DISABLE, bindings need to tick!
             return zone;
         }
     }

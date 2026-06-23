@@ -33,7 +33,7 @@ namespace GearEngine.Campaign.Presentation
             DragServiceRegistry.Register(viewModel.DragService);
             boardView.Bind(viewModel.Board);
             inventoryView.Bind(viewModel.Inventory);
-            
+            trashDropZone.gameObject.SetActive(true);
             trashDropZone.SetDragService(viewModel.DragService);
             trashDropZone.SetBoardPresentation(boardView.BoardLayout, viewModel.Board.BoardRules);
             trashDropZone.Bind(viewModel.TrashZone);

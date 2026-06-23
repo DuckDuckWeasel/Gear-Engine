@@ -34,7 +34,9 @@ namespace GearEngine.GearEngine.Presentation.UI
         public void HandleDragStarted(DragPayload payload)
         {
             GearItemData gear = payload.GetData<GearItemData>() ?? payload.GetData<IGridNode>()?.ConfigData;
-            if (gear != null && CanTrashAcceptGear(gear))
+            bool canAccept = CanTrashAcceptGear(gear);
+            
+            if (gear != null && canAccept)
             {
                 RewardText = $"+{gear.DeleteRewardAmount}";
                 IsActive = true;
