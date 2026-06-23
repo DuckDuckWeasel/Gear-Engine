@@ -111,7 +111,7 @@ namespace GearEngine.Campaign.Presentation
 
                 if (newItem != null)
                 {
-                    OpenItemPopup(newItem);
+                    OpenItemPopup(newItem, true);
                 }
             }
             catch (Exception ex)
@@ -254,7 +254,9 @@ namespace GearEngine.Campaign.Presentation
             return null;
         }
 
-        private void OpenItemPopup(ItemSlotViewModel item)
+        private void OpenItemPopup(ItemSlotViewModel item) => OpenItemPopup(item, false);
+
+        private void OpenItemPopup(ItemSlotViewModel item, bool fromPurchase)
         {
             try
             {
@@ -263,7 +265,8 @@ namespace GearEngine.Campaign.Presentation
                 {
                     if (Config.TypeToDisplay == ItemScreenType.Perks)
                     {
-                        navigation.Open(new ItemPopupViewModel(items, index, BurnItemPopupHandler));
+                        Func<string, Task<bool>> handler = fromPurchase ? null : BurnItemPopupHandler;
+                        navigation.Open(new ItemPopupViewModel(items, index, handler));
                     }
                     else if (Config.TypeToDisplay == ItemScreenType.Gears)
                     {

@@ -55,8 +55,7 @@ namespace GearEngine.Campaign.Presentation
         private void OnRaceClicked()
         {
             UpdateRadioButtons(raceButton);
-            // Para o MainView, apenas ativamos (sem recriar pelo navigation)
-            ActivateMainView();
+            OpenMainView();
         }
 
         private void OnGarageClicked()
@@ -127,8 +126,10 @@ namespace GearEngine.Campaign.Presentation
             }
         }
 
-        private void ActivateMainView()
+        public void OpenMainView()
         {
+            this.gameObject.SetActive(true);
+
             // Ativa o MainView
             MainView mainView = FindObjectOfType<MainView>(true);
             if (mainView != null) 
