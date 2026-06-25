@@ -13,6 +13,16 @@ MonoBehaviour:
   m_Name: CampaignGearCatalog
   m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Config.GearCatalogSO
   gears:
+  - {fileID: 11400000, guid: ce9de38d129a44b98b56516716885404, type: 2}
+  - {fileID: 11400000, guid: bd701eab632894cd58e05d0869fa0535, type: 2}
+  - {fileID: 11400000, guid: 9ce9ff78469a94fa7b9c455992c36fce, type: 2}
+  - {fileID: 11400000, guid: b74f3142245ed44a18cb29f56d1837d7, type: 2}
+  - {fileID: 11400000, guid: b62e708c44e1345a3bab8db269200d7b, type: 2}
+  - {fileID: 11400000, guid: d22373275ea2f47a1a02fedc4de5f7a7, type: 2}
+  - {fileID: 11400000, guid: b38a509b178ee4c7791ad3887401511a, type: 2}
+  - {fileID: 11400000, guid: d5293f6badb834088b81bf4b4fdeb783, type: 2}
+  - {fileID: 11400000, guid: 822f69936b45043f9b19c050f9b0af3d, type: 2}
+  - {fileID: 11400000, guid: c78acd8f1d29f49f7b978f0380d3d253, type: 2}
   - {fileID: 11400000, guid: 9bdba5c8e5f7d47e697416280fbea719, type: 2}
   - {fileID: 11400000, guid: 892bb40e359644a2cbebb0780d7ef589, type: 2}
   - {fileID: 11400000, guid: e86c57d9086214fada1d27edb8e23fae, type: 2}
@@ -23,6 +33,11 @@ MonoBehaviour:
   - {fileID: 11400000, guid: a6830ff1590ff4e619a517162e699320, type: 2}
   - {fileID: 11400000, guid: f1f2bb4de48c0477ab5df32284b2d9a9, type: 2}
   - {fileID: 11400000, guid: 6b4b1283bfccb494e8eca264415e8e9d, type: 2}
+  - {fileID: 11400000, guid: 13be0977618d54b789b7217baa25b891, type: 2}
+  - {fileID: 11400000, guid: 2b5e4264c73e246159d27845f78655c6, type: 2}
+  - {fileID: 11400000, guid: eb770333d1cbd44c7be69dbd6fa3069f, type: 2}
+  - {fileID: 11400000, guid: c727de390bc6a40fd878851b473d3717, type: 2}
+  - {fileID: 11400000, guid: 7f667005f0ccc453d8b95f04ab2822f8, type: 2}
   - {fileID: 11400000, guid: b908f924ba2a740cc911c7b6682462b7, type: 2}
   - {fileID: 11400000, guid: e9683df024dae4b76b9fef1a348a58fc, type: 2}
   - {fileID: 11400000, guid: ea23594aa63bd4160b9bc07c18248871, type: 2}
@@ -69,6 +84,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 039415cafefcc470b9e4931797a5563b, type: 2}
   - {fileID: 11400000, guid: af8361ac2263e4426855df8233f89d0a, type: 2}
   - {fileID: 11400000, guid: 69e686b79377d4526aa5270b340e53a2, type: 2}
+  - {fileID: 11400000, guid: 39144108699f44d10b422acf50e748ba, type: 2}
   - {fileID: 11400000, guid: b642772cacb3f48d7870118c94a3e3a0, type: 2}
   - {fileID: 11400000, guid: 9f0ce76835399481e9aaf8f8af8f41ca, type: 2}
   - {fileID: 11400000, guid: 3783c6d85510a4bf6b4f879d30ef249b, type: 2}
