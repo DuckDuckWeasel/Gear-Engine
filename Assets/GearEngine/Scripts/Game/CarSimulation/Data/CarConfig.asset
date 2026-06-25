@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: CarConfig
   m_EditorClassIdentifier: 
   variables: {fileID: 11400000, guid: f6cfd8fa3fbb61843b66534996d0329d, type: 2}
-  baseMaxSpeed: 190
-  baseAcceleration: 10
-  baseBrakeForce: 350
+  baseMaxSpeed: 95
+  baseAcceleration: 5
+  baseBrakeForce: 175
   minSpeedPercentage: 0.4
   baseSimulationMultiplier: 1
   boundsDriftAccMult: {x: 1.1, y: 2.5}

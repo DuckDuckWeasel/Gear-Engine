@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b0f1df9247540468aa06b72ed1d0aefa, type: 3}
   m_Name: SplineSimulationConfig
   m_EditorClassIdentifier: Game.CarSimulation::GearEngine.CarSimulation.SplineSimulation.SplineDriverConfig
-  maxSpeed: 200
-  minCurveSpeed: 12
-  accelerationRate: 18
-  brakeRate: 35
+  maxSpeed: 100
+  minCurveSpeed: 6
+  accelerationRate: 9
+  brakeRate: 17.5
   curvatureLookaheadMeters: 40
   curvatureSampleCount: 10
   maxCurvatureReference: 0.15
