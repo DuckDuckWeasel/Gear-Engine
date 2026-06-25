@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a55c900497c24c2b9d116350dde15e2, type: 3}
+  m_Name: Perk_MaxSpeed_Legendary
+  m_EditorClassIdentifier: Game.Perks::GearEngine.Perks.Config.PerkItem
+  data:
+    id: MaxSpeed_Legendary
+    perkName: Max Speed
+    rarity: 4
+    rarityConfig: {fileID: 11400000, guid: c0000000000000000000000000000004, type: 2}
+    description: Increase speed limit of the car on a race
+    UIIcon: {fileID: 21300000, guid: db58f586a98ba4d0da8da8d3570b6cc9, type: 3}
+    modifiers:
+    - {fileID: 11400000, guid: 0b68a2cca6c047f4883f36817178e56a, type: 2}
