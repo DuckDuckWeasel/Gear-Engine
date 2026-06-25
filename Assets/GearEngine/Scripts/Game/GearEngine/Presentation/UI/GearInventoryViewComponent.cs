@@ -151,7 +151,7 @@ namespace GearEngine.GearEngine.Presentation.UI
                 return;
             }
 
-            view.SetChargeFillTarget(0f, snap: true);
+            view.SetChargeFillTarget(1f, snap: true);
             view.SettleNow();
 
             // Gear prefabs ship with physics colliders for board-side raycasting

@@ -43,7 +43,7 @@ namespace GearEngine.GearEngine.Presentation.UI
             // on the rendering camera. We add both so future gear prefabs can use either.
             EnsureBoardCameraRaycasters();
 
-            animator.Configure(GetSlotTransform, boardLayout, viewModel.MotorCogGearId);
+            animator.Configure(GetSlotTransform, boardLayout, viewModel.MotorCogGearId, () => viewModel.IsSimulationRunning);
 
             viewModel.OnGearPlaced += HandleGearPlaced;
             viewModel.OnGearRemoved += HandleGearRemoved;

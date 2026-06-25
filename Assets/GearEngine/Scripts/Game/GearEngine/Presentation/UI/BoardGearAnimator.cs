@@ -13,12 +13,14 @@ namespace GearEngine.GearEngine.Presentation.UI
         private BoardLayoutSO layout;
         private string motorCogGearId = string.Empty;
         private Vector2Int? lastMotorPos;
+        private Func<bool> isSimulationRunningFn;
 
-        public void Configure(Func<Vector2Int, Transform> getSlot, BoardLayoutSO boardLayout, string motorCogGearId = null)
+        public void Configure(Func<Vector2Int, Transform> getSlot, BoardLayoutSO boardLayout, string motorCogGearId = null, Func<bool> isSimulationRunningFn = null)
         {
             slotFn = getSlot;
             layout = boardLayout;
             this.motorCogGearId = motorCogGearId ?? string.Empty;
+            this.isSimulationRunningFn = isSimulationRunningFn;
             lastMotorPos = null;
         }
 
@@ -123,13 +125,20 @@ namespace GearEngine.GearEngine.Presentation.UI
 
         private void ApplyChargeVisual(IGridNode node, GearView view, bool snap)
         {
-            if (node is BaseGearNode baseGear && baseGear.ConfigData != null && baseGear.ConfigData.MaxCharge > 0f)
+            if (isSimulationRunningFn != null && !isSimulationRunningFn())
             {
-                view.SetChargeFillTarget(baseGear.CurrentCharge / baseGear.ConfigData.MaxCharge, snap: snap);
+                view.SetChargeFillTarget(1f, snap: snap);
             }
             else
             {
-                view.ClearChargeFillTarget();
+                if (node is BaseGearNode baseGear && baseGear.ConfigData != null && baseGear.ConfigData.MaxCharge > 0f)
+                {
+                    view.SetChargeFillTarget(baseGear.CurrentCharge / baseGear.ConfigData.MaxCharge, snap: snap);
+                }
+                else
+                {
+                    view.SetChargeFillTarget(0f, snap: snap);
+                }
             }
         }
 
