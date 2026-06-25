@@ -1,9 +1,9 @@
 using System;
-using GearEngine.GearEngine.Services.Inventory;
 using Scaffold.MVVM;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using GearEngine.GearEngine.Config;
 
 namespace GearEngine.Campaign.Presentation
 {
@@ -14,6 +14,7 @@ namespace GearEngine.Campaign.Presentation
         [SerializeField] private Image iconImage;
         [SerializeField] private Button selectButton;
         [SerializeField] private Material grayscaleMaterial;
+        [SerializeField] private Image rarityBackgroundImage;
 
         protected override void OnBind()
         {
@@ -35,13 +36,19 @@ namespace GearEngine.Campaign.Presentation
         {
             if (viewModel?.Item == null) return;
 
+            RarityConfigSO visualConfig = viewModel.Item.RarityConfig;
+
             if (nameLabel != null)
             {
-                string colorHex = viewModel.Item.Rarity.GetColorHex();
+                if (visualConfig != null)
+                {
+                    nameLabel.color = visualConfig.TextColor;
+                }
+
                 if (viewModel.Amount > 1)
-                    nameLabel.text = $"<color=#{colorHex}>x{viewModel.Amount} {viewModel.Item.Name}</color>";
+                    nameLabel.text = $"x{viewModel.Amount} {viewModel.Item.Name}";
                 else
-                    nameLabel.text = $"<color=#{colorHex}>{viewModel.Item.Name}</color>";
+                    nameLabel.text = viewModel.Item.Name;
             }
 
             if (descriptionLabel != null)
@@ -57,28 +64,25 @@ namespace GearEngine.Campaign.Presentation
                 iconImage.gameObject.SetActive(false);
             }
 
-            Image bgImage = null;
-            if (selectButton != null) bgImage = selectButton.image;
-            if (bgImage == null) bgImage = GetComponent<Image>();
+            if (rarityBackgroundImage != null)
+            {
+                if (visualConfig != null && visualConfig.CardSprite != null)
+                {
+                    rarityBackgroundImage.sprite = visualConfig.CardSprite;
+                }
+                rarityBackgroundImage.color = Color.white;
+            }
 
-            if (bgImage != null)
+            Image[] allImages = GetComponentsInChildren<Image>(true);
+            foreach (var img in allImages)
             {
                 if (viewModel.IsOwned)
                 {
-                    bgImage.material = null;
-                    if (grayscaleMaterial == null) bgImage.color = Color.white;
+                    img.material = null;
                 }
-                else
+                else if (grayscaleMaterial != null)
                 {
-                    if (grayscaleMaterial != null)
-                    {
-                        bgImage.material = grayscaleMaterial;
-                    }
-                    else
-                    {
-                        bgImage.material = null;
-                        bgImage.color = new Color(0.5f, 0.5f, 0.5f, 0.5f);
-                    }
+                    img.material = grayscaleMaterial;
                 }
             }
         }
