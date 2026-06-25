@@ -237,16 +237,22 @@ namespace Scaffold.LiveOps.Authoring.Editor.Deployment
                         });
                 }
 
-                return Process.Start(
-                    new ProcessStartInfo
-                    {
-                        FileName = "ugs",
-                        Arguments = $"deploy \"{pathQ}\" --project-id \"{pidQ}\" --environment-name \"{envQ}\"",
-                        UseShellExecute = false,
-                        RedirectStandardOutput = true,
-                        RedirectStandardError = true,
-                        CreateNoWindow = true,
-                    });
+                var psi = new ProcessStartInfo
+                {
+                    FileName = "ugs",
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    CreateNoWindow = true,
+                };
+                psi.ArgumentList.Add("deploy");
+                psi.ArgumentList.Add(fullRcPath);
+                psi.ArgumentList.Add("--project-id");
+                psi.ArgumentList.Add(projectId);
+                psi.ArgumentList.Add("--environment-name");
+                psi.ArgumentList.Add(environmentName);
+                
+                return Process.Start(psi);
             }
             catch
             {
