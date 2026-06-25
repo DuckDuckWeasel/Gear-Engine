@@ -15,11 +15,13 @@ MonoBehaviour:
   nextLevel: {fileID: 11400000, guid: f5f8229a48d2c4e11a2787f42278770b, type: 2}
   data:
     id: slotmachine_handling_tier1
+    displayName: Handling Roulette I
     rarity: 0
+    rarityConfig: {fileID: 11400000, guid: c0000000000000000000000000000000, type: 2}
     Category: 0
     BaseRotationSpeed: 0
     ViewPrefab: {fileID: 8811223344556677001, guid: 16426345c7f1e4cfcbe7499d444b3f6d, type: 3}
-    UIIcon: {fileID: -1078806869439273028, guid: 78e190fb2677d49c98a2084be2b34dd5, type: 3}
+    UIIcon: {fileID: 21300000, guid: 86138cafd7b5241aaae099c869ccc2f8, type: 3}
     RelativeScaleMultiplier: 1
     TriggerPattern: 4
     IsInteractable: 1

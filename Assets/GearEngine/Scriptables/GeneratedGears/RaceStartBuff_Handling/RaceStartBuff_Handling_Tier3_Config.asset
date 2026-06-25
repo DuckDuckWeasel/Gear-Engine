@@ -15,11 +15,13 @@ MonoBehaviour:
   nextLevel: {fileID: 11400000, guid: cd454716be56340588c932bdac9bd2ac, type: 2}
   data:
     id: racestartbuff_handling_tier3
+    displayName: Race Start Buff Handling III
     rarity: 2
+    rarityConfig: {fileID: 11400000, guid: c0000000000000000000000000000002, type: 2}
     Category: 0
     BaseRotationSpeed: 0
     ViewPrefab: {fileID: 8811223344556677001, guid: 16426345c7f1e4cfcbe7499d444b3f6d, type: 3}
-    UIIcon: {fileID: -6753460923083988250, guid: b8216f7a260464979a01f9197993d7a4, type: 3}
+    UIIcon: {fileID: 21300000, guid: 86138cafd7b5241aaae099c869ccc2f8, type: 3}
     RelativeScaleMultiplier: 1
     TriggerPattern: 4
     IsInteractable: 1

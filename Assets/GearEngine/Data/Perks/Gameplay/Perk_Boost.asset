@@ -16,7 +16,8 @@ MonoBehaviour:
     id: Boost
     perkName: Boost
     rarity: 0
+    rarityConfig: {fileID: 11400000, guid: c0000000000000000000000000000000, type: 2}
     description: Increase the maximum nitro-boost you can have in a race
-    UIIcon: {fileID: 0}
+    UIIcon: {fileID: 21300000, guid: d2c96d95f81574ae186e5975e6650d84, type: 3}
     modifiers:
     - {fileID: 11400000, guid: 6cf39c78d079a479293121c38ca55c69, type: 2}

@@ -15,11 +15,13 @@ MonoBehaviour:
   nextLevel: {fileID: 11400000, guid: e9683df024dae4b76b9fef1a348a58fc, type: 2}
   data:
     id: quantumlink_tier1
+    displayName: Quantum Link I
     rarity: 0
+    rarityConfig: {fileID: 11400000, guid: c0000000000000000000000000000000, type: 2}
     Category: 0
     BaseRotationSpeed: 0
     ViewPrefab: {fileID: 8811223344556677001, guid: 16426345c7f1e4cfcbe7499d444b3f6d, type: 3}
-    UIIcon: {fileID: -1078806869439273028, guid: 78e190fb2677d49c98a2084be2b34dd5, type: 3}
+    UIIcon: {fileID: 21300000, guid: 60d3addecfa14c40ab31ca1283c93277, type: 3}
     RelativeScaleMultiplier: 1
     TriggerPattern: 4
     IsInteractable: 1

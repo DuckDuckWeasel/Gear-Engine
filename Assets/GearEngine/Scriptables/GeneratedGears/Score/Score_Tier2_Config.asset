@@ -15,7 +15,9 @@ MonoBehaviour:
   nextLevel: {fileID: 11400000, guid: c00e7d10d53f74a73ba9310a5734d957, type: 2}
   data:
     id: score_tier2
+    displayName: Score II
     rarity: 0
+    rarityConfig: {fileID: 11400000, guid: c0000000000000000000000000000000, type: 2}
     Category: 0
     BaseRotationSpeed: 0
     ViewPrefab: {fileID: 8811223344556677001, guid: 16426345c7f1e4cfcbe7499d444b3f6d, type: 3}

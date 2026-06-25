@@ -16,7 +16,8 @@ MonoBehaviour:
     id: MaxSpeed
     perkName: Max Speed
     rarity: 0
+    rarityConfig: {fileID: 11400000, guid: c0000000000000000000000000000000, type: 2}
     description: Increase speed limit of the car on a race
-    UIIcon: {fileID: 0}
+    UIIcon: {fileID: 21300000, guid: db58f586a98ba4d0da8da8d3570b6cc9, type: 3}
     modifiers:
     - {fileID: 11400000, guid: c77f93cfe212141af817e617fce0a646, type: 2}

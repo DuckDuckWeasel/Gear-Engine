@@ -16,7 +16,8 @@ MonoBehaviour:
     id: Stations
     perkName: Stations
     rarity: 0
+    rarityConfig: {fileID: 11400000, guid: c0000000000000000000000000000000, type: 2}
     description: Increase how many gears you can have in inventory
-    UIIcon: {fileID: 0}
+    UIIcon: {fileID: 549791827698005827, guid: 5dfef29a39a904169a9856d51e18ee25, type: 3}
     modifiers:
     - {fileID: 11400000, guid: 15919505bc6d2424bba47a3d8db92e1b, type: 2}

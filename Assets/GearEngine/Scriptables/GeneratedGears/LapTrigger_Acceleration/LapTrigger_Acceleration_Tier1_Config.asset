@@ -15,11 +15,13 @@ MonoBehaviour:
   nextLevel: {fileID: 11400000, guid: 8c108858e8caf4a1483addba516d2bf4, type: 2}
   data:
     id: laptrigger_acceleration_tier1
+    displayName: Lap Trigger Acceleration I
     rarity: 0
+    rarityConfig: {fileID: 11400000, guid: c0000000000000000000000000000000, type: 2}
     Category: 0
     BaseRotationSpeed: 0
     ViewPrefab: {fileID: 8811223344556677001, guid: 16426345c7f1e4cfcbe7499d444b3f6d, type: 3}
-    UIIcon: {fileID: -1078806869439273028, guid: 78e190fb2677d49c98a2084be2b34dd5, type: 3}
+    UIIcon: {fileID: 8389318117570065543, guid: 441672f287ca240f8a1ca8f27b7a8465, type: 3}
     RelativeScaleMultiplier: 1
     TriggerPattern: 4
     IsInteractable: 1

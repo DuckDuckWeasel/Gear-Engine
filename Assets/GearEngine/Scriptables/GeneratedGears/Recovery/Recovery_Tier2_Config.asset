@@ -15,11 +15,13 @@ MonoBehaviour:
   nextLevel: {fileID: 11400000, guid: f3f3f8ba18abc46ae8ac36c581b16fc3, type: 2}
   data:
     id: recovery_tier2
-    rarity: 1
+    displayName: Recovery II
+    rarity: 0
+    rarityConfig: {fileID: 11400000, guid: c0000000000000000000000000000000, type: 2}
     Category: 0
     BaseRotationSpeed: 0
     ViewPrefab: {fileID: 8811223344556677001, guid: 16426345c7f1e4cfcbe7499d444b3f6d, type: 3}
-    UIIcon: {fileID: -7704486634247314759, guid: 03f65dc4c2b234ba2a311dfc81c43e6b, type: 3}
+    UIIcon: {fileID: 21300000, guid: 339a523634661476dba11b83c59758cc, type: 3}
     RelativeScaleMultiplier: 1
     TriggerPattern: 4
     IsInteractable: 1

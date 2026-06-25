@@ -16,15 +16,22 @@ namespace GearEngine.GearEngine.Config
         
         [SerializeField] private ItemRarity rarity = ItemRarity.Common;
         public ItemRarity Rarity { get => rarity; set => rarity = value; }
+        
+        [SerializeField] private RarityConfigSO rarityConfig;
+        public RarityConfigSO RarityConfig { get => rarityConfig; set => rarityConfig = value; }
 
-        public string Name => SourceGearConfig != null ? SourceGearConfig.name : Id;
+        [SerializeField] private string displayName;
+        public string DisplayName { get => displayName; set => displayName = value; }
+
+        public string Name => !string.IsNullOrEmpty(displayName) ? displayName : (SourceGearConfig != null ? SourceGearConfig.name : Id);
 
         public string Description
         {
             get
             {
                 var sb = new StringBuilder();
-                sb.Append($"<b><color=#{rarity.GetColorHex()}>{rarity}</color></b> Gear\n");
+                string colorHex = rarityConfig != null ? ColorUtility.ToHtmlStringRGB(rarityConfig.Color) : "FFFFFF";
+                sb.Append($"<b><color=#{colorHex}>{rarity}</color></b> Gear\n");
                 foreach (var ability in Abilities)
                 {
                     if (ability is IDescribable describable)
@@ -84,7 +91,9 @@ namespace GearEngine.GearEngine.Config
             return new GearItemData
             {
                 Id = Id,
+                DisplayName = DisplayName,
                 Rarity = Rarity,
+                RarityConfig = RarityConfig,
                 Category = Category,
                 BaseRotationSpeed = BaseRotationSpeed,
                 ViewPrefab = ViewPrefab,

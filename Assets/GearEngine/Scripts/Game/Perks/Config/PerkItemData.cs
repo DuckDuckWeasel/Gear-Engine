@@ -1,8 +1,9 @@
 using System;
 using UnityEngine;
 using GearEngine.GearEngine.Services.Inventory;
-using System.Collections.Generic;
 using GearEngine.Perks.Powerups;
+using GearEngine.GearEngine.Config;
+using System.Collections.Generic;
 
 namespace GearEngine.Perks.Config
 {
@@ -17,6 +18,9 @@ namespace GearEngine.Perks.Config
 
         [SerializeField] private ItemRarity rarity = ItemRarity.Common;
         public ItemRarity Rarity { get => rarity; set => rarity = value; }
+
+        [SerializeField] private RarityConfigSO rarityConfig;
+        public RarityConfigSO RarityConfig => rarityConfig;
 
         [SerializeField] [TextArea] private string description;
         public string Description { get => description; set => description = value; }
