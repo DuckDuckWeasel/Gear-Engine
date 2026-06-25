@@ -18,6 +18,6 @@ MonoBehaviour:
     rarity: 3
     rarityConfig: {fileID: 11400000, guid: c0000000000000000000000000000003, type: 2}
     description: Increase how many gears you can have in inventory
-    UIIcon: {fileID: 549791827698005827, guid: 5dfef29a39a904169a9856d51e18ee25, type: 3}
+    UIIcon: {fileID: 21300000, guid: 5dfef29a39a904169a9856d51e18ee25, type: 3}
     modifiers:
     - {fileID: 11400000, guid: f8d6eeeb8ab54460a6411698a7a8d13a, type: 2}

@@ -18,6 +18,6 @@ MonoBehaviour:
     rarity: 3
     rarityConfig: {fileID: 11400000, guid: c0000000000000000000000000000003, type: 2}
     description: Increase how many gears you can have in the car
-    UIIcon: {fileID: 1152328335451434310, guid: 14e9241d4e8ea48128570fffe78f3575, type: 3}
+    UIIcon: {fileID: 21300000, guid: 14e9241d4e8ea48128570fffe78f3575, type: 3}
     modifiers:
     - {fileID: 11400000, guid: 9bb719708e95489780d9bacbd1f29c1c, type: 2}
