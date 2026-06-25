@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cd8ce156f04b24b8dad94bf91f33323a, type: 3}
+  m_Name: EpicRarity
+  m_EditorClassIdentifier: 
+  Rarity: 3
+  DisplayName: Epic
+  Color: {r: 0.63922, g: 0.20784, b: 0.93333, a: 1}
+  TextColor: {r: 0.85569, g: 0.68314, b: 0.97333, a: 1}
+  CardSprite: {fileID: 2479754136191681894, guid: 9bf051ae8e5254532b9b31b9dfd744eb, type: 3}

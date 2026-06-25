@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cd8ce156f04b24b8dad94bf91f33323a, type: 3}
+  m_Name: LegendaryRarity
+  m_EditorClassIdentifier: 
+  Rarity: 4
+  DisplayName: Legendary
+  Color: {r: 1, g: 0.50196, b: 0, a: 1}
+  TextColor: {r: 0.3, g: 0.15, b: 0, a: 1}
+  CardSprite: {fileID: 1428105968125069659, guid: 6774e124206f8442e9f46f60ba7ebfab, type: 3}

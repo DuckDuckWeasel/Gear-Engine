@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cd8ce156f04b24b8dad94bf91f33323a, type: 3}
+  m_Name: CommonRarity
+  m_EditorClassIdentifier: 
+  Rarity: 0
+  DisplayName: Common
+  Color: {r: 0.6666667, g: 0.6666667, b: 0.6666667, a: 1}
+  TextColor: {r: 0.1, g: 0.1, b: 0.1, a: 1}
+  CardSprite: {fileID: -7068723629182821413, guid: 2e0b16453c71346bb8baee549a4b2405, type: 3}
