@@ -1,16 +1,25 @@
 fileFormatVersion: 2
-guid: d5dc668f88f1144bda9781c121f92c96
+guid: a8f6221d49b2d47b3bd0002da2a44c7f
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 1320692370411241892
-    second: TrashIcon_0
+      213: 1963772419232943555
+    second: VAR_Perfectionist_0
+  - first:
+      213: -8810851771741083589
+    second: VAR_Perfectionist_1
+  - first:
+      213: 8226107691654889819
+    second: VAR_Perfectionist_2
+  - first:
+      213: 4708635481278058458
+    second: VAR_Perfectionist_3
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
     mipMapMode: 0
     enableMipMap: 0
-    sRGBTexture: 0
+    sRGBTexture: 1
     linearTexture: 0
     fadeOut: 0
     borderMipMap: 0
@@ -37,7 +46,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 0
+    filterMode: 1
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -51,7 +60,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 64
+  spritePixelsToUnits: 1600
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -72,7 +81,7 @@ TextureImporter:
   platformSettings:
   - serializedVersion: 4
     buildTarget: DefaultTexturePlatform
-    maxTextureSize: 2048
+    maxTextureSize: 256
     resizeAlgorithm: 0
     textureFormat: -1
     textureCompression: 1
@@ -85,19 +94,6 @@ TextureImporter:
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 4
     buildTarget: Standalone
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    ignorePlatformSupport: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 4
-    buildTarget: WebGL
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
@@ -126,13 +122,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: TrashIcon_0
+      name: VAR_Perfectionist_0
       rect:
         serializedVersion: 2
-        x: 9
-        y: 7
-        width: 46
-        height: 54
+        x: 328
+        y: 404
+        width: 1360
+        height: 1289
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -141,8 +137,74 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 4a14eeba6ba045210800000000000000
-      internalID: 1320692370411241892
+      spriteID: 3cdc61c5c98b04b10800000000000000
+      internalID: 1963772419232943555
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: VAR_Perfectionist_1
+      rect:
+        serializedVersion: 2
+        x: 335
+        y: 1145
+        width: 9
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b3860c8def099b580800000000000000
+      internalID: -8810851771741083589
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: VAR_Perfectionist_2
+      rect:
+        serializedVersion: 2
+        x: 337
+        y: 1151
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b51c23d9c51092270800000000000000
+      internalID: 8226107691654889819
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: VAR_Perfectionist_3
+      rect:
+        serializedVersion: 2
+        x: 335
+        y: 1135
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: adf0166d50f685140800000000000000
+      internalID: 4708635481278058458
       vertices: []
       indices: 
       edges: []
@@ -161,7 +223,10 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      TrashIcon_0: 1320692370411241892
+      VAR_Perfectionist_0: 1963772419232943555
+      VAR_Perfectionist_1: -8810851771741083589
+      VAR_Perfectionist_2: 8226107691654889819
+      VAR_Perfectionist_3: 4708635481278058458
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
