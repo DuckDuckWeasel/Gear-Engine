@@ -22,6 +22,8 @@ namespace GearEngine.Campaign.Presentation
 {
     public partial class ActiveRaceViewModel : ViewModel
     {
+        private const float ResultPopupDelaySeconds = 2f;
+
         [ObservableProperty]
         private TrackViewModel track;
 
@@ -66,8 +68,6 @@ namespace GearEngine.Campaign.Presentation
             Car = new CarViewModel(freshSession, aiRunner, attachRunnerOnBind: false);
             BindChildViewModel(Car);
 
-            engineService.Play();
-
             Bind<SimulationLifecycleState, SimulationLifecycleState>(() => Track.State, OnTrackStateChanged);
             analyticsService?.Record(new RaceStartedEvent(trackService.CurrentTrack.name, trackService.CurrentCar.name));
         }
@@ -81,6 +81,7 @@ namespace GearEngine.Campaign.Presentation
                 {
                     Track.Toggle(true);
                 }
+                engineService?.Play();
             }
             catch (Exception ex)
             {
@@ -135,6 +136,9 @@ namespace GearEngine.Campaign.Presentation
                     result.IsGoodResult
                 ));
                 await trackService.RecordResultAsync(result);
+                
+                await Task.Delay(TimeSpan.FromSeconds(ResultPopupDelaySeconds));
+                
                 navigation.Open(new ResultPopupViewModel(result));
             }
             catch (Exception ex)

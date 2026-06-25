@@ -161,7 +161,6 @@ namespace GearEngine.CarSimulation.SplineSimulation
                 }
 
                 isInitialized = true;
-            isPaused = false;
             
             GenerateTrackPlan();
         }

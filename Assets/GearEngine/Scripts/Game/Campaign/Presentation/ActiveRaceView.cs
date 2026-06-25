@@ -9,6 +9,7 @@ using GearEngine.GearEngine.Presentation.UI;
 using Scaffold.MVVM;
 using TMPro;
 using UnityEngine;
+using Ami.BroAudio;
 
 namespace GearEngine.Campaign.Presentation
 {
@@ -19,6 +20,11 @@ namespace GearEngine.Campaign.Presentation
         [SerializeField] private TrackTelemetryViewComponent telemetry;
         [SerializeField] private FrustumFitAnchor[] openTransitionAnchors;
         [SerializeField] private float openTransitionDurationSeconds = 0.35f;
+
+        [Header("Audio")]
+        [SerializeField] private SoundID startRaceSound;
+        [SerializeField] private SoundID lapCompletedSound;
+        [SerializeField] private SoundID raceFinishedSound;
 
         [Header("Telemetry UI")]
         [SerializeField] private TMP_Text raceTimeText;
@@ -36,6 +42,8 @@ namespace GearEngine.Campaign.Presentation
         private readonly List<CarView> spawnedCars = new List<CarView>();
         private bool raceStartPending;
         private float displayedRpm;
+        private int lastDisplayedLap = 0;
+        private SimulationLifecycleState lastTrackState = SimulationLifecycleState.Created;
 
         protected override void OnBind()
         {
@@ -47,6 +55,9 @@ namespace GearEngine.Campaign.Presentation
 
             track.Bind(viewModel.Track);
             SpawnAndBindCar();
+
+            lastDisplayedLap = 0;
+            lastTrackState = viewModel.Track?.State ?? SimulationLifecycleState.Created;
 
             // Defer race start (and prop generation) until after the FrustumFit
             // open transition has positioned the track at its final screen location.
@@ -63,6 +74,15 @@ namespace GearEngine.Campaign.Presentation
                 telemetry.UpdateFrom(viewModel.Car);
             }
 
+            if (viewModel.Track != null)
+            {
+                if (lastTrackState != SimulationLifecycleState.Completed && viewModel.Track.State == SimulationLifecycleState.Completed)
+                {
+                    if (raceFinishedSound.IsValid()) BroAudio.Play(raceFinishedSound);
+                }
+                lastTrackState = viewModel.Track.State;
+            }
+
             if (viewModel.Track?.Session != null)
             {
                 if (raceTimeText != null)
@@ -73,8 +93,15 @@ namespace GearEngine.Campaign.Presentation
 
                 if (currentLapText != null)
                 {
+                    int currentLapRaw = viewModel.Track.Session.CurrentLap;
+                    if (currentLapRaw > lastDisplayedLap && lastDisplayedLap > 0)
+                    {
+                        if (lapCompletedSound.IsValid()) BroAudio.Play(lapCompletedSound);
+                    }
+                    lastDisplayedLap = currentLapRaw;
+
                     // Optionally clamp to 1 if the race starts at lap 0 before crossing the line
-                    int displayLap = Mathf.Clamp(viewModel.Track.Session.CurrentLap, 1, viewModel.Track.Session.TotalLaps);
+                    int displayLap = Mathf.Clamp(currentLapRaw, 1, viewModel.Track.Session.TotalLaps);
                     currentLapText.text = $"Lap {displayLap}/{viewModel.Track.Session.TotalLaps}";
                 }
 
@@ -208,7 +235,20 @@ namespace GearEngine.Campaign.Presentation
                 track.BroadcastMessage("Generate", SendMessageOptions.DontRequireReceiver);
             }
 
-            viewModel.StartRaceAfterCarReady();
+            if (startRaceSound.IsValid())
+            {
+                BroAudio.Play(startRaceSound).OnEnd(_ => 
+                {
+                    if (this != null && viewModel != null)
+                    {
+                        viewModel.StartRaceAfterCarReady();
+                    }
+                });
+            }
+            else
+            {
+                viewModel.StartRaceAfterCarReady();
+            }
         }
 
         protected override void OnClose(bool hiding)
