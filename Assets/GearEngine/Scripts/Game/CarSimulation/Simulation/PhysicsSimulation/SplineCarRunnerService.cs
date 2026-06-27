@@ -244,11 +244,12 @@ namespace GearEngine.CarSimulation.PhysicsSimulation
                 data = new CarTelemetryData
                 {
                     Speed = ctx.currentSpeed,
+                    MaxSpeed = ctx.maxSimulationSpeed,
                     Progress = ctx.previousProgressPercent,
                     IsBraking = ctx.aiBrake.buttonPressed || ctx.aiReverse.buttonPressed,
                     IsDrifting = ctx.targetCar.isDrifting,
                     IsAccelerating = ctx.aiThrottle.buttonPressed,
-                    CurrentAcceleration = ctx.targetCar.accelerationMultiplier
+                    CurrentAcceleration = ctx.aiThrottle.buttonPressed ? ctx.targetCar.accelerationMultiplier : 0f
                 };
                 return true;
             }

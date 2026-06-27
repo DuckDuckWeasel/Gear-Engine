@@ -15,6 +15,7 @@ namespace GearEngine.CarSimulation.Presentation
         public ISimulationRunnerService RunnerService { get; }
 
         [ObservableProperty] private float speed;
+        [ObservableProperty] private float maxSpeed;
         [ObservableProperty] private float progress;
         [ObservableProperty] private bool isBraking;
         [ObservableProperty] private bool isDrifting;
@@ -38,9 +39,10 @@ namespace GearEngine.CarSimulation.Presentation
 
         public void TickTelemetry()
         {
-            if (RunnerService.GetTelemetry(Car, out CarTelemetryData data))
+            if (RunnerService != null && RunnerService.GetTelemetry(Session.Car, out CarTelemetryData data))
             {
                 Speed = data.Speed;
+                MaxSpeed = data.MaxSpeed;
                 Progress = data.Progress;
                 IsBraking = data.IsBraking;
                 IsDrifting = data.IsDrifting;

@@ -6,6 +6,7 @@ namespace GearEngine.CarSimulation.Simulation
     public struct CarTelemetryData
     {
         public float Speed;
+        public float MaxSpeed;
         public float Progress;
         public bool IsBraking;
         public bool IsDrifting;

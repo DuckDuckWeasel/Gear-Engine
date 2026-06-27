@@ -104,6 +104,7 @@ namespace GearEngine.CarSimulation.SplineSimulation
                 data = new CarTelemetryData
                 {
                     Speed = s.Speed * 3.6f, // m/s → km/h for display
+                    MaxSpeed = config.maxSpeed * 3.6f,
                     Progress = s.T,
                     IsBraking = s.IsBraking,
                     IsDrifting = s.IsDrifting,
