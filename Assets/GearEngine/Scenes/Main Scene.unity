@@ -1910,6 +1910,17 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 2330401762921269356, guid: 7fc0f6df20b58de419af0dc0a0b99674, type: 3}
   m_PrefabInstance: {fileID: 8307600993965290502}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &488276883 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3557760724773374193, guid: 7fc0f6df20b58de419af0dc0a0b99674, type: 3}
+  m_PrefabInstance: {fileID: 8307600993965290502}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 488276881}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a1534cbac729494f945c90efe327e10a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: AnimoraRuntime::OM.Animora.Runtime.AnimoraPlayer
 --- !u!1 &500010000
 GameObject:
   m_ObjectHideFlags: 0
@@ -11082,6 +11093,14 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2707552733167712125, guid: 7fc0f6df20b58de419af0dc0a0b99674, type: 3}
+      propertyPath: playMode
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2707552733167712125, guid: 7fc0f6df20b58de419af0dc0a0b99674, type: 3}
+      propertyPath: parentAnimoraPlayer
+      value: 
+      objectReference: {fileID: 488276883}
     - target: {fileID: 2952876747183614833, guid: 7fc0f6df20b58de419af0dc0a0b99674, type: 3}
       propertyPath: m_Color.a
       value: 0.9098039
@@ -11154,6 +11173,10 @@ PrefabInstance:
       propertyPath: positionText
       value: 
       objectReference: {fileID: 992010931}
+    - target: {fileID: 6342649612423169511, guid: 7fc0f6df20b58de419af0dc0a0b99674, type: 3}
+      propertyPath: raceTimeText
+      value: 
+      objectReference: {fileID: 90824485}
     - target: {fileID: 6342649612423169511, guid: 7fc0f6df20b58de419af0dc0a0b99674, type: 3}
       propertyPath: totalTimeText
       value: 
