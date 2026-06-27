@@ -43,7 +43,7 @@ namespace GearEngine.Campaign.Presentation
                 var config = ScriptableObject.CreateInstance<ItemsScreenState>();
                 config.TypeToDisplay = ItemScreenType.Perks;
                 config.ShowBuyButton = true;
-                config.ShowUnownedItems = true;
+                config.ShowUnownedItems = false;
                 config.Title = "Storage";
                 config.Subtitle = "MAX OUT YOUR GEAR";
                 
@@ -62,7 +62,7 @@ namespace GearEngine.Campaign.Presentation
                 var config = ScriptableObject.CreateInstance<ItemsScreenState>();
                 config.TypeToDisplay = ItemScreenType.Gears;
                 config.ShowBuyButton = false;
-                config.ShowUnownedItems = true;
+                config.ShowUnownedItems = false;
                 config.Title = "Garage";
                 config.Subtitle = "FIX AND REPAIR";
                 

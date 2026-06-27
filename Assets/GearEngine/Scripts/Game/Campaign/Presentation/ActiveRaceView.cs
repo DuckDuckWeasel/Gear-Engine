@@ -31,6 +31,7 @@ namespace GearEngine.Campaign.Presentation
         [SerializeField] private TMP_Text currentVelocityText;
         [SerializeField] private TMP_Text currentLapText;
         [SerializeField] private TMP_Text currentRpmText;
+        [SerializeField] private TMP_Text currentGearText;
 
         [Header("Roguelike Stats UI")]
         [SerializeField] private TMP_Text speedCapabilityText;
@@ -42,7 +43,9 @@ namespace GearEngine.Campaign.Presentation
         private readonly List<CarView> spawnedCars = new List<CarView>();
         private bool raceStartPending;
         private float displayedRpm;
+        private float displayedSpeed;
         private int lastDisplayedLap = 0;
+        private int currentSimulatedGear = 1;
         private SimulationLifecycleState lastTrackState = SimulationLifecycleState.Created;
 
         protected override void OnBind()
@@ -94,20 +97,24 @@ namespace GearEngine.Campaign.Presentation
                 if (currentLapText != null)
                 {
                     int currentLapRaw = viewModel.Track.Session.CurrentLap;
-                    if (currentLapRaw > lastDisplayedLap && lastDisplayedLap > 0)
+                    
+                    // The race starts at lap 0. Crossing the line the first time completes lap 1 (currentLapRaw becomes 1).
+                    if (currentLapRaw > lastDisplayedLap)
                     {
                         if (lapCompletedSound.IsValid()) BroAudio.Play(lapCompletedSound);
                     }
                     lastDisplayedLap = currentLapRaw;
 
-                    // Optionally clamp to 1 if the race starts at lap 0 before crossing the line
-                    int displayLap = Mathf.Clamp(currentLapRaw, 1, viewModel.Track.Session.TotalLaps);
+                    int displayLap = Mathf.Clamp(currentLapRaw, 0, viewModel.Track.Session.TotalLaps);
                     currentLapText.text = $"Lap {displayLap}/{viewModel.Track.Session.TotalLaps}";
                 }
 
                 if (currentVelocityText != null && viewModel.Car != null)
                 {
-                    currentVelocityText.text = $"{viewModel.Car.Speed:F0}";
+                    float targetSpeed = Mathf.Abs(viewModel.Car.Speed);
+                    float speedLerp = targetSpeed < displayedSpeed ? 15f : 2f;
+                    displayedSpeed = Mathf.Lerp(displayedSpeed, targetSpeed, Time.deltaTime * speedLerp);
+                    currentVelocityText.text = $"{displayedSpeed:F0}";
                 }
             }
 
@@ -124,37 +131,79 @@ namespace GearEngine.Campaign.Presentation
                 float lerpSpeedDown = 5f; 
                 displayedRpm = Mathf.Lerp(displayedRpm, 0f, Time.deltaTime * lerpSpeedDown);
                 currentRpmText.text = $"{displayedRpm:F0}";
+                if (currentGearText != null) currentGearText.text = "N";
                 return;
             }
 
-            float absSpeed = Mathf.Abs(viewModel.Car.Speed);
-            float gearSpeedRange = 35f; // Simulate a gear shift every 35 km/h
+            float speed = viewModel.Car.Speed;
+            float absSpeed = Mathf.Abs(speed);
             
-            int currentGear = Mathf.FloorToInt(absSpeed / gearSpeedRange) + 1;
-            float speedInGear = absSpeed % gearSpeedRange;
-            float t = speedInGear / gearSpeedRange;
+            float maxSpeed = viewModel.Car.MaxSpeed;
+            if (maxSpeed < 10f) maxSpeed = 200f;
             
-            // Adding a small jitter for realism
-            float jitter = UnityEngine.Random.Range(-50f, 50f);
+            int totalGears = 6;
+            // Progressive distribution: lower gears have smaller speed ranges, so they shift faster
+            float[] gearSpeedPercents = { 0f, 0.12f, 0.28f, 0.48f, 0.72f, 1.00f, 1.30f }; 
             
-            float baseRpm = currentGear == 1 ? 1000f : 4000f;
-            float targetRpm = 7500f;
+            float shiftUpSpeed = gearSpeedPercents[currentSimulatedGear] * maxSpeed;
+            float shiftDownSpeed = gearSpeedPercents[currentSimulatedGear - 1] * maxSpeed - 8f; // Hysteresis
             
-            // Idle state
-            if (absSpeed < 1f)
+            if (absSpeed > shiftUpSpeed && currentSimulatedGear < totalGears)
             {
+                currentSimulatedGear++;
+            }
+            else if (absSpeed < shiftDownSpeed && currentSimulatedGear > 1)
+            {
+                currentSimulatedGear--;
+            }
+            
+            float gearMinSpeed = gearSpeedPercents[currentSimulatedGear - 1] * maxSpeed;
+            float gearMaxSpeed = gearSpeedPercents[currentSimulatedGear] * maxSpeed;
+            float currentGearRange = gearMaxSpeed - gearMinSpeed;
+
+            float speedInGear = Mathf.Clamp(absSpeed - gearMinSpeed, 0f, currentGearRange);
+            float t = currentGearRange > 0f ? speedInGear / currentGearRange : 1f; 
+            
+            float baseRpm = currentSimulatedGear * 1000f;
+            // Gear 1 targets 3000, Gear 2 targets 4000, ..., Gear 6 targets 8000
+            float targetRpm = 2000f + (currentSimulatedGear * 1000f); 
+            string gearString = currentSimulatedGear.ToString();
+            
+            // Reverse state
+            if (speed < -1f)
+            {
+                gearString = "R";
                 baseRpm = 1000f;
-                targetRpm = 1000f;
-                jitter = UnityEngine.Random.Range(-20f, 20f);
+                targetRpm = 4500f;
+            }
+            // Idle state
+            else if (absSpeed < 1f)
+            {
+                gearString = "N";
+                baseRpm = 0f;
+                targetRpm = 0f;
+                t = 0f;
+            }
+            // Coasting / decelerating
+            else if (!viewModel.Car.IsAccelerating)
+            {
+                t *= 0.2f; // Drop RPM significantly when off-throttle
             }
 
-            float rawRpm = Mathf.Lerp(baseRpm, targetRpm, t) + jitter;
+            // Simple linear interpolation without jitter for clear, readable values
+            float rawRpm = Mathf.Lerp(baseRpm, targetRpm, t);
             
-            // Lerp towards the raw RPM for smoother UI transitions
-            float lerpSpeed = 2; 
+            // Snappy drop (gear shift / brake), smooth rise (acceleration)
+            float lerpSpeed = rawRpm < displayedRpm ? 20f : 2f; 
             displayedRpm = Mathf.Lerp(displayedRpm, rawRpm, Time.deltaTime * lerpSpeed);
 
-            currentRpmText.text = $"{displayedRpm:F0}";
+            // Diegetic RPM rounding (nearest 50)
+            float diegeticRpm = Mathf.Round(displayedRpm / 50f) * 50f;
+            currentRpmText.text = $"{diegeticRpm:F0}";
+            if (currentGearText != null)
+            {
+                currentGearText.text = gearString;
+            }
         }
 
         private void UpdateStatsUI()

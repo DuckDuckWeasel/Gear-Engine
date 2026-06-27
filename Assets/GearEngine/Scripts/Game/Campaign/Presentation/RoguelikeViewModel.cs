@@ -70,6 +70,9 @@ namespace GearEngine.Campaign.Presentation
         [Inject]
         private ToolbarController toolbarController;
 
+        [Inject]
+        private Scaffold.Events.Contracts.IEventBus eventBus;
+
         [ObservableProperty]
         private bool isProcessingAction;
 
@@ -264,7 +267,7 @@ namespace GearEngine.Campaign.Presentation
 
         private void SetupGearEngineSubtree()
         {
-            Board = new BoardViewModel(boardService, engineService, inventoryService);
+            Board = new BoardViewModel(boardService, engineService, inventoryService, eventBus);
             Board.OnBoardClicked += ShowItemPreview;
             BindChildViewModel(Board);
             Inventory = new GearInventoryViewModel(engineService, boardService, inventoryService);

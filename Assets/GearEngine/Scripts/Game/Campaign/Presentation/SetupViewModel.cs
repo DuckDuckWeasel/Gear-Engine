@@ -42,7 +42,7 @@ namespace GearEngine.Campaign.Presentation
             Track = new CampaignTrackPreviewViewModel(trackService.CurrentTrack);
             BindChildViewModel(Track);
 
-            Board = new BoardViewModel(boardService, engineService, inventoryService);
+            Board = new BoardViewModel(boardService, engineService, inventoryService, eventBus);
             BindChildViewModel(Board);
 
             BoardLayoutData savedLayout = loadoutService.GetBoardLayout();

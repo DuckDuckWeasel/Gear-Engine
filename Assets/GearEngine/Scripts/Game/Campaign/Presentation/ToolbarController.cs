@@ -94,12 +94,14 @@ namespace GearEngine.Campaign.Presentation
                 // Muda o tipo da tela e atualiza a View sem abrir uma nova na pilha de navegação
                 currentVm.Config.TypeToDisplay = screenType;
                 currentVm.Config.ShowBuyButton = showBuyButton;
+                currentVm.Config.ShowUnownedItems = false;
                 currentVm.Config.Title = title;
                 currentVm.Config.Subtitle = subtitle;
                 
                 // Mantém o estado interno do Toolbar atualizado também
                 itemsState.TypeToDisplay = screenType;
                 itemsState.ShowBuyButton = showBuyButton;
+                itemsState.ShowUnownedItems = false;
                 itemsState.Title = title;
                 itemsState.Subtitle = subtitle;
 
@@ -110,6 +112,7 @@ namespace GearEngine.Campaign.Presentation
             // Se não estiver aberta, configuramos e abrimos normalmente
             itemsState.TypeToDisplay = screenType;
             itemsState.ShowBuyButton = showBuyButton;
+            itemsState.ShowUnownedItems = false;
             itemsState.Title = title;
             itemsState.Subtitle = subtitle;
 

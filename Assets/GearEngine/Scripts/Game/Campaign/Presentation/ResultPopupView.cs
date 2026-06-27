@@ -14,12 +14,17 @@ namespace GearEngine.Campaign.Presentation
         [SerializeField] private Ease popEase = Ease.OutBack;
         [SerializeField] private Button upgradeButton;
         [SerializeField] private Button continueButton;
+        [SerializeField] private TMPro.TMP_Text raceTimeText;
 
         private Sequence statsSequence;
 
         protected override void OnBind()
         {
             ValidateHierarchy();
+            if (raceTimeText != null)
+            {
+                raceTimeText.text = viewModel.FormattedRaceTime;
+            }
             RebuildStatSlots();
             upgradeButton.onClick.AddListener(OnUpgradeClicked);
             continueButton.onClick.AddListener(OnContinueClicked);
