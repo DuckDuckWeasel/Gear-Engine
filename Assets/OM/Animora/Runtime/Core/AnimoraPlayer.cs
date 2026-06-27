@@ -154,6 +154,7 @@ namespace OM.Animora.Runtime
         public AnimoraPlayMode PlayMode => playMode;
 
         private float _initialCanvasGroupAlpha = 1f;
+        private bool _isFirstEnable = true;
 
         // --- Getters and Public Properties ---
 
@@ -299,7 +300,30 @@ namespace OM.Animora.Runtime
         /// </summary>
         private void Awake()
         {
-            if (playMode == AnimoraPlayMode.Child && GetComponent<RectTransform>() != null)
+            // Runtime fallback for instantiated objects where OnValidate didn't run
+            if (playMode != AnimoraPlayMode.Child)
+            {
+                var parentPlayers = GetComponentsInParent<AnimoraPlayer>(true);
+                foreach (var player in parentPlayers)
+                {
+                    if (player == this) continue;
+                    var clips = player.GetClips();
+                    if (clips != null)
+                    {
+                        foreach (var clip in clips)
+                        {
+                            if (clip != null && clip.IsNestedPlayerClip(this))
+                            {
+                                playMode = AnimoraPlayMode.Child;
+                                break;
+                            }
+                        }
+                    }
+                    if (playMode == AnimoraPlayMode.Child) break;
+                }
+            }
+
+            if (GetComponent<RectTransform>() != null)
             {
                 var cg = GetComponent<CanvasGroup>();
                 if (cg == null)
@@ -307,7 +331,6 @@ namespace OM.Animora.Runtime
                     cg = gameObject.AddComponent<CanvasGroup>();
                 }
                 _initialCanvasGroupAlpha = cg.alpha;
-                cg.alpha = 0f;
             }
         }
 
@@ -331,6 +354,18 @@ namespace OM.Animora.Runtime
         private void OnEnable()
         {
             AnimoraManager.RegisterAnimoraPlayer(this);
+
+            bool hideAlpha = playMode != AnimoraPlayMode.OnStart || _isFirstEnable;
+            if (hideAlpha && GetComponent<RectTransform>() != null)
+            {
+                var cg = GetComponent<CanvasGroup>();
+                if (cg != null)
+                {
+                    cg.alpha = 0f;
+                }
+            }
+            _isFirstEnable = false;
+
             // Automatically start playback if configured to do so on Enable.
             if (playMode == AnimoraPlayMode.OnEnable)
             {
@@ -819,8 +854,11 @@ namespace OM.Animora.Runtime
         /// <summary> Hook called internally when playback starts. </summary>
         private void OnStartPlaying()
         {
-            if (playMode == AnimoraPlayMode.Child && GetComponent<RectTransform>() != null)
+            if (GetComponent<RectTransform>() != null)
             {
+                // Force evaluate the first frame before restoring alpha to prevent 1-frame visual glitches
+                AnimoraClipsPlayUtility.EvaluateForce(ClipsToPlay, GetElapsedTimeStartTime(_currentPlayDirection));
+
                 var cg = GetComponent<CanvasGroup>();
                 if (cg != null)
                 {
