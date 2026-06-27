@@ -2,11 +2,26 @@
   "entries": {
     "PerkConfig": {
       "catalog": [
-        "Boost",
-        "GearSize",
         "HotTires",
+        "HotTires_Rare",
+        "HotTires_Epic",
+        "HotTires_Legendary",
         "MaxSpeed",
-        "Stations"
+        "MaxSpeed_Rare",
+        "MaxSpeed_Epic",
+        "MaxSpeed_Legendary",
+        "Boost",
+        "Boost_Rare",
+        "Boost_Epic",
+        "Boost_Legendary",
+        "GearSize",
+        "GearSize_Rare",
+        "GearSize_Epic",
+        "GearSize_Legendary",
+        "Stations",
+        "Stations_Rare",
+        "Stations_Epic",
+        "Stations_Legendary"
       ],
       "baseCost": 100,
       "costPerPurchaseGrowth": 50,
