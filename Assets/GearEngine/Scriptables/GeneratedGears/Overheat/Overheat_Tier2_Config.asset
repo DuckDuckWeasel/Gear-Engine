@@ -15,9 +15,9 @@ MonoBehaviour:
   nextLevel: {fileID: 11400000, guid: 97cef2c7c91c04fde92b1f96683f2888, type: 2}
   data:
     id: overheat_tier2
-    displayName: Overheat II
     rarity: 0
     rarityConfig: {fileID: 11400000, guid: c0000000000000000000000000000000, type: 2}
+    displayName: Overheat II
     Category: 0
     BaseRotationSpeed: 0
     ViewPrefab: {fileID: 8811223344556677001, guid: 16426345c7f1e4cfcbe7499d444b3f6d, type: 3}
@@ -33,6 +33,14 @@ MonoBehaviour:
     SnapSlowdownDuration: 0.5
     SnapSlowdownMultiplier: 0.15
     TriggerSpinDegrees: 45
+    HitSound:
+      _entity: {fileID: 0}
+      ID: 0
+      <DebugObject>k__BackingField: {fileID: 0}
+    ChargeCompleteSound:
+      _entity: {fileID: 11400000, guid: 2ddc460ea3f7a574493e4fd00e59949e, type: 2}
+      ID: 0
+      <DebugObject>k__BackingField: {fileID: 0}
     IsDeletable: 1
     DeleteRewardAmount: 0
     Abilities: []
