@@ -15,6 +15,14 @@ namespace OM.Animora.Runtime
     public abstract class AnimoraClip : OM_ClipBase // Inherits from a base timeline clip class
     {
         /// <summary>
+        /// Checks if this clip manages a nested AnimoraPlayer and if it matches the target player.
+        /// </summary>
+        public virtual bool IsNestedPlayerClip(AnimoraPlayer targetPlayer)
+        {
+            return false;
+        }
+
+        /// <summary>
         /// Flags for enabling specific debug logs related to this clip's lifecycle events.
         /// </summary>
         [Flags]

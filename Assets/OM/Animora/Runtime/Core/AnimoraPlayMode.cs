@@ -24,5 +24,11 @@ namespace OM.Animora.Runtime
         /// via script or editor interaction.
         /// </summary>
         Manual,
+
+        /// <summary>
+        /// The player is a nested child of another AnimoraPlayer. Its playback is exclusively 
+        /// managed by the parent AnimoraPlayer.
+        /// </summary>
+        Child,
     }
 }

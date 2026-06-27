@@ -71,6 +71,24 @@ namespace OM.Animora.Editor
             Root = new VisualElement();
             Root.AddStyleSheet("Animora");
 
+            if (Player.PlayMode == AnimoraPlayMode.Child && Player.parentAnimoraPlayer != null)
+            {
+                var warningBox = new HelpBox($"This Animora is a child of '{Player.parentAnimoraPlayer.gameObject.name}'. (Click to Select)", HelpBoxMessageType.Warning);
+                warningBox.style.marginBottom = 5;
+                warningBox.style.marginTop = 5;
+                
+                warningBox.RegisterCallback<MouseDownEvent>(evt =>
+                {
+                    if (evt.button == 0) // Left click
+                    {
+                        EditorGUIUtility.PingObject(Player.parentAnimoraPlayer.gameObject);
+                        Selection.activeGameObject = Player.parentAnimoraPlayer.gameObject;
+                    }
+                });
+
+                Root.Add(warningBox);
+            }
+
             DrawSettings();
             DrawTimeline();
             DrawInspector();

@@ -14,11 +14,17 @@ namespace OM.Animora.Modules
     {
         [OM_StartGroup("Nested Player Settings","Settings")]
         [SerializeField] private AnimoraPlayer nestedPlayer;
+        public AnimoraPlayer NestedPlayer => nestedPlayer;
         
         public override void OnPreviewChanged(AnimoraPlayer animoraPlayer, bool isOn)
         {
             base.OnPreviewChanged(animoraPlayer, isOn);
             nestedPlayer.OnPreviewStateChanged(isOn);
+        }
+
+        public override bool IsNestedPlayerClip(AnimoraPlayer targetPlayer)
+        {
+            return nestedPlayer != null && nestedPlayer == targetPlayer;
         }
 
         public override void OnEvaluate(float time, float clipTime, float normalizedTime, bool isPreviewing)

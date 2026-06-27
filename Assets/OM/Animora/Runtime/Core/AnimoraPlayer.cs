@@ -148,6 +148,13 @@ namespace OM.Animora.Runtime
         [SerializeField, OM_HideInInspector] // Hide from default inspector
         private AnimoraClipsManager clipsManager;
 
+        [HideInInspector]
+        public AnimoraPlayer parentAnimoraPlayer;
+
+        public AnimoraPlayMode PlayMode => playMode;
+
+        private float _initialCanvasGroupAlpha = 1f;
+
         // --- Getters and Public Properties ---
 
         /// <summary>
@@ -247,11 +254,61 @@ namespace OM.Animora.Runtime
             // Clamp loop count (allow -1 for infinite).
             loopCount = Mathf.Max(-1, loopCount);
 
+#if UNITY_EDITOR
+            if (!Application.isPlaying)
+            {
+                bool foundParent = false;
+                parentAnimoraPlayer = null;
+                var allPlayers = UnityEngine.Object.FindObjectsOfType<AnimoraPlayer>(true);
+                foreach (var player in allPlayers)
+                {
+                    if (player == this) continue;
+
+                    var clips = player.GetClips();
+                    if (clips != null)
+                    {
+                        foreach (var clip in clips)
+                        {
+                            if (clip != null && clip.IsNestedPlayerClip(this))
+                            {
+                                foundParent = true;
+                                parentAnimoraPlayer = player;
+                                break;
+                            }
+                        }
+                    }
+                    if (foundParent) break;
+                }
+
+                if (foundParent)
+                {
+                    playMode = AnimoraPlayMode.Child;
+                }
+            }
+#endif
+
             // Invoke the validation callback for external listeners (like editor UI).
             OnPlayerValidateCallback?.Invoke();
             // Validate the clip manager and its clips, passing this player instance for context.
             // The null-conditional operator (?.) prevents errors if clipsManager is null.
             clipsManager?.OnValidate(this);
+        }
+
+        /// <summary>
+        /// Unity callback function. Called when the script instance is being loaded.
+        /// </summary>
+        private void Awake()
+        {
+            if (playMode == AnimoraPlayMode.Child && GetComponent<RectTransform>() != null)
+            {
+                var cg = GetComponent<CanvasGroup>();
+                if (cg == null)
+                {
+                    cg = gameObject.AddComponent<CanvasGroup>();
+                }
+                _initialCanvasGroupAlpha = cg.alpha;
+                cg.alpha = 0f;
+            }
         }
 
         /// <summary>
@@ -760,7 +817,17 @@ namespace OM.Animora.Runtime
         // --- Internal Hook Methods (Can be overridden by derived classes if needed) ---
 
         /// <summary> Hook called internally when playback starts. </summary>
-        private void OnStartPlaying() { /* Base implementation does nothing */ }
+        private void OnStartPlaying()
+        {
+            if (playMode == AnimoraPlayMode.Child && GetComponent<RectTransform>() != null)
+            {
+                var cg = GetComponent<CanvasGroup>();
+                if (cg != null)
+                {
+                    cg.alpha = _initialCanvasGroupAlpha;
+                }
+            }
+        }
         /// <summary> Hook called internally when playback completes. </summary>
         private void OnCompletePlaying() { /* Base implementation does nothing */ }
         /// <summary> Hook called internally when a loop iteration starts. </summary>
