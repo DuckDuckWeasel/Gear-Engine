@@ -13,5 +13,7 @@ namespace GearEngine.Perks.Powerups
         {
             stats.GripMultiplier *= multiplier;
         }
+
+        public override string GetFormattedValue() => $"+{(multiplier - 1f) * 100f:0}%";
     }
 }

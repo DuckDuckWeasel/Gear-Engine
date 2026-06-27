@@ -23,7 +23,33 @@ namespace GearEngine.Perks.Config
         public RarityConfigSO RarityConfig => rarityConfig;
 
         [SerializeField] [TextArea] private string description;
-        public string Description { get => description; set => description = value; }
+        public string Description 
+        { 
+            get 
+            {
+                if (modifiers == null || modifiers.Count == 0) return description;
+                
+                string values = "";
+                for (int i = 0; i < modifiers.Count; i++)
+                {
+                    var m = modifiers[i];
+                    if (m == null) continue;
+                    string val = m.GetFormattedValue();
+                    if (!string.IsNullOrEmpty(val))
+                    {
+                        if (values.Length > 0) values += ", ";
+                        values += val;
+                    }
+                }
+                
+                if (values.Length > 0)
+                {
+                    return string.IsNullOrEmpty(description) ? values : $"{description} ({values})";
+                }
+                return description;
+            }
+            set => description = value; 
+        }
 
         public Sprite UIIcon;
         public Sprite Icon => UIIcon;

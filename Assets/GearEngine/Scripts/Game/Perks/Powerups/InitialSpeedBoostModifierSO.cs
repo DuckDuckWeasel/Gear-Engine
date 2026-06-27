@@ -13,5 +13,7 @@ namespace GearEngine.Perks.Powerups
         {
             stats.InitialSpeedBoost += speedBoost;
         }
+
+        public override string GetFormattedValue() => $"+{speedBoost}";
     }
 }

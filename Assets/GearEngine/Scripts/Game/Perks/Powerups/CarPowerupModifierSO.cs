@@ -9,5 +9,7 @@ namespace GearEngine.Perks.Powerups
         [SerializeField] private CarPowerupApplyPhase phase = CarPowerupApplyPhase.Multiplicative;
 
         public abstract void Apply(ref CarPowerupStats stats);
+
+        public virtual string GetFormattedValue() => string.Empty;
     }
 }

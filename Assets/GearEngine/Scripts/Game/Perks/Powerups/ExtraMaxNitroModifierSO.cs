@@ -13,5 +13,7 @@ namespace GearEngine.Perks.Powerups
         {
             stats.ExtraMaxNitro += extraNitro;
         }
+
+        public override string GetFormattedValue() => $"+{extraNitro}";
     }
 }

@@ -13,5 +13,7 @@ namespace GearEngine.Perks.Powerups
         {
             stats.ExtraInventoryGears += extraGears;
         }
+
+        public override string GetFormattedValue() => $"+{extraGears}";
     }
 }
