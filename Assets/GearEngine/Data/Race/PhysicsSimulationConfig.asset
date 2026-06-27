@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: PhysicsSimulationConfig
   m_EditorClassIdentifier: Game.CarSimulation::GearEngine.CarSimulation.PhysicsSimulation.PhysicsSimulationConfig
   variables: {fileID: 11400000, guid: f6cfd8fa3fbb61843b66534996d0329d, type: 2}
-  baseMaxSpeed: 40
-  baseAcceleration: 5.5
-  baseBrakeForce: 150
+  baseMaxSpeed: 80
+  baseAcceleration: 11
+  baseBrakeForce: 300
   minSpeedPercentage: 0.4
   baseSimulationMultiplier: 1.35
   boundsDriftAccMult: {x: 1.1, y: 2.5}

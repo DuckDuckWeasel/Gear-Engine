@@ -15,9 +15,9 @@ MonoBehaviour:
   nextLevel: {fileID: 0}
   data:
     id: gear_core
-    displayName: Core Engine
     rarity: 0
     rarityConfig: {fileID: 11400000, guid: c0000000000000000000000000000000, type: 2}
+    displayName: Core Engine
     Category: 1
     BaseRotationSpeed: 150
     ViewPrefab: {fileID: 8811223344556677006, guid: b1d3f12d5b8c54349a34f49dd2ef4bf3, type: 3}
@@ -33,6 +33,14 @@ MonoBehaviour:
     SnapSlowdownDuration: 0.15
     SnapSlowdownMultiplier: 0.1
     TriggerSpinDegrees: 45
+    HitSound:
+      _entity: {fileID: 11400000, guid: f30f68317fe067f4a9510bf10006cb69, type: 2}
+      ID: 0
+      <DebugObject>k__BackingField: {fileID: 0}
+    ChargeCompleteSound:
+      _entity: {fileID: 11400000, guid: 2ddc460ea3f7a574493e4fd00e59949e, type: 2}
+      ID: 0
+      <DebugObject>k__BackingField: {fileID: 0}
     IsDeletable: 0
     DeleteRewardAmount: 0
     Abilities: []

@@ -394,6 +394,17 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 3466192356750912508, guid: d9b2bf9ad3d2d21439a807add8a1c39e, type: 3}
   m_PrefabInstance: {fileID: 2682326351873531148}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &99603530 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 606473912564031116, guid: d9b2bf9ad3d2d21439a807add8a1c39e, type: 3}
+  m_PrefabInstance: {fileID: 2682326351873531148}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 99603526}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a1534cbac729494f945c90efe327e10a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: AnimoraRuntime::OM.Animora.Runtime.AnimoraPlayer
 --- !u!1 &121759242
 GameObject:
   m_ObjectHideFlags: 0
@@ -569,14 +580,13 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 912142489}
+  m_Children: []
   m_Father: {fileID: 851543467}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: 2048, y: 2048}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &143291468
 MonoBehaviour:
@@ -598,9 +608,9 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 3125714948696492455, guid: c545e9b0e3b08419f89e01a71cce4ea7, type: 3}
   m_Type: 0
-  m_PreserveAspect: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
@@ -732,7 +742,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: AnimoraRuntime::OM.Animora.Runtime.AnimoraPlayer
   playerUniqueID: SetupLabel
   selectedClipIndex: 0
-  playMode: 2
+  playMode: 3
   timeMode: 1
   defaultPlayDirection: 0
   playLoopType: 2
@@ -767,6 +777,7 @@ MonoBehaviour:
     clips:
     - rid: 8490313434449576084
     - rid: 8490313434449576086
+  parentAnimoraPlayer: {fileID: 99603530}
   references:
     version: 2
     RefIds:
@@ -3007,6 +3018,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 143291467}
+  - {fileID: 912142489}
   m_Father: {fileID: 368155065}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -3043,12 +3055,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.CanvasScaler
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
-  m_ReferenceResolution: {x: 800, y: 600}
+  m_ReferenceResolution: {x: 1080, y: 1920}
   m_ScreenMatchMode: 0
-  m_MatchWidthOrHeight: 0
+  m_MatchWidthOrHeight: 1
   m_PhysicalUnit: 3
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
@@ -3327,7 +3339,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 912142488}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -3336,11 +3348,11 @@ RectTransform:
   - {fileID: 1325302257}
   - {fileID: 1051824855}
   - {fileID: 1799515721}
-  m_Father: {fileID: 143291467}
+  m_Father: {fileID: 851543467}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: 0, y: 300}
+  m_AnchoredPosition: {x: 0, y: 236}
   m_SizeDelta: {x: -200, y: 150}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &912142490
@@ -3390,7 +3402,7 @@ MonoBehaviour:
   m_MinValue: 0
   m_MaxValue: 1
   m_WholeNumbers: 0
-  m_Value: 0
+  m_Value: 0.02
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -4604,7 +4616,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
+  m_Sprite: {fileID: 7244646134145023678, guid: a83844f25c112764c92f68c0403d549a, type: 3}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -6159,6 +6171,7 @@ MonoBehaviour:
   clipsManager:
     clips:
     - rid: 8490313441434927272
+  parentAnimoraPlayer: {fileID: 0}
   references:
     version: 2
     RefIds:
@@ -6392,6 +6405,17 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 312738014}
   m_SourcePrefab: {fileID: 100100000, guid: 1aa1f93a538acb041b7004151a9c2a03, type: 3}
+--- !u!114 &1562684942 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7848338588028481742, guid: 689dcd40046774c4b80166058bccaf5f, type: 3}
+  m_PrefabInstance: {fileID: 6358256590727607001}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
 --- !u!1 &1575967190
 GameObject:
   m_ObjectHideFlags: 0
@@ -7351,7 +7375,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
+  m_Sprite: {fileID: 7244646134145023678, guid: a83844f25c112764c92f68c0403d549a, type: 3}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -7656,6 +7680,17 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 4520925794862549634, guid: 3baae1b6fa9ea2345a187b40f8fe60ee, type: 3}
   m_PrefabInstance: {fileID: 4124597037242338316}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1795382757 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3374042956491641106, guid: 689dcd40046774c4b80166058bccaf5f, type: 3}
+  m_PrefabInstance: {fileID: 6358256590727607001}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a1534cbac729494f945c90efe327e10a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: AnimoraRuntime::OM.Animora.Runtime.AnimoraPlayer
 --- !u!1 &1799515720
 GameObject:
   m_ObjectHideFlags: 0
@@ -8706,7 +8741,7 @@ MonoBehaviour:
   _stopOnDisable: 0
   _overrideFadeOut: -1
   _sound:
-    _entity: {fileID: 11400000, guid: 7a924d2e63a3f474ea06440effe463c1, type: 2}
+    _entity: {fileID: 11400000, guid: d9b1a362b0e188840830117f405906a3, type: 2}
     ID: 0
     <DebugObject>k__BackingField: {fileID: 849322785}
   _overrideGroup: {fileID: 0}
@@ -10571,6 +10606,10 @@ PrefabInstance:
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 3929749304631115974, guid: 689dcd40046774c4b80166058bccaf5f, type: 3}
+      propertyPath: m_text
+      value: GEAR
+      objectReference: {fileID: 0}
+    - target: {fileID: 3929749304631115974, guid: 689dcd40046774c4b80166058bccaf5f, type: 3}
       propertyPath: m_HorizontalAlignment
       value: 2
       objectReference: {fileID: 0}
@@ -10650,6 +10689,14 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: -52.85
       objectReference: {fileID: 0}
+    - target: {fileID: 5463234736882384597, guid: 689dcd40046774c4b80166058bccaf5f, type: 3}
+      propertyPath: playMode
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 5463234736882384597, guid: 689dcd40046774c4b80166058bccaf5f, type: 3}
+      propertyPath: parentAnimoraPlayer
+      value: 
+      objectReference: {fileID: 1795382757}
     - target: {fileID: 5876265680009058339, guid: 689dcd40046774c4b80166058bccaf5f, type: 3}
       propertyPath: m_AnchorMax.y
       value: 1
@@ -10714,6 +10761,42 @@ PrefabInstance:
       propertyPath: currentRpmText
       value: 
       objectReference: {fileID: 1699684742}
+    - target: {fileID: 6671208370226862571, guid: 689dcd40046774c4b80166058bccaf5f, type: 3}
+      propertyPath: currentGearText
+      value: 
+      objectReference: {fileID: 1562684942}
+    - target: {fileID: 6671208370226862571, guid: 689dcd40046774c4b80166058bccaf5f, type: 3}
+      propertyPath: startRaceSound._entity
+      value: 
+      objectReference: {fileID: 11400000, guid: 3742bd296d409414ea01ae06a48d8f40, type: 2}
+    - target: {fileID: 6671208370226862571, guid: 689dcd40046774c4b80166058bccaf5f, type: 3}
+      propertyPath: lapCompletedSound._entity
+      value: 
+      objectReference: {fileID: 11400000, guid: 06f0bd5ab41869b47aac1ff9c1275199, type: 2}
+    - target: {fileID: 6671208370226862571, guid: 689dcd40046774c4b80166058bccaf5f, type: 3}
+      propertyPath: raceFinishedSound._entity
+      value: 
+      objectReference: {fileID: 11400000, guid: bfd9931839d8d2f4d8c34bc881f64f3b, type: 2}
+    - target: {fileID: 6671208370226862571, guid: 689dcd40046774c4b80166058bccaf5f, type: 3}
+      propertyPath: startRaceSound.<DebugObject>k__BackingField
+      value: 
+      objectReference: {fileID: 536225473}
+    - target: {fileID: 6671208370226862571, guid: 689dcd40046774c4b80166058bccaf5f, type: 3}
+      propertyPath: lapCompletedSound.<DebugObject>k__BackingField
+      value: 
+      objectReference: {fileID: 536225473}
+    - target: {fileID: 6671208370226862571, guid: 689dcd40046774c4b80166058bccaf5f, type: 3}
+      propertyPath: raceFinishedSound.<DebugObject>k__BackingField
+      value: 
+      objectReference: {fileID: 536225473}
+    - target: {fileID: 6958002413641448777, guid: 689dcd40046774c4b80166058bccaf5f, type: 3}
+      propertyPath: playMode
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 6958002413641448777, guid: 689dcd40046774c4b80166058bccaf5f, type: 3}
+      propertyPath: parentAnimoraPlayer
+      value: 
+      objectReference: {fileID: 1795382757}
     - target: {fileID: 7288834320373065518, guid: 689dcd40046774c4b80166058bccaf5f, type: 3}
       propertyPath: m_AnchorMax.y
       value: 1
@@ -11017,7 +11100,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3557760724773374193, guid: 7fc0f6df20b58de419af0dc0a0b99674, type: 3}
       propertyPath: selectedClipIndex
-      value: 2
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 3557760724773374193, guid: 7fc0f6df20b58de419af0dc0a0b99674, type: 3}
       propertyPath: 'managedReferences[2891885309521821825].targets.directTargets.Array.data[0]'

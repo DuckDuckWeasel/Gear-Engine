@@ -1352,7 +1352,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 4901296698282230454, guid: e249138c3e8c145ffa512ae23cae2438, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6114065797632589264}
   m_SourcePrefab: {fileID: 100100000, guid: e249138c3e8c145ffa512ae23cae2438, type: 3}
 --- !u!224 &2616392719422200369 stripped
 RectTransform:
@@ -1364,12 +1367,35 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 4690689839520378525, guid: e249138c3e8c145ffa512ae23cae2438, type: 3}
   m_PrefabInstance: {fileID: 8717681486749075298}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 4395384040564573652}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
+--- !u!1 &4395384040564573652 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4901296698282230454, guid: e249138c3e8c145ffa512ae23cae2438, type: 3}
+  m_PrefabInstance: {fileID: 8717681486749075298}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &6114065797632589264
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4395384040564573652}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 471a6f36fb0c84273965321f132ab249, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GearEngine.Core.ViewUtility.Audio.UIAudioEventTrigger
+  _triggers:
+  - eventID: 4
+    sound:
+      _entity: {fileID: 11400000, guid: 0680a3fa16bfe944b91aaa167171683e, type: 2}
+      ID: 0
+      <DebugObject>k__BackingField: {fileID: 4138748775826216442}
 --- !u!1001 &9037367060373182284
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1477,19 +1503,45 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 4901296698282230454, guid: e249138c3e8c145ffa512ae23cae2438, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 3099336661765618717}
   m_SourcePrefab: {fileID: 100100000, guid: e249138c3e8c145ffa512ae23cae2438, type: 3}
 --- !u!224 &2440681870198147615 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 6680006269395901779, guid: e249138c3e8c145ffa512ae23cae2438, type: 3}
   m_PrefabInstance: {fileID: 9037367060373182284}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &4138748775826216442 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4901296698282230454, guid: e249138c3e8c145ffa512ae23cae2438, type: 3}
+  m_PrefabInstance: {fileID: 9037367060373182284}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &3099336661765618717
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4138748775826216442}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 471a6f36fb0c84273965321f132ab249, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GearEngine.Core.ViewUtility.Audio.UIAudioEventTrigger
+  _triggers:
+  - eventID: 4
+    sound:
+      _entity: {fileID: 11400000, guid: 0680a3fa16bfe944b91aaa167171683e, type: 2}
+      ID: 0
+      <DebugObject>k__BackingField: {fileID: 4138748775826216442}
 --- !u!114 &4355967080633825745 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 4690689839520378525, guid: e249138c3e8c145ffa512ae23cae2438, type: 3}
   m_PrefabInstance: {fileID: 9037367060373182284}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 4138748775826216442}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
