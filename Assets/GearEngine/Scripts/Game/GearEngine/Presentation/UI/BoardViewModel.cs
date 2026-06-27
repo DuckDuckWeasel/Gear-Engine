@@ -6,21 +6,26 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using GearEngine.GearEngine.Config;
 using GearEngine.GearEngine.Services;
 using GearEngine.GearEngine.Services.Board;
+using GearEngine.GearEngine.Services.Inventory;
 using Scaffold.MVVM;
 using UnityEngine;
+using Scaffold.Events.Contracts;
+using GearEngine.GearEngine.Events;
 
 namespace GearEngine.GearEngine.Presentation.UI
 {
     public partial class BoardViewModel : ViewModel
     {
-        public BoardViewModel(IBoardService boardService, IGearEngineService engineService, IInventoryService inventoryService)
+        public BoardViewModel(IBoardService boardService, IGearEngineService engineService, IInventoryService inventoryService, IEventBus eventBus)
         {
             this.boardService = boardService ?? throw new ArgumentNullException(nameof(boardService));
             this.engineService = engineService ?? throw new ArgumentNullException(nameof(engineService));
             this.inventoryService = inventoryService ?? throw new ArgumentNullException(nameof(inventoryService));
+            this.eventBus = eventBus ?? throw new ArgumentNullException(nameof(eventBus));
 
             boardService.GearPlaced += OnBoardGearPlaced;
             boardService.GearRemoved += OnBoardGearRemoved;
+            eventBus.AddListener<GearRotatedEvent>(OnGearRotated);
 
             RefreshSimulationRunningFromGrid();
             UpdateLabels();
@@ -44,6 +49,7 @@ namespace GearEngine.GearEngine.Presentation.UI
         private readonly IBoardService boardService;
         private readonly IGearEngineService engineService;
         private readonly IInventoryService inventoryService;
+        private readonly IEventBus eventBus;
 
         [ObservableProperty] private bool interactable = true;
         [ObservableProperty] private string boardLimitText = string.Empty;
@@ -52,6 +58,8 @@ namespace GearEngine.GearEngine.Presentation.UI
         public event Action<IGridNode> OnGearPlaced;
         public event Action<IGridNode> OnGearRemoved;
         public event Action<IGridNode> OnBoardClicked;
+        public event Action<Vector2Int, string> OnGearTriggered;
+        public event Action<IGridNode> OnGearChargeCompleted;
 
         internal void HandleBoardClick(IGridNode node)
         {
@@ -121,6 +129,7 @@ namespace GearEngine.GearEngine.Presentation.UI
         {
             boardService.GearPlaced -= OnBoardGearPlaced;
             boardService.GearRemoved -= OnBoardGearRemoved;
+            eventBus.RemoveListener<GearRotatedEvent>(OnGearRotated);
             base.OnClosed();
         }
 
@@ -139,6 +148,29 @@ namespace GearEngine.GearEngine.Presentation.UI
         private void UpdateLabels()
         {
             BoardLimitText = $"Board: {CurrentBoardGearCount}/{MaxAllowedBoardGears}";
+        }
+
+        private void OnGearRotated(GearRotatedEvent evt)
+        {
+            IGridNode node = boardService.GetNode(evt.Source);
+            if (node?.ConfigData == null) return;
+
+            OnGearChargeCompleted?.Invoke(node);
+
+            var sb = new System.Text.StringBuilder();
+            foreach (var ability in node.ConfigData.Abilities)
+            {
+                if (ability is IDescribable describable)
+                {
+                    sb.AppendLine(describable.GetRichTextDescription());
+                }
+            }
+            
+            string text = sb.ToString().TrimEnd();
+            if (!string.IsNullOrEmpty(text))
+            {
+                OnGearTriggered?.Invoke(evt.Source, text);
+            }
         }
     }
 }

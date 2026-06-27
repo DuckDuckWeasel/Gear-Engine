@@ -63,6 +63,8 @@ namespace GearEngine.GearEngine.Config
         public float SnapSlowdownDuration = 0.5f;
         public float SnapSlowdownMultiplier = 0.15f;
         public float TriggerSpinDegrees = 45f;
+        public Ami.BroAudio.SoundID HitSound;
+        public Ami.BroAudio.SoundID ChargeCompleteSound;
 
         // Delete / Scrap Mechanics (opt-in)
         public bool IsDeletable = false;
@@ -109,6 +111,8 @@ namespace GearEngine.GearEngine.Config
                 SnapSlowdownDuration = SnapSlowdownDuration,
                 SnapSlowdownMultiplier = SnapSlowdownMultiplier,
                 TriggerSpinDegrees = TriggerSpinDegrees,
+                HitSound = HitSound,
+                ChargeCompleteSound = ChargeCompleteSound,
                 IsDeletable = IsDeletable,
                 DeleteRewardAmount = DeleteRewardAmount,
                 NextLevelConfig = nextLevelConfig,

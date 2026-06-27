@@ -9,6 +9,7 @@ using System.ComponentModel;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Assertions;
+using Ami.BroAudio;
 
 namespace GearEngine.GearEngine.Presentation.UI
 {
@@ -27,6 +28,10 @@ namespace GearEngine.GearEngine.Presentation.UI
         [SerializeField]
         private BoardGearAnimator animator;
 
+        [SerializeField]
+        [Tooltip("Prefab for floating combat text when a gear is triggered.")]
+        private FloatingText floatingTextPrefab;
+
         private readonly Dictionary<IGridNode, GearView> viewsByNode = new Dictionary<IGridNode, GearView>();
         private readonly Dictionary<Vector2Int, Transform> slotByCoord = new Dictionary<Vector2Int, Transform>();
         private readonly List<GameObject> backgroundSlots = new List<GameObject>();
@@ -43,10 +48,13 @@ namespace GearEngine.GearEngine.Presentation.UI
             // on the rendering camera. We add both so future gear prefabs can use either.
             EnsureBoardCameraRaycasters();
 
-            animator.Configure(GetSlotTransform, boardLayout, viewModel.MotorCogGearId, () => viewModel.IsSimulationRunning);
+            animator.Configure(GetSlotTransform, boardLayout, viewModel.MotorCogGearId, 
+                () => viewModel.IsSimulationRunning || (viewModel.EngineService != null && viewModel.EngineService.IsRunning));
 
             viewModel.OnGearPlaced += HandleGearPlaced;
             viewModel.OnGearRemoved += HandleGearRemoved;
+            viewModel.OnGearTriggered += HandleGearTriggered;
+            viewModel.OnGearChargeCompleted += HandleGearChargeCompleted;
 
             SpawnBackgroundGrid();
             foreach (IGridNode node in viewModel.GetCurrentNodes())
@@ -65,6 +73,8 @@ namespace GearEngine.GearEngine.Presentation.UI
             {
                 viewModel.OnGearPlaced -= HandleGearPlaced;
                 viewModel.OnGearRemoved -= HandleGearRemoved;
+                viewModel.OnGearTriggered -= HandleGearTriggered;
+                viewModel.OnGearChargeCompleted -= HandleGearChargeCompleted;
                 viewModel.PropertyChanged -= OnBoardViewModelPropertyChanged;
             }
 
@@ -143,6 +153,34 @@ namespace GearEngine.GearEngine.Presentation.UI
             }
 
             SpawnView(node);
+        }
+
+        private void HandleGearTriggered(Vector2Int pos, string text)
+        {
+            Transform slot = GetSlotTransform(pos);
+            if (slot == null) return;
+            
+            if (floatingTextPrefab != null)
+            {
+                FloatingText instance = Instantiate(floatingTextPrefab, slot.position, Quaternion.identity);
+                instance.Play(text);
+            }
+            else
+            {
+                FloatingText.Spawn(slot.position, text);
+            }
+        }
+
+        private void HandleGearChargeCompleted(IGridNode node)
+        {
+            if (node == null || !viewsByNode.TryGetValue(node, out GearView view)) return;
+            
+            view.PlayChargeCompleteFeedback();
+            
+            if (node.ConfigData != null && node.ConfigData.ChargeCompleteSound.IsValid())
+            {
+                Ami.BroAudio.BroAudio.Play(node.ConfigData.ChargeCompleteSound);
+            }
         }
 
         private void HandleGearRemoved(IGridNode node)

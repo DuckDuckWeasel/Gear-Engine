@@ -2,6 +2,7 @@ using System;
 using GearEngine.GearEngine.Config;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using DG.Tweening;
 
 namespace GearEngine.GearEngine.Visuals
 {
@@ -30,6 +31,7 @@ namespace GearEngine.GearEngine.Visuals
         private float targetRotationZ;
         private float currentVisualFill;
         private float targetVisualFill = -1f;
+        private MaterialPropertyBlock propertyBlock;
 
         /// <summary>Editor tests: assigns serialized references without a prefab asset.</summary>
         internal void WireTestReferences(Transform gearVisualRef, SpriteRenderer chargeRef = null)
@@ -70,9 +72,12 @@ namespace GearEngine.GearEngine.Visuals
             if (snap)
             {
                 currentVisualFill = targetVisualFill;
-                if (chargeFillRenderer != null && chargeFillRenderer.material != null)
+                if (chargeFillRenderer != null)
                 {
-                    chargeFillRenderer.material.SetFloat("_FillAmount", currentVisualFill);
+                    if (propertyBlock == null) propertyBlock = new MaterialPropertyBlock();
+                    chargeFillRenderer.GetPropertyBlock(propertyBlock);
+                    propertyBlock.SetFloat("_FillAmount", currentVisualFill);
+                    chargeFillRenderer.SetPropertyBlock(propertyBlock);
                 }
             }
         }
@@ -96,6 +101,11 @@ namespace GearEngine.GearEngine.Visuals
             transform.localPosition = Vector3.zero;
         }
 
+        public void PlayChargeCompleteFeedback()
+        {
+            transform.DOPunchScale(Vector3.one * 0.2f, 0.3f, 5, 0.5f);
+        }
+
         private void Update()
         {
             transform.localPosition = Vector3.Lerp(transform.localPosition, Vector3.zero, Time.deltaTime * settleLerpSpeed);
@@ -104,10 +114,14 @@ namespace GearEngine.GearEngine.Visuals
             Quaternion target = Quaternion.Euler(0, 0, targetRotationZ);
             rotateTarget.localRotation = Quaternion.Lerp(rotateTarget.localRotation, target, Time.deltaTime * rotationLerpSpeed);
 
-            if (targetVisualFill >= 0f && chargeFillRenderer != null && chargeFillRenderer.material != null)
+            if (targetVisualFill >= 0f && chargeFillRenderer != null)
             {
                 currentVisualFill = Mathf.Lerp(currentVisualFill, targetVisualFill, Time.deltaTime * fillLerpSpeed);
-                chargeFillRenderer.material.SetFloat("_FillAmount", currentVisualFill);
+                
+                if (propertyBlock == null) propertyBlock = new MaterialPropertyBlock();
+                chargeFillRenderer.GetPropertyBlock(propertyBlock);
+                propertyBlock.SetFloat("_FillAmount", currentVisualFill);
+                chargeFillRenderer.SetPropertyBlock(propertyBlock);
             }
         }
 

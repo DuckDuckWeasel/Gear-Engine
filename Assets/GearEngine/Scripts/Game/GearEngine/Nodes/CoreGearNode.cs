@@ -1,5 +1,6 @@
 using UnityEngine;
 using Scaffold.Events.Contracts;
+using Ami.BroAudio;
 
 namespace GearEngine.GearEngine.Nodes
 {
@@ -78,6 +79,11 @@ namespace GearEngine.GearEngine.Nodes
 
             float currentSign = Mathf.Sign(ConfigData.BaseRotationSpeed * LocalSpeedMultiplier);
             eventBus.Raise(new DirectionalTriggerEvent(targetPos, ConfigData.ChargeOnTriggerAmount, currentSign));
+
+            if (ConfigData != null && ConfigData.HitSound.IsValid())
+            {
+                Ami.BroAudio.BroAudio.Play(ConfigData.HitSound);
+            }
 
             slowdownTimer = ConfigData.SnapSlowdownDuration;
         }

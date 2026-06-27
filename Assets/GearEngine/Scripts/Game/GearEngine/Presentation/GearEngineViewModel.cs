@@ -24,6 +24,7 @@ namespace GearEngine.GearEngine.Presentation
         [Inject] private IGearPresentationTransferService presentationTransferService;
         [Inject] private IDragService dragService;
         [Inject] private GearEngineFeatureToggleSO featureToggle;
+        [Inject] private Scaffold.Events.Contracts.IEventBus eventBus;
 
         protected override void Initialize()
         {
@@ -39,7 +40,7 @@ namespace GearEngine.GearEngine.Presentation
 
         private BoardViewModel CreateBoard()
         {
-            return new BoardViewModel(boardService, engineService, inventoryService);
+            return new BoardViewModel(boardService, engineService, inventoryService, eventBus);
         }
 
         private GearInventoryViewModel CreateInventory()

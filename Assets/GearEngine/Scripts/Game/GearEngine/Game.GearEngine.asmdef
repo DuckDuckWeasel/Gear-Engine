@@ -18,7 +18,8 @@
         "Unity.TextMeshPro",
         "UnityEngine.UI",
         "Unity.InputSystem",
-        "Game.CarSimulation"
+        "Game.CarSimulation",
+        "BroAudio"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
