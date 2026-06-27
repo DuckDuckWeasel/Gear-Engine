@@ -3580,6 +3580,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
+--- !u!114 &1018275239 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7690131273768744179, guid: 3baae1b6fa9ea2345a187b40f8fe60ee, type: 3}
+  m_PrefabInstance: {fileID: 4124597037242338316}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a1534cbac729494f945c90efe327e10a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: AnimoraRuntime::OM.Animora.Runtime.AnimoraPlayer
 --- !u!1 &1051824854
 GameObject:
   m_ObjectHideFlags: 0
@@ -9317,7 +9328,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 676802979670280929, guid: 3baae1b6fa9ea2345a187b40f8fe60ee, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 180
+      value: -150
       objectReference: {fileID: 0}
     - target: {fileID: 764799833612350578, guid: 3baae1b6fa9ea2345a187b40f8fe60ee, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
@@ -9527,37 +9538,45 @@ PrefabInstance:
       propertyPath: selectedClipIndex
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6019269376832945620, guid: 3baae1b6fa9ea2345a187b40f8fe60ee, type: 3}
+      propertyPath: parentAnimoraPlayer
+      value: 
+      objectReference: {fileID: 1018275239}
+    - target: {fileID: 6019269376832945620, guid: 3baae1b6fa9ea2345a187b40f8fe60ee, type: 3}
+      propertyPath: managedReferences[8490313434449576084].anchorPosition.one.value.y
+      value: -150
+      objectReference: {fileID: 0}
     - target: {fileID: 6092363404801034338, guid: 3baae1b6fa9ea2345a187b40f8fe60ee, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6092363404801034338, guid: 3baae1b6fa9ea2345a187b40f8fe60ee, type: 3}
       propertyPath: m_AnchorMin.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6092363404801034338, guid: 3baae1b6fa9ea2345a187b40f8fe60ee, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 463.5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6092363404801034338, guid: 3baae1b6fa9ea2345a187b40f8fe60ee, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -270.5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6924472397306322811, guid: 3baae1b6fa9ea2345a187b40f8fe60ee, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6924472397306322811, guid: 3baae1b6fa9ea2345a187b40f8fe60ee, type: 3}
       propertyPath: m_AnchorMin.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6924472397306322811, guid: 3baae1b6fa9ea2345a187b40f8fe60ee, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 463.5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6924472397306322811, guid: 3baae1b6fa9ea2345a187b40f8fe60ee, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -83.5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6964219568219412174, guid: 3baae1b6fa9ea2345a187b40f8fe60ee, type: 3}
       propertyPath: m_Camera
@@ -9577,23 +9596,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7279388909862312374, guid: 3baae1b6fa9ea2345a187b40f8fe60ee, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7279388909862312374, guid: 3baae1b6fa9ea2345a187b40f8fe60ee, type: 3}
       propertyPath: m_AnchorMin.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7279388909862312374, guid: 3baae1b6fa9ea2345a187b40f8fe60ee, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 463.5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7279388909862312374, guid: 3baae1b6fa9ea2345a187b40f8fe60ee, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -457.5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7690131273768744179, guid: 3baae1b6fa9ea2345a187b40f8fe60ee, type: 3}
       propertyPath: selectedClipIndex
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 9100100110011001003, guid: 3baae1b6fa9ea2345a187b40f8fe60ee, type: 3}
       propertyPath: worldCamera
