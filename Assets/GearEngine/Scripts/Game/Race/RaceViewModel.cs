@@ -48,6 +48,9 @@ namespace GearEngine.Race
         [Inject]
         private ISimulationRunnerService aiRunner;
 
+        [Inject]
+        private Scaffold.Events.Contracts.IEventBus eventBus;
+
         protected override void Initialize()
         {
             base.Initialize();
@@ -91,7 +94,7 @@ namespace GearEngine.Race
 
         private void SetupBoard()
         {
-            Board = new BoardViewModel(boardService, engineService, inventoryService);
+            Board = new BoardViewModel(boardService, engineService, inventoryService, eventBus);
             BindChildViewModel(Board);
         }
 
