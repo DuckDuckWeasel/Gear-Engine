@@ -28,7 +28,7 @@ MonoBehaviour:
     Delay: 0
     StartPosition: 0.054
     EndPosition: 0
-    FadeIn: 1.997
+    FadeIn: 0.992
     FadeOut: 0
     Weight: 0
   <AudioAsset>k__BackingField: {fileID: 11400000, guid: a4337db4fc61b4d43a4aaf77e045bc26, type: 2}
@@ -36,7 +36,7 @@ MonoBehaviour:
   <MasterVolume>k__BackingField: 1
   <Loop>k__BackingField: 1
   <SeamlessLoop>k__BackingField: 0
-  <TransitionTime>k__BackingField: 0
+  <TransitionTime>k__BackingField: -1
   <SpatialSetting>k__BackingField: {fileID: 0}
   <Priority>k__BackingField: 128
   <Pitch>k__BackingField: 1
