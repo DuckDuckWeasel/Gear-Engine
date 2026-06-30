@@ -107,7 +107,7 @@ MonoBehaviour:
   m_ChildAlignment: 1
   m_StartCorner: 0
   m_StartAxis: 0
-  m_CellSize: {x: 290, y: 360}
+  m_CellSize: {x: 300, y: 420}
   m_Spacing: {x: 25, y: 25}
   m_Constraint: 1
   m_ConstraintCount: 3
@@ -162,7 +162,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: -17}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 1}
 --- !u!222 &1825694612619113984
 CanvasRenderer:
@@ -305,6 +305,7 @@ MonoBehaviour:
     - rid: 8490313434449576072
     - rid: 8490313728363856003
     - rid: 8490313728363856004
+  parentAnimoraPlayer: {fileID: 0}
   references:
     version: 2
     RefIds:
@@ -657,10 +658,10 @@ RectTransform:
   - {fileID: 1863212164673198191}
   m_Father: {fileID: 4655780785637346330}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 980, y: 1335}
+  m_SizeDelta: {x: -200, y: -945}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7164517710912617283
 CanvasRenderer:
@@ -779,6 +780,7 @@ MonoBehaviour:
     clips:
     - rid: 8490313434449576063
     - rid: 8490313434449576065
+  parentAnimoraPlayer: {fileID: 0}
   references:
     version: 2
     RefIds:
@@ -2525,6 +2527,7 @@ MonoBehaviour:
   clipsManager:
     clips:
     - rid: 8490313404091203731
+  parentAnimoraPlayer: {fileID: 0}
   references:
     version: 2
     RefIds:

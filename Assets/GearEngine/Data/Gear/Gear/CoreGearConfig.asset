@@ -18,6 +18,7 @@ MonoBehaviour:
     rarity: 0
     rarityConfig: {fileID: 11400000, guid: c0000000000000000000000000000000, type: 2}
     displayName: Core Engine
+    description: The engine's heart. Spins automatically during the race, dispatching continuous energy pulses to adjacent connected gears.
     Category: 1
     BaseRotationSpeed: 150
     ViewPrefab: {fileID: 8811223344556677006, guid: b1d3f12d5b8c54349a34f49dd2ef4bf3, type: 3}
