@@ -155,19 +155,48 @@ namespace GearEngine.GearEngine.Presentation.UI
             SpawnView(node);
         }
 
-        private void HandleGearTriggered(Vector2Int pos, string text)
+        private global::GearEngine.CarSimulation.Presentation.CarView cachedCarView;
+
+        private void Start()
         {
-            Transform slot = GetSlotTransform(pos);
-            if (slot == null) return;
+            cachedCarView = UnityEngine.Object.FindObjectOfType<global::GearEngine.CarSimulation.Presentation.CarView>();
+        }
+
+        private void HandleGearTriggered(Vector2Int pos, string text, float duration)
+        {
+            Transform targetTransform = null;
+            bool isCarTarget = false;
             
-            if (floatingTextPrefab != null)
+            if (cachedCarView == null)
             {
-                FloatingText instance = Instantiate(floatingTextPrefab, slot.position, Quaternion.identity);
-                instance.Play(text);
+                cachedCarView = UnityEngine.Object.FindObjectOfType<global::GearEngine.CarSimulation.Presentation.CarView>();
+            }
+
+            if (cachedCarView != null)
+            {
+                Transform innerCar = cachedCarView.transform.Find("Car");
+                targetTransform = innerCar != null ? innerCar : cachedCarView.transform;
+                isCarTarget = true;
             }
             else
             {
-                FloatingText.Spawn(slot.position, text);
+                targetTransform = GetSlotTransform(pos);
+            }
+            
+            if (targetTransform == null) return;
+            
+            if (floatingTextPrefab != null)
+            {
+                FloatingText instance = Instantiate(floatingTextPrefab, targetTransform.position, Quaternion.identity, targetTransform);
+                if (isCarTarget)
+                {
+                    instance.SetBaseScale(0.3f);
+                }
+                instance.Play(text, duration);
+            }
+            else
+            {
+                FloatingText.Spawn(targetTransform.position, text, duration);
             }
         }
 

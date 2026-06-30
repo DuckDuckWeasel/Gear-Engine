@@ -36,8 +36,9 @@ namespace GearEngine.GearEngine.Presentation.UI
         private readonly IInventoryService inventoryService;
 
         [ObservableProperty] private GearItemData selectedItem;
-
         [ObservableProperty] private int inventoryListRevision;
+        [ObservableProperty] private int currentBoardGears;
+        [ObservableProperty] private int maxBoardGears;
 
         public void NotifySlotDragAccepted(GearItemData gear)
         {
@@ -107,6 +108,9 @@ namespace GearEngine.GearEngine.Presentation.UI
 
         private void RebuildTray()
         {
+            CurrentBoardGears = boardService.CurrentBoardGearCount;
+            MaxBoardGears = boardService.MaxAllowedBoardGears;
+
             var placed = new HashSet<OwnedGear>(boardService.GetAllNodes()
                 .Select(n => n.ConfigData?.Owner)
                 .Where(o => o != null));

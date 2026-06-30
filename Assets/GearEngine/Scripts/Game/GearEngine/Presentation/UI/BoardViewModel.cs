@@ -58,7 +58,7 @@ namespace GearEngine.GearEngine.Presentation.UI
         public event Action<IGridNode> OnGearPlaced;
         public event Action<IGridNode> OnGearRemoved;
         public event Action<IGridNode> OnBoardClicked;
-        public event Action<Vector2Int, string> OnGearTriggered;
+        public event Action<Vector2Int, string, float> OnGearTriggered;
         public event Action<IGridNode> OnGearChargeCompleted;
 
         internal void HandleBoardClick(IGridNode node)
@@ -158,18 +158,25 @@ namespace GearEngine.GearEngine.Presentation.UI
             OnGearChargeCompleted?.Invoke(node);
 
             var sb = new System.Text.StringBuilder();
+            float maxDuration = 0f;
             foreach (var ability in node.ConfigData.Abilities)
             {
                 if (ability is IDescribable describable)
                 {
-                    sb.AppendLine(describable.GetRichTextDescription());
+                    sb.AppendLine(describable.GetFloatingTextDescription());
+                }
+                
+                if (ability is GearEngine.Abilities.GearAbilitySO gearAbility)
+                {
+                    float d = gearAbility.GetDuration();
+                    if (d > maxDuration) maxDuration = d;
                 }
             }
             
             string text = sb.ToString().TrimEnd();
             if (!string.IsNullOrEmpty(text))
             {
-                OnGearTriggered?.Invoke(evt.Source, text);
+                OnGearTriggered?.Invoke(evt.Source, text, maxDuration);
             }
         }
     }

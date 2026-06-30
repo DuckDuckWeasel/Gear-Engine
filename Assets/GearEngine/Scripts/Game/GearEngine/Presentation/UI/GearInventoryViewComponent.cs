@@ -4,6 +4,7 @@ using Scaffold.MVVM;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Assertions;
+using DG.Tweening;
 
 namespace GearEngine.GearEngine.Presentation.UI
 {
@@ -30,10 +31,22 @@ namespace GearEngine.GearEngine.Presentation.UI
 
                 Bind<int, int>(() => viewModel.InventoryListRevision, OnInventoryListRevisionChanged);
                 Bind<GearItemData, GearItemData>(() => viewModel.SelectedItem, OnSelectionChanged);
+                
+                Bind<int, int>(() => viewModel.CurrentBoardGears, _ => UpdateCapacityLabel());
+                Bind<int, int>(() => viewModel.MaxBoardGears, _ => UpdateCapacityLabel());
+                UpdateCapacityLabel();
             }
             finally
             {
                 inventoryUiBinding = false;
+            }
+        }
+
+        private void UpdateCapacityLabel()
+        {
+            if (inventoryLimitLabel != null)
+            {
+                inventoryLimitLabel.text = $"{viewModel.CurrentBoardGears}/{viewModel.MaxBoardGears}";
             }
         }
 
@@ -126,13 +139,34 @@ namespace GearEngine.GearEngine.Presentation.UI
             GearItemData capturedGear = gear;
             drag.BuildPayload = e =>
             {
+                if (viewModel.CurrentBoardGears >= viewModel.MaxBoardGears)
+                {
+                    PunchCapacityLabel();
+                }
+
                 Vector3 world = DragPointerUtility.GetWorldPosition(e);
                 return new DragPayload(capturedGear, world);
             };
 
             drag.OnDropAccepted = _ => viewModel.NotifySlotDragAccepted(capturedGear);
+            drag.OnDropRejected = () => 
+            {
+                if (viewModel.CurrentBoardGears >= viewModel.MaxBoardGears)
+                {
+                    PunchCapacityLabel();
+                }
+            };
 
             ApplyGearVisualAndDrag(slotView, gear);
+        }
+
+        private void PunchCapacityLabel()
+        {
+            if (inventoryLimitLabel != null)
+            {
+                inventoryLimitLabel.transform.DOKill(complete: true);
+                inventoryLimitLabel.transform.DOPunchScale(new Vector3(0.3f, 0.3f, 0.3f), 0.3f, 10, 1f);
+            }
         }
 
         private void ApplyGearVisualAndDrag(GearInventorySlotView slotView, GearItemData gear)
