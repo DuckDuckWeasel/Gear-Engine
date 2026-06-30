@@ -30,5 +30,15 @@ namespace GearEngine.Campaign.Gear
                 }
             }
         }
+
+        public override string GetRichTextDescription()
+        {
+            return $"+{injectedChargeAmount} Charge to All Gears";
+        }
+
+        public override string GetFloatingTextDescription()
+        {
+            return $"+{injectedChargeAmount} Charge to All Gears";
+        }
     }
 }

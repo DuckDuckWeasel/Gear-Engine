@@ -44,7 +44,7 @@ namespace GearEngine.Perks.Config
                 
                 if (values.Length > 0)
                 {
-                    return string.IsNullOrEmpty(description) ? values : $"{description} ({values})";
+                    return string.IsNullOrEmpty(description) ? values : $"{description} {values}";
                 }
                 return description;
             }

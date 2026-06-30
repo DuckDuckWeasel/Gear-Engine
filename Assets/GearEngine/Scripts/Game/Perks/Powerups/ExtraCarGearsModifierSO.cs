@@ -14,6 +14,6 @@ namespace GearEngine.Perks.Powerups
             stats.ExtraCarGears += extraGears;
         }
 
-        public override string GetFormattedValue() => $"+{extraGears}";
+        public override string GetFormattedValue() => FormatValueColored(extraGears) + " Car Gears";
     }
 }

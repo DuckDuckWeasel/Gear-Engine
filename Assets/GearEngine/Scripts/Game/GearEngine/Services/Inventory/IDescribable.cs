@@ -7,5 +7,6 @@ namespace GearEngine.GearEngine.Services.Inventory
     public interface IDescribable
     {
         string GetRichTextDescription();
+        string GetFloatingTextDescription();
     }
 }

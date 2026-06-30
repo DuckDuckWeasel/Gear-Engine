@@ -14,6 +14,6 @@ namespace GearEngine.Perks.Powerups
             stats.GripMultiplier *= multiplier;
         }
 
-        public override string GetFormattedValue() => $"+{(multiplier - 1f) * 100f:0}%";
+        public override string GetFormattedValue() => FormatValueColored((multiplier - 1f) * 100f, "%") + " Grip";
     }
 }

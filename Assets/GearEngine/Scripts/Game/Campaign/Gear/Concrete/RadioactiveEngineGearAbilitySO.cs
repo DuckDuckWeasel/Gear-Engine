@@ -9,6 +9,7 @@ namespace GearEngine.Campaign.Gear
     public sealed class RadioactiveEngineGearAbilitySO : ActiveRaceGearAbilitySO
     {
         [SerializeField] private VariableSO decayTarget;
+        [SerializeField] private float decayAmount = 1f;
         private float decayStack = 0f;
         private float tickT = 0f;
 
@@ -20,7 +21,7 @@ namespace GearEngine.Campaign.Gear
             tickT += deltaTime;
             if(tickT > passiveTickRate) {
                 tickT = 0f;
-                decayStack -= 1f;
+                decayStack -= decayAmount;
                 ApplyModifier(owner, decayTarget, decayStack);
             }
         }

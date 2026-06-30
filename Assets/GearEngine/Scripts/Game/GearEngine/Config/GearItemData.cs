@@ -25,20 +25,34 @@ namespace GearEngine.GearEngine.Config
 
         public string Name => !string.IsNullOrEmpty(displayName) ? displayName : (SourceGearConfig != null ? SourceGearConfig.name : Id);
 
+        [SerializeField] [TextArea] private string description;
         public string Description
         {
             get
             {
-                var sb = new StringBuilder();
-                string colorHex = rarityConfig != null ? ColorUtility.ToHtmlStringRGB(rarityConfig.Color) : "FFFFFF";
-                sb.Append($"<b><color=#{colorHex}>{rarity}</color></b> Gear\n");
+                if (Abilities == null || Abilities.Count == 0) return description;
+                
+                string values = "";
                 foreach (var ability in Abilities)
                 {
                     if (ability is IDescribable describable)
-                        sb.AppendLine(describable.GetRichTextDescription());
+                    {
+                        string val = describable.GetRichTextDescription();
+                        if (!string.IsNullOrEmpty(val))
+                        {
+                            if (values.Length > 0) values += "\n";
+                            values += val;
+                        }
+                    }
                 }
-                return sb.ToString().TrimEnd();
+                
+                if (values.Length > 0)
+                {
+                    return string.IsNullOrEmpty(description) ? values : $"{description}\n\n{values}";
+                }
+                return description;
             }
+            set => description = value;
         }
 
         
@@ -94,6 +108,7 @@ namespace GearEngine.GearEngine.Config
             {
                 Id = Id,
                 DisplayName = DisplayName,
+                Description = description,
                 Rarity = Rarity,
                 RarityConfig = RarityConfig,
                 Category = Category,
