@@ -18,6 +18,10 @@ namespace GearEngine.SceneFoundation.Bootstrap
         [SerializeField]
         private Transform navigationViewHolder;
 
+        [Header("Global UI")]
+        [SerializeField]
+        private GearEngine.SceneFoundation.Presentation.GlobalLoadingOverlay globalLoadingPrefab;
+
         protected sealed override void Configure(IContainerBuilder builder)
         {
             ValidateFoundationAssignments();
@@ -36,6 +40,15 @@ namespace GearEngine.SceneFoundation.Bootstrap
         {
             RequireNavigationSettings();
             RequireNavigationViewHolder();
+            RequireGlobalLoadingPrefab();
+        }
+
+        private void RequireGlobalLoadingPrefab()
+        {
+            if (globalLoadingPrefab == null)
+            {
+                Debug.LogWarning($"[{GetType().Name}] Assign globalLoadingPrefab to enable the global loading canvas.");
+            }
         }
 
         private void RequireNavigationSettings()
@@ -61,6 +74,11 @@ namespace GearEngine.SceneFoundation.Bootstrap
             new AddressablesInstaller().Install(builder);
             new NavigationInstaller(navigationViewHolder, navigationSettings).Install(builder);
             new EventsInstaller().Install(builder);
+            
+            if (globalLoadingPrefab != null)
+            {
+                new GlobalLoadingInstaller(globalLoadingPrefab).Install(builder);
+            }
         }
     }
 }

@@ -18,6 +18,10 @@ namespace GearEngine.App.Bootstrap
         [SerializeField]
         private Transform navigationViewHolder;
 
+        [Header("Global UI")]
+        [SerializeField]
+        private global::GearEngine.SceneFoundation.Presentation.GlobalLoadingOverlay globalLoadingPrefab;
+
         [Header("Racing defaults")]
         [Tooltip("Default car for track services and LiveOps modules (same as former TrackCatalogSO.defaultCar).")]
         [SerializeField]
@@ -35,7 +39,7 @@ namespace GearEngine.App.Bootstrap
 
         protected sealed override IEnumerable<IScopeLayer> GetInitialLayers()
         {
-            yield return new FoundationLayer(navigationSettings, navigationViewHolder, layerAssetPublishers, defaultRaceCar);
+            yield return new FoundationLayer(navigationSettings, navigationViewHolder, globalLoadingPrefab, layerAssetPublishers, defaultRaceCar);
             foreach (IScopeLayer layer in GetGameLayers())
             {
                 yield return layer;

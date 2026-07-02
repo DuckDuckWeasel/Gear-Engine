@@ -33,7 +33,9 @@
         "Scaffold.Ads.Container",
         "Scaffold.Ads.Levelplay.Runtime",
         "Scaffold.Ads.Levelplay.Container",
-        "GUID:e418286a092124ad0a7c18e51d353dc2"
+        "Game.SceneFoundation",
+        "GUID:e418286a092124ad0a7c18e51d353dc2",
+        "GUID:add4e0403ba79634984fb6eb819e09bd"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

@@ -3,34 +3,46 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using GearEngine.Campaign.Bootstrap.LiveOps;
+using GearEngine.Core.Config.Events;
 using GearEngine.GearEngine.Config;
 using GearEngine.GearEngine.Services.Inventory;
 using UnityEngine;
 using Scaffold.Analytics;
+using Scaffold.Events.Contracts;
 using GearEngine.Campaign.Analytics;
 
 namespace GearEngine.Campaign.Services
 {
     public sealed class RoguelikeRollService : IRoguelikeRollService
     {
-        public RoguelikeRollService(RoguelikeClientModule module, GearCatalogSO catalog, IAnalyticsService analytics)
+        public RoguelikeRollService(RoguelikeClientModule module, GearCatalogSO catalog, IAnalyticsService analytics, IEventBus eventBus)
         {
             this.module = module ?? throw new ArgumentNullException(nameof(module));
             this.catalog = catalog ?? throw new ArgumentNullException(nameof(catalog));
             this.analytics = analytics;
+            this.eventBus = eventBus;
         }
 
         private readonly RoguelikeClientModule module;
         private readonly GearCatalogSO catalog;
         private readonly IAnalyticsService analytics;
+        private readonly IEventBus eventBus;
 
         public async Task<IReadOnlyList<IItem>> GetCurrentRollAsync(CancellationToken cancellationToken = default)
         {
-            IReadOnlyList<string> ids = await module.EnsureCurrentRollAsync(cancellationToken);
-            return GenerateFallbackIfNeeded(ids);
+            eventBus?.Raise(new GlobalLoadingEvent(true));
+            try
+            {
+                IReadOnlyList<string> ids = await module.EnsureCurrentRollAsync(cancellationToken);
+                return GenerateFallbackIfNeeded(ids);
+            }
+            finally
+            {
+                eventBus?.Raise(new GlobalLoadingEvent(false));
+            }
         }
 
-        public Task ConsumePickAsync(string pickedId, CancellationToken cancellationToken = default)
+        public async Task ConsumePickAsync(string pickedId, CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrEmpty(pickedId))
             {
@@ -38,19 +50,45 @@ namespace GearEngine.Campaign.Services
             }
 
             analytics?.Record(new RoguelikeRollEvent());
-            return module.ClaimAsync(pickedId, cancellationToken);
+            
+            eventBus?.Raise(new GlobalLoadingEvent(true));
+            try
+            {
+                await module.ClaimAsync(pickedId, cancellationToken);
+            }
+            finally
+            {
+                eventBus?.Raise(new GlobalLoadingEvent(false));
+            }
         }
 
-        public Task SkipPickAsync(CancellationToken cancellationToken = default)
+        public async Task SkipPickAsync(CancellationToken cancellationToken = default)
         {
-            return module.SkipAsync(cancellationToken);
+            eventBus?.Raise(new GlobalLoadingEvent(true));
+            try
+            {
+                await module.SkipAsync(cancellationToken);
+            }
+            finally
+            {
+                eventBus?.Raise(new GlobalLoadingEvent(false));
+            }
         }
 
         public async Task<IReadOnlyList<IItem>> RerollAsync(CancellationToken cancellationToken = default)
         {
             analytics?.Record(new RoguelikeRollEvent());
-            IReadOnlyList<string> ids = await module.RerollAsync(cancellationToken);
-            return GenerateFallbackIfNeeded(ids);
+            
+            eventBus?.Raise(new GlobalLoadingEvent(true));
+            try
+            {
+                IReadOnlyList<string> ids = await module.RerollAsync(cancellationToken);
+                return GenerateFallbackIfNeeded(ids);
+            }
+            finally
+            {
+                eventBus?.Raise(new GlobalLoadingEvent(false));
+            }
         }
 
         private IReadOnlyList<IItem> GenerateFallbackIfNeeded(IReadOnlyList<string> ids)

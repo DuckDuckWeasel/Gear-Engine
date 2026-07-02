@@ -1,7 +1,9 @@
 {
     "name": "GearEngine.Core.Config",
     "rootNamespace": "GearEngine.Core.Config",
-    "references": [],
+    "references": [
+        "GUID:add4e0403ba79634984fb6eb819e09bd"
+    ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,

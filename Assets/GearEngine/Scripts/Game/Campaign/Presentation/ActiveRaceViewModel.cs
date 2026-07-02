@@ -17,6 +17,8 @@ using UnityEngine;
 using VContainer;
 using Scaffold.Analytics;
 using GearEngine.Campaign.Analytics;
+using GearEngine.Core.Config.Events;
+using Scaffold.Events.Contracts;
 
 namespace GearEngine.Campaign.Presentation
 {
@@ -36,6 +38,7 @@ namespace GearEngine.Campaign.Presentation
         [Inject] private ISimulationRunnerService aiRunner;
         [Inject] private CampaignRaceSessionDefaults raceSessionDefaults;
         [Inject] private IAnalyticsService analyticsService;
+        [Inject] private IEventBus eventBus;
 
         protected override void Initialize()
         {
@@ -135,7 +138,16 @@ namespace GearEngine.Campaign.Presentation
                     result.Score,
                     result.IsGoodResult
                 ));
-                await trackService.RecordResultAsync(result);
+
+                eventBus?.Raise(new GlobalLoadingEvent(true));
+                try
+                {
+                    await trackService.RecordResultAsync(result);
+                }
+                finally
+                {
+                    eventBus?.Raise(new GlobalLoadingEvent(false));
+                }
                 
                 await Task.Delay(TimeSpan.FromSeconds(ResultPopupDelaySeconds));
                 

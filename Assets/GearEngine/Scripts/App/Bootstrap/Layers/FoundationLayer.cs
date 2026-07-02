@@ -17,17 +17,20 @@ namespace GearEngine.App.Bootstrap.Layers
         public FoundationLayer(
             NavigationSettings navigationSettings,
             Transform navigationViewHolder,
+            global::GearEngine.SceneFoundation.Presentation.GlobalLoadingOverlay globalLoadingPrefab,
             IReadOnlyList<AssetPublisherDefinition> layerAssetPublishers = null,
             CarDefinition defaultRaceCar = null)
         {
             this.navigationSettings = navigationSettings ?? throw new ArgumentNullException(nameof(navigationSettings));
             this.navigationViewHolder = navigationViewHolder ?? throw new ArgumentNullException(nameof(navigationViewHolder));
+            this.globalLoadingPrefab = globalLoadingPrefab;
             this.layerAssetPublishers = layerAssetPublishers ?? Array.Empty<AssetPublisherDefinition>();
             this.defaultRaceCar = defaultRaceCar;
         }
 
         private readonly NavigationSettings navigationSettings;
         private readonly Transform navigationViewHolder;
+        private readonly global::GearEngine.SceneFoundation.Presentation.GlobalLoadingOverlay globalLoadingPrefab;
         private readonly IReadOnlyList<AssetPublisherDefinition> layerAssetPublishers;
         private readonly CarDefinition defaultRaceCar;
 
@@ -41,6 +44,11 @@ namespace GearEngine.App.Bootstrap.Layers
             new AddressablesInstaller().Install(builder);
             new NavigationInstaller(navigationViewHolder, navigationSettings).Install(builder);
             new EventsInstaller().Install(builder);
+            
+            if (globalLoadingPrefab != null)
+            {
+                new global::GearEngine.SceneFoundation.Bootstrap.GlobalLoadingInstaller(globalLoadingPrefab).Install(builder);
+            }
 
             for (int i = 0; i < layerAssetPublishers.Count; i++)
             {
