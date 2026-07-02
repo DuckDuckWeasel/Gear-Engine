@@ -129,6 +129,19 @@ namespace OM.Animora.Editor
                 var field = new PropertyField(property);
                 field.Bind(serializedObject);
 
+                if (property.name == "loopCount")
+                {
+                    var playLoopTypeProp = serializedObject.FindProperty("playLoopType");
+                    if (playLoopTypeProp != null)
+                    {
+                        field.TrackPropertyValue(playLoopTypeProp, prop =>
+                        {
+                            field.style.display = prop.intValue == (int)AnimoraPlayLoopType.Once ? DisplayStyle.None : DisplayStyle.Flex;
+                        });
+                        field.style.display = playLoopTypeProp.intValue == (int)AnimoraPlayLoopType.Once ? DisplayStyle.None : DisplayStyle.Flex;
+                    }
+                }
+
                 if (property.name == "animoraPlayerEvents")
                 {
                     Root.Add(field);

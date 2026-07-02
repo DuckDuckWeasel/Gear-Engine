@@ -130,8 +130,8 @@ namespace OM.Animora.Runtime
         /// Used in conjunction with <see cref="AnimoraPlayLoopType"/>. Ignored if playLoopType is Once.
         /// </summary>
         [SerializeField, AnimoraLoopCount(0, "endless loop"), Min(-1)] // Custom attribute likely provides better UI, Min enforces minimum value
-        [Tooltip("Number of loops (-1 for infinite). Only used for Loop and PingPong modes.")]
-        private int loopCount = 1; // Default to playing once (0 loops after initial play) if Loop/PingPong, or ignored if Once
+        [Tooltip("Number of loops (-1 or 0 for infinite). Only used for Loop and PingPong modes.")]
+        private int loopCount = 0; // Default to 0 (endless loop) if Loop/PingPong, or ignored if Once
 
         /// <summary>
         /// Container for UnityEvents triggered at various points in the player's lifecycle (StartPlaying, CompletePlaying, etc.).
@@ -656,10 +656,15 @@ namespace OM.Animora.Runtime
                 }
 
                 // 2. Loop Count Check: Stop if the loop count is reached (and not infinite).
-                if (loopCount != -1 && _currentLoop >= loopCount) // Check loop count (-1 means infinite)
+                // 0 and -1 both mean infinite loop.
+                if (loopCount > 0)
                 {
-                    CompletePlaying(); // Signal completion
-                    return; // End evaluation
+                    int requiredEnds = playLoopType == AnimoraPlayLoopType.PingPong ? loopCount * 2 : loopCount;
+                    if (_currentLoop >= requiredEnds)
+                    {
+                        CompletePlaying(); // Signal completion
+                        return; // End evaluation
+                    }
                 }
 
                 // 3. PingPong Mode: Reverse direction and start the next loop.
