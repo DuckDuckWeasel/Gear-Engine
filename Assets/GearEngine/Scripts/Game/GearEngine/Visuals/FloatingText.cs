@@ -12,7 +12,12 @@ namespace GearEngine.GearEngine.Visuals
         [SerializeField] private Color textColor = Color.white;
         
         private static int globalSpawnCounter = 0;
-        private Vector3 baseScale = new Vector3(0.02f, 0.02f, 0.02f);
+        private Vector3 baseScale = new Vector3(0.022f, 0.022f, 0.022f);
+        
+        private Transform carTransform;
+        private bool isExploding = false;
+        private float aliveTime = 0f;
+        private System.Action onExplodeAction;
 
         public void SetBaseScale(float scale)
         {
@@ -57,17 +62,59 @@ namespace GearEngine.GearEngine.Visuals
 
         private void Update()
         {
+            aliveTime += Time.deltaTime;
+
             if (Camera.main != null)
             {
                 // Make the text face the camera
                 transform.rotation = Camera.main.transform.rotation;
             }
+
+            // Explosion logic when car passes by
+            if (!isExploding && carTransform != null && aliveTime > 0.6f)
+            {
+                // 8.0f threshold accounts for the height offset of the text and makes collision easier
+                if (Vector3.Distance(transform.position, carTransform.position) < 8.0f)
+                {
+                    ExplodeAndFade();
+                }
+            }
         }
 
-        public void Play(string text, float duration = 0f)
+        private void ExplodeAndFade()
         {
+            isExploding = true;
+            transform.DOKill(); // Stop all existing animations
+
+            onExplodeAction?.Invoke();
+
+            Sequence explodeSeq = DOTween.Sequence();
+            // Explosion punch scale (less big, slower)
+            explodeSeq.Append(transform.DOScale(baseScale * 2.2f, 0.4f).SetEase(Ease.OutExpo));
+            // Fade out (slower)
+            explodeSeq.Join(DOTween.To(() => textMesh.color, x => textMesh.color = x, new Color(textColor.r, textColor.g, textColor.b, 0f), 0.4f));
+            explodeSeq.OnComplete(() => Destroy(gameObject));
+        }
+
+        public void Play(string text, float duration = 0f, Vector3? endMoveDirection = null, Transform carRef = null, System.Action onExplode = null)
+        {
+            this.onExplodeAction = onExplode;
+            if (carRef != null)
+            {
+                carTransform = carRef;
+            }
+            transform.SetParent(null);
             textMesh.text = text;
             textMesh.color = textColor;
+
+            float speedMultiplier = 1f;
+            if (endMoveDirection.HasValue)
+            {
+                Vector3 dir = endMoveDirection.Value;
+                dir.y = 0f;
+                speedMultiplier = Mathf.Max(1f, dir.magnitude);
+                endMoveDirection = dir.normalized;
+            }
 
             // Apply dynamic duration if provided and valid
             if (duration > 0.1f)
@@ -108,13 +155,20 @@ namespace GearEngine.GearEngine.Visuals
             float waitDuration = Mathf.Max(0.3f, floatDuration - fadeDuration);
 
             // Move up relative to the camera's upward direction ONLY during waitDuration
-            Vector3 targetPosition = transform.position + (Camera.main != null ? Camera.main.transform.up : Vector3.up) * actualDistance;
-            transform.DOMove(targetPosition, waitDuration).SetEase(Ease.OutQuad);
+            Vector3 upMovement = (Camera.main != null ? Camera.main.transform.up : Vector3.up) * actualDistance;
+            transform.DOBlendableMoveBy(upMovement, waitDuration).SetEase(Ease.OutQuad);
 
-            // Scale animation: Punch on spawn, then shrink to size 20 equivalent (better readability)
+            // Initial movement backwards (relative to the car's direction) for 0.5 seconds
+            if (endMoveDirection.HasValue)
+            {
+                // Multiplier scales with the car's speed (encoded in the magnitude of endMoveDirection)
+                transform.DOBlendableMoveBy(endMoveDirection.Value * 10f * speedMultiplier, 0.5f).SetEase(Ease.OutQuad);
+            }
+
+            // Scale animation: Punch on spawn, then shrink to -20%
             transform.localScale = Vector3.zero;
-            Vector3 punchScale = baseScale * 1.5f; // Pop to 150% size
-            Vector3 endScale = baseScale * (20f / 36f); // Equivalent to font size 20 (base is 36)
+            Vector3 punchScale = baseScale * 1.8f; // Pop to 180% size
+            Vector3 endScale = baseScale * 0.8f; // -20% of base size
 
             Sequence scaleSeq = DOTween.Sequence();
             scaleSeq.Append(transform.DOScale(punchScale, 0.15f).SetEase(Ease.OutQuad));
@@ -126,13 +180,7 @@ namespace GearEngine.GearEngine.Visuals
                 scaleSeq.Append(transform.DOScale(endScale, shrinkDuration).SetEase(Ease.InSine));
             }
             
-            // Fade Sequence
-            Sequence fadeSeq = DOTween.Sequence();
-            fadeSeq.AppendInterval(waitDuration);
-            fadeSeq.Append(DOTween.To(() => textMesh.color, x => textMesh.color = x, new Color(textColor.r, textColor.g, textColor.b, 0f), fadeDuration).SetEase(Ease.InOutQuad));
-            fadeSeq.OnComplete(() => Destroy(gameObject));
-
-            // Delayed Shake effect: Triggers exactly when shrinking ends and fading begins
+            // Delayed Shake effect: Triggers exactly when shrinking ends
             DOVirtual.DelayedCall(waitDuration, () => {
                 if (this != null && gameObject != null)
                 {
@@ -141,14 +189,29 @@ namespace GearEngine.GearEngine.Visuals
                     transform.DOShakePosition(fadeDuration, shakeDir * 0.2f, vibrato: 20, randomness: 0f, snapping: false, fadeOut: true);
                 }
             });
+
+            // Fade Sequence: Starts after the shake finishes
+            Sequence fadeSeq = DOTween.Sequence();
+            fadeSeq.AppendInterval(waitDuration + fadeDuration);
+            fadeSeq.AppendCallback(() => {
+                if (this != null && gameObject != null)
+                {
+                    // Scale down to 0 and move up a bit to "poof" away
+                    transform.DOScale(Vector3.zero, fadeDuration).SetEase(Ease.InBack);
+                    Vector3 upPoof = (Camera.main != null ? Camera.main.transform.up : Vector3.up);
+                    transform.DOBlendableMoveBy(upPoof * 1.5f, fadeDuration).SetEase(Ease.InQuad);
+                }
+            });
+            fadeSeq.Append(DOTween.To(() => textMesh.color, x => textMesh.color = x, new Color(textColor.r, textColor.g, textColor.b, 0f), fadeDuration).SetEase(Ease.InQuad));
+            fadeSeq.OnComplete(() => Destroy(gameObject));
         }
         
-        public static FloatingText Spawn(Vector3 position, string text, float duration = 0f)
+        public static FloatingText Spawn(Vector3 position, string text, float duration = 0f, Vector3? endMoveDirection = null, Transform carRef = null, System.Action onExplode = null)
         {
             GameObject go = new GameObject("FloatingText");
             go.transform.position = position;
             FloatingText floatingText = go.AddComponent<FloatingText>();
-            floatingText.Play(text, duration);
+            floatingText.Play(text, duration, endMoveDirection, carRef, onExplode);
             return floatingText;
         }
     }

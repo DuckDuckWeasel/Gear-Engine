@@ -58,6 +58,11 @@ namespace GearEngine.GearEngine.Presentation.UI
         public event Action<IGridNode> OnGearPlaced;
         public event Action<IGridNode> OnGearRemoved;
         public event Action<IGridNode> OnBoardClicked;
+
+        public void PublishCombatTextExploded(int score)
+        {
+            eventBus.Raise(new GearEngine.Events.CombatTextCollectedEvent(score));
+        }
         public event Action<Vector2Int, string, float> OnGearTriggered;
         public event Action<IGridNode> OnGearChargeCompleted;
 

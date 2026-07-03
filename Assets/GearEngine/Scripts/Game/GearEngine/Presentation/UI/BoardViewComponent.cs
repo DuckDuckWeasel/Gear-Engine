@@ -185,18 +185,46 @@ namespace GearEngine.GearEngine.Presentation.UI
             
             if (targetTransform == null) return;
             
+            // Move in the opposite direction of the car's forward vector
+            Vector3? moveDir = isCarTarget ? -targetTransform.forward : (Vector3?)null;
+            Transform carRef = isCarTarget ? targetTransform : null;
+
+            if (isCarTarget && moveDir.HasValue && cachedCarView != null)
+            {
+                // Multiply the direction vector by a factor of the car's speed.
+                float speedMultiplier = Mathf.Max(1f, Mathf.Abs(cachedCarView.CurrentSpeed) / 125f);
+                moveDir = moveDir.Value * speedMultiplier;
+            }
+            
+            int parsedScore = 50; // default points
+            if (!string.IsNullOrEmpty(text))
+            {
+                var match = System.Text.RegularExpressions.Regex.Match(text, @"\d+");
+                if (match.Success && int.TryParse(match.Value, out int s))
+                {
+                    parsedScore = s;
+                }
+            }
+
+            System.Action onExplode = () => {
+                if (viewModel != null)
+                {
+                    viewModel.PublishCombatTextExploded(parsedScore);
+                }
+            };
+            
             if (floatingTextPrefab != null)
             {
-                FloatingText instance = Instantiate(floatingTextPrefab, targetTransform.position, Quaternion.identity, targetTransform);
+                FloatingText instance = Instantiate(floatingTextPrefab, targetTransform.position, Quaternion.identity);
                 if (isCarTarget)
                 {
                     instance.SetBaseScale(0.3f);
                 }
-                instance.Play(text, duration);
+                instance.Play(text, duration, moveDir, carRef, onExplode);
             }
             else
             {
-                FloatingText.Spawn(targetTransform.position, text, duration);
+                FloatingText.Spawn(targetTransform.position, text, duration, moveDir, carRef, onExplode);
             }
         }
 

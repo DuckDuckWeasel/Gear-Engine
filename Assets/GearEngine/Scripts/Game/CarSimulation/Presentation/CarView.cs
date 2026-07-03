@@ -13,6 +13,8 @@ namespace GearEngine.CarSimulation.Presentation
 
         private bool runnerAttached;
 
+        public float CurrentSpeed => viewModel != null ? viewModel.Speed : 0f;
+
         protected override void OnBind()
         {
             if (prometeoController == null)
