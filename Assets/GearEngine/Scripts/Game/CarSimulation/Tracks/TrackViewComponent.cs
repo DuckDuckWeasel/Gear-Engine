@@ -86,8 +86,8 @@ namespace GearEngine.CarSimulation.Tracks
                 return;
             }
 
-            CopySplineIntoContainer(data.Spline, splineContainer);
-            RebuildVisualSplineExtrude(data.Spline);
+            CopySplineIntoContainer(data, splineContainer);
+            RebuildVisualSplineExtrude(data);
         }
 
         private bool HasSplineContainerOrLog()
@@ -149,18 +149,18 @@ namespace GearEngine.CarSimulation.Tracks
             Debug.LogError($"[Track] TrackDefinition '{definitionName}' has no spline knots.");
         }
 
-        private void RebuildVisualSplineExtrude(Spline source)
+        private void RebuildVisualSplineExtrude(TrackDefinition data)
         {
             if (splineExtrude == null)
             {
                 return;
             }
 
-            SyncVisualContainer(source);
+            SyncVisualContainer(data);
             splineExtrude.Rebuild();
         }
 
-        private void SyncVisualContainer(Spline source)
+        private void SyncVisualContainer(TrackDefinition data)
         {
             SplineContainer visualContainer = splineExtrude.Container;
             if (visualContainer == null)
@@ -171,15 +171,33 @@ namespace GearEngine.CarSimulation.Tracks
 
             if (visualContainer != splineContainer)
             {
-                CopySplineIntoContainer(source, visualContainer);
+                CopySplineIntoContainer(data, visualContainer);
             }
         }
 
-        private void CopySplineIntoContainer(Spline source, SplineContainer targetContainer)
+        private void CopySplineIntoContainer(TrackDefinition data, SplineContainer targetContainer)
         {
+            Spline source = data.Spline;
             Spline target = targetContainer.Spline;
-            target.Knots = source.Knots;
             target.Closed = source.Closed;
+            target.Clear();
+            foreach (var knot in source.Knots)
+            {
+                BezierKnot k = knot;
+                k.Position = new Unity.Mathematics.float3(
+                    k.Position.x * data.Scale + data.Offset.x, 
+                    k.Position.y * data.Scale + data.Offset.y, 
+                    k.Position.z * data.Scale + data.Offset.z);
+                k.TangentIn = new Unity.Mathematics.float3(
+                    k.TangentIn.x * data.Scale, 
+                    k.TangentIn.y * data.Scale, 
+                    k.TangentIn.z * data.Scale);
+                k.TangentOut = new Unity.Mathematics.float3(
+                    k.TangentOut.x * data.Scale, 
+                    k.TangentOut.y * data.Scale, 
+                    k.TangentOut.z * data.Scale);
+                target.Add(k, TangentMode.AutoSmooth);
+            }
         }
     }
 }

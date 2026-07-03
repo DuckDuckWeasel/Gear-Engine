@@ -10,7 +10,7 @@ namespace GearEngine.Campaign
         private const int scoreThresholdToAdvance = 500;
         private const int legacyGoldPerScorePoint = 5;
 
-        public RaceResultModel(float raceTime, int lapCount, TrackDefinition track)
+        public RaceResultModel(float raceTime, int lapCount, TrackDefinition track, int driftScore = 0)
         {
             if (raceTime < 0f)
             {
@@ -19,27 +19,28 @@ namespace GearEngine.Campaign
 
             RaceTime = raceTime;
             LapCount = lapCount;
+            Score = driftScore; // Score is now strictly drift score
 
-            if (track != null && track.HasConfiguredScoreBands)
+            if (track != null && track.HasConfiguredTiers)
             {
-                Score = track.EvaluateRewardForTotalRaceTime(raceTime);
-                Position = track.EvaluatePositionForTotalRaceTime(raceTime);
-                Gold = new GoldReward(Score);
+                HighestAchievedTier = track.EvaluateHighestAchievedTier(raceTime, driftScore);
+                int totalGold = track.EvaluateTotalGoldReward(raceTime, driftScore);
+                Gold = new GoldReward(totalGold);
+                IsGoodResult = HighestAchievedTier > 0;
             }
             else
             {
-                Score = ComputeLegacyScore(raceTime, lapCount);
-                Position = 1;
-                Gold = new GoldReward(Score * legacyGoldPerScorePoint);
+                HighestAchievedTier = 0;
+                int legacyScore = ComputeLegacyScore(raceTime, lapCount) + driftScore;
+                Gold = new GoldReward(legacyScore * legacyGoldPerScorePoint);
+                IsGoodResult = legacyScore >= scoreThresholdToAdvance;
             }
-
-            IsGoodResult = Score >= scoreThresholdToAdvance;
         }
 
         public float RaceTime { get; }
         public int LapCount { get; }
         public int Score { get; }
-        public int Position { get; }
+        public int HighestAchievedTier { get; }
         public GoldReward Gold { get; }
         public bool IsGoodResult { get; }
 

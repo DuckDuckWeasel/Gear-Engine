@@ -13,16 +13,16 @@ namespace GearEngine.Campaign.Presentation
         [SerializeField] private TextMeshProUGUI targetLapsLabel;
         [SerializeField] private TextMeshProUGUI targetTimeLabel;
 
-        [Header("Score Bands")]
-        [SerializeField] private int maxDisplayScores = 3;
-        [SerializeField] private RectTransform bandsContainer;
-        [SerializeField] private List<BandSlotPrefabConfig> bandSlotPrefabs = new List<BandSlotPrefabConfig>();
-        [SerializeField] private TrackScoreBandSlotView defaultBandSlotPrefab;
+        [Header("Tiers")]
+        [SerializeField] private int maxDisplayTiers = 3;
+        [SerializeField] private RectTransform tiersContainer;
+        [SerializeField] private List<TierSlotPrefabConfig> tierSlotPrefabs = new List<TierSlotPrefabConfig>();
+        [SerializeField] private TrackTierSlotView defaultTierSlotPrefab;
         [SerializeField] private float popDuration = 0.25f;
         [SerializeField] private float stagger = 0.08f;
         [SerializeField] private Ease popEase = Ease.OutBack;
 
-        private Sequence bandsSequence;
+        private Sequence tiersSequence;
 
         protected override void OnBind()
         {
@@ -45,37 +45,37 @@ namespace GearEngine.Campaign.Presentation
                 targetTimeLabel.text = $"Target: {(int)time.TotalSeconds:00}:{time:ff}";
             }
 
-            RebuildBandSlots();
+            RebuildTierSlots();
         }
 
         private void OnDisable()
         {
-            if (bandsSequence != null && bandsSequence.IsActive())
+            if (tiersSequence != null && tiersSequence.IsActive())
             {
-                bandsSequence.Kill();
-                bandsSequence = null;
+                tiersSequence.Kill();
+                tiersSequence = null;
             }
         }
 
-        private void RebuildBandSlots()
+        private void RebuildTierSlots()
         {
-            if (bandsContainer == null)
+            if (tiersContainer == null)
             {
-                Debug.LogError("[TrackStatsView] bandsContainer missing; cannot render score bands.");
+                Debug.LogError("[TrackStatsView] tiersContainer missing; cannot render tiers.");
                 return;
             }
 
-            ClearBandSlots();
-            TryKillBandsSequence();
-            bandsSequence = DOTween.Sequence();
-            RunSpawnBandTweens();
+            ClearTierSlots();
+            TryKillTiersSequence();
+            tiersSequence = DOTween.Sequence();
+            RunSpawnTierTweens();
         }
 
-        private void ClearBandSlots()
+        private void ClearTierSlots()
         {
-            for (int i = bandsContainer.childCount - 1; i >= 0; i--)
+            for (int i = tiersContainer.childCount - 1; i >= 0; i--)
             {
-                Transform child = bandsContainer.GetChild(i);
+                Transform child = tiersContainer.GetChild(i);
                 if (Application.isPlaying)
                 {
                     Destroy(child.gameObject);
@@ -87,35 +87,35 @@ namespace GearEngine.Campaign.Presentation
             }
         }
 
-        private void TryKillBandsSequence()
+        private void TryKillTiersSequence()
         {
-            if (bandsSequence != null && bandsSequence.IsActive())
+            if (tiersSequence != null && tiersSequence.IsActive())
             {
-                bandsSequence.Kill();
+                tiersSequence.Kill();
             }
         }
 
-        private void RunSpawnBandTweens()
+        private void RunSpawnTierTweens()
         {
             int slotIndex = 0;
-            foreach (TrackScoreBandViewModel bandVm in viewModel.ScoreBands)
+            foreach (TrackTierViewModel tierVm in viewModel.Tiers)
             {
-                if (maxDisplayScores > 0 && slotIndex >= maxDisplayScores)
+                if (maxDisplayTiers > 0 && slotIndex >= maxDisplayTiers)
                 {
                     break;
                 }
-                AddBandSlotTween(bandVm, slotIndex++);
+                AddTierSlotTween(tierVm, slotIndex++);
             }
         }
 
-        private void AddBandSlotTween(TrackScoreBandViewModel bandVm, int slotIndex)
+        private void AddTierSlotTween(TrackTierViewModel tierVm, int slotIndex)
         {
-            TrackScoreBandSlotView prefabToInstantiate = defaultBandSlotPrefab;
-            if (bandSlotPrefabs != null)
+            TrackTierSlotView prefabToInstantiate = defaultTierSlotPrefab;
+            if (tierSlotPrefabs != null)
             {
-                foreach (var config in bandSlotPrefabs)
+                foreach (var config in tierSlotPrefabs)
                 {
-                    if (config.Contains(bandVm.Position))
+                    if (config.Contains(tierVm.TierNumber))
                     {
                         prefabToInstantiate = config.Prefab;
                         break;
@@ -125,15 +125,15 @@ namespace GearEngine.Campaign.Presentation
 
             if (prefabToInstantiate == null)
             {
-                Debug.LogError($"[TrackStatsView] No prefab configured for position {bandVm.Position} and default prefab is missing.");
+                Debug.LogError($"[TrackStatsView] No prefab configured for tier {tierVm.TierNumber} and default prefab is missing.");
                 return;
             }
 
-            TrackScoreBandSlotView slot = Instantiate(prefabToInstantiate, bandsContainer);
-            slot.gameObject.name = $"BandSlot_{bandVm.Position}";
+            TrackTierSlotView slot = Instantiate(prefabToInstantiate, tiersContainer);
+            slot.gameObject.name = $"TierSlot_{tierVm.TierNumber}";
             slot.transform.localScale = Vector3.zero;
-            slot.Bind(bandVm);
-            bandsSequence.Insert(slotIndex * stagger, slot.transform.DOScale(Vector3.one, popDuration).SetEase(popEase));
+            slot.Bind(tierVm);
+            tiersSequence.Insert(slotIndex * stagger, slot.transform.DOScale(Vector3.one, popDuration).SetEase(popEase));
         }
     }
 }

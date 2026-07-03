@@ -66,15 +66,16 @@ namespace GearEngine.Campaign.Authoring
                     BaseReward = defaultBaseReward,
                 };
 
-                if (track.ScoreBands != null)
+                if (track.HasConfiguredTiers)
                 {
-                    foreach (TrackScoreBand band in track.ScoreBands)
+                    foreach (TrackTierConfig tier in track.Tiers)
                     {
                         dtoEntry.Bands.Add(
                             new TrackScoreBandConfig
                             {
-                                MaxRaceTimeSeconds = band.MaxRaceTimeSeconds,
-                                Reward = band.RewardValue,
+                                MaxRaceTimeSeconds = tier.TargetTimeSeconds,
+                                TargetScore = tier.TargetScore,
+                                Reward = tier.GoldReward,
                             });
                     }
                 }

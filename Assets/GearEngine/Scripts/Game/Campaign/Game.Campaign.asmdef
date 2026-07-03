@@ -29,6 +29,7 @@
         "GUID:a17cae9fe3203457d917c88be8acb6ed",
         "GUID:2759f1476e0dc49e99119fcc9f47f6e7",
         "GUID:5e0b455853cd340e0813387221dfd501",
+        "Unity.Mathematics",
         "BroAudio"
     ],
     "includePlatforms": [],

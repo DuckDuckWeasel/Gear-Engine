@@ -20,7 +20,7 @@ namespace GearEngine.Campaign.Presentation
             TrackName = track.GetDisplayName();
             TargetLaps = track.TotalLaps;
             TargetTime = track.TimeToBeatSeconds;
-            ScoreBands = BuildOrderedScoreBands(track);
+            Tiers = BuildOrderedTiers(track);
         }
 
         public string TrackName { get; }
@@ -29,29 +29,28 @@ namespace GearEngine.Campaign.Presentation
 
         public float TargetTime { get; }
 
-        public IReadOnlyList<TrackScoreBandViewModel> ScoreBands { get; }
+        public IReadOnlyList<TrackTierViewModel> Tiers { get; }
 
         protected override void Initialize()
         {
             base.Initialize();
 
-            foreach (TrackScoreBandViewModel bandVm in ScoreBands)
+            foreach (TrackTierViewModel tierVm in Tiers)
             {
-                BindChildViewModel(bandVm);
+                BindChildViewModel(tierVm);
             }
         }
 
-        private static List<TrackScoreBandViewModel> BuildOrderedScoreBands(TrackDefinition track)
+        private static List<TrackTierViewModel> BuildOrderedTiers(TrackDefinition track)
         {
-            if (!track.HasConfiguredScoreBands)
+            if (!track.HasConfiguredTiers)
             {
-                return new List<TrackScoreBandViewModel>();
+                return new List<TrackTierViewModel>();
             }
 
-            return track.ScoreBands
-                .Where(b => b != null)
-                .OrderBy(b => b.MaxRaceTimeSeconds)
-                .Select((band, idx) => new TrackScoreBandViewModel(idx + 1, band))
+            return track.Tiers
+                .Where(t => t != null)
+                .Select((tier, idx) => new TrackTierViewModel(idx + 1, tier))
                 .ToList();
         }
     }

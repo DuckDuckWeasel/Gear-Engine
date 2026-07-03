@@ -30,6 +30,7 @@ namespace GearEngine.Campaign.Presentation
         private TrackViewModel track;
 
         public CarViewModel Car { get; private set; }
+        public RaceDriftScoreViewModel DriftScore { get; private set; }
 
         [Inject] private ITrackService trackService;
         [Inject] private IGearEngineService engineService;
@@ -43,6 +44,8 @@ namespace GearEngine.Campaign.Presentation
         protected override void Initialize()
         {
             base.Initialize();
+            
+            eventBus.AddListener<GearEngine.Events.CombatTextCollectedEvent>(OnCombatTextCollected);
 
             RaceSessionConfig sessionConfig = raceSessionDefaults.CreateForTrack(trackService.CurrentTrack);
             RaceState freshSession = trackFactory.Create(trackService.CurrentCar, trackService.CurrentTrack, sessionConfig);
@@ -71,8 +74,16 @@ namespace GearEngine.Campaign.Presentation
             Car = new CarViewModel(freshSession, aiRunner, attachRunnerOnBind: false);
             BindChildViewModel(Car);
 
+            DriftScore = new RaceDriftScoreViewModel(freshSession, Car);
+            BindChildViewModel(DriftScore);
+
             Bind<SimulationLifecycleState, SimulationLifecycleState>(() => Track.State, OnTrackStateChanged);
             analyticsService?.Record(new RaceStartedEvent(trackService.CurrentTrack.name, trackService.CurrentCar.name));
+        }
+
+        public void Tick(float deltaTime)
+        {
+            DriftScore?.Tick(deltaTime);
         }
 
         /// <summary>Called from <see cref="ActiveRaceView"/> after the car is spawned and <see cref="CarView.AttachRunner"/> runs.</summary>
@@ -94,6 +105,8 @@ namespace GearEngine.Campaign.Presentation
 
         protected override void OnClosed()
         {
+            eventBus.RemoveListener<GearEngine.Events.CombatTextCollectedEvent>(OnCombatTextCollected);
+
             try
             {
                 if (Track?.Session != null)
@@ -129,7 +142,7 @@ namespace GearEngine.Campaign.Presentation
                 engineService.ResetGridSimulationState();
 
                 RaceState session = Track.Session;
-                RaceResultModel result = new RaceResultModel(session.RaceTime, session.CurrentLap, trackService.CurrentTrack);
+                RaceResultModel result = new RaceResultModel(session.RaceTime, session.CurrentLap, trackService.CurrentTrack, session.TotalDriftScore);
                 analyticsService?.Record(new RaceFinishedEvent(
                     trackService.CurrentTrack.name,
                     trackService.CurrentCar.name,
@@ -156,6 +169,15 @@ namespace GearEngine.Campaign.Presentation
             catch (Exception ex)
             {
                 Debug.LogError($"[ActiveRaceViewModel] OnRaceCompleted failed: {ex.Message}\n{ex.StackTrace}");
+            }
+        }
+
+        private void OnCombatTextCollected(GearEngine.Events.CombatTextCollectedEvent evt)
+        {
+            if (DriftScore != null)
+            {
+                DriftScore.CurrentPoints += evt.Score;
+                DriftScore.IsDisplayingScore = true;
             }
         }
     }

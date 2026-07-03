@@ -7,6 +7,9 @@ namespace LiveOps.Modules.DTO.Tracks
         [JsonProperty("maxSec")]
         public float MaxRaceTimeSeconds { get; set; }
 
+        [JsonProperty("tgtScore")]
+        public int TargetScore { get; set; }
+
         [JsonProperty("r")]
         public int Reward { get; set; }
     }

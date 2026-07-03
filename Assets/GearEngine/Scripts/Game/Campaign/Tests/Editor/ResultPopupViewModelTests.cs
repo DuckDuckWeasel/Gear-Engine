@@ -22,9 +22,9 @@ namespace GearEngine.Campaign.Tests.Editor
         [Test]
         public void Continue_WhenGoodResult_OpensMain()
         {
-            TrackDefinition track = CampaignTestUtilities.CreateTrackWithScoreBandsForTests(
-                new TrackScoreBand(50f, 800),
-                new TrackScoreBand(9999f, 100));
+            TrackDefinition track = CampaignTestUtilities.CreateTrackWithTiersForTests(
+                new TrackTierConfig(50f, 1000, 800),
+                new TrackTierConfig(9999f, 0, 100));
             var good = new RaceResultModel(raceTime: 0f, lapCount: 1, track);
             Assert.That(good.IsGoodResult, Is.True);
 
@@ -51,10 +51,10 @@ namespace GearEngine.Campaign.Tests.Editor
         [Test]
         public void Continue_WhenPoorResult_OpensMain()
         {
-            TrackDefinition track = CampaignTestUtilities.CreateTrackWithScoreBandsForTests(
-                new TrackScoreBand(50f, 800),
-                new TrackScoreBand(90f, 400),
-                new TrackScoreBand(9999f, 100));
+            TrackDefinition track = CampaignTestUtilities.CreateTrackWithTiersForTests(
+                new TrackTierConfig(50f, 1000, 800),
+                new TrackTierConfig(90f, 500, 400),
+                new TrackTierConfig(9999f, 0, 100));
             var poor = new RaceResultModel(raceTime: 100f, lapCount: 1, track);
             Assert.That(poor.IsGoodResult, Is.False);
 
@@ -81,9 +81,9 @@ namespace GearEngine.Campaign.Tests.Editor
         [Test]
         public void Upgrade_OpensRoguelikeViewModel()
         {
-            TrackDefinition track = CampaignTestUtilities.CreateTrackWithScoreBandsForTests(
-                new TrackScoreBand(50f, 800),
-                new TrackScoreBand(9999f, 100));
+            TrackDefinition track = CampaignTestUtilities.CreateTrackWithTiersForTests(
+                new TrackTierConfig(50f, 1000, 800),
+                new TrackTierConfig(9999f, 0, 100));
             var result = new RaceResultModel(raceTime: 0f, lapCount: 1, track);
             var navigation = new RecordingNavigation();
 
@@ -152,18 +152,18 @@ namespace GearEngine.Campaign.Tests.Editor
     public sealed class RaceResultModelTests
     {
         [Test]
-        public void WhenTrackHasScoreBands_ScoreAndGoldMatchBandReward()
+        public void WhenTrackHasTiers_ScoreAndGoldMatchTierReward()
         {
-            TrackDefinition track = CampaignTestUtilities.CreateTrackWithScoreBandsForTests(
-                new TrackScoreBand(30f, 900),
-                new TrackScoreBand(9999f, 100));
+            TrackDefinition track = CampaignTestUtilities.CreateTrackWithTiersForTests(
+                new TrackTierConfig(30f, 1000, 900),
+                new TrackTierConfig(9999f, 0, 100));
 
             try
             {
-                var result = new RaceResultModel(raceTime: 20f, lapCount: 3, track);
+                var result = new RaceResultModel(raceTime: 20f, lapCount: 3, track, driftScore: 1200);
 
-                Assert.That(result.Score, Is.EqualTo(900));
-                Assert.That(result.Gold.Amount, Is.EqualTo(900));
+                Assert.That(result.HighestAchievedTier, Is.EqualTo(1));
+                Assert.That(result.Gold.Amount, Is.EqualTo(910)); // 900 + 10 base gold
                 Assert.That(result.IsGoodResult, Is.True);
             }
             finally
@@ -173,15 +173,15 @@ namespace GearEngine.Campaign.Tests.Editor
         }
 
         [Test]
-        public void WhenTrackHasNoBands_UsesLegacyScoreAndScaledGold()
+        public void WhenTrackHasNoTiers_UsesLegacyScoreAndScaledGold()
         {
             TrackDefinition track = ScriptableObject.CreateInstance<TrackDefinition>();
 
             try
             {
-                var result = new RaceResultModel(raceTime: 10f, lapCount: 1, track);
+                var result = new RaceResultModel(raceTime: 10f, lapCount: 1, track, driftScore: 0);
 
-                Assert.That(result.Score, Is.EqualTo(900));
+                Assert.That(result.HighestAchievedTier, Is.EqualTo(0));
                 Assert.That(result.Gold.Amount, Is.EqualTo(4500));
             }
             finally

@@ -13,6 +13,19 @@ MonoBehaviour:
   m_Name: TrackConfigBuilder
   m_EditorClassIdentifier: Game.Campaign::GearEngine.Campaign.Authoring.TrackConfigBuilderSO
   trackDefinitions:
-  - {fileID: 11400000, guid: 6ce7712943d0d1344bcaccc8749ee69c, type: 2}
+  - {fileID: 11400000, guid: 652fbcb6bca7b46babf6eacef9397931, type: 2}
+  - {fileID: 11400000, guid: 10dd8608d01154962acbe66d553ca314, type: 2}
+  - {fileID: 11400000, guid: 628cc69cd86634b05bec8796488c8d2d, type: 2}
   - {fileID: 11400000, guid: c1c1c1c1b2a3948576c5d4e3f2a1b0c9, type: 2}
+  - {fileID: 11400000, guid: e4b10721f441ba24b8253dd37e8e32b3, type: 2}
+  - {fileID: 11400000, guid: b0c28b649caf44a8f932b42482b55457, type: 2}
+  - {fileID: 11400000, guid: c7b9cd876097247f289f980babb13afb, type: 2}
+  - {fileID: 11400000, guid: 6ce7712943d0d1344bcaccc8749ee69c, type: 2}
+  - {fileID: 11400000, guid: 176028c8f102c4647a1f91c9685d1571, type: 2}
+  - {fileID: 11400000, guid: ff613fcc9ed565a40b53d5d42b0014b3, type: 2}
+  - {fileID: 11400000, guid: 0677328e8b18d4e128a78ed05e8f4169, type: 2}
+  - {fileID: 11400000, guid: d2d2d2d2b2a3948576c5d4e3f2a1b0c8, type: 2}
+  - {fileID: 11400000, guid: 248639503549346c0b504d13e4d7c453, type: 2}
+  - {fileID: 11400000, guid: b1aac44ea26824e908c8ca5cb7f41f3b, type: 2}
+  - {fileID: 11400000, guid: d9b5d4dca34b340f7bd292930ab35ee2, type: 2}
   defaultBaseReward: 10

@@ -89,10 +89,10 @@ namespace GearEngine.Campaign.Tests.Editor
             return factory.Create(carDef, trackDef, null);
         }
 
-        public static TrackDefinition CreateTrackWithScoreBandsForTests(params TrackScoreBand[] bands)
+        public static TrackDefinition CreateTrackWithTiersForTests(params TrackTierConfig[] tiers)
         {
             var track = ScriptableObject.CreateInstance<TrackDefinition>();
-            track.SetScoreBandsForTests(bands);
+            track.SetTiersForTests(tiers);
             return track;
         }
 

@@ -18,6 +18,7 @@ namespace GearEngine.Campaign.Presentation
         [SerializeField] private TrackViewComponent track;
         [SerializeField] private BoardViewComponent board;
         [SerializeField] private TrackTelemetryViewComponent telemetry;
+        [SerializeField] private RaceDriftScoreView driftScore;
         [SerializeField] private FrustumFitAnchor[] openTransitionAnchors;
         [SerializeField] private float openTransitionDurationSeconds = 0.35f;
 
@@ -57,6 +58,7 @@ namespace GearEngine.Campaign.Presentation
             }
 
             track.Bind(viewModel.Track);
+            driftScore?.Bind(viewModel.DriftScore);
             SpawnAndBindCar();
 
             lastDisplayedLap = 0;
@@ -71,6 +73,8 @@ namespace GearEngine.Campaign.Presentation
         private void LateUpdate()
         {
             if (viewModel == null) return;
+
+            viewModel.Tick(Time.deltaTime);
 
             if (telemetry != null && viewModel.Car != null)
             {

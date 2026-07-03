@@ -12,6 +12,14 @@ namespace GearEngine.CarSimulation.Definitions
 
         [SerializeField] private string trackName;
 
+        public float Scale => scale;
+
+        [SerializeField] private float scale = 1f;
+
+        public Vector3 Offset => offset;
+
+        [SerializeField] private Vector3 offset = Vector3.zero;
+
         public int TotalLaps => totalLaps;
 
         [SerializeField] private int totalLaps = 3;
@@ -24,59 +32,58 @@ namespace GearEngine.CarSimulation.Definitions
 
         [SerializeField] private Spline spline = new Spline();
 
-        public bool HasConfiguredScoreBands => scoreBands != null && scoreBands.Length > 0;
+        public int BaseGoldReward => baseGoldReward;
 
-        public IReadOnlyList<TrackScoreBand> ScoreBands => scoreBands;
+        [SerializeField] private int baseGoldReward = 10;
 
-        [SerializeField] private TrackScoreBand[] scoreBands = Array.Empty<TrackScoreBand>();
+        public bool HasConfiguredTiers => tiers != null && tiers.Length > 0;
+
+        public IReadOnlyList<TrackTierConfig> Tiers => tiers;
+
+        [SerializeField] private TrackTierConfig[] tiers = Array.Empty<TrackTierConfig>();
 
         public string GetDisplayName()
         {
             return string.IsNullOrEmpty(trackName) ? name : trackName;
         }
 
-        public int EvaluateRewardForTotalRaceTime(float totalRaceTimeSeconds)
+        public int EvaluateHighestAchievedTier(float finalRaceTimeSeconds, int finalScore)
         {
-            if (!HasConfiguredScoreBands)
+            if (!HasConfiguredTiers)
             {
                 return 0;
             }
 
-            TrackScoreBand[] ordered = new TrackScoreBand[scoreBands.Length];
-            Array.Copy(scoreBands, ordered, scoreBands.Length);
-            Array.Sort(ordered, (a, b) => a.MaxRaceTimeSeconds.CompareTo(b.MaxRaceTimeSeconds));
-
-            foreach (TrackScoreBand band in ordered)
+            // Tiers should be ordered 1 to N, assume index 0 is Tier 1, index 1 is Tier 2, etc.
+            int highestTier = 0;
+            for (int i = 0; i < tiers.Length; i++)
             {
-                if (totalRaceTimeSeconds <= band.MaxRaceTimeSeconds)
+                TrackTierConfig tier = tiers[i];
+                if (finalRaceTimeSeconds <= tier.TargetTimeSeconds || finalScore >= tier.TargetScore)
                 {
-                    return band.RewardValue;
+                    highestTier = i + 1;
+                }
+                else
+                {
+                    // If we didn't achieve this tier, we don't achieve higher tiers either
+                    break;
                 }
             }
 
-            return 0;
+            return highestTier;
         }
 
-        public int EvaluatePositionForTotalRaceTime(float totalRaceTimeSeconds)
+        public int EvaluateTotalGoldReward(float finalRaceTimeSeconds, int finalScore)
         {
-            if (!HasConfiguredScoreBands)
+            int gold = BaseGoldReward;
+            int highestTier = EvaluateHighestAchievedTier(finalRaceTimeSeconds, finalScore);
+            
+            if (highestTier > 0 && highestTier <= tiers.Length)
             {
-                return 1;
+                gold += tiers[highestTier - 1].GoldReward;
             }
 
-            TrackScoreBand[] ordered = new TrackScoreBand[scoreBands.Length];
-            Array.Copy(scoreBands, ordered, scoreBands.Length);
-            Array.Sort(ordered, (a, b) => a.MaxRaceTimeSeconds.CompareTo(b.MaxRaceTimeSeconds));
-
-            for (int i = 0; i < ordered.Length; i++)
-            {
-                if (totalRaceTimeSeconds <= ordered[i].MaxRaceTimeSeconds)
-                {
-                    return i + 1;
-                }
-            }
-
-            return ordered.Length + 1; // Last place if failed all bands
+            return gold;
         }
 
         internal void SetTotalLapsForTests(int value)
@@ -84,9 +91,9 @@ namespace GearEngine.CarSimulation.Definitions
             totalLaps = value;
         }
 
-        internal void SetScoreBandsForTests(TrackScoreBand[] bands)
+        internal void SetTiersForTests(TrackTierConfig[] testTiers)
         {
-            scoreBands = bands ?? Array.Empty<TrackScoreBand>();
+            tiers = testTiers ?? Array.Empty<TrackTierConfig>();
         }
     }
 }

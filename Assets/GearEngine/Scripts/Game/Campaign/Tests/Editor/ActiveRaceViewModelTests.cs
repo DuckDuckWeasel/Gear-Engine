@@ -46,7 +46,7 @@ namespace GearEngine.Campaign.Tests.Editor
             var trackDef = ScriptableObject.CreateInstance<TrackDefinition>();
             trackDef.Spline.Knots = new[] { new BezierKnot(Vector3.zero), new BezierKnot(Vector3.right * 10f) };
             trackDef.Spline.Closed = false;
-            trackDef.SetScoreBandsForTests(new[] { new TrackScoreBand(9999f, 200) });
+            trackDef.SetTiersForTests(new[] { new TrackTierConfig(9999f, 0, 200) });
 
             RaceState initialSession = CampaignTestUtilities.CreateMinimalSession(carDef, trackDef);
             var trackService = new FakeTrackService(trackDef, carDef);
@@ -91,7 +91,7 @@ namespace GearEngine.Campaign.Tests.Editor
             var trackDef = ScriptableObject.CreateInstance<TrackDefinition>();
             trackDef.Spline.Knots = new[] { new BezierKnot(Vector3.zero), new BezierKnot(Vector3.right * 10f) };
             trackDef.Spline.Closed = false;
-            trackDef.SetScoreBandsForTests(new[] { new TrackScoreBand(9999f, 200) });
+            trackDef.SetTiersForTests(new[] { new TrackTierConfig(9999f, 0, 200) });
 
             RaceState initialSession = CampaignTestUtilities.CreateMinimalSession(carDef, trackDef);
             var engine = new FakeEngine();
