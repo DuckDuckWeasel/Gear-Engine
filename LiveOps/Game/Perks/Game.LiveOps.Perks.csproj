@@ -14,8 +14,8 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Deploy\Core\LiveOps.Core\LiveOps.Core.csproj" />
-    <ProjectReference Include="..\s.DTO\Game.LiveOps.Perks.DTO.csproj" />
-    <ProjectReference Include="..\Perks.DTO\Game.LiveOps.Perks.DTO.csproj" />
+    <ProjectReference Include="..\Perks.DTO\Game.LiveOps.PerkPerks.DTO.csproj" />
+    <ProjectReference Include="..\PerkPerks.DTO\Game.LiveOps.PerkPerks.DTO.csproj" />
     <ProjectReference Include="..\Currency.DTO\Game.LiveOps.Currency.DTO.csproj" />
   </ItemGroup>
 </Project>

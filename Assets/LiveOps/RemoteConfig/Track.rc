@@ -3,46 +3,237 @@
     "TrackConfig": {
       "entries": [
         {
-          "id": "OvalTrack",
+          "id": "DShapeTrack",
           "baseReward": 10,
           "bands": [
             {
               "maxSec": 40.0,
-              "r": 900
+              "tgtScore": 5000,
+              "r": 1000
             },
             {
-              "maxSec": 55.0,
-              "r": 650
+              "maxSec": 50.0,
+              "tgtScore": 3000,
+              "r": 500
             },
             {
-              "maxSec": 75.0,
-              "r": 400
+              "maxSec": 60.0,
+              "tgtScore": 1000,
+              "r": 200
+            }
+          ]
+        },
+        {
+          "id": "Figure8Track",
+          "baseReward": 10,
+          "bands": [
+            {
+              "maxSec": 40.0,
+              "tgtScore": 5000,
+              "r": 1000
             },
             {
-              "maxSec": 99999.0,
-              "r": 150
+              "maxSec": 50.0,
+              "tgtScore": 3000,
+              "r": 500
+            },
+            {
+              "maxSec": 60.0,
+              "tgtScore": 1000,
+              "r": 200
+            }
+          ]
+        },
+        {
+          "id": "HairpinTrack",
+          "baseReward": 10,
+          "bands": [
+            {
+              "maxSec": 40.0,
+              "tgtScore": 5000,
+              "r": 1000
+            },
+            {
+              "maxSec": 50.0,
+              "tgtScore": 3000,
+              "r": 500
+            },
+            {
+              "maxSec": 60.0,
+              "tgtScore": 1000,
+              "r": 200
             }
           ]
         },
         {
           "id": "CircleTrack",
           "baseReward": 10,
+          "bands": []
+        },
+        {
+          "id": "InfinityTrack",
+          "baseReward": 10,
+          "bands": []
+        },
+        {
+          "id": "KidneyTrack",
+          "baseReward": 10,
           "bands": [
             {
               "maxSec": 40.0,
-              "r": 900
+              "tgtScore": 5000,
+              "r": 1000
             },
             {
-              "maxSec": 55.0,
-              "r": 650
+              "maxSec": 50.0,
+              "tgtScore": 3000,
+              "r": 500
             },
             {
-              "maxSec": 75.0,
-              "r": 400
+              "maxSec": 60.0,
+              "tgtScore": 1000,
+              "r": 200
+            }
+          ]
+        },
+        {
+          "id": "LShapeTrack",
+          "baseReward": 10,
+          "bands": [
+            {
+              "maxSec": 40.0,
+              "tgtScore": 5000,
+              "r": 1000
             },
             {
-              "maxSec": 99999.0,
-              "r": 150
+              "maxSec": 50.0,
+              "tgtScore": 3000,
+              "r": 500
+            },
+            {
+              "maxSec": 60.0,
+              "tgtScore": 1000,
+              "r": 200
+            }
+          ]
+        },
+        {
+          "id": "OvalTrack",
+          "baseReward": 10,
+          "bands": []
+        },
+        {
+          "id": "PeanutTrack",
+          "baseReward": 10,
+          "bands": [
+            {
+              "maxSec": 40.0,
+              "tgtScore": 5000,
+              "r": 1000
+            },
+            {
+              "maxSec": 50.0,
+              "tgtScore": 3000,
+              "r": 500
+            },
+            {
+              "maxSec": 60.0,
+              "tgtScore": 1000,
+              "r": 200
+            }
+          ]
+        },
+        {
+          "id": "RoundedSquareTrack",
+          "baseReward": 10,
+          "bands": []
+        },
+        {
+          "id": "SCurveTrack",
+          "baseReward": 10,
+          "bands": [
+            {
+              "maxSec": 40.0,
+              "tgtScore": 5000,
+              "r": 1000
+            },
+            {
+              "maxSec": 50.0,
+              "tgtScore": 3000,
+              "r": 500
+            },
+            {
+              "maxSec": 60.0,
+              "tgtScore": 1000,
+              "r": 200
+            }
+          ]
+        },
+        {
+          "id": "SquareTrack",
+          "baseReward": 10,
+          "bands": []
+        },
+        {
+          "id": "StarTrack",
+          "baseReward": 10,
+          "bands": [
+            {
+              "maxSec": 40.0,
+              "tgtScore": 5000,
+              "r": 1000
+            },
+            {
+              "maxSec": 50.0,
+              "tgtScore": 3000,
+              "r": 500
+            },
+            {
+              "maxSec": 60.0,
+              "tgtScore": 1000,
+              "r": 200
+            }
+          ]
+        },
+        {
+          "id": "TriangleTrack",
+          "baseReward": 10,
+          "bands": [
+            {
+              "maxSec": 40.0,
+              "tgtScore": 5000,
+              "r": 1000
+            },
+            {
+              "maxSec": 50.0,
+              "tgtScore": 3000,
+              "r": 500
+            },
+            {
+              "maxSec": 60.0,
+              "tgtScore": 1000,
+              "r": 200
+            }
+          ]
+        },
+        {
+          "id": "ZigZagTrack",
+          "baseReward": 10,
+          "bands": [
+            {
+              "maxSec": 40.0,
+              "tgtScore": 5000,
+              "r": 1000
+            },
+            {
+              "maxSec": 50.0,
+              "tgtScore": 3000,
+              "r": 500
+            },
+            {
+              "maxSec": 60.0,
+              "tgtScore": 1000,
+              "r": 200
             }
           ]
         }

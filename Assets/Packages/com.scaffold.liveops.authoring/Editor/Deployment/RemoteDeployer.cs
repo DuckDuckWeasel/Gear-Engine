@@ -216,7 +216,9 @@ namespace Scaffold.LiveOps.Authoring.Editor.Deployment
 
         private static Process CreateUgsProcess(string fullRcPath, string projectId, string environmentName)
         {
-            string pathQ = EscapeForCmdQuotedArg(fullRcPath);
+            string workDir = Path.GetDirectoryName(fullRcPath) ?? string.Empty;
+            string fileName = Path.GetFileName(fullRcPath);
+            string pathQ = EscapeForCmdQuotedArg(fileName);
             string pidQ = EscapeForCmdQuotedArg(projectId);
             string envQ = EscapeForCmdQuotedArg(environmentName);
             try
@@ -230,6 +232,7 @@ namespace Scaffold.LiveOps.Authoring.Editor.Deployment
                         {
                             FileName = Environment.GetEnvironmentVariable("ComSpec") ?? "cmd.exe",
                             Arguments = cmdLine,
+                            WorkingDirectory = workDir,
                             UseShellExecute = false,
                             RedirectStandardOutput = true,
                             RedirectStandardError = true,
@@ -240,13 +243,14 @@ namespace Scaffold.LiveOps.Authoring.Editor.Deployment
                 var psi = new ProcessStartInfo
                 {
                     FileName = "ugs",
+                    WorkingDirectory = workDir,
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     CreateNoWindow = true,
                 };
                 psi.ArgumentList.Add("deploy");
-                psi.ArgumentList.Add(fullRcPath);
+                psi.ArgumentList.Add(fileName);
                 psi.ArgumentList.Add("--project-id");
                 psi.ArgumentList.Add(projectId);
                 psi.ArgumentList.Add("--environment-name");

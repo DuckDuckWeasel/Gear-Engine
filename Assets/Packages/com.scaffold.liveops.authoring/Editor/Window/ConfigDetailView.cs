@@ -32,6 +32,8 @@ namespace Scaffold.LiveOps.Authoring.Editor.Window
         private Label _titleStatusLabel;
 
         private Image _titleStatusLight;
+        
+        private VisualElement _diffStatusLight;
 
         private Button _findButton;
 
@@ -82,6 +84,7 @@ namespace Scaffold.LiveOps.Authoring.Editor.Window
             _host = host;
             _titleStatusLight = null;
             _titleStatusLabel = null;
+            _diffStatusLight = null;
 
             if (row == null || row.Builder == null)
             {
@@ -327,11 +330,31 @@ namespace Scaffold.LiveOps.Authoring.Editor.Window
                 text = "Config",
                 tooltip = "Edit the builder and any referenced ScriptableObjects, and view generated local JSON.",
             };
+            
             _tabDiffButton = new Button(() => SelectTab(1))
             {
-                text = "Diff",
                 tooltip = "Compare locally generated JSON with the live Remote Config value in the cloud for this key.",
             };
+            _tabDiffButton.style.flexDirection = FlexDirection.Row;
+            _tabDiffButton.style.alignItems = Align.Center;
+
+            _diffStatusLight = new VisualElement
+            {
+                style =
+                {
+                    width = 8,
+                    height = 8,
+                    borderTopLeftRadius = 4,
+                    borderTopRightRadius = 4,
+                    borderBottomLeftRadius = 4,
+                    borderBottomRightRadius = 4,
+                    marginRight = 6,
+                    display = DisplayStyle.None,
+                }
+            };
+            _tabDiffButton.Add(_diffStatusLight);
+            _tabDiffButton.Add(new Label("Diff"));
+
             StyleTabButton(_tabConfigButton, true);
             StyleTabButton(_tabDiffButton, false);
             _tabConfigButton.style.marginRight = 2;
@@ -647,14 +670,37 @@ namespace Scaffold.LiveOps.Authoring.Editor.Window
             _compareCloudButton.style.marginBottom = 8;
             wrap.Add(_compareCloudButton);
 
-            _localDiffField = new TextField("Local (generated)") { isReadOnly = true, multiline = true };
-            _remoteDiffField = new TextField("Remote (dashboard)") { isReadOnly = true, multiline = true };
+            var localCol = new VisualElement { style = { flexGrow = 1, flexBasis = 0, marginRight = 4 } };
+            var localLabel = new Label("Local (generated)") { style = { unityFontStyleAndWeight = FontStyle.Bold, marginBottom = 4 } };
+            _localDiffField = new TextField() { isReadOnly = true, multiline = true };
+            _localDiffField.style.flexGrow = 1;
+            _localDiffField.style.minHeight = 200f;
+            localCol.Add(localLabel);
+            localCol.Add(_localDiffField);
+
+            var remoteCol = new VisualElement { style = { flexGrow = 1, flexBasis = 0, marginLeft = 4 } };
+            var remoteLabel = new Label("Remote (dashboard)") { style = { unityFontStyleAndWeight = FontStyle.Bold, marginBottom = 4 } };
+            _remoteDiffField = new TextField() { isReadOnly = true, multiline = true };
+            _remoteDiffField.style.flexGrow = 1;
+            _remoteDiffField.style.minHeight = 200f;
+            remoteCol.Add(remoteLabel);
+            remoteCol.Add(_remoteDiffField);
+
             RefreshLocalDiffPayload();
 
-            _localDiffField.style.minHeight = 200f;
-            _remoteDiffField.style.minHeight = 200f;
-            wrap.Add(_localDiffField);
-            wrap.Add(_remoteDiffField);
+            var diffRow = new VisualElement
+            {
+                style =
+                {
+                    flexDirection = FlexDirection.Row,
+                    flexGrow = 1,
+                    marginTop = 4
+                }
+            };
+
+            diffRow.Add(localCol);
+            diffRow.Add(remoteCol);
+            wrap.Add(diffRow);
 
             _tabDiffPage.Add(wrap);
         }
@@ -696,15 +742,54 @@ namespace Scaffold.LiveOps.Authoring.Editor.Window
                 {
                     _remoteDiffField.value = res.Error;
                     Debug.LogWarning($"[LiveOps Config] Cloud compare: {res.Error}");
+                    if (_diffStatusLight != null)
+                    {
+                        _diffStatusLight.style.display = DisplayStyle.Flex;
+                        _diffStatusLight.style.backgroundColor = EditorGUIUtility.isProSkin ? new Color(1f, 0.5f, 0.5f) : new Color(0.65f, 0.15f, 0.15f);
+                    }
                     return;
                 }
 
-                _remoteDiffField.value = res.Json ?? string.Empty;
+                string remoteStr = res.Json ?? string.Empty;
+                try
+                {
+                    if (!string.IsNullOrEmpty(remoteStr) && builder != null && builder.ConfigType != null)
+                    {
+                        JToken rawToken = JToken.Parse(remoteStr);
+                        JsonSerializer ser = JsonSerializer.Create(RcEnvelope.SerializerSettings);
+                        object dto = rawToken.ToObject(builder.ConfigType, ser);
+                        if (dto != null)
+                        {
+                            remoteStr = JToken.FromObject(dto, ser).ToString(Formatting.Indented);
+                        }
+                    }
+                }
+                catch
+                {
+                    // Ignore parsing errors and show raw JSON
+                }
+
+                _remoteDiffField.value = remoteStr;
                 RefreshLocalDiffPayload();
+
+                if (_diffStatusLight != null)
+                {
+                    _diffStatusLight.style.display = DisplayStyle.Flex;
+                    bool inSync = RcSyncService.Normalize(_localDiffField.value) == RcSyncService.Normalize(_remoteDiffField.value);
+                    bool pro = EditorGUIUtility.isProSkin;
+                    _diffStatusLight.style.backgroundColor = inSync
+                        ? (pro ? new Color(0.55f, 0.95f, 0.55f) : new Color(0.1f, 0.45f, 0.12f))
+                        : (pro ? new Color(1f, 0.5f, 0.5f) : new Color(0.65f, 0.15f, 0.15f));
+                }
             }
             catch (Exception ex)
             {
                 _remoteDiffField.value = ex.Message;
+                if (_diffStatusLight != null)
+                {
+                    _diffStatusLight.style.display = DisplayStyle.Flex;
+                    _diffStatusLight.style.backgroundColor = EditorGUIUtility.isProSkin ? new Color(1f, 0.5f, 0.5f) : new Color(0.65f, 0.15f, 0.15f);
+                }
                 Debug.LogError($"[LiveOps Config] Cloud compare failed: {ex.Message}\n{ex.StackTrace}");
             }
         }

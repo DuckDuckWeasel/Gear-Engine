@@ -15,65 +15,119 @@ MonoBehaviour:
   m_GroupName: Default Local Group
   m_GUID: 0bdbf61a5d37c41ee95db94752ea759c
   m_SerializeEntries:
+  - m_GUID: 0677328e8b18d4e128a78ed05e8f4169
+    m_Address: SCurveTrack
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - liveops.tracks
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 10dd8608d01154962acbe66d553ca314
+    m_Address: Figure8Track
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - liveops.tracks
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 176028c8f102c4647a1f91c9685d1571
+    m_Address: PeanutTrack
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - liveops.tracks
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 1cdf3f9880f0e43c499fd1afae844cbc
     m_Address: Catalogs/PerkCatalog
     m_ReadOnly: 0
     m_SerializedLabels:
     - Sample
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 248639503549346c0b504d13e4d7c453
+    m_Address: StarTrack
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - liveops.tracks
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 2e7fb10914d4448eebd5ebf3b37d4661
-    m_Address: Assets/GearEngine/Prefabs/Campaign/TalentCards_Popup View.prefab
+    m_Address: TalentCards_Popup View
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 3b45b42660c494773ae595ffa59e54b3
-    m_Address: Assets/GearEngine/Prefabs/Campaign/TalentCards View.prefab
+    m_Address: TalentCards View
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 3baae1b6fa9ea2345a187b40f8fe60ee
-    m_Address: Assets/GearEngine/Prefabs/Campaign/Main View.prefab
+    m_Address: Main View
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 628cc69cd86634b05bec8796488c8d2d
+    m_Address: HairpinTrack
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - liveops.tracks
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 652fbcb6bca7b46babf6eacef9397931
+    m_Address: DShapeTrack
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - liveops.tracks
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 689dcd40046774c4b80166058bccaf5f
-    m_Address: Assets/GearEngine/Prefabs/Campaign/Race View.prefab
+    m_Address: Race View
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 6ce7712943d0d1344bcaccc8749ee69c
-    m_Address: Assets/GearEngine/Data/Track/Tracks/OvalTrack.asset
+    m_Address: OvalTrack
     m_ReadOnly: 0
     m_SerializedLabels:
     - liveops.tracks
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 6e9cd533eec944d2d8eb2b7cf5e8cdca
-    m_Address: Assets/GearEngine/Prefabs/Gears/GearEngineView_NavigationStub.prefab
+    m_Address: GearEngineView_NavigationStub
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 7fc0f6df20b58de419af0dc0a0b99674
-    m_Address: Assets/GearEngine/Prefabs/Campaign/Campaign_ResultPopupView.prefab
+    m_Address: Campaign_ResultPopupView
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: a7b8c9d0e1f2435465768798a9bacdef
-    m_Address: Assets/GearEngine/Prefabs/Cards/CardSampleViewRoot.prefab
+    m_Address: CardSampleViewRoot
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: ae9649b11d04d44e4835017c358d0574
-    m_Address: Assets/GearEngine/Prefabs/GearEngineView_NavigationStub.prefab
+    m_Address: GearEngineView_NavigationStub
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: b050ac44f110045e79e6df30f00fe8d0
-    m_Address: Assets/GearEngine/Prefabs/Race/Track Test View.prefab
+    m_Address: Track Test View
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b0c28b649caf44a8f932b42482b55457
+    m_Address: KidneyTrack
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - liveops.tracks
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b1aac44ea26824e908c8ca5cb7f41f3b
+    m_Address: TriangleTrack
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - liveops.tracks
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: c1c1c1c1b2a3948576c5d4e3f2a1b0c9
-    m_Address: Assets/GearEngine/Data/Track/Tracks/CircleTrack.asset
+    m_Address: CircleTrack
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - liveops.tracks
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c7b9cd876097247f289f980babb13afb
+    m_Address: LShapeTrack
     m_ReadOnly: 0
     m_SerializedLabels:
     - liveops.tracks
@@ -85,25 +139,43 @@ MonoBehaviour:
     - Sample
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: d4e5f60718293a4b5c6d7e8f90123456
-    m_Address: Assets/GearEngine/Prefabs/App/MetaLoadedViewRoot.prefab
+    m_Address: MetaLoadedViewRoot
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: d628a68ecdaeac44c84b7f3072518b94
-    m_Address: Assets/GearEngine/Prefabs/Campaign/Campaign_RoguelikeView.prefab
+    m_Address: Campaign_RoguelikeView
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: d9b2bf9ad3d2d21439a807add8a1c39e
-    m_Address: Assets/GearEngine/Prefabs/Campaign/Setup View.prefab
+    m_Address: Setup View
     m_ReadOnly: 0
     m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d9b5d4dca34b340f7bd292930ab35ee2
+    m_Address: ZigZagTrack
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - liveops.tracks
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e4b10721f441ba24b8253dd37e8e32b3
+    m_Address: InfinityTrack
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - liveops.tracks
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2
     m_Address: Catalogs/Gear
     m_ReadOnly: 0
     m_SerializedLabels:
     - Sample
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ff613fcc9ed565a40b53d5d42b0014b3
+    m_Address: RoundedSquareTrack
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - liveops.tracks
     FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: fbb208bb5aa7a441d95f8c927490d368, type: 2}

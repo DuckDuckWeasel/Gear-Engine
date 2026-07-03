@@ -19,5 +19,5 @@ MonoBehaviour:
   hasMax: 0
   max: 0
   displayName: Gold
-  icon: {fileID: 0}
-  displayColor: {r: 1, g: 0.84, b: 0, a: 1}
+  icon: {fileID: -6167760959765602184, guid: fb560a5b2d3a9004b8b883995942a2db, type: 3}
+  displayColor: {r: 1, g: 1, b: 1, a: 1}
