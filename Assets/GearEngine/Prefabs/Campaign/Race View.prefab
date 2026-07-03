@@ -122,13 +122,29 @@ MonoBehaviour:
   track: {fileID: 0}
   board: {fileID: 0}
   telemetry: {fileID: 7146927928660000180}
+  driftScore: {fileID: 0}
   openTransitionAnchors:
   - {fileID: 471602485269854917}
   - {fileID: 7720100010300}
   - {fileID: 920020011001100103}
   openTransitionDurationSeconds: 0.35
+  startRaceSound:
+    _entity: {fileID: 0}
+    ID: 0
+    <DebugObject>k__BackingField: {fileID: 231521040734453040}
+  lapCompletedSound:
+    _entity: {fileID: 0}
+    ID: 0
+    <DebugObject>k__BackingField: {fileID: 231521040734453040}
+  raceFinishedSound:
+    _entity: {fileID: 0}
+    ID: 0
+    <DebugObject>k__BackingField: {fileID: 231521040734453040}
   raceTimeText: {fileID: 6321392184707742895}
   currentVelocityText: {fileID: 6051459843670843345}
+  currentLapText: {fileID: 0}
+  currentRpmText: {fileID: 0}
+  currentGearText: {fileID: 0}
   speedCapabilityText: {fileID: 3901787954810688563}
   corneringSkillText: {fileID: 2955861156730665953}
   driftText: {fileID: 7788234615437263103}
@@ -1004,6 +1020,7 @@ MonoBehaviour:
     - rid: 8490313441434927278
     - rid: 8490313728363856042
     - rid: 8490313728363856046
+  parentAnimoraPlayer: {fileID: 0}
   references:
     version: 2
     RefIds:
@@ -1946,6 +1963,7 @@ MonoBehaviour:
   clipsManager:
     clips:
     - rid: 8490313441434927280
+  parentAnimoraPlayer: {fileID: 0}
   references:
     version: 2
     RefIds:
@@ -2424,6 +2442,7 @@ MonoBehaviour:
   clipsManager:
     clips:
     - rid: 8490313441434927286
+  parentAnimoraPlayer: {fileID: 0}
   references:
     version: 2
     RefIds:

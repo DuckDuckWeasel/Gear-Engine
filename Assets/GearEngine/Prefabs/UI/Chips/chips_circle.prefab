@@ -10,7 +10,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 343925696065289225, guid: 82b8d303f811e904d8a2d4291b7dd5a8, type: 3}
       propertyPath: m_Name
-      value: chips (2) Variant
+      value: chips_circle
       objectReference: {fileID: 0}
     - target: {fileID: 4311653600123158341, guid: 82b8d303f811e904d8a2d4291b7dd5a8, type: 3}
       propertyPath: m_Pivot.x

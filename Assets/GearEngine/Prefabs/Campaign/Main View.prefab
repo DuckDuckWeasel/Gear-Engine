@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 7279388909862312374}
   - component: {fileID: 5429820963616905633}
   - component: {fileID: 4546811918224540501}
-  - component: {fileID: 6516564400842414703}
   m_Layer: 0
   m_Name: 3rdPlace
   m_TagString: Untagged
@@ -36,9 +35,9 @@ RectTransform:
   - {fileID: 1051262865929199773}
   m_Father: {fileID: 7538563878474711090}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 463.5, y: -457.5}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 827, y: 167}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5429820963616905633
@@ -79,21 +78,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &6516564400842414703
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 645047754522720598}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7c8d9e0f1a2b4c6d8e0f1a2b4c6d8e0f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Game.Campaign::GearEngine.Campaign.Presentation.TrackScoreBandSlotView
-  positionLabel: {fileID: 7947246233124081638}
-  targetTimeLabel: {fileID: 7294273364311868920}
-  rewardLabel: {fileID: 4225549558796993429}
 --- !u!1 &758158231837923763
 GameObject:
   m_ObjectHideFlags: 0
@@ -341,7 +325,6 @@ GameObject:
   - component: {fileID: 6924472397306322811}
   - component: {fileID: 5640659807324659564}
   - component: {fileID: 4180670902167094680}
-  - component: {fileID: 6877633916834487458}
   m_Layer: 0
   m_Name: '1stPlace '
   m_TagString: Untagged
@@ -366,9 +349,9 @@ RectTransform:
   - {fileID: 832015093661623888}
   m_Father: {fileID: 7538563878474711090}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 463.5, y: -83.5}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 827, y: 167}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5640659807324659564
@@ -409,21 +392,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &6877633916834487458
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1003903403850432411}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7c8d9e0f1a2b4c6d8e0f1a2b4c6d8e0f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Game.Campaign::GearEngine.Campaign.Presentation.TrackScoreBandSlotView
-  positionLabel: {fileID: 7734779561377663275}
-  targetTimeLabel: {fileID: 6928587546600735541}
-  rewardLabel: {fileID: 4591725208935941464}
 --- !u!1 &1140105658424561479
 GameObject:
   m_ObjectHideFlags: 0
@@ -932,7 +900,6 @@ GameObject:
   - component: {fileID: 6092363404801034338}
   - component: {fileID: 8850524329265940597}
   - component: {fileID: 1049475880973947521}
-  - component: {fileID: 7775048396077304763}
   m_Layer: 0
   m_Name: 2ndPlace
   m_TagString: Untagged
@@ -957,9 +924,9 @@ RectTransform:
   - {fileID: 4548406478998303049}
   m_Father: {fileID: 7538563878474711090}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 463.5, y: -270.5}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 827, y: 167}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8850524329265940597
@@ -1000,21 +967,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &7775048396077304763
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4141713081040300162}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7c8d9e0f1a2b4c6d8e0f1a2b4c6d8e0f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Game.Campaign::GearEngine.Campaign.Presentation.TrackScoreBandSlotView
-  positionLabel: {fileID: 6900556751816334898}
-  targetTimeLabel: {fileID: 6103379578701780012}
-  rewardLabel: {fileID: 805532412991033921}
 --- !u!1 &4225183476264005054
 GameObject:
   m_ObjectHideFlags: 0
@@ -2023,13 +1975,10 @@ MonoBehaviour:
   trackNameLabel: {fileID: 3951729304625382977}
   targetLapsLabel: {fileID: 214836599506853913}
   targetTimeLabel: {fileID: 5475977143569156494}
-  maxDisplayScores: 3
-  bandsContainer: {fileID: 7538563878474711090}
-  bandSlotPrefabs:
-  - MinPosition: 0
-    MaxPosition: 1
-    Prefab: {fileID: 7712636100114552401, guid: d844640ffef1ac74a80ec310f2b635d0, type: 3}
-  defaultBandSlotPrefab: {fileID: 498237623679208949, guid: 86c234928a8354dd3842ea95258c0d6f, type: 3}
+  maxDisplayTiers: 3
+  tiersContainer: {fileID: 0}
+  tierSlotPrefabs: []
+  defaultTierSlotPrefab: {fileID: 0}
   popDuration: 0.25
   stagger: 0.08
   popEase: 26
@@ -2915,7 +2864,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: AnimoraRuntime::OM.Animora.Runtime.AnimoraPlayer
   playerUniqueID: MainMenu
-  selectedClipIndex: 0
+  selectedClipIndex: 1
   playMode: 1
   timeMode: 1
   defaultPlayDirection: 0
@@ -3646,30 +3595,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 7405209907058371180, guid: ba79c7db93477e641ac2b9a2c3a5ce18, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7405209907058371180, guid: ba79c7db93477e641ac2b9a2c3a5ce18, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
-      value: 6
-      objectReference: {fileID: 0}
-    - target: {fileID: 7405209907058371180, guid: ba79c7db93477e641ac2b9a2c3a5ce18, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 7405209907058371180, guid: ba79c7db93477e641ac2b9a2c3a5ce18, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: SetActive
-      objectReference: {fileID: 0}
-    - target: {fileID: 7405209907058371180, guid: ba79c7db93477e641ac2b9a2c3a5ce18, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: UnityEngine.GameObject, UnityEngine
-      objectReference: {fileID: 0}
-    - target: {fileID: 7405209907058371180, guid: ba79c7db93477e641ac2b9a2c3a5ce18, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
-      value: UnityEngine.Object, UnityEngine
-      objectReference: {fileID: 0}
     - target: {fileID: 7833259013974841860, guid: ba79c7db93477e641ac2b9a2c3a5ce18, type: 3}
       propertyPath: m_Name
       value: startrace_button
@@ -3719,10 +3644,6 @@ PrefabInstance:
       value: 527.7381
       objectReference: {fileID: 0}
     - target: {fileID: 1002547155367510495, guid: d932b1e0a0811734c907544ebd4209ef, type: 3}
-      propertyPath: m_SizeDelta.y
-      value: 85.2435
-      objectReference: {fileID: 0}
-    - target: {fileID: 1002547155367510495, guid: d932b1e0a0811734c907544ebd4209ef, type: 3}
       propertyPath: m_AnchoredPosition.x
       value: 0
       objectReference: {fileID: 0}
@@ -3737,6 +3658,10 @@ PrefabInstance:
     - target: {fileID: 3117315771165366363, guid: d932b1e0a0811734c907544ebd4209ef, type: 3}
       propertyPath: selectedClipIndex
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3117315771165366363, guid: d932b1e0a0811734c907544ebd4209ef, type: 3}
+      propertyPath: managedReferences[8490313434449576084].anchorPosition.one.value.y
+      value: -150
       objectReference: {fileID: 0}
     - target: {fileID: 3689793368030866433, guid: d932b1e0a0811734c907544ebd4209ef, type: 3}
       propertyPath: m_fontSize
@@ -3799,10 +3724,6 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8191536515024105326, guid: d932b1e0a0811734c907544ebd4209ef, type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 485.526
-      objectReference: {fileID: 0}
-    - target: {fileID: 8191536515024105326, guid: d932b1e0a0811734c907544ebd4209ef, type: 3}
       propertyPath: m_SizeDelta.y
       value: 171.7647
       objectReference: {fileID: 0}
@@ -3852,7 +3773,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8191536515024105326, guid: d932b1e0a0811734c907544ebd4209ef, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 180
+      value: -150
       objectReference: {fileID: 0}
     - target: {fileID: 8191536515024105326, guid: d932b1e0a0811734c907544ebd4209ef, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x

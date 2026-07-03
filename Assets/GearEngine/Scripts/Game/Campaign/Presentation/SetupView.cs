@@ -57,7 +57,10 @@ namespace GearEngine.Campaign.Presentation
                 this,
                 openTransitionAnchors,
                 openTransitionDurationSeconds,
-                onComplete: () => inventoryView.RebuildAndFit());
+                onComplete: () => {
+                    inventoryView.RebuildAndFit();
+                    if (boardView != null) boardView.SpinAllGearsOnceVisual();
+                });
         }
 
         protected override void OnClose(bool hiding)

@@ -68,7 +68,7 @@ MonoBehaviour:
   m_text: Place the cogs.
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 3f182bccd6815e546801663f21300cdb, type: 2}
-  m_sharedMaterial: {fileID: 8067483209966327803, guid: 3f182bccd6815e546801663f21300cdb, type: 2}
+  m_sharedMaterial: {fileID: 2100000, guid: 8403b954e0aa74b7794a4509efbf5e12, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -205,7 +205,7 @@ MonoBehaviour:
   m_text: BUILD YOUR RUNNER
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 3f182bccd6815e546801663f21300cdb, type: 2}
-  m_sharedMaterial: {fileID: 8067483209966327803, guid: 3f182bccd6815e546801663f21300cdb, type: 2}
+  m_sharedMaterial: {fileID: 2100000, guid: 8403b954e0aa74b7794a4509efbf5e12, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -284,7 +284,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8867612761060566318}
   m_Layer: 0
-  m_Name: labels_Title&Sub
+  m_Name: Labels_Title&Sub
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

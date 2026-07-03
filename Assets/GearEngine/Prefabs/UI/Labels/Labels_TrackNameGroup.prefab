@@ -35,7 +35,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
   m_AnchoredPosition: {x: -8.8, y: 58.3}
-  m_SizeDelta: {x: 437.6, y: 50}
+  m_SizeDelta: {x: 700, y: 50}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!222 &6712113285577011045
 CanvasRenderer:
@@ -68,7 +68,7 @@ MonoBehaviour:
   m_text: "TRACK 03 \xB7 RIVIERA"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 3f182bccd6815e546801663f21300cdb, type: 2}
-  m_sharedMaterial: {fileID: 8067483209966327803, guid: 3f182bccd6815e546801663f21300cdb, type: 2}
+  m_sharedMaterial: {fileID: 2100000, guid: 8403b954e0aa74b7794a4509efbf5e12, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -174,7 +174,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
   m_AnchoredPosition: {x: 0, y: -400}
-  m_SizeDelta: {x: 485.526, y: 171.7647}
+  m_SizeDelta: {x: 800, y: 171.7647}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &3117315771165366363
 MonoBehaviour:
@@ -225,6 +225,7 @@ MonoBehaviour:
     clips:
     - rid: 8490313434449576084
     - rid: 8490313434449576086
+  parentAnimoraPlayer: {fileID: 0}
   references:
     version: 2
     RefIds:
@@ -469,7 +470,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
   m_AnchoredPosition: {x: 0, y: -1.5}
-  m_SizeDelta: {x: 420, y: 72}
+  m_SizeDelta: {x: 420, y: 125}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!222 &8825005876838250198
 CanvasRenderer:
@@ -502,7 +503,7 @@ MonoBehaviour:
   m_text: MONACO
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 3f182bccd6815e546801663f21300cdb, type: 2}
-  m_sharedMaterial: {fileID: 8067483209966327803, guid: 3f182bccd6815e546801663f21300cdb, type: 2}
+  m_sharedMaterial: {fileID: 2100000, guid: 8403b954e0aa74b7794a4509efbf5e12, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -526,12 +527,12 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 94
-  m_fontSizeBase: 94
+  m_fontSize: 98.75
+  m_fontSizeBase: 125
   m_fontWeight: 400
-  m_enableAutoSizing: 0
-  m_fontSizeMin: 18
-  m_fontSizeMax: 72
+  m_enableAutoSizing: 1
+  m_fontSizeMin: 50
+  m_fontSizeMax: 125
   m_fontStyle: 1
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
@@ -638,8 +639,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: "Pill-shape \xB7 Smooth \xB7 600m"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8af42aa59bc0d4546bf726734e3e1b93, type: 2}
-  m_sharedMaterial: {fileID: -8401354629715570643, guid: 8af42aa59bc0d4546bf726734e3e1b93, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 3f182bccd6815e546801663f21300cdb, type: 2}
+  m_sharedMaterial: {fileID: 2100000, guid: 8403b954e0aa74b7794a4509efbf5e12, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []

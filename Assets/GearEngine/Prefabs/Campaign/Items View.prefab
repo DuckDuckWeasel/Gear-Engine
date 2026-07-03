@@ -266,7 +266,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: AnimoraRuntime::OM.Animora.Runtime.AnimoraPlayer
   playerUniqueID: AnimoraPlayer
-  selectedClipIndex: 1
+  selectedClipIndex: 2
   playMode: 1
   timeMode: 1
   defaultPlayDirection: 0
@@ -744,7 +744,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: AnimoraRuntime::OM.Animora.Runtime.AnimoraPlayer
   playerUniqueID: AnimoraPlayer
-  selectedClipIndex: 1
+  selectedClipIndex: 0
   playMode: 2
   timeMode: 1
   defaultPlayDirection: 0
@@ -790,7 +790,7 @@ MonoBehaviour:
         clipName: Scale
         clipDescription: This is a scale action
         highlightColor: {r: 0.38, g: 0.78, b: 0.8, a: 1}
-        isActive: 1
+        isActive: 0
         startTime: 0
         duration: 1
         orderIndex: 0
@@ -2588,7 +2588,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5628672064307717070, guid: d932b1e0a0811734c907544ebd4209ef, type: 3}
       propertyPath: m_fontSize
-      value: 124
+      value: 79.75
       objectReference: {fileID: 0}
     - target: {fileID: 5628672064307717070, guid: d932b1e0a0811734c907544ebd4209ef, type: 3}
       propertyPath: m_margin.y
