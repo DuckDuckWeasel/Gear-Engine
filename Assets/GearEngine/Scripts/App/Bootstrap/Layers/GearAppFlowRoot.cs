@@ -18,6 +18,11 @@ namespace GearEngine.App.Bootstrap
         [SerializeField]
         private Transform navigationViewHolder;
 
+        [Header("Timing")]
+        [Tooltip("Minimum time (in seconds) the application bootstrap should take before declaring readiness.")]
+        [SerializeField]
+        private float minimumLoadingTimeSeconds = 2f;
+
         [Header("Global UI")]
         [SerializeField]
         private global::GearEngine.SceneFoundation.Presentation.GlobalLoadingOverlay globalLoadingPrefab;
@@ -32,6 +37,14 @@ namespace GearEngine.App.Bootstrap
         [SerializeField]
         private List<AssetPublisherDefinition> layerAssetPublishers = new List<AssetPublisherDefinition>();
 
+        private float _startupTime;
+
+        protected override void Awake()
+        {
+            base.Awake();
+            _startupTime = Time.realtimeSinceStartup;
+        }
+
         protected sealed override IInLayerScheduler CreateScheduler()
         {
             return new SequentialInLayerScheduler();
@@ -44,6 +57,7 @@ namespace GearEngine.App.Bootstrap
             {
                 yield return layer;
             }
+            yield return new MinimumDelayLayer(_startupTime, minimumLoadingTimeSeconds);
         }
 
         protected abstract IEnumerable<IScopeLayer> GetGameLayers();
