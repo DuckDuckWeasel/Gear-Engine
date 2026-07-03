@@ -1,0 +1,493 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &2340266143207795232
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2173354052729107407}
+  - component: {fileID: 1029003171777768492}
+  - component: {fileID: 1874217339250379449}
+  m_Layer: 0
+  m_Name: Container
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &2173354052729107407
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2340266143207795232}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 202822064703107894}
+  m_Father: {fileID: 7544192529601394365}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1029003171777768492
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2340266143207795232}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a1534cbac729494f945c90efe327e10a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: AnimoraRuntime::OM.Animora.Runtime.AnimoraPlayer
+  playerUniqueID: AnimoraPlayer
+  selectedClipIndex: 1
+  playMode: 1
+  timeMode: 1
+  defaultPlayDirection: 0
+  playLoopType: 2
+  debugFlags: 0
+  timelineDuration: 1
+  playbackSpeed: 1
+  loopCount: 1
+  animoraPlayerEvents:
+    enabled: 0
+    onStartPlaying:
+      m_PersistentCalls:
+        m_Calls: []
+    onCompletePlaying:
+      m_PersistentCalls:
+        m_Calls: []
+    onStartLoop:
+      m_PersistentCalls:
+        m_Calls: []
+    onCompleteLoop:
+      m_PersistentCalls:
+        m_Calls: []
+    onPause:
+      m_PersistentCalls:
+        m_Calls: []
+    onResume:
+      m_PersistentCalls:
+        m_Calls: []
+    onStop:
+      m_PersistentCalls:
+        m_Calls: []
+  clipsManager:
+    clips:
+    - rid: 8490313441434927275
+    - rid: 8490313441434927278
+    - rid: 8490313728363856042
+    - rid: 8490313728363856046
+  parentAnimoraPlayer: {fileID: 0}
+  references:
+    version: 2
+    RefIds:
+    - rid: 8490313441434927275
+      type: {class: AnimoraClipNestedPlayer, ns: OM.Animora.Modules, asm: Assembly-CSharp}
+      data:
+        clipName: HeaderChips
+        clipDescription: Plays a nested player
+        highlightColor: {r: 0.4, g: 0.8, b: 0.41, a: 1}
+        isActive: 1
+        startTime: 0
+        duration: 0.6
+        orderIndex: 0
+        debugFlags: 0
+        playChance: 100
+        events:
+          isEnabled: 0
+          onStartPlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompletePlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onStartOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompleteOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onEnter:
+            m_PersistentCalls:
+              m_Calls: []
+          onUpdate:
+            m_PersistentCalls:
+              m_Calls: []
+          onExit:
+            m_PersistentCalls:
+              m_Calls: []
+        nestedPlayer: {fileID: 0}
+    - rid: 8490313441434927278
+      type: {class: AnimoraClipNestedPlayer, ns: OM.Animora.Modules, asm: Assembly-CSharp}
+      data:
+        clipName: PainelRaceContainer
+        clipDescription: Plays a nested player
+        highlightColor: {r: 0.8, g: 0.49, b: 0.8, a: 1}
+        isActive: 1
+        startTime: 0
+        duration: 0.5968586
+        orderIndex: 1
+        debugFlags: 0
+        playChance: 100
+        events:
+          isEnabled: 0
+          onStartPlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompletePlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onStartOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompleteOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onEnter:
+            m_PersistentCalls:
+              m_Calls: []
+          onUpdate:
+            m_PersistentCalls:
+              m_Calls: []
+          onExit:
+            m_PersistentCalls:
+              m_Calls: []
+        nestedPlayer: {fileID: 0}
+    - rid: 8490313728363856042
+      type: {class: AnimoraClipBroAudio, ns: OM.Animora.Modules, asm: Assembly-CSharp}
+      data:
+        clipName: BroAudio Play
+        clipDescription: Plays a sound using BroAudio
+        highlightColor: {r: 0.8, g: 0.33, b: 0.41, a: 1}
+        isActive: 1
+        startTime: 0.05851064
+        duration: 0.19680852
+        orderIndex: 2
+        debugFlags: 0
+        playChance: 100
+        events:
+          isEnabled: 0
+          onStartPlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompletePlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onStartOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompleteOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onEnter:
+            m_PersistentCalls:
+              m_Calls: []
+          onUpdate:
+            m_PersistentCalls:
+              m_Calls: []
+          onExit:
+            m_PersistentCalls:
+              m_Calls: []
+        soundID:
+          _entity: {fileID: 11400000, guid: 260e9b9886c0cda46895212ce42b51a5, type: 2}
+          ID: 0
+          <DebugObject>k__BackingField: {fileID: 0}
+        stopOnExit: 0
+        fadeOut: -1
+    - rid: 8490313728363856046
+      type: {class: AnimoraClipBroAudio, ns: OM.Animora.Modules, asm: Assembly-CSharp}
+      data:
+        clipName: BroAudio Play
+        clipDescription: Plays a sound using BroAudio
+        highlightColor: {r: 0.8, g: 0.33, b: 0.41, a: 1}
+        isActive: 1
+        startTime: 0.42021278
+        duration: 0.5
+        orderIndex: 3
+        debugFlags: 0
+        playChance: 100
+        events:
+          isEnabled: 0
+          onStartPlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompletePlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onStartOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompleteOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onEnter:
+            m_PersistentCalls:
+              m_Calls: []
+          onUpdate:
+            m_PersistentCalls:
+              m_Calls: []
+          onExit:
+            m_PersistentCalls:
+              m_Calls: []
+        soundID:
+          _entity: {fileID: 11400000, guid: 3675c87e6e6dac74d8ffe18743fa68aa, type: 2}
+          ID: 0
+          <DebugObject>k__BackingField: {fileID: 2340266143207795232}
+        stopOnExit: 0
+        fadeOut: -1
+--- !u!114 &1874217339250379449
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2340266143207795232}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 471a6f36fb0c84273965321f132ab249, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GearEngine.Core.ViewUtility.Audio.UIAudioEventTrigger
+  _triggers:
+  - eventID: 0
+    sound:
+      _entity: {fileID: 11400000, guid: 5a100ca87225f284588a7ee9a2e26340, type: 2}
+      ID: 0
+      <DebugObject>k__BackingField: {fileID: 2340266143207795232}
+--- !u!1 &4689783073282822617
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 202822064703107894}
+  - component: {fileID: 3883360335511625626}
+  m_Layer: 0
+  m_Name: Score
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &202822064703107894
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4689783073282822617}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2173354052729107407}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: -200}
+  m_SizeDelta: {x: -650, y: 200}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &3883360335511625626
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4689783073282822617}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4c83410da1d949abaa8c3e774447131, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.Campaign::GearEngine.Campaign.Presentation.RaceDriftScoreView
+  multiplierText: {fileID: 0}
+  pointsText: {fileID: 0}
+  canvasGroup: {fileID: 0}
+  multiplierPunchScale: {x: 0.5, y: 0.5, z: 0}
+  punchDuration: 0.3
+  pointScalePingPong: 1.05
+  pointPingPongDuration: 0.2
+--- !u!1 &5273866206788955210
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7544192529601394365}
+  - component: {fileID: 5277353525138750851}
+  - component: {fileID: 8547230020709933595}
+  - component: {fileID: 252851164616936413}
+  - component: {fileID: 8101901184549904543}
+  - component: {fileID: 1120289716105245696}
+  m_Layer: 0
+  m_Name: ScoreView
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &7544192529601394365
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5273866206788955210}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 0, y: 0, z: 0}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 2173354052729107407}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0, y: 0}
+--- !u!223 &5277353525138750851
+Canvas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5273866206788955210}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_RenderMode: 0
+  m_Camera: {fileID: 0}
+  m_PlaneDistance: 100
+  m_PixelPerfect: 0
+  m_ReceivesEvents: 1
+  m_OverrideSorting: 0
+  m_OverridePixelPerfect: 0
+  m_SortingBucketNormalizedSize: 0
+  m_VertexColorAlwaysGammaSpace: 0
+  m_AdditionalShaderChannelsFlag: 25
+  m_UpdateRectTransformForStandalone: 0
+  m_SortingLayerID: 0
+  m_SortingOrder: 0
+  m_TargetDisplay: 0
+--- !u!114 &8547230020709933595
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5273866206788955210}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.CanvasScaler
+  m_UiScaleMode: 1
+  m_ReferencePixelsPerUnit: 100
+  m_ScaleFactor: 1
+  m_ReferenceResolution: {x: 1080, y: 2280}
+  m_ScreenMatchMode: 0
+  m_MatchWidthOrHeight: 1
+  m_PhysicalUnit: 3
+  m_FallbackScreenDPI: 96
+  m_DefaultSpriteDPI: 96
+  m_DynamicPixelsPerUnit: 1
+  m_PresetInfoIsWorld: 0
+--- !u!114 &252851164616936413
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5273866206788955210}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc42784cf147c0c48a680349fa168899, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.GraphicRaycaster
+  m_IgnoreReversedGraphics: 1
+  m_BlockingObjects: 0
+  m_BlockingMask:
+    serializedVersion: 2
+    m_Bits: 55
+--- !u!114 &8101901184549904543
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5273866206788955210}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1f5d4105055055846b7ca7a6dcedc157, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.Campaign::GearEngine.Campaign.Presentation.ActiveRaceView
+  type: 0
+  track: {fileID: 0}
+  board: {fileID: 0}
+  telemetry: {fileID: 0}
+  driftScore: {fileID: 0}
+  openTransitionAnchors:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  openTransitionDurationSeconds: 0.35
+  startRaceSound:
+    _entity: {fileID: 11400000, guid: 3742bd296d409414ea01ae06a48d8f40, type: 2}
+    ID: 0
+    <DebugObject>k__BackingField: {fileID: 5273866206788955210}
+  lapCompletedSound:
+    _entity: {fileID: 11400000, guid: 06f0bd5ab41869b47aac1ff9c1275199, type: 2}
+    ID: 0
+    <DebugObject>k__BackingField: {fileID: 5273866206788955210}
+  raceFinishedSound:
+    _entity: {fileID: 11400000, guid: bfd9931839d8d2f4d8c34bc881f64f3b, type: 2}
+    ID: 0
+    <DebugObject>k__BackingField: {fileID: 5273866206788955210}
+  raceTimeText: {fileID: 0}
+  currentVelocityText: {fileID: 0}
+  currentLapText: {fileID: 0}
+  currentRpmText: {fileID: 0}
+  currentGearText: {fileID: 0}
+  speedCapabilityText: {fileID: 0}
+  corneringSkillText: {fileID: 0}
+  driftText: {fileID: 0}
+  precisionText: {fileID: 0}
+  smoothnessText: {fileID: 0}
+--- !u!114 &1120289716105245696
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5273866206788955210}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 385ffc06106304cc3824d5bcf25a7037, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: BroAudio::Ami.BroAudio.SoundSource
+  _onlyPlayOnce: 0
+  _playOnEnable: 1
+  _stopOnDisable: 0
+  _overrideFadeOut: -1
+  _sound:
+    _entity: {fileID: 11400000, guid: 5a100ca87225f284588a7ee9a2e26340, type: 2}
+    ID: 0
+    <DebugObject>k__BackingField: {fileID: 5273866206788955210}
+  _overrideGroup: {fileID: 11400000, guid: 8e6c3458659b642fc8619a959b12f2df, type: 2}
+  _positionMode: 0
+  _delay: 0

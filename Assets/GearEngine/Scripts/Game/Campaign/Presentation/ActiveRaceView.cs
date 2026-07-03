@@ -59,6 +59,12 @@ namespace GearEngine.Campaign.Presentation
 
             track.Bind(viewModel.Track);
             driftScore?.Bind(viewModel.DriftScore);
+            
+            if (board != null)
+            {
+                board.Bind(viewModel.Board);
+            }
+
             SpawnAndBindCar();
 
             lastDisplayedLap = 0;
@@ -257,6 +263,10 @@ namespace GearEngine.Campaign.Presentation
         {
             base.OnOpen(wasHidden);
             SetRaceSceneRootsActive(true);
+            if (board != null)
+            {
+                board.SetAllGearsRapidSpin(true);
+            }
             PlayFrustumTransitionThenStartRace();
         }
 
@@ -281,6 +291,11 @@ namespace GearEngine.Campaign.Presentation
             }
 
             raceStartPending = false;
+            
+            if (board != null)
+            {
+                board.SetAllGearsRapidSpin(false);
+            }
 
             // Generate props now that the track is at its final position.
             if (track != null)
@@ -322,6 +337,12 @@ namespace GearEngine.Campaign.Presentation
             if (track != null)
             {
                 track.Unbind();
+            }
+            
+            if (board != null)
+            {
+                board.SetAllGearsRapidSpin(false);
+                board.Unbind();
             }
 
             SetRaceSceneRootsActive(false);

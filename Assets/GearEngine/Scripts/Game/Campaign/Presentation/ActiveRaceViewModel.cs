@@ -11,6 +11,9 @@ using GearEngine.CarSimulation.Definitions;
 using GearEngine.CarSimulation.Presentation;
 using GearEngine.CarSimulation.Simulation;
 using GearEngine.GearEngine;
+using GearEngine.GearEngine.Presentation.UI;
+using GearEngine.GearEngine.Services;
+using GearEngine.GearEngine.Services.Board;
 using Scaffold.MVVM;
 using Scaffold.Navigation.Contracts;
 using UnityEngine;
@@ -31,9 +34,12 @@ namespace GearEngine.Campaign.Presentation
 
         public CarViewModel Car { get; private set; }
         public RaceDriftScoreViewModel DriftScore { get; private set; }
+        public BoardViewModel Board { get; private set; }
 
         [Inject] private ITrackService trackService;
         [Inject] private IGearEngineService engineService;
+        [Inject] private IBoardService boardService;
+        [Inject] private IInventoryService inventoryService;
         [Inject] private TrackSimulationFactory trackFactory;
         [Inject] private RaceManagerService raceManager;
         [Inject] private ISimulationRunnerService aiRunner;
@@ -76,6 +82,10 @@ namespace GearEngine.Campaign.Presentation
 
             DriftScore = new RaceDriftScoreViewModel(freshSession, Car);
             BindChildViewModel(DriftScore);
+
+            Board = new BoardViewModel(boardService, engineService, inventoryService, eventBus);
+            Board.Interactable = false;
+            BindChildViewModel(Board);
 
             Bind<SimulationLifecycleState, SimulationLifecycleState>(() => Track.State, OnTrackStateChanged);
             analyticsService?.Record(new RaceStartedEvent(trackService.CurrentTrack.name, trackService.CurrentCar.name));

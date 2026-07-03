@@ -3,6 +3,7 @@ using TMPro;
 using DG.Tweening;
 using Scaffold.MVVM;
 using System.ComponentModel;
+using GearEngine.GearEngine.Config;
 
 namespace GearEngine.Campaign.Presentation
 {
@@ -18,10 +19,12 @@ namespace GearEngine.Campaign.Presentation
         [SerializeField] private float punchDuration = 0.3f;
         [SerializeField] private float pointScalePingPong = 1.05f;
         [SerializeField] private float pointPingPongDuration = 0.2f;
+        [SerializeField] private float punchScalePerTier = 0.2f;
 
         private Tween pointsTween;
         private Tween fadeTween;
         private Tween multiplierPunchTween;
+        private Tween multiplierLoopTween;
 
         protected override void OnBind()
         {
@@ -32,7 +35,7 @@ namespace GearEngine.Campaign.Presentation
             viewModel.PropertyChanged += OnViewModelPropertyChanged;
 
             UpdateVisibility(false, false);
-            multiplierText.text = $"{viewModel.CurrentMultiplier}x";
+            UpdateMultiplierTextAndColor();
             pointsText.text = $"{viewModel.DisplayPoints}";
         }
 
@@ -61,8 +64,17 @@ namespace GearEngine.Campaign.Presentation
             }
             else if (e.PropertyName == nameof(viewModel.CurrentMultiplier))
             {
-                multiplierText.text = $"{viewModel.CurrentMultiplier}x";
+                UpdateMultiplierTextAndColor();
             }
+        }
+
+        private void UpdateMultiplierTextAndColor()
+        {
+            multiplierText.text = $"{viewModel.CurrentMultiplier}x";
+            
+            // Multiplier 1 = Tier 0 (Common), Multiplier 2 = Tier 1 (Uncommon), etc.
+            int tierIndex = Mathf.Max(0, viewModel.CurrentMultiplier - 1);
+            multiplierText.color = RarityPalette.GetColorByTier(tierIndex);
         }
 
         private void UpdateVisibility(bool visible, bool animate = true)
@@ -88,6 +100,7 @@ namespace GearEngine.Campaign.Presentation
                 if (canvasGroup.alpha <= 0f && fadeTween == null) return;
                 
                 StopPointsAnimation();
+                StopMultiplierLoop();
                 fadeTween?.Kill();
                 if (animate)
                 {
@@ -103,10 +116,23 @@ namespace GearEngine.Campaign.Presentation
         private void OnMultiplierIncreased()
         {
             multiplierPunchTween?.Kill();
-            multiplierText.transform.localScale = Vector3.one;
-            multiplierPunchTween = multiplierText.transform.DOPunchScale(multiplierPunchScale, punchDuration, 5, 1f);
+            StopMultiplierLoop();
             
-            multiplierText.text = $"{viewModel.CurrentMultiplier}x";
+            multiplierText.transform.localScale = Vector3.one;
+            
+            float scaleMultiplier = 1f + (Mathf.Max(0, viewModel.CurrentMultiplier - 1) * punchScalePerTier);
+            Vector3 actualPunchScale = multiplierPunchScale * scaleMultiplier;
+            
+            multiplierPunchTween = multiplierText.transform.DOPunchScale(actualPunchScale, punchDuration, 5, 1f)
+                .OnComplete(() => 
+                {
+                    if (viewModel.CurrentMultiplier >= 5)
+                    {
+                        StartMultiplierLoop();
+                    }
+                });
+            
+            UpdateMultiplierTextAndColor();
             pointsText.text = $"{viewModel.DisplayPoints}";
         }
 
@@ -114,7 +140,7 @@ namespace GearEngine.Campaign.Presentation
         {
             KillTweens();
             canvasGroup.alpha = 1f;
-            multiplierText.text = $"{viewModel.CurrentMultiplier}x";
+            UpdateMultiplierTextAndColor();
             pointsText.text = $"{viewModel.DisplayPoints}";
             
             fadeTween = DOTween.To(() => canvasGroup.alpha, x => canvasGroup.alpha = x, 0f, 0.5f).SetDelay(1f);
@@ -136,9 +162,26 @@ namespace GearEngine.Campaign.Presentation
             pointsText.transform.localScale = Vector3.one;
         }
 
+        private void StartMultiplierLoop()
+        {
+            if (multiplierLoopTween != null && multiplierLoopTween.IsActive()) return;
+            
+            multiplierText.transform.localScale = Vector3.one;
+            multiplierLoopTween = multiplierText.transform.DOScale(1.15f, 0.25f)
+                .SetEase(Ease.InOutSine)
+                .SetLoops(-1, LoopType.Yoyo);
+        }
+
+        private void StopMultiplierLoop()
+        {
+            multiplierLoopTween?.Kill();
+            multiplierText.transform.localScale = Vector3.one;
+        }
+
         private void KillTweens()
         {
             multiplierPunchTween?.Kill();
+            StopMultiplierLoop();
             pointsText.transform.DOKill();
             fadeTween?.Kill();
             pointsTween?.Kill();
