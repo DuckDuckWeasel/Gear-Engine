@@ -27,8 +27,14 @@ namespace GearEngine.CarSimulation.Simulation
         /// <summary>Returns telemetry data for a given car entity.</summary>
         bool GetTelemetry(CarEntity entity, out CarTelemetryData data);
 
+        /// <summary>Applies a sudden jerk (speed reduction/momentum loss) to the car, such as during a gear shift.</summary>
+        void ApplyJerk(CarEntity entity, float severity);
+
         /// <summary>Removes a driver from the active simulation.</summary>
         void RemoveDriver(CarEntity entity);
+
+        /// <summary>Triggers a cinematic finish for the car.</summary>
+        void TriggerCinematicFinish(CarEntity entity);
 
         /// <summary>Advances the simulation by one frame.</summary>
         void Tick();

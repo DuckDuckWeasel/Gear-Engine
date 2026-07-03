@@ -21,6 +21,16 @@ namespace GearEngine.CarSimulation.PhysicsSimulation
             this.config = config;
         }
 
+        public void TriggerCinematicFinish(CarEntity entity)
+        {
+            // Optional: Implement cinematic finish for physics runner if needed, or leave empty
+        }
+
+        public void ApplyJerk(CarEntity entity, float severity)
+        {
+            // Not implemented in deprecated runner
+        }
+
         public void SetPaused(CarEntity entity, bool paused)
         {
             SplineCarRunnerContext ctx = activeRunners.Find(c => c.entity == entity);

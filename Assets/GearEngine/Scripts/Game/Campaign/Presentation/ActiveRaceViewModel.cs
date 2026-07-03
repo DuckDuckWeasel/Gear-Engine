@@ -162,6 +162,9 @@ namespace GearEngine.Campaign.Presentation
                     result.IsGoodResult
                 ));
 
+                // Wait for the cinematic finish (Akira slide) to play out before covering the screen
+                await Task.Delay(TimeSpan.FromSeconds(ResultPopupDelaySeconds));
+
                 eventBus?.Raise(new GlobalLoadingEvent(true));
                 try
                 {
@@ -171,8 +174,6 @@ namespace GearEngine.Campaign.Presentation
                 {
                     eventBus?.Raise(new GlobalLoadingEvent(false));
                 }
-                
-                await Task.Delay(TimeSpan.FromSeconds(ResultPopupDelaySeconds));
                 
                 navigation.Open(new ResultPopupViewModel(result));
             }

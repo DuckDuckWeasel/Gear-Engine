@@ -10,6 +10,7 @@ using Scaffold.MVVM;
 using TMPro;
 using UnityEngine;
 using Ami.BroAudio;
+using DG.Tweening;
 
 namespace GearEngine.Campaign.Presentation
 {
@@ -48,6 +49,7 @@ namespace GearEngine.Campaign.Presentation
         private int lastDisplayedLap = 0;
         private int currentSimulatedGear = 1;
         private SimulationLifecycleState lastTrackState = SimulationLifecycleState.Created;
+        private string lastDisplayedGear = "";
 
         protected override void OnBind()
         {
@@ -112,6 +114,8 @@ namespace GearEngine.Campaign.Presentation
                     if (currentLapRaw > lastDisplayedLap)
                     {
                         if (lapCompletedSound.IsValid()) BroAudio.Play(lapCompletedSound);
+                        currentLapText.transform.DOKill(true);
+                        currentLapText.transform.DOPunchScale(Vector3.one * 0.2f, 0.3f, 5, 1f);
                     }
                     lastDisplayedLap = currentLapRaw;
 
@@ -141,7 +145,7 @@ namespace GearEngine.Campaign.Presentation
                 float lerpSpeedDown = 5f; 
                 displayedRpm = Mathf.Lerp(displayedRpm, 0f, Time.deltaTime * lerpSpeedDown);
                 currentRpmText.text = $"{displayedRpm:F0}";
-                if (currentGearText != null) currentGearText.text = "N";
+                UpdateGearText("N");
                 return;
             }
 
@@ -161,10 +165,22 @@ namespace GearEngine.Campaign.Presentation
             if (absSpeed > shiftUpSpeed && currentSimulatedGear < totalGears)
             {
                 currentSimulatedGear++;
+                // Shift up jerk (momentary loss of torque)
+                float severity = 0.10f / currentSimulatedGear;
+                if (viewModel?.Car?.RunnerService != null)
+                {
+                    viewModel.Car.RunnerService.ApplyJerk(viewModel.Car.Session.Car, severity);
+                }
             }
             else if (absSpeed < shiftDownSpeed && currentSimulatedGear > 1)
             {
                 currentSimulatedGear--;
+                // Shift down jerk (engine braking, slightly more severe)
+                float severity = 0.15f / currentSimulatedGear;
+                if (viewModel?.Car?.RunnerService != null)
+                {
+                    viewModel.Car.RunnerService.ApplyJerk(viewModel.Car.Session.Car, severity);
+                }
             }
             
             float gearMinSpeed = gearSpeedPercents[currentSimulatedGear - 1] * maxSpeed;
@@ -210,10 +226,54 @@ namespace GearEngine.Campaign.Presentation
             // Diegetic RPM rounding (nearest 50)
             float diegeticRpm = Mathf.Round(displayedRpm / 50f) * 50f;
             currentRpmText.text = $"{diegeticRpm:F0}";
-            if (currentGearText != null)
+            UpdateGearText(gearString);
+        }
+
+        private void UpdateGearText(string gearString)
+        {
+            if (currentGearText == null) return;
+            
+            if (lastDisplayedGear != gearString)
             {
-                currentGearText.text = gearString;
+                bool isUp = false;
+                bool isDown = false;
+
+                if (int.TryParse(lastDisplayedGear, out int lastG) && int.TryParse(gearString, out int newG))
+                {
+                    if (newG > lastG) isUp = true;
+                    else if (newG < lastG) isDown = true;
+                }
+                else if (gearString == "1" && (lastDisplayedGear == "N" || lastDisplayedGear == "R"))
+                {
+                    isUp = true;
+                }
+                else if ((gearString == "N" || gearString == "R") && int.TryParse(lastDisplayedGear, out _))
+                {
+                    isDown = true;
+                }
+
+                currentGearText.transform.DOKill(true);
+                currentGearText.transform.localScale = Vector3.one;
+                currentGearText.transform.localRotation = Quaternion.identity;
+
+                if (isUp)
+                {
+                    currentGearText.transform.DOPunchScale(Vector3.one * 0.4f, 0.3f, 6, 1f);
+                }
+                else if (isDown)
+                {
+                    currentGearText.transform.DOPunchScale(Vector3.one * -0.3f, 0.3f, 6, 1f);
+                    currentGearText.transform.DOPunchRotation(new Vector3(0, 0, -15f), 0.3f, 6, 1f);
+                }
+                else if (!string.IsNullOrEmpty(lastDisplayedGear))
+                {
+                    currentGearText.transform.DOPunchScale(Vector3.one * 0.2f, 0.3f, 5, 1f);
+                }
+
+                lastDisplayedGear = gearString;
             }
+
+            currentGearText.text = gearString;
         }
 
         private void UpdateStatsUI()
@@ -291,11 +351,6 @@ namespace GearEngine.Campaign.Presentation
             }
 
             raceStartPending = false;
-            
-            if (board != null)
-            {
-                board.SetAllGearsRapidSpin(false);
-            }
 
             // Generate props now that the track is at its final position.
             if (track != null)
@@ -307,14 +362,16 @@ namespace GearEngine.Campaign.Presentation
             {
                 BroAudio.Play(startRaceSound).OnEnd(_ => 
                 {
-                    if (this != null && viewModel != null)
+                    if (this != null)
                     {
-                        viewModel.StartRaceAfterCarReady();
+                        if (board != null) board.SetAllGearsRapidSpin(false);
+                        if (viewModel != null) viewModel.StartRaceAfterCarReady();
                     }
                 });
             }
             else
             {
+                if (board != null) board.SetAllGearsRapidSpin(false);
                 viewModel.StartRaceAfterCarReady();
             }
         }

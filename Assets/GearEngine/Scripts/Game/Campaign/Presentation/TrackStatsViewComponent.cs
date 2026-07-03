@@ -61,7 +61,6 @@ namespace GearEngine.Campaign.Presentation
         {
             if (tiersContainer == null)
             {
-                Debug.LogError("[TrackStatsView] tiersContainer missing; cannot render tiers.");
                 return;
             }
 

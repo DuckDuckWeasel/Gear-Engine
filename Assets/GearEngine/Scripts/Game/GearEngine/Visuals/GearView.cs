@@ -37,6 +37,9 @@ namespace GearEngine.GearEngine.Visuals
         private float visualRotationOffset;
         private float rapidSpinSpeed = 0f;
         private bool hasInitializedRotation = false;
+        private float baseScale = 1f;
+        private float rapidSpinScalePhase = 0f;
+        private float rapidSpinOffset = 0f;
 
         /// <summary>Editor tests: assigns serialized references without a prefab asset.</summary>
         internal void WireTestReferences(Transform gearVisualRef, SpriteRenderer chargeRef = null)
@@ -54,8 +57,8 @@ namespace GearEngine.GearEngine.Visuals
 
             if (gearVisual != null)
             {
-                float s = config.RelativeScaleMultiplier;
-                gearVisual.localScale = new Vector3(s, s, s);
+                baseScale = config.RelativeScaleMultiplier;
+                gearVisual.localScale = new Vector3(baseScale, baseScale, baseScale);
             }
 
             if (config.UIIcon != null && chargeFillRenderer != null)
@@ -137,10 +140,40 @@ namespace GearEngine.GearEngine.Visuals
 
             if (rapidSpinSpeed != 0f)
             {
-                visualRotationOffset -= rapidSpinSpeed * Time.deltaTime;
+                rapidSpinOffset -= rapidSpinSpeed * Time.deltaTime;
+                
+                rapidSpinScalePhase += Time.deltaTime * 25f;
+                float scaleMod = 1f + (Mathf.Sin(rapidSpinScalePhase) * 0.05f);
+                if (gearVisual != null)
+                {
+                    gearVisual.localScale = Vector3.one * (baseScale * scaleMod);
+                }
+            }
+            else 
+            {
+                if (rapidSpinOffset != 0f)
+                {
+                    float currentMod = rapidSpinOffset % 360f;
+                    if (currentMod > 0) currentMod -= 360f;
+                    
+                    if (Mathf.Abs(currentMod) < 0.5f || Mathf.Abs(currentMod + 360f) < 0.5f)
+                    {
+                        rapidSpinOffset = 0f;
+                    }
+                    else
+                    {
+                        rapidSpinOffset = Mathf.Lerp(currentMod, -360f, Time.deltaTime * 15f);
+                    }
+                }
+                
+                if (gearVisual != null && Mathf.Abs(gearVisual.localScale.x - baseScale) > 0.001f)
+                {
+                    float currentScale = Mathf.Lerp(gearVisual.localScale.x, baseScale, Time.deltaTime * 15f);
+                    gearVisual.localScale = Vector3.one * currentScale;
+                }
             }
 
-            rotateTarget.localRotation = Quaternion.Euler(0, 0, animatedBaseRotationZ + visualRotationOffset);
+            rotateTarget.localRotation = Quaternion.Euler(0, 0, animatedBaseRotationZ + visualRotationOffset + rapidSpinOffset);
 
             if (targetVisualFill >= 0f && chargeFillRenderer != null)
             {

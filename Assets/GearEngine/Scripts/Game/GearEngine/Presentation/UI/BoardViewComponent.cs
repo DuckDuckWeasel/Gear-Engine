@@ -20,6 +20,8 @@ namespace GearEngine.GearEngine.Presentation.UI
         [Tooltip("Legacy root for board-space plane. Gears parent to grid slots.")]
         [SerializeField] private Transform gearsRoot;
         [SerializeField] private TextMeshProUGUI boardLimitLabel;
+        [Tooltip("GameObjects to enable when gears are present, and disable when empty.")]
+        [SerializeField] private List<GameObject> activeGridVisuals = new List<GameObject>();
 
         [SerializeField]
         [Tooltip("Layout math for slots, stagger rotation, and drop projection (view-only).")]
@@ -35,6 +37,7 @@ namespace GearEngine.GearEngine.Presentation.UI
         private readonly Dictionary<IGridNode, GearView> viewsByNode = new Dictionary<IGridNode, GearView>();
         private readonly Dictionary<Vector2Int, Transform> slotByCoord = new Dictionary<Vector2Int, Transform>();
         private readonly List<GameObject> backgroundSlots = new List<GameObject>();
+        private bool isRapidSpinningAll;
 
         public BoardLayoutSO BoardLayout => boardLayout;
 
@@ -66,10 +69,47 @@ namespace GearEngine.GearEngine.Presentation.UI
             {
                 SpawnView(node);
             }
+            
+            UpdateGridRootVisibility();
 
             viewModel.PropertyChanged += OnBoardViewModelPropertyChanged;
             RefreshDraggableInteractable();
             Bind(() => viewModel.BoardLimitText, () => boardLimitLabel.text);
+        }
+
+        private void OnEnable()
+        {
+            UpdateGridRootVisibility();
+        }
+
+        private void OnDisable()
+        {
+            if (activeGridVisuals != null)
+            {
+                foreach (GameObject visual in activeGridVisuals)
+                {
+                    if (visual != null)
+                    {
+                        visual.SetActive(false);
+                    }
+                }
+            }
+        }
+
+        private void UpdateGridRootVisibility()
+        {
+            // Only show visuals if the component is enabled AND there are gears.
+            bool hasGears = isActiveAndEnabled && viewsByNode.Count > 0;
+            if (activeGridVisuals != null)
+            {
+                foreach (GameObject visual in activeGridVisuals)
+                {
+                    if (visual != null)
+                    {
+                        visual.SetActive(hasGears);
+                    }
+                }
+            }
         }
 
         public void SpinAllGearsOnceVisual()
@@ -82,6 +122,7 @@ namespace GearEngine.GearEngine.Presentation.UI
 
         public void SetAllGearsRapidSpin(bool enabled)
         {
+            isRapidSpinningAll = enabled;
             foreach (GearView view in viewsByNode.Values)
             {
                 if (view != null) view.SetRapidSpin(enabled);
@@ -278,6 +319,8 @@ namespace GearEngine.GearEngine.Presentation.UI
             animator.Untrack(node);
             viewsByNode.Remove(node);
             DestroyViewGameObject(view.gameObject);
+            
+            UpdateGridRootVisibility();
         }
 
         private void SpawnView(IGridNode node)
@@ -315,6 +358,13 @@ namespace GearEngine.GearEngine.Presentation.UI
             viewsByNode[node] = view;
             animator.Track(node, view);
             WireBoardDraggable(view, node);
+
+            if (isRapidSpinningAll)
+            {
+                view.SetRapidSpin(true);
+            }
+            
+            UpdateGridRootVisibility();
         }
 
         private void WireBoardDraggable(GearView view, IGridNode node)

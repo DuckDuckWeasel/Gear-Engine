@@ -91,6 +91,15 @@ namespace GearEngine.CarSimulation.SplineSimulation
             }
         }
 
+        public void ApplyJerk(CarEntity entity, float severity)
+        {
+            SplineEvaluateDriver driver = FindDriver(entity);
+            if (driver != null)
+            {
+                driver.ApplyJerk(severity);
+            }
+        }
+
         /// <summary>
         /// Returns telemetry data compatible with the existing
         /// <see cref="CarTelemetryData"/> struct.
@@ -134,6 +143,15 @@ namespace GearEngine.CarSimulation.SplineSimulation
                     activeDrivers[i].OnLapCompleted -= HandleLapCompleted;
                     activeDrivers.RemoveAt(i);
                 }
+            }
+        }
+
+        public void TriggerCinematicFinish(CarEntity entity)
+        {
+            SplineEvaluateDriver driver = FindDriver(entity);
+            if (driver != null)
+            {
+                driver.TriggerCinematicFinish();
             }
         }
 

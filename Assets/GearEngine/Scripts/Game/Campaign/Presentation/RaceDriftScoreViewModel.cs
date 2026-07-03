@@ -22,6 +22,8 @@ namespace GearEngine.Campaign.Presentation
         [ObservableProperty] private int currentMultiplier = 1;
         [ObservableProperty] private bool isDisplayingScore;
 
+        public int TotalDriftScore => session.TotalDriftScore;
+
         public event Action MultiplierIncreased;
         public event Action ScoreBanked;
 

@@ -19,6 +19,10 @@ namespace GearEngine.CarSimulation.Tracks
         [SerializeField] private SplineContainer splineContainer;
         [SerializeField] private SplineExtrude splineExtrude;
 
+        [Header("Props")]
+        [SerializeField] private GameObject startFinishLinePrefab;
+        private GameObject startFinishLineInstance;
+
         public new void Unbind()
         {
             base.Unbind();
@@ -88,6 +92,7 @@ namespace GearEngine.CarSimulation.Tracks
 
             CopySplineIntoContainer(data, splineContainer);
             RebuildVisualSplineExtrude(data);
+            SpawnStartFinishLine();
         }
 
         private bool HasSplineContainerOrLog()
@@ -198,6 +203,33 @@ namespace GearEngine.CarSimulation.Tracks
                     k.TangentOut.z * data.Scale);
                 target.Add(k, TangentMode.AutoSmooth);
             }
+        }
+
+        private void SpawnStartFinishLine()
+        {
+            if (startFinishLinePrefab == null)
+            {
+                return;
+            }
+            
+            if (startFinishLineInstance != null)
+            {
+                if (Application.isPlaying) Destroy(startFinishLineInstance);
+                else DestroyImmediate(startFinishLineInstance);
+            }
+
+            if (splineContainer.Spline == null || splineContainer.Spline.Count == 0)
+            {
+                return;
+            }
+
+            Vector3 position = splineContainer.transform.TransformPoint(SplineUtility.EvaluatePosition(splineContainer.Spline, 0f));
+            Vector3 forward = splineContainer.transform.TransformDirection(SplineUtility.EvaluateTangent(splineContainer.Spline, 0f));
+            Vector3 up = splineContainer.transform.TransformDirection(SplineUtility.EvaluateUpVector(splineContainer.Spline, 0f));
+            
+            Quaternion rotation = Quaternion.LookRotation(forward, up);
+
+            startFinishLineInstance = Instantiate(startFinishLinePrefab, position, rotation, this.transform);
         }
     }
 }

@@ -60,6 +60,7 @@ namespace GearEngine.CarSimulation.Simulation
             if (state.Phase != SimulationLifecycleState.Completed)
             {
                 state.Phase = SimulationLifecycleState.Completed;
+                runner.TriggerCinematicFinish(state.Car);
                 runner.SetPaused(state.Car, true);
                 Debug.Log($"[RaceManagerService] Race Finished! Total Laps: {state.TotalLaps} | Total Time: {state.RaceTime:F2}s");
                 state.TriggerPresentationChanged();
@@ -70,11 +71,32 @@ namespace GearEngine.CarSimulation.Simulation
         {
             float dt = Time.deltaTime;
 
-            foreach (var state in activeRaces)
+            // Use a for loop since we might modify the collection indirectly, though foreach is mostly fine here
+            for (int i = activeRaces.Count - 1; i >= 0; i--)
             {
+                var state = activeRaces[i];
                 if (state.Phase == SimulationLifecycleState.Running)
                 {
                     state.RaceTime += dt;
+
+                    // Anticipate the finish line for a cinematic slide (start slightly before the line)
+                    if (state.TotalLaps > 0 && state.CurrentLap == state.TotalLaps - 1)
+                    {
+                        if (runner.GetTelemetry(state.Car, out CarTelemetryData telemetry))
+                        {
+                            // 0.95f is 5% before the finish line
+                            if (telemetry.Progress >= 0.95f)
+                            {
+                                // Artificially complete the lap
+                                state.CurrentLap++;
+                                float lapTime = state.RaceTime - state.PreviousLapStartTime;
+                                state.AddLapTime(lapTime);
+                                state.PreviousLapStartTime = state.RaceTime;
+                                
+                                ForceFinish(state);
+                            }
+                        }
+                    }
                 }
             }
         }

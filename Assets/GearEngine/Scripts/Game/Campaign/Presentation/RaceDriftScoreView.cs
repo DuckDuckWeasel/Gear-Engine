@@ -12,6 +12,7 @@ namespace GearEngine.Campaign.Presentation
         [Header("References")]
         [SerializeField] private TMP_Text multiplierText;
         [SerializeField] private TMP_Text pointsText;
+        [SerializeField] private TMP_Text totalScoreText;
         [SerializeField] private CanvasGroup canvasGroup;
 
         [Header("Juice Settings")]
@@ -37,6 +38,11 @@ namespace GearEngine.Campaign.Presentation
             UpdateVisibility(false, false);
             UpdateMultiplierTextAndColor();
             pointsText.text = $"{viewModel.DisplayPoints}";
+            
+            if (totalScoreText != null)
+            {
+                totalScoreText.text = $"{viewModel.TotalDriftScore}";
+            }
         }
 
         protected override void OnUnbind()
@@ -142,6 +148,22 @@ namespace GearEngine.Campaign.Presentation
             canvasGroup.alpha = 1f;
             UpdateMultiplierTextAndColor();
             pointsText.text = $"{viewModel.DisplayPoints}";
+            
+            if (totalScoreText != null)
+            {
+                int startScore = 0;
+                int.TryParse(totalScoreText.text, out startScore);
+                int endScore = viewModel.TotalDriftScore;
+                
+                DOTween.To(() => startScore, x => 
+                {
+                    startScore = x;
+                    totalScoreText.text = $"{startScore}";
+                }, endScore, 0.5f).SetEase(Ease.OutQuad);
+
+                totalScoreText.transform.DOKill(true);
+                totalScoreText.transform.DOPunchScale(Vector3.one * 0.2f, 0.3f, 5, 1f);
+            }
             
             fadeTween = DOTween.To(() => canvasGroup.alpha, x => canvasGroup.alpha = x, 0f, 0.5f).SetDelay(1f);
         }

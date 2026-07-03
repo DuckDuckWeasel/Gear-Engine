@@ -52,6 +52,18 @@ namespace GearEngine.CarSimulation.SplineSimulation
         private float smoothedRacingLine; // Prevents the racing line from jumping
         private float visualSteerAngle; // Tracks the current steering wheel angle
 
+        // Cinematic Finish Fields
+        private bool isDoingCinematicFinish;
+        private float cinematicTimer;
+        private Vector3 cinematicVelocityDir;
+        private float cinematicSpeed;
+        private Quaternion cinematicInitialRot;
+        private Quaternion cinematicTargetRot;
+        private float cinematicSlideDir;
+        private Quaternion cinematicTrackRot;
+
+        private Vector3 baseScale = Vector3.one;
+
         public SplineMotionState State;
 
         public bool IsInitialized => isInitialized;
@@ -74,6 +86,7 @@ namespace GearEngine.CarSimulation.SplineSimulation
             public bool WillDrift;
             public float DynamicEntryDist;
             public float DynamicExitDist;
+            public float PeakCurvature;
         }
 
         private List<TrackCurveEvent> precalculatedCurves = new List<TrackCurveEvent>();
@@ -102,6 +115,8 @@ namespace GearEngine.CarSimulation.SplineSimulation
             this.carEntity = carEntity;
             this.personality = personality;
             splineLength = spline.GetLength();
+            
+            baseScale = carTransform.localScale;
 
             State = new SplineMotionState();
             PlaceAtStart();
@@ -204,20 +219,21 @@ namespace GearEngine.CarSimulation.SplineSimulation
                 }
                 else if (inCurve && curvature < 0.02f)
                 {
-                    AddCurveEvent(peakT, peakSign, curveIndex++, startT, t);
+                    AddCurveEvent(peakT, peakSign, curveIndex++, startT, t, currentPeak);
                     inCurve = false;
                     currentPeak = 0f;
                 }
             }
-            if (inCurve) AddCurveEvent(peakT, peakSign, curveIndex++, startT, 1f);
+            if (inCurve) AddCurveEvent(peakT, peakSign, curveIndex++, startT, 1f, currentPeak);
         }
 
-        private void AddCurveEvent(float t, float sign, int curveIndex, float startT, float endT)
+        private void AddCurveEvent(float t, float sign, int curveIndex, float startT, float endT, float peakCurvature)
         {
             TrackCurveEvent ev = new TrackCurveEvent();
             ev.T = t;
             ev.Sign = sign;
             ev.CurveIndex = curveIndex;
+            ev.PeakCurvature = peakCurvature;
 
             // Calculate physical distance from start of curve to apex, and apex to end
             float distStart = t - startT;
@@ -330,6 +346,11 @@ namespace GearEngine.CarSimulation.SplineSimulation
             isPaused = paused;
         }
 
+        public void ApplyJerk(float severity)
+        {
+            State.Speed *= (1f - severity);
+        }
+
         /// <summary>
         /// Advances the simulation by <paramref name="dt"/> seconds. This is the
         /// single entry point that computes position, speed, lateral offset, and
@@ -338,6 +359,12 @@ namespace GearEngine.CarSimulation.SplineSimulation
         public void Tick(float dt)
         {
             if (!isInitialized || dt <= 0f) return;
+
+            if (isDoingCinematicFinish)
+            {
+                TickCinematicFinish(dt);
+                return;
+            }
 
             if (isPaused)
             {
@@ -402,6 +429,7 @@ namespace GearEngine.CarSimulation.SplineSimulation
             {
                 // Entering a new curve (far from apex on the entry side), reset flags!
                 State.HasFailedThisCurve = false;
+                State.HasJumpedThisCurve = false;
             }
 
             // Trigger end-of-curve effects during the final 20% of the exit
@@ -692,6 +720,7 @@ namespace GearEngine.CarSimulation.SplineSimulation
                     // Maximize severity so the drift angle sets up BEFORE the apex.
                     driftSeverityForVFX = Mathf.Max(currentSeverity, upcomingSeverity);
                     
+                    // In Mario Kart, the car twists sideways MID-AIR during the hop!
                     float explicitDrift = activeCurve.Sign * driftSeverityForVFX * 45f;
                     targetSlip += explicitDrift;
                     
@@ -702,12 +731,58 @@ namespace GearEngine.CarSimulation.SplineSimulation
             targetSlip = Mathf.Clamp(targetSlip, -maxAllowedSlip, maxAllowedSlip);
             State.SlipAngle = Mathf.Lerp(State.SlipAngle, targetSlip, dt * config.slipAngleSmoothRate);
 
+            // Handle Arcade Jump Anticipation
+            if (State.DriftAnticipationTimer > 0f)
+            {
+                State.DriftAnticipationTimer -= dt;
+                
+                // Parabola: y = 4 * h * (t / d) * (1 - t / d)
+                float jumpDuration = 0.35f;
+                float tJump = jumpDuration - State.DriftAnticipationTimer;
+                float normalizedT = Mathf.Clamp01(tJump / jumpDuration);
+                
+                float jumpHeight = 1.2f; // Exaggerated arcade hop height in meters
+                State.JumpOffset = 4f * jumpHeight * normalizedT * (1f - normalizedT);
+            }
+            else
+            {
+                State.JumpOffset = 0f;
+            }
+
             // Trigger IsDrifting purely based on explicit curve drift intent and depth
             // This prevents lateral lane shifts on straightaways from faking a drift
             State.IsDrifting = false;
             if (State.IsInCurveSequence && State.WillDriftCurrentCurve)
             {
-                State.IsDrifting = driftSeverityForVFX > 0.05f; 
+                // Trigger the jump very early into the curve entry
+                if (driftSeverityForVFX > 0.02f && !State.HasJumpedThisCurve)
+                {
+                    State.HasJumpedThisCurve = true;
+                    
+                    // Em baixa velocidade (-100 km/h), não pula
+                    float speedKmh = State.Speed * 3.6f;
+                    if (speedKmh >= 100f)
+                    {
+                        State.DriftAnticipationTimer = 0.35f; 
+                        
+                        // Curvas muito íngremes (fechadas) pulam menos (0.1), curvas abertas pulam mais (0.3).
+                        TrackCurveEvent activeCurveForJump = GetActiveCurve(State.T, State.CompletedLaps);
+                        float curveMildness = Mathf.InverseLerp(0.20f, 0.04f, activeCurveForJump.PeakCurvature);
+                        
+                        State.JumpScaleIntensity = Mathf.Lerp(0.1f, 0.3f, curveMildness);
+                    }
+                    else
+                    {
+                        State.DriftAnticipationTimer = 0f;
+                        State.JumpScaleIntensity = 0f;
+                    }
+                }
+
+                // Actually drift only after the jump finishes!
+                if (State.DriftAnticipationTimer <= 0f)
+                {
+                    State.IsDrifting = driftSeverityForVFX > 0.05f; 
+                }
             }
 
             // Handle Prometeo VFX via cached reflection fields
@@ -796,6 +871,28 @@ namespace GearEngine.CarSimulation.SplineSimulation
             State.SuspensionOffset = Mathf.Sin(Time.time * config.suspensionBobFrequency * bounceMult * Mathf.Max(speedNorm, 0.1f))
                                      * config.suspensionBobAmplitude * speedNorm * bounceMult;
 
+            // ── SMOOTH BODY ROLL ──
+            float targetBodyRoll = 0f;
+            if (State.IsInCurveSequence)
+            {
+                TrackCurveEvent activeCurve = GetActiveCurve(State.T, State.CompletedLaps);
+                CalculateCurveSeverities(State.T, activeCurve, out float currentSeverity, out float upcomingSeverity, out float _);
+                
+                float severity = Mathf.Max(currentSeverity, upcomingSeverity);
+                
+                // Base inclination (subtle but noticeable)
+                targetBodyRoll = activeCurve.Sign * severity * 4f; 
+                
+                // Amplify significantly during drift
+                if (State.IsDrifting)
+                {
+                    targetBodyRoll = activeCurve.Sign * severity * 20f;
+                }
+            }
+            
+            // Smoothly interpolate current body roll towards the target
+            State.BodyRoll = Mathf.Lerp(State.BodyRoll, targetBodyRoll, dt * 8f);
+
             // ── FAILED CURVE VISUALS (VIOLENT SHUDDER) ──
             if (State.IsInCurveSequence && (int)State.ActiveCurveMode >= 5)
             {
@@ -830,7 +927,7 @@ namespace GearEngine.CarSimulation.SplineSimulation
             // Apply lateral offset and suspension bob
             Vector3 finalPos = worldPos
                                + worldRight * State.LateralOffset
-                               + worldUp * State.SuspensionOffset;
+                               + worldUp * (State.SuspensionOffset + State.JumpOffset);
 
             // Build rotation: base orientation + body roll + slip angle
             Quaternion baseRot = Quaternion.LookRotation(worldTangent, worldUp);
@@ -840,14 +937,98 @@ namespace GearEngine.CarSimulation.SplineSimulation
 
             carTransform.position = finalPos;
             
-            // Smoothly interpolate rotation to prevent instant snapping on poorly constructed, sharp spline knots
-            if (dt > 0f && Time.timeScale > 0f)
+            // In Orthographic cameras, Y-axis translation is barely visible.
+            // We scale the car up during a jump to create a faux perspective "pop".
+            // Since JumpOffset peaks at 1.2, we divide by 1.2 to normalize it, then multiply by the calculated intensity (0.1 to 0.4).
+            float scaleMultiplier = 1f + (State.JumpScaleIntensity * (State.JumpOffset / 1.2f)); 
+            carTransform.localScale = baseScale * scaleMultiplier;
+            
+            if (isDoingCinematicFinish)
             {
-                carTransform.rotation = Quaternion.Slerp(carTransform.rotation, targetRot, dt * 20f);
+                cinematicTrackRot = targetRot;
             }
             else
             {
-                carTransform.rotation = targetRot;
+                // Smoothly interpolate rotation to prevent instant snapping on poorly constructed, sharp spline knots
+                if (dt > 0f && Time.timeScale > 0f)
+                {
+                    carTransform.rotation = Quaternion.Slerp(carTransform.rotation, targetRot, dt * 20f);
+                }
+                else
+                {
+                    carTransform.rotation = targetRot;
+                }
+            }
+        }
+
+        public void TriggerCinematicFinish()
+        {
+            isDoingCinematicFinish = true;
+            cinematicTimer = 0f;
+            cinematicSpeed = State.Speed;
+            cinematicInitialRot = carTransform.rotation;
+            
+            TrackCurveEvent nextCurve = GetActiveCurve(State.T, State.CompletedLaps);
+            cinematicSlideDir = nextCurve.Sign != 0 ? Mathf.Sign(nextCurve.Sign) : 1f;
+
+            Debug.Log($"[AkiraSlide] SplineEvaluateDriver initialized with direction {cinematicSlideDir}");
+        }
+
+        private void TickCinematicFinish(float dt)
+        {
+            cinematicTimer += dt;
+            
+            float snapDuration = 0.4f;
+            float totalDuration = 0.8f; // 20% shorter (originally decay was 1.0f, now 0.8f)
+            
+            if (cinematicTimer <= snapDuration)
+            {
+                float t = cinematicTimer / snapDuration;
+                t = 1f - Mathf.Pow(1f - t, 3f);
+                State.Speed = Mathf.Lerp(cinematicSpeed, cinematicSpeed * 0.8f, t);
+            }
+            else
+            {
+                float timeSinceSnap = cinematicTimer - snapDuration;
+                float decayFactor = Mathf.Clamp01(timeSinceSnap / totalDuration);
+                State.Speed = Mathf.Lerp(cinematicSpeed * 0.8f, 0f, decayFactor);
+            }
+
+            // Move the car along the spline!
+            AdvanceT(dt);
+            TickVisuals(dt);
+            ApplyTransform(dt);
+
+            // Now apply our cinematic rotation overriding the track rotation
+            float driftAngle = 80f * cinematicSlideDir;
+            Quaternion akiraRot = cinematicTrackRot * Quaternion.Euler(0, driftAngle, 0);
+
+            if (cinematicTimer <= snapDuration)
+            {
+                float t = cinematicTimer / snapDuration;
+                t = 1f - Mathf.Pow(1f - t, 3f);
+                
+                carTransform.rotation = Quaternion.Slerp(cinematicInitialRot, akiraRot, t);
+            }
+            else
+            {
+                float timeSinceSnap = cinematicTimer - snapDuration;
+                float decayFactor = Mathf.Clamp01(timeSinceSnap / totalDuration);
+                
+                float wobbleFrequency = 15f;
+                float wobbleAmplitude = Mathf.Lerp(3f, 0f, decayFactor); 
+                float wobbleAngle = Mathf.Sin(timeSinceSnap * wobbleFrequency) * wobbleAmplitude;
+                
+                carTransform.rotation = akiraRot * Quaternion.Euler(wobbleAngle, 0, wobbleAngle * cinematicSlideDir);
+            }
+
+            // VFX
+            if (hasPrometeoEffects)
+            {
+                if (rlParticle != null && !rlParticle.isPlaying) rlParticle.Play();
+                if (rrParticle != null && !rrParticle.isPlaying) rrParticle.Play();
+                if (rlSkid != null) rlSkid.emitting = true;
+                if (rrSkid != null) rrSkid.emitting = true;
             }
         }
 

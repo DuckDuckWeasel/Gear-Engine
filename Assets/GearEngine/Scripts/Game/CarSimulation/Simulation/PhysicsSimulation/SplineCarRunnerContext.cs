@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Splines;
+using GearEngine.CarSimulation.PhysicsSimulation.Cinematic;
 
 namespace GearEngine.CarSimulation.PhysicsSimulation
 {
@@ -23,6 +24,9 @@ namespace GearEngine.CarSimulation.PhysicsSimulation
 
         public bool mustRecalculateWaypoints = true;
         public List<CarAreaModifier> activeAreaModifiers = new List<CarAreaModifier>();
+
+        public bool isDoingCinematicFinish;
+        public ICinematicFinishStrategy cinematicStrategy;
 
         public PrometeoTouchInput aiThrottle;
         public PrometeoTouchInput aiReverse;

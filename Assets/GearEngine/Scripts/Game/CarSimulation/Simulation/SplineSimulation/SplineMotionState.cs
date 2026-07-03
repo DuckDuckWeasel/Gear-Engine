@@ -36,6 +36,15 @@ namespace GearEngine.CarSimulation.SplineSimulation
         /// <summary>Visual-only vertical offset in meters, simulating suspension movement.</summary>
         public float SuspensionOffset;
 
+        /// <summary>Vertical offset in meters, used specifically for the arcade drift jump.</summary>
+        public float JumpOffset;
+
+        /// <summary>Maximum scale intensity for the faux perspective jump pop (e.g. 0.1 to 0.4).</summary>
+        public float JumpScaleIntensity;
+
+        /// <summary>Timer used to anticipate the drift and delay traction loss.</summary>
+        public float DriftAnticipationTimer;
+
         /// <summary>Unsigned curvature magnitude at the current <see cref="T"/> position.</summary>
         public float Curvature;
 
@@ -89,5 +98,8 @@ namespace GearEngine.CarSimulation.SplineSimulation
 
         /// <summary>True if the driver already received their failure penalty for this curve.</summary>
         public bool HasFailedThisCurve;
+
+        /// <summary>True if the driver has already executed the drift entry jump for this curve.</summary>
+        public bool HasJumpedThisCurve;
     }
 }
