@@ -25,6 +25,7 @@ namespace GearEngine.CarSimulation.Simulation
         public float PreviousLapStartTime { get; set; } = 0f;
         public float CurrentSpeed { get; set; } = 0f;
         public float NormalizedProgress { get; set; } = 0f;
+        public int TotalDriftScore { get; set; } = 0;
         public RaceSessionConfig Config { get; }
 
         public IReadOnlyList<float> LapTimes => lapTimes;
@@ -44,6 +45,7 @@ namespace GearEngine.CarSimulation.Simulation
             CurrentLap = 0;
             RaceTime = 0f;
             PreviousLapStartTime = 0f;
+            TotalDriftScore = 0;
             lapTimes.Clear();
             TriggerPresentationChanged();
         }

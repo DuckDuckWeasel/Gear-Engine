@@ -13,11 +13,15 @@ MonoBehaviour:
   m_Name: InfinityTrack
   m_EditorClassIdentifier: Game.CarSimulation::GearEngine.CarSimulation.Definitions.TrackDefinition
   trackName: Infinity
+  scale: 0.8
+  offset: {x: 0, y: 0, z: 0}
+  totalLaps: 5
+  timeToBeatSeconds: 47.94933
   spline:
     m_EditModeType: 1
     m_Knots:
     - Position:
-        x: 54.648478
+        x: 54.64848
         y: 0
         z: 3.574181
       TangentIn:
@@ -35,7 +39,7 @@ MonoBehaviour:
           z: 0
           w: 1
     - Position:
-        x: 51.965376
+        x: 51.965378
         y: 0
         z: 10.137942
       TangentIn:
@@ -53,7 +57,7 @@ MonoBehaviour:
           z: 0
           w: 1
     - Position:
-        x: 47.203894
+        x: 47.203896
         y: 0
         z: 15.173194
       TangentIn:
@@ -71,9 +75,9 @@ MonoBehaviour:
           z: 0
           w: 1
     - Position:
-        x: 41.257281
+        x: 41.257282
         y: 0
-        z: 18.247629
+        z: 18.24763
       TangentIn:
         x: 0
         y: 0
@@ -89,9 +93,9 @@ MonoBehaviour:
           z: 0
           w: 1
     - Position:
-        x: 34.944820
+        x: 34.94482
         y: 0
-        z: 19.414302
+        z: 19.414303
       TangentIn:
         x: 0
         y: 0
@@ -109,7 +113,7 @@ MonoBehaviour:
     - Position:
         x: 28.821444
         y: 0
-        z: 19.003299
+        z: 19.0033
       TangentIn:
         x: 0
         y: 0
@@ -179,7 +183,7 @@ MonoBehaviour:
           z: 0
           w: 1
     - Position:
-        x: 9.321130
+        x: 9.32113
         y: 0
         z: 8.826459
       TangentIn:
@@ -269,7 +273,7 @@ MonoBehaviour:
           z: 0
           w: 1
     - Position:
-        x: -9.321130
+        x: -9.32113
         y: 0
         z: -8.826459
       TangentIn:
@@ -343,7 +347,7 @@ MonoBehaviour:
     - Position:
         x: -28.821444
         y: 0
-        z: -19.003299
+        z: -19.0033
       TangentIn:
         x: 0
         y: 0
@@ -359,9 +363,9 @@ MonoBehaviour:
           z: 0
           w: 1
     - Position:
-        x: -34.944820
+        x: -34.94482
         y: 0
-        z: -19.414302
+        z: -19.414303
       TangentIn:
         x: 0
         y: 0
@@ -377,9 +381,9 @@ MonoBehaviour:
           z: 0
           w: 1
     - Position:
-        x: -41.257281
+        x: -41.257282
         y: 0
-        z: -18.247629
+        z: -18.24763
       TangentIn:
         x: 0
         y: 0
@@ -395,7 +399,7 @@ MonoBehaviour:
           z: 0
           w: 1
     - Position:
-        x: -47.203894
+        x: -47.203896
         y: 0
         z: -15.173194
       TangentIn:
@@ -413,7 +417,7 @@ MonoBehaviour:
           z: 0
           w: 1
     - Position:
-        x: -51.965376
+        x: -51.965378
         y: 0
         z: -10.137942
       TangentIn:
@@ -431,7 +435,7 @@ MonoBehaviour:
           z: 0
           w: 1
     - Position:
-        x: -54.648478
+        x: -54.64848
         y: 0
         z: -3.574181
       TangentIn:
@@ -449,7 +453,7 @@ MonoBehaviour:
           z: 0
           w: 1
     - Position:
-        x: -54.648478
+        x: -54.64848
         y: 0
         z: 3.574181
       TangentIn:
@@ -467,7 +471,7 @@ MonoBehaviour:
           z: 0
           w: 1
     - Position:
-        x: -51.965376
+        x: -51.965378
         y: 0
         z: 10.137942
       TangentIn:
@@ -485,7 +489,7 @@ MonoBehaviour:
           z: 0
           w: 1
     - Position:
-        x: -47.203894
+        x: -47.203896
         y: 0
         z: 15.173194
       TangentIn:
@@ -503,9 +507,9 @@ MonoBehaviour:
           z: 0
           w: 1
     - Position:
-        x: -41.257281
+        x: -41.257282
         y: 0
-        z: 18.247629
+        z: 18.24763
       TangentIn:
         x: 0
         y: 0
@@ -521,9 +525,9 @@ MonoBehaviour:
           z: 0
           w: 1
     - Position:
-        x: -34.944820
+        x: -34.94482
         y: 0
-        z: 19.414302
+        z: 19.414303
       TangentIn:
         x: 0
         y: 0
@@ -541,7 +545,7 @@ MonoBehaviour:
     - Position:
         x: -28.821444
         y: 0
-        z: 19.003299
+        z: 19.0033
       TangentIn:
         x: 0
         y: 0
@@ -611,7 +615,7 @@ MonoBehaviour:
           z: 0
           w: 1
     - Position:
-        x: -9.321130
+        x: -9.32113
         y: 0
         z: 8.826459
       TangentIn:
@@ -701,7 +705,7 @@ MonoBehaviour:
           z: 0
           w: 1
     - Position:
-        x: 9.321130
+        x: 9.32113
         y: 0
         z: -8.826459
       TangentIn:
@@ -775,7 +779,7 @@ MonoBehaviour:
     - Position:
         x: 28.821444
         y: 0
-        z: -19.003299
+        z: -19.0033
       TangentIn:
         x: 0
         y: 0
@@ -791,9 +795,9 @@ MonoBehaviour:
           z: 0
           w: 1
     - Position:
-        x: 34.944820
+        x: 34.94482
         y: 0
-        z: -19.414302
+        z: -19.414303
       TangentIn:
         x: 0
         y: 0
@@ -809,9 +813,9 @@ MonoBehaviour:
           z: 0
           w: 1
     - Position:
-        x: 41.257281
+        x: 41.257282
         y: 0
-        z: -18.247629
+        z: -18.24763
       TangentIn:
         x: 0
         y: 0
@@ -827,7 +831,7 @@ MonoBehaviour:
           z: 0
           w: 1
     - Position:
-        x: 47.203894
+        x: 47.203896
         y: 0
         z: -15.173194
       TangentIn:
@@ -845,7 +849,7 @@ MonoBehaviour:
           z: 0
           w: 1
     - Position:
-        x: 51.965376
+        x: 51.965378
         y: 0
         z: -10.137942
       TangentIn:
@@ -863,7 +867,7 @@ MonoBehaviour:
           z: 0
           w: 1
     - Position:
-        x: 54.648478
+        x: 54.64848
         y: 0
         z: -3.574181
       TangentIn:
@@ -986,3 +990,14 @@ MonoBehaviour:
       m_Data: []
     m_ObjectData:
       m_Data: []
+  baseGoldReward: 50
+  tiers:
+  - targetTimeSeconds: 38.359463
+    targetScore: 5000
+    goldReward: 1000
+  - targetTimeSeconds: 50.346794
+    targetScore: 3000
+    goldReward: 500
+  - targetTimeSeconds: 62.334126
+    targetScore: 1000
+    goldReward: 200

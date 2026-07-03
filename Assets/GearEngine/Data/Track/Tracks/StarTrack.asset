@@ -10,176 +10,216 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7f4a8b2c1d9e4f6a8b0c1d2e3f4a5b6c, type: 3}
-  m_Name: RoundedSquareTrack
+  m_Name: StarTrack
   m_EditorClassIdentifier: Game.CarSimulation::GearEngine.CarSimulation.Definitions.TrackDefinition
-  trackName: RoundedSquare
+  trackName: Star
   scale: 1
   offset: {x: 0, y: 0, z: 0}
   totalLaps: 5
-  timeToBeatSeconds: 37.71106
+  timeToBeatSeconds: 56.58602
   spline:
     m_EditModeType: 1
     m_Knots:
     - Position:
-        x: -22
+        x: 50
         y: 0
-        z: 30
+        z: 0
       TangentIn:
-        x: -4.418278
-        y: 0
-        z: 0
+        x: -0
+        y: -0
+        z: -4.898209
       TangentOut:
-        x: 14.666667
+        x: 0
         y: 0
-        z: 0
+        z: 4.8982096
       Rotation:
         value:
           x: 0
-          y: 0
+          y: 0.00000007427527
           z: 0
           w: 1
     - Position:
-        x: 22
+        x: 20.225426
         y: 0
-        z: 30
+        z: 14.694632
       TangentIn:
-        x: -14.666667
-        y: 0
-        z: 0
+        x: -0
+        y: -0
+        z: -9.796423
       TangentOut:
-        x: 4.418278
+        x: 0
         y: 0
-        z: 0
+        z: 9.796421
       Rotation:
         value:
           x: 0
-          y: 0
-          z: 0
-          w: 1
+          y: -0.309017
+          z: -0
+          w: 0.9510565
     - Position:
-        x: 30
+        x: 15.450849
         y: 0
-        z: 22
+        z: 47.552826
       TangentIn:
-        x: 0
-        y: 0
-        z: 4.418278
+        x: -0
+        y: -0
+        z: -4.8982105
       TangentOut:
         x: 0
         y: 0
-        z: -14.666667
+        z: 4.898211
       Rotation:
         value:
           x: 0
-          y: 0
-          z: 0
-          w: 1
+          y: -0.58778524
+          z: -0
+          w: 0.80901706
     - Position:
-        x: 30
+        x: -7.7254257
         y: 0
-        z: -22
+        z: 23.776413
       TangentIn:
-        x: 0
-        y: 0
-        z: 14.666667
+        x: -0
+        y: -0
+        z: -9.796421
       TangentOut:
         x: 0
         y: 0
-        z: -4.418278
+        z: 9.796421
       Rotation:
         value:
           x: 0
-          y: 0
+          y: 0.80901706
           z: 0
-          w: 1
+          w: -0.58778524
     - Position:
-        x: 22
+        x: -40.45085
         y: 0
-        z: -30
+        z: 29.38926
       TangentIn:
-        x: 4.418278
-        y: 0
-        z: 0
+        x: -0
+        y: -0
+        z: -4.8982105
       TangentOut:
-        x: -14.666667
+        x: 0
         y: 0
-        z: 0
+        z: 4.8982105
       Rotation:
         value:
           x: 0
-          y: 0
+          y: 0.9510565
           z: 0
-          w: 1
+          w: -0.30901697
     - Position:
-        x: -22
+        x: -25
         y: 0
-        z: -30
+        z: -0.0000021855694
       TangentIn:
-        x: 14.666667
-        y: 0
-        z: 0
+        x: -0
+        y: -0
+        z: -9.796422
       TangentOut:
-        x: -4.418278
+        x: 0
         y: 0
-        z: 0
+        z: 9.796422
       Rotation:
         value:
           x: 0
-          y: 0
+          y: 1
           z: 0
-          w: 1
+          w: 0.00000003127378
     - Position:
-        x: -30
+        x: -40.450848
         y: 0
-        z: -22
+        z: -29.389269
       TangentIn:
-        x: 0
-        y: 0
-        z: -4.418278
+        x: -0
+        y: -0
+        z: -4.8982105
       TangentOut:
         x: 0
         y: 0
-        z: 14.666667
+        z: 4.8982105
       Rotation:
         value:
           x: 0
-          y: 0
+          y: 0.9510565
           z: 0
-          w: 1
+          w: 0.30901703
     - Position:
-        x: -30
+        x: -7.725427
         y: 0
-        z: 22
+        z: -23.776413
       TangentIn:
-        x: 0
-        y: 0
-        z: -14.666667
+        x: -0
+        y: -0
+        z: -9.796421
       TangentOut:
         x: 0
         y: 0
-        z: 4.418278
+        z: 9.796422
       Rotation:
         value:
           x: 0
-          y: 0
+          y: 0.809017
           z: 0
-          w: 1
+          w: 0.5877853
+    - Position:
+        x: 15.450856
+        y: 0
+        z: -47.552826
+      TangentIn:
+        x: -0
+        y: -0
+        z: -4.8982124
+      TangentOut:
+        x: 0
+        y: 0
+        z: 4.8982124
+      Rotation:
+        value:
+          x: 0
+          y: 0.58778524
+          z: 0
+          w: 0.80901706
+    - Position:
+        x: 20.225431
+        y: 0
+        z: -14.694624
+      TangentIn:
+        x: -0
+        y: -0
+        z: -9.796421
+      TangentOut:
+        x: 0
+        y: 0
+        z: 9.796419
+      Rotation:
+        value:
+          x: 0
+          y: 0.30901697
+          z: 0
+          w: 0.95105654
     m_MetaData:
-    - Mode: 3
+    - Mode: 0
       Tension: 0.5
-    - Mode: 3
+    - Mode: 0
       Tension: 0.5
-    - Mode: 3
+    - Mode: 0
       Tension: 0.5
-    - Mode: 3
+    - Mode: 0
       Tension: 0.5
-    - Mode: 3
+    - Mode: 0
       Tension: 0.5
-    - Mode: 3
+    - Mode: 0
       Tension: 0.5
-    - Mode: 3
+    - Mode: 0
       Tension: 0.5
-    - Mode: 3
+    - Mode: 0
+      Tension: 0.5
+    - Mode: 0
+      Tension: 0.5
+    - Mode: 0
       Tension: 0.5
     m_Closed: 1
     m_IntData:
@@ -192,12 +232,12 @@ MonoBehaviour:
       m_Data: []
   baseGoldReward: 50
   tiers:
-  - targetTimeSeconds: 30.168848
+  - targetTimeSeconds: 45.268818
     targetScore: 5000
     goldReward: 1000
-  - targetTimeSeconds: 39.59661
+  - targetTimeSeconds: 59.41532
     targetScore: 3000
     goldReward: 500
-  - targetTimeSeconds: 49.024376
+  - targetTimeSeconds: 73.56183
     targetScore: 1000
     goldReward: 200

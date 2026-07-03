@@ -10,136 +10,136 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7f4a8b2c1d9e4f6a8b0c1d2e3f4a5b6c, type: 3}
-  m_Name: OvalTrack
+  m_Name: SCurveTrack
   m_EditorClassIdentifier: Game.CarSimulation::GearEngine.CarSimulation.Definitions.TrackDefinition
-  trackName: Oval
-  scale: 1
+  trackName: SCurve
+  scale: 0.6
   offset: {x: 0, y: 0, z: 0}
-  totalLaps: 5
-  timeToBeatSeconds: 34.277657
+  totalLaps: 4
+  timeToBeatSeconds: 55.68611
   spline:
     m_EditModeType: 1
     m_Knots:
     - Position:
-        x: -20
+        x: -50
         y: 0
-        z: 20
+        z: 50
       TangentIn:
-        x: -11.045695
-        y: 0
-        z: 0
-      TangentOut:
-        x: 13.333333
-        y: 0
-        z: 0
-      Rotation:
-        value:
-          x: 0
-          y: 0
-          z: 0
-          w: 1
-    - Position:
-        x: 20
-        y: 0
-        z: 20
-      TangentIn:
-        x: -13.333333
-        y: 0
-        z: 0
-      TangentOut:
-        x: 11.045695
-        y: 0
-        z: 0
-      Rotation:
-        value:
-          x: 0
-          y: 0
-          z: 0
-          w: 1
-    - Position:
-        x: 40
-        y: 0
-        z: 0
-      TangentIn:
-        x: 0
-        y: 0
-        z: 11.045695
+        x: -0
+        y: -0
+        z: -19.526217
       TangentOut:
         x: 0
         y: 0
-        z: -11.045695
+        z: 13.807119
       Rotation:
         value:
           x: 0
-          y: 0
+          y: 0.38268346
           z: 0
-          w: 1
+          w: 0.92387956
     - Position:
-        x: 20
-        y: 0
-        z: -20
-      TangentIn:
-        x: 11.045695
-        y: 0
-        z: 0
-      TangentOut:
-        x: -13.333333
-        y: 0
-        z: 0
-      Rotation:
-        value:
-          x: 0
-          y: 0
-          z: 0
-          w: 1
-    - Position:
-        x: -20
-        y: 0
-        z: -20
-      TangentIn:
-        x: 13.333333
-        y: 0
-        z: 0
-      TangentOut:
-        x: -11.045695
-        y: 0
-        z: 0
-      Rotation:
-        value:
-          x: 0
-          y: 0
-          z: 0
-          w: 1
-    - Position:
-        x: -40
-        y: 0
-        z: 0
-      TangentIn:
         x: 0
         y: 0
-        z: -11.045695
+        z: 50
+      TangentIn:
+        x: -0
+        y: -0
+        z: -11.785113
       TangentOut:
         x: 0
         y: 0
-        z: 11.045695
+        z: 11.785113
       Rotation:
         value:
           x: 0
-          y: 0
+          y: 0.92387956
           z: 0
-          w: 1
+          w: 0.38268346
+    - Position:
+        x: 0
+        y: 0
+        z: 0
+      TangentIn:
+        x: -0
+        y: -0
+        z: -11.785113
+      TangentOut:
+        x: 0
+        y: 0
+        z: 11.785113
+      Rotation:
+        value:
+          x: 0
+          y: 0.92387956
+          z: 0
+          w: 0.38268346
+    - Position:
+        x: 50
+        y: 0
+        z: 0
+      TangentIn:
+        x: -0
+        y: -0
+        z: -11.785113
+      TangentOut:
+        x: 0
+        y: 0
+        z: 11.785113
+      Rotation:
+        value:
+          x: 0
+          y: 0.92387956
+          z: 0
+          w: 0.38268346
+    - Position:
+        x: 50
+        y: 0
+        z: -50
+      TangentIn:
+        x: -0
+        y: -0
+        z: -13.807119
+      TangentOut:
+        x: 0
+        y: 0
+        z: 19.526217
+      Rotation:
+        value:
+          x: 0
+          y: 0.92387956
+          z: 0
+          w: -0.38268346
+    - Position:
+        x: -50
+        y: 0
+        z: -50
+      TangentIn:
+        x: -0
+        y: -0
+        z: -23.570227
+      TangentOut:
+        x: 0
+        y: 0
+        z: 23.570227
+      Rotation:
+        value:
+          x: 0
+          y: -0.38268346
+          z: -0
+          w: 0.92387956
     m_MetaData:
-    - Mode: 3
+    - Mode: 0
       Tension: 0.5
-    - Mode: 3
+    - Mode: 0
       Tension: 0.5
-    - Mode: 2
+    - Mode: 0
       Tension: 0.5
-    - Mode: 3
+    - Mode: 0
       Tension: 0.5
-    - Mode: 3
+    - Mode: 0
       Tension: 0.5
-    - Mode: 2
+    - Mode: 0
       Tension: 0.5
     m_Closed: 1
     m_IntData:
@@ -150,14 +150,14 @@ MonoBehaviour:
       m_Data: []
     m_ObjectData:
       m_Data: []
-  baseGoldReward: 50
+  baseGoldReward: 40
   tiers:
-  - targetTimeSeconds: 27.422125
+  - targetTimeSeconds: 44.54889
     targetScore: 5000
     goldReward: 1000
-  - targetTimeSeconds: 35.99154
+  - targetTimeSeconds: 58.470413
     targetScore: 3000
     goldReward: 500
-  - targetTimeSeconds: 44.56095
+  - targetTimeSeconds: 72.391945
     targetScore: 1000
     goldReward: 200
