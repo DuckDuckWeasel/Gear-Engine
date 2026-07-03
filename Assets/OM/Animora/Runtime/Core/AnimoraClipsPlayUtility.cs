@@ -235,7 +235,8 @@ namespace OM.Animora.Runtime
         /// </summary>
         /// <param name="clips">The collection of <see cref="AnimoraClip"/> instances to evaluate.</param>
         /// <param name="time">The specific time to evaluate at (e.g., the scrub head position).</param>
-        public static void EvaluateForce(IEnumerable<AnimoraClip> clips, float time)
+        /// <param name="isPreviewing">True if evaluating during editor preview, false for forced evaluation during gameplay.</param>
+        public static void EvaluateForce(IEnumerable<AnimoraClip> clips, float time, bool isPreviewing = true)
         {
             // Check if the provided collection is null.
             if (clips == null) return;
@@ -247,7 +248,7 @@ namespace OM.Animora.Runtime
                  if (clip == null) continue;
 
                 // Call the evaluation method that runs always, indicating it's a preview update.
-                clip.OnEvaluateAllTime(time, true);
+                clip.OnEvaluateAllTime(time, isPreviewing);
 
                 // Get clip timings.
                 var startTime = clip.GetStartTime();
@@ -262,7 +263,7 @@ namespace OM.Animora.Runtime
                      var clipTime = time - startTime;
                      var normalizedTime = Mathf.Clamp01(clipTime / safeDuration);
                      // Evaluate the clip at the current scrub time.
-                     clip.OnEvaluate(time, clipTime, normalizedTime, true); // isPreviewing = true
+                     clip.OnEvaluate(time, clipTime, normalizedTime, isPreviewing);
                      continue;
                  }
 
@@ -274,7 +275,7 @@ namespace OM.Animora.Runtime
                      if (clip.HasEntered && clip.HasExited == false)
                      {
                          // Evaluate at the end state (normalized time 1).
-                         clip.OnEvaluate(endTime, duration, 1, true); // isPreviewing = true
+                         clip.OnEvaluate(endTime, duration, 1, isPreviewing);
                          // Conceptually exit for the preview state.
                          clip.Exit();
                          // Mark that this specific clip's preview evaluation is completed (reached or passed the end).
@@ -303,7 +304,7 @@ namespace OM.Animora.Runtime
                      var clipTime = time - startTime;
                      var normalizedTime = Mathf.Clamp01(clipTime / safeDuration);
                      // Evaluate the clip at the current scrub time.
-                     clip.OnEvaluate(time, clipTime, normalizedTime, true); // isPreviewing = true
+                     clip.OnEvaluate(time, clipTime, normalizedTime, isPreviewing);
                  }
                  // Check if scrub time is before the clip's start time.
                  else // time < startTime
@@ -312,7 +313,7 @@ namespace OM.Animora.Runtime
                      if (clip.HasEntered)
                      {
                          // Evaluate at the beginning state (normalized time 0).
-                         clip.OnEvaluate(startTime, 0, 0, true); // isPreviewing = true
+                         clip.OnEvaluate(startTime, 0, 0, isPreviewing);
                          // Mark as exited conceptually for the preview.
                          clip.HasExited = true;
                          // Reset entered flag.

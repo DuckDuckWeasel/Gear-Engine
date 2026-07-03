@@ -19,7 +19,10 @@ namespace OM.Animora.Modules
         public override void OnPreviewChanged(AnimoraPlayer animoraPlayer, bool isOn)
         {
             base.OnPreviewChanged(animoraPlayer, isOn);
-            nestedPlayer.OnPreviewStateChanged(isOn);
+            if (nestedPlayer != null)
+            {
+                nestedPlayer.OnPreviewStateChanged(isOn);
+            }
         }
 
         public override bool IsNestedPlayerClip(AnimoraPlayer targetPlayer)
@@ -31,13 +34,16 @@ namespace OM.Animora.Modules
         {
             base.OnEvaluate(time, clipTime, normalizedTime, isPreviewing);
             var speed = nestedPlayer.GetTimelineDuration() / GetDuration();
-            AnimoraClipsPlayUtility.EvaluateForce(nestedPlayer.ClipsToPlay, clipTime * speed);
+            AnimoraClipsPlayUtility.EvaluateForce(nestedPlayer.ClipsToPlay, clipTime * speed, isPreviewing);
         }
 
         public override void Enter()
         {
             base.Enter();
-            nestedPlayer.StartPlayingAndStartFirstLoop(CurrentPlayDirection, IsPreviewing);
+            if (!IsPreviewing)
+            {
+                nestedPlayer.StartPlayingAndStartFirstLoop(CurrentPlayDirection, false);
+            }
         }
 
         public override void Exit()
@@ -48,6 +54,30 @@ namespace OM.Animora.Modules
             {
                 nestedPlayer.CompleteLoop();
                 nestedPlayer.CompletePlaying();
+            }
+        }
+
+        public override void OnCompletePlaying()
+        {
+            base.OnCompletePlaying();
+            
+            // If the parent timeline completed but this clip never exited naturally 
+            // (e.g., its end time matched exactly the timeline's duration), force complete.
+            if (!IsPreviewing && HasEntered && !HasExited)
+            {
+                nestedPlayer.CompleteLoop();
+                nestedPlayer.CompletePlaying();
+            }
+        }
+
+        public override void OnStop()
+        {
+            base.OnStop();
+            
+            // Ensure nested player stops when parent stops
+            if (!IsPreviewing && HasEntered && !HasExited)
+            {
+                nestedPlayer.StopAnimation();
             }
         }
 

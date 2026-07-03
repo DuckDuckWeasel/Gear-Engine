@@ -17,6 +17,11 @@ namespace OM.Animora.Editor
         private readonly AnimoraPlayer AnimoraPlayer;
         private readonly OM_HeaderButton _playButton, _stopButton, _replayButton;
 
+        private double _lastEditorTime;
+        private bool _isPlayingInEditor;
+        private bool _previewLoopEnabled = false;
+        private OM_PlayState _editorPlayState = OM_PlayState.Stopped;
+
         /// <summary>
         /// Initializes the control section and binds UI controls to the player's state.
         /// </summary>
@@ -30,7 +35,7 @@ namespace OM.Animora.Editor
             _playButton = playerEditor.AnimoraTimeline.Header.PlayButton;
             _stopButton = playerEditor.AnimoraTimeline.Header.StopButton;
 
-            playerEditor.AnimoraTimeline.Header.OnReplayButtonClicked += Play;
+            playerEditor.AnimoraTimeline.Header.OnReplayButtonClicked += TogglePreviewLoop;
             playerEditor.AnimoraTimeline.Header.OnPlayButtonClicked += OnPlayButtonClicked;
             playerEditor.AnimoraTimeline.Header.OnStopButtonClicked += Stop;
 
@@ -40,7 +45,16 @@ namespace OM.Animora.Editor
             }
 
             AnimoraPlayer.OnPlayStateChanged += OnPlayStateChanged;
-            OnPlayStateChanged(AnimoraPlayer.PlayState);
+            playerEditor.AnimoraTimeline.OnPreviewStateChangedCallback += OnPreviewStateChanged;
+            OnPlayStateChanged(Application.isPlaying ? AnimoraPlayer.PlayState : _editorPlayState);
+        }
+
+        private void OnPreviewStateChanged(bool isPreviewing)
+        {
+            if (_editorPlayState == OM_PlayState.Stopped)
+            {
+                _stopButton.SetEnabled(isPreviewing);
+            }
         }
 
         /// <summary>
@@ -49,9 +63,11 @@ namespace OM.Animora.Editor
         public void OnEnable()
         {
             EditorApplication.playModeStateChanged += OnApplicationPlayModeStateChanged;
-            OnApplicationPlayModeStateChanged(EditorApplication.isPlayingOrWillChangePlaymode 
-                ? PlayModeStateChange.ExitingEditMode 
-                : PlayModeStateChange.EnteredEditMode);
+            EditorApplication.update += EditorUpdate;
+            
+            _playButton.SetEnabled(true);
+            _stopButton.SetEnabled(true);
+            _replayButton.SetEnabled(true);
         }
 
         /// <summary>
@@ -60,6 +76,57 @@ namespace OM.Animora.Editor
         public void OnDisable()
         {
             EditorApplication.playModeStateChanged -= OnApplicationPlayModeStateChanged;
+            EditorApplication.update -= EditorUpdate;
+            if (AnimoraPlayerEditor != null && AnimoraPlayerEditor.AnimoraTimeline != null)
+            {
+                AnimoraPlayerEditor.AnimoraTimeline.OnPreviewStateChangedCallback -= OnPreviewStateChanged;
+            }
+        }
+
+        private void EditorUpdate()
+        {
+            if (Application.isPlaying || !_isPlayingInEditor || AnimoraPlayer == null) return;
+            
+            if (!AnimoraPlayerEditor.AnimoraTimeline.IsPreviewing)
+            {
+                AnimoraPlayerEditor.AnimoraTimeline.StartPreview();
+            }
+
+            float deltaTime = (float)(EditorApplication.timeSinceStartup - _lastEditorTime);
+            _lastEditorTime = EditorApplication.timeSinceStartup;
+            
+            float playbackSpeed = AnimoraPlayerEditor.serializedObject.FindProperty("playbackSpeed").floatValue;
+            int loopType = AnimoraPlayerEditor.serializedObject.FindProperty("playLoopType").intValue;
+            
+            float timeIncrement = deltaTime * playbackSpeed;
+            float duration = AnimoraPlayer.GetTimelineDuration();
+
+            float newTime = AnimoraPlayer.ElapsedTime + timeIncrement;
+
+            if (duration > 0 && newTime >= duration)
+            {
+                if (!_previewLoopEnabled && loopType == (int)AnimoraPlayLoopType.Once)
+                {
+                    newTime = duration;
+                    _isPlayingInEditor = false;
+                    _editorPlayState = OM_PlayState.Stopped;
+                    OnPlayStateChanged(_editorPlayState);
+                }
+                else
+                {
+                    newTime = newTime % duration;
+                }
+            }
+
+            AnimoraPlayerEditor.AnimoraTimeline.SetCursorTime(newTime);
+            AnimoraPlayerEditor.AnimoraTimeline.UpdatePreviewElapsedTime(newTime);
+            
+            // Sync CurrentPreviewTime via reflection since it has a private setter
+            var prop = typeof(OM_TimelineHeader<AnimoraClip, AnimoraTrack>).GetProperty("CurrentPreviewTime", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
+            if (prop != null && prop.CanWrite)
+            {
+                prop.SetValue(AnimoraPlayerEditor.AnimoraTimeline.Header, newTime);
+            }
         }
 
         /// <summary>
@@ -69,6 +136,12 @@ namespace OM.Animora.Editor
         {
             if (Application.isPlaying)
                 AnimoraPlayer.PauseAnimation();
+            else
+            {
+                _isPlayingInEditor = false;
+                _editorPlayState = OM_PlayState.Paused;
+                OnPlayStateChanged(_editorPlayState);
+            }
         }
 
         /// <summary>
@@ -78,6 +151,13 @@ namespace OM.Animora.Editor
         {
             if (Application.isPlaying)
                 AnimoraPlayer.ResumeAnimation();
+            else
+            {
+                _isPlayingInEditor = true;
+                _lastEditorTime = EditorApplication.timeSinceStartup;
+                _editorPlayState = OM_PlayState.Playing;
+                OnPlayStateChanged(_editorPlayState);
+            }
         }
 
         /// <summary>
@@ -87,15 +167,43 @@ namespace OM.Animora.Editor
         {
             if (Application.isPlaying)
                 AnimoraPlayer.PlayAnimation();
+            else
+            {
+                _isPlayingInEditor = true;
+                _lastEditorTime = EditorApplication.timeSinceStartup;
+                _editorPlayState = OM_PlayState.Playing;
+                
+                if (!AnimoraPlayerEditor.AnimoraTimeline.IsPreviewing)
+                    AnimoraPlayerEditor.AnimoraTimeline.StartPreview();
+
+                AnimoraPlayerEditor.AnimoraTimeline.SetCursorTime(0);
+                AnimoraPlayerEditor.AnimoraTimeline.UpdatePreviewElapsedTime(0);
+                
+                OnPlayStateChanged(_editorPlayState);
+            }
+        }
+
+        public void StopEditorPlayback()
+        {
+            _isPlayingInEditor = false;
+            _editorPlayState = OM_PlayState.Stopped;
+            OnPlayStateChanged(_editorPlayState);
         }
 
         /// <summary>
         /// Stops the animation if in play mode.
         /// </summary>
-        private void Stop()
+        public void Stop()
         {
             if (Application.isPlaying)
                 AnimoraPlayer.StopAnimation();
+            else
+            {
+                StopEditorPlayback();
+                
+                if (AnimoraPlayerEditor.AnimoraTimeline.IsPreviewing)
+                    AnimoraPlayerEditor.AnimoraTimeline.StopPreview();
+            }
         }
 
         /// <summary>
@@ -104,7 +212,8 @@ namespace OM.Animora.Editor
         /// </summary>
         private void OnPlayButtonClicked()
         {
-            switch (AnimoraPlayer.PlayState)
+            OM_PlayState state = Application.isPlaying ? AnimoraPlayer.PlayState : _editorPlayState;
+            switch (state)
             {
                 case OM_PlayState.Playing:
                     Pause();
@@ -118,16 +227,41 @@ namespace OM.Animora.Editor
             }
         }
 
+        private void TogglePreviewLoop()
+        {
+            _previewLoopEnabled = !_previewLoopEnabled;
+            UpdateReplayButtonIcon();
+        }
+
+        private void UpdateReplayButtonIcon()
+        {
+            _replayButton.Icon.SetBackgroundFromIconContent("preAudioAutoPlayOff@2x");
+            
+            if (_previewLoopEnabled)
+            {
+                _replayButton.style.backgroundColor = new StyleColor(new Color(0.25f, 0.45f, 0.7f, 1f));
+            }
+            else
+            {
+                _replayButton.style.backgroundColor = new StyleColor(StyleKeyword.Null);
+            }
+        }
+
         /// <summary>
         /// Updates the button states based on Unity's play mode state.
         /// </summary>
         private void OnApplicationPlayModeStateChanged(PlayModeStateChange playModeState)
         {
-            bool enable = playModeState is PlayModeStateChange.ExitingEditMode or PlayModeStateChange.EnteredPlayMode;
-
-            _playButton.SetEnabled(enable);
-            _stopButton.SetEnabled(enable);
-            _replayButton.SetEnabled(enable);
+            _playButton.SetEnabled(true);
+            _stopButton.SetEnabled(true);
+            _replayButton.SetEnabled(true);
+            
+            if (playModeState == PlayModeStateChange.ExitingEditMode)
+            {
+                _isPlayingInEditor = false;
+                _editorPlayState = OM_PlayState.Stopped;
+                OnPlayStateChanged(_editorPlayState);
+            }
         }
 
         /// <summary>
@@ -148,7 +282,7 @@ namespace OM.Animora.Editor
                     break;
 
                 case OM_PlayState.Stopped:
-                    _stopButton.SetEnabled(false);
+                    _stopButton.SetEnabled(AnimoraPlayerEditor.AnimoraTimeline != null && AnimoraPlayerEditor.AnimoraTimeline.IsPreviewing);
                     _playButton.Icon.SetBackgroundFromIconContent("PlayButton@2x");
                     break;
             }

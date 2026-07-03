@@ -30,7 +30,7 @@ namespace OM.Animora.Editor
         public AnimoraInspector Inspector { get; private set; }
 
         private List<Type> _cachedClipsTypes;
-        private AnimoraPlayerEditorControlSection _animoraPlayerEditorControlSection;
+        public AnimoraPlayerEditorControlSection AnimoraPlayerEditorControlSection { get; private set; }
 
         private List<AnimoraPlayer> _allPlayersInScene;
 
@@ -44,6 +44,7 @@ namespace OM.Animora.Editor
 
             Undo.undoRedoPerformed += UndoRedoPerformed;
             Player.OnPlayerValidateCallback += OnPlayerValidate;
+            Selection.selectionChanged += OnSelectionChanged;
 
             _allPlayersInScene = FindObjectsByType<AnimoraPlayer>(FindObjectsInactive.Include, FindObjectsSortMode.None)
                 .ToList();
@@ -57,7 +58,26 @@ namespace OM.Animora.Editor
         {
             Undo.undoRedoPerformed -= UndoRedoPerformed;
             Player.OnPlayerValidateCallback -= OnPlayerValidate;
-            _animoraPlayerEditorControlSection?.OnDisable();
+            Selection.selectionChanged -= OnSelectionChanged;
+            
+            if (AnimoraTimeline != null && AnimoraTimeline.IsPreviewing)
+            {
+                AnimoraTimeline.StopPreview();
+            }
+            AnimoraPlayerEditorControlSection?.StopEditorPlayback();
+            AnimoraPlayerEditorControlSection?.OnDisable();
+        }
+
+        private void OnSelectionChanged()
+        {
+            if (Selection.activeGameObject != Player.gameObject)
+            {
+                if (AnimoraTimeline != null && AnimoraTimeline.IsPreviewing)
+                {
+                    AnimoraTimeline.StopPreview();
+                }
+                AnimoraPlayerEditorControlSection?.StopEditorPlayback();
+            }
         }
 
         private void UndoRedoPerformed() => VisualElementsManager.TriggerUndoRedo();
@@ -193,8 +213,8 @@ namespace OM.Animora.Editor
             AnimoraTimeline = new AnimoraTimeline(this, this);
             Root.Add(AnimoraTimeline);
 
-            _animoraPlayerEditorControlSection = new AnimoraPlayerEditorControlSection(this);
-            _animoraPlayerEditorControlSection.OnEnable();
+            AnimoraPlayerEditorControlSection = new AnimoraPlayerEditorControlSection(this);
+            AnimoraPlayerEditorControlSection.OnEnable();
 
             AnimoraTimeline.Header.OnContextButtonClicked += () =>
             {

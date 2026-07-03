@@ -30,6 +30,7 @@ namespace OM.Animora.Modules
             for (var index = 0; index < allTargets.Count; index++)
             {
                 var target = allTargets[index];
+                if (target == null) continue;
                 target.anchorMin = new Vector2(0.5f, 0.5f);
                 target.anchorMax = new Vector2(0.5f, 0.5f);
                 target.pivot = new Vector2(0.5f, 0.5f);
@@ -50,6 +51,7 @@ namespace OM.Animora.Modules
             for (var i = 0; i < list.Count; i++)
             {
                 var target = list[i];
+                if (target == null) continue;
                 target.sizeDelta = Vector2.LerpUnclamped(_startSize[i], _targetSize[i], ease.Evaluate(normalizedTime));
                 target.anchoredPosition = Vector2.LerpUnclamped(_startPosition[i], Vector2.zero, ease.Evaluate(normalizedTime));
             }
@@ -63,6 +65,7 @@ namespace OM.Animora.Modules
             for (var i = 0; i < list.Count; i++)
             {
                 var target = list[i];
+                if (target == null) continue;
             
                 AnimoraPreviewManager.RecordOrUndoObject(isOn,this,target.sizeDelta, (e)=> target.sizeDelta = e);
                 AnimoraPreviewManager.RecordOrUndoObject(isOn,this,target.anchorMin, (e)=> target.anchorMin = e);

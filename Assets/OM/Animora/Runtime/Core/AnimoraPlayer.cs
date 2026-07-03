@@ -862,12 +862,12 @@ namespace OM.Animora.Runtime
             if (GetComponent<RectTransform>() != null)
             {
                 // Force evaluate the first frame before restoring alpha to prevent 1-frame visual glitches
-                AnimoraClipsPlayUtility.EvaluateForce(ClipsToPlay, GetElapsedTimeStartTime(_currentPlayDirection));
+                AnimoraClipsPlayUtility.EvaluateForce(ClipsToPlay, GetElapsedTimeStartTime(_currentPlayDirection), _isPreviewing);
 
                 var cg = GetComponent<CanvasGroup>();
                 if (cg != null)
                 {
-                    cg.alpha = _initialCanvasGroupAlpha;
+                    cg.alpha = playMode == AnimoraPlayMode.Child ? 1f : _initialCanvasGroupAlpha;
                 }
             }
         }
@@ -985,7 +985,7 @@ namespace OM.Animora.Runtime
                 StartPlayingAndStartFirstLoop(OM_PlayDirection.Forward, true); // Start preview forward
 
                 // Evaluate the initial frame (time 0) forcefully for preview
-                AnimoraClipsPlayUtility.EvaluateForce(ClipsToPlay, 0);
+                AnimoraClipsPlayUtility.EvaluateForce(ClipsToPlay, 0, true);
             }
             else
             {
@@ -1021,7 +1021,7 @@ namespace OM.Animora.Runtime
                 return;
             }
             // Force evaluate all active clips at the specified time for preview.
-            AnimoraClipsPlayUtility.EvaluateForce(ClipsToPlay, time);
+            AnimoraClipsPlayUtility.EvaluateForce(ClipsToPlay, time, true);
              // Update the logical elapsed time to match the preview time
              SetElapsedTime(time);
         }

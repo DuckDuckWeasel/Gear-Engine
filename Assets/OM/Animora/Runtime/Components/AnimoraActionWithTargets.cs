@@ -23,6 +23,7 @@ namespace OM.Animora.Runtime
             {
                 foreach (var target in customTargets)
                 {
+                    if (target == null) continue;
                     yield return target;
                 }
                 yield break;
@@ -30,6 +31,8 @@ namespace OM.Animora.Runtime
 
             foreach (var target in targets)
             {
+                if (target == null) continue;
+
                 if (target is T t) // Direct cast
                 {
                     yield return t;
