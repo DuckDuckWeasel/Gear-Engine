@@ -33,6 +33,11 @@ namespace GearEngine.GearEngine.Visuals
         private float targetVisualFill = -1f;
         private MaterialPropertyBlock propertyBlock;
 
+        private float animatedBaseRotationZ;
+        private float visualRotationOffset;
+        private float rapidSpinSpeed = 0f;
+        private bool hasInitializedRotation = false;
+
         /// <summary>Editor tests: assigns serialized references without a prefab asset.</summary>
         internal void WireTestReferences(Transform gearVisualRef, SpriteRenderer chargeRef = null)
         {
@@ -59,9 +64,14 @@ namespace GearEngine.GearEngine.Visuals
             }
         }
 
-        public void SetRotationTarget(float zDegrees)
+        public void SetRotationTarget(float zDegrees, bool snap = false)
         {
             targetRotationZ = zDegrees;
+            if (!hasInitializedRotation || snap)
+            {
+                animatedBaseRotationZ = zDegrees;
+                hasInitializedRotation = true;
+            }
         }
 
         /// <param name="normalized01">Fill amount 0..1.</param>
@@ -106,13 +116,31 @@ namespace GearEngine.GearEngine.Visuals
             transform.DOPunchScale(Vector3.one * 0.2f, 0.3f, 5, 0.5f);
         }
 
+        public void SpinOnceVisual(float duration = 0.5f)
+        {
+            DOTween.To(() => visualRotationOffset, x => visualRotationOffset = x, visualRotationOffset - 360f, duration)
+                .SetEase(Ease.OutQuad);
+        }
+
+        public void SetRapidSpin(bool enabled, float speed = 1500f)
+        {
+            rapidSpinSpeed = enabled ? speed : 0f;
+        }
+
         private void Update()
         {
             transform.localPosition = Vector3.Lerp(transform.localPosition, Vector3.zero, Time.deltaTime * settleLerpSpeed);
 
             Transform rotateTarget = gearVisual != null ? gearVisual : transform;
-            Quaternion target = Quaternion.Euler(0, 0, targetRotationZ);
-            rotateTarget.localRotation = Quaternion.Lerp(rotateTarget.localRotation, target, Time.deltaTime * rotationLerpSpeed);
+            
+            animatedBaseRotationZ = Mathf.LerpAngle(animatedBaseRotationZ, targetRotationZ, Time.deltaTime * rotationLerpSpeed);
+
+            if (rapidSpinSpeed != 0f)
+            {
+                visualRotationOffset -= rapidSpinSpeed * Time.deltaTime;
+            }
+
+            rotateTarget.localRotation = Quaternion.Euler(0, 0, animatedBaseRotationZ + visualRotationOffset);
 
             if (targetVisualFill >= 0f && chargeFillRenderer != null)
             {

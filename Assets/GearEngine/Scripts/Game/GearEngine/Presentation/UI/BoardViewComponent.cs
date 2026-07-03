@@ -38,6 +38,11 @@ namespace GearEngine.GearEngine.Presentation.UI
 
         public BoardLayoutSO BoardLayout => boardLayout;
 
+        public new void Unbind()
+        {
+            base.Unbind();
+        }
+
         protected override void OnBind()
         {
             Assert.IsNotNull(boardLayout, "[BoardView] BoardLayoutSO is missing.");
@@ -65,6 +70,22 @@ namespace GearEngine.GearEngine.Presentation.UI
             viewModel.PropertyChanged += OnBoardViewModelPropertyChanged;
             RefreshDraggableInteractable();
             Bind(() => viewModel.BoardLimitText, () => boardLimitLabel.text);
+        }
+
+        public void SpinAllGearsOnceVisual()
+        {
+            foreach (GearView view in viewsByNode.Values)
+            {
+                if (view != null) view.SpinOnceVisual();
+            }
+        }
+
+        public void SetAllGearsRapidSpin(bool enabled)
+        {
+            foreach (GearView view in viewsByNode.Values)
+            {
+                if (view != null) view.SetRapidSpin(enabled);
+            }
         }
 
         protected override void OnUnbind()
