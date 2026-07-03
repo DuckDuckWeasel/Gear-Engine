@@ -41,6 +41,8 @@ namespace GearEngine.CarSimulation.SplineSimulation
         private Component prometeoComponent;
         private ParticleSystem rlParticle;
         private ParticleSystem rrParticle;
+        private ParticleSystem flParticle;
+        private ParticleSystem frParticle;
         private TrailRenderer rlSkid;
         private TrailRenderer rrSkid;
         private Transform frontLeftWheelTr;
@@ -51,6 +53,12 @@ namespace GearEngine.CarSimulation.SplineSimulation
         private bool hasPrometeoEffects;
         private float smoothedRacingLine; // Prevents the racing line from jumping
         private float visualSteerAngle; // Tracks the current steering wheel angle
+
+        // Visual Combo System for Celebrations
+        private float visualDriftGraceTimer;
+        private int visualDriftCombo = 1;
+        private float totalJumpDuration; // Needed to evaluate the ease curve correctly
+        private bool canCelebrateCurrentJump;
 
         // Cinematic Finish Fields
         private bool isDoingCinematicFinish;
@@ -63,10 +71,12 @@ namespace GearEngine.CarSimulation.SplineSimulation
         private Quaternion cinematicTrackRot;
 
         private Vector3 baseScale = Vector3.one;
+        private Quaternion smoothedBaseRot = Quaternion.identity;
 
         public SplineMotionState State;
 
         public bool IsInitialized => isInitialized;
+        public bool IsValid => isInitialized && carTransform != null;
         public bool IsPaused => isPaused;
         public CarEntity CarEntity => carEntity;
 
@@ -117,6 +127,7 @@ namespace GearEngine.CarSimulation.SplineSimulation
             splineLength = spline.GetLength();
             
             baseScale = carTransform.localScale;
+            smoothedBaseRot = carTransform.rotation;
 
             State = new SplineMotionState();
             PlaceAtStart();
@@ -146,18 +157,34 @@ namespace GearEngine.CarSimulation.SplineSimulation
                         rrParticle = prometeoType.GetField("RRWParticleSystem")?.GetValue(prometeoComponent) as ParticleSystem;
                         rlSkid = prometeoType.GetField("RLWTireSkid")?.GetValue(prometeoComponent) as TrailRenderer;
                         rrSkid = prometeoType.GetField("RRWTireSkid")?.GetValue(prometeoComponent) as TrailRenderer;
-
+                        
                         var flObj = prometeoType.GetField("frontLeftMesh")?.GetValue(prometeoComponent) as GameObject;
                         if (flObj != null) frontLeftWheelTr = flObj.transform;
                         
                         var frObj = prometeoType.GetField("frontRightMesh")?.GetValue(prometeoComponent) as GameObject;
+                        
+                        // We need front right wheel correctly
                         if (frObj != null) frontRightWheelTr = frObj.transform;
 
                         var rlObj = prometeoType.GetField("rearLeftMesh")?.GetValue(prometeoComponent) as GameObject;
                         if (rlObj != null) rearLeftWheelTr = rlObj.transform;
-                        
                         var rrObj = prometeoType.GetField("rearRightMesh")?.GetValue(prometeoComponent) as GameObject;
                         if (rrObj != null) rearRightWheelTr = rrObj.transform;
+
+                        // Create front particles for the celebration spin if they don't exist
+                        if (rlParticle != null && frontLeftWheelTr != null)
+                        {
+                            flParticle = UnityEngine.Object.Instantiate(rlParticle.gameObject, carTransform).GetComponent<ParticleSystem>();
+                            flParticle.transform.position = frontLeftWheelTr.position;
+                            // Keep it slightly above ground like the rear ones usually are
+                            flParticle.transform.localPosition = new Vector3(flParticle.transform.localPosition.x, rlParticle.transform.localPosition.y, flParticle.transform.localPosition.z);
+                        }
+                        if (rrParticle != null && frontRightWheelTr != null)
+                        {
+                            frParticle = UnityEngine.Object.Instantiate(rrParticle.gameObject, carTransform).GetComponent<ParticleSystem>();
+                            frParticle.transform.position = frontRightWheelTr.position;
+                            frParticle.transform.localPosition = new Vector3(frParticle.transform.localPosition.x, rrParticle.transform.localPosition.y, frParticle.transform.localPosition.z);
+                        }
                         
                         var swObj = prometeoType.GetField("steeringWheel")?.GetValue(prometeoComponent) as GameObject;
                         if (swObj != null) steeringWheelTr = swObj.transform;
@@ -685,6 +712,19 @@ namespace GearEngine.CarSimulation.SplineSimulation
         
         private void TickVisuals(float dt)
         {
+            if (State.IsDrifting)
+            {
+                visualDriftGraceTimer = 1.5f;
+            }
+            else if (visualDriftGraceTimer > 0f)
+            {
+                visualDriftGraceTimer -= dt;
+                if (visualDriftGraceTimer <= 0f)
+                {
+                    visualDriftCombo = 1;
+                }
+            }
+
             // Body roll from centripetal acceleration: a_c = v² * curvature
             float centripetalAccel = State.Speed * State.Speed * State.Curvature;
             float targetRoll = -centripetalAccel * config.bodyRollScale;
@@ -737,16 +777,30 @@ namespace GearEngine.CarSimulation.SplineSimulation
                 State.DriftAnticipationTimer -= dt;
                 
                 // Parabola: y = 4 * h * (t / d) * (1 - t / d)
-                float jumpDuration = 0.35f;
+                float jumpDuration = totalJumpDuration > 0f ? totalJumpDuration : 0.35f;
                 float tJump = jumpDuration - State.DriftAnticipationTimer;
                 float normalizedT = Mathf.Clamp01(tJump / jumpDuration);
                 
-                float jumpHeight = 1.2f; // Exaggerated arcade hop height in meters
+                float jumpHeight = 1.2f * State.JumpHeightMultiplier; // Exaggerated arcade hop height in meters
                 State.JumpOffset = 4f * jumpHeight * normalizedT * (1f - normalizedT);
+                
+                if (visualDriftCombo > 1 && !isDoingCinematicFinish && canCelebrateCurrentJump)
+                {
+                    float easedT = normalizedT * (2f - normalizedT); // Ease Out Quad
+                    float totalSpins = 1f; // User requested EXACTLY ONE spin falling into drift position
+                    float spinSign = Mathf.Sign(State.CurrentCurveSign);
+                    if (spinSign == 0f) spinSign = 1f;
+                    State.CelebrationSpinAngle = easedT * totalSpins * 360f * spinSign;
+                }
+                else
+                {
+                    State.CelebrationSpinAngle = 0f;
+                }
             }
             else
             {
                 State.JumpOffset = 0f;
+                State.CelebrationSpinAngle = 0f;
             }
 
             // Trigger IsDrifting purely based on explicit curve drift intent and depth
@@ -755,26 +809,51 @@ namespace GearEngine.CarSimulation.SplineSimulation
             if (State.IsInCurveSequence && State.WillDriftCurrentCurve)
             {
                 // Trigger the jump very early into the curve entry
-                if (driftSeverityForVFX > 0.02f && !State.HasJumpedThisCurve)
+                if (driftSeverityForVFX > 0.02f && !State.HasJumpedThisCurve && !isDoingCinematicFinish)
                 {
                     State.HasJumpedThisCurve = true;
                     
-                    // Em baixa velocidade (-100 km/h), não pula
+                    TrackCurveEvent activeCurveForJump = GetActiveCurve(State.T, State.CompletedLaps);
+                    
+                    // The correct physical length of the curve is Entry + Exit distance
+                    float driftLength = activeCurveForJump.DynamicEntryDist + activeCurveForJump.DynamicExitDist;
+                    
+                    // Em baixa velocidade (-100 km/h) ou curvas muito curtas, não pula!
                     float speedKmh = State.Speed * 3.6f;
-                    if (speedKmh >= 100f)
+                    if (speedKmh >= 100f && driftLength > 15f)
                     {
-                        State.DriftAnticipationTimer = 0.35f; 
+                        if (visualDriftGraceTimer > 0f) {
+                            visualDriftCombo++;
+                        } else {
+                            visualDriftCombo = 1;
+                        }
+                        
+                        // Limit height combo to avoid jumps getting too high
+                        float comboBonus = Mathf.Min((visualDriftCombo - 1) * 0.02f, 0.1f);
+                        State.JumpHeightMultiplier = 1f + comboBonus;
+                        totalJumpDuration = 0.35f + Mathf.Min((visualDriftCombo - 1) * 0.1f, 0.4f);
+                        totalJumpDuration = Mathf.Min(totalJumpDuration, 0.8f);
+                        
+                        State.DriftAnticipationTimer = totalJumpDuration; 
                         
                         // Curvas muito íngremes (fechadas) pulam menos (0.1), curvas abertas pulam mais (0.3).
-                        TrackCurveEvent activeCurveForJump = GetActiveCurve(State.T, State.CompletedLaps);
                         float curveMildness = Mathf.InverseLerp(0.20f, 0.04f, activeCurveForJump.PeakCurvature);
                         
-                        State.JumpScaleIntensity = Mathf.Lerp(0.1f, 0.3f, curveMildness);
+                        State.JumpScaleIntensity = Mathf.Lerp(0.1f, 0.3f, curveMildness) + comboBonus;
+
+                        // Só faz o giro em combos e se o drift não for muito curto (mas já filtramos curvas menores que 15m)
+                        canCelebrateCurrentJump = driftLength > 20f; // Um threshold um pouco maior para liberar o 360
                     }
                     else
                     {
                         State.DriftAnticipationTimer = 0f;
                         State.JumpScaleIntensity = 0f;
+                        State.JumpHeightMultiplier = 1f;
+                        totalJumpDuration = 0f;
+                        canCelebrateCurrentJump = false;
+                        
+                        // Se a curva é minúscula ou o carro está devagar, apenas ignora o pulo. 
+                        // O combo não incrementa nem zera.
                     }
                 }
 
@@ -790,19 +869,34 @@ namespace GearEngine.CarSimulation.SplineSimulation
             {
                 // Drift VFX strictly triggers only when performing a designated curve drift
                 bool showDriftVfx = State.IsDrifting && State.Speed > 5f;
+                bool isSpinning = State.CelebrationSpinAngle != 0f;
 
-                // Particle Systems
+                // Particle Systems (Rear wheels always on drift, all 4 wheels on spin)
                 if (rlParticle != null)
                 {
                     var em = rlParticle.emission;
-                    if (showDriftVfx) { if (!rlParticle.isPlaying) rlParticle.Play(); em.enabled = true; }
+                    if (showDriftVfx || isSpinning) { if (!rlParticle.isPlaying) rlParticle.Play(); em.enabled = true; }
                     else { if (rlParticle.isPlaying) rlParticle.Stop(); em.enabled = false; }
                 }
                 if (rrParticle != null)
                 {
                     var em = rrParticle.emission;
-                    if (showDriftVfx) { if (!rrParticle.isPlaying) rrParticle.Play(); em.enabled = true; }
+                    if (showDriftVfx || isSpinning) { if (!rrParticle.isPlaying) rrParticle.Play(); em.enabled = true; }
                     else { if (rrParticle.isPlaying) rrParticle.Stop(); em.enabled = false; }
+                }
+                
+                // Front wheels ONLY during the spin celebration
+                if (flParticle != null)
+                {
+                    var em = flParticle.emission;
+                    if (isSpinning) { if (!flParticle.isPlaying) flParticle.Play(); em.enabled = true; }
+                    else { if (flParticle.isPlaying) flParticle.Stop(); em.enabled = false; }
+                }
+                if (frParticle != null)
+                {
+                    var em = frParticle.emission;
+                    if (isSpinning) { if (!frParticle.isPlaying) frParticle.Play(); em.enabled = true; }
+                    else { if (frParticle.isPlaying) frParticle.Stop(); em.enabled = false; }
                 }
 
                 // Skid Trails
@@ -933,7 +1027,7 @@ namespace GearEngine.CarSimulation.SplineSimulation
             Quaternion baseRot = Quaternion.LookRotation(worldTangent, worldUp);
             Quaternion rollRot = Quaternion.AngleAxis(State.BodyRoll, worldTangent);
             Quaternion slipRot = Quaternion.AngleAxis(State.SlipAngle, worldUp);
-            Quaternion targetRot = slipRot * rollRot * baseRot;
+            Quaternion baseTargetRot = slipRot * rollRot * baseRot;
 
             carTransform.position = finalPos;
             
@@ -945,18 +1039,30 @@ namespace GearEngine.CarSimulation.SplineSimulation
             
             if (isDoingCinematicFinish)
             {
-                cinematicTrackRot = targetRot;
+                cinematicTrackRot = baseTargetRot;
             }
             else
             {
                 // Smoothly interpolate rotation to prevent instant snapping on poorly constructed, sharp spline knots
                 if (dt > 0f && Time.timeScale > 0f)
                 {
-                    carTransform.rotation = Quaternion.Slerp(carTransform.rotation, targetRot, dt * 20f);
+                    smoothedBaseRot = Quaternion.Slerp(smoothedBaseRot, baseTargetRot, dt * 20f);
                 }
                 else
                 {
-                    carTransform.rotation = targetRot;
+                    smoothedBaseRot = baseTargetRot;
+                }
+
+                if (State.CelebrationSpinAngle != 0f)
+                {
+                    // Apply the celebration spin INSTANTLY on top of the Slerped rotation.
+                    // By keeping smoothedBaseRot separate, we prevent the spin from feeding back into the Slerp!
+                    Quaternion spinRot = Quaternion.AngleAxis(State.CelebrationSpinAngle, worldUp);
+                    carTransform.rotation = spinRot * smoothedBaseRot;
+                }
+                else
+                {
+                    carTransform.rotation = smoothedBaseRot;
                 }
             }
         }

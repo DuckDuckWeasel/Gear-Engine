@@ -162,7 +162,7 @@ namespace GearEngine.CarSimulation.SplineSimulation
             for (int i = activeDrivers.Count - 1; i >= 0; i--)
             {
                 SplineEvaluateDriver driver = activeDrivers[i];
-                if (!driver.IsInitialized)
+                if (!driver.IsValid)
                 {
                     activeDrivers.RemoveAt(i);
                     continue;

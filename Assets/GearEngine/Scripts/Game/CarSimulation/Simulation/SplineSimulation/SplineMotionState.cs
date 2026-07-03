@@ -42,6 +42,12 @@ namespace GearEngine.CarSimulation.SplineSimulation
         /// <summary>Maximum scale intensity for the faux perspective jump pop (e.g. 0.1 to 0.4).</summary>
         public float JumpScaleIntensity;
 
+        /// <summary>Spin angle around Y-axis for the celebration jump (degrees).</summary>
+        public float CelebrationSpinAngle;
+
+        /// <summary>Multiplier applied to the jump height based on drift combo.</summary>
+        public float JumpHeightMultiplier;
+
         /// <summary>Timer used to anticipate the drift and delay traction loss.</summary>
         public float DriftAnticipationTimer;
 
