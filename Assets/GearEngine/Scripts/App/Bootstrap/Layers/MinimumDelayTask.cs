@@ -1,11 +1,11 @@
 using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
-using VContainer.Unity;
+using Scaffold.AppFlow;
 
 namespace GearEngine.App.Bootstrap.Layers
 {
-    internal sealed class MinimumDelayTask : IAsyncStartable
+    internal sealed class MinimumDelayTask : IAsyncInitializable
     {
         private readonly float _startupTime;
         private readonly float _minimumLoadingTimeSeconds;
@@ -16,7 +16,7 @@ namespace GearEngine.App.Bootstrap.Layers
             _minimumLoadingTimeSeconds = minimumLoadingTimeSeconds;
         }
 
-        public async Awaitable StartAsync(CancellationToken cancellationToken)
+        public async Task InitializeAsync(CancellationToken cancellationToken)
         {
             float elapsed = Time.realtimeSinceStartup - _startupTime;
             if (elapsed < _minimumLoadingTimeSeconds)

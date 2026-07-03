@@ -19,7 +19,7 @@ namespace GearEngine.App.Bootstrap.Layers
 
         public void Install(IContainerBuilder builder)
         {
-            builder.RegisterInstance(new MinimumDelayTask(_startupTime, _minimumLoadingTimeSeconds)).As<IAsyncStartable>();
+            builder.RegisterInstance(new MinimumDelayTask(_startupTime, _minimumLoadingTimeSeconds)).As<IAsyncInitializable>();
         }
     }
 }
