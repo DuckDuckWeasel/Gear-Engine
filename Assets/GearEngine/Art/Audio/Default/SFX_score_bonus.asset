@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: BroAudio::Ami.BroAudio.Data.AudioEntity
   UseAddressables: 0
   <ID>k__BackingField: 0
-  MulticlipsPlayMode: 2
+  MulticlipsPlayMode: 4
   _group: {fileID: 0}
   Clips:
   - AudioClipAssetReference:
@@ -44,7 +44,7 @@ MonoBehaviour:
     EndPosition: 1.879
     FadeIn: 0
     FadeOut: 0
-    Weight: 0
+    Weight: 1
   - AudioClipAssetReference:
       m_AssetGUID: 
       m_SubObjectName: 
@@ -58,7 +58,7 @@ MonoBehaviour:
     EndPosition: 1.964
     FadeIn: 0
     FadeOut: 0
-    Weight: 0
+    Weight: 2
   - AudioClipAssetReference:
       m_AssetGUID: 
       m_SubObjectName: 
@@ -72,7 +72,7 @@ MonoBehaviour:
     EndPosition: 1.412
     FadeIn: 0
     FadeOut: 0
-    Weight: 0
+    Weight: 3
   - AudioClipAssetReference:
       m_AssetGUID: 
       m_SubObjectName: 
@@ -86,7 +86,7 @@ MonoBehaviour:
     EndPosition: 0.877
     FadeIn: 0
     FadeOut: 0
-    Weight: 0
+    Weight: 4
   <AudioAsset>k__BackingField: {fileID: 11400000, guid: a4337db4fc61b4d43a4aaf77e045bc26, type: 2}
   <AudioType>k__BackingField: 2
   <MasterVolume>k__BackingField: 1
