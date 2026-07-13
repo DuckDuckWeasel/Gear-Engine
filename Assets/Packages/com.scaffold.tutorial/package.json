@@ -1,0 +1,8 @@
+{
+  "name": "com.scaffold.tutorial",
+  "version": "1.0.0",
+  "displayName": "Scaffold Tutorial",
+  "description": "Tutorial system and Fungus integration",
+  "unity": "2023.2",
+  "dependencies": {}
+}

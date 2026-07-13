@@ -1,0 +1,25 @@
+{
+    "name": "Scaffold.Tutorial",
+    "rootNamespace": "Scaffold.Tutorial",
+    "references": [
+        "VContainer",
+        "UniTask",
+        "Fungus",
+        "Scaffold.CloudCode",
+        "Scaffold.LiveOps",
+        "Scaffold.LiveOps.DTO",
+        "Scaffold.Events",
+        "Scaffold.Analytics.Runtime",
+        "Unity.Services.Analytics",
+        "Scaffold.Core"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

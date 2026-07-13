@@ -9,7 +9,8 @@
         "Scaffold.Events.Container",
         "Scaffold.Navigation",
         "Scaffold.Navigation.Container",
-        "GearEngine.Core.Config"
+        "GearEngine.Core.Config",
+        "Scaffold.Tutorial"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

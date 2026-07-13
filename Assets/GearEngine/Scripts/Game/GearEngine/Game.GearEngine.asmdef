@@ -19,7 +19,11 @@
         "UnityEngine.UI",
         "Unity.InputSystem",
         "Game.CarSimulation",
-        "BroAudio"
+        "BroAudio",
+        "Fungus",
+        "Scaffold.Input",
+        "Coffee.UIEffect",
+        "TriInspector"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
@@ -27,11 +31,7 @@
     "overrideReferences": true,
     "precompiledReferences": [
         "CommunityToolkit.Mvvm.dll",
-        "DOTween.dll",
-        "Sirenix.OdinInspector.Attributes.dll",
-        "Sirenix.Serialization.dll",
-        "Sirenix.Serialization.Config.dll",
-        "Sirenix.Utilities.dll"
+        "DOTween.dll"
     ],
     "autoReferenced": true,
     "defineConstraints": [],

@@ -1,5 +1,5 @@
 using GearEngine.CarSimulation.Definitions;
-using Sirenix.OdinInspector;
+using TriInspector;
 using UnityEngine;
 
 namespace GearEngine.CarSimulation.PhysicsSimulation

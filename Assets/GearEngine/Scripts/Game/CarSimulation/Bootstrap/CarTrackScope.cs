@@ -1,7 +1,7 @@
 using System;
 using GearEngine.SceneFoundation.Bootstrap;
 using GearEngine.CarSimulation.Definitions;
-using Sirenix.OdinInspector;
+using TriInspector;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;

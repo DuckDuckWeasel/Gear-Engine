@@ -9,7 +9,8 @@
         "Scaffold.MVVM.ViewModel",
         "Scaffold.Navigation",
         "VContainer",
-        "PROMETEO"
+        "PROMETEO",
+        "Scaffold.Variables"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

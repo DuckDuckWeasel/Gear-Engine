@@ -1,0 +1,20 @@
+{
+    "name": "Scaffold.Tutorial.Editor",
+    "rootNamespace": "Scaffold.Tutorial.Editor",
+    "references": [
+        "Scaffold.Tutorial",
+        "Fungus",
+        "FungusEditor"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

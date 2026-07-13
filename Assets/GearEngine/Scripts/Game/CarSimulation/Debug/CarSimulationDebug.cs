@@ -4,13 +4,14 @@ using GearEngine.CarSimulation.Entity;
 using GearEngine.CarSimulation.Simulation;
 using GearEngine.CarSimulation.Definitions;
 using Scaffold.Entities;
-using Sirenix.OdinInspector;
+using TriInspector;
 using UnityEngine;
 
 namespace GearEngine.CarSimulation.Debug
 {
+    [DrawWithTriInspector]
     [RequireComponent(typeof(CarSimulationUIDebug))]
-    public sealed class CarSimulationDebug : SerializedMonoBehaviour
+    public sealed class CarSimulationDebug : MonoBehaviour
     {
         [SerializeField]
         private VariableSO targetAttribute;
@@ -18,7 +19,7 @@ namespace GearEngine.CarSimulation.Debug
         [SerializeField]
         private float modifierValue;
 
-        private EntityModifierEntry activeModifier;
+        private Scaffold.Entities.ModifierId? activeModifierId = null;
 
         [ShowInInspector, BoxGroup("Race")]
         public RaceState Session { get; private set; }
@@ -50,7 +51,7 @@ namespace GearEngine.CarSimulation.Debug
                     return 0f;
                 }
 
-                return Car.TryGetValue(targetAttribute, out float v) ? v : 0f;
+                return Car.TryGetVariable(targetAttribute, out float v) ? v : 0f;
             }
         }
 
@@ -76,7 +77,7 @@ namespace GearEngine.CarSimulation.Debug
         private float ExtractEntityStat(VariableSO varSo)
         {
             if (varSo == null || Car == null) return 0f;
-            return Car.TryGetValue(varSo, out float v) ? v : 0f;
+            return Car.TryGetVariable(varSo, out float v) ? v : 0f;
         }
 
         [ShowInInspector, BoxGroup("Runtime Mechanics")]
@@ -115,27 +116,26 @@ namespace GearEngine.CarSimulation.Debug
                 return;
             }
 
-            activeModifier = new EntityModifierEntry(targetAttribute, new FloatVariableValue { Value = modifierValue });
-            Car.AddModifier(activeModifier);
+            activeModifierId = Car.AddModifier(targetAttribute, new FloatAddModifier(modifierValue));
         }
 
         [Button, BoxGroup("Modifiers")]
         private void RemoveModifier()
         {
-            if (Car == null || activeModifier == null)
+            if (Car == null || activeModifierId == null)
             {
                 return;
             }
 
-            Car.RemoveModifier(activeModifier);
-            activeModifier = null;
+            Car.RemoveModifier(targetAttribute, activeModifierId.Value);
+            activeModifierId = null;
         }
 
         [Button, BoxGroup("Modifiers")]
         private void ClearAllModifiers()
         {
             Car?.ClearModifiers();
-            activeModifier = null;
+            activeModifierId = null;
         }
 
         private void OnDrawGizmos()

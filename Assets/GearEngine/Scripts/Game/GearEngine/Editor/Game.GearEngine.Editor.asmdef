@@ -11,7 +11,10 @@
         "Scaffold.Schemas",
         "Unity.Addressables.Editor",
         "Unity.InputSystem",
-        "Unity.TextMeshPro"
+        "Unity.TextMeshPro",
+        "Coffee.UIEffect",
+        "Fungus",
+        "FungusEditor"
     ],
     "includePlatforms": [
         "Editor"

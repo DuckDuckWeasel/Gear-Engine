@@ -17,7 +17,8 @@
         "Unity.Splines",
         "Scaffold.Events.Container",
         "PROMETEO",
-        "Unity.TextMeshPro"
+        "Unity.TextMeshPro",
+        "Scaffold.Variables"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

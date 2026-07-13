@@ -1,5 +1,5 @@
 using UnityEngine;
-using Sirenix.OdinInspector;
+using TriInspector;
 
 [InfoBox("Add this to a volume trigger (e.g. Water Puddle, Oil, Speed Bump) to dynamically modify the SplineCarRunner stats when the car passes through it.")]
 [RequireComponent(typeof(Collider))]
