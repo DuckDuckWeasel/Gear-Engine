@@ -109,7 +109,7 @@
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "7c2c3cb3cf7eb8ff5cba2777afa73f8de5b19efb"
+      "hash": "b8eee71cba06264333a0f35444e4fdf633b4a0e3"
     },
     "com.scaffold.entities": {
       "version": "https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.entities#main",
