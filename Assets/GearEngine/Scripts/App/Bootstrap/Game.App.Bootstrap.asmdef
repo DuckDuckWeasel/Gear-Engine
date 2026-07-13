@@ -49,10 +49,7 @@
         "Game.LiveOps.Perks.DTO.dll",
         "Game.LiveOps.Loadout.DTO.dll",
         "Game.LiveOps.Roguelike.DTO.dll",
-        "Game.LiveOps.Tracks.DTO.dll",
-        "Sirenix.OdinInspector.Attributes.dll",
-        "Sirenix.Serialization.dll",
-        "Sirenix.Utilities.dll"
+        "Game.LiveOps.Tracks.DTO.dll"
     ],
     "autoReferenced": false,
     "defineConstraints": [],

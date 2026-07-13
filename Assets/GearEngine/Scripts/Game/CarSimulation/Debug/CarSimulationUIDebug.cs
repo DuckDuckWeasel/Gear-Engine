@@ -152,14 +152,14 @@ namespace GearEngine.CarSimulation.Debug
         {
             if (variable == null || car == null) return;
             
-            car.TryGetValue(variable, out float currentValue);
+            car.TryGetVariable(variable, out float currentValue);
             GUILayout.BeginHorizontal();
             GUILayout.Label($"{label}: {currentValue:F1}", GUILayout.Width(120));
             
             if (GUILayout.Button("- 10", GUILayout.Width(40)))
-                car.AddModifier(new EntityModifierEntry(variable, new FloatVariableValue { Value = -10f }));
+                car.AddModifier(variable, new FloatAddModifier(-10f));
             if (GUILayout.Button("+ 10", GUILayout.Width(40)))
-                car.AddModifier(new EntityModifierEntry(variable, new FloatVariableValue { Value = 10f }));
+                car.AddModifier(variable, new FloatAddModifier(10f));
             
             GUILayout.EndHorizontal();
         }

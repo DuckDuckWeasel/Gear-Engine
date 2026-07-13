@@ -28,10 +28,7 @@
         "Game.LiveOps.Loadout.DTO.dll",
         "Game.LiveOps.Roguelike.DTO.dll",
         "Game.LiveOps.Tracks.DTO.dll",
-        "Newtonsoft.Json.dll",
-        "Sirenix.OdinInspector.Attributes.dll",
-        "Sirenix.Serialization.dll",
-        "Sirenix.Utilities.dll"
+        "Newtonsoft.Json.dll"
     ],
     "autoReferenced": false,
     "defineConstraints": [

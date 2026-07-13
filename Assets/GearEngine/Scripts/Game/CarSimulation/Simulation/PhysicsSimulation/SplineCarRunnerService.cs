@@ -97,13 +97,6 @@ namespace GearEngine.CarSimulation.PhysicsSimulation
                 SetEntityVariable(entity, config.variables.Drift, stats.Drift);
                 SetEntityVariable(entity, config.variables.Precision, stats.Precision);
                 SetEntityVariable(entity, config.variables.Smoothness, stats.Smoothness);
-
-                Action<Scaffold.Entities.VariableValue> onVarChanged = _ => ReevaluateStats(ctx);
-                entity.Subscribe(config.variables.SpeedCapability, onVarChanged);
-                entity.Subscribe(config.variables.CorneringSkill, onVarChanged);
-                entity.Subscribe(config.variables.Drift, onVarChanged);
-                entity.Subscribe(config.variables.Precision, onVarChanged);
-                entity.Subscribe(config.variables.Smoothness, onVarChanged);
             }
         }
 
@@ -133,11 +126,11 @@ namespace GearEngine.CarSimulation.PhysicsSimulation
             
             if (ctx.Variables != null)
             {
-                ctx.entity.TryGetValue(ctx.Variables.SpeedCapability, out sc);
-                ctx.entity.TryGetValue(ctx.Variables.CorneringSkill, out cs);
-                ctx.entity.TryGetValue(ctx.Variables.Drift, out dr);
-                ctx.entity.TryGetValue(ctx.Variables.Precision, out pr);
-                ctx.entity.TryGetValue(ctx.Variables.Smoothness, out sm);
+                ctx.entity.TryGetVariable(ctx.Variables.SpeedCapability, out sc);
+                ctx.entity.TryGetVariable(ctx.Variables.CorneringSkill, out cs);
+                ctx.entity.TryGetVariable(ctx.Variables.Drift, out dr);
+                ctx.entity.TryGetVariable(ctx.Variables.Precision, out pr);
+                ctx.entity.TryGetVariable(ctx.Variables.Smoothness, out sm);
             }
 
             // Normalizing the 0-100 stats to 0-1 for multiplier logic, assuming max was 100f.

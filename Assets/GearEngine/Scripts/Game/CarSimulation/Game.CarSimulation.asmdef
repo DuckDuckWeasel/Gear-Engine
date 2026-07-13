@@ -17,18 +17,16 @@
         "Unity.Splines",
         "Scaffold.Events.Container",
         "PROMETEO",
-        "Unity.TextMeshPro"
+        "Unity.TextMeshPro",
+        "Scaffold.Variables",
+        "TriInspector"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": true,
     "precompiledReferences": [
-        "CommunityToolkit.Mvvm.dll",
-        "Sirenix.OdinInspector.Attributes.dll",
-        "Sirenix.Serialization.dll",
-        "Sirenix.Serialization.Config.dll",
-        "Sirenix.Utilities.dll"
+        "CommunityToolkit.Mvvm.dll"
     ],
     "autoReferenced": true,
     "defineConstraints": [],

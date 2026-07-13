@@ -1,0 +1,7 @@
+{
+    "name": "com.scaffold.input",
+    "version": "1.0.0",
+    "displayName": "Scaffold Input",
+    "description": "Provides UI Raycast Filtering and Input blocking capabilities.",
+    "dependencies": {}
+}

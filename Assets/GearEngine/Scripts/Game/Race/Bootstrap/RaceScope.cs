@@ -9,7 +9,7 @@ using GearEngine.GearEngine.Config;
 using GearEngine.GearEngine.Services;
 using GearEngine.GearEngine.Services.Board;
 using GearEngine.SceneFoundation.Bootstrap;
-using Sirenix.OdinInspector;
+using TriInspector;
 using UnityEngine;
 using UnityEngine.Serialization;
 using VContainer;

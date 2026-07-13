@@ -18,18 +18,15 @@
         "Scaffold.Navigation.Container",
         "Unity.Splines",
         "Unity.TextMeshPro",
-        "UnityEngine.UI"
+        "UnityEngine.UI",
+        "TriInspector"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": true,
     "precompiledReferences": [
-        "CommunityToolkit.Mvvm.dll",
-        "Sirenix.OdinInspector.Attributes.dll",
-        "Sirenix.Serialization.dll",
-        "Sirenix.Serialization.Config.dll",
-        "Sirenix.Utilities.dll"
+        "CommunityToolkit.Mvvm.dll"
     ],
     "autoReferenced": true,
     "defineConstraints": [],

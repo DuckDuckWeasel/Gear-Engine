@@ -1,4 +1,4 @@
-using Sirenix.OdinInspector;
+using TriInspector;
 using UnityEngine;
 
 namespace GearEngine.CarSimulation.SplineSimulation
@@ -13,25 +13,30 @@ namespace GearEngine.CarSimulation.SplineSimulation
     /// </para>
     /// </summary>
     [CreateAssetMenu(menuName = "GearEngine/Spline Evaluate/Lane Profile", fileName = "LaneProfile")]
+    [DeclareFoldoutGroup("Aggression", Expanded = true)]
+    [DeclareFoldoutGroup("Drift")]
+    [DeclareFoldoutGroup("Line Width")]
+    [DeclareFoldoutGroup("Risk Entry")]
+    [DeclareFoldoutGroup("Noise Settings")]
     public sealed class LaneProfile : ScriptableObject
     {
-        [FoldoutGroup("Aggression", expanded: true)]
+        [Group("Aggression")]
         [InfoBox("Positive = outside (right of centerline), Negative = inside (left). Evaluated at curve apexes to simulate aggressive inside cutting.")]
         [SerializeField] private AnimationCurve aggressionCurve = AnimationCurve.Constant(0f, 1f, 0f);
 
-        [FoldoutGroup("Drift")]
+        [Group("Drift")]
         [InfoBox("Post-apex exit line width. Positive values widen the exit arc to simulate controlled oversteer.")]
         [SerializeField] private AnimationCurve driftCurve = AnimationCurve.Constant(0f, 1f, 0f);
 
-        [FoldoutGroup("Line Width")]
+        [Group("Line Width")]
         [InfoBox("General lane wandering amplitude. This is a base shape; Perlin noise is added on top scaled by the Consistency stat.")]
         [SerializeField] private AnimationCurve widthCurve = AnimationCurve.Constant(0f, 1f, 0f);
 
-        [FoldoutGroup("Risk Entry")]
+        [Group("Risk Entry")]
         [InfoBox("Lateral entry offset for late-braking entries. Negative values pull the car inside for tighter turn-in.")]
         [SerializeField] private AnimationCurve riskEntryCurve = AnimationCurve.Constant(0f, 1f, 0f);
 
-        [FoldoutGroup("Noise Settings")]
+        [Group("Noise Settings")]
         [Tooltip("Frequency multiplier for the Perlin noise applied to the Consistency axis.")]
         [SerializeField] private float noiseFrequency = 3f;
 

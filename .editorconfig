@@ -43,7 +43,7 @@ dotnet_diagnostic.SCA3006.severity = warning   # Full namespace must match folde
 scaffold.SCA3005.root = GearEngine
 scaffold.SCA3005.allowed_roots = GameModule,GameModuleDTO,Scaffold
 scaffold.SCA3006.content_roots = Assets/Scripts,LiveOps/Project
-dotnet_diagnostic.SCA3002.severity = warning   # Extra types: own file if shared/public, else place after primary type
+dotnet_diagnostic.SCA3002.severity = error     # Extra types: own file if shared/public, else place after primary type
 dotnet_diagnostic.SCA3003.severity = warning   # Class member order
 
 # --- Category 6 (Unity / UI): SCA6001–SCA6002 ---

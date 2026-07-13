@@ -10,18 +10,23 @@
     "com.scaffold.appflow": "https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.appflow#main",
     "com.scaffold.autopacker": "https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.autopacker#main",
     "com.scaffold.cloudcode": "https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.cloudcode#main",
+    "com.scaffold.core": "https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.core#main",
     "com.scaffold.entities": "https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.entities#main",
+    "com.scaffold.entities.states": "https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.entities.states#main",
     "com.scaffold.events": "https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.events#main",
     "com.scaffold.liveops": "https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.liveops#main",
     "com.scaffold.maps": "https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.maps#main",
     "com.scaffold.model": "https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.model#main",
     "com.scaffold.mvvm": "https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.mvvm#main",
     "com.scaffold.navigation": "https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.navigation#main",
+    "com.scaffold.pooling": "https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.pooling#main",
     "com.scaffold.records": "https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.records#main",
     "com.scaffold.sceneflow": "https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.sceneflow#main",
     "com.scaffold.schemas": "https://github.com/ScaffoldLibrary/Schemas.git",
+    "com.scaffold.states": "https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.states#main",
     "com.scaffold.types": "https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.types#main",
     "com.scaffold.ugs": "https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.ugs#main",
+    "com.scaffold.variables": "https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.variables#main",
     "com.scaffold.view": "https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.view#main",
     "com.scaffold.viewmodel": "https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.viewmodel#main",
     "com.unity.2d.animation": "13.0.4",
@@ -94,15 +99,18 @@
     "com.unity.modules.video": "1.0.0",
     "com.unity.modules.vr": "1.0.0",
     "com.unity.modules.wind": "1.0.0",
-    "com.unity.modules.xr": "1.0.0"
+    "com.unity.modules.xr": "1.0.0",
+    "com.cysharp.unitask": "2.5.11",
+    "com.codewriter.triinspector": "1.15.1"
   },
   "scopedRegistries": [
     {
       "name": "openupm",
       "url": "https://package.openupm.com",
       "scopes": [
-        "com.cysharp.unitask",
-        "com.bustedbunny.mvvmtoolkit"
+        "com.bustedbunny.mvvmtoolkit",
+        "com.codewriter.triinspector",
+        "com.cysharp.unitask"
       ]
     }
   ]

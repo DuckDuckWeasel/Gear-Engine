@@ -2,11 +2,11 @@ using UnityEngine;
 using UnityEngine.Splines;
 using Unity.Mathematics;
 using System.Collections.Generic;
-using Sirenix.OdinInspector;
+using TriInspector;
 
 namespace GearEngine.CarSimulation.Tracks
 {
-    [InfoBox("Generates props along a spline-based track.\n\nAdd rules to the list. Each rule type determines WHERE it applies (Curves, Straights, All, or the Inside/Outside fill areas).")]
+    [DeclareFoldoutGroup("Generated Objects")]
     public class SplinePropGenerator : MonoBehaviour
     {
         // ──────────────────────────────────────────────
@@ -69,23 +69,29 @@ namespace GearEngine.CarSimulation.Tracks
         [Title("Placement Settings")]
         public PlacementSide side = PlacementSide.Both;
 
-        [ShowIf("@this.side == PlacementSide.Left || this.side == PlacementSide.Both")]
+        private bool ShowLeft => side == PlacementSide.Left || side == PlacementSide.Both;
+        private bool ShowRight => side == PlacementSide.Right || side == PlacementSide.Both;
+        private bool ShowInside => side == PlacementSide.Inside;
+        private bool ShowOutside => side == PlacementSide.Outside;
+        private bool ShowMinSpline => side == PlacementSide.Inside || side == PlacementSide.Outside;
+
+        [ShowIf(nameof(ShowLeft))]
         [Tooltip("Distance from spline center to the left edge.")]
         public float leftDistance = 4.5f;
 
-        [ShowIf("@this.side == PlacementSide.Right || this.side == PlacementSide.Both")]
+        [ShowIf(nameof(ShowRight))]
         [Tooltip("Distance from spline center to the right edge.")]
         public float rightDistance = 4.5f;
 
-        [ShowIf("side", PlacementSide.Inside)]
+        [ShowIf(nameof(ShowInside))]
         [Tooltip("Maximum inward distance from the road toward the center.")]
         public float insideMaxDistance = 20f;
 
-        [ShowIf("side", PlacementSide.Outside)]
+        [ShowIf(nameof(ShowOutside))]
         [Tooltip("Maximum outward distance from the road away from the center.")]
         public float outsideMaxDistance = 20f;
 
-        [ShowIf("@this.side == PlacementSide.Inside || this.side == PlacementSide.Outside")]
+        [ShowIf(nameof(ShowMinSpline))]
         [Tooltip("Minimum buffer from the road surface to keep props off the track.")]
         public float minSplineDistance = 1.5f;
     }
@@ -101,23 +107,29 @@ namespace GearEngine.CarSimulation.Tracks
         [Title("Placement Settings")]
         public PlacementSide side = PlacementSide.Both;
 
-        [ShowIf("@this.side == PlacementSide.Left || this.side == PlacementSide.Both")]
+        private bool ShowLeft => side == PlacementSide.Left || side == PlacementSide.Both;
+        private bool ShowRight => side == PlacementSide.Right || side == PlacementSide.Both;
+        private bool ShowInside => side == PlacementSide.Inside;
+        private bool ShowOutside => side == PlacementSide.Outside;
+        private bool ShowMinSpline => side == PlacementSide.Inside || side == PlacementSide.Outside;
+
+        [ShowIf(nameof(ShowLeft))]
         [Tooltip("Distance from spline center to the left edge.")]
         public float leftDistance = 4.5f;
 
-        [ShowIf("@this.side == PlacementSide.Right || this.side == PlacementSide.Both")]
+        [ShowIf(nameof(ShowRight))]
         [Tooltip("Distance from spline center to the right edge.")]
         public float rightDistance = 4.5f;
 
-        [ShowIf("side", PlacementSide.Inside)]
+        [ShowIf(nameof(ShowInside))]
         [Tooltip("Maximum inward distance from the road toward the center.")]
         public float insideMaxDistance = 20f;
 
-        [ShowIf("side", PlacementSide.Outside)]
+        [ShowIf(nameof(ShowOutside))]
         [Tooltip("Maximum outward distance from the road away from the center.")]
         public float outsideMaxDistance = 20f;
 
-        [ShowIf("@this.side == PlacementSide.Inside || this.side == PlacementSide.Outside")]
+        [ShowIf(nameof(ShowMinSpline))]
         [Tooltip("Minimum buffer from the road surface to keep props off the track.")]
         public float minSplineDistance = 1.5f;
     }
@@ -133,23 +145,29 @@ namespace GearEngine.CarSimulation.Tracks
         [Title("Placement Settings")]
         public PlacementSide side = PlacementSide.Both;
 
-        [ShowIf("@this.side == PlacementSide.Left || this.side == PlacementSide.Both")]
+        private bool ShowLeft => side == PlacementSide.Left || side == PlacementSide.Both;
+        private bool ShowRight => side == PlacementSide.Right || side == PlacementSide.Both;
+        private bool ShowInside => side == PlacementSide.Inside;
+        private bool ShowOutside => side == PlacementSide.Outside;
+        private bool ShowMinSpline => side == PlacementSide.Inside || side == PlacementSide.Outside;
+
+        [ShowIf(nameof(ShowLeft))]
         [Tooltip("Distance from spline center to the left edge.")]
         public float leftDistance = 4.5f;
 
-        [ShowIf("@this.side == PlacementSide.Right || this.side == PlacementSide.Both")]
+        [ShowIf(nameof(ShowRight))]
         [Tooltip("Distance from spline center to the right edge.")]
         public float rightDistance = 4.5f;
 
-        [ShowIf("side", PlacementSide.Inside)]
+        [ShowIf(nameof(ShowInside))]
         [Tooltip("Maximum inward distance from the road toward the center.")]
         public float insideMaxDistance = 20f;
 
-        [ShowIf("side", PlacementSide.Outside)]
+        [ShowIf(nameof(ShowOutside))]
         [Tooltip("Maximum outward distance from the road away from the center.")]
         public float outsideMaxDistance = 20f;
 
-        [ShowIf("@this.side == PlacementSide.Inside || this.side == PlacementSide.Outside")]
+        [ShowIf(nameof(ShowMinSpline))]
         [Tooltip("Minimum buffer from the road surface to keep props off the track.")]
         public float minSplineDistance = 1.5f;
     }
@@ -180,17 +198,17 @@ namespace GearEngine.CarSimulation.Tracks
     //  Inspector
     // ──────────────────────────────────────────────
 
+    [InfoBox("Generates props along a spline-based track.\n\nAdd rules to the list. Each rule type determines WHERE it applies (Curves, Straights, All, or the Inside/Outside fill areas).")]
     [Required]
     public SplineContainer track;
 
     [SerializeReference]
-    [ListDrawerSettings(ShowIndexLabels = true)]
     public List<PropRule> propRules = new List<PropRule>();
 
     [Tooltip("Automatically generate props on Start.")]
     public bool generateOnStart = false;
 
-    [FoldoutGroup("Generated Objects"), ReadOnly]
+    [Group("Generated Objects"), ReadOnly]
     public List<GameObject> generatedProps = new List<GameObject>();
 
     // ──────────────────────────────────────────────
@@ -272,7 +290,7 @@ namespace GearEngine.CarSimulation.Tracks
     //  Generation
     // ──────────────────────────────────────────────
 
-    [Button("Generate / Reset Props", ButtonSizes.Large), GUIColor(0.4f, 0.8f, 1f)]
+    [Button("Generate / Reset Props")]
     public void Generate()
     {
         ClearProps();
