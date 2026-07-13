@@ -10,6 +10,11 @@ using UnityEngine;
 namespace GearEngine.CarSimulation.Debug
 {
     [DrawWithTriInspector]
+    [DeclareBoxGroup("Race")]
+    [DeclareBoxGroup("Attribute")]
+    [DeclareBoxGroup("Effective Stats")]
+    [DeclareBoxGroup("Runtime Mechanics")]
+    [DeclareBoxGroup("Modifiers")]
     [RequireComponent(typeof(CarSimulationUIDebug))]
     public sealed class CarSimulationDebug : MonoBehaviour
     {
@@ -21,27 +26,27 @@ namespace GearEngine.CarSimulation.Debug
 
         private Scaffold.Entities.ModifierId? activeModifierId = null;
 
-        [ShowInInspector, BoxGroup("Race")]
+        [ShowInInspector, Group("Race")]
         public RaceState Session { get; private set; }
 
         private CarEntity Car => Session?.Car;
 
-        [ShowInInspector, BoxGroup("Race")]
+        [ShowInInspector, Group("Race")]
         private float CurrentSpeed => Session?.CurrentSpeed ?? 0f;
 
-        [ShowInInspector, BoxGroup("Race")]
+        [ShowInInspector, Group("Race")]
         private float NormalizedProgress => Session?.NormalizedProgress ?? 0f;
 
-        [ShowInInspector, BoxGroup("Race")]
+        [ShowInInspector, Group("Race")]
         private int CurrentLap => Session?.CurrentLap ?? 0;
 
-        [ShowInInspector, BoxGroup("Race")]
+        [ShowInInspector, Group("Race")]
         private float RaceTime => Session?.RaceTime ?? 0f;
 
-        [ShowInInspector, BoxGroup("Race")]
+        [ShowInInspector, Group("Race")]
         private SimulationLifecycleState Phase => Session?.Phase ?? SimulationLifecycleState.Created;
 
-        [ShowInInspector, BoxGroup("Attribute")]
+        [ShowInInspector, Group("Attribute")]
         private float CurrentAttributeValue
         {
             get
@@ -60,18 +65,18 @@ namespace GearEngine.CarSimulation.Debug
         public SplineCarRunnerService Runner => runner;
         public SplineCarRunnerContext Context => runner?.GetDebugContext(Car);
 
-        // [ShowInInspector, BoxGroup("Progression Stats")]
+        // [ShowInInspector, Group("Progression Stats")]
         // public RoguelikeCarStats SourceStats => Context?.sourceStats ?? RoguelikeCarStats.Default;
 
-        [ShowInInspector, BoxGroup("Effective Stats")]
+        [ShowInInspector, Group("Effective Stats")]
         private float StatSpeedCapability => ExtractEntityStat(Context?.Variables?.SpeedCapability);
-        [ShowInInspector, BoxGroup("Effective Stats")]
+        [ShowInInspector, Group("Effective Stats")]
         private float StatCorneringSkill => ExtractEntityStat(Context?.Variables?.CorneringSkill);
-        [ShowInInspector, BoxGroup("Effective Stats")]
+        [ShowInInspector, Group("Effective Stats")]
         private float StatDrift => ExtractEntityStat(Context?.Variables?.Drift);
-        [ShowInInspector, BoxGroup("Effective Stats")]
+        [ShowInInspector, Group("Effective Stats")]
         private float StatPrecision => ExtractEntityStat(Context?.Variables?.Precision);
-        [ShowInInspector, BoxGroup("Effective Stats")]
+        [ShowInInspector, Group("Effective Stats")]
         private float StatSmoothness => ExtractEntityStat(Context?.Variables?.Smoothness);
 
         private float ExtractEntityStat(VariableSO varSo)
@@ -80,25 +85,25 @@ namespace GearEngine.CarSimulation.Debug
             return Car.TryGetVariable(varSo, out float v) ? v : 0f;
         }
 
-        [ShowInInspector, BoxGroup("Runtime Mechanics")]
+        [ShowInInspector, Group("Runtime Mechanics")]
         private float MaxSimulationSpeed => Context?.maxSimulationSpeed ?? 0f;
 
-        [ShowInInspector, BoxGroup("Runtime Mechanics")]
+        [ShowInInspector, Group("Runtime Mechanics")]
         private float SafeCornerSpeed => Context?.safeCornerSpeed ?? 0f;
 
-        [ShowInInspector, BoxGroup("Runtime Mechanics")]
+        [ShowInInspector, Group("Runtime Mechanics")]
         private float ArcadeSteerAssist => Context?.arcadeSteerAssist ?? 0f;
 
-        [ShowInInspector, BoxGroup("Runtime Mechanics")]
+        [ShowInInspector, Group("Runtime Mechanics")]
         private int CalculatedAcceleration => Context?.calculatedAcceleration ?? 0;
 
-        [ShowInInspector, BoxGroup("Runtime Mechanics")]
+        [ShowInInspector, Group("Runtime Mechanics")]
         private int CalculatedBrakeForce => Context?.calculatedBrakeForce ?? 0;
 
-        [ShowInInspector, BoxGroup("Runtime Mechanics")]
+        [ShowInInspector, Group("Runtime Mechanics")]
         private int CalculatedDriftGrip => Context?.calculatedDriftGrip ?? 0;
 
-        [ShowInInspector, BoxGroup("Runtime Mechanics")]
+        [ShowInInspector, Group("Runtime Mechanics")]
         private float CurrentSimulationMultiplier => Context?.currentSimulationMultiplier ?? 0f;
 
         public void Setup(RaceState session, SplineCarRunnerService runner)
@@ -107,7 +112,7 @@ namespace GearEngine.CarSimulation.Debug
             this.runner = runner;
         }
 
-        [Button, BoxGroup("Modifiers")]
+        [Button, Group("Modifiers")]
         private void AddModifier()
         {
             if (Car == null || targetAttribute == null)
@@ -119,7 +124,7 @@ namespace GearEngine.CarSimulation.Debug
             activeModifierId = Car.AddModifier(targetAttribute, new FloatAddModifier(modifierValue));
         }
 
-        [Button, BoxGroup("Modifiers")]
+        [Button, Group("Modifiers")]
         private void RemoveModifier()
         {
             if (Car == null || activeModifierId == null)
@@ -131,7 +136,7 @@ namespace GearEngine.CarSimulation.Debug
             activeModifierId = null;
         }
 
-        [Button, BoxGroup("Modifiers")]
+        [Button, Group("Modifiers")]
         private void ClearAllModifiers()
         {
             Car?.ClearModifiers();

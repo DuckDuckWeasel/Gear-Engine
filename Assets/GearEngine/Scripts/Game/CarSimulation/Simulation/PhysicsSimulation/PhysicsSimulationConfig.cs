@@ -5,34 +5,37 @@ using UnityEngine;
 namespace GearEngine.CarSimulation.PhysicsSimulation
 {
     [CreateAssetMenu(fileName = "PhysicsSimulationConfig", menuName = "GearEngine/Simulation/Physics Simulation Config")]
+    [DeclareFoldoutGroup("Simulation Global Settings", Expanded = true)]
+    [DeclareFoldoutGroup("Simulation Hardware Constraints", Expanded = true)]
+    [DeclareFoldoutGroup("Advanced Heuristics (Automated)", Expanded = false)]
     public class PhysicsSimulationConfig : SimulationConfigBase
     {
-        [FoldoutGroup("Simulation Global Settings", expanded: true)]
+        [Group("Simulation Global Settings")]
         [InfoBox("Variables map definitions that this runner will attempt to read natively from Car Entities.")]
         public CarVariableSet variables;
 
-        [FoldoutGroup("Simulation Hardware Constraints", expanded: true)]
+        [Group("Simulation Hardware Constraints")]
         [InfoBox("Limits max scaling for the simulation limits.")]
         public float baseMaxSpeed = 160f;
-        
-        [FoldoutGroup("Simulation Hardware Constraints")]
+
+        [Group("Simulation Hardware Constraints")]
         public float baseAcceleration = 22f;
-        
-        [FoldoutGroup("Simulation Hardware Constraints")]
+
+        [Group("Simulation Hardware Constraints")]
         public float baseBrakeForce = 600f;
-        
-        [FoldoutGroup("Simulation Hardware Constraints")]
+
+        [Group("Simulation Hardware Constraints")]
         [Range(0f, 1f), PropertyTooltip("Minimum speed floor as a percentage of Base Max Speed.")]
         public float minSpeedPercentage = 0.4f;
 
-        [FoldoutGroup("Simulation Hardware Constraints")]
+        [Group("Simulation Hardware Constraints")]
         [Range(1f, 1.5f), PropertyTooltip("Global artificial speed-up multiplier without drifting (Creates a sense of break-neck speed)")]
         public float baseSimulationMultiplier = 1.35f;
 
 
-        [FoldoutGroup("Advanced Heuristics (Automated)", expanded: false)]
+        [Group("Advanced Heuristics (Automated)")]
         [InfoBox("ALL variables here are calculated mathematically based on the Roguelike Base Stats. Tweak their 'Bounds' to alter the limits (X = 0% stat, Y = 100% stat).")]
-        
+
         [LabelText("Drift Acceleration Mult")] public Vector2 boundsDriftAccMult = new Vector2(1.1f, 2.5f);
         [LabelText("Drift Steer Assist Mult")] public Vector2 boundsDriftSteerMult = new Vector2(1.0f, 2.0f);
         [LabelText("Hairpin Acc Boost")] public Vector2 boundsHairpinAccBoost = new Vector2(1.5f, 4f);

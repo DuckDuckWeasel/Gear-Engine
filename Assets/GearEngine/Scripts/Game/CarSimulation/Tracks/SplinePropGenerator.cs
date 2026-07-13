@@ -6,7 +6,7 @@ using TriInspector;
 
 namespace GearEngine.CarSimulation.Tracks
 {
-    [InfoBox("Generates props along a spline-based track.\n\nAdd rules to the list. Each rule type determines WHERE it applies (Curves, Straights, All, or the Inside/Outside fill areas).")]
+    [DeclareFoldoutGroup("Generated Objects")]
     public class SplinePropGenerator : MonoBehaviour
     {
         // ──────────────────────────────────────────────
@@ -198,6 +198,7 @@ namespace GearEngine.CarSimulation.Tracks
     //  Inspector
     // ──────────────────────────────────────────────
 
+    [InfoBox("Generates props along a spline-based track.\n\nAdd rules to the list. Each rule type determines WHERE it applies (Curves, Straights, All, or the Inside/Outside fill areas).")]
     [Required]
     public SplineContainer track;
 
@@ -207,7 +208,7 @@ namespace GearEngine.CarSimulation.Tracks
     [Tooltip("Automatically generate props on Start.")]
     public bool generateOnStart = false;
 
-    [FoldoutGroup("Generated Objects"), ReadOnly]
+    [Group("Generated Objects"), ReadOnly]
     public List<GameObject> generatedProps = new List<GameObject>();
 
     // ──────────────────────────────────────────────

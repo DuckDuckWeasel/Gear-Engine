@@ -8,7 +8,7 @@ using System.Text;
 using System.Linq;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using Sirenix.OdinInspector;
+using TriInspector;
 
 namespace Fungus
 {
@@ -17,7 +17,7 @@ namespace Fungus
     /// Flowchart objects may be edited visually using the Flowchart editor window.
     /// </summary>
     [ExecuteInEditMode]
-    public class Flowchart : SerializedMonoBehaviour, ISubstitutionHandler
+    public class Flowchart : MonoBehaviour, ISubstitutionHandler
     {
         public const string SubstituteVariableRegexString = "{\\$.*?}";
 

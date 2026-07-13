@@ -10,16 +10,15 @@
         "Scaffold.Navigation",
         "VContainer",
         "PROMETEO",
-        "Scaffold.Variables"
+        "Scaffold.Variables",
+        "TriInspector"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": true,
     "precompiledReferences": [
-        "CommunityToolkit.Mvvm.dll",
-        "Sirenix.OdinInspector.Attributes.dll",
-        "Sirenix.Serialization.dll"
+        "CommunityToolkit.Mvvm.dll"
     ],
     "autoReferenced": true,
     "defineConstraints": [],
