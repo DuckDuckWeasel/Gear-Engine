@@ -8,6 +8,7 @@ using Scaffold.Input.Contracts;
 using Scaffold.Input.Events;
 using Scaffold.Events.Contracts;
 using Command = Fungus.Command;
+using GearEngine.GearEngine.Extensions;
 
 namespace GearEngine.GearEngine.Presentation.UI.Input
 {
@@ -34,6 +35,14 @@ namespace GearEngine.GearEngine.Presentation.UI.Input
                 return;
             }
 
+            if (_inputService == null || _eventBus == null)
+            {
+                this.TryInject();
+
+                if (_eventBus == null) _eventBus = new Scaffold.Events.EventController();
+                if (_inputService == null) _inputService = new Scaffold.Input.InputFilterService(_eventBus);
+            }
+
             _inputService.FilterForButtonDownTags(matchAll, dragTargetTagSOList.ToArray());
             _inputService.FilterForDropEnterTags(matchAll, checkDroppedGameObject, dropTargetTagSOList.ToArray());
 
@@ -52,7 +61,7 @@ namespace GearEngine.GearEngine.Presentation.UI.Input
                 return;
             }
 
-            TagComponent tagComponent = screenDroppedSignal.DropTopResult.transform.GetComponent<TagComponent>();
+            TagComponent tagComponent = screenDroppedSignal.DropTopResult.transform.GetComponentInParent<TagComponent>();
 
             if (tagComponent == null || !tagComponent.ContainsTag(dropTargetTagSOList.ToArray(), matchAll))
             {

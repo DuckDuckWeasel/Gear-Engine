@@ -3,10 +3,7 @@ using System.Collections.Generic;
 using GearEngine.GearEngine.Presentation.UI.Tags;
 using Fungus;
 using UnityEngine;
-using VContainer;
-using Scaffold.Input.Contracts;
-using Scaffold.Input.Events;
-using Scaffold.Events.Contracts;
+using UnityEngine.EventSystems;
 using Command = Fungus.Command;
 
 namespace GearEngine.GearEngine.Presentation.UI.Input
@@ -19,60 +16,106 @@ namespace GearEngine.GearEngine.Presentation.UI.Input
         public bool matchAll = false;
 
         private bool isTargetClicked = false;
-        
-        [Inject] private IInputFilterService _inputService;
-        [Inject] private IEventBus _eventBus;
+        private List<EventTrigger> addedTriggers = new List<EventTrigger>();
+        private List<EventTrigger.Entry> addedEntries = new List<EventTrigger.Entry>();
 
         public override void OnEnter()
         {
-            if (targetTagSOList == null)
+            if (targetTagSOList == null || targetTagSOList.Count == 0)
             {
-                Debug.LogError($"[WaitForTargetClick] targetTagSOList is null, cannot filter input. Method: {nameof(OnEnter)}");
+                Debug.LogError($"[WaitForTargetClick] targetTagSOList is null or empty. Method: {nameof(OnEnter)}");
                 Continue();
                 return;
             }
 
-            _inputService.FilterForButtonUpTags(matchAll, targetTagSOList.ToArray());
-
             isTargetClicked = false;
 
-            _eventBus.AddListener<ScreenClickedEvent>(OnClick);
+            // Find all GameObjects that have matching tags
+            TagComponent[] allComponents = FindObjectsOfType<TagComponent>();
+            bool foundTarget = false;
+
+            foreach (TagComponent comp in allComponents)
+            {
+                if (comp.ContainsTag(targetTagSOList.ToArray(), matchAll))
+                {
+                    AttachPointerClickTrigger(comp.gameObject);
+                    foundTarget = true;
+                }
+            }
+
+            if (!foundTarget)
+            {
+                Debug.LogWarning($"[WaitForTargetClick] No GameObjects found with matching tags.");
+                Continue();
+                return;
+            }
 
             StartCoroutine(WaitForTargetClickCoroutine());
         }
 
-        private void OnClick(ScreenClickedEvent screenClickedSignal)
+        private void AttachPointerClickTrigger(GameObject target)
         {
-            if (screenClickedSignal.TopResult == null || screenClickedSignal.TopResult.transform.gameObject == null)
+            // If target is a 3D object (has Collider but no Graphic), ensure Camera has PhysicsRaycaster
+            if (target.GetComponent<Collider>() != null && target.GetComponent<UnityEngine.UI.Graphic>() == null)
             {
-                Debug.Log($"[WaitForTargetClick] Clicked object is null. Method: {nameof(OnClick)}");
-                return;
+                if (Camera.main != null && Camera.main.GetComponent<PhysicsRaycaster>() == null)
+                {
+                    Camera.main.gameObject.AddComponent<PhysicsRaycaster>();
+                }
             }
 
-            TagComponent tagComponent = screenClickedSignal.TopResult.transform.GetComponent<TagComponent>();
-
-            if (tagComponent == null || !tagComponent.ContainsTag(targetTagSOList.ToArray(), matchAll))
+            EventTrigger trigger = target.GetComponent<EventTrigger>();
+            bool wasAdded = false;
+            if (trigger == null)
             {
-                Debug.Log($"[WaitForTargetClick] Clicked target does not match the required tags or condition. Method: {nameof(OnClick)}");
-                return;
+                trigger = target.AddComponent<EventTrigger>();
+                wasAdded = true;
             }
 
-            isTargetClicked = true;
+            EventTrigger.Entry entry = new EventTrigger.Entry();
+            entry.eventID = EventTriggerType.PointerClick;
+            entry.callback.AddListener((data) => { isTargetClicked = true; });
+            trigger.triggers.Add(entry);
+
+            if (wasAdded)
+            {
+                addedTriggers.Add(trigger);
+            }
+            addedEntries.Add(entry);
         }
 
         private IEnumerator WaitForTargetClickCoroutine()
         {
-            Debug.Log($"[WaitForTargetClick] Waiting for target click with the required tags and condition.");
-
             yield return new WaitUntil(() => isTargetClicked);
 
-            Debug.Log($"[WaitForTargetClick] Target with the required tags and condition has been clicked!");
-
-            _inputService.ClearButtonUpFilters();
-
-            _eventBus.RemoveListener<ScreenClickedEvent>(OnClick);
+            CleanupTriggers();
 
             Continue();
+        }
+
+        public void OnDisable()
+        {
+            CleanupTriggers();
+        }
+
+        private void CleanupTriggers()
+        {
+            // Remove entries we added (from triggers that already existed)
+            foreach (EventTrigger.Entry entry in addedEntries)
+            {
+                entry.callback.RemoveAllListeners();
+            }
+            addedEntries.Clear();
+
+            // Destroy triggers we created
+            foreach (EventTrigger trigger in addedTriggers)
+            {
+                if (trigger != null)
+                {
+                    Destroy(trigger);
+                }
+            }
+            addedTriggers.Clear();
         }
     }
 }

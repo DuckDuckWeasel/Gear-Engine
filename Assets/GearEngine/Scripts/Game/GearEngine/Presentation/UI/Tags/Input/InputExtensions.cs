@@ -11,7 +11,7 @@ namespace GearEngine.GearEngine.Presentation.UI.Input
         {
             input.SetButtonUpRaycastFilter((rh) =>
             {
-                TagComponent tagComponent = rh.transform.GetComponent<TagComponent>();
+                TagComponent tagComponent = rh.transform.GetComponentInParent<TagComponent>();
                 return tagComponent && tagComponent.HasTag(tagSO);
             }, true);
         }
@@ -20,22 +20,14 @@ namespace GearEngine.GearEngine.Presentation.UI.Input
         {
             input.SetPointerEnterRaycastFilter((rh) =>
             {
-                TagComponent tagComponent = rh.transform.GetComponent<TagComponent>();
+                TagComponent tagComponent = rh.transform.GetComponentInParent<TagComponent>();
 
                 if (!tagComponent)
                 {
                     return false;
                 }
 
-                if (matchAll)
-                {
-                    foreach (TagSO tag in tagSOArray)
-                    {
-                        if (!tagComponent.HasTag(tag)) return false;
-                    }
-                    return true;
-                }
-                return tagComponent.HasAnyTag(tagSOArray);
+                return tagComponent.ContainsTag(tagSOArray, matchAll);
             }, true);
         }
 
@@ -43,22 +35,14 @@ namespace GearEngine.GearEngine.Presentation.UI.Input
         {
             input.SetButtonDownRaycastFilter((rh) =>
             {
-                TagComponent tagComponent = rh.transform.GetComponent<TagComponent>();
+                TagComponent tagComponent = rh.transform.GetComponentInParent<TagComponent>();
 
                 if (!tagComponent)
                 {
                     return false;
                 }
 
-                if (matchAll)
-                {
-                    foreach (TagSO tag in tagSOArray)
-                    {
-                        if (!tagComponent.HasTag(tag)) return false;
-                    }
-                    return true;
-                }
-                return tagComponent.HasAnyTag(tagSOArray);
+                return tagComponent.ContainsTag(tagSOArray, matchAll);
             }, true);
         }
 
@@ -66,22 +50,14 @@ namespace GearEngine.GearEngine.Presentation.UI.Input
         {
             input.SetDropRaycastFilter((rh) =>
             {
-                TagComponent tagComponent = rh.transform.GetComponent<TagComponent>();
+                TagComponent tagComponent = rh.transform.GetComponentInParent<TagComponent>();
 
                 if (!tagComponent)
                 {
                     return false;
                 }
 
-                if (matchAll)
-                {
-                    foreach (TagSO tag in tagSOArray)
-                    {
-                        if (!tagComponent.HasTag(tag)) return false;
-                    }
-                    return true;
-                }
-                return tagComponent.HasAnyTag(tagSOArray);
+                return tagComponent.ContainsTag(tagSOArray, matchAll);
             }, checkDroppedGameObject, true);
         }
 
@@ -89,22 +65,9 @@ namespace GearEngine.GearEngine.Presentation.UI.Input
         {
             input.SetButtonUpRaycastFilter((rh) =>
             {
-                TagComponent tagComponent = rh.transform.GetComponent<TagComponent>();
-
-                if (!tagComponent)
-                {
-                    return false;
-                }
-
-                if (matchAll)
-                {
-                    foreach (TagSO tag in tagSOArray)
-                    {
-                        if (!tagComponent.HasTag(tag)) return false;
-                    }
-                    return true;
-                }
-                return tagComponent.HasAnyTag(tagSOArray);
+                TagComponent tagComponent = rh.transform.GetComponentInParent<TagComponent>();
+                if (!tagComponent) return false;
+                return tagComponent.ContainsTag(tagSOArray, matchAll);
             }, true);
         }
 

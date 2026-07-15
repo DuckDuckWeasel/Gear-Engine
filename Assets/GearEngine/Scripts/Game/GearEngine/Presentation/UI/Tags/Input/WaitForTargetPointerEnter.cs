@@ -3,10 +3,7 @@ using System.Collections.Generic;
 using GearEngine.GearEngine.Presentation.UI.Tags;
 using Fungus;
 using UnityEngine;
-using VContainer;
-using Scaffold.Input.Contracts;
-using Scaffold.Input.Events;
-using Scaffold.Events.Contracts;
+using UnityEngine.EventSystems;
 using Command = Fungus.Command;
 
 namespace GearEngine.GearEngine.Presentation.UI.Input
@@ -19,73 +16,106 @@ namespace GearEngine.GearEngine.Presentation.UI.Input
         public bool matchAll = false;
 
         private bool isTargetPointered = false;
-
-        [Inject] private IInputFilterService _inputService;
-        [Inject] private IEventBus _eventBus;
+        private List<EventTrigger> addedTriggers = new List<EventTrigger>();
+        private List<EventTrigger.Entry> addedEntries = new List<EventTrigger.Entry>();
 
         public override void OnEnter()
         {
-            if (targetTagSOList == null)
+            if (targetTagSOList == null || targetTagSOList.Count == 0)
             {
-                Debug.LogError($"[WaitForTargetPointerEnter] targetTagSOList is null. Method: {nameof(OnEnter)}");
+                Debug.LogError($"[WaitForTargetPointerEnter] targetTagSOList is null or empty. Method: {nameof(OnEnter)}");
                 Continue();
                 return;
             }
 
-            _inputService.FilterForPointerEnterTags(matchAll, targetTagSOList.ToArray());
-
             isTargetPointered = false;
 
-            _eventBus.AddListener<ScreenPointerEnterEvent>(OnPointerEnter);
-            _eventBus.AddListener<ScreenPointerExitEvent>(OnPointerExit);
+            // Find all GameObjects that have matching tags
+            TagComponent[] allComponents = FindObjectsOfType<TagComponent>();
+            bool foundTarget = false;
+
+            foreach (TagComponent comp in allComponents)
+            {
+                if (comp.ContainsTag(targetTagSOList.ToArray(), matchAll))
+                {
+                    AttachPointerEnterTrigger(comp.gameObject);
+                    foundTarget = true;
+                }
+            }
+
+            if (!foundTarget)
+            {
+                Debug.LogWarning($"[WaitForTargetPointerEnter] No GameObjects found with matching tags.");
+                Continue();
+                return;
+            }
 
             StartCoroutine(WaitForTargetPointerEnterCoroutine());
         }
 
-        public void OnPointerEnter(ScreenPointerEnterEvent screenPointerEnterSignal)
+        private void AttachPointerEnterTrigger(GameObject target)
         {
-            if (screenPointerEnterSignal.TopResult == null || screenPointerEnterSignal.TopResult.transform == null)
+            // If target is a 3D object (has Collider but no Graphic), ensure Camera has PhysicsRaycaster
+            if (target.GetComponent<Collider>() != null && target.GetComponent<UnityEngine.UI.Graphic>() == null)
             {
-                return;
+                if (Camera.main != null && Camera.main.GetComponent<UnityEngine.EventSystems.PhysicsRaycaster>() == null)
+                {
+                    Camera.main.gameObject.AddComponent<UnityEngine.EventSystems.PhysicsRaycaster>();
+                }
             }
 
-            TagComponent tagComponent = screenPointerEnterSignal.TopResult.transform.GetComponent<TagComponent>();
-
-            if (tagComponent == null || !tagComponent.ContainsTag(targetTagSOList.ToArray(), matchAll))
+            EventTrigger trigger = target.GetComponent<EventTrigger>();
+            bool wasAdded = false;
+            if (trigger == null)
             {
-                return;
+                trigger = target.AddComponent<EventTrigger>();
+                wasAdded = true;
             }
 
-            isTargetPointered = true;
-        }
+            EventTrigger.Entry entry = new EventTrigger.Entry();
+            entry.eventID = EventTriggerType.PointerEnter;
+            entry.callback.AddListener((data) => { isTargetPointered = true; });
+            trigger.triggers.Add(entry);
 
-        private void OnPointerExit(ScreenPointerExitEvent screenPointerExitSignal)
-        {
-            isTargetPointered = false;
+            if (wasAdded)
+            {
+                addedTriggers.Add(trigger);
+            }
+            addedEntries.Add(entry);
         }
 
         private IEnumerator WaitForTargetPointerEnterCoroutine()
         {
             yield return new WaitUntil(() => isTargetPointered);
 
-            _inputService.ClearPointerEnterFilters();
-            UnsubscribeAll();
+            CleanupTriggers();
 
             Continue();
         }
 
         public void OnDisable()
         {
-            UnsubscribeAll();
+            CleanupTriggers();
         }
 
-        private void UnsubscribeAll()
+        private void CleanupTriggers()
         {
-            if (_eventBus != null)
+            // Remove entries we added (from triggers that already existed)
+            foreach (EventTrigger.Entry entry in addedEntries)
             {
-                _eventBus.RemoveListener<ScreenPointerEnterEvent>(OnPointerEnter);
-                _eventBus.RemoveListener<ScreenPointerExitEvent>(OnPointerExit);
+                entry.callback.RemoveAllListeners();
             }
+            addedEntries.Clear();
+
+            // Destroy triggers we created
+            foreach (EventTrigger trigger in addedTriggers)
+            {
+                if (trigger != null)
+                {
+                    Destroy(trigger);
+                }
+            }
+            addedTriggers.Clear();
         }
     }
 }
