@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace GearEngine.GearEngine.Config
 {
-    [CreateAssetMenu(menuName = "GearEngine/Feature Toggle", fileName = "GearEngineFeatureToggle")]
+    [CreateAssetMenu(menuName = "GearEngine/Config/Feature Toggle", fileName = "GearEngineFeatureToggle")]
     public sealed class GearEngineFeatureToggleSO : ScriptableObject
     {
         [Header("Trash / Scrap Feature")]

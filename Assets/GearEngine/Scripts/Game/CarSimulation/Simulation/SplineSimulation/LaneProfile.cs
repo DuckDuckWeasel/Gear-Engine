@@ -12,7 +12,7 @@ namespace GearEngine.CarSimulation.SplineSimulation
     /// sum of all 5 contributions, clamped to the track half-width.
     /// </para>
     /// </summary>
-    [CreateAssetMenu(menuName = "GearEngine/Spline Evaluate/Lane Profile", fileName = "LaneProfile")]
+    [CreateAssetMenu(menuName = "GearEngine/Simulation/Lane Profile", fileName = "LaneProfile")]
     [DeclareFoldoutGroup("Aggression", Expanded = true)]
     [DeclareFoldoutGroup("Drift")]
     [DeclareFoldoutGroup("Line Width")]

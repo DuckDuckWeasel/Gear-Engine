@@ -1,4 +1,4 @@
-﻿// This code is part of the Fungus library (https://github.com/snozbot/fungus)
+// This code is part of the Fungus library (https://github.com/snozbot/fungus)
 // It is released for free under the MIT open source license (https://github.com/snozbot/fungus/blob/master/LICENSE)
 
 using System.Collections;
@@ -26,14 +26,14 @@ namespace Fungus
         static Texture2D TextureIcon { get { return Fungus.EditorUtils.FungusEditorResources.FungusMushroom; } }
 
         //sorted list of the GO instance IDs that have flowcharts on them
-        static List<int> flowchartIDs = new List<int>();
+        static List<UnityEngine.EntityId> flowchartIDs = new List<UnityEngine.EntityId>();
 
         static bool initalHierarchyCheckFlag = true;
 
         static HierarchyIcons()
         {
             initalHierarchyCheckFlag = true;
-            EditorApplication.hierarchyWindowItemOnGUI += HierarchyIconCallback;
+            EditorApplication.hierarchyWindowItemByEntityIdOnGUI += HierarchyIconCallback;
 #if UNITY_2018_1_OR_NEWER
             EditorApplication.hierarchyChanged += HierarchyChanged;
 #else
@@ -51,12 +51,12 @@ namespace Fungus
 
             var flowcharts = GameObject.FindObjectsOfType<Flowchart>();
 
-            flowchartIDs = flowcharts.Select(x => x.gameObject.GetInstanceID()).Distinct().ToList();
-            flowchartIDs.Sort();
+            flowchartIDs = flowcharts.Select(x => x.gameObject.GetEntityId()).Distinct().ToList();
+            flowchartIDs.Sort((a, b) => a.CompareTo(b));
         }
 
         //Draw icon if the isntance id is in our cached list
-        static void HierarchyIconCallback(int instanceID, Rect selectionRect)
+        static void HierarchyIconCallback(UnityEngine.EntityId instanceID, Rect selectionRect)
         {
             if(initalHierarchyCheckFlag)
             {
@@ -80,8 +80,16 @@ namespace Fungus
 
             //binary search as it is much faster to cache and int bin search than GetComponent
             //  should be less GC too
-            if (flowchartIDs.BinarySearch(instanceID) >= 0)
+            if (flowchartIDs.BinarySearch(instanceID, new EntityIdComparer()) >= 0)
                 GUI.Label(r, TextureIcon);
+        }
+
+        class EntityIdComparer : IComparer<UnityEngine.EntityId>
+        {
+            public int Compare(UnityEngine.EntityId x, UnityEngine.EntityId y)
+            {
+                return x.CompareTo(y);
+            }
         }
     }
 }

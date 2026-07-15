@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace GearEngine.GearEngine.Config
 {
-    [CreateAssetMenu(fileName = "BoardLayout", menuName = "GearEngine/BoardLayout")]
+    [CreateAssetMenu(fileName = "BoardLayout", menuName = "GearEngine/Config/Board Layout")]
     public sealed class BoardLayoutSO : ScriptableObject
     {
         [Min(0.1f)]

@@ -219,7 +219,7 @@ namespace Scaffold.AppFlow.Publishers.Editor
                 return 0;
             }
 
-            int targetId = target != null ? target.GetInstanceID() : 0;
+            int targetId = target != null ? target.GetEntityId().GetHashCode() : 0;
             return (targetId * 397) ^ (definitionPropertyPath.GetHashCode(StringComparison.Ordinal) * 397);
         }
 
@@ -442,7 +442,7 @@ namespace Scaffold.AppFlow.Publishers.Editor
         private static string MakeChildPathsCacheKey(SerializedProperty definitionProperty, SerializedProperty sourceProp)
         {
             UnityEngine.Object t = definitionProperty.serializedObject.targetObject;
-            int id = t != null ? t.GetInstanceID() : 0;
+            int id = t != null ? t.GetEntityId().GetHashCode() : 0;
             return $"{id}:{definitionProperty.propertyPath}|{sourceProp.managedReferenceFullTypename ?? "null"}";
         }
 

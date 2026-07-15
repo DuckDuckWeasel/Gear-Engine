@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace GearEngine.GearEngine.Config
 {
-    [CreateAssetMenu(fileName = "GearItem", menuName = "GearEngine/GearItem")]
+    [CreateAssetMenu(fileName = "GearItem", menuName = "GearEngine/Gear/Gear Item")]
     public class GearItem : ScriptableObject
     {
         public GearItem NextLevel => nextLevel;

@@ -65,7 +65,7 @@ namespace AAGen
             // Attempt to parse the guid string representation into an actual data structure.
             // If the parse was successful, then create a new node with the GUID as its value.
             // Otherwise, the parse was unsuccessful. Return an invalid node.
-            return GUID.TryParse(guidString, out var guid) ? new AssetNode(guid) : null;
+            return UnityEngine.GUID.TryParse(guidString, out var guid) ? new AssetNode(guid) : null;
         }
         #endregion
 
@@ -74,7 +74,7 @@ namespace AAGen
         /// The GUID for the asset.
         /// </summary>
         [JsonIgnore]
-        public readonly GUID Guid;
+        public readonly UnityEngine.GUID Guid;
         #endregion
 
         #region Properties
@@ -102,7 +102,7 @@ namespace AAGen
         /// <remarks>
         /// There is no default constructor since it has no meaning to these nodes without an asset guid.
         /// </remarks>
-        public AssetNode(GUID guid) 
+        public AssetNode(UnityEngine.GUID guid) 
         {
             Guid = guid;
         }

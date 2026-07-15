@@ -1,4 +1,4 @@
-﻿// [OptionalShader] com.coffee.softmask-for-ugui: Hidden/UI/Default (UIEffect)
+// [OptionalShader] com.coffee.softmask-for-ugui: Hidden/UI/Default (UIEffect)
 // [OptionalShader] com.coffee.ui-effect: Hidden/UI/Default (SoftMaskable)
 Shader "Hidden/UI/Default (UIEffect)"
 {
@@ -158,7 +158,7 @@ Shader "Hidden/UI/Default (UIEffect)"
             }
 
             #define UIEFFECT_FRAG_STRUCT v2f
-            #include "Packages/com.coffee.ui-effect/Shaders/UIEffect.cginc"
+            #include "UIEffect.cginc"
             // ==== UIEFFECT END ====
 
             half4 frag(v2f IN) : SV_Target
