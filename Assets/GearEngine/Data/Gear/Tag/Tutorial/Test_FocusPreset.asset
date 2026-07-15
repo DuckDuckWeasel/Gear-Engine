@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5208d2d3b2a3f44b1a6fb8e73916433f, type: 3}
+  m_Name: Test_FocusPreset
+  m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Presentation.UI.Tags.Highlight.FocusPresetSO
+  useDarkOverlay: 1
+  overlayColor: {r: 0, g: 0, b: 0, a: 0.75}
+  blockClicksOutside: 1
+  indicatorPrefab: {fileID: 163528230674916269, guid: 7cbffe0b8de8d4e4fb147d455b3944f1, type: 3}
+  indicatorAnchor: 4
+  customIndicatorAnchor: {x: 0.5, y: 1}
+  indicatorOffset: {x: 0, y: 0}
+  directionOffset: 0
+  aimToAnchor: 1
+  useUIEffect: 1
+  uiEffectPreset: {fileID: 11400000, guid: 8e1f52a88aa69404a9316e9bef0bbe57, type: 2}
