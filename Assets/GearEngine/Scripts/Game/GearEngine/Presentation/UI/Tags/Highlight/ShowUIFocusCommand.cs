@@ -4,7 +4,7 @@ using UnityEngine;
 using VContainer;
 using Command = Fungus.Command;
 using System.Linq;
-using TriInspector;
+using GearEngine.GearEngine.Extensions;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -25,6 +25,10 @@ namespace GearEngine.GearEngine.Presentation.UI.Tags.Highlight
         [SerializeField] 
         private FocusPresetSO _preset;
 
+        [Tooltip("If true, overrides the layout properties (anchor, offset, etc.) defined in the FocusPresetSO.")]
+        [SerializeField]
+        private bool _overridePresetLayout = false;
+
         [Tooltip("Offset of the indicator relative to the anchor point on the target bounds.")]
         [SerializeField] 
         private Vector2 _indicatorOffset = Vector2.zero;
@@ -33,9 +37,6 @@ namespace GearEngine.GearEngine.Presentation.UI.Tags.Highlight
         [SerializeField] 
         private IndicatorAnchor _indicatorAnchor = IndicatorAnchor.TopCenter;
 
-        private bool IsCustomAnchor => _indicatorAnchor == IndicatorAnchor.Custom;
-
-        [ShowIf(nameof(IsCustomAnchor))]
         [Tooltip("Used only if IndicatorAnchor is set to Custom (e.g. 0.5, 1.0 is Top Center).")]
         [SerializeField]
         private Vector2 _customIndicatorAnchor = new Vector2(0.5f, 1f);
@@ -53,34 +54,29 @@ namespace GearEngine.GearEngine.Presentation.UI.Tags.Highlight
         private int _targetIndex = 0;
 
 #if UNITY_EDITOR
-        [Button("Preview with these Settings")]
-        private void OpenLivePreview()
+        /// <summary>
+        /// Hides fields that only apply to specific configurations
+        /// (drawn by Fungus's CommandEditor, which honors this hook).
+        /// </summary>
+        public override bool IsPropertyVisible(string propertyName)
         {
-            if (_preset == null)
+            if (propertyName == "_indicatorOffset" || 
+                propertyName == "_indicatorAnchor" || 
+                propertyName == "_customIndicatorAnchor" || 
+                propertyName == "_aimToAnchor" || 
+                propertyName == "_directionOffset")
             {
-                Debug.LogWarning("Please assign a FocusPresetSO first.");
-                return;
+                if (!_overridePresetLayout) return false;
             }
 
-            System.Type windowType = System.Type.GetType("GearEngine.GearEngine.Editor.TutorialFocusPreviewWindow, Game.GearEngine.Editor");
-            if (windowType != null)
+            if (propertyName == "_customIndicatorAnchor")
             {
-                var window = EditorWindow.GetWindow(windowType);
-                window.titleContent = new GUIContent("Focus Preview");
-                
-                var setPresetMethod = windowType.GetMethod("SetPreset");
-                if (setPresetMethod != null) setPresetMethod.Invoke(window, new object[] { _preset });
+                return _indicatorAnchor == IndicatorAnchor.Custom;
+            }
 
-                var setParamsMethod = windowType.GetMethod("SetPreviewParams");
-                if (setParamsMethod != null) setParamsMethod.Invoke(window, new object[] { _indicatorAnchor, _directionOffset, _aimToAnchor });
-            }
-            else
-            {
-                Debug.LogError("Could not find TutorialFocusPreviewWindow.");
-            }
+            return base.IsPropertyVisible(propertyName);
         }
 #endif
-
         public override void OnEnter()
         {
             if (_targetTag == null || _preset == null)
@@ -90,11 +86,10 @@ namespace GearEngine.GearEngine.Presentation.UI.Tags.Highlight
                 return;
             }
 
+            // Using Singleton to guarantee a single Canvas across all commands
             if (_focusService == null)
             {
-                Debug.LogError("[ShowUIFocusCommand] TutorialFocusService is not injected.");
-                Continue();
-                return;
+                _focusService = TutorialFocusService.Instance;
             }
 
             TagComponent[] allComponents = FindObjectsOfType<TagComponent>();
@@ -126,7 +121,13 @@ namespace GearEngine.GearEngine.Presentation.UI.Tags.Highlight
                 return;
             }
 
-            _focusService.FocusOn(targetRect, _preset, _indicatorAnchor, _customIndicatorAnchor, _indicatorOffset, _directionOffset, _aimToAnchor);
+            IndicatorAnchor anchor = _overridePresetLayout ? _indicatorAnchor : _preset.indicatorAnchor;
+            Vector2 customAnchor = _overridePresetLayout ? _customIndicatorAnchor : _preset.customIndicatorAnchor;
+            Vector2 offset = _overridePresetLayout ? _indicatorOffset : _preset.indicatorOffset;
+            float dirOffset = _overridePresetLayout ? _directionOffset : _preset.directionOffset;
+            bool aim = _overridePresetLayout ? _aimToAnchor : _preset.aimToAnchor;
+
+            _focusService.FocusOn(targetRect, _preset, anchor, customAnchor, offset, dirOffset, aim);
 
             Continue();
         }

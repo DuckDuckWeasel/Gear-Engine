@@ -1,75 +1,60 @@
+using Fungus.EditorUtils;
+using GearEngine.GearEngine.Presentation.UI.Tags.Highlight;
 using UnityEditor;
 using UnityEngine;
-using GearEngine.GearEngine.Presentation.UI.Tags.Highlight;
 
 namespace GearEngine.GearEngine.Editor
 {
-    [CustomEditor(typeof(FocusPresetSO))]
-    public class FocusPresetSOEditor : UnityEditor.Editor
+    [CustomEditor(typeof(ShowUIFocusCommand))]
+    public class ShowUIFocusCommandEditor : CommandEditor
     {
-        public override void OnInspectorGUI()
+        public override void DrawCommandGUI()
         {
             EditorGUI.BeginChangeCheck();
-            DrawDefaultInspector();
+            base.DrawCommandGUI();
             if (EditorGUI.EndChangeCheck())
             {
-                // Repaints automatically
+                // Nothing to refresh, it draws directly in Repaint
             }
 
-            FocusPresetSO preset = (FocusPresetSO)target;
-
-            if (preset.useUIEffect && preset.uiEffectPreset != null)
+            var presetProp = serializedObject.FindProperty("_preset");
+            if (presetProp.objectReferenceValue != null)
             {
                 EditorGUILayout.Space(15);
-                Rect rect = EditorGUILayout.GetControlRect(false, 1);
-                EditorGUI.DrawRect(rect, new Color(0.5f, 0.5f, 0.5f, 1));
+                Rect sepRect = EditorGUILayout.GetControlRect(false, 1);
+                EditorGUI.DrawRect(sepRect, new Color(0.5f, 0.5f, 0.5f, 1));
                 EditorGUILayout.Space(10);
-                GUILayout.Label("Active Effects", EditorStyles.boldLabel);
-
-                Coffee.UIEffects.UIEffectPreset p = preset.uiEffectPreset;
-                string text = "";
-                if (p.m_ToneFilter != Coffee.UIEffects.ToneFilter.None) text += $"- Tone: {p.m_ToneFilter}\n";
-                if (p.m_ColorFilter != Coffee.UIEffects.ColorFilter.None) text += $"- Color: {p.m_ColorFilter}\n";
-                if (p.m_SamplingFilter != Coffee.UIEffects.SamplingFilter.None) text += $"- Filter/Blur: {p.m_SamplingFilter}\n";
-                if (p.m_TransitionFilter != Coffee.UIEffects.TransitionFilter.None) text += $"- Transition: {p.m_TransitionFilter}\n";
-                if (p.m_ShadowMode != Coffee.UIEffects.ShadowMode.None) text += $"- Shadow: {p.m_ShadowMode}\n";
-                if (p.m_GradationMode != Coffee.UIEffects.GradationMode.None) text += $"- Gradation: {p.m_GradationMode}\n";
-                if (p.m_EdgeMode != Coffee.UIEffects.EdgeMode.None) text += $"- Edge/Shiny: {p.m_EdgeMode}\n";
-                if (p.m_DetailFilter != Coffee.UIEffects.DetailFilter.None) text += $"- Detail: {p.m_DetailFilter}\n";
                 
-                if (string.IsNullOrEmpty(text)) text = "Preset has no active filters enabled.";
+                GUILayout.Label("Live Focus Preview", EditorStyles.boldLabel);
                 
-                EditorGUILayout.HelpBox(text.TrimEnd(), MessageType.Info);
+                Rect previewRect = GUILayoutUtility.GetRect(256, 256, GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(false));
+                
+                if (Event.current.type == EventType.Repaint)
+                {
+                    DrawFakePreview(previewRect);
+                }
             }
-
-            EditorGUILayout.Space(15);
-            Rect separator = EditorGUILayout.GetControlRect(false, 1);
-            EditorGUI.DrawRect(separator, new Color(0.5f, 0.5f, 0.5f, 1));
-            EditorGUILayout.Space(10);
-            
-            GUILayout.Label("Live Focus Preview", EditorStyles.boldLabel);
-            
-            Rect previewRect = GUILayoutUtility.GetRect(256, 256, GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(false));
-            
-            if (Event.current.type == EventType.Repaint)
+            else
             {
-                DrawFakePreview(previewRect, preset);
+                EditorGUILayout.HelpBox("Select a FocusPresetSO to preview.", MessageType.Info);
             }
         }
 
-        private void DrawFakePreview(Rect rect, FocusPresetSO preset)
+        private void DrawFakePreview(Rect rect)
         {
             // 1. Draw dark background
             EditorGUI.DrawRect(rect, new Color(0.15f, 0.15f, 0.15f, 1f));
 
+            var presetProp = serializedObject.FindProperty("_preset");
+            FocusPresetSO preset = presetProp.objectReferenceValue as FocusPresetSO;
             if (preset == null) return;
 
             // 2. Draw Overlay
             if (preset.useDarkOverlay)
             {
-                // We draw the overlay color with blending
-                Color c = preset.overlayColor;
-                Handles.DrawSolidRectangleWithOutline(rect, c, Color.clear);
+                // EditorGUI.DrawRect doesn't blend alpha properly in older unity versions, 
+                // but we can draw it and hope it blends, or use Handles
+                Handles.DrawSolidRectangleWithOutline(rect, preset.overlayColor, Color.clear);
             }
 
             // 3. Draw Target
@@ -82,15 +67,43 @@ namespace GearEngine.GearEngine.Editor
             GUI.Label(targetRect, "Dummy Button", textStyle);
 
             // 4. Indicator
-            Vector2 anchorPos = GetAnchorPosition(targetRect, preset.indicatorAnchor, preset.customIndicatorAnchor);
+            var overrideProp = serializedObject.FindProperty("_overridePresetLayout");
+            bool isOverride = overrideProp != null && overrideProp.boolValue;
+
+            IndicatorAnchor anchor;
+            Vector2 customAnchor;
+            float dirOffset;
+            Vector2 posOffset;
+            bool aimToAnchor;
+
+            if (isOverride)
+            {
+                anchor = (IndicatorAnchor)serializedObject.FindProperty("_indicatorAnchor").enumValueIndex;
+                customAnchor = serializedObject.FindProperty("_customIndicatorAnchor").vector2Value;
+                dirOffset = serializedObject.FindProperty("_directionOffset").floatValue;
+                posOffset = serializedObject.FindProperty("_indicatorOffset").vector2Value;
+                aimToAnchor = serializedObject.FindProperty("_aimToAnchor").boolValue;
+            }
+            else
+            {
+                anchor = preset.indicatorAnchor;
+                customAnchor = preset.customIndicatorAnchor;
+                dirOffset = preset.directionOffset;
+                posOffset = preset.indicatorOffset;
+                aimToAnchor = preset.aimToAnchor;
+            }
+
+            Vector2 anchorPos = GetAnchorPosition(targetRect, anchor, customAnchor);
             
             Vector2 directionOutward = (anchorPos - targetRect.center).normalized;
             if (directionOutward == Vector2.zero) directionOutward = new Vector2(0, -1); // Up in IMGUI
 
-            float previewDirOffset = preset.directionOffset * 10f;
-            Vector2 previewPosOffset = preset.indicatorOffset * 10f;
-            previewPosOffset.y = -previewPosOffset.y; // In IMGUI, Y points down, so negate Y for preview to match Unity space
-
+            // Scale offsets proportionally for the preview (10f = preview equivalent of runtime's 20f * scaleFactor)
+            float previewDirOffset = dirOffset * 10f;
+            Vector2 previewPosOffset = posOffset * 10f;
+            // In IMGUI, Y points down, so negate Y for preview to match Unity space
+            previewPosOffset.y = -previewPosOffset.y; 
+            
             Vector2 indicatorCenter = anchorPos + previewPosOffset + (directionOutward * previewDirOffset);
 
             float indSize = 32f;
@@ -98,7 +111,7 @@ namespace GearEngine.GearEngine.Editor
 
             // Aim to anchor: rotate so indicator points from its position toward target center
             float angle = 0f;
-            if (preset.aimToAnchor)
+            if (aimToAnchor)
             {
                 Vector2 aimDirection = targetRect.center - indicatorCenter; // direction in IMGUI
                 Vector2 unityAim = new Vector2(aimDirection.x, -aimDirection.y); // convert to Unity space
@@ -106,7 +119,7 @@ namespace GearEngine.GearEngine.Editor
             }
 
             Matrix4x4 oldMatrix = GUI.matrix;
-            if (preset.aimToAnchor)
+            if (aimToAnchor)
             {
                 // IMGUI RotateAroundPivot is clockwise. Unity Z rotation is counter-clockwise.
                 // We negate the angle to match.
