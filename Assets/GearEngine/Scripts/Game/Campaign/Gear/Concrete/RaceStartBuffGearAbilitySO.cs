@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace GearEngine.Campaign.Gear
 {
-    [CreateAssetMenu(fileName = "RaceStartBuffGear", menuName = "Gear Engine/Abilities/Race Start Buff")]
+    [CreateAssetMenu(fileName = "RaceStartBuffGear", menuName = "GearEngine/Abilities/Race Start Buff")]
     public sealed class RaceStartBuffGearAbilitySO : ActiveRaceGearAbilitySO
     {
         [Header("Buff Info")]

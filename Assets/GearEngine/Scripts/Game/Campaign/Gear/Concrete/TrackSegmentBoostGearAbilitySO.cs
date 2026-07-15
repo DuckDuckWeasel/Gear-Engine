@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace GearEngine.Campaign.Gear
 {
-    [CreateAssetMenu(fileName = "TrackSegmentBoostGear", menuName = "Gear Engine/Abilities/Track Segment Boost")]
+    [CreateAssetMenu(fileName = "TrackSegmentBoostGear", menuName = "GearEngine/Abilities/Track Segment Boost")]
     public sealed class TrackSegmentBoostGearAbilitySO : ActiveRaceGearAbilitySO
     {
         [Header("Trigger Setup")]

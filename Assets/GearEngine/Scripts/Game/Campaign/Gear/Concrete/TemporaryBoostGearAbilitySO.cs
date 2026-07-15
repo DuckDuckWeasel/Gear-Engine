@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace GearEngine.Campaign.Gear
 {
-    [CreateAssetMenu(fileName = "TemporaryBoostGear", menuName = "Gear Engine/Abilities/Temporary Race Start Boost")]
+    [CreateAssetMenu(fileName = "TemporaryBoostGear", menuName = "GearEngine/Abilities/Temporary Race Start Boost")]
     public sealed class TemporaryBoostGearAbilitySO : ActiveRaceGearAbilitySO
     {
         [Header("Boost Setup")]

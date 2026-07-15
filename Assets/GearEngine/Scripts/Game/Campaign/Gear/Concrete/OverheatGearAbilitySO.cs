@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace GearEngine.Campaign.Gear
 {
-    [CreateAssetMenu(fileName = "OverheatGear", menuName = "Gear Engine/Abilities/Group C/Overheat Gear")]
+    [CreateAssetMenu(fileName = "OverheatGear", menuName = "GearEngine/Abilities/Group C/Overheat Gear")]
     public sealed class OverheatGearAbilitySO : ActiveRaceGearAbilitySO
     {
         [SerializeField] private VariableSO speedStat;

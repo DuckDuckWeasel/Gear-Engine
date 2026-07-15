@@ -9,7 +9,7 @@ using UnityEngine;
 
 namespace GearEngine.Campaign.Gear
 {
-    [CreateAssetMenu(fileName = "FragileBombGear", menuName = "Gear Engine/Abilities/Group A/Fragile Bomb Gear")]
+    [CreateAssetMenu(fileName = "FragileBombGear", menuName = "GearEngine/Abilities/Group A/Fragile Bomb Gear")]
     public sealed class FragileBombGearAbilitySO : ActiveRaceGearAbilitySO
     {
         [Header("Bomb Metrics")]

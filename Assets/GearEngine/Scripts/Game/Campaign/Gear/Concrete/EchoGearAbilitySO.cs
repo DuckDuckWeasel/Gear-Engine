@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace GearEngine.Campaign.Gear
 {
-    [CreateAssetMenu(fileName = "EchoGear", menuName = "Gear Engine/Abilities/Group B/Echo Gear")]
+    [CreateAssetMenu(fileName = "EchoGear", menuName = "GearEngine/Abilities/Group B/Echo Gear")]
     public sealed class EchoGearAbilitySO : ActiveRaceGearAbilitySO
     {
         public override void Execute(IGridNode owner)

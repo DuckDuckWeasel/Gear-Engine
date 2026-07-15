@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace GearEngine.Campaign.Gear
 {
-    [CreateAssetMenu(fileName = "AdjacentSynergyGear", menuName = "Gear Engine/Abilities/Group B/Adjacent Synergy Gear")]
+    [CreateAssetMenu(fileName = "AdjacentSynergyGear", menuName = "GearEngine/Abilities/Group B/Adjacent Synergy Gear")]
     public sealed class AdjacentSynergyGearAbilitySO : PassiveRaceGearAbilitySO
     {
         [Header("Synergy Metrics")]

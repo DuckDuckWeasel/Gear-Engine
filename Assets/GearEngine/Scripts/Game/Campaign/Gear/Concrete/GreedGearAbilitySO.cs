@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace GearEngine.Campaign.Gear
 {
-    [CreateAssetMenu(fileName = "GreedGear", menuName = "Gear Engine/Abilities/Group B/Greed Gear")]
+    [CreateAssetMenu(fileName = "GreedGear", menuName = "GearEngine/Abilities/Group B/Greed Gear")]
     public sealed class GreedGearAbilitySO : PassiveRaceGearAbilitySO
     {
         [SerializeField] private float speedCapabilityBonusPerSlot = 10f;

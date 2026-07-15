@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace GearEngine.Campaign.Gear
 {
-    [CreateAssetMenu(fileName = "NeighborOverclockGear", menuName = "Gear Engine/Abilities/Neighbor Overclock (Board Boost)")]
+    [CreateAssetMenu(fileName = "NeighborOverclockGear", menuName = "GearEngine/Abilities/Neighbor Overclock (Board Boost)")]
     public sealed class NeighborOverclockGearAbilitySO : ActiveRaceGearAbilitySO
     {
         [Header("Overclock Pulse")]

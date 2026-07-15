@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace GearEngine.Campaign.Gear
 {
-    [CreateAssetMenu(fileName = "LapScalerGear", menuName = "Gear Engine/Abilities/Group C/Lap Scaler Gear")]
+    [CreateAssetMenu(fileName = "LapScalerGear", menuName = "GearEngine/Abilities/Group C/Lap Scaler Gear")]
     public sealed class LapScalerGearAbilitySO : ActiveRaceGearAbilitySO
     {
         [SerializeField] private VariableSO stat;

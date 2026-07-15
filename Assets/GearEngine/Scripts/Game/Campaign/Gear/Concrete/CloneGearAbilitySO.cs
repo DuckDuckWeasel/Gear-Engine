@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace GearEngine.Campaign.Gear
 {
-    [CreateAssetMenu(fileName = "CloneGear", menuName = "Gear Engine/Abilities/Group B/Clone Gear")]
+    [CreateAssetMenu(fileName = "CloneGear", menuName = "GearEngine/Abilities/Group B/Clone Gear")]
     public sealed class CloneGearAbilitySO : PassiveRaceGearAbilitySO
     {
         [SerializeField] private float speedCapabilityBonus = 50f;

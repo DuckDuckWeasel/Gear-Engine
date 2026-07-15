@@ -9,7 +9,7 @@ using Scaffold.Events.Contracts;
 
 namespace GearEngine.Campaign.Gear
 {
-    [CreateAssetMenu(fileName = "MartyrGear", menuName = "Gear Engine/Abilities/Group A/Martyr Gear")]
+    [CreateAssetMenu(fileName = "MartyrGear", menuName = "GearEngine/Abilities/Group A/Martyr Gear")]
     public sealed class MartyrGearAbilitySO : ActiveRaceGearAbilitySO
     {
         [Header("Sacrifice Reward")]

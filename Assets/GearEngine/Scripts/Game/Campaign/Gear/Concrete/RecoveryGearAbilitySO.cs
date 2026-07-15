@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace GearEngine.Campaign.Gear
 {
-    [CreateAssetMenu(fileName = "RecoveryGear", menuName = "Gear Engine/Abilities/Recovery Gear (Low Speed Boost)")]
+    [CreateAssetMenu(fileName = "RecoveryGear", menuName = "GearEngine/Abilities/Recovery Gear (Low Speed Boost)")]
     public sealed class RecoveryGearAbilitySO : ActiveRaceGearAbilitySO
     {
         [Header("Triggers")]

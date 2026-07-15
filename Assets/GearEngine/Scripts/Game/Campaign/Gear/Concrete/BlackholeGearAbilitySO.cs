@@ -7,7 +7,7 @@ using Scaffold.Entities;
 
 namespace GearEngine.Campaign.Gear
 {
-    [CreateAssetMenu(fileName = "BlackholeGear", menuName = "Gear Engine/Abilities/Group B/Blackhole Gear")]
+    [CreateAssetMenu(fileName = "BlackholeGear", menuName = "GearEngine/Abilities/Group B/Blackhole Gear")]
     public sealed class BlackholeGearAbilitySO : ActiveRaceGearAbilitySO
     {
         [SerializeField] private VariableSO burstTarget;

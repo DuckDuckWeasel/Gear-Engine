@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace GearEngine.Campaign.Gear
 {
-    [CreateAssetMenu(fileName = "BipolarGear", menuName = "Gear Engine/Abilities/Group D/Bipolar Gear")]
+    [CreateAssetMenu(fileName = "BipolarGear", menuName = "GearEngine/Abilities/Group D/Bipolar Gear")]
     public sealed class BipolarGearAbilitySO : ActiveRaceGearAbilitySO
     {
         [SerializeField] private VariableSO targ;

@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace GearEngine.Campaign.Gear
 {
-    [CreateAssetMenu(fileName = "VampiricEngineGear", menuName = "Gear Engine/Abilities/Group C/Vampiric Engine Gear")]
+    [CreateAssetMenu(fileName = "VampiricEngineGear", menuName = "GearEngine/Abilities/Group C/Vampiric Engine Gear")]
     public sealed class VampiricEngineGearAbilitySO : ActiveRaceGearAbilitySO
     {
         [SerializeField] private VariableSO targetStat;
