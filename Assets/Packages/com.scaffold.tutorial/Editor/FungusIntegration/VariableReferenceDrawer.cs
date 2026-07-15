@@ -219,13 +219,15 @@ namespace Scaffold.Tutorial.Editor
 
         private void ShowTypePicker(SerializedProperty dataProp, List<Type> types)
         {
+            GenericMenu menu = new GenericMenu();
+
             if (types.Count == 0)
             {
-                Debug.LogWarning("[TutorialVariableReferenceDrawer] No concrete types found for this field.");
-                return;
+                string fieldTypeName = GetManagedReferenceFieldTypeName(dataProp);
+                menu.AddDisabledItem(new GUIContent($"No {fieldTypeName} implementations found"));
+                menu.AddDisabledItem(new GUIContent("Create a non-abstract class implementing it to list it here"));
             }
 
-            GenericMenu menu = new GenericMenu();
             foreach (Type type in types)
             {
                 Type captured = type;
@@ -259,7 +261,9 @@ namespace Scaffold.Tutorial.Editor
                     try { return a.GetTypes(); }
                     catch { return Array.Empty<Type>(); }
                 })
-                .Where(t => !t.IsAbstract && !t.IsInterface && fieldType.IsAssignableFrom(t))
+                .Where(t => !t.IsAbstract && !t.IsInterface && fieldType.IsAssignableFrom(t)
+                    && !typeof(UnityEngine.Object).IsAssignableFrom(t)
+                    && t.GetConstructor(Type.EmptyTypes) != null)
                 .OrderBy(t => t.Name)
                 .ToList();
         }

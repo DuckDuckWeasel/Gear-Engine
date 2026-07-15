@@ -3,11 +3,7 @@ using UnityEngine;
 
 namespace Scaffold.Tutorial.Variables
 {
-    public enum VariableSource
-    {
-        Constant,
-        Reference
-    }
+
 
     /// <summary>
     /// Odin-free, serialization-safe variable reference using Unity's native [SerializeField]

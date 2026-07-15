@@ -16,46 +16,5 @@ namespace Fungus
     public class TutorialProgressControllerVariable : VariableBase<TutorialProgressController>
     { }
 
-    /// <summary>
-    /// Container for a TutorialController variable reference or constant value.
-    /// </summary>
-    [System.Serializable]
-    public struct TutorialProgressControllerData
-    {
-        [SerializeField]
-        [VariableProperty("<Value>", typeof(TutorialProgressControllerVariable))]
-        public TutorialProgressControllerVariable tutorialControllerRef;
 
-        [SerializeField]
-        public TutorialProgressController tutorialControllerVal;
-
-        public static implicit operator TutorialProgressController(TutorialProgressControllerData tutorialProgressControllerData)
-        {
-            return tutorialProgressControllerData.Value;
-        }
-
-        public TutorialProgressControllerData(TutorialProgressController v)
-        {
-            tutorialControllerVal = v;
-            tutorialControllerRef = null;
-        }
-
-        public TutorialProgressController Value
-        {
-            get { return (tutorialControllerRef == null) ? tutorialControllerVal : tutorialControllerRef.Value; }
-            set { if (tutorialControllerRef == null) { tutorialControllerVal = value; } else { tutorialControllerRef.Value = value; } }
-        }
-
-        public string GetDescription()
-        {
-            if (tutorialControllerRef == null)
-            {
-                return tutorialControllerVal != null ? tutorialControllerVal.ToString() : "Null";
-            }
-            else
-            {
-                return tutorialControllerRef.Key;
-            }
-        }
-    }
 }
