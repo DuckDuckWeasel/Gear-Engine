@@ -7,6 +7,8 @@ using VContainer;
 using Scaffold.Input.Contracts;
 using Scaffold.Input.Events;
 using Scaffold.Events.Contracts;
+using UnityEngine.EventSystems;
+using GearEngine.Core.Architecture.References;
 using Command = Fungus.Command;
 using GearEngine.GearEngine.Extensions;
 
@@ -16,10 +18,40 @@ namespace GearEngine.GearEngine.Presentation.UI.Input
     [AddComponentMenu("")]
     public class WaitForTargetDrop : Command
     {
-        public List<TagSO> dragTargetTagSOList = new();
-        public List<TagSO> dropTargetTagSOList = new();
-        public bool matchAll = false;
+        public TargetReference dragTarget = new TargetReference();
+        public TargetReference dropTarget = new TargetReference();
+
         public bool checkDroppedGameObject = false;
+
+        // Legacy fields for migration
+        [HideInInspector] public List<TagSO> dragTargetTagSOList = new();
+        [HideInInspector] public List<TagSO> dropTargetTagSOList = new();
+        [HideInInspector] public bool matchAll = false;
+        [HideInInspector] [SerializeField] private bool migratedToTargetReference = false;
+
+        protected virtual void OnEnable()
+        {
+            if (!migratedToTargetReference)
+            {
+                if (dragTargetTagSOList != null && dragTargetTagSOList.Count > 0)
+                {
+                    dragTarget.strategy = TargetResolutionStrategy.Tags;
+                    dragTarget.tagFilter.soTags = new List<TagSO>(dragTargetTagSOList);
+                    dragTarget.tagFilter.matchAll = matchAll;
+                    dragTargetTagSOList.Clear();
+                }
+                
+                if (dropTargetTagSOList != null && dropTargetTagSOList.Count > 0)
+                {
+                    dropTarget.strategy = TargetResolutionStrategy.Tags;
+                    dropTarget.tagFilter.soTags = new List<TagSO>(dropTargetTagSOList);
+                    dropTarget.tagFilter.matchAll = matchAll;
+                    dropTargetTagSOList.Clear();
+                }
+
+                migratedToTargetReference = true;
+            }
+        }
 
         private bool isTargetDropped = false;
         
@@ -28,13 +60,6 @@ namespace GearEngine.GearEngine.Presentation.UI.Input
 
         public override void OnEnter()
         {
-            if (dragTargetTagSOList == null || dropTargetTagSOList == null)
-            {
-                Debug.LogError($"[WaitForTargetDrop] dragTargetTagSOList or dropTargetTagSOList is null. Method: {nameof(OnEnter)}");
-                Continue();
-                return;
-            }
-
             if (_inputService == null || _eventBus == null)
             {
                 this.TryInject();
@@ -43,8 +68,8 @@ namespace GearEngine.GearEngine.Presentation.UI.Input
                 if (_inputService == null) _inputService = new Scaffold.Input.InputFilterService(_eventBus);
             }
 
-            _inputService.FilterForButtonDownTags(matchAll, dragTargetTagSOList.ToArray());
-            _inputService.FilterForDropEnterTags(matchAll, checkDroppedGameObject, dropTargetTagSOList.ToArray());
+            _inputService.FilterForButtonDownTarget(dragTarget);
+            _inputService.FilterForDropEnterTarget(checkDroppedGameObject, dropTarget);
 
             isTargetDropped = false;
 
@@ -61,12 +86,18 @@ namespace GearEngine.GearEngine.Presentation.UI.Input
                 return;
             }
 
-            TagComponent tagComponent = screenDroppedSignal.DropTopResult.transform.GetComponentInParent<TagComponent>();
+            GameObject droppedObj = screenDroppedSignal.DropTopResult.gameObject;
 
-            if (tagComponent == null || !tagComponent.ContainsTag(dropTargetTagSOList.ToArray(), matchAll))
+            // First check if the direct object matches
+            if (!dropTarget.IsMatch(droppedObj))
             {
-                Debug.Log($"[WaitForTargetDrop] Dropped target does not match the required tags or condition. Method: {nameof(OnDrop)}");
-                return;
+                // Fallback to checking parent just in case, similar to previous logic
+                TagComponent tagComponent = droppedObj.GetComponentInParent<TagComponent>();
+                if (tagComponent == null || !dropTarget.IsMatch(tagComponent.gameObject))
+                {
+                    Debug.Log($"[WaitForTargetDrop] Dropped target does not match the required target reference. Method: {nameof(OnDrop)}");
+                    return;
+                }
             }
 
             isTargetDropped = true;
@@ -86,6 +117,12 @@ namespace GearEngine.GearEngine.Presentation.UI.Input
             _eventBus.RemoveListener<ScreenDroppedEvent>(OnDrop);
 
             Continue();
+        }
+
+        public override string GetSummary()
+        {
+            if (dragTarget == null || dropTarget == null) return "Error: No Target";
+            return $"{dragTarget.GetSummary()} -> {dropTarget.GetSummary()}";
         }
     }
 }

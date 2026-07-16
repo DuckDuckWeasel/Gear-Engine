@@ -4,6 +4,7 @@ using GearEngine.GearEngine.Presentation.UI.Tags;
 using Fungus;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using GearEngine.Core.Architecture.References;
 using Command = Fungus.Command;
 
 namespace GearEngine.GearEngine.Presentation.UI.Input
@@ -12,8 +13,24 @@ namespace GearEngine.GearEngine.Presentation.UI.Input
     [AddComponentMenu("")]
     public class WaitForTargetPointerEnter : Command
     {
-        public List<TagSO> targetTagSOList;
-        public bool matchAll = false;
+        public TargetReference target = new TargetReference();
+
+        // Legacy fields for migration
+        [HideInInspector] public List<TagSO> targetTagSOList;
+        [HideInInspector] public bool matchAll = false;
+        [HideInInspector] [SerializeField] private bool migratedToTargetReference = false;
+
+        protected virtual void OnEnable()
+        {
+            if (!migratedToTargetReference && targetTagSOList != null && targetTagSOList.Count > 0)
+            {
+                target.strategy = TargetResolutionStrategy.Tags;
+                target.tagFilter.soTags = new List<TagSO>(targetTagSOList);
+                target.tagFilter.matchAll = matchAll;
+                migratedToTargetReference = true;
+                targetTagSOList.Clear();
+            }
+        }
 
         private bool isTargetPointered = false;
         private List<EventTrigger> addedTriggers = new List<EventTrigger>();
@@ -21,31 +38,43 @@ namespace GearEngine.GearEngine.Presentation.UI.Input
 
         public override void OnEnter()
         {
-            if (targetTagSOList == null || targetTagSOList.Count == 0)
-            {
-                Debug.LogError($"[WaitForTargetPointerEnter] targetTagSOList is null or empty. Method: {nameof(OnEnter)}");
-                Continue();
-                return;
-            }
-
             isTargetPointered = false;
 
-            // Find all GameObjects that have matching tags
-            TagComponent[] allComponents = FindObjectsOfType<TagComponent>();
             bool foundTarget = false;
 
-            foreach (TagComponent comp in allComponents)
+            if (target.strategy == TargetResolutionStrategy.Tags)
             {
-                if (comp.ContainsTag(targetTagSOList.ToArray(), matchAll))
+                // Find all GameObjects that have matching tags
+                TagComponent[] allComponents = FindObjectsOfType<TagComponent>();
+
+                foreach (TagComponent comp in allComponents)
                 {
-                    AttachPointerEnterTrigger(comp.gameObject);
-                    foundTarget = true;
+                    if (target.IsMatch(comp.gameObject))
+                    {
+                        AttachPointerEnterTrigger(comp.gameObject);
+                        foundTarget = true;
+                    }
+                }
+            }
+            else
+            {
+                List<GameObject> resolvedTargets = target.ResolveAll();
+                if (resolvedTargets != null && resolvedTargets.Count > 0)
+                {
+                    foreach (var resolvedTarget in resolvedTargets)
+                    {
+                        if (resolvedTarget != null)
+                        {
+                            AttachPointerEnterTrigger(resolvedTarget);
+                            foundTarget = true;
+                        }
+                    }
                 }
             }
 
             if (!foundTarget)
             {
-                Debug.LogWarning($"[WaitForTargetPointerEnter] No GameObjects found with matching tags.");
+                Debug.LogWarning($"[WaitForTargetPointerEnter] No GameObjects found with matching target reference.");
                 Continue();
                 return;
             }
@@ -116,6 +145,12 @@ namespace GearEngine.GearEngine.Presentation.UI.Input
                 }
             }
             addedTriggers.Clear();
+        }
+
+        public override string GetSummary()
+        {
+            if (target == null) return "Error: No Target";
+            return target.GetSummary();
         }
     }
 }

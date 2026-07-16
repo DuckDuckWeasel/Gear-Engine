@@ -1,4 +1,5 @@
 using Fungus;
+using GearEngine.Core.Architecture.References;
 using System.Collections.Generic;
 using UnityEngine;
 using VContainer;
@@ -17,9 +18,25 @@ namespace GearEngine.GearEngine.Presentation.UI.Tags.Highlight
         [Inject] 
         private TutorialFocusService _focusService;
 
-        [Tooltip("The tag of the UI element to focus on.")]
+        [Tooltip("The target UI element to focus on. Use Tags or Runtime Anchors.")]
         [SerializeField] 
-        private TagSO _targetTag;
+        private TargetReference _target = new TargetReference();
+
+        // Legacy fields for migration
+        [HideInInspector] [SerializeField] private TagSO _targetTag;
+        [HideInInspector] [SerializeField] private bool _migratedToTargetReference = false;
+
+        protected virtual void OnEnable()
+        {
+            if (!_migratedToTargetReference && _targetTag != null)
+            {
+                _target.strategy = TargetResolutionStrategy.Tags;
+                _target.tagFilter.soTags = new List<TagSO>() { _targetTag };
+                _target.tagFilter.matchAll = false;
+                _migratedToTargetReference = true;
+                _targetTag = null;
+            }
+        }
 
         [Tooltip("The visual preset to use for the focus overlay and effects.")]
         [SerializeField] 
@@ -49,7 +66,7 @@ namespace GearEngine.GearEngine.Presentation.UI.Tags.Highlight
         [SerializeField]
         private float _directionOffset = 0f;
 
-        [Tooltip("If multiple objects have this tag, pick the one at this index. Default is 0.")]
+        [Tooltip("If multiple objects have this tag, pick the one at this index. Default is 0. (Only applies if using Tags strategy)")]
         [SerializeField] 
         private int _targetIndex = 0;
 
@@ -79,9 +96,9 @@ namespace GearEngine.GearEngine.Presentation.UI.Tags.Highlight
 #endif
         public override void OnEnter()
         {
-            if (_targetTag == null || _preset == null)
+            if (_preset == null)
             {
-                Debug.LogError("[ShowUIFocusCommand] TargetTag or Preset is missing.");
+                Debug.LogError("[ShowUIFocusCommand] Preset is missing.");
                 Continue();
                 return;
             }
@@ -92,28 +109,46 @@ namespace GearEngine.GearEngine.Presentation.UI.Tags.Highlight
                 _focusService = TutorialFocusService.Instance;
             }
 
-            TagComponent[] allComponents = FindObjectsOfType<TagComponent>();
             List<TagComponent> matchingTags = new List<TagComponent>();
-            
-            foreach (TagComponent comp in allComponents)
+            RectTransform targetRect = null;
+
+            if (_target.strategy == TargetResolutionStrategy.Tags && _target.tagFilter.soTags.Count > 0)
             {
-                if (comp.HasTag(_targetTag))
+                TagComponent[] allComponents = FindObjectsOfType<TagComponent>();
+                
+                foreach (TagComponent comp in allComponents)
                 {
-                    matchingTags.Add(comp);
+                    if (_target.IsMatch(comp.gameObject))
+                    {
+                        matchingTags.Add(comp);
+                    }
+                }
+
+                if (matchingTags.Count == 0 || _targetIndex >= matchingTags.Count)
+                {
+                    Debug.LogWarning($"[ShowUIFocusCommand] No valid target found for the specified TargetReference at index {_targetIndex}.");
+                    Continue();
+                    return;
+                }
+
+                // Sort by hierarchy to be deterministic
+                matchingTags.Sort((a, b) => a.transform.GetSiblingIndex().CompareTo(b.transform.GetSiblingIndex()));
+                targetRect = matchingTags[_targetIndex].GetComponent<RectTransform>();
+            }
+            else
+            {
+                GameObject resolvedTarget = _target.Resolve();
+                if (resolvedTarget != null)
+                {
+                    targetRect = resolvedTarget.GetComponent<RectTransform>();
+                }
+                else
+                {
+                    Debug.LogWarning($"[ShowUIFocusCommand] Could not resolve target using the specified TargetReference.");
+                    Continue();
+                    return;
                 }
             }
-
-            if (matchingTags.Count == 0 || _targetIndex >= matchingTags.Count)
-            {
-                Debug.LogWarning($"[ShowUIFocusCommand] No valid target found for tag {_targetTag.name} at index {_targetIndex}.");
-                Continue();
-                return;
-            }
-
-            // Sort by hierarchy to be deterministic
-            matchingTags.Sort((a, b) => a.transform.GetSiblingIndex().CompareTo(b.transform.GetSiblingIndex()));
-
-            RectTransform targetRect = matchingTags[_targetIndex].GetComponent<RectTransform>();
             if (targetRect == null)
             {
                 Debug.LogError("[ShowUIFocusCommand] Target does not have a RectTransform.");
@@ -134,9 +169,8 @@ namespace GearEngine.GearEngine.Presentation.UI.Tags.Highlight
 
         public override string GetSummary()
         {
-            if (_targetTag == null)
-                return "Error: No Tag";
-            return _targetTag.name;
+            if (_target == null) return "Error: No Target";
+            return _target.GetSummary();
         }
     }
 }

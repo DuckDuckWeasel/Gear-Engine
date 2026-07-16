@@ -8,6 +8,7 @@ using VContainer;
 using Scaffold.Input.Contracts;
 using Scaffold.Input.Events;
 using Scaffold.Events.Contracts;
+using GearEngine.Core.Architecture.References;
 using Command = Fungus.Command;
 using GearEngine.GearEngine.Extensions;
 
@@ -16,8 +17,11 @@ namespace GearEngine.GearEngine.Presentation.UI.Input
     [Serializable]
     public class DropTargetConfig
     {
-        public TagSO tagSO;
+        public TargetReference target = new TargetReference();
         public List<int> allowedNodeIndices = new List<int>();
+
+        // Legacy
+        [HideInInspector] public TagSO tagSO;
     }
 
     [CommandInfo("Input", "Wait For Target Drop At Index", "Waits for dropping an object with the specified target tags node.")]
@@ -27,24 +31,56 @@ namespace GearEngine.GearEngine.Presentation.UI.Input
         [Inject] private IInputFilterService _inputService;
         [Inject] private IEventBus _eventBus;
 
-        [Header("Drag-side tags")]
-        [SerializeField]
-        private List<TagSO> dragTargetTagSOList = new List<TagSO>();
+        [Header("Drag-side Target")]
+        public TargetReference dragTarget = new TargetReference();
 
         [Header("Drop-side configurations")]
         [SerializeField]
         private List<DropTargetConfig> dropConfigs = new List<DropTargetConfig>();
         
         [SerializeField]
-        private bool matchAll = false;
-        [SerializeField]
         private bool checkGameObject = false;
+
+        // Legacy fields for migration
+        [HideInInspector] [SerializeField] private List<TagSO> dragTargetTagSOList = new List<TagSO>();
+        [HideInInspector] [SerializeField] private bool matchAll = false;
+        [HideInInspector] [SerializeField] private bool migratedToTargetReference = false;
+
+        protected virtual void OnEnable()
+        {
+            if (!migratedToTargetReference)
+            {
+                if (dragTargetTagSOList != null && dragTargetTagSOList.Count > 0)
+                {
+                    dragTarget.strategy = TargetResolutionStrategy.Tags;
+                    dragTarget.tagFilter.soTags = new List<TagSO>(dragTargetTagSOList);
+                    dragTarget.tagFilter.matchAll = matchAll;
+                    dragTargetTagSOList.Clear();
+                }
+
+                if (dropConfigs != null)
+                {
+                    foreach (var config in dropConfigs)
+                    {
+                        if (config.tagSO != null)
+                        {
+                            config.target.strategy = TargetResolutionStrategy.Tags;
+                            config.target.tagFilter.soTags = new List<TagSO>() { config.tagSO };
+                            config.target.tagFilter.matchAll = matchAll;
+                            config.tagSO = null;
+                        }
+                    }
+                }
+
+                migratedToTargetReference = true;
+            }
+        }
 
         private bool isTargetDropped;
 
         public override void OnEnter()
         {
-            if (dragTargetTagSOList == null || dragTargetTagSOList.Count == 0 || dropConfigs == null || dropConfigs.Count == 0)
+            if (dropConfigs == null || dropConfigs.Count == 0)
             {
                 Debug.LogError($"[WaitForTargetDropAtIndex] Invalid configuration.");
                 Finish(false);
@@ -59,10 +95,16 @@ namespace GearEngine.GearEngine.Presentation.UI.Input
                 if (_inputService == null) _inputService = new Scaffold.Input.InputFilterService(_eventBus);
             }
 
-            _inputService.FilterForButtonDownTags(matchAll, dragTargetTagSOList.ToArray());
-            _inputService.FilterForDropEnterTags(matchAll, checkGameObject, 
-                                               dropConfigs.ConvertAll(dc => dc.tagSO).ToArray());
-            _inputService.FilterForPointerEnterTags(matchAll, dragTargetTagSOList.ToArray());
+            // Provide filtering for UI highlights/raycasts based on target references
+            _inputService.FilterForButtonDownTarget(dragTarget);
+            _inputService.FilterForPointerEnterTarget(dragTarget);
+
+            List<TargetReference> dropTargetRefs = new List<TargetReference>();
+            foreach (var cfg in dropConfigs)
+            {
+                dropTargetRefs.Add(cfg.target);
+            }
+            _inputService.FilterForDropEnterTargets(checkGameObject, dropTargetRefs);
 
             _eventBus.AddListener<ScreenDroppedEvent>(OnDrop);
             _eventBus.AddListener<ScreenPointerExitEvent>(OnPointerExit);
@@ -80,19 +122,29 @@ namespace GearEngine.GearEngine.Presentation.UI.Input
                 return;
             }
 
-            if (!go.TryGetComponent<TagComponent>(out TagComponent tagComp))
-            {
-                Finish(false);
-                return;
-            }
-
             foreach (DropTargetConfig dropConfig in dropConfigs)
             {
-                if (!tagComp.ContainsTag(new[] { dropConfig.tagSO }, matchAll))
-                    continue;
+                if (!dropConfig.target.IsMatch(go))
+                {
+                    // Fallback to parents
+                    TagComponent parentTagComp = go.GetComponentInParent<TagComponent>();
+                    if (parentTagComp == null || !dropConfig.target.IsMatch(parentTagComp.gameObject))
+                    {
+                        continue;
+                    }
+                }
 
-                List<TagComponent> allTagged = GetAllTaggedObjects(dropConfig.tagSO);
-                int indexToCheck = allTagged.IndexOf(tagComp);
+                List<GameObject> allMatching = GetAllMatchingObjects(dropConfig.target);
+                int indexToCheck = allMatching.IndexOf(go);
+                
+                // Also check if index was from the parent component
+                if (indexToCheck < 0)
+                {
+                    TagComponent parentTagComp = go.GetComponentInParent<TagComponent>();
+                    if (parentTagComp != null)
+                        indexToCheck = allMatching.IndexOf(parentTagComp.gameObject);
+                }
+
                 if (indexToCheck >= 0 && dropConfig.allowedNodeIndices.Contains(indexToCheck))
                 {
                     isTargetDropped = true;
@@ -139,20 +191,40 @@ namespace GearEngine.GearEngine.Presentation.UI.Input
             }
         }
 
-        private List<TagComponent> GetAllTaggedObjects(TagSO tagSO)
+        private List<GameObject> GetAllMatchingObjects(TargetReference targetRef)
         {
             TagComponent[] allComponents = FindObjectsOfType<TagComponent>();
-            List<TagComponent> list = new List<TagComponent>();
-            foreach (TagComponent comp in allComponents)
+            List<GameObject> list = new List<GameObject>();
+
+            if (targetRef.strategy == TargetResolutionStrategy.Tags)
             {
-                if (comp.HasTag(tagSO))
+                foreach (TagComponent comp in allComponents)
                 {
-                    list.Add(comp);
+                    if (targetRef.IsMatch(comp.gameObject))
+                    {
+                        list.Add(comp.gameObject);
+                    }
                 }
             }
+            else
+            {
+                List<GameObject> resolvedTargets = targetRef.ResolveAll();
+                if (resolvedTargets != null)
+                {
+                    list.AddRange(resolvedTargets);
+                }
+            }
+
             // Sort by sibling index as a fallback for deterministic indexing
             list.Sort((a, b) => a.transform.GetSiblingIndex().CompareTo(b.transform.GetSiblingIndex()));
             return list;
+        }
+
+        public override string GetSummary()
+        {
+            if (dragTarget == null) return "Error: No Drag Target";
+            int count = dropConfigs != null ? dropConfigs.Count : 0;
+            return $"{dragTarget.GetSummary()} -> [{count} Slots]";
         }
     }
 }

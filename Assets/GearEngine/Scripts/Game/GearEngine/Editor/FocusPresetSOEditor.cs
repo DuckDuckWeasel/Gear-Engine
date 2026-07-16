@@ -9,12 +9,46 @@ namespace GearEngine.GearEngine.Editor
     {
         public override void OnInspectorGUI()
         {
-            EditorGUI.BeginChangeCheck();
-            DrawDefaultInspector();
-            if (EditorGUI.EndChangeCheck())
+            serializedObject.Update();
+
+            SerializedProperty iterator = serializedObject.GetIterator();
+            bool enterChildren = true;
+            while (iterator.NextVisible(enterChildren))
             {
-                // Repaints automatically
+                enterChildren = false;
+
+                if (iterator.name == "m_Script")
+                {
+                    using (new EditorGUI.DisabledScope(true))
+                        EditorGUILayout.PropertyField(iterator, true);
+                    continue;
+                }
+
+                if (iterator.name == "customIndicatorAnchor")
+                {
+                    var anchorProp = serializedObject.FindProperty("indicatorAnchor");
+                    if (anchorProp.enumValueIndex != (int)IndicatorAnchor.Custom)
+                        continue;
+                }
+
+                if (iterator.name == "overlayColor" || iterator.name == "blockClicksOutside")
+                {
+                    var useDarkProp = serializedObject.FindProperty("useDarkOverlay");
+                    if (!useDarkProp.boolValue)
+                        continue;
+                }
+
+                if (iterator.name == "uiEffectPreset")
+                {
+                    var useUIEffectProp = serializedObject.FindProperty("useUIEffect");
+                    if (!useUIEffectProp.boolValue)
+                        continue;
+                }
+
+                EditorGUILayout.PropertyField(iterator, true);
             }
+
+            serializedObject.ApplyModifiedProperties();
 
             FocusPresetSO preset = (FocusPresetSO)target;
 

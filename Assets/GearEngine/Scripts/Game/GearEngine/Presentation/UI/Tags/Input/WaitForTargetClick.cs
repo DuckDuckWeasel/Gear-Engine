@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using GearEngine.GearEngine.Presentation.UI.Tags;
 using Fungus;
 using UnityEngine;
+using Scaffold.Input.Events;
 using UnityEngine.EventSystems;
+using GearEngine.Core.Architecture.References;
 using Command = Fungus.Command;
 
 namespace GearEngine.GearEngine.Presentation.UI.Input
@@ -12,8 +14,24 @@ namespace GearEngine.GearEngine.Presentation.UI.Input
     [AddComponentMenu("")]
     public class WaitForTargetClick : Command
     {
-        public List<TagSO> targetTagSOList;
-        public bool matchAll = false;
+        public TargetReference target = new TargetReference();
+
+        // Legacy fields for migration
+        [HideInInspector] public List<TagSO> targetTagSOList;
+        [HideInInspector] public bool matchAll = false;
+        [HideInInspector] [SerializeField] private bool migratedToTargetReference = false;
+
+        protected virtual void OnEnable()
+        {
+            if (!migratedToTargetReference && targetTagSOList != null && targetTagSOList.Count > 0)
+            {
+                target.strategy = TargetResolutionStrategy.Tags;
+                target.tagFilter.soTags = new List<TagSO>(targetTagSOList);
+                target.tagFilter.matchAll = matchAll;
+                migratedToTargetReference = true;
+                targetTagSOList.Clear();
+            }
+        }
 
         private bool isTargetClicked = false;
         private List<EventTrigger> addedTriggers = new List<EventTrigger>();
@@ -21,31 +39,43 @@ namespace GearEngine.GearEngine.Presentation.UI.Input
 
         public override void OnEnter()
         {
-            if (targetTagSOList == null || targetTagSOList.Count == 0)
-            {
-                Debug.LogError($"[WaitForTargetClick] targetTagSOList is null or empty. Method: {nameof(OnEnter)}");
-                Continue();
-                return;
-            }
-
             isTargetClicked = false;
 
-            // Find all GameObjects that have matching tags
-            TagComponent[] allComponents = FindObjectsOfType<TagComponent>();
             bool foundTarget = false;
 
-            foreach (TagComponent comp in allComponents)
+            if (target.strategy == TargetResolutionStrategy.Tags)
             {
-                if (comp.ContainsTag(targetTagSOList.ToArray(), matchAll))
+                // Find all GameObjects that have matching tags
+                TagComponent[] allComponents = FindObjectsOfType<TagComponent>();
+
+                foreach (TagComponent comp in allComponents)
                 {
-                    AttachPointerClickTrigger(comp.gameObject);
-                    foundTarget = true;
+                    if (target.IsMatch(comp.gameObject))
+                    {
+                        AttachPointerClickTrigger(comp.gameObject);
+                        foundTarget = true;
+                    }
+                }
+            }
+            else
+            {
+                List<GameObject> resolvedTargets = target.ResolveAll();
+                if (resolvedTargets != null && resolvedTargets.Count > 0)
+                {
+                    foreach (var resolvedTarget in resolvedTargets)
+                    {
+                        if (resolvedTarget != null)
+                        {
+                            AttachPointerClickTrigger(resolvedTarget);
+                            foundTarget = true;
+                        }
+                    }
                 }
             }
 
             if (!foundTarget)
             {
-                Debug.LogWarning($"[WaitForTargetClick] No GameObjects found with matching tags.");
+                Debug.LogWarning($"[WaitForTargetClick] No valid targets found for the specified TargetReference.");
                 Continue();
                 return;
             }
@@ -116,6 +146,12 @@ namespace GearEngine.GearEngine.Presentation.UI.Input
                 }
             }
             addedTriggers.Clear();
+        }
+
+        public override string GetSummary()
+        {
+            if (target == null) return "Error: No Target";
+            return target.GetSummary();
         }
     }
 }
