@@ -1011,6 +1011,9 @@ GameObject:
   - component: {fileID: 1893364507}
   - component: {fileID: 1893364506}
   - component: {fileID: 1893364508}
+  - component: {fileID: 1893364511}
+  - component: {fileID: 1893364510}
+  - component: {fileID: 1893364509}
   m_Layer: 0
   m_Name: GameObject
   m_TagString: Untagged
@@ -1034,7 +1037,7 @@ MonoBehaviour:
   indentLevel: 0
   target:
     strategy: 0
-    directReference: {fileID: 0}
+    directReference: {fileID: 478737325}
     tagFilter:
       soTags: []
       nativeTags:
@@ -1153,6 +1156,9 @@ MonoBehaviour:
   - {fileID: 1893364507}
   - {fileID: 1893364500}
   - {fileID: 1893364502}
+  - {fileID: 1893364511}
+  - {fileID: 1893364510}
+  - {fileID: 1893364509}
   suppressAllAutoSelections: 0
 --- !u!114 &1893364504
 MonoBehaviour:
@@ -1181,7 +1187,7 @@ MonoBehaviour:
   selectedBlocks:
   - {fileID: 1893364503}
   selectedCommands:
-  - {fileID: 1893364501}
+  - {fileID: 1893364509}
   variables: []
   description: 
   stepPause: 0
@@ -1237,10 +1243,11 @@ MonoBehaviour:
   itemId: 5
   indentLevel: 0
   _target:
-    strategy: 2
+    strategy: 1
     directReference: {fileID: 0}
     tagFilter:
-      soTags: []
+      soTags:
+      - {fileID: 11400000, guid: 6b80c79064f1d4a05919837bb3f35e43, type: 2}
       nativeTags:
         tags: []
       matchAll: 0
@@ -1271,6 +1278,51 @@ MonoBehaviour:
   parentBlock: {fileID: 1893364503}
   suppressBlockAutoSelect: 0
   waitForFrames: 1
+--- !u!114 &1893364509
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1893364498}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59cae78530361499c94cd67bd55d62ef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Presentation.UI.Input.WaitForEventCommand
+  itemId: 10
+  indentLevel: 0
+  eventType: GearEngine.Campaign.Analytics.CurrencySpentEvent
+--- !u!114 &1893364510
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1893364498}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 64d84d7597dd44e9e853720fe338f75e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Presentation.UI.Input.CloseViewCommand
+  itemId: 9
+  indentLevel: 0
+  viewType: GearEngine.Campaign.Presentation.ActiveRaceView
+--- !u!114 &1893364511
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1893364498}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 31ffadc2c76134efbaa854a7841a6fa0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Presentation.UI.Input.OpenViewCommand
+  itemId: 8
+  indentLevel: 0
+  viewType: GearEngine.CarSimulation.Presentation.CarTrackTestView
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
