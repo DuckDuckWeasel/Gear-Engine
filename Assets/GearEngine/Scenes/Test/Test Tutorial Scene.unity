@@ -484,6 +484,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Presentation.UI.Tags.TagComponent
   tags:
   - {fileID: 11400000, guid: 095a066fb920f48d88ce0d9bacbf4696, type: 2}
+  nativeTags:
+    tags: []
 --- !u!1 &610416765
 GameObject:
   m_ObjectHideFlags: 1
@@ -989,6 +991,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Presentation.UI.Tags.TagComponent
   tags:
   - {fileID: 11400000, guid: 6b80c79064f1d4a05919837bb3f35e43, type: 2}
+  nativeTags:
+    tags: []
 --- !u!1 &1893364498
 GameObject:
   m_ObjectHideFlags: 0
@@ -1028,9 +1032,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Presentation.UI.Input.WaitForTargetPointerEnter
   itemId: 4
   indentLevel: 0
+  target:
+    strategy: 0
+    directReference: {fileID: 0}
+    tagFilter:
+      soTags: []
+      nativeTags:
+        tags: []
+      matchAll: 0
+    globalVariableName: 
+    references: []
   targetTagSOList:
   - {fileID: 11400000, guid: 095a066fb920f48d88ce0d9bacbf4696, type: 2}
   matchAll: 0
+  migratedToTargetReference: 0
 --- !u!114 &1893364500
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -1045,9 +1060,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Presentation.UI.Input.WaitForTargetClick
   itemId: 3
   indentLevel: 0
+  target:
+    strategy: 0
+    directReference: {fileID: 0}
+    tagFilter:
+      soTags: []
+      nativeTags:
+        tags: []
+      matchAll: 0
+    globalVariableName: 
+    references: []
   targetTagSOList:
   - {fileID: 11400000, guid: 6b80c79064f1d4a05919837bb3f35e43, type: 2}
   matchAll: 0
+  migratedToTargetReference: 0
 --- !u!114 &1893364501
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -1062,7 +1088,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Presentation.UI.Tags.Highlight.ShowUIFocusCommand
   itemId: 2
   indentLevel: 0
+  _target:
+    strategy: 0
+    directReference: {fileID: 0}
+    tagFilter:
+      soTags: []
+      nativeTags:
+        tags: []
+      matchAll: 0
+    globalVariableName: 
+    references: []
   _targetTag: {fileID: 11400000, guid: 095a066fb920f48d88ce0d9bacbf4696, type: 2}
+  _migratedToTargetReference: 0
   _preset: {fileID: 11400000, guid: c7f2e8f2a779e4d08b9892b9792129e0, type: 2}
   _overridePresetLayout: 1
   _indicatorOffset: {x: 0, y: 0}
@@ -1144,7 +1181,7 @@ MonoBehaviour:
   selectedBlocks:
   - {fileID: 1893364503}
   selectedCommands:
-  - {fileID: 1893364506}
+  - {fileID: 1893364501}
   variables: []
   description: 
   stepPause: 0
@@ -1199,7 +1236,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Presentation.UI.Tags.Highlight.ShowUIFocusCommand
   itemId: 5
   indentLevel: 0
+  _target:
+    strategy: 2
+    directReference: {fileID: 0}
+    tagFilter:
+      soTags: []
+      nativeTags:
+        tags: []
+      matchAll: 0
+    globalVariableName: Var
+    references: []
   _targetTag: {fileID: 11400000, guid: 6b80c79064f1d4a05919837bb3f35e43, type: 2}
+  _migratedToTargetReference: 0
   _preset: {fileID: 11400000, guid: c7f2e8f2a779e4d08b9892b9792129e0, type: 2}
   _overridePresetLayout: 1
   _indicatorOffset: {x: 0, y: 0}
