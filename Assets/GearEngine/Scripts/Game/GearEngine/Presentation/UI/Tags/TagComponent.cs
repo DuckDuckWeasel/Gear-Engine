@@ -10,6 +10,9 @@ namespace GearEngine.GearEngine.Presentation.UI.Tags
         [Tooltip("The conceptual tags assigned to this object.")]
         [SerializeField] private List<TagSO> tags = new List<TagSO>();
 
+        [Tooltip("Native Unity tags assigned to this object (Bitmask mode).")]
+        [SerializeField] private UnityNativeTagMask nativeTags;
+
         public bool HasAnyTag(IEnumerable<TagSO> tagsToCheck)
         {
             if (tagsToCheck == null)
@@ -36,6 +39,16 @@ namespace GearEngine.GearEngine.Presentation.UI.Tags
             }
 
             return tags.Contains(tagToCheck);
+        }
+
+        public bool HasNativeTag(string unityTag)
+        {
+            if (string.IsNullOrEmpty(unityTag))
+            {
+                return false;
+            }
+            
+            return nativeTags.HasTag(unityTag);
         }
 
         public void AddTag(TagSO tagToAdd)
