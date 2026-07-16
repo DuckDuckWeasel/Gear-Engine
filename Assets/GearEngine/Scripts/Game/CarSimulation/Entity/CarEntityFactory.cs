@@ -13,7 +13,7 @@ namespace GearEngine.CarSimulation.Entity
                 throw new ArgumentNullException(nameof(carDefinition));
             }
 
-            var car = new CarEntity(carDefinition, new LocalVariableStorage(null));
+            var car = new CarEntity(carDefinition);
             return car;
         }
     }

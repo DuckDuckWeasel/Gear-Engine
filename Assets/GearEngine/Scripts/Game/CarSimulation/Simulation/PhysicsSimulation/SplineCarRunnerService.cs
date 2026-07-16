@@ -103,7 +103,7 @@ namespace GearEngine.CarSimulation.PhysicsSimulation
         private void SetEntityVariable(CarEntity entity, Scaffold.Entities.VariableSO variable, float value)
         {
             if (variable == null) return;
-            entity.AddVariable(variable, new Scaffold.Entities.FloatVariableValue { Value = value });
+            entity.AddVariable(variable, value);
         }
 
         public void ReevaluateStats(SplineCarRunnerContext ctx)

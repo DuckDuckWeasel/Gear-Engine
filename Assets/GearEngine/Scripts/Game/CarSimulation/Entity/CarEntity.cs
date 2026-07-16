@@ -7,7 +7,7 @@ namespace GearEngine.CarSimulation.Entity
     [Serializable]
     public sealed class CarEntity : EntityInstance<CarDefinition>
     {
-        public CarEntity(CarDefinition definition, IEntityVariableStorage storage) : base(definition, storage)
+        public CarEntity(CarDefinition definition) : base(definition)
         {
         }
     }
