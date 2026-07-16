@@ -17,7 +17,7 @@
     {
       "displayName": "Example",
       "description": "Sample character, variables, prefab, and behavior runner.",
-      "path": "Samples/Example"
+      "path": "Samples"
     }
   ],
   "path": "https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.entities#main",

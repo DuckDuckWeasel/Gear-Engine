@@ -1,22 +1,22 @@
-using Fungus;
 using System;
 using UnityEngine;
+using GearEngine.Core.Actions;
+using global::GearEngine.GearEngine.Presentation.UI.Input;
 
-namespace GearEngine.GearEngine.Presentation.UI.Input
+namespace GearEngine.GearEngine.Presentation.UI.Actions
 {
-    [CommandInfo("UI", "Open View", "Opens a View by finding it in the scene and calling Open() or activating its GameObject.")]
-    [AddComponentMenu("")]
-    public class OpenViewCommand : Command
+    [Serializable]
+    public class OpenViewAction : IAction
     {
         [Tooltip("The View class to open.")]
         [SubclassDropdown("View")]
         public string viewType;
 
-        public override void OnEnter()
+        public void Execute(System.Action onComplete)
         {
             if (string.IsNullOrEmpty(viewType))
             {
-                Continue();
+                onComplete?.Invoke();
                 return;
             }
 
@@ -29,12 +29,11 @@ namespace GearEngine.GearEngine.Presentation.UI.Input
 
             if (resolvedType == null)
             {
-                Debug.LogWarning($"[OpenViewCommand] Type {viewType} not found.");
-                Continue();
+                Debug.LogWarning($"[OpenViewAction] Type {viewType} not found.");
                 return;
             }
 
-            var viewInstances = FindObjectsOfType(resolvedType, true); // true to include inactive
+            var viewInstances = UnityEngine.Object.FindObjectsOfType(resolvedType, true);
             if (viewInstances != null && viewInstances.Length > 0)
             {
                 foreach (var viewInstance in viewInstances)
@@ -49,7 +48,6 @@ namespace GearEngine.GearEngine.Presentation.UI.Input
                         }
                         else
                         {
-                            // Try Show()
                             var showMethod = resolvedType.GetMethod("Show", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.FlattenHierarchy, null, Type.EmptyTypes, null);
                             if (showMethod != null)
                             {
@@ -65,17 +63,10 @@ namespace GearEngine.GearEngine.Presentation.UI.Input
             }
             else
             {
-                Debug.LogWarning($"[OpenViewCommand] Could not find an instance of {viewType} in the scene.");
+                Debug.LogWarning($"[OpenViewAction] Could not find an instance of {viewType} in the scene.");
             }
 
-            Continue();
-        }
-
-        public override string GetSummary()
-        {
-            if (string.IsNullOrEmpty(viewType)) return "None";
-            var parts = viewType.Split('.');
-            return parts[parts.Length - 1];
+            onComplete?.Invoke();
         }
     }
 }

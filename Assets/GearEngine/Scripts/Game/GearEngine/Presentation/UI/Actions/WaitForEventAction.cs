@@ -1,12 +1,12 @@
-using Fungus;
 using System;
 using UnityEngine;
+using GearEngine.Core.Actions;
+using global::GearEngine.GearEngine.Presentation.UI.Input;
 
-namespace GearEngine.GearEngine.Presentation.UI.Input
+namespace GearEngine.GearEngine.Presentation.UI.Actions
 {
-    [CommandInfo("Events", "Wait For Event", "Waits for a specific event to be published.")]
-    [AddComponentMenu("")]
-    public class WaitForEventCommand : Command
+    [Serializable]
+    public class WaitForEventAction : IAction
     {
         [Tooltip("The type of event to wait for.")]
         [SubclassDropdown("AnalyticsEvent")]
@@ -16,13 +16,16 @@ namespace GearEngine.GearEngine.Presentation.UI.Input
         private Delegate cachedDelegate;
         private Type resolvedType;
         private Type omEventsManagerType;
+        private System.Action onCompleteCallback;
 
-        public override void OnEnter()
+        public void Execute(System.Action onComplete)
         {
+            this.onCompleteCallback = onComplete;
             eventFired = false;
+
             if (string.IsNullOrEmpty(eventType))
             {
-                Continue();
+                onCompleteCallback?.Invoke();
                 return;
             }
 
@@ -43,15 +46,15 @@ namespace GearEngine.GearEngine.Presentation.UI.Input
 
             if (resolvedType == null)
             {
-                Debug.LogWarning($"[WaitForEvent] Type {eventType} not found.");
-                Continue();
+                Debug.LogWarning($"[WaitForEventAction] Type {eventType} not found.");
+                onCompleteCallback?.Invoke();
                 return;
             }
 
             if (omEventsManagerType == null)
             {
-                Debug.LogWarning($"[WaitForEvent] OM.OM_EventsManager not found.");
-                Continue();
+                Debug.LogWarning($"[WaitForEventAction] OM.OM_EventsManager not found.");
+                onCompleteCallback?.Invoke();
                 return;
             }
 
@@ -88,8 +91,8 @@ namespace GearEngine.GearEngine.Presentation.UI.Input
 
             if (!subscribed)
             {
-                Debug.LogError($"[WaitForEvent] Failed to find Subscribe for type {eventType}");
-                Continue();
+                Debug.LogError($"[WaitForEventAction] Failed to find Subscribe for type {eventType}");
+                onCompleteCallback?.Invoke();
             }
         }
 
@@ -115,14 +118,7 @@ namespace GearEngine.GearEngine.Presentation.UI.Input
                 }
             }
 
-            Continue();
-        }
-
-        public override string GetSummary()
-        {
-            if (string.IsNullOrEmpty(eventType)) return "None";
-            var parts = eventType.Split('.');
-            return parts[parts.Length - 1];
+            onCompleteCallback?.Invoke();
         }
     }
 }

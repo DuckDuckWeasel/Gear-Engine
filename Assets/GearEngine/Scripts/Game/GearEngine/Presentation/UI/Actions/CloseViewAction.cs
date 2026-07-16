@@ -1,22 +1,22 @@
-using Fungus;
 using System;
 using UnityEngine;
+using GearEngine.Core.Actions;
+using global::GearEngine.GearEngine.Presentation.UI.Input;
 
-namespace GearEngine.GearEngine.Presentation.UI.Input
+namespace GearEngine.GearEngine.Presentation.UI.Actions
 {
-    [CommandInfo("UI", "Close View", "Closes a View by finding it in the scene and calling Close() or deactivating its GameObject.")]
-    [AddComponentMenu("")]
-    public class CloseViewCommand : Command
+    [Serializable]
+    public class CloseViewAction : IAction
     {
         [Tooltip("The View class to close.")]
         [SubclassDropdown("View")]
         public string viewType;
 
-        public override void OnEnter()
+        public void Execute(System.Action onComplete)
         {
             if (string.IsNullOrEmpty(viewType))
             {
-                Continue();
+                onComplete?.Invoke();
                 return;
             }
 
@@ -29,12 +29,11 @@ namespace GearEngine.GearEngine.Presentation.UI.Input
 
             if (resolvedType == null)
             {
-                Debug.LogWarning($"[CloseViewCommand] Type {viewType} not found.");
-                Continue();
+                Debug.LogWarning($"[CloseViewAction] Type {viewType} not found.");
                 return;
             }
 
-            var viewInstances = FindObjectsOfType(resolvedType, true); // true to include inactive, in case it's already inactive
+            var viewInstances = UnityEngine.Object.FindObjectsOfType(resolvedType, true); // true to include inactive, in case it's already inactive
             if (viewInstances != null && viewInstances.Length > 0)
             {
                 foreach (var viewInstance in viewInstances)
@@ -49,7 +48,6 @@ namespace GearEngine.GearEngine.Presentation.UI.Input
                         }
                         else
                         {
-                            // Try Hide()
                             var hideMethod = resolvedType.GetMethod("Hide", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.FlattenHierarchy, null, Type.EmptyTypes, null);
                             if (hideMethod != null)
                             {
@@ -64,14 +62,7 @@ namespace GearEngine.GearEngine.Presentation.UI.Input
                 }
             }
 
-            Continue();
-        }
-
-        public override string GetSummary()
-        {
-            if (string.IsNullOrEmpty(viewType)) return "None";
-            var parts = viewType.Split('.');
-            return parts[parts.Length - 1];
+            onComplete?.Invoke();
         }
     }
 }
