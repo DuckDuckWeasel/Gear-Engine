@@ -14,6 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Rarity: 0
   DisplayName: Common
-  Color: {r: 0.6666667, g: 0.6666667, b: 0.6666667, a: 1}
+  Color: {r: 1, g: 1, b: 1, a: 1}
   TextColor: {r: 0.1, g: 0.1, b: 0.1, a: 1}
-  CardSprite: {fileID: -7068723629182821413, guid: 2e0b16453c71346bb8baee549a4b2405, type: 3}
+  CardSprite: {fileID: -3303715921876389073, guid: a3a4fd4af172308499dd859c80833ba2, type: 3}
