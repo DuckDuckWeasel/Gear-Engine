@@ -14,7 +14,9 @@
         "Unity.TextMeshPro",
         "Coffee.UIEffect",
         "Fungus",
-        "FungusEditor"
+        "FungusEditor",
+        "Scaffold",
+        "ScaffoldEditor"
     ],
     "includePlatforms": [
         "Editor"

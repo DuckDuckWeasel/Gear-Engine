@@ -1,39 +1,109 @@
-using Fungus;
+using System.Collections.Generic;
+using Scaffold;
 using UnityEngine;
 using GearEngine.Core.Actions;
 
 namespace GearEngine.GearEngine.Presentation.UI.Input
 {
     /// <summary>
-    /// A generic wrapper command for Fungus that executes a decoupled pure C# IAction.
-    /// This removes the need to create a new MonoBehaviour Command for every new behavior.
+    /// A generic wrapper command for Scaffold that executes decoupled pure C# IActions.
+    /// Supports a list of actions executed sequentially within a single Scaffold block.
     /// </summary>
-    [CommandInfo("Generic", "Invoke Action", "Executes a pure C# action independent of MonoBehaviours.")]
+    [CommandInfo("Generic", "Invoke Action", "Executes a sequence of pure C# actions independent of MonoBehaviours.")]
     [AddComponentMenu("")]
     public class InvokeActionCommand : Command
     {
-        [Tooltip("The pure C# action to execute.")]
-        [SerializeReference]
-        public IAction action;
+        [Tooltip("The pure C# actions to execute sequentially.")]
+        [SerializeReference, SubclassDropdown("GearEngine.Core.Actions.IAction")]
+        public List<IAction> actions = new List<IAction>();
+
+        private int currentActionIndex = 0;
+        private bool isExecutingSequence = false;
 
         public override void OnEnter()
         {
-            if (action != null)
+            if (actions == null || actions.Count == 0)
             {
-                action.Execute(Continue);
-            }
-            else
-            {
-                Debug.LogWarning("[InvokeActionCommand] No action assigned to execute.");
                 Continue();
+                return;
             }
+
+            currentActionIndex = 0;
+            isExecutingSequence = true;
+            ExecuteNextAction();
+        }
+
+        private void ExecuteNextAction()
+        {
+            if (!isExecutingSequence) return;
+
+            if (currentActionIndex >= actions.Count)
+            {
+                isExecutingSequence = false;
+                Continue();
+                return;
+            }
+
+            IAction currentAction = actions[currentActionIndex];
+            
+            if (currentAction == null)
+            {
+                Debug.LogWarning($"[InvokeActionCommand] Null action found at index {currentActionIndex}. Skipping.");
+                OnActionComplete();
+                return;
+            }
+
+            // Inject contexts if needed
+            if (currentAction is IMonoBehaviourConsumer mbConsumer)
+            {
+                mbConsumer.SetHost(this);
+            }
+            if (currentAction is IFlowchartConsumer fcConsumer)
+            {
+                fcConsumer.SetFlowchart(GetFlowchart());
+            }
+            if (currentAction is ICommandContextConsumer ccConsumer)
+            {
+                ccConsumer.SetCommandContext(this);
+            }
+
+            try
+            {
+                currentAction.Execute(OnActionComplete);
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogError($"[InvokeActionCommand] Exception during action execution: {e}");
+                OnActionComplete();
+            }
+        }
+
+        private void OnActionComplete()
+        {
+            if (!isExecutingSequence) return;
+            
+            currentActionIndex++;
+            ExecuteNextAction();
+        }
+        
+        /// <summary>
+        /// Allows an IAction (e.g. flow control) to cancel the internal execution of this sequence
+        /// so it can delegate jumping to the parent Block.
+        /// </summary>
+        public void CancelSequence()
+        {
+            isExecutingSequence = false;
         }
 
         public override string GetSummary()
         {
-            if (action == null)
-                return "None";
-            return action.GetType().Name;
+            if (actions == null || actions.Count == 0)
+                return "Empty";
+                
+            if (actions.Count == 1)
+                return actions[0] != null ? actions[0].GetType().Name : "None";
+                
+            return $"{actions.Count} Actions";
         }
     }
 }

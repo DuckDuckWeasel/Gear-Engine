@@ -23,7 +23,8 @@
         "Fungus",
         "Scaffold.Input",
         "Coffee.UIEffect",
-        "TriInspector"
+        "TriInspector",
+        "Scaffold"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
