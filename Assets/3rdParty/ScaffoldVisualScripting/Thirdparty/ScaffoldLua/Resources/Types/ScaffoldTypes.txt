@@ -1,0 +1,37 @@
+﻿{
+	"registerTypes" : [
+		"Scaffold.AnimatorVariable",
+		"Scaffold.AudioSourceVariable",
+		"Scaffold.Block",
+		"Scaffold.BooleanVariable",
+		"Scaffold.Character",
+		"Scaffold.ColorVariable",
+		"Scaffold.Command",
+		"Scaffold.CommandInfoAttribute",
+		"Scaffold.FacingDirection",
+		"Scaffold.FloatVariable",
+		"Scaffold.Flowchart",
+		"Scaffold.ScaffoldPrefs",
+		"Scaffold.LuaEnvironment",
+		"Scaffold.LuaUtils",
+		"Scaffold.GameObjectVariable",
+		"Scaffold.IntegerVariable",
+		"Scaffold.MaterialVariable",
+		"Scaffold.MenuDialog",
+		"Scaffold.ObjectVariable",
+		"Scaffold.PODTypeFactory",
+		"Scaffold.PortraitState",
+		"Scaffold.SayDialog",
+		"Scaffold.SpriteVariable",
+		"Scaffold.StringVariable",
+		"Scaffold.Task",
+		"Scaffold.TextureVariable",
+		"Scaffold.TransformVariable",
+		"Scaffold.Variable",
+		"Scaffold.Vector2Variable",
+		"Scaffold.Vector3Variable",
+        "Scaffold.Label"
+	],
+	"extensionTypes" : [
+	]
+}
