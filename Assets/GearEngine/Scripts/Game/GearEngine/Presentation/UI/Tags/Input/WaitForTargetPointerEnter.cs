@@ -1,150 +1,93 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
-using GearEngine.GearEngine.Presentation.UI.Tags;
-using Fungus;
+using Scaffold;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using GearEngine.Core.Architecture.References;
-using Command = Fungus.Command;
+using GearEngine.Core.Actions;
+using VContainer;
+using Scaffold.Input.Contracts;
+using Scaffold.Input.Events;
+using Scaffold.Events.Contracts;
+using GearEngine.GearEngine.Extensions;
+using GearEngine.GearEngine.Presentation.UI.Tags;
+using GearEngine.GearEngine.Presentation.UI.Input;
 
-namespace GearEngine.GearEngine.Presentation.UI.Input
+namespace GearEngine.GearEngine.Presentation.UI.Actions
 {
-    [CommandInfo("Input", "Wait For Target Pointer Enter", "Waits for pointer entering an object with the specified target tags.")]
-    [AddComponentMenu("")]
-    public class WaitForTargetPointerEnter : Command
+    [Serializable]
+    public class WaitForTargetPointerEnterAction : ActionBase
     {
         public TargetReference target = new TargetReference();
 
-        // Legacy fields for migration
-        [HideInInspector] public List<TagSO> targetTagSOList;
-        [HideInInspector] public bool matchAll = false;
-        [HideInInspector] [SerializeField] private bool migratedToTargetReference = false;
-
-        protected virtual void OnEnable()
-        {
-            if (!migratedToTargetReference && targetTagSOList != null && targetTagSOList.Count > 0)
-            {
-                target.strategy = TargetResolutionStrategy.Tags;
-                target.tagFilter.soTags = new List<TagSO>(targetTagSOList);
-                target.tagFilter.matchAll = matchAll;
-                migratedToTargetReference = true;
-                targetTagSOList.Clear();
-            }
-        }
+        [Inject] private IInputFilterService _inputService;
+        [Inject] private IEventBus _eventBus;
 
         private bool isTargetPointered = false;
-        private List<EventTrigger> addedTriggers = new List<EventTrigger>();
-        private List<EventTrigger.Entry> addedEntries = new List<EventTrigger.Entry>();
 
         public override void OnEnter()
         {
             isTargetPointered = false;
 
-            bool foundTarget = false;
-
-            if (target.strategy == TargetResolutionStrategy.Tags)
+            if (_inputService == null || _eventBus == null)
             {
-                // Find all GameObjects that have matching tags
-                TagComponent[] allComponents = FindObjectsOfType<TagComponent>();
+                this.TryInject();
 
-                foreach (TagComponent comp in allComponents)
-                {
-                    if (target.IsMatch(comp.gameObject))
-                    {
-                        AttachPointerEnterTrigger(comp.gameObject);
-                        foundTarget = true;
-                    }
-                }
-            }
-            else
-            {
-                List<GameObject> resolvedTargets = target.ResolveAll();
-                if (resolvedTargets != null && resolvedTargets.Count > 0)
-                {
-                    foreach (var resolvedTarget in resolvedTargets)
-                    {
-                        if (resolvedTarget != null)
-                        {
-                            AttachPointerEnterTrigger(resolvedTarget);
-                            foundTarget = true;
-                        }
-                    }
-                }
+                if (_eventBus == null) _eventBus = new Scaffold.Events.EventController();
+                if (_inputService == null) _inputService = new Scaffold.Input.InputFilterService(_eventBus);
             }
 
-            if (!foundTarget)
+            // Provide filtering for UI pointer enter based on target reference
+            _inputService.FilterForPointerEnterTarget(target);
+
+            _eventBus.AddListener<ScreenPointerEnterEvent>(OnPointerEnter);
+
+            hostCommand.StartCoroutine(WaitForTargetPointerEnterCoroutine());
+        }
+
+        private void OnPointerEnter(ScreenPointerEnterEvent signal)
+        {
+            if (signal.TopResult == null || signal.TopResult.transform == null)
             {
-                Debug.LogWarning($"[WaitForTargetPointerEnter] No GameObjects found with matching target reference.");
-                Continue();
                 return;
             }
 
-            StartCoroutine(WaitForTargetPointerEnterCoroutine());
-        }
+            GameObject enteredObj = signal.TopResult.gameObject;
 
-        private void AttachPointerEnterTrigger(GameObject target)
-        {
-            // If target is a 3D object (has Collider but no Graphic), ensure Camera has PhysicsRaycaster
-            if (target.GetComponent<Collider>() != null && target.GetComponent<UnityEngine.UI.Graphic>() == null)
+            if (target.IsMatch(enteredObj))
             {
-                if (Camera.main != null && Camera.main.GetComponent<UnityEngine.EventSystems.PhysicsRaycaster>() == null)
+                isTargetPointered = true;
+            }
+            else
+            {
+                // Fallback to parents
+                var tagComponent = enteredObj.GetComponentInParent<TagComponent>();
+                if (tagComponent != null && target.IsMatch(tagComponent.gameObject))
                 {
-                    Camera.main.gameObject.AddComponent<UnityEngine.EventSystems.PhysicsRaycaster>();
+                    isTargetPointered = true;
                 }
             }
-
-            EventTrigger trigger = target.GetComponent<EventTrigger>();
-            bool wasAdded = false;
-            if (trigger == null)
-            {
-                trigger = target.AddComponent<EventTrigger>();
-                wasAdded = true;
-            }
-
-            EventTrigger.Entry entry = new EventTrigger.Entry();
-            entry.eventID = EventTriggerType.PointerEnter;
-            entry.callback.AddListener((data) => { isTargetPointered = true; });
-            trigger.triggers.Add(entry);
-
-            if (wasAdded)
-            {
-                addedTriggers.Add(trigger);
-            }
-            addedEntries.Add(entry);
         }
 
         private IEnumerator WaitForTargetPointerEnterCoroutine()
         {
             yield return new WaitUntil(() => isTargetPointered);
 
-            CleanupTriggers();
-
+            Cleanup();
             Continue();
         }
 
-        public void OnDisable()
+        private void Cleanup()
         {
-            CleanupTriggers();
-        }
-
-        private void CleanupTriggers()
-        {
-            // Remove entries we added (from triggers that already existed)
-            foreach (EventTrigger.Entry entry in addedEntries)
+            if (_eventBus != null)
             {
-                entry.callback.RemoveAllListeners();
+                _eventBus.RemoveListener<ScreenPointerEnterEvent>(OnPointerEnter);
             }
-            addedEntries.Clear();
 
-            // Destroy triggers we created
-            foreach (EventTrigger trigger in addedTriggers)
+            if (_inputService != null)
             {
-                if (trigger != null)
-                {
-                    Destroy(trigger);
-                }
+                _inputService.ClearPointerEnterFilters();
             }
-            addedTriggers.Clear();
         }
 
         public override string GetSummary()

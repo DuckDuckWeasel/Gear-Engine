@@ -2,31 +2,28 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using GearEngine.GearEngine.Presentation.UI.Tags;
-using Fungus;
+using Scaffold;
 using UnityEngine;
 using VContainer;
 using Scaffold.Input.Contracts;
 using Scaffold.Input.Events;
 using Scaffold.Events.Contracts;
 using GearEngine.Core.Architecture.References;
-using Command = Fungus.Command;
+using GearEngine.Core.Actions;
 using GearEngine.GearEngine.Extensions;
+using GearEngine.GearEngine.Presentation.UI.Input;
 
-namespace GearEngine.GearEngine.Presentation.UI.Input
+namespace GearEngine.GearEngine.Presentation.UI.Actions
 {
     [Serializable]
     public class DropTargetConfig
     {
         public TargetReference target = new TargetReference();
         public List<int> allowedNodeIndices = new List<int>();
-
-        // Legacy
-        [HideInInspector] public TagSO tagSO;
     }
 
-    [CommandInfo("Input", "Wait For Target Drop At Index", "Waits for dropping an object with the specified target tags node.")]
-    [AddComponentMenu("")]
-    public class WaitForTargetDropAtIndex : Command
+    [Serializable]
+    public class WaitForTargetDropAtIndexAction : ActionBase
     {
         [Inject] private IInputFilterService _inputService;
         [Inject] private IEventBus _eventBus;
@@ -41,45 +38,10 @@ namespace GearEngine.GearEngine.Presentation.UI.Input
         [SerializeField]
         private bool checkGameObject = false;
 
-        // Legacy fields for migration
-        [HideInInspector] [SerializeField] private List<TagSO> dragTargetTagSOList = new List<TagSO>();
-        [HideInInspector] [SerializeField] private bool matchAll = false;
-        [HideInInspector] [SerializeField] private bool migratedToTargetReference = false;
-
-        protected virtual void OnEnable()
-        {
-            if (!migratedToTargetReference)
-            {
-                if (dragTargetTagSOList != null && dragTargetTagSOList.Count > 0)
-                {
-                    dragTarget.strategy = TargetResolutionStrategy.Tags;
-                    dragTarget.tagFilter.soTags = new List<TagSO>(dragTargetTagSOList);
-                    dragTarget.tagFilter.matchAll = matchAll;
-                    dragTargetTagSOList.Clear();
-                }
-
-                if (dropConfigs != null)
-                {
-                    foreach (var config in dropConfigs)
-                    {
-                        if (config.tagSO != null)
-                        {
-                            config.target.strategy = TargetResolutionStrategy.Tags;
-                            config.target.tagFilter.soTags = new List<TagSO>() { config.tagSO };
-                            config.target.tagFilter.matchAll = matchAll;
-                            config.tagSO = null;
-                        }
-                    }
-                }
-
-                migratedToTargetReference = true;
-            }
-        }
-
         private bool isTargetDropped;
-
         public override void OnEnter()
         {
+            
             if (dropConfigs == null || dropConfigs.Count == 0)
             {
                 Debug.LogError($"[WaitForTargetDropAtIndex] Invalid configuration.");
@@ -110,7 +72,7 @@ namespace GearEngine.GearEngine.Presentation.UI.Input
             _eventBus.AddListener<ScreenPointerExitEvent>(OnPointerExit);
 
             isTargetDropped = false;
-            StartCoroutine(WaitForDrop());
+            hostCommand.StartCoroutine(WaitForDrop());
         }
 
         private void OnDrop(ScreenDroppedEvent signal)
@@ -179,7 +141,10 @@ namespace GearEngine.GearEngine.Presentation.UI.Input
                 _eventBus.RemoveListener<ScreenPointerExitEvent>(OnPointerExit);
             }
 
-            _inputService.ClearAllFilters();
+            if (_inputService != null)
+            {
+                _inputService.ClearAllFilters();
+            }
 
             if (success)
             {
@@ -187,13 +152,13 @@ namespace GearEngine.GearEngine.Presentation.UI.Input
             }
             else
             {
-                StopAllCoroutines();
+                hostCommand.StopAllCoroutines();
             }
         }
 
         private List<GameObject> GetAllMatchingObjects(TargetReference targetRef)
         {
-            TagComponent[] allComponents = FindObjectsOfType<TagComponent>();
+            TagComponent[] allComponents = UnityEngine.Object.FindObjectsOfType<TagComponent>();
             List<GameObject> list = new List<GameObject>();
 
             if (targetRef.strategy == TargetResolutionStrategy.Tags)

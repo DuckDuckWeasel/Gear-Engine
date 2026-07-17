@@ -1,7 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using GearEngine.GearEngine.Presentation.UI.Tags;
-using Fungus;
+using Scaffold;
 using UnityEngine;
 using VContainer;
 using Scaffold.Input.Contracts;
@@ -9,57 +10,29 @@ using Scaffold.Input.Events;
 using Scaffold.Events.Contracts;
 using UnityEngine.EventSystems;
 using GearEngine.Core.Architecture.References;
-using Command = Fungus.Command;
+using GearEngine.Core.Actions;
 using GearEngine.GearEngine.Extensions;
+using GearEngine.GearEngine.Presentation.UI.Input;
 
-namespace GearEngine.GearEngine.Presentation.UI.Input
+namespace GearEngine.GearEngine.Presentation.UI.Actions
 {
-    [CommandInfo("Input", "Wait For Target Drop", "Waits for dropping an object with the specified target tags.")]
-    [AddComponentMenu("")]
-    public class WaitForTargetDrop : Command
+    [Serializable]
+    public class WaitForTargetDropAction : ActionBase
     {
         public TargetReference dragTarget = new TargetReference();
         public TargetReference dropTarget = new TargetReference();
 
         public bool checkDroppedGameObject = false;
 
-        // Legacy fields for migration
-        [HideInInspector] public List<TagSO> dragTargetTagSOList = new();
-        [HideInInspector] public List<TagSO> dropTargetTagSOList = new();
-        [HideInInspector] public bool matchAll = false;
-        [HideInInspector] [SerializeField] private bool migratedToTargetReference = false;
-
-        protected virtual void OnEnable()
-        {
-            if (!migratedToTargetReference)
-            {
-                if (dragTargetTagSOList != null && dragTargetTagSOList.Count > 0)
-                {
-                    dragTarget.strategy = TargetResolutionStrategy.Tags;
-                    dragTarget.tagFilter.soTags = new List<TagSO>(dragTargetTagSOList);
-                    dragTarget.tagFilter.matchAll = matchAll;
-                    dragTargetTagSOList.Clear();
-                }
-                
-                if (dropTargetTagSOList != null && dropTargetTagSOList.Count > 0)
-                {
-                    dropTarget.strategy = TargetResolutionStrategy.Tags;
-                    dropTarget.tagFilter.soTags = new List<TagSO>(dropTargetTagSOList);
-                    dropTarget.tagFilter.matchAll = matchAll;
-                    dropTargetTagSOList.Clear();
-                }
-
-                migratedToTargetReference = true;
-            }
-        }
-
-        private bool isTargetDropped = false;
-        
         [Inject] private IInputFilterService _inputService;
         [Inject] private IEventBus _eventBus;
 
+        private bool isTargetDropped = false;
+
         public override void OnEnter()
         {
+            isTargetDropped = false;
+
             if (_inputService == null || _eventBus == null)
             {
                 this.TryInject();
@@ -71,11 +44,9 @@ namespace GearEngine.GearEngine.Presentation.UI.Input
             _inputService.FilterForButtonDownTarget(dragTarget);
             _inputService.FilterForDropEnterTarget(checkDroppedGameObject, dropTarget);
 
-            isTargetDropped = false;
-
             _eventBus.AddListener<ScreenDroppedEvent>(OnDrop);
 
-            StartCoroutine(WaitForTargetDropCoroutine());
+            hostCommand.StartCoroutine(WaitForTargetDropCoroutine());
         }
 
         private void OnDrop(ScreenDroppedEvent screenDroppedSignal)
@@ -111,10 +82,16 @@ namespace GearEngine.GearEngine.Presentation.UI.Input
 
             Debug.Log($"[WaitForTargetDrop] Target with the required tags and condition has been dropped!");
 
-            _inputService.ClearButtonDownFilters();
-            _inputService.ClearButtonUpFilters();
+            if (_inputService != null)
+            {
+                _inputService.ClearButtonDownFilters();
+                _inputService.ClearButtonUpFilters();
+            }
 
-            _eventBus.RemoveListener<ScreenDroppedEvent>(OnDrop);
+            if (_eventBus != null)
+            {
+                _eventBus.RemoveListener<ScreenDroppedEvent>(OnDrop);
+            }
 
             Continue();
         }

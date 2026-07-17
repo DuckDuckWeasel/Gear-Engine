@@ -1,6 +1,6 @@
 using UnityEditor;
 using UnityEngine;
-using Fungus;
+using Scaffold;
 using System.Linq;
 using System.Collections.Generic;
 using GearEngine.Core.Architecture.Editor.References;
@@ -8,9 +8,9 @@ using GearEngine.Core.Architecture.Editor.References;
 namespace GearEngine.GearEngine.Editor
 {
     [InitializeOnLoad]
-    public static class FungusGlobalVariableDropdownInjector
+    public static class ScaffoldGlobalVariableDropdownInjector
     {
-        static FungusGlobalVariableDropdownInjector()
+        static ScaffoldGlobalVariableDropdownInjector()
         {
             // Inject the method into the Core's TargetReferenceDrawer to keep the architecture clean
             TargetReferenceDrawer.GetGlobalVariableNames = () =>

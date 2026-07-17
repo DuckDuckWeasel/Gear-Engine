@@ -1,30 +1,30 @@
 using UnityEngine;
-using Fungus;
+using Scaffold;
 using GearEngine.Core.Architecture.References;
 
 namespace GearEngine.GearEngine.Presentation.UI.Tags.Input
 {
     /// <summary>
     /// Implements the ITargetResolver interface to read string-based target IDs 
-    /// directly from Fungus Global Variables.
+    /// directly from Scaffold Global Variables.
     /// </summary>
-    public class FungusGlobalVariableResolver : ITargetResolver
+    public class ScaffoldGlobalVariableResolver : ITargetResolver
     {
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         private static void InjectResolver()
         {
-            TargetReference.GlobalResolver = new FungusGlobalVariableResolver();
+            TargetReference.GlobalResolver = new ScaffoldGlobalVariableResolver();
         }
 
         public GameObject Resolve(string globalVariableName)
         {
-            if (FungusManager.Instance == null || FungusManager.Instance.GlobalVariables == null)
+            if (ScaffoldManager.Instance == null || ScaffoldManager.Instance.GlobalVariables == null)
             {
-                Debug.LogWarning("[FungusGlobalVariableResolver] FungusManager or GlobalVariables is missing.");
+                Debug.LogWarning("[ScaffoldGlobalVariableResolver] ScaffoldManager or GlobalVariables is missing.");
                 return null;
             }
 
-            Variable v = FungusManager.Instance.GlobalVariables.GetVariable(globalVariableName);
+            Variable v = ScaffoldManager.Instance.GlobalVariables.GetVariable(globalVariableName);
             if (v != null)
             {
                 GameObjectVariable goVar = v as GameObjectVariable;
