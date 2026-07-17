@@ -14,7 +14,7 @@ namespace GearEngine.GearEngine.Presentation.UI.Input
     public class InvokeActionCommand : Command
     {
         [Tooltip("The pure C# actions to execute sequentially.")]
-        [SerializeReference, SubclassDropdown("GearEngine.Core.Actions.IAction")]
+        [SerializeReference]
         public List<IAction> actions = new List<IAction>();
 
         private int currentActionIndex = 0;
