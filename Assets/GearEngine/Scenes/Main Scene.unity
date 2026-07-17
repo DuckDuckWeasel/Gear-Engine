@@ -9306,6 +9306,14 @@ PrefabInstance:
       propertyPath: parentAnimoraPlayer
       value: 
       objectReference: {fileID: 99603530}
+    - target: {fileID: 7030514584805418009, guid: d9b2bf9ad3d2d21439a807add8a1c39e, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7370625781060933055, guid: d9b2bf9ad3d2d21439a807add8a1c39e, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8512859849813010297, guid: d9b2bf9ad3d2d21439a807add8a1c39e, type: 3}
       propertyPath: parentAnimoraPlayer
       value: 
@@ -9388,6 +9396,10 @@ PrefabInstance:
       propertyPath: parentAnimoraPlayer
       value: 
       objectReference: {fileID: 1172963925}
+    - target: {fileID: 2312224313242635596, guid: 3baae1b6fa9ea2345a187b40f8fe60ee, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4079008854461144768, guid: 3baae1b6fa9ea2345a187b40f8fe60ee, type: 3}
       propertyPath: parentAnimoraPlayer
       value: 
@@ -9488,14 +9500,66 @@ PrefabInstance:
       propertyPath: m_Name
       value: Main View
       objectReference: {fileID: 0}
+    - target: {fileID: 5207228282024246112, guid: 3baae1b6fa9ea2345a187b40f8fe60ee, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6019269376832945620, guid: 3baae1b6fa9ea2345a187b40f8fe60ee, type: 3}
       propertyPath: parentAnimoraPlayer
       value: 
       objectReference: {fileID: 1172963925}
+    - target: {fileID: 6092363404801034338, guid: 3baae1b6fa9ea2345a187b40f8fe60ee, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6092363404801034338, guid: 3baae1b6fa9ea2345a187b40f8fe60ee, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6092363404801034338, guid: 3baae1b6fa9ea2345a187b40f8fe60ee, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6092363404801034338, guid: 3baae1b6fa9ea2345a187b40f8fe60ee, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6924472397306322811, guid: 3baae1b6fa9ea2345a187b40f8fe60ee, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6924472397306322811, guid: 3baae1b6fa9ea2345a187b40f8fe60ee, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6924472397306322811, guid: 3baae1b6fa9ea2345a187b40f8fe60ee, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6924472397306322811, guid: 3baae1b6fa9ea2345a187b40f8fe60ee, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6964219568219412174, guid: 3baae1b6fa9ea2345a187b40f8fe60ee, type: 3}
       propertyPath: m_Camera
       value: 
       objectReference: {fileID: 1196090827}
+    - target: {fileID: 7279388909862312374, guid: 3baae1b6fa9ea2345a187b40f8fe60ee, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7279388909862312374, guid: 3baae1b6fa9ea2345a187b40f8fe60ee, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7279388909862312374, guid: 3baae1b6fa9ea2345a187b40f8fe60ee, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7279388909862312374, guid: 3baae1b6fa9ea2345a187b40f8fe60ee, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7432570478084764053, guid: 3baae1b6fa9ea2345a187b40f8fe60ee, type: 3}
       propertyPath: parentAnimoraPlayer
       value: 
