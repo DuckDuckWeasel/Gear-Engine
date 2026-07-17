@@ -1,11 +1,11 @@
 using System.Collections;
-using Fungus;
+using Scaffold;
 using UnityEngine;
 
 using Scaffold.Tutorial.Requirements;
 using Cysharp.Threading.Tasks;
 
-namespace Scaffold.Tutorial.FungusIntegration
+namespace Scaffold.Tutorial.ScaffoldIntegration
 {
     [CommandInfo("Tutorial", "Wait Tutorial Requirement", "Waits until the specified tutorial requirement is met.")]
     public class WaitTutorialRequirementCommand : Command

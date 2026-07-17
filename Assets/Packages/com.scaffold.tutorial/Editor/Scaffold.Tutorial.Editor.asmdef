@@ -3,8 +3,8 @@
     "rootNamespace": "Scaffold.Tutorial.Editor",
     "references": [
         "Scaffold.Tutorial",
-        "Fungus",
-        "FungusEditor"
+        "Scaffold",
+        "ScaffoldEditor"
     ],
     "includePlatforms": [
         "Editor"

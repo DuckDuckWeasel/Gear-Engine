@@ -1,8 +1,8 @@
-using Fungus;
+using Scaffold;
 using Scaffold.Tutorial.Controllers;
 using UnityEngine;
 
-namespace Fungus
+namespace Scaffold
 {
     /// <summary>
     /// Container for a TutorialController variable reference or constant value.

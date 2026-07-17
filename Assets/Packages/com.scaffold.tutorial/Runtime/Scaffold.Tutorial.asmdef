@@ -4,7 +4,7 @@
     "references": [
         "VContainer",
         "UniTask",
-        "Fungus",
+        "Scaffold",
         "Scaffold.CloudCode",
         "Scaffold.LiveOps",
         "Scaffold.LiveOps.DTO",

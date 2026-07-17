@@ -1,11 +1,11 @@
-using Fungus;
+using Scaffold;
 using Scaffold.Tutorial.Controllers;
 using UnityEngine;
 
-namespace Scaffold.Tutorial.FungusIntegration
+namespace Scaffold.Tutorial.ScaffoldIntegration
 {
     [RequireComponent(typeof(Flowchart), typeof(TutorialProgressController))]
-    public class FungusTutorialAdapter : MonoBehaviour
+    public class ScaffoldTutorialAdapter : MonoBehaviour
     {
         private Flowchart flowchart;
         private TutorialProgressController tutorialController;
