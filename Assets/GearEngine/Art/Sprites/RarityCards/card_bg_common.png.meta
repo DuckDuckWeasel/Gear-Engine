@@ -116,13 +116,13 @@ TextureImporter:
       name: card_bg_common_0
       rect:
         serializedVersion: 2
-        x: 398
-        y: 101
-        width: 1251
-        height: 1845
+        x: 394
+        y: 98
+        width: 1260
+        height: 1856
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 42, y: 42, z: 42, w: 42}
+      border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
