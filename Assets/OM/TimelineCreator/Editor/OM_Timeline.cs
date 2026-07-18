@@ -268,6 +268,7 @@ namespace OM.TimelineCreator.Editor
         /// <param name="track">The track UI element to add.</param>
         public virtual void AddTrack(OM_Track<T, TTrack> track)
         {
+            track.Init();
             // Add to the internal list
             TracksList.Add(track);
             // Add visually to the body container
@@ -799,41 +800,59 @@ namespace OM.TimelineCreator.Editor
         #endregion
 
         /// <summary>
+        /// Live-previews a potential reorder while dragging, without touching the underlying clip
+        /// data or Undo stack. Every track other than <paramref name="draggedTrack"/> is repositioned
+        /// to the slot it would occupy if the drag were dropped at <paramref name="newIndex"/> right now,
+        /// so the user sees where the displaced track will land before committing to the move.
+        /// </summary>
+        /// <param name="draggedTrack">The track currently being dragged (its own position follows the mouse).</param>
+        /// <param name="newIndex">The order index the dragged track is currently hovering over.</param>
+        public void PreviewMoveTrack(OM_Track<T, TTrack> draggedTrack, int newIndex)
+        {
+            var ordered = TracksList.OrderBy(t => t.Clip.OrderIndex).ToList();
+            ordered.Remove(draggedTrack);
+            newIndex = Mathf.Clamp(newIndex, 0, ordered.Count);
+            ordered.Insert(newIndex, draggedTrack);
+
+            for (int i = 0; i < ordered.Count; i++)
+            {
+                if (ordered[i] == draggedTrack) continue; // Dragged track's position is driven by the mouse
+                ordered[i].SetPreviewIndex(i);
+            }
+        }
+
+        /// <summary>
         /// Handles moving a track to a new order index. Updates the underlying clip data order.
         /// </summary>
         /// <param name="track">The track UI element being moved.</param>
         /// <param name="newIndex">The target order index.</param>
         public void MoveTrack(OM_Track<T, TTrack> track, int newIndex)
         {
-            // Find the clip data currently at the target index
-            T clip2 = TimelinePlayer.GetClips().FirstOrDefault(x => x.OrderIndex == newIndex);
-            if (clip2 == null || track.Clip == null) return; // Cannot move if target or source clip is invalid
+            if (track.Clip == null) return;
 
-            // Store the original index of the track being moved
-            var originalIndex = track.Clip.OrderIndex;
+            // Reorder by removing the track from its current position and reinserting it at the
+            // target index, then reassigning contiguous order indices. This correctly handles moves
+            // spanning multiple slots, unlike a naive pairwise swap of two order indices.
+            var ordered = TracksList.OrderBy(t => t.Clip.OrderIndex).ToList();
+            var originalIndex = ordered.IndexOf(track);
+            if (originalIndex < 0) return; // Track not found (shouldn't happen)
+
+            newIndex = Mathf.Clamp(newIndex, 0, ordered.Count - 1);
+            if (newIndex == originalIndex) return; // No actual move requested
 
             // Record Undo for the reordering action
             TimelinePlayer.RecordUndo("Change Clip Order");
 
-            // --- Reorder Logic ---
-            // This simple swap assumes contiguous indices and only works for adjacent swaps easily.
-            // A more robust approach involves iterating through all clips and adjusting indices.
+            ordered.RemoveAt(originalIndex);
+            ordered.Insert(newIndex, track);
 
-            // Simple Swap Implementation (adjust if more complex reordering is needed):
-            // Set the moved clip's index to the target index
-             track.Clip.OrderIndex = newIndex;
-             // Set the clip originally at the target index to the moved clip's original index
-             clip2.OrderIndex = originalIndex;
-
-             // TODO: Implement robust reordering if non-adjacent moves are common.
-             // Example of more robust reordering:
-             // 1. Temporarily remove the moved clip from ordering considerations (e.g., set index to -1).
-             // 2. Shift indices of clips between originalIndex and newIndex.
-             // 3. Set the moved clip's index to newIndex.
-             // This requires careful handling of iteration direction based on original vs new index.
+            for (int i = 0; i < ordered.Count; i++)
+            {
+                ordered[i].Clip.OrderIndex = i;
+            }
 
             // After reordering data, refresh the UI track visuals
-            RefreshAllTracks(); // Refresh might re-sort based on OrderIndex if implemented
+            RefreshAllTracks();
 
             // If the moved track was the selected one, update the player's selected index (data-wise)
             if (SelectedTrack != null && track.Clip == SelectedTrack.Clip)

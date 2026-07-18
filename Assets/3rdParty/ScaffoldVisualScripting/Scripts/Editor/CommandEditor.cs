@@ -84,7 +84,7 @@ namespace Scaffold.EditorUtils
             }
             GUILayout.BeginHorizontal(GUI.skin.button);
 
-            string commandName = commandInfoAttr.CommandName;
+            string commandName = GetCommandDisplayName(t, commandInfoAttr);
             GUILayout.Label(commandName, GUILayout.MinWidth(80), GUILayout.ExpandWidth(true));
 
             GUILayout.FlexibleSpace();
@@ -198,6 +198,11 @@ namespace Scaffold.EditorUtils
             }
 
             serializedObject.ApplyModifiedProperties();
+        }
+
+        protected virtual string GetCommandDisplayName(Command command, CommandInfoAttribute commandInfo)
+        {
+            return commandInfo.CommandName;
         }
 
         

@@ -27,10 +27,12 @@ namespace Scaffold.EditorUtils
         private CommandListAdaptor commandListAdaptor;
         private SerializedProperty commandListProperty;
 
-        private Rect lastEventPopupPos, lastCMDpopupPos;
+        private Rect lastCMDpopupPos;
 
         private string callersString;
         private bool callersFoldout;
+        private bool behaviourAndTimingFoldout = true;
+        private Vector2 descriptionScrollPosition;
 
     
         protected virtual void OnEnable()
@@ -53,8 +55,22 @@ namespace Scaffold.EditorUtils
             deleteIcon = ScaffoldEditorResources.Delete;
 
             var block = target as Block;
-            commandListProperty = serializedObject.FindProperty("commandList");
+
+            // The classic command list used to be backed directly by the "commandList" field,
+            // but commands now live in Tracks[0] (see Block.CommandList / Block.Tracks). Ensure
+            // that track exists and bind to it, so this Inspector and the Scaffold Timeline
+            // window both read/write the same list instead of two disconnected ones.
+            block.EnsureTracksInitialized();
+            serializedObject.Update();
+
+            commandListProperty = GetPrimaryTrackCommandsProperty();
             commandListAdaptor = new CommandListAdaptor(block, commandListProperty);
+        }
+
+        private SerializedProperty GetPrimaryTrackCommandsProperty()
+        {
+            SerializedProperty tracksProperty = serializedObject.FindProperty("tracks");
+            return tracksProperty.GetArrayElementAtIndex(0).FindPropertyRelative("commands");
         }
 
         protected void CacheCallerString()
@@ -82,16 +98,21 @@ namespace Scaffold.EditorUtils
             serializedObject.Update();
 
             SerializedProperty blockNameProperty = serializedObject.FindProperty("blockName");
-            //calc position as size of what we want to draw pushed up into the top bar of the inspector
-            //Rect blockLabelRect = new Rect(45, -GUI.skin.window.padding.bottom - EditorGUIUtility.singleLineHeight * 2, 120, 16);
-            //EditorGUI.LabelField(blockLabelRect, new GUIContent("Block Name"));
-            //Rect blockNameRect = new Rect(45, blockLabelRect.y + EditorGUIUtility.singleLineHeight, 180, 16);
-            //EditorGUI.PropertyField(blockNameRect, blockNameProperty, new GUIContent(""));
+            SerializedProperty useCustomTintProp = serializedObject.FindProperty("useCustomTint");
+            SerializedProperty tintProp = serializedObject.FindProperty("tint");
+            SerializedProperty descriptionProp = serializedObject.FindProperty("description");
+
+            EditorGUILayout.LabelField("Block Inspector", BlockInspectorStyleSheet.Title);
+            EditorGUILayout.BeginVertical(BlockInspectorStyleSheet.IdentityCard);
             EditorGUILayout.BeginHorizontal();
-            EditorGUILayout.PrefixLabel(new GUIContent("Block Name"), EditorStyles.largeLabel);
+            GUILayout.Label(new GUIContent(ScaffoldEditorResources.FlowGraph), GUILayout.Width(38f), GUILayout.Height(38f));
+            EditorGUILayout.BeginVertical();
+
+            EditorGUILayout.LabelField("Block Name", BlockInspectorStyleSheet.FieldHeader);
+            EditorGUILayout.BeginHorizontal();
             EditorGUI.BeginChangeCheck();
             blockNameProperty.stringValue = EditorGUILayout.TextField(blockNameProperty.stringValue);
-            if(EditorGUI.EndChangeCheck())
+            if (EditorGUI.EndChangeCheck())
             {
                 // Ensure block name is unique for this Flowchart
                 var block = target as Block;
@@ -101,10 +122,56 @@ namespace Scaffold.EditorUtils
                     blockNameProperty.stringValue = uniqueName;
                 }
             }
+            EditorGUI.BeginChangeCheck();
+            Color tint = EditorGUILayout.ColorField(GUIContent.none, tintProp.colorValue, true, true, false, GUILayout.Width(42f));
+            if (EditorGUI.EndChangeCheck())
+            {
+                Undo.RecordObject(target, "Set Block Tint");
+                tintProp.colorValue = tint;
+                useCustomTintProp.boolValue = true;
+                EditorUtility.SetDirty(target);
+                SelectedBlockDataStale = true;
+            }
             EditorGUILayout.EndHorizontal();
-            EditorGUILayout.Space();
+
+            EditorGUILayout.Space(BlockInspectorStyleSheet.InnerSpacing);
+            EditorGUILayout.LabelField("Description", BlockInspectorStyleSheet.FieldHeader);
+            DrawAutoGrowingDescription(descriptionProp);
+            EditorGUILayout.EndVertical();
+            EditorGUILayout.EndHorizontal();
+            EditorGUILayout.EndVertical();
+            EditorGUILayout.Space(BlockInspectorStyleSheet.OuterSpacing);
 
             serializedObject.ApplyModifiedProperties();
+        }
+
+        private void DrawAutoGrowingDescription(SerializedProperty descriptionProperty)
+        {
+            GUIStyle textAreaStyle = BlockInspectorStyleSheet.DescriptionTextArea;
+            float fieldWidth = Mathf.Max(1f, EditorGUIUtility.currentViewWidth - 100f);
+            float contentHeight = textAreaStyle.CalcHeight(new GUIContent(descriptionProperty.stringValue), fieldWidth);
+            float lineHeight = EditorGUIUtility.singleLineHeight + textAreaStyle.padding.top + textAreaStyle.padding.bottom;
+            BlockInspectorStyleSheet.DescriptionLayout layout = BlockInspectorStyleSheet.CalculateDescriptionLayout(contentHeight, lineHeight);
+
+            EditorGUI.BeginChangeCheck();
+            string description;
+            if (layout.RequiresScroll)
+            {
+                descriptionScrollPosition.x = 0f;
+                descriptionScrollPosition = EditorGUILayout.BeginScrollView(descriptionScrollPosition, GUIStyle.none, GUI.skin.verticalScrollbar, GUILayout.Height(layout.Height));
+                description = EditorGUILayout.TextArea(descriptionProperty.stringValue, textAreaStyle, GUILayout.MinHeight(contentHeight));
+                EditorGUILayout.EndScrollView();
+            }
+            else
+            {
+                description = EditorGUILayout.TextArea(descriptionProperty.stringValue, textAreaStyle, GUILayout.Height(layout.Height));
+            }
+
+            if (EditorGUI.EndChangeCheck())
+            {
+                descriptionProperty.stringValue = description;
+                SelectedBlockDataStale = true;
+            }
         }
 
         public virtual void DrawBlockGUI(Flowchart flowchart)
@@ -134,40 +201,35 @@ namespace Scaffold.EditorUtils
 
             if (block == flowchart.SelectedBlock)
             {
-                // Custom tinting
-                SerializedProperty useCustomTintProp = serializedObject.FindProperty("useCustomTint");
-                SerializedProperty tintProp = serializedObject.FindProperty("tint");
-
-                EditorGUILayout.BeginHorizontal();
-
-                useCustomTintProp.boolValue = GUILayout.Toggle(useCustomTintProp.boolValue, " Custom Tint");
-                if (useCustomTintProp.boolValue)
-                {
-                    EditorGUILayout.PropertyField(tintProp, GUIContent.none);
-                }
-
-                EditorGUILayout.EndHorizontal();
-
-                SerializedProperty descriptionProp = serializedObject.FindProperty("description");
-                EditorGUILayout.PropertyField(descriptionProp);
-
-
                 SerializedProperty suppressProp = serializedObject.FindProperty("suppressAllAutoSelections");
-                EditorGUILayout.PropertyField(suppressProp);
-                
-                EditorGUI.indentLevel++;
-                if (callersFoldout = EditorGUILayout.Foldout(callersFoldout, "Callers"))
+                SerializedProperty executionMethodProp = serializedObject.FindProperty("executionMethod");
+                SerializedProperty awaitModeProp = serializedObject.FindProperty("awaitMode");
+
+                DrawExecutionSummary(executionMethodProp, awaitModeProp);
+                EditorGUILayout.Space(BlockInspectorStyleSheet.OuterSpacing);
+
+                EditorGUILayout.BeginVertical(BlockInspectorStyleSheet.SectionCard);
+                behaviourAndTimingFoldout = EditorGUILayout.Foldout(behaviourAndTimingFoldout, "Behaviour & Timing", true, BlockInspectorStyleSheet.SectionFoldout);
+                if (behaviourAndTimingFoldout)
+                {
+                    EditorGUI.indentLevel++;
+                    EditorGUILayout.PropertyField(suppressProp, new GUIContent("Suppress All Auto Selections"));
+                    DrawEventHandlerProperties(block);
+                    EditorGUI.indentLevel--;
+                }
+                EditorGUILayout.EndVertical();
+
+                EditorGUILayout.Space(BlockInspectorStyleSheet.OuterSpacing);
+                EditorGUILayout.BeginVertical(BlockInspectorStyleSheet.SectionCard);
+                if (callersFoldout = EditorGUILayout.Foldout(callersFoldout, "Callers", true, BlockInspectorStyleSheet.SectionFoldout))
                 {
                     CacheCallerString();
                     GUI.enabled = false;
                     EditorGUILayout.TextArea(callersString);
                     GUI.enabled = true;
                 }
-                EditorGUI.indentLevel--;
-                
-                EditorGUILayout.Space();
-                
-                DrawEventHandlerGUI(flowchart);
+                EditorGUILayout.EndVertical();
+                EditorGUILayout.Space(BlockInspectorStyleSheet.OuterSpacing);
 
                 block.UpdateIndentLevels();
 
@@ -382,42 +444,112 @@ namespace Scaffold.EditorUtils
 
         
 
-        protected virtual void DrawEventHandlerGUI(Flowchart flowchart)
+        private void DrawExecutionSummary(SerializedProperty executionMethodProp, SerializedProperty awaitModeProp)
         {
-            // Show available Event Handlers in a drop down list with type of current
-            // event handler selected.
             Block block = target as Block;
-            System.Type currentType = null;
-            if (block._EventHandler != null)
+            bool useCompactLayout = BlockInspectorStyleSheet.UsesCompactSummaryLayout(EditorGUIUtility.currentViewWidth);
+            float fieldHeight = EditorGUIUtility.singleLineHeight * 2f + BlockInspectorStyleSheet.InnerSpacing;
+            float totalHeight = useCompactLayout
+                ? (fieldHeight * 3f) + (BlockInspectorStyleSheet.InnerSpacing * 2f)
+                : fieldHeight;
+
+            EditorGUILayout.BeginVertical(BlockInspectorStyleSheet.SectionCard);
+            Rect summaryRect = GUILayoutUtility.GetRect(GUIContent.none, GUIStyle.none, GUILayout.Height(totalHeight), GUILayout.ExpandWidth(true));
+            if (useCompactLayout)
             {
-                currentType = block._EventHandler.GetType();
+                DrawEnumSummaryField(GetSummaryFieldRect(summaryRect, 0, 1, fieldHeight), executionMethodProp, "Execution", "Sequence runs Command Tracks one after another. All At Same Time starts every track together.", false);
+                DrawEnumSummaryField(GetSummaryFieldRect(summaryRect, 1, 1, fieldHeight), awaitModeProp, "Await", "Controls how this Block waits for tracks started at the same time.", executionMethodProp.enumValueIndex == (int)BlockExecutionMethod.Sequence);
+                DrawEventSummaryField(GetSummaryFieldRect(summaryRect, 2, 1, fieldHeight), block);
+            }
+            else
+            {
+                DrawEnumSummaryField(GetSummaryFieldRect(summaryRect, 0, 3, fieldHeight), executionMethodProp, "Execution", "Sequence runs Command Tracks one after another. All At Same Time starts every track together.", false);
+                DrawEnumSummaryField(GetSummaryFieldRect(summaryRect, 1, 3, fieldHeight), awaitModeProp, "Await", "Controls how this Block waits for tracks started at the same time.", executionMethodProp.enumValueIndex == (int)BlockExecutionMethod.Sequence);
+                DrawEventSummaryField(GetSummaryFieldRect(summaryRect, 2, 3, fieldHeight), block);
+            }
+            EditorGUILayout.EndVertical();
+        }
+
+        private static Rect GetSummaryFieldRect(Rect summaryRect, int index, int columnCount, float fieldHeight)
+        {
+            if (columnCount == 1)
+            {
+                return new Rect(summaryRect.x, summaryRect.y + (index * (fieldHeight + BlockInspectorStyleSheet.InnerSpacing)), summaryRect.width, fieldHeight);
             }
 
-            string currentHandlerName = "<None>";
-            if (currentType != null)
+            float gapWidth = BlockInspectorStyleSheet.InnerSpacing;
+            float fieldWidth = Mathf.Max(1f, (summaryRect.width - (gapWidth * (columnCount - 1))) / columnCount);
+            return new Rect(summaryRect.x + (index * (fieldWidth + gapWidth)), summaryRect.y, fieldWidth, fieldHeight);
+        }
+
+        private void DrawEnumSummaryField(Rect fieldRect, SerializedProperty property, string label, string tooltip, bool disabled)
+        {
+            EditorGUI.LabelField(new Rect(fieldRect.x, fieldRect.y, fieldRect.width, EditorGUIUtility.singleLineHeight), label, BlockInspectorStyleSheet.SummaryHeader);
+            using (new EditorGUI.DisabledScope(disabled))
             {
-                EventHandlerInfoAttribute info = EventHandlerEditor.GetEventHandlerInfo(currentType);
-                if (info != null)
-                {
-                    currentHandlerName = info.EventHandlerName;
-                }
+                DrawEnumSummaryPopup(new Rect(fieldRect.x, fieldRect.yMax - EditorGUIUtility.singleLineHeight, fieldRect.width, EditorGUIUtility.singleLineHeight), property, label, tooltip);
+            }
+        }
+
+        private void DrawEnumSummaryPopup(Rect rect, SerializedProperty property, string label, string tooltip)
+        {
+            string value = property.enumDisplayNames[property.enumValueIndex];
+            if (!GUI.Button(rect, new GUIContent(value, tooltip), BlockInspectorStyleSheet.SummaryPopup))
+            {
+                return;
             }
 
-            var pos = EditorGUILayout.GetControlRect(true, 0, EditorStyles.objectField);
-            if (pos.x != 0)
+            string propertyPath = property.propertyPath;
+            var menu = new GenericMenu();
+            for (int index = 0; index < property.enumDisplayNames.Length; index++)
             {
-                lastEventPopupPos = pos;
-                lastEventPopupPos.x += EditorGUIUtility.labelWidth;
-                lastEventPopupPos.y += EditorGUIUtility.singleLineHeight;
+                int selectedIndex = index;
+                menu.AddItem(new GUIContent(property.enumDisplayNames[selectedIndex]), selectedIndex == property.enumValueIndex, () => SetEnumValue(propertyPath, selectedIndex, label));
             }
-            EditorGUILayout.BeginHorizontal();
-            EditorGUILayout.PrefixLabel(new GUIContent("Execute On Event"));
-            if (EditorGUILayout.DropdownButton(new GUIContent(currentHandlerName), FocusType.Passive))
-            {
-                EventSelectorPopupWindowContent.DoEventHandlerPopUp(lastEventPopupPos, currentHandlerName, block, (int)(EditorGUIUtility.currentViewWidth - lastEventPopupPos.x), 200);
-            }
-            EditorGUILayout.EndHorizontal();
+            menu.DropDown(rect);
+        }
 
+        private void SetEnumValue(string propertyPath, int enumValueIndex, string label)
+        {
+            serializedObject.Update();
+            SerializedProperty property = serializedObject.FindProperty(propertyPath);
+            if (property == null)
+            {
+                return;
+            }
+
+            Undo.RecordObject(target, "Set " + label);
+            property.enumValueIndex = enumValueIndex;
+            serializedObject.ApplyModifiedProperties();
+            EditorUtility.SetDirty(target);
+            SelectedBlockDataStale = true;
+        }
+
+        private void DrawEventSummaryField(Rect fieldRect, Block block)
+        {
+            EditorGUI.LabelField(new Rect(fieldRect.x, fieldRect.y, fieldRect.width, EditorGUIUtility.singleLineHeight), "Event", BlockInspectorStyleSheet.SummaryHeader);
+            string currentHandlerName = GetEventHandlerName(block);
+            Rect rect = new Rect(fieldRect.x, fieldRect.yMax - EditorGUIUtility.singleLineHeight, fieldRect.width, EditorGUIUtility.singleLineHeight);
+            if (GUI.Button(rect, new GUIContent(currentHandlerName, "Select the event that executes this Block."), BlockInspectorStyleSheet.SummaryPopup))
+            {
+                Rect popupPosition = new Rect(rect.x, rect.yMax, rect.width, 0f);
+                EventSelectorPopupWindowContent.DoEventHandlerPopUp(popupPosition, currentHandlerName, block, (int)rect.width, 200);
+            }
+        }
+
+        private static string GetEventHandlerName(Block block)
+        {
+            if (block == null || block._EventHandler == null)
+            {
+                return "<None>";
+            }
+
+            EventHandlerInfoAttribute info = EventHandlerEditor.GetEventHandlerInfo(block._EventHandler.GetType());
+            return info != null ? info.EventHandlerName : block._EventHandler.GetType().Name;
+        }
+
+        private void DrawEventHandlerProperties(Block block)
+        {
             if (block._EventHandler != null)
             {
                 EventHandlerEditor eventHandlerEditor = Editor.CreateEditor(block._EventHandler) as EventHandlerEditor;

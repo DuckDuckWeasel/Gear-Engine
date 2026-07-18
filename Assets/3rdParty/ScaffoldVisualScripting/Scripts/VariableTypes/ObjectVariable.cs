@@ -23,7 +23,13 @@ namespace Scaffold
         [SerializeField]
         [VariableProperty("<Value>", typeof(ObjectVariable))]
         public ObjectVariable objectRef;
-        
+
+
+        [SerializeField]
+        public VariableDataSource source;
+
+        [SerializeField]
+        public ObjectValueSO objectSO;
         [SerializeField]
         public Object objectVal;
 
@@ -31,8 +37,10 @@ namespace Scaffold
         {
             objectVal = v;
             objectRef = null;
+            source = VariableDataSource.Unspecified;
+            objectSO = null;
         }
-        
+
         public static implicit operator Object(ObjectData objectData)
         {
             return objectData.Value;
@@ -40,20 +48,13 @@ namespace Scaffold
 
         public Object Value
         {
-            get { return (objectRef == null) ? objectVal : objectRef.Value; }
-            set { if (objectRef == null) { objectVal = value; } else { objectRef.Value = value; } }
+            get { return VariableValueReference.Resolve(objectRef, objectVal, objectSO, source); }
+            set { VariableValueReference.Assign(objectRef, ref objectVal, objectSO, source, value); }
         }
 
         public string GetDescription()
         {
-            if (objectRef == null)
-            {
-                return objectVal != null ? objectVal.ToString() : "Null";
-            }
-            else
-            {
-                return objectRef.Key;
-            }
+            return VariableValueReference.Describe(objectRef, objectVal, objectSO, source);
         }
     }
 }

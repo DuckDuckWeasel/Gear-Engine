@@ -208,9 +208,29 @@ namespace OM.TimelineCreator.Editor
             StopButton.Icon.SetBackgroundFromIconContent("d_Animation.Record"); // Set icon (Record icon often used for Stop)
             Container1SplitView.Container1.Add(StopButton);
 
+            // Playback buttons only make sense while actively previewing (scrubbing/playing),
+            // so keep them hidden otherwise and toggle visibility with the preview state.
+            SetPlaybackButtonsVisible(_timeline.IsPreviewing);
+            _timeline.OnPreviewStateChangedCallback += SetPlaybackButtonsVisible;
+            RegisterCallback<DetachFromPanelEvent>(_ => _timeline.OnPreviewStateChangedCallback -= SetPlaybackButtonsVisible);
+
              // --- Register for Dragging on Container2 (Time Ruler) ---
              // This allows scrubbing the timeline preview
              //this.AddManipulator(new OM_DragControlManipulator(Container2, this)); // Assumes OM_DragControlManipulator exists
+        }
+
+        /// <summary>
+        /// Shows or hides the Replay/Play/Stop playback buttons.
+        /// They are only relevant while the timeline is actively previewing (gameplay-like scrubbing),
+        /// so they stay hidden the rest of the time.
+        /// </summary>
+        /// <param name="visible">True to show the buttons, false to hide them.</param>
+        private void SetPlaybackButtonsVisible(bool visible)
+        {
+            var display = visible ? DisplayStyle.Flex : DisplayStyle.None;
+            ReplayButton.style.display = display;
+            PlayButton.style.display = display;
+            StopButton.style.display = display;
         }
 
         /// <summary>

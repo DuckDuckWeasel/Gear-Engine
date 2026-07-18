@@ -57,6 +57,12 @@ namespace Scaffold
         [VariableProperty("<Value>", typeof(Matrix4x4Variable))]
         public Matrix4x4Variable matrix4x4Ref;
 
+
+        [SerializeField]
+        public VariableDataSource source;
+
+        [SerializeField]
+        public Matrix4x4ValueSO matrix4x4SO;
         [SerializeField]
         public UnityEngine.Matrix4x4 matrix4x4Val;
 
@@ -69,24 +75,19 @@ namespace Scaffold
         {
             matrix4x4Val = v;
             matrix4x4Ref = null;
+            source = VariableDataSource.Unspecified;
+            matrix4x4SO = null;
         }
 
         public UnityEngine.Matrix4x4 Value
         {
-            get { return (matrix4x4Ref == null) ? matrix4x4Val : matrix4x4Ref.Value; }
-            set { if (matrix4x4Ref == null) { matrix4x4Val = value; } else { matrix4x4Ref.Value = value; } }
+            get { return VariableValueReference.Resolve(matrix4x4Ref, matrix4x4Val, matrix4x4SO, source); }
+            set { VariableValueReference.Assign(matrix4x4Ref, ref matrix4x4Val, matrix4x4SO, source, value); }
         }
 
         public string GetDescription()
         {
-            if (matrix4x4Ref == null)
-            {
-                return matrix4x4Val.ToString();
-            }
-            else
-            {
-                return matrix4x4Ref.Key;
-            }
+            return VariableValueReference.Describe(matrix4x4Ref, matrix4x4Val, matrix4x4SO, source);
         }
     }
 }

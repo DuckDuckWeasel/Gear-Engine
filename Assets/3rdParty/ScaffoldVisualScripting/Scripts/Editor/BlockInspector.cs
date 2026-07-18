@@ -106,9 +106,8 @@ namespace Scaffold.EditorUtils
 
             UpdateWindowHeight();
 
-            float width = EditorGUIUtility.currentViewWidth;
-
-            blockScrollPos = GUILayout.BeginScrollView(blockScrollPos, GUILayout.Height(flowchart.BlockViewHeight));
+            blockScrollPos.x = 0f;
+            blockScrollPos = GUILayout.BeginScrollView(blockScrollPos, GUIStyle.none, GUI.skin.verticalScrollbar, GUILayout.Height(flowchart.BlockViewHeight));
             activeBlockEditor.DrawBlockName(flowchart);
             activeBlockEditor.DrawBlockGUI(flowchart);
             GUILayout.EndScrollView();
@@ -155,7 +154,8 @@ namespace Scaffold.EditorUtils
 
             activeBlockEditor.DrawButtonToolbar();
 
-            commandScrollPos = GUILayout.BeginScrollView(commandScrollPos);
+            commandScrollPos.x = 0f;
+            commandScrollPos = GUILayout.BeginScrollView(commandScrollPos, GUIStyle.none, GUI.skin.verticalScrollbar);
 
             if (inspectCommand != null)
             {

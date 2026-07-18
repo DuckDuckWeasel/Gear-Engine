@@ -24,6 +24,12 @@ namespace Scaffold
         [VariableProperty("<Value>", typeof(ColliderVariable))]
         public ColliderVariable colliderRef;
 
+
+        [SerializeField]
+        public VariableDataSource source;
+
+        [SerializeField]
+        public ColliderValueSO colliderSO;
         [SerializeField]
         public UnityEngine.Collider colliderVal;
 
@@ -36,24 +42,19 @@ namespace Scaffold
         {
             colliderVal = v;
             colliderRef = null;
+            source = VariableDataSource.Unspecified;
+            colliderSO = null;
         }
 
         public UnityEngine.Collider Value
         {
-            get { return (colliderRef == null) ? colliderVal : colliderRef.Value; }
-            set { if (colliderRef == null) { colliderVal = value; } else { colliderRef.Value = value; } }
+            get { return VariableValueReference.Resolve(colliderRef, colliderVal, colliderSO, source); }
+            set { VariableValueReference.Assign(colliderRef, ref colliderVal, colliderSO, source, value); }
         }
 
         public string GetDescription()
         {
-            if (colliderRef == null)
-            {
-                return colliderVal != null ? colliderVal.ToString() : "Null";
-            }
-            else
-            {
-                return colliderRef.Key;
-            }
+            return VariableValueReference.Describe(colliderRef, colliderVal, colliderSO, source);
         }
     }
 }

@@ -22,7 +22,13 @@ namespace Scaffold
         [SerializeField]
         [VariableProperty("<Value>", typeof(AnimatorVariable))]
         public AnimatorVariable animatorRef;
-        
+
+
+        [SerializeField]
+        public VariableDataSource source;
+
+        [SerializeField]
+        public AnimatorValueSO animatorSO;
         [SerializeField]
         public Animator animatorVal;
 
@@ -35,24 +41,19 @@ namespace Scaffold
         {
             animatorVal = v;
             animatorRef = null;
+            source = VariableDataSource.Unspecified;
+            animatorSO = null;
         }
-            
+
         public Animator Value
         {
-            get { return (animatorRef == null) ? animatorVal : animatorRef.Value; }
-            set { if (animatorRef == null) { animatorVal = value; } else { animatorRef.Value = value; } }
+            get { return VariableValueReference.Resolve(animatorRef, animatorVal, animatorSO, source); }
+            set { VariableValueReference.Assign(animatorRef, ref animatorVal, animatorSO, source, value); }
         }
 
         public string GetDescription()
         {
-            if (animatorRef == null)
-            {
-                return animatorVal != null ? animatorVal.ToString() : "Null";
-            }
-            else
-            {
-                return animatorRef.Key;
-            }
+            return VariableValueReference.Describe(animatorRef, animatorVal, animatorSO, source);
         }
     }
 }

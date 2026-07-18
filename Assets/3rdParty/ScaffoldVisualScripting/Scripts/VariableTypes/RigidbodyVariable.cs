@@ -24,6 +24,12 @@ namespace Scaffold
         [VariableProperty("<Value>", typeof(RigidbodyVariable))]
         public RigidbodyVariable rigidbodyRef;
 
+
+        [SerializeField]
+        public VariableDataSource source;
+
+        [SerializeField]
+        public RigidbodyValueSO rigidbodySO;
         [SerializeField]
         public UnityEngine.Rigidbody rigidbodyVal;
 
@@ -36,24 +42,19 @@ namespace Scaffold
         {
             rigidbodyVal = v;
             rigidbodyRef = null;
+            source = VariableDataSource.Unspecified;
+            rigidbodySO = null;
         }
 
         public UnityEngine.Rigidbody Value
         {
-            get { return (rigidbodyRef == null) ? rigidbodyVal : rigidbodyRef.Value; }
-            set { if (rigidbodyRef == null) { rigidbodyVal = value; } else { rigidbodyRef.Value = value; } }
+            get { return VariableValueReference.Resolve(rigidbodyRef, rigidbodyVal, rigidbodySO, source); }
+            set { VariableValueReference.Assign(rigidbodyRef, ref rigidbodyVal, rigidbodySO, source, value); }
         }
 
         public string GetDescription()
         {
-            if (rigidbodyRef == null)
-            {
-                return rigidbodyVal != null ? rigidbodyVal.ToString() : "Null";
-            }
-            else
-            {
-                return rigidbodyRef.Key;
-            }
+            return VariableValueReference.Describe(rigidbodyRef, rigidbodyVal, rigidbodySO, source);
         }
     }
 }

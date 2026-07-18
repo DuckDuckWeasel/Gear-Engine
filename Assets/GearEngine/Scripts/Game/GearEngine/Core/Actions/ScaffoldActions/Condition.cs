@@ -103,9 +103,10 @@ namespace Scaffold
                 return null;
 
             int indent = startCommand.IndentLevel;
-            for (int i = startCommand.CommandIndex + 1; i < startCommand.ParentBlock.CommandList.Count; ++i)
+            var trackCommands = startCommand.ParentTrack != null ? startCommand.ParentTrack.Commands : startCommand.ParentBlock.CommandList;
+            for (int i = startCommand.CommandIndex + 1; i < trackCommands.Count; ++i)
             {
-                var command = startCommand.ParentBlock.CommandList[i];
+                var command = trackCommands[i];
 
                 if (command.IndentLevel == indent)
                 {
@@ -192,9 +193,10 @@ namespace Scaffold
             }
 
             // Find the next Else, ElseIf or End command at the same indent level as this If command
-            for (int i = CommandIndex + 1; i < ParentBlock.CommandList.Count; ++i)
+            var trackCommands = ParentTrack != null ? ParentTrack.Commands : ParentBlock.CommandList;
+            for (int i = CommandIndex + 1; i < trackCommands.Count; ++i)
             {
-                Command nextCommand = ParentBlock.CommandList[i];
+                Command nextCommand = trackCommands[i];
 
                 if (nextCommand == null)
                 {
@@ -215,10 +217,12 @@ namespace Scaffold
                 if (type == typeof(Else) ||
                     type == typeof(End))
                 {
-                    if (i >= ParentBlock.CommandList.Count - 1)
+                    if (i >= trackCommands.Count - 1)
                     {
-                        // Last command in Block, so stop
-                        StopParentBlock();
+                        // Nothing follows the Else/End in this track, so let this track finish
+                        // naturally rather than stopping the whole Block (other tracks may still be running).
+                        Continue(trackCommands.Count);
+                        return;
                     }
                     else
                     {
@@ -265,9 +269,9 @@ namespace Scaffold
         /// <returns></returns>
         protected virtual bool DoesPassElifSanityCheck()
         {
-            System.Type previousCommandType = ParentBlock.GetPreviousActiveCommandType();
-            var prevCmdIndent = ParentBlock.GetPreviousActiveCommandIndent();
-            var prevCmd = ParentBlock.GetPreviousActiveCommand();
+            var prevCmd = ParentTrack != null ? ParentTrack.GetPreviousActiveCommand() : ParentBlock.GetPreviousActiveCommand();
+            System.Type previousCommandType = prevCmd != null ? prevCmd.GetType() : null;
+            var prevCmdIndent = prevCmd != null ? prevCmd.IndentLevel : -1;
 
             //handle our matching if or else if in the chain failing and moving to us,
             //  need to make sure it is the same indent level

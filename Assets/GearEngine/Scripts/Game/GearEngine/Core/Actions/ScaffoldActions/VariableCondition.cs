@@ -252,6 +252,8 @@ namespace Scaffold
                 {
                     anyVar.data.stringData.stringRef = stringData.stringRef;
                     anyVar.data.stringData.stringVal = stringData.stringVal;
+                    anyVar.data.stringData.source = stringData.source;
+                    anyVar.data.stringData.stringSO = stringData.stringSO;
                     stringData = new StringDataMulti();
                 }
                 else if (variable.GetType() == typeof(AnimatorVariable) && !animatorData.Equals(new AnimatorData()))

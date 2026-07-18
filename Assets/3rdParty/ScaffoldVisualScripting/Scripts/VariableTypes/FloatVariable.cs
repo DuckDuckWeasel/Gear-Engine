@@ -86,6 +86,12 @@ namespace Scaffold
         [VariableProperty("<Value>", typeof(FloatVariable))]
         public FloatVariable floatRef;
 
+
+        [SerializeField]
+        public VariableDataSource source;
+
+        [SerializeField]
+        public FloatValueSO floatSO;
         [SerializeField]
         public float floatVal;
 
@@ -93,6 +99,8 @@ namespace Scaffold
         {
             floatVal = v;
             floatRef = null;
+            source = VariableDataSource.Unspecified;
+            floatSO = null;
         }
 
         public static implicit operator float(FloatData floatData)
@@ -102,20 +110,13 @@ namespace Scaffold
 
         public float Value
         {
-            get { return (floatRef == null) ? floatVal : floatRef.Value; }
-            set { if (floatRef == null) { floatVal = value; } else { floatRef.Value = value; } }
+            get { return VariableValueReference.Resolve(floatRef, floatVal, floatSO, source); }
+            set { VariableValueReference.Assign(floatRef, ref floatVal, floatSO, source, value); }
         }
 
         public string GetDescription()
         {
-            if (floatRef == null)
-            {
-                return floatVal.ToString();
-            }
-            else
-            {
-                return floatRef.Key;
-            }
+            return VariableValueReference.Describe(floatRef, floatVal, floatSO, source);
         }
     }
 }

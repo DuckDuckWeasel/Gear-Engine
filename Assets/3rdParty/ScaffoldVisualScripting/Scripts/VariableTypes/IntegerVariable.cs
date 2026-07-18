@@ -86,6 +86,12 @@ namespace Scaffold
         [VariableProperty("<Value>", typeof(IntegerVariable))]
         public IntegerVariable integerRef;
 
+
+        [SerializeField]
+        public VariableDataSource source;
+
+        [SerializeField]
+        public IntegerValueSO integerSO;
         [SerializeField]
         public int integerVal;
 
@@ -93,6 +99,8 @@ namespace Scaffold
         {
             integerVal = v;
             integerRef = null;
+            source = VariableDataSource.Unspecified;
+            integerSO = null;
         }
 
         public static implicit operator int(IntegerData integerData)
@@ -102,20 +110,13 @@ namespace Scaffold
 
         public int Value
         {
-            get { return (integerRef == null) ? integerVal : integerRef.Value; }
-            set { if (integerRef == null) { integerVal = value; } else { integerRef.Value = value; } }
+            get { return VariableValueReference.Resolve(integerRef, integerVal, integerSO, source); }
+            set { VariableValueReference.Assign(integerRef, ref integerVal, integerSO, source, value); }
         }
 
         public string GetDescription()
         {
-            if (integerRef == null)
-            {
-                return integerVal.ToString();
-            }
-            else
-            {
-                return integerRef.Key;
-            }
+            return VariableValueReference.Describe(integerRef, integerVal, integerSO, source);
         }
     }
 }

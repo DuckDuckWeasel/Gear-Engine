@@ -17,11 +17,12 @@ namespace Scaffold
         {
             // Have we loaded the prefs yet
             private static bool prefsLoaded = false;
-            private const string HIDE_MUSH_KEY = "hideMushroomInHierarchy";
+            private const string HIDE_FLOWCHART_ICON_KEY = "hideFlowchartIconInHierarchy";
+            private const string LEGACY_HIDE_MUSHROOM_KEY = "hideMushroomInHierarchy";
             private const string USE_LEGACY_MENUS = "useLegacyMenus";
             private const string USE_GRID_SNAP = "useGridSnap";
 
-            public static bool hideMushroomInHierarchy;
+            public static bool hideFlowchartIconInHierarchy;
             public static bool useLegacyMenus;
             public static bool useGridSnap;
 
@@ -61,7 +62,7 @@ namespace Scaffold
                 }
 
                 // Preferences GUI
-                hideMushroomInHierarchy = EditorGUILayout.Toggle("Hide Mushroom Flowchart Icon", hideMushroomInHierarchy);
+                hideFlowchartIconInHierarchy = EditorGUILayout.Toggle("Hide Flowchart Icon in Hierarchy", hideFlowchartIconInHierarchy);
                 useLegacyMenus = EditorGUILayout.Toggle(new GUIContent("Legacy Menus", "Force Legacy menus for Event, Add Variable and Add Command menus"), useLegacyMenus);
                 useGridSnap = EditorGUILayout.Toggle(new GUIContent("Grid Snap", "Align and Snap block positions and widths in the flowchart window to the grid"), useGridSnap);
 
@@ -112,7 +113,7 @@ namespace Scaffold
                 // Save the preferences
                 if (GUI.changed)
                 {
-                    EditorPrefs.SetBool(HIDE_MUSH_KEY, hideMushroomInHierarchy);
+                    EditorPrefs.SetBool(HIDE_FLOWCHART_ICON_KEY, hideFlowchartIconInHierarchy);
                     EditorPrefs.SetBool(USE_LEGACY_MENUS, useLegacyMenus);
                     EditorPrefs.SetBool(USE_GRID_SNAP, useGridSnap);
                 }
@@ -120,7 +121,9 @@ namespace Scaffold
 
             public static void LoadOnScriptLoad()
             {
-                hideMushroomInHierarchy = EditorPrefs.GetBool(HIDE_MUSH_KEY, false);
+                hideFlowchartIconInHierarchy = EditorPrefs.HasKey(HIDE_FLOWCHART_ICON_KEY)
+                    ? EditorPrefs.GetBool(HIDE_FLOWCHART_ICON_KEY)
+                    : EditorPrefs.GetBool(LEGACY_HIDE_MUSHROOM_KEY, false);
                 useLegacyMenus = EditorPrefs.GetBool(USE_LEGACY_MENUS, false);
                 useGridSnap = EditorPrefs.GetBool(USE_GRID_SNAP, false);
                 prefsLoaded = true;

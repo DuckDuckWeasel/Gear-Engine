@@ -20,8 +20,8 @@ namespace Scaffold
     [InitializeOnLoad]
     public class HierarchyIcons
     {
-        // the scaffold mushroom icon
-        static Texture2D TextureIcon { get { return Scaffold.EditorUtils.ScaffoldEditorResources.ScaffoldMushroom; } }
+        // The shared flowchart icon used by the Hierarchy and Block Inspector.
+        static Texture2D TextureIcon { get { return Scaffold.EditorUtils.ScaffoldEditorResources.FlowGraph; } }
 
         //sorted list of the GO instance IDs that have flowcharts on them
         static List<UnityEngine.EntityId> flowchartIDs = new List<UnityEngine.EntityId>();
@@ -44,7 +44,7 @@ namespace Scaffold
         {
             flowchartIDs.Clear();
 
-            if (EditorUtils.ScaffoldEditorPreferences.hideMushroomInHierarchy)
+            if (EditorUtils.ScaffoldEditorPreferences.hideFlowchartIconInHierarchy)
                 return;
 
             var flowcharts = GameObject.FindObjectsOfType<Flowchart>();
@@ -62,7 +62,7 @@ namespace Scaffold
                 initalHierarchyCheckFlag = false;
             }
 
-            if (EditorUtils.ScaffoldEditorPreferences.hideMushroomInHierarchy)
+            if (EditorUtils.ScaffoldEditorPreferences.hideFlowchartIconInHierarchy)
                 return;
 
             // place the icon to the left of the element

@@ -15,13 +15,15 @@ namespace Scaffold.EditorUtils
 
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
-            position.height = EditorGUIUtility.singleLineHeight;
-
             var varProp = property.FindPropertyRelative("variable");
+            float variableHeight = EditorGUI.GetPropertyHeight(varProp);
+            Rect variableRect = position;
+            variableRect.height = variableHeight;
 
-            EditorGUI.PropertyField(position, varProp, label);
+            EditorGUI.PropertyField(variableRect, varProp, label);
 
-            position.y += EditorGUIUtility.singleLineHeight;
+            position.y = variableRect.yMax + EditorGUIUtility.standardVerticalSpacing;
+            position.height = EditorGUIUtility.singleLineHeight;
 
             if (varProp.objectReferenceValue != null)
             {
@@ -64,6 +66,7 @@ namespace Scaffold.EditorUtils
             var dataProp = GetDataProp(property);
 
             return EditorGUI.GetPropertyHeight(property.FindPropertyRelative("variable")) +
+                EditorGUIUtility.standardVerticalSpacing +
                 (dataProp != null ? 
                     EditorGUI.GetPropertyHeight(dataProp) :
                     EditorGUIUtility.singleLineHeight);

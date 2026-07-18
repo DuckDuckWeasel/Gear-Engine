@@ -23,7 +23,13 @@ namespace Scaffold
         [SerializeField]
         [VariableProperty("<Value>", typeof(TransformVariable))]
         public TransformVariable transformRef;
-        
+
+
+        [SerializeField]
+        public VariableDataSource source;
+
+        [SerializeField]
+        public TransformValueSO transformSO;
         [SerializeField]
         public Transform transformVal;
 
@@ -31,8 +37,10 @@ namespace Scaffold
         {
             transformVal = v;
             transformRef = null;
+            source = VariableDataSource.Unspecified;
+            transformSO = null;
         }
-        
+
         public static implicit operator Transform(TransformData vector3Data)
         {
             return vector3Data.Value;
@@ -40,20 +48,13 @@ namespace Scaffold
 
         public Transform Value
         {
-            get { return (transformRef == null) ? transformVal : transformRef.Value; }
-            set { if (transformRef == null) { transformVal = value; } else { transformRef.Value = value; } }
+            get { return VariableValueReference.Resolve(transformRef, transformVal, transformSO, source); }
+            set { VariableValueReference.Assign(transformRef, ref transformVal, transformSO, source, value); }
         }
 
         public string GetDescription()
         {
-            if (transformRef == null)
-            {
-                return transformVal != null ? transformVal.ToString() : "Null";
-            }
-            else
-            {
-                return transformRef.Key;
-            }
+            return VariableValueReference.Describe(transformRef, transformVal, transformSO, source);
         }
     }
 }

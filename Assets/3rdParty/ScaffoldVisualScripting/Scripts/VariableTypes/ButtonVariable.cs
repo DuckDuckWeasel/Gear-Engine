@@ -24,7 +24,13 @@ namespace Scaffold
 		[VariableProperty("<Value>", typeof(ButtonVariable))]
 		public ButtonVariable buttonRef;
 
-		[SerializeField]
+
+        [SerializeField]
+        public VariableDataSource source;
+
+        [SerializeField]
+        public ButtonValueSO buttonSO;
+        [SerializeField]
 		public UnityEngine.UI.Button buttonVal;
 
 		public static implicit operator UnityEngine.UI.Button(ButtonData ButtonData)
@@ -36,24 +42,19 @@ namespace Scaffold
 		{
 			buttonVal = v;
 			buttonRef = null;
+            source = VariableDataSource.Unspecified;
+            buttonSO = null;
 		}
 
 		public UnityEngine.UI.Button Value
 		{
-			get { return (buttonRef == null) ? buttonVal : buttonRef.Value; }
-			set { if (buttonRef == null) { buttonVal = value; } else { buttonRef.Value = value; } }
+			get { return VariableValueReference.Resolve(buttonRef, buttonVal, buttonSO, source); }
+            set { VariableValueReference.Assign(buttonRef, ref buttonVal, buttonSO, source, value); }
 		}
 
 		public string GetDescription()
-		{
-			if (buttonRef == null)
-			{
-				return buttonVal.ToString();
-			}
-			else
-			{
-				return buttonRef.Key;
-			}
-		}
+        {
+            return VariableValueReference.Describe(buttonRef, buttonVal, buttonSO, source);
+        }
 	}
 }

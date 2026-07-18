@@ -12,6 +12,7 @@ namespace Scaffold.EditorUtils
         [SerializeField] private EditorTexture delete;
         [SerializeField] private EditorTexture down;
         [SerializeField] private EditorTexture duplicate;
+        [SerializeField] private EditorTexture flow_graph;
         [SerializeField] private EditorTexture scaffold_mushroom;
         [SerializeField] private EditorTexture up;
         [SerializeField] private EditorTexture bullet_point;
@@ -31,6 +32,7 @@ namespace Scaffold.EditorUtils
         public static Texture2D Delete { get { return Instance.delete.Texture2D; } }
         public static Texture2D Down { get { return Instance.down.Texture2D; } }
         public static Texture2D Duplicate { get { return Instance.duplicate.Texture2D; } }
+        public static Texture2D FlowGraph { get { return Instance.flow_graph.Texture2D; } }
         public static Texture2D ScaffoldMushroom { get { return Instance.scaffold_mushroom.Texture2D; } }
         public static Texture2D Up { get { return Instance.up.Texture2D; } }
         public static Texture2D BulletPoint { get { return Instance.bullet_point.Texture2D; } }

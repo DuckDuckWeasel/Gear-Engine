@@ -23,7 +23,13 @@ namespace Scaffold
         [SerializeField]
         [VariableProperty("<Value>", typeof(TextureVariable))]
         public TextureVariable textureRef;
-        
+
+
+        [SerializeField]
+        public VariableDataSource source;
+
+        [SerializeField]
+        public TextureValueSO textureSO;
         [SerializeField]
         public Texture textureVal;
 
@@ -31,8 +37,10 @@ namespace Scaffold
         {
             textureVal = v;
             textureRef = null;
+            source = VariableDataSource.Unspecified;
+            textureSO = null;
         }
-        
+
         public static implicit operator Texture(TextureData textureData)
         {
             return textureData.Value;
@@ -40,20 +48,13 @@ namespace Scaffold
 
         public Texture Value
         {
-            get { return (textureRef == null) ? textureVal : textureRef.Value; }
-            set { if (textureRef == null) { textureVal = value; } else { textureRef.Value = value; } }
+            get { return VariableValueReference.Resolve(textureRef, textureVal, textureSO, source); }
+            set { VariableValueReference.Assign(textureRef, ref textureVal, textureSO, source, value); }
         }
 
         public string GetDescription()
         {
-            if (textureRef == null)
-            {
-                return textureVal != null ? textureVal.ToString() : "Null";
-            }
-            else
-            {
-                return textureRef.Key;
-            }
+            return VariableValueReference.Describe(textureRef, textureVal, textureSO, source);
         }
     }
 }

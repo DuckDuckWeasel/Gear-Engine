@@ -23,6 +23,12 @@ namespace Scaffold
         [VariableProperty("<Value>", typeof(Rigidbody2DVariable))]
         public Rigidbody2DVariable rigidbody2DRef;
 
+
+        [SerializeField]
+        public VariableDataSource source;
+
+        [SerializeField]
+        public Rigidbody2DValueSO rigidbody2DSO;
         [SerializeField]
         public Rigidbody2D rigidbody2DVal;
 
@@ -35,24 +41,19 @@ namespace Scaffold
         {
             rigidbody2DVal = v;
             rigidbody2DRef = null;
+            source = VariableDataSource.Unspecified;
+            rigidbody2DSO = null;
         }
 
         public Rigidbody2D Value
         {
-            get { return (rigidbody2DRef == null) ? rigidbody2DVal : rigidbody2DRef.Value; }
-            set { if (rigidbody2DRef == null) { rigidbody2DVal = value; } else { rigidbody2DRef.Value = value; } }
+            get { return VariableValueReference.Resolve(rigidbody2DRef, rigidbody2DVal, rigidbody2DSO, source); }
+            set { VariableValueReference.Assign(rigidbody2DRef, ref rigidbody2DVal, rigidbody2DSO, source, value); }
         }
 
         public string GetDescription()
         {
-            if (rigidbody2DRef == null)
-            {
-                return rigidbody2DVal != null ? rigidbody2DVal.ToString() : "Null";
-            }
-            else
-            {
-                return rigidbody2DRef.Key;
-            }
+            return VariableValueReference.Describe(rigidbody2DRef, rigidbody2DVal, rigidbody2DSO, source);
         }
     }
 }

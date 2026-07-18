@@ -1,7 +1,12 @@
 {
     "name": "ScaffoldEditor",
     "references": [
-        "GUID:007db7f7a4c8f944990d71603a110f82"
+        "GUID:007db7f7a4c8f944990d71603a110f82",
+        "GUID:b62e7de798d864a2fa8cee24acf3a3a6",
+        "GUID:4ae89db7f8eb34ecfa05bc30f0162358",
+        "GUID:b2189558d420a46e3a7e1421892020e5",
+        "GUID:6f06f7bc90a9a4423bc4467152087b1e",
+        "GUID:5ad7600acbaf54d2996633df50d16b7e"
     ],
     "optionalUnityReferences": [],
     "includePlatforms": [

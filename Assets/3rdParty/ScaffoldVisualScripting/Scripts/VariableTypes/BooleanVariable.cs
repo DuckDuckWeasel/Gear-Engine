@@ -40,6 +40,12 @@ namespace Scaffold
         [VariableProperty("<Value>", typeof(BooleanVariable))]
         public BooleanVariable booleanRef;
 
+
+        [SerializeField]
+        public VariableDataSource source;
+
+        [SerializeField]
+        public BooleanValueSO booleanSO;
         [SerializeField]
         public bool booleanVal;
 
@@ -47,8 +53,10 @@ namespace Scaffold
         {
             booleanVal = v;
             booleanRef = null;
+            source = VariableDataSource.Unspecified;
+            booleanSO = null;
         }
-        
+
         public static implicit operator bool(BooleanData booleanData)
         {
             return booleanData.Value;
@@ -56,20 +64,13 @@ namespace Scaffold
 
         public bool Value
         {
-            get { return (booleanRef == null) ? booleanVal : booleanRef.Value; }
-            set { if (booleanRef == null) { booleanVal = value; } else { booleanRef.Value = value; } }
+            get { return VariableValueReference.Resolve(booleanRef, booleanVal, booleanSO, source); }
+            set { VariableValueReference.Assign(booleanRef, ref booleanVal, booleanSO, source, value); }
         }
 
         public string GetDescription()
         {
-            if (booleanRef == null)
-            {
-                return booleanVal.ToString();
-            }
-            else
-            {
-                return booleanRef.Key;
-            }
+            return VariableValueReference.Describe(booleanRef, booleanVal, booleanSO, source);
         }
     }
 }

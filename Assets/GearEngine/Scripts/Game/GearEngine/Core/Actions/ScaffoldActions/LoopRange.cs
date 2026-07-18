@@ -39,8 +39,9 @@ namespace Scaffold
 
         protected override void PreEvaluate()
         {
+            var previousIndex = ParentTrack != null ? ParentTrack.PreviousActiveCommandIndex : ParentBlock.PreviousActiveCommandIndex;
             //if we came from the end then we are already looping, if not this is first loop so prep
-            if (ParentBlock.PreviousActiveCommandIndex != endCommand.CommandIndex)
+            if (previousIndex != endCommand.CommandIndex)
             {
                 counter.Value = startingValue.Value;
             }

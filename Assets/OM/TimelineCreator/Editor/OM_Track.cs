@@ -68,6 +68,12 @@ namespace OM.TimelineCreator.Editor
         private float _dragStartTime;
 
         /// <summary>
+        /// The order index currently being previewed during a drag operation (i.e. where the track
+        /// would land if dropped right now). Committed to the underlying clip data in <see cref="EndDrag"/>.
+        /// </summary>
+        private int _dragPreviewIndex;
+
+        /// <summary>
         /// Reference to the visual snapping line displayed during drag operations.
         /// </summary>
         private OM_SnappingLine _snappingLine;
@@ -311,6 +317,7 @@ namespace OM.TimelineCreator.Editor
             // Store initial state for delta calculations
             _dragStartPosition = new Vector2(TrackClip.layout.x, layout.y); // Use layout.y for vertical position
             _dragStartTime = GetStartTime();
+            _dragPreviewIndex = GetTrackIndex(); // No reorder previewed yet
 
             BringToFront(); // Ensure the dragged track is rendered on top
             this.AddClassNames("no-animation"); // Disable animations during drag
@@ -341,14 +348,16 @@ namespace OM.TimelineCreator.Editor
             // Apply snapping logic to the horizontal position (time)
             HandleSnapping(ref newXInSeconds);
 
-            // Determine the new track order index based on the vertical position
-            var currentOrderIndex = GetTrackIndex();
+            // Determine the order index the dragged track is currently hovering over (i.e. where it
+            // would land if dropped now, requiring the mouse to pass the midpoint of the target slot).
             var newIndex = GetIndexOfClipBasedOnPosition(Timeline, newY);
 
-            // If the order index has changed, move the track
-            if (newIndex != currentOrderIndex)
+            // Only live-preview the reorder (no data mutation, no Undo) so the displaced track shows
+            // where it will end up. The actual reorder is committed once, in EndDrag.
+            if (newIndex != _dragPreviewIndex)
             {
-                MoveTrack(newIndex);
+                _dragPreviewIndex = newIndex;
+                Timeline.PreviewMoveTrack(this, newIndex);
             }
 
             // Apply the calculated visual position
@@ -449,12 +458,60 @@ namespace OM.TimelineCreator.Editor
         public void EndDrag(Vector2 delta, Vector2 mousePosition)
         {
             SetIsDragging(false); // Clear the dragging flag
+            bool reordered = _dragPreviewIndex != GetTrackIndex();
+            if (reordered)
+            {
+                MoveTrack(_dragPreviewIndex); // Commit the previewed reorder (this already refreshes every track)
+            }
+
+            if (!Mathf.Approximately(_dragStartTime, GetStartTime()))
+            {
+                OnPositionChanged(_dragStartTime, GetStartTime()); // Let derived tracks commit a horizontal reorder
+            }
+
             this.RemoveFromClassList("no-animation"); // Re-enable animations
-            UpdateTrack(); // Ensure final visual state is correct
+
+            // MoveTrack() above already refreshed every track. Otherwise, a pure horizontal drag can
+            // still have shifted GetPixelPerSecond() (it's derived from the shared timeline duration,
+            // which grows/shrinks with this clip's own end time) - refresh every track so siblings
+            // aren't left rendered at a stale scale. Opt-in per track type since this changes visuals
+            // that some timelines (e.g. Animora) may not want touched by an unrelated drag.
+            if (!reordered && ShouldRefreshAllTracksOnDragEnd())
+            {
+                Timeline.RefreshAllTracks();
+            }
+            else
+            {
+                UpdateTrack(); // Ensure final visual state is correct
+            }
+
             GetSnappingLine().SetPosition(false, Vector2.zero); // Hide snapping line
             TrackClip.Details.SetDisplay(false); // Hide details label
              // Potentially trigger timeline validation after drag
              // Timeline.TimelinePlayer.OnValidate();
+        }
+
+        /// <summary>
+        /// Whether ending a drag that didn't reorder rows should still refresh every track's visuals,
+        /// not just this one. Needed by tracks whose <see cref="OM_Timeline{T,TTrack}.GetPixelPerSecond"/>
+        /// scale is derived from the total timeline duration, since a pure horizontal move can change
+        /// that shared scale and leave sibling clips rendered at their old (now stale) width/position.
+        /// Default is false, matching prior behaviour exactly.
+        /// </summary>
+        protected virtual bool ShouldRefreshAllTracksOnDragEnd()
+        {
+            return false;
+        }
+
+        /// <summary>
+        /// Virtual hook called once, at the end of a drag, if the clip's start time actually changed
+        /// (whether or not a row/index change also happened). Base implementation does nothing -
+        /// horizontal position is purely visual/time-based for the default timeline. Tracks whose
+        /// horizontal axis represents a real reorderable sequence (e.g. ScaffoldTrack) can override
+        /// this to commit that reorder into their underlying data.
+        /// </summary>
+        protected virtual void OnPositionChanged(float previousStartTime, float newStartTime)
+        {
         }
 
         /// <summary>
@@ -624,6 +681,17 @@ namespace OM.TimelineCreator.Editor
         public virtual void UpdateTop()
         {
             style.top = GetTrackIndex() * (OM_TimelineUtil.ClipHeight + OM_TimelineUtil.ClipSpaceBetween);
+        }
+
+        /// <summary>
+        /// Moves this track to the slot for <paramref name="index"/> without touching the underlying
+        /// clip's order data. Used to preview a neighbouring track's landing spot while another track
+        /// is being dragged over it (see <see cref="OM_Timeline{T,TTrack}.PreviewMoveTrack"/>).
+        /// </summary>
+        /// <param name="index">The order index whose slot position to preview.</param>
+        public void SetPreviewIndex(int index)
+        {
+            style.top = index * (OM_TimelineUtil.ClipHeight + OM_TimelineUtil.ClipSpaceBetween);
         }
 
         /// <summary>

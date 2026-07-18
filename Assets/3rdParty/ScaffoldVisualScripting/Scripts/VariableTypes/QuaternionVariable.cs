@@ -57,6 +57,12 @@ namespace Scaffold
         [VariableProperty("<Value>", typeof(QuaternionVariable))]
         public QuaternionVariable quaternionRef;
 
+
+        [SerializeField]
+        public VariableDataSource source;
+
+        [SerializeField]
+        public QuaternionValueSO quaternionSO;
         [SerializeField]
         public UnityEngine.Quaternion quaternionVal;
 
@@ -69,24 +75,19 @@ namespace Scaffold
         {
             quaternionVal = v;
             quaternionRef = null;
+            source = VariableDataSource.Unspecified;
+            quaternionSO = null;
         }
 
         public UnityEngine.Quaternion Value
         {
-            get { return (quaternionRef == null) ? quaternionVal : quaternionRef.Value; }
-            set { if (quaternionRef == null) { quaternionVal = value; } else { quaternionRef.Value = value; } }
+            get { return VariableValueReference.Resolve(quaternionRef, quaternionVal, quaternionSO, source); }
+            set { VariableValueReference.Assign(quaternionRef, ref quaternionVal, quaternionSO, source, value); }
         }
 
         public string GetDescription()
         {
-            if (quaternionRef == null)
-            {
-                return quaternionVal.ToString();
-            }
-            else
-            {
-                return quaternionRef.Key;
-            }
+            return VariableValueReference.Describe(quaternionRef, quaternionVal, quaternionSO, source);
         }
     }
 }

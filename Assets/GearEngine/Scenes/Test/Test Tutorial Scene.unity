@@ -515,7 +515,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 61dddfdc5e0e44ca298d8f46f7f5a915, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Fungus::Fungus.FungusState
-  selectedFlowchart: {fileID: 1893364504}
+  selectedFlowchart: {fileID: 1210569622}
 --- !u!4 &610416767
 Transform:
   m_ObjectHideFlags: 1
@@ -772,6 +772,479 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!1 &1210569615
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1210569623}
+  - component: {fileID: 1210569622}
+  - component: {fileID: 1210569621}
+  - component: {fileID: 1210569620}
+  - component: {fileID: 1210569619}
+  - component: {fileID: 1210569618}
+  - component: {fileID: 1210569617}
+  - component: {fileID: 1210569616}
+  m_Layer: 0
+  m_Name: GameObject
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1210569616
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1210569615}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a6a0f330126b84a40b64420fcb09d831, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Presentation.UI.Input.InvokeActionCommand
+  itemId: 2
+  indentLevel: 0
+  actions:
+  - rid: 3466829814678684070
+  actionEnabled: 01
+  executionMethod: 0
+  references:
+    version: 2
+    RefIds:
+    - rid: 3466829814678684070
+      type: {class: Call, ns: Scaffold, asm: Game.GearEngine}
+      data:
+        targetFlowchart: {fileID: 0}
+        targetBlock: {fileID: 0}
+        startLabel:
+          stringRef: {fileID: 0}
+          stringVal: 
+        startIndex: 0
+        callMode: 0
+--- !u!114 &1210569617
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1210569615}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a6a0f330126b84a40b64420fcb09d831, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Presentation.UI.Input.InvokeActionCommand
+  itemId: 1
+  indentLevel: 0
+  actions:
+  - rid: 3466829814678684068
+  actionEnabled: 01
+  executionMethod: 0
+  references:
+    version: 2
+    RefIds:
+    - rid: 3466829814678684068
+      type: {class: CrossfadeAnim, ns: Scaffold, asm: Game.GearEngine}
+      data:
+        targetAnimator:
+          animatorRef: {fileID: 0}
+          animatorVal: {fileID: 0}
+        stateName:
+          stringRef: {fileID: 0}
+          stringVal: 
+        transitionDuration:
+          floatRef: {fileID: 0}
+          floatVal: 0.25
+        layer: 0
+--- !u!114 &1210569618
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1210569615}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a1534cbac729494f945c90efe327e10a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: AnimoraRuntime::OM.Animora.Runtime.AnimoraPlayer
+  playerUniqueID: AnimoraPlayer
+  selectedClipIndex: -1
+  playMode: 0
+  timeMode: 1
+  defaultPlayDirection: 0
+  playLoopType: 0
+  debugFlags: 0
+  timelineDuration: 2
+  playbackSpeed: 1
+  loopCount: 0
+  animoraPlayerEvents:
+    enabled: 0
+    onStartPlaying:
+      m_PersistentCalls:
+        m_Calls: []
+    onCompletePlaying:
+      m_PersistentCalls:
+        m_Calls: []
+    onStartLoop:
+      m_PersistentCalls:
+        m_Calls: []
+    onCompleteLoop:
+      m_PersistentCalls:
+        m_Calls: []
+    onPause:
+      m_PersistentCalls:
+        m_Calls: []
+    onResume:
+      m_PersistentCalls:
+        m_Calls: []
+    onStop:
+      m_PersistentCalls:
+        m_Calls: []
+  clipsManager:
+    clips:
+    - rid: 3466829814678684018
+    - rid: 3466829814678684019
+    - rid: 3466829814678684020
+  parentAnimoraPlayer: {fileID: 0}
+  references:
+    version: 2
+    RefIds:
+    - rid: 3466829814678684018
+      type: {class: AnimoraClipBroAudio, ns: OM.Animora.Modules, asm: Assembly-CSharp}
+      data:
+        clipName: BroAudio Play
+        clipDescription: Plays a sound using BroAudio
+        highlightColor: {r: 0.38, g: 0.78, b: 0.8, a: 1}
+        isActive: 1
+        startTime: 0
+        duration: 1
+        orderIndex: 0
+        debugFlags: 0
+        playChance: 100
+        events:
+          isEnabled: 0
+          onStartPlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompletePlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onStartOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompleteOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onEnter:
+            m_PersistentCalls:
+              m_Calls: []
+          onUpdate:
+            m_PersistentCalls:
+              m_Calls: []
+          onExit:
+            m_PersistentCalls:
+              m_Calls: []
+        soundID:
+          _entity: {fileID: 0}
+          ID: 0
+          <DebugObject>k__BackingField: {fileID: 0}
+        stopOnExit: 0
+        fadeOut: -1
+    - rid: 3466829814678684019
+      type: {class: AnimoraClipNestedPlayer, ns: OM.Animora.Modules, asm: Assembly-CSharp}
+      data:
+        clipName: Nested Player
+        clipDescription: Plays a nested player
+        highlightColor: {r: 0.8, g: 0.33, b: 0.41, a: 1}
+        isActive: 1
+        startTime: 0
+        duration: 1
+        orderIndex: 1
+        debugFlags: 0
+        playChance: 100
+        events:
+          isEnabled: 0
+          onStartPlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompletePlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onStartOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompleteOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onEnter:
+            m_PersistentCalls:
+              m_Calls: []
+          onUpdate:
+            m_PersistentCalls:
+              m_Calls: []
+          onExit:
+            m_PersistentCalls:
+              m_Calls: []
+        nestedPlayer: {fileID: 0}
+    - rid: 3466829814678684020
+      type: {class: AnimoraClipPosition, ns: OM.Animora.Modules, asm: Assembly-CSharp}
+      data:
+        clipName: Position
+        clipDescription: This is a position animation clip
+        highlightColor: {r: 0.8, g: 0.33, b: 0.41, a: 1}
+        isActive: 1
+        startTime: 1
+        duration: 1
+        orderIndex: 2
+        debugFlags: 0
+        playChance: 100
+        events:
+          isEnabled: 0
+          onStartPlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompletePlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onStartOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompleteOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onEnter:
+            m_PersistentCalls:
+              m_Calls: []
+          onUpdate:
+            m_PersistentCalls:
+              m_Calls: []
+          onExit:
+            m_PersistentCalls:
+              m_Calls: []
+        targets:
+          directTargets: []
+        actionsManager:
+          actions:
+          - rid: 3466829814678684021
+        space: 0
+        position:
+          enabled: 1
+          interpolationType: 0
+          ease:
+            easeDataType: 1
+            animationCurve:
+              serializedVersion: 2
+              m_Curve:
+              - serializedVersion: 3
+                time: 0
+                value: 0
+                inSlope: 0
+                outSlope: 0
+                tangentMode: 0
+                weightedMode: 0
+                inWeight: 0
+                outWeight: 0
+              - serializedVersion: 3
+                time: 1
+                value: 1
+                inSlope: 0
+                outSlope: 0
+                tangentMode: 0
+                weightedMode: 0
+                inWeight: 0
+                outWeight: 0
+              m_PreInfinity: 2
+              m_PostInfinity: 2
+              m_RotationOrder: 4
+            easeType: 0
+          randomizeForEach: 0
+          zero:
+            valueType: 0
+            vector3Type: 5
+            value: {x: 0, y: 0, z: 0}
+            randomValue1: {x: 0, y: 0, z: 0}
+            randomValue2: {x: 0, y: 0, z: 0}
+            targetTransform: {fileID: 0}
+          one:
+            valueType: 0
+            vector3Type: 5
+            value: {x: 0, y: 0, z: 0}
+            randomValue1: {x: 0, y: 0, z: 0}
+            randomValue2: {x: 0, y: 0, z: 0}
+            targetTransform: {fileID: 0}
+    - rid: 3466829814678684021
+      type: {class: AnimoraActionSetPosition, ns: OM.Animora.Modules, asm: Assembly-CSharp}
+      data:
+        actionName: Set Position
+        actionGroup: 0
+        isEnabled: 0
+        orderIndex: 0
+        playDirection: 2
+        useCustomTargets: 0
+        customTargets: []
+        space: 0
+        position:
+          valueType: 0
+          vector3Type: 0
+          value: {x: 0, y: 0, z: 0}
+          randomValue1: {x: 0, y: 0, z: 0}
+          randomValue2: {x: 0, y: 0, z: 0}
+          targetTransform: {fileID: 0}
+--- !u!114 &1210569619
+MonoBehaviour:
+  m_ObjectHideFlags: 2
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1210569615}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b10c77fb70124b2489533472023a791, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Presentation.UI.Input.WaitForTargetClick
+  itemId: 1
+  indentLevel: 0
+  errorMessage: 
+  referencedVariables: []
+  <CommandIndex>k__BackingField: 0
+  <IsExecuting>k__BackingField: 0
+  <ExecutingIconTimer>k__BackingField: 0
+  <ParentBlock>k__BackingField: {fileID: 1210569621}
+  target:
+    strategy: 0
+    directReference: {fileID: 0}
+    tagFilter:
+      soTags: []
+      nativeTags:
+        tags: []
+      matchAll: 0
+    globalVariableName: 
+    references: []
+  targetTagSOList: []
+  matchAll: 0
+  migratedToTargetReference: 0
+  isTargetClicked: 0
+  addedTriggers: []
+  addedEntries: []
+--- !u!114 &1210569620
+MonoBehaviour:
+  m_ObjectHideFlags: 2
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1210569615}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d2f6487d21a03404cb21b245f0242e79, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Scaffold::Scaffold.GameStarted
+  parentBlock: {fileID: 1210569621}
+  suppressBlockAutoSelect: 0
+  waitForFrames: 1
+--- !u!114 &1210569621
+MonoBehaviour:
+  m_ObjectHideFlags: 2
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1210569615}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d3d73aef2cfc4f51abf34ac00241f60, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Scaffold::Scaffold.Block
+  nodeRect:
+    serializedVersion: 2
+    x: 387
+    y: 165.5
+    width: 110.17969
+    height: 40
+  tint: {r: 1, g: 1, b: 1, a: 1}
+  useCustomTint: 0
+  itemId: 0
+  blockName: New Block
+  description: 
+  eventHandler: {fileID: 1210569620}
+  commandList: []
+  tracks:
+  - trackName: Track 0
+    commands:
+    - {fileID: 1210569617}
+    - {fileID: 1210569616}
+  - trackName: Track 1
+    commands: []
+  - trackName: Track 2
+    commands: []
+  - trackName: Track 3
+    commands: []
+  - trackName: Track 4
+    commands: []
+  - trackName: Track 5
+    commands: []
+  - trackName: Track 6
+    commands: []
+  executionMethod: 0
+  awaitMode: 0
+  suppressAllAutoSelections: 0
+--- !u!114 &1210569622
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1210569615}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a334fe2ffb574b3583ff3b18b4792d3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Scaffold::Scaffold.Flowchart
+  version: 1
+  scrollPos: {x: -66, y: -15}
+  variablesScrollPos: {x: 0, y: 0}
+  variablesExpanded: 1
+  blockViewHeight: 294.5
+  zoom: 1
+  scrollViewRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 0
+    height: 0
+  selectedBlocks:
+  - {fileID: 1210569621}
+  selectedCommands:
+  - {fileID: 1210569616}
+  variables: []
+  description: 
+  stepPause: 0
+  colorCommands: 1
+  hideComponents: 1
+  saveSelection: 1
+  localizationId: 
+  showLineNumbers: 0
+  hideCommands: []
+  luaEnvironment: {fileID: 0}
+  luaBindingName: flowchart
+--- !u!4 &1210569623
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1210569615}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 444.04248, y: 1205.9503, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1330917694
 GameObject:
   m_ObjectHideFlags: 0
@@ -993,336 +1466,6 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 6b80c79064f1d4a05919837bb3f35e43, type: 2}
   nativeTags:
     tags: []
---- !u!1 &1893364498
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1893364505}
-  - component: {fileID: 1893364504}
-  - component: {fileID: 1893364503}
-  - component: {fileID: 1893364502}
-  - component: {fileID: 1893364501}
-  - component: {fileID: 1893364500}
-  - component: {fileID: 1893364499}
-  - component: {fileID: 1893364507}
-  - component: {fileID: 1893364506}
-  - component: {fileID: 1893364508}
-  - component: {fileID: 1893364511}
-  - component: {fileID: 1893364510}
-  - component: {fileID: 1893364509}
-  m_Layer: 0
-  m_Name: GameObject
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1893364499
-MonoBehaviour:
-  m_ObjectHideFlags: 2
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1893364498}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4c57880ce088147a697319b2545d0430, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Presentation.UI.Input.WaitForTargetPointerEnter
-  itemId: 4
-  indentLevel: 0
-  target:
-    strategy: 0
-    directReference: {fileID: 478737325}
-    tagFilter:
-      soTags: []
-      nativeTags:
-        tags: []
-      matchAll: 0
-    globalVariableName: 
-    references: []
-  targetTagSOList:
-  - {fileID: 11400000, guid: 095a066fb920f48d88ce0d9bacbf4696, type: 2}
-  matchAll: 0
-  migratedToTargetReference: 0
---- !u!114 &1893364500
-MonoBehaviour:
-  m_ObjectHideFlags: 2
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1893364498}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9b10c77fb70124b2489533472023a791, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Presentation.UI.Input.WaitForTargetClick
-  itemId: 3
-  indentLevel: 0
-  target:
-    strategy: 0
-    directReference: {fileID: 0}
-    tagFilter:
-      soTags: []
-      nativeTags:
-        tags: []
-      matchAll: 0
-    globalVariableName: 
-    references: []
-  targetTagSOList:
-  - {fileID: 11400000, guid: 6b80c79064f1d4a05919837bb3f35e43, type: 2}
-  matchAll: 0
-  migratedToTargetReference: 0
---- !u!114 &1893364501
-MonoBehaviour:
-  m_ObjectHideFlags: 2
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1893364498}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 85344b122b93d4d8199c6412aa8c23ac, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Presentation.UI.Tags.Highlight.ShowUIFocusCommand
-  itemId: 2
-  indentLevel: 0
-  _target:
-    strategy: 0
-    directReference: {fileID: 0}
-    tagFilter:
-      soTags: []
-      nativeTags:
-        tags: []
-      matchAll: 0
-    globalVariableName: 
-    references: []
-  _targetTag: {fileID: 11400000, guid: 095a066fb920f48d88ce0d9bacbf4696, type: 2}
-  _migratedToTargetReference: 0
-  _preset: {fileID: 11400000, guid: c7f2e8f2a779e4d08b9892b9792129e0, type: 2}
-  _overridePresetLayout: 1
-  _indicatorOffset: {x: 0, y: 0}
-  _indicatorAnchor: 4
-  _customIndicatorAnchor: {x: 0.5, y: 1}
-  _aimToAnchor: 0
-  _directionOffset: -5
-  _targetIndex: 0
---- !u!114 &1893364502
-MonoBehaviour:
-  m_ObjectHideFlags: 2
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1893364498}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b1c4e12aa47b44ef29237b4d620474be, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Presentation.UI.Tags.Highlight.ClearUIFocusCommand
-  itemId: 1
-  indentLevel: 0
---- !u!114 &1893364503
-MonoBehaviour:
-  m_ObjectHideFlags: 2
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1893364498}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3d3d73aef2cfc4f51abf34ac00241f60, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Fungus::Fungus.Block
-  nodeRect:
-    serializedVersion: 2
-    x: 346
-    y: 126
-    width: 110.17969
-    height: 40
-  tint: {r: 1, g: 1, b: 1, a: 1}
-  useCustomTint: 0
-  itemId: 0
-  blockName: New Block
-  description: 
-  eventHandler: {fileID: 1893364508}
-  commandList:
-  - {fileID: 1893364501}
-  - {fileID: 1893364499}
-  - {fileID: 1893364506}
-  - {fileID: 1893364507}
-  - {fileID: 1893364500}
-  - {fileID: 1893364502}
-  - {fileID: 1893364511}
-  - {fileID: 1893364510}
-  - {fileID: 1893364509}
-  suppressAllAutoSelections: 0
---- !u!114 &1893364504
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1893364498}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7a334fe2ffb574b3583ff3b18b4792d3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Fungus::Fungus.Flowchart
-  version: 1
-  scrollPos: {x: -27.339844, y: -13}
-  variablesScrollPos: {x: 0, y: 0}
-  variablesExpanded: 1
-  blockViewHeight: 200
-  zoom: 1
-  scrollViewRect:
-    serializedVersion: 2
-    x: 0
-    y: 0
-    width: 0
-    height: 0
-  selectedBlocks:
-  - {fileID: 1893364503}
-  selectedCommands:
-  - {fileID: 1893364509}
-  variables: []
-  description: 
-  stepPause: 0
-  colorCommands: 1
-  hideComponents: 1
-  saveSelection: 1
-  localizationId: 
-  showLineNumbers: 0
-  hideCommands: []
-  luaEnvironment: {fileID: 0}
-  luaBindingName: flowchart
---- !u!4 &1893364505
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1893364498}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -2476.6675, y: -1417.9128, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1893364506
-MonoBehaviour:
-  m_ObjectHideFlags: 2
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1893364498}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b1c4e12aa47b44ef29237b4d620474be, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Presentation.UI.Tags.Highlight.ClearUIFocusCommand
-  itemId: 7
-  indentLevel: 0
---- !u!114 &1893364507
-MonoBehaviour:
-  m_ObjectHideFlags: 2
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1893364498}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 85344b122b93d4d8199c6412aa8c23ac, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Presentation.UI.Tags.Highlight.ShowUIFocusCommand
-  itemId: 5
-  indentLevel: 0
-  _target:
-    strategy: 1
-    directReference: {fileID: 0}
-    tagFilter:
-      soTags:
-      - {fileID: 11400000, guid: 6b80c79064f1d4a05919837bb3f35e43, type: 2}
-      nativeTags:
-        tags: []
-      matchAll: 0
-    globalVariableName: Var
-    references: []
-  _targetTag: {fileID: 11400000, guid: 6b80c79064f1d4a05919837bb3f35e43, type: 2}
-  _migratedToTargetReference: 0
-  _preset: {fileID: 11400000, guid: c7f2e8f2a779e4d08b9892b9792129e0, type: 2}
-  _overridePresetLayout: 1
-  _indicatorOffset: {x: 0, y: 0}
-  _indicatorAnchor: 5
-  _customIndicatorAnchor: {x: 0.5, y: 1}
-  _aimToAnchor: 1
-  _directionOffset: 2
-  _targetIndex: 0
---- !u!114 &1893364508
-MonoBehaviour:
-  m_ObjectHideFlags: 2
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1893364498}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d2f6487d21a03404cb21b245f0242e79, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Fungus::Fungus.GameStarted
-  parentBlock: {fileID: 1893364503}
-  suppressBlockAutoSelect: 0
-  waitForFrames: 1
---- !u!114 &1893364509
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1893364498}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 59cae78530361499c94cd67bd55d62ef, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Presentation.UI.Input.WaitForEventCommand
-  itemId: 10
-  indentLevel: 0
-  eventType: GearEngine.Campaign.Analytics.CurrencySpentEvent
---- !u!114 &1893364510
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1893364498}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 64d84d7597dd44e9e853720fe338f75e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Presentation.UI.Input.CloseViewCommand
-  itemId: 9
-  indentLevel: 0
-  viewType: GearEngine.Campaign.Presentation.ActiveRaceView
---- !u!114 &1893364511
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1893364498}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 31ffadc2c76134efbaa854a7841a6fa0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Presentation.UI.Input.OpenViewCommand
-  itemId: 8
-  indentLevel: 0
-  viewType: GearEngine.CarSimulation.Presentation.CarTrackTestView
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -1331,4 +1474,4 @@ SceneRoots:
   - {fileID: 610416767}
   - {fileID: 1330917698}
   - {fileID: 905234846}
-  - {fileID: 1893364505}
+  - {fileID: 1210569623}

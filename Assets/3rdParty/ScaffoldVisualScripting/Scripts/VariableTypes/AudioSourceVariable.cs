@@ -22,7 +22,13 @@ namespace Scaffold
         [SerializeField]
         [VariableProperty("<Value>", typeof(AudioSourceVariable))]
         public AudioSourceVariable audioSourceRef;
-        
+
+
+        [SerializeField]
+        public VariableDataSource source;
+
+        [SerializeField]
+        public AudioSourceValueSO audioSourceSO;
         [SerializeField]
         public AudioSource audioSourceVal;
 
@@ -35,24 +41,19 @@ namespace Scaffold
         {
             audioSourceVal = v;
             audioSourceRef = null;
+            source = VariableDataSource.Unspecified;
+            audioSourceSO = null;
         }
 
         public AudioSource Value
         {
-            get { return (audioSourceRef == null) ? audioSourceVal : audioSourceRef.Value; }
-            set { if (audioSourceRef == null) { audioSourceVal = value; } else { audioSourceRef.Value = value; } }
+            get { return VariableValueReference.Resolve(audioSourceRef, audioSourceVal, audioSourceSO, source); }
+            set { VariableValueReference.Assign(audioSourceRef, ref audioSourceVal, audioSourceSO, source, value); }
         }
 
         public string GetDescription()
         {
-            if (audioSourceRef == null)
-            {
-                return audioSourceVal != null ? audioSourceVal.ToString() : "Null";
-            }
-            else
-            {
-                return audioSourceRef.Key;
-            }
+            return VariableValueReference.Describe(audioSourceRef, audioSourceVal, audioSourceSO, source);
         }
     }
 }

@@ -63,6 +63,12 @@ namespace Scaffold
         [VariableProperty("<Value>", typeof(Vector4Variable))]
         public Vector4Variable vector4Ref;
 
+
+        [SerializeField]
+        public VariableDataSource source;
+
+        [SerializeField]
+        public Vector4ValueSO vector4SO;
         [SerializeField]
         public UnityEngine.Vector4 vector4Val;
 
@@ -75,24 +81,19 @@ namespace Scaffold
         {
             vector4Val = v;
             vector4Ref = null;
+            source = VariableDataSource.Unspecified;
+            vector4SO = null;
         }
 
         public UnityEngine.Vector4 Value
         {
-            get { return (vector4Ref == null) ? vector4Val : vector4Ref.Value; }
-            set { if (vector4Ref == null) { vector4Val = value; } else { vector4Ref.Value = value; } }
+            get { return VariableValueReference.Resolve(vector4Ref, vector4Val, vector4SO, source); }
+            set { VariableValueReference.Assign(vector4Ref, ref vector4Val, vector4SO, source, value); }
         }
 
         public string GetDescription()
         {
-            if (vector4Ref == null)
-            {
-                return vector4Val.ToString();
-            }
-            else
-            {
-                return vector4Ref.Key;
-            }
+            return VariableValueReference.Describe(vector4Ref, vector4Val, vector4SO, source);
         }
     }
 }

@@ -9,6 +9,14 @@ using VContainer.Unity;
 
 namespace GearEngine.CarSimulation.PhysicsSimulation
 {
+    /// <summary>
+    /// [OUTLIER JUSTIFICATION]
+    /// This service handles the physics simulation lifecycle, stats progression, input overriding, 
+    /// telemetry, and trajectory generation. It is intentionally kept as a unified service to avoid 
+    /// the performance overhead of event-driven communication during high-frequency physics ticks. 
+    /// Keeping the waypoint calculation and AI input overrides in the same loop guarantees that 
+    /// physics forces are applied immediately after trajectory evaluation.
+    /// </summary>
     public class SplineCarRunnerService : ISimulationRunnerService, ITickable
     {
         public event Action<CarEntity> OnLapCompleted;

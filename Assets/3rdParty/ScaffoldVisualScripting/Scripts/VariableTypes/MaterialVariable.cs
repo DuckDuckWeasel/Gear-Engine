@@ -23,7 +23,13 @@ namespace Scaffold
         [SerializeField]
         [VariableProperty("<Value>", typeof(MaterialVariable))]
         public MaterialVariable materialRef;
-        
+
+
+        [SerializeField]
+        public VariableDataSource source;
+
+        [SerializeField]
+        public MaterialValueSO materialSO;
         [SerializeField]
         public Material materialVal;
 
@@ -31,8 +37,10 @@ namespace Scaffold
         {
             materialVal = v;
             materialRef = null;
+            source = VariableDataSource.Unspecified;
+            materialSO = null;
         }
-        
+
         public static implicit operator Material(MaterialData materialData)
         {
             return materialData.Value;
@@ -40,20 +48,13 @@ namespace Scaffold
 
         public Material Value
         {
-            get { return (materialRef == null) ? materialVal : materialRef.Value; }
-            set { if (materialRef == null) { materialVal = value; } else { materialRef.Value = value; } }
+            get { return VariableValueReference.Resolve(materialRef, materialVal, materialSO, source); }
+            set { VariableValueReference.Assign(materialRef, ref materialVal, materialSO, source, value); }
         }
 
         public string GetDescription()
         {
-            if (materialRef == null)
-            {
-                return materialVal != null ? materialVal.ToString() : "Null";
-            }
-            else
-            {
-                return materialRef.Key;
-            }
+            return VariableValueReference.Describe(materialRef, materialVal, materialSO, source);
         }
     }
 }

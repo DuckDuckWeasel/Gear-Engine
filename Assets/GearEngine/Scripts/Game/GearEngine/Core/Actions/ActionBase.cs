@@ -47,10 +47,21 @@ namespace GearEngine.Core.Actions
             set { if (hostCommand != null) hostCommand.IsExecuting = value; } 
         }
         
-        public virtual Block ParentBlock 
-        { 
-            get { return hostCommand != null ? hostCommand.ParentBlock : null; } 
-            set { if (hostCommand != null) hostCommand.ParentBlock = value; } 
+        public virtual Block ParentBlock
+        {
+            get { return hostCommand != null ? hostCommand.ParentBlock : null; }
+            set { if (hostCommand != null) hostCommand.ParentBlock = value; }
+        }
+
+        /// <summary>
+        /// The CommandTrack the host Command belongs to. Delegates to the host, same as ParentBlock,
+        /// so flow-control actions (If/Else/End, loops, jumps) resolve against the track they actually
+        /// run on rather than always the Block's first track.
+        /// </summary>
+        public virtual CommandTrack ParentTrack
+        {
+            get { return hostCommand != null ? hostCommand.ParentTrack : null; }
+            set { if (hostCommand != null) hostCommand.ParentTrack = value; }
         }
 
         public virtual void SetHost(MonoBehaviour host)

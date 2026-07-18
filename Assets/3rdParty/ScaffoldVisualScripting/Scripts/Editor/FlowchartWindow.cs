@@ -1875,6 +1875,7 @@ namespace Scaffold.EditorUtils
             {
                 flowchart.AddSelectedCommand(block.ActiveCommand);
             }
+
         }
 
         /// <summary>

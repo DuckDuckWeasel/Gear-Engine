@@ -114,6 +114,14 @@ namespace Scaffold
         public virtual Block ParentBlock { get; set; }
 
         /// <summary>
+        /// Reference to the CommandTrack that this command belongs to within its parent Block.
+        /// This reference is only populated at runtime and in the editor when the
+        /// block is selected. Used to scope flow-control (If/Else/End, loops, jumps) to the
+        /// track the command actually runs on, since a Block can run multiple tracks in parallel.
+        /// </summary>
+        public virtual CommandTrack ParentTrack { get; set; }
+
+        /// <summary>
         /// Returns the Flowchart that this command belongs to.
         /// </summary>
         public virtual Flowchart GetFlowchart()
@@ -156,7 +164,7 @@ namespace Scaffold
             OnExit();
             if (ParentBlock != null)
             {
-                ParentBlock.JumpToCommandIndex = nextCommandIndex;
+                ParentBlock.OnCommandCompleted(this, nextCommandIndex);
             }
         }
 

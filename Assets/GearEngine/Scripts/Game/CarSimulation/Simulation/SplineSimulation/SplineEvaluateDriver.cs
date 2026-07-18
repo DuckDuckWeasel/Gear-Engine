@@ -18,6 +18,14 @@ namespace GearEngine.CarSimulation.SplineSimulation
     /// <see cref="SplineEvaluateRunnerService"/>). It writes to a
     /// <see cref="Transform"/> reference each tick.
     /// </para>
+    /// <para>
+    /// [OUTLIER JUSTIFICATION] 
+    /// This class is intentionally kept as a monolithic God Object (1000+ lines) to ensure perfectly 
+    /// deterministic, frame-tight execution order for the entire spline simulation pipeline 
+    /// (Speed -> T Advancement -> Lateral Offset -> Visuals -> Transform). Splitting this into multiple 
+    /// observers or components would introduce state synchronization complexities and performance overhead,
+    /// which goes against the requirement of having a lightweight, pure-C# procedural simulation.
+    /// </para>
     /// </summary>
     public sealed class SplineEvaluateDriver
     {

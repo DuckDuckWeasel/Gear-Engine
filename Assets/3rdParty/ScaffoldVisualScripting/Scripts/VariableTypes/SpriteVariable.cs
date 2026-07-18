@@ -23,7 +23,13 @@ namespace Scaffold
         [SerializeField]
         [VariableProperty("<Value>", typeof(SpriteVariable))]
         public SpriteVariable spriteRef;
-        
+
+
+        [SerializeField]
+        public VariableDataSource source;
+
+        [SerializeField]
+        public SpriteValueSO spriteSO;
         [SerializeField]
         public Sprite spriteVal;
 
@@ -31,8 +37,10 @@ namespace Scaffold
         {
             spriteVal = v;
             spriteRef = null;
+            source = VariableDataSource.Unspecified;
+            spriteSO = null;
         }
-        
+
         public static implicit operator Sprite(SpriteData spriteData)
         {
             return spriteData.Value;
@@ -40,20 +48,13 @@ namespace Scaffold
 
         public Sprite Value
         {
-            get { return (spriteRef == null) ? spriteVal : spriteRef.Value; }
-            set { if (spriteRef == null) { spriteVal = value; } else { spriteRef.Value = value; } }
+            get { return VariableValueReference.Resolve(spriteRef, spriteVal, spriteSO, source); }
+            set { VariableValueReference.Assign(spriteRef, ref spriteVal, spriteSO, source, value); }
         }
 
         public string GetDescription()
         {
-            if (spriteRef == null)
-            {
-                return spriteVal != null ? spriteVal.ToString() : "Null";
-            }
-            else
-            {
-                return spriteRef.Key;
-            }
+            return VariableValueReference.Describe(spriteRef, spriteVal, spriteSO, source);
         }
     }
 }

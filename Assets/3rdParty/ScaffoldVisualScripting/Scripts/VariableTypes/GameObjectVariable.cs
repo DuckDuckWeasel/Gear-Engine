@@ -23,7 +23,13 @@ namespace Scaffold
         [SerializeField]
         [VariableProperty("<Value>", typeof(GameObjectVariable))]
         public GameObjectVariable gameObjectRef;
-        
+
+
+        [SerializeField]
+        public VariableDataSource source;
+
+        [SerializeField]
+        public GameObjectValueSO gameObjectSO;
         [SerializeField]
         public GameObject gameObjectVal;
 
@@ -31,8 +37,10 @@ namespace Scaffold
         {
             gameObjectVal = v;
             gameObjectRef = null;
+            source = VariableDataSource.Unspecified;
+            gameObjectSO = null;
         }
-        
+
         public static implicit operator GameObject(GameObjectData gameObjectData)
         {
             return gameObjectData.Value;
@@ -40,20 +48,13 @@ namespace Scaffold
 
         public GameObject Value
         {
-            get { return (gameObjectRef == null) ? gameObjectVal : gameObjectRef.Value; }
-            set { if (gameObjectRef == null) { gameObjectVal = value; } else { gameObjectRef.Value = value; } }
+            get { return VariableValueReference.Resolve(gameObjectRef, gameObjectVal, gameObjectSO, source); }
+            set { VariableValueReference.Assign(gameObjectRef, ref gameObjectVal, gameObjectSO, source, value); }
         }
 
         public string GetDescription()
         {
-            if (gameObjectRef == null)
-            {
-                return gameObjectVal != null ? gameObjectVal.ToString() : "Null";
-            }
-            else
-            {
-                return gameObjectRef.Key;
-            }
+            return VariableValueReference.Describe(gameObjectRef, gameObjectVal, gameObjectSO, source);
         }
     }
 }

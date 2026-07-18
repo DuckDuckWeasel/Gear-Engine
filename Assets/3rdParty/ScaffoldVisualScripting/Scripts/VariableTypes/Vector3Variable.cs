@@ -56,7 +56,13 @@ namespace Scaffold
         [SerializeField]
         [VariableProperty("<Value>", typeof(Vector3Variable))]
         public Vector3Variable vector3Ref;
-        
+
+
+        [SerializeField]
+        public VariableDataSource source;
+
+        [SerializeField]
+        public Vector3ValueSO vector3SO;
         [SerializeField]
         public Vector3 vector3Val;
 
@@ -64,8 +70,10 @@ namespace Scaffold
         {
             vector3Val = v;
             vector3Ref = null;
+            source = VariableDataSource.Unspecified;
+            vector3SO = null;
         }
-        
+
         public static implicit operator Vector3(Vector3Data vector3Data)
         {
             return vector3Data.Value;
@@ -73,20 +81,13 @@ namespace Scaffold
 
         public Vector3 Value
         {
-            get { return (vector3Ref == null) ? vector3Val : vector3Ref.Value; }
-            set { if (vector3Ref == null) { vector3Val = value; } else { vector3Ref.Value = value; } }
+            get { return VariableValueReference.Resolve(vector3Ref, vector3Val, vector3SO, source); }
+            set { VariableValueReference.Assign(vector3Ref, ref vector3Val, vector3SO, source, value); }
         }
 
         public string GetDescription()
         {
-            if (vector3Ref == null)
-            {
-                return vector3Val.ToString();
-            }
-            else
-            {
-                return vector3Ref.Key;
-            }
+            return VariableValueReference.Describe(vector3Ref, vector3Val, vector3SO, source);
         }
     }
 }

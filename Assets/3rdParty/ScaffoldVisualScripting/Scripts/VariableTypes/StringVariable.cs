@@ -25,6 +25,12 @@ namespace Scaffold
         [VariableProperty("<Value>", typeof(StringVariable))]
         public StringVariable stringRef;
 
+
+        [SerializeField]
+        public VariableDataSource source;
+
+        [SerializeField]
+        public StringValueSO stringSO;
         [SerializeField]
         public string stringVal;
 
@@ -32,8 +38,10 @@ namespace Scaffold
         {
             stringVal = v;
             stringRef = null;
+            source = VariableDataSource.Unspecified;
+            stringSO = null;
         }
-        
+
         public static implicit operator string(StringData spriteData)
         {
             return spriteData.Value;
@@ -41,24 +49,16 @@ namespace Scaffold
 
         public string Value
         {
-            get 
-            { 
+            get
+            {
                 if (stringVal == null) stringVal = "";
-                return (stringRef == null) ? stringVal : stringRef.Value; 
-            }
-            set { if (stringRef == null) { stringVal = value; } else { stringRef.Value = value; } }
+                return VariableValueReference.Resolve(stringRef, stringVal, stringSO, source); }
+            set { VariableValueReference.Assign(stringRef, ref stringVal, stringSO, source, value); }
         }
 
         public string GetDescription()
         {
-            if (stringRef == null)
-            {
-                return stringVal != null ? stringVal : string.Empty;
-            }
-            else
-            {
-                return stringRef.Key;
-            }
+            return VariableValueReference.Describe(stringRef, stringVal, stringSO, source);
         }
     }
 
@@ -74,6 +74,12 @@ namespace Scaffold
         [VariableProperty("<Value>", typeof(StringVariable))]
         public StringVariable stringRef;
 
+
+        [SerializeField]
+        public VariableDataSource source;
+
+        [SerializeField]
+        public StringValueSO stringSO;
         [TextArea(1,15)]
         [SerializeField]
         public string stringVal;
@@ -82,6 +88,8 @@ namespace Scaffold
         {
             stringVal = v;
             stringRef = null;
+            source = VariableDataSource.Unspecified;
+            stringSO = null;
         }
 
         public static implicit operator string(StringDataMulti spriteData)
@@ -91,25 +99,17 @@ namespace Scaffold
 
         public string Value
         {
-            get 
+            get
             {
                 if (stringVal == null) stringVal = "";
-                return (stringRef == null) ? stringVal : stringRef.Value; 
-            }
-            set { if (stringRef == null) { stringVal = value; } else { stringRef.Value = value; } }
+                return VariableValueReference.Resolve(stringRef, stringVal, stringSO, source); }
+            set { VariableValueReference.Assign(stringRef, ref stringVal, stringSO, source, value); }
         }
 
         public string GetDescription()
         {
-            if (stringRef == null)
-            {
-                return stringVal != null ? stringVal : string.Empty;
-            }
-            else
-            {
-                return stringRef.Key;
-            }
+            return VariableValueReference.Describe(stringRef, stringVal, stringSO, source);
         }
     }
-        
+
 }

@@ -49,7 +49,13 @@ namespace Scaffold
         [SerializeField]
         [VariableProperty("<Value>", typeof(ColorVariable))]
         public ColorVariable colorRef;
-        
+
+
+        [SerializeField]
+        public VariableDataSource source;
+
+        [SerializeField]
+        public ColorValueSO colorSO;
         [SerializeField]
         public Color colorVal;
 
@@ -57,8 +63,10 @@ namespace Scaffold
         {
             colorVal = v;
             colorRef = null;
+            source = VariableDataSource.Unspecified;
+            colorSO = null;
         }
-        
+
         public static implicit operator Color(ColorData colorData)
         {
             return colorData.Value;
@@ -66,20 +74,13 @@ namespace Scaffold
 
         public Color Value
         {
-            get { return (colorRef == null) ? colorVal : colorRef.Value; }
-            set { if (colorRef == null) { colorVal = value; } else { colorRef.Value = value; } }
+            get { return VariableValueReference.Resolve(colorRef, colorVal, colorSO, source); }
+            set { VariableValueReference.Assign(colorRef, ref colorVal, colorSO, source, value); }
         }
 
         public string GetDescription()
         {
-            if (colorRef == null)
-            {
-                return colorVal.ToString();
-            }
-            else
-            {
-                return colorRef.Key;
-            }
+            return VariableValueReference.Describe(colorRef, colorVal, colorSO, source);
         }
     }
 }

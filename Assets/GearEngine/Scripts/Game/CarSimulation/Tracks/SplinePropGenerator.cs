@@ -6,6 +6,14 @@ using TriInspector;
 
 namespace GearEngine.CarSimulation.Tracks
 {
+    /// <summary>
+    /// [OUTLIER JUSTIFICATION]
+    /// This MonoBehaviour is responsible for evaluating PropRules and placing track props along 
+    /// a spline. It contains over 500 lines because the rule evaluation logic (density, jitter, 
+    /// scaling, rotation, collision checking) is tightly coupled to the internal data structures. 
+    /// Abstracting the builders into separate classes would over-complicate the Inspector serialization 
+    /// in TriInspector and make rule authoring harder for designers.
+    /// </summary>
     [DeclareFoldoutGroup("Generated Objects")]
     public class SplinePropGenerator : MonoBehaviour
     {

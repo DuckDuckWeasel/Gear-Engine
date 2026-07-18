@@ -24,6 +24,12 @@ namespace Scaffold
         [VariableProperty("<Value>", typeof(CollectionVariable))]
         public CollectionVariable collectionRef;
 
+
+        [SerializeField]
+        public VariableDataSource source;
+
+        [SerializeField]
+        public CollectionValueSO collectionSO;
         [SerializeField]
         public Scaffold.Collection collectionVal;
 
@@ -36,24 +42,19 @@ namespace Scaffold
         {
             collectionVal = v;
             collectionRef = null;
+            source = VariableDataSource.Unspecified;
+            collectionSO = null;
         }
 
         public Scaffold.Collection Value
         {
-            get { return (collectionRef == null) ? collectionVal : collectionRef.Value; }
-            set { if (collectionRef == null) { collectionVal = value; } else { collectionRef.Value = value; } }
+            get { return VariableValueReference.Resolve(collectionRef, collectionVal, collectionSO, source); }
+            set { VariableValueReference.Assign(collectionRef, ref collectionVal, collectionSO, source, value); }
         }
 
         public string GetDescription()
         {
-            if (collectionRef == null)
-            {
-                return collectionVal != null ? collectionVal.ToString() : "Null";
-            }
-            else
-            {
-                return collectionRef.Key;
-            }
+            return VariableValueReference.Describe(collectionRef, collectionVal, collectionSO, source);
         }
     }
 }
