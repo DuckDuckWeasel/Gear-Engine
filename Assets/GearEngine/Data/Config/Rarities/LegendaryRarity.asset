@@ -16,4 +16,4 @@ MonoBehaviour:
   DisplayName: Legendary
   Color: {r: 1, g: 1, b: 1, a: 1}
   TextColor: {r: 0.8207547, g: 0.5566719, b: 0.18195976, a: 1}
-  CardSprite: {fileID: 7299124036260076323, guid: c8956ce9d44bfdb4398ad2fec6b6f782, type: 3}
+  CardSprite: {fileID: 3196532287794960104, guid: b6f05df7784b45f4d9a50b1fb07aae7f, type: 3}

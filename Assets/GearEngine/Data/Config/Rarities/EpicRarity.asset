@@ -16,4 +16,4 @@ MonoBehaviour:
   DisplayName: Epic
   Color: {r: 1, g: 1, b: 1, a: 1}
   TextColor: {r: 0.8235294, g: 0.58431375, b: 0.8, a: 1}
-  CardSprite: {fileID: -3487413257976883920, guid: 1b119a02e7f2b2c4791d826ca7a3d923, type: 3}
+  CardSprite: {fileID: -8534394762085464787, guid: a87bebd15a647184ab12d91d6c23ee7d, type: 3}

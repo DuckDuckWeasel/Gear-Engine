@@ -16,4 +16,4 @@ MonoBehaviour:
   DisplayName: Rare
   Color: {r: 1, g: 1, b: 1, a: 1}
   TextColor: {r: 0.48104307, g: 0.6717798, b: 0.8867924, a: 1}
-  CardSprite: {fileID: 2964861059982524251, guid: c8ae917f1f410fd4ab5b785a101249f9, type: 3}
+  CardSprite: {fileID: -750118365727225786, guid: 124922726ee113e41b53c3f73430058d, type: 3}

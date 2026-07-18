@@ -618,6 +618,697 @@ MonoBehaviour:
     y: 0
     width: 1
     height: 1
+--- !u!1001 &208478671
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1519351437}
+    m_Modifications:
+    - target: {fileID: 1207130886626049513, guid: d902a5a136024f842833675aeccbd89f, type: 3}
+      propertyPath: m_Pivot.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1207130886626049513, guid: d902a5a136024f842833675aeccbd89f, type: 3}
+      propertyPath: m_Pivot.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1207130886626049513, guid: d902a5a136024f842833675aeccbd89f, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1207130886626049513, guid: d902a5a136024f842833675aeccbd89f, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1207130886626049513, guid: d902a5a136024f842833675aeccbd89f, type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1207130886626049513, guid: d902a5a136024f842833675aeccbd89f, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1207130886626049513, guid: d902a5a136024f842833675aeccbd89f, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 1207130886626049513, guid: d902a5a136024f842833675aeccbd89f, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 1207130886626049513, guid: d902a5a136024f842833675aeccbd89f, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1207130886626049513, guid: d902a5a136024f842833675aeccbd89f, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1207130886626049513, guid: d902a5a136024f842833675aeccbd89f, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -228.48152
+      objectReference: {fileID: 0}
+    - target: {fileID: 1207130886626049513, guid: d902a5a136024f842833675aeccbd89f, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1207130886626049513, guid: d902a5a136024f842833675aeccbd89f, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1207130886626049513, guid: d902a5a136024f842833675aeccbd89f, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1207130886626049513, guid: d902a5a136024f842833675aeccbd89f, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1207130886626049513, guid: d902a5a136024f842833675aeccbd89f, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -407
+      objectReference: {fileID: 0}
+    - target: {fileID: 1207130886626049513, guid: d902a5a136024f842833675aeccbd89f, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0.00010871888
+      objectReference: {fileID: 0}
+    - target: {fileID: 1207130886626049513, guid: d902a5a136024f842833675aeccbd89f, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1207130886626049513, guid: d902a5a136024f842833675aeccbd89f, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1207130886626049513, guid: d902a5a136024f842833675aeccbd89f, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2559820613048660443, guid: d902a5a136024f842833675aeccbd89f, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2559820613048660443, guid: d902a5a136024f842833675aeccbd89f, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2559820613048660443, guid: d902a5a136024f842833675aeccbd89f, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2559820613048660443, guid: d902a5a136024f842833675aeccbd89f, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 865
+      objectReference: {fileID: 0}
+    - target: {fileID: 4598836812183972753, guid: d902a5a136024f842833675aeccbd89f, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4598836812183972753, guid: d902a5a136024f842833675aeccbd89f, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4598836812183972753, guid: d902a5a136024f842833675aeccbd89f, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4598836812183972753, guid: d902a5a136024f842833675aeccbd89f, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -45
+      objectReference: {fileID: 0}
+    - target: {fileID: 6995965840607867383, guid: d902a5a136024f842833675aeccbd89f, type: 3}
+      propertyPath: m_Name
+      value: select_track
+      objectReference: {fileID: 0}
+    - target: {fileID: 6995965840607867383, guid: d902a5a136024f842833675aeccbd89f, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 6995965840607867383, guid: d902a5a136024f842833675aeccbd89f, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 208478680}
+    - targetCorrespondingSourceObject: {fileID: 1887973214231956058, guid: d902a5a136024f842833675aeccbd89f, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 208478675}
+    - targetCorrespondingSourceObject: {fileID: 3708131295171052217, guid: d902a5a136024f842833675aeccbd89f, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 208478679}
+  m_SourcePrefab: {fileID: 100100000, guid: d902a5a136024f842833675aeccbd89f, type: 3}
+--- !u!224 &208478672 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 1207130886626049513, guid: d902a5a136024f842833675aeccbd89f, type: 3}
+  m_PrefabInstance: {fileID: 208478671}
+  m_PrefabAsset: {fileID: 0}
+--- !u!224 &208478673 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 4598836812183972753, guid: d902a5a136024f842833675aeccbd89f, type: 3}
+  m_PrefabInstance: {fileID: 208478671}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &208478674 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1887973214231956058, guid: d902a5a136024f842833675aeccbd89f, type: 3}
+  m_PrefabInstance: {fileID: 208478671}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &208478675
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 208478674}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a1534cbac729494f945c90efe327e10a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: AnimoraRuntime::OM.Animora.Runtime.AnimoraPlayer
+  playerUniqueID: AnimoraPlayer
+  selectedClipIndex: -1
+  playMode: 3
+  timeMode: 1
+  defaultPlayDirection: 0
+  playLoopType: 2
+  debugFlags: 0
+  timelineDuration: 0.3
+  playbackSpeed: 1
+  loopCount: 0
+  animoraPlayerEvents:
+    enabled: 0
+    onStartPlaying:
+      m_PersistentCalls:
+        m_Calls: []
+    onCompletePlaying:
+      m_PersistentCalls:
+        m_Calls: []
+    onStartLoop:
+      m_PersistentCalls:
+        m_Calls: []
+    onCompleteLoop:
+      m_PersistentCalls:
+        m_Calls: []
+    onPause:
+      m_PersistentCalls:
+        m_Calls: []
+    onResume:
+      m_PersistentCalls:
+        m_Calls: []
+    onStop:
+      m_PersistentCalls:
+        m_Calls: []
+  clipsManager:
+    clips:
+    - rid: 9011605396309672071
+    - rid: 9011605396309672076
+  parentAnimoraPlayer: {fileID: 208478680}
+  references:
+    version: 2
+    RefIds:
+    - rid: 9011605396309672071
+      type: {class: AnimoraClipScale, ns: OM.Animora.Modules, asm: Assembly-CSharp}
+      data:
+        clipName: Scale
+        clipDescription: This is a scale action
+        highlightColor: {r: 0.38, g: 0.78, b: 0.8, a: 1}
+        isActive: 1
+        startTime: 0
+        duration: 0.3
+        orderIndex: 0
+        debugFlags: 0
+        playChance: 100
+        events:
+          isEnabled: 0
+          onStartPlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompletePlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onStartOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompleteOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onEnter:
+            m_PersistentCalls:
+              m_Calls: []
+          onUpdate:
+            m_PersistentCalls:
+              m_Calls: []
+          onExit:
+            m_PersistentCalls:
+              m_Calls: []
+        targets:
+          directTargets:
+          - {fileID: 208478673}
+        actionsManager:
+          actions:
+          - rid: 9011605396309672072
+        scale:
+          enabled: 1
+          interpolationType: 0
+          ease:
+            easeDataType: 0
+            animationCurve:
+              serializedVersion: 2
+              m_Curve:
+              - serializedVersion: 3
+                time: 0
+                value: 0
+                inSlope: 0
+                outSlope: 0
+                tangentMode: 0
+                weightedMode: 0
+                inWeight: 0
+                outWeight: 0
+              - serializedVersion: 3
+                time: 1
+                value: 1
+                inSlope: 0
+                outSlope: 0
+                tangentMode: 0
+                weightedMode: 0
+                inWeight: 0
+                outWeight: 0
+              m_PreInfinity: 2
+              m_PostInfinity: 2
+              m_RotationOrder: 4
+            easeType: 26
+          randomizeForEach: 0
+          zero:
+            valueType: 0
+            vector3Type: 5
+            value: {x: 0, y: 0, z: 0}
+            randomValue1: {x: 0, y: 0, z: 0}
+            randomValue2: {x: 0, y: 0, z: 0}
+            targetTransform: {fileID: 0}
+          one:
+            valueType: 0
+            vector3Type: 5
+            value: {x: 1, y: 1, z: 1}
+            randomValue1: {x: 0, y: 0, z: 0}
+            randomValue2: {x: 0, y: 0, z: 0}
+            targetTransform: {fileID: 0}
+    - rid: 9011605396309672072
+      type: {class: AnimoraActionSetScale, ns: OM.Animora.Modules, asm: Assembly-CSharp}
+      data:
+        actionName: Set Scale
+        actionGroup: 0
+        isEnabled: 0
+        orderIndex: 0
+        playDirection: 2
+        useCustomTargets: 0
+        customTargets: []
+        scale:
+          valueType: 0
+          vector3Type: 0
+          value: {x: 0, y: 0, z: 0}
+          randomValue1: {x: 0, y: 0, z: 0}
+          randomValue2: {x: 0, y: 0, z: 0}
+          targetTransform: {fileID: 0}
+    - rid: 9011605396309672076
+      type: {class: AnimoraClipBroAudio, ns: OM.Animora.Modules, asm: Assembly-CSharp}
+      data:
+        clipName: BroAudio Play
+        clipDescription: Plays a sound using BroAudio
+        highlightColor: {r: 0.8, g: 0.33, b: 0.41, a: 1}
+        isActive: 1
+        startTime: 0.03720317
+        duration: 0.15
+        orderIndex: 1
+        debugFlags: 0
+        playChance: 100
+        events:
+          isEnabled: 0
+          onStartPlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompletePlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onStartOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompleteOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onEnter:
+            m_PersistentCalls:
+              m_Calls: []
+          onUpdate:
+            m_PersistentCalls:
+              m_Calls: []
+          onExit:
+            m_PersistentCalls:
+              m_Calls: []
+        soundID:
+          _entity: {fileID: 11400000, guid: 2ddc460ea3f7a574493e4fd00e59949e, type: 2}
+          ID: 0
+          <DebugObject>k__BackingField: {fileID: 208478677}
+        stopOnExit: 0
+        fadeOut: -1
+--- !u!224 &208478676 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 2559820613048660443, guid: d902a5a136024f842833675aeccbd89f, type: 3}
+  m_PrefabInstance: {fileID: 208478671}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &208478677 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3708131295171052217, guid: d902a5a136024f842833675aeccbd89f, type: 3}
+  m_PrefabInstance: {fileID: 208478671}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &208478678 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6995965840607867383, guid: d902a5a136024f842833675aeccbd89f, type: 3}
+  m_PrefabInstance: {fileID: 208478671}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &208478679
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 208478677}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a1534cbac729494f945c90efe327e10a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: AnimoraRuntime::OM.Animora.Runtime.AnimoraPlayer
+  playerUniqueID: AnimoraPlayer
+  selectedClipIndex: 1
+  playMode: 3
+  timeMode: 1
+  defaultPlayDirection: 0
+  playLoopType: 2
+  debugFlags: 0
+  timelineDuration: 0.3
+  playbackSpeed: 1
+  loopCount: 0
+  animoraPlayerEvents:
+    enabled: 0
+    onStartPlaying:
+      m_PersistentCalls:
+        m_Calls: []
+    onCompletePlaying:
+      m_PersistentCalls:
+        m_Calls: []
+    onStartLoop:
+      m_PersistentCalls:
+        m_Calls: []
+    onCompleteLoop:
+      m_PersistentCalls:
+        m_Calls: []
+    onPause:
+      m_PersistentCalls:
+        m_Calls: []
+    onResume:
+      m_PersistentCalls:
+        m_Calls: []
+    onStop:
+      m_PersistentCalls:
+        m_Calls: []
+  clipsManager:
+    clips:
+    - rid: 9011605396309672073
+    - rid: 9011605396309672075
+  parentAnimoraPlayer: {fileID: 208478680}
+  references:
+    version: 2
+    RefIds:
+    - rid: 9011605396309672073
+      type: {class: AnimoraClipScale, ns: OM.Animora.Modules, asm: Assembly-CSharp}
+      data:
+        clipName: Scale
+        clipDescription: This is a scale action
+        highlightColor: {r: 0.38, g: 0.78, b: 0.8, a: 1}
+        isActive: 1
+        startTime: 0
+        duration: 0.3
+        orderIndex: 0
+        debugFlags: 0
+        playChance: 100
+        events:
+          isEnabled: 0
+          onStartPlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompletePlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onStartOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompleteOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onEnter:
+            m_PersistentCalls:
+              m_Calls: []
+          onUpdate:
+            m_PersistentCalls:
+              m_Calls: []
+          onExit:
+            m_PersistentCalls:
+              m_Calls: []
+        targets:
+          directTargets:
+          - {fileID: 208478676}
+        actionsManager:
+          actions:
+          - rid: 9011605396309672074
+        scale:
+          enabled: 1
+          interpolationType: 0
+          ease:
+            easeDataType: 0
+            animationCurve:
+              serializedVersion: 2
+              m_Curve:
+              - serializedVersion: 3
+                time: 0
+                value: 0
+                inSlope: 0
+                outSlope: 0
+                tangentMode: 0
+                weightedMode: 0
+                inWeight: 0
+                outWeight: 0
+              - serializedVersion: 3
+                time: 1
+                value: 1
+                inSlope: 0
+                outSlope: 0
+                tangentMode: 0
+                weightedMode: 0
+                inWeight: 0
+                outWeight: 0
+              m_PreInfinity: 2
+              m_PostInfinity: 2
+              m_RotationOrder: 4
+            easeType: 26
+          randomizeForEach: 0
+          zero:
+            valueType: 0
+            vector3Type: 5
+            value: {x: 0, y: 0, z: 0}
+            randomValue1: {x: 0, y: 0, z: 0}
+            randomValue2: {x: 0, y: 0, z: 0}
+            targetTransform: {fileID: 0}
+          one:
+            valueType: 0
+            vector3Type: 5
+            value: {x: 1, y: 1, z: 1}
+            randomValue1: {x: 0, y: 0, z: 0}
+            randomValue2: {x: 0, y: 0, z: 0}
+            targetTransform: {fileID: 0}
+    - rid: 9011605396309672074
+      type: {class: AnimoraActionSetScale, ns: OM.Animora.Modules, asm: Assembly-CSharp}
+      data:
+        actionName: Set Scale
+        actionGroup: 0
+        isEnabled: 0
+        orderIndex: 0
+        playDirection: 2
+        useCustomTargets: 0
+        customTargets: []
+        scale:
+          valueType: 0
+          vector3Type: 0
+          value: {x: 0, y: 0, z: 0}
+          randomValue1: {x: 0, y: 0, z: 0}
+          randomValue2: {x: 0, y: 0, z: 0}
+          targetTransform: {fileID: 0}
+    - rid: 9011605396309672075
+      type: {class: AnimoraClipBroAudio, ns: OM.Animora.Modules, asm: Assembly-CSharp}
+      data:
+        clipName: BroAudio Play
+        clipDescription: Plays a sound using BroAudio
+        highlightColor: {r: 0.8, g: 0.33, b: 0.41, a: 1}
+        isActive: 1
+        startTime: 0.03720317
+        duration: 0.15
+        orderIndex: 1
+        debugFlags: 0
+        playChance: 100
+        events:
+          isEnabled: 0
+          onStartPlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompletePlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onStartOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompleteOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onEnter:
+            m_PersistentCalls:
+              m_Calls: []
+          onUpdate:
+            m_PersistentCalls:
+              m_Calls: []
+          onExit:
+            m_PersistentCalls:
+              m_Calls: []
+        soundID:
+          _entity: {fileID: 11400000, guid: 2ddc460ea3f7a574493e4fd00e59949e, type: 2}
+          ID: 0
+          <DebugObject>k__BackingField: {fileID: 208478677}
+        stopOnExit: 0
+        fadeOut: -1
+--- !u!114 &208478680
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 208478678}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a1534cbac729494f945c90efe327e10a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: AnimoraRuntime::OM.Animora.Runtime.AnimoraPlayer
+  playerUniqueID: AnimoraPlayer
+  selectedClipIndex: 0
+  playMode: 3
+  timeMode: 1
+  defaultPlayDirection: 0
+  playLoopType: 2
+  debugFlags: 0
+  timelineDuration: 0.3
+  playbackSpeed: 1
+  loopCount: 0
+  animoraPlayerEvents:
+    enabled: 0
+    onStartPlaying:
+      m_PersistentCalls:
+        m_Calls: []
+    onCompletePlaying:
+      m_PersistentCalls:
+        m_Calls: []
+    onStartLoop:
+      m_PersistentCalls:
+        m_Calls: []
+    onCompleteLoop:
+      m_PersistentCalls:
+        m_Calls: []
+    onPause:
+      m_PersistentCalls:
+        m_Calls: []
+    onResume:
+      m_PersistentCalls:
+        m_Calls: []
+    onStop:
+      m_PersistentCalls:
+        m_Calls: []
+  clipsManager:
+    clips:
+    - rid: 9011605396309672077
+    - rid: 9011605396309672078
+  parentAnimoraPlayer: {fileID: 1172963925}
+  references:
+    version: 2
+    RefIds:
+    - rid: 9011605396309672077
+      type: {class: AnimoraClipNestedPlayer, ns: OM.Animora.Modules, asm: Assembly-CSharp}
+      data:
+        clipName: left button
+        clipDescription: Plays a nested player
+        highlightColor: {r: 0.8, g: 0.33, b: 0.41, a: 1}
+        isActive: 1
+        startTime: 0
+        duration: 0.3
+        orderIndex: 0
+        debugFlags: 0
+        playChance: 100
+        events:
+          isEnabled: 0
+          onStartPlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompletePlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onStartOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompleteOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onEnter:
+            m_PersistentCalls:
+              m_Calls: []
+          onUpdate:
+            m_PersistentCalls:
+              m_Calls: []
+          onExit:
+            m_PersistentCalls:
+              m_Calls: []
+        nestedPlayer: {fileID: 208478675}
+    - rid: 9011605396309672078
+      type: {class: AnimoraClipNestedPlayer, ns: OM.Animora.Modules, asm: Assembly-CSharp}
+      data:
+        clipName: right button
+        clipDescription: Plays a nested player
+        highlightColor: {r: 0.8, g: 0.33, b: 0.41, a: 1}
+        isActive: 1
+        startTime: 0
+        duration: 0.3
+        orderIndex: 1
+        debugFlags: 0
+        playChance: 100
+        events:
+          isEnabled: 0
+          onStartPlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompletePlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onStartOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompleteOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onEnter:
+            m_PersistentCalls:
+              m_Calls: []
+          onUpdate:
+            m_PersistentCalls:
+              m_Calls: []
+          onExit:
+            m_PersistentCalls:
+              m_Calls: []
+        nestedPlayer: {fileID: 208478679}
 --- !u!1 &219021547 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 4996804029147965331, guid: ab75c9ea343544092b7c1c9d4871329a, type: 3}
@@ -731,7 +1422,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &368155065
 Transform:
   m_ObjectHideFlags: 0
@@ -6434,6 +7125,11 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1506246122}
   m_Mesh: {fileID: 3613567641014311022, guid: aa35326e084c5774b9fea1733afca70f, type: 3}
+--- !u!224 &1519351437 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 1349722921554172917, guid: 3baae1b6fa9ea2345a187b40f8fe60ee, type: 3}
+  m_PrefabInstance: {fileID: 4124597037242338316}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1535702868
 GameObject:
   m_ObjectHideFlags: 0
@@ -7488,7 +8184,7 @@ RectTransform:
   m_Father: {fileID: 1325302257}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMax: {x: 0.02, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 10, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -9388,6 +10084,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 661299471}
     m_Modifications:
+    - target: {fileID: 676802979670280929, guid: 3baae1b6fa9ea2345a187b40f8fe60ee, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 676802979670280929, guid: 3baae1b6fa9ea2345a187b40f8fe60ee, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 676802979670280929, guid: 3baae1b6fa9ea2345a187b40f8fe60ee, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -150
+      objectReference: {fileID: 0}
     - target: {fileID: 764799833612350578, guid: 3baae1b6fa9ea2345a187b40f8fe60ee, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
@@ -9399,6 +10107,10 @@ PrefabInstance:
     - target: {fileID: 2312224313242635596, guid: 3baae1b6fa9ea2345a187b40f8fe60ee, type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3951729304625382977, guid: 3baae1b6fa9ea2345a187b40f8fe60ee, type: 3}
+      propertyPath: m_fontSize
+      value: 104.15
       objectReference: {fileID: 0}
     - target: {fileID: 4079008854461144768, guid: 3baae1b6fa9ea2345a187b40f8fe60ee, type: 3}
       propertyPath: parentAnimoraPlayer
@@ -9504,6 +10216,30 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 5828242072491688799, guid: 3baae1b6fa9ea2345a187b40f8fe60ee, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5828242072491688799, guid: 3baae1b6fa9ea2345a187b40f8fe60ee, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5828242072491688799, guid: 3baae1b6fa9ea2345a187b40f8fe60ee, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5925617499276284497, guid: 3baae1b6fa9ea2345a187b40f8fe60ee, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5925617499276284497, guid: 3baae1b6fa9ea2345a187b40f8fe60ee, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5925617499276284497, guid: 3baae1b6fa9ea2345a187b40f8fe60ee, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6019269376832945620, guid: 3baae1b6fa9ea2345a187b40f8fe60ee, type: 3}
       propertyPath: parentAnimoraPlayer
       value: 
@@ -9544,6 +10280,18 @@ PrefabInstance:
       propertyPath: m_Camera
       value: 
       objectReference: {fileID: 1196090827}
+    - target: {fileID: 7047780471952498813, guid: 3baae1b6fa9ea2345a187b40f8fe60ee, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7047780471952498813, guid: 3baae1b6fa9ea2345a187b40f8fe60ee, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7047780471952498813, guid: 3baae1b6fa9ea2345a187b40f8fe60ee, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7279388909862312374, guid: 3baae1b6fa9ea2345a187b40f8fe60ee, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -9564,13 +10312,116 @@ PrefabInstance:
       propertyPath: parentAnimoraPlayer
       value: 
       objectReference: {fileID: 1172963925}
+    - target: {fileID: 7690131273768744179, guid: 3baae1b6fa9ea2345a187b40f8fe60ee, type: 3}
+      propertyPath: selectedClipIndex
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 7690131273768744179, guid: 3baae1b6fa9ea2345a187b40f8fe60ee, type: 3}
+      propertyPath: clipsManager.clips.Array.size
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 7690131273768744179, guid: 3baae1b6fa9ea2345a187b40f8fe60ee, type: 3}
+      propertyPath: 'clipsManager.clips.Array.data[7]'
+      value: 9011605396309672079
+      objectReference: {fileID: 0}
+    - target: {fileID: 7690131273768744179, guid: 3baae1b6fa9ea2345a187b40f8fe60ee, type: 3}
+      propertyPath: 'managedReferences[9011605396309672079]'
+      value: Assembly-CSharp OM.Animora.Modules.AnimoraClipNestedPlayer
+      objectReference: {fileID: 0}
+    - target: {fileID: 7690131273768744179, guid: 3baae1b6fa9ea2345a187b40f8fe60ee, type: 3}
+      propertyPath: managedReferences[9011605396309672079].clipName
+      value: Select track buttons
+      objectReference: {fileID: 0}
+    - target: {fileID: 7690131273768744179, guid: 3baae1b6fa9ea2345a187b40f8fe60ee, type: 3}
+      propertyPath: managedReferences[9011605396309672079].duration
+      value: 0.5633245
+      objectReference: {fileID: 0}
+    - target: {fileID: 7690131273768744179, guid: 3baae1b6fa9ea2345a187b40f8fe60ee, type: 3}
+      propertyPath: managedReferences[9011605396309672079].isActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7690131273768744179, guid: 3baae1b6fa9ea2345a187b40f8fe60ee, type: 3}
+      propertyPath: managedReferences[9011605396309672079].startTime
+      value: 0.42480212
+      objectReference: {fileID: 0}
+    - target: {fileID: 7690131273768744179, guid: 3baae1b6fa9ea2345a187b40f8fe60ee, type: 3}
+      propertyPath: managedReferences[9011605396309672079].debugFlags
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7690131273768744179, guid: 3baae1b6fa9ea2345a187b40f8fe60ee, type: 3}
+      propertyPath: managedReferences[9011605396309672079].orderIndex
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 7690131273768744179, guid: 3baae1b6fa9ea2345a187b40f8fe60ee, type: 3}
+      propertyPath: managedReferences[9011605396309672079].playChance
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 7690131273768744179, guid: 3baae1b6fa9ea2345a187b40f8fe60ee, type: 3}
+      propertyPath: managedReferences[9011605396309672079].nestedPlayer
+      value: 
+      objectReference: {fileID: 208478680}
+    - target: {fileID: 7690131273768744179, guid: 3baae1b6fa9ea2345a187b40f8fe60ee, type: 3}
+      propertyPath: managedReferences[9011605396309672079].clipDescription
+      value: Plays a nested player
+      objectReference: {fileID: 0}
+    - target: {fileID: 7690131273768744179, guid: 3baae1b6fa9ea2345a187b40f8fe60ee, type: 3}
+      propertyPath: managedReferences[9011605396309672079].events.isEnabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7690131273768744179, guid: 3baae1b6fa9ea2345a187b40f8fe60ee, type: 3}
+      propertyPath: managedReferences[9011605396309672079].highlightColor.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7690131273768744179, guid: 3baae1b6fa9ea2345a187b40f8fe60ee, type: 3}
+      propertyPath: managedReferences[9011605396309672079].highlightColor.b
+      value: 0.41
+      objectReference: {fileID: 0}
+    - target: {fileID: 7690131273768744179, guid: 3baae1b6fa9ea2345a187b40f8fe60ee, type: 3}
+      propertyPath: managedReferences[9011605396309672079].highlightColor.g
+      value: 0.8
+      objectReference: {fileID: 0}
+    - target: {fileID: 7690131273768744179, guid: 3baae1b6fa9ea2345a187b40f8fe60ee, type: 3}
+      propertyPath: managedReferences[9011605396309672079].highlightColor.r
+      value: 0.4
+      objectReference: {fileID: 0}
+    - target: {fileID: 7690131273768744179, guid: 3baae1b6fa9ea2345a187b40f8fe60ee, type: 3}
+      propertyPath: managedReferences[9011605396309672079].events.onExit.m_PersistentCalls.m_Calls.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7690131273768744179, guid: 3baae1b6fa9ea2345a187b40f8fe60ee, type: 3}
+      propertyPath: managedReferences[9011605396309672079].events.onEnter.m_PersistentCalls.m_Calls.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7690131273768744179, guid: 3baae1b6fa9ea2345a187b40f8fe60ee, type: 3}
+      propertyPath: managedReferences[9011605396309672079].events.onUpdate.m_PersistentCalls.m_Calls.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7690131273768744179, guid: 3baae1b6fa9ea2345a187b40f8fe60ee, type: 3}
+      propertyPath: managedReferences[9011605396309672079].events.onStartOneLoop.m_PersistentCalls.m_Calls.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7690131273768744179, guid: 3baae1b6fa9ea2345a187b40f8fe60ee, type: 3}
+      propertyPath: managedReferences[9011605396309672079].events.onStartPlaying.m_PersistentCalls.m_Calls.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7690131273768744179, guid: 3baae1b6fa9ea2345a187b40f8fe60ee, type: 3}
+      propertyPath: managedReferences[9011605396309672079].events.onCompleteOneLoop.m_PersistentCalls.m_Calls.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7690131273768744179, guid: 3baae1b6fa9ea2345a187b40f8fe60ee, type: 3}
+      propertyPath: managedReferences[9011605396309672079].events.onCompletePlaying.m_PersistentCalls.m_Calls.Array.size
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 9100100110011001003, guid: 3baae1b6fa9ea2345a187b40f8fe60ee, type: 3}
       propertyPath: worldCamera
       value: 
       objectReference: {fileID: 1196090827}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 1349722921554172917, guid: 3baae1b6fa9ea2345a187b40f8fe60ee, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 208478672}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3baae1b6fa9ea2345a187b40f8fe60ee, type: 3}
 --- !u!1 &4758551379633810056

@@ -16,4 +16,4 @@ MonoBehaviour:
   DisplayName: Common
   Color: {r: 1, g: 1, b: 1, a: 1}
   TextColor: {r: 0.1, g: 0.1, b: 0.1, a: 1}
-  CardSprite: {fileID: -3303715921876389073, guid: a3a4fd4af172308499dd859c80833ba2, type: 3}
+  CardSprite: {fileID: -5941515666361811787, guid: 5ba0d06fe29a5c94d8251d73cd7582a3, type: 3}
