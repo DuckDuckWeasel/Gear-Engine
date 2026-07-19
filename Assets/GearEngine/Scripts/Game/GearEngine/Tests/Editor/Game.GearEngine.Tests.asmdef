@@ -11,10 +11,12 @@
         "Scaffold.MVVM.View",
         "Scaffold.MVVM.ViewModel",
         "Scaffold.Navigation",
+        "Scaffold",
         "ScaffoldEditor",
         "VContainer",
         "Scaffold.MVVM",
-        "Unity.TextMeshPro"
+        "Unity.TextMeshPro",
+        "Coffee.UIEffect"
     ],
     "includePlatforms": [
         "Editor"
