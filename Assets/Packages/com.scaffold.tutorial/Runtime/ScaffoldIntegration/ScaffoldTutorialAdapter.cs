@@ -4,15 +4,15 @@ using UnityEngine;
 
 namespace Scaffold.Tutorial.ScaffoldIntegration
 {
-    [RequireComponent(typeof(Flowchart), typeof(TutorialProgressController))]
+    [RequireComponent(typeof(Blackboard), typeof(TutorialProgressController))]
     public class ScaffoldTutorialAdapter : MonoBehaviour
     {
-        private Flowchart flowchart;
+        private Blackboard blackboard;
         private TutorialProgressController tutorialController;
 
         private void Awake()
         {
-            flowchart = GetComponent<Flowchart>();
+            blackboard = GetComponent<Blackboard>();
             tutorialController = GetComponent<TutorialProgressController>();
         }
 
@@ -28,7 +28,7 @@ namespace Scaffold.Tutorial.ScaffoldIntegration
 
         private void HandleBlockStart(Block block)
         {
-            if (block.GetFlowchart() == flowchart)
+            if (block.GetBlackboard() == blackboard)
             {
                 tutorialController.NotifyStepReached(block.BlockName);
             }

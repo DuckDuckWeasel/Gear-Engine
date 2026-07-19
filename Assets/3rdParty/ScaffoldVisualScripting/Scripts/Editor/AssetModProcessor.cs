@@ -26,8 +26,8 @@ namespace Scaffold.EditorUtils
             }
 
             // Reset these variables before save so that they won't cause a git conflict
-            Flowchart[] flowcharts = UnityEngine.Object.FindObjectsOfType<Flowchart>();
-            foreach (Flowchart f in flowcharts)
+            Blackboard[] blackboards = UnityEngine.Object.FindObjectsOfType<Blackboard>();
+            foreach (Blackboard f in blackboards)
             {
                 if (!f.SaveSelection)
                 {

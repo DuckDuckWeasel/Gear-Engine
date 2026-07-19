@@ -10,7 +10,7 @@ Foundation bootstraps register **addressable or direct** ScriptableObject conten
 ## Diagram (data flow)
 
 ```mermaid
-flowchart LR
+blackboard LR
   A[GearAppFlowRoot.layerAssetPublishers] --> B[AssetPublisherDefinition]
   B --> C[IAssetPublisherSource]
   C -->|Editor Rebake| D[IPublisherRegistrar]

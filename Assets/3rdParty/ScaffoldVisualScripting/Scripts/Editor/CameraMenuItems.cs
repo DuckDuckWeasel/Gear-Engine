@@ -9,7 +9,7 @@ namespace Scaffold.EditorUtils
         [MenuItem("Tools/Scaffold/Create/View", false, 100)]
         static void CreateView()
         {
-            FlowchartMenuItems.SpawnPrefab("View");
+            BlackboardMenuItems.SpawnPrefab("View");
         }
     }
 }

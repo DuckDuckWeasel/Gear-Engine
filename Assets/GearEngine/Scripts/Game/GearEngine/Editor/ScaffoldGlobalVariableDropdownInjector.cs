@@ -15,12 +15,12 @@ namespace GearEngine.GearEngine.Editor
             // Inject the method into the Core's TargetReferenceDrawer to keep the architecture clean
             TargetReferenceDrawer.GetGlobalVariableNames = () =>
             {
-                var flowcharts = Resources.FindObjectsOfTypeAll<Flowchart>();
+                var blackboards = Resources.FindObjectsOfTypeAll<Blackboard>();
                 var globalVars = new List<string>();
 
-                foreach (var flowchart in flowcharts)
+                foreach (var blackboard in blackboards)
                 {
-                    foreach (var variable in flowchart.Variables)
+                    foreach (var variable in blackboard.Variables)
                     {
                         if (variable.Scope == VariableScope.Global)
                         {

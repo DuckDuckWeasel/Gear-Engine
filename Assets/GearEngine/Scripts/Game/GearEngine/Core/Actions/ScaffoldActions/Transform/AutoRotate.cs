@@ -18,9 +18,9 @@ namespace Scaffold
 
         public override void OnEnter()
         {
-            if (targetGameObject.Value != null && flowchart != null)
+            if (targetGameObject.Value != null && blackboard != null)
             {
-                flowchart.StartCoroutine(RotateRoutine());
+                blackboard.StartCoroutine(RotateRoutine());
             }
             Continue(); // Always continue immediately
         }

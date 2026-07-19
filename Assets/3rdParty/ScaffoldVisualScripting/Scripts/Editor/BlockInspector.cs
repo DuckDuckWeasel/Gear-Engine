@@ -83,18 +83,18 @@ namespace Scaffold.EditorUtils
                 return;
             }
 
-            var flowchart = (Flowchart)block.GetFlowchart();
+            var blackboard = (Blackboard)block.GetBlackboard();
 
-            if (flowchart.SelectedBlocks.Count > 1)
+            if (blackboard.SelectedBlocks.Count > 1)
             {
                 GUILayout.Label("Multiple blocks selected");
                 return;
             }
 
             //if there is no selection but we are drawing, fix that
-            if (flowchart.SelectedBlocks.Count == 0)
+            if (blackboard.SelectedBlocks.Count == 0)
             {
-                flowchart.AddSelectedBlock(block);
+                blackboard.AddSelectedBlock(block);
             }
 
             if (activeBlockEditor == null ||
@@ -107,15 +107,15 @@ namespace Scaffold.EditorUtils
             UpdateWindowHeight();
 
             blockScrollPos.x = 0f;
-            blockScrollPos = GUILayout.BeginScrollView(blockScrollPos, GUIStyle.none, GUI.skin.verticalScrollbar, GUILayout.Height(flowchart.BlockViewHeight));
-            activeBlockEditor.DrawBlockName(flowchart);
-            activeBlockEditor.DrawBlockGUI(flowchart);
+            blockScrollPos = GUILayout.BeginScrollView(blockScrollPos, GUIStyle.none, GUI.skin.verticalScrollbar, GUILayout.Height(blackboard.BlockViewHeight));
+            activeBlockEditor.DrawBlockName(blackboard);
+            activeBlockEditor.DrawBlockGUI(blackboard);
             GUILayout.EndScrollView();
 
             Command inspectCommand = null;
-            if (flowchart.SelectedCommands.Count == 1)
+            if (blackboard.SelectedCommands.Count == 1)
             {
-                inspectCommand = flowchart.SelectedCommands[0];
+                inspectCommand = blackboard.SelectedCommands[0];
             }
 
             if (Application.isPlaying &&
@@ -132,7 +132,7 @@ namespace Scaffold.EditorUtils
                 activeCommand = inspectCommand;
             }
 
-            DrawCommandUI(flowchart, inspectCommand);
+            DrawCommandUI(blackboard, inspectCommand);
         }
 
         /// <summary>
@@ -146,9 +146,9 @@ namespace Scaffold.EditorUtils
             windowHeight = Screen.height * EditorGUIUtility.pixelsPerPoint;
         }
 
-        public void DrawCommandUI(Flowchart flowchart, Command inspectCommand)
+        public void DrawCommandUI(Blackboard blackboard, Command inspectCommand)
         {
-            ResizeScrollView(flowchart);
+            ResizeScrollView(blackboard);
 
             EditorGUILayout.Space();
 
@@ -187,7 +187,7 @@ namespace Scaffold.EditorUtils
 
             // Draw the resize bar after everything else has finished drawing
             // This is mainly to avoid incorrect indenting.
-            Rect resizeRect = new Rect(0, flowchart.BlockViewHeight + topPanelHeight, EditorGUIUtility.currentViewWidth, 4f);
+            Rect resizeRect = new Rect(0, blackboard.BlockViewHeight + topPanelHeight, EditorGUIUtility.currentViewWidth, 4f);
             GUI.color = new Color(0.64f, 0.64f, 0.64f);
             GUI.DrawTexture(resizeRect, EditorGUIUtility.whiteTexture);
             resizeRect.height = 1;
@@ -200,9 +200,9 @@ namespace Scaffold.EditorUtils
             Repaint();
         }
 
-        private void ResizeScrollView(Flowchart flowchart)
+        private void ResizeScrollView(Blackboard blackboard)
         {
-            Rect cursorChangeRect = new Rect(0, flowchart.BlockViewHeight + 1 + topPanelHeight, EditorGUIUtility.currentViewWidth, 4f);
+            Rect cursorChangeRect = new Rect(0, blackboard.BlockViewHeight + 1 + topPanelHeight, EditorGUIUtility.currentViewWidth, 4f);
 
             EditorGUIUtility.AddCursorRect(cursorChangeRect, MouseCursor.ResizeVertical);
             
@@ -216,11 +216,11 @@ namespace Scaffold.EditorUtils
 
             if (resize && Event.current.type == EventType.Repaint)
             {
-                Undo.RecordObject(flowchart, "Resize view");
-                flowchart.BlockViewHeight = Event.current.mousePosition.y - topPanelHeight;
+                Undo.RecordObject(blackboard, "Resize view");
+                blackboard.BlockViewHeight = Event.current.mousePosition.y - topPanelHeight;
             }
             
-            ClampBlockViewHeight(flowchart);
+            ClampBlockViewHeight(blackboard);
             
             // Stop resizing if mouse is outside inspector window.
             // This isn't standard Unity UI behavior but it is robust and safe.
@@ -239,7 +239,7 @@ namespace Scaffold.EditorUtils
             }
         }
         
-        protected virtual void ClampBlockViewHeight(Flowchart flowchart)
+        protected virtual void ClampBlockViewHeight(Blackboard blackboard)
         {
             // Screen.height seems to temporarily reset to 480 for a single frame whenever a command like 
             // Copy, Paste, etc. happens. Only clamp the block view height when one of these operations is not occuring.
@@ -252,10 +252,10 @@ namespace Scaffold.EditorUtils
             if (clamp)
             {
                 // Make sure block view is always clamped to visible area
-                float height = flowchart.BlockViewHeight;
+                float height = blackboard.BlockViewHeight;
                 height = Mathf.Max(200, height);
                 height = Mathf.Min(windowHeight - 200,height);
-                flowchart.BlockViewHeight = height;
+                blackboard.BlockViewHeight = height;
             }
             
             if (Event.current.type == EventType.Repaint)

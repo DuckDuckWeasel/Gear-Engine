@@ -51,7 +51,7 @@ namespace Scaffold
         [SerializeField] protected InvokeMethodParameter[] methodParameters;
 
         [HideInInspector]
-        [Tooltip("If true, store the return value in a flowchart variable of the same type.")]
+        [Tooltip("If true, store the return value in a Blackboard Variable of the same type.")]
         [SerializeField] protected bool saveReturnValue;
 
         [HideInInspector]
@@ -126,7 +126,7 @@ namespace Scaffold
         protected virtual object[] GetParameterValues()
         {
             object[] values = new object[methodParameters.Length];
-            var flowChart = GetFlowchart();
+            var blackboard = GetBlackboard();
 
             for (int i = 0; i < methodParameters.Length; i++)
             {
@@ -143,62 +143,62 @@ namespace Scaffold
                     switch (item.objValue.typeFullname)
                     {
                         case "System.Int32":
-                            var intvalue = flowChart.GetVariable<IntegerVariable>(item.variableKey);
+                            var intvalue = blackboard.GetVariable<IntegerVariable>(item.variableKey);
                             if (intvalue != null)
                                 objValue = intvalue.Value;
                             break;
                         case "System.Boolean":
-                            var boolean = flowChart.GetVariable<BooleanVariable>(item.variableKey);
+                            var boolean = blackboard.GetVariable<BooleanVariable>(item.variableKey);
                             if (boolean != null)
                                 objValue = boolean.Value;
                             break;
                         case "System.Single":
-                            var floatvalue = flowChart.GetVariable<FloatVariable>(item.variableKey);
+                            var floatvalue = blackboard.GetVariable<FloatVariable>(item.variableKey);
                             if (floatvalue != null)
                                 objValue = floatvalue.Value;
                             break;
                         case "System.String":
-                            var stringvalue = flowChart.GetVariable<StringVariable>(item.variableKey);
+                            var stringvalue = blackboard.GetVariable<StringVariable>(item.variableKey);
                             if (stringvalue != null)
                                 objValue = stringvalue.Value;
                             break;
                         case "UnityEngine.Color":
-                            var color = flowChart.GetVariable<ColorVariable>(item.variableKey);
+                            var color = blackboard.GetVariable<ColorVariable>(item.variableKey);
                             if (color != null)
                                 objValue = color.Value;
                             break;
                         case "UnityEngine.GameObject":
-                            var gameObj = flowChart.GetVariable<GameObjectVariable>(item.variableKey);
+                            var gameObj = blackboard.GetVariable<GameObjectVariable>(item.variableKey);
                             if (gameObj != null)
                                 objValue = gameObj.Value;
                             break;
                         case "UnityEngine.Material":
-                            var material = flowChart.GetVariable<MaterialVariable>(item.variableKey);
+                            var material = blackboard.GetVariable<MaterialVariable>(item.variableKey);
                             if (material != null)
                                 objValue = material.Value;
                             break;
                         case "UnityEngine.Sprite":
-                            var sprite = flowChart.GetVariable<SpriteVariable>(item.variableKey);
+                            var sprite = blackboard.GetVariable<SpriteVariable>(item.variableKey);
                             if (sprite != null)
                                 objValue = sprite.Value;
                             break;
                         case "UnityEngine.Texture":
-                            var texture = flowChart.GetVariable<TextureVariable>(item.variableKey);
+                            var texture = blackboard.GetVariable<TextureVariable>(item.variableKey);
                             if (texture != null)
                                 objValue = texture.Value;
                             break;
                         case "UnityEngine.Vector2":
-                            var vector2 = flowChart.GetVariable<Vector2Variable>(item.variableKey);
+                            var vector2 = blackboard.GetVariable<Vector2Variable>(item.variableKey);
                             if (vector2 != null)
                                 objValue = vector2.Value;
                             break;
                         case "UnityEngine.Vector3":
-                            var vector3 = flowChart.GetVariable<Vector3Variable>(item.variableKey);
+                            var vector3 = blackboard.GetVariable<Vector3Variable>(item.variableKey);
                             if (vector3 != null)
                                 objValue = vector3.Value;
                             break;
                         default:
-                            var obj = flowChart.GetVariable<ObjectVariable>(item.variableKey);
+                            var obj = blackboard.GetVariable<ObjectVariable>(item.variableKey);
                             if (obj != null)
                                 objValue = obj.Value;
                             break;
@@ -213,45 +213,45 @@ namespace Scaffold
 
         protected virtual void SetVariable(string key, object value, string returnType)
         {
-            var flowChart = GetFlowchart();
+            var blackboard = GetBlackboard();
 
             switch (returnType)
             {
                 case "System.Int32":
-                    flowChart.GetVariable<IntegerVariable>(key).Value = (int)value;
+                    blackboard.GetVariable<IntegerVariable>(key).Value = (int)value;
                     break;
                 case "System.Boolean":
-                    flowChart.GetVariable<BooleanVariable>(key).Value = (bool)value;
+                    blackboard.GetVariable<BooleanVariable>(key).Value = (bool)value;
                     break;
                 case "System.Single":
-                    flowChart.GetVariable<FloatVariable>(key).Value = (float)value;
+                    blackboard.GetVariable<FloatVariable>(key).Value = (float)value;
                     break;
                 case "System.String":
-                    flowChart.GetVariable<StringVariable>(key).Value = (string)value;
+                    blackboard.GetVariable<StringVariable>(key).Value = (string)value;
                     break;
                 case "UnityEngine.Color":
-                    flowChart.GetVariable<ColorVariable>(key).Value = (UnityEngine.Color)value;
+                    blackboard.GetVariable<ColorVariable>(key).Value = (UnityEngine.Color)value;
                     break;
                 case "UnityEngine.GameObject":
-                    flowChart.GetVariable<GameObjectVariable>(key).Value = (UnityEngine.GameObject)value;
+                    blackboard.GetVariable<GameObjectVariable>(key).Value = (UnityEngine.GameObject)value;
                     break;
                 case "UnityEngine.Material":
-                    flowChart.GetVariable<MaterialVariable>(key).Value = (UnityEngine.Material)value;
+                    blackboard.GetVariable<MaterialVariable>(key).Value = (UnityEngine.Material)value;
                     break;
                 case "UnityEngine.Sprite":
-                    flowChart.GetVariable<SpriteVariable>(key).Value = (UnityEngine.Sprite)value;
+                    blackboard.GetVariable<SpriteVariable>(key).Value = (UnityEngine.Sprite)value;
                     break;
                 case "UnityEngine.Texture":
-                    flowChart.GetVariable<TextureVariable>(key).Value = (UnityEngine.Texture)value;
+                    blackboard.GetVariable<TextureVariable>(key).Value = (UnityEngine.Texture)value;
                     break;
                 case "UnityEngine.Vector2":
-                    flowChart.GetVariable<Vector2Variable>(key).Value = (UnityEngine.Vector2)value;
+                    blackboard.GetVariable<Vector2Variable>(key).Value = (UnityEngine.Vector2)value;
                     break;
                 case "UnityEngine.Vector3":
-                    flowChart.GetVariable<Vector3Variable>(key).Value = (UnityEngine.Vector3)value;
+                    blackboard.GetVariable<Vector3Variable>(key).Value = (UnityEngine.Vector3)value;
                     break;
                 default:
-                    flowChart.GetVariable<ObjectVariable>(key).Value = (UnityEngine.Object)value;
+                    blackboard.GetVariable<ObjectVariable>(key).Value = (UnityEngine.Object)value;
                     break;
             }
         }

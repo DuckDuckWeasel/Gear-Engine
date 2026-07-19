@@ -12,7 +12,7 @@ GameObject:
   - 114: {fileID: 11433304}
   - 114: {fileID: 11462346}
   m_Layer: 0
-  m_Name: Flowchart
+  m_Name: Blackboard
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -66,7 +66,7 @@ MonoBehaviour:
   showLineNumbers: 0
   hideCommands: []
   luaEnvironment: {fileID: 0}
-  luaBindingName: flowchart
+  luaBindingName: blackboard
 --- !u!114 &11433304
 MonoBehaviour:
   m_ObjectHideFlags: 2

@@ -58,8 +58,8 @@ namespace Scaffold
                 {
                     menuDialog.SetActive(true);
 
-                    var flowchart = GetFlowchart();
-                    string displayText = flowchart.SubstituteVariables(text);
+                    var blackboard = GetBlackboard();
+                    string displayText = blackboard.SubstituteVariables(text);
 
                     menuDialog.AddOption(displayText, interactable, hideOption, targetBlock);
                 }
@@ -128,7 +128,7 @@ namespace Scaffold
         public virtual string GetStringId()
         {
             // String id for Menu commands is MENU.<Localization Id>.<Command id>
-            return "MENU." + GetFlowchart().LocalizationId + "." + ItemId;
+            return "MENU." + GetBlackboard().LocalizationId + "." + ItemId;
         }
 
         #endregion
@@ -139,7 +139,7 @@ namespace Scaffold
         {
             base.RefreshVariableCache();
 
-            var f = GetFlowchart();
+            var f = GetBlackboard();
 
             f.DetermineSubstituteVariables(text, referencedVariables);
         }

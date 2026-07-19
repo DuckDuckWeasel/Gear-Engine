@@ -27,7 +27,7 @@ namespace Scaffold
         [Tooltip("Transform to use as parent during instantiate.")]
         [SerializeField] protected TransformData parentTransform;
 
-        [Tooltip("If true, will use the Transfrom of this Flowchart for the position and rotation.")]
+        [Tooltip("If true, will use the Transfrom of this Blackboard for the position and rotation.")]
         [SerializeField] protected BooleanData spawnAtSelf = new BooleanData(false);
 
         [Tooltip("Local position of newly spawned object.")]

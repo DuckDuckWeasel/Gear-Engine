@@ -66,12 +66,12 @@ namespace Scaffold
             // Cache a descriptive name to use in Lua error messages
             friendlyName = GetLocationIdentifier();
 
-            Flowchart flowchart = GetFlowchart();
+            Blackboard blackboard = GetBlackboard();
 
-            // See if a Lua Environment has been assigned to this Flowchart
+            // See if a Lua Environment has been assigned to this Blackboard
             if (luaEnvironment == null)        
             {
-                luaEnvironment = flowchart.LuaEnv;
+                luaEnvironment = blackboard.LuaEnv;
             }
             
             // No Lua Environment specified so just use any available or create one.
@@ -83,13 +83,13 @@ namespace Scaffold
             string s = GetLuaString();
             luaFunction = luaEnvironment.LoadLuaFunction(s, friendlyName);
 
-            // Add a binding to the parent flowchart
-            if (flowchart.LuaBindingName != "")
+            // Add a binding to the parent blackboard
+            if (blackboard.LuaBindingName != "")
             {
                 Table globals = luaEnvironment.Interpreter.Globals;
                 if (globals != null)
 				{
-                	globals[flowchart.LuaBindingName] = flowchart;
+                	globals[blackboard.LuaBindingName] = blackboard;
 				}
             }
 

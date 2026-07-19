@@ -78,15 +78,15 @@ namespace Scaffold
                     var luaBindings = target as LuaBindings;
                     element.FindPropertyRelative("key").stringValue = GetUniqueKey(luaBindings, keyName.ToLower(), index);
 
-                    // Auto select any Flowchart component in the object
+                    // Auto select any Blackboard component in the object
                     GameObject go = objectProp.objectReferenceValue as GameObject;
                     if (go != null)
                     {
-                        Component flowchart = go.GetComponent("Scaffold.Flowchart");
-                        if (flowchart != null)
+                        Component blackboard = go.GetComponent("Scaffold.Blackboard");
+                        if (blackboard != null)
                         {
                             SerializedProperty componentProp = element.FindPropertyRelative("component");
-                            componentProp.objectReferenceValue = flowchart;
+                            componentProp.objectReferenceValue = blackboard;
                         }
                     }
                 }

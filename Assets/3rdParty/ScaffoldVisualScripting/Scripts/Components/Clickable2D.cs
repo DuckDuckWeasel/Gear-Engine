@@ -5,9 +5,9 @@ using UnityEngine.EventSystems;
 namespace Scaffold
 {
     /// <summary>
-    /// Detects mouse clicks and touches on a Game Object, and sends an event to all Flowchart event handlers in the scene.
+    /// Detects mouse clicks and touches on a Game Object, and sends an event to all Blackboard event handlers in the scene.
     /// The Game Object must have a Collider or Collider2D component attached.
-    /// Use in conjunction with the ObjectClicked Flowchart event handler.
+    /// Use in conjunction with the ObjectClicked Blackboard event handler.
     /// </summary>
     public class Clickable2D : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
     {

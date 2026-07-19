@@ -13,7 +13,7 @@ namespace Scaffold.EditorUtils
     [CustomPropertyDrawer(typeof(Scaffold.BlockReference))]
     public class BlockReferenceDrawer : PropertyDrawer
     {
-        public Scaffold.Flowchart lastFlowchart;
+        public Scaffold.Blackboard lastBlackboard;
 
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
@@ -24,20 +24,20 @@ namespace Scaffold.EditorUtils
 
             Scaffold.Block b = block.objectReferenceValue as Scaffold.Block;
 
-            if (block.objectReferenceValue != null && lastFlowchart == null)
+            if (block.objectReferenceValue != null && lastBlackboard == null)
             {
                 if (b != null)
                 {
-                    lastFlowchart = b.GetFlowchart();
+                    lastBlackboard = b.GetBlackboard();
                 }
             }
 
-            lastFlowchart = EditorGUI.ObjectField(position, lastFlowchart, typeof(Scaffold.Flowchart), true) as Scaffold.Flowchart;
+            lastBlackboard = EditorGUI.ObjectField(position, lastBlackboard, typeof(Scaffold.Blackboard), true) as Scaffold.Blackboard;
             position.y += EditorGUIUtility.singleLineHeight;
-            if (lastFlowchart != null)
-                b = Scaffold.EditorUtils.BlockEditor.BlockField(position, new GUIContent("None"), lastFlowchart, b);
+            if (lastBlackboard != null)
+                b = Scaffold.EditorUtils.BlockEditor.BlockField(position, new GUIContent("None"), lastBlackboard, b);
             else
-                EditorGUI.PrefixLabel(position, new GUIContent("Flowchart Required"));
+                EditorGUI.PrefixLabel(position, new GUIContent("Blackboard Required"));
 
             block.objectReferenceValue = b;
 

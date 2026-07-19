@@ -8,8 +8,8 @@ namespace Scaffold
     /// <summary>
     /// Marks the end of a conditional block.
     /// </summary>
-    [CommandInfo("Flow", 
-                 "End", 
+    [CommandInfo("Conditional",
+                 "End",
                  "Marks the end of a conditional block.")]
     [Serializable]
     public class End : ActionBase

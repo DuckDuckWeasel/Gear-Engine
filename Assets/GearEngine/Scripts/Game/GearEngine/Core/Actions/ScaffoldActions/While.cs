@@ -8,8 +8,8 @@ namespace Scaffold
     /// <summary>
     /// Continuously loop through a block of commands while the condition is true. Use the Break command to force the loop to terminate immediately.
     /// </summary>
-    [CommandInfo("Flow", 
-                 "While", 
+    [CommandInfo("Conditional",
+                 "While",
                  "Continuously loop through a block of commands while the condition is true. Use the Break command to force the loop to terminate immediately.")]
     [Serializable]
     public class While : If
@@ -19,5 +19,5 @@ namespace Scaffold
         public override bool IsLooping { get { return true; } }
 
         #endregion
-    }    
+    }
 }

@@ -20,8 +20,8 @@ namespace Fungus.EditorUtils
         
         public override void DrawCommandGUI()
         {
-            var flowchart = FlowchartWindow.GetFlowchart();
-            if (flowchart == null)
+            var blackboard = BlackboardWindow.GetBlackboard();
+            if (blackboard == null)
             {
                 return;
             }
@@ -33,7 +33,7 @@ namespace Fungus.EditorUtils
             BlockEditor.BlockField(targetBlockProp,
                                          new GUIContent("Target Block", "Block to call when timer expires"), 
                                          new GUIContent("<None>"), 
-                                         flowchart);
+                                         blackboard);
             
             serializedObject.ApplyModifiedProperties();
         }

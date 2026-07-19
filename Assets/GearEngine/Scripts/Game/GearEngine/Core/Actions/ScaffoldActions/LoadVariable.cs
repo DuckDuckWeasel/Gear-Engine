@@ -28,10 +28,10 @@ namespace Scaffold
 
         public override void OnEnter()
         {
-            var flowchart = GetFlowchart();
+            var blackboard = GetBlackboard();
 
             // Prepend the current save profile (if any) and make sure all inputs are valid
-            string prefsKey = SetSaveProfile.SaveProfile + "_" + flowchart.SubstituteVariables(key);
+            string prefsKey = SetSaveProfile.SaveProfile + "_" + blackboard.SubstituteVariables(key);
             bool validKey = key != "" && PlayerPrefs.HasKey(prefsKey);
             bool validVariable = variable != null;
 
@@ -113,7 +113,7 @@ namespace Scaffold
         {
             base.RefreshVariableCache();
 
-            var f = GetFlowchart();
+            var f = GetBlackboard();
 
             f.DetermineSubstituteVariables(key, referencedVariables);
         }

@@ -23,16 +23,16 @@ namespace Scaffold
     }
 
     /// <summary>
-    /// Execute another block in the same Flowchart as the command, or in a different Flowchart.
+    /// Execute another block in the same Blackboard as the command, or in a different Blackboard.
     /// </summary>
     [CommandInfo("Flow", 
                  "Call", 
-                 "Execute another block in the same Flowchart as the command, or in a different Flowchart.")]
+                 "Execute another block in the same Blackboard as the command, or in a different Blackboard.")]
     [Serializable]
     public class Call : ActionBase, IBlockCaller
     {
-        [Tooltip("Flowchart which contains the block to execute. If none is specified then the current Flowchart is used.")]
-        [SerializeField] protected Flowchart targetFlowchart;
+        [Tooltip("Blackboard which contains the block to execute. If none is specified then the current Blackboard is used.")]
+        [SerializeField] protected Blackboard targetBlackboard;
 
         [FormerlySerializedAs("targetSequence")]
         [Tooltip("Block to start executing")]
@@ -89,8 +89,8 @@ namespace Scaffold
                     }
                 }
 
-                if (targetFlowchart == null ||
-                    targetFlowchart.Equals(GetFlowchart()))
+                if (targetBlackboard == null ||
+                    targetBlackboard.Equals(GetBlackboard()))
                 {
                     if (callMode == CallMode.StopThenCall)
                     {
@@ -104,8 +104,8 @@ namespace Scaffold
                     {
                         StopParentBlock();
                     }
-                    // Execute block in another Flowchart
-                    targetFlowchart.ExecuteBlock(targetBlock, index, onComplete);
+                    // Execute block in another Blackboard
+                    targetBlackboard.ExecuteBlock(targetBlock, index, onComplete);
                 }
             }
 

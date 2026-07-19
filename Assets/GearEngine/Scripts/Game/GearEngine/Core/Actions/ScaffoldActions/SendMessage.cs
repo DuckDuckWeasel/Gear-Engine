@@ -12,27 +12,27 @@ namespace Scaffold
     public enum MessageTarget
     {
         /// <summary>
-        /// Send message to the Flowchart containing the SendMessage command.
+        /// Send message to the Blackboard containing the SendMessage command.
         /// </summary>
-        SameFlowchart,
+        SameBlackboard,
         /// <summary>
-        /// Broadcast message to all Flowcharts.
+        /// Broadcast message to all Blackboards.
         /// </summary>
-        AllFlowcharts
+        AllBlackboards
     }
 
     /// <summary>
-    /// Sends a message to either the owner Flowchart or all Flowcharts in the scene. Blocks can listen for this message using a Message Received event handler.
+    /// Sends a message to either the owner Blackboard or all Blackboards in the scene. Blocks can listen for this message using a Message Received event handler.
     /// </summary>
     [CommandInfo("Flow", 
                  "Send Message", 
-                 "Sends a message to either the owner Flowchart or all Flowcharts in the scene. Blocks can listen for this message using a Message Received event handler.")]
+                 "Sends a message to either the owner Blackboard or all Blackboards in the scene. Blocks can listen for this message using a Message Received event handler.")]
     [AddComponentMenu("")]
     [ExecuteInEditMode]
     [Serializable]
     public class SendMessage : ActionBase
     {
-        [Tooltip("Target flowchart(s) to send the message to")]
+        [Tooltip("Target blackboard(s) to send the message to")]
         [SerializeField] protected MessageTarget messageTarget;
 
         [Tooltip("Name of the message to send")]
@@ -49,7 +49,7 @@ namespace Scaffold
             }
 
             MessageReceived[] receivers = null;
-            if (messageTarget == MessageTarget.SameFlowchart)
+            if (messageTarget == MessageTarget.SameBlackboard)
             {
                 receivers = host.GetComponents<MessageReceived>();
             }

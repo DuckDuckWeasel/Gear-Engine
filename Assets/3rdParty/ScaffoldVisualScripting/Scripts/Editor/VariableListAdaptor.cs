@@ -12,7 +12,7 @@ namespace Scaffold.EditorUtils
     {
         protected class AddVariableInfo
         {
-            public Flowchart flowchart;
+            public Blackboard blackboard;
             public System.Type variableType;
         }
 
@@ -26,7 +26,7 @@ namespace Scaffold.EditorUtils
         public int widthOfList;
 
         private ReorderableList list;
-        public Flowchart TargetFlowchart { get; private set; }
+        public Blackboard TargetBlackboard { get; private set; }
 
         private float[] itemWidths = new float[4];
         private Rect[] itemRects = new Rect[4];
@@ -56,14 +56,14 @@ namespace Scaffold.EditorUtils
             }
         }
 
-        public VariableListAdaptor(SerializedProperty arrayProperty, Flowchart _targetFlowchart)
+        public VariableListAdaptor(SerializedProperty arrayProperty, Blackboard _targetBlackboard)
         {
             if (arrayProperty == null)
                 throw new ArgumentNullException("Array property was null.");
             if (!arrayProperty.isArray)
                 throw new InvalidOperationException("Specified serialized propery is not an array.");
 
-            this.TargetFlowchart = _targetFlowchart;
+            this.TargetBlackboard = _targetBlackboard;
             this.fixedItemHeight = 0;
             this._arrayProperty = arrayProperty;
             this.widthOfList = widthOfList - ScrollSpacer;
@@ -93,7 +93,7 @@ namespace Scaffold.EditorUtils
         private void AddDropDown(Rect buttonRect, ReorderableList list)
         {
             Event.current.Use();
-            VariableSelectPopupWindowContent.DoAddVariable(buttonRect, "", TargetFlowchart);
+            VariableSelectPopupWindowContent.DoAddVariable(buttonRect, "", TargetBlackboard);
         }
 
         protected virtual void AddVariable(object obj)
@@ -104,16 +104,16 @@ namespace Scaffold.EditorUtils
                 return;
             }
 
-            var flowchart = addVariableInfo.flowchart;
+            var blackboard = addVariableInfo.blackboard;
             System.Type variableType = addVariableInfo.variableType;
 
-            Undo.RecordObject(flowchart, "Add Variable");
-            Variable newVariable = flowchart.gameObject.AddComponent(variableType) as Variable;
-            newVariable.Key = flowchart.GetUniqueVariableKey("");
-            flowchart.Variables.Add(newVariable);
+            Undo.RecordObject(blackboard, "Add Variable");
+            Variable newVariable = blackboard.gameObject.AddComponent(variableType) as Variable;
+            newVariable.Key = blackboard.GetUniqueVariableKey("");
+            blackboard.Variables.Add(newVariable);
 
             // Because this is an async call, we need to force prefab instances to record changes
-            PrefabUtility.RecordPrefabInstancePropertyModifications(flowchart);
+            PrefabUtility.RecordPrefabInstancePropertyModifications(blackboard);
         }
 
         public void DrawVarList(int w)
@@ -183,23 +183,23 @@ namespace Scaffold.EditorUtils
                 return;
             }
 
-            var flowchart = TargetFlowchart;
-            if (flowchart == null)
+            var blackboard = TargetBlackboard;
+            if (blackboard == null)
             {
                 return;
             }
 
             // Highlight if an active or selected command is referencing this variable
             bool highlight = false;
-            if (flowchart.SelectedBlock != null)
+            if (blackboard.SelectedBlock != null)
             {
-                if (Application.isPlaying && flowchart.SelectedBlock.IsExecuting())
+                if (Application.isPlaying && blackboard.SelectedBlock.IsExecuting())
                 {
-                    highlight = flowchart.SelectedBlock.ActiveCommand.IsVariableReferenced(variable);
+                    highlight = blackboard.SelectedBlock.ActiveCommand.IsVariableReferenced(variable);
                 }
-                else if (!Application.isPlaying && flowchart.SelectedCommands.Count > 0)
+                else if (!Application.isPlaying && blackboard.SelectedCommands.Count > 0)
                 {
-                    foreach (Command selectedCommand in flowchart.SelectedCommands)
+                    foreach (Command selectedCommand in blackboard.SelectedCommands)
                     {
                         if (selectedCommand == null)
                         {
@@ -241,7 +241,7 @@ namespace Scaffold.EditorUtils
             key = EditorGUI.TextField(itemRects[1], variable.Key);
             if (EditorGUI.EndChangeCheck())
             {
-                keyProp.stringValue = flowchart.GetUniqueVariableKey(key, variable);
+                keyProp.stringValue = blackboard.GetUniqueVariableKey(key, variable);
             }
 
             bool isGlobal = scopeProp.enumValueIndex == (int)VariableScope.Global;

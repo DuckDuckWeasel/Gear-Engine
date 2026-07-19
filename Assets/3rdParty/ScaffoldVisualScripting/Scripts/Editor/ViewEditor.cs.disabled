@@ -166,10 +166,10 @@ namespace Fungus.EditorUtils
 
             bool highlight = Selection.activeGameObject == view.gameObject;
 
-            var flowchart = FlowchartWindow.GetFlowchart();
-            if (flowchart != null)
+            var blackboard = BlackboardWindow.GetBlackboard();
+            if (blackboard != null)
             {
-                var selectedCommands = flowchart.SelectedCommands;
+                var selectedCommands = blackboard.SelectedCommands;
                 foreach (var command in selectedCommands)
                 {
                     MoveToView moveToViewCommand = command as MoveToView;

@@ -24,9 +24,9 @@ namespace Scaffold
 
         public override void OnEnter()
         {
-            if (targetRenderer != null && frames != null && frames.Length > 0 && flowchart != null)
+            if (targetRenderer != null && frames != null && frames.Length > 0 && blackboard != null)
             {
-                flowchart.StartCoroutine(PlayRoutine());
+                blackboard.StartCoroutine(PlayRoutine());
             }
             else
             {

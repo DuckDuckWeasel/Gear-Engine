@@ -42,8 +42,6 @@ namespace Scaffold
         [System.NonSerialized] public Command ActiveCommand;
         [System.NonSerialized] public int PreviousActiveCommandIndex = -1;
         [System.NonSerialized] public int JumpToCommandIndex = -1;
-        [System.NonSerialized] public bool IsComplete;
-        [System.NonSerialized] public UnityEngine.Coroutine RunningCoroutine;
 
         /// <summary>
         /// Returns the command that was active before the current one, within this track.

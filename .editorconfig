@@ -75,6 +75,96 @@ dotnet_diagnostic.SCA4003.severity = none      # disabled — asmdef layout repl
 dotnet_diagnostic.SCA5001.severity = none      # Disabled — replan/refactor (see Plans/SCA-Analyzer-Revamp/SCA5001.md)
 dotnet_diagnostic.SCA5002.severity = none      # disabled — replan with SCA5001 (see Plans/SCA-Analyzer-Revamp/SCA5002.md)
 
+# ==========================================
+# GLOBAL CODING STANDARDS (AGENTS.md)
+# ==========================================
+
+# 1. Indentation & Formatting
+indent_style = space
+indent_size = 4
+tab_width = 4
+
+# Brace Style: Allman (new line)
+csharp_new_line_before_open_brace = all
+# Mandatory Braces
+csharp_prefer_braces = true:warning
+
+# Switch Statements
+csharp_indent_case_contents = true
+csharp_indent_switch_labels = true
+
+# 2. Type Declaration (NO VAR)
+csharp_style_var_for_built_in_types = false:warning
+csharp_style_var_when_type_is_apparent = false:warning
+csharp_style_var_elsewhere = false:warning
+
+# 3. Naming Conventions
+
+# Classes, Structs, Enums, Properties: PascalCase
+dotnet_naming_rule.types_should_be_pascal_case.severity = warning
+dotnet_naming_rule.types_should_be_pascal_case.symbols = types
+dotnet_naming_rule.types_should_be_pascal_case.style = pascal_case_style
+
+dotnet_naming_symbols.types.applicable_kinds = class, struct, enum, property
+dotnet_naming_symbols.types.applicable_accessibilities = *
+
+dotnet_naming_style.pascal_case_style.capitalization = pascal_case
+
+# Interfaces: Prefixo 'I' + PascalCase
+dotnet_naming_rule.interfaces_should_be_ipath.severity = warning
+dotnet_naming_rule.interfaces_should_be_ipath.symbols = interfaces
+dotnet_naming_rule.interfaces_should_be_ipath.style = iprefix_style
+
+dotnet_naming_symbols.interfaces.applicable_kinds = interface
+dotnet_naming_symbols.interfaces.applicable_accessibilities = *
+
+dotnet_naming_style.iprefix_style.required_prefix = I
+dotnet_naming_style.iprefix_style.capitalization = pascal_case
+
+# Private/Protected Fields: camelCase
+dotnet_naming_rule.private_fields_should_be_camel_case.severity = warning
+dotnet_naming_rule.private_fields_should_be_camel_case.symbols = private_fields
+dotnet_naming_rule.private_fields_should_be_camel_case.style = private_camel_case_style
+
+dotnet_naming_symbols.private_fields.applicable_kinds = field
+dotnet_naming_symbols.private_fields.applicable_accessibilities = private, protected
+
+dotnet_naming_style.private_camel_case_style.capitalization = camel_case
+
+# Static Fields: s_ prefix + camelCase
+dotnet_naming_rule.static_fields_should_have_prefix.severity = warning
+dotnet_naming_rule.static_fields_should_have_prefix.symbols = static_fields
+dotnet_naming_rule.static_fields_should_have_prefix.style = static_prefix_style
+
+dotnet_naming_symbols.static_fields.applicable_kinds = field
+dotnet_naming_symbols.static_fields.required_modifiers = static
+dotnet_naming_symbols.static_fields.applicable_accessibilities = *
+
+dotnet_naming_style.static_prefix_style.required_prefix = s_
+dotnet_naming_style.static_prefix_style.capitalization = camel_case
+
+# Constants: k_ prefix + camelCase
+dotnet_naming_rule.constant_fields_should_have_prefix.severity = warning
+dotnet_naming_rule.constant_fields_should_have_prefix.symbols = constant_fields
+dotnet_naming_rule.constant_fields_should_have_prefix.style = constant_prefix_style
+
+dotnet_naming_symbols.constant_fields.applicable_kinds = field
+dotnet_naming_symbols.constant_fields.required_modifiers = const
+dotnet_naming_symbols.constant_fields.applicable_accessibilities = *
+
+dotnet_naming_style.constant_prefix_style.required_prefix = k_
+dotnet_naming_style.constant_prefix_style.capitalization = camel_case
+
+# Local Variables & Parameters: camelCase
+dotnet_naming_rule.locals_should_be_camel_case.severity = warning
+dotnet_naming_rule.locals_should_be_camel_case.symbols = locals
+dotnet_naming_rule.locals_should_be_camel_case.style = camel_case_style
+
+dotnet_naming_symbols.locals.applicable_kinds = local, parameter
+dotnet_naming_symbols.locals.applicable_accessibilities = local
+
+dotnet_naming_style.camel_case_style.capitalization = camel_case
+
 # --- Path overrides — SCA3005 / SCA3006 (legacy namespaces / layout) ---
 
 [Assets/Scripts/Infra/Model/**/*.cs]

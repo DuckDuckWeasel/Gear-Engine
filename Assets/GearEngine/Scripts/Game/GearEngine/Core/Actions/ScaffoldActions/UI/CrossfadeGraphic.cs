@@ -25,9 +25,9 @@ namespace Scaffold
 
         public override void OnEnter()
         {
-            if (targetGraphic != null && flowchart != null)
+            if (targetGraphic != null && blackboard != null)
             {
-                flowchart.StartCoroutine(FadeRoutine());
+                blackboard.StartCoroutine(FadeRoutine());
             }
             else
             {

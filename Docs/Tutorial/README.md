@@ -17,8 +17,8 @@ The architecture is composed of three main layers:
 ### C. Integration Layer
 - **LiveOps / GameApi**: The `CompleteTutorialOptimisticHandler` intercepts `CompleteTutorialRequest` to immediately simulate success locally (Optimistic update) while the server processes the state change in the background.
 - **Fungus Integration**: 
-  - `TutorialProgressControllerVariable`: Allows Fungus Flowcharts to hold a reference to our Controller.
-  - `WaitTutorialRequirementCommand`: A custom Fungus Command that pauses a flowchart block until a specific `TutorialRequirement` returns true.
+  - `TutorialProgressControllerVariable`: Allows Fungus Blackboards to hold a reference to our Controller.
+  - `WaitTutorialRequirementCommand`: A custom Fungus Command that pauses a blackboard block until a specific `TutorialRequirement` returns true.
 
 ---
 
@@ -50,7 +50,7 @@ public class ScreenStateRequirement : TutorialRequirement
 *This makes the system aware that this tutorial exists and should be checked for initialization.*
 
 ### Step 4: Create the Visual Flow (Fungus)
-1. Open your scene or UI prefab and create a **Fungus Flowchart**.
+1. Open your scene or UI prefab and create a **Fungus Blackboard**.
 2. In the Fungus Variables window, create a new variable of type **Tutorial > TutorialProgressController**. (You can use this to call Controller methods if needed).
 3. Create a Block in Fungus for the first step (e.g., "Show Dialogue").
 4. Add the standard Fungus commands (Say, Portrait, Mask UI).
@@ -59,10 +59,10 @@ public class ScreenStateRequirement : TutorialRequirement
 When you need the player to actually do something (like click a specific button) before the tutorial advances:
 1. In your Fungus Block, add the custom command: **Tutorial > Wait Tutorial Requirement**.
 2. Drag and drop the specific `TutorialRequirement` ScriptableObject that represents the action you are waiting for (e.g., a `ButtonClickedRequirement` for the "Upgrade" button).
-3. The Flowchart will pause on this node until the player clicks the button (or meets the requirement), then it will resume.
+3. The Blackboard will pause on this node until the player clicks the button (or meets the requirement), then it will resume.
 
 ### Step 6: Complete the Tutorial
-At the final block of your Fungus Flowchart:
+At the final block of your Fungus Blackboard:
 1. You can use the Fungus **Invoke Method** command to call `CompleteTutorial()` on the `TutorialProgressController`.
 2. The Controller will dispatch the `CompleteTutorialRequest` to the **GameApi**.
 3. Our `CompleteTutorialOptimisticHandler` instantly validates it on the client, grants rewards if any, and updates the UI without waiting for the server roundtrip.

@@ -7,7 +7,7 @@ namespace Scaffold
 {
     [CommandInfo("Tags", 
                  "Tag Event", 
-                 "Sends an event to all Flowcharts on GameObjects that possess a specific TagSO.")]
+                 "Sends an event to all Blackboards on GameObjects that possess a specific TagSO.")]
     [AddComponentMenu("")]
     [Serializable]
     public class TagEvent : ActionBase

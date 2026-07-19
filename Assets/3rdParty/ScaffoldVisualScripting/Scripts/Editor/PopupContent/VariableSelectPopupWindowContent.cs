@@ -59,9 +59,9 @@ namespace Scaffold.EditorUtils
             AddVariable(VariableTypes[index]);
         }
 
-        static public void DoAddVariable(Rect position, string currentHandlerName, Flowchart flowchart)
+        static public void DoAddVariable(Rect position, string currentHandlerName, Blackboard blackboard)
         {
-            curFlowchart = flowchart;
+            curBlackboard = blackboard;
             if (!ScaffoldEditorPreferences.useLegacyMenus)
             {
                 //new method
@@ -69,10 +69,10 @@ namespace Scaffold.EditorUtils
                 PopupWindow.Show(position, win);
             }
             //old method
-            DoOlderMenu(flowchart);
+            DoOlderMenu(blackboard);
         }
 
-        static protected void DoOlderMenu(Flowchart flowchart)
+        static protected void DoOlderMenu(Blackboard blackboard)
         {
             GenericMenu menu = new GenericMenu();
 
@@ -109,7 +109,7 @@ namespace Scaffold.EditorUtils
             menu.ShowAsContext();
         }
 
-        private static Flowchart curFlowchart;
+        private static Blackboard curBlackboard;
 
         public VariableSelectPopupWindowContent(string currentHandlerName, int width, int height)
             : base(currentHandlerName, width, height)
@@ -129,24 +129,24 @@ namespace Scaffold.EditorUtils
                 return;
             }
 
-            var flowchart = curFlowchart != null ? curFlowchart : FlowchartWindow.GetFlowchart();
-            Undo.RecordObject(flowchart, "Add Variable");
-            Variable newVariable = flowchart.gameObject.AddComponent(t) as Variable;
-            newVariable.Key = flowchart.GetUniqueVariableKey(suggestedName);
+            var blackboard = curBlackboard != null ? curBlackboard : BlackboardWindow.GetBlackboard();
+            Undo.RecordObject(blackboard, "Add Variable");
+            Variable newVariable = blackboard.gameObject.AddComponent(t) as Variable;
+            newVariable.Key = blackboard.GetUniqueVariableKey(suggestedName);
 
             //if suggested exists, then insert, if not just add
-            var existingVariable = flowchart.GetVariable(suggestedName);
+            var existingVariable = blackboard.GetVariable(suggestedName);
             if (existingVariable != null)
             {
-                flowchart.Variables.Insert(flowchart.Variables.IndexOf(existingVariable)+1, newVariable);
+                blackboard.Variables.Insert(blackboard.Variables.IndexOf(existingVariable)+1, newVariable);
             }
             else
             {
-                flowchart.Variables.Add(newVariable);
+                blackboard.Variables.Add(newVariable);
             }
 
             // Because this is an async call, we need to force prefab instances to record changes
-            PrefabUtility.RecordPrefabInstancePropertyModifications(flowchart);
+            PrefabUtility.RecordPrefabInstancePropertyModifications(blackboard);
         }
     }
 }

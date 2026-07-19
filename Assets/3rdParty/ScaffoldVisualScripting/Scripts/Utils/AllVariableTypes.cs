@@ -249,13 +249,13 @@ namespace Scaffold
                 new TypeActions( "stringData",
                     (anyVar, compareOperator) =>
                     {
-                        var subbedRHS = anyVar.variable.GetFlowchart().SubstituteVariables(anyVar.data.stringData.Value);
+                        var subbedRHS = anyVar.variable.GetBlackboard().SubstituteVariables(anyVar.data.stringData.Value);
                         return anyVar.variable.Evaluate(compareOperator, subbedRHS); 
                     },
                     (anyVar) => anyVar.data.stringData.GetDescription(),
                     (anyVar, setOperator) =>
                     {
-                        var subbedRHS = anyVar.variable.GetFlowchart().SubstituteVariables(anyVar.data.stringData.Value);
+                        var subbedRHS = anyVar.variable.GetBlackboard().SubstituteVariables(anyVar.data.stringData.Value);
                         anyVar.variable.Apply(setOperator, subbedRHS); 
                     })},
             { typeof(TextureVariable),
@@ -291,7 +291,7 @@ namespace Scaffold
         }
 
 #if UNITY_EDITOR
-        public void RefreshVariableCacheHelper(Flowchart f, ref List<Variable> referencedVariables)
+        public void RefreshVariableCacheHelper(Blackboard f, ref List<Variable> referencedVariables)
         {
             if (variable is StringVariable asStringVar && asStringVar != null && !string.IsNullOrEmpty(asStringVar.Value))
                 f.DetermineSubstituteVariables(asStringVar.Value, referencedVariables);

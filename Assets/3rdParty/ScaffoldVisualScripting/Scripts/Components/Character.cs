@@ -92,6 +92,22 @@ namespace Scaffold
         public virtual Sprite ProfileSprite { get; set; }
 
         /// <summary>
+        /// Default portrait used when a dialogue command does not supply a legacy portrait override.
+        /// </summary>
+        public virtual Sprite DefaultPortrait
+        {
+            get
+            {
+                if (ProfileSprite != null)
+                {
+                    return ProfileSprite;
+                }
+
+                return portraits != null && portraits.Count > 0 ? portraits[0] : null;
+            }
+        }
+
+        /// <summary>
         /// Current display state of this character's portrait.
         /// </summary>
         /// <value>The state.</value>

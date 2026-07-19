@@ -111,7 +111,7 @@ namespace Scaffold.EditorUtils
 
         protected virtual void ShowNotification(Localization localization)
         {
-            FlowchartWindow.ShowNotification(localization.NotificationText);
+            BlackboardWindow.ShowNotification(localization.NotificationText);
             localization.NotificationText = "";
         }
     }

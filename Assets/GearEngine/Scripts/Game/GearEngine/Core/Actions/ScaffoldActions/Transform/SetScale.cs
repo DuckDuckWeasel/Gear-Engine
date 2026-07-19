@@ -18,7 +18,7 @@ namespace Scaffold
 
         public override void OnEnter()
         {
-            Transform t = (targetTransform.Value != null) ? targetTransform.Value : GetFlowchart().transform;
+            Transform t = (targetTransform.Value != null) ? targetTransform.Value : GetBlackboard().transform;
             if (t != null)
             {
                 t.localScale = scale.Value;

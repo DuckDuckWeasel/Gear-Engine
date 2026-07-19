@@ -11,55 +11,55 @@ namespace Scaffold.EditorUtils
         [MenuItem("Tools/Scaffold/Create/Character", false, 50)]
         static void CreateCharacter()
         {
-            GameObject go = FlowchartMenuItems.SpawnPrefab("Character");
+            GameObject go = BlackboardMenuItems.SpawnPrefab("Character");
             go.transform.position = Vector3.zero;
         }
 
         [MenuItem("Tools/Scaffold/Create/Say Dialog", false, 51)]
         static void CreateSayDialog()
         {
-            GameObject go = FlowchartMenuItems.SpawnPrefab("SayDialog");
+            GameObject go = BlackboardMenuItems.SpawnPrefab("SayDialog");
             go.transform.position = Vector3.zero;
         }
 
         [MenuItem("Tools/Scaffold/Create/Menu Dialog", false, 52)]
         static void CreateMenuDialog()
         {
-            GameObject go = FlowchartMenuItems.SpawnPrefab("MenuDialog");
+            GameObject go = BlackboardMenuItems.SpawnPrefab("MenuDialog");
             go.transform.position = Vector3.zero;
         }
 
         [MenuItem("Tools/Scaffold/Create/Tag", false, 53)]
         static void CreateTag()
         {
-            GameObject go = FlowchartMenuItems.SpawnPrefab("Tag");
+            GameObject go = BlackboardMenuItems.SpawnPrefab("Tag");
             go.transform.position = Vector3.zero;
         }
 
         [MenuItem("Tools/Scaffold/Create/Audio Tag", false, 54)]
         static void CreateAudioTag()
         {
-            GameObject go = FlowchartMenuItems.SpawnPrefab("AudioTag");
+            GameObject go = BlackboardMenuItems.SpawnPrefab("AudioTag");
             go.transform.position = Vector3.zero;
         }
 
         [MenuItem("Tools/Scaffold/Create/Stage", false, 55)]
         static void CreateStage()
         {
-            GameObject go = FlowchartMenuItems.SpawnPrefab("Stage");
+            GameObject go = BlackboardMenuItems.SpawnPrefab("Stage");
             go.transform.position = Vector3.zero;
         }
         
         [MenuItem("Tools/Scaffold/Create/Stage Position", false, 56)]
         static void CreateStagePosition()
         {
-            FlowchartMenuItems.SpawnPrefab("StagePosition");
+            BlackboardMenuItems.SpawnPrefab("StagePosition");
         }
 
         [MenuItem("Tools/Scaffold/Create/Localization", false, 57)]
         static void CreateLocalization()
         {
-            GameObject go = FlowchartMenuItems.SpawnPrefab("Localization");
+            GameObject go = BlackboardMenuItems.SpawnPrefab("Localization");
             go.transform.position = Vector3.zero;
         }
     }

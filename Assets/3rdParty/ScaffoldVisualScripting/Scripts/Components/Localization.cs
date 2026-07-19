@@ -130,11 +130,11 @@ namespace Scaffold
 
             // Add localizable commands in same order as command list to make it
             // easier to localise / edit standard text.
-            var flowcharts = GameObject.FindObjectsOfType<Flowchart>();
-            for (int i = 0; i < flowcharts.Length; i++)
+            var blackboards = GameObject.FindObjectsOfType<Blackboard>();
+            for (int i = 0; i < blackboards.Length; i++)
             {
-                var flowchart = flowcharts[i];
-                var blocks = flowchart.GetComponents<Block>();
+                var blackboard = blackboards[i];
+                var blocks = blackboard.GetComponents<Block>();
 
                 for (int j = 0; j < blocks.Length; j++)
                 {
@@ -215,7 +215,7 @@ namespace Scaffold
                         stringId.StartsWith("WRITE.") ||
                         stringId.StartsWith("SETTEXT."))
                     {
-                        // If it's a 'built-in' type this probably means that item has been deleted from its flowchart,
+                        // If it's a 'built-in' type this probably means that item has been deleted from its blackboard,
                         // so there's no need to add a text item for it.
                         continue;
                     }
@@ -559,7 +559,7 @@ namespace Scaffold
             Init();
 
             // Instantiate the regular expression object.
-            Regex r = new Regex(Flowchart.SubstituteVariableRegexString);
+            Regex r = new Regex(Blackboard.SubstituteVariableRegexString);
 
             bool modified = false;
 

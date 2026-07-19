@@ -9,7 +9,7 @@ using Object = UnityEngine.Object;
 
 namespace Scaffold.EditorUtils
 {
-    public class FlowchartWindow : EventWindow
+    public class BlackboardWindow : EventWindow
     {
         protected class ClipboardObject
         {
@@ -32,7 +32,7 @@ namespace Scaffold.EditorUtils
             internal BlockCopy(Block block)
             {
                 this.block = new SerializedObject(block);
-                foreach (var command in block.CommandList)
+                foreach (Command command in block.CommandList)
                 {
                     commands.Add(new ClipboardObject(command));
                 }
@@ -44,8 +44,8 @@ namespace Scaffold.EditorUtils
 
             private void CopyProperties(SerializedObject source, Object dest, params SerializedPropertyType[] excludeTypes)
             {
-                var newSerializedObject = new SerializedObject(dest);
-                var prop = source.GetIterator();
+                SerializedObject newSerializedObject = new SerializedObject(dest);
+                SerializedProperty prop = source.GetIterator();
                 while (prop.NextVisible(true))
                 {
                     if (!excludeTypes.Contains(prop.propertyType))
@@ -57,27 +57,27 @@ namespace Scaffold.EditorUtils
                 newSerializedObject.ApplyModifiedProperties();
             }
 
-            internal Block PasteBlock(FlowchartWindow flowWind ,Flowchart flowchart)
+            internal Block PasteBlock(BlackboardWindow flowWind, Blackboard blackboard)
             {
-                var newBlock = flowWind.CreateBlock(flowchart, Vector2.zero);
+                Block newBlock = flowWind.CreateBlock(blackboard, Vector2.zero);
 
                 // Copy all command serialized properties
                 // Copy references to match duplication behavior
-                foreach (var command in commands)
+                foreach (ClipboardObject command in commands)
                 {
-                    var newCommand = Undo.AddComponent(flowchart.gameObject, command.type) as Command;
+                    Command newCommand = Undo.AddComponent(blackboard.gameObject, command.type) as Command;
                     CopyProperties(command.serializedObject, newCommand);
-                    newCommand.ItemId = flowchart.NextItemId();
+                    newCommand.ItemId = blackboard.NextItemId();
                     newBlock.CommandList.Add(newCommand);
                 }
 
                 // Copy event handler
                 if (eventHandler != null)
                 {
-                    var newEventHandler = Undo.AddComponent(flowchart.gameObject, eventHandler.type) as EventHandler;
+                    EventHandler newEventHandler = Undo.AddComponent(blackboard.gameObject, eventHandler.type) as EventHandler;
                     CopyProperties(eventHandler.serializedObject, newEventHandler);
                     newEventHandler.ParentBlock = newBlock;
-                    newBlock._EventHandler = newEventHandler;     
+                    newBlock._EventHandler = newEventHandler;
                 }
 
                 // Copy block properties, but do not copy references because those were just assigned
@@ -89,7 +89,7 @@ namespace Scaffold.EditorUtils
                     SerializedPropertyType.ArraySize
                 );
 
-                newBlock.BlockName = flowchart.GetUniqueBlockKey(block.FindProperty("blockName").stringValue + " (Copy)");
+                newBlock.BlockName = blackboard.GetUniqueBlockKey(block.FindProperty("blockName").stringValue + " (Copy)");
 
                 return newBlock;
             }
@@ -120,12 +120,12 @@ namespace Scaffold.EditorUtils
                 isChangeDetected = false;
                 workspace.Clear();
                 //cache these once as they can end up being called thousands of times per frame otherwise
-                var curRealTime = Time.realtimeSinceStartup;
-                var fadeTimer = curRealTime + ScaffoldConstants.ExecutingIconFadeTime;
+                float curRealTime = Time.realtimeSinceStartup;
+                float fadeTimer = curRealTime + ScaffoldConstants.ExecutingIconFadeTime;
                 for (int i = 0; i < blocks.Length; ++i)
                 {
-                    var b = blocks[i];
-                    var bIsExec = b.IsExecuting();
+                    Block b = blocks[i];
+                    bool bIsExec = b.IsExecuting();
                     if (bIsExec)
                     {
                         b.ExecutingIconTimer = fadeTimer;
@@ -134,7 +134,7 @@ namespace Scaffold.EditorUtils
                     }
                 }
 
-                if(areExecuting.Count != workspace.Count || !WorkspaceMatchesExeucting())
+                if (areExecuting.Count != workspace.Count || !WorkspaceMatchesExeucting())
                 {
                     wereExecuting.Clear();
                     wereExecuting.AddRange(areExecuting);
@@ -150,7 +150,9 @@ namespace Scaffold.EditorUtils
                 for (int i = 0; i < areExecuting.Count; i++)
                 {
                     if (areExecuting[i] != workspace[i])
+                    {
                         return false;
+                    }
                 }
                 return true;
             }
@@ -182,7 +184,7 @@ namespace Scaffold.EditorUtils
         public const int HorizontalPad = 20;
         public const int VerticalPad = 5;
         //defines the distance between a down and up for a right click to be a click rather than a drag
-        public const float RightClickTolerance = 5f;   
+        public const float RightClickTolerance = 5f;
         public const string SearchFieldName = "search";
 
 
@@ -211,7 +213,7 @@ namespace Scaffold.EditorUtils
         protected List<Block> filteredBlocks = new List<Block>();
         protected int blockPopupSelection = -1;
         protected Vector2 popupScroll;
-        protected Flowchart flowchart, prevFlowchart;
+        protected Blackboard blackboard, prevBlackboard;
         protected int prevVarCount;
         protected Block[] blocks = new Block[0];
         protected Block dragBlock;
@@ -229,8 +231,10 @@ namespace Scaffold.EditorUtils
         {
             get
             {
-                if(toolbarSeachTextFieldStyle == null)
+                if (toolbarSeachTextFieldStyle == null)
+                {
                     toolbarSeachTextFieldStyle = GUI.skin.FindStyle("ToolbarSeachTextField");
+                }
 
                 return toolbarSeachTextFieldStyle;
             }
@@ -242,17 +246,19 @@ namespace Scaffold.EditorUtils
         {
             get
             {
-                if(toolbarSeachCancelButtonStyle == null)
+                if (toolbarSeachCancelButtonStyle == null)
+                {
                     toolbarSeachCancelButtonStyle = GUI.skin.FindStyle("ToolbarSeachCancelButton");
+                }
 
                 return toolbarSeachCancelButtonStyle;
             }
         }
 
-        [MenuItem("Tools/Scaffold/Flowchart Window")]
+        [MenuItem("Tools/Scaffold/Blackboard")]
         static void Init()
         {
-            GetWindow(typeof(FlowchartWindow), false, "Flowchart");
+            GetWindow(typeof(BlackboardWindow), false, "Blackboard");
         }
 
         protected virtual void OnEnable()
@@ -332,8 +338,8 @@ namespace Scaffold.EditorUtils
         private void EditorApplication_playModeStateChanged(PlayModeStateChange obj)
         {
             //force null so it can refresh context on the other side of the context
-            flowchart = null;
-            prevFlowchart = null;
+            blackboard = null;
+            prevBlackboard = null;
             blockInspector = null;
         }
 #endif
@@ -342,44 +348,44 @@ namespace Scaffold.EditorUtils
         {
             //an undo redo may have added or removed blocks so
             UpdateBlockCollection();
-            flowchart.UpdateSelectedCache();
+            blackboard.UpdateSelectedCache();
             Repaint();
         }
 
         protected void OnEditorUpdate()
         {
-            HandleFlowchartSelectionChange();
+            HandleBlackboardSelectionChange();
 
-            if(flowchart != null)
+            if (blackboard != null)
             {
-                var varcount = flowchart.VariableCount;
+                int varcount = blackboard.VariableCount;
                 if (varcount != prevVarCount)
                 {
                     prevVarCount = varcount;
                     Repaint();
                 }
 
-                if(flowchart.SelectedCommandsStale)
+                if (blackboard.SelectedCommandsStale)
                 {
-                    flowchart.SelectedCommandsStale = false;
+                    blackboard.SelectedCommandsStale = false;
                     Repaint();
                 }
 
-                if(CommandEditor.SelectedCommandDataStale)
+                if (CommandEditor.SelectedCommandDataStale)
                 {
                     CommandEditor.SelectedCommandDataStale = false;
                     Repaint();
                 }
 
-                if(BlockEditor.SelectedBlockDataStale)
+                if (BlockEditor.SelectedBlockDataStale)
                 {
                     BlockEditor.SelectedBlockDataStale = false;
                     Repaint();
                 }
 
-                if (FlowchartEditor.FlowchartDataStale)
+                if (BlackboardEditor.BlackboardDataStale)
                 {
-                    FlowchartEditor.FlowchartDataStale = false;
+                    BlackboardEditor.BlackboardDataStale = false;
                     Repaint();
                 }
             }
@@ -392,33 +398,63 @@ namespace Scaffold.EditorUtils
             {
                 executingBlocks.ProcessAllBlocks(blocks);
                 if (executingBlocks.isChangeDetected || executingBlocks.IsAnimFadeoutNeed())
+                {
                     Repaint();
+                }
             }
         }
 
         protected void UpdateBlockCollection()
         {
-            flowchart = GetFlowchart();
-            if (flowchart == null)
+            blackboard = GetBlackboard();
+            if (blackboard == null)
             {
                 blocks = new Block[0];
                 filteredBlocks = new List<Block>();
             }
             else
             {
-                blocks = flowchart.GetComponents<Block>();
+                blocks = blackboard.GetComponents<Block>();
             }
             filterStale = true;
             UpdateFilteredBlocks();
         }
 
+        /// <summary>
+        /// Rebuilds the cached block collection for every open Blackboard window displaying
+        /// the specified Blackboard. Structural changes made from an inspector otherwise do
+        /// not appear until the window is reopened or another refresh is triggered.
+        /// </summary>
+        public static void RefreshForBlackboard(Blackboard targetBlackboard)
+        {
+            if (targetBlackboard == null)
+            {
+                return;
+            }
+
+            BlackboardWindow[] windows = Resources.FindObjectsOfTypeAll<BlackboardWindow>();
+            foreach (BlackboardWindow window in windows)
+            {
+                if (window == null || window.blackboard != targetBlackboard)
+                {
+                    continue;
+                }
+
+                window.UpdateBlockCollection();
+                window.Repaint();
+            }
+        }
+
         protected virtual void OnInspectorUpdate()
         {
-            if (HandleFlowchartSelectionChange()) return;
+            if (HandleBlackboardSelectionChange())
+            {
+                return;
+            }
 
             // Ensure the Block Inspector is always showing the currently selected block
-            var flowchart = GetFlowchart();
-            if (flowchart == null || AnyNullBLocks())
+            Blackboard blackboard = GetBlackboard();
+            if (blackboard == null || AnyNullBLocks())
             {
                 UpdateBlockCollection();
                 Repaint();
@@ -426,13 +462,13 @@ namespace Scaffold.EditorUtils
             }
 
             if (Selection.activeGameObject == null &&
-                flowchart.SelectedBlock != null)
+                blackboard.SelectedBlock != null)
             {
                 if (blockInspector == null)
                 {
-                    ShowBlockInspector(flowchart);
+                    ShowBlockInspector(blackboard);
                 }
-                blockInspector.block = (Block)flowchart.SelectedBlock;
+                blockInspector.block = (Block)blackboard.SelectedBlock;
             }
 
             if (forceRepaintCount != 0)
@@ -447,12 +483,16 @@ namespace Scaffold.EditorUtils
         private bool AnyNullBLocks()
         {
             if (blocks == null)
+            {
                 return true;
+            }
 
             for (int i = 0; i < blocks.Length; i++)
             {
                 if (blocks[i] == null)
+                {
                     return true;
+                }
             }
 
             return false;
@@ -462,10 +502,11 @@ namespace Scaffold.EditorUtils
         {
             // Ensure that toolbar looks correct in both docked and undocked windows
             // The docked value doesn't always report correctly without the delayCall
-            EditorApplication.delayCall += () => {
-                var flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
-                var isDockedMethod = typeof(EditorWindow).GetProperty("docked", flags).GetGetMethod(true);
-                if ((bool) isDockedMethod.Invoke(this, null))
+            EditorApplication.delayCall += () =>
+            {
+                BindingFlags flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
+                MethodInfo isDockedMethod = typeof(EditorWindow).GetProperty("docked", flags).GetGetMethod(true);
+                if ((bool)isDockedMethod.Invoke(this, null))
                 {
                     EditorZoomArea.Offset = new Vector2(2.0f, 19.0f);
                 }
@@ -476,9 +517,9 @@ namespace Scaffold.EditorUtils
             };
         }
 
-        public static Flowchart GetFlowchart()
+        public static Blackboard GetBlackboard()
         {
-            // Using a temp hidden object to track the active Flowchart across 
+            // Using a temp hidden object to track the active Blackboard across 
             // serialization / deserialization when playing the game in the editor.
             if (scaffoldState == null)
             {
@@ -493,24 +534,24 @@ namespace Scaffold.EditorUtils
 
             if (Selection.activeGameObject != null)
             {
-                var fs = Selection.activeGameObject.GetComponent<Flowchart>();
+                Blackboard fs = Selection.activeGameObject.GetComponent<Blackboard>();
                 if (fs != null)
                 {
-                    scaffoldState.SelectedFlowchart = fs;
+                    scaffoldState.SelectedBlackboard = fs;
                 }
             }
 
-            if (scaffoldState.SelectedFlowchart == null)
+            if (scaffoldState.SelectedBlackboard == null)
             {
                 variableListAdaptor = null;
             }
-            else if (variableListAdaptor == null || variableListAdaptor.TargetFlowchart != scaffoldState.SelectedFlowchart)
+            else if (variableListAdaptor == null || variableListAdaptor.TargetBlackboard != scaffoldState.SelectedBlackboard)
             {
-                var fsSO = new SerializedObject(scaffoldState.SelectedFlowchart);
-                variableListAdaptor = new VariableListAdaptor(fsSO.FindProperty("variables"), scaffoldState.SelectedFlowchart);
+                SerializedObject fsSO = new SerializedObject(scaffoldState.SelectedBlackboard);
+                variableListAdaptor = new VariableListAdaptor(fsSO.FindProperty("variables"), scaffoldState.SelectedBlackboard);
             }
 
-            return scaffoldState.SelectedFlowchart;
+            return scaffoldState.SelectedBlackboard;
         }
 
         protected void UpdateFilteredBlocks()
@@ -527,20 +568,20 @@ namespace Scaffold.EditorUtils
                     }
                 }
 
-                var nullCount = filteredBlocks.Count(x => x == null);
+                int nullCount = filteredBlocks.Count(x => x == null);
                 if (nullCount > 0 && nullCount != filteredBlocks.Count)
                 {
                     Debug.LogWarning("Null block found in filteredBlocks. May be a symptom of an underlying issue");
                 }
 
                 filteredBlocks.Clear();
-                
+
                 for (int i = 0; i < blocks.Length; i++)
                 {
-                    var item = blocks[i];
+                    Block item = blocks[i];
                     if (item != null)
                     {
-                        if(IsBlockNameMatch(item))
+                        if (IsBlockNameMatch(item))
                         {
                             filteredBlocks.Add(item);
                             item.FilterState = Block.FilteredState.Full;
@@ -571,114 +612,114 @@ namespace Scaffold.EditorUtils
             catch (Exception)
             {
                 return false;
-            }           
+            }
         }
 
-        protected virtual void HandleEarlyEvents(Event e) 
+        protected virtual void HandleEarlyEvents(Event e)
         {
             switch (e.type)
             {
-            case EventType.MouseDown:
-                // Clear search filter focus
-                if (!searchRect.Contains(e.mousePosition) && !popupRect.Contains(e.mousePosition))
-                {
-                    CloseBlockPopup();
-                }
-
-                if (e.button == 0 && searchRect.Contains(e.mousePosition))
-                {
-                    blockPopupSelection = 0;
-                    popupScroll = Vector2.zero;
-                }
-
-                rightClickDown = -Vector2.one;
-                break;
-
-            case EventType.KeyDown:
-                if (GUI.GetNameOfFocusedControl() == SearchFieldName)
-                {
-                    var centerBlock = false;
-                    var selectBlock = false;
-                    var closePopup = false;
-                    var useEvent = false;
-
-                    switch (e.keyCode)
-                    {
-                    case KeyCode.DownArrow:
-                        ++blockPopupSelection;
-                        centerBlock = true;
-                        useEvent = true;
-                        break;
-
-                    case KeyCode.UpArrow:
-                        --blockPopupSelection;
-                        centerBlock = true;
-                        useEvent = true;
-                        break;
-
-                    case KeyCode.Return:
-                        centerBlock = true;
-                        selectBlock = true;
-                        closePopup = true;
-                        useEvent = true;
-                        break;
-                        
-                    case KeyCode.Escape:
-                        closePopup = true;
-                        useEvent = true;
-                        break;
-                    }
-
-                    blockPopupSelection = Mathf.Clamp(blockPopupSelection, 0, filteredBlocks.Count - 1);
-
-                    if (centerBlock && filteredBlocks.Count > 0)
-                    {
-                        var block = filteredBlocks[blockPopupSelection];
-                        CenterBlock(block);
-
-                        if (selectBlock)
-                        {
-                            SelectBlock(block);
-                        }
-                    }
-
-                    if (closePopup)
+                case EventType.MouseDown:
+                    // Clear search filter focus
+                    if (!searchRect.Contains(e.mousePosition) && !popupRect.Contains(e.mousePosition))
                     {
                         CloseBlockPopup();
                     }
 
-                    if (useEvent)
+                    if (e.button == 0 && searchRect.Contains(e.mousePosition))
                     {
+                        blockPopupSelection = 0;
+                        popupScroll = Vector2.zero;
+                    }
+
+                    rightClickDown = -Vector2.one;
+                    break;
+
+                case EventType.KeyDown:
+                    if (GUI.GetNameOfFocusedControl() == SearchFieldName)
+                    {
+                        bool centerBlock = false;
+                        bool selectBlock = false;
+                        bool closePopup = false;
+                        bool useEvent = false;
+
+                        switch (e.keyCode)
+                        {
+                            case KeyCode.DownArrow:
+                                ++blockPopupSelection;
+                                centerBlock = true;
+                                useEvent = true;
+                                break;
+
+                            case KeyCode.UpArrow:
+                                --blockPopupSelection;
+                                centerBlock = true;
+                                useEvent = true;
+                                break;
+
+                            case KeyCode.Return:
+                                centerBlock = true;
+                                selectBlock = true;
+                                closePopup = true;
+                                useEvent = true;
+                                break;
+
+                            case KeyCode.Escape:
+                                closePopup = true;
+                                useEvent = true;
+                                break;
+                        }
+
+                        blockPopupSelection = Mathf.Clamp(blockPopupSelection, 0, filteredBlocks.Count - 1);
+
+                        if (centerBlock && filteredBlocks.Count > 0)
+                        {
+                            Block block = filteredBlocks[blockPopupSelection];
+                            CenterBlock(block);
+
+                            if (selectBlock)
+                            {
+                                SelectBlock(block);
+                            }
+                        }
+
+                        if (closePopup)
+                        {
+                            CloseBlockPopup();
+                        }
+
+                        if (useEvent)
+                        {
+                            e.Use();
+                        }
+                    }
+                    else if (e.keyCode == KeyCode.Escape)
+                    {
+                        DeselectAll();
                         e.Use();
                     }
-                }
-                else if (e.keyCode == KeyCode.Escape)
-                {
-                    DeselectAll();
-                    e.Use();
-                }
-                else if (e.control && !wasControl)
-                {
-                    StartControlSelection();
-                    Repaint();
-                    wasControl = true;
-                }
-                break;
+                    else if (e.control && !wasControl)
+                    {
+                        StartControlSelection();
+                        Repaint();
+                        wasControl = true;
+                    }
+                    break;
                 case EventType.KeyUp:
-                if (!e.control && wasControl)
-                {
-                    wasControl = false;
-                    EndControlSelection();
-                    Repaint();
-                }
-                break;
+                    if (!e.control && wasControl)
+                    {
+                        wasControl = false;
+                        EndControlSelection();
+                        Repaint();
+                    }
+                    break;
             }
         }
 
         private void StartControlSelection()
         {
-            mouseDownSelectionState.AddRange(flowchart.SelectedBlocks);
-            flowchart.ClearSelectedBlocks();
+            mouseDownSelectionState.AddRange(blackboard.SelectedBlocks);
+            blackboard.ClearSelectedBlocks();
             for (int i = 0; i < mouseDownSelectionState.Count; i++)
             {
                 if (mouseDownSelectionState[i] != null)
@@ -712,16 +753,16 @@ namespace Scaffold.EditorUtils
                 //remove items selected from the mouse down and then move the mouse down to the selection
                 for (int i = mouseDownSelectionState.Count - 1; i >= 0; i--)
                 {
-                    var item = mouseDownSelectionState[i];
+                    Block item = mouseDownSelectionState[i];
 
                     if (item.IsSelected)
                     {
-                        flowchart.DeselectBlockNoCheck(item);
+                        blackboard.DeselectBlockNoCheck(item);
                         RemoveMouseDownSelectionState(item);
                     }
                     else
                     {
-                        flowchart.AddSelectedBlock(item);
+                        blackboard.AddSelectedBlock(item);
                     }
                 }
             }
@@ -730,21 +771,21 @@ namespace Scaffold.EditorUtils
                 //ctrl released moves all back to selection
                 for (int i = mouseDownSelectionState.Count - 1; i >= 0; i--)
                 {
-                    var item = mouseDownSelectionState[i];
-                    flowchart.AddSelectedBlock(item);
+                    Block item = mouseDownSelectionState[i];
+                    blackboard.AddSelectedBlock(item);
                     RemoveMouseDownSelectionState(item);
                 }
             }
         }
 
-        internal bool HandleFlowchartSelectionChange()
+        internal bool HandleBlackboardSelectionChange()
         {
-            flowchart = GetFlowchart();
+            blackboard = GetBlackboard();
             //target has changed, so clear the blockinspector
-            if (flowchart != prevFlowchart)
+            if (blackboard != prevBlackboard)
             {
                 blockInspector = null;
-                prevFlowchart = flowchart;
+                prevBlackboard = blackboard;
                 executingBlocks.ClearAll();
 
                 //attempt to defilter previous, if due to scene change these will be null
@@ -759,8 +800,10 @@ namespace Scaffold.EditorUtils
 
                 UpdateBlockCollection();
 
-                if(flowchart != null)
-                    flowchart.ReverseUpdateSelectedCache();//becomes reverse restore selected cache
+                if (blackboard != null)
+                {
+                    blackboard.ReverseUpdateSelectedCache();//becomes reverse restore selected cache
+                }
 
                 Repaint();
                 return true;
@@ -771,17 +814,20 @@ namespace Scaffold.EditorUtils
         protected virtual void OnGUI()
         {
             // TODO: avoid calling some of these methods in OnGUI because it should be possible
-            // to only call them when the window is initialized or a new flowchart is selected, etc.
-            if (HandleFlowchartSelectionChange()) return;
-
-            if (flowchart == null)
+            // to only call them when the window is initialized or a new blackboard is selected, etc.
+            if (HandleBlackboardSelectionChange())
             {
-                GUILayout.Label("No Flowchart scene object selected");
+                return;
+            }
+
+            if (blackboard == null)
+            {
+                GUILayout.Label("No Blackboard scene object selected");
                 return;
             }
 
             InitStyles();
-            
+
             DeleteBlocks();
 
             UpdateFilteredBlocks();
@@ -797,7 +843,7 @@ namespace Scaffold.EditorUtils
             }
 
             // Draw blocks and connections
-            DrawFlowchartView(Event.current);
+            DrawBlackboardView(Event.current);
 
             // Draw selection box
             if (Event.current.type == EventType.Repaint)
@@ -809,7 +855,7 @@ namespace Scaffold.EditorUtils
             }
 
             // Draw toolbar, search popup, and variables window
-            //  need try catch here as we are now invalidating the drawer if the target flowchart
+            //  need try catch here as we are now invalidating the drawer if the target blackboard
             //      has changed which makes unity GUILayouts upset and this function appears to 
             //      actually get called partially outside our control
             try
@@ -848,9 +894,9 @@ namespace Scaffold.EditorUtils
                 {
                     DeselectAll();
                     Vector2 newNodePosition = new Vector2(
-                        50 / flowchart.Zoom - flowchart.ScrollPos.x, 50 / flowchart.Zoom - flowchart.ScrollPos.y
+                        50 / blackboard.Zoom - blackboard.ScrollPos.x, 50 / blackboard.Zoom - blackboard.ScrollPos.y
                     );
-                    CreateBlock(flowchart, newNodePosition);
+                    CreateBlock(blackboard, newNodePosition);
                     UpdateBlockCollection();
                 }
 
@@ -858,27 +904,27 @@ namespace Scaffold.EditorUtils
 
                 // Draw scale bar and labels
                 GUILayout.Label("Scale", EditorStyles.miniLabel);
-                var newZoom = GUILayout.HorizontalSlider(
-                    flowchart.Zoom, MinZoomValue, MaxZoomValue, GUILayout.MinWidth(40), GUILayout.MaxWidth(100)
+                float newZoom = GUILayout.HorizontalSlider(
+                    blackboard.Zoom, MinZoomValue, MaxZoomValue, GUILayout.MinWidth(40), GUILayout.MaxWidth(100)
                 );
-                GUILayout.Label(flowchart.Zoom.ToString("0.0#x"), EditorStyles.miniLabel, GUILayout.Width(30));
+                GUILayout.Label(blackboard.Zoom.ToString("0.0#x"), EditorStyles.miniLabel, GUILayout.Width(30));
 
-                if (newZoom != flowchart.Zoom)
+                if (newZoom != blackboard.Zoom)
                 {
-                    DoZoom(newZoom - flowchart.Zoom, Vector2.one * 0.5f);
+                    DoZoom(newZoom - blackboard.Zoom, Vector2.one * 0.5f);
                 }
 
                 // Draw center button
                 if (GUILayout.Button("Center", EditorStyles.toolbarButton))
                 {
-                    CenterFlowchart();
+                    CenterBlackboard();
                 }
 
                 GUILayout.FlexibleSpace();
 
                 // Draw search bar
                 GUI.SetNextControlName(SearchFieldName);
-                var newString = EditorGUILayout.TextField(searchString, ToolbarSeachTextFieldStyle, GUILayout.Width(150));
+                string newString = EditorGUILayout.TextField(searchString, ToolbarSeachTextFieldStyle, GUILayout.Width(150));
                 if (newString != searchString)
                 {
                     searchString = newString;
@@ -892,7 +938,7 @@ namespace Scaffold.EditorUtils
                     popupRect = searchRect;
                     popupRect.width += 12;
                     popupRect.y += popupRect.height;
-                    popupRect.height = Mathf.Min(Mathf.Max(1,filteredBlocks.Count) * 16, position.height - 22);
+                    popupRect.height = Mathf.Min(Mathf.Max(1, filteredBlocks.Count) * 16, position.height - 22);
                 }
 
                 if (GUILayout.Button("", ToolbarSeachCancelButtonStyle))
@@ -918,13 +964,13 @@ namespace Scaffold.EditorUtils
 
                 GUILayout.BeginVertical();
                 {
-                    GUILayout.Label(flowchart.name, EditorStyles.boldLabel);
+                    GUILayout.Label(blackboard.name, EditorStyles.boldLabel);
 
                     GUILayout.Space(2);
 
-                    if (flowchart.Description.Length > 0)
+                    if (blackboard.Description.Length > 0)
                     {
-                        GUILayout.Label(flowchart.Description, EditorStyles.helpBox);
+                        GUILayout.Label(blackboard.Description, EditorStyles.helpBox);
                     }
                 }
                 GUILayout.EndVertical();
@@ -950,7 +996,7 @@ namespace Scaffold.EditorUtils
                 {
                     GUILayout.FlexibleSpace();
 
-                    flowchart.VariablesScrollPos = GUILayout.BeginScrollView(flowchart.VariablesScrollPos);
+                    blackboard.VariablesScrollPos = GUILayout.BeginScrollView(blackboard.VariablesScrollPos);
                     {
                         GUILayout.Space(8);
 
@@ -958,7 +1004,7 @@ namespace Scaffold.EditorUtils
 
                         if (variableListAdaptor != null)
                         {
-                            if (variableListAdaptor.TargetFlowchart != null)
+                            if (variableListAdaptor.TargetBlackboard != null)
                             {
                                 //440 - space for scrollbar
                                 variableListAdaptor.DrawVarList(400);
@@ -971,7 +1017,7 @@ namespace Scaffold.EditorUtils
 
                         if (EditorGUI.EndChangeCheck())
                         {
-                            EditorUtility.SetDirty(flowchart);
+                            EditorUtility.SetDirty(blackboard);
                         }
                     }
                     GUILayout.EndScrollView();
@@ -981,7 +1027,7 @@ namespace Scaffold.EditorUtils
                     if (e.type == EventType.MouseDown)
                     {
                         Rect variableWindowRect = GUILayoutUtility.GetLastRect();
-                        if (flowchart.VariablesExpanded && flowchart.Variables.Count > 0)
+                        if (blackboard.VariablesExpanded && blackboard.Variables.Count > 0)
                         {
                             variableWindowRect.y -= 20;
                             variableWindowRect.height += 20;
@@ -1001,8 +1047,8 @@ namespace Scaffold.EditorUtils
         }
 
         protected virtual void DrawBlockPopup(Event e)
-        {            
-            blockPopupSelection = Mathf.Clamp(blockPopupSelection, 0, Mathf.Max(filteredBlocks.Count - 1,0));
+        {
+            blockPopupSelection = Mathf.Clamp(blockPopupSelection, 0, Mathf.Max(filteredBlocks.Count - 1, 0));
 
             GUI.Box(popupRect, "", GUI.skin.FindStyle("sv_iconselector_back"));
 
@@ -1010,8 +1056,8 @@ namespace Scaffold.EditorUtils
             {
                 if (popupRect.Contains(e.mousePosition))
                 {
-                    var relativeY = e.mousePosition.y - popupRect.yMin + popupScroll.y;
-                    blockPopupSelection = (int) (relativeY / 16);
+                    float relativeY = e.mousePosition.y - popupRect.yMin + popupScroll.y;
+                    blockPopupSelection = (int)(relativeY / 16);
                 }
 
                 e.Use();
@@ -1026,7 +1072,7 @@ namespace Scaffold.EditorUtils
                         DrawBlockSearchPopUpItem(filteredBlocks[i], i == blockPopupSelection);
                     }
 
-                    if(filteredBlocks.Count == 0)
+                    if (filteredBlocks.Count == 0)
                     {
                         DrawBlockSearchPopUpItem(null, false);
                     }
@@ -1040,11 +1086,11 @@ namespace Scaffold.EditorUtils
         {
             EditorGUILayout.BeginHorizontal(GUILayout.Height(16));
 
-            var style = selected ? blockSearchPopupSelectedStyle : blockSearchPopupNormalStyle;
+            GUIStyle style = selected ? blockSearchPopupSelectedStyle : blockSearchPopupNormalStyle;
 
             GUI.contentColor = block != null ? GetBlockGraphics(block).tint : Color.white;
 
-            var buttonPressed = false;
+            bool buttonPressed = false;
             if (GUILayout.Button(ScaffoldEditorResources.BulletPoint, style, GUILayout.Width(16)))
             {
                 buttonPressed = true;
@@ -1071,11 +1117,11 @@ namespace Scaffold.EditorUtils
         {
             for (int i = blocks.Length - 1; i > -1; --i)
             {
-                var block = blocks[i];
-                var rect = block._NodeRect;
-                rect.position += flowchart.ScrollPos;
+                Block block = blocks[i];
+                Rect rect = block._NodeRect;
+                rect.position += blackboard.ScrollPos;
 
-                if (rect.Contains(point / flowchart.Zoom))
+                if (rect.Contains(point / blackboard.Zoom))
                 {
                     return block;
                 }
@@ -1086,7 +1132,7 @@ namespace Scaffold.EditorUtils
 
         protected override void OnMouseDown(Event e)
         {
-            var hitBlock = GetBlockAtPoint(e.mousePosition);
+            Block hitBlock = GetBlockAtPoint(e.mousePosition);
 
             // Convert Ctrl+Left click to a right click on mac
             if (Application.platform == RuntimePlatform.OSXEditor)
@@ -1098,158 +1144,160 @@ namespace Scaffold.EditorUtils
                 }
             }
 
-            switch(e.button)
+            switch (e.button)
             {
-            case MouseButton.Left:
-                if (!e.alt)
-                {
-                    if (hitBlock != null)
+                case MouseButton.Left:
+                    if (!e.alt)
                     {
-                        if(e.clickCount == 2)
+                        if (hitBlock != null)
                         {
-                            CenterBlock(hitBlock);
+                            if (e.clickCount == 2)
+                            {
+                                CenterBlock(hitBlock);
+
+                                e.Use();
+                                didDoubleClick = true;
+                                return;
+                            }
+
+                            startDragPosition = e.mousePosition / blackboard.Zoom - blackboard.ScrollPos;
+                            Undo.RecordObject(blackboard, "Select");
+
+                            if (GetAppendModifierDown())
+                            {
+                                //ctrl clicking blocks toggles between
+                                if (mouseDownSelectionState.Contains(hitBlock))
+                                {
+                                    RemoveMouseDownSelectionState(hitBlock);
+                                }
+                                else
+                                {
+                                    AddMouseDownSelectionState(hitBlock);
+                                }
+                            }
+                            else
+                            {
+                                if (blackboard.SelectedBlocks.Contains(hitBlock))
+                                {
+                                    SetBlockForInspector(blackboard, hitBlock);
+                                }
+                                else
+                                {
+                                    SelectBlock(hitBlock);
+                                }
+
+                                dragBlock = hitBlock;
+                                hasDraggedSelected = false;
+                            }
 
                             e.Use();
-                            didDoubleClick = true;
-                            return;
+                            GUIUtility.keyboardControl = 0; // Fix for textarea not refeshing (change focus)
                         }
-
-                        startDragPosition = e.mousePosition / flowchart.Zoom - flowchart.ScrollPos;
-                        Undo.RecordObject(flowchart, "Select");
-
-                        if (GetAppendModifierDown())
+                        else if (!(UnityEditor.Tools.current == Tool.View && UnityEditor.Tools.viewTool == ViewTool.Zoom))
                         {
-                            //ctrl clicking blocks toggles between
-                            if (mouseDownSelectionState.Contains(hitBlock))
-                            {
-                                RemoveMouseDownSelectionState(hitBlock);
-                            }
-                            else
-                            {
-                                AddMouseDownSelectionState(hitBlock);
-                            }
+                            startSelectionBoxPosition = e.mousePosition;
+                            selectionBox = Rect.MinMaxRect(selectionBox.x, selectionBox.y, selectionBox.x, selectionBox.y);
+                            e.Use();
                         }
-                        else
-                        {
-                            if (flowchart.SelectedBlocks.Contains(hitBlock))
-                            {
-                                SetBlockForInspector(flowchart, hitBlock);
-                            }
-                            else
-                            {
-                                SelectBlock(hitBlock);
-                            }
-
-                            dragBlock = hitBlock;
-                            hasDraggedSelected = false;
-                        }
-
-                        e.Use();
-                        GUIUtility.keyboardControl = 0; // Fix for textarea not refeshing (change focus)
                     }
-                    else if (!(UnityEditor.Tools.current == Tool.View && UnityEditor.Tools.viewTool == ViewTool.Zoom))
-                    {
-                        startSelectionBoxPosition = e.mousePosition;
-                        selectionBox = Rect.MinMaxRect(selectionBox.x, selectionBox.y, selectionBox.x, selectionBox.y);
-                        e.Use();
-                    }
-                }
-                break;
+                    break;
 
-            case MouseButton.Right:
-                rightClickDown = e.mousePosition;
-                e.Use();
-                break;    
+                case MouseButton.Right:
+                    rightClickDown = e.mousePosition;
+                    e.Use();
+                    break;
             }
         }
 
         protected override void OnMouseDrag(Event e)
         {
-            var draggingWindow = false;
+            bool draggingWindow = false;
             switch (e.button)
             {
-            case MouseButton.Left:
-                // Block dragging
-                if (dragBlock != null)
-                {
-                    for (int i = 0; i < flowchart.SelectedBlocks.Count; ++i)
+                case MouseButton.Left:
+                    // Block dragging
+                    if (dragBlock != null)
                     {
-                        var block = flowchart.SelectedBlocks[i];
-                        var tempRect = block._NodeRect;
-                        tempRect.position += e.delta / flowchart.Zoom;
-                        block._NodeRect = tempRect;
-                    }
-
-                    hasDraggedSelected = true;
-                    e.Use();
-                }
-                // Pan tool or alt + left click
-                else if (UnityEditor.Tools.current == Tool.View && UnityEditor.Tools.viewTool == ViewTool.Pan || e.alt)
-                {
-                    draggingWindow = true;
-                }
-                else if (UnityEditor.Tools.current == Tool.View && UnityEditor.Tools.viewTool == ViewTool.Zoom)
-                {
-                    DoZoom(-e.delta.y * 0.01f, Vector2.one * 0.5f);
-                    e.Use();
-                }
-                // Selection box
-                else if (startSelectionBoxPosition.x >= 0 && startSelectionBoxPosition.y >= 0)
-                {
-                    if (Mathf.Approximately(e.delta.magnitude, 0))
-                        break;
-                    
-                    var topLeft = Vector2.Min(startSelectionBoxPosition, e.mousePosition);
-                    var bottomRight = Vector2.Max(startSelectionBoxPosition, e.mousePosition);
-                    selectionBox = Rect.MinMaxRect(topLeft.x, topLeft.y, bottomRight.x, bottomRight.y);
-
-                    Rect zoomSelectionBox = selectionBox;
-                    zoomSelectionBox.position -= flowchart.ScrollPos * flowchart.Zoom;
-                    zoomSelectionBox.position /= flowchart.Zoom;
-                    zoomSelectionBox.size /= flowchart.Zoom;
-
-
-                    for (int i = 0; i < blocks.Length; ++i)
-                    {
-                        var block = blocks[i];
-                        var doesMarqueOverlap = zoomSelectionBox.Overlaps(block._NodeRect);
-                        if (doesMarqueOverlap)
+                        for (int i = 0; i < blackboard.SelectedBlocks.Count; ++i)
                         {
-                            flowchart.AddSelectedBlock(block);
+                            Block block = blackboard.SelectedBlocks[i];
+                            Rect tempRect = block._NodeRect;
+                            tempRect.position += e.delta / blackboard.Zoom;
+                            block._NodeRect = tempRect;
                         }
-                        else
-                        { 
-                            flowchart.DeselectBlockNoCheck(block);
-                        }
+
+                        hasDraggedSelected = true;
+                        e.Use();
                     }
+                    // Pan tool or alt + left click
+                    else if (UnityEditor.Tools.current == Tool.View && UnityEditor.Tools.viewTool == ViewTool.Pan || e.alt)
+                    {
+                        draggingWindow = true;
+                    }
+                    else if (UnityEditor.Tools.current == Tool.View && UnityEditor.Tools.viewTool == ViewTool.Zoom)
+                    {
+                        DoZoom(-e.delta.y * 0.01f, Vector2.one * 0.5f);
+                        e.Use();
+                    }
+                    // Selection box
+                    else if (startSelectionBoxPosition.x >= 0 && startSelectionBoxPosition.y >= 0)
+                    {
+                        if (Mathf.Approximately(e.delta.magnitude, 0))
+                        {
+                            break;
+                        }
 
-                    e.Use();
-                }
-                break;
+                        Vector2 topLeft = Vector2.Min(startSelectionBoxPosition, e.mousePosition);
+                        Vector2 bottomRight = Vector2.Max(startSelectionBoxPosition, e.mousePosition);
+                        selectionBox = Rect.MinMaxRect(topLeft.x, topLeft.y, bottomRight.x, bottomRight.y);
 
-            case MouseButton.Right:
-                if (Vector2.Distance(rightClickDown, e.mousePosition) > RightClickTolerance)
-                {
-                    rightClickDown = -Vector2.one;
-                }
-                draggingWindow = true;
-                break;
+                        Rect zoomSelectionBox = selectionBox;
+                        zoomSelectionBox.position -= blackboard.ScrollPos * blackboard.Zoom;
+                        zoomSelectionBox.position /= blackboard.Zoom;
+                        zoomSelectionBox.size /= blackboard.Zoom;
 
-            case MouseButton.Middle:
-                draggingWindow = true;
-                break;
+
+                        for (int i = 0; i < blocks.Length; ++i)
+                        {
+                            Block block = blocks[i];
+                            bool doesMarqueOverlap = zoomSelectionBox.Overlaps(block._NodeRect);
+                            if (doesMarqueOverlap)
+                            {
+                                blackboard.AddSelectedBlock(block);
+                            }
+                            else
+                            {
+                                blackboard.DeselectBlockNoCheck(block);
+                            }
+                        }
+
+                        e.Use();
+                    }
+                    break;
+
+                case MouseButton.Right:
+                    if (Vector2.Distance(rightClickDown, e.mousePosition) > RightClickTolerance)
+                    {
+                        rightClickDown = -Vector2.one;
+                    }
+                    draggingWindow = true;
+                    break;
+
+                case MouseButton.Middle:
+                    draggingWindow = true;
+                    break;
             }
 
             if (draggingWindow)
             {
-                flowchart.ScrollPos += e.delta / flowchart.Zoom;
+                blackboard.ScrollPos += e.delta / blackboard.Zoom;
                 e.Use();
             }
         }
 
         protected override void OnRawMouseUp(Event e)
         {
-            var hitBlock = GetBlockAtPoint(e.mousePosition);
+            Block hitBlock = GetBlockAtPoint(e.mousePosition);
 
             // Convert Ctrl+Left click to a right click on mac
             if (Application.platform == RuntimePlatform.OSXEditor)
@@ -1263,136 +1311,138 @@ namespace Scaffold.EditorUtils
 
             switch (e.button)
             {
-            case MouseButton.Left:
-                if(didDoubleClick)
-                {
-                    didDoubleClick = false;
-                    return;
-                }
-
-
-                if (dragBlock != null)
-                {
-                    for (int i = 0; i < flowchart.SelectedBlocks.Count; ++i)
+                case MouseButton.Left:
+                    if (didDoubleClick)
                     {
-                        var block = flowchart.SelectedBlocks[i];
-                        var tempRect = block._NodeRect;
-                        var distance = e.mousePosition / flowchart.Zoom - flowchart.ScrollPos - startDragPosition;
-                        tempRect.position -= distance;
-                        block._NodeRect = tempRect;
-                        Undo.RecordObject(block, "Block Position");
-                        tempRect.position += distance;
-                        block._NodeRect = tempRect;
-                        if (ScaffoldEditorPreferences.useGridSnap)
+                        didDoubleClick = false;
+                        return;
+                    }
+
+
+                    if (dragBlock != null)
+                    {
+                        for (int i = 0; i < blackboard.SelectedBlocks.Count; ++i)
                         {
-                            block._NodeRect = block._NodeRect.SnapPosition(GridObjectSnap);
+                            Block block = blackboard.SelectedBlocks[i];
+                            Rect tempRect = block._NodeRect;
+                            Vector2 distance = e.mousePosition / blackboard.Zoom - blackboard.ScrollPos - startDragPosition;
+                            tempRect.position -= distance;
+                            block._NodeRect = tempRect;
+                            Undo.RecordObject(block, "Block Position");
+                            tempRect.position += distance;
+                            block._NodeRect = tempRect;
+                            if (ScaffoldEditorPreferences.useGridSnap)
+                            {
+                                block._NodeRect = block._NodeRect.SnapPosition(GridObjectSnap);
+                            }
+                            Repaint();
+                        }
+
+                        dragBlock = null;
+                    }
+
+                    // Check to see if selection actually changed?
+                    if (selectionBox.size.x > 0 && selectionBox.size.y > 0)
+                    {
+                        Undo.RecordObject(blackboard, "Select");
+                        blackboard.UpdateSelectedCache();
+
+                        EndControlSelection();
+                        //if ctrl down push them immediately back into mouse down
+                        if (GetAppendModifierDown())
+                        {
+                            StartControlSelection();
+                        }
+
+                        Repaint();
+
+                        if (blackboard.SelectedBlock != null)
+                        {
+                            SetBlockForInspector(blackboard, blackboard.SelectedBlock);
                         }
                         Repaint();
                     }
-
-                    dragBlock = null;
-                }
-
-                // Check to see if selection actually changed?
-                if (selectionBox.size.x > 0 && selectionBox.size.y > 0)
-                {
-                    Undo.RecordObject(flowchart, "Select");
-                    flowchart.UpdateSelectedCache();
-
-                    EndControlSelection();
-                    //if ctrl down push them immediately back into mouse down
-                    if (GetAppendModifierDown())
-                        StartControlSelection();
-
-                    Repaint();
-
-                    if (flowchart.SelectedBlock != null)
-                    {
-                        SetBlockForInspector(flowchart, flowchart.SelectedBlock);
-                    }
-                    Repaint();
-                }
-                else
-                {
-                    if (!GetAppendModifierDown() && !hasDraggedSelected)
-                    {
-                        DeselectAll();
-
-                        if (hitBlock != null)
-                        {
-                            SelectBlock(hitBlock);
-                        }
-                    }
-                }
-
-                hasDraggedSelected = false;
-                break;
-
-            case MouseButton.Right:
-                if (rightClickDown != -Vector2.one)
-                {
-                    var menu = new GenericMenu();
-                    var mousePosition = rightClickDown;
-
-                    // Clicked on a block
-                    if (hitBlock != null)
-                    {
-                        flowchart.AddSelectedBlock(hitBlock);
-
-                        // Use a copy because flowchart.SelectedBlocks gets modified
-                        var blockList = new List<Block>(flowchart.SelectedBlocks);
-                        menu.AddItem(new GUIContent ("Copy"), false, () => Copy());
-                        menu.AddItem(new GUIContent ("Cut"), false, () => Cut());
-                        menu.AddItem(new GUIContent ("Duplicate"), false, () => Duplicate());
-                        menu.AddItem(new GUIContent ("Delete"), false, () => AddToDeleteList(blockList));
-                        menu.AddSeparator("");
-                        if(Application.isPlaying)
-                        {
-                            menu.AddItem(new GUIContent("StopAll"), false, () => StopAllBlocks());
-                            menu.AddItem(new GUIContent("Stop"), false, () => StopThisBlock(hitBlock));
-                            menu.AddItem(new GUIContent("Execute"), false, () => ExecuteThisBlock(hitBlock, false));
-                            menu.AddItem(new GUIContent("Execute (Stop All First)"), false, () => ExecuteThisBlock(hitBlock, true));
-                        }
-                        else
-                        {
-                            menu.AddDisabledItem(new GUIContent("StopAll"));//, false), () => StopAllBlocks());
-                            menu.AddDisabledItem(new GUIContent("Stop"));//, false);, () => StopThisBlock(hitBlock));
-                            menu.AddDisabledItem(new GUIContent("Execute"));//, false);, () => ExecuteThisBlock(hitBlock, false));
-                            menu.AddDisabledItem(new GUIContent("Execute (Stop All First)"));//, false);, () => ExecuteThisBlock(hitBlock, true));
-                        }
-                    }
                     else
                     {
-                        DeselectAll();
+                        if (!GetAppendModifierDown() && !hasDraggedSelected)
+                        {
+                            DeselectAll();
 
-                        menu.AddItem(new GUIContent("Add Block"), false, () => CreateBlock(flowchart, mousePosition / flowchart.Zoom - flowchart.ScrollPos));
-
-                        if (copyList.Count > 0)
-                        {
-                            menu.AddItem(new GUIContent("Paste"), false, () => Paste(mousePosition));
-                        }
-                        else
-                        {
-                            menu.AddDisabledItem(new GUIContent("Paste"));
-                        }
-
-                        menu.AddSeparator("");
-                        if (Application.isPlaying)
-                        {
-                            menu.AddItem(new GUIContent("StopAll"), false, () => StopAllBlocks());
-                        }
-                        else
-                        {
-                            menu.AddDisabledItem(new GUIContent("StopAll"));//, false);, () => StopAllBlocks());
+                            if (hitBlock != null)
+                            {
+                                SelectBlock(hitBlock);
+                            }
                         }
                     }
 
-                    var menuRect = new Rect();
-                    menuRect.position = new Vector2(mousePosition.x, mousePosition.y - 12f);
-                    menu.DropDown(menuRect);
-                    e.Use();               
-                }
-                break;
+                    hasDraggedSelected = false;
+                    break;
+
+                case MouseButton.Right:
+                    if (rightClickDown != -Vector2.one)
+                    {
+                        GenericMenu menu = new GenericMenu();
+                        Vector2 mousePosition = rightClickDown;
+
+                        // Clicked on a block
+                        if (hitBlock != null)
+                        {
+                            blackboard.AddSelectedBlock(hitBlock);
+
+                            // Use a copy because blackboard.SelectedBlocks gets modified
+                            List<Block> blockList = new List<Block>(blackboard.SelectedBlocks);
+                            menu.AddItem(new GUIContent("Copy"), false, () => Copy());
+                            menu.AddItem(new GUIContent("Cut"), false, () => Cut());
+                            menu.AddItem(new GUIContent("Duplicate"), false, () => Duplicate());
+                            menu.AddItem(new GUIContent("Delete"), false, () => AddToDeleteList(blockList));
+                            menu.AddSeparator("");
+                            if (Application.isPlaying)
+                            {
+                                menu.AddItem(new GUIContent("StopAll"), false, () => StopAllBlocks());
+                                menu.AddItem(new GUIContent("Stop"), false, () => StopThisBlock(hitBlock));
+                                menu.AddItem(new GUIContent("Execute"), false, () => ExecuteThisBlock(hitBlock, false));
+                                menu.AddItem(new GUIContent("Execute (Stop All First)"), false, () => ExecuteThisBlock(hitBlock, true));
+                            }
+                            else
+                            {
+                                menu.AddDisabledItem(new GUIContent("StopAll"));//, false), () => StopAllBlocks());
+                                menu.AddDisabledItem(new GUIContent("Stop"));//, false);, () => StopThisBlock(hitBlock));
+                                menu.AddDisabledItem(new GUIContent("Execute"));//, false);, () => ExecuteThisBlock(hitBlock, false));
+                                menu.AddDisabledItem(new GUIContent("Execute (Stop All First)"));//, false);, () => ExecuteThisBlock(hitBlock, true));
+                            }
+                        }
+                        else
+                        {
+                            DeselectAll();
+
+                            menu.AddItem(new GUIContent("Add Block"), false, () => CreateBlock(blackboard, mousePosition / blackboard.Zoom - blackboard.ScrollPos));
+
+                            if (copyList.Count > 0)
+                            {
+                                menu.AddItem(new GUIContent("Paste"), false, () => Paste(mousePosition));
+                            }
+                            else
+                            {
+                                menu.AddDisabledItem(new GUIContent("Paste"));
+                            }
+
+                            menu.AddSeparator("");
+                            if (Application.isPlaying)
+                            {
+                                menu.AddItem(new GUIContent("StopAll"), false, () => StopAllBlocks());
+                            }
+                            else
+                            {
+                                menu.AddDisabledItem(new GUIContent("StopAll"));//, false);, () => StopAllBlocks());
+                            }
+                        }
+
+                        Rect menuRect = new Rect();
+                        menuRect.position = new Vector2(mousePosition.x, mousePosition.y - 12f);
+                        menu.DropDown(menuRect);
+                        e.Use();
+                    }
+                    break;
             }
 
             // Selection box
@@ -1406,21 +1456,21 @@ namespace Scaffold.EditorUtils
             if (selectionBox.size == Vector2.zero)
             {
                 Vector2 zoomCenter;
-                zoomCenter.x = e.mousePosition.x / flowchart.Zoom / position.width;
-                zoomCenter.y = e.mousePosition.y / flowchart.Zoom / position.height;
-                zoomCenter *= flowchart.Zoom;
+                zoomCenter.x = e.mousePosition.x / blackboard.Zoom / position.width;
+                zoomCenter.y = e.mousePosition.y / blackboard.Zoom / position.height;
+                zoomCenter *= blackboard.Zoom;
 
                 DoZoom(-e.delta.y * 0.01f, zoomCenter);
                 e.Use();
             }
         }
 
-        protected virtual void DrawFlowchartView(Event e)
+        protected virtual void DrawBlackboardView(Event e)
         {
             // Calc rect for script view
-            Rect scriptViewRect = CalcFlowchartWindowViewRect();
+            Rect scriptViewRect = CalcBlackboardWindowViewRect();
 
-            EditorZoomArea.Begin(flowchart.Zoom, scriptViewRect);
+            EditorZoomArea.Begin(blackboard.Zoom, scriptViewRect);
 
             if (e.type == EventType.Repaint)
             {
@@ -1429,39 +1479,45 @@ namespace Scaffold.EditorUtils
                 //draw all non selected
                 for (int i = 0; i < blocks.Length; ++i)
                 {
-                    var block = blocks[i];
-                    if(!block.IsSelected && ! block.IsControlSelected)
+                    Block block = blocks[i];
+                    if (!block.IsSelected && !block.IsControlSelected)
+                    {
                         DrawBlock(block, scriptViewRect);
+                    }
                 }
-                
+
                 //draw all held
                 for (int i = 0; i < blocks.Length; ++i)
                 {
-                    var block = blocks[i];
+                    Block block = blocks[i];
                     if (block.IsControlSelected)
+                    {
                         DrawBlock(block, scriptViewRect);
+                    }
                 }
 
                 //draw all selected
                 for (int i = 0; i < blocks.Length; ++i)
                 {
-                    var block = blocks[i];
+                    Block block = blocks[i];
                     if (block.IsSelected)
+                    {
                         DrawBlock(block, scriptViewRect);
+                    }
                 }
             }
 
             // Draw play icons beside all executing blocks
             if (Application.isPlaying)
             {
-                var emptyStyle = new GUIStyle();
+                GUIStyle emptyStyle = new GUIStyle();
 
                 //cache these once as they can end up being called thousands of times per frame otherwise
-                var curRealTime = Time.realtimeSinceStartup;
+                float curRealTime = Time.realtimeSinceStartup;
 
                 for (int i = 0; i < blocks.Length; ++i)
                 {
-                    var b = blocks[i];
+                    Block b = blocks[i];
                     DrawExecutingBlockIcon(b,
                         scriptViewRect,
                         (b.ExecutingIconTimer - curRealTime) / ScaffoldConstants.ExecutingIconFadeTime,
@@ -1476,12 +1532,14 @@ namespace Scaffold.EditorUtils
         private void DrawExecutingBlockIcon(Block b, Rect scriptViewRect, float alpha, GUIStyle style)
         {
             if (alpha <= 0)
+            {
                 return;
+            }
 
             Rect rect = new Rect(b._NodeRect);
 
-            rect.x += flowchart.ScrollPos.x - 37;
-            rect.y += flowchart.ScrollPos.y + 3;
+            rect.x += blackboard.ScrollPos.x - 37;
+            rect.y += blackboard.ScrollPos.y + 3;
             rect.width = 34;
             rect.height = 34;
 
@@ -1498,9 +1556,9 @@ namespace Scaffold.EditorUtils
             }
         }
 
-        private Rect CalcFlowchartWindowViewRect()
+        private Rect CalcBlackboardWindowViewRect()
         {
-            return new Rect(0, 0, this.position.width / flowchart.Zoom, this.position.height / flowchart.Zoom);
+            return new Rect(0, 0, this.position.width / blackboard.Zoom, this.position.height / blackboard.Zoom);
         }
 
         public virtual Vector2 GetBlockCenter(Block[] blocks)
@@ -1515,7 +1573,7 @@ namespace Scaffold.EditorUtils
 
             for (int i = 0; i < blocks.Length; ++i)
             {
-                var block = blocks[i];
+                Block block = blocks[i];
                 min.x = Mathf.Min(min.x, block._NodeRect.center.x);
                 min.y = Mathf.Min(min.y, block._NodeRect.center.y);
                 max.x = Mathf.Max(max.x, block._NodeRect.center.x);
@@ -1525,49 +1583,49 @@ namespace Scaffold.EditorUtils
             return (min + max) * 0.5f;
         }
 
-        protected virtual void CenterFlowchart()
+        protected virtual void CenterBlackboard()
         {
             UpdateBlockCollection();
 
             if (blocks.Length > 0)
             {
-                var center = -GetBlockCenter(blocks);
-                center.x += position.width * 0.5f / flowchart.Zoom;
-                center.y += position.height * 0.5f / flowchart.Zoom;
+                Vector2 center = -GetBlockCenter(blocks);
+                center.x += position.width * 0.5f / blackboard.Zoom;
+                center.y += position.height * 0.5f / blackboard.Zoom;
 
-                flowchart.CenterPosition = center;
-                flowchart.ScrollPos = flowchart.CenterPosition;
+                blackboard.CenterPosition = center;
+                blackboard.ScrollPos = blackboard.CenterPosition;
             }
         }
 
         protected virtual void DoZoom(float delta, Vector2 center)
         {
-            var prevZoom = flowchart.Zoom;
-            flowchart.Zoom += delta;
-            flowchart.Zoom = Mathf.Clamp(flowchart.Zoom, MinZoomValue, MaxZoomValue);
-            var deltaSize = position.size / prevZoom - position.size / flowchart.Zoom;
-            var offset = -Vector2.Scale(deltaSize, center);
-            flowchart.ScrollPos += offset;
+            float prevZoom = blackboard.Zoom;
+            blackboard.Zoom += delta;
+            blackboard.Zoom = Mathf.Clamp(blackboard.Zoom, MinZoomValue, MaxZoomValue);
+            Vector2 deltaSize = position.size / prevZoom - position.size / blackboard.Zoom;
+            Vector2 offset = -Vector2.Scale(deltaSize, center);
+            blackboard.ScrollPos += offset;
             forceRepaintCount = 1;
         }
 
         //Potentially could be faster using https://forum.unity.com/threads/how-do-i-access-the-background-image-used-for-the-animator.501876/
         protected virtual void DrawGrid()
         {
-            float width = this.position.width / flowchart.Zoom;
-            float height = this.position.height / flowchart.Zoom;
+            float width = this.position.width / blackboard.Zoom;
+            float height = this.position.height / blackboard.Zoom;
 
             Handles.color = gridLineColor;
 
-            
-            float x = flowchart.ScrollPos.x % GridLineSpacingSize;
+
+            float x = blackboard.ScrollPos.x % GridLineSpacingSize;
             while (x < width)
             {
                 Handles.DrawLine(new Vector2(x, 0), new Vector2(x, height));
                 x += GridLineSpacingSize;
             }
-            
-            float y = (flowchart.ScrollPos.y % GridLineSpacingSize);
+
+            float y = (blackboard.ScrollPos.y % GridLineSpacingSize);
             while (y < height)
             {
                 if (y >= 0)
@@ -1583,35 +1641,35 @@ namespace Scaffold.EditorUtils
         protected virtual void SelectBlock(Block block)
         {
             // Select the block and also select currently executing command
-            flowchart.SelectedBlock = block;
-            SetBlockForInspector(flowchart, block);
+            blackboard.SelectedBlock = block;
+            SetBlockForInspector(blackboard, block);
         }
 
         protected virtual void DeselectAll()
         {
-            Undo.RecordObject(flowchart, "Deselect");
-            flowchart.ClearSelectedCommands();
+            Undo.RecordObject(blackboard, "Deselect");
+            blackboard.ClearSelectedCommands();
             EndControlSelection();
-            flowchart.ClearSelectedBlocks();
-            Selection.activeGameObject = flowchart.gameObject;
+            blackboard.ClearSelectedBlocks();
+            Selection.activeGameObject = blackboard.gameObject;
         }
-        
-        public Block CreateBlock(Flowchart flowchart, Vector2 position)
+
+        public Block CreateBlock(Blackboard blackboard, Vector2 position)
         {
-            Block newBlock = flowchart.CreateBlock(position);
+            Block newBlock = blackboard.CreateBlock(position);
             UpdateBlockCollection();
             Undo.RegisterCreatedObjectUndo(newBlock, "New Block");
 
             // Use AddSelected instead of Select for when multiple blocks are duplicated
-            flowchart.AddSelectedBlock(newBlock);
-            SetBlockForInspector(flowchart, newBlock);
+            blackboard.AddSelectedBlock(newBlock);
+            SetBlockForInspector(blackboard, newBlock);
 
             return newBlock;
         }
 
-        public Block CreateBlockSuppressSelect(Flowchart flowchart, Vector2 position)
+        public Block CreateBlockSuppressSelect(Blackboard blackboard, Vector2 position)
         {
-            Block newBlock = flowchart.CreateBlock(position);
+            Block newBlock = blackboard.CreateBlock(position);
             UpdateBlockCollection();
             Undo.RegisterCreatedObjectUndo(newBlock, "New Block");
 
@@ -1629,13 +1687,13 @@ namespace Scaffold.EditorUtils
             }
 
 
-            bool blockIsSelected = flowchart.SelectedBlock == block;
+            bool blockIsSelected = blackboard.SelectedBlock == block;
 
 
-            Rect scriptViewRect = CalcFlowchartWindowViewRect();
+            Rect scriptViewRect = CalcBlackboardWindowViewRect();
 
-            var commandList = block.CommandList;
-            foreach (var command in commandList)
+            List<Command> commandList = block.CommandList;
+            foreach (Command command in commandList)
             {
                 if (command == null)
                 {
@@ -1643,8 +1701,8 @@ namespace Scaffold.EditorUtils
                 }
 
                 bool commandIsSelected = false;
-                var selectedCommands = flowchart.SelectedCommands;
-                foreach (var selectedCommand in selectedCommands)
+                List<Command> selectedCommands = blackboard.SelectedCommands;
+                foreach (Command selectedCommand in selectedCommands)
                 {
                     if (selectedCommand == command)
                     {
@@ -1658,22 +1716,22 @@ namespace Scaffold.EditorUtils
                 connectedBlocksWorkSpace.Clear();
                 command.GetConnectedBlocks(ref connectedBlocksWorkSpace);
 
-                foreach (var blockB in connectedBlocksWorkSpace)
+                foreach (Block blockB in connectedBlocksWorkSpace)
                 {
                     if (blockB == null ||
                         block == blockB ||
-                        !blockB.GetFlowchart().Equals(flowchart))
+                        !blockB.GetBlackboard().Equals(blackboard))
                     {
                         continue;
                     }
 
                     Rect startRect = new Rect(block._NodeRect);
-                    startRect.x += flowchart.ScrollPos.x;
-                    startRect.y += flowchart.ScrollPos.y;
+                    startRect.x += blackboard.ScrollPos.x;
+                    startRect.y += blackboard.ScrollPos.y;
 
                     Rect endRect = new Rect(blockB._NodeRect);
-                    endRect.x += flowchart.ScrollPos.x;
-                    endRect.y += flowchart.ScrollPos.y;
+                    endRect.x += blackboard.ScrollPos.x;
+                    endRect.y += blackboard.ScrollPos.y;
 
                     Rect boundRect = new Rect();
                     boundRect.xMin = Mathf.Min(startRect.xMin, endRect.xMin);
@@ -1682,7 +1740,9 @@ namespace Scaffold.EditorUtils
                     boundRect.yMax = Mathf.Max(startRect.yMax, endRect.yMax);
 
                     if (boundRect.Overlaps(scriptViewRect))
+                    {
                         DrawRectConnection(startRect, endRect, highlight);
+                    }
                 }
             }
         }
@@ -1691,7 +1751,7 @@ namespace Scaffold.EditorUtils
         static readonly Vector2[] pointsB = new Vector2[4];
 
         //we only connect mids on sides to matching opposing middle side on other block
-        private struct IndexPair { public int a, b;  public IndexPair(int a, int b) { this.a = a;this.b = b; } }
+        private struct IndexPair { public int a, b; public IndexPair(int a, int b) { this.a = a; this.b = b; } }
         static readonly IndexPair[] closestCornerIndexPairs = new IndexPair[]
         {
             new IndexPair(){a=0,b=3 },
@@ -1724,8 +1784,8 @@ namespace Scaffold.EditorUtils
             //  we only check mathcing opposing mids
             for (int i = 0; i < closestCornerIndexPairs.Length; i++)
             {
-                var a = pointsA[closestCornerIndexPairs[i].a];
-                var b = pointsB[closestCornerIndexPairs[i].b];
+                Vector2 a = pointsA[closestCornerIndexPairs[i].a];
+                Vector2 b = pointsB[closestCornerIndexPairs[i].b];
                 float d = Vector2.Distance(a, b);
                 if (d < minDist)
                 {
@@ -1745,34 +1805,34 @@ namespace Scaffold.EditorUtils
 
             // Place control based on distance between points
             // Weight the min component more so things don't get overly curvy
-            var diff = pointA - pointB;
+            Vector2 diff = pointA - pointB;
             diff.x = Mathf.Abs(diff.x);
             diff.y = Mathf.Abs(diff.y);
-            var min = Mathf.Min(diff.x, diff.y);
-            var max = Mathf.Max(diff.x, diff.y);
-            var mod = min * 0.75f + max * 0.25f;
+            float min = Mathf.Min(diff.x, diff.y);
+            float max = Mathf.Max(diff.x, diff.y);
+            float mod = min * 0.75f + max * 0.25f;
 
             // Draw bezier curve connecting blocks
-            var directionA = (rectA.center - pointA).normalized;
-            var directionB = (rectB.center - pointB).normalized;
-            var controlA = pointA - directionA * mod * 0.67f;
-            var controlB = pointB - directionB * mod * 0.67f;            
+            Vector2 directionA = (rectA.center - pointA).normalized;
+            Vector2 directionB = (rectB.center - pointB).normalized;
+            Vector2 controlA = pointA - directionA * mod * 0.67f;
+            Vector2 controlB = pointB - directionB * mod * 0.67f;
             Handles.DrawBezier(pointA, pointB, controlA, controlB, color, null, 3f);
 
             // Draw arrow on curve
-            var point = GetPointOnCurve(pointA, controlA, pointB, controlB, 0.7f);
-            var direction = (GetPointOnCurve(pointA, controlA, pointB, controlB, 0.6f) - point).normalized;
-            var perp = new Vector2(direction.y, -direction.x);
+            Vector2 point = GetPointOnCurve(pointA, controlA, pointB, controlB, 0.7f);
+            Vector2 direction = (GetPointOnCurve(pointA, controlA, pointB, controlB, 0.6f) - point).normalized;
+            Vector2 perp = new Vector2(direction.y, -direction.x);
             //reuse same array to avoid the auto alloced one in DrawAAConvexPolygon
             beizerWorkSpace[0] = point;
             beizerWorkSpace[1] = point + direction * 10 + perp * 5;
             beizerWorkSpace[2] = point + direction * 10 - perp * 5;
             Handles.DrawAAConvexPolygon(beizerWorkSpace);
 
-            var connectionPointA = pointA + directionA * 4f;
-            var connectionRectA = new Rect(connectionPointA.x - 4f, connectionPointA.y - 4f, 8f, 8f);
-            var connectionPointB = pointB + directionB * 4f;
-            var connectionRectB = new Rect(connectionPointB.x - 4f, connectionPointB.y - 4f, 8f, 8f);
+            Vector2 connectionPointA = pointA + directionA * 4f;
+            Rect connectionRectA = new Rect(connectionPointA.x - 4f, connectionPointA.y - 4f, 8f, 8f);
+            Vector2 connectionPointB = pointB + directionB * 4f;
+            Rect connectionRectB = new Rect(connectionPointB.x - 4f, connectionPointB.y - 4f, 8f, 8f);
 
             GUI.DrawTexture(connectionRectA, connectionPointTexture, ScaleMode.ScaleToFit);
             GUI.DrawTexture(connectionRectB, connectionPointTexture, ScaleMode.ScaleToFit);
@@ -1791,7 +1851,7 @@ namespace Scaffold.EditorUtils
         {
             for (int i = 0; i < blocks.Count; ++i)
             {
-                FlowchartWindow.deleteList.Add(blocks[i]);
+                BlackboardWindow.deleteList.Add(blocks[i]);
             }
         }
 
@@ -1802,25 +1862,27 @@ namespace Scaffold.EditorUtils
 
         internal void StopAllBlocks()
         {
-            flowchart.StopAllBlocks();
+            blackboard.StopAllBlocks();
         }
 
         internal void ExecuteThisBlock(Block block, bool stopRunningBlocks)
         {
             if (stopRunningBlocks)
+            {
                 StopAllBlocks();
+            }
 
             block.StartExecution();
         }
 
         public void DeleteBlocks()
         {
-             // Delete any scheduled objects
+            // Delete any scheduled objects
             for (int i = 0; i < deleteList.Count; ++i)
             {
-                var deleteBlock = deleteList[i];
+                Block deleteBlock = deleteList[i];
 
-                var commandList = deleteBlock.CommandList;
+                List<Command> commandList = deleteBlock.CommandList;
                 for (int j = 0; j < commandList.Count; ++j)
                 {
                     Undo.DestroyObjectImmediate(commandList[j]);
@@ -1830,11 +1892,11 @@ namespace Scaffold.EditorUtils
                 {
                     Undo.DestroyObjectImmediate(deleteBlock._EventHandler);
                 }
-                
+
                 if (deleteBlock.IsSelected)
                 {
                     // Deselect
-                    flowchart.DeselectBlockNoCheck(deleteBlock);
+                    blackboard.DeselectBlockNoCheck(deleteBlock);
                 }
 
                 Undo.DestroyObjectImmediate(deleteBlock);
@@ -1843,16 +1905,16 @@ namespace Scaffold.EditorUtils
             if (deleteList.Count > 0)
             {
                 UpdateBlockCollection();
-                // Revert to showing properties for the Flowchart
-                Selection.activeGameObject = flowchart.gameObject;
-                flowchart.ClearSelectedCommands();
+                // Revert to showing properties for the Blackboard
+                Selection.activeGameObject = blackboard.gameObject;
+                blackboard.ClearSelectedCommands();
                 Repaint();
             }
 
             deleteList.Clear();
         }
-        
-        protected static void ShowBlockInspector(Flowchart flowchart)
+
+        protected static void ShowBlockInspector(Blackboard blackboard)
         {
             if (blockInspector == null)
             {
@@ -1867,23 +1929,23 @@ namespace Scaffold.EditorUtils
             EditorUtility.SetDirty(blockInspector);
         }
 
-        protected static void SetBlockForInspector(Flowchart flowchart, Block block)
+        protected static void SetBlockForInspector(Blackboard blackboard, Block block)
         {
-            ShowBlockInspector(flowchart);
-            flowchart.ClearSelectedCommands();
+            ShowBlockInspector(blackboard);
+            blackboard.ClearSelectedCommands();
             if (block.ActiveCommand != null)
             {
-                flowchart.AddSelectedCommand(block.ActiveCommand);
+                blackboard.AddSelectedCommand(block.ActiveCommand);
             }
 
         }
 
         /// <summary>
-        /// Displays a temporary text alert in the center of the Flowchart window.
+        /// Displays a temporary text alert in the center of the Blackboard window.
         /// </summary>
         public static void ShowNotification(string notificationText)
         {
-            EditorWindow window = EditorWindow.GetWindow(typeof(FlowchartWindow), false, "Flowchart");
+            EditorWindow window = EditorWindow.GetWindow(typeof(BlackboardWindow), false, "Blackboard");
             if (window != null)
             {
                 window.ShowNotification(new GUIContent(notificationText));
@@ -1899,7 +1961,7 @@ namespace Scaffold.EditorUtils
         {
             copyList.Clear();
 
-            foreach (var block in flowchart.SelectedBlocks
+            foreach (Block block in blackboard.SelectedBlocks
                 .Union(mouseDownSelectionState))
             {
                 copyList.Add(new BlockCopy(block));
@@ -1909,29 +1971,29 @@ namespace Scaffold.EditorUtils
         protected virtual void Cut()
         {
             Copy();
-            Undo.RecordObject(flowchart, "Cut");
-            AddToDeleteList(flowchart.SelectedBlocks);
+            Undo.RecordObject(blackboard, "Cut");
+            AddToDeleteList(blackboard.SelectedBlocks);
         }
 
         // Center is position in unscaled window space
         protected virtual void Paste(Vector2 center, bool relative = false)
         {
-            Undo.RecordObject(flowchart, "Deselect");
+            Undo.RecordObject(blackboard, "Deselect");
             DeselectAll();
 
-            var pasteList = new List<Block>();
+            List<Block> pasteList = new List<Block>();
 
-            foreach (var copy in copyList)
+            foreach (BlockCopy copy in copyList)
             {
-                pasteList.Add(copy.PasteBlock(this, flowchart));
+                pasteList.Add(copy.PasteBlock(this, blackboard));
             }
 
-            var copiedCenter = GetBlockCenter(pasteList.ToArray()) + flowchart.ScrollPos;
-            var delta = relative ? center : (center / flowchart.Zoom - copiedCenter);
-            
-            foreach (var block in pasteList)
+            Vector2 copiedCenter = GetBlockCenter(pasteList.ToArray()) + blackboard.ScrollPos;
+            Vector2 delta = relative ? center : (center / blackboard.Zoom - copiedCenter);
+
+            foreach (Block block in pasteList)
             {
-                var tempRect = block._NodeRect;
+                Rect tempRect = block._NodeRect;
                 tempRect.position += delta;
                 block._NodeRect = tempRect;
             }
@@ -1941,7 +2003,7 @@ namespace Scaffold.EditorUtils
 
         protected virtual void Duplicate()
         {
-            var tempCopyList = new List<BlockCopy>(copyList);
+            List<BlockCopy> tempCopyList = new List<BlockCopy>(copyList);
             Copy();
             Paste(new Vector2(20, 0), true);
             copyList = tempCopyList;
@@ -1951,10 +2013,10 @@ namespace Scaffold.EditorUtils
         {
             if (e.type == EventType.ValidateCommand)
             {
-                var c = e.commandName;
+                string c = e.commandName;
                 if (c == "Copy" || c == "Cut" || c == "SoftDelete" || c == "Delete" || c == "Duplicate")
                 {
-                    if (flowchart.SelectedBlocks.Count > 0 || mouseDownSelectionState.Count > 0)
+                    if (blackboard.SelectedBlocks.Count > 0 || mouseDownSelectionState.Count > 0)
                     {
                         e.Use();
                     }
@@ -1977,63 +2039,63 @@ namespace Scaffold.EditorUtils
         {
             switch (e.commandName)
             {
-            case "Copy":
-                Copy();
-                e.Use();
-                break;
-            
-            case "Cut":
-                Cut();
-                e.Use();
-                break;
+                case "Copy":
+                    Copy();
+                    e.Use();
+                    break;
 
-            case "Paste":
-                Paste(position.center - position.position);
-                e.Use();
-                break;
+                case "Cut":
+                    Cut();
+                    e.Use();
+                    break;
 
-            case "Delete":
-                AddToDeleteList(flowchart.SelectedBlocks);
-                e.Use();
-                break;
+                case "Paste":
+                    Paste(position.center - position.position);
+                    e.Use();
+                    break;
 
-            case "SoftDelete":
-                AddToDeleteList(flowchart.SelectedBlocks);
-                e.Use();
-                break;
+                case "Delete":
+                    AddToDeleteList(blackboard.SelectedBlocks);
+                    e.Use();
+                    break;
 
-            case "Duplicate":
-                Duplicate();
-                e.Use();
-                break;
+                case "SoftDelete":
+                    AddToDeleteList(blackboard.SelectedBlocks);
+                    e.Use();
+                    break;
 
-            case "SelectAll":
-                Undo.RecordObject(flowchart, "Selection");
-                flowchart.ClearSelectedBlocks();
-                for (int i = 0; i < blocks.Length; ++i)
-                {
-                    flowchart.AddSelectedBlock(blocks[i]);
-                }
-                e.Use();
-                break;
+                case "Duplicate":
+                    Duplicate();
+                    e.Use();
+                    break;
 
-            case "Find":
-                blockPopupSelection = 0;
-                popupScroll = Vector2.zero;
-                EditorGUI.FocusTextInControl(SearchFieldName);
-                e.Use();
-                break;
+                case "SelectAll":
+                    Undo.RecordObject(blackboard, "Selection");
+                    blackboard.ClearSelectedBlocks();
+                    for (int i = 0; i < blocks.Length; ++i)
+                    {
+                        blackboard.AddSelectedBlock(blocks[i]);
+                    }
+                    e.Use();
+                    break;
+
+                case "Find":
+                    blockPopupSelection = 0;
+                    popupScroll = Vector2.zero;
+                    EditorGUI.FocusTextInControl(SearchFieldName);
+                    e.Use();
+                    break;
             }
         }
 
         protected virtual void CenterBlock(Block block)
         {
-            if (flowchart.Zoom < 1)
+            if (blackboard.Zoom < 1)
             {
-                DoZoom(1 - flowchart.Zoom, Vector2.one * 0.5f);
+                DoZoom(1 - blackboard.Zoom, Vector2.one * 0.5f);
             }
 
-            flowchart.ScrollPos = -block._NodeRect.center + position.size * 0.5f / flowchart.Zoom;
+            blackboard.ScrollPos = -block._NodeRect.center + position.size * 0.5f / blackboard.Zoom;
         }
 
         protected virtual void CloseBlockPopup()
@@ -2047,7 +2109,7 @@ namespace Scaffold.EditorUtils
         static protected List<Block> blockGraphicsConnectedWorkSpace = new List<Block>();
         protected virtual BlockGraphics GetBlockGraphics(Block block)
         {
-            var graphics = new BlockGraphics();
+            BlockGraphics graphics = new BlockGraphics();
 
             blockGraphicsUniqueListWorkSpace.Clear();
             blockGraphicsConnectedWorkSpace.Clear();
@@ -2062,7 +2124,7 @@ namespace Scaffold.EditorUtils
             {
                 // Count the number of unique connections (excluding self references)
                 block.GetConnectedBlocks(ref blockGraphicsConnectedWorkSpace);
-                foreach (var connectedBlock in blockGraphicsConnectedWorkSpace)
+                foreach (Block connectedBlock in blockGraphicsConnectedWorkSpace)
                 {
                     if (connectedBlock == block ||
                         blockGraphicsUniqueListWorkSpace.Contains(connectedBlock))
@@ -2094,7 +2156,7 @@ namespace Scaffold.EditorUtils
         private void DrawBlock(Block block, Rect scriptViewRect)
         {
             float nodeWidthA = nodeStyle.CalcSize(new GUIContent(block.BlockName)).x + 10;
-            
+
             Rect tempRect = block._NodeRect;
             tempRect.width = Mathf.Clamp(nodeWidthA, BlockMinWidth, BlockMaxWidth);
             tempRect.height = DefaultBlockHeight;
@@ -2105,20 +2167,20 @@ namespace Scaffold.EditorUtils
             block._NodeRect = tempRect;
 
             // Draw blocks
-            var graphics = GetBlockGraphics(block);
+            BlockGraphics graphics = GetBlockGraphics(block);
 
             Rect windowRelativeRect = new Rect(block._NodeRect);
             if (ScaffoldEditorPreferences.useGridSnap)
             {
                 windowRelativeRect = windowRelativeRect.SnapPosition(GridObjectSnap);
             }
-            windowRelativeRect.position += flowchart.ScrollPos;
+            windowRelativeRect.position += blackboard.ScrollPos;
 
             //skip if outside of view
             if (scriptViewRect.Overlaps(windowRelativeRect))
             {
 
-                var tmpNormBg = nodeStyle.normal.background;
+                Texture2D tmpNormBg = nodeStyle.normal.background;
 
                 // Draw untinted highlight
                 if (block.IsSelected && !block.IsControlSelected)
@@ -2133,7 +2195,7 @@ namespace Scaffold.EditorUtils
                 {
                     GUI.backgroundColor = Color.white;
                     nodeStyle.normal.background = graphics.onTexture;
-                    var c = GUI.backgroundColor;
+                    Color c = GUI.backgroundColor;
                     c.a = 0.5f;
                     GUI.backgroundColor = c;
                     GUI.Box(windowRelativeRect, "", nodeStyle);
@@ -2141,22 +2203,22 @@ namespace Scaffold.EditorUtils
                 }
 
                 // Draw tinted block; ensure text is readable
-                var brightness = graphics.tint.r * 0.3 + graphics.tint.g * 0.59 + graphics.tint.b * 0.11;
-                var tmpNormTxtCol = nodeStyle.normal.textColor;
+                double brightness = graphics.tint.r * 0.3 + graphics.tint.g * 0.59 + graphics.tint.b * 0.11;
+                Color tmpNormTxtCol = nodeStyle.normal.textColor;
                 nodeStyle.normal.textColor = brightness >= 0.5 ? Color.black : Color.white;
 
                 switch (block.FilterState)
                 {
-                case Block.FilteredState.Full:
-                    break;
-                case Block.FilteredState.Partial:
-                    graphics.tint.a *= 0.65f;
-                    break;
-                case Block.FilteredState.None:
-                    graphics.tint.a *= 0.2f;
-                    break;
-                default:
-                    break;
+                    case Block.FilteredState.Full:
+                        break;
+                    case Block.FilteredState.Partial:
+                        graphics.tint.a *= 0.65f;
+                        break;
+                    case Block.FilteredState.None:
+                        graphics.tint.a *= 0.2f;
+                        break;
+                    default:
+                        break;
                 }
 
                 nodeStyle.normal.background = graphics.offTexture;
@@ -2167,7 +2229,7 @@ namespace Scaffold.EditorUtils
 
                 if (block.Description.Length > 0)
                 {
-                    var content = new GUIContent(block.Description);
+                    GUIContent content = new GUIContent(block.Description);
                     windowRelativeRect.y += windowRelativeRect.height;
                     windowRelativeRect.height = descriptionStyle.CalcHeight(content, windowRelativeRect.width);
                     GUI.Label(windowRelativeRect, content, descriptionStyle);
@@ -2190,8 +2252,8 @@ namespace Scaffold.EditorUtils
 
                     Rect rect = new Rect(block._NodeRect);
                     rect.height = handlerStyle.CalcHeight(new GUIContent(handlerLabel), block._NodeRect.width);
-                    rect.x += flowchart.ScrollPos.x;
-                    rect.y += flowchart.ScrollPos.y - rect.height;
+                    rect.x += blackboard.ScrollPos.x;
+                    rect.y += blackboard.ScrollPos.y - rect.height;
 
                     GUI.Label(rect, handlerLabel, handlerStyle);
                 }

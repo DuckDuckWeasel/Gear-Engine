@@ -27,9 +27,9 @@ namespace Scaffold
 
         public override void OnEnter()
         {
-            if (targetRenderer != null && flowchart != null)
+            if (targetRenderer != null && blackboard != null)
             {
-                flowchart.StartCoroutine(BlinkRoutine());
+                blackboard.StartCoroutine(BlinkRoutine());
             }
             else
             {

@@ -10,7 +10,7 @@
 		"Scaffold.CommandInfoAttribute",
 		"Scaffold.FacingDirection",
 		"Scaffold.FloatVariable",
-		"Scaffold.Flowchart",
+		"Scaffold.Blackboard",
 		"Scaffold.ScaffoldPrefs",
 		"Scaffold.LuaEnvironment",
 		"Scaffold.LuaUtils",

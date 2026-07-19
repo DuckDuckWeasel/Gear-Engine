@@ -10,12 +10,12 @@ namespace Scaffold
     /// </summary>
     public class GlobalVariables : MonoBehaviour
     {
-        private Flowchart holder;
+        private Blackboard holder;
         private Dictionary<string, Variable> variables = new Dictionary<string, Variable>();
 
         void Awake()
         {
-            holder = new GameObject("GlobalVariables").AddComponent<Flowchart>();
+            holder = new GameObject("GlobalVariables").AddComponent<Blackboard>();
             holder.transform.parent = transform;
         }
 

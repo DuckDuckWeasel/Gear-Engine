@@ -2,28 +2,28 @@ namespace Scaffold
 {
     public static class VariableValueReference
     {
-        public static T Resolve<T>(VariableBase<T> flowchartVariable, T directValue, VariableValueSO<T> scriptableObjectValue, VariableDataSource source)
+        public static T Resolve<T>(VariableBase<T> blackboardVariable, T directValue, VariableValueSO<T> scriptableObjectValue, VariableDataSource source)
         {
             switch (source)
             {
-                case VariableDataSource.FlowchartVariable:
-                    return flowchartVariable != null ? flowchartVariable.Value : default;
+                case VariableDataSource.BlackboardVariable:
+                    return blackboardVariable != null ? blackboardVariable.Value : default;
                 case VariableDataSource.Direct:
                     return directValue;
                 case VariableDataSource.ScriptableObject:
                     return scriptableObjectValue != null ? scriptableObjectValue.Value : default;
                 case VariableDataSource.Unspecified:
                 default:
-                    return flowchartVariable != null ? flowchartVariable.Value : directValue;
+                    return blackboardVariable != null ? blackboardVariable.Value : directValue;
             }
         }
 
-        public static void Assign<T>(VariableBase<T> flowchartVariable, ref T directValue, VariableValueSO<T> scriptableObjectValue, VariableDataSource source, T value)
+        public static void Assign<T>(VariableBase<T> blackboardVariable, ref T directValue, VariableValueSO<T> scriptableObjectValue, VariableDataSource source, T value)
         {
-            VariableDataSource resolvedSource = GetResolvedSource(flowchartVariable, source);
-            if (resolvedSource == VariableDataSource.FlowchartVariable)
+            VariableDataSource resolvedSource = GetResolvedSource(blackboardVariable, source);
+            if (resolvedSource == VariableDataSource.BlackboardVariable)
             {
-                AssignFlowchartVariable(flowchartVariable, value);
+                AssignBlackboardVariable(blackboardVariable, value);
                 return;
             }
 
@@ -36,19 +36,19 @@ namespace Scaffold
             directValue = value;
         }
 
-        public static VariableDataSource GetResolvedSource<T>(VariableBase<T> flowchartVariable, VariableDataSource source)
+        public static VariableDataSource GetResolvedSource<T>(VariableBase<T> blackboardVariable, VariableDataSource source)
         {
             return source == VariableDataSource.Unspecified
-                ? flowchartVariable != null ? VariableDataSource.FlowchartVariable : VariableDataSource.Direct
+                ? blackboardVariable != null ? VariableDataSource.BlackboardVariable : VariableDataSource.Direct
                 : source;
         }
 
-        public static string Describe<T>(VariableBase<T> flowchartVariable, T directValue, VariableValueSO<T> scriptableObjectValue, VariableDataSource source)
+        public static string Describe<T>(VariableBase<T> blackboardVariable, T directValue, VariableValueSO<T> scriptableObjectValue, VariableDataSource source)
         {
-            switch (GetResolvedSource(flowchartVariable, source))
+            switch (GetResolvedSource(blackboardVariable, source))
             {
-                case VariableDataSource.FlowchartVariable:
-                    return flowchartVariable != null ? flowchartVariable.Key : "Null";
+                case VariableDataSource.BlackboardVariable:
+                    return blackboardVariable != null ? blackboardVariable.Key : "Null";
                 case VariableDataSource.ScriptableObject:
                     return scriptableObjectValue != null ? scriptableObjectValue.name : "Null";
                 case VariableDataSource.Direct:
@@ -57,11 +57,11 @@ namespace Scaffold
             }
         }
 
-        private static void AssignFlowchartVariable<T>(VariableBase<T> flowchartVariable, T value)
+        private static void AssignBlackboardVariable<T>(VariableBase<T> blackboardVariable, T value)
         {
-            if (flowchartVariable != null)
+            if (blackboardVariable != null)
             {
-                flowchartVariable.Value = value;
+                blackboardVariable.Value = value;
             }
         }
 

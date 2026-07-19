@@ -27,10 +27,10 @@ namespace Scaffold
                 return;
             }
             
-            var flowchart = GetFlowchart();
+            var blackboard = GetBlackboard();
             
             // Prepend the current save profile (if any)
-            string prefsKey = SetSaveProfile.SaveProfile + "_" + flowchart.SubstituteVariables(key);
+            string prefsKey = SetSaveProfile.SaveProfile + "_" + blackboard.SubstituteVariables(key);
             
             PlayerPrefs.DeleteKey(prefsKey);
 
@@ -60,7 +60,7 @@ namespace Scaffold
         {
             base.RefreshVariableCache();
 
-            var f = GetFlowchart();
+            var f = GetBlackboard();
 
             f.DetermineSubstituteVariables(key, referencedVariables);
         }

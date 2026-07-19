@@ -156,7 +156,7 @@ namespace Scaffold
             {
                 foreach (var item in conditions)
                 {
-                    item.AnyVar.RefreshVariableCacheHelper(GetFlowchart(), ref referencedVariables);
+                    item.AnyVar.RefreshVariableCacheHelper(GetBlackboard(), ref referencedVariables);
                 }
             }
         }

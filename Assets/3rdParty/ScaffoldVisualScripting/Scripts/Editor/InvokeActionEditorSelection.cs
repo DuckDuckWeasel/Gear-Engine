@@ -5,7 +5,9 @@ namespace Scaffold.EditorUtils
 {
     public static class InvokeActionEditorSelection
     {
-        private static readonly Dictionary<int, int> selectedActionIndices = new Dictionary<int, int>();
+        private static readonly Dictionary<InvokeActionCommand, int> selectedActionIndices = new Dictionary<InvokeActionCommand, int>();
+        private static readonly Dictionary<InvokeActionCommand, HashSet<int>> selectedActionIndexSets =
+            new Dictionary<InvokeActionCommand, HashSet<int>>();
 
         public static void Select(InvokeActionCommand command, int actionIndex)
         {
@@ -14,7 +16,8 @@ namespace Scaffold.EditorUtils
                 return;
             }
 
-            selectedActionIndices[command.GetInstanceID()] = actionIndex;
+            selectedActionIndices[command] = actionIndex;
+            selectedActionIndexSets[command] = new HashSet<int> { actionIndex };
         }
 
         public static int GetSelectedIndex(InvokeActionCommand command)
@@ -24,7 +27,7 @@ namespace Scaffold.EditorUtils
                 return -1;
             }
 
-            if (!selectedActionIndices.TryGetValue(command.GetInstanceID(), out int actionIndex))
+            if (!selectedActionIndices.TryGetValue(command, out int actionIndex))
             {
                 return -1;
             }
@@ -36,8 +39,48 @@ namespace Scaffold.EditorUtils
         {
             if (command != null)
             {
-                selectedActionIndices.Remove(command.GetInstanceID());
+                selectedActionIndices.Remove(command);
+                selectedActionIndexSets.Remove(command);
             }
+        }
+
+        public static void SelectAll(InvokeActionCommand command)
+        {
+            if (command == null || command.actions == null || command.actions.Count == 0)
+            {
+                Clear(command);
+                return;
+            }
+
+            HashSet<int> indices = new HashSet<int>();
+            for (int index = 0; index < command.actions.Count; index++)
+            {
+                indices.Add(index);
+            }
+
+            selectedActionIndices[command] = 0;
+            selectedActionIndexSets[command] = indices;
+        }
+
+        public static List<int> GetSelectedIndices(InvokeActionCommand command)
+        {
+            if (command == null || command.actions == null ||
+                !selectedActionIndexSets.TryGetValue(command, out HashSet<int> indices))
+            {
+                return new List<int>();
+            }
+
+            List<int> validIndices = new List<int>();
+            foreach (int index in indices)
+            {
+                if (index >= 0 && index < command.actions.Count)
+                {
+                    validIndices.Add(index);
+                }
+            }
+
+            validIndices.Sort();
+            return validIndices;
         }
     }
 }

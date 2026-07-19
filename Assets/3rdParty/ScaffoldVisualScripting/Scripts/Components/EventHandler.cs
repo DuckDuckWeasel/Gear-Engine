@@ -31,7 +31,7 @@ namespace Scaffold
     /// 'Execute On Event' dropdown menu when a block is selected.
     /// </summary>
     [RequireComponent(typeof(Block))]
-    [RequireComponent(typeof(Flowchart))]
+    [RequireComponent(typeof(Blackboard))]
     [AddComponentMenu("")]
     public class EventHandler : MonoBehaviour
     {   
@@ -39,7 +39,7 @@ namespace Scaffold
         [FormerlySerializedAs("parentSequence")]
         [SerializeField] protected Block parentBlock;
 
-        [Tooltip("If true, the flowchart window will not auto select the Block when the Event Handler fires. Affects Editor only.")]
+        [Tooltip("If true, the blackboard window will not auto select the Block when the Event Handler fires. Affects Editor only.")]
         [SerializeField] protected bool suppressBlockAutoSelect = false;
 
         #region Public members
@@ -64,10 +64,10 @@ namespace Scaffold
                 return false;
             }
 
-            var flowchart = ParentBlock.GetFlowchart();
+            var blackboard = ParentBlock.GetBlackboard();
 
-            //if somehow the flowchart is invalid or has been disabled we don't want to continue
-            if(flowchart == null || !flowchart.isActiveAndEnabled)
+            //if somehow the blackboard is invalid or has been disabled we don't want to continue
+            if(blackboard == null || !blackboard.isActiveAndEnabled)
             {
                 return false;
             }
@@ -77,7 +77,7 @@ namespace Scaffold
                 ParentBlock.SuppressNextAutoSelection = true;
             }
 
-            return flowchart.ExecuteBlock(ParentBlock);
+            return blackboard.ExecuteBlock(ParentBlock);
         }
 
         /// <summary>

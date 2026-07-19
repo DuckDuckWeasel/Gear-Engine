@@ -80,7 +80,7 @@ namespace Scaffold
             base.RefreshVariableCache();
 
             if(anyVar != null)
-                anyVar.RefreshVariableCacheHelper(GetFlowchart(), ref referencedVariables);
+                anyVar.RefreshVariableCacheHelper(GetBlackboard(), ref referencedVariables);
         }
 #endif
         #endregion Editor caches

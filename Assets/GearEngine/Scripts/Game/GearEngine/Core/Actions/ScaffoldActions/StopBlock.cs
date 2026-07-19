@@ -14,8 +14,8 @@ namespace Scaffold
     [Serializable]
     public class StopBlock : ActionBase, IBlockCaller
     {
-        [Tooltip("Flowchart containing the Block. If none is specified, the parent Flowchart is used.")]
-        [SerializeField] protected Flowchart flowchart;
+        [Tooltip("Blackboard containing the Block. If none is specified, the parent Blackboard is used.")]
+        [SerializeField] protected Blackboard blackboard;
 
         [Tooltip("Name of the Block to stop")]
         [SerializeField] protected StringData blockName = new StringData("");
@@ -29,12 +29,12 @@ namespace Scaffold
                 Continue();
             }
 
-            if (flowchart == null)
+            if (blackboard == null)
             {
-                flowchart = (Flowchart)GetFlowchart();
+                blackboard = (Blackboard)GetBlackboard();
             }
 
-            var block = flowchart.FindBlock(blockName.Value);
+            var block = blackboard.FindBlock(blockName.Value);
             if (block == null ||
                 !block.IsExecuting())
             {
@@ -63,8 +63,8 @@ namespace Scaffold
 
         public bool MayCallBlock(Block block)
         {
-            if(flowchart != null)
-                return block == flowchart.FindBlock(blockName.Value);
+            if(blackboard != null)
+                return block == blackboard.FindBlock(blockName.Value);
             return false;
         }
 

@@ -17,12 +17,12 @@ namespace Scaffold
         {
             // Have we loaded the prefs yet
             private static bool prefsLoaded = false;
-            private const string HIDE_FLOWCHART_ICON_KEY = "hideFlowchartIconInHierarchy";
+            private const string HIDE_BLACKBOARD_ICON_KEY = "hideBlackboardIconInHierarchy";
             private const string LEGACY_HIDE_MUSHROOM_KEY = "hideMushroomInHierarchy";
             private const string USE_LEGACY_MENUS = "useLegacyMenus";
             private const string USE_GRID_SNAP = "useGridSnap";
 
-            public static bool hideFlowchartIconInHierarchy;
+            public static bool hideBlackboardIconInHierarchy;
             public static bool useLegacyMenus;
             public static bool useGridSnap;
 
@@ -62,9 +62,9 @@ namespace Scaffold
                 }
 
                 // Preferences GUI
-                hideFlowchartIconInHierarchy = EditorGUILayout.Toggle("Hide Flowchart Icon in Hierarchy", hideFlowchartIconInHierarchy);
+                hideBlackboardIconInHierarchy = EditorGUILayout.Toggle("Hide Blackboard Icon in Hierarchy", hideBlackboardIconInHierarchy);
                 useLegacyMenus = EditorGUILayout.Toggle(new GUIContent("Legacy Menus", "Force Legacy menus for Event, Add Variable and Add Command menus"), useLegacyMenus);
-                useGridSnap = EditorGUILayout.Toggle(new GUIContent("Grid Snap", "Align and Snap block positions and widths in the flowchart window to the grid"), useGridSnap);
+                useGridSnap = EditorGUILayout.Toggle(new GUIContent("Grid Snap", "Align and Snap block positions and widths in the blackboard window to the grid"), useGridSnap);
 
                 EditorGUILayout.Space();
                 //ideally if any are null, but typically it is all or nothing that have broken links due to version changes or moving files external to Unity
@@ -113,7 +113,7 @@ namespace Scaffold
                 // Save the preferences
                 if (GUI.changed)
                 {
-                    EditorPrefs.SetBool(HIDE_FLOWCHART_ICON_KEY, hideFlowchartIconInHierarchy);
+                    EditorPrefs.SetBool(HIDE_BLACKBOARD_ICON_KEY, hideBlackboardIconInHierarchy);
                     EditorPrefs.SetBool(USE_LEGACY_MENUS, useLegacyMenus);
                     EditorPrefs.SetBool(USE_GRID_SNAP, useGridSnap);
                 }
@@ -121,8 +121,8 @@ namespace Scaffold
 
             public static void LoadOnScriptLoad()
             {
-                hideFlowchartIconInHierarchy = EditorPrefs.HasKey(HIDE_FLOWCHART_ICON_KEY)
-                    ? EditorPrefs.GetBool(HIDE_FLOWCHART_ICON_KEY)
+                hideBlackboardIconInHierarchy = EditorPrefs.HasKey(HIDE_BLACKBOARD_ICON_KEY)
+                    ? EditorPrefs.GetBool(HIDE_BLACKBOARD_ICON_KEY)
                     : EditorPrefs.GetBool(LEGACY_HIDE_MUSHROOM_KEY, false);
                 useLegacyMenus = EditorPrefs.GetBool(USE_LEGACY_MENUS, false);
                 useGridSnap = EditorPrefs.GetBool(USE_GRID_SNAP, false);

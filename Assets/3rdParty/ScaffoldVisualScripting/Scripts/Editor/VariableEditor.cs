@@ -35,7 +35,7 @@ namespace Scaffold.EditorUtils
 
         public static void VariableField(SerializedProperty property, 
                                          GUIContent label, 
-                                         Flowchart flowchart,
+                                         Blackboard blackboard,
                                          string defaultText,
                                          Func<Variable, bool> filter, 
                                          Func<string, int, string[], int> drawer = null)
@@ -46,19 +46,19 @@ namespace Scaffold.EditorUtils
             variableKeys.Add(defaultText);
             variableObjects.Add(null);
             
-            List<Variable> variables = flowchart.Variables;
+            List<Variable> variables = blackboard.Variables;
             int index = 0;
             int selectedIndex = 0;
 
             Variable selectedVariable = property.objectReferenceValue as Variable;
 
-            // When there are multiple Flowcharts in a scene with variables, switching
-            // between the Flowcharts can cause the wrong variable property
+            // When there are multiple Blackboards in a scene with variables, switching
+            // between the Blackboards can cause the wrong variable property
             // to be inspected for a single frame. This has the effect of causing private
             // variable references to be set to null when inspected. When this condition 
             // occurs we just skip displaying the property for this frame.
             if (selectedVariable != null &&
-                selectedVariable.gameObject != flowchart.gameObject &&
+                selectedVariable.gameObject != blackboard.gameObject &&
                 selectedVariable.Scope == VariableScope.Private)
             {
                 property.objectReferenceValue = null;
@@ -86,10 +86,10 @@ namespace Scaffold.EditorUtils
                 }
             }
 
-            List<Flowchart> fsList = Flowchart.CachedFlowcharts;
-            foreach (Flowchart fs in fsList)
+            List<Blackboard> fsList = Blackboard.CachedBlackboards;
+            foreach (Blackboard fs in fsList)
             {
-                if (fs == flowchart)
+                if (fs == blackboard)
                 {
                     continue;
                 }
@@ -170,7 +170,7 @@ namespace Scaffold.EditorUtils
 
             VariableEditor.VariableField(property, 
                                          label,
-                                         FlowchartWindow.GetFlowchart(),
+                                         BlackboardWindow.GetBlackboard(),
                                          variableProperty.defaultText,
                                          compare,
                                          (s,t,u) => (EditorGUI.Popup(position, s, t, u)));

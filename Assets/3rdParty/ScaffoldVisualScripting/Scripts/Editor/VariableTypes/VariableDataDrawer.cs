@@ -7,11 +7,11 @@ namespace Scaffold.EditorUtils
     {
         private const float SourceButtonGap = 2f;
 
-        private static readonly string[] SourceLabels = { "Direct", "Flowchart Variable", "ScriptableObject" };
+        private static readonly string[] SourceLabels = { "Direct", "Blackboard Variable", "ScriptableObject" };
         private static readonly VariableDataSource[] Sources =
         {
             VariableDataSource.Direct,
-            VariableDataSource.FlowchartVariable,
+            VariableDataSource.BlackboardVariable,
             VariableDataSource.ScriptableObject,
         };
 
@@ -87,7 +87,7 @@ namespace Scaffold.EditorUtils
         {
             VariableDataSource source = (VariableDataSource)sourceProperty.enumValueIndex;
             return source == VariableDataSource.Unspecified
-                ? referenceProperty.objectReferenceValue != null ? VariableDataSource.FlowchartVariable : VariableDataSource.Direct
+                ? referenceProperty.objectReferenceValue != null ? VariableDataSource.BlackboardVariable : VariableDataSource.Direct
                 : source;
         }
 
@@ -150,7 +150,7 @@ namespace Scaffold.EditorUtils
         {
             switch (source)
             {
-                case VariableDataSource.FlowchartVariable:
+                case VariableDataSource.BlackboardVariable:
                     UnityEngine.Object selectedVariable = EditorGUI.ObjectField(rect,
                                                                                  label,
                                                                                  referenceProperty.objectReferenceValue,

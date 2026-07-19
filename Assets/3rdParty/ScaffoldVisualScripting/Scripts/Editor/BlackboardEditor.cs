@@ -7,8 +7,8 @@ using System.Reflection;
 
 namespace Scaffold.EditorUtils
 {
-    [CustomEditor (typeof(Flowchart))]
-    public class FlowchartEditor : Editor 
+    [CustomEditor (typeof(Blackboard))]
+    public class BlackboardEditor : Editor 
     {
         protected SerializedProperty descriptionProp;
         protected SerializedProperty colorCommandsProp;
@@ -27,7 +27,7 @@ namespace Scaffold.EditorUtils
         protected VariableListAdaptor variableListAdaptor;
 
 
-        public static bool FlowchartDataStale { get; set; }
+        public static bool BlackboardDataStale { get; set; }
 
         protected virtual void OnEnable()
         {
@@ -48,16 +48,16 @@ namespace Scaffold.EditorUtils
 
             addTexture = ScaffoldEditorResources.AddSmall;
 
-            variableListAdaptor = new VariableListAdaptor(variablesProp, target as Flowchart);
+            variableListAdaptor = new VariableListAdaptor(variablesProp, target as Blackboard);
         }
 
         public override void OnInspectorGUI() 
         {
             serializedObject.Update();
 
-            var flowchart = target as Flowchart;
+            var blackboard = target as Blackboard;
 
-            flowchart.UpdateHideFlags();
+            blackboard.UpdateHideFlags();
 
             EditorGUI.BeginChangeCheck();
 
@@ -78,15 +78,15 @@ namespace Scaffold.EditorUtils
 
             if(EditorGUI.EndChangeCheck())
             {
-                FlowchartDataStale = true;
+                BlackboardDataStale = true;
             }
 
 
             GUILayout.BeginHorizontal();
             GUILayout.FlexibleSpace();
-            if (GUILayout.Button(new GUIContent("Open Flowchart Window", "Opens the Flowchart Window")))
+            if (GUILayout.Button(new GUIContent("Open Blackboard Window", "Opens the Blackboard Window")))
             {
-                EditorWindow.GetWindow(typeof(FlowchartWindow), false, "Flowchart");
+                EditorWindow.GetWindow(typeof(BlackboardWindow), false, "Blackboard");
             }
 
 
@@ -95,7 +95,7 @@ namespace Scaffold.EditorUtils
 
             serializedObject.ApplyModifiedProperties();
 
-            //Show the variables in the flowchart inspector
+            //Show the variables in the blackboard inspector
             GUILayout.Space(20);
 
             DrawVariablesGUI(false, Mathf.FloorToInt(EditorGUIUtility.currentViewWidth) - VariableListAdaptor.ReorderListSkirts);
@@ -104,7 +104,7 @@ namespace Scaffold.EditorUtils
 
         public virtual void DrawVariablesGUI(bool showVariableToggleButton, int w)
         {
-            var t = target as Flowchart;
+            var t = target as Blackboard;
 
             if(t == null)
             {

@@ -239,7 +239,7 @@ public sealed class InitializableTypeCollection : IInitializableTypeSource
 ### Flow (end-to-end)
 
 ```mermaid
-flowchart LR
+blackboard LR
     subgraph build["After ContainerBuilder.Build()"]
         R[IObjectResolver]
     end

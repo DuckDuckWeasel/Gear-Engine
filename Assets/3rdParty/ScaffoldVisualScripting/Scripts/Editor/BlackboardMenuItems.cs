@@ -4,23 +4,23 @@ using UnityEditor;
 
 namespace Scaffold.EditorUtils
 {
-    public class FlowchartMenuItems
+    public class BlackboardMenuItems
     {
-        [MenuItem("Tools/Scaffold/Create/Flowchart", false, 0)]
-        static void CreateFlowchart()
+        [MenuItem("Tools/Scaffold/Create/Blackboard", false, 0)]
+        static void CreateBlackboard()
         {
-            GameObject go = SpawnPrefab("Flowchart");
+            GameObject go = SpawnPrefab("Blackboard");
             go.transform.position = Vector3.zero;
 
-            // This is the latest version of Flowchart, so no need to update.
-            var flowchart = go.GetComponent<Flowchart>();
-            if (flowchart != null)
+            // This is the latest version of Blackboard, so no need to update.
+            var blackboard = go.GetComponent<Blackboard>();
+            if (blackboard != null)
             {
-                flowchart.Version = ScaffoldConstants.CurrentVersion;
+                blackboard.Version = ScaffoldConstants.CurrentVersion;
             }
 
-            // Only the first created Flowchart in the scene should have a default GameStarted block
-            if (GameObject.FindObjectsOfType<Flowchart>().Length > 1)
+            // Only the first created Blackboard in the scene should have a default GameStarted block
+            if (GameObject.FindObjectsOfType<Blackboard>().Length > 1)
             {
                 var block = go.GetComponent<Block>();
                 GameObject.DestroyImmediate(block._EventHandler);

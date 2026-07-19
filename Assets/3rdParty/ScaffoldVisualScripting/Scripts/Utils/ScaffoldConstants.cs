@@ -16,12 +16,12 @@ namespace Scaffold
         public const float ExecutingIconFadeTime = 0.5f;
 
         /// <summary>
-        /// The current version of the Flowchart. Used for updating components.
+        /// The current version of the Blackboard. Used for updating components.
         /// </summary>
         public const int CurrentVersion = 1;
 
         /// <summary>
-        /// The name of the initial block in a new flowchart.
+        /// The name of the initial block in a new blackboard.
         /// </summary>
         public const string DefaultBlockName = "New Block";
 

@@ -256,6 +256,284 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &162214861
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 162214862}
+  - component: {fileID: 162214868}
+  - component: {fileID: 162214867}
+  - component: {fileID: 162214866}
+  - component: {fileID: 162214865}
+  - component: {fileID: 162214864}
+  - component: {fileID: 162214863}
+  m_Layer: 0
+  m_Name: Utility Selector - Utility
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &162214862
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 162214861}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 912527617}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &162214863
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 162214861}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a6a0f330126b84a40b64420fcb09d831, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Presentation.UI.Input.InvokeActionCommand
+  itemId: 3
+  indentLevel: 0
+  compositeUtility: 30
+  compositeBlockDuringExecution: 0
+  compositeWeight: 0
+  compositeWeightInitialized: 0
+  compositeWeightOverride: 0
+  actions:
+  - rid: 3466829874012356762
+  actionEnabled: 01
+  actionIds:
+  - 31f641ec2d6540eda018866063e0569a
+  actionUtilitySettings:
+  - utility:
+      floatRef: {fileID: 0}
+      source: 0
+      floatSO: {fileID: 0}
+      floatVal: 0
+    blockDuringExecution: 0
+    weight: 0
+    weightInitialized: 0
+    weightOverride: 0
+  displayAsGroup: 0
+  executionMethod: 0
+  awaitMode: 0
+  orderMode: 0
+  avoidRepeatingLastAction: 0
+  references:
+    version: 2
+    RefIds:
+    - rid: 3466829874012356762
+      type: {class: DebugLog, ns: Scaffold, asm: Game.GearEngine}
+      data:
+        logType: 0
+        logMessage:
+          stringRef: {fileID: 0}
+          source: 0
+          stringSO: {fileID: 0}
+          stringVal: '[Utility Selector - Utility] End'
+--- !u!114 &162214864
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 162214861}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a6a0f330126b84a40b64420fcb09d831, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Presentation.UI.Input.InvokeActionCommand
+  itemId: 2
+  indentLevel: 0
+  compositeUtility: 20
+  compositeBlockDuringExecution: 0
+  compositeWeight: 0
+  compositeWeightInitialized: 0
+  compositeWeightOverride: 0
+  actions:
+  - rid: 3466829874012356763
+  actionEnabled: 01
+  actionIds:
+  - ef1430e66bf6402cad3d586fe9c27b32
+  actionUtilitySettings:
+  - utility:
+      floatRef: {fileID: 0}
+      source: 0
+      floatSO: {fileID: 0}
+      floatVal: 0
+    blockDuringExecution: 0
+    weight: 0
+    weightInitialized: 0
+    weightOverride: 0
+  displayAsGroup: 0
+  executionMethod: 0
+  awaitMode: 0
+  orderMode: 0
+  avoidRepeatingLastAction: 0
+  references:
+    version: 2
+    RefIds:
+    - rid: 3466829874012356763
+      type: {class: Wait, ns: Scaffold, asm: Game.GearEngine}
+      data:
+        duration:
+          floatRef: {fileID: 0}
+          source: 0
+          floatSO: {fileID: 0}
+          floatVal: 1
+        durationOLD: 0
+--- !u!114 &162214865
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 162214861}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d2f6487d21a03404cb21b245f0242e79, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Scaffold::Scaffold.GameStarted
+  parentBlock: {fileID: 162214867}
+  suppressBlockAutoSelect: 0
+  waitForFrames: 1
+--- !u!114 &162214866
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 162214861}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a6a0f330126b84a40b64420fcb09d831, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Presentation.UI.Input.InvokeActionCommand
+  itemId: 1
+  indentLevel: 0
+  compositeUtility: 10
+  compositeBlockDuringExecution: 0
+  compositeWeight: 0
+  compositeWeightInitialized: 0
+  compositeWeightOverride: 0
+  actions:
+  - rid: 3466829874012356764
+  actionEnabled: 01
+  actionIds:
+  - fe13074b741a4c049888211c37814323
+  actionUtilitySettings:
+  - utility:
+      floatRef: {fileID: 0}
+      source: 0
+      floatSO: {fileID: 0}
+      floatVal: 0
+    blockDuringExecution: 0
+    weight: 0
+    weightInitialized: 0
+    weightOverride: 0
+  displayAsGroup: 0
+  executionMethod: 0
+  awaitMode: 0
+  orderMode: 0
+  avoidRepeatingLastAction: 0
+  references:
+    version: 2
+    RefIds:
+    - rid: 3466829874012356764
+      type: {class: DebugLog, ns: Scaffold, asm: Game.GearEngine}
+      data:
+        logType: 0
+        logMessage:
+          stringRef: {fileID: 0}
+          source: 0
+          stringSO: {fileID: 0}
+          stringVal: '[Utility Selector - Utility] Start'
+--- !u!114 &162214867
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 162214861}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d3d73aef2cfc4f51abf34ac00241f60, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Scaffold::Scaffold.Block
+  nodeRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 0
+    height: 0
+  tint: {r: 1, g: 1, b: 1, a: 1}
+  useCustomTint: 0
+  itemId: 0
+  blockName: Utility Selector - Utility
+  description: 
+  eventHandler: {fileID: 162214865}
+  commandList: []
+  tracks:
+  - trackName: Track 0
+    commands:
+    - {fileID: 162214866}
+    - {fileID: 162214864}
+    - {fileID: 162214863}
+  executionMethod: 4
+  awaitMode: 0
+  orderMode: 0
+  avoidRepeatingLastCommand: 0
+  suppressAllAutoSelections: 0
+--- !u!114 &162214868
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 162214861}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a334fe2ffb574b3583ff3b18b4792d3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Scaffold::Scaffold.Blackboard
+  version: 1
+  scrollPos: {x: 0, y: 0}
+  variablesScrollPos: {x: 0, y: 0}
+  variablesExpanded: 1
+  blockViewHeight: 400
+  zoom: 1
+  scrollViewRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 0
+    height: 0
+  selectedBlocks: []
+  selectedCommands: []
+  variables: []
+  description: 
+  stepPause: 0
+  colorCommands: 1
+  hideComponents: 1
+  saveSelection: 1
+  localizationId: 
+  showLineNumbers: 0
+  hideCommands: []
+  luaEnvironment: {fileID: 0}
+  luaBindingName: blackboard
 --- !u!1 &253973450
 GameObject:
   m_ObjectHideFlags: 0
@@ -393,6 +671,840 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 253973450}
   m_CullTransparentMesh: 1
+--- !u!1 &330002944
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 330002945}
+  - component: {fileID: 330002951}
+  - component: {fileID: 330002950}
+  - component: {fileID: 330002949}
+  - component: {fileID: 330002948}
+  - component: {fileID: 330002947}
+  - component: {fileID: 330002946}
+  m_Layer: 0
+  m_Name: Selector - Ordered
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &330002945
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 330002944}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 912527617}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &330002946
+MonoBehaviour:
+  m_ObjectHideFlags: 2
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 330002944}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a6a0f330126b84a40b64420fcb09d831, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Presentation.UI.Input.InvokeActionCommand
+  itemId: 3
+  indentLevel: 0
+  compositeUtility: 30
+  compositeBlockDuringExecution: 0
+  compositeWeight: 0
+  compositeWeightInitialized: 0
+  compositeWeightOverride: 0
+  actions:
+  - rid: 3466829874012356789
+  actionEnabled: 01
+  actionIds:
+  - 5a5e54188dd84cea9c9da21b34cd33a9
+  actionUtilitySettings:
+  - utility:
+      floatRef: {fileID: 0}
+      source: 0
+      floatSO: {fileID: 0}
+      floatVal: 0
+    blockDuringExecution: 0
+    weight: 0
+    weightInitialized: 0
+    weightOverride: 0
+  displayAsGroup: 0
+  executionMethod: 0
+  awaitMode: 0
+  orderMode: 0
+  avoidRepeatingLastAction: 0
+  references:
+    version: 2
+    RefIds:
+    - rid: 3466829874012356789
+      type: {class: DebugLog, ns: Scaffold, asm: Game.GearEngine}
+      data:
+        logType: 0
+        logMessage:
+          stringRef: {fileID: 0}
+          source: 0
+          stringSO: {fileID: 0}
+          stringVal: '[Selector - Ordered] End'
+--- !u!114 &330002947
+MonoBehaviour:
+  m_ObjectHideFlags: 2
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 330002944}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a6a0f330126b84a40b64420fcb09d831, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Presentation.UI.Input.InvokeActionCommand
+  itemId: 2
+  indentLevel: 0
+  compositeUtility: 20
+  compositeBlockDuringExecution: 0
+  compositeWeight: 0
+  compositeWeightInitialized: 0
+  compositeWeightOverride: 0
+  actions:
+  - rid: 3466829874012356790
+  actionEnabled: 01
+  actionIds:
+  - 3c40f6c8768246a8a22e79c44f0977af
+  actionUtilitySettings:
+  - utility:
+      floatRef: {fileID: 0}
+      source: 0
+      floatSO: {fileID: 0}
+      floatVal: 0
+    blockDuringExecution: 0
+    weight: 0
+    weightInitialized: 0
+    weightOverride: 0
+  displayAsGroup: 0
+  executionMethod: 0
+  awaitMode: 0
+  orderMode: 0
+  avoidRepeatingLastAction: 0
+  references:
+    version: 2
+    RefIds:
+    - rid: 3466829874012356790
+      type: {class: Wait, ns: Scaffold, asm: Game.GearEngine}
+      data:
+        duration:
+          floatRef: {fileID: 0}
+          source: 0
+          floatSO: {fileID: 0}
+          floatVal: 1
+        durationOLD: 0
+--- !u!114 &330002948
+MonoBehaviour:
+  m_ObjectHideFlags: 2
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 330002944}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d2f6487d21a03404cb21b245f0242e79, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Scaffold::Scaffold.GameStarted
+  parentBlock: {fileID: 330002950}
+  suppressBlockAutoSelect: 0
+  waitForFrames: 1
+--- !u!114 &330002949
+MonoBehaviour:
+  m_ObjectHideFlags: 2
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 330002944}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a6a0f330126b84a40b64420fcb09d831, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Presentation.UI.Input.InvokeActionCommand
+  itemId: 1
+  indentLevel: 0
+  compositeUtility: 10
+  compositeBlockDuringExecution: 0
+  compositeWeight: 0
+  compositeWeightInitialized: 0
+  compositeWeightOverride: 0
+  actions:
+  - rid: 3466829874012356791
+  actionEnabled: 01
+  actionIds:
+  - 0c06f9f988cb4f058ef8b549aa324804
+  actionUtilitySettings:
+  - utility:
+      floatRef: {fileID: 0}
+      source: 0
+      floatSO: {fileID: 0}
+      floatVal: 0
+    blockDuringExecution: 0
+    weight: 0
+    weightInitialized: 0
+    weightOverride: 0
+  displayAsGroup: 0
+  executionMethod: 0
+  awaitMode: 0
+  orderMode: 0
+  avoidRepeatingLastAction: 0
+  references:
+    version: 2
+    RefIds:
+    - rid: 3466829874012356791
+      type: {class: DebugLog, ns: Scaffold, asm: Game.GearEngine}
+      data:
+        logType: 0
+        logMessage:
+          stringRef: {fileID: 0}
+          source: 0
+          stringSO: {fileID: 0}
+          stringVal: '[Selector - Ordered] Start'
+--- !u!114 &330002950
+MonoBehaviour:
+  m_ObjectHideFlags: 2
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 330002944}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d3d73aef2cfc4f51abf34ac00241f60, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Scaffold::Scaffold.Block
+  nodeRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 155.91406
+    height: 40
+  tint: {r: 1, g: 1, b: 1, a: 1}
+  useCustomTint: 0
+  itemId: 0
+  blockName: Selector - Ordered
+  description: 
+  eventHandler: {fileID: 330002948}
+  commandList: []
+  tracks:
+  - trackName: Track 0
+    commands:
+    - {fileID: 330002949}
+    - {fileID: 330002947}
+    - {fileID: 330002946}
+  executionMethod: 2
+  awaitMode: 0
+  orderMode: 0
+  avoidRepeatingLastCommand: 0
+  suppressAllAutoSelections: 0
+--- !u!114 &330002951
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 330002944}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a334fe2ffb574b3583ff3b18b4792d3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Scaffold::Scaffold.Blackboard
+  version: 1
+  scrollPos: {x: 0, y: 0}
+  variablesScrollPos: {x: 0, y: 0}
+  variablesExpanded: 1
+  blockViewHeight: 400
+  zoom: 1
+  scrollViewRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 0
+    height: 0
+  selectedBlocks: []
+  selectedCommands: []
+  variables: []
+  description: 
+  stepPause: 0
+  colorCommands: 1
+  hideComponents: 1
+  saveSelection: 1
+  localizationId: 
+  showLineNumbers: 0
+  hideCommands: []
+  luaEnvironment: {fileID: 0}
+  luaBindingName: blackboard
+--- !u!1 &363005690
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 363005691}
+  - component: {fileID: 363005697}
+  - component: {fileID: 363005696}
+  - component: {fileID: 363005695}
+  - component: {fileID: 363005694}
+  - component: {fileID: 363005693}
+  - component: {fileID: 363005692}
+  m_Layer: 0
+  m_Name: Parallel - Wait All
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &363005691
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 363005690}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 912527617}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &363005692
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 363005690}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a6a0f330126b84a40b64420fcb09d831, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Presentation.UI.Input.InvokeActionCommand
+  itemId: 3
+  indentLevel: 0
+  compositeUtility: 30
+  compositeBlockDuringExecution: 0
+  compositeWeight: 0
+  compositeWeightInitialized: 0
+  compositeWeightOverride: 0
+  actions:
+  - rid: 3466829874012356780
+  actionEnabled: 01
+  actionIds:
+  - a91b067f722942e298cbf8993720b88b
+  actionUtilitySettings:
+  - utility:
+      floatRef: {fileID: 0}
+      source: 0
+      floatSO: {fileID: 0}
+      floatVal: 0
+    blockDuringExecution: 0
+    weight: 0
+    weightInitialized: 0
+    weightOverride: 0
+  displayAsGroup: 0
+  executionMethod: 0
+  awaitMode: 0
+  orderMode: 0
+  avoidRepeatingLastAction: 0
+  references:
+    version: 2
+    RefIds:
+    - rid: 3466829874012356780
+      type: {class: DebugLog, ns: Scaffold, asm: Game.GearEngine}
+      data:
+        logType: 0
+        logMessage:
+          stringRef: {fileID: 0}
+          source: 0
+          stringSO: {fileID: 0}
+          stringVal: '[Parallel - Wait All] End'
+--- !u!114 &363005693
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 363005690}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a6a0f330126b84a40b64420fcb09d831, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Presentation.UI.Input.InvokeActionCommand
+  itemId: 2
+  indentLevel: 0
+  compositeUtility: 20
+  compositeBlockDuringExecution: 0
+  compositeWeight: 0
+  compositeWeightInitialized: 0
+  compositeWeightOverride: 0
+  actions:
+  - rid: 3466829874012356781
+  actionEnabled: 01
+  actionIds:
+  - a98000cf01b34730bc943458eabf0a85
+  actionUtilitySettings:
+  - utility:
+      floatRef: {fileID: 0}
+      source: 0
+      floatSO: {fileID: 0}
+      floatVal: 0
+    blockDuringExecution: 0
+    weight: 0
+    weightInitialized: 0
+    weightOverride: 0
+  displayAsGroup: 0
+  executionMethod: 0
+  awaitMode: 0
+  orderMode: 0
+  avoidRepeatingLastAction: 0
+  references:
+    version: 2
+    RefIds:
+    - rid: 3466829874012356781
+      type: {class: Wait, ns: Scaffold, asm: Game.GearEngine}
+      data:
+        duration:
+          floatRef: {fileID: 0}
+          source: 0
+          floatSO: {fileID: 0}
+          floatVal: 1
+        durationOLD: 0
+--- !u!114 &363005694
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 363005690}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d2f6487d21a03404cb21b245f0242e79, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Scaffold::Scaffold.GameStarted
+  parentBlock: {fileID: 363005696}
+  suppressBlockAutoSelect: 0
+  waitForFrames: 1
+--- !u!114 &363005695
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 363005690}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a6a0f330126b84a40b64420fcb09d831, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Presentation.UI.Input.InvokeActionCommand
+  itemId: 1
+  indentLevel: 0
+  compositeUtility: 10
+  compositeBlockDuringExecution: 0
+  compositeWeight: 0
+  compositeWeightInitialized: 0
+  compositeWeightOverride: 0
+  actions:
+  - rid: 3466829874012356782
+  actionEnabled: 01
+  actionIds:
+  - 27afb698b0de408aa57836e29c1c4db7
+  actionUtilitySettings:
+  - utility:
+      floatRef: {fileID: 0}
+      source: 0
+      floatSO: {fileID: 0}
+      floatVal: 0
+    blockDuringExecution: 0
+    weight: 0
+    weightInitialized: 0
+    weightOverride: 0
+  displayAsGroup: 0
+  executionMethod: 0
+  awaitMode: 0
+  orderMode: 0
+  avoidRepeatingLastAction: 0
+  references:
+    version: 2
+    RefIds:
+    - rid: 3466829874012356782
+      type: {class: DebugLog, ns: Scaffold, asm: Game.GearEngine}
+      data:
+        logType: 0
+        logMessage:
+          stringRef: {fileID: 0}
+          source: 0
+          stringSO: {fileID: 0}
+          stringVal: '[Parallel - Wait All] Start'
+--- !u!114 &363005696
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 363005690}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d3d73aef2cfc4f51abf34ac00241f60, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Scaffold::Scaffold.Block
+  nodeRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 0
+    height: 0
+  tint: {r: 1, g: 1, b: 1, a: 1}
+  useCustomTint: 0
+  itemId: 0
+  blockName: Parallel - Wait All
+  description: 
+  eventHandler: {fileID: 363005694}
+  commandList: []
+  tracks:
+  - trackName: Track 0
+    commands:
+    - {fileID: 363005695}
+    - {fileID: 363005693}
+    - {fileID: 363005692}
+  executionMethod: 1
+  awaitMode: 0
+  orderMode: 0
+  avoidRepeatingLastCommand: 0
+  suppressAllAutoSelections: 0
+--- !u!114 &363005697
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 363005690}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a334fe2ffb574b3583ff3b18b4792d3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Scaffold::Scaffold.Blackboard
+  version: 1
+  scrollPos: {x: 0, y: 0}
+  variablesScrollPos: {x: 0, y: 0}
+  variablesExpanded: 1
+  blockViewHeight: 400
+  zoom: 1
+  scrollViewRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 0
+    height: 0
+  selectedBlocks: []
+  selectedCommands: []
+  variables: []
+  description: 
+  stepPause: 0
+  colorCommands: 1
+  hideComponents: 1
+  saveSelection: 1
+  localizationId: 
+  showLineNumbers: 0
+  hideCommands: []
+  luaEnvironment: {fileID: 0}
+  luaBindingName: blackboard
+--- !u!1 &458307487
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 458307488}
+  - component: {fileID: 458307494}
+  - component: {fileID: 458307493}
+  - component: {fileID: 458307492}
+  - component: {fileID: 458307491}
+  - component: {fileID: 458307490}
+  - component: {fileID: 458307489}
+  m_Layer: 0
+  m_Name: Parallel Selector - Wait None
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &458307488
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 458307487}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 912527617}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &458307489
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 458307487}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a6a0f330126b84a40b64420fcb09d831, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Presentation.UI.Input.InvokeActionCommand
+  itemId: 3
+  indentLevel: 0
+  compositeUtility: 30
+  compositeBlockDuringExecution: 0
+  compositeWeight: 0
+  compositeWeightInitialized: 0
+  compositeWeightOverride: 0
+  actions:
+  - rid: 3466829874012356765
+  actionEnabled: 01
+  actionIds:
+  - 03dae80ada2e41e6bd77a6530fbe9679
+  actionUtilitySettings:
+  - utility:
+      floatRef: {fileID: 0}
+      source: 0
+      floatSO: {fileID: 0}
+      floatVal: 0
+    blockDuringExecution: 0
+    weight: 0
+    weightInitialized: 0
+    weightOverride: 0
+  displayAsGroup: 0
+  executionMethod: 0
+  awaitMode: 0
+  orderMode: 0
+  avoidRepeatingLastAction: 0
+  references:
+    version: 2
+    RefIds:
+    - rid: 3466829874012356765
+      type: {class: DebugLog, ns: Scaffold, asm: Game.GearEngine}
+      data:
+        logType: 0
+        logMessage:
+          stringRef: {fileID: 0}
+          source: 0
+          stringSO: {fileID: 0}
+          stringVal: '[Parallel Selector - Wait None] End'
+--- !u!114 &458307490
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 458307487}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a6a0f330126b84a40b64420fcb09d831, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Presentation.UI.Input.InvokeActionCommand
+  itemId: 2
+  indentLevel: 0
+  compositeUtility: 20
+  compositeBlockDuringExecution: 0
+  compositeWeight: 0
+  compositeWeightInitialized: 0
+  compositeWeightOverride: 0
+  actions:
+  - rid: 3466829874012356766
+  actionEnabled: 01
+  actionIds:
+  - 1eae0f61efb84068af1514c9f19fa5ad
+  actionUtilitySettings:
+  - utility:
+      floatRef: {fileID: 0}
+      source: 0
+      floatSO: {fileID: 0}
+      floatVal: 0
+    blockDuringExecution: 0
+    weight: 0
+    weightInitialized: 0
+    weightOverride: 0
+  displayAsGroup: 0
+  executionMethod: 0
+  awaitMode: 0
+  orderMode: 0
+  avoidRepeatingLastAction: 0
+  references:
+    version: 2
+    RefIds:
+    - rid: 3466829874012356766
+      type: {class: Wait, ns: Scaffold, asm: Game.GearEngine}
+      data:
+        duration:
+          floatRef: {fileID: 0}
+          source: 0
+          floatSO: {fileID: 0}
+          floatVal: 1
+        durationOLD: 0
+--- !u!114 &458307491
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 458307487}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d2f6487d21a03404cb21b245f0242e79, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Scaffold::Scaffold.GameStarted
+  parentBlock: {fileID: 458307493}
+  suppressBlockAutoSelect: 0
+  waitForFrames: 1
+--- !u!114 &458307492
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 458307487}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a6a0f330126b84a40b64420fcb09d831, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Presentation.UI.Input.InvokeActionCommand
+  itemId: 1
+  indentLevel: 0
+  compositeUtility: 10
+  compositeBlockDuringExecution: 0
+  compositeWeight: 0
+  compositeWeightInitialized: 0
+  compositeWeightOverride: 0
+  actions:
+  - rid: 3466829874012356767
+  actionEnabled: 01
+  actionIds:
+  - 48d1b7902b8b413284881cd9fb79219f
+  actionUtilitySettings:
+  - utility:
+      floatRef: {fileID: 0}
+      source: 0
+      floatSO: {fileID: 0}
+      floatVal: 0
+    blockDuringExecution: 0
+    weight: 0
+    weightInitialized: 0
+    weightOverride: 0
+  displayAsGroup: 0
+  executionMethod: 0
+  awaitMode: 0
+  orderMode: 0
+  avoidRepeatingLastAction: 0
+  references:
+    version: 2
+    RefIds:
+    - rid: 3466829874012356767
+      type: {class: DebugLog, ns: Scaffold, asm: Game.GearEngine}
+      data:
+        logType: 0
+        logMessage:
+          stringRef: {fileID: 0}
+          source: 0
+          stringSO: {fileID: 0}
+          stringVal: '[Parallel Selector - Wait None] Start'
+--- !u!114 &458307493
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 458307487}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d3d73aef2cfc4f51abf34ac00241f60, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Scaffold::Scaffold.Block
+  nodeRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 0
+    height: 0
+  tint: {r: 1, g: 1, b: 1, a: 1}
+  useCustomTint: 0
+  itemId: 0
+  blockName: Parallel Selector - Wait None
+  description: 
+  eventHandler: {fileID: 458307491}
+  commandList: []
+  tracks:
+  - trackName: Track 0
+    commands:
+    - {fileID: 458307492}
+    - {fileID: 458307490}
+    - {fileID: 458307489}
+  executionMethod: 3
+  awaitMode: 2
+  orderMode: 0
+  avoidRepeatingLastCommand: 0
+  suppressAllAutoSelections: 0
+--- !u!114 &458307494
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 458307487}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a334fe2ffb574b3583ff3b18b4792d3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Scaffold::Scaffold.Blackboard
+  version: 1
+  scrollPos: {x: 0, y: 0}
+  variablesScrollPos: {x: 0, y: 0}
+  variablesExpanded: 1
+  blockViewHeight: 400
+  zoom: 1
+  scrollViewRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 0
+    height: 0
+  selectedBlocks: []
+  selectedCommands: []
+  variables: []
+  description: 
+  stepPause: 0
+  colorCommands: 1
+  hideComponents: 1
+  saveSelection: 1
+  localizationId: 
+  showLineNumbers: 0
+  hideCommands: []
+  luaEnvironment: {fileID: 0}
+  luaBindingName: blackboard
 --- !u!1 &478737325
 GameObject:
   m_ObjectHideFlags: 0
@@ -405,6 +1517,7 @@ GameObject:
   - component: {fileID: 478737328}
   - component: {fileID: 478737327}
   - component: {fileID: 478737329}
+  - component: {fileID: 478737330}
   m_Layer: 5
   m_Name: Image
   m_TagString: Untagged
@@ -486,6 +1599,435 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 095a066fb920f48d88ce0d9bacbf4696, type: 2}
   nativeTags:
     tags: []
+--- !u!114 &478737330
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 478737325}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 938fce054c42f40a3969e27a88d9bdd8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Coffee.UIEffect::Coffee.UIEffects.UIEffect
+  m_ToneFilter: 0
+  m_ToneIntensity: 1
+  m_ColorFilter: 0
+  m_ColorIntensity: 1
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_ColorGlow: 0
+  m_SamplingFilter: 0
+  m_SamplingIntensity: 0.5
+  m_SamplingWidth: 1
+  m_SamplingScale: 1
+  m_TransitionFilter: 0
+  m_TransitionRate: 0.5
+  m_TransitionReverse: 0
+  m_TransitionTex: {fileID: 0}
+  m_TransitionTexScale: {x: 1, y: 1}
+  m_TransitionTexOffset: {x: 0, y: 0}
+  m_TransitionTexSpeed: {x: 0, y: 0}
+  m_TransitionRotation: 0
+  m_TransitionKeepAspectRatio: 1
+  m_TransitionWidth: 0.2
+  m_TransitionSoftness: 0.2
+  m_TransitionRange:
+    m_Min: 0
+    m_Max: 1
+  m_TransitionColorFilter: 6
+  m_TransitionColor: {r: 0, g: 0.5, b: 1, a: 1}
+  m_TransitionColorGlow: 0
+  m_TransitionPatternReverse: 0
+  m_TransitionAutoPlaySpeed: 0
+  m_TransitionGradient:
+    serializedVersion: 2
+    key0: {r: 1, g: 1, b: 1, a: 1}
+    key1: {r: 1, g: 1, b: 1, a: 1}
+    key2: {r: 0, g: 0, b: 0, a: 0}
+    key3: {r: 0, g: 0, b: 0, a: 0}
+    key4: {r: 0, g: 0, b: 0, a: 0}
+    key5: {r: 0, g: 0, b: 0, a: 0}
+    key6: {r: 0, g: 0, b: 0, a: 0}
+    key7: {r: 0, g: 0, b: 0, a: 0}
+    ctime0: 0
+    ctime1: 65535
+    ctime2: 0
+    ctime3: 0
+    ctime4: 0
+    ctime5: 0
+    ctime6: 0
+    ctime7: 0
+    atime0: 0
+    atime1: 65535
+    atime2: 0
+    atime3: 0
+    atime4: 0
+    atime5: 0
+    atime6: 0
+    atime7: 0
+    m_Mode: 0
+    m_ColorSpace: -1
+    m_NumColorKeys: 2
+    m_NumAlphaKeys: 2
+  m_TargetMode: 0
+  m_TargetColor: {r: 1, g: 1, b: 1, a: 1}
+  m_TargetRange: 0.1
+  m_TargetSoftness: 0.5
+  m_BlendType: 1
+  m_SrcBlendMode: 1
+  m_DstBlendMode: 10
+  m_ShadowMode: 0
+  m_ShadowDistance: {x: 1, y: -1}
+  m_ShadowIteration: 1
+  m_ShadowFade: 0.9
+  m_ShadowMirrorScale: 0.5
+  m_ShadowBlurIntensity: 1
+  m_ShadowColorFilter: 4
+  m_ShadowColor: {r: 1, g: 1, b: 1, a: 1}
+  m_ShadowColorGlow: 0
+  m_GradationMode: 0
+  m_GradationIntensity: 1
+  m_GradationColorFilter: 1
+  m_GradationColor1: {r: 1, g: 1, b: 1, a: 1}
+  m_GradationColor2: {r: 1, g: 1, b: 1, a: 1}
+  m_GradationColor3: {r: 1, g: 1, b: 1, a: 1}
+  m_GradationColor4: {r: 1, g: 1, b: 1, a: 1}
+  m_GradationGradient:
+    serializedVersion: 2
+    key0: {r: 1, g: 1, b: 1, a: 1}
+    key1: {r: 1, g: 1, b: 1, a: 1}
+    key2: {r: 0, g: 0, b: 0, a: 0}
+    key3: {r: 0, g: 0, b: 0, a: 0}
+    key4: {r: 0, g: 0, b: 0, a: 0}
+    key5: {r: 0, g: 0, b: 0, a: 0}
+    key6: {r: 0, g: 0, b: 0, a: 0}
+    key7: {r: 0, g: 0, b: 0, a: 0}
+    ctime0: 0
+    ctime1: 65535
+    ctime2: 0
+    ctime3: 0
+    ctime4: 0
+    ctime5: 0
+    ctime6: 0
+    ctime7: 0
+    atime0: 0
+    atime1: 65535
+    atime2: 0
+    atime3: 0
+    atime4: 0
+    atime5: 0
+    atime6: 0
+    atime7: 0
+    m_Mode: 0
+    m_ColorSpace: -1
+    m_NumColorKeys: 2
+    m_NumAlphaKeys: 2
+  m_GradationOffset: 0
+  m_GradationScale: 1
+  m_GradationRotation: 0
+  m_GradationWrapMode: 0
+  m_GradationReverse: 0
+  m_AllowToModifyMeshShape: 1
+  m_EdgeMode: 0
+  m_EdgeWidth: 0.5
+  m_EdgeColorFilter: 4
+  m_EdgeColor: {r: 1, g: 1, b: 1, a: 1}
+  m_EdgeColorGlow: 0
+  m_EdgeShinyRate: 0.5
+  m_EdgeShinyWidth: 0.5
+  m_EdgeShinyAutoPlaySpeed: 1
+  m_PatternArea: 1
+  m_DetailFilter: 0
+  m_DetailIntensity: 1
+  m_DetailThreshold:
+    m_Min: 0
+    m_Max: 1
+  m_DetailColor: {r: 1, g: 1, b: 1, a: 1}
+  m_DetailTex: {fileID: 0}
+  m_DetailTexScale: {x: 1, y: 1}
+  m_DetailTexOffset: {x: 0, y: 0}
+  m_DetailTexSpeed: {x: 0, y: 0}
+  m_CustomRoot: {fileID: 0}
+  m_Flip: 0
+--- !u!1 &514994777
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 514994778}
+  - component: {fileID: 514994784}
+  - component: {fileID: 514994783}
+  - component: {fileID: 514994782}
+  - component: {fileID: 514994781}
+  - component: {fileID: 514994780}
+  - component: {fileID: 514994779}
+  m_Layer: 0
+  m_Name: Sequence - Shuffle
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &514994778
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 514994777}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 912527617}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &514994779
+MonoBehaviour:
+  m_ObjectHideFlags: 2
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 514994777}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a6a0f330126b84a40b64420fcb09d831, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Presentation.UI.Input.InvokeActionCommand
+  itemId: 3
+  indentLevel: 0
+  compositeUtility: 30
+  compositeBlockDuringExecution: 0
+  compositeWeight: 0
+  compositeWeightInitialized: 0
+  compositeWeightOverride: 0
+  actions:
+  - rid: 3466829874012356792
+  actionEnabled: 01
+  actionIds:
+  - 8ff43016633945568b563d7a8632b7b2
+  actionUtilitySettings:
+  - utility:
+      floatRef: {fileID: 0}
+      source: 0
+      floatSO: {fileID: 0}
+      floatVal: 0
+    blockDuringExecution: 0
+    weight: 0
+    weightInitialized: 0
+    weightOverride: 0
+  displayAsGroup: 0
+  executionMethod: 0
+  awaitMode: 0
+  orderMode: 0
+  avoidRepeatingLastAction: 0
+  references:
+    version: 2
+    RefIds:
+    - rid: 3466829874012356792
+      type: {class: DebugLog, ns: Scaffold, asm: Game.GearEngine}
+      data:
+        logType: 0
+        logMessage:
+          stringRef: {fileID: 0}
+          source: 0
+          stringSO: {fileID: 0}
+          stringVal: '[Sequence - Shuffle] End'
+--- !u!114 &514994780
+MonoBehaviour:
+  m_ObjectHideFlags: 2
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 514994777}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a6a0f330126b84a40b64420fcb09d831, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Presentation.UI.Input.InvokeActionCommand
+  itemId: 2
+  indentLevel: 0
+  compositeUtility: 20
+  compositeBlockDuringExecution: 0
+  compositeWeight: 0
+  compositeWeightInitialized: 0
+  compositeWeightOverride: 0
+  actions:
+  - rid: 3466829874012356793
+  actionEnabled: 01
+  actionIds:
+  - 6a791e6d6ab94591b19c6257c83bde7b
+  actionUtilitySettings:
+  - utility:
+      floatRef: {fileID: 0}
+      source: 0
+      floatSO: {fileID: 0}
+      floatVal: 0
+    blockDuringExecution: 0
+    weight: 0
+    weightInitialized: 0
+    weightOverride: 0
+  displayAsGroup: 0
+  executionMethod: 0
+  awaitMode: 0
+  orderMode: 0
+  avoidRepeatingLastAction: 0
+  references:
+    version: 2
+    RefIds:
+    - rid: 3466829874012356793
+      type: {class: Wait, ns: Scaffold, asm: Game.GearEngine}
+      data:
+        duration:
+          floatRef: {fileID: 0}
+          source: 0
+          floatSO: {fileID: 0}
+          floatVal: 1
+        durationOLD: 0
+--- !u!114 &514994781
+MonoBehaviour:
+  m_ObjectHideFlags: 2
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 514994777}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d2f6487d21a03404cb21b245f0242e79, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Scaffold::Scaffold.GameStarted
+  parentBlock: {fileID: 514994783}
+  suppressBlockAutoSelect: 0
+  waitForFrames: 1
+--- !u!114 &514994782
+MonoBehaviour:
+  m_ObjectHideFlags: 2
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 514994777}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a6a0f330126b84a40b64420fcb09d831, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Presentation.UI.Input.InvokeActionCommand
+  itemId: 1
+  indentLevel: 0
+  compositeUtility: 10
+  compositeBlockDuringExecution: 0
+  compositeWeight: 0
+  compositeWeightInitialized: 0
+  compositeWeightOverride: 0
+  actions:
+  - rid: 3466829874012356794
+  actionEnabled: 01
+  actionIds:
+  - a0acf2cac7fd42eb9b7d924f9f2a89df
+  actionUtilitySettings:
+  - utility:
+      floatRef: {fileID: 0}
+      source: 0
+      floatSO: {fileID: 0}
+      floatVal: 0
+    blockDuringExecution: 0
+    weight: 0
+    weightInitialized: 0
+    weightOverride: 0
+  displayAsGroup: 0
+  executionMethod: 0
+  awaitMode: 0
+  orderMode: 0
+  avoidRepeatingLastAction: 0
+  references:
+    version: 2
+    RefIds:
+    - rid: 3466829874012356794
+      type: {class: DebugLog, ns: Scaffold, asm: Game.GearEngine}
+      data:
+        logType: 0
+        logMessage:
+          stringRef: {fileID: 0}
+          source: 0
+          stringSO: {fileID: 0}
+          stringVal: '[Sequence - Shuffle] Start'
+--- !u!114 &514994783
+MonoBehaviour:
+  m_ObjectHideFlags: 2
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 514994777}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d3d73aef2cfc4f51abf34ac00241f60, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Scaffold::Scaffold.Block
+  nodeRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 159.11719
+    height: 40
+  tint: {r: 1, g: 1, b: 1, a: 1}
+  useCustomTint: 0
+  itemId: 0
+  blockName: Sequence - Shuffle
+  description: 
+  eventHandler: {fileID: 514994781}
+  commandList: []
+  tracks:
+  - trackName: Track 0
+    commands:
+    - {fileID: 514994782}
+    - {fileID: 514994780}
+    - {fileID: 514994779}
+  executionMethod: 0
+  awaitMode: 0
+  orderMode: 2
+  avoidRepeatingLastCommand: 0
+  suppressAllAutoSelections: 0
+--- !u!114 &514994784
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 514994777}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a334fe2ffb574b3583ff3b18b4792d3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Scaffold::Scaffold.Blackboard
+  version: 1
+  scrollPos: {x: 0, y: 0}
+  variablesScrollPos: {x: 0, y: 0}
+  variablesExpanded: 1
+  blockViewHeight: 400
+  zoom: 1
+  scrollViewRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 0
+    height: 0
+  selectedBlocks: []
+  selectedCommands: []
+  variables: []
+  description: 
+  stepPause: 0
+  colorCommands: 1
+  hideComponents: 1
+  saveSelection: 1
+  localizationId: 
+  showLineNumbers: 0
+  hideCommands: []
+  luaEnvironment: {fileID: 0}
+  luaBindingName: blackboard
 --- !u!1 &610416765
 GameObject:
   m_ObjectHideFlags: 1
@@ -515,7 +2057,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 61dddfdc5e0e44ca298d8f46f7f5a915, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Fungus::Fungus.FungusState
-  selectedFlowchart: {fileID: 1210569622}
+  selectedBlackboard: {fileID: 775746603}
 --- !u!4 &610416767
 Transform:
   m_ObjectHideFlags: 1
@@ -668,6 +2210,562 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 692456171}
   m_CullTransparentMesh: 1
+--- !u!1 &734510248
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 734510249}
+  - component: {fileID: 734510255}
+  - component: {fileID: 734510254}
+  - component: {fileID: 734510253}
+  - component: {fileID: 734510252}
+  - component: {fileID: 734510251}
+  - component: {fileID: 734510250}
+  m_Layer: 0
+  m_Name: Parallel - Wait None
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &734510249
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 734510248}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 912527617}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &734510250
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 734510248}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a6a0f330126b84a40b64420fcb09d831, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Presentation.UI.Input.InvokeActionCommand
+  itemId: 3
+  indentLevel: 0
+  compositeUtility: 30
+  compositeBlockDuringExecution: 0
+  compositeWeight: 0
+  compositeWeightInitialized: 0
+  compositeWeightOverride: 0
+  actions:
+  - rid: 3466829874012356774
+  actionEnabled: 01
+  actionIds:
+  - b3d1939e2288408686660b9d7b875356
+  actionUtilitySettings:
+  - utility:
+      floatRef: {fileID: 0}
+      source: 0
+      floatSO: {fileID: 0}
+      floatVal: 0
+    blockDuringExecution: 0
+    weight: 0
+    weightInitialized: 0
+    weightOverride: 0
+  displayAsGroup: 0
+  executionMethod: 0
+  awaitMode: 0
+  orderMode: 0
+  avoidRepeatingLastAction: 0
+  references:
+    version: 2
+    RefIds:
+    - rid: 3466829874012356774
+      type: {class: DebugLog, ns: Scaffold, asm: Game.GearEngine}
+      data:
+        logType: 0
+        logMessage:
+          stringRef: {fileID: 0}
+          source: 0
+          stringSO: {fileID: 0}
+          stringVal: '[Parallel - Wait None] End'
+--- !u!114 &734510251
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 734510248}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a6a0f330126b84a40b64420fcb09d831, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Presentation.UI.Input.InvokeActionCommand
+  itemId: 2
+  indentLevel: 0
+  compositeUtility: 20
+  compositeBlockDuringExecution: 0
+  compositeWeight: 0
+  compositeWeightInitialized: 0
+  compositeWeightOverride: 0
+  actions:
+  - rid: 3466829874012356775
+  actionEnabled: 01
+  actionIds:
+  - 2b35aea617cd4a3398393cc5b7a04992
+  actionUtilitySettings:
+  - utility:
+      floatRef: {fileID: 0}
+      source: 0
+      floatSO: {fileID: 0}
+      floatVal: 0
+    blockDuringExecution: 0
+    weight: 0
+    weightInitialized: 0
+    weightOverride: 0
+  displayAsGroup: 0
+  executionMethod: 0
+  awaitMode: 0
+  orderMode: 0
+  avoidRepeatingLastAction: 0
+  references:
+    version: 2
+    RefIds:
+    - rid: 3466829874012356775
+      type: {class: Wait, ns: Scaffold, asm: Game.GearEngine}
+      data:
+        duration:
+          floatRef: {fileID: 0}
+          source: 0
+          floatSO: {fileID: 0}
+          floatVal: 1
+        durationOLD: 0
+--- !u!114 &734510252
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 734510248}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d2f6487d21a03404cb21b245f0242e79, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Scaffold::Scaffold.GameStarted
+  parentBlock: {fileID: 734510254}
+  suppressBlockAutoSelect: 0
+  waitForFrames: 1
+--- !u!114 &734510253
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 734510248}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a6a0f330126b84a40b64420fcb09d831, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Presentation.UI.Input.InvokeActionCommand
+  itemId: 1
+  indentLevel: 0
+  compositeUtility: 10
+  compositeBlockDuringExecution: 0
+  compositeWeight: 0
+  compositeWeightInitialized: 0
+  compositeWeightOverride: 0
+  actions:
+  - rid: 3466829874012356776
+  actionEnabled: 01
+  actionIds:
+  - 23c87c8c9ca149429476d716cea84b5e
+  actionUtilitySettings:
+  - utility:
+      floatRef: {fileID: 0}
+      source: 0
+      floatSO: {fileID: 0}
+      floatVal: 0
+    blockDuringExecution: 0
+    weight: 0
+    weightInitialized: 0
+    weightOverride: 0
+  displayAsGroup: 0
+  executionMethod: 0
+  awaitMode: 0
+  orderMode: 0
+  avoidRepeatingLastAction: 0
+  references:
+    version: 2
+    RefIds:
+    - rid: 3466829874012356776
+      type: {class: DebugLog, ns: Scaffold, asm: Game.GearEngine}
+      data:
+        logType: 0
+        logMessage:
+          stringRef: {fileID: 0}
+          source: 0
+          stringSO: {fileID: 0}
+          stringVal: '[Parallel - Wait None] Start'
+--- !u!114 &734510254
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 734510248}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d3d73aef2cfc4f51abf34ac00241f60, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Scaffold::Scaffold.Block
+  nodeRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 0
+    height: 0
+  tint: {r: 1, g: 1, b: 1, a: 1}
+  useCustomTint: 0
+  itemId: 0
+  blockName: Parallel - Wait None
+  description: 
+  eventHandler: {fileID: 734510252}
+  commandList: []
+  tracks:
+  - trackName: Track 0
+    commands:
+    - {fileID: 734510253}
+    - {fileID: 734510251}
+    - {fileID: 734510250}
+  executionMethod: 1
+  awaitMode: 2
+  orderMode: 0
+  avoidRepeatingLastCommand: 0
+  suppressAllAutoSelections: 0
+--- !u!114 &734510255
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 734510248}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a334fe2ffb574b3583ff3b18b4792d3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Scaffold::Scaffold.Blackboard
+  version: 1
+  scrollPos: {x: 0, y: 0}
+  variablesScrollPos: {x: 0, y: 0}
+  variablesExpanded: 1
+  blockViewHeight: 400
+  zoom: 1
+  scrollViewRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 0
+    height: 0
+  selectedBlocks: []
+  selectedCommands: []
+  variables: []
+  description: 
+  stepPause: 0
+  colorCommands: 1
+  hideComponents: 1
+  saveSelection: 1
+  localizationId: 
+  showLineNumbers: 0
+  hideCommands: []
+  luaEnvironment: {fileID: 0}
+  luaBindingName: blackboard
+--- !u!1 &775746596
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 775746597}
+  - component: {fileID: 775746603}
+  - component: {fileID: 775746602}
+  - component: {fileID: 775746601}
+  - component: {fileID: 775746600}
+  - component: {fileID: 775746599}
+  - component: {fileID: 775746598}
+  m_Layer: 0
+  m_Name: Sequence - Ordered
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &775746597
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 775746596}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 912527617}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &775746598
+MonoBehaviour:
+  m_ObjectHideFlags: 2
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 775746596}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a6a0f330126b84a40b64420fcb09d831, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Presentation.UI.Input.InvokeActionCommand
+  itemId: 3
+  indentLevel: 0
+  compositeUtility: 30
+  compositeBlockDuringExecution: 0
+  compositeWeight: 0
+  compositeWeightInitialized: 0
+  compositeWeightOverride: 0
+  actions:
+  - rid: 3466829874012356798
+  actionEnabled: 01
+  actionIds:
+  - 39b6d385fb8048bf91b7c6570210aaa5
+  actionUtilitySettings:
+  - utility:
+      floatRef: {fileID: 0}
+      source: 0
+      floatSO: {fileID: 0}
+      floatVal: 0
+    blockDuringExecution: 0
+    weight: 0
+    weightInitialized: 0
+    weightOverride: 0
+  displayAsGroup: 0
+  executionMethod: 0
+  awaitMode: 0
+  orderMode: 0
+  avoidRepeatingLastAction: 0
+  references:
+    version: 2
+    RefIds:
+    - rid: 3466829874012356798
+      type: {class: DebugLog, ns: Scaffold, asm: Game.GearEngine}
+      data:
+        logType: 0
+        logMessage:
+          stringRef: {fileID: 0}
+          source: 0
+          stringSO: {fileID: 0}
+          stringVal: '[Sequence - Ordered] End'
+--- !u!114 &775746599
+MonoBehaviour:
+  m_ObjectHideFlags: 2
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 775746596}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a6a0f330126b84a40b64420fcb09d831, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Presentation.UI.Input.InvokeActionCommand
+  itemId: 2
+  indentLevel: 0
+  compositeUtility: 20
+  compositeBlockDuringExecution: 0
+  compositeWeight: 0
+  compositeWeightInitialized: 0
+  compositeWeightOverride: 0
+  actions:
+  - rid: 3466829874012356799
+  actionEnabled: 01
+  actionIds:
+  - 894eea940cb146dcb7429f10a4dc8c81
+  actionUtilitySettings:
+  - utility:
+      floatRef: {fileID: 0}
+      source: 0
+      floatSO: {fileID: 0}
+      floatVal: 0
+    blockDuringExecution: 0
+    weight: 0
+    weightInitialized: 0
+    weightOverride: 0
+  displayAsGroup: 0
+  executionMethod: 0
+  awaitMode: 0
+  orderMode: 0
+  avoidRepeatingLastAction: 0
+  references:
+    version: 2
+    RefIds:
+    - rid: 3466829874012356799
+      type: {class: Wait, ns: Scaffold, asm: Game.GearEngine}
+      data:
+        duration:
+          floatRef: {fileID: 0}
+          source: 0
+          floatSO: {fileID: 0}
+          floatVal: 1
+        durationOLD: 0
+--- !u!114 &775746600
+MonoBehaviour:
+  m_ObjectHideFlags: 2
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 775746596}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d2f6487d21a03404cb21b245f0242e79, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Scaffold::Scaffold.GameStarted
+  parentBlock: {fileID: 775746602}
+  suppressBlockAutoSelect: 0
+  waitForFrames: 1
+--- !u!114 &775746601
+MonoBehaviour:
+  m_ObjectHideFlags: 2
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 775746596}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a6a0f330126b84a40b64420fcb09d831, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Presentation.UI.Input.InvokeActionCommand
+  itemId: 1
+  indentLevel: 0
+  compositeUtility: 10
+  compositeBlockDuringExecution: 0
+  compositeWeight: 0
+  compositeWeightInitialized: 0
+  compositeWeightOverride: 0
+  actions:
+  - rid: 3466829874012356800
+  actionEnabled: 01
+  actionIds:
+  - ab2e263564be4892bd77ee66ff81a1da
+  actionUtilitySettings:
+  - utility:
+      floatRef: {fileID: 0}
+      source: 0
+      floatSO: {fileID: 0}
+      floatVal: 0
+    blockDuringExecution: 0
+    weight: 0
+    weightInitialized: 0
+    weightOverride: 0
+  displayAsGroup: 0
+  executionMethod: 0
+  awaitMode: 0
+  orderMode: 0
+  avoidRepeatingLastAction: 0
+  references:
+    version: 2
+    RefIds:
+    - rid: 3466829874012356800
+      type: {class: DebugLog, ns: Scaffold, asm: Game.GearEngine}
+      data:
+        logType: 0
+        logMessage:
+          stringRef: {fileID: 0}
+          source: 0
+          stringSO: {fileID: 0}
+          stringVal: '[Sequence - Ordered] Start'
+--- !u!114 &775746602
+MonoBehaviour:
+  m_ObjectHideFlags: 2
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 775746596}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d3d73aef2cfc4f51abf34ac00241f60, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Scaffold::Scaffold.Block
+  nodeRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 165.44531
+    height: 40
+  tint: {r: 1, g: 1, b: 1, a: 1}
+  useCustomTint: 0
+  itemId: 0
+  blockName: Sequence - Ordered
+  description: 
+  eventHandler: {fileID: 775746600}
+  commandList: []
+  tracks:
+  - trackName: Track 0
+    commands:
+    - {fileID: 775746601}
+    - {fileID: 775746599}
+    - {fileID: 775746598}
+  executionMethod: 0
+  awaitMode: 0
+  orderMode: 0
+  avoidRepeatingLastCommand: 0
+  suppressAllAutoSelections: 0
+--- !u!114 &775746603
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 775746596}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a334fe2ffb574b3583ff3b18b4792d3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Scaffold::Scaffold.Blackboard
+  version: 1
+  scrollPos: {x: 0, y: 0}
+  variablesScrollPos: {x: 0, y: 0}
+  variablesExpanded: 1
+  blockViewHeight: 400
+  zoom: 1
+  scrollViewRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 0
+    height: 0
+  selectedBlocks: []
+  selectedCommands: []
+  variables: []
+  description: 
+  stepPause: 0
+  colorCommands: 1
+  hideComponents: 1
+  saveSelection: 1
+  localizationId: 
+  showLineNumbers: 0
+  hideCommands: []
+  luaEnvironment: {fileID: 0}
+  luaBindingName: blackboard
 --- !u!1 &905234842
 GameObject:
   m_ObjectHideFlags: 0
@@ -772,6 +2870,328 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!1 &912527616
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 912527617}
+  m_Layer: 0
+  m_Name: Execution Matrix
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &912527617
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 912527616}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 775746597}
+  - {fileID: 1349956256}
+  - {fileID: 514994778}
+  - {fileID: 330002945}
+  - {fileID: 1857163470}
+  - {fileID: 2022101386}
+  - {fileID: 363005691}
+  - {fileID: 960011137}
+  - {fileID: 734510249}
+  - {fileID: 2074271051}
+  - {fileID: 1834495473}
+  - {fileID: 458307488}
+  - {fileID: 162214862}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &960011136
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 960011137}
+  - component: {fileID: 960011143}
+  - component: {fileID: 960011142}
+  - component: {fileID: 960011141}
+  - component: {fileID: 960011140}
+  - component: {fileID: 960011139}
+  - component: {fileID: 960011138}
+  m_Layer: 0
+  m_Name: Parallel - Wait Any
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &960011137
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 960011136}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 912527617}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &960011138
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 960011136}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a6a0f330126b84a40b64420fcb09d831, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Presentation.UI.Input.InvokeActionCommand
+  itemId: 3
+  indentLevel: 0
+  compositeUtility: 30
+  compositeBlockDuringExecution: 0
+  compositeWeight: 0
+  compositeWeightInitialized: 0
+  compositeWeightOverride: 0
+  actions:
+  - rid: 3466829874012356777
+  actionEnabled: 01
+  actionIds:
+  - 3378cdfb849747df966b125e0f7f49dc
+  actionUtilitySettings:
+  - utility:
+      floatRef: {fileID: 0}
+      source: 0
+      floatSO: {fileID: 0}
+      floatVal: 0
+    blockDuringExecution: 0
+    weight: 0
+    weightInitialized: 0
+    weightOverride: 0
+  displayAsGroup: 0
+  executionMethod: 0
+  awaitMode: 0
+  orderMode: 0
+  avoidRepeatingLastAction: 0
+  references:
+    version: 2
+    RefIds:
+    - rid: 3466829874012356777
+      type: {class: DebugLog, ns: Scaffold, asm: Game.GearEngine}
+      data:
+        logType: 0
+        logMessage:
+          stringRef: {fileID: 0}
+          source: 0
+          stringSO: {fileID: 0}
+          stringVal: '[Parallel - Wait Any] End'
+--- !u!114 &960011139
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 960011136}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a6a0f330126b84a40b64420fcb09d831, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Presentation.UI.Input.InvokeActionCommand
+  itemId: 2
+  indentLevel: 0
+  compositeUtility: 20
+  compositeBlockDuringExecution: 0
+  compositeWeight: 0
+  compositeWeightInitialized: 0
+  compositeWeightOverride: 0
+  actions:
+  - rid: 3466829874012356778
+  actionEnabled: 01
+  actionIds:
+  - 2e0484e4540544a781c789fad09a7105
+  actionUtilitySettings:
+  - utility:
+      floatRef: {fileID: 0}
+      source: 0
+      floatSO: {fileID: 0}
+      floatVal: 0
+    blockDuringExecution: 0
+    weight: 0
+    weightInitialized: 0
+    weightOverride: 0
+  displayAsGroup: 0
+  executionMethod: 0
+  awaitMode: 0
+  orderMode: 0
+  avoidRepeatingLastAction: 0
+  references:
+    version: 2
+    RefIds:
+    - rid: 3466829874012356778
+      type: {class: Wait, ns: Scaffold, asm: Game.GearEngine}
+      data:
+        duration:
+          floatRef: {fileID: 0}
+          source: 0
+          floatSO: {fileID: 0}
+          floatVal: 1
+        durationOLD: 0
+--- !u!114 &960011140
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 960011136}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d2f6487d21a03404cb21b245f0242e79, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Scaffold::Scaffold.GameStarted
+  parentBlock: {fileID: 960011142}
+  suppressBlockAutoSelect: 0
+  waitForFrames: 1
+--- !u!114 &960011141
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 960011136}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a6a0f330126b84a40b64420fcb09d831, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Presentation.UI.Input.InvokeActionCommand
+  itemId: 1
+  indentLevel: 0
+  compositeUtility: 10
+  compositeBlockDuringExecution: 0
+  compositeWeight: 0
+  compositeWeightInitialized: 0
+  compositeWeightOverride: 0
+  actions:
+  - rid: 3466829874012356779
+  actionEnabled: 01
+  actionIds:
+  - 6e6f9788821947fdbaa35674675d6b6f
+  actionUtilitySettings:
+  - utility:
+      floatRef: {fileID: 0}
+      source: 0
+      floatSO: {fileID: 0}
+      floatVal: 0
+    blockDuringExecution: 0
+    weight: 0
+    weightInitialized: 0
+    weightOverride: 0
+  displayAsGroup: 0
+  executionMethod: 0
+  awaitMode: 0
+  orderMode: 0
+  avoidRepeatingLastAction: 0
+  references:
+    version: 2
+    RefIds:
+    - rid: 3466829874012356779
+      type: {class: DebugLog, ns: Scaffold, asm: Game.GearEngine}
+      data:
+        logType: 0
+        logMessage:
+          stringRef: {fileID: 0}
+          source: 0
+          stringSO: {fileID: 0}
+          stringVal: '[Parallel - Wait Any] Start'
+--- !u!114 &960011142
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 960011136}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d3d73aef2cfc4f51abf34ac00241f60, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Scaffold::Scaffold.Block
+  nodeRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 0
+    height: 0
+  tint: {r: 1, g: 1, b: 1, a: 1}
+  useCustomTint: 0
+  itemId: 0
+  blockName: Parallel - Wait Any
+  description: 
+  eventHandler: {fileID: 960011140}
+  commandList: []
+  tracks:
+  - trackName: Track 0
+    commands:
+    - {fileID: 960011141}
+    - {fileID: 960011139}
+    - {fileID: 960011138}
+  executionMethod: 1
+  awaitMode: 1
+  orderMode: 0
+  avoidRepeatingLastCommand: 0
+  suppressAllAutoSelections: 0
+--- !u!114 &960011143
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 960011136}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a334fe2ffb574b3583ff3b18b4792d3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Scaffold::Scaffold.Blackboard
+  version: 1
+  scrollPos: {x: 0, y: 0}
+  variablesScrollPos: {x: 0, y: 0}
+  variablesExpanded: 1
+  blockViewHeight: 400
+  zoom: 1
+  scrollViewRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 0
+    height: 0
+  selectedBlocks: []
+  selectedCommands: []
+  variables: []
+  description: 
+  stepPause: 0
+  colorCommands: 1
+  hideComponents: 1
+  saveSelection: 1
+  localizationId: 
+  showLineNumbers: 0
+  hideCommands: []
+  luaEnvironment: {fileID: 0}
+  luaBindingName: blackboard
 --- !u!1 &1210569615
 GameObject:
   m_ObjectHideFlags: 0
@@ -786,8 +3206,7 @@ GameObject:
   - component: {fileID: 1210569620}
   - component: {fileID: 1210569619}
   - component: {fileID: 1210569618}
-  - component: {fileID: 1210569617}
-  - component: {fileID: 1210569616}
+  - component: {fileID: 1210569624}
   m_Layer: 0
   m_Name: GameObject
   m_TagString: Untagged
@@ -795,71 +3214,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1210569616
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1210569615}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a6a0f330126b84a40b64420fcb09d831, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Presentation.UI.Input.InvokeActionCommand
-  itemId: 2
-  indentLevel: 0
-  actions:
-  - rid: 3466829814678684070
-  actionEnabled: 01
-  executionMethod: 0
-  references:
-    version: 2
-    RefIds:
-    - rid: 3466829814678684070
-      type: {class: Call, ns: Scaffold, asm: Game.GearEngine}
-      data:
-        targetFlowchart: {fileID: 0}
-        targetBlock: {fileID: 0}
-        startLabel:
-          stringRef: {fileID: 0}
-          stringVal: 
-        startIndex: 0
-        callMode: 0
---- !u!114 &1210569617
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1210569615}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a6a0f330126b84a40b64420fcb09d831, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Presentation.UI.Input.InvokeActionCommand
-  itemId: 1
-  indentLevel: 0
-  actions:
-  - rid: 3466829814678684068
-  actionEnabled: 01
-  executionMethod: 0
-  references:
-    version: 2
-    RefIds:
-    - rid: 3466829814678684068
-      type: {class: CrossfadeAnim, ns: Scaffold, asm: Game.GearEngine}
-      data:
-        targetAnimator:
-          animatorRef: {fileID: 0}
-          animatorVal: {fileID: 0}
-        stateName:
-          stringRef: {fileID: 0}
-          stringVal: 
-        transitionDuration:
-          floatRef: {fileID: 0}
-          floatVal: 0.25
-        layer: 0
 --- !u!114 &1210569618
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1107,30 +3461,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b10c77fb70124b2489533472023a791, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Presentation.UI.Input.WaitForTargetClick
-  itemId: 1
-  indentLevel: 0
-  errorMessage: 
-  referencedVariables: []
-  <CommandIndex>k__BackingField: 0
-  <IsExecuting>k__BackingField: 0
-  <ExecutingIconTimer>k__BackingField: 0
-  <ParentBlock>k__BackingField: {fileID: 1210569621}
-  target:
-    strategy: 0
-    directReference: {fileID: 0}
-    tagFilter:
-      soTags: []
-      nativeTags:
-        tags: []
-      matchAll: 0
-    globalVariableName: 
-    references: []
-  targetTagSOList: []
-  matchAll: 0
-  migratedToTargetReference: 0
-  isTargetClicked: 0
-  addedTriggers: []
-  addedEntries: []
 --- !u!114 &1210569620
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -1160,7 +3490,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Scaffold::Scaffold.Block
   nodeRect:
     serializedVersion: 2
-    x: 387
+    x: 386
     y: 165.5
     width: 110.17969
     height: 40
@@ -1174,8 +3504,7 @@ MonoBehaviour:
   tracks:
   - trackName: Track 0
     commands:
-    - {fileID: 1210569617}
-    - {fileID: 1210569616}
+    - {fileID: 1210569624}
   - trackName: Track 1
     commands: []
   - trackName: Track 2
@@ -1188,8 +3517,10 @@ MonoBehaviour:
     commands: []
   - trackName: Track 6
     commands: []
-  executionMethod: 0
+  executionMethod: 2
   awaitMode: 0
+  orderMode: 0
+  avoidRepeatingLastCommand: 0
   suppressAllAutoSelections: 0
 --- !u!114 &1210569622
 MonoBehaviour:
@@ -1202,12 +3533,12 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7a334fe2ffb574b3583ff3b18b4792d3, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Scaffold::Scaffold.Flowchart
+  m_EditorClassIdentifier: Scaffold::Scaffold.Blackboard
   version: 1
   scrollPos: {x: -66, y: -15}
   variablesScrollPos: {x: 0, y: 0}
   variablesExpanded: 1
-  blockViewHeight: 294.5
+  blockViewHeight: 200
   zoom: 1
   scrollViewRect:
     serializedVersion: 2
@@ -1218,7 +3549,7 @@ MonoBehaviour:
   selectedBlocks:
   - {fileID: 1210569621}
   selectedCommands:
-  - {fileID: 1210569616}
+  - {fileID: 1210569624}
   variables: []
   description: 
   stepPause: 0
@@ -1229,7 +3560,7 @@ MonoBehaviour:
   showLineNumbers: 0
   hideCommands: []
   luaEnvironment: {fileID: 0}
-  luaBindingName: flowchart
+  luaBindingName: blackboard
 --- !u!4 &1210569623
 Transform:
   m_ObjectHideFlags: 0
@@ -1245,6 +3576,68 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1210569624
+MonoBehaviour:
+  m_ObjectHideFlags: 2
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1210569615}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a6a0f330126b84a40b64420fcb09d831, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Presentation.UI.Input.InvokeActionCommand
+  itemId: 1
+  indentLevel: 0
+  compositeUtility: 0
+  compositeBlockDuringExecution: 0
+  compositeWeight: 0
+  compositeWeightInitialized: 0
+  compositeWeightOverride: 0
+  actions:
+  - rid: 3466829874012356830
+  actionEnabled: 01
+  actionIds:
+  - c1977f95a82144dbaf33d8151122ccc6
+  actionUtilitySettings:
+  - utility:
+      floatRef: {fileID: 0}
+      source: 0
+      floatSO: {fileID: 0}
+      floatVal: 0
+    blockDuringExecution: 0
+    weight: 0
+    weightInitialized: 0
+    weightOverride: 0
+  displayAsGroup: 0
+  executionMethod: 0
+  awaitMode: 0
+  orderMode: 0
+  avoidRepeatingLastAction: 0
+  references:
+    version: 2
+    RefIds:
+    - rid: 3466829874012356830
+      type: {class: ApplyUIEffectPreset, ns: Scaffold, asm: Game.GearEngine}
+      data:
+        targetEffect: {fileID: 478737330}
+        targetGameObject:
+          gameObjectRef: {fileID: 0}
+          source: 0
+          gameObjectSO: {fileID: 0}
+          gameObjectVal: {fileID: 478737325}
+        preset: {fileID: 11400000, guid: b3e2f58e3c8944b1daf1e15e51c3e2e9, type: 2}
+        append:
+          booleanRef: {fileID: 0}
+          source: 0
+          booleanSO: {fileID: 0}
+          booleanVal: 0
+        addIfMissing:
+          booleanRef: {fileID: 0}
+          source: 0
+          booleanSO: {fileID: 0}
+          booleanVal: 1
 --- !u!1 &1330917694
 GameObject:
   m_ObjectHideFlags: 0
@@ -1328,6 +3721,284 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1349956255
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1349956256}
+  - component: {fileID: 1349956262}
+  - component: {fileID: 1349956261}
+  - component: {fileID: 1349956260}
+  - component: {fileID: 1349956259}
+  - component: {fileID: 1349956258}
+  - component: {fileID: 1349956257}
+  m_Layer: 0
+  m_Name: Sequence - Random
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1349956256
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1349956255}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 912527617}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1349956257
+MonoBehaviour:
+  m_ObjectHideFlags: 2
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1349956255}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a6a0f330126b84a40b64420fcb09d831, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Presentation.UI.Input.InvokeActionCommand
+  itemId: 3
+  indentLevel: 0
+  compositeUtility: 30
+  compositeBlockDuringExecution: 0
+  compositeWeight: 0
+  compositeWeightInitialized: 0
+  compositeWeightOverride: 0
+  actions:
+  - rid: 3466829874012356795
+  actionEnabled: 01
+  actionIds:
+  - 7c7522300459404f89fdf16c01b54276
+  actionUtilitySettings:
+  - utility:
+      floatRef: {fileID: 0}
+      source: 0
+      floatSO: {fileID: 0}
+      floatVal: 0
+    blockDuringExecution: 0
+    weight: 0
+    weightInitialized: 0
+    weightOverride: 0
+  displayAsGroup: 0
+  executionMethod: 0
+  awaitMode: 0
+  orderMode: 0
+  avoidRepeatingLastAction: 0
+  references:
+    version: 2
+    RefIds:
+    - rid: 3466829874012356795
+      type: {class: DebugLog, ns: Scaffold, asm: Game.GearEngine}
+      data:
+        logType: 0
+        logMessage:
+          stringRef: {fileID: 0}
+          source: 0
+          stringSO: {fileID: 0}
+          stringVal: '[Sequence - Random] End'
+--- !u!114 &1349956258
+MonoBehaviour:
+  m_ObjectHideFlags: 2
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1349956255}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a6a0f330126b84a40b64420fcb09d831, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Presentation.UI.Input.InvokeActionCommand
+  itemId: 2
+  indentLevel: 0
+  compositeUtility: 20
+  compositeBlockDuringExecution: 0
+  compositeWeight: 0
+  compositeWeightInitialized: 0
+  compositeWeightOverride: 0
+  actions:
+  - rid: 3466829874012356796
+  actionEnabled: 01
+  actionIds:
+  - 8a0317358c6946a79fd6fcb54aa6b780
+  actionUtilitySettings:
+  - utility:
+      floatRef: {fileID: 0}
+      source: 0
+      floatSO: {fileID: 0}
+      floatVal: 0
+    blockDuringExecution: 0
+    weight: 0
+    weightInitialized: 0
+    weightOverride: 0
+  displayAsGroup: 0
+  executionMethod: 0
+  awaitMode: 0
+  orderMode: 0
+  avoidRepeatingLastAction: 0
+  references:
+    version: 2
+    RefIds:
+    - rid: 3466829874012356796
+      type: {class: Wait, ns: Scaffold, asm: Game.GearEngine}
+      data:
+        duration:
+          floatRef: {fileID: 0}
+          source: 0
+          floatSO: {fileID: 0}
+          floatVal: 1
+        durationOLD: 0
+--- !u!114 &1349956259
+MonoBehaviour:
+  m_ObjectHideFlags: 2
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1349956255}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d2f6487d21a03404cb21b245f0242e79, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Scaffold::Scaffold.GameStarted
+  parentBlock: {fileID: 1349956261}
+  suppressBlockAutoSelect: 0
+  waitForFrames: 1
+--- !u!114 &1349956260
+MonoBehaviour:
+  m_ObjectHideFlags: 2
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1349956255}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a6a0f330126b84a40b64420fcb09d831, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Presentation.UI.Input.InvokeActionCommand
+  itemId: 1
+  indentLevel: 0
+  compositeUtility: 10
+  compositeBlockDuringExecution: 0
+  compositeWeight: 0
+  compositeWeightInitialized: 0
+  compositeWeightOverride: 0
+  actions:
+  - rid: 3466829874012356797
+  actionEnabled: 01
+  actionIds:
+  - bb29c8e2cde043cdbe6dcdc0f047ba6a
+  actionUtilitySettings:
+  - utility:
+      floatRef: {fileID: 0}
+      source: 0
+      floatSO: {fileID: 0}
+      floatVal: 0
+    blockDuringExecution: 0
+    weight: 0
+    weightInitialized: 0
+    weightOverride: 0
+  displayAsGroup: 0
+  executionMethod: 0
+  awaitMode: 0
+  orderMode: 0
+  avoidRepeatingLastAction: 0
+  references:
+    version: 2
+    RefIds:
+    - rid: 3466829874012356797
+      type: {class: DebugLog, ns: Scaffold, asm: Game.GearEngine}
+      data:
+        logType: 0
+        logMessage:
+          stringRef: {fileID: 0}
+          source: 0
+          stringSO: {fileID: 0}
+          stringVal: '[Sequence - Random] Start'
+--- !u!114 &1349956261
+MonoBehaviour:
+  m_ObjectHideFlags: 2
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1349956255}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d3d73aef2cfc4f51abf34ac00241f60, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Scaffold::Scaffold.Block
+  nodeRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 165.39844
+    height: 40
+  tint: {r: 1, g: 1, b: 1, a: 1}
+  useCustomTint: 0
+  itemId: 0
+  blockName: Sequence - Random
+  description: 
+  eventHandler: {fileID: 1349956259}
+  commandList: []
+  tracks:
+  - trackName: Track 0
+    commands:
+    - {fileID: 1349956260}
+    - {fileID: 1349956258}
+    - {fileID: 1349956257}
+  executionMethod: 0
+  awaitMode: 0
+  orderMode: 1
+  avoidRepeatingLastCommand: 0
+  suppressAllAutoSelections: 0
+--- !u!114 &1349956262
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1349956255}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a334fe2ffb574b3583ff3b18b4792d3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Scaffold::Scaffold.Blackboard
+  version: 1
+  scrollPos: {x: 0, y: 0}
+  variablesScrollPos: {x: 0, y: 0}
+  variablesExpanded: 1
+  blockViewHeight: 400
+  zoom: 1
+  scrollViewRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 0
+    height: 0
+  selectedBlocks: []
+  selectedCommands: []
+  variables: []
+  description: 
+  stepPause: 0
+  colorCommands: 1
+  hideComponents: 1
+  saveSelection: 1
+  localizationId: 
+  showLineNumbers: 0
+  hideCommands: []
+  luaEnvironment: {fileID: 0}
+  luaBindingName: blackboard
 --- !u!1 &1805717740
 GameObject:
   m_ObjectHideFlags: 0
@@ -1341,6 +4012,7 @@ GameObject:
   - component: {fileID: 1805717743}
   - component: {fileID: 1805717742}
   - component: {fileID: 1805717745}
+  - component: {fileID: 1805717746}
   m_Layer: 5
   m_Name: Image (1)
   m_TagString: Untagged
@@ -1466,6 +4138,1270 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 6b80c79064f1d4a05919837bb3f35e43, type: 2}
   nativeTags:
     tags: []
+--- !u!114 &1805717746
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1805717740}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 938fce054c42f40a3969e27a88d9bdd8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Coffee.UIEffect::Coffee.UIEffects.UIEffect
+  m_ToneFilter: 0
+  m_ToneIntensity: 1
+  m_ColorFilter: 0
+  m_ColorIntensity: 1
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_ColorGlow: 0
+  m_SamplingFilter: 0
+  m_SamplingIntensity: 0.5
+  m_SamplingWidth: 1
+  m_SamplingScale: 1
+  m_TransitionFilter: 0
+  m_TransitionRate: 0.5
+  m_TransitionReverse: 0
+  m_TransitionTex: {fileID: 0}
+  m_TransitionTexScale: {x: 1, y: 1}
+  m_TransitionTexOffset: {x: 0, y: 0}
+  m_TransitionTexSpeed: {x: 0, y: 0}
+  m_TransitionRotation: 0
+  m_TransitionKeepAspectRatio: 1
+  m_TransitionWidth: 0.2
+  m_TransitionSoftness: 0.2
+  m_TransitionRange:
+    m_Min: 0
+    m_Max: 1
+  m_TransitionColorFilter: 6
+  m_TransitionColor: {r: 0, g: 0.5, b: 1, a: 1}
+  m_TransitionColorGlow: 0
+  m_TransitionPatternReverse: 0
+  m_TransitionAutoPlaySpeed: 0
+  m_TransitionGradient:
+    serializedVersion: 2
+    key0: {r: 1, g: 1, b: 1, a: 1}
+    key1: {r: 1, g: 1, b: 1, a: 1}
+    key2: {r: 0, g: 0, b: 0, a: 0}
+    key3: {r: 0, g: 0, b: 0, a: 0}
+    key4: {r: 0, g: 0, b: 0, a: 0}
+    key5: {r: 0, g: 0, b: 0, a: 0}
+    key6: {r: 0, g: 0, b: 0, a: 0}
+    key7: {r: 0, g: 0, b: 0, a: 0}
+    ctime0: 0
+    ctime1: 65535
+    ctime2: 0
+    ctime3: 0
+    ctime4: 0
+    ctime5: 0
+    ctime6: 0
+    ctime7: 0
+    atime0: 0
+    atime1: 65535
+    atime2: 0
+    atime3: 0
+    atime4: 0
+    atime5: 0
+    atime6: 0
+    atime7: 0
+    m_Mode: 0
+    m_ColorSpace: -1
+    m_NumColorKeys: 2
+    m_NumAlphaKeys: 2
+  m_TargetMode: 0
+  m_TargetColor: {r: 1, g: 1, b: 1, a: 1}
+  m_TargetRange: 0.1
+  m_TargetSoftness: 0.5
+  m_BlendType: 1
+  m_SrcBlendMode: 1
+  m_DstBlendMode: 10
+  m_ShadowMode: 0
+  m_ShadowDistance: {x: 1, y: -1}
+  m_ShadowIteration: 1
+  m_ShadowFade: 0.9
+  m_ShadowMirrorScale: 0.5
+  m_ShadowBlurIntensity: 1
+  m_ShadowColorFilter: 4
+  m_ShadowColor: {r: 1, g: 1, b: 1, a: 1}
+  m_ShadowColorGlow: 0
+  m_GradationMode: 0
+  m_GradationIntensity: 1
+  m_GradationColorFilter: 1
+  m_GradationColor1: {r: 1, g: 1, b: 1, a: 1}
+  m_GradationColor2: {r: 1, g: 1, b: 1, a: 1}
+  m_GradationColor3: {r: 1, g: 1, b: 1, a: 1}
+  m_GradationColor4: {r: 1, g: 1, b: 1, a: 1}
+  m_GradationGradient:
+    serializedVersion: 2
+    key0: {r: 1, g: 1, b: 1, a: 1}
+    key1: {r: 1, g: 1, b: 1, a: 1}
+    key2: {r: 0, g: 0, b: 0, a: 0}
+    key3: {r: 0, g: 0, b: 0, a: 0}
+    key4: {r: 0, g: 0, b: 0, a: 0}
+    key5: {r: 0, g: 0, b: 0, a: 0}
+    key6: {r: 0, g: 0, b: 0, a: 0}
+    key7: {r: 0, g: 0, b: 0, a: 0}
+    ctime0: 0
+    ctime1: 65535
+    ctime2: 0
+    ctime3: 0
+    ctime4: 0
+    ctime5: 0
+    ctime6: 0
+    ctime7: 0
+    atime0: 0
+    atime1: 65535
+    atime2: 0
+    atime3: 0
+    atime4: 0
+    atime5: 0
+    atime6: 0
+    atime7: 0
+    m_Mode: 0
+    m_ColorSpace: -1
+    m_NumColorKeys: 2
+    m_NumAlphaKeys: 2
+  m_GradationOffset: 0
+  m_GradationScale: 1
+  m_GradationRotation: 0
+  m_GradationWrapMode: 0
+  m_GradationReverse: 0
+  m_AllowToModifyMeshShape: 1
+  m_EdgeMode: 0
+  m_EdgeWidth: 0.5
+  m_EdgeColorFilter: 4
+  m_EdgeColor: {r: 1, g: 1, b: 1, a: 1}
+  m_EdgeColorGlow: 0
+  m_EdgeShinyRate: 0.5
+  m_EdgeShinyWidth: 0.5
+  m_EdgeShinyAutoPlaySpeed: 1
+  m_PatternArea: 1
+  m_DetailFilter: 0
+  m_DetailIntensity: 1
+  m_DetailThreshold:
+    m_Min: 0
+    m_Max: 1
+  m_DetailColor: {r: 1, g: 1, b: 1, a: 1}
+  m_DetailTex: {fileID: 0}
+  m_DetailTexScale: {x: 1, y: 1}
+  m_DetailTexOffset: {x: 0, y: 0}
+  m_DetailTexSpeed: {x: 0, y: 0}
+  m_CustomRoot: {fileID: 0}
+  m_Flip: 0
+--- !u!1 &1834495472
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1834495473}
+  - component: {fileID: 1834495479}
+  - component: {fileID: 1834495478}
+  - component: {fileID: 1834495477}
+  - component: {fileID: 1834495476}
+  - component: {fileID: 1834495475}
+  - component: {fileID: 1834495474}
+  m_Layer: 0
+  m_Name: Parallel Selector - Wait Any
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1834495473
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1834495472}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 912527617}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1834495474
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1834495472}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a6a0f330126b84a40b64420fcb09d831, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Presentation.UI.Input.InvokeActionCommand
+  itemId: 3
+  indentLevel: 0
+  compositeUtility: 30
+  compositeBlockDuringExecution: 0
+  compositeWeight: 0
+  compositeWeightInitialized: 0
+  compositeWeightOverride: 0
+  actions:
+  - rid: 3466829874012356768
+  actionEnabled: 01
+  actionIds:
+  - 9a7e00cee49b47d1be408ea5eeda1256
+  actionUtilitySettings:
+  - utility:
+      floatRef: {fileID: 0}
+      source: 0
+      floatSO: {fileID: 0}
+      floatVal: 0
+    blockDuringExecution: 0
+    weight: 0
+    weightInitialized: 0
+    weightOverride: 0
+  displayAsGroup: 0
+  executionMethod: 0
+  awaitMode: 0
+  orderMode: 0
+  avoidRepeatingLastAction: 0
+  references:
+    version: 2
+    RefIds:
+    - rid: 3466829874012356768
+      type: {class: DebugLog, ns: Scaffold, asm: Game.GearEngine}
+      data:
+        logType: 0
+        logMessage:
+          stringRef: {fileID: 0}
+          source: 0
+          stringSO: {fileID: 0}
+          stringVal: '[Parallel Selector - Wait Any] End'
+--- !u!114 &1834495475
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1834495472}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a6a0f330126b84a40b64420fcb09d831, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Presentation.UI.Input.InvokeActionCommand
+  itemId: 2
+  indentLevel: 0
+  compositeUtility: 20
+  compositeBlockDuringExecution: 0
+  compositeWeight: 0
+  compositeWeightInitialized: 0
+  compositeWeightOverride: 0
+  actions:
+  - rid: 3466829874012356769
+  actionEnabled: 01
+  actionIds:
+  - df27081c02f04fdd871be85cf39b6bdb
+  actionUtilitySettings:
+  - utility:
+      floatRef: {fileID: 0}
+      source: 0
+      floatSO: {fileID: 0}
+      floatVal: 0
+    blockDuringExecution: 0
+    weight: 0
+    weightInitialized: 0
+    weightOverride: 0
+  displayAsGroup: 0
+  executionMethod: 0
+  awaitMode: 0
+  orderMode: 0
+  avoidRepeatingLastAction: 0
+  references:
+    version: 2
+    RefIds:
+    - rid: 3466829874012356769
+      type: {class: Wait, ns: Scaffold, asm: Game.GearEngine}
+      data:
+        duration:
+          floatRef: {fileID: 0}
+          source: 0
+          floatSO: {fileID: 0}
+          floatVal: 1
+        durationOLD: 0
+--- !u!114 &1834495476
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1834495472}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d2f6487d21a03404cb21b245f0242e79, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Scaffold::Scaffold.GameStarted
+  parentBlock: {fileID: 1834495478}
+  suppressBlockAutoSelect: 0
+  waitForFrames: 1
+--- !u!114 &1834495477
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1834495472}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a6a0f330126b84a40b64420fcb09d831, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Presentation.UI.Input.InvokeActionCommand
+  itemId: 1
+  indentLevel: 0
+  compositeUtility: 10
+  compositeBlockDuringExecution: 0
+  compositeWeight: 0
+  compositeWeightInitialized: 0
+  compositeWeightOverride: 0
+  actions:
+  - rid: 3466829874012356770
+  actionEnabled: 01
+  actionIds:
+  - a0c7eb59ac7244d789bdae0f7ba1b7d7
+  actionUtilitySettings:
+  - utility:
+      floatRef: {fileID: 0}
+      source: 0
+      floatSO: {fileID: 0}
+      floatVal: 0
+    blockDuringExecution: 0
+    weight: 0
+    weightInitialized: 0
+    weightOverride: 0
+  displayAsGroup: 0
+  executionMethod: 0
+  awaitMode: 0
+  orderMode: 0
+  avoidRepeatingLastAction: 0
+  references:
+    version: 2
+    RefIds:
+    - rid: 3466829874012356770
+      type: {class: DebugLog, ns: Scaffold, asm: Game.GearEngine}
+      data:
+        logType: 0
+        logMessage:
+          stringRef: {fileID: 0}
+          source: 0
+          stringSO: {fileID: 0}
+          stringVal: '[Parallel Selector - Wait Any] Start'
+--- !u!114 &1834495478
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1834495472}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d3d73aef2cfc4f51abf34ac00241f60, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Scaffold::Scaffold.Block
+  nodeRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 0
+    height: 0
+  tint: {r: 1, g: 1, b: 1, a: 1}
+  useCustomTint: 0
+  itemId: 0
+  blockName: Parallel Selector - Wait Any
+  description: 
+  eventHandler: {fileID: 1834495476}
+  commandList: []
+  tracks:
+  - trackName: Track 0
+    commands:
+    - {fileID: 1834495477}
+    - {fileID: 1834495475}
+    - {fileID: 1834495474}
+  executionMethod: 3
+  awaitMode: 1
+  orderMode: 0
+  avoidRepeatingLastCommand: 0
+  suppressAllAutoSelections: 0
+--- !u!114 &1834495479
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1834495472}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a334fe2ffb574b3583ff3b18b4792d3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Scaffold::Scaffold.Blackboard
+  version: 1
+  scrollPos: {x: 0, y: 0}
+  variablesScrollPos: {x: 0, y: 0}
+  variablesExpanded: 1
+  blockViewHeight: 400
+  zoom: 1
+  scrollViewRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 0
+    height: 0
+  selectedBlocks: []
+  selectedCommands: []
+  variables: []
+  description: 
+  stepPause: 0
+  colorCommands: 1
+  hideComponents: 1
+  saveSelection: 1
+  localizationId: 
+  showLineNumbers: 0
+  hideCommands: []
+  luaEnvironment: {fileID: 0}
+  luaBindingName: blackboard
+--- !u!1 &1857163469
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1857163470}
+  - component: {fileID: 1857163476}
+  - component: {fileID: 1857163475}
+  - component: {fileID: 1857163474}
+  - component: {fileID: 1857163473}
+  - component: {fileID: 1857163472}
+  - component: {fileID: 1857163471}
+  m_Layer: 0
+  m_Name: Selector - Random
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1857163470
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1857163469}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 912527617}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1857163471
+MonoBehaviour:
+  m_ObjectHideFlags: 2
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1857163469}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a6a0f330126b84a40b64420fcb09d831, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Presentation.UI.Input.InvokeActionCommand
+  itemId: 3
+  indentLevel: 0
+  compositeUtility: 30
+  compositeBlockDuringExecution: 0
+  compositeWeight: 0
+  compositeWeightInitialized: 0
+  compositeWeightOverride: 0
+  actions:
+  - rid: 3466829874012356786
+  actionEnabled: 01
+  actionIds:
+  - 31b2bd4ed5f8418ca84af05933481a12
+  actionUtilitySettings:
+  - utility:
+      floatRef: {fileID: 0}
+      source: 0
+      floatSO: {fileID: 0}
+      floatVal: 0
+    blockDuringExecution: 0
+    weight: 0
+    weightInitialized: 0
+    weightOverride: 0
+  displayAsGroup: 0
+  executionMethod: 0
+  awaitMode: 0
+  orderMode: 0
+  avoidRepeatingLastAction: 0
+  references:
+    version: 2
+    RefIds:
+    - rid: 3466829874012356786
+      type: {class: DebugLog, ns: Scaffold, asm: Game.GearEngine}
+      data:
+        logType: 0
+        logMessage:
+          stringRef: {fileID: 0}
+          source: 0
+          stringSO: {fileID: 0}
+          stringVal: '[Selector - Random] End'
+--- !u!114 &1857163472
+MonoBehaviour:
+  m_ObjectHideFlags: 2
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1857163469}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a6a0f330126b84a40b64420fcb09d831, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Presentation.UI.Input.InvokeActionCommand
+  itemId: 2
+  indentLevel: 0
+  compositeUtility: 20
+  compositeBlockDuringExecution: 0
+  compositeWeight: 0
+  compositeWeightInitialized: 0
+  compositeWeightOverride: 0
+  actions:
+  - rid: 3466829874012356787
+  actionEnabled: 01
+  actionIds:
+  - 51dd40dedc314d189c2db3ed4d977047
+  actionUtilitySettings:
+  - utility:
+      floatRef: {fileID: 0}
+      source: 0
+      floatSO: {fileID: 0}
+      floatVal: 0
+    blockDuringExecution: 0
+    weight: 0
+    weightInitialized: 0
+    weightOverride: 0
+  displayAsGroup: 0
+  executionMethod: 0
+  awaitMode: 0
+  orderMode: 0
+  avoidRepeatingLastAction: 0
+  references:
+    version: 2
+    RefIds:
+    - rid: 3466829874012356787
+      type: {class: Wait, ns: Scaffold, asm: Game.GearEngine}
+      data:
+        duration:
+          floatRef: {fileID: 0}
+          source: 0
+          floatSO: {fileID: 0}
+          floatVal: 1
+        durationOLD: 0
+--- !u!114 &1857163473
+MonoBehaviour:
+  m_ObjectHideFlags: 2
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1857163469}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d2f6487d21a03404cb21b245f0242e79, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Scaffold::Scaffold.GameStarted
+  parentBlock: {fileID: 1857163475}
+  suppressBlockAutoSelect: 0
+  waitForFrames: 1
+--- !u!114 &1857163474
+MonoBehaviour:
+  m_ObjectHideFlags: 2
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1857163469}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a6a0f330126b84a40b64420fcb09d831, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Presentation.UI.Input.InvokeActionCommand
+  itemId: 1
+  indentLevel: 0
+  compositeUtility: 10
+  compositeBlockDuringExecution: 0
+  compositeWeight: 0
+  compositeWeightInitialized: 0
+  compositeWeightOverride: 0
+  actions:
+  - rid: 3466829874012356788
+  actionEnabled: 01
+  actionIds:
+  - bb60efdff61041e8a8776942ec94c19d
+  actionUtilitySettings:
+  - utility:
+      floatRef: {fileID: 0}
+      source: 0
+      floatSO: {fileID: 0}
+      floatVal: 0
+    blockDuringExecution: 0
+    weight: 0
+    weightInitialized: 0
+    weightOverride: 0
+  displayAsGroup: 0
+  executionMethod: 0
+  awaitMode: 0
+  orderMode: 0
+  avoidRepeatingLastAction: 0
+  references:
+    version: 2
+    RefIds:
+    - rid: 3466829874012356788
+      type: {class: DebugLog, ns: Scaffold, asm: Game.GearEngine}
+      data:
+        logType: 0
+        logMessage:
+          stringRef: {fileID: 0}
+          source: 0
+          stringSO: {fileID: 0}
+          stringVal: '[Selector - Random] Start'
+--- !u!114 &1857163475
+MonoBehaviour:
+  m_ObjectHideFlags: 2
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1857163469}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d3d73aef2cfc4f51abf34ac00241f60, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Scaffold::Scaffold.Block
+  nodeRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 155.86719
+    height: 40
+  tint: {r: 1, g: 1, b: 1, a: 1}
+  useCustomTint: 0
+  itemId: 0
+  blockName: Selector - Random
+  description: 
+  eventHandler: {fileID: 1857163473}
+  commandList: []
+  tracks:
+  - trackName: Track 0
+    commands:
+    - {fileID: 1857163474}
+    - {fileID: 1857163472}
+    - {fileID: 1857163471}
+  executionMethod: 2
+  awaitMode: 0
+  orderMode: 1
+  avoidRepeatingLastCommand: 0
+  suppressAllAutoSelections: 0
+--- !u!114 &1857163476
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1857163469}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a334fe2ffb574b3583ff3b18b4792d3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Scaffold::Scaffold.Blackboard
+  version: 1
+  scrollPos: {x: 0, y: 0}
+  variablesScrollPos: {x: 0, y: 0}
+  variablesExpanded: 1
+  blockViewHeight: 400
+  zoom: 1
+  scrollViewRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 0
+    height: 0
+  selectedBlocks: []
+  selectedCommands: []
+  variables: []
+  description: 
+  stepPause: 0
+  colorCommands: 1
+  hideComponents: 1
+  saveSelection: 1
+  localizationId: 
+  showLineNumbers: 0
+  hideCommands: []
+  luaEnvironment: {fileID: 0}
+  luaBindingName: blackboard
+--- !u!1 &2022101385
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2022101386}
+  - component: {fileID: 2022101392}
+  - component: {fileID: 2022101391}
+  - component: {fileID: 2022101390}
+  - component: {fileID: 2022101389}
+  - component: {fileID: 2022101388}
+  - component: {fileID: 2022101387}
+  m_Layer: 0
+  m_Name: Selector - Shuffle
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2022101386
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2022101385}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 912527617}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2022101387
+MonoBehaviour:
+  m_ObjectHideFlags: 2
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2022101385}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a6a0f330126b84a40b64420fcb09d831, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Presentation.UI.Input.InvokeActionCommand
+  itemId: 3
+  indentLevel: 0
+  compositeUtility: 30
+  compositeBlockDuringExecution: 0
+  compositeWeight: 0
+  compositeWeightInitialized: 0
+  compositeWeightOverride: 0
+  actions:
+  - rid: 3466829874012356783
+  actionEnabled: 01
+  actionIds:
+  - 74de4f4809164a7db62e4df4a83a29ef
+  actionUtilitySettings:
+  - utility:
+      floatRef: {fileID: 0}
+      source: 0
+      floatSO: {fileID: 0}
+      floatVal: 0
+    blockDuringExecution: 0
+    weight: 0
+    weightInitialized: 0
+    weightOverride: 0
+  displayAsGroup: 0
+  executionMethod: 0
+  awaitMode: 0
+  orderMode: 0
+  avoidRepeatingLastAction: 0
+  references:
+    version: 2
+    RefIds:
+    - rid: 3466829874012356783
+      type: {class: DebugLog, ns: Scaffold, asm: Game.GearEngine}
+      data:
+        logType: 0
+        logMessage:
+          stringRef: {fileID: 0}
+          source: 0
+          stringSO: {fileID: 0}
+          stringVal: '[Selector - Shuffle] End'
+--- !u!114 &2022101388
+MonoBehaviour:
+  m_ObjectHideFlags: 2
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2022101385}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a6a0f330126b84a40b64420fcb09d831, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Presentation.UI.Input.InvokeActionCommand
+  itemId: 2
+  indentLevel: 0
+  compositeUtility: 20
+  compositeBlockDuringExecution: 0
+  compositeWeight: 0
+  compositeWeightInitialized: 0
+  compositeWeightOverride: 0
+  actions:
+  - rid: 3466829874012356784
+  actionEnabled: 01
+  actionIds:
+  - d2f3430e8b6445a09aa5a05407a5395f
+  actionUtilitySettings:
+  - utility:
+      floatRef: {fileID: 0}
+      source: 0
+      floatSO: {fileID: 0}
+      floatVal: 0
+    blockDuringExecution: 0
+    weight: 0
+    weightInitialized: 0
+    weightOverride: 0
+  displayAsGroup: 0
+  executionMethod: 0
+  awaitMode: 0
+  orderMode: 0
+  avoidRepeatingLastAction: 0
+  references:
+    version: 2
+    RefIds:
+    - rid: 3466829874012356784
+      type: {class: Wait, ns: Scaffold, asm: Game.GearEngine}
+      data:
+        duration:
+          floatRef: {fileID: 0}
+          source: 0
+          floatSO: {fileID: 0}
+          floatVal: 1
+        durationOLD: 0
+--- !u!114 &2022101389
+MonoBehaviour:
+  m_ObjectHideFlags: 2
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2022101385}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d2f6487d21a03404cb21b245f0242e79, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Scaffold::Scaffold.GameStarted
+  parentBlock: {fileID: 2022101391}
+  suppressBlockAutoSelect: 0
+  waitForFrames: 1
+--- !u!114 &2022101390
+MonoBehaviour:
+  m_ObjectHideFlags: 2
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2022101385}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a6a0f330126b84a40b64420fcb09d831, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Presentation.UI.Input.InvokeActionCommand
+  itemId: 1
+  indentLevel: 0
+  compositeUtility: 10
+  compositeBlockDuringExecution: 0
+  compositeWeight: 0
+  compositeWeightInitialized: 0
+  compositeWeightOverride: 0
+  actions:
+  - rid: 3466829874012356785
+  actionEnabled: 01
+  actionIds:
+  - 153f5e92b8d04419adb9d7e647b3e468
+  actionUtilitySettings:
+  - utility:
+      floatRef: {fileID: 0}
+      source: 0
+      floatSO: {fileID: 0}
+      floatVal: 0
+    blockDuringExecution: 0
+    weight: 0
+    weightInitialized: 0
+    weightOverride: 0
+  displayAsGroup: 0
+  executionMethod: 0
+  awaitMode: 0
+  orderMode: 0
+  avoidRepeatingLastAction: 0
+  references:
+    version: 2
+    RefIds:
+    - rid: 3466829874012356785
+      type: {class: DebugLog, ns: Scaffold, asm: Game.GearEngine}
+      data:
+        logType: 0
+        logMessage:
+          stringRef: {fileID: 0}
+          source: 0
+          stringSO: {fileID: 0}
+          stringVal: '[Selector - Shuffle] Start'
+--- !u!114 &2022101391
+MonoBehaviour:
+  m_ObjectHideFlags: 2
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2022101385}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d3d73aef2cfc4f51abf34ac00241f60, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Scaffold::Scaffold.Block
+  nodeRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 149.58594
+    height: 40
+  tint: {r: 1, g: 1, b: 1, a: 1}
+  useCustomTint: 0
+  itemId: 0
+  blockName: Selector - Shuffle
+  description: 
+  eventHandler: {fileID: 2022101389}
+  commandList: []
+  tracks:
+  - trackName: Track 0
+    commands:
+    - {fileID: 2022101390}
+    - {fileID: 2022101388}
+    - {fileID: 2022101387}
+  executionMethod: 0
+  awaitMode: 0
+  orderMode: 2
+  avoidRepeatingLastCommand: 0
+  suppressAllAutoSelections: 0
+--- !u!114 &2022101392
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2022101385}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a334fe2ffb574b3583ff3b18b4792d3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Scaffold::Scaffold.Blackboard
+  version: 1
+  scrollPos: {x: 121, y: 88}
+  variablesScrollPos: {x: 0, y: 0}
+  variablesExpanded: 1
+  blockViewHeight: 400
+  zoom: 1
+  scrollViewRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 0
+    height: 0
+  selectedBlocks:
+  - {fileID: 2022101391}
+  selectedCommands: []
+  variables: []
+  description: 
+  stepPause: 0
+  colorCommands: 1
+  hideComponents: 1
+  saveSelection: 1
+  localizationId: 
+  showLineNumbers: 0
+  hideCommands: []
+  luaEnvironment: {fileID: 0}
+  luaBindingName: blackboard
+--- !u!1 &2074271050
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2074271051}
+  - component: {fileID: 2074271057}
+  - component: {fileID: 2074271056}
+  - component: {fileID: 2074271055}
+  - component: {fileID: 2074271054}
+  - component: {fileID: 2074271053}
+  - component: {fileID: 2074271052}
+  m_Layer: 0
+  m_Name: Parallel Selector - Wait All
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2074271051
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2074271050}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 912527617}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2074271052
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2074271050}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a6a0f330126b84a40b64420fcb09d831, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Presentation.UI.Input.InvokeActionCommand
+  itemId: 3
+  indentLevel: 0
+  compositeUtility: 30
+  compositeBlockDuringExecution: 0
+  compositeWeight: 0
+  compositeWeightInitialized: 0
+  compositeWeightOverride: 0
+  actions:
+  - rid: 3466829874012356771
+  actionEnabled: 01
+  actionIds:
+  - 66906208988449248e00d093c4172c05
+  actionUtilitySettings:
+  - utility:
+      floatRef: {fileID: 0}
+      source: 0
+      floatSO: {fileID: 0}
+      floatVal: 0
+    blockDuringExecution: 0
+    weight: 0
+    weightInitialized: 0
+    weightOverride: 0
+  displayAsGroup: 0
+  executionMethod: 0
+  awaitMode: 0
+  orderMode: 0
+  avoidRepeatingLastAction: 0
+  references:
+    version: 2
+    RefIds:
+    - rid: 3466829874012356771
+      type: {class: DebugLog, ns: Scaffold, asm: Game.GearEngine}
+      data:
+        logType: 0
+        logMessage:
+          stringRef: {fileID: 0}
+          source: 0
+          stringSO: {fileID: 0}
+          stringVal: '[Parallel Selector - Wait All] End'
+--- !u!114 &2074271053
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2074271050}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a6a0f330126b84a40b64420fcb09d831, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Presentation.UI.Input.InvokeActionCommand
+  itemId: 2
+  indentLevel: 0
+  compositeUtility: 20
+  compositeBlockDuringExecution: 0
+  compositeWeight: 0
+  compositeWeightInitialized: 0
+  compositeWeightOverride: 0
+  actions:
+  - rid: 3466829874012356772
+  actionEnabled: 01
+  actionIds:
+  - 410b15041282415fa1a2f5fe97ab54d9
+  actionUtilitySettings:
+  - utility:
+      floatRef: {fileID: 0}
+      source: 0
+      floatSO: {fileID: 0}
+      floatVal: 0
+    blockDuringExecution: 0
+    weight: 0
+    weightInitialized: 0
+    weightOverride: 0
+  displayAsGroup: 0
+  executionMethod: 0
+  awaitMode: 0
+  orderMode: 0
+  avoidRepeatingLastAction: 0
+  references:
+    version: 2
+    RefIds:
+    - rid: 3466829874012356772
+      type: {class: Wait, ns: Scaffold, asm: Game.GearEngine}
+      data:
+        duration:
+          floatRef: {fileID: 0}
+          source: 0
+          floatSO: {fileID: 0}
+          floatVal: 1
+        durationOLD: 0
+--- !u!114 &2074271054
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2074271050}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d2f6487d21a03404cb21b245f0242e79, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Scaffold::Scaffold.GameStarted
+  parentBlock: {fileID: 2074271056}
+  suppressBlockAutoSelect: 0
+  waitForFrames: 1
+--- !u!114 &2074271055
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2074271050}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a6a0f330126b84a40b64420fcb09d831, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Presentation.UI.Input.InvokeActionCommand
+  itemId: 1
+  indentLevel: 0
+  compositeUtility: 10
+  compositeBlockDuringExecution: 0
+  compositeWeight: 0
+  compositeWeightInitialized: 0
+  compositeWeightOverride: 0
+  actions:
+  - rid: 3466829874012356773
+  actionEnabled: 01
+  actionIds:
+  - 0fd652c403a54a688690abba8c37ca59
+  actionUtilitySettings:
+  - utility:
+      floatRef: {fileID: 0}
+      source: 0
+      floatSO: {fileID: 0}
+      floatVal: 0
+    blockDuringExecution: 0
+    weight: 0
+    weightInitialized: 0
+    weightOverride: 0
+  displayAsGroup: 0
+  executionMethod: 0
+  awaitMode: 0
+  orderMode: 0
+  avoidRepeatingLastAction: 0
+  references:
+    version: 2
+    RefIds:
+    - rid: 3466829874012356773
+      type: {class: DebugLog, ns: Scaffold, asm: Game.GearEngine}
+      data:
+        logType: 0
+        logMessage:
+          stringRef: {fileID: 0}
+          source: 0
+          stringSO: {fileID: 0}
+          stringVal: '[Parallel Selector - Wait All] Start'
+--- !u!114 &2074271056
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2074271050}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d3d73aef2cfc4f51abf34ac00241f60, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Scaffold::Scaffold.Block
+  nodeRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 0
+    height: 0
+  tint: {r: 1, g: 1, b: 1, a: 1}
+  useCustomTint: 0
+  itemId: 0
+  blockName: Parallel Selector - Wait All
+  description: 
+  eventHandler: {fileID: 2074271054}
+  commandList: []
+  tracks:
+  - trackName: Track 0
+    commands:
+    - {fileID: 2074271055}
+    - {fileID: 2074271053}
+    - {fileID: 2074271052}
+  executionMethod: 3
+  awaitMode: 0
+  orderMode: 0
+  avoidRepeatingLastCommand: 0
+  suppressAllAutoSelections: 0
+--- !u!114 &2074271057
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2074271050}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a334fe2ffb574b3583ff3b18b4792d3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Scaffold::Scaffold.Blackboard
+  version: 1
+  scrollPos: {x: 0, y: 0}
+  variablesScrollPos: {x: 0, y: 0}
+  variablesExpanded: 1
+  blockViewHeight: 400
+  zoom: 1
+  scrollViewRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 0
+    height: 0
+  selectedBlocks: []
+  selectedCommands: []
+  variables: []
+  description: 
+  stepPause: 0
+  colorCommands: 1
+  hideComponents: 1
+  saveSelection: 1
+  localizationId: 
+  showLineNumbers: 0
+  hideCommands: []
+  luaEnvironment: {fileID: 0}
+  luaBindingName: blackboard
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -1475,3 +5411,4 @@ SceneRoots:
   - {fileID: 1330917698}
   - {fileID: 905234846}
   - {fileID: 1210569623}
+  - {fileID: 912527617}

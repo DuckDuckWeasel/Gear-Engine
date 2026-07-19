@@ -37,7 +37,7 @@ namespace Scaffold
             Custom
         }
 
-        [Tooltip("Marks this Save Point as the starting point for Flowchart execution in the scene. Each scene in your game should have exactly one Save Point with this enabled.")]
+        [Tooltip("Marks this Save Point as the starting point for Blackboard execution in the scene. Each scene in your game should have exactly one Save Point with this enabled.")]
         [SerializeField] protected bool isStartPoint = false;
 
         [Tooltip("How the Save Point Key for this Save Point is defined.")]
@@ -65,7 +65,7 @@ namespace Scaffold
         #region Public members
 
         /// <summary>
-        /// Marks this Save Point as the starting point for Flowchart execution in the scene. Each scene in your game should have exactly one Save Point with this enabled.
+        /// Marks this Save Point as the starting point for Blackboard execution in the scene. Each scene in your game should have exactly one Save Point with this enabled.
         /// </summary>
         public bool IsStartPoint { get { return isStartPoint; } set { isStartPoint = value; } }
 

@@ -18,7 +18,7 @@ namespace Scaffold
         #region Public members
 
         /// <summary>
-        /// Called from Flowchart when a message is sent.
+        /// Called from Blackboard when a message is sent.
         /// </summary>
         /// <param name="message">Message.</param>
         public void OnSendScaffoldMessage(string message)

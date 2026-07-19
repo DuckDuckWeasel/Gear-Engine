@@ -22,7 +22,7 @@ easy to scan without changing any block or command behaviour:
 
 The red mushroom must be replaced by a neutral **flow-graph icon**: three rounded
 square nodes connected by two directional lines, rendered in off-white on transparent
-background. It communicates a visual-scripting flowchart, works at small sizes, and is
+background. It communicates a visual-scripting blackboard, works at small sizes, and is
 not tied to the legacy Scaffold branding. The same icon will appear in both the Block
 Inspector and the Unity Hierarchy, where the current mushroom is also used.
 
@@ -171,7 +171,7 @@ open.
 | `Assets/3rdParty/ScaffoldVisualScripting/Scripts/Editor/CommandListAdaptor.cs` | Draws the specialized command list, nested Invoke Action groups, selection, and drag/drop. | Preserve the existing summary transition: an empty Invoke Action shows `Invoke Action`; one with actions displays its first action as the row/group identity. |
 | `Assets/3rdParty/ScaffoldVisualScripting/Scripts/Editor/ScaffoldEditorResources.cs` | Generates and binds editor texture resources by filename. | Regenerate/bind the new `flow_graph` Free and Pro textures. |
 | `Assets/3rdParty/ScaffoldVisualScripting/Scripts/Editor/ScaffoldEditorResourcesGenerated.cs` | Generated properties for editor texture resources. | Regenerate so it exposes `FlowGraph` and no obsolete mushroom property. Do not manually add a pragma suppression. |
-| `Assets/3rdParty/ScaffoldVisualScripting/Scripts/Editor/HierarchyIcons.cs` | Draws the flowchart icon next to eligible GameObjects. | Render `FlowGraph`; rename comments and internal symbols to remove mushroom wording. |
+| `Assets/3rdParty/ScaffoldVisualScripting/Scripts/Editor/HierarchyIcons.cs` | Draws the blackboard icon next to eligible GameObjects. | Render `FlowGraph`; rename comments and internal symbols to remove mushroom wording. |
 | `Assets/3rdParty/ScaffoldVisualScripting/Scripts/Editor/ScaffoldEditorPreferences.cs` | Stores the hierarchy icon visibility preference. | Rename user-facing label and persisted key only through a migration-safe read fallback. |
 | `Assets/3rdParty/ScaffoldVisualScripting/Scripts/Editor/BlockInspector.cs.meta` | Assigns Unity's native object-header icon to the `BlockInspector` script. | Change its texture GUID from the mushroom `ScriptIcon.png` to the Free flow-graph texture. |
 | `Assets/3rdParty/ScaffoldVisualScripting/Scripts/Editor/BlockInspectorStyleSheet.cs` | New file. | Own cached GUI styles, section/card drawing helpers, spacing, and Description min/max line metrics for the IMGUI Inspector. |
@@ -184,7 +184,7 @@ runtime UI framework or consumer-app styling.
 | Area | Required layout and interaction |
 |---|---|
 | Inspector title | Keep Unity's native Inspector chrome. The first content label is `Block Inspector`. |
-| Identity card | One bordered container. Left: 32 x 32 flow-graph icon. Right: `Block Name` text field, a direct-edit tint swatch, then Description. The swatch always shows the effective tint; changing it writes `tint` and enables `useCustomTint`. Keep unique-name normalization through `Flowchart.GetUniqueBlockKey`. |
+| Identity card | One bordered container. Left: 32 x 32 flow-graph icon. Right: `Block Name` text field, a direct-edit tint swatch, then Description. The swatch always shows the effective tint; changing it writes `tint` and enables `useCustomTint`. Keep unique-name normalization through `Blackboard.GetUniqueBlockKey`. |
 | Description | Start at one text line. Measure wrapped text using the shared text-area style; grow up to four lines plus vertical padding. Above that cap, keep the fixed maximum height and render the text area inside a vertical scroll view that retains a per-inspector scroll position. |
 | Execution summary | One horizontal container with three equal-width columns. Each column has a `miniLabel` header (`Execution`, `Await`, `Event`) above a value-only popup. Disable only the Await value popup when Sequence makes it inapplicable. Clicking Event must open the existing event-selector popup. |
 | Behaviour & Timing | Expanded foldout by default for the current inspector session. Its body contains `Suppress All Auto Selections`, event-handler fields relevant to the selected event, and timing fields such as `Wait For Frames`. Render the existing help message directly inside this section. |
@@ -216,10 +216,10 @@ runtime UI framework or consumer-app styling.
 
 1. In `HierarchyIcons.cs`, replace `ScaffoldEditorResources.ScaffoldMushroom` with
    `ScaffoldEditorResources.FlowGraph`; update comments, local identifiers, and class
-   documentation from “mushroom” to “flowchart icon”. Keep the hierarchy callback,
+   documentation from “mushroom” to “blackboard icon”. Keep the hierarchy callback,
    visibility preference behaviour, cached IDs, and `EntityId` sorting unchanged.
-2. In `ScaffoldEditorPreferences.cs`, change the preference label to **Hide Flowchart
-   Icon in Hierarchy**. Introduce a new `hideFlowchartIcon` field and a new persisted key,
+2. In `ScaffoldEditorPreferences.cs`, change the preference label to **Hide Blackboard
+   Icon in Hierarchy**. Introduce a new `hideBlackboardIcon` field and a new persisted key,
    but on initial read fall back to the legacy `hideMushroomInHierarchy` key when the new
    key is absent. Save to the new key thereafter. This preserves users' existing hidden
    setting across the rename.
@@ -272,7 +272,7 @@ runtime UI framework or consumer-app styling.
    under both Pro and light skin test conditions (restore the previous skin value in
    `TearDown`) and verifies that the replacement resource is non-null and has the
    expected dimensions.
-3. Add `BlockEditorLayoutTests.cs` using a temporary `GameObject`, `Flowchart`, and
+3. Add `BlockEditorLayoutTests.cs` using a temporary `GameObject`, `Blackboard`, and
    `Block`. Verify that the custom editor can render the no-handler and configured-event
    paths without exceptions, that setting a duplicate block name still resolves through
    `GetUniqueBlockKey`, and that command selection remains bound after the updated block
@@ -287,11 +287,11 @@ runtime UI framework or consumer-app styling.
 
 ### M5 — Validate and hand off
 
-1. Open a flowchart with blocks with and without event handlers. Verify at narrow and
+1. Open a blackboard with blocks with and without event handlers. Verify at narrow and
    wide Inspector widths that fields neither overlap nor clip, the event popup opens,
    Await disables correctly for Sequence, Custom Tint exposes its swatch only when
    enabled, and Callers remains lazy/collapsed by default.
-2. Verify the Hierarchy shows the flow-graph icon beside flowchart GameObjects, and the
+2. Verify the Hierarchy shows the flow-graph icon beside blackboard GameObjects, and the
    renamed preference hides it and retains the prior hidden state after restart.
 3. Verify command operations: selecting, reordering, adding, duplicating, deleting,
    copying/pasting, context-clicking, keyboard shortcuts, selecting a nested action, and
@@ -433,7 +433,7 @@ From `/Users/leonardosilva/Documents/MatheusCohen/Gear Engine`:
   needed.
 - `ScaffoldEditorResources` is the existing asset-backed texture registry. Its generated
   `FlowGraph` accessor is the only new resource-facing API.
-- `Flowchart.GetUniqueBlockKey`, `Flowchart.SelectedCommands`, `Block.CommandList`,
+- `Blackboard.GetUniqueBlockKey`, `Blackboard.SelectedCommands`, `Block.CommandList`,
   `CommandListAdaptor`, and `EventHandlerEditor` are existing contracts and must retain
   their current behaviour.
 - The new `Scaffold.EditorTests` test assembly references only `Scaffold`,

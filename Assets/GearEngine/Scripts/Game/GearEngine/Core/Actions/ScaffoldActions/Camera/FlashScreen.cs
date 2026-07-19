@@ -22,9 +22,9 @@ namespace Scaffold
 
         public override void OnEnter()
         {
-            if (flowchart != null)
+            if (blackboard != null)
             {
-                flowchart.StartCoroutine(FlashRoutine());
+                blackboard.StartCoroutine(FlashRoutine());
             }
             else
             {

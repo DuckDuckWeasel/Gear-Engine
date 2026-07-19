@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 
 namespace Scaffold
-{   
+{
     /// <summary>
     /// Attribute class for Scaffold commands.
     /// </summary>
@@ -41,10 +41,26 @@ namespace Scaffold
     {
         [FormerlySerializedAs("commandId")]
         [HideInInspector]
-        [SerializeField] protected int itemId = -1; // Invalid flowchart item id
+        [SerializeField] protected int itemId = -1; // Invalid blackboard item id
 
         [HideInInspector]
         [SerializeField] protected int indentLevel;
+
+        [HideInInspector]
+        [SerializeField] private float compositeUtility;
+
+        [HideInInspector]
+        [SerializeField] private bool compositeBlockDuringExecution;
+
+        [HideInInspector]
+        [Range(0f, 100f)]
+        [SerializeField] private float compositeWeight;
+
+        [HideInInspector]
+        [SerializeField] private bool compositeWeightInitialized;
+
+        [HideInInspector]
+        [SerializeField] private bool compositeWeightOverride;
 
         protected string errorMessage = "";
 
@@ -63,7 +79,7 @@ namespace Scaffold
         /// Called by OnValidate
         /// 
         /// Child classes to specialise to add variable references to referencedVariables, either directly or
-        /// via the use of Flowchart.DetermineSubstituteVariables
+        /// via the use of Blackboard.DetermineSubstituteVariables
         /// </summary>
         protected virtual void RefreshVariableCache()
         {
@@ -76,7 +92,7 @@ namespace Scaffold
 
         /// <summary>
         /// Unique identifier for this command.
-        /// Unique for this Flowchart.
+        /// Unique for this Blackboard.
         /// </summary>
         public virtual int ItemId { get { return itemId; } set { itemId = value; } }
 
@@ -97,9 +113,77 @@ namespace Scaffold
         public virtual int CommandIndex { get; set; }
 
         /// <summary>
+        /// Utility score used when the parent Block executes commands as a Utility Selector.
+        /// </summary>
+        public virtual float CompositeUtility
+        {
+            get { return compositeUtility; }
+            set { compositeUtility = value; }
+        }
+
+        /// <summary>
+        /// Prevents utility reevaluation while this command is executing.
+        /// </summary>
+        public virtual bool CompositeBlockDuringExecution
+        {
+            get { return compositeBlockDuringExecution; }
+            set { compositeBlockDuringExecution = value; }
+        }
+
+        /// <summary>
+        /// Stored selection weight used when this command overrides automatic balancing.
+        /// </summary>
+        public virtual float CompositeWeight
+        {
+            get
+            {
+                return compositeWeightInitialized
+                    ? Mathf.Clamp(compositeWeight, 0f, 100f)
+                    : 100f;
+            }
+            set
+            {
+                compositeWeight = Mathf.Clamp(value, 0f, 100f);
+                compositeWeightInitialized = true;
+                compositeWeightOverride = true;
+            }
+        }
+
+        /// <summary>
+        /// True when this command reserves a manual percentage instead of sharing the
+        /// percentage left by the other overrides in its command list.
+        /// </summary>
+        public virtual bool HasCompositeWeightOverride
+        {
+            get
+            {
+                return compositeWeightOverride ||
+                       (compositeWeightInitialized && !Mathf.Approximately(compositeWeight, 100f));
+            }
+        }
+
+        /// <summary>
+        /// Restores automatic balancing for this command.
+        /// </summary>
+        public virtual void ClearCompositeWeightOverride()
+        {
+            compositeWeight = 0f;
+            compositeWeightInitialized = false;
+            compositeWeightOverride = false;
+        }
+
+        /// <summary>
         /// Set to true by the parent block while the command is executing.
         /// </summary>
         public virtual bool IsExecuting { get; set; }
+
+        /// <summary>
+        /// Clears transient editor feedback retained from the previous execution.
+        /// Composite commands override this to clear their child results as well.
+        /// </summary>
+        public virtual void ResetExecutionFeedback()
+        {
+        }
 
         /// <summary>
         /// Timer used to control appearance of executing icon in inspector.
@@ -122,17 +206,17 @@ namespace Scaffold
         public virtual CommandTrack ParentTrack { get; set; }
 
         /// <summary>
-        /// Returns the Flowchart that this command belongs to.
+        /// Returns the Blackboard that this command belongs to.
         /// </summary>
-        public virtual Flowchart GetFlowchart()
+        public virtual Blackboard GetBlackboard()
         {
-            var flowchart = GetComponent<Flowchart>();
-            if (flowchart == null &&
+            Blackboard blackboard = GetComponent<Blackboard>();
+            if (blackboard == null &&
                 transform.parent != null)
             {
-                flowchart = transform.parent.GetComponent<Flowchart>();
+                blackboard = transform.parent.GetComponent<Blackboard>();
             }
-            return flowchart;
+            return blackboard;
         }
 
         /// <summary>
@@ -187,43 +271,43 @@ namespace Scaffold
         /// cleanup state so that the command is ready to execute again later on.
         /// </summary>
         public virtual void OnStopExecuting()
-        {}
+        { }
 
         /// <summary>
         /// Called when the new command is added to a block in the editor.
         /// </summary>
         public virtual void OnCommandAdded(Block parentBlock)
-        {}
+        { }
 
         /// <summary>
         /// Called when the command is deleted from a block in the editor.
         /// </summary>
         public virtual void OnCommandRemoved(Block parentBlock)
-        {}
+        { }
 
         /// <summary>
         /// Called when this command starts execution.
         /// </summary>
         public virtual void OnEnter()
-        {}
+        { }
 
         /// <summary>
         /// Called when this command ends execution.
         /// </summary>
         public virtual void OnExit()
-        {}
+        { }
 
         /// <summary>
         /// Called when this command is reset. This happens when the Reset command is used.
         /// </summary>
         public virtual void OnReset()
-        {}
+        { }
 
         /// <summary>
         /// Populates a list with the Blocks that this command references.
         /// </summary>
         public virtual void GetConnectedBlocks(ref List<Block> connectedBlocks)
-        {}
+        { }
 
         /// <summary>
         /// Returns true if this command references the variable.
@@ -236,7 +320,7 @@ namespace Scaffold
 
         public virtual string GetLocationIdentifier()
         {
-            return ParentBlock.GetFlowchart().GetName() + ":" + ParentBlock.BlockName + "." + this.GetType().Name + "#" + CommandIndex.ToString(); 
+            return ParentBlock.GetBlackboard().GetName() + ":" + ParentBlock.BlockName + "." + this.GetType().Name + "#" + CommandIndex.ToString();
         }
 
         /// <summary>
@@ -258,7 +342,7 @@ namespace Scaffold
         }
 
         /// <summary>
-        /// Returns the searchable content for searches on the flowchart window.
+        /// Returns the searchable content for searches on the blackboard window.
         /// </summary>
         public virtual string GetSearchableContent()
         {
@@ -317,25 +401,25 @@ namespace Scaffold
         }
 
         /// <summary>
-        /// Returns the localization id for the Flowchart that contains this command.
+        /// Returns the localization id for the Blackboard that contains this command.
         /// </summary>
-        public virtual string GetFlowchartLocalizationId()
+        public virtual string GetBlackboardLocalizationId()
         {
-            // If no localization id has been set then use the Flowchart name
-            var flowchart = GetFlowchart();
-            if (flowchart == null)
+            // If no localization id has been set then use the Blackboard name
+            Blackboard blackboard = GetBlackboard();
+            if (blackboard == null)
             {
                 return "";
             }
 
-            string localizationId = GetFlowchart().LocalizationId;
+            string localizationId = GetBlackboard().LocalizationId;
             if (localizationId.Length == 0)
             {
-                localizationId = flowchart.GetName();            
+                localizationId = blackboard.GetName();
             }
 
             return localizationId;
-        }        
+        }
 
         #endregion
     }

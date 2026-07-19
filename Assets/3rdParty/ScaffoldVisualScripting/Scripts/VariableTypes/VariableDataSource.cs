@@ -3,7 +3,7 @@ namespace Scaffold
     public enum VariableDataSource
     {
         Unspecified,
-        FlowchartVariable,
+        BlackboardVariable,
         Direct,
         ScriptableObject,
     }

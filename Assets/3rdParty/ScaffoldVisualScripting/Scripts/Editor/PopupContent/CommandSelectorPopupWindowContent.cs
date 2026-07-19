@@ -69,7 +69,7 @@ namespace Scaffold.EditorUtils
 
         protected override void PrepareAllItems()
         {
-            filteredAttributes = GetFilteredSupportedCommands(curBlock.GetFlowchart());
+            filteredAttributes = GetFilteredSupportedCommands(curBlock.GetBlackboard());
 
             foreach (var item in filteredAttributes)
             {
@@ -93,20 +93,20 @@ namespace Scaffold.EditorUtils
             else
             {
                 //need to ensure we have filtered data 
-                filteredAttributes = GetFilteredSupportedCommands(curBlock.GetFlowchart());
+                filteredAttributes = GetFilteredSupportedCommands(curBlock.GetBlackboard());
             }
 
             //old method
             DoOlderMenu();
         }
 
-        protected static List<KeyValuePair<System.Type, CommandInfoAttribute>> GetFilteredSupportedCommands(Flowchart flowchart)
+        protected static List<KeyValuePair<System.Type, CommandInfoAttribute>> GetFilteredSupportedCommands(Blackboard blackboard)
         {
             List<KeyValuePair<System.Type, CommandInfoAttribute>> filteredAttributes = BlockEditor.GetFilteredCommandInfoAttribute(CommandTypes);
 
             filteredAttributes.Sort(BlockEditor.CompareCommandAttributes);
 
-            filteredAttributes = filteredAttributes.Where(x => flowchart.IsCommandSupported(x.Value)).ToList();
+            filteredAttributes = filteredAttributes.Where(x => blackboard.IsCommandSupported(x.Value)).ToList();
 
             return filteredAttributes;
         }
@@ -155,11 +155,11 @@ namespace Scaffold.EditorUtils
                 return;
             }
 
-            var flowchart = (Flowchart)block.GetFlowchart();
+            var blackboard = (Blackboard)block.GetBlackboard();
 
             // Use index of last selected command in list, or end of list if nothing selected.
             int index = -1;
-            foreach (var command in flowchart.SelectedCommands)
+            foreach (var command in blackboard.SelectedCommands)
             {
                 if (command.CommandIndex + 1 > index)
                 {
@@ -202,9 +202,9 @@ namespace Scaffold.EditorUtils
                 }
             }
 
-            block.GetFlowchart().AddSelectedCommand(newCommand);
+            block.GetBlackboard().AddSelectedCommand(newCommand);
             newCommand.ParentBlock = block;
-            newCommand.ItemId = flowchart.NextItemId();
+            newCommand.ItemId = blackboard.NextItemId();
 
             // Let command know it has just been added to the block
             newCommand.OnCommandAdded(block);
@@ -224,10 +224,10 @@ namespace Scaffold.EditorUtils
 
             //clear commands just in case there was a selection made prior, 
             // this way, only one command is selected at the end; the new one.
-            flowchart.ClearSelectedCommands();
+            blackboard.ClearSelectedCommands();
 
             CommandListAdaptor.ScrollToCommandOnDraw = true;
-            flowchart.AddSelectedCommand(newCommand); //select the new command.
+            blackboard.AddSelectedCommand(newCommand); //select the new command.
         }
     }
 }

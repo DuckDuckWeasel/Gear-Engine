@@ -1608,7 +1608,7 @@ Optional host / bootstrap
 ## Flow Graph
 
 ```mermaid
-flowchart TD
+blackboard TD
     A[Host / Test Scene] --> B[GearEngineStartData]
     A --> C[GearTestSceneBootstrap]
     C --> D[INavigation.Open(new GearEngineViewModel(startData))]

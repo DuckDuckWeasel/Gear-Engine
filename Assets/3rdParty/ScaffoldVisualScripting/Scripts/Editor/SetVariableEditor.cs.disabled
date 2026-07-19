@@ -26,8 +26,8 @@ namespace Fungus.EditorUtils
 
             SetVariable t = target as SetVariable;
 
-            var flowchart = (Flowchart)t.GetFlowchart();
-            if (flowchart == null)
+            var blackboard = (Blackboard)t.GetBlackboard();
+            if (blackboard == null)
             {
                 return;
             }

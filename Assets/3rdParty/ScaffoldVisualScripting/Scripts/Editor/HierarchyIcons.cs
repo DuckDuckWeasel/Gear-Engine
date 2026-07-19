@@ -9,7 +9,7 @@ namespace Scaffold
 {
     /// <summary>
     /// Static class that hooks into the hierachy changed and item gui callbacks to put
-    /// a scaffold icon infront of all GOs that have a flowchart on them
+    /// a scaffold icon infront of all GOs that have a blackboard on them
     /// 
     /// Reference; http://answers.unity3d.com/questions/431952/how-to-show-an-icon-in-hierarchy-view.html
     /// 
@@ -20,11 +20,11 @@ namespace Scaffold
     [InitializeOnLoad]
     public class HierarchyIcons
     {
-        // The shared flowchart icon used by the Hierarchy and Block Inspector.
+        // The shared blackboard icon used by the Hierarchy and Block Inspector.
         static Texture2D TextureIcon { get { return Scaffold.EditorUtils.ScaffoldEditorResources.FlowGraph; } }
 
-        //sorted list of the GO instance IDs that have flowcharts on them
-        static List<UnityEngine.EntityId> flowchartIDs = new List<UnityEngine.EntityId>();
+        //sorted list of the GO instance IDs that have blackboards on them
+        static List<UnityEngine.EntityId> blackboardIDs = new List<UnityEngine.EntityId>();
 
         static bool initalHierarchyCheckFlag = true;
 
@@ -39,18 +39,18 @@ namespace Scaffold
 #endif
         }
 
-        //track all gameobjectIds that have flowcharts on them
+        //track all gameobjectIds that have blackboards on them
         static void HierarchyChanged()
         {
-            flowchartIDs.Clear();
+            blackboardIDs.Clear();
 
-            if (EditorUtils.ScaffoldEditorPreferences.hideFlowchartIconInHierarchy)
+            if (EditorUtils.ScaffoldEditorPreferences.hideBlackboardIconInHierarchy)
                 return;
 
-            var flowcharts = GameObject.FindObjectsOfType<Flowchart>();
+            var blackboards = GameObject.FindObjectsOfType<Blackboard>();
 
-            flowchartIDs = flowcharts.Select(x => x.gameObject.GetEntityId()).Distinct().ToList();
-            flowchartIDs.Sort((a, b) => a.CompareTo(b));
+            blackboardIDs = blackboards.Select(x => x.gameObject.GetEntityId()).Distinct().ToList();
+            blackboardIDs.Sort((a, b) => a.CompareTo(b));
         }
 
         //Draw icon if the isntance id is in our cached list
@@ -62,7 +62,7 @@ namespace Scaffold
                 initalHierarchyCheckFlag = false;
             }
 
-            if (EditorUtils.ScaffoldEditorPreferences.hideFlowchartIconInHierarchy)
+            if (EditorUtils.ScaffoldEditorPreferences.hideBlackboardIconInHierarchy)
                 return;
 
             // place the icon to the left of the element
@@ -78,7 +78,7 @@ namespace Scaffold
 
             //binary search as it is much faster to cache and int bin search than GetComponent
             //  should be less GC too
-            if (flowchartIDs.BinarySearch(instanceID, new EntityIdComparer()) >= 0)
+            if (blackboardIDs.BinarySearch(instanceID, new EntityIdComparer()) >= 0)
                 GUI.Label(r, TextureIcon);
         }
 

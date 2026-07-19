@@ -18,7 +18,7 @@ namespace Scaffold.EditorUtils
                 if (saveMenu != null)
                 {
                     SaveManager.Delete(saveMenu.SaveDataKey);
-                    FlowchartWindow.ShowNotification("Deleted Save Data");
+                    BlackboardWindow.ShowNotification("Deleted Save Data");
                 }
             }
 

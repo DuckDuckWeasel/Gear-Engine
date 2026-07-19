@@ -176,7 +176,7 @@ namespace Fungus.EditorUtils
 
                     if (isDrawn)
                     {
-                        var vars = GetFungusVariablesByType(targetMethod.GetFlowchart().Variables, objParam.ParameterType);
+                        var vars = GetFungusVariablesByType(targetMethod.GetBlackboard().Variables, objParam.ParameterType);
                         var values = new string[] { "<Value>" };
                         var displayValue = values.Concat(vars).ToList();
 
@@ -210,7 +210,7 @@ namespace Fungus.EditorUtils
                         var style = EditorStyles.label;
                         var prevColor = style.normal.textColor;
                         style.normal.textColor = Color.red;
-                        EditorGUILayout.LabelField(new GUIContent(objParam.ParameterType.Name + " cannot be drawn, don´t use this method in the flowchart."), style);
+                        EditorGUILayout.LabelField(new GUIContent(objParam.ParameterType.Name + " cannot be drawn, don´t use this method in the blackboard."), style);
                         style.normal.textColor = prevColor;
                     }
 
@@ -245,7 +245,7 @@ namespace Fungus.EditorUtils
 
                 if (saveReturnValueProp.boolValue)
                 {
-                    var vars = GetFungusVariablesByType(targetMethod.GetFlowchart().Variables, method.ReturnType).ToList();
+                    var vars = GetFungusVariablesByType(targetMethod.GetBlackboard().Variables, method.ReturnType).ToList();
                     int index = vars.IndexOf(returnValueKeyProp.stringValue);
                     index = EditorGUILayout.Popup(method.ReturnType.Name, index, vars.ToArray());
 

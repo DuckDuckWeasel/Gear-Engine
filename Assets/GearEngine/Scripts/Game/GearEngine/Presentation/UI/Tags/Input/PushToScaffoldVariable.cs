@@ -36,7 +36,7 @@ namespace GearEngine.GearEngine.Presentation.UI.Actions
             {
                 var globalVars = ScaffoldManager.Instance.GlobalVariables;
                 
-                // Get or add the variable in the global flowchart
+                // Get or add the variable in the global blackboard
                 var goVar = globalVars.GetOrAddVariable<GameObject>(
                     globalVariableKey, 
                     targetGO, 

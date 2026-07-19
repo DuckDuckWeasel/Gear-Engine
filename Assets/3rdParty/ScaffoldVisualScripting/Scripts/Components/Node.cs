@@ -4,7 +4,7 @@
 namespace Scaffold
 {
     /// <summary>
-    /// Base class for Flowchart nodes.
+    /// Base class for Blackboard nodes.
     /// </summary>
     [AddComponentMenu("")]
     public class Node : MonoBehaviour

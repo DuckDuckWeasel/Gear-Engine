@@ -9,19 +9,24 @@ namespace Scaffold
     /// <summary>
     /// Waits for period of time before executing the next command in the block.
     /// </summary>
-    [CommandInfo("Flow", 
-                 "Wait", 
+    [CommandInfo("Flow",
+                 "Wait",
                  "Waits for period of time before executing the next command in the block.")]
     [AddComponentMenu("")]
     [ExecuteInEditMode]
     [Serializable]
-    public class Wait : ActionBase
+    public class Wait : ActionBase, IActionProgressProvider
     {
         [Tooltip("Duration to wait for")]
         [SerializeField] protected FloatData duration = new FloatData(1);
 
+        private float waitStartedAt;
+        private float activeWaitDuration;
+        private bool isWaiting;
+
         protected virtual void OnWaitComplete()
         {
+            isWaiting = false;
             Continue();
         }
 
@@ -29,7 +34,28 @@ namespace Scaffold
 
         public override void OnEnter()
         {
-            Invoke ("OnWaitComplete", duration.Value);
+            activeWaitDuration = Mathf.Max(0f, duration.Value);
+            waitStartedAt = Time.time;
+            isWaiting = activeWaitDuration > 0f;
+            Invoke("OnWaitComplete", activeWaitDuration);
+        }
+
+        public bool TryGetExecutionProgress(out float progress)
+        {
+            if (!isWaiting || activeWaitDuration <= 0f)
+            {
+                progress = 0f;
+                return false;
+            }
+
+            progress = Mathf.Clamp01((Time.time - waitStartedAt) / activeWaitDuration);
+            return true;
+        }
+
+        public override void OnStopExecuting()
+        {
+            isWaiting = false;
+            base.OnStopExecuting();
         }
 
         public override string GetSummary()
@@ -51,7 +77,7 @@ namespace Scaffold
 
         #region Backwards compatibility
 
-        [HideInInspector] [FormerlySerializedAs("duration")] public float durationOLD;
+        [HideInInspector][FormerlySerializedAs("duration")] public float durationOLD;
 
         protected virtual void OnEnable()
         {

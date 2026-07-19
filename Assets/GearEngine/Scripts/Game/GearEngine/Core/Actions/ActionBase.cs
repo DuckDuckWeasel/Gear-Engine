@@ -7,50 +7,83 @@ namespace GearEngine.Core.Actions
     /// <summary>
     /// A base class to ease the migration of Scaffold Commands to IActions.
     /// It implements the necessary consumers and provides legacy methods like Continue() 
-    /// and GetFlowchart() so that existing command logic can remain mostly untouched.
+    /// and GetBlackboard() so that existing command logic can remain mostly untouched.
     /// </summary>
     [Serializable]
-    public abstract class ActionBase : IAction, IMonoBehaviourConsumer, IFlowchartConsumer, ICommandContextConsumer, IStringLocationIdentifier
+    public abstract class ActionBase : IAction, IActionWithStatus, IInterruptibleAction, IMonoBehaviourConsumer, IBlackboardConsumer, ICommandContextConsumer, IStringLocationIdentifier
     {
         protected MonoBehaviour host;
-        protected Flowchart flowchart;
+        protected Blackboard blackboard;
         protected Command hostCommand;
         protected Action onCompleteCallback;
+        protected Action<ActionExecutionStatus> onStatusCompleteCallback;
+
+        private bool actionCompleted;
 
         // Legacy properties delegating to the host Command
-        public virtual int ItemId 
-        { 
-            get { return hostCommand != null ? hostCommand.ItemId : -1; } 
-            set { if (hostCommand != null) hostCommand.ItemId = value; } 
+        public virtual int ItemId
+        {
+            get { return hostCommand != null ? hostCommand.ItemId : -1; }
+            set
+            {
+                if (hostCommand != null)
+                {
+                    hostCommand.ItemId = value;
+                }
+            }
         }
-        
-        public virtual string ErrorMessage 
-        { 
-            get { return hostCommand != null ? hostCommand.ErrorMessage : ""; } 
+
+        public virtual string ErrorMessage
+        {
+            get { return hostCommand != null ? hostCommand.ErrorMessage : ""; }
         }
-        
-        public virtual int IndentLevel 
-        { 
-            get { return hostCommand != null ? hostCommand.IndentLevel : 0; } 
-            set { if (hostCommand != null) hostCommand.IndentLevel = value; } 
+
+        public virtual int IndentLevel
+        {
+            get { return hostCommand != null ? hostCommand.IndentLevel : 0; }
+            set
+            {
+                if (hostCommand != null)
+                {
+                    hostCommand.IndentLevel = value;
+                }
+            }
         }
-        
-        public virtual int CommandIndex 
-        { 
-            get { return hostCommand != null ? hostCommand.CommandIndex : 0; } 
-            set { if (hostCommand != null) hostCommand.CommandIndex = value; } 
+
+        public virtual int CommandIndex
+        {
+            get { return hostCommand != null ? hostCommand.CommandIndex : 0; }
+            set
+            {
+                if (hostCommand != null)
+                {
+                    hostCommand.CommandIndex = value;
+                }
+            }
         }
-        
-        public virtual bool IsExecuting 
-        { 
-            get { return hostCommand != null ? hostCommand.IsExecuting : false; } 
-            set { if (hostCommand != null) hostCommand.IsExecuting = value; } 
+
+        public virtual bool IsExecuting
+        {
+            get { return hostCommand != null ? hostCommand.IsExecuting : false; }
+            set
+            {
+                if (hostCommand != null)
+                {
+                    hostCommand.IsExecuting = value;
+                }
+            }
         }
-        
+
         public virtual Block ParentBlock
         {
             get { return hostCommand != null ? hostCommand.ParentBlock : null; }
-            set { if (hostCommand != null) hostCommand.ParentBlock = value; }
+            set
+            {
+                if (hostCommand != null)
+                {
+                    hostCommand.ParentBlock = value;
+                }
+            }
         }
 
         /// <summary>
@@ -61,7 +94,13 @@ namespace GearEngine.Core.Actions
         public virtual CommandTrack ParentTrack
         {
             get { return hostCommand != null ? hostCommand.ParentTrack : null; }
-            set { if (hostCommand != null) hostCommand.ParentTrack = value; }
+            set
+            {
+                if (hostCommand != null)
+                {
+                    hostCommand.ParentTrack = value;
+                }
+            }
         }
 
         public virtual void SetHost(MonoBehaviour host)
@@ -69,9 +108,9 @@ namespace GearEngine.Core.Actions
             this.host = host;
         }
 
-        public virtual void SetFlowchart(Flowchart flowchart)
+        public virtual void SetBlackboard(Blackboard blackboard)
         {
-            this.flowchart = flowchart;
+            this.blackboard = blackboard;
         }
 
         public virtual void SetCommandContext(Command hostCommand)
@@ -82,6 +121,16 @@ namespace GearEngine.Core.Actions
         public void Execute(Action onComplete)
         {
             this.onCompleteCallback = onComplete;
+            onStatusCompleteCallback = null;
+            actionCompleted = false;
+            OnEnter();
+        }
+
+        public void ExecuteWithStatus(Action<ActionExecutionStatus> onComplete)
+        {
+            onCompleteCallback = null;
+            onStatusCompleteCallback = onComplete;
+            actionCompleted = false;
             OnEnter();
         }
 
@@ -99,7 +148,32 @@ namespace GearEngine.Core.Actions
         /// </summary>
         public virtual void Continue()
         {
-            onCompleteCallback?.Invoke();
+            CompleteAction(ActionExecutionStatus.Success);
+        }
+
+        /// <summary>
+        /// Completes this action with a failure result.
+        /// </summary>
+        public virtual void Fail()
+        {
+            CompleteAction(ActionExecutionStatus.Failure);
+        }
+
+        /// <summary>
+        /// Stops this action without invoking its completion callback. The execution host owns
+        /// the result assigned to an interrupted child.
+        /// </summary>
+        public virtual void Interrupt()
+        {
+            if (actionCompleted)
+            {
+                return;
+            }
+
+            actionCompleted = true;
+            onCompleteCallback = null;
+            onStatusCompleteCallback = null;
+            OnStopExecuting();
         }
 
         /// <summary>
@@ -109,11 +183,12 @@ namespace GearEngine.Core.Actions
         /// </summary>
         public virtual void Continue(int nextCommandIndex)
         {
+            CancelCompletionCallback();
             if (hostCommand is global::GearEngine.GearEngine.Presentation.UI.Input.InvokeActionCommand invokeCmd)
             {
                 invokeCmd.CancelSequence();
             }
-            if (hostCommand != null) 
+            if (hostCommand != null)
             {
                 hostCommand.Continue(nextCommandIndex);
             }
@@ -124,6 +199,7 @@ namespace GearEngine.Core.Actions
         /// </summary>
         public virtual void StopParentBlock()
         {
+            CancelCompletionCallback();
             if (hostCommand is global::GearEngine.GearEngine.Presentation.UI.Input.InvokeActionCommand invokeCmd)
             {
                 invokeCmd.CancelSequence();
@@ -134,9 +210,9 @@ namespace GearEngine.Core.Actions
             }
         }
 
-        public virtual Flowchart GetFlowchart()
+        public virtual Blackboard GetBlackboard()
         {
-            return flowchart;
+            return blackboard;
         }
 
         /// <summary>
@@ -146,7 +222,7 @@ namespace GearEngine.Core.Actions
         {
             return "";
         }
-        
+
         /// <summary>
         /// Legacy formatting methods
         /// </summary>
@@ -154,68 +230,91 @@ namespace GearEngine.Core.Actions
         {
             return Color.white;
         }
-        
+
         public virtual bool OpenBlock()
         {
             return false;
         }
-        
+
         public virtual bool CloseBlock()
         {
             return false;
         }
-        
+
         public virtual void OnCommandAdded(Block parentBlock)
         {
         }
-        
+
         public virtual void OnCommandRemoved(Block parentBlock)
         {
         }
-        
+
         public virtual bool HasReference(Variable variable)
         {
             return false;
         }
-        
+
         public virtual void OnStopExecuting()
         {
         }
-        
+
         public virtual void OnCommandListChanged()
         {
         }
-        
+
         public virtual void OnReset()
         {
         }
-        
+
+        protected virtual void CompleteAction(ActionExecutionStatus status)
+        {
+            if (actionCompleted)
+            {
+                return;
+            }
+
+            actionCompleted = true;
+            Action completion = onCompleteCallback;
+            Action<ActionExecutionStatus> statusCompletion = onStatusCompleteCallback;
+            onCompleteCallback = null;
+            onStatusCompleteCallback = null;
+            completion?.Invoke();
+            statusCompletion?.Invoke(status);
+        }
+
+        private void CancelCompletionCallback()
+        {
+            actionCompleted = true;
+            onCompleteCallback = null;
+            onStatusCompleteCallback = null;
+        }
+
         protected System.Collections.Generic.List<Scaffold.Variable> referencedVariables = new System.Collections.Generic.List<Scaffold.Variable>();
-        
+
         protected void Invoke(string methodName, float delay)
         {
-            if (flowchart != null)
+            if (blackboard != null)
             {
-                flowchart.StartCoroutine(InvokeCoroutine(methodName, delay));
+                blackboard.StartCoroutine(InvokeCoroutine(methodName, delay));
             }
         }
-        
+
         private System.Collections.IEnumerator InvokeCoroutine(string methodName, float delay)
         {
             yield return new UnityEngine.WaitForSeconds(delay);
-            var method = GetType().GetMethod(methodName, System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Public);
+            System.Reflection.MethodInfo method = GetType().GetMethod(methodName, System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Public);
             if (method != null)
             {
                 method.Invoke(this, null);
             }
         }
-        
+
         // Stubs to fix compilation errors in migrated classes
         public virtual bool IsReorderableArray(string propertyName) { return false; }
-        protected virtual void RefreshVariableCache() {}
+        protected virtual void RefreshVariableCache() { }
         public virtual bool IsPropertyVisible(string propertyName) { return true; }
-        public virtual void OnValidate() {}
-        public virtual void GetConnectedBlocks(ref System.Collections.Generic.List<Block> connectedBlocks) {}
+        public virtual void OnValidate() { }
+        public virtual void GetConnectedBlocks(ref System.Collections.Generic.List<Block> connectedBlocks) { }
         public virtual string GetLocationIdentifier() { return GetType().Name; }
     }
 }

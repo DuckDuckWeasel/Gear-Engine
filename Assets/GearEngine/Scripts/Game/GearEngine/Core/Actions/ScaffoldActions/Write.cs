@@ -94,8 +94,8 @@ namespace Scaffold
                 break;
             }
 
-            var flowchart = GetFlowchart();
-            string newText = flowchart.SubstituteVariables(text.Value);
+            var blackboard = GetBlackboard();
+            string newText = blackboard.SubstituteVariables(text.Value);
 
             if (!waitUntilFinished)
             {
@@ -152,7 +152,7 @@ namespace Scaffold
         public virtual string GetStringId()
         {
             // String id for Write commands is WRITE.<Localization Id>.<Command id>
-            return "WRITE." + GetFlowchart().LocalizationId + "." + ItemId;
+            return "WRITE." + GetBlackboard().LocalizationId + "." + ItemId;
         }
 
         public override bool HasReference(Variable variable)

@@ -11,7 +11,7 @@ namespace Scaffold.EditorUtils
     [CustomPropertyDrawer(typeof(Scaffold.AnyVariableAndDataPair))]
     public class AnyVariableAndDataPairDrawer : PropertyDrawer
     {
-        public Scaffold.Flowchart lastFlowchart;
+        public Scaffold.Blackboard lastBlackboard;
 
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {

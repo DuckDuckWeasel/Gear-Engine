@@ -12,14 +12,14 @@ namespace Scaffold.Tests.Editor
         [Test]
         public void FlowGraph_ProvidesFreeAndProTextures()
         {
-            var resource = Scaffold.EditorUtils.ScaffoldEditorResources.Instance;
-            var serializedResource = new SerializedObject(resource);
+            EditorUtils.ScaffoldEditorResources resource = Scaffold.EditorUtils.ScaffoldEditorResources.Instance;
+            SerializedObject serializedResource = new SerializedObject(resource);
             SerializedProperty flowGraph = serializedResource.FindProperty("flow_graph");
 
             Assert.That(flowGraph, Is.Not.Null);
 
-            var freeTexture = flowGraph.FindPropertyRelative("free").objectReferenceValue as Texture2D;
-            var proTexture = flowGraph.FindPropertyRelative("pro").objectReferenceValue as Texture2D;
+            Texture2D freeTexture = flowGraph.FindPropertyRelative("free").objectReferenceValue as Texture2D;
+            Texture2D proTexture = flowGraph.FindPropertyRelative("pro").objectReferenceValue as Texture2D;
 
             Assert.That(freeTexture, Is.Not.Null);
             Assert.That(proTexture, Is.Not.Null);
@@ -65,6 +65,46 @@ namespace Scaffold.Tests.Editor
             bool usesCompactLayout = (bool)compactLayoutMethod.Invoke(null, new object[] { availableWidth });
 
             Assert.That(usesCompactLayout, Is.EqualTo(expectedCompactLayout));
+        }
+
+        [Test]
+        public void RefreshForBlackboard_RebuildsTheOpenWindowBlockCollection()
+        {
+            UnityEngine.Object previousSelection = Selection.activeObject;
+            GameObject blackboardObject = new GameObject("Blackboard");
+            Blackboard blackboard = blackboardObject.AddComponent<Blackboard>();
+            blackboardObject.AddComponent<Block>();
+            TestBlackboardWindow window = ScriptableObject.CreateInstance<TestBlackboardWindow>();
+
+            try
+            {
+                Selection.activeGameObject = blackboardObject;
+                window.SetBlackboard(blackboard);
+                Scaffold.EditorUtils.BlackboardWindow.RefreshForBlackboard(blackboard);
+
+                Assert.That(window.BlockCount, Is.EqualTo(1));
+
+                blackboardObject.AddComponent<Block>();
+                Scaffold.EditorUtils.BlackboardWindow.RefreshForBlackboard(blackboard);
+
+                Assert.That(window.BlockCount, Is.EqualTo(2));
+            }
+            finally
+            {
+                Selection.activeObject = previousSelection;
+                UnityEngine.Object.DestroyImmediate(window);
+                UnityEngine.Object.DestroyImmediate(blackboardObject);
+            }
+        }
+
+        private class TestBlackboardWindow : Scaffold.EditorUtils.BlackboardWindow
+        {
+            public int BlockCount => blocks.Length;
+
+            public void SetBlackboard(Blackboard targetBlackboard)
+            {
+                blackboard = targetBlackboard;
+            }
         }
     }
 }

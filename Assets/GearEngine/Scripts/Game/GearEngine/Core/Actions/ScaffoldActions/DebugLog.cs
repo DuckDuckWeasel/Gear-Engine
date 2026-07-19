@@ -37,8 +37,8 @@ namespace Scaffold
 
         public override void OnEnter ()
         {
-            var flowchart = GetFlowchart();
-            string message = flowchart.SubstituteVariables(logMessage.Value);
+            var blackboard = GetBlackboard();
+            string message = blackboard.SubstituteVariables(logMessage.Value);
 
             switch (logType)
             {
@@ -79,7 +79,7 @@ namespace Scaffold
         {
             base.RefreshVariableCache();
 
-            var f = GetFlowchart();
+            var f = GetBlackboard();
 
             f.DetermineSubstituteVariables(logMessage.Value, referencedVariables);
         }

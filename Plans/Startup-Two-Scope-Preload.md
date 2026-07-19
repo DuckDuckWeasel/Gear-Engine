@@ -43,7 +43,7 @@ A **base (early) scope** for Addressables and future “very early” checks; a 
 ## Flow diagram (Mermaid)
 
 ```mermaid
-flowchart TB
+blackboard TB
     subgraph S1[Scope 1 - Base]
         GW[IAddressablesGateway]
         O1[Other early services TBD]

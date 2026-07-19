@@ -406,7 +406,7 @@ namespace Scaffold
                 case TokenType.Message:
                     if (CheckParamCount(token.paramList, 1)) 
                     {
-                        Flowchart.BroadcastScaffoldMessage(token.paramList[0]);
+                        Blackboard.BroadcastScaffoldMessage(token.paramList[0]);
                     }
                     break;
                     

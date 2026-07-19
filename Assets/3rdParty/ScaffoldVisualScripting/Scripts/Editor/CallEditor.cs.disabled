@@ -7,7 +7,7 @@ namespace Fungus.EditorUtils
     [CustomEditor (typeof(Call))]
     public class CallEditor : CommandEditor 
     {
-        protected SerializedProperty targetFlowchartProp;
+        protected SerializedProperty targetBlackboardProp;
         protected SerializedProperty targetBlockProp;
         protected SerializedProperty startLabelProp;
         protected SerializedProperty startIndexProp;
@@ -17,7 +17,7 @@ namespace Fungus.EditorUtils
         {
             base.OnEnable();
 
-            targetFlowchartProp = serializedObject.FindProperty("targetFlowchart");
+            targetBlackboardProp = serializedObject.FindProperty("targetBlackboard");
             targetBlockProp = serializedObject.FindProperty("targetBlock");
             startLabelProp = serializedObject.FindProperty("startLabel");
             startIndexProp = serializedObject.FindProperty("startIndex");
@@ -30,24 +30,24 @@ namespace Fungus.EditorUtils
 
             Call t = target as Call;
 
-            Flowchart flowchart = null;
-            if (targetFlowchartProp.objectReferenceValue == null)
+            Blackboard blackboard = null;
+            if (targetBlackboardProp.objectReferenceValue == null)
             {
-                flowchart = (Flowchart)t.GetFlowchart();
+                blackboard = (Blackboard)t.GetBlackboard();
             }
             else
             {
-                flowchart = targetFlowchartProp.objectReferenceValue as Flowchart;
+                blackboard = targetBlackboardProp.objectReferenceValue as Blackboard;
             }
 
-            EditorGUILayout.PropertyField(targetFlowchartProp);
+            EditorGUILayout.PropertyField(targetBlackboardProp);
 
-            if (flowchart != null)
+            if (blackboard != null)
             {
                 BlockEditor.BlockField(targetBlockProp,
                                        new GUIContent("Target Block", "Block to call"), 
                                        new GUIContent("<None>"), 
-                                       flowchart);
+                                       blackboard);
 
                 EditorGUILayout.PropertyField(startLabelProp);
 

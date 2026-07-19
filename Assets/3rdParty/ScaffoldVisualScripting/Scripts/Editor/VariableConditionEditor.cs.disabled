@@ -55,8 +55,8 @@ namespace Fungus.EditorUtils
 
             VariableCondition t = target as VariableCondition;
 
-            var flowchart = (Flowchart)t.GetFlowchart();
-            if (flowchart == null)
+            var blackboard = (Blackboard)t.GetBlackboard();
+            if (blackboard == null)
             {
                 return;
             }

@@ -13,6 +13,14 @@ MonoBehaviour:
   m_Name: SFX_Gear_Sound
   m_EditorClassIdentifier: BroAudio::Ami.BroAudio.Data.AudioEntity
   UseAddressables: 0
+  _localizedAudio:
+    m_TableReference:
+      m_TableCollectionName: 
+    m_TableEntryReference:
+      m_KeyId: 0
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
   <ID>k__BackingField: 0
   MulticlipsPlayMode: 0
   _group: {fileID: 11400000, guid: 8e6c3458659b642fc8619a959b12f2df, type: 2}
@@ -23,6 +31,8 @@ MonoBehaviour:
       m_SubObjectType: 
       m_SubObjectGUID: 
       m_EditorAssetChanged: 0
+    Locale:
+      m_Code: 
     AudioClip: {fileID: 8300000, guid: 2f3a91cabe08ae54992eb0c3dc34594a, type: 3}
     Volume: 0.3
     Delay: 0

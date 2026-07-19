@@ -1,7 +1,7 @@
 using System;
 using GearEngine.Core.Actions;
 
-﻿using UnityEngine;
+using UnityEngine;
 using MoonSharp.Interpreter;
 
 namespace Scaffold
@@ -9,11 +9,11 @@ namespace Scaffold
     /// <summary>
     /// Executes a Lua code chunk using a Lua Environment.
     /// </summary>
-    [CommandInfo("Scripting",
+    [CommandInfo("Lua",
                  "Execute Lua",
                  "Executes a Lua code chunk using a Lua Environment.")]
     [Serializable]
-    public class ExecuteLua : ActionBase 
+    public class ExecuteLua : ActionBase
     {
         [Tooltip("Lua Environment to use to execute this Lua script")]
         [SerializeField] protected LuaEnvironment luaEnvironment;
@@ -21,7 +21,7 @@ namespace Scaffold
         [Tooltip("A text file containing Lua script to execute.")]
         [SerializeField] protected TextAsset luaFile;
 
-        [TextArea(10,100)]
+        [TextArea(10, 100)]
         [Tooltip("Lua script to execute. This text is appended to the contents of Lua file (if one is specified).")]
         [SerializeField] protected string luaScript;
 
@@ -31,7 +31,7 @@ namespace Scaffold
         [Tooltip("Pause command execution until the Lua script has finished execution")]
         [SerializeField] protected bool waitUntilFinished = true;
 
-        [Tooltip("A Flowchart variable to store the returned value in.")]
+        [Tooltip("A Blackboard Variable to store the returned value in.")]
         [VariableProperty()]
         [SerializeField] protected Variable returnVariable;
 
@@ -41,7 +41,7 @@ namespace Scaffold
 
         // Stores the compiled Lua code for fast execution later.
         protected Closure luaFunction;
- 
+
         protected virtual void Start()
         {
             InitExecuteLua();
@@ -60,12 +60,12 @@ namespace Scaffold
             // Cache a descriptive name to use in Lua error messages
             friendlyName = host.gameObject.name + "." + ParentBlock.BlockName + "." + "ExecuteLua #" + CommandIndex.ToString();
 
-            var flowchart = GetFlowchart();
+            Blackboard blackboard = GetBlackboard();
 
-            // See if a Lua Environment has been assigned to this Flowchart
+            // See if a Lua Environment has been assigned to this Blackboard
             if (luaEnvironment == null)
             {
-                luaEnvironment = flowchart.LuaEnv;
+                luaEnvironment = blackboard.LuaEnv;
             }
 
             if (luaEnvironment == null)
@@ -77,19 +77,19 @@ namespace Scaffold
             string s = GetLuaString();
             luaFunction = luaEnvironment.LoadLuaFunction(s, friendlyName);
 
-            // Add a binding to the parent flowchart
-            if (flowchart.LuaBindingName != "")
+            // Add a binding to the parent blackboard
+            if (blackboard.LuaBindingName != "")
             {
                 Table globals = luaEnvironment.Interpreter.Globals;
                 if (globals != null)
                 {
-                    globals[flowchart.LuaBindingName] = flowchart;
+                    globals[blackboard.LuaBindingName] = blackboard;
                 }
             }
 
             // Always initialise when playing in the editor.
             // Allows the user to edit the Lua script while the game is playing.
-            if ( !(Application.isPlaying && Application.isEditor) )
+            if (!(Application.isPlaying && Application.isEditor))
             {
                 initialised = true;
             }
@@ -180,7 +180,8 @@ namespace Scaffold
                 Continue();
             }
 
-            luaEnvironment.RunLuaFunction(luaFunction, runAsCoroutine, (returnValue) => {
+            luaEnvironment.RunLuaFunction(luaFunction, runAsCoroutine, (returnValue) =>
+            {
                 StoreReturnVariable(returnValue);
                 if (waitUntilFinished)
                 {

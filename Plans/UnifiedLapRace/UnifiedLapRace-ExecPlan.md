@@ -288,7 +288,7 @@ Delete and replace:
 ### Target architecture
 
 ```mermaid
-flowchart TD
+blackboard TD
     TrackDef["TrackDefinition<br/>authoring input"] --> Track["Track<br/>scene spline authority"]
     CarEntity["CarEntity<br/>live car values"] --> LapSim["LapSimulation"]
     CarEntity --> Visual["CarVisualPlayback"]
@@ -630,7 +630,7 @@ This guarantees:
 #### Per-frame flow
 
 ```mermaid
-flowchart TD
+blackboard TD
     Runner["Race session runner Tick(dt)"] --> Sampler["SplineCurveSampler.Sample(NormalizedProgress)"]
     Sampler --> CurveSample["CurveSample"]
     CurveSample --> Sim["LapSimulation.Tick(dt, CarEntity, CurveSample)"]

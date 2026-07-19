@@ -19,7 +19,7 @@ Usage
 ============
 
 To write Playmaker variable values to Scaffold Variables, use the Action Browser > ScriptControl > Write To Scaffold command.
-To execute a block in a Scaffold flowchart from , use the Action Browser > ScriptControl > Playmaker Execute Block command.
+To execute a block in a Scaffold blackboard from , use the Action Browser > ScriptControl > Playmaker Execute Block command.
 To trigger a global state transition in Playmaker from Scaffold, use the Playmaker > Global State Transition command.
 To read Scaffold variable values into Playmaker Variables, use the Action Browser > ScriptControl > Receive Scaffold Variable command.
 To write Scaffold variable values from the inspector into Playmaker global variables, use the Playmaker > Write To Playmaker command.

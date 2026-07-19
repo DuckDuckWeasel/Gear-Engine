@@ -21,10 +21,16 @@ namespace Scaffold
         [Tooltip("Notes about this story text for other authors, localization, etc.")]
         [SerializeField] protected string description = "";
 
-        [Tooltip("Character that is speaking")]
+        [HideInInspector]
+        [Tooltip("Legacy direct character reference retained for existing commands.")]
         [SerializeField] protected Character character;
 
-        [Tooltip("Portrait that represents speaking character")]
+        [InspectorName("Character")]
+        [Tooltip("Character that is speaking. Choose a direct reference, Blackboard variable, or ScriptableObject value.")]
+        [SerializeField] protected CharacterData characterData;
+
+        [HideInInspector]
+        [Tooltip("Legacy portrait override retained for existing commands.")]
         [SerializeField] protected Sprite portrait;
 
         [Tooltip("Voiceover audio to play when writing the text")]
@@ -66,12 +72,12 @@ namespace Scaffold
         /// <summary>
         /// Character that is speaking.
         /// </summary>
-        public virtual Character _Character { get { return character; } }
+        public virtual Character _Character { get { return ResolveCharacter(); } }
 
         /// <summary>
         /// Portrait that represents speaking character.
         /// </summary>
-        public virtual Sprite Portrait { get { return portrait; } set { portrait = value; } }
+        public virtual Sprite Portrait { get { return ResolvePortrait(ResolveCharacter()); } set { portrait = value; } }
 
         /// <summary>
         /// Type this text in the previous dialog box.
@@ -88,10 +94,12 @@ namespace Scaffold
 
             executionCount++;
 
+            Character resolvedCharacter = ResolveCharacter();
+
             // Override the active say dialog if needed
-            if (character != null && character.SetSayDialog != null)
+            if (resolvedCharacter != null && resolvedCharacter.SetSayDialog != null)
             {
-                SayDialog.ActiveSayDialog = character.SetSayDialog;
+                SayDialog.ActiveSayDialog = resolvedCharacter.SetSayDialog;
             }
 
             if (setSayDialog != null)
@@ -106,12 +114,12 @@ namespace Scaffold
                 return;
             }
     
-            var flowchart = GetFlowchart();
+            var blackboard = GetBlackboard();
 
             sayDialog.SetActive(true);
 
-            sayDialog.SetCharacter(character);
-            sayDialog.SetCharacterImage(portrait);
+            sayDialog.SetCharacter(resolvedCharacter);
+            sayDialog.SetCharacterImage(ResolvePortrait(resolvedCharacter));
 
             string displayText = storyText;
 
@@ -126,7 +134,7 @@ namespace Scaffold
                 }
             }
 
-            string subbedText = flowchart.SubstituteVariables(displayText);
+            string subbedText = blackboard.SubstituteVariables(displayText);
             
             if(waitForComplete)
             {
@@ -145,9 +153,10 @@ namespace Scaffold
         public override string GetSummary()
         {
             string namePrefix = "";
-            if (character != null) 
+            Character resolvedCharacter = ResolveCharacter();
+            if (resolvedCharacter != null)
             {
-                namePrefix = character.NameText + ": ";
+                namePrefix = resolvedCharacter.NameText + ": ";
             }
             if (extendPrevious)
             {
@@ -199,15 +208,26 @@ namespace Scaffold
         public virtual string GetStringId()
         {
             // String id for Say commands is SAY.<Localization Id>.<Command id>.[Character Name]
-            string stringId = "SAY." + GetFlowchart().LocalizationId + "." + ItemId + ".";
-            if (character != null)
+            string stringId = "SAY." + GetBlackboard().LocalizationId + "." + ItemId + ".";
+            Character resolvedCharacter = ResolveCharacter();
+            if (resolvedCharacter != null)
             {
-                stringId += character.NameText;
+                stringId += resolvedCharacter.NameText;
             }
 
             return stringId;
         }
 
         #endregion
+
+        private Character ResolveCharacter()
+        {
+            return characterData.IsConfigured ? characterData.Value : character;
+        }
+
+        private Sprite ResolvePortrait(Character resolvedCharacter)
+        {
+            return resolvedCharacter != null ? resolvedCharacter.DefaultPortrait : portrait;
+        }
     }
 }

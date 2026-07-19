@@ -19,42 +19,17 @@ namespace Scaffold
     }
 
     /// <summary>
-    /// Controls how a Block waits for its (potentially several, parallel) CommandTracks
-    /// to finish before the Block itself is considered complete.
-    /// </summary>
-    public enum BlockAwaitMode
-    {
-        /// <summary> Block completes only once every track has finished. </summary>
-        WaitAll,
-        /// <summary> Block completes as soon as any single track finishes; other tracks keep running in the background. </summary>
-        WaitAny,
-        /// <summary> Block completes immediately after starting all tracks, without waiting on any of them. </summary>
-        WaitNone,
-    }
-
-    /// <summary>
-    /// Controls whether a Block starts its CommandTracks in sequence or together.
-    /// </summary>
-    public enum BlockExecutionMethod
-    {
-        /// <summary> Starts the next track after the current track has completed. </summary>
-        Sequence,
-        /// <summary> Starts every track together. </summary>
-        AllAtSameTime,
-    }
-
-    /// <summary>
     /// A container for a sequence of Scaffold comands.
     /// </summary>
     [ExecuteInEditMode]
-    [RequireComponent(typeof(Flowchart))]
+    [RequireComponent(typeof(Blackboard))]
     [AddComponentMenu("")]
     public class Block : Node
     {
-        [SerializeField] protected int itemId = -1; // Invalid flowchart item id
+        [SerializeField] protected int itemId = -1; // Invalid blackboard item id
 
         [FormerlySerializedAs("sequenceName")]
-        [Tooltip("The name of the block node as displayed in the Flowchart window")]
+        [Tooltip("The name of the block node as displayed in the Blackboard window")]
         [SerializeField] protected string blockName = "New Block";
 
         [TextArea(2, 5)]
@@ -69,18 +44,38 @@ namespace Scaffold
 
         [SerializeField] protected List<CommandTrack> tracks = new List<CommandTrack>();
 
-        [Tooltip("Controls whether Command Tracks run one after another or together.")]
-        [SerializeField] protected BlockExecutionMethod executionMethod = BlockExecutionMethod.Sequence;
+        [Tooltip("Controls the shared composite behavior used to execute Commands.")]
+        [SerializeField]
+        protected CompositeExecutionMethod executionMethod =
+            CompositeExecutionMethod.Sequence;
 
-        [Tooltip("Controls how the Block waits for its parallel Command Tracks to finish before completing.")]
-        [SerializeField] protected BlockAwaitMode awaitMode = BlockAwaitMode.WaitAll;
+        [Tooltip("Controls how the Block waits for its parallel Commands to finish before completing.")]
+        [SerializeField] protected CompositeAwaitMode awaitMode = CompositeAwaitMode.WaitAll;
+
+        [Tooltip("Controls the Command order for Sequence and Selector.")]
+        [SerializeField] protected CompositeOrderMode orderMode = CompositeOrderMode.Ordered;
+
+        [Tooltip("Prevents Random and Shuffle from starting with the Command that executed last in the previous run.")]
+        [SerializeField] protected bool avoidRepeatingLastCommand;
 
         protected ExecutionState executionState;
 
         protected Command activeCommand;
 
-        // Tracks currently running as part of the in-flight Execute() call, if any.
+        // Tracks whose visible Commands are part of the in-flight Execute() call, if any.
         protected List<CommandTrack> activeTracks;
+
+        private readonly List<ICompositeTask> compositeCommandTasks = new List<ICompositeTask>();
+        private readonly List<Command> compositeCommands = new List<Command>();
+        private readonly Dictionary<Command, int> compositeTaskIndexes =
+            new Dictionary<Command, int>();
+        private readonly Dictionary<Command, Action<CompositeExecutionStatus>> compositeCompletions =
+            new Dictionary<Command, Action<CompositeExecutionStatus>>();
+        private CompositeExecutionRunner compositeRunner;
+        private Command lastExecutedCommand;
+        private bool compositeExecutionCompleted;
+        private CompositeExecutionStatus lastCompositeExecutionStatus =
+            CompositeExecutionStatus.Success;
 
         protected Action lastOnCompleteAction;
 
@@ -94,7 +89,7 @@ namespace Scaffold
         {
             get
             {
-                var track = (tracks != null && tracks.Count > 0) ? tracks[0] : null;
+                CommandTrack track = (tracks != null && tracks.Count > 0) ? tracks[0] : null;
                 return track != null ? track.PreviousActiveCommandIndex : previousActiveCommandIndex;
             }
         }
@@ -104,13 +99,13 @@ namespace Scaffold
         protected int executionCount;
 
         /// <summary>
-        /// If set, flowchart will not auto select when it is next executed, used by eventhandlers.
+        /// If set, blackboard will not auto select when it is next executed, used by eventhandlers.
         /// Only effects the editor.
         /// </summary>
         public bool SuppressNextAutoSelection { get; set; }
 
         [SerializeField] bool suppressAllAutoSelections = false;
-        
+
 
         protected virtual void Awake()
         {
@@ -133,7 +128,7 @@ namespace Scaffold
 
             if (tracks.Count == 0)
             {
-                var track = new CommandTrack("Track 0");
+                CommandTrack track = new CommandTrack("Track 0");
                 if (commandList != null && commandList.Count > 0)
                 {
                     track.Commands.AddRange(commandList);
@@ -156,12 +151,12 @@ namespace Scaffold
             // and tell each command its index within its own track.
             if (tracks != null)
             {
-                foreach (var track in tracks)
+                foreach (CommandTrack track in tracks)
                 {
                     int index = 0;
                     for (int i = 0; i < track.Commands.Count; i++)
                     {
-                        var command = track.Commands[i];
+                        Command command = track.Commands[i];
                         if (command == null)
                         {
                             continue;
@@ -179,23 +174,28 @@ namespace Scaffold
             UpdateIndentLevels();
         }
 
-#if UNITY_EDITOR
-        // The user can modify the command list order while playing in the editor,
-        // so we keep the command indices updated every frame. There's no need to
-        // do this in player builds so we compile this bit out for those builds.
         protected virtual void Update()
+        {
+            compositeRunner?.Tick();
+#if UNITY_EDITOR
+            UpdateCommandIndexes();
+#endif
+        }
+
+#if UNITY_EDITOR
+        private void UpdateCommandIndexes()
         {
             if (tracks == null)
             {
                 return;
             }
 
-            foreach (var track in tracks)
+            foreach (CommandTrack track in tracks)
             {
                 int index = 0;
                 for (int i = 0; i < track.Commands.Count; i++)
                 {
-                    var command = track.Commands[i];
+                    Command command = track.Commands[i];
                     if (command == null)// Null entry will be deleted automatically later
                     {
                         continue;
@@ -204,11 +204,10 @@ namespace Scaffold
                 }
             }
         }
-
 #endif
-        //editor only state for speeding up flowchart window drawing
+        //editor only state for speeding up blackboard window drawing
         public bool IsSelected { get; set; }    //local cache of selectedness
-        public enum FilteredState { Full, Partial, None}
+        public enum FilteredState { Full, Partial, None }
         public FilteredState FilterState { get; set; }    //local cache of filteredness
         public bool IsControlSelected { get; set; } //local cache of being part of the control exclusion group
 
@@ -225,7 +224,7 @@ namespace Scaffold
         public virtual int ItemId { get { return itemId; } set { itemId = value; } }
 
         /// <summary>
-        /// The name of the block node as displayed in the Flowchart window.
+        /// The name of the block node as displayed in the Blackboard window.
         /// </summary>
         public virtual string BlockName { get { return blockName; } set { blockName = value; } }
 
@@ -257,7 +256,11 @@ namespace Scaffold
         {
             get
             {
-                if (tracks != null && tracks.Count > 0) return tracks[0].Commands;
+                if (tracks != null && tracks.Count > 0)
+                {
+                    return tracks[0].Commands;
+                }
+
                 return commandList;
             }
         }
@@ -265,14 +268,119 @@ namespace Scaffold
         public virtual List<CommandTrack> Tracks { get { return tracks; } }
 
         /// <summary>
-        /// Controls whether CommandTracks start in sequence or all at the same time.
+        /// Controls how the Block's visible Commands execute.
         /// </summary>
-        public virtual BlockExecutionMethod ExecutionMethod { get { return executionMethod; } set { executionMethod = value; } }
+        public virtual CompositeExecutionMethod ExecutionMethod { get { return executionMethod; } set { executionMethod = value; } }
 
         /// <summary>
-        /// Controls how this Block waits for its (possibly several, parallel) CommandTracks to finish.
+        /// Controls how this Block waits for parallel Commands to finish.
         /// </summary>
-        public virtual BlockAwaitMode AwaitMode { get { return awaitMode; } set { awaitMode = value; } }
+        public virtual CompositeAwaitMode AwaitMode { get { return awaitMode; } set { awaitMode = value; } }
+
+        public virtual CompositeOrderMode OrderMode { get { return orderMode; } set { orderMode = value; } }
+
+        public virtual bool AvoidRepeatingLastCommand
+        {
+            get { return avoidRepeatingLastCommand; }
+            set { avoidRepeatingLastCommand = value; }
+        }
+
+        public virtual CompositeExecutionStatus LastCompositeExecutionStatus
+        {
+            get { return lastCompositeExecutionStatus; }
+        }
+
+        /// <summary>
+        /// Returns the effective percentage for a command in its containing track.
+        /// Manual overrides reserve their percentages and enabled automatic commands
+        /// share the remainder equally. Disabled commands contribute zero percent.
+        /// </summary>
+        public virtual float GetCommandWeight(Command command)
+        {
+            List<Command> commands = GetCommandWeightList(command);
+            if (!IsCommandWeightEligible(command) || commands == null)
+            {
+                return 0f;
+            }
+
+            GetEnabledCommandWeightBalance(
+                commands,
+                out float overrideTotal,
+                out int automaticCommandCount);
+            if (overrideTotal >= 100f)
+            {
+                return command.HasCompositeWeightOverride && overrideTotal > 0f
+                    ? command.CompositeWeight / overrideTotal * 100f
+                    : 0f;
+            }
+
+            if (command.HasCompositeWeightOverride)
+            {
+                return command.CompositeWeight;
+            }
+
+            return automaticCommandCount > 0
+                ? (100f - overrideTotal) / automaticCommandCount
+                : 0f;
+        }
+
+        private List<Command> GetCommandWeightList(Command command)
+        {
+            if (command == null)
+            {
+                return null;
+            }
+
+            if (command.ParentTrack != null && command.ParentTrack.Commands.Contains(command))
+            {
+                return command.ParentTrack.Commands;
+            }
+
+            if (tracks != null)
+            {
+                foreach (CommandTrack track in tracks)
+                {
+                    if (track != null && track.Commands.Contains(command))
+                    {
+                        return track.Commands;
+                    }
+                }
+            }
+
+            return CommandList.Contains(command) ? CommandList : null;
+        }
+
+        private static void GetEnabledCommandWeightBalance(
+            List<Command> commands,
+            out float overrideTotal,
+            out int automaticCommandCount)
+        {
+            overrideTotal = 0f;
+            automaticCommandCount = 0;
+            foreach (Command command in commands)
+            {
+                if (!IsCommandWeightEligible(command))
+                {
+                    continue;
+                }
+
+                if (command.HasCompositeWeightOverride)
+                {
+                    overrideTotal += command.CompositeWeight;
+                    continue;
+                }
+
+                automaticCommandCount++;
+            }
+        }
+
+        private static bool IsCommandWeightEligible(Command command)
+        {
+            return command != null &&
+                   command.enabled &&
+                   command.GetType().Name != "CommentAction" &&
+                   command.GetType().Name != "LabelAction";
+        }
 
         /// <summary>
         /// Controls the next command to execute in the block execution coroutine.
@@ -282,7 +390,7 @@ namespace Scaffold
         {
             set
             {
-                var track = (tracks != null && tracks.Count > 0) ? tracks[0] : null;
+                CommandTrack track = (tracks != null && tracks.Count > 0) ? tracks[0] : null;
                 if (track != null)
                 {
                     track.JumpToCommandIndex = value;
@@ -300,7 +408,18 @@ namespace Scaffold
         /// </summary>
         public virtual void OnCommandCompleted(Command command, int nextCommandIndex)
         {
-            var track = command != null ? command.ParentTrack : null;
+            Action<CompositeExecutionStatus> completion;
+            if (command != null && compositeCompletions.TryGetValue(command, out completion))
+            {
+                compositeCompletions.Remove(command);
+                command.IsExecuting = false;
+                RequestOrderedCommandHandoff(command, nextCommandIndex);
+                CompositeExecutionStatus status = GetCommandStatus(command);
+                CompleteCompositeCommand(command, completion, status);
+                return;
+            }
+
+            CommandTrack track = command != null ? command.ParentTrack : null;
             if (track != null)
             {
                 track.JumpToCommandIndex = nextCommandIndex;
@@ -314,11 +433,11 @@ namespace Scaffold
         }
 
         /// <summary>
-        /// Returns the parent Flowchart for this Block.
+        /// Returns the parent Blackboard for this Block.
         /// </summary>
-        public virtual Flowchart GetFlowchart()
+        public virtual Blackboard GetBlackboard()
         {
-            return GetComponent<Flowchart>();
+            return GetComponent<Blackboard>();
         }
 
         /// <summary>
@@ -347,8 +466,8 @@ namespace Scaffold
 
         /// <summary>
         /// A coroutine method that executes all commands in the Block. Only one running instance of each Block is permitted.
-        /// Starts CommandTracks according to ExecutionMethod. AwaitMode controls completion only when
-        /// tracks start all at the same time.
+        /// Executes the visible Commands through the same composite runtime used by Invoke Action.
+        /// AwaitMode controls completion when commands start in parallel.
         /// </summary>
         /// <param name="commandIndex">Index of command to start execution at, within the first (primary) track</param>
         /// <param name="onComplete">Delegate function to call when execution completes</param>
@@ -360,6 +479,8 @@ namespace Scaffold
                 yield break;
             }
 
+            ResetExecutionFeedback();
+
             lastOnCompleteAction = onComplete;
 
             // Always refresh (cheap): tracks/commands may have been added or reordered
@@ -367,15 +488,15 @@ namespace Scaffold
             SetExecutionInfo();
 
             executionCount++;
-            var executionCountAtStart = executionCount;
+            int executionCountAtStart = executionCount;
 
-            var flowchart = GetFlowchart();
+            Blackboard blackboard = GetBlackboard();
             executionState = ExecutionState.Executing;
             BlockSignals.DoBlockStart(this);
 
             bool suppressSelectionChanges = false;
 
-            #if UNITY_EDITOR
+#if UNITY_EDITOR
             // Select the executing block & the first command
             if (suppressAllAutoSelections || SuppressNextAutoSelection)
             {
@@ -384,82 +505,44 @@ namespace Scaffold
             }
             else
             {
-                flowchart.SelectedBlock = this;
+                blackboard.SelectedBlock = this;
                 if (CommandList.Count > 0)
                 {
-                    flowchart.ClearSelectedCommands();
-                    flowchart.AddSelectedCommand(CommandList[0]);
+                    blackboard.ClearSelectedCommands();
+                    blackboard.AddSelectedCommand(CommandList[0]);
                 }
             }
-            #endif
+#endif
 
             activeTracks = (tracks != null) ? new List<CommandTrack>(tracks) : new List<CommandTrack>();
 
             for (int t = 0; t < activeTracks.Count; t++)
             {
-                var track = activeTracks[t];
-                track.IsComplete = false;
+                CommandTrack track = activeTracks[t];
                 track.ActiveCommand = null;
                 track.PreviousActiveCommandIndex = -1;
+                track.JumpToCommandIndex = -1;
             }
 
-            if (executionMethod == BlockExecutionMethod.Sequence)
-            {
-                for (int t = 0; t < activeTracks.Count; t++)
+            BlockCompositeExecutionContext compositeContext =
+                new BlockCompositeExecutionContext
                 {
-                    var track = activeTracks[t];
-                    int startIndex = t == 0 ? commandIndex : 0;
-                    bool isPrimaryTrack = t == 0;
-                    track.RunningCoroutine = StartCoroutine(ExecuteTrack(track, startIndex, flowchart, suppressSelectionChanges, isPrimaryTrack));
-                    yield return track.RunningCoroutine;
+                    CommandIndex = commandIndex,
+                    Blackboard = blackboard,
+                    SuppressSelectionChanges = suppressSelectionChanges,
+                };
+            CreateCompositeCommandRunner(compositeContext);
+            compositeExecutionCompleted = false;
+            StartCompositeCommandRunner();
 
-                    if (executionCountAtStart != executionCount || executionState != ExecutionState.Executing)
-                    {
-                        yield break;
-                    }
-                }
-            }
-            else
+            while (!compositeExecutionCompleted &&
+                   executionCountAtStart == executionCount &&
+                   executionState == ExecutionState.Executing)
             {
-                for (int t = 0; t < activeTracks.Count; t++)
-                {
-                    var track = activeTracks[t];
-                    // Only the primary (first) track honours the requested starting index,
-                    // preserving the previous single-track Execute(commandIndex) contract.
-                    int startIndex = (t == 0) ? commandIndex : 0;
-                    bool isPrimaryTrack = (t == 0);
-                    track.RunningCoroutine = StartCoroutine(ExecuteTrack(track, startIndex, flowchart, suppressSelectionChanges, isPrimaryTrack));
-                }
+                yield return null;
             }
 
-            if (executionMethod == BlockExecutionMethod.AllAtSameTime)
-            {
-                switch (awaitMode)
-                {
-                    case BlockAwaitMode.WaitNone:
-                        break;
-
-                    case BlockAwaitMode.WaitAny:
-                        while (executionCountAtStart == executionCount &&
-                               activeTracks.Count > 0 &&
-                               !activeTracks.Exists(trk => trk.IsComplete))
-                        {
-                            yield return null;
-                        }
-                        break;
-
-                    case BlockAwaitMode.WaitAll:
-                    default:
-                        while (executionCountAtStart == executionCount &&
-                               activeTracks.Exists(trk => !trk.IsComplete))
-                        {
-                            yield return null;
-                        }
-                        break;
-                }
-            }
-
-            if(State == ExecutionState.Executing &&
+            if (State == ExecutionState.Executing &&
                 //ensure we aren't dangling from a previous stopage and stopping a future run
                 executionCountAtStart == executionCount)
             {
@@ -467,101 +550,269 @@ namespace Scaffold
             }
         }
 
-        /// <summary>
-        /// Executes the commands of a single CommandTrack in sequence. Multiple instances of this
-        /// coroutine run concurrently (one per track) while the Block is executing.
-        /// </summary>
-        protected virtual IEnumerator ExecuteTrack(CommandTrack track, int startCommandIndex, Flowchart flowchart, bool suppressSelectionChanges, bool isPrimaryTrack)
+        protected virtual float GetCompositeRandomValue()
         {
-            var commands = track.Commands;
-            track.JumpToCommandIndex = startCommandIndex;
+            return UnityEngine.Random.value;
+        }
 
-            int i = 0;
-            while (true)
+        private void CreateCompositeCommandRunner(BlockCompositeExecutionContext compositeContext)
+        {
+            RememberLastExecutedCommand();
+            compositeRunner?.Stop();
+            compositeCommandTasks.Clear();
+            compositeCommands.Clear();
+            compositeTaskIndexes.Clear();
+            compositeCompletions.Clear();
+
+            for (int trackIndex = 0; trackIndex < activeTracks.Count; trackIndex++)
             {
-                // Executing commands specify the next command to skip to by setting JumpToCommandIndex via Command.Continue()
-                if (track.JumpToCommandIndex > -1)
+                CommandTrack track = activeTracks[trackIndex];
+                for (int commandListIndex = 0; commandListIndex < track.Commands.Count; commandListIndex++)
                 {
-                    i = track.JumpToCommandIndex;
-                    track.JumpToCommandIndex = -1;
-                }
-
-                // Skip disabled commands, comments and labels
-                while (i < commands.Count &&
-                      (!commands[i].enabled ||
-                        commands[i].GetType().Name == "CommentAction" ||
-                        commands[i].GetType().Name == "LabelAction"))
-                {
-                    i = commands[i].CommandIndex + 1;
-                }
-
-                if (i >= commands.Count)
-                {
-                    break;
-                }
-
-                // The previous active command is needed for if / else / else if commands
-                track.PreviousActiveCommandIndex = (track.ActiveCommand == null) ? -1 : track.ActiveCommand.CommandIndex;
-                if (isPrimaryTrack)
-                {
-                    previousActiveCommandIndex = track.PreviousActiveCommandIndex;
-                }
-
-                var command = commands[i];
-                track.ActiveCommand = command;
-                activeCommand = command;
-
-                if (flowchart.IsActive() && !suppressSelectionChanges && isPrimaryTrack)
-                {
-                    // Auto select a command in some situations
-                    if ((flowchart.SelectedCommands.Count == 0 && i == 0) ||
-                        (flowchart.SelectedCommands.Count == 1 && flowchart.SelectedCommands[0].CommandIndex == track.PreviousActiveCommandIndex))
+                    Command command = track.Commands[commandListIndex];
+                    if (command == null)
                     {
-                        flowchart.ClearSelectedCommands();
-                        flowchart.AddSelectedCommand(commands[i]);
+                        continue;
+                    }
+
+                    CommandExecutionContext context = new CommandExecutionContext
+                    {
+                        Block = this,
+                        Command = command,
+                        Track = track,
+                        Blackboard = compositeContext.Blackboard,
+                        IsIncluded = trackIndex != 0 || command.CommandIndex >= compositeContext.CommandIndex,
+                        IsPrimaryTrack = trackIndex == 0,
+                        SuppressSelectionChanges = compositeContext.SuppressSelectionChanges,
+                    };
+                    compositeTaskIndexes.Add(command, compositeCommandTasks.Count);
+                    compositeCommands.Add(command);
+                    compositeCommandTasks.Add(new CommandCompositeTask(context));
+                }
+            }
+
+            compositeRunner = new CompositeExecutionRunner(
+                compositeCommandTasks,
+                GetCompositeRandomValue);
+        }
+
+        private void StartCompositeCommandRunner()
+        {
+            int lastExecutedCommandIndex = compositeCommands.IndexOf(lastExecutedCommand);
+            if (ShouldAvoidRepeatingLastCommand())
+            {
+                compositeRunner.StartWithoutRepeatingLast(
+                    executionMethod,
+                    awaitMode,
+                    orderMode,
+                    lastExecutedCommandIndex,
+                    OnCompositeCommandsComplete);
+                return;
+            }
+
+            compositeRunner.Start(
+                executionMethod,
+                awaitMode,
+                orderMode,
+                OnCompositeCommandsComplete);
+        }
+
+        private void OnCompositeCommandsComplete(CompositeExecutionStatus status)
+        {
+            RememberLastExecutedCommand();
+            lastCompositeExecutionStatus = status;
+            compositeExecutionCompleted = true;
+        }
+
+        private bool ShouldAvoidRepeatingLastCommand()
+        {
+            return avoidRepeatingLastCommand &&
+                   compositeCommandTasks.Count > 1 &&
+                   CompositeExecutionDescription.SupportsOrder(executionMethod) &&
+                   orderMode != CompositeOrderMode.Ordered;
+        }
+
+        private void RememberLastExecutedCommand()
+        {
+            if (compositeRunner == null)
+            {
+                return;
+            }
+
+            int lastExecutedCommandIndex = compositeRunner.LastStartedTaskIndex;
+            if (lastExecutedCommandIndex >= 0 && lastExecutedCommandIndex < compositeCommands.Count)
+            {
+                lastExecutedCommand = compositeCommands[lastExecutedCommandIndex];
+            }
+        }
+
+        internal void StartCompositeCommand(
+            CommandExecutionContext context,
+            Action<CompositeExecutionStatus> onComplete)
+        {
+            Command command = context.Command;
+            CommandTrack track = context.Track;
+            track.PreviousActiveCommandIndex = track.ActiveCommand == null
+                ? -1
+                : track.ActiveCommand.CommandIndex;
+            track.ActiveCommand = command;
+            activeCommand = command;
+            if (context.IsPrimaryTrack)
+            {
+                previousActiveCommandIndex = track.PreviousActiveCommandIndex;
+            }
+
+            SelectExecutingCommand(context);
+            command.IsExecuting = true;
+            command.ExecutingIconTimer =
+                Time.realtimeSinceStartup + ScaffoldConstants.ExecutingIconFadeTime;
+            BlockSignals.DoCommandExecute(
+                this,
+                command,
+                command.CommandIndex,
+                track.Commands.Count);
+            compositeCompletions[command] = onComplete;
+
+            try
+            {
+                command.Execute();
+            }
+            catch (Exception exception)
+            {
+                Debug.LogError(
+                    $"[Block] Command execution failed at {command.GetLocationIdentifier()}: {exception}");
+                compositeCompletions.Remove(command);
+                command.IsExecuting = false;
+                onComplete(CompositeExecutionStatus.Failure);
+            }
+        }
+
+        internal void StopCompositeCommand(Command command)
+        {
+            if (command == null)
+            {
+                return;
+            }
+
+            compositeCompletions.Remove(command);
+            if (!command.IsExecuting)
+            {
+                return;
+            }
+
+            command.IsExecuting = false;
+            command.OnStopExecuting();
+            if (activeCommand == command)
+            {
+                activeCommand = null;
+            }
+        }
+
+        private void SelectExecutingCommand(CommandExecutionContext context)
+        {
+#if UNITY_EDITOR
+            Blackboard blackboard = context.Blackboard;
+            if (!blackboard.IsActive() ||
+                context.SuppressSelectionChanges ||
+                !context.IsPrimaryTrack)
+            {
+                return;
+            }
+
+            if ((blackboard.SelectedCommands.Count == 0 && context.Command.CommandIndex == 0) ||
+                (blackboard.SelectedCommands.Count == 1 &&
+                 blackboard.SelectedCommands[0].CommandIndex ==
+                 context.Track.PreviousActiveCommandIndex))
+            {
+                blackboard.ClearSelectedCommands();
+                blackboard.AddSelectedCommand(context.Command);
+            }
+#endif
+        }
+
+        private void RequestOrderedCommandHandoff(Command command, int nextCommandIndex)
+        {
+            if (executionMethod != CompositeExecutionMethod.Sequence ||
+                orderMode != CompositeOrderMode.Ordered ||
+                nextCommandIndex == command.CommandIndex + 1)
+            {
+                return;
+            }
+
+            int nextTaskIndex = FindCompositeTaskIndex(command.ParentTrack, nextCommandIndex);
+            compositeRunner?.RequestNextTaskIndex(nextTaskIndex);
+        }
+
+        private int FindCompositeTaskIndex(CommandTrack track, int commandIndex)
+        {
+            int trackIndex = activeTracks.IndexOf(track);
+            if (trackIndex < 0)
+            {
+                return compositeCommandTasks.Count;
+            }
+
+            for (int searchTrackIndex = trackIndex; searchTrackIndex < activeTracks.Count; searchTrackIndex++)
+            {
+                CommandTrack searchTrack = activeTracks[searchTrackIndex];
+                foreach (Command candidate in searchTrack.Commands)
+                {
+                    if (candidate == null ||
+                        (searchTrackIndex == trackIndex && candidate.CommandIndex < commandIndex))
+                    {
+                        continue;
+                    }
+
+                    int taskIndex;
+                    if (compositeTaskIndexes.TryGetValue(candidate, out taskIndex))
+                    {
+                        return taskIndex;
                     }
                 }
 
-                command.IsExecuting = true;
-                // This icon timer is managed by the FlowchartWindow class, but we also need to
-                // set it here in case a command starts and finishes execution before the next window update.
-                command.ExecutingIconTimer = Time.realtimeSinceStartup + ScaffoldConstants.ExecutingIconFadeTime;
-                BlockSignals.DoCommandExecute(this, command, i, commands.Count);
-
-#if UNITY_EDITOR
-                try
-                {
-                    command.Execute();
-                }
-                catch (Exception)
-                {
-                    Debug.LogError("Rethrowing Exception thrown by:" + command.GetLocationIdentifier());
-                    throw;
-                }
-#else
-                command.Execute();
-#endif
-
-                // Wait until the executing command sets another command to jump to via Command.Continue()
-                while (track.JumpToCommandIndex == -1)
-                {
-                    yield return null;
-                }
-
-                #if UNITY_EDITOR
-                if (flowchart.StepPause > 0f)
-                {
-                    yield return new WaitForSeconds(flowchart.StepPause);
-                }
-                #endif
-
-                command.IsExecuting = false;
+                commandIndex = 0;
             }
 
-            track.IsComplete = true;
-            track.ActiveCommand = null;
-            track.RunningCoroutine = null;
+            return compositeCommandTasks.Count;
         }
+
+        private static CompositeExecutionStatus GetCommandStatus(Command command)
+        {
+            ICompositeExecutionStatusProvider statusProvider =
+                command as ICompositeExecutionStatusProvider;
+            return statusProvider != null
+                ? statusProvider.LastCompositeExecutionStatus
+                : CompositeExecutionStatus.Success;
+        }
+
+        private void CompleteCompositeCommand(
+            Command command,
+            Action<CompositeExecutionStatus> completion,
+            CompositeExecutionStatus status)
+        {
+#if UNITY_EDITOR
+            Blackboard blackboard = GetBlackboard();
+            if (blackboard.StepPause > 0f && isActiveAndEnabled)
+            {
+                StartCoroutine(CompleteCompositeCommandAfterPause(command, completion, status));
+                return;
+            }
+#endif
+            completion(status);
+        }
+
+#if UNITY_EDITOR
+        private IEnumerator CompleteCompositeCommandAfterPause(
+            Command command,
+            Action<CompositeExecutionStatus> completion,
+            CompositeExecutionStatus status)
+        {
+            yield return new WaitForSeconds(GetBlackboard().StepPause);
+            if (!command.IsExecuting)
+            {
+                completion(status);
+            }
+        }
+#endif
 
         private void ReturnToIdle()
         {
@@ -577,36 +828,56 @@ namespace Scaffold
         }
 
         /// <summary>
-        /// Stop executing commands in this Block, including every currently running CommandTrack.
+        /// Stop executing commands in this Block, including detached parallel commands.
         /// </summary>
         public virtual void Stop()
         {
-            if (activeTracks != null)
-            {
-                foreach (var track in activeTracks)
-                {
-                    // Tell the executing command to stop immediately
-                    if (track.ActiveCommand != null)
-                    {
-                        track.ActiveCommand.IsExecuting = false;
-                        track.ActiveCommand.OnStopExecuting();
-                    }
-
-                    if (track.RunningCoroutine != null)
-                    {
-                        StopCoroutine(track.RunningCoroutine);
-                        track.RunningCoroutine = null;
-                    }
-
-                    track.IsComplete = true;
-                }
-            }
+            RememberLastExecutedCommand();
+            compositeRunner?.Stop();
+            compositeCompletions.Clear();
+            ResetExecutionFeedback();
 
             // Legacy fallback field, harmless to also set for the no-tracks edge case.
             jumpToCommandIndex = int.MaxValue;
 
             //force idle here so other commands that rely on block not executing are informed this frame rather than next
-            ReturnToIdle();
+            if (executionState == ExecutionState.Executing)
+            {
+                ReturnToIdle();
+            }
+        }
+
+        public virtual bool TryGetCommandExecutionStatus(
+            Command command,
+            out CompositeExecutionStatus status)
+        {
+            status = default;
+            return command != null &&
+                   compositeRunner != null &&
+                   compositeTaskIndexes.TryGetValue(command, out int taskIndex) &&
+                   compositeRunner.TryGetTaskStatus(taskIndex, out status);
+        }
+
+        public virtual void ResetExecutionFeedback()
+        {
+            compositeRunner?.ResetTaskStatuses();
+            if (tracks == null)
+            {
+                return;
+            }
+
+            foreach (CommandTrack track in tracks)
+            {
+                if (track == null)
+                {
+                    continue;
+                }
+
+                foreach (Command command in track.Commands)
+                {
+                    command?.ResetExecutionFeedback();
+                }
+            }
         }
 
         /// <summary>
@@ -614,7 +885,7 @@ namespace Scaffold
         /// </summary>
         public virtual List<Block> GetConnectedBlocks()
         {
-            var connectedBlocks = new List<Block>();
+            List<Block> connectedBlocks = new List<Block>();
             GetConnectedBlocks(ref connectedBlocks);
             return connectedBlocks;
         }
@@ -626,11 +897,11 @@ namespace Scaffold
                 return;
             }
 
-            foreach (var track in tracks)
+            foreach (CommandTrack track in tracks)
             {
                 for (int i = 0; i < track.Commands.Count; i++)
                 {
-                    var command = track.Commands[i];
+                    Command command = track.Commands[i];
                     if (command != null)
                     {
                         command.GetConnectedBlocks(ref connectedBlocks);
@@ -645,25 +916,25 @@ namespace Scaffold
         /// <returns>The previous active command type.</returns>
         public virtual System.Type GetPreviousActiveCommandType()
         {
-            var command = GetPreviousActiveCommand();
+            Command command = GetPreviousActiveCommand();
             return command != null ? command.GetType() : null;
         }
 
         public virtual int GetPreviousActiveCommandIndent()
         {
-            var command = GetPreviousActiveCommand();
+            Command command = GetPreviousActiveCommand();
             return command != null ? command.IndentLevel : -1;
         }
 
         public virtual Command GetPreviousActiveCommand()
         {
-            var track = (tracks != null && tracks.Count > 0) ? tracks[0] : null;
+            CommandTrack track = (tracks != null && tracks.Count > 0) ? tracks[0] : null;
             if (track != null)
             {
                 return track.GetPreviousActiveCommand();
             }
 
-            var index = PreviousActiveCommandIndex;
+            int index = PreviousActiveCommandIndex;
             if (index >= 0 && index < CommandList.Count)
             {
                 return CommandList[index];
@@ -682,12 +953,12 @@ namespace Scaffold
                 return;
             }
 
-            foreach (var track in tracks)
+            foreach (CommandTrack track in tracks)
             {
                 int indentLevel = 0;
                 for (int i = 0; i < track.Commands.Count; i++)
                 {
-                    var command = track.Commands[i];
+                    Command command = track.Commands[i];
                     if (command == null)
                     {
                         continue;
@@ -719,7 +990,7 @@ namespace Scaffold
 
             for (int i = 0; i < CommandList.Count; i++)
             {
-                var command = CommandList[i];
+                Command command = CommandList[i];
                 if (command.GetType().Name == "LabelAction")
                 {
                     // TODO: ActionBase doesn't have Key. Skip for now.

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using GearEngine.Core.Actions;
 using GearEngine.GearEngine.Presentation.UI.Input;
@@ -13,9 +14,23 @@ namespace GearEngine.GearEngine.Editor
     [CustomEditor(typeof(InvokeActionCommand))]
     public sealed class InvokeActionCommandEditor : CommandEditor
     {
+        private const float ReorderHandleWidth = 18f;
+
         private ReorderableList _actionsList;
         private SerializedProperty _actionsProperty;
         private SerializedProperty _actionEnabledProperty;
+        private SerializedProperty _actionIdsProperty;
+        private SerializedProperty _actionUtilitySettingsProperty;
+        private int _lastSynchronizedActionIndex = -1;
+        private static readonly List<ActionClipboardEntry> ActionClipboard =
+            new List<ActionClipboardEntry>();
+
+        private sealed class ActionClipboardEntry : ScriptableObject
+        {
+            [SerializeReference] public IAction action;
+            [SerializeField] public bool isEnabled;
+            [SerializeField] public InvokeActionUtilitySettings utilitySettings;
+        }
 
         public override void OnEnable()
         {
@@ -27,32 +42,93 @@ namespace GearEngine.GearEngine.Editor
 
             _actionsProperty = serializedObject.FindProperty("actions");
             _actionEnabledProperty = serializedObject.FindProperty("actionEnabled");
-            SynchronizeEnabledStates();
+            _actionIdsProperty = serializedObject.FindProperty("actionIds");
+            _actionUtilitySettingsProperty = serializedObject.FindProperty("actionUtilitySettings");
+            SynchronizeActionMetadata();
             CreateActionsList();
         }
 
         public override void DrawCommandGUI()
         {
             serializedObject.Update();
-            SynchronizeEnabledStates();
-            SynchronizeSelectedAction();
-
-            if (RequiresExecutionMethod())
+            SynchronizeActionMetadata();
+            InvokeActionCommand invokeAction = target as InvokeActionCommand;
+            if (ShouldShowActionsList(invokeAction))
             {
-                EditorGUILayout.PropertyField(serializedObject.FindProperty("executionMethod"));
-                EditorGUILayout.Space();
+                DrawExecutionSettings(invokeAction);
+                SynchronizeSelectedAction();
+                _actionsList.DoLayoutList();
             }
-            _actionsList.DoLayoutList();
+            else
+            {
+                DrawStandaloneAction();
+            }
 
             serializedObject.ApplyModifiedProperties();
         }
 
-        protected override string GetCommandDisplayName(Command command, CommandInfoAttribute commandInfo)
+        private void DrawExecutionSettings(InvokeActionCommand invokeAction)
         {
-            var invokeAction = command as InvokeActionCommand;
-            if (invokeAction != null && invokeAction.actions.Count == 1 && invokeAction.actions[0] != null)
+            SerializedProperty executionMethodProperty =
+                serializedObject.FindProperty("executionMethod");
+            SerializedProperty awaitModeProperty = serializedObject.FindProperty("awaitMode");
+            SerializedProperty orderModeProperty = serializedObject.FindProperty("orderMode");
+            SerializedProperty avoidRepeatProperty =
+                serializedObject.FindProperty("avoidRepeatingLastAction");
+
+            CompositeExecutionMethod executionMethod =
+                (CompositeExecutionMethod)executionMethodProperty.enumValueIndex;
+            CompositeAwaitMode awaitMode =
+                (CompositeAwaitMode)awaitModeProperty.enumValueIndex;
+            CompositeOrderMode orderMode =
+                (CompositeOrderMode)orderModeProperty.enumValueIndex;
+            EditorGUILayout.PropertyField(
+                executionMethodProperty,
+                new GUIContent(
+                    "Execution",
+                    CompositeExecutionDescription.GetExecutionTooltip(
+                        executionMethod,
+                        awaitMode,
+                        orderMode)));
+
+            executionMethod = (CompositeExecutionMethod)executionMethodProperty.enumValueIndex;
+            if (CompositeExecutionDescription.SupportsAwait(executionMethod))
             {
-                return InvokeActionEditorUtility.GetDisplayName(invokeAction.actions[0]);
+                awaitMode = (CompositeAwaitMode)awaitModeProperty.enumValueIndex;
+                EditorGUILayout.PropertyField(
+                    awaitModeProperty,
+                    new GUIContent(
+                        "Await",
+                        CompositeExecutionDescription.GetAwaitTooltip(executionMethod, awaitMode)));
+            }
+            else if (CompositeExecutionDescription.SupportsOrder(executionMethod))
+            {
+                orderMode = (CompositeOrderMode)orderModeProperty.enumValueIndex;
+                EditorGUILayout.PropertyField(
+                    orderModeProperty,
+                    new GUIContent(
+                        "Order",
+                        CompositeExecutionDescription.GetOrderTooltip(executionMethod, orderMode)));
+                if (orderMode != CompositeOrderMode.Ordered && invokeAction.actions.Count > 1)
+                {
+                    EditorGUILayout.PropertyField(
+                        avoidRepeatProperty,
+                        new GUIContent(
+                            "Avoid Repeating Last Action",
+                            "Prevents the first Random or Shuffle choice from matching the action that finished the previous execution."));
+                }
+            }
+
+            EditorGUILayout.Space();
+        }
+
+        protected override string GetCommandDisplayName(
+            Command command,
+            CommandInfoAttribute commandInfo)
+        {
+            if (TryGetStandaloneAction(command as InvokeActionCommand, out IAction action))
+            {
+                return InvokeActionEditorUtility.GetDisplayName(action);
             }
 
             return base.GetCommandDisplayName(command, commandInfo);
@@ -62,7 +138,7 @@ namespace GearEngine.GearEngine.Editor
         {
             _actionsList = new ReorderableList(serializedObject, _actionsProperty, true, true, true, true)
             {
-                drawHeaderCallback = rect => EditorGUI.LabelField(rect, "Actions"),
+                drawHeaderCallback = DrawActionsHeader,
                 drawElementCallback = DrawActionElement,
                 elementHeightCallback = GetActionElementHeight,
                 onAddDropdownCallback = ShowAddActionMenu,
@@ -72,34 +148,545 @@ namespace GearEngine.GearEngine.Editor
             };
         }
 
+        private void DrawStandaloneAction()
+        {
+            SerializedProperty actionProperty = _actionsProperty.GetArrayElementAtIndex(0);
+            SerializedProperty property = actionProperty.Copy();
+            SerializedProperty endProperty = property.GetEndProperty();
+            bool enterChildren = true;
+            while (property.NextVisible(enterChildren) &&
+                   !SerializedProperty.EqualContents(property, endProperty))
+            {
+                enterChildren = false;
+                EditorGUILayout.PropertyField(property, true);
+            }
+        }
+
+        private static bool ShouldShowActionsList(InvokeActionCommand invokeAction)
+        {
+            return !TryGetStandaloneAction(invokeAction, out _);
+        }
+
+        private static bool TryGetStandaloneAction(
+            InvokeActionCommand invokeAction,
+            out IAction action)
+        {
+            action = null;
+            if (invokeAction == null ||
+                invokeAction.DisplayAsGroup ||
+                invokeAction.actions == null ||
+                invokeAction.actions.Count != 1)
+            {
+                return false;
+            }
+
+            action = invokeAction.actions[0];
+            return action != null;
+        }
+
         private void DrawActionElement(Rect rect, int index, bool isActive, bool isFocused)
         {
-            var actionProperty = _actionsProperty.GetArrayElementAtIndex(index);
-            var enabledProperty = _actionEnabledProperty.GetArrayElementAtIndex(index);
+            SerializedProperty actionProperty = _actionsProperty.GetArrayElementAtIndex(index);
+            SerializedProperty enabledProperty = _actionEnabledProperty.GetArrayElementAtIndex(index);
             const float ToggleWidth = 20f;
-            var actionRect = new Rect(rect.x, rect.y, rect.width - ToggleWidth, rect.height);
-            var toggleRect = new Rect(actionRect.xMax, rect.y, ToggleWidth, EditorGUIUtility.singleLineHeight);
+            const float WeightWidth = 58f;
+            const float PercentageToggleWidth = 20f;
+            bool showWeight = IsRandomOrder();
+            float controlsWidth = ToggleWidth +
+                                  (showWeight ? WeightWidth + PercentageToggleWidth : 0f);
+            Rect headerRect = InvokeActionEditorUtility.GetActionRowContentRect(
+                rect,
+                ReorderHandleWidth,
+                controlsWidth,
+                EditorGUIUtility.singleLineHeight);
+            Rect weightRect = new Rect(
+                headerRect.xMax,
+                rect.y,
+                WeightWidth,
+                EditorGUIUtility.singleLineHeight);
+            Rect percentageToggleRect = new Rect(
+                weightRect.xMax,
+                rect.y,
+                PercentageToggleWidth,
+                EditorGUIUtility.singleLineHeight);
+            Rect toggleRect = new Rect(
+                showWeight ? percentageToggleRect.xMax : headerRect.xMax,
+                rect.y,
+                ToggleWidth,
+                EditorGUIUtility.singleLineHeight);
+            DrawActionExecutionFeedback(headerRect, index);
             enabledProperty.boolValue = EditorGUI.Toggle(toggleRect, enabledProperty.boolValue);
+            if (showWeight)
+            {
+                DrawWeightControls(weightRect, percentageToggleRect, index);
+            }
+            DrawActionContextMenu(headerRect, index);
             if (actionProperty.managedReferenceValue == null)
             {
-                if (GUI.Button(actionRect, "Select Action", EditorStyles.popup))
+                Rect issueRect = new Rect(
+                    headerRect.xMax - EditorGUIUtility.singleLineHeight,
+                    headerRect.y,
+                    EditorGUIUtility.singleLineHeight,
+                    headerRect.height);
+                Rect selectRect = headerRect;
+                selectRect.width -= issueRect.width;
+                if (GUI.Button(selectRect, "Select Action", EditorStyles.popup))
                 {
-                    ShowActionMenu(actionRect, index);
+                    ShowActionMenu(selectRect, index);
                 }
+                InvokeActionEditorUtility.DrawActionIssueBadge(issueRect, null);
                 return;
             }
 
-            var action = actionProperty.managedReferenceValue as IAction;
-            var actionLabel = new GUIContent(InvokeActionEditorUtility.GetDisplayName(action));
-            EditorGUI.PropertyField(actionRect, actionProperty, actionLabel, true);
+            IAction action = actionProperty.managedReferenceValue as IAction;
+            int originalIndentLevel = EditorGUI.indentLevel;
+            EditorGUI.indentLevel = 0;
+            Rect foldoutRect = new Rect(
+                headerRect.x,
+                headerRect.y,
+                20f,
+                headerRect.height);
+            Rect actionNameRect = new Rect(
+                foldoutRect.xMax,
+                headerRect.y,
+                headerRect.width - foldoutRect.width,
+                headerRect.height);
+            Rect issueBadgeRect = new Rect(
+                actionNameRect.xMax - EditorGUIUtility.singleLineHeight,
+                actionNameRect.y,
+                EditorGUIUtility.singleLineHeight,
+                actionNameRect.height);
+            bool hasIssue = InvokeActionEditorUtility.DrawActionIssueBadge(
+                issueBadgeRect,
+                action);
+            if (hasIssue)
+            {
+                actionNameRect.width -= issueBadgeRect.width;
+            }
+            try
+            {
+                actionProperty.isExpanded = EditorGUI.Foldout(
+                    foldoutRect,
+                    actionProperty.isExpanded,
+                    GUIContent.none,
+                    false);
+                GUI.Label(
+                    actionNameRect,
+                    InvokeActionEditorUtility.GetDisplayName(action),
+                    EditorStyles.boldLabel);
+            }
+            finally
+            {
+                EditorGUI.indentLevel = originalIndentLevel;
+            }
+
+            if (!actionProperty.isExpanded)
+            {
+                return;
+            }
+
+            float propertiesHeight = GetActionPropertiesHeight(actionProperty);
+            Rect propertiesRect = new Rect(
+                headerRect.x + 14f,
+                headerRect.yMax + EditorGUIUtility.standardVerticalSpacing,
+                headerRect.width - 14f,
+                propertiesHeight);
+            DrawActionProperties(actionProperty, propertiesRect);
+
+            if (!IsUtilitySelector())
+            {
+                return;
+            }
+
+            SerializedProperty settingsProperty =
+                _actionUtilitySettingsProperty.GetArrayElementAtIndex(index);
+            SerializedProperty utilityProperty = settingsProperty.FindPropertyRelative("utility");
+            SerializedProperty blockProperty = settingsProperty.FindPropertyRelative("blockDuringExecution");
+            float utilityHeight = EditorGUI.GetPropertyHeight(utilityProperty, true);
+            Rect utilityRect = new Rect(
+                rect.x + 14f,
+                propertiesRect.yMax + EditorGUIUtility.standardVerticalSpacing,
+                rect.width - 14f,
+                utilityHeight);
+            EditorGUI.PropertyField(utilityRect, utilityProperty, new GUIContent("Utility"), true);
+
+            Rect blockRect = new Rect(
+                utilityRect.x,
+                utilityRect.yMax + EditorGUIUtility.standardVerticalSpacing,
+                utilityRect.width,
+                EditorGUIUtility.singleLineHeight);
+            EditorGUI.PropertyField(blockRect, blockProperty, new GUIContent("Block During Execution"));
+        }
+
+        private void DrawWeightControls(Rect weightRect, Rect percentageToggleRect, int index)
+        {
+            InvokeActionCommand invokeAction = target as InvokeActionCommand;
+            if (invokeAction == null)
+            {
+                return;
+            }
+
+            float weight = invokeAction.GetActionWeight(index);
+            bool hasOverride = invokeAction.HasActionWeightOverride(index);
+            GUIContent tooltip = new GUIContent(
+                string.Empty,
+                hasOverride
+                    ? "Manual weight override."
+                    : "Automatically balanced weight.");
+            EditorGUI.BeginChangeCheck();
+            float requestedWeight;
+            using (new EditorGUI.DisabledScope(!hasOverride))
+            {
+                requestedWeight = InvokeActionEditorUtility.DelayedPercentageField(
+                    weightRect,
+                    tooltip,
+                    weight);
+            }
+            if (EditorGUI.EndChangeCheck())
+            {
+                SerializedProperty settingsProperty =
+                    _actionUtilitySettingsProperty.GetArrayElementAtIndex(index);
+                settingsProperty.FindPropertyRelative("weight").floatValue =
+                    Mathf.Clamp(requestedWeight, 0f, 100f);
+                settingsProperty.FindPropertyRelative("weightInitialized").boolValue = true;
+                settingsProperty.FindPropertyRelative("weightOverride").boolValue = true;
+            }
+
+            bool requestedOverride = GUI.Toggle(
+                percentageToggleRect,
+                hasOverride,
+                new GUIContent(
+                    "%",
+                    hasOverride
+                        ? "Click to restore automatic balancing."
+                        : "Click to edit a manual percentage."),
+                EditorStyles.miniButton);
+            if (requestedOverride == hasOverride)
+            {
+                return;
+            }
+
+            SerializedProperty actionSettings =
+                _actionUtilitySettingsProperty.GetArrayElementAtIndex(index);
+            if (requestedOverride)
+            {
+                actionSettings.FindPropertyRelative("weight").floatValue = weight;
+                actionSettings.FindPropertyRelative("weightInitialized").boolValue = true;
+            }
+            else
+            {
+                actionSettings.FindPropertyRelative("weight").floatValue = 0f;
+                actionSettings.FindPropertyRelative("weightInitialized").boolValue = false;
+            }
+            actionSettings.FindPropertyRelative("weightOverride").boolValue = requestedOverride;
+        }
+
+        private void DrawActionContextMenu(Rect headerRect, int actionIndex)
+        {
+            if (Event.current.type != EventType.ContextClick ||
+                !headerRect.Contains(Event.current.mousePosition))
+            {
+                return;
+            }
+
+            InvokeActionCommand invokeAction = target as InvokeActionCommand;
+            if (invokeAction == null)
+            {
+                return;
+            }
+
+            List<int> selectedIndices = InvokeActionEditorSelection.GetSelectedIndices(invokeAction);
+            if (!selectedIndices.Contains(actionIndex))
+            {
+                InvokeActionEditorSelection.Select(invokeAction, actionIndex);
+                selectedIndices = InvokeActionEditorSelection.GetSelectedIndices(invokeAction);
+            }
+
+            GenericMenu menu = new GenericMenu();
+            bool hasSelection = selectedIndices.Count > 0;
+            AddActionContextMenuItem(menu, "Cut", hasSelection, () =>
+            {
+                CopySelectedActions(invokeAction);
+                DeleteSelectedActions(invokeAction);
+            });
+            AddActionContextMenuItem(
+                menu,
+                "Copy",
+                hasSelection,
+                () => CopySelectedActions(invokeAction));
+            AddActionContextMenuItem(
+                menu,
+                "Paste",
+                ActionClipboard.Count > 0,
+                () => PasteActionClipboard(invokeAction));
+            AddActionContextMenuItem(
+                menu,
+                "Delete",
+                hasSelection,
+                () => DeleteSelectedActions(invokeAction));
+            menu.AddSeparator(string.Empty);
+            menu.AddItem(
+                new GUIContent("Select All"),
+                false,
+                () =>
+                {
+                    InvokeActionEditorSelection.SelectAll(invokeAction);
+                    _actionsList.index = 0;
+                });
+            menu.AddItem(
+                new GUIContent("Select None"),
+                false,
+                () =>
+                {
+                    InvokeActionEditorSelection.Clear(invokeAction);
+                    _actionsList.index = -1;
+                });
+            menu.ShowAsContext();
+            Event.current.Use();
+        }
+
+        private static void AddActionContextMenuItem(
+            GenericMenu menu,
+            string label,
+            bool enabled,
+            GenericMenu.MenuFunction callback)
+        {
+            if (enabled)
+            {
+                menu.AddItem(new GUIContent(label), false, callback);
+                return;
+            }
+
+            menu.AddDisabledItem(new GUIContent(label));
+        }
+
+        private void CopySelectedActions(InvokeActionCommand invokeAction)
+        {
+            ClearActionClipboard();
+            serializedObject.Update();
+            foreach (int actionIndex in InvokeActionEditorSelection.GetSelectedIndices(invokeAction))
+            {
+                ActionClipboardEntry entry = ScriptableObject.CreateInstance<ActionClipboardEntry>();
+                entry.hideFlags = HideFlags.HideAndDontSave;
+                entry.action = invokeAction.actions[actionIndex];
+                entry.isEnabled = invokeAction.IsActionEnabled(actionIndex);
+                entry.utilitySettings = (InvokeActionUtilitySettings)_actionUtilitySettingsProperty
+                    .GetArrayElementAtIndex(actionIndex)
+                    .boxedValue;
+                ActionClipboard.Add(entry);
+            }
+        }
+
+        private void DrawActionsHeader(Rect rect)
+        {
+            EditorGUI.LabelField(rect, "Actions");
+            InvokeActionCommand invokeAction = target as InvokeActionCommand;
+            if (invokeAction == null ||
+                !invokeAction.IsExecuting ||
+                invokeAction.actions == null ||
+                invokeAction.actions.Count <= 1)
+            {
+                return;
+            }
+
+            string waitingMessage = InvokeActionEditorUtility.GetExecutionWaitingMessage(
+                invokeAction.ExecutionMethod,
+                invokeAction.AwaitMode,
+                invokeAction.OrderMode);
+            InvokeActionEditorUtility.DrawWaitingMessage(rect, waitingMessage);
+            Repaint();
+        }
+
+        private void DrawActionExecutionFeedback(Rect headerRect, int actionIndex)
+        {
+            InvokeActionCommand invokeAction = target as InvokeActionCommand;
+            if (!Application.isPlaying ||
+                invokeAction == null ||
+                invokeAction.actions == null ||
+                invokeAction.actions.Count <= 1)
+            {
+                return;
+            }
+
+            if (invokeAction.TryGetActionExecutionStatus(
+                    actionIndex,
+                    out CompositeExecutionStatus status))
+            {
+                InvokeActionEditorUtility.DrawExecutionResult(headerRect, status);
+                Repaint();
+                return;
+            }
+
+            if (!invokeAction.IsExecuting ||
+                !InvokeActionEditorUtility.IsDeterministicExecution(
+                    invokeAction.ExecutionMethod,
+                    invokeAction.OrderMode) ||
+                !invokeAction.IsActionRunning(actionIndex))
+            {
+                return;
+            }
+
+            if (invokeAction.TryGetActionExecutionProgress(actionIndex, out float progress))
+            {
+                InvokeActionEditorUtility.DrawExecutionProgress(headerRect, progress);
+            }
+            else
+            {
+                InvokeActionEditorUtility.DrawExecutingHighlight(headerRect);
+            }
+
+            Repaint();
+        }
+
+        private void PasteActionClipboard(InvokeActionCommand invokeAction)
+        {
+            if (ActionClipboard.Count == 0)
+            {
+                return;
+            }
+
+            Undo.RecordObject(invokeAction, "Paste Invoke Actions");
+            serializedObject.Update();
+            List<int> selectedIndices = InvokeActionEditorSelection.GetSelectedIndices(invokeAction);
+            int insertIndex = selectedIndices.Count > 0
+                ? selectedIndices[selectedIndices.Count - 1] + 1
+                : _actionsProperty.arraySize;
+            int firstInsertedIndex = insertIndex;
+            foreach (ActionClipboardEntry entry in ActionClipboard)
+            {
+                _actionsProperty.InsertArrayElementAtIndex(insertIndex);
+                _actionEnabledProperty.InsertArrayElementAtIndex(insertIndex);
+                _actionIdsProperty.InsertArrayElementAtIndex(insertIndex);
+                _actionUtilitySettingsProperty.InsertArrayElementAtIndex(insertIndex);
+
+                _actionsProperty.GetArrayElementAtIndex(insertIndex).managedReferenceValue = entry.action;
+                _actionsProperty.GetArrayElementAtIndex(insertIndex).isExpanded = true;
+                _actionEnabledProperty.GetArrayElementAtIndex(insertIndex).boolValue = entry.isEnabled;
+                _actionIdsProperty.GetArrayElementAtIndex(insertIndex).stringValue =
+                    Guid.NewGuid().ToString("N");
+                _actionUtilitySettingsProperty.GetArrayElementAtIndex(insertIndex).boxedValue =
+                    entry.utilitySettings;
+                insertIndex++;
+            }
+
+            serializedObject.FindProperty("displayAsGroup").boolValue = true;
+            serializedObject.ApplyModifiedProperties();
+            EditorUtility.SetDirty(invokeAction);
+            InvokeActionEditorSelection.Select(invokeAction, firstInsertedIndex);
+        }
+
+        private void DeleteSelectedActions(InvokeActionCommand invokeAction)
+        {
+            List<int> selectedIndices = InvokeActionEditorSelection.GetSelectedIndices(invokeAction);
+            if (selectedIndices.Count == 0)
+            {
+                return;
+            }
+
+            Undo.RecordObject(invokeAction, "Delete Invoke Actions");
+            serializedObject.Update();
+            int closestIndex = selectedIndices[0];
+            for (int selectionIndex = selectedIndices.Count - 1; selectionIndex >= 0; selectionIndex--)
+            {
+                int actionIndex = selectedIndices[selectionIndex];
+                _actionsProperty.DeleteArrayElementAtIndex(actionIndex);
+                _actionEnabledProperty.DeleteArrayElementAtIndex(actionIndex);
+                _actionIdsProperty.DeleteArrayElementAtIndex(actionIndex);
+                _actionUtilitySettingsProperty.DeleteArrayElementAtIndex(actionIndex);
+            }
+
+            serializedObject.ApplyModifiedProperties();
+            EditorUtility.SetDirty(invokeAction);
+            SelectClosestAction(closestIndex);
+        }
+
+        private static void ClearActionClipboard()
+        {
+            foreach (ActionClipboardEntry entry in ActionClipboard)
+            {
+                UnityEngine.Object.DestroyImmediate(entry);
+            }
+
+            ActionClipboard.Clear();
+        }
+
+        private static void DrawActionProperties(SerializedProperty actionProperty, Rect propertiesRect)
+        {
+            SerializedProperty property = actionProperty.Copy();
+            float originalLabelWidth = EditorGUIUtility.labelWidth;
+            EditorGUIUtility.labelWidth = Mathf.Min(180f, propertiesRect.width * 0.4f);
+            try
+            {
+                bool enterChildren = true;
+                float propertyY = propertiesRect.y;
+                while (property.NextVisible(enterChildren) &&
+                       IsActionChildProperty(actionProperty, property))
+                {
+                    enterChildren = false;
+                    float propertyHeight = EditorGUI.GetPropertyHeight(property, true);
+                    Rect propertyRect = new Rect(
+                        propertiesRect.x,
+                        propertyY,
+                        propertiesRect.width,
+                        propertyHeight);
+                    EditorGUI.PropertyField(propertyRect, property, true);
+                    propertyY += propertyHeight + EditorGUIUtility.standardVerticalSpacing;
+                }
+            }
+            finally
+            {
+                EditorGUIUtility.labelWidth = originalLabelWidth;
+            }
         }
 
         private float GetActionElementHeight(int index)
         {
-            var actionProperty = _actionsProperty.GetArrayElementAtIndex(index);
-            return actionProperty.managedReferenceValue == null
-                ? EditorGUIUtility.singleLineHeight
-                : EditorGUI.GetPropertyHeight(actionProperty, true) + EditorGUIUtility.standardVerticalSpacing;
+            SerializedProperty actionProperty = _actionsProperty.GetArrayElementAtIndex(index);
+            float height = EditorGUIUtility.singleLineHeight;
+            if (actionProperty.managedReferenceValue != null && actionProperty.isExpanded)
+            {
+                height += EditorGUIUtility.standardVerticalSpacing +
+                          GetActionPropertiesHeight(actionProperty);
+            }
+            if (!IsUtilitySelector() ||
+                actionProperty.managedReferenceValue == null ||
+                !actionProperty.isExpanded)
+            {
+                return height;
+            }
+
+            SerializedProperty settingsProperty =
+                _actionUtilitySettingsProperty.GetArrayElementAtIndex(index);
+            SerializedProperty utilityProperty = settingsProperty.FindPropertyRelative("utility");
+            height += EditorGUI.GetPropertyHeight(utilityProperty, true);
+            height += EditorGUIUtility.singleLineHeight;
+            height += EditorGUIUtility.standardVerticalSpacing * 2f;
+            return height;
+        }
+
+        private static float GetActionPropertiesHeight(SerializedProperty actionProperty)
+        {
+            SerializedProperty property = actionProperty.Copy();
+            bool enterChildren = true;
+            float height = 0f;
+            while (property.NextVisible(enterChildren) &&
+                   IsActionChildProperty(actionProperty, property))
+            {
+                enterChildren = false;
+                height += EditorGUI.GetPropertyHeight(property, true) +
+                          EditorGUIUtility.standardVerticalSpacing;
+            }
+
+            return Mathf.Max(0f, height - EditorGUIUtility.standardVerticalSpacing);
+        }
+
+        private static bool IsActionChildProperty(
+            SerializedProperty actionProperty,
+            SerializedProperty candidateProperty)
+        {
+            return candidateProperty.propertyPath.StartsWith(
+                actionProperty.propertyPath + ".",
+                StringComparison.Ordinal);
         }
 
         private void ShowAddActionMenu(Rect rect, ReorderableList list)
@@ -109,16 +696,17 @@ namespace GearEngine.GearEngine.Editor
 
         private void ShowActionMenu(Rect rect, int insertIndex)
         {
-            var menu = new GenericMenu();
-            var actionTypes = TypeCache.GetTypesDerivedFrom<IAction>()
+            GenericMenu menu = new GenericMenu();
+            List<Type> actionTypes = TypeCache.GetTypesDerivedFrom<IAction>()
                 .Where(type => type.IsClass && type.IsSerializable && !type.IsAbstract && type.GetConstructor(Type.EmptyTypes) != null)
                 .OrderBy(type => type.FullName)
                 .ToList();
 
-            foreach (var actionType in actionTypes)
+            foreach (Type actionType in actionTypes)
             {
-                var capturedType = actionType;
-                menu.AddItem(new GUIContent(capturedType.FullName), false, () => AddAction(capturedType, insertIndex));
+                Type capturedType = actionType;
+                string menuPath = InvokeActionEditorUtility.GetMenuPath(capturedType);
+                menu.AddItem(new GUIContent(menuPath), false, () => AddAction(capturedType, insertIndex));
             }
 
             if (actionTypes.Count == 0)
@@ -136,14 +724,18 @@ namespace GearEngine.GearEngine.Editor
 
             _actionsProperty.InsertArrayElementAtIndex(insertIndex);
             _actionEnabledProperty.InsertArrayElementAtIndex(insertIndex);
+            _actionIdsProperty.InsertArrayElementAtIndex(insertIndex);
+            _actionUtilitySettingsProperty.InsertArrayElementAtIndex(insertIndex);
             _actionEnabledProperty.GetArrayElementAtIndex(insertIndex).boolValue = true;
-            var actionProperty = _actionsProperty.GetArrayElementAtIndex(insertIndex);
+            _actionIdsProperty.GetArrayElementAtIndex(insertIndex).stringValue = Guid.NewGuid().ToString("N");
+            _actionUtilitySettingsProperty.GetArrayElementAtIndex(insertIndex).boxedValue =
+                new InvokeActionUtilitySettings(0f, false);
+            SerializedProperty actionProperty = _actionsProperty.GetArrayElementAtIndex(insertIndex);
             actionProperty.managedReferenceValue = Activator.CreateInstance(actionType);
             actionProperty.isExpanded = true;
-            if (_actionsProperty.arraySize > 1)
-            {
-                serializedObject.FindProperty("displayAsGroup").boolValue = true;
-            }
+            // Actions added through this Inspector belong to an explicit Action Invoker,
+            // even when it currently contains only one action.
+            serializedObject.FindProperty("displayAsGroup").boolValue = true;
 
             serializedObject.ApplyModifiedProperties();
             EditorUtility.SetDirty(target);
@@ -164,6 +756,8 @@ namespace GearEngine.GearEngine.Editor
             }
             _actionsProperty.DeleteArrayElementAtIndex(list.index);
             _actionEnabledProperty.DeleteArrayElementAtIndex(list.index);
+            _actionIdsProperty.DeleteArrayElementAtIndex(list.index);
+            _actionUtilitySettingsProperty.DeleteArrayElementAtIndex(list.index);
             serializedObject.ApplyModifiedProperties();
             EditorUtility.SetDirty(target);
             SelectClosestAction(list.index);
@@ -178,9 +772,20 @@ namespace GearEngine.GearEngine.Editor
             }
 
             bool enabled = _actionEnabledProperty.GetArrayElementAtIndex(oldIndex).boolValue;
+            string actionId = _actionIdsProperty.GetArrayElementAtIndex(oldIndex).stringValue;
+            InvokeActionUtilitySettings utilitySettings =
+                (InvokeActionUtilitySettings)_actionUtilitySettingsProperty
+                    .GetArrayElementAtIndex(oldIndex)
+                    .boxedValue;
             _actionEnabledProperty.DeleteArrayElementAtIndex(oldIndex);
             _actionEnabledProperty.InsertArrayElementAtIndex(newIndex);
             _actionEnabledProperty.GetArrayElementAtIndex(newIndex).boolValue = enabled;
+            _actionIdsProperty.DeleteArrayElementAtIndex(oldIndex);
+            _actionIdsProperty.InsertArrayElementAtIndex(newIndex);
+            _actionIdsProperty.GetArrayElementAtIndex(newIndex).stringValue = actionId;
+            _actionUtilitySettingsProperty.DeleteArrayElementAtIndex(oldIndex);
+            _actionUtilitySettingsProperty.InsertArrayElementAtIndex(newIndex);
+            _actionUtilitySettingsProperty.GetArrayElementAtIndex(newIndex).boxedValue = utilitySettings;
             serializedObject.ApplyModifiedProperties();
             EditorUtility.SetDirty(target);
             InvokeActionEditorSelection.Select(target as InvokeActionCommand, newIndex);
@@ -209,14 +814,21 @@ namespace GearEngine.GearEngine.Editor
             int selectedIndex = InvokeActionEditorSelection.GetSelectedIndex(target as InvokeActionCommand);
             if (selectedIndex < 0 || selectedIndex >= _actionsProperty.arraySize)
             {
+                _lastSynchronizedActionIndex = -1;
                 return;
             }
 
             _actionsList.index = selectedIndex;
+            if (_lastSynchronizedActionIndex == selectedIndex)
+            {
+                return;
+            }
+
             _actionsProperty.GetArrayElementAtIndex(selectedIndex).isExpanded = true;
+            _lastSynchronizedActionIndex = selectedIndex;
         }
 
-        private void SynchronizeEnabledStates()
+        private void SynchronizeActionMetadata()
         {
             while (_actionEnabledProperty.arraySize < _actionsProperty.arraySize)
             {
@@ -228,20 +840,57 @@ namespace GearEngine.GearEngine.Editor
             {
                 _actionEnabledProperty.DeleteArrayElementAtIndex(_actionEnabledProperty.arraySize - 1);
             }
-        }
 
-        private bool RequiresExecutionMethod()
-        {
-            if (_actionsProperty.arraySize > 1)
+            while (_actionIdsProperty.arraySize < _actionsProperty.arraySize)
             {
-                return true;
+                _actionIdsProperty.InsertArrayElementAtIndex(_actionIdsProperty.arraySize);
+                _actionIdsProperty.GetArrayElementAtIndex(_actionIdsProperty.arraySize - 1).stringValue = Guid.NewGuid().ToString("N");
             }
 
-            var invokeAction = target as InvokeActionCommand;
+            while (_actionIdsProperty.arraySize > _actionsProperty.arraySize)
+            {
+                _actionIdsProperty.DeleteArrayElementAtIndex(_actionIdsProperty.arraySize - 1);
+            }
+
+            while (_actionUtilitySettingsProperty.arraySize < _actionsProperty.arraySize)
+            {
+                int newSettingsIndex = _actionUtilitySettingsProperty.arraySize;
+                _actionUtilitySettingsProperty.InsertArrayElementAtIndex(newSettingsIndex);
+                _actionUtilitySettingsProperty.GetArrayElementAtIndex(newSettingsIndex).boxedValue =
+                    new InvokeActionUtilitySettings(0f, false);
+            }
+
+            while (_actionUtilitySettingsProperty.arraySize > _actionsProperty.arraySize)
+            {
+                _actionUtilitySettingsProperty.DeleteArrayElementAtIndex(
+                    _actionUtilitySettingsProperty.arraySize - 1);
+            }
+
+            for (int actionIndex = 0; actionIndex < _actionIdsProperty.arraySize; actionIndex++)
+            {
+                SerializedProperty actionIdProperty = _actionIdsProperty.GetArrayElementAtIndex(actionIndex);
+                if (string.IsNullOrEmpty(actionIdProperty.stringValue))
+                {
+                    actionIdProperty.stringValue = Guid.NewGuid().ToString("N");
+                }
+
+            }
+        }
+
+        private bool IsUtilitySelector()
+        {
+            InvokeActionCommand invokeAction = target as InvokeActionCommand;
             return invokeAction != null &&
-                   invokeAction.actions.Count > 0 &&
-                   invokeAction.actions[0] is ActionBase action &&
-                   action.OpenBlock();
+                   invokeAction.ExecutionMethod == CompositeExecutionMethod.UtilitySelector;
+        }
+
+        private bool IsRandomOrder()
+        {
+            InvokeActionCommand invokeAction = target as InvokeActionCommand;
+            return invokeAction != null &&
+                   CompositeExecutionDescription.SupportsWeight(
+                       invokeAction.ExecutionMethod,
+                       invokeAction.OrderMode);
         }
     }
 }

@@ -237,11 +237,11 @@ namespace Scaffold
                 HideSayDialog();
                 if (block != null)
                 {
-                    var flowchart = block.GetFlowchart();
+                    var blackboard = block.GetBlackboard();
                     gameObject.SetActive(false);
                     // Use a coroutine to call the block on the next frame
-                    // Have to use the Flowchart gameobject as the MenuDialog is now inactive
-                    flowchart.StartCoroutine(CallBlock(block));
+                    // Have to use the Blackboard gameobject as the MenuDialog is now inactive
+                    blackboard.StartCoroutine(CallBlock(block));
                 }
             };
 

@@ -1,5 +1,6 @@
 using System;
 using GearEngine.Core.Actions;
+using GearEngine.GearEngine.Presentation.UI.Input;
 
 using UnityEngine;
 
@@ -12,7 +13,7 @@ namespace Scaffold
     public abstract class Condition : ActionBase
     {
         protected End endCommand;
-     
+
         public override void OnEnter()
         {
             if (ParentBlock == null)
@@ -21,14 +22,14 @@ namespace Scaffold
             }
 
             //if looping we need the end command in order to work
-            if(IsLooping && !EnsureRequiredEnd())
+            if (IsLooping && !EnsureRequiredEnd())
             {
                 Debug.LogError(GetLocationIdentifier() + " is looping but has no matching End command");
                 Continue();
                 return;
             }
 
-            if ( !HasNeededProperties() )
+            if (!HasNeededProperties())
             {
                 Debug.LogError(GetLocationIdentifier() + " cannot run due to missing required properties");
                 Continue();
@@ -55,7 +56,7 @@ namespace Scaffold
         {
             return new Color32(253, 253, 150, 255);
         }
-        
+
         public virtual bool IsLooping { get { return false; } }
 
 
@@ -65,7 +66,7 @@ namespace Scaffold
         /// </summary>
         public virtual void MoveToEnd()
         {
-            if(endCommand == null)
+            if (endCommand == null)
             {
                 endCommand = FindOurEndCommand();
             }
@@ -86,7 +87,7 @@ namespace Scaffold
             }
         }
 
-               
+
         protected End FindOurEndCommand()
         {
             return FindMatchingEndCommand(this);
@@ -100,19 +101,24 @@ namespace Scaffold
         public static End FindMatchingEndCommand(GearEngine.Core.Actions.ActionBase startCommand)
         {
             if (startCommand.ParentBlock == null)
+            {
                 return null;
+            }
 
             int indent = startCommand.IndentLevel;
-            var trackCommands = startCommand.ParentTrack != null ? startCommand.ParentTrack.Commands : startCommand.ParentBlock.CommandList;
+            System.Collections.Generic.List<Command> trackCommands = startCommand.ParentTrack != null
+                ? startCommand.ParentTrack.Commands
+                : startCommand.ParentBlock.CommandList;
             for (int i = startCommand.CommandIndex + 1; i < trackCommands.Count; ++i)
             {
-                var command = trackCommands[i];
+                Command command = trackCommands[i];
 
                 if (command.IndentLevel == indent)
                 {
-                    if (command is End)
+                    End end = FindWrappedAction<End>(command);
+                    if (end != null)
                     {
-                        return command as object as object as End;
+                        return end;
                     }
                 }
                 else if (command.IndentLevel < indent)
@@ -139,7 +145,7 @@ namespace Scaffold
 
                 if (endCommand == null)
                 {
-                    Debug.LogError( GetLocationIdentifier() + "', could not find closing End command and thus cannot loop.");
+                    Debug.LogError(GetLocationIdentifier() + "', could not find closing End command and thus cannot loop.");
                     //StopParentBlock();
                     return false;
                 }
@@ -186,14 +192,16 @@ namespace Scaffold
         protected virtual void OnFalse()
         {
             //looping constructs only care about the end
-            if(IsLooping)
+            if (IsLooping)
             {
                 MoveToEnd();
                 return;
             }
 
             // Find the next Else, ElseIf or End command at the same indent level as this If command
-            var trackCommands = ParentTrack != null ? ParentTrack.Commands : ParentBlock.CommandList;
+            System.Collections.Generic.List<Command> trackCommands = ParentTrack != null
+                ? ParentTrack.Commands
+                : ParentBlock.CommandList;
             for (int i = CommandIndex + 1; i < trackCommands.Count; ++i)
             {
                 Command nextCommand = trackCommands[i];
@@ -205,17 +213,18 @@ namespace Scaffold
 
                 // Find next command at same indent level as this If command
                 // Skip disabled commands, comments & labels
-                if (((GearEngine.Core.Actions.ActionBase)(object)nextCommand) == null || 
-                    nextCommand.GetType() == typeof(Comment) ||
-                    nextCommand.GetType() == typeof(Label) ||
+                ActionBase nextAction = FindWrappedAction<ActionBase>(nextCommand);
+                if (nextAction == null ||
+                    nextAction is Comment ||
+                    nextAction is Label ||
                     nextCommand.IndentLevel != IndentLevel)
                 {
                     continue;
                 }
 
-                System.Type type = nextCommand.GetType();
-                if (type == typeof(Else) ||
-                    type == typeof(End))
+                Else elseAction = FindWrappedAction<Else>(nextCommand);
+                End endAction = FindWrappedAction<End>(nextCommand);
+                if (elseAction != null || endAction != null)
                 {
                     if (i >= trackCommands.Count - 1)
                     {
@@ -231,7 +240,7 @@ namespace Scaffold
                         return;
                     }
                 }
-                else if (type.IsSubclassOf(typeof(Condition)) && (nextCommand as object as object as Condition).IsElseIf)
+                else if (nextAction is Condition condition && condition.IsElseIf)
                 {
                     // Execute the Else If command
                     Continue(i);
@@ -241,6 +250,26 @@ namespace Scaffold
 
             // No matching End command found, so just stop the block
             StopParentBlock();
+        }
+
+        private static TAction FindWrappedAction<TAction>(Command command)
+            where TAction : ActionBase
+        {
+            InvokeActionCommand invokeActionCommand = command as InvokeActionCommand;
+            if (invokeActionCommand == null || invokeActionCommand.actions == null)
+            {
+                return null;
+            }
+
+            foreach (IAction action in invokeActionCommand.actions)
+            {
+                if (action is TAction typedAction)
+                {
+                    return typedAction;
+                }
+            }
+
+            return null;
         }
 
         /// <summary>
@@ -269,9 +298,9 @@ namespace Scaffold
         /// <returns></returns>
         protected virtual bool DoesPassElifSanityCheck()
         {
-            var prevCmd = ParentTrack != null ? ParentTrack.GetPreviousActiveCommand() : ParentBlock.GetPreviousActiveCommand();
+            Command prevCmd = ParentTrack != null ? ParentTrack.GetPreviousActiveCommand() : ParentBlock.GetPreviousActiveCommand();
             System.Type previousCommandType = prevCmd != null ? prevCmd.GetType() : null;
-            var prevCmdIndent = prevCmd != null ? prevCmd.IndentLevel : -1;
+            int prevCmdIndent = prevCmd != null ? prevCmd.IndentLevel : -1;
 
             //handle our matching if or else if in the chain failing and moving to us,
             //  need to make sure it is the same indent level

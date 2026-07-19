@@ -10,7 +10,7 @@ namespace Scaffold.EditorUtils
     /// <summary>
     /// Adds window that generates the require scripts to create a new ScaffoldVariable that wraps an existing type. 
     /// 
-    /// These can then be used in the scaffold flowcharts. It also generates a *Property command to allow Gets and Sets
+    /// These can then be used in the scaffold blackboards. It also generates a *Property command to allow Gets and Sets
     /// on all the elements of that variable that Scaffold Understands. The Quaternion and Matrix4x4 have been auto
     /// generated and then auto formatted in visual studio and set to preview only as examples of it's use. 
     /// 

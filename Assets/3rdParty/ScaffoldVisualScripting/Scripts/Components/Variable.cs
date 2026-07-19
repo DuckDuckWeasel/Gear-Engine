@@ -46,9 +46,9 @@ namespace Scaffold
     /// </summary>
     public enum VariableScope
     {
-        /// <summary> Can only be accessed by commands in the same Flowchart. </summary>
+        /// <summary> Can only be accessed by commands in the same Blackboard. </summary>
         Private,
-        /// <summary> Can be accessed from any command in any Flowchart. </summary>
+        /// <summary> Can be accessed from any command in any Blackboard. </summary>
         Public,
         /// <summary> Creates and/or references a global variable of that name, all variables of this name and scope share the same underlying scaffold variable and exist for the duration of the instance of Unity.</summary>
         Global,
@@ -104,7 +104,7 @@ namespace Scaffold
     /// <summary>
     /// Abstract base class for variables.
     /// </summary>
-    [RequireComponent(typeof(Flowchart))]
+    [RequireComponent(typeof(Blackboard))]
     [System.Serializable]
     public abstract class Variable : MonoBehaviour
     {
@@ -125,7 +125,7 @@ namespace Scaffold
         public virtual string Key { get { return key; } set { key = value; } }
 
         /// <summary>
-        /// Callback to reset the variable if the Flowchart is reset.
+        /// Callback to reset the variable if the Blackboard is reset.
         /// </summary>
         public abstract void OnReset();
 
@@ -160,10 +160,10 @@ namespace Scaffold
         /// </summary>
         public abstract object GetValue();
 
-        //we are required to be on a flowchart so we provide this as a helper
-        public virtual Flowchart GetFlowchart()
+        //we are required to be on a blackboard so we provide this as a helper
+        public virtual Blackboard GetBlackboard()
         {
-            return GetComponent<Flowchart>();
+            return GetComponent<Blackboard>();
         }
         #endregion
     }

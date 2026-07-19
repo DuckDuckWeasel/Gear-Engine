@@ -34,8 +34,8 @@ namespace Scaffold
 
         protected virtual IEnumerator DoConversation()
         {
-            var flowchart = GetFlowchart();
-            string subbedText = flowchart.SubstituteVariables(conversationText.Value);
+            var blackboard = GetBlackboard();
+            string subbedText = blackboard.SubstituteVariables(conversationText.Value);
 
             conversationManager.ClearPrev = clearPrevious;
             conversationManager.WaitForInput = waitForInput;
@@ -80,7 +80,7 @@ namespace Scaffold
         {
             base.RefreshVariableCache();
 
-            var f = GetFlowchart();
+            var f = GetBlackboard();
 
             if(!string.IsNullOrEmpty(conversationText.Value))
                 f.DetermineSubstituteVariables(conversationText, referencedVariables);

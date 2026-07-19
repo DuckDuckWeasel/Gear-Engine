@@ -6,25 +6,25 @@ namespace Scaffold.Tests.Editor
     public class VariableValueReferenceTests
     {
         [Test]
-        public void FloatData_ResolvesTheSelectedFlowchartDirectAndScriptableObjectSources()
+        public void FloatData_ResolvesTheSelectedBlackboardDirectAndScriptableObjectSources()
         {
             var gameObject = new GameObject("VariableValueReferenceTests");
-            gameObject.AddComponent<Flowchart>();
-            var flowchartVariable = gameObject.AddComponent<FloatVariable>();
+            gameObject.AddComponent<Blackboard>();
+            var blackboardVariable = gameObject.AddComponent<FloatVariable>();
             var valueAsset = ScriptableObject.CreateInstance<FloatValueSO>();
 
             try
             {
-                flowchartVariable.Value = 12f;
+                blackboardVariable.Value = 12f;
                 valueAsset.Value = 24f;
 
                 var value = new FloatData(6f)
                 {
-                    floatRef = flowchartVariable,
+                    floatRef = blackboardVariable,
                     floatSO = valueAsset,
                 };
 
-                value.source = VariableDataSource.FlowchartVariable;
+                value.source = VariableDataSource.BlackboardVariable;
                 Assert.That(value.Value, Is.EqualTo(12f));
 
                 value.source = VariableDataSource.Direct;
@@ -41,19 +41,19 @@ namespace Scaffold.Tests.Editor
         }
 
         [Test]
-        public void FloatData_UnspecifiedSource_PreservesTheLegacyFlowchartThenDirectResolutionOrder()
+        public void FloatData_UnspecifiedSource_PreservesTheLegacyBlackboardThenDirectResolutionOrder()
         {
             var gameObject = new GameObject("VariableValueReferenceTests");
-            gameObject.AddComponent<Flowchart>();
-            var flowchartVariable = gameObject.AddComponent<FloatVariable>();
+            gameObject.AddComponent<Blackboard>();
+            var blackboardVariable = gameObject.AddComponent<FloatVariable>();
 
             try
             {
-                flowchartVariable.Value = 9f;
+                blackboardVariable.Value = 9f;
 
                 var referencedValue = new FloatData(4f)
                 {
-                    floatRef = flowchartVariable,
+                    floatRef = blackboardVariable,
                 };
                 var directValue = new FloatData(4f);
 
@@ -70,21 +70,21 @@ namespace Scaffold.Tests.Editor
         public void FloatData_AssignsToTheSelectedSource()
         {
             var gameObject = new GameObject("VariableValueReferenceTests");
-            gameObject.AddComponent<Flowchart>();
-            var flowchartVariable = gameObject.AddComponent<FloatVariable>();
+            gameObject.AddComponent<Blackboard>();
+            var blackboardVariable = gameObject.AddComponent<FloatVariable>();
             var valueAsset = ScriptableObject.CreateInstance<FloatValueSO>();
 
             try
             {
                 var value = new FloatData(2f)
                 {
-                    floatRef = flowchartVariable,
+                    floatRef = blackboardVariable,
                     floatSO = valueAsset,
                 };
 
-                value.source = VariableDataSource.FlowchartVariable;
+                value.source = VariableDataSource.BlackboardVariable;
                 value.Value = 4f;
-                Assert.That(flowchartVariable.Value, Is.EqualTo(4f));
+                Assert.That(blackboardVariable.Value, Is.EqualTo(4f));
 
                 value.source = VariableDataSource.Direct;
                 value.Value = 6f;
@@ -98,6 +98,47 @@ namespace Scaffold.Tests.Editor
             {
                 Object.DestroyImmediate(valueAsset);
                 Object.DestroyImmediate(gameObject);
+            }
+        }
+
+        [Test]
+        public void CharacterData_ResolvesTheSelectedBlackboardDirectAndScriptableObjectSources()
+        {
+            var variableGameObject = new GameObject("CharacterVariable");
+            variableGameObject.AddComponent<Blackboard>();
+            var blackboardVariable = variableGameObject.AddComponent<CharacterVariable>();
+            var directCharacter = new GameObject("DirectCharacter").AddComponent<Character>();
+            var blackboardCharacter = new GameObject("BlackboardCharacter").AddComponent<Character>();
+            var scriptableObjectCharacter = new GameObject("ScriptableObjectCharacter").AddComponent<Character>();
+            var valueAsset = ScriptableObject.CreateInstance<CharacterValueSO>();
+
+            try
+            {
+                blackboardVariable.Value = blackboardCharacter;
+                valueAsset.Value = scriptableObjectCharacter;
+
+                var value = new CharacterData(directCharacter)
+                {
+                    characterRef = blackboardVariable,
+                    characterSO = valueAsset,
+                };
+
+                value.source = VariableDataSource.BlackboardVariable;
+                Assert.That(value.Value, Is.EqualTo(blackboardCharacter));
+
+                value.source = VariableDataSource.Direct;
+                Assert.That(value.Value, Is.EqualTo(directCharacter));
+
+                value.source = VariableDataSource.ScriptableObject;
+                Assert.That(value.Value, Is.EqualTo(scriptableObjectCharacter));
+            }
+            finally
+            {
+                Object.DestroyImmediate(valueAsset);
+                Object.DestroyImmediate(variableGameObject);
+                Object.DestroyImmediate(directCharacter.gameObject);
+                Object.DestroyImmediate(blackboardCharacter.gameObject);
+                Object.DestroyImmediate(scriptableObjectCharacter.gameObject);
             }
         }
     }

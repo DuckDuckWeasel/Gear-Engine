@@ -8,8 +8,8 @@ namespace Scaffold
     /// <summary>
     /// Marks the start of a command block to be executed when the preceding If statement is False.
     /// </summary>
-    [CommandInfo("Flow", 
-                 "Else", 
+    [CommandInfo("Conditional",
+                 "Else",
                  "Marks the start of a command block to be executed when the preceding If statement is False.")]
     [Serializable]
     public class Else : ActionBase
@@ -19,7 +19,7 @@ namespace Scaffold
         public override void OnEnter()
         {
             // Find the next End command at the same indent level as this Else command
-            var matchingEnd = Condition.FindMatchingEndCommand(this);
+            End matchingEnd = Condition.FindMatchingEndCommand(this);
             if (matchingEnd != null)
             {
                 // Execute command immediately after the EndIf command

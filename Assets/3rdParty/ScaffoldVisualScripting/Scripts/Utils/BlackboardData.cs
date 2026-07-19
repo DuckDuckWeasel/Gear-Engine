@@ -73,12 +73,12 @@ namespace Scaffold
     }
 
     /// <summary>
-    /// Serializable container for encoding the state of a Flowchart's variables.
+    /// Serializable container for encoding the state of a Blackboard's variables.
     /// </summary>
     [System.Serializable]
-    public class FlowchartData
+    public class BlackboardData
     {
-        [SerializeField] protected string flowchartName;
+        [SerializeField] protected string blackboardName;
         [SerializeField] protected List<StringVar> stringVars = new List<StringVar>();
         [SerializeField] protected List<IntVar> intVars = new List<IntVar>();
         [SerializeField] protected List<FloatVar> floatVars = new List<FloatVar>();
@@ -87,9 +87,9 @@ namespace Scaffold
         #region Public methods
 
         /// <summary>
-        /// Gets or sets the name of the encoded Flowchart.
+        /// Gets or sets the name of the encoded Blackboard.
         /// </summary>
-        public string FlowchartName { get { return flowchartName; } set { flowchartName = value; } }
+        public string BlackboardName { get { return blackboardName; } set { blackboardName = value; } }
 
         /// <summary>
         /// Gets or sets the list of encoded string variables.
@@ -112,17 +112,17 @@ namespace Scaffold
         public List<BoolVar> BoolVars { get { return boolVars; } set { boolVars = value; } }
 
         /// <summary>
-        /// Encodes the data in a Flowchart into a structure that can be stored by the save system.
+        /// Encodes the data in a Blackboard into a structure that can be stored by the save system.
         /// </summary>
-        public static FlowchartData Encode(Flowchart flowchart)
+        public static BlackboardData Encode(Blackboard blackboard)
         {
-            var flowchartData = new FlowchartData();
+            var blackboardData = new BlackboardData();
 
-            flowchartData.FlowchartName = flowchart.name;
+            blackboardData.BlackboardName = blackboard.name;
 
-            for (int i = 0; i < flowchart.Variables.Count; i++) 
+            for (int i = 0; i < blackboard.Variables.Count; i++) 
             {
-                var v = flowchart.Variables[i];
+                var v = blackboard.Variables[i];
 
                 // Save string
                 var stringVariable = v as StringVariable;
@@ -131,7 +131,7 @@ namespace Scaffold
                     var d = new StringVar();
                     d.Key = stringVariable.Key;
                     d.Value = stringVariable.Value;
-                    flowchartData.StringVars.Add(d);
+                    blackboardData.StringVars.Add(d);
                 }
 
                 // Save int
@@ -141,7 +141,7 @@ namespace Scaffold
                     var d = new IntVar();
                     d.Key = intVariable.Key;
                     d.Value = intVariable.Value;
-                    flowchartData.IntVars.Add(d);
+                    blackboardData.IntVars.Add(d);
                 }
 
                 // Save float
@@ -151,7 +151,7 @@ namespace Scaffold
                     var d = new FloatVar();
                     d.Key = floatVariable.Key;
                     d.Value = floatVariable.Value;
-                    flowchartData.FloatVars.Add(d);
+                    blackboardData.FloatVars.Add(d);
                 }
 
                 // Save bool
@@ -161,51 +161,51 @@ namespace Scaffold
                     var d = new BoolVar();
                     d.Key = boolVariable.Key;
                     d.Value = boolVariable.Value;
-                    flowchartData.BoolVars.Add(d);
+                    blackboardData.BoolVars.Add(d);
                 }
             }
 
-            return flowchartData;
+            return blackboardData;
         }
 
         /// <summary>
-        /// Decodes a FlowchartData object and uses it to restore the state of a Flowchart in the scene.
+        /// Decodes a BlackboardData object and uses it to restore the state of a Blackboard in the scene.
         /// </summary>
-        public static void Decode(FlowchartData flowchartData)
+        public static void Decode(BlackboardData blackboardData)
         {
-            var go = GameObject.Find(flowchartData.FlowchartName);
+            var go = GameObject.Find(blackboardData.BlackboardName);
             if (go == null)
             {
-                Debug.LogError("Failed to find flowchart object specified in save data");
+                Debug.LogError("Failed to find blackboard object specified in save data");
                 return;
             }
 
-            var flowchart = go.GetComponent<Flowchart>();
-            if (flowchart == null)
+            var blackboard = go.GetComponent<Blackboard>();
+            if (blackboard == null)
             {
-                Debug.LogError("Failed to find flowchart object specified in save data");
+                Debug.LogError("Failed to find blackboard object specified in save data");
                 return;
             }
 
-            for (int i = 0; i < flowchartData.BoolVars.Count; i++)
+            for (int i = 0; i < blackboardData.BoolVars.Count; i++)
             {
-                var boolVar = flowchartData.BoolVars[i];
-                flowchart.SetBooleanVariable(boolVar.Key, boolVar.Value);
+                var boolVar = blackboardData.BoolVars[i];
+                blackboard.SetBooleanVariable(boolVar.Key, boolVar.Value);
             }
-            for (int i = 0; i < flowchartData.IntVars.Count; i++)
+            for (int i = 0; i < blackboardData.IntVars.Count; i++)
             {
-                var intVar = flowchartData.IntVars[i];
-                flowchart.SetIntegerVariable(intVar.Key, intVar.Value);
+                var intVar = blackboardData.IntVars[i];
+                blackboard.SetIntegerVariable(intVar.Key, intVar.Value);
             }
-            for (int i = 0; i < flowchartData.FloatVars.Count; i++)
+            for (int i = 0; i < blackboardData.FloatVars.Count; i++)
             {
-                var floatVar = flowchartData.FloatVars[i];
-                flowchart.SetFloatVariable(floatVar.Key, floatVar.Value);
+                var floatVar = blackboardData.FloatVars[i];
+                blackboard.SetFloatVariable(floatVar.Key, floatVar.Value);
             }
-            for (int i = 0; i < flowchartData.StringVars.Count; i++)
+            for (int i = 0; i < blackboardData.StringVars.Count; i++)
             {
-                var stringVar = flowchartData.StringVars[i];
-                flowchart.SetStringVariable(stringVar.Key, stringVar.Value);
+                var stringVar = blackboardData.StringVars[i];
+                blackboard.SetStringVariable(stringVar.Key, stringVar.Value);
             }
         }
 

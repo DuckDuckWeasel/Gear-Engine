@@ -6,11 +6,11 @@ using UnityEngine;
 namespace Scaffold
 {
     /// <summary>
-    /// Resets the state of all commands and variables in the Flowchart.
+    /// Resets the state of all commands and variables in the Blackboard.
     /// </summary>
     [CommandInfo("Variable", 
                  "Reset", 
-                 "Resets the state of all commands and variables in the Flowchart.")]
+                 "Resets the state of all commands and variables in the Blackboard.")]
     [Serializable]
     public class Reset : ActionBase
     {   
@@ -24,7 +24,7 @@ namespace Scaffold
 
         public override void OnEnter()
         {
-            GetFlowchart().Reset(resetCommands, resetVariables);
+            GetBlackboard().Reset(resetCommands, resetVariables);
             Continue();
         }
 

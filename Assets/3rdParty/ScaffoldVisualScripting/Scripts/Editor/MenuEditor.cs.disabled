@@ -30,8 +30,8 @@ namespace Fungus.EditorUtils
         
         public override void DrawCommandGUI()
         {
-            var flowchart = FlowchartWindow.GetFlowchart();
-            if (flowchart == null)
+            var blackboard = BlackboardWindow.GetBlackboard();
+            if (blackboard == null)
             {
                 return;
             }
@@ -46,16 +46,16 @@ namespace Fungus.EditorUtils
             BlockEditor.BlockField(targetBlockProp,
                                    new GUIContent("Target Block", "Block to call when option is selected"), 
                                    new GUIContent("<None>"), 
-                                   flowchart);
+                                   blackboard);
             const int popupWidth = 17;
             if(targetBlockProp.objectReferenceValue == null && GUILayout.Button("+",GUILayout.MaxWidth(popupWidth)))
             {
-                var fw = EditorWindow.GetWindow<FlowchartWindow>();
+                var fw = EditorWindow.GetWindow<BlackboardWindow>();
                 var t = (Menu)target;
-                var activeFlowchart = t.GetFlowchart();
-                var newBlock = fw.CreateBlockSuppressSelect(activeFlowchart, t.ParentBlock._NodeRect.position - Vector2.down * 60);
+                var activeBlackboard = t.GetBlackboard();
+                var newBlock = fw.CreateBlockSuppressSelect(activeBlackboard, t.ParentBlock._NodeRect.position - Vector2.down * 60);
                 targetBlockProp.objectReferenceValue = newBlock;
-                activeFlowchart.SelectedBlock = t.ParentBlock;
+                activeBlackboard.SelectedBlock = t.ParentBlock;
             }
             EditorGUILayout.EndHorizontal();
 

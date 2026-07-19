@@ -314,30 +314,30 @@ function M.clearmenu()
 end
 
 ------------
--- Flowchart
+-- Blackboard
 ------------
 
--- Returns the specified Variable in a Flowchart.
+-- Returns the specified Variable in a Blackboard.
 -- To access the value of the variable, use its .value property. e.g.
---  v = getvar(flowchart, "FloatVar") 
+--  v = getvar(blackboard, "FloatVar") 
 --  v.value = 10    -- Sets the value of the variable to 10
 --  f = v.value     -- f now contains 10
--- flowchart: The Scaffold Flowchart containing the Block to run.
+-- blackboard: The Scaffold Blackboard containing the Block to run.
 -- varname: The name of the Variable to get.
-function M.getvar(flowchart, varname)
-    assert(flowchart, "flowchart must not be nil")
-    return flowchart.GetVariable(varname)
+function M.getvar(blackboard, varname)
+    assert(blackboard, "blackboard must not be nil")
+    return blackboard.GetVariable(varname)
 end
 
--- Runs the specified Block in a Flowchart
--- flowchart: The Scaffold Flowchart containing the Block to run.
+-- Runs the specified Block in a Blackboard
+-- blackboard: The Scaffold Blackboard containing the Block to run.
 -- blockname: The name of the Block to run.
 -- commandindex: Index of the command to start execution at
 -- nowait: If false, will yield until the Block finishes execution. If true will continue immediately.
-function M.runblock(flowchart, blockname, commandindex, nowait)
-    assert(flowchart, "flowchart must not be nil")
+function M.runblock(blackboard, blockname, commandindex, nowait)
+    assert(blackboard, "blackboard must not be nil")
     assert(blockname, "blockname must not be nil")
-    local block = flowchart.FindBlock(blockname)
+    local block = blackboard.FindBlock(blockname)
     if (not block) then
         error("Block " .. blockname .. " not found")
         return

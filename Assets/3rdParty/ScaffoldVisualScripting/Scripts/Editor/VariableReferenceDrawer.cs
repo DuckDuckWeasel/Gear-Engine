@@ -11,7 +11,7 @@ namespace Scaffold.EditorUtils
     [CustomPropertyDrawer(typeof(Scaffold.VariableReference))]
     public class VariableReferenceDrawer : PropertyDrawer
     {
-        public Scaffold.Flowchart lastFlowchart;
+        public Scaffold.Blackboard lastBlackboard;
 
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
@@ -23,17 +23,17 @@ namespace Scaffold.EditorUtils
 
             Scaffold.Variable v = variable.objectReferenceValue as Scaffold.Variable;
 
-            if (variable.objectReferenceValue != null && lastFlowchart == null)
+            if (variable.objectReferenceValue != null && lastBlackboard == null)
             {
                 if (v != null)
                 {
-                    lastFlowchart = v.GetComponent<Flowchart>();
+                    lastBlackboard = v.GetComponent<Blackboard>();
                 }
             }
 
-            lastFlowchart = EditorGUI.ObjectField(position, lastFlowchart, typeof(Scaffold.Flowchart), true) as Scaffold.Flowchart;
+            lastBlackboard = EditorGUI.ObjectField(position, lastBlackboard, typeof(Scaffold.Blackboard), true) as Scaffold.Blackboard;
             position.y += EditorGUIUtility.singleLineHeight;
-            if (lastFlowchart != null)
+            if (lastBlackboard != null)
             {
                 var ourPos = startPos;
                 ourPos.y = position.y;
@@ -41,7 +41,7 @@ namespace Scaffold.EditorUtils
                 EditorGUI.indentLevel++;
                 VariableEditor.VariableField(variable,
                                              prefixLabel,
-                                             lastFlowchart,
+                                             lastBlackboard,
                                              "<None>",
                                              null,
                                              //lable, index, elements
@@ -52,7 +52,7 @@ namespace Scaffold.EditorUtils
             }
             else
             {
-                EditorGUI.PrefixLabel(position, new GUIContent("Flowchart Required"));
+                EditorGUI.PrefixLabel(position, new GUIContent("Blackboard Required"));
             }
 
             variable.serializedObject.ApplyModifiedProperties();

@@ -8,25 +8,25 @@ namespace Scaffold.EditorUtils
         [MenuItem("Tools/Scaffold/Create/Clickable Sprite", false, 150)]
         static void CreateClickableSprite()
         {
-            FlowchartMenuItems.SpawnPrefab("ClickableSprite");
+            BlackboardMenuItems.SpawnPrefab("ClickableSprite");
         }
 
         [MenuItem("Tools/Scaffold/Create/Draggable Sprite", false, 151)]
         static void CreateDraggableSprite()
         {
-            FlowchartMenuItems.SpawnPrefab("DraggableSprite");
+            BlackboardMenuItems.SpawnPrefab("DraggableSprite");
         }
 
         [MenuItem("Tools/Scaffold/Create/Drag Target Sprite", false, 152)]
         static void CreateDragTargetSprite()
         {
-            FlowchartMenuItems.SpawnPrefab("DragTargetSprite");
+            BlackboardMenuItems.SpawnPrefab("DragTargetSprite");
         }
 
         [MenuItem("Tools/Scaffold/Create/Parallax Sprite", false, 152)]
         static void CreateParallaxSprite()
         {
-            FlowchartMenuItems.SpawnPrefab("ParallaxSprite");
+            BlackboardMenuItems.SpawnPrefab("ParallaxSprite");
         }
     }
 }

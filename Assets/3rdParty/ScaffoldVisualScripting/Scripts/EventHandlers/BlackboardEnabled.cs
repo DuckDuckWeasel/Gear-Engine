@@ -4,13 +4,13 @@
 namespace Scaffold
 {
     /// <summary>
-    /// The block will execute when the Flowchart game object is enabled.
+    /// The block will execute when the Blackboard game object is enabled.
     /// </summary>
     [EventHandlerInfo("Scene",
-                      "Flowchart Enabled",
-                      "The block will execute when the Flowchart game object is enabled.")]
+                      "Blackboard Enabled",
+                      "The block will execute when the Blackboard game object is enabled.")]
     [AddComponentMenu("")]
-    public class FlowchartEnabled : EventHandler
+    public class BlackboardEnabled : EventHandler
     {   
         protected virtual void OnEnable()
         {

@@ -1,13 +1,16 @@
 
 using UnityEditor;
 using UnityEngine;
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using UnityEditorInternal;
 
 namespace Scaffold.EditorUtils
 {
-    [CustomEditor (typeof(Command), true)]
-    public class CommandEditor : Editor 
+    [CustomEditor(typeof(Command), true)]
+    public class CommandEditor : Editor
     {
         #region statics
         public static Command selectedCommand;
@@ -24,12 +27,16 @@ namespace Scaffold.EditorUtils
                 if (commandInfoAttr != null)
                 {
                     if (retval == null)
+                    {
                         retval = commandInfoAttr;
+                    }
                     else if (retval.Priority < commandInfoAttr.Priority)
+                    {
                         retval = commandInfoAttr;
+                    }
                 }
             }
-            
+
             return retval;
         }
 
@@ -40,7 +47,9 @@ namespace Scaffold.EditorUtils
         public virtual void OnEnable()
         {
             if (NullTargetCheck()) // Check for an orphaned editor instance
+            {
                 return;
+            }
 
             reorderableLists = new Dictionary<string, ReorderableList>();
         }
@@ -53,8 +62,8 @@ namespace Scaffold.EditorUtils
                 return;
             }
 
-            var flowchart = (Flowchart)t.GetFlowchart();
-            if (flowchart == null)
+            Blackboard blackboard = (Blackboard)t.GetBlackboard();
+            if (blackboard == null)
             {
                 return;
             }
@@ -69,7 +78,7 @@ namespace Scaffold.EditorUtils
 
             if (t.enabled)
             {
-                if (flowchart.ColorCommands)
+                if (blackboard.ColorCommands)
                 {
                     GUI.backgroundColor = t.GetButtonColor();
                 }
@@ -94,6 +103,7 @@ namespace Scaffold.EditorUtils
             GUILayout.Space(10);
 
             GUI.backgroundColor = Color.white;
+            DrawHeaderCompositeWeight(t);
             bool enabled = t.enabled;
             enabled = GUILayout.Toggle(enabled, new GUIContent());
 
@@ -104,13 +114,15 @@ namespace Scaffold.EditorUtils
             }
 
             GUILayout.EndHorizontal();
+            DrawHeaderContextMenu(GUILayoutUtility.GetLastRect(), t, blackboard);
             GUI.backgroundColor = Color.white;
 
             EditorGUILayout.Separator();
 
             EditorGUI.BeginChangeCheck();
+            DrawBlockCompositeSettings(t);
             DrawCommandGUI();
-            if(EditorGUI.EndChangeCheck())
+            if (EditorGUI.EndChangeCheck())
             {
                 SelectedCommandDataStale = true;
             }
@@ -120,7 +132,7 @@ namespace Scaffold.EditorUtils
             if (t.ErrorMessage.Length > 0)
             {
                 GUIStyle style = new GUIStyle(GUI.skin.label);
-                style.normal.textColor = new Color(1,0,0);
+                style.normal.textColor = new Color(1, 0, 0);
                 EditorGUILayout.LabelField(new GUIContent("Error: " + t.ErrorMessage), style);
             }
 
@@ -134,10 +146,346 @@ namespace Scaffold.EditorUtils
             }
         }
 
+        private static void DrawHeaderContextMenu(Rect headerRect, Command command, Blackboard blackboard)
+        {
+            if (Event.current.type != EventType.ContextClick ||
+                !headerRect.Contains(Event.current.mousePosition))
+            {
+                return;
+            }
+
+            Block block = command.ParentBlock;
+            if (block == null)
+            {
+                block = command.GetComponent<Block>();
+            }
+
+            if (block == null)
+            {
+                return;
+            }
+
+            ShowCommandContextMenu(command, blackboard);
+            Event.current.Use();
+        }
+
+        internal static void ShowCommandContextMenu(
+            Command command,
+            Blackboard blackboard,
+            string additionalItemLabel = null,
+            GenericMenu.MenuFunction additionalItemAction = null)
+        {
+            if (command == null || blackboard == null)
+            {
+                return;
+            }
+
+            Block block = command.ParentBlock;
+            if (block == null)
+            {
+                block = command.GetComponent<Block>();
+            }
+
+            if (block == null)
+            {
+                return;
+            }
+
+            SelectCommandForContextMenu(command, blackboard);
+            GenericMenu menu = new GenericMenu();
+            bool hasSelection = blackboard.SelectedCommands.Count > 0;
+            bool hasClipboardCommands = CommandCopyBuffer.GetInstance().HasCommands();
+            AddContextMenuItem(menu, "Cut", hasSelection, () =>
+            {
+                CopySelectedCommands(block, blackboard);
+                DeleteSelectedCommands(block, blackboard);
+            });
+            AddContextMenuItem(menu, "Copy", hasSelection, () => CopySelectedCommands(block, blackboard));
+            AddContextMenuItem(menu, "Duplicate", hasSelection, () =>
+            {
+                CopySelectedCommands(block, blackboard);
+                PasteCommands(block, blackboard);
+            });
+            AddContextMenuItem(menu, "Paste", hasClipboardCommands, () => PasteCommands(block, blackboard));
+            AddContextMenuItem(menu, "Delete", hasSelection, () => DeleteSelectedCommands(block, blackboard));
+
+            if (ShouldShowListSelectionItems(command))
+            {
+                menu.AddSeparator(string.Empty);
+                menu.AddItem(new GUIContent("Select All"), false, () => SelectAllCommands(block, blackboard));
+                menu.AddItem(new GUIContent("Select None"), false, () => blackboard.ClearSelectedCommands());
+            }
+
+            if (!string.IsNullOrEmpty(additionalItemLabel) && additionalItemAction != null)
+            {
+                menu.AddSeparator(string.Empty);
+                menu.AddItem(new GUIContent(additionalItemLabel), false, additionalItemAction);
+            }
+
+            menu.ShowAsContext();
+        }
+
+        private static void AddContextMenuItem(
+            GenericMenu menu,
+            string label,
+            bool enabled,
+            GenericMenu.MenuFunction callback)
+        {
+            if (enabled)
+            {
+                menu.AddItem(new GUIContent(label), false, callback);
+                return;
+            }
+
+            menu.AddDisabledItem(new GUIContent(label));
+        }
+
+        private static bool ShouldShowListSelectionItems(Command command)
+        {
+            PropertyInfo displayAsGroupProperty = command.GetType().GetProperty("DisplayAsGroup");
+            if (displayAsGroupProperty != null &&
+                displayAsGroupProperty.PropertyType == typeof(bool) &&
+                (bool)displayAsGroupProperty.GetValue(command))
+            {
+                return true;
+            }
+
+            FieldInfo actionsField = command.GetType().GetField("actions");
+            return actionsField?.GetValue(command) is System.Collections.ICollection actions &&
+                   actions.Count > 1;
+        }
+
+        private static void SelectCommandForContextMenu(Command command, Blackboard blackboard)
+        {
+            if (blackboard.SelectedCommands.Contains(command))
+            {
+                return;
+            }
+
+            Undo.RecordObject(blackboard, "Select Command");
+            blackboard.ClearSelectedCommands();
+            blackboard.AddSelectedCommand(command);
+        }
+
+        private static void CopySelectedCommands(Block block, Blackboard blackboard)
+        {
+            CommandCopyBuffer commandCopyBuffer = CommandCopyBuffer.GetInstance();
+            commandCopyBuffer.Clear();
+            foreach (Command command in block.CommandList)
+            {
+                if (!blackboard.SelectedCommands.Contains(command))
+                {
+                    continue;
+                }
+
+                Type type = command.GetType();
+                Command copiedCommand = Undo.AddComponent(commandCopyBuffer.gameObject, type) as Command;
+                foreach (FieldInfo field in type.GetFields(
+                             BindingFlags.Instance |
+                             BindingFlags.Public |
+                             BindingFlags.NonPublic |
+                             BindingFlags.FlattenHierarchy))
+                {
+                    bool shouldCopy = field.IsPublic ||
+                                      field.GetCustomAttributes(typeof(SerializeField), true).Length > 0;
+                    if (shouldCopy)
+                    {
+                        field.SetValue(copiedCommand, field.GetValue(command));
+                    }
+                }
+            }
+        }
+
+        private static void PasteCommands(Block block, Blackboard blackboard)
+        {
+            CommandCopyBuffer commandCopyBuffer = CommandCopyBuffer.GetInstance();
+            int pasteIndex = block.CommandList.Count;
+            for (int commandIndex = 0; commandIndex < block.CommandList.Count; commandIndex++)
+            {
+                if (blackboard.SelectedCommands.Contains(block.CommandList[commandIndex]))
+                {
+                    pasteIndex = commandIndex + 1;
+                }
+            }
+
+            foreach (Command copiedCommand in commandCopyBuffer.GetCommands())
+            {
+                if (!ComponentUtility.CopyComponent(copiedCommand) ||
+                    !ComponentUtility.PasteComponentAsNew(blackboard.gameObject))
+                {
+                    continue;
+                }
+
+                Command pastedCommand = blackboard.GetComponents<Command>().LastOrDefault();
+                if (pastedCommand == null)
+                {
+                    continue;
+                }
+
+                pastedCommand.ItemId = blackboard.NextItemId();
+                pastedCommand.ParentBlock = block;
+                pastedCommand.OnCommandAdded(block);
+                block.CommandList.Insert(pasteIndex++, pastedCommand);
+                ComponentUtility.CopyComponent(blackboard.transform);
+            }
+
+            PrefabUtility.RecordPrefabInstancePropertyModifications(block);
+            EditorUtility.SetDirty(block);
+        }
+
+        private static void DeleteSelectedCommands(Block block, Blackboard blackboard)
+        {
+            int lastSelectedIndex = 0;
+            for (int commandIndex = block.CommandList.Count - 1; commandIndex >= 0; commandIndex--)
+            {
+                Command command = block.CommandList[commandIndex];
+                if (!blackboard.SelectedCommands.Contains(command))
+                {
+                    continue;
+                }
+
+                command.OnCommandRemoved(block);
+                Undo.DestroyObjectImmediate(command);
+                Undo.RecordObject(block, "Delete Command");
+                block.CommandList.RemoveAt(commandIndex);
+                lastSelectedIndex = commandIndex;
+            }
+
+            Undo.RecordObject(blackboard, "Delete Command");
+            blackboard.ClearSelectedCommands();
+            if (lastSelectedIndex < block.CommandList.Count)
+            {
+                blackboard.AddSelectedCommand(block.CommandList[lastSelectedIndex]);
+            }
+
+            EditorUtility.SetDirty(block);
+        }
+
+        private static void SelectAllCommands(Block block, Blackboard blackboard)
+        {
+            Undo.RecordObject(blackboard, "Select All Commands");
+            blackboard.ClearSelectedCommands();
+            foreach (Command command in block.CommandList)
+            {
+                blackboard.AddSelectedCommand(command);
+            }
+        }
+
+        private static void DrawHeaderCompositeWeight(Command command)
+        {
+            Block block = command.ParentBlock;
+            if (block == null)
+            {
+                block = command.GetComponent<Block>();
+            }
+
+            if (block == null ||
+                !CompositeExecutionDescription.SupportsWeight(
+                    block.ExecutionMethod,
+                    block.OrderMode) ||
+                command.GetType().Name == "CommentAction" ||
+                command.GetType().Name == "LabelAction")
+            {
+                return;
+            }
+
+            bool hasOverride = command.HasCompositeWeightOverride;
+            float displayedWeight = block.GetCommandWeight(command);
+            EditorGUI.BeginChangeCheck();
+            using (new EditorGUI.DisabledScope(!hasOverride))
+            {
+                displayedWeight = EditorGUILayout.DelayedFloatField(
+                    displayedWeight,
+                    GUILayout.Width(48f));
+            }
+
+            if (EditorGUI.EndChangeCheck())
+            {
+                SetCommandWeightOverride(command, displayedWeight);
+            }
+
+            bool requestedOverride = GUILayout.Toggle(
+                hasOverride,
+                new GUIContent(
+                    "%",
+                    hasOverride
+                        ? "Click to restore automatic balancing."
+                        : "Click to edit a manual percentage."),
+                EditorStyles.miniButton,
+                GUILayout.Width(20f));
+            if (requestedOverride == hasOverride)
+            {
+                return;
+            }
+
+            Undo.RecordObject(command, requestedOverride
+                ? "Enable Command Weight Override"
+                : "Disable Command Weight Override");
+            if (requestedOverride)
+            {
+                command.CompositeWeight = displayedWeight;
+            }
+            else
+            {
+                command.ClearCompositeWeightOverride();
+            }
+
+            PrefabUtility.RecordPrefabInstancePropertyModifications(command);
+            EditorUtility.SetDirty(command);
+            SelectedCommandDataStale = true;
+        }
+
+        private static void SetCommandWeightOverride(Command command, float weight)
+        {
+            Undo.RecordObject(command, "Set Command Weight Override");
+            command.CompositeWeight = Mathf.Clamp(weight, 0f, 100f);
+            PrefabUtility.RecordPrefabInstancePropertyModifications(command);
+            EditorUtility.SetDirty(command);
+            SelectedCommandDataStale = true;
+        }
+
+        private void DrawBlockCompositeSettings(Command command)
+        {
+            Block block = command.ParentBlock;
+            if (block == null)
+            {
+                block = command.GetComponent<Block>();
+            }
+
+            if (block == null)
+            {
+                return;
+            }
+
+            if (block.ExecutionMethod != CompositeExecutionMethod.UtilitySelector)
+            {
+                return;
+            }
+
+            serializedObject.Update();
+            GUIContent utilityLabel = new GUIContent(
+                "Block Utility",
+                CompositeExecutionDescription.GetExecutionTooltip(
+                    block.ExecutionMethod,
+                    block.AwaitMode,
+                    block.OrderMode));
+            GUIContent blockLabel = new GUIContent(
+                "Block During Execution",
+                "Keeps this command selected until it finishes instead of reevaluating utility every frame.");
+            EditorGUILayout.PropertyField(
+                serializedObject.FindProperty("compositeUtility"),
+                utilityLabel);
+            EditorGUILayout.PropertyField(
+                serializedObject.FindProperty("compositeBlockDuringExecution"),
+                blockLabel);
+            serializedObject.ApplyModifiedProperties();
+            EditorGUILayout.Space();
+        }
+
         public virtual void DrawCommandGUI()
         {
             Command t = target as Command;
-            
+
             // Code below was copied from here
             // http://answers.unity3d.com/questions/550829/how-to-add-a-script-field-in-custom-inspector.html
 
@@ -166,9 +514,9 @@ namespace Scaffold.EditorUtils
                 {
                     ReorderableList reordList = null;
                     reorderableLists.TryGetValue(iterator.displayName, out reordList);
-                    if(reordList == null)
+                    if (reordList == null)
                     {
-                        var locSerProp = iterator.Copy();
+                        SerializedProperty locSerProp = iterator.Copy();
                         //create and insert
                         reordList = new ReorderableList(serializedObject, locSerProp, true, false, true, true)
                         {
@@ -184,7 +532,7 @@ namespace Scaffold.EditorUtils
                             {
                                 return EditorGUI.GetPropertyHeight(locSerProp.GetArrayElementAtIndex(index), null, true);// + EditorGUIUtility.singleLineHeight;
                             }
-                    };
+                        };
 
                         reorderableLists.Add(iterator.displayName, reordList);
                     }
@@ -205,8 +553,8 @@ namespace Scaffold.EditorUtils
             return commandInfo.CommandName;
         }
 
-        
-        public static void ObjectField<T>(SerializedProperty property, GUIContent label, GUIContent nullLabel, List<T> objectList) where T : Object 
+
+        public static void ObjectField<T>(SerializedProperty property, GUIContent label, GUIContent nullLabel, List<T> objectList) where T : UnityEngine.Object
         {
             if (property == null)
             {
@@ -228,7 +576,11 @@ namespace Scaffold.EditorUtils
 
             for (int i = 0; i < objectList.Count; ++i)
             {
-                if (objectList[i] == null) continue;
+                if (objectList[i] == null)
+                {
+                    continue;
+                }
+
                 objectNames.Add(new GUIContent(objectList[i].name));
 
                 if (selectedObject == objectList[i])
@@ -238,7 +590,7 @@ namespace Scaffold.EditorUtils
             }
 
             T result;
-            
+
             selectedIndex = EditorGUILayout.Popup(label, selectedIndex, objectNames.ToArray());
 
             if (selectedIndex == -1)
@@ -270,7 +622,7 @@ namespace Scaffold.EditorUtils
             {
                 // The serializedObject accessor create a new SerializedObject if needed.
                 // However, this will fail with a null exception if the target object no longer exists.
-                #pragma warning disable 0219
+#pragma warning disable 0219
                 SerializedObject so = serializedObject;
             }
             catch (System.NullReferenceException)

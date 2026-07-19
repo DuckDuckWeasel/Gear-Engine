@@ -22,7 +22,7 @@ namespace Scaffold.EditorUtils
         protected Texture2D addIcon;
         protected Texture2D duplicateIcon;
         protected Texture2D deleteIcon;
-        
+
 
         private CommandListAdaptor commandListAdaptor;
         private SerializedProperty commandListProperty;
@@ -34,14 +34,16 @@ namespace Scaffold.EditorUtils
         private bool behaviourAndTimingFoldout = true;
         private Vector2 descriptionScrollPosition;
 
-    
+
         protected virtual void OnEnable()
         {
             //this appears to happen when leaving playmode
             try
             {
                 if (serializedObject == null)
+                {
                     return;
+                }
             }
             catch (Exception)
             {
@@ -54,7 +56,7 @@ namespace Scaffold.EditorUtils
             duplicateIcon = ScaffoldEditorResources.Duplicate;
             deleteIcon = ScaffoldEditorResources.Delete;
 
-            var block = target as Block;
+            Block block = target as Block;
 
             // The classic command list used to be backed directly by the "commandList" field,
             // but commands now live in Tracks[0] (see Block.CommandList / Block.Tracks). Ensure
@@ -76,24 +78,29 @@ namespace Scaffold.EditorUtils
         protected void CacheCallerString()
         {
             if (!string.IsNullOrEmpty(callersString))
+            {
                 return;
+            }
 
-            var targetBlock = target as Block;
+            Block targetBlock = target as Block;
 
-            var callers = FindObjectsOfType<MonoBehaviour>()
+            string[] callers = FindObjectsOfType<MonoBehaviour>()
                 .Where(x => x is IBlockCaller)
                 .Select(x => x as IBlockCaller)
                 .Where(x => x.MayCallBlock(targetBlock))
                 .Select(x => x.GetLocationIdentifier()).ToArray();
 
             if (callers != null && callers.Length > 0)
+            {
                 callersString = string.Join("\n", callers);
+            }
             else
+            {
                 callersString = "None";
-
+            }
         }
 
-        public virtual void DrawBlockName(Flowchart flowchart)
+        public virtual void DrawBlockName(Blackboard blackboard)
         {
             serializedObject.Update();
 
@@ -114,9 +121,9 @@ namespace Scaffold.EditorUtils
             blockNameProperty.stringValue = EditorGUILayout.TextField(blockNameProperty.stringValue);
             if (EditorGUI.EndChangeCheck())
             {
-                // Ensure block name is unique for this Flowchart
-                var block = target as Block;
-                string uniqueName = flowchart.GetUniqueBlockKey(blockNameProperty.stringValue, block);
+                // Ensure block name is unique for this Blackboard
+                Block block = target as Block;
+                string uniqueName = blackboard.GetUniqueBlockKey(blockNameProperty.stringValue, block);
                 if (uniqueName != block.BlockName)
                 {
                     blockNameProperty.stringValue = uniqueName;
@@ -174,11 +181,11 @@ namespace Scaffold.EditorUtils
             }
         }
 
-        public virtual void DrawBlockGUI(Flowchart flowchart)
+        public virtual void DrawBlockGUI(Blackboard blackboard)
         {
             serializedObject.Update();
 
-            var block = target as Block;
+            Block block = target as Block;
 
             // Execute any queued cut, copy, paste, etc. operations from the prevous GUI update
             // We need to defer applying these operations until the following update because
@@ -199,13 +206,16 @@ namespace Scaffold.EditorUtils
 
             EditorGUI.BeginChangeCheck();
 
-            if (block == flowchart.SelectedBlock)
+            if (block == blackboard.SelectedBlock)
             {
                 SerializedProperty suppressProp = serializedObject.FindProperty("suppressAllAutoSelections");
                 SerializedProperty executionMethodProp = serializedObject.FindProperty("executionMethod");
                 SerializedProperty awaitModeProp = serializedObject.FindProperty("awaitMode");
+                SerializedProperty orderModeProp = serializedObject.FindProperty("orderMode");
+                SerializedProperty avoidRepeatProp =
+                    serializedObject.FindProperty("avoidRepeatingLastCommand");
 
-                DrawExecutionSummary(executionMethodProp, awaitModeProp);
+                DrawExecutionSummary(executionMethodProp, awaitModeProp, orderModeProp);
                 EditorGUILayout.Space(BlockInspectorStyleSheet.OuterSpacing);
 
                 EditorGUILayout.BeginVertical(BlockInspectorStyleSheet.SectionCard);
@@ -214,6 +224,11 @@ namespace Scaffold.EditorUtils
                 {
                     EditorGUI.indentLevel++;
                     EditorGUILayout.PropertyField(suppressProp, new GUIContent("Suppress All Auto Selections"));
+                    DrawAvoidRepeatLastCommand(
+                        block,
+                        executionMethodProp,
+                        orderModeProp,
+                        avoidRepeatProp);
                     DrawEventHandlerProperties(block);
                     EditorGUI.indentLevel--;
                 }
@@ -234,7 +249,7 @@ namespace Scaffold.EditorUtils
                 block.UpdateIndentLevels();
 
                 // Make sure each command has a reference to its parent block
-                foreach (var command in block.CommandList)
+                foreach (Command command in block.CommandList)
                 {
                     if (command == null) // Will be deleted from the list later on
                     {
@@ -261,7 +276,7 @@ namespace Scaffold.EditorUtils
                     // Copy keyboard shortcut
                     if (e.type == EventType.ValidateCommand && e.commandName == "Copy")
                     {
-                        if (flowchart.SelectedCommands.Count > 0)
+                        if (blackboard.SelectedCommands.Count > 0)
                         {
                             e.Use();
                         }
@@ -276,7 +291,7 @@ namespace Scaffold.EditorUtils
                     // Cut keyboard shortcut
                     if (e.type == EventType.ValidateCommand && e.commandName == "Cut")
                     {
-                        if (flowchart.SelectedCommands.Count > 0)
+                        if (blackboard.SelectedCommands.Count > 0)
                         {
                             e.Use();
                         }
@@ -307,7 +322,7 @@ namespace Scaffold.EditorUtils
                     // Duplicate keyboard shortcut
                     if (e.type == EventType.ValidateCommand && e.commandName == "Duplicate")
                     {
-                        if (flowchart.SelectedCommands.Count > 0)
+                        if (blackboard.SelectedCommands.Count > 0)
                         {
                             e.Use();
                         }
@@ -323,7 +338,7 @@ namespace Scaffold.EditorUtils
                     // Delete keyboard shortcut
                     if (e.type == EventType.ValidateCommand && e.commandName == "Delete")
                     {
-                        if (flowchart.SelectedCommands.Count > 0)
+                        if (blackboard.SelectedCommands.Count > 0)
                         {
                             e.Use();
                         }
@@ -404,7 +419,7 @@ namespace Scaffold.EditorUtils
 
 
             //using false to prevent forcing a longer row than will fit on smallest inspector
-            var pos = EditorGUILayout.GetControlRect(false, 0, EditorStyles.objectField);
+            Rect pos = EditorGUILayout.GetControlRect(false, 0, EditorStyles.objectField);
             if (pos.x != 0)
             {
                 lastCMDpopupPos = pos;
@@ -417,8 +432,14 @@ namespace Scaffold.EditorUtils
                 //this may be less reliable for HDPI scaling but previous method using editor window height is now returning 
                 //  null in 2019.2 suspect ongoing ui changes, so default to screen.height and then attempt to get the better result
                 int h = Screen.height;
-                if (EditorWindow.focusedWindow != null) h = (int)EditorWindow.focusedWindow.position.height;
-                else if (EditorWindow.mouseOverWindow != null) h = (int)EditorWindow.mouseOverWindow.position.height;
+                if (EditorWindow.focusedWindow != null)
+                {
+                    h = (int)EditorWindow.focusedWindow.position.height;
+                }
+                else if (EditorWindow.mouseOverWindow != null)
+                {
+                    h = (int)EditorWindow.mouseOverWindow.position.height;
+                }
 
                 CommandSelectorPopupWindowContent.ShowCommandMenu(lastCMDpopupPos, "", target as Block,
                     (int)(EditorGUIUtility.currentViewWidth),
@@ -442,11 +463,24 @@ namespace Scaffold.EditorUtils
 
         }
 
-        
 
-        private void DrawExecutionSummary(SerializedProperty executionMethodProp, SerializedProperty awaitModeProp)
+
+        private void DrawExecutionSummary(
+            SerializedProperty executionMethodProp,
+            SerializedProperty awaitModeProp,
+            SerializedProperty orderModeProp)
         {
             Block block = target as Block;
+            CompositeExecutionMethod executionMethod =
+                (CompositeExecutionMethod)executionMethodProp.enumValueIndex;
+            CompositeAwaitMode awaitMode =
+                (CompositeAwaitMode)awaitModeProp.enumValueIndex;
+            CompositeOrderMode orderMode =
+                (CompositeOrderMode)orderModeProp.enumValueIndex;
+            string executionTooltip = CompositeExecutionDescription.GetExecutionTooltip(
+                executionMethod,
+                awaitMode,
+                orderMode);
             bool useCompactLayout = BlockInspectorStyleSheet.UsesCompactSummaryLayout(EditorGUIUtility.currentViewWidth);
             float fieldHeight = EditorGUIUtility.singleLineHeight * 2f + BlockInspectorStyleSheet.InnerSpacing;
             float totalHeight = useCompactLayout
@@ -457,17 +491,136 @@ namespace Scaffold.EditorUtils
             Rect summaryRect = GUILayoutUtility.GetRect(GUIContent.none, GUIStyle.none, GUILayout.Height(totalHeight), GUILayout.ExpandWidth(true));
             if (useCompactLayout)
             {
-                DrawEnumSummaryField(GetSummaryFieldRect(summaryRect, 0, 1, fieldHeight), executionMethodProp, "Execution", "Sequence runs Command Tracks one after another. All At Same Time starts every track together.", false);
-                DrawEnumSummaryField(GetSummaryFieldRect(summaryRect, 1, 1, fieldHeight), awaitModeProp, "Await", "Controls how this Block waits for tracks started at the same time.", executionMethodProp.enumValueIndex == (int)BlockExecutionMethod.Sequence);
-                DrawEventSummaryField(GetSummaryFieldRect(summaryRect, 2, 1, fieldHeight), block);
+                DrawEventSummaryField(GetSummaryFieldRect(summaryRect, 0, 1, fieldHeight), block);
+                DrawEnumSummaryField(GetSummaryFieldRect(summaryRect, 1, 1, fieldHeight), executionMethodProp, "Execution Mode", executionTooltip, false);
+                DrawCompositeSecondarySummaryField(GetSummaryFieldRect(summaryRect, 2, 1, fieldHeight), executionMethod, awaitModeProp, orderModeProp);
             }
             else
             {
-                DrawEnumSummaryField(GetSummaryFieldRect(summaryRect, 0, 3, fieldHeight), executionMethodProp, "Execution", "Sequence runs Command Tracks one after another. All At Same Time starts every track together.", false);
-                DrawEnumSummaryField(GetSummaryFieldRect(summaryRect, 1, 3, fieldHeight), awaitModeProp, "Await", "Controls how this Block waits for tracks started at the same time.", executionMethodProp.enumValueIndex == (int)BlockExecutionMethod.Sequence);
-                DrawEventSummaryField(GetSummaryFieldRect(summaryRect, 2, 3, fieldHeight), block);
+                DrawEventSummaryField(GetSummaryFieldRect(summaryRect, 0, 3, fieldHeight), block);
+                DrawEnumSummaryField(GetSummaryFieldRect(summaryRect, 1, 3, fieldHeight), executionMethodProp, "Execution Mode", executionTooltip, false);
+                DrawCompositeSecondarySummaryField(GetSummaryFieldRect(summaryRect, 2, 3, fieldHeight), executionMethod, awaitModeProp, orderModeProp);
             }
             EditorGUILayout.EndVertical();
+        }
+
+        private static void DrawAvoidRepeatLastCommand(
+            Block block,
+            SerializedProperty executionMethodProperty,
+            SerializedProperty orderModeProperty,
+            SerializedProperty avoidRepeatProperty)
+        {
+            CompositeExecutionMethod executionMethod =
+                (CompositeExecutionMethod)executionMethodProperty.enumValueIndex;
+            CompositeOrderMode orderMode =
+                (CompositeOrderMode)orderModeProperty.enumValueIndex;
+            if (!CompositeExecutionDescription.SupportsOrder(executionMethod) ||
+                orderMode == CompositeOrderMode.Ordered ||
+                CountCommands(block) <= 1)
+            {
+                return;
+            }
+
+            GUIContent label = new GUIContent(
+                "Avoid Repeating Last Command",
+                "Prevents the first Random or Shuffle choice from matching the Command that finished the previous execution.");
+            EditorGUILayout.PropertyField(avoidRepeatProperty, label);
+        }
+
+        private static int CountCommands(Block block)
+        {
+            int commandCount = 0;
+            foreach (CommandTrack track in block.Tracks)
+            {
+                foreach (Command command in track.Commands)
+                {
+                    if (command != null)
+                    {
+                        commandCount++;
+                    }
+                }
+            }
+
+            return commandCount;
+        }
+
+        private void DrawCompositeSecondarySummaryField(
+            Rect fieldRect,
+            CompositeExecutionMethod executionMethod,
+            SerializedProperty awaitModeProperty,
+            SerializedProperty orderModeProperty)
+        {
+            if (CompositeExecutionDescription.SupportsAwait(executionMethod))
+            {
+                CompositeAwaitMode awaitMode =
+                    (CompositeAwaitMode)awaitModeProperty.enumValueIndex;
+                string tooltip = CompositeExecutionDescription.GetAwaitTooltip(
+                    executionMethod,
+                    awaitMode);
+                DrawEnumSummaryField(
+                    fieldRect,
+                    awaitModeProperty,
+                    "Parallel Completion",
+                    tooltip,
+                    false);
+                return;
+            }
+
+            if (CompositeExecutionDescription.SupportsOrder(executionMethod))
+            {
+                CompositeOrderMode orderMode =
+                    (CompositeOrderMode)orderModeProperty.enumValueIndex;
+                string tooltip = CompositeExecutionDescription.GetOrderTooltip(
+                    executionMethod,
+                    orderMode);
+                DrawEnumSummaryField(
+                    fieldRect,
+                    orderModeProperty,
+                    GetOrderLabel(executionMethod),
+                    tooltip,
+                    false);
+                return;
+            }
+
+            DrawDisabledSummaryField(
+                fieldRect,
+                "Selection Mode",
+                "Utility-driven",
+                "Utility Selector derives execution from child utility settings.");
+        }
+
+        private static string GetOrderLabel(CompositeExecutionMethod executionMethod)
+        {
+            return executionMethod == CompositeExecutionMethod.Selector
+                ? "Selector Order"
+                : "Sequence Order";
+        }
+
+        private static void DrawDisabledSummaryField(
+            Rect fieldRect,
+            string label,
+            string value,
+            string tooltip)
+        {
+            EditorGUI.LabelField(
+                new Rect(
+                    fieldRect.x,
+                    fieldRect.y,
+                    fieldRect.width,
+                    EditorGUIUtility.singleLineHeight),
+                label,
+                BlockInspectorStyleSheet.SummaryHeader);
+            using (new EditorGUI.DisabledScope(true))
+            {
+                GUI.Button(
+                    new Rect(
+                        fieldRect.x,
+                        fieldRect.yMax - EditorGUIUtility.singleLineHeight,
+                        fieldRect.width,
+                        EditorGUIUtility.singleLineHeight),
+                    new GUIContent(value, tooltip),
+                    BlockInspectorStyleSheet.SummaryPopup);
+            }
         }
 
         private static Rect GetSummaryFieldRect(Rect summaryRect, int index, int columnCount, float fieldHeight)
@@ -500,7 +653,7 @@ namespace Scaffold.EditorUtils
             }
 
             string propertyPath = property.propertyPath;
-            var menu = new GenericMenu();
+            GenericMenu menu = new GenericMenu();
             for (int index = 0; index < property.enumDisplayNames.Length; index++)
             {
                 int selectedIndex = index;
@@ -558,7 +711,7 @@ namespace Scaffold.EditorUtils
                     EditorGUI.BeginChangeCheck();
                     eventHandlerEditor.DrawInspectorGUI();
 
-                    if(EditorGUI.EndChangeCheck())
+                    if (EditorGUI.EndChangeCheck())
                     {
                         SelectedBlockDataStale = true;
                     }
@@ -569,21 +722,21 @@ namespace Scaffold.EditorUtils
         }
 
 
-        public static void BlockField(SerializedProperty property, GUIContent label, GUIContent nullLabel, Flowchart flowchart)
+        public static void BlockField(SerializedProperty property, GUIContent label, GUIContent nullLabel, Blackboard blackboard)
         {
-            if (flowchart == null)
+            if (blackboard == null)
             {
                 return;
             }
 
-            var block = property.objectReferenceValue as Block;
+            Block block = property.objectReferenceValue as Block;
 
             // Build dictionary of child blocks
             List<GUIContent> blockNames = new List<GUIContent>();
 
             int selectedIndex = 0;
             blockNames.Add(nullLabel);
-            var blocks = flowchart.GetComponents<Block>();
+            Block[] blocks = blackboard.GetComponents<Block>();
             blocks = blocks.OrderBy(x => x.BlockName).ToArray();
 
             for (int i = 0; i < blocks.Length; ++i)
@@ -609,9 +762,9 @@ namespace Scaffold.EditorUtils
             property.objectReferenceValue = block;
         }
 
-        public static Block BlockField(Rect position, GUIContent nullLabel, Flowchart flowchart, Block block)
+        public static Block BlockField(Rect position, GUIContent nullLabel, Blackboard blackboard, Block block)
         {
-            if (flowchart == null)
+            if (blackboard == null)
             {
                 return null;
             }
@@ -623,12 +776,12 @@ namespace Scaffold.EditorUtils
 
             int selectedIndex = 0;
             blockNames.Add(nullLabel);
-            Block[] blocks = flowchart.GetComponents<Block>();
+            Block[] blocks = blackboard.GetComponents<Block>();
             blocks = blocks.OrderBy(x => x.BlockName).ToArray();
 
             for (int i = 0; i < blocks.Length; ++i)
             {
-				blockNames.Add(new GUIContent(blocks[i].BlockName));
+                blockNames.Add(new GUIContent(blocks[i].BlockName));
 
                 if (block == blocks[i])
                 {
@@ -651,29 +804,33 @@ namespace Scaffold.EditorUtils
 
         public virtual void ShowContextMenu()
         {
-            var block = target as Block;
-            var flowchart = (Flowchart)block.GetFlowchart();
+            Block block = target as Block;
+            Blackboard blackboard = (Blackboard)block.GetBlackboard();
 
-            if (flowchart == null)
+            if (blackboard == null)
             {
                 return;
             }
 
             bool showCut = false;
             bool showCopy = false;
+            bool showDuplicate = false;
             bool showDelete = false;
             bool showPaste = false;
             bool showPlay = false;
+            Command contextCommand = commandListAdaptor.ContextCommand;
 
-            if (flowchart.SelectedCommands.Count > 0)
+            if (blackboard.SelectedCommands.Count > 0)
             {
                 showCut = true;
                 showCopy = true;
+                showDuplicate = true;
                 showDelete = true;
-                if (flowchart.SelectedCommands.Count == 1 && Application.isPlaying)
-                {
-                    showPlay = true;
-                }
+            }
+
+            if (contextCommand != null && Application.isPlaying)
+            {
+                showPlay = true;
             }
 
 
@@ -705,6 +862,15 @@ namespace Scaffold.EditorUtils
                 commandMenu.AddDisabledItem(new GUIContent("Copy"));
             }
 
+            if (showDuplicate)
+            {
+                commandMenu.AddItem(new GUIContent("Duplicate"), false, Duplicate);
+            }
+            else
+            {
+                commandMenu.AddDisabledItem(new GUIContent("Duplicate"));
+            }
+
             if (showPaste)
             {
                 commandMenu.AddItem(new GUIContent("Paste"), false, Paste);
@@ -725,8 +891,14 @@ namespace Scaffold.EditorUtils
 
             if (showPlay)
             {
-                commandMenu.AddItem(new GUIContent("Play from selected"), false, PlayCommand);
-                commandMenu.AddItem(new GUIContent("Stop all and play"), false, StopAllPlayCommand);
+                commandMenu.AddItem(
+                    new GUIContent("Play From Selected Command"),
+                    false,
+                    () => PlayCommand(contextCommand));
+                commandMenu.AddItem(
+                    new GUIContent("Stop All Blocks & Play From Selected"),
+                    false,
+                    () => StopAllPlayCommand(contextCommand));
             }
 
             commandMenu.AddSeparator("");
@@ -739,20 +911,20 @@ namespace Scaffold.EditorUtils
 
         protected void SelectAll()
         {
-            var block = target as Block;
-            var flowchart = (Flowchart)block.GetFlowchart();
+            Block block = target as Block;
+            Blackboard blackboard = (Blackboard)block.GetBlackboard();
 
-            if (flowchart == null ||
-                flowchart.SelectedBlock == null)
+            if (blackboard == null ||
+                blackboard.SelectedBlock == null)
             {
                 return;
             }
 
-            flowchart.ClearSelectedCommands();
-            Undo.RecordObject(flowchart, "Select All");
-            foreach (Command command in flowchart.SelectedBlock.CommandList)
+            blackboard.ClearSelectedCommands();
+            Undo.RecordObject(blackboard, "Select All");
+            foreach (Command command in blackboard.SelectedBlock.CommandList)
             {
-                flowchart.AddSelectedCommand(command);
+                blackboard.AddSelectedCommand(command);
             }
 
             Repaint();
@@ -760,17 +932,17 @@ namespace Scaffold.EditorUtils
 
         protected void SelectNone()
         {
-            var block = target as Block;
-            var flowchart = (Flowchart)block.GetFlowchart();
+            Block block = target as Block;
+            Blackboard blackboard = (Blackboard)block.GetBlackboard();
 
-            if (flowchart == null ||
-                flowchart.SelectedBlock == null)
+            if (blackboard == null ||
+                blackboard.SelectedBlock == null)
             {
                 return;
             }
 
-            Undo.RecordObject(flowchart, "Select None");
-            flowchart.ClearSelectedCommands();
+            Undo.RecordObject(blackboard, "Select None");
+            blackboard.ClearSelectedCommands();
 
             Repaint();
         }
@@ -781,13 +953,19 @@ namespace Scaffold.EditorUtils
             Delete();
         }
 
+        protected void Duplicate()
+        {
+            Copy();
+            Paste();
+        }
+
         protected void Copy()
         {
-            var block = target as Block;
-            var flowchart = (Flowchart)block.GetFlowchart();
+            Block block = target as Block;
+            Blackboard blackboard = (Blackboard)block.GetBlackboard();
 
-            if (flowchart == null ||
-                flowchart.SelectedBlock == null)
+            if (blackboard == null ||
+                blackboard.SelectedBlock == null)
             {
                 return;
             }
@@ -796,20 +974,20 @@ namespace Scaffold.EditorUtils
             commandCopyBuffer.Clear();
 
             // Scan through all commands in execution order to see if each needs to be copied
-            foreach (Command command in flowchart.SelectedBlock.CommandList)
+            foreach (Command command in blackboard.SelectedBlock.CommandList)
             {
-                if (flowchart.SelectedCommands.Contains(command))
+                if (blackboard.SelectedCommands.Contains(command))
                 {
-                    var type = command.GetType();
+                    Type type = command.GetType();
                     Command newCommand = Undo.AddComponent(commandCopyBuffer.gameObject, type) as Command;
-                    var fields = type.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy);
-                    foreach (var field in fields)
+                    FieldInfo[] fields = type.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy);
+                    foreach (FieldInfo field in fields)
                     {
                         // Copy all public fields
                         bool copy = field.IsPublic;
 
                         // Copy non-public fields that have the SerializeField attribute
-                        var attributes = field.GetCustomAttributes(typeof(SerializeField), true);
+                        object[] attributes = field.GetCustomAttributes(typeof(SerializeField), true);
                         if (attributes.Length > 0)
                         {
                             copy = true;
@@ -826,11 +1004,11 @@ namespace Scaffold.EditorUtils
 
         protected void Paste()
         {
-            var block = target as Block;
-            var flowchart = (Flowchart)block.GetFlowchart();
+            Block block = target as Block;
+            Blackboard blackboard = (Blackboard)block.GetBlackboard();
 
-            if (flowchart == null ||
-                flowchart.SelectedBlock == null)
+            if (blackboard == null ||
+                blackboard.SelectedBlock == null)
             {
                 return;
             }
@@ -838,14 +1016,14 @@ namespace Scaffold.EditorUtils
             CommandCopyBuffer commandCopyBuffer = CommandCopyBuffer.GetInstance();
 
             // Find where to paste commands in block (either at end or after last selected command)
-            int pasteIndex = flowchart.SelectedBlock.CommandList.Count;
-            if (flowchart.SelectedCommands.Count > 0)
+            int pasteIndex = blackboard.SelectedBlock.CommandList.Count;
+            if (blackboard.SelectedCommands.Count > 0)
             {
-                for (int i = 0; i < flowchart.SelectedBlock.CommandList.Count; ++i)
+                for (int i = 0; i < blackboard.SelectedBlock.CommandList.Count; ++i)
                 {
-                    Command command = flowchart.SelectedBlock.CommandList[i];
+                    Command command = blackboard.SelectedBlock.CommandList[i];
 
-                    foreach (Command selectedCommand in flowchart.SelectedCommands)
+                    foreach (Command selectedCommand in blackboard.SelectedCommands)
                     {
                         if (command == selectedCommand)
                         {
@@ -861,19 +1039,19 @@ namespace Scaffold.EditorUtils
                 // because this does a deep copy of the command properties.
                 if (ComponentUtility.CopyComponent(command))
                 {
-                    if (ComponentUtility.PasteComponentAsNew(flowchart.gameObject))
+                    if (ComponentUtility.PasteComponentAsNew(blackboard.gameObject))
                     {
-                        Command[] commands = flowchart.GetComponents<Command>();
+                        Command[] commands = blackboard.GetComponents<Command>();
                         Command pastedCommand = commands.Last<Command>();
                         if (pastedCommand != null)
                         {
-                            pastedCommand.ItemId = flowchart.NextItemId();
-                            flowchart.SelectedBlock.CommandList.Insert(pasteIndex++, pastedCommand);
+                            pastedCommand.ItemId = blackboard.NextItemId();
+                            blackboard.SelectedBlock.CommandList.Insert(pasteIndex++, pastedCommand);
                         }
                     }
 
                     // This stops the user pasting the command manually into another game object.
-                    ComponentUtility.CopyComponent(flowchart.transform);
+                    ComponentUtility.CopyComponent(blackboard.transform);
                 }
             }
 
@@ -885,19 +1063,19 @@ namespace Scaffold.EditorUtils
 
         protected void Delete()
         {
-            var block = target as Block;
-            var flowchart = (Flowchart)block.GetFlowchart();
+            Block block = target as Block;
+            Blackboard blackboard = (Blackboard)block.GetBlackboard();
 
-            if (flowchart == null ||
-                flowchart.SelectedBlock == null)
+            if (blackboard == null ||
+                blackboard.SelectedBlock == null)
             {
                 return;
             }
             int lastSelectedIndex = 0;
-            for (int i = flowchart.SelectedBlock.CommandList.Count - 1; i >= 0; --i)
+            for (int i = blackboard.SelectedBlock.CommandList.Count - 1; i >= 0; --i)
             {
-                Command command = flowchart.SelectedBlock.CommandList[i];
-                foreach (Command selectedCommand in flowchart.SelectedCommands)
+                Command command = blackboard.SelectedBlock.CommandList[i];
+                foreach (Command selectedCommand in blackboard.SelectedCommands)
                 {
                     if (command == selectedCommand)
                     {
@@ -906,8 +1084,8 @@ namespace Scaffold.EditorUtils
                         // Order of destruction is important here for undo to work
                         Undo.DestroyObjectImmediate(command);
 
-                        Undo.RecordObject((Block)flowchart.SelectedBlock, "Delete");
-                        flowchart.SelectedBlock.CommandList.RemoveAt(i);
+                        Undo.RecordObject((Block)blackboard.SelectedBlock, "Delete");
+                        blackboard.SelectedBlock.CommandList.RemoveAt(i);
 
                         lastSelectedIndex = i;
 
@@ -916,69 +1094,56 @@ namespace Scaffold.EditorUtils
                 }
             }
 
-            Undo.RecordObject(flowchart, "Delete");
-            flowchart.ClearSelectedCommands();
+            Undo.RecordObject(blackboard, "Delete");
+            blackboard.ClearSelectedCommands();
 
-            if (lastSelectedIndex < flowchart.SelectedBlock.CommandList.Count)
+            if (lastSelectedIndex < blackboard.SelectedBlock.CommandList.Count)
             {
-                var nextCommand = flowchart.SelectedBlock.CommandList[lastSelectedIndex];
-                block.GetFlowchart().AddSelectedCommand(nextCommand);
+                Command nextCommand = blackboard.SelectedBlock.CommandList[lastSelectedIndex];
+                block.GetBlackboard().AddSelectedCommand(nextCommand);
             }
 
             Repaint();
         }
 
-        protected void PlayCommand()
+        protected void PlayCommand(Command command)
         {
-            var targetBlock = target as Block;
-            var flowchart = (Flowchart)targetBlock.GetFlowchart();
-            Command command = flowchart.SelectedCommands[0];
+            Block targetBlock = target as Block;
+            Blackboard blackboard = (Blackboard)targetBlock.GetBlackboard();
             if (targetBlock.IsExecuting())
             {
-                // The Block is already executing.
-                // Tell the Block to stop, wait a little while so the executing command has a 
-                // chance to stop, and then start execution again from the new command. 
-                targetBlock.Stop();
-                flowchart.StartCoroutine(RunBlock(flowchart, targetBlock, command.CommandIndex, 0.2f));
+                blackboard.RestartBlock(targetBlock, command.CommandIndex);
             }
             else
             {
                 // Block isn't executing yet so can start it now.
-                flowchart.ExecuteBlock(targetBlock, command.CommandIndex);
+                blackboard.ExecuteBlock(targetBlock, command.CommandIndex);
             }
         }
 
-        protected void StopAllPlayCommand()
+        protected void StopAllPlayCommand(Command command)
         {
-            var targetBlock = target as Block;
-            var flowchart = (Flowchart)targetBlock.GetFlowchart();
-            Command command = flowchart.SelectedCommands[0];
+            Block targetBlock = target as Block;
+            Blackboard blackboard = (Blackboard)targetBlock.GetBlackboard();
 
             // Stop all active blocks then run the selected block.
-            flowchart.StopAllBlocks();
-            flowchart.StartCoroutine(RunBlock(flowchart, targetBlock, command.CommandIndex, 0.2f));
-        }
-
-        protected IEnumerator RunBlock(Flowchart flowchart, Block targetBlock, int commandIndex, float delay)
-        {
-            yield return new WaitForSeconds(delay);
-            flowchart.ExecuteBlock(targetBlock, commandIndex);
+            blackboard.StopAllBlocksAndRestartBlock(targetBlock, command.CommandIndex);
         }
 
         protected void SelectPrevious()
         {
-            var block = target as Block;
-            var flowchart = (Flowchart)block.GetFlowchart();
+            Block block = target as Block;
+            Blackboard blackboard = (Blackboard)block.GetBlackboard();
 
-            int firstSelectedIndex = flowchart.SelectedBlock.CommandList.Count;
+            int firstSelectedIndex = blackboard.SelectedBlock.CommandList.Count;
             bool firstSelectedCommandFound = false;
-            if (flowchart.SelectedCommands.Count > 0)
+            if (blackboard.SelectedCommands.Count > 0)
             {
-                for (int i = 0; i < flowchart.SelectedBlock.CommandList.Count; i++)
+                for (int i = 0; i < blackboard.SelectedBlock.CommandList.Count; i++)
                 {
-                    Command commandInBlock = flowchart.SelectedBlock.CommandList[i];
+                    Command commandInBlock = blackboard.SelectedBlock.CommandList[i];
 
-                    foreach (Command selectedCommand in flowchart.SelectedCommands)
+                    foreach (Command selectedCommand in blackboard.SelectedCommands)
                     {
                         if (commandInBlock == selectedCommand)
                         {
@@ -998,8 +1163,8 @@ namespace Scaffold.EditorUtils
             }
             if (firstSelectedIndex > 0)
             {
-                flowchart.ClearSelectedCommands();
-                flowchart.AddSelectedCommand(flowchart.SelectedBlock.CommandList[firstSelectedIndex - 1]);
+                blackboard.ClearSelectedCommands();
+                blackboard.AddSelectedCommand(blackboard.SelectedBlock.CommandList[firstSelectedIndex - 1]);
             }
 
             Repaint();
@@ -1007,17 +1172,17 @@ namespace Scaffold.EditorUtils
 
         protected void SelectNext()
         {
-            var block = target as Block;
-            var flowchart = (Flowchart)block.GetFlowchart();
+            Block block = target as Block;
+            Blackboard blackboard = (Blackboard)block.GetBlackboard();
 
             int lastSelectedIndex = -1;
-            if (flowchart.SelectedCommands.Count > 0)
+            if (blackboard.SelectedCommands.Count > 0)
             {
-                for (int i = 0; i < flowchart.SelectedBlock.CommandList.Count; i++)
+                for (int i = 0; i < blackboard.SelectedBlock.CommandList.Count; i++)
                 {
-                    Command commandInBlock = flowchart.SelectedBlock.CommandList[i];
+                    Command commandInBlock = blackboard.SelectedBlock.CommandList[i];
 
-                    foreach (Command selectedCommand in flowchart.SelectedCommands)
+                    foreach (Command selectedCommand in blackboard.SelectedCommands)
                     {
                         if (commandInBlock == selectedCommand)
                         {
@@ -1026,10 +1191,10 @@ namespace Scaffold.EditorUtils
                     }
                 }
             }
-            if (lastSelectedIndex < flowchart.SelectedBlock.CommandList.Count - 1)
+            if (lastSelectedIndex < blackboard.SelectedBlock.CommandList.Count - 1)
             {
-                flowchart.ClearSelectedCommands();
-                flowchart.AddSelectedCommand(flowchart.SelectedBlock.CommandList[lastSelectedIndex + 1]);
+                blackboard.ClearSelectedCommands();
+                blackboard.AddSelectedCommand(blackboard.SelectedBlock.CommandList[lastSelectedIndex + 1]);
             }
 
             Repaint();

@@ -30,8 +30,8 @@ namespace Scaffold
 
         public override void OnEnter()
         {
-            var flowchart = GetFlowchart();
-            string newText = flowchart.SubstituteVariables(text.Value);
+            var blackboard = GetBlackboard();
+            string newText = blackboard.SubstituteVariables(text.Value);
             
             if (targetTextObject == null)
             {
@@ -79,7 +79,7 @@ namespace Scaffold
         {
             base.RefreshVariableCache();
 
-            var f = GetFlowchart();
+            var f = GetBlackboard();
 
             f.DetermineSubstituteVariables(text, referencedVariables);
         }
@@ -106,7 +106,7 @@ namespace Scaffold
         public virtual string GetStringId()
         {
             // String id for Set Text commands is SETTEXT.<Localization Id>.<Command id>
-            return "SETTEXT." + GetFlowchart().LocalizationId + "." + ItemId;
+            return "SETTEXT." + GetBlackboard().LocalizationId + "." + ItemId;
         }
 
         #endregion
