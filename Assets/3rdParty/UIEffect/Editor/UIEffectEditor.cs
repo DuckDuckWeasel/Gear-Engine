@@ -74,7 +74,7 @@ namespace Coffee.UIEffects.Editors
                     Undo.RecordObjects(targets, "Load UIEffect Preset");
                     Array.ForEach(targets.OfType<UIEffect>().ToArray(), t =>
                     {
-                        t.LoadPreset(p, false);
+                        t.ExecutePreset(p, false);
                     });
                 });
             }
@@ -87,7 +87,7 @@ namespace Coffee.UIEffects.Editors
                     Undo.RecordObjects(targets, "Append UIEffect Preset");
                     Array.ForEach(targets.OfType<UIEffect>().ToArray(), t =>
                     {
-                        t.LoadPreset(p, true);
+                        t.ExecutePreset(p, true);
                     });
                 });
             }

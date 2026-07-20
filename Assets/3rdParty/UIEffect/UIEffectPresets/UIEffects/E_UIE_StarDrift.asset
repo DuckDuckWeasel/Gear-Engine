@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0103bfce48a44307b86d6cba5d06ab31, type: 3}
+  m_Name: E_UIE_StarDrift
+  m_EditorClassIdentifier: 
+  m_DetailFilter: 3
+  m_DetailIntensity: 0.25
+  m_DetailColor: {r: 1, g: 0.84, b: 0.2, a: 1}
+  m_DetailTex: {fileID: 2800000, guid: 0ab909246f72242358deb093241bb627, type: 3}
+  m_DetailTexScale: {x: 8, y: 8}
+  m_DetailTexSpeed: {x: 0.03, y: -0.05}
+  materialPreset: {fileID: 0}
+  disableNativeUiEffect: 1

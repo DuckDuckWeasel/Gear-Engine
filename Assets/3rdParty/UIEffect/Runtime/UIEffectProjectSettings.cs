@@ -94,7 +94,7 @@ namespace Coffee.UIEffects
 #if UNITY_EDITOR
         private const string k_PresetDir = "UIEffectPresets";
         private const string k_PresetSaveDir = "Assets/ProjectSettings/" + k_PresetDir;
-        private const string k_PresetPathPattern = "/" + k_PresetDir + "/(.*).prefab$";
+        private const string k_PresetPathPattern = "/" + k_PresetDir + "/(.*)\\.(prefab|asset)$";
 
         [InitializeOnLoadMethod]
         private static void InitializeOnLoadMethod()

@@ -14,6 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Rarity: 3
   DisplayName: Epic
-  Color: {r: 0.63922, g: 0.20784, b: 0.93333, a: 1}
-  TextColor: {r: 0.85569, g: 0.68314, b: 0.97333, a: 1}
-  CardSprite: {fileID: 2479754136191681894, guid: 9bf051ae8e5254532b9b31b9dfd744eb, type: 3}
+  Color: {r: 1, g: 1, b: 1, a: 1}
+  TextColor: {r: 0.8235294, g: 0.58431375, b: 0.8, a: 1}
+  CardSprite: {fileID: -8534394762085464787, guid: a87bebd15a647184ab12d91d6c23ee7d, type: 3}

@@ -34,7 +34,7 @@ namespace Scaffold
             UIEffectPreset preset = presets[currentIndex];
             if (preset != null && TryResolveEffect(true, out UIEffect effect))
             {
-                effect.LoadPreset(preset, false);
+                effect.ExecutePreset(preset, false);
                 UpdateLabel(preset);
             }
 

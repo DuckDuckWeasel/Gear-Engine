@@ -501,7 +501,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: -8393463893848550460, guid: a83844f25c112764c92f68c0403d549a, type: 3}
-  m_Type: 1
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -744,6 +744,11 @@ MonoBehaviour:
           gameObjectVal: {fileID: 699192720}
         targetLabel: {fileID: 203611766}
         presets:
+        - {fileID: 11400000, guid: 711326f303c5480ba56797ef6c75d4cc, type: 2}
+        - {fileID: 11400000, guid: 950e25dc4a25443fbf7971d2a6af6f25, type: 2}
+        - {fileID: 11400000, guid: 5c3e4224c3f3442c919a7189ee813d50, type: 2}
+        - {fileID: 11400000, guid: f7c32ceb819a49f9915e83c280f34cba, type: 2}
+        - {fileID: 11400000, guid: 6a0e977db0a9483f9666cece41a5cb41, type: 2}
         - {fileID: 11400000, guid: 742d9999180a448bb929b1c680aea688, type: 2}
         - {fileID: 11400000, guid: 488c27f7c07ac48258cceaf1d1fbf64d, type: 2}
         - {fileID: 11400000, guid: 2c560acfce0d649b4afc3f47c3c07341, type: 2}
@@ -761,6 +766,7 @@ MonoBehaviour:
         - {fileID: 11400000, guid: dae842610dad04d3389f160dfb941a1c, type: 2}
         - {fileID: 11400000, guid: daad47c014f14404e907718b3142d965, type: 2}
         - {fileID: 11400000, guid: b3e2f58e3c8944b1daf1e15e51c3e2e9, type: 2}
+        - {fileID: 11400000, guid: aaeec68f78f2429ba10f9d5a48dc864f, type: 2}
         - {fileID: 11400000, guid: 78c970bde9548492b86faad7055ff02a, type: 2}
         - {fileID: 11400000, guid: 6a9b57211ffd64e829875c3501194a19, type: 2}
         - {fileID: 11400000, guid: 36c7d752e23f64f3ab6b34788664f0a7, type: 2}
@@ -777,6 +783,7 @@ MonoBehaviour:
         - {fileID: 11400000, guid: 8b437e48566c6495e9aa99b640fdcd79, type: 2}
         - {fileID: 11400000, guid: 23afd25a08b1e4f9bbb06123c932a6b7, type: 2}
         - {fileID: 11400000, guid: 39034f60e1b974cdab4dca22371bed09, type: 2}
+        - {fileID: 11400000, guid: a38a3f8cde214c4e85f7d2b21b2a4a58, type: 2}
         - {fileID: 11400000, guid: 441b7bedda8c74420971ba876859b1f3, type: 2}
         - {fileID: 11400000, guid: 5cbbb53ab1e0e48f4b94640e047f5d54, type: 2}
         - {fileID: 11400000, guid: c272dc97a936f4d4db231904c0ec3c06, type: 2}
@@ -790,6 +797,9 @@ MonoBehaviour:
         - {fileID: 11400000, guid: 95225f486aac04135949500fd6cedd3c, type: 2}
         - {fileID: 11400000, guid: 07dadf38175fc4859aa4ebaa508181fe, type: 2}
         - {fileID: 11400000, guid: f3f534fa0ee6e4338bfd10c4e58b1fbd, type: 2}
+        - {fileID: 11400000, guid: 70805e2ebba74e0fac79b822364e8e9a, type: 2}
+        - {fileID: 11400000, guid: 9760693e2bbe437eb53ac2ae7a12bb01, type: 2}
+        - {fileID: 11400000, guid: 4cc7febb9a0f4764b59d64002d5cddcb, type: 2}
         - {fileID: 11400000, guid: 10f1b5474b843491885846a83e00ceeb, type: 2}
         - {fileID: 11400000, guid: 4f6aa109f649e47dbb07a0f9e768afb1, type: 2}
         - {fileID: 11400000, guid: fb9dcbe72cb09411fbad66eea6793380, type: 2}
@@ -876,10 +886,8 @@ MonoBehaviour:
     y: 0
     width: 0
     height: 0
-  selectedBlocks:
-  - {fileID: 820933063}
-  selectedCommands:
-  - {fileID: 820933062}
+  selectedBlocks: []
+  selectedCommands: []
   variables: []
   description: 
   stepPause: 0

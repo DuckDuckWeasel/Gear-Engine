@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0103bfce48a44307b86d6cba5d06ab31, type: 3}
+  m_Name: E_UIE_HologramMatrix
+  m_EditorClassIdentifier: 
+  m_DetailFilter: 5
+  m_DetailIntensity: 0.42
+  m_DetailColor: {r: 0.08, g: 0.9, b: 1, a: 1}
+  m_DetailTex: {fileID: 2800000, guid: 2e96fa4dde48f4747bdc38947c7aba92, type: 3}
+  m_DetailTexScale: {x: 35, y: 35}
+  m_DetailTexSpeed: {x: 0, y: -0.12}
+  materialPreset: {fileID: 0}
+  disableNativeUiEffect: 1

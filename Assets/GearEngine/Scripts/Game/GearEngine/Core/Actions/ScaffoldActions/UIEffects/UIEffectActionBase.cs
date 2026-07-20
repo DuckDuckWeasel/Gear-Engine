@@ -2,6 +2,7 @@ using System;
 using Coffee.UIEffects;
 using GearEngine.Core.Actions;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Scaffold
 {
@@ -38,6 +39,18 @@ namespace Scaffold
             }
 
             return effect != null;
+        }
+
+        protected bool TryResolveGraphic(out Graphic graphic)
+        {
+            graphic = null;
+            if (targetEffect != null)
+            {
+                return targetEffect.TryGetComponent(out graphic);
+            }
+
+            GameObject target = targetGameObject.Value;
+            return target != null && target.TryGetComponent(out graphic);
         }
 
         protected string GetTargetDescription()

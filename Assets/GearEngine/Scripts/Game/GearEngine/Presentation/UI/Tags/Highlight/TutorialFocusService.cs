@@ -247,7 +247,7 @@ namespace GearEngine.GearEngine.Presentation.UI.Tags.Highlight
             if (preset.useUIEffect && preset.uiEffectPreset != null)
             {
                 _currentUIEffect = target.gameObject.AddComponent<UIEffect>();
-                _currentUIEffect.LoadPreset(preset.uiEffectPreset, false);
+                _currentUIEffect.ExecutePreset(preset.uiEffectPreset, false);
             }
         }
 

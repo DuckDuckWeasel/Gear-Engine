@@ -1712,6 +1712,22 @@ namespace Coffee.UIEffects
         }
 
         /// <summary>
+        /// Applies a preset, allowing project extensions to provide custom behavior.
+        /// </summary>
+        public void ExecutePreset(UIEffectPreset preset, bool append = false)
+        {
+            if (preset == null) return;
+
+            if (preset is IUIEffectPresetExecutor executor)
+            {
+                executor.Execute(this, append);
+                return;
+            }
+
+            LoadPreset(preset, append);
+        }
+
+        /// <summary>
         /// Load preset settings.
         /// </summary>
         public void LoadPreset(UIEffect src, bool append)
