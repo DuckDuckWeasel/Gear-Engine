@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 473b39d4cc0276742b19394401ca37c5
+guid: 77dd0a84a38f94846be3e702d4062977
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -6069968688241102494
-    second: Card_Legendary_Redstar_0
+      213: 2160096023051070127
+    second: Group 66_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -113,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Card_Legendary_Redstar_0
+      name: Group 66_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 765
-        height: 1170
+        x: 3
+        y: 10
+        width: 83
+        height: 80
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 26135ab53a323cba0800000000000000
-      internalID: -6069968688241102494
+      spriteID: faa61b663e33afd10800000000000000
+      internalID: 2160096023051070127
       vertices: []
       indices: 
       edges: []
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Card_Legendary_Redstar_0: -6069968688241102494
+      Group 66_0: 2160096023051070127
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

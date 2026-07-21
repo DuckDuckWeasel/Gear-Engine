@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: a56f6a9cf9b6ade4cab0514340767bd0
+guid: 7ffee4b05bee9624aa6e907a14a41e58
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -3446260518756543510
-    second: Card_Rare_Redstar_0
+      213: -6491859831333707476
+    second: Background_Resize_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -113,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Card_Rare_Redstar_0
+      name: Background_Resize_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 765
-        height: 1170
+        width: 1080
+        height: 2280
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: ae31018315c6c20d0800000000000000
-      internalID: -3446260518756543510
+      spriteID: c212ab5f0e748e5a0800000000000000
+      internalID: -6491859831333707476
       vertices: []
       indices: 
       edges: []
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Card_Rare_Redstar_0: -3446260518756543510
+      Background_Resize_0: -6491859831333707476
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
