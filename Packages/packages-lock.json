@@ -5,36 +5,21 @@
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "17420978d91ab439746a23459e92b55ab8e6addf"
-    },
-    "com.codewriter.triinspector": {
-      "version": "file:com.codewriter.triinspector",
-      "depth": 0,
-      "source": "embedded",
-      "dependencies": {
-        "com.unity.localization": "1.0.0"
-      }
-    },
-    "com.cysharp.unitask": {
-      "version": "2.5.11",
-      "depth": 0,
-      "source": "registry",
-      "dependencies": {},
-      "url": "https://package.openupm.com"
+      "hash": "37a528ce8ddbb7789e68e61517cdfc489595cda1"
     },
     "com.dbrizov.naughtyattributes": {
       "version": "https://github.com/dbrizov/NaughtyAttributes.git#upm",
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "b11d62b28c5fcbe242988f9f8d451deb925cf23b"
+      "hash": "8a8fa5a9659a6d63f196391c71e06c4286c8acd7"
     },
     "com.github-glitchenzo.nugetforunity": {
       "version": "https://github.com/GlitchEnzo/NuGetForUnity.git?path=/src/NuGetForUnity",
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "acc1c7bc9ea34c33b830e40316fca52553878d29"
+      "hash": "9b5989b98f668c7ef409b3c5a1d5192612703eb5"
     },
     "com.scaffold.addressables": {
       "version": "https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.addressables#main",
@@ -46,7 +31,7 @@
         "com.scaffold.appflow": "0.1.0",
         "com.unity.addressables": "2.9.1"
       },
-      "hash": "62957a9c05414e8701daf323aeb05c9af50bd9e5"
+      "hash": "f79dcd2609c5e6a25026507bb68813e02ee3b902"
     },
     "com.scaffold.ads": {
       "version": "https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.ads#main",
@@ -55,7 +40,7 @@
       "dependencies": {
         "jp.hadashikick.vcontainer": "1.17.0"
       },
-      "hash": "62957a9c05414e8701daf323aeb05c9af50bd9e5"
+      "hash": "e23b17b3e5f2365e0655eda6a042d928c96b46bd"
     },
     "com.scaffold.ads.levelplay": {
       "version": "https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.ads.levelplay#main",
@@ -65,17 +50,16 @@
         "com.scaffold.ads": "0.1.0",
         "com.unity.services.levelplay": "9.3.0"
       },
-      "hash": "62957a9c05414e8701daf323aeb05c9af50bd9e5"
+      "hash": "e23b17b3e5f2365e0655eda6a042d928c96b46bd"
     },
     "com.scaffold.analytics": {
       "version": "https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.analytics#main",
       "depth": 0,
       "source": "git",
       "dependencies": {
-        "jp.hadashikick.vcontainer": "1.17.0",
-        "com.unity.services.analytics": "5.1.0"
+        "jp.hadashikick.vcontainer": "1.17.0"
       },
-      "hash": "62957a9c05414e8701daf323aeb05c9af50bd9e5"
+      "hash": "ae7e3492a17305f0510f8312ec7035f25721e612"
     },
     "com.scaffold.appflow": {
       "version": "https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.appflow#main",
@@ -84,14 +68,14 @@
       "dependencies": {
         "jp.hadashikick.vcontainer": "https://github.com/hadashiA/VContainer.git?path=VContainer/Assets/VContainer#1.17.0"
       },
-      "hash": "62957a9c05414e8701daf323aeb05c9af50bd9e5"
+      "hash": "f79dcd2609c5e6a25026507bb68813e02ee3b902"
     },
     "com.scaffold.autopacker": {
       "version": "https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.autopacker#main",
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "62957a9c05414e8701daf323aeb05c9af50bd9e5"
+      "hash": "d0ff9f487444dfee57e732bcb5e61f77275a00eb"
     },
     "com.scaffold.cloudcode": {
       "version": "https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.cloudcode#main",
@@ -101,33 +85,14 @@
         "com.unity.services.cloudcode": "2.10.2",
         "com.unity.nuget.newtonsoft-json": "3.2.1"
       },
-      "hash": "62957a9c05414e8701daf323aeb05c9af50bd9e5"
+      "hash": "d0ff9f487444dfee57e732bcb5e61f77275a00eb"
     },
-    "com.scaffold.core": {
-      "version": "https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.core#main",
+    "com.scaffold.entities": {
+      "version": "https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.entities#main",
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "b8eee71cba06264333a0f35444e4fdf633b4a0e3"
-    },
-    "com.scaffold.entities": {
-      "version": "file:com.scaffold.entities",
-      "depth": 0,
-      "source": "embedded",
-      "dependencies": {
-        "com.scaffold.records": "0.1.0",
-        "com.scaffold.variables": "0.1.0"
-      }
-    },
-    "com.scaffold.entities.states": {
-      "version": "file:com.scaffold.entities.states",
-      "depth": 0,
-      "source": "embedded",
-      "dependencies": {
-        "com.scaffold.entities": "0.1.0",
-        "com.scaffold.records": "0.1.0",
-        "com.scaffold.states": "0.1.0"
-      }
+      "hash": "d0ff9f487444dfee57e732bcb5e61f77275a00eb"
     },
     "com.scaffold.events": {
       "version": "https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.events#main",
@@ -136,7 +101,7 @@
       "dependencies": {
         "com.scaffold.types": "0.1.0"
       },
-      "hash": "62957a9c05414e8701daf323aeb05c9af50bd9e5"
+      "hash": "d0ff9f487444dfee57e732bcb5e61f77275a00eb"
     },
     "com.scaffold.liveops": {
       "version": "https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.liveops#main",
@@ -146,14 +111,16 @@
         "com.scaffold.cloudcode": "0.1.0",
         "com.scaffold.appflow": "0.1.0"
       },
-      "hash": "62957a9c05414e8701daf323aeb05c9af50bd9e5"
+      "hash": "30472b02c5c306da508dfa89b271ca2cf8461364"
     },
     "com.scaffold.maps": {
       "version": "https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.maps#main",
       "depth": 0,
       "source": "git",
-      "dependencies": {},
-      "hash": "62957a9c05414e8701daf323aeb05c9af50bd9e5"
+      "dependencies": {
+        "com.scaffold.records": "0.1.0"
+      },
+      "hash": "d0ff9f487444dfee57e732bcb5e61f77275a00eb"
     },
     "com.scaffold.model": {
       "version": "https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.model#main",
@@ -162,7 +129,7 @@
       "dependencies": {
         "com.scaffold.mvvm": "0.1.0"
       },
-      "hash": "62957a9c05414e8701daf323aeb05c9af50bd9e5"
+      "hash": "d0ff9f487444dfee57e732bcb5e61f77275a00eb"
     },
     "com.scaffold.mvvm": {
       "version": "https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.mvvm#main",
@@ -172,7 +139,7 @@
         "com.scaffold.maps": "0.1.0",
         "com.scaffold.records": "0.1.0"
       },
-      "hash": "62957a9c05414e8701daf323aeb05c9af50bd9e5"
+      "hash": "d0ff9f487444dfee57e732bcb5e61f77275a00eb"
     },
     "com.scaffold.navigation": {
       "version": "https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.navigation#main",
@@ -186,21 +153,14 @@
         "com.unity.addressables": "2.9.1",
         "com.scaffold.addressables": "0.1.0"
       },
-      "hash": "62957a9c05414e8701daf323aeb05c9af50bd9e5"
-    },
-    "com.scaffold.pooling": {
-      "version": "https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.pooling#main",
-      "depth": 0,
-      "source": "git",
-      "dependencies": {},
-      "hash": "62957a9c05414e8701daf323aeb05c9af50bd9e5"
+      "hash": "f79dcd2609c5e6a25026507bb68813e02ee3b902"
     },
     "com.scaffold.records": {
       "version": "https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.records#main",
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "62957a9c05414e8701daf323aeb05c9af50bd9e5"
+      "hash": "d0ff9f487444dfee57e732bcb5e61f77275a00eb"
     },
     "com.scaffold.sceneflow": {
       "version": "https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.sceneflow#main",
@@ -209,7 +169,7 @@
       "dependencies": {
         "com.unity.addressables": "2.9.1"
       },
-      "hash": "62957a9c05414e8701daf323aeb05c9af50bd9e5"
+      "hash": "d0ff9f487444dfee57e732bcb5e61f77275a00eb"
     },
     "com.scaffold.schemas": {
       "version": "https://github.com/ScaffoldLibrary/Schemas.git",
@@ -218,24 +178,12 @@
       "dependencies": {},
       "hash": "09b1ce52e83c7ca53985081a3ab0d601c2d22bb3"
     },
-    "com.scaffold.states": {
-      "version": "https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.states#main",
-      "depth": 0,
-      "source": "git",
-      "dependencies": {
-        "com.scaffold.records": "0.1.0",
-        "com.scaffold.maps": "0.1.0",
-        "com.scaffold.pooling": "0.1.0",
-        "jp.hadashikick.vcontainer": "https://github.com/hadashiA/VContainer.git?path=VContainer/Assets/VContainer#1.17.0"
-      },
-      "hash": "62957a9c05414e8701daf323aeb05c9af50bd9e5"
-    },
     "com.scaffold.types": {
       "version": "https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.types#main",
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "62957a9c05414e8701daf323aeb05c9af50bd9e5"
+      "hash": "d0ff9f487444dfee57e732bcb5e61f77275a00eb"
     },
     "com.scaffold.ugs": {
       "version": "https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.ugs#main",
@@ -244,13 +192,7 @@
       "dependencies": {
         "com.scaffold.appflow": "0.1.0"
       },
-      "hash": "62957a9c05414e8701daf323aeb05c9af50bd9e5"
-    },
-    "com.scaffold.variables": {
-      "version": "file:com.scaffold.variables",
-      "depth": 0,
-      "source": "embedded",
-      "dependencies": {}
+      "hash": "d0ff9f487444dfee57e732bcb5e61f77275a00eb"
     },
     "com.scaffold.view": {
       "version": "https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.view#main",
@@ -263,7 +205,7 @@
         "com.scaffold.mvvm": "0.1.0",
         "com.scaffold.viewmodel": "0.1.0"
       },
-      "hash": "62957a9c05414e8701daf323aeb05c9af50bd9e5"
+      "hash": "d0ff9f487444dfee57e732bcb5e61f77275a00eb"
     },
     "com.scaffold.viewmodel": {
       "version": "https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.viewmodel#main",
@@ -273,14 +215,14 @@
         "com.scaffold.navigation": "0.1.0",
         "com.scaffold.mvvm": "0.1.0"
       },
-      "hash": "62957a9c05414e8701daf323aeb05c9af50bd9e5"
+      "hash": "d0ff9f487444dfee57e732bcb5e61f77275a00eb"
     },
     "com.unity.2d.animation": {
-      "version": "15.1.0",
+      "version": "13.0.4",
       "depth": 0,
       "source": "registry",
       "dependencies": {
-        "com.unity.2d.common": "14.0.1",
+        "com.unity.2d.common": "12.0.2",
         "com.unity.2d.sprite": "1.0.0",
         "com.unity.collections": "2.4.3",
         "com.unity.modules.animation": "1.0.0",
@@ -289,11 +231,11 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.2d.aseprite": {
-      "version": "5.0.3",
+      "version": "3.0.1",
       "depth": 0,
       "source": "registry",
       "dependencies": {
-        "com.unity.2d.common": "14.0.1",
+        "com.unity.2d.common": "12.0.1",
         "com.unity.2d.sprite": "1.0.0",
         "com.unity.2d.tilemap": "1.0.0",
         "com.unity.mathematics": "1.2.6",
@@ -302,7 +244,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.2d.common": {
-      "version": "14.0.1",
+      "version": "12.0.2",
       "depth": 1,
       "source": "registry",
       "dependencies": {
@@ -317,11 +259,11 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.2d.psdimporter": {
-      "version": "14.0.3",
+      "version": "12.0.1",
       "depth": 0,
       "source": "registry",
       "dependencies": {
-        "com.unity.2d.common": "14.0.1",
+        "com.unity.2d.common": "12.0.1",
         "com.unity.2d.sprite": "1.0.0",
         "com.unity.2d.tilemap": "1.0.0"
       },
@@ -334,11 +276,11 @@
       "dependencies": {}
     },
     "com.unity.2d.spriteshape": {
-      "version": "15.0.3",
+      "version": "13.0.0",
       "depth": 0,
       "source": "registry",
       "dependencies": {
-        "com.unity.2d.common": "14.0.1",
+        "com.unity.2d.common": "12.0.0",
         "com.unity.mathematics": "1.1.0",
         "com.unity.modules.physics2d": "1.0.0"
       },
@@ -354,7 +296,7 @@
       }
     },
     "com.unity.2d.tilemap.extras": {
-      "version": "8.0.3",
+      "version": "6.0.1",
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -365,11 +307,11 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.2d.tooling": {
-      "version": "3.0.1",
+      "version": "1.0.2",
       "depth": 0,
       "source": "registry",
       "dependencies": {
-        "com.unity.2d.common": "14.0.1",
+        "com.unity.2d.common": "12.0.2",
         "com.unity.modules.uielements": "1.0.0"
       },
       "url": "https://packages.unity.com"
@@ -400,7 +342,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.burst": {
-      "version": "1.8.29",
+      "version": "1.8.28",
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -410,18 +352,20 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.collections": {
-      "version": "6.5.0",
+      "version": "2.6.2",
       "depth": 1,
-      "source": "builtin",
+      "source": "registry",
       "dependencies": {
-        "com.unity.burst": "1.8.25",
-        "com.unity.nuget.mono-cecil": "1.11.6",
+        "com.unity.burst": "1.8.23",
+        "com.unity.mathematics": "1.3.2",
         "com.unity.test-framework": "1.4.6",
-        "com.unity.test-framework.performance": "3.2.0"
-      }
+        "com.unity.nuget.mono-cecil": "1.11.5",
+        "com.unity.test-framework.performance": "3.0.3"
+      },
+      "url": "https://packages.unity.com"
     },
     "com.unity.dedicated-server": {
-      "version": "2.0.2",
+      "version": "2.0.1",
       "depth": 0,
       "source": "registry",
       "dependencies": {},
@@ -435,14 +379,14 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.editorcoroutines": {
-      "version": "1.1.0",
+      "version": "1.0.1",
       "depth": 0,
       "source": "registry",
       "dependencies": {},
       "url": "https://packages.unity.com"
     },
     "com.unity.ext.nunit": {
-      "version": "2.1.0",
+      "version": "2.0.5",
       "depth": 1,
       "source": "builtin",
       "dependencies": {}
@@ -474,21 +418,12 @@
       },
       "url": "https://packages.unity.com"
     },
-    "com.unity.localization": {
-      "version": "1.5.12",
+    "com.unity.mathematics": {
+      "version": "1.3.3",
       "depth": 1,
       "source": "registry",
-      "dependencies": {
-        "com.unity.addressables": "1.25.0",
-        "com.unity.nuget.newtonsoft-json": "3.0.2"
-      },
+      "dependencies": {},
       "url": "https://packages.unity.com"
-    },
-    "com.unity.mathematics": {
-      "version": "1.4.0",
-      "depth": 1,
-      "source": "builtin",
-      "dependencies": {}
     },
     "com.unity.multiplayer.center": {
       "version": "1.0.1",
@@ -509,7 +444,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.multiplayer.playmode": {
-      "version": "2.0.2",
+      "version": "2.0.1",
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -518,7 +453,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.multiplayer.tools": {
-      "version": "2.2.9",
+      "version": "2.2.8",
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -542,7 +477,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.netcode.gameobjects": {
-      "version": "2.13.0",
+      "version": "2.9.1",
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -608,32 +543,35 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.render-pipelines.core": {
-      "version": "17.5.0",
+      "version": "17.3.0",
       "depth": 1,
       "source": "builtin",
       "dependencies": {
         "com.unity.burst": "1.8.14",
+        "com.unity.mathematics": "1.3.2",
+        "com.unity.ugui": "2.0.0",
         "com.unity.collections": "2.4.3",
+        "com.unity.modules.physics": "1.0.0",
         "com.unity.modules.terrain": "1.0.0",
         "com.unity.modules.jsonserialize": "1.0.0"
       }
     },
     "com.unity.render-pipelines.universal": {
-      "version": "17.5.0",
+      "version": "17.3.0",
       "depth": 0,
       "source": "builtin",
       "dependencies": {
-        "com.unity.render-pipelines.core": "17.5.0",
-        "com.unity.shadergraph": "17.5.0",
-        "com.unity.render-pipelines.universal-config": "17.5.0"
+        "com.unity.render-pipelines.core": "17.3.0",
+        "com.unity.shadergraph": "17.3.0",
+        "com.unity.render-pipelines.universal-config": "17.0.3"
       }
     },
     "com.unity.render-pipelines.universal-config": {
-      "version": "17.5.0",
+      "version": "17.0.3",
       "depth": 1,
       "source": "builtin",
       "dependencies": {
-        "com.unity.render-pipelines.core": "17.5.0"
+        "com.unity.render-pipelines.core": "17.0.3"
       }
     },
     "com.unity.scriptablebuildpipeline": {
@@ -654,24 +592,24 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.services.analytics": {
-      "version": "6.3.0",
+      "version": "5.1.0",
       "depth": 0,
       "source": "registry",
       "dependencies": {
         "com.unity.ugui": "1.0.0",
-        "com.unity.services.core": "1.16.0",
+        "com.unity.services.core": "1.10.1",
         "com.unity.modules.jsonserialize": "1.0.0"
       },
       "url": "https://packages.unity.com"
     },
     "com.unity.services.authentication": {
-      "version": "3.7.1",
+      "version": "3.6.0",
       "depth": 1,
       "source": "registry",
       "dependencies": {
         "com.unity.ugui": "1.0.0",
-        "com.unity.services.core": "1.18.0",
-        "com.unity.nuget.newtonsoft-json": "3.2.2",
+        "com.unity.services.core": "1.15.1",
+        "com.unity.nuget.newtonsoft-json": "3.2.1",
         "com.unity.modules.unitywebrequest": "1.0.0"
       },
       "url": "https://packages.unity.com"
@@ -692,30 +630,31 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.services.cloudcode": {
-      "version": "file:com.unity.services.cloudcode",
+      "version": "2.10.2",
       "depth": 0,
-      "source": "embedded",
+      "source": "registry",
       "dependencies": {
-        "com.unity.services.authentication": "3.5.1",
         "com.unity.services.core": "1.15.1",
-        "com.unity.modules.unitywebrequest": "1.0.0",
+        "com.unity.services.wire": "1.2.3",
         "com.unity.nuget.newtonsoft-json": "3.0.2",
-        "com.unity.services.wire": "1.2.3"
-      }
+        "com.unity.modules.unitywebrequest": "1.0.0",
+        "com.unity.services.authentication": "3.5.1"
+      },
+      "url": "https://packages.unity.com"
     },
     "com.unity.services.core": {
-      "version": "1.18.0",
+      "version": "1.16.0",
       "depth": 1,
       "source": "registry",
       "dependencies": {
         "com.unity.modules.androidjni": "1.0.0",
-        "com.unity.nuget.newtonsoft-json": "3.2.2",
+        "com.unity.nuget.newtonsoft-json": "3.2.1",
         "com.unity.modules.unitywebrequest": "1.0.0"
       },
       "url": "https://packages.unity.com"
     },
     "com.unity.services.deployment": {
-      "version": "1.7.2",
+      "version": "1.7.1",
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -741,7 +680,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.services.multiplayer": {
-      "version": "2.2.4",
+      "version": "2.1.3",
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -749,7 +688,7 @@
         "com.unity.collections": "2.2.1",
         "com.unity.services.qos": "1.4.1",
         "com.unity.services.core": "1.16.0",
-        "com.unity.services.wire": "1.4.4",
+        "com.unity.services.wire": "1.4.1",
         "com.unity.services.deployment": "1.7.1",
         "com.unity.nuget.newtonsoft-json": "3.2.2",
         "com.unity.modules.unitywebrequest": "1.0.0",
@@ -771,7 +710,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.services.wire": {
-      "version": "1.4.4",
+      "version": "1.4.2",
       "depth": 1,
       "source": "registry",
       "dependencies": {
@@ -789,16 +728,16 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.shadergraph": {
-      "version": "17.5.0",
+      "version": "17.3.0",
       "depth": 1,
       "source": "builtin",
       "dependencies": {
-        "com.unity.render-pipelines.core": "17.5.0",
+        "com.unity.render-pipelines.core": "17.3.0",
         "com.unity.searcher": "4.9.3"
       }
     },
     "com.unity.splines": {
-      "version": "2.9.0",
+      "version": "2.8.4",
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -809,17 +748,17 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.test-framework": {
-      "version": "1.7.0",
+      "version": "1.6.0",
       "depth": 0,
       "source": "builtin",
       "dependencies": {
-        "com.unity.ext.nunit": "2.1.0",
+        "com.unity.ext.nunit": "2.0.3",
         "com.unity.modules.imgui": "1.0.0",
         "com.unity.modules.jsonserialize": "1.0.0"
       }
     },
     "com.unity.test-framework.performance": {
-      "version": "3.5.0",
+      "version": "3.2.0",
       "depth": 2,
       "source": "registry",
       "dependencies": {
@@ -829,7 +768,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.timeline": {
-      "version": "1.8.12",
+      "version": "1.8.11",
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -841,29 +780,27 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.transport": {
-      "version": "6.5.0",
+      "version": "2.6.0",
       "depth": 1,
-      "source": "builtin",
+      "source": "registry",
       "dependencies": {
-        "com.unity.collections": "6.5.0",
         "com.unity.burst": "1.8.24",
-        "com.unity.mathematics": "1.4.0"
-      }
+        "com.unity.collections": "2.2.1",
+        "com.unity.mathematics": "1.3.2"
+      },
+      "url": "https://packages.unity.com"
     },
     "com.unity.ugui": {
-      "version": "2.5.0",
+      "version": "2.0.0",
       "depth": 0,
       "source": "builtin",
       "dependencies": {
         "com.unity.modules.ui": "1.0.0",
-        "com.unity.modules.imgui": "1.0.0",
-        "com.unity.modules.audio": "1.0.0",
-        "com.unity.modules.physics2d": "1.0.0",
-        "com.unity.modules.physics": "1.0.0"
+        "com.unity.modules.imgui": "1.0.0"
       }
     },
     "com.unity.visualscripting": {
-      "version": "1.9.11",
+      "version": "1.9.10",
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -873,10 +810,11 @@
       "url": "https://packages.unity.com"
     },
     "jp.hadashikick.vcontainer": {
-      "version": "file:jp.hadashikick.vcontainer",
+      "version": "https://github.com/hadashiA/VContainer.git?path=VContainer/Assets/VContainer#1.17.0",
       "depth": 0,
-      "source": "embedded",
-      "dependencies": {}
+      "source": "git",
+      "dependencies": {},
+      "hash": "177dbda557fd652ce7f5d1647a3621653e094373"
     },
     "com.unity.modules.accessibility": {
       "version": "1.0.0",
@@ -902,9 +840,7 @@
       "version": "1.0.0",
       "depth": 0,
       "source": "builtin",
-      "dependencies": {
-        "com.unity.modules.jsonserialize": "1.0.0"
-      }
+      "dependencies": {}
     },
     "com.unity.modules.animation": {
       "version": "1.0.0",
@@ -981,14 +917,6 @@
       "version": "1.0.0",
       "depth": 0,
       "source": "builtin",
-      "dependencies": {
-        "com.unity.modules.physicscore2d": "1.0.0"
-      }
-    },
-    "com.unity.modules.physicscore2d": {
-      "version": "1.0.0",
-      "depth": 0,
-      "source": "builtin",
       "dependencies": {}
     },
     "com.unity.modules.screencapture": {
@@ -1045,8 +973,7 @@
         "com.unity.modules.imgui": "1.0.0",
         "com.unity.modules.jsonserialize": "1.0.0",
         "com.unity.modules.hierarchycore": "1.0.0",
-        "com.unity.modules.physics": "1.0.0",
-        "com.unity.modules.animation": "1.0.0"
+        "com.unity.modules.physics": "1.0.0"
       }
     },
     "com.unity.modules.umbra": {
@@ -1136,6 +1063,16 @@
         "com.unity.modules.audio": "1.0.0",
         "com.unity.modules.ui": "1.0.0",
         "com.unity.modules.unitywebrequest": "1.0.0"
+      }
+    },
+    "com.unity.modules.vr": {
+      "version": "1.0.0",
+      "depth": 0,
+      "source": "builtin",
+      "dependencies": {
+        "com.unity.modules.jsonserialize": "1.0.0",
+        "com.unity.modules.physics": "1.0.0",
+        "com.unity.modules.xr": "1.0.0"
       }
     },
     "com.unity.modules.wind": {

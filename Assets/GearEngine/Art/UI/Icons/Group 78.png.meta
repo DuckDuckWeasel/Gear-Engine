@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 21bfaecfba3cc2e49a1ffc0cb34bb940
+guid: ec286fda576d4cb46a07ea882dfa84d1
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 7427143884904716542
-    second: Card_Epic_Redstar_0
+      213: -765930273514264058
+    second: Group 78_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -113,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Card_Epic_Redstar_0
+      name: Group 78_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 765
-        height: 1170
+        x: 4
+        y: 9
+        width: 85
+        height: 82
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: ef8d57b3304821760800000000000000
-      internalID: 7427143884904716542
+      spriteID: 60ae67c697ede55f0800000000000000
+      internalID: -765930273514264058
       vertices: []
       indices: 
       edges: []
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Card_Epic_Redstar_0: 7427143884904716542
+      Group 78_0: -765930273514264058
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
