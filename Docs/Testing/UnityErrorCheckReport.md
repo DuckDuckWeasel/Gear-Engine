@@ -26,7 +26,7 @@
 
 ### Persistent Fix
 
-The affected Git dependencies are now embedded as `Packages/com.scaffold.analytics` and `Packages/com.dbrizov.naughtyattributes`. `Packages/manifest.json` references those local package paths, so the compatibility fixes will remain after Package Manager resolves dependencies again.
+`com.scaffold.analytics` now resolves from Scaffold `main`, which contains the Unity 6000.5 compatibility fix while retaining the legacy API path for earlier Unity versions. `com.dbrizov.naughtyattributes` remains embedded at `Packages/com.dbrizov.naughtyattributes` until its upstream compatibility fix is available.
 
 ### Formatting
 

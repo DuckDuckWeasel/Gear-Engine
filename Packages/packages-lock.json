@@ -67,12 +67,14 @@
       "hash": "e23b17b3e5f2365e0655eda6a042d928c96b46bd"
     },
     "com.scaffold.analytics": {
-      "version": "file:com.scaffold.analytics",
+      "version": "https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.analytics#main",
       "depth": 0,
-      "source": "embedded",
+      "source": "git",
       "dependencies": {
-        "jp.hadashikick.vcontainer": "1.17.0"
-      }
+        "jp.hadashikick.vcontainer": "1.17.0",
+        "com.unity.services.analytics": "5.1.0"
+      },
+      "hash": "0d7d62696943129d9ac8eb77f4fe1d3c8ae51442"
     },
     "com.scaffold.appflow": {
       "version": "https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.appflow#main",
