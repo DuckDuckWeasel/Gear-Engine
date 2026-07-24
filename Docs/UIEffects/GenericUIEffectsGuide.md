@@ -93,6 +93,16 @@ Every `E_UIE_*` asset is a `MaterialUIEffectPreset`. It applies its native UIEff
 
 ## Native UIEffect Preset Catalog
 
+### Multi-Layer Pattern Transitions
+
+Native `Transition.Pattern` effects provide four ordered pattern layers. Layer `0` is the base and layers `1`, `2`, and `3` are composited over it in ascending index order. Each layer can be enabled independently and owns its texture, opacity, UV transform and animation, range and reverse controls, color filter and glow settings, and target area.
+
+Layer opacity is combined with the pattern color alpha and the sampled pattern mask before alpha-over composition. An opacity of `0` contributes nothing, and a disabled layer is skipped. Prefer the lowest number of enabled layers that produces the required look.
+
+The list intentionally has exactly four slots. A fixed upper bound keeps the shader instruction and sampler budget predictable on mobile GPUs, gives every material the same property layout, avoids runtime shader variants for arbitrary list lengths, and preserves compatible UGUI material batching across effects that use different numbers of active layers.
+
+Existing single-pattern `UIEffect` components and `UIEffectPreset` assets migrate automatically. Every legacy pattern value is copied to layer `0`, so its appearance is retained; layers `1` through `3` start disabled. Migration is versioned and idempotent, and opening a migrated asset in the inspector marks it dirty so Unity persists the new data. The legacy serialized fields remain only as migration input and are not used by pattern rendering afterward.
+
 These assets use the installed `Coffee.UIEffects.UIEffectPreset` type. They complement the material library where an existing UGUI `UIEffect` component is already the preferred integration point.
 
 | Preset | Effect |

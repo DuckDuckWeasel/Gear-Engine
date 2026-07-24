@@ -33,6 +33,46 @@ uniform const float _TransitionWidth;
 uniform const int _TransitionPatternReverse;
 uniform const float _TransitionAutoPlaySpeed;
 uniform const sampler2D _TransitionGradientTex;
+uniform const int _PatternEnabled0;
+uniform const int _PatternEnabled1;
+uniform const int _PatternEnabled2;
+uniform const int _PatternEnabled3;
+uniform const sampler2D _PatternTex0;
+uniform const sampler2D _PatternTex1;
+uniform const sampler2D _PatternTex2;
+uniform const sampler2D _PatternTex3;
+uniform const float4 _PatternTex0_ST;
+uniform const float4 _PatternTex1_ST;
+uniform const float4 _PatternTex2_ST;
+uniform const float4 _PatternTex3_ST;
+uniform const float2 _PatternTex0_Speed;
+uniform const float2 _PatternTex1_Speed;
+uniform const float2 _PatternTex2_Speed;
+uniform const float2 _PatternTex3_Speed;
+uniform const float4 _PatternParams1_0;
+uniform const float4 _PatternParams1_1;
+uniform const float4 _PatternParams1_2;
+uniform const float4 _PatternParams1_3;
+uniform const float4 _PatternParams2_0;
+uniform const float4 _PatternParams2_1;
+uniform const float4 _PatternParams2_2;
+uniform const float4 _PatternParams2_3;
+uniform const int _PatternColorFilter0;
+uniform const int _PatternColorFilter1;
+uniform const int _PatternColorFilter2;
+uniform const int _PatternColorFilter3;
+uniform const half4 _PatternColor0;
+uniform const half4 _PatternColor1;
+uniform const half4 _PatternColor2;
+uniform const half4 _PatternColor3;
+uniform const int _PatternColorGlow0;
+uniform const int _PatternColorGlow1;
+uniform const int _PatternColorGlow2;
+uniform const int _PatternColorGlow3;
+uniform const int _PatternArea0;
+uniform const int _PatternArea1;
+uniform const int _PatternArea2;
+uniform const int _PatternArea3;
 uniform const half4 _TargetColor;
 uniform const float _TargetRange;
 uniform const float _TargetSoftness;
@@ -68,6 +108,14 @@ uniform const matrix _GradViewMatrix;
 uniform const matrix _MirrorRootViewMatrix;
 uniform const matrix _MirrorGradViewMatrix;
 uniform const matrix _CanvasToWorldMatrix;
+uniform const matrix _PatternRootViewMatrix0;
+uniform const matrix _PatternRootViewMatrix1;
+uniform const matrix _PatternRootViewMatrix2;
+uniform const matrix _PatternRootViewMatrix3;
+uniform const matrix _PatternMirrorRootViewMatrix0;
+uniform const matrix _PatternMirrorRootViewMatrix1;
+uniform const matrix _PatternMirrorRootViewMatrix2;
+uniform const matrix _PatternMirrorRootViewMatrix3;
 
 // For performance reasons, limit the sampling of blur in TextMeshPro.
 #ifdef UIEFFECT_TEXTMESHPRO
@@ -160,9 +208,7 @@ float transition_alpha(float2 uvLocal)
     return 1;
     #elif TRANSITION_PATTERN
     {
-        const half scale = lerp(100, 1, _TransitionWidth);
-        const half2 time = half2(-transition_rate() * 2, 0);
-        uv = uvLocal * _TransitionTex_ST.xy * scale + _TransitionTex_ST.zw + time;
+        return 1;
     }
     #else
     {
@@ -350,7 +396,29 @@ float2 move_transition_filter(const float4 uvMask, const float alpha)
     return 0;
 }
 
-half4 apply_transition_filter(half4 color, const float alpha, const float2 uvLocal, float edgeFactor)
+half4 apply_pattern_layer(half4 color, sampler2D patternTex, const float2 uvLocal, const float4 texST,
+    const float2 texSpeed, const float4 parameters1, const float4 parameters2, const int colorFilter,
+    const half4 layerColor, const int colorGlow, const int patternArea, const float edgeFactor)
+{
+    const half scale = lerp(100, 1, parameters1.w);
+    const float rate = frac(parameters2.w * _Time.y + parameters1.y * 0.9999);
+    const half2 time = half2(-rate * 2, 0);
+    const float2 uv = uvLocal * texST.xy * scale + texST.zw + time + _Time.y * texSpeed;
+    float sampledAlpha = tex2D(patternTex, uv).a;
+    sampledAlpha = parameters1.z ? 1 - sampledAlpha : sampledAlpha;
+    const half4 patternColor = apply_color_filter(colorFilter, half4(color.rgb, 1),
+        half4(layerColor.rgb * color.a, 1), 1, colorGlow);
+    float isPattern = min(inv_lerp(parameters2.x, parameters2.y, uvLocal.x), 0.995)
+        < (parameters2.z ? sampledAlpha : 1 - sampledAlpha);
+    isPattern = parameters2.z ? isPattern : 1 - isPattern;
+    const float patternFactor = patternArea == 0 ? 1 : patternArea == 1 ? 1 - edgeFactor : edgeFactor;
+    const float layerAlpha = saturate(parameters1.x * layerColor.a * sampledAlpha * patternFactor * isPattern);
+    color.rgb = lerp(color.rgb, patternColor.rgb, layerAlpha);
+    return color;
+}
+
+half4 apply_transition_filter(half4 color, const float alpha, const float2 uvLocal, float edgeFactor,
+    const float2 patternUv0, const float2 patternUv1, const float2 patternUv2, const float2 patternUv3)
 {
     #if TRANSITION_FADE  // Transition.Fade
     {
@@ -362,11 +430,22 @@ half4 apply_transition_filter(half4 color, const float alpha, const float2 uvLoc
     }
     #elif TRANSITION_PATTERN  // Transition.Pattern
     {
-        const half4 patternColor = apply_color_filter(_TransitionColorFilter, half4(color.rgb, 1), half4(_TransitionColor.rgb * color.a, 1), _TransitionColor.a, _TransitionColorGlow);
-        float isPattern = min(inv_lerp(_TransitionRange.x, _TransitionRange.y, uvLocal.x), 0.995) < (_TransitionPatternReverse ? alpha : 1 - alpha);
-        isPattern = _TransitionPatternReverse ? isPattern : 1 - isPattern;
-        const float patternFactor = _PatternArea == 0 ? 1 : _PatternArea == 1 ? 1 - edgeFactor : edgeFactor;
-        color.rgb = lerp(color.rgb, patternColor.rgb, patternFactor * isPattern);
+        if (_PatternEnabled0)
+            color = apply_pattern_layer(color, _PatternTex0, patternUv0, _PatternTex0_ST, _PatternTex0_Speed,
+                _PatternParams1_0, _PatternParams2_0, _PatternColorFilter0, _PatternColor0,
+                _PatternColorGlow0, _PatternArea0, edgeFactor);
+        if (_PatternEnabled1)
+            color = apply_pattern_layer(color, _PatternTex1, patternUv1, _PatternTex1_ST, _PatternTex1_Speed,
+                _PatternParams1_1, _PatternParams2_1, _PatternColorFilter1, _PatternColor1,
+                _PatternColorGlow1, _PatternArea1, edgeFactor);
+        if (_PatternEnabled2)
+            color = apply_pattern_layer(color, _PatternTex2, patternUv2, _PatternTex2_ST, _PatternTex2_Speed,
+                _PatternParams1_2, _PatternParams2_2, _PatternColorFilter2, _PatternColor2,
+                _PatternColorGlow2, _PatternArea2, edgeFactor);
+        if (_PatternEnabled3)
+            color = apply_pattern_layer(color, _PatternTex3, patternUv3, _PatternTex3_ST, _PatternTex3_Speed,
+                _PatternParams1_3, _PatternParams2_3, _PatternColorFilter3, _PatternColor3,
+                _PatternColorGlow3, _PatternArea3, edgeFactor);
     }
     // Transition.Dissolve/Shiny/ShinyOnly/Melt
     #elif TRANSITION_DISSOLVE || TRANSITION_SHINY || TRANSITION_MASK || TRANSITION_MELT || TRANSITION_BURN
@@ -559,7 +638,9 @@ float is_edge_shiny(const float2 uvLocal)
     #endif
 }
 
-half4 uieffect_internal(UIEFFECT_FRAG_STRUCT IN, float2 uv, float4 uvMask, const float2 uvLocal, const float2 uvGrad, const float isShadow)
+half4 uieffect_internal(UIEFFECT_FRAG_STRUCT IN, float2 uv, float4 uvMask, const float2 uvLocal,
+    const float2 uvGrad, const float isShadow, const float2 patternUv0, const float2 patternUv1,
+    const float2 patternUv2, const float2 patternUv3)
 {
     const half alpha = transition_alpha(uvLocal);
     const float edgeFactor = edge(uv, uvMask, _EdgeWidth);
@@ -567,7 +648,8 @@ half4 uieffect_internal(UIEFFECT_FRAG_STRUCT IN, float2 uv, float4 uvMask, const
     half4 color = apply_sampling_filter(IN, uv, uvMask, isShadow);
     color = apply_gradation_filter(color, uvGrad);
     color = apply_tone_filter(color);
-    color = apply_transition_filter(color, alpha, uvLocal, edgeFactor);
+    color = apply_transition_filter(color, alpha, uvLocal, edgeFactor,
+        patternUv0, patternUv1, patternUv2, patternUv3);
     color = apply_detail_filter(color, uvLocal);
 
     if (0 < isShadow)
@@ -607,12 +689,20 @@ half4 uieffect(half4 origin, float2 uv, float4 uvMask, float4 wpos, UIEFFECT_FRA
     const half rate = get_target_rate(origin.rgb);
     float2 uvLocal = saturate(mul(_RootViewMatrix, wpos)).xy;
     float2 uvGrad = mul(_GradViewMatrix, wpos).xy;
+    float2 patternUv0 = saturate(mul(_PatternRootViewMatrix0, wpos)).xy;
+    float2 patternUv1 = saturate(mul(_PatternRootViewMatrix1, wpos)).xy;
+    float2 patternUv2 = saturate(mul(_PatternRootViewMatrix2, wpos)).xy;
+    float2 patternUv3 = saturate(mul(_PatternRootViewMatrix3, wpos)).xy;
 
     // Mirror
     if (uvMask.x < -3)
     {
         uvLocal = saturate(mul(_MirrorRootViewMatrix, wpos)).xy;
         uvGrad = saturate(mul(_MirrorGradViewMatrix, wpos)).xy;
+        patternUv0 = saturate(mul(_PatternMirrorRootViewMatrix0, wpos)).xy;
+        patternUv1 = saturate(mul(_PatternMirrorRootViewMatrix1, wpos)).xy;
+        patternUv2 = saturate(mul(_PatternMirrorRootViewMatrix2, wpos)).xy;
+        patternUv3 = saturate(mul(_PatternMirrorRootViewMatrix3, wpos)).xy;
         uvMask.x += 4;
     }
 
@@ -629,9 +719,12 @@ half4 uieffect(half4 origin, float2 uv, float4 uvMask, float4 wpos, UIEFFECT_FRA
     #elif SAMPLING_RGB_SHIFT
     {
         const half2 offset = half2(_SamplingIntensity * texel_size().x * 20, 0);
-        const half2 r = uieffect_internal(IN, uv + offset, uvMask, uvLocal, uvGrad, isShadow).ra;
-        const half2 g = uieffect_internal(IN, uv, uvMask, uvLocal, uvGrad, isShadow).ga;
-        const half2 b = uieffect_internal(IN, uv - offset, uvMask, uvLocal, uvGrad, isShadow).ba;
+        const half2 r = uieffect_internal(IN, uv + offset, uvMask, uvLocal, uvGrad, isShadow,
+            patternUv0, patternUv1, patternUv2, patternUv3).ra;
+        const half2 g = uieffect_internal(IN, uv, uvMask, uvLocal, uvGrad, isShadow,
+            patternUv0, patternUv1, patternUv2, patternUv3).ga;
+        const half2 b = uieffect_internal(IN, uv - offset, uvMask, uvLocal, uvGrad, isShadow,
+            patternUv0, patternUv1, patternUv2, patternUv3).ba;
         return half4(r.x * r.y, g.x * g.y, b.x * b.y, (r.y + g.y + b.y) / 3);
     }
     // Sampling.EdgeLuminance/EdgeAlpha
@@ -655,11 +748,13 @@ half4 uieffect(half4 origin, float2 uv, float4 uvMask, float4 wpos, UIEFFECT_FRA
         half sobel_v = v00 * -1.0 + v10 * -2.0 + v20 * -1.0 + v02 * 1.0 + v12 * 2.0 + v22 * 1.0;
 
         const half sobel = sqrt(sobel_h * sobel_h + sobel_v * sobel_v) * _SamplingIntensity;
-        return lerp(half4(0, 0, 0, 0), uieffect_internal(IN, uv, uvMask, uvLocal, uvGrad, isShadow), inv_lerp(0.5, 1, sobel));
+        return lerp(half4(0, 0, 0, 0), uieffect_internal(IN, uv, uvMask, uvLocal, uvGrad, isShadow,
+            patternUv0, patternUv1, patternUv2, patternUv3), inv_lerp(0.5, 1, sobel));
     }
     #endif
 
-    return lerp(origin, uieffect_internal(IN, uv, uvMask, uvLocal, uvGrad, isShadow), rate);
+    return lerp(origin, uieffect_internal(IN, uv, uvMask, uvLocal, uvGrad, isShadow,
+        patternUv0, patternUv1, patternUv2, patternUv3), rate);
 }
 
 

@@ -48,6 +48,7 @@ namespace Coffee.UIEffects.Editors
         private SerializedProperty _transitionPatternReverse;
         private SerializedProperty _transitionAutoPlaySpeed;
         private SerializedProperty _transitionGradient;
+        private SerializedProperty _patternLayers;
 
         private SerializedProperty _targetMode;
         private SerializedProperty _targetColor;
@@ -109,6 +110,7 @@ namespace Coffee.UIEffects.Editors
 
         protected virtual void OnEnable()
         {
+            MigratePatternLayers();
             _toneFilter = serializedObject.FindProperty("m_ToneFilter");
             _toneIntensity = serializedObject.FindProperty("m_ToneIntensity");
 
@@ -139,6 +141,7 @@ namespace Coffee.UIEffects.Editors
             _transitionPatternReverse = serializedObject.FindProperty("m_TransitionPatternReverse");
             _transitionAutoPlaySpeed = serializedObject.FindProperty("m_TransitionAutoPlaySpeed");
             _transitionGradient = serializedObject.FindProperty("m_TransitionGradient");
+            _patternLayers = serializedObject.FindProperty("m_PatternLayers");
 
             s_RotationLabel.tooltip = _transitionRotation.tooltip;
             s_KeepAspectRatioLabel.tooltip = _transitionKeepAspectRatio.tooltip;
@@ -219,7 +222,7 @@ namespace Coffee.UIEffects.Editors
 
             // Color filter
             DrawSeparator();
-            var prevColorFilter = (ColorFilter)_colorFilter.intValue;
+            ColorFilter prevColorFilter = (ColorFilter)_colorFilter.intValue;
             if (DrawHeaderPopup(_colorFilter))
             {
                 EditorGUI.indentLevel++;
@@ -249,46 +252,45 @@ namespace Coffee.UIEffects.Editors
             if (DrawHeaderPopup(_transitionFilter))
             {
                 EditorGUI.indentLevel++;
-                EditorGUILayout.PropertyField(_transitionRate);
-                EditorGUILayout.PropertyField(_transitionTex);
-                EditorGUI.indentLevel++;
-                EditorGUILayout.PropertyField(_transitionTexScale, EditorGUIUtility.TrTempContent("Scale"));
-                EditorGUILayout.PropertyField(_transitionTexOffset, EditorGUIUtility.TrTempContent("Offset"));
-                EditorGUILayout.PropertyField(_transitionTexSpeed, EditorGUIUtility.TrTempContent("Speed"));
-                if (_transitionTexSpeed.vector2Value != Vector2.zero)
-                {
-                    EditorApplication.QueuePlayerLoopUpdate();
-                }
-
-                EditorGUILayout.PropertyField(_transitionRotation, s_RotationLabel);
-                EditorGUILayout.PropertyField(_transitionKeepAspectRatio, s_KeepAspectRatioLabel);
-                EditorGUILayout.PropertyField(_transitionReverse, EditorGUIUtility.TrTempContent("Reverse"));
-                EditorGUI.indentLevel--;
-
                 if (_transitionFilter.intValue == (int)TransitionFilter.Pattern)
                 {
-                    EditorGUILayout.PropertyField(_transitionWidth, EditorGUIUtility.TrTempContent("Pattern Size"));
-                    EditorGUILayout.PropertyField(_transitionRange, EditorGUIUtility.TrTempContent("Pattern Range"));
-                    EditorGUILayout.PropertyField(_transitionPatternReverse,
-                        EditorGUIUtility.TrTempContent("Pattern Reverse"));
-                    DrawColor(_transitionColorFilter, _transitionColor, null);
+                    DrawPatternLayers();
                 }
-                else if (_transitionFilter.intValue == (int)TransitionFilter.Blaze)
+                else
                 {
-                    EditorGUILayout.PropertyField(_transitionWidth);
-                    DrawGradientField(_transitionGradient);
-                }
-                else if (2 < _transitionFilter.intValue)
-                {
-                    EditorGUILayout.PropertyField(_transitionWidth);
-                    EditorGUILayout.PropertyField(_transitionSoftness);
-                    DrawColor(_transitionColorFilter, _transitionColor, _transitionColorGlow);
-                }
+                    EditorGUILayout.PropertyField(_transitionRate);
+                    EditorGUILayout.PropertyField(_transitionTex);
+                    EditorGUI.indentLevel++;
+                    EditorGUILayout.PropertyField(_transitionTexScale, EditorGUIUtility.TrTempContent("Scale"));
+                    EditorGUILayout.PropertyField(_transitionTexOffset, EditorGUIUtility.TrTempContent("Offset"));
+                    EditorGUILayout.PropertyField(_transitionTexSpeed, EditorGUIUtility.TrTempContent("Speed"));
+                    if (_transitionTexSpeed.vector2Value != Vector2.zero)
+                    {
+                        EditorApplication.QueuePlayerLoopUpdate();
+                    }
 
-                EditorGUILayout.PropertyField(_transitionAutoPlaySpeed);
-                if (0 < _transitionFilter.intValue && !Mathf.Approximately(0, _transitionAutoPlaySpeed.floatValue))
-                {
-                    EditorApplication.QueuePlayerLoopUpdate();
+                    EditorGUILayout.PropertyField(_transitionRotation, s_RotationLabel);
+                    EditorGUILayout.PropertyField(_transitionKeepAspectRatio, s_KeepAspectRatioLabel);
+                    EditorGUILayout.PropertyField(_transitionReverse, EditorGUIUtility.TrTempContent("Reverse"));
+                    EditorGUI.indentLevel--;
+
+                    if (_transitionFilter.intValue == (int)TransitionFilter.Blaze)
+                    {
+                        EditorGUILayout.PropertyField(_transitionWidth);
+                        DrawGradientField(_transitionGradient);
+                    }
+                    else if (2 < _transitionFilter.intValue)
+                    {
+                        EditorGUILayout.PropertyField(_transitionWidth);
+                        EditorGUILayout.PropertyField(_transitionSoftness);
+                        DrawColor(_transitionColorFilter, _transitionColor, _transitionColorGlow);
+                    }
+
+                    EditorGUILayout.PropertyField(_transitionAutoPlaySpeed);
+                    if (!Mathf.Approximately(0, _transitionAutoPlaySpeed.floatValue))
+                    {
+                        EditorApplication.QueuePlayerLoopUpdate();
+                    }
                 }
 
                 EditorGUI.indentLevel--;
@@ -317,7 +319,7 @@ namespace Coffee.UIEffects.Editors
 
             // Shadow
             DrawSeparator();
-            var prevShadowMode = (ShadowMode)_shadowMode.intValue;
+            ShadowMode prevShadowMode = (ShadowMode)_shadowMode.intValue;
             if (DrawHeaderPopup(_shadowMode))
             {
                 EditorGUI.indentLevel++;
@@ -385,7 +387,7 @@ namespace Coffee.UIEffects.Editors
                         break;
                     default:
                         DrawColorPickerField(EditorGUILayout.GetControlRect(), _gradationColor1, true);
-                        var r = EditorGUILayout.GetControlRect();
+                        Rect r = EditorGUILayout.GetControlRect();
                         r.width -= 24;
                         DrawColorPickerField(r, _gradationColor2, true);
 
@@ -428,10 +430,6 @@ namespace Coffee.UIEffects.Editors
                     }
                 }
 
-                if (_transitionFilter.intValue == (int)TransitionFilter.Pattern)
-                {
-                    EditorGUILayout.PropertyField(_patternArea);
-                }
             }
 
             // Detail filter
@@ -472,14 +470,14 @@ namespace Coffee.UIEffects.Editors
 
         private static void DrawColorPickerField(string label, SerializedProperty color1, SerializedProperty color2)
         {
-            var labelWidth = EditorGUIUtility.labelWidth;
-            var r = EditorGUILayout.GetControlRect();
+            float labelWidth = EditorGUIUtility.labelWidth;
+            Rect r = EditorGUILayout.GetControlRect();
             r.width -= 24;
             EditorGUI.PrefixLabel(new Rect(r.x, r.y, labelWidth, r.height), EditorGUIUtility.TrTempContent(label));
 
-            var indentLevel = EditorGUI.indentLevel;
+            int indentLevel = EditorGUI.indentLevel;
             EditorGUI.indentLevel = 0;
-            var rPos = new Rect(r.x + labelWidth, r.y, (r.width - labelWidth) / 2, r.height);
+            Rect rPos = new Rect(r.x + labelWidth, r.y, (r.width - labelWidth) / 2, r.height);
             DrawColorPickerField(rPos, GUIContent.none, color1, true);
 
             rPos.x += rPos.width;
@@ -490,20 +488,66 @@ namespace Coffee.UIEffects.Editors
             EditorGUI.indentLevel = indentLevel;
         }
 
+        private void DrawPatternLayers()
+        {
+            if (_patternLayers == null)
+            {
+                return;
+            }
+
+            for (int i = 0; i < PatternLayer.MaxCount; i++)
+            {
+                SerializedProperty layer = _patternLayers.GetArrayElementAtIndex(i);
+                GUIContent label = EditorGUIUtility.TrTempContent($"Layer {i}");
+                EditorGUILayout.PropertyField(layer, label, true);
+                SerializedProperty speed = layer.FindPropertyRelative("m_TextureSpeed");
+                SerializedProperty autoPlaySpeed = layer.FindPropertyRelative("m_AutoPlaySpeed");
+                if (speed.vector2Value != Vector2.zero || !Mathf.Approximately(0, autoPlaySpeed.floatValue))
+                {
+                    EditorApplication.QueuePlayerLoopUpdate();
+                }
+            }
+        }
+
+        private void MigratePatternLayers()
+        {
+            foreach (UnityEngine.Object currentTarget in targets)
+            {
+                _ = currentTarget switch
+                {
+                    UIEffect effect => effect.EnsurePatternLayers(),
+                    UIEffectPreset preset => preset.EnsurePatternLayers(),
+                    _ => false,
+                };
+
+                bool migrated = currentTarget switch
+                {
+                    UIEffect effect => effect.ConsumePatternLayerMigrationPending(),
+                    UIEffectPreset preset => preset.ConsumePatternLayerMigrationPending(),
+                    _ => false,
+                };
+
+                if (migrated)
+                {
+                    EditorUtility.SetDirty(currentTarget);
+                }
+            }
+        }
+
         private static void DrawColorPickerField(Rect rect, SerializedProperty color, bool showAlpha)
         {
-            var label = EditorGUIUtility.TrTempContent(color.displayName);
+            GUIContent label = EditorGUIUtility.TrTempContent(color.displayName);
             label.tooltip = color.tooltip;
             DrawColorPickerField(rect, label, color, showAlpha);
         }
 
         private static void DrawColorPickerField(Rect rect, GUIContent label, SerializedProperty color, bool showAlpha)
         {
-            var hdr = UIEffectProjectSettings.useHdrColorPicker;
+            bool hdr = UIEffectProjectSettings.useHdrColorPicker;
             EditorGUI.showMixedValue = color.hasMultipleDifferentValues;
 
             EditorGUI.BeginChangeCheck();
-            var colorValue = EditorGUI.ColorField(rect, label, color.colorValue, true, showAlpha, hdr);
+            Color colorValue = EditorGUI.ColorField(rect, label, color.colorValue, true, showAlpha, hdr);
             if (EditorGUI.EndChangeCheck())
             {
                 color.colorValue = colorValue;
@@ -512,14 +556,14 @@ namespace Coffee.UIEffects.Editors
 
         private static void DrawGradientField(SerializedProperty gradient)
         {
-            var r = EditorGUILayout.GetControlRect();
-            var label = EditorGUIUtility.TrTempContent(gradient.displayName);
+            Rect r = EditorGUILayout.GetControlRect();
+            GUIContent label = EditorGUIUtility.TrTempContent(gradient.displayName);
             label.tooltip = gradient.tooltip;
-            var hdr = UIEffectProjectSettings.useHdrColorPicker;
+            bool hdr = UIEffectProjectSettings.useHdrColorPicker;
             EditorGUI.showMixedValue = gradient.hasMultipleDifferentValues;
 
             EditorGUI.BeginChangeCheck();
-            var gradientValue = EditorGUI.GradientField(r, label, s_GetGradient(gradient), hdr);
+            Gradient gradientValue = EditorGUI.GradientField(r, label, s_GetGradient(gradient), hdr);
             if (EditorGUI.EndChangeCheck())
             {
                 s_SetGradient(gradient, gradientValue);
@@ -529,7 +573,10 @@ namespace Coffee.UIEffects.Editors
         private static void DrawColor(SerializedProperty color, ColorFilter filter, ColorFilter prevFilter,
             bool showAlpha = true)
         {
-            if (filter == ColorFilter.None) return;
+            if (filter == ColorFilter.None)
+            {
+                return;
+            }
 
             if (filter == ColorFilter.HsvModifier)
             {
@@ -568,9 +615,12 @@ namespace Coffee.UIEffects.Editors
         private static void DrawColor(SerializedProperty filter, SerializedProperty color, SerializedProperty glow,
             bool showAlpha = true)
         {
-            var prevFilter = (ColorFilter)filter.intValue;
+            ColorFilter prevFilter = (ColorFilter)filter.intValue;
             EditorGUILayout.PropertyField(filter);
-            if (filter.intValue == (int)ColorFilter.None) return;
+            if (filter.intValue == (int)ColorFilter.None)
+            {
+                return;
+            }
 
             EditorGUI.indentLevel++;
             DrawColor(color, (ColorFilter)filter.intValue, prevFilter, showAlpha);
@@ -593,8 +643,8 @@ namespace Coffee.UIEffects.Editors
 
         private static bool DrawHeaderPopup(SerializedProperty sp)
         {
-            var r = EditorGUILayout.GetControlRect();
-            var pos = EditorGUI.PrefixLabel(r, EditorGUIUtility.TrTempContent(sp.displayName), EditorStyles.boldLabel);
+            Rect r = EditorGUILayout.GetControlRect();
+            Rect pos = EditorGUI.PrefixLabel(r, EditorGUIUtility.TrTempContent(sp.displayName), EditorStyles.boldLabel);
             EditorGUI.PropertyField(pos, sp, GUIContent.none);
             return 0 < sp.intValue;
         }

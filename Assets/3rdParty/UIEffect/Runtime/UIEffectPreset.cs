@@ -1,4 +1,5 @@
-﻿using Coffee.UIEffectInternal;
+﻿using System;
+using Coffee.UIEffectInternal;
 using UnityEngine;
 using UnityEngine.Rendering;
 
@@ -6,8 +7,9 @@ namespace Coffee.UIEffects
 {
     [CreateAssetMenu]
     [ExecuteAlways]
-    public class UIEffectPreset : ScriptableObject
+    public class UIEffectPreset : ScriptableObject, ISerializationCallbackReceiver
     {
+        private const int CurrentPatternLayerVersion = 1;
         private static UIEffectPreset s_DefaultPreset;
 
 #if UNITY_EDITOR && UNITY_2019_3_OR_NEWER
@@ -65,6 +67,10 @@ namespace Coffee.UIEffects
         [Range(-5, 5)] public float m_TransitionAutoPlaySpeed = 0f;
         public Gradient m_TransitionGradient = new Gradient();
 
+        [SerializeField] private int m_PatternLayerVersion;
+        [SerializeField] private PatternLayer[] m_PatternLayers;
+        [NonSerialized] private bool m_PatternLayerMigrationPending;
+
         public TargetMode m_TargetMode = TargetMode.None;
         public Color m_TargetColor = Color.white;
         [Range(0, 1)] public float m_TargetRange = 0.1f;
@@ -119,9 +125,36 @@ namespace Coffee.UIEffects
 
         public Flip m_Flip = 0;
 
+        public int patternLayerCount => PatternLayer.MaxCount;
+
+        public PatternLayer GetPatternLayer(int index)
+        {
+            ValidatePatternLayerIndex(index);
+            EnsurePatternLayers();
+            return m_PatternLayers[index].Clone();
+        }
+
+        public void SetPatternLayer(int index, PatternLayer layer)
+        {
+            ValidatePatternLayerIndex(index);
+            if (layer == null)
+            {
+                throw new ArgumentNullException(nameof(layer));
+            }
+
+            EnsurePatternLayers();
+            m_PatternLayers[index].CopyFrom(layer);
+        }
+
         public void UpdateContext(UIEffectContext dst)
         {
-            var src = this;
+            if (dst == null)
+            {
+                throw new ArgumentNullException(nameof(dst));
+            }
+
+            EnsurePatternLayers();
+            UIEffectPreset src = this;
             dst.m_ToneFilter = src.m_ToneFilter;
             dst.m_ToneIntensity = src.m_ToneIntensity;
 
@@ -152,6 +185,7 @@ namespace Coffee.UIEffects
             dst.m_TransitionPatternReverse = src.m_TransitionPatternReverse;
             dst.m_TransitionAutoPlaySpeed = src.m_TransitionAutoPlaySpeed;
             dst.m_TransitionGradient = src.m_TransitionGradient;
+            dst.m_PatternLayers = PatternLayer.CloneFixed(src.m_PatternLayers);
 
             dst.m_TargetMode = src.m_TargetMode;
             dst.m_TargetColor = src.m_TargetColor;
@@ -205,6 +239,98 @@ namespace Coffee.UIEffects
             dst.m_DetailTexSpeed = src.m_DetailTexSpeed;
 
             dst.m_Flip = src.m_Flip;
+        }
+
+        public void OnBeforeSerialize()
+        {
+            EnsurePatternLayers();
+        }
+
+        public void OnAfterDeserialize()
+        {
+            EnsurePatternLayers();
+        }
+
+        internal bool EnsurePatternLayers()
+        {
+            if (m_PatternLayerVersion >= CurrentPatternLayerVersion
+                && m_PatternLayers != null
+                && m_PatternLayers.Length == PatternLayer.MaxCount)
+            {
+                for (int i = 0; i < m_PatternLayers.Length; i++)
+                {
+                    m_PatternLayers[i] ??= new PatternLayer { m_Enabled = false };
+                }
+
+                return false;
+            }
+
+            bool hasExistingLayers = m_PatternLayers != null
+                && Array.Exists(m_PatternLayers, layer => layer != null);
+            PatternLayer legacyLayer = CreateLegacyPatternLayer();
+            PatternLayer[] existingLayers = PatternLayer.CloneFixed(m_PatternLayers);
+            m_PatternLayers = existingLayers;
+            if (m_PatternLayerVersion < CurrentPatternLayerVersion && !hasExistingLayers)
+            {
+                m_PatternLayers[0] = legacyLayer;
+            }
+
+            m_PatternLayerVersion = CurrentPatternLayerVersion;
+            m_PatternLayerMigrationPending = true;
+            return true;
+        }
+
+        internal bool ConsumePatternLayerMigrationPending()
+        {
+            bool pending = m_PatternLayerMigrationPending;
+            m_PatternLayerMigrationPending = false;
+            return pending;
+        }
+
+        internal PatternLayer[] ClonePatternLayers()
+        {
+            EnsurePatternLayers();
+            return PatternLayer.CloneFixed(m_PatternLayers);
+        }
+
+        internal void SetPatternLayers(PatternLayer[] source)
+        {
+            m_PatternLayers = PatternLayer.CloneFixed(source);
+            m_PatternLayerVersion = CurrentPatternLayerVersion;
+        }
+
+        private PatternLayer CreateLegacyPatternLayer()
+        {
+            return new PatternLayer
+            {
+                m_Enabled = true,
+                m_Texture = m_TransitionTex,
+                m_Opacity = 1,
+                m_TextureScale = m_TransitionTexScale,
+                m_TextureOffset = m_TransitionTexOffset,
+                m_TextureSpeed = m_TransitionTexSpeed,
+                m_Rotation = m_TransitionRotation,
+                m_KeepAspectRatio = m_TransitionKeepAspectRatio,
+                m_Rate = m_TransitionRate,
+                m_TextureReverse = m_TransitionReverse,
+                m_Width = m_TransitionWidth,
+                m_Range = m_TransitionRange,
+                m_PatternReverse = m_TransitionPatternReverse,
+                m_AutoPlaySpeed = m_TransitionAutoPlaySpeed,
+                m_ColorFilter = m_TransitionColorFilter,
+                m_Color = m_TransitionColor,
+                m_ColorGlow = m_TransitionColorGlow,
+                m_Area = m_PatternArea,
+            };
+        }
+
+        private static void ValidatePatternLayerIndex(int index)
+        {
+            if (index < 0 || PatternLayer.MaxCount <= index)
+            {
+                throw new ArgumentOutOfRangeException(nameof(index), index,
+                    $"Pattern layer index must be between 0 and {PatternLayer.MaxCount - 1}.");
+            }
         }
     }
 }

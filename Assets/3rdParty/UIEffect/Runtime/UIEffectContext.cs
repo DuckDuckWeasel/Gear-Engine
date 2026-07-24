@@ -36,6 +36,19 @@ namespace Coffee.UIEffects
         private static readonly int s_TransitionPatternReverse = Shader.PropertyToID("_TransitionPatternReverse");
         private static readonly int s_TransitionAutoPlaySpeed = Shader.PropertyToID("_TransitionAutoPlaySpeed");
         private static readonly int s_TransitionGradientTex = Shader.PropertyToID("_TransitionGradientTex");
+        private static readonly int[] s_PatternEnabled = CreatePropertyIds("_PatternEnabled{0}");
+        private static readonly int[] s_PatternTex = CreatePropertyIds("_PatternTex{0}");
+        private static readonly int[] s_PatternTex_ST = CreatePropertyIds("_PatternTex{0}_ST");
+        private static readonly int[] s_PatternTex_Speed = CreatePropertyIds("_PatternTex{0}_Speed");
+        private static readonly int[] s_PatternParams1 = CreatePropertyIds("_PatternParams1_{0}");
+        private static readonly int[] s_PatternParams2 = CreatePropertyIds("_PatternParams2_{0}");
+        private static readonly int[] s_PatternColorFilter = CreatePropertyIds("_PatternColorFilter{0}");
+        private static readonly int[] s_PatternColor = CreatePropertyIds("_PatternColor{0}");
+        private static readonly int[] s_PatternColorGlow = CreatePropertyIds("_PatternColorGlow{0}");
+        private static readonly int[] s_PatternLayerArea = CreatePropertyIds("_PatternArea{0}");
+        private static readonly int[] s_PatternRootViewMatrix = CreatePropertyIds("_PatternRootViewMatrix{0}");
+        private static readonly int[] s_PatternMirrorRootViewMatrix =
+            CreatePropertyIds("_PatternMirrorRootViewMatrix{0}");
         private static readonly int s_TargetColor = Shader.PropertyToID("_TargetColor");
         private static readonly int s_TargetRange = Shader.PropertyToID("_TargetRange");
         private static readonly int s_TargetSoftness = Shader.PropertyToID("_TargetSoftness");
@@ -191,6 +204,7 @@ namespace Coffee.UIEffects
         public bool m_TransitionPatternReverse;
         public float m_TransitionAutoPlaySpeed;
         public Gradient m_TransitionGradient;
+        public PatternLayer[] m_PatternLayers;
 
         public TargetMode m_TargetMode;
         public Color m_TargetColor;
@@ -272,7 +286,7 @@ namespace Coffee.UIEffects
         private static readonly InternalObjectPool<Texture2D> s_TexturePool = new InternalObjectPool<Texture2D>(
             () =>
             {
-                var texture = new Texture2D(s_Colors.Length, 1, TextureFormat.RGBAFloat, false, false)
+                Texture2D texture = new Texture2D(s_Colors.Length, 1, TextureFormat.RGBAFloat, false, false)
                 {
                     name = "GradationRamp",
                     hideFlags = HideFlags.DontSave,
@@ -289,16 +303,28 @@ namespace Coffee.UIEffects
         {
             get
             {
-                if (m_GradationGradient == null) return null;
-                if (_gradationRampTex == null) _gradationRampTex = s_TexturePool.Rent();
-                if (!_isGradientDirty) return _gradationRampTex;
+                if (m_GradationGradient == null)
+                {
+                    return null;
+                }
+
+                if (_gradationRampTex == null)
+                {
+                    _gradationRampTex = s_TexturePool.Rent();
+                }
+
+                if (!_isGradientDirty)
+                {
+                    return _gradationRampTex;
+                }
+
                 _isGradientDirty = false;
 
-                var w = s_Colors.Length;
-                for (var i = 0; i < w; i++)
+                int w = s_Colors.Length;
+                for (int i = 0; i < w; i++)
                 {
-                    var x = m_GradationReverse ? w - 1 - i : i;
-                    var t = (float)i / (w - 1);
+                    int x = m_GradationReverse ? w - 1 - i : i;
+                    float t = (float)i / (w - 1);
                     s_Colors[x] = ApplyColorSpace(m_GradationGradient.Evaluate(t));
                 }
 
@@ -316,15 +342,27 @@ namespace Coffee.UIEffects
         {
             get
             {
-                if (m_TransitionGradient == null) return null;
-                if (_transitionRampTex == null) _transitionRampTex = s_TexturePool.Rent();
-                if (!_isTransitionGradientDirty) return _transitionRampTex;
+                if (m_TransitionGradient == null)
+                {
+                    return null;
+                }
+
+                if (_transitionRampTex == null)
+                {
+                    _transitionRampTex = s_TexturePool.Rent();
+                }
+
+                if (!_isTransitionGradientDirty)
+                {
+                    return _transitionRampTex;
+                }
+
                 _isTransitionGradientDirty = false;
 
-                var w = s_Colors.Length;
-                for (var i = 0; i < w; i++)
+                int w = s_Colors.Length;
+                for (int i = 0; i < w; i++)
                 {
-                    var t = (float)i / (w - 1);
+                    float t = (float)i / (w - 1);
                     s_Colors[i] = ApplyColorSpace(m_TransitionGradient.Evaluate(t));
                 }
 
@@ -351,7 +389,7 @@ namespace Coffee.UIEffects
 
         private void CopyFrom(UIEffectContext src)
         {
-            var dst = this;
+            UIEffectContext dst = this;
             dst.m_ToneFilter = src.m_ToneFilter;
             dst.m_ToneIntensity = src.m_ToneIntensity;
 
@@ -382,6 +420,7 @@ namespace Coffee.UIEffects
             dst.m_TransitionPatternReverse = src.m_TransitionPatternReverse;
             dst.m_TransitionAutoPlaySpeed = src.m_TransitionAutoPlaySpeed;
             dst.m_TransitionGradient = src.m_TransitionGradient;
+            dst.m_PatternLayers = PatternLayer.CloneFixed(src.m_PatternLayers);
 
             dst.m_TargetMode = src.m_TargetMode;
             dst.m_TargetColor = src.m_TargetColor;
@@ -449,7 +488,10 @@ namespace Coffee.UIEffects
 
         public void ApplyToMaterial(Material material, float actualSamplingScale = 1f)
         {
-            if (material == null) return;
+            if (material == null)
+            {
+                return;
+            }
 
             Profiler.BeginSample("(UIE)[UIEffect] ApplyToMaterial");
 
@@ -484,6 +526,7 @@ namespace Coffee.UIEffects
             material.SetFloat(s_TransitionAutoPlaySpeed, m_TransitionAutoPlaySpeed);
             material.SetTexture(s_TransitionGradientTex,
                 m_TransitionFilter == TransitionFilter.Blaze ? transitionRampTex : null);
+            ApplyPatternLayersToMaterial(material);
 
             material.SetColor(s_TargetColor, ApplyColorSpace(m_TargetColor));
             material.SetFloat(s_TargetRange, Mathf.Clamp01(m_TargetRange));
@@ -580,19 +623,35 @@ namespace Coffee.UIEffects
 
         public void SetEnablePreview(bool enable, Material material)
         {
-            if (material == null) return;
+            if (material == null)
+            {
+                return;
+            }
+
             material.SetVector(s_TransitionTex_Speed, enable ? (Vector4)m_TransitionTexSpeed : Vector4.zero);
             material.SetVector(s_DetailTex_Speed, enable ? (Vector4)m_DetailTexSpeed : Vector4.zero);
             material.SetFloat(s_TransitionAutoPlaySpeed, enable ? m_TransitionAutoPlaySpeed : 0);
             material.SetFloat(s_EdgeShinyAutoPlaySpeed, enable ? m_EdgeShinyAutoPlaySpeed : 0);
+            PatternLayer[] layers = PatternLayer.CloneFixed(m_PatternLayers);
+            for (int i = 0; i < PatternLayer.MaxCount; i++)
+            {
+                PatternLayer layer = layers[i];
+                material.SetVector(s_PatternTex_Speed[i], enable ? (Vector4)layer.m_TextureSpeed : Vector4.zero);
+                Vector4 parameters = material.GetVector(s_PatternParams2[i]);
+                parameters.w = enable ? layer.m_AutoPlaySpeed : 0;
+                material.SetVector(s_PatternParams2[i], parameters);
+            }
         }
 
         public void UpdateViewMatrix(Material material, RectTransform transitionRoot, Canvas canvas)
         {
-            if (material == null) return;
+            if (material == null)
+            {
+                return;
+            }
 
-            var size = transitionRoot.rect.size;
-            var scale = new Vector3(1f / size.x, 1f / size.y, 1f);
+            Vector2 size = transitionRoot.rect.size;
+            Vector3 scale = new Vector3(1f / size.x, 1f / size.y, 1f);
             if (m_TransitionKeepAspectRatio && !Mathf.Approximately(scale.x, scale.y))
             {
                 scale.x = scale.y = Mathf.Min(scale.x, scale.y);
@@ -604,26 +663,26 @@ namespace Coffee.UIEffects
                 scale.y = 0 != (m_Flip & Flip.Vertical) ? -scale.y : scale.y;
             }
 
-            var pivot = new Vector3(0.5f, 0.5f);
-            var offset = (transitionRoot.pivot - (Vector2)pivot) * size;
-            var w2LMat = Matrix4x4.Translate(offset) * transitionRoot.worldToLocalMatrix;
+            Vector3 pivot = new Vector3(0.5f, 0.5f);
+            Vector2 offset = (transitionRoot.pivot - (Vector2)pivot) * size;
+            Matrix4x4 w2LMat = Matrix4x4.Translate(offset) * transitionRoot.worldToLocalMatrix;
 
-            var rootRotation = Quaternion.Euler(0, 0, m_TransitionRotation);
-            var rootScale = 1f / GetMultiplier(m_TransitionRotation);
+            Quaternion rootRotation = Quaternion.Euler(0, 0, m_TransitionRotation);
+            float rootScale = 1f / GetMultiplier(m_TransitionRotation);
             material.SetMatrix(s_RootViewMatrix, Matrix4x4.TRS(pivot, rootRotation, scale * rootScale) * w2LMat);
 
-            var rotation = GetGradationRotation();
-            var gradRotation = Quaternion.Euler(0, 0, rotation);
-            var gradScale = 1f / GetMultiplier(rotation);
+            float rotation = GetGradationRotation();
+            Quaternion gradRotation = Quaternion.Euler(0, 0, rotation);
+            float gradScale = 1f / GetMultiplier(rotation);
             material.SetMatrix(s_GradViewMatrix, Matrix4x4.TRS(pivot, gradRotation, scale * gradScale) * w2LMat);
 
             if (m_ShadowMode == ShadowMode.Mirror)
             {
-                var mirrorInv = 1f / m_ShadowMirrorScale;
-                var mirrorOffset = new Vector3(0, size.y / 2 * (mirrorInv + 1) - m_ShadowDistance.y * mirrorInv, 0);
-                var mirrorScale = new Vector3(1, mirrorInv, 1);
-                var udScale = new Vector3(scale.x, -scale.y, scale.z);
-                var mirrorTranslation = Matrix4x4.TRS(mirrorOffset, Quaternion.identity, mirrorScale) * w2LMat;
+                float mirrorInv = 1f / m_ShadowMirrorScale;
+                Vector3 mirrorOffset = new Vector3(0, size.y / 2 * (mirrorInv + 1) - m_ShadowDistance.y * mirrorInv, 0);
+                Vector3 mirrorScale = new Vector3(1, mirrorInv, 1);
+                Vector3 udScale = new Vector3(scale.x, -scale.y, scale.z);
+                Matrix4x4 mirrorTranslation = Matrix4x4.TRS(mirrorOffset, Quaternion.identity, mirrorScale) * w2LMat;
                 material.SetMatrix(
                     s_MirrorRootViewMatrix,
                     Matrix4x4.TRS(pivot, rootRotation, udScale * rootScale) * mirrorTranslation
@@ -634,7 +693,7 @@ namespace Coffee.UIEffects
                 );
             }
 
-            var useIdentity =
+            bool useIdentity =
                 canvas.renderMode == RenderMode.WorldSpace ||
                 (canvas.renderMode != RenderMode.ScreenSpaceOverlay && canvas.worldCamera);
 
@@ -642,11 +701,91 @@ namespace Coffee.UIEffects
                 s_CanvasToWorldMatrix,
                 useIdentity ? Matrix4x4.identity : canvas.transform.localToWorldMatrix
             );
+
+            SetPatternViewMatrices(material, scale, pivot, w2LMat, size);
+        }
+
+        private void ApplyPatternLayersToMaterial(Material material)
+        {
+            PatternLayer[] layers = PatternLayer.CloneFixed(m_PatternLayers);
+            for (int i = 0; i < PatternLayer.MaxCount; i++)
+            {
+                PatternLayer layer = layers[i];
+                bool enabled = m_TransitionFilter == TransitionFilter.Pattern && layer.m_Enabled;
+                material.SetInt(s_PatternEnabled[i], enabled ? 1 : 0);
+                material.SetTexture(s_PatternTex[i], enabled ? layer.m_Texture : null);
+                material.SetVector(s_PatternTex_ST[i], new Vector4(layer.m_TextureScale.x,
+                    layer.m_TextureScale.y, layer.m_TextureOffset.x, layer.m_TextureOffset.y));
+                material.SetVector(s_PatternTex_Speed[i], layer.m_TextureSpeed);
+                material.SetVector(s_PatternParams1[i], new Vector4(Mathf.Clamp01(layer.m_Opacity),
+                    Mathf.Clamp01(layer.m_Rate), layer.m_TextureReverse ? 1 : 0, Mathf.Clamp01(layer.m_Width)));
+                material.SetVector(s_PatternParams2[i], new Vector4(layer.m_Range.min, layer.m_Range.max,
+                    layer.m_PatternReverse ? 1 : 0, layer.m_AutoPlaySpeed));
+                material.SetInt(s_PatternColorFilter[i], (int)layer.m_ColorFilter);
+                material.SetColor(s_PatternColor[i], ApplyColorSpace(layer.m_Color));
+                material.SetInt(s_PatternColorGlow[i], layer.m_ColorGlow ? 1 : 0);
+                material.SetInt(s_PatternLayerArea[i], m_EdgeMode != EdgeMode.None ? (int)layer.m_Area : 0);
+            }
+        }
+
+        private void SetPatternViewMatrices(Material material, Vector3 baseScale, Vector3 pivot,
+            Matrix4x4 worldToLocal, Vector2 size)
+        {
+            PatternLayer[] layers = PatternLayer.CloneFixed(m_PatternLayers);
+            for (int i = 0; i < PatternLayer.MaxCount; i++)
+            {
+                PatternLayer layer = layers[i];
+                Vector3 scale = new Vector3(1f / size.x, 1f / size.y, 1f);
+                if (layer.m_KeepAspectRatio && !Mathf.Approximately(scale.x, scale.y))
+                {
+                    scale.x = scale.y = Mathf.Min(scale.x, scale.y);
+                }
+
+                scale.x = Mathf.Sign(baseScale.x) * Mathf.Abs(scale.x);
+                scale.y = Mathf.Sign(baseScale.y) * Mathf.Abs(scale.y);
+                Quaternion rotation = Quaternion.Euler(0, 0, layer.m_Rotation);
+                float scaleMultiplier = 1f / GetMultiplier(layer.m_Rotation);
+                material.SetMatrix(s_PatternRootViewMatrix[i],
+                    Matrix4x4.TRS(pivot, rotation, scale * scaleMultiplier) * worldToLocal);
+                SetPatternMirrorViewMatrix(material, i, pivot, rotation, scale,
+                    scaleMultiplier, worldToLocal, size);
+            }
+        }
+
+        private void SetPatternMirrorViewMatrix(Material material, int index, Vector3 pivot, Quaternion rotation,
+            Vector3 scale, float scaleMultiplier, Matrix4x4 worldToLocal, Vector2 size)
+        {
+            if (m_ShadowMode != ShadowMode.Mirror)
+            {
+                material.SetMatrix(s_PatternMirrorRootViewMatrix[index], Matrix4x4.identity);
+                return;
+            }
+
+            float mirrorInv = 1f / m_ShadowMirrorScale;
+            Vector3 mirrorOffset = new Vector3(0,
+                size.y / 2 * (mirrorInv + 1) - m_ShadowDistance.y * mirrorInv, 0);
+            Vector3 mirrorScale = new Vector3(1, mirrorInv, 1);
+            Vector3 upDownScale = new Vector3(scale.x, -scale.y, scale.z);
+            Matrix4x4 mirrorTranslation = Matrix4x4.TRS(mirrorOffset, Quaternion.identity, mirrorScale)
+                                                * worldToLocal;
+            material.SetMatrix(s_PatternMirrorRootViewMatrix[index],
+                Matrix4x4.TRS(pivot, rotation, upDownScale * scaleMultiplier) * mirrorTranslation);
+        }
+
+        private static int[] CreatePropertyIds(string format)
+        {
+            int[] propertyIds = new int[PatternLayer.MaxCount];
+            for (int i = 0; i < propertyIds.Length; i++)
+            {
+                propertyIds[i] = Shader.PropertyToID(string.Format(format, i));
+            }
+
+            return propertyIds;
         }
 
         private Vector4 GetGradationScaleAndOffset()
         {
-            var gScale = 1 / m_GradationScale;
+            float gScale = 1 / m_GradationScale;
             switch (m_GradationMode)
             {
                 case GradationMode.HorizontalGradient:
@@ -657,9 +796,9 @@ namespace Coffee.UIEffects
 #pragma warning disable CS0612 // Type or member is obsolete
                 case GradationMode.RadialDetail:
 #pragma warning restore CS0612
-                {
-                    return new Vector4(gScale, 1, m_GradationOffset, 0);
-                }
+                    {
+                        return new Vector4(gScale, 1, m_GradationOffset, 0);
+                    }
                 default:
                     return new Vector4(gScale, 1, m_GradationOffset * (gScale + 1) / 2 - gScale * 0.5f + 0.5f, 0);
             }
@@ -687,9 +826,9 @@ namespace Coffee.UIEffects
 
         private static float GetMultiplier(float deg)
         {
-            var rad = Mathf.Deg2Rad * deg;
-            var sin = Mathf.Sin(rad);
-            var cos = Mathf.Cos(rad);
+            float rad = Mathf.Deg2Rad * deg;
+            float sin = Mathf.Sin(rad);
+            float cos = Mathf.Cos(rad);
             return Mathf.Max(Mathf.Abs(cos - sin), Mathf.Abs(cos + sin));
         }
 
@@ -699,15 +838,19 @@ namespace Coffee.UIEffects
         private static void SetKeyword(Material material, string[] keywords, int index)
 #endif
         {
-            var length = keywords.Length;
+            int length = keywords.Length;
             if (index < length && !string.IsNullOrEmpty(keywords[index]))
             {
                 material.EnableKeyword(keywords[index]);
             }
 
-            for (var i = 0; i < length; i++)
+            for (int i = 0; i < length; i++)
             {
-                if (i == index) continue;
+                if (i == index)
+                {
+                    continue;
+                }
+
                 material.DisableKeyword(keywords[i]);
             }
         }
@@ -718,29 +861,32 @@ namespace Coffee.UIEffects
             // Apply flip (without effect).
             ApplyFlipWithoutEffect(vh, m_Flip);
 
-            var count = vh.currentIndexCount;
-            if (!willModifyVertex || count == 0) return;
+            int count = vh.currentIndexCount;
+            if (!willModifyVertex || count == 0)
+            {
+                return;
+            }
 
-            var effectProxy = GraphicProxy.Find(graphic);
-            var isText = effectProxy.IsText(graphic);
+            GraphicProxy effectProxy = GraphicProxy.Find(graphic);
+            bool isText = effectProxy.IsText(graphic);
             effectProxy.OnPreModifyMesh(graphic, canvas);
 
-            var verts = s_WorkingVertices;
-            var expandSize = effectProxy.ModifyExpandSize(graphic, GetExpandSize(canModifyShape));
+            List<UIVertex> verts = s_WorkingVertices;
+            Vector4 expandSize = effectProxy.ModifyExpandSize(graphic, GetExpandSize(canModifyShape));
 
             // Get the rectangle to calculate the normalized position.
             vh.GetUIVertexStream(verts);
-            var bundleSize = isText ? 6 : count;
+            int bundleSize = isText ? 6 : count;
 
             // Modify vertices for each bundled-quad.
-            for (var i = 0; i < count; i += bundleSize)
+            for (int i = 0; i < count; i += bundleSize)
             {
                 // min/max for bundled-quad
-                UIVertexUtil.GetBounds(verts, i, bundleSize, out var bounds, out var uvMask);
+                UIVertexUtil.GetBounds(verts, i, bundleSize, out Rect bounds, out Rect uvMask);
                 UIVertexUtil.Expand(verts, i, bundleSize, expandSize, bounds);
-                for (var j = 0; j < bundleSize; j++)
+                for (int j = 0; j < bundleSize; j++)
                 {
-                    var vt = verts[i + j];
+                    UIVertex vt = verts[i + j];
                     if (onModifyVertex != null)
                     {
                         vt = onModifyVertex(vt, uvMask);
@@ -766,8 +912,11 @@ namespace Coffee.UIEffects
 
         private void ApplyShadow(List<UIVertex> verts, RectTransform transitionRoot, Flip flip)
         {
-            var distance = m_ShadowDistance;
-            if (distance == Vector2.zero) return;
+            Vector2 distance = m_ShadowDistance;
+            if (distance == Vector2.zero)
+            {
+                return;
+            }
 
             if ((flip & Flip.Shadow) != 0)
             {
@@ -792,31 +941,46 @@ namespace Coffee.UIEffects
 
         private static void ApplyFlipWithoutEffect(VertexHelper vh, Flip flip)
         {
-            if ((flip & Flip.Effect) != 0) return;
+            if ((flip & Flip.Effect) != 0)
+            {
+                return;
+            }
 
-            var flipHorizontal = 0 != (flip & Flip.Horizontal);
-            var flipVertical = 0 != (flip & Flip.Vertical);
-            if (!flipHorizontal && !flipVertical) return;
+            bool flipHorizontal = 0 != (flip & Flip.Horizontal);
+            bool flipVertical = 0 != (flip & Flip.Vertical);
+            if (!flipHorizontal && !flipVertical)
+            {
+                return;
+            }
 
             UIVertexUtil.Flip(vh, flipHorizontal, flipVertical);
         }
 
         private static void ApplyFlipWithEffect(List<UIVertex> verts, Flip flip)
         {
-            if ((flip & Flip.Effect) == 0) return;
+            if ((flip & Flip.Effect) == 0)
+            {
+                return;
+            }
 
-            var flipHorizontal = 0 != (flip & Flip.Horizontal);
-            var flipVertical = 0 != (flip & Flip.Vertical);
-            if (!flipHorizontal && !flipVertical) return;
+            bool flipHorizontal = 0 != (flip & Flip.Horizontal);
+            bool flipVertical = 0 != (flip & Flip.Vertical);
+            if (!flipHorizontal && !flipVertical)
+            {
+                return;
+            }
 
             UIVertexUtil.Flip(verts, flipHorizontal, flipVertical);
         }
 
         private Vector4 GetExpandSize(bool canModifyShape)
         {
-            if (!canModifyShape) return Vector4.zero;
+            if (!canModifyShape)
+            {
+                return Vector4.zero;
+            }
 
-            var expandSize = Vector4.zero;
+            Vector4 expandSize = Vector4.zero;
             switch (m_SamplingFilter)
             {
                 case SamplingFilter.BlurFast:

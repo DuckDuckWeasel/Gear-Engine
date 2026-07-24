@@ -10,8 +10,10 @@ namespace Coffee.UIEffects
     [Icon("Packages/com.coffee.ui-effect/Editor/UIEffectIconIcon.png")]
     [ExecuteAlways]
     [DisallowMultipleComponent]
-    public class UIEffect : UIEffectBase
+    public class UIEffect : UIEffectBase, ISerializationCallbackReceiver
     {
+        private const int CurrentPatternLayerVersion = 1;
+
         [SerializeField]
         protected ToneFilter m_ToneFilter = ToneFilter.None;
 
@@ -109,6 +111,15 @@ namespace Coffee.UIEffects
 
         [SerializeField]
         private Gradient m_TransitionGradient = new Gradient();
+
+        [SerializeField]
+        private int m_PatternLayerVersion;
+
+        [SerializeField]
+        private PatternLayer[] m_PatternLayers;
+
+        [NonSerialized]
+        private bool m_PatternLayerMigrationPending;
 
         [SerializeField]
         protected TargetMode m_TargetMode = TargetMode.None;
@@ -280,7 +291,11 @@ namespace Coffee.UIEffects
             get => m_ToneFilter;
             set
             {
-                if (m_ToneFilter == value) return;
+                if (m_ToneFilter == value)
+                {
+                    return;
+                }
+
                 context.m_ToneFilter = m_ToneFilter = value;
                 SetVerticesDirty();
                 SetMaterialDirty();
@@ -296,7 +311,11 @@ namespace Coffee.UIEffects
             set
             {
                 value = Mathf.Clamp(value, 0, 1);
-                if (Mathf.Approximately(m_ToneIntensity, value)) return;
+                if (Mathf.Approximately(m_ToneIntensity, value))
+                {
+                    return;
+                }
+
                 context.m_ToneIntensity = m_ToneIntensity = value;
                 SetMaterialContextDirty();
             }
@@ -310,7 +329,11 @@ namespace Coffee.UIEffects
             get => m_ColorFilter;
             set
             {
-                if (m_ColorFilter == value) return;
+                if (m_ColorFilter == value)
+                {
+                    return;
+                }
+
                 context.m_ColorFilter = m_ColorFilter = value;
                 SetVerticesDirty();
                 SetMaterialDirty();
@@ -326,7 +349,11 @@ namespace Coffee.UIEffects
             set
             {
                 value = Mathf.Clamp(value, 0, 1);
-                if (Mathf.Approximately(m_ColorIntensity, value)) return;
+                if (Mathf.Approximately(m_ColorIntensity, value))
+                {
+                    return;
+                }
+
                 context.m_ColorIntensity = m_ColorIntensity = value;
                 SetMaterialContextDirty();
             }
@@ -338,7 +365,11 @@ namespace Coffee.UIEffects
             set
             {
                 m_Color.a = 1;
-                if (m_Color == value) return;
+                if (m_Color == value)
+                {
+                    return;
+                }
+
                 context.m_Color = m_Color = value;
                 SetMaterialContextDirty();
             }
@@ -349,7 +380,7 @@ namespace Coffee.UIEffects
             get => color.r;
             set
             {
-                var c = color;
+                Color c = color;
                 c.r = Mathf.Clamp(value, -0.5f, 0.5f);
                 color = c;
             }
@@ -360,7 +391,7 @@ namespace Coffee.UIEffects
             get => color.g;
             set
             {
-                var c = color;
+                Color c = color;
                 c.g = Mathf.Clamp(value, -1, 1);
                 color = c;
             }
@@ -371,7 +402,7 @@ namespace Coffee.UIEffects
             get => color.b;
             set
             {
-                var c = color;
+                Color c = color;
                 c.b = Mathf.Clamp(value, -1, 1);
                 color = c;
             }
@@ -382,7 +413,7 @@ namespace Coffee.UIEffects
             get => color.r;
             set
             {
-                var c = color;
+                Color c = color;
                 c.r = Mathf.Clamp(value, -1, 1);
                 color = c;
             }
@@ -393,7 +424,7 @@ namespace Coffee.UIEffects
             get => color.g;
             set
             {
-                var c = color;
+                Color c = color;
                 c.g = Mathf.Clamp(value, -1, 1);
                 color = c;
             }
@@ -404,7 +435,7 @@ namespace Coffee.UIEffects
             get => color.a;
             set
             {
-                var c = color;
+                Color c = color;
                 c.a = value;
                 color = c;
             }
@@ -415,7 +446,11 @@ namespace Coffee.UIEffects
             get => m_ColorGlow;
             set
             {
-                if (m_ColorGlow == value) return;
+                if (m_ColorGlow == value)
+                {
+                    return;
+                }
+
                 context.m_ColorGlow = m_ColorGlow = value;
                 SetMaterialContextDirty();
             }
@@ -429,7 +464,11 @@ namespace Coffee.UIEffects
             get => m_SamplingFilter;
             set
             {
-                if (m_SamplingFilter == value) return;
+                if (m_SamplingFilter == value)
+                {
+                    return;
+                }
+
                 context.m_SamplingFilter = m_SamplingFilter = value;
                 SetVerticesDirty();
                 SetMaterialDirty();
@@ -445,7 +484,11 @@ namespace Coffee.UIEffects
             set
             {
                 value = Mathf.Clamp(value, 0, 1);
-                if (Mathf.Approximately(m_SamplingIntensity, value)) return;
+                if (Mathf.Approximately(m_SamplingIntensity, value))
+                {
+                    return;
+                }
+
                 context.m_SamplingIntensity = m_SamplingIntensity = value;
                 SetMaterialContextDirty();
             }
@@ -457,7 +500,11 @@ namespace Coffee.UIEffects
             set
             {
                 value = Mathf.Clamp(value, 0.5f, 10);
-                if (Mathf.Approximately(m_SamplingWidth, value)) return;
+                if (Mathf.Approximately(m_SamplingWidth, value))
+                {
+                    return;
+                }
+
                 context.m_SamplingWidth = m_SamplingWidth = value;
                 SetMaterialContextDirty();
             }
@@ -469,7 +516,11 @@ namespace Coffee.UIEffects
             set
             {
                 value = Mathf.Clamp(value, 0.01f, 100);
-                if (Mathf.Approximately(m_SamplingScale, value)) return;
+                if (Mathf.Approximately(m_SamplingScale, value))
+                {
+                    return;
+                }
+
                 m_SamplingScale = value;
                 SetMaterialDirty();
             }
@@ -479,6 +530,30 @@ namespace Coffee.UIEffects
 
         public override bool canModifyShape => m_AllowToModifyMeshShape;
 
+        public int patternLayerCount => PatternLayer.MaxCount;
+
+        public PatternLayer GetPatternLayer(int index)
+        {
+            ValidatePatternLayerIndex(index);
+            EnsurePatternLayers();
+            return m_PatternLayers[index].Clone();
+        }
+
+        public void SetPatternLayer(int index, PatternLayer layer)
+        {
+            ValidatePatternLayerIndex(index);
+            if (layer == null)
+            {
+                throw new ArgumentNullException(nameof(layer));
+            }
+
+            EnsurePatternLayers();
+            m_PatternLayers[index].CopyFrom(layer);
+            UpdateContext(context);
+            SetVerticesDirty();
+            SetMaterialDirty();
+        }
+
         /// <summary>
         /// Transition filter for rendering.
         /// </summary>
@@ -487,7 +562,11 @@ namespace Coffee.UIEffects
             get => m_TransitionFilter;
             set
             {
-                if (m_TransitionFilter == value) return;
+                if (m_TransitionFilter == value)
+                {
+                    return;
+                }
+
                 context.m_TransitionFilter = m_TransitionFilter = value;
                 SetVerticesDirty();
                 SetMaterialDirty();
@@ -503,7 +582,11 @@ namespace Coffee.UIEffects
             set
             {
                 value = Mathf.Clamp(value, 0, 1);
-                if (Mathf.Approximately(m_TransitionRate, value)) return;
+                if (Mathf.Approximately(m_TransitionRate, value))
+                {
+                    return;
+                }
+
                 context.m_TransitionRate = m_TransitionRate = value;
                 SetMaterialContextDirty();
             }
@@ -514,7 +597,11 @@ namespace Coffee.UIEffects
             get => m_TransitionReverse;
             set
             {
-                if (m_TransitionReverse == value) return;
+                if (m_TransitionReverse == value)
+                {
+                    return;
+                }
+
                 context.m_TransitionReverse = m_TransitionReverse = value;
                 SetMaterialContextDirty();
             }
@@ -525,7 +612,11 @@ namespace Coffee.UIEffects
             get => m_TransitionTex;
             set
             {
-                if (m_TransitionTex == value) return;
+                if (m_TransitionTex == value)
+                {
+                    return;
+                }
+
                 context.m_TransitionTex = m_TransitionTex = value;
                 SetMaterialContextDirty();
             }
@@ -536,7 +627,11 @@ namespace Coffee.UIEffects
             get => m_TransitionTexScale;
             set
             {
-                if (m_TransitionTexScale == value) return;
+                if (m_TransitionTexScale == value)
+                {
+                    return;
+                }
+
                 context.m_TransitionTexScale = m_TransitionTexScale = value;
                 SetMaterialContextDirty();
             }
@@ -547,7 +642,11 @@ namespace Coffee.UIEffects
             get => m_TransitionTexOffset;
             set
             {
-                if (m_TransitionTexOffset == value) return;
+                if (m_TransitionTexOffset == value)
+                {
+                    return;
+                }
+
                 context.m_TransitionTexOffset = m_TransitionTexOffset = value;
                 SetMaterialContextDirty();
             }
@@ -558,7 +657,11 @@ namespace Coffee.UIEffects
             get => m_TransitionTexSpeed;
             set
             {
-                if (m_TransitionTexSpeed == value) return;
+                if (m_TransitionTexSpeed == value)
+                {
+                    return;
+                }
+
                 context.m_TransitionTexSpeed = m_TransitionTexSpeed = value;
                 SetMaterialContextDirty();
             }
@@ -569,7 +672,11 @@ namespace Coffee.UIEffects
             get => m_TransitionRotation;
             set
             {
-                if (Mathf.Approximately(m_TransitionRotation, value)) return;
+                if (Mathf.Approximately(m_TransitionRotation, value))
+                {
+                    return;
+                }
+
                 context.m_TransitionRotation = m_TransitionRotation = value;
             }
         }
@@ -579,7 +686,11 @@ namespace Coffee.UIEffects
             get => m_TransitionKeepAspectRatio;
             set
             {
-                if (m_TransitionKeepAspectRatio == value) return;
+                if (m_TransitionKeepAspectRatio == value)
+                {
+                    return;
+                }
+
                 context.m_TransitionKeepAspectRatio = m_TransitionKeepAspectRatio = value;
             }
         }
@@ -590,7 +701,11 @@ namespace Coffee.UIEffects
             set
             {
                 value = Mathf.Clamp(value, 0, 1);
-                if (Mathf.Approximately(m_TransitionWidth, value)) return;
+                if (Mathf.Approximately(m_TransitionWidth, value))
+                {
+                    return;
+                }
+
                 context.m_TransitionWidth = m_TransitionWidth = value;
                 SetMaterialContextDirty();
             }
@@ -602,7 +717,11 @@ namespace Coffee.UIEffects
             set
             {
                 value = Mathf.Clamp(value, 0, 1);
-                if (Mathf.Approximately(m_TransitionSoftness, value)) return;
+                if (Mathf.Approximately(m_TransitionSoftness, value))
+                {
+                    return;
+                }
+
                 context.m_TransitionSoftness = m_TransitionSoftness = value;
                 SetMaterialContextDirty();
             }
@@ -613,7 +732,11 @@ namespace Coffee.UIEffects
             get => m_TransitionRange;
             set
             {
-                if (m_TransitionRange.Approximately(value)) return;
+                if (m_TransitionRange.Approximately(value))
+                {
+                    return;
+                }
+
                 context.m_TransitionRange = m_TransitionRange = value;
                 SetMaterialContextDirty();
             }
@@ -624,7 +747,11 @@ namespace Coffee.UIEffects
             get => m_TransitionColorFilter;
             set
             {
-                if (m_TransitionColorFilter == value) return;
+                if (m_TransitionColorFilter == value)
+                {
+                    return;
+                }
+
                 context.m_TransitionColorFilter = m_TransitionColorFilter = value;
                 SetMaterialDirty();
             }
@@ -635,7 +762,11 @@ namespace Coffee.UIEffects
             get => m_TransitionColor;
             set
             {
-                if (m_TransitionColor == value) return;
+                if (m_TransitionColor == value)
+                {
+                    return;
+                }
+
                 context.m_TransitionColor = m_TransitionColor = value;
                 SetMaterialContextDirty();
             }
@@ -646,7 +777,7 @@ namespace Coffee.UIEffects
             get => transitionColor.r;
             set
             {
-                var c = transitionColor;
+                Color c = transitionColor;
                 c.r = Mathf.Clamp(value, -0.5f, 0.5f);
                 transitionColor = c;
             }
@@ -657,7 +788,7 @@ namespace Coffee.UIEffects
             get => transitionColor.g;
             set
             {
-                var c = transitionColor;
+                Color c = transitionColor;
                 c.g = Mathf.Clamp(value, -1, 1);
                 transitionColor = c;
             }
@@ -668,7 +799,7 @@ namespace Coffee.UIEffects
             get => transitionColor.b;
             set
             {
-                var c = transitionColor;
+                Color c = transitionColor;
                 c.b = Mathf.Clamp(value, -1, 1);
                 transitionColor = c;
             }
@@ -679,7 +810,7 @@ namespace Coffee.UIEffects
             get => transitionColor.r;
             set
             {
-                var c = transitionColor;
+                Color c = transitionColor;
                 c.r = Mathf.Clamp(value, -1, 1);
                 transitionColor = c;
             }
@@ -690,7 +821,7 @@ namespace Coffee.UIEffects
             get => transitionColor.g;
             set
             {
-                var c = transitionColor;
+                Color c = transitionColor;
                 c.g = Mathf.Clamp(value, -1, 1);
                 transitionColor = c;
             }
@@ -701,7 +832,7 @@ namespace Coffee.UIEffects
             get => transitionColor.a;
             set
             {
-                var c = transitionColor;
+                Color c = transitionColor;
                 c.a = value;
                 transitionColor = c;
             }
@@ -712,7 +843,11 @@ namespace Coffee.UIEffects
             get => m_TransitionColorGlow;
             set
             {
-                if (m_TransitionColorGlow == value) return;
+                if (m_TransitionColorGlow == value)
+                {
+                    return;
+                }
+
                 context.m_TransitionColorGlow = m_TransitionColorGlow = value;
                 SetMaterialContextDirty();
             }
@@ -723,7 +858,11 @@ namespace Coffee.UIEffects
             get => m_TransitionPatternReverse;
             set
             {
-                if (m_TransitionPatternReverse == value) return;
+                if (m_TransitionPatternReverse == value)
+                {
+                    return;
+                }
+
                 context.m_TransitionPatternReverse = m_TransitionPatternReverse = value;
                 SetMaterialContextDirty();
             }
@@ -735,7 +874,11 @@ namespace Coffee.UIEffects
             set
             {
                 value = Mathf.Clamp(value, -5, 5);
-                if (Mathf.Approximately(m_TransitionAutoPlaySpeed, value)) return;
+                if (Mathf.Approximately(m_TransitionAutoPlaySpeed, value))
+                {
+                    return;
+                }
+
                 context.m_TransitionAutoPlaySpeed = m_TransitionAutoPlaySpeed = value;
                 SetMaterialContextDirty();
             }
@@ -746,7 +889,11 @@ namespace Coffee.UIEffects
             get => m_TargetMode;
             set
             {
-                if (m_TargetMode == value) return;
+                if (m_TargetMode == value)
+                {
+                    return;
+                }
+
                 context.m_TargetMode = m_TargetMode = value;
                 SetMaterialDirty();
             }
@@ -757,7 +904,11 @@ namespace Coffee.UIEffects
             get => m_TargetColor;
             set
             {
-                if (m_TargetColor == value) return;
+                if (m_TargetColor == value)
+                {
+                    return;
+                }
+
                 context.m_TargetColor = m_TargetColor = value;
                 SetMaterialContextDirty();
             }
@@ -769,7 +920,11 @@ namespace Coffee.UIEffects
             set
             {
                 value = Mathf.Clamp(value, 0, 1);
-                if (Mathf.Approximately(m_TargetRange, value)) return;
+                if (Mathf.Approximately(m_TargetRange, value))
+                {
+                    return;
+                }
+
                 context.m_TargetRange = m_TargetRange = value;
                 SetMaterialContextDirty();
             }
@@ -781,7 +936,11 @@ namespace Coffee.UIEffects
             set
             {
                 value = Mathf.Clamp(value, 0, 1);
-                if (Mathf.Approximately(m_TargetSoftness, value)) return;
+                if (Mathf.Approximately(m_TargetSoftness, value))
+                {
+                    return;
+                }
+
                 context.m_TargetSoftness = m_TargetSoftness = value;
                 SetMaterialContextDirty();
             }
@@ -792,7 +951,11 @@ namespace Coffee.UIEffects
             get => m_BlendType;
             set
             {
-                if (m_BlendType == value) return;
+                if (m_BlendType == value)
+                {
+                    return;
+                }
+
                 (m_SrcBlendMode, m_DstBlendMode) = (m_BlendType, m_SrcBlendMode, m_DstBlendMode).Convert();
                 context.m_SrcBlendMode = m_SrcBlendMode;
                 context.m_DstBlendMode = m_DstBlendMode;
@@ -810,7 +973,11 @@ namespace Coffee.UIEffects
             get => m_SrcBlendMode;
             set
             {
-                if (m_SrcBlendMode == value) return;
+                if (m_SrcBlendMode == value)
+                {
+                    return;
+                }
+
                 context.m_SrcBlendMode = m_SrcBlendMode = value;
                 m_BlendType = (m_SrcBlendMode, m_DstBlendMode).Convert();
                 SetVerticesDirty();
@@ -827,7 +994,11 @@ namespace Coffee.UIEffects
             get => m_DstBlendMode;
             set
             {
-                if (m_DstBlendMode == value) return;
+                if (m_DstBlendMode == value)
+                {
+                    return;
+                }
+
                 context.m_DstBlendMode = m_DstBlendMode = value;
                 m_BlendType = (m_SrcBlendMode, m_DstBlendMode).Convert();
                 SetVerticesDirty();
@@ -840,7 +1011,11 @@ namespace Coffee.UIEffects
             get => m_ShadowMode;
             set
             {
-                if (m_ShadowMode == value) return;
+                if (m_ShadowMode == value)
+                {
+                    return;
+                }
+
                 context.m_ShadowMode = m_ShadowMode = value;
                 SetVerticesDirty();
                 SetVerticesDirty();
@@ -852,7 +1027,11 @@ namespace Coffee.UIEffects
             get => m_ShadowDistance;
             set
             {
-                if (m_ShadowDistance == value) return;
+                if (m_ShadowDistance == value)
+                {
+                    return;
+                }
+
                 context.m_ShadowDistance = m_ShadowDistance = value;
                 SetVerticesDirty();
             }
@@ -864,7 +1043,11 @@ namespace Coffee.UIEffects
             set
             {
                 value = Mathf.Clamp01(value);
-                if (Mathf.Approximately(m_ShadowFade, value)) return;
+                if (Mathf.Approximately(m_ShadowFade, value))
+                {
+                    return;
+                }
+
                 context.m_ShadowFade = m_ShadowFade = value;
                 SetVerticesDirty();
             }
@@ -876,7 +1059,11 @@ namespace Coffee.UIEffects
             set
             {
                 value = Mathf.Clamp(value, 1, 5);
-                if (m_ShadowIteration == value) return;
+                if (m_ShadowIteration == value)
+                {
+                    return;
+                }
+
                 context.m_ShadowIteration = m_ShadowIteration = value;
                 SetVerticesDirty();
             }
@@ -888,7 +1075,11 @@ namespace Coffee.UIEffects
             set
             {
                 value = Mathf.Clamp(value, 0f, 2f);
-                if (Mathf.Approximately(m_ShadowMirrorScale, value)) return;
+                if (Mathf.Approximately(m_ShadowMirrorScale, value))
+                {
+                    return;
+                }
+
                 context.m_ShadowMirrorScale = m_ShadowMirrorScale = value;
                 SetVerticesDirty();
             }
@@ -900,7 +1091,11 @@ namespace Coffee.UIEffects
             set
             {
                 value = Mathf.Clamp(value, 0, 1);
-                if (Mathf.Approximately(m_ShadowBlurIntensity, value)) return;
+                if (Mathf.Approximately(m_ShadowBlurIntensity, value))
+                {
+                    return;
+                }
+
                 context.m_ShadowBlurIntensity = m_ShadowBlurIntensity = value;
                 SetMaterialContextDirty();
             }
@@ -911,7 +1106,11 @@ namespace Coffee.UIEffects
             get => m_ShadowColorFilter;
             set
             {
-                if (m_ShadowColorFilter == value) return;
+                if (m_ShadowColorFilter == value)
+                {
+                    return;
+                }
+
                 context.m_ShadowColorFilter = m_ShadowColorFilter = value;
                 SetMaterialDirty();
             }
@@ -922,7 +1121,11 @@ namespace Coffee.UIEffects
             get => m_ShadowColor;
             set
             {
-                if (m_ShadowColor == value) return;
+                if (m_ShadowColor == value)
+                {
+                    return;
+                }
+
                 context.m_ShadowColor = m_ShadowColor = value;
                 SetMaterialContextDirty();
             }
@@ -933,7 +1136,7 @@ namespace Coffee.UIEffects
             get => shadowColor.r;
             set
             {
-                var c = shadowColor;
+                Color c = shadowColor;
                 c.r = Mathf.Clamp(value, -0.5f, 0.5f);
                 shadowColor = c;
             }
@@ -944,7 +1147,7 @@ namespace Coffee.UIEffects
             get => shadowColor.g;
             set
             {
-                var c = shadowColor;
+                Color c = shadowColor;
                 c.g = Mathf.Clamp(value, -1, 1);
                 shadowColor = c;
             }
@@ -955,7 +1158,7 @@ namespace Coffee.UIEffects
             get => shadowColor.b;
             set
             {
-                var c = shadowColor;
+                Color c = shadowColor;
                 c.b = Mathf.Clamp(value, -1, 1);
                 shadowColor = c;
             }
@@ -966,7 +1169,7 @@ namespace Coffee.UIEffects
             get => shadowColor.r;
             set
             {
-                var c = shadowColor;
+                Color c = shadowColor;
                 c.r = Mathf.Clamp(value, -1, 1);
                 shadowColor = c;
             }
@@ -977,7 +1180,7 @@ namespace Coffee.UIEffects
             get => shadowColor.g;
             set
             {
-                var c = shadowColor;
+                Color c = shadowColor;
                 c.g = Mathf.Clamp(value, -1, 1);
                 shadowColor = c;
             }
@@ -988,7 +1191,7 @@ namespace Coffee.UIEffects
             get => shadowColor.a;
             set
             {
-                var c = shadowColor;
+                Color c = shadowColor;
                 c.a = value;
                 shadowColor = c;
             }
@@ -1006,7 +1209,11 @@ namespace Coffee.UIEffects
             get => m_ShadowColorGlow;
             set
             {
-                if (m_ShadowColorGlow == value) return;
+                if (m_ShadowColorGlow == value)
+                {
+                    return;
+                }
+
                 context.m_ShadowColorGlow = m_ShadowColorGlow = value;
                 SetMaterialContextDirty();
             }
@@ -1017,7 +1224,11 @@ namespace Coffee.UIEffects
             get => m_EdgeMode;
             set
             {
-                if (m_EdgeMode == value) return;
+                if (m_EdgeMode == value)
+                {
+                    return;
+                }
+
                 context.m_EdgeMode = m_EdgeMode = value;
                 SetVerticesDirty();
                 SetMaterialDirty();
@@ -1030,7 +1241,11 @@ namespace Coffee.UIEffects
             set
             {
                 value = Mathf.Clamp(value, 0, 1);
-                if (Mathf.Approximately(m_EdgeShinyRate, value)) return;
+                if (Mathf.Approximately(m_EdgeShinyRate, value))
+                {
+                    return;
+                }
+
                 context.m_EdgeShinyRate = m_EdgeShinyRate = value;
                 SetMaterialContextDirty();
             }
@@ -1042,7 +1257,11 @@ namespace Coffee.UIEffects
             set
             {
                 value = Mathf.Clamp(value, 0, 1);
-                if (Mathf.Approximately(m_EdgeWidth, value)) return;
+                if (Mathf.Approximately(m_EdgeWidth, value))
+                {
+                    return;
+                }
+
                 context.m_EdgeWidth = m_EdgeWidth = value;
                 SetMaterialContextDirty();
             }
@@ -1053,7 +1272,11 @@ namespace Coffee.UIEffects
             get => m_EdgeColorFilter;
             set
             {
-                if (m_EdgeColorFilter == value) return;
+                if (m_EdgeColorFilter == value)
+                {
+                    return;
+                }
+
                 context.m_EdgeColorFilter = m_EdgeColorFilter = value;
                 SetMaterialDirty();
             }
@@ -1064,7 +1287,11 @@ namespace Coffee.UIEffects
             get => m_EdgeColor;
             set
             {
-                if (m_EdgeColor == value) return;
+                if (m_EdgeColor == value)
+                {
+                    return;
+                }
+
                 context.m_EdgeColor = m_EdgeColor = value;
                 SetMaterialContextDirty();
             }
@@ -1075,7 +1302,7 @@ namespace Coffee.UIEffects
             get => edgeColor.r;
             set
             {
-                var c = edgeColor;
+                Color c = edgeColor;
                 c.r = Mathf.Clamp(value, -0.5f, 0.5f);
                 edgeColor = c;
             }
@@ -1086,7 +1313,7 @@ namespace Coffee.UIEffects
             get => edgeColor.g;
             set
             {
-                var c = edgeColor;
+                Color c = edgeColor;
                 c.g = Mathf.Clamp(value, -1, 1);
                 edgeColor = c;
             }
@@ -1097,7 +1324,7 @@ namespace Coffee.UIEffects
             get => edgeColor.b;
             set
             {
-                var c = edgeColor;
+                Color c = edgeColor;
                 c.b = Mathf.Clamp(value, -1, 1);
                 edgeColor = c;
             }
@@ -1108,7 +1335,7 @@ namespace Coffee.UIEffects
             get => edgeColor.r;
             set
             {
-                var c = edgeColor;
+                Color c = edgeColor;
                 c.r = Mathf.Clamp(value, -1, 1);
                 edgeColor = c;
             }
@@ -1119,7 +1346,7 @@ namespace Coffee.UIEffects
             get => edgeColor.g;
             set
             {
-                var c = edgeColor;
+                Color c = edgeColor;
                 c.g = Mathf.Clamp(value, -1, 1);
                 edgeColor = c;
             }
@@ -1130,7 +1357,7 @@ namespace Coffee.UIEffects
             get => edgeColor.a;
             set
             {
-                var c = edgeColor;
+                Color c = edgeColor;
                 c.a = value;
                 edgeColor = c;
             }
@@ -1141,7 +1368,11 @@ namespace Coffee.UIEffects
             get => m_EdgeColorGlow;
             set
             {
-                if (m_EdgeColorGlow == value) return;
+                if (m_EdgeColorGlow == value)
+                {
+                    return;
+                }
+
                 context.m_EdgeColorGlow = m_EdgeColorGlow = value;
                 SetMaterialContextDirty();
             }
@@ -1153,7 +1384,11 @@ namespace Coffee.UIEffects
             set
             {
                 value = Mathf.Clamp(value, 0, 1);
-                if (Mathf.Approximately(m_EdgeShinyWidth, value)) return;
+                if (Mathf.Approximately(m_EdgeShinyWidth, value))
+                {
+                    return;
+                }
+
                 context.m_EdgeShinyWidth = m_EdgeShinyWidth = value;
                 SetMaterialContextDirty();
             }
@@ -1165,7 +1400,11 @@ namespace Coffee.UIEffects
             set
             {
                 value = Mathf.Clamp(value, -5, 5);
-                if (Mathf.Approximately(m_EdgeShinyAutoPlaySpeed, value)) return;
+                if (Mathf.Approximately(m_EdgeShinyAutoPlaySpeed, value))
+                {
+                    return;
+                }
+
                 context.m_EdgeShinyAutoPlaySpeed = m_EdgeShinyAutoPlaySpeed = value;
                 SetMaterialContextDirty();
             }
@@ -1176,7 +1415,11 @@ namespace Coffee.UIEffects
             get => m_PatternArea;
             set
             {
-                if (m_PatternArea == value) return;
+                if (m_PatternArea == value)
+                {
+                    return;
+                }
+
                 context.m_PatternArea = m_PatternArea = value;
                 SetMaterialDirty();
             }
@@ -1187,7 +1430,11 @@ namespace Coffee.UIEffects
             get => m_GradationMode;
             set
             {
-                if (m_GradationMode == value) return;
+                if (m_GradationMode == value)
+                {
+                    return;
+                }
+
                 context.m_GradationMode = m_GradationMode = value;
                 SetVerticesDirty();
                 SetMaterialDirty();
@@ -1203,7 +1450,11 @@ namespace Coffee.UIEffects
             set
             {
                 value = Mathf.Clamp(value, 0, 1);
-                if (Mathf.Approximately(m_GradationIntensity, value)) return;
+                if (Mathf.Approximately(m_GradationIntensity, value))
+                {
+                    return;
+                }
+
                 context.m_GradationIntensity = m_GradationIntensity = value;
                 SetMaterialContextDirty();
             }
@@ -1214,7 +1465,11 @@ namespace Coffee.UIEffects
             get => m_GradationColorFilter;
             set
             {
-                if (m_GradationColorFilter == value) return;
+                if (m_GradationColorFilter == value)
+                {
+                    return;
+                }
+
                 context.m_GradationColorFilter = m_GradationColorFilter = value;
                 SetMaterialDirty();
             }
@@ -1225,7 +1480,11 @@ namespace Coffee.UIEffects
             get => m_GradationColor1;
             set
             {
-                if (m_GradationColor1 == value) return;
+                if (m_GradationColor1 == value)
+                {
+                    return;
+                }
+
                 context.m_GradationColor1 = m_GradationColor1 = value;
                 SetMaterialContextDirty();
             }
@@ -1236,7 +1495,11 @@ namespace Coffee.UIEffects
             get => m_GradationColor2;
             set
             {
-                if (m_GradationColor2 == value) return;
+                if (m_GradationColor2 == value)
+                {
+                    return;
+                }
+
                 context.m_GradationColor2 = m_GradationColor2 = value;
                 SetMaterialContextDirty();
             }
@@ -1247,7 +1510,11 @@ namespace Coffee.UIEffects
             get => m_GradationColor3;
             set
             {
-                if (m_GradationColor3 == value) return;
+                if (m_GradationColor3 == value)
+                {
+                    return;
+                }
+
                 context.m_GradationColor3 = m_GradationColor3 = value;
                 SetMaterialContextDirty();
             }
@@ -1258,7 +1525,11 @@ namespace Coffee.UIEffects
             get => m_GradationColor4;
             set
             {
-                if (m_GradationColor4 == value) return;
+                if (m_GradationColor4 == value)
+                {
+                    return;
+                }
+
                 context.m_GradationColor4 = m_GradationColor4 = value;
                 SetMaterialContextDirty();
             }
@@ -1269,7 +1540,11 @@ namespace Coffee.UIEffects
             get => m_GradationOffset;
             set
             {
-                if (Mathf.Approximately(m_GradationOffset, value)) return;
+                if (Mathf.Approximately(m_GradationOffset, value))
+                {
+                    return;
+                }
+
                 context.m_GradationOffset = m_GradationOffset = value;
                 SetMaterialContextDirty();
             }
@@ -1281,7 +1556,11 @@ namespace Coffee.UIEffects
             set
             {
                 value = Mathf.Clamp(value, 0.01f, 10f);
-                if (Mathf.Approximately(m_GradationScale, value)) return;
+                if (Mathf.Approximately(m_GradationScale, value))
+                {
+                    return;
+                }
+
                 context.m_GradationScale = m_GradationScale = value;
                 SetMaterialContextDirty();
             }
@@ -1293,7 +1572,11 @@ namespace Coffee.UIEffects
             set
             {
                 value = Mathf.Repeat(value, 360);
-                if (Mathf.Approximately(m_GradationRotation, value)) return;
+                if (Mathf.Approximately(m_GradationRotation, value))
+                {
+                    return;
+                }
+
                 context.m_GradationRotation = m_GradationRotation = value;
             }
         }
@@ -1303,7 +1586,11 @@ namespace Coffee.UIEffects
             get => m_GradationWrapMode;
             set
             {
-                if (m_GradationWrapMode == value) return;
+                if (m_GradationWrapMode == value)
+                {
+                    return;
+                }
+
                 context.m_GradationWrapMode = m_GradationWrapMode = value;
                 context.SetGradationDirty();
                 SetMaterialContextDirty();
@@ -1315,7 +1602,11 @@ namespace Coffee.UIEffects
             get => m_GradationReverse;
             set
             {
-                if (m_GradationReverse == value) return;
+                if (m_GradationReverse == value)
+                {
+                    return;
+                }
+
                 context.m_GradationReverse = m_GradationReverse = value;
                 context.SetGradationDirty();
                 SetMaterialContextDirty();
@@ -1327,7 +1618,11 @@ namespace Coffee.UIEffects
             get => m_DetailFilter;
             set
             {
-                if (m_DetailFilter == value) return;
+                if (m_DetailFilter == value)
+                {
+                    return;
+                }
+
                 context.m_DetailFilter = m_DetailFilter = value;
                 SetVerticesDirty();
                 SetMaterialDirty();
@@ -1340,7 +1635,11 @@ namespace Coffee.UIEffects
             set
             {
                 value = Mathf.Clamp(value, 0, 1);
-                if (Mathf.Approximately(m_DetailIntensity, value)) return;
+                if (Mathf.Approximately(m_DetailIntensity, value))
+                {
+                    return;
+                }
+
                 context.m_DetailIntensity = m_DetailIntensity = value;
                 SetMaterialContextDirty();
             }
@@ -1351,7 +1650,11 @@ namespace Coffee.UIEffects
             get => m_DetailThreshold;
             set
             {
-                if (m_DetailThreshold.Approximately(value)) return;
+                if (m_DetailThreshold.Approximately(value))
+                {
+                    return;
+                }
+
                 context.m_DetailThreshold = m_DetailThreshold = value;
                 SetMaterialContextDirty();
             }
@@ -1362,7 +1665,11 @@ namespace Coffee.UIEffects
             get => m_DetailColor;
             set
             {
-                if (m_DetailColor == value) return;
+                if (m_DetailColor == value)
+                {
+                    return;
+                }
+
                 context.m_DetailColor = m_DetailColor = value;
                 SetMaterialContextDirty();
             }
@@ -1373,7 +1680,7 @@ namespace Coffee.UIEffects
             get => detailColor.a;
             set
             {
-                var c = detailColor;
+                Color c = detailColor;
                 c.a = value;
                 detailColor = c;
             }
@@ -1384,7 +1691,11 @@ namespace Coffee.UIEffects
             get => m_DetailTex;
             set
             {
-                if (m_DetailTex == value) return;
+                if (m_DetailTex == value)
+                {
+                    return;
+                }
+
                 context.m_DetailTex = m_DetailTex = value;
                 SetMaterialContextDirty();
             }
@@ -1395,7 +1706,11 @@ namespace Coffee.UIEffects
             get => m_DetailTexScale;
             set
             {
-                if (m_DetailTexScale == value) return;
+                if (m_DetailTexScale == value)
+                {
+                    return;
+                }
+
                 context.m_DetailTexScale = m_DetailTexScale = value;
                 SetMaterialContextDirty();
             }
@@ -1406,7 +1721,11 @@ namespace Coffee.UIEffects
             get => m_DetailTexOffset;
             set
             {
-                if (m_DetailTexOffset == value) return;
+                if (m_DetailTexOffset == value)
+                {
+                    return;
+                }
+
                 context.m_DetailTexOffset = m_DetailTexOffset = value;
                 SetMaterialContextDirty();
             }
@@ -1417,7 +1736,11 @@ namespace Coffee.UIEffects
             get => m_DetailTexSpeed;
             set
             {
-                if (m_DetailTexSpeed == value) return;
+                if (m_DetailTexSpeed == value)
+                {
+                    return;
+                }
+
                 context.m_DetailTexSpeed = m_DetailTexSpeed = value;
                 SetMaterialContextDirty();
             }
@@ -1428,7 +1751,11 @@ namespace Coffee.UIEffects
             get => m_AllowToModifyMeshShape;
             set
             {
-                if (m_AllowToModifyMeshShape == value) return;
+                if (m_AllowToModifyMeshShape == value)
+                {
+                    return;
+                }
+
                 m_AllowToModifyMeshShape = value;
                 SetVerticesDirty();
             }
@@ -1445,7 +1772,11 @@ namespace Coffee.UIEffects
             get => m_Flip;
             set
             {
-                if (m_Flip == value) return;
+                if (m_Flip == value)
+                {
+                    return;
+                }
+
                 context.m_Flip = m_Flip = value;
                 SetVerticesDirty();
             }
@@ -1479,6 +1810,7 @@ namespace Coffee.UIEffects
 #if UNITY_EDITOR
         protected override void OnValidate()
         {
+            EnsurePatternLayers();
             (m_SrcBlendMode, m_DstBlendMode) = (m_BlendType, m_SrcBlendMode, m_DstBlendMode).Convert();
             context?.SetGradationDirty();
             context?.SetTransitionGradationDirty();
@@ -1487,26 +1819,44 @@ namespace Coffee.UIEffects
 
         internal override void SetEnablePreviewIfSelected(GameObject[] selection)
         {
-            var selected = 0 < selection.Length
+            bool selected = 0 < selection.Length
                            && (selection.Contains(gameObject)
                                || replicas.Any(x => x != null && selection.Contains(x.gameObject)));
 
             context.SetEnablePreview(selected, effectMaterial);
-            foreach (var r in replicas)
+            foreach (UIEffectReplica r in replicas)
             {
-                if (r == null || !r.isActiveAndEnabled || r.context == null) continue;
+                if (r == null || !r.isActiveAndEnabled || r.context == null)
+                {
+                    continue;
+                }
+
                 r.context.SetEnablePreview(selected, r.effectMaterial);
             }
         }
 #endif
 
+        public void OnBeforeSerialize()
+        {
+            EnsurePatternLayers();
+        }
+
+        public void OnAfterDeserialize()
+        {
+            EnsurePatternLayers();
+        }
+
         public override void SetVerticesDirty()
         {
             base.SetVerticesDirty();
-            var count = replicas.Count;
-            for (var i = 0; i < count; i++)
+            int count = replicas.Count;
+            for (int i = 0; i < count; i++)
             {
-                if (replicas[i] == null) continue;
+                if (replicas[i] == null)
+                {
+                    continue;
+                }
+
                 replicas[i].SetVerticesDirty();
             }
         }
@@ -1514,10 +1864,14 @@ namespace Coffee.UIEffects
         public override void SetMaterialDirty()
         {
             base.SetMaterialDirty();
-            var count = replicas.Count;
-            for (var i = 0; i < count; i++)
+            int count = replicas.Count;
+            for (int i = 0; i < count; i++)
             {
-                if (replicas[i] == null) continue;
+                if (replicas[i] == null)
+                {
+                    continue;
+                }
+
                 replicas[i].SetMaterialDirty();
             }
         }
@@ -1525,10 +1879,14 @@ namespace Coffee.UIEffects
         public override void SetMaterialContextDirty()
         {
             base.SetMaterialContextDirty();
-            var count = replicas.Count;
-            for (var i = 0; i < count; i++)
+            int count = replicas.Count;
+            for (int i = 0; i < count; i++)
             {
-                if (replicas[i] == null) continue;
+                if (replicas[i] == null)
+                {
+                    continue;
+                }
+
                 replicas[i].SetMaterialContextDirty();
             }
         }
@@ -1601,10 +1959,14 @@ namespace Coffee.UIEffects
         {
             base.ApplyContextToMaterial(material);
 
-            var count = replicas.Count;
-            for (var i = 0; i < count; i++)
+            int count = replicas.Count;
+            for (int i = 0; i < count; i++)
             {
-                if (!replicas[i]) continue;
+                if (!replicas[i])
+                {
+                    continue;
+                }
+
                 replicas[i].ApplyContextToMaterial(material);
             }
         }
@@ -1684,7 +2046,7 @@ namespace Coffee.UIEffects
         /// </summary>
         public void LoadPreset(string presetName, bool append)
         {
-            var preset = UIEffectProjectSettings.LoadPreset(presetName);
+            UnityEngine.Object preset = UIEffectProjectSettings.LoadPreset(presetName);
             if (preset is UIEffect presetV1)
             {
                 LoadPreset(presetV1, append);
@@ -1716,7 +2078,10 @@ namespace Coffee.UIEffects
         /// </summary>
         public void ExecutePreset(UIEffectPreset preset, bool append = false)
         {
-            if (preset == null) return;
+            if (preset == null)
+            {
+                return;
+            }
 
             if (preset is IUIEffectPresetExecutor executor)
             {
@@ -1732,9 +2097,12 @@ namespace Coffee.UIEffects
         /// </summary>
         public void LoadPreset(UIEffect src, bool append)
         {
-            if (src == null) return;
+            if (src == null)
+            {
+                return;
+            }
 
-            var dst = this;
+            UIEffect dst = this;
             if (!append || src.m_ToneFilter != ToneFilter.None)
             {
                 dst.m_ToneFilter = src.m_ToneFilter;
@@ -1776,6 +2144,8 @@ namespace Coffee.UIEffects
                 dst.m_TransitionPatternReverse = src.m_TransitionPatternReverse;
                 dst.m_TransitionAutoPlaySpeed = src.m_TransitionAutoPlaySpeed;
                 dst.SetTransitionGradientKeys(src.m_TransitionGradient);
+                src.EnsurePatternLayers();
+                dst.CopyPatternLayersFrom(src.m_PatternLayers);
             }
 
             if (!append || src.m_TargetMode != TargetMode.None)
@@ -1864,9 +2234,12 @@ namespace Coffee.UIEffects
         /// </summary>
         public void LoadPreset(UIEffectPreset src, bool append)
         {
-            if (src == null) return;
+            if (src == null)
+            {
+                return;
+            }
 
-            var dst = this;
+            UIEffect dst = this;
             if (!append || src.m_ToneFilter != ToneFilter.None)
             {
                 dst.m_ToneFilter = src.m_ToneFilter;
@@ -1908,6 +2281,7 @@ namespace Coffee.UIEffects
                 dst.m_TransitionPatternReverse = src.m_TransitionPatternReverse;
                 dst.m_TransitionAutoPlaySpeed = src.m_TransitionAutoPlaySpeed;
                 dst.SetTransitionGradientKeys(src.m_TransitionGradient);
+                dst.CopyPatternLayersFrom(src.ClonePatternLayers());
             }
 
             if (!append || src.m_TargetMode != TargetMode.None)
@@ -1993,9 +2367,12 @@ namespace Coffee.UIEffects
 
         public void SavePreset(UIEffectPreset dst, bool append)
         {
-            if (dst == null) return;
+            if (dst == null)
+            {
+                return;
+            }
 
-            var src = this;
+            UIEffect src = this;
             if (!append || src.m_ToneFilter != ToneFilter.None)
             {
                 dst.m_ToneFilter = src.m_ToneFilter;
@@ -2039,6 +2416,8 @@ namespace Coffee.UIEffects
                 dst.m_TransitionGradient.SetKeys(src.m_TransitionGradient.colorKeys,
                     src.m_TransitionGradient.alphaKeys);
                 dst.m_TransitionGradient.mode = src.m_TransitionGradient.mode;
+                src.EnsurePatternLayers();
+                dst.SetPatternLayers(src.m_PatternLayers);
             }
 
             if (!append || src.m_TargetMode != TargetMode.None)
@@ -2122,7 +2501,8 @@ namespace Coffee.UIEffects
 
         internal override void UpdateContext(UIEffectContext dst)
         {
-            var src = this;
+            EnsurePatternLayers();
+            UIEffect src = this;
             dst.m_ToneFilter = src.m_ToneFilter;
             dst.m_ToneIntensity = src.m_ToneIntensity;
 
@@ -2153,6 +2533,7 @@ namespace Coffee.UIEffects
             dst.m_TransitionPatternReverse = src.m_TransitionPatternReverse;
             dst.m_TransitionAutoPlaySpeed = src.m_TransitionAutoPlaySpeed;
             dst.m_TransitionGradient = src.m_TransitionGradient;
+            dst.m_PatternLayers = PatternLayer.CloneFixed(src.m_PatternLayers);
 
             dst.m_TargetMode = src.m_TargetMode;
             dst.m_TargetColor = src.m_TargetColor;
@@ -2206,6 +2587,81 @@ namespace Coffee.UIEffects
             dst.m_DetailTexSpeed = src.m_DetailTexSpeed;
 
             dst.m_Flip = src.m_Flip;
+        }
+
+        internal bool EnsurePatternLayers()
+        {
+            if (m_PatternLayerVersion >= CurrentPatternLayerVersion
+                && m_PatternLayers != null
+                && m_PatternLayers.Length == PatternLayer.MaxCount)
+            {
+                for (int i = 0; i < m_PatternLayers.Length; i++)
+                {
+                    m_PatternLayers[i] ??= new PatternLayer { m_Enabled = false };
+                }
+
+                return false;
+            }
+
+            bool hasExistingLayers = m_PatternLayers != null
+                && Array.Exists(m_PatternLayers, layer => layer != null);
+            PatternLayer legacyLayer = CreateLegacyPatternLayer();
+            m_PatternLayers = PatternLayer.CloneFixed(m_PatternLayers);
+            if (m_PatternLayerVersion < CurrentPatternLayerVersion && !hasExistingLayers)
+            {
+                m_PatternLayers[0] = legacyLayer;
+            }
+
+            m_PatternLayerVersion = CurrentPatternLayerVersion;
+            m_PatternLayerMigrationPending = true;
+            return true;
+        }
+
+        internal bool ConsumePatternLayerMigrationPending()
+        {
+            bool pending = m_PatternLayerMigrationPending;
+            m_PatternLayerMigrationPending = false;
+            return pending;
+        }
+
+        private PatternLayer CreateLegacyPatternLayer()
+        {
+            return new PatternLayer
+            {
+                m_Enabled = true,
+                m_Texture = m_TransitionTex,
+                m_Opacity = 1,
+                m_TextureScale = m_TransitionTexScale,
+                m_TextureOffset = m_TransitionTexOffset,
+                m_TextureSpeed = m_TransitionTexSpeed,
+                m_Rotation = m_TransitionRotation,
+                m_KeepAspectRatio = m_TransitionKeepAspectRatio,
+                m_Rate = m_TransitionRate,
+                m_TextureReverse = m_TransitionReverse,
+                m_Width = m_TransitionWidth,
+                m_Range = m_TransitionRange,
+                m_PatternReverse = m_TransitionPatternReverse,
+                m_AutoPlaySpeed = m_TransitionAutoPlaySpeed,
+                m_ColorFilter = m_TransitionColorFilter,
+                m_Color = m_TransitionColor,
+                m_ColorGlow = m_TransitionColorGlow,
+                m_Area = m_PatternArea,
+            };
+        }
+
+        private void CopyPatternLayersFrom(PatternLayer[] source)
+        {
+            m_PatternLayers = PatternLayer.CloneFixed(source);
+            m_PatternLayerVersion = CurrentPatternLayerVersion;
+        }
+
+        private static void ValidatePatternLayerIndex(int index)
+        {
+            if (index < 0 || PatternLayer.MaxCount <= index)
+            {
+                throw new ArgumentOutOfRangeException(nameof(index), index,
+                    $"Pattern layer index must be between 0 and {PatternLayer.MaxCount - 1}.");
+            }
         }
     }
 }
