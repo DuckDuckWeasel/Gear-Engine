@@ -1,10 +1,6 @@
 fileFormatVersion: 2
-<<<<<<<< HEAD:Packages/com.unity.services.cloudcode/Editor/Authoring/Unity.Services.CloudCode.Authoring.Editor.api.meta
-guid: 52841bc5d8bc14164a44e8252613e86e
-========
 guid: 2877e214e32ca434b8a39bafc5280339
 folderAsset: yes
->>>>>>>> 574764b9662a685236ea1198b2ccc2fb37ae46b4:Assets/GearEngine/Art/Audio/MUSIC_Race_Biomes.meta
 DefaultImporter:
   externalObjects: {}
   userData: 
