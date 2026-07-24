@@ -534,7 +534,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: AnimoraRuntime::OM.Animora.Runtime.AnimoraPlayer
   playerUniqueID: AnimoraPlayer
-  selectedClipIndex: 1
+  selectedClipIndex: -1
   playMode: 1
   timeMode: 1
   defaultPlayDirection: 0
@@ -573,6 +573,7 @@ MonoBehaviour:
     - rid: 8490313728363856024
     - rid: 8490313728363856027
     - rid: 2891885309521821823
+    - rid: 9011605504682098952
   parentAnimoraPlayer: {fileID: 0}
   references:
     version: 2
@@ -583,7 +584,7 @@ MonoBehaviour:
         clipName: Scale
         clipDescription: This is a scale action
         highlightColor: {r: 0.8, g: 0.78, b: 0.51, a: 1}
-        isActive: 1
+        isActive: 0
         startTime: 0
         duration: 1
         orderIndex: 2
@@ -722,7 +723,7 @@ MonoBehaviour:
         clipName: BuyButton
         clipDescription: Plays a nested player
         highlightColor: {r: 0.8, g: 0.49, b: 0.8, a: 1}
-        isActive: 1
+        isActive: 0
         startTime: 0
         duration: 0.5
         orderIndex: 1
@@ -759,9 +760,9 @@ MonoBehaviour:
         clipDescription: Plays a sound using BroAudio
         highlightColor: {r: 0.8, g: 0.33, b: 0.41, a: 1}
         isActive: 1
-        startTime: 0.2526596
-        duration: 0.5
-        orderIndex: 3
+        startTime: 0.45090908
+        duration: 0.4090909
+        orderIndex: 4
         debugFlags: 0
         playChance: 100
         events:
@@ -800,9 +801,9 @@ MonoBehaviour:
         clipDescription: Plays a sound using BroAudio
         highlightColor: {r: 0.8, g: 0.33, b: 0.41, a: 1}
         isActive: 1
-        startTime: 0.05851064
+        startTime: 0.3
         duration: 0.19680852
-        orderIndex: 4
+        orderIndex: 5
         debugFlags: 0
         playChance: 100
         events:
@@ -834,6 +835,42 @@ MonoBehaviour:
           <DebugObject>k__BackingField: {fileID: 3795459667440567417}
         stopOnExit: 0
         fadeOut: -1
+    - rid: 9011605504682098952
+      type: {class: AnimoraClipNestedPlayer, ns: OM.Animora.Modules, asm: Assembly-CSharp}
+      data:
+        clipName: Container
+        clipDescription: Plays a nested player
+        highlightColor: {r: 0.39, g: 0.38, b: 0.8, a: 1}
+        isActive: 1
+        startTime: 0.3
+        duration: 0.56
+        orderIndex: 3
+        debugFlags: 0
+        playChance: 100
+        events:
+          isEnabled: 0
+          onStartPlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompletePlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onStartOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompleteOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onEnter:
+            m_PersistentCalls:
+              m_Calls: []
+          onUpdate:
+            m_PersistentCalls:
+              m_Calls: []
+          onExit:
+            m_PersistentCalls:
+              m_Calls: []
+        nestedPlayer: {fileID: 724879942246386558}
 --- !u!1 &5085001633947344627
 GameObject:
   m_ObjectHideFlags: 0
@@ -843,6 +880,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 489602344715787385}
+  - component: {fileID: 724879942246386558}
   m_Layer: 0
   m_Name: Container
   m_TagString: Untagged
@@ -871,6 +909,353 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &724879942246386558
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5085001633947344627}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a1534cbac729494f945c90efe327e10a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: AnimoraRuntime::OM.Animora.Runtime.AnimoraPlayer
+  playerUniqueID: AnimoraPlayer
+  selectedClipIndex: 7
+  playMode: 1
+  timeMode: 1
+  defaultPlayDirection: 0
+  playLoopType: 2
+  debugFlags: 0
+  timelineDuration: 0.56
+  playbackSpeed: 1
+  loopCount: 0
+  animoraPlayerEvents:
+    enabled: 0
+    onStartPlaying:
+      m_PersistentCalls:
+        m_Calls: []
+    onCompletePlaying:
+      m_PersistentCalls:
+        m_Calls: []
+    onStartLoop:
+      m_PersistentCalls:
+        m_Calls: []
+    onCompleteLoop:
+      m_PersistentCalls:
+        m_Calls: []
+    onPause:
+      m_PersistentCalls:
+        m_Calls: []
+    onResume:
+      m_PersistentCalls:
+        m_Calls: []
+    onStop:
+      m_PersistentCalls:
+        m_Calls: []
+  clipsManager:
+    clips:
+    - rid: 9011605504682098945
+    - rid: 9011605504682098946
+    - rid: 9011605504682098947
+    - rid: 9011605504682098948
+    - rid: 9011605504682098951
+    - rid: 9011605504682098953
+    - rid: 9011605504682098966
+    - rid: 9011605529027936258
+  parentAnimoraPlayer: {fileID: 0}
+  references:
+    version: 2
+    RefIds:
+    - rid: 9011605504682098945
+      type: {class: AnimoraClipNestedPlayer, ns: OM.Animora.Modules, asm: Assembly-CSharp}
+      data:
+        clipName: PreviousArrow
+        clipDescription: Plays a nested player
+        highlightColor: {r: 0.8, g: 0.49, b: 0.8, a: 1}
+        isActive: 1
+        startTime: 0
+        duration: 0.3
+        orderIndex: 0
+        debugFlags: 0
+        playChance: 100
+        events:
+          isEnabled: 0
+          onStartPlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompletePlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onStartOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompleteOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onEnter:
+            m_PersistentCalls:
+              m_Calls: []
+          onUpdate:
+            m_PersistentCalls:
+              m_Calls: []
+          onExit:
+            m_PersistentCalls:
+              m_Calls: []
+        nestedPlayer: {fileID: 7717404764317465907}
+    - rid: 9011605504682098946
+      type: {class: AnimoraClipNestedPlayer, ns: OM.Animora.Modules, asm: Assembly-CSharp}
+      data:
+        clipName: NextArrow
+        clipDescription: Plays a nested player
+        highlightColor: {r: 0.8, g: 0.49, b: 0.8, a: 1}
+        isActive: 1
+        startTime: 0
+        duration: 0.3
+        orderIndex: 1
+        debugFlags: 0
+        playChance: 100
+        events:
+          isEnabled: 0
+          onStartPlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompletePlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onStartOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompleteOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onEnter:
+            m_PersistentCalls:
+              m_Calls: []
+          onUpdate:
+            m_PersistentCalls:
+              m_Calls: []
+          onExit:
+            m_PersistentCalls:
+              m_Calls: []
+        nestedPlayer: {fileID: 1484172911910972099}
+    - rid: 9011605504682098947
+      type: {class: AnimoraClipNestedPlayer, ns: OM.Animora.Modules, asm: Assembly-CSharp}
+      data:
+        clipName: View
+        clipDescription: Plays a nested player
+        highlightColor: {r: 0.38, g: 0.78, b: 0.8, a: 1}
+        isActive: 1
+        startTime: 0.06
+        duration: 0.502984
+        orderIndex: 2
+        debugFlags: 0
+        playChance: 100
+        events:
+          isEnabled: 0
+          onStartPlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompletePlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onStartOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompleteOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onEnter:
+            m_PersistentCalls:
+              m_Calls: []
+          onUpdate:
+            m_PersistentCalls:
+              m_Calls: []
+          onExit:
+            m_PersistentCalls:
+              m_Calls: []
+        nestedPlayer: {fileID: 4330980744206259786}
+    - rid: 9011605504682098948
+      type: {class: AnimoraClipNestedPlayer, ns: OM.Animora.Modules, asm: Assembly-CSharp}
+      data:
+        clipName: Text
+        clipDescription: Plays a nested player
+        highlightColor: {r: 0.8, g: 0.33, b: 0.41, a: 1}
+        isActive: 1
+        startTime: 0.06
+        duration: 0.3
+        orderIndex: 3
+        debugFlags: 0
+        playChance: 100
+        events:
+          isEnabled: 0
+          onStartPlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompletePlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onStartOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompleteOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onEnter:
+            m_PersistentCalls:
+              m_Calls: []
+          onUpdate:
+            m_PersistentCalls:
+              m_Calls: []
+          onExit:
+            m_PersistentCalls:
+              m_Calls: []
+        nestedPlayer: {fileID: 1286688349870368072}
+    - rid: 9011605504682098951
+      type: {class: AnimoraClipNestedPlayer, ns: OM.Animora.Modules, asm: Assembly-CSharp}
+      data:
+        clipName: Continue Button
+        clipDescription: Plays a nested player
+        highlightColor: {r: 0.4, g: 0.8, b: 0.41, a: 1}
+        isActive: 1
+        startTime: 0.25952727
+        duration: 0.3
+        orderIndex: 4
+        debugFlags: 0
+        playChance: 100
+        events:
+          isEnabled: 0
+          onStartPlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompletePlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onStartOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompleteOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onEnter:
+            m_PersistentCalls:
+              m_Calls: []
+          onUpdate:
+            m_PersistentCalls:
+              m_Calls: []
+          onExit:
+            m_PersistentCalls:
+              m_Calls: []
+        nestedPlayer: {fileID: 8972295499049539714}
+    - rid: 9011605504682098953
+      type: {class: AnimoraClipNestedPlayer, ns: OM.Animora.Modules, asm: Assembly-CSharp}
+      data:
+        clipName: Label
+        clipDescription: Plays a nested player
+        highlightColor: {r: 0.8, g: 0.78, b: 0.51, a: 1}
+        isActive: 1
+        startTime: 0.12218182
+        duration: 0.28
+        orderIndex: 5
+        debugFlags: 0
+        playChance: 100
+        events:
+          isEnabled: 0
+          onStartPlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompletePlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onStartOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompleteOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onEnter:
+            m_PersistentCalls:
+              m_Calls: []
+          onUpdate:
+            m_PersistentCalls:
+              m_Calls: []
+          onExit:
+            m_PersistentCalls:
+              m_Calls: []
+        nestedPlayer: {fileID: 8758743245695991959}
+    - rid: 9011605504682098966
+      type: {class: AnimoraClipNestedPlayer, ns: OM.Animora.Modules, asm: Assembly-CSharp}
+      data:
+        clipName: CardRank
+        clipDescription: Plays a nested player
+        highlightColor: {r: 0.8, g: 0.33, b: 0.41, a: 1}
+        isActive: 1
+        startTime: 0.22399999
+        duration: 0.28
+        orderIndex: 6
+        debugFlags: 0
+        playChance: 100
+        events:
+          isEnabled: 0
+          onStartPlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompletePlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onStartOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompleteOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onEnter:
+            m_PersistentCalls:
+              m_Calls: []
+          onUpdate:
+            m_PersistentCalls:
+              m_Calls: []
+          onExit:
+            m_PersistentCalls:
+              m_Calls: []
+        nestedPlayer: {fileID: 4590314700530849561}
+    - rid: 9011605529027936258
+      type: {class: AnimoraClipNestedPlayer, ns: OM.Animora.Modules, asm: Assembly-CSharp}
+      data:
+        clipName: Icon
+        clipDescription: Plays a nested player
+        highlightColor: {r: 0.39, g: 0.38, b: 0.8, a: 1}
+        isActive: 1
+        startTime: 0.115652174
+        duration: 0.3
+        orderIndex: 7
+        debugFlags: 0
+        playChance: 100
+        events:
+          isEnabled: 0
+          onStartPlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompletePlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onStartOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompleteOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onEnter:
+            m_PersistentCalls:
+              m_Calls: []
+          onUpdate:
+            m_PersistentCalls:
+              m_Calls: []
+          onExit:
+            m_PersistentCalls:
+              m_Calls: []
+        nestedPlayer: {fileID: 8175628732676073097}
 --- !u!1001 &4173713761152799813
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1138,6 +1523,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1259234722648596006, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: f19c629eb8cdf415db2ed8e23be0d0f4, type: 3}
+    - target: {fileID: 1458914235821702288, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2806751471807342945, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
       propertyPath: m_fontSize
       value: 50
@@ -1158,6 +1551,10 @@ PrefabInstance:
     - target: {fileID: 3685162079972473300, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
       propertyPath: m_margin.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3685162079972473300, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
+      propertyPath: m_fontColor.a
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3685162079972473300, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
       propertyPath: m_fontColor.b
@@ -1192,6 +1589,10 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3685162079972473300, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
+      propertyPath: m_fontColor32.rgba
+      value: 4294967295
+      objectReference: {fileID: 0}
+    - target: {fileID: 3685162079972473300, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
       propertyPath: m_VerticalAlignment
       value: 256
       objectReference: {fileID: 0}
@@ -1201,15 +1602,47 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4764992845997630898, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 318
+      value: 260
       objectReference: {fileID: 0}
     - target: {fileID: 4764992845997630898, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 318
+      value: 260
+      objectReference: {fileID: 0}
+    - target: {fileID: 4764992845997630898, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4764992845997630898, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4764992845997630898, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4764992845997630898, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4764992845997630898, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 6
+      value: 42.8877
+      objectReference: {fileID: 0}
+    - target: {fileID: 4968145166921576578, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
+      propertyPath: m_Name
+      value: star_2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5596629810602851211, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6023283984803095403, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6023283984803095403, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6052519529062482123, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
       propertyPath: m_SizeDelta.x
@@ -1220,21 +1653,116 @@ PrefabInstance:
       value: 284.6005
       objectReference: {fileID: 0}
     - target: {fileID: 6052519529062482123, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6052519529062482123, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6052519529062482123, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
       propertyPath: m_AnchoredPosition.x
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6052519529062482123, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -192.3002
+      value: -192
+      objectReference: {fileID: 0}
+    - target: {fileID: 6442921856192400440, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6442921856192400440, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6442921856192400440, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7388326146735716970, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7388326146735716970, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7388326146735716970, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7864269024603239243, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8414302336313763179, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
+      propertyPath: m_Name
+      value: star_1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8452726171591866237, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8452726171591866237, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8452726171591866237, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8577524891781176608, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
       propertyPath: m_Name
       value: Perk_View
       objectReference: {fileID: 0}
+    - target: {fileID: 8577524891781176608, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9217194302651771238, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9217194302651771238, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9217194302651771238, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 5596629810602851211, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4330980744206259786}
+    - targetCorrespondingSourceObject: {fileID: 5596629810602851211, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8327152953510887777}
+    - targetCorrespondingSourceObject: {fileID: 1458914235821702288, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8758743245695991959}
+    - targetCorrespondingSourceObject: {fileID: 7864269024603239243, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8175628732676073097}
+    - targetCorrespondingSourceObject: {fileID: 2516029253250060897, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1286688349870368072}
+    - targetCorrespondingSourceObject: {fileID: 3882536163260423931, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4590314700530849561}
+    - targetCorrespondingSourceObject: {fileID: 4968145166921576578, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1031911709455934737}
+    - targetCorrespondingSourceObject: {fileID: 8414302336313763179, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8091902964273287245}
+    - targetCorrespondingSourceObject: {fileID: 1230953024846954537, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7805101990487401734}
   m_SourcePrefab: {fileID: 100100000, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
 --- !u!114 &386200447018654922 stripped
 MonoBehaviour:
@@ -1247,22 +1775,1703 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d24e883d345347ac94e8ca8632ba3b3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Game.Campaign::GearEngine.Campaign.Presentation.ItemSlotView
+--- !u!224 &527642485443320325 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 7388326146735716970, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
+  m_PrefabInstance: {fileID: 7050960775647158383}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &934906443922674468 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7864269024603239243, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
+  m_PrefabInstance: {fileID: 7050960775647158383}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &8175628732676073097
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 934906443922674468}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a1534cbac729494f945c90efe327e10a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: AnimoraRuntime::OM.Animora.Runtime.AnimoraPlayer
+  playerUniqueID: AnimoraPlayer
+  selectedClipIndex: 0
+  playMode: 3
+  timeMode: 1
+  defaultPlayDirection: 0
+  playLoopType: 2
+  debugFlags: 0
+  timelineDuration: 0.3
+  playbackSpeed: 1
+  loopCount: 0
+  animoraPlayerEvents:
+    enabled: 0
+    onStartPlaying:
+      m_PersistentCalls:
+        m_Calls: []
+    onCompletePlaying:
+      m_PersistentCalls:
+        m_Calls: []
+    onStartLoop:
+      m_PersistentCalls:
+        m_Calls: []
+    onCompleteLoop:
+      m_PersistentCalls:
+        m_Calls: []
+    onPause:
+      m_PersistentCalls:
+        m_Calls: []
+    onResume:
+      m_PersistentCalls:
+        m_Calls: []
+    onStop:
+      m_PersistentCalls:
+        m_Calls: []
+  clipsManager:
+    clips:
+    - rid: 9011605529027936256
+  parentAnimoraPlayer: {fileID: 0}
+  references:
+    version: 2
+    RefIds:
+    - rid: 9011605529027936256
+      type: {class: AnimoraClipScale, ns: OM.Animora.Modules, asm: Assembly-CSharp}
+      data:
+        clipName: Scale
+        clipDescription: This is a scale action
+        highlightColor: {r: 0.4, g: 0.8, b: 0.41, a: 1}
+        isActive: 1
+        startTime: 0
+        duration: 0.3
+        orderIndex: 0
+        debugFlags: 0
+        playChance: 100
+        events:
+          isEnabled: 0
+          onStartPlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompletePlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onStartOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompleteOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onEnter:
+            m_PersistentCalls:
+              m_Calls: []
+          onUpdate:
+            m_PersistentCalls:
+              m_Calls: []
+          onExit:
+            m_PersistentCalls:
+              m_Calls: []
+        targets:
+          directTargets:
+          - {fileID: 2592574512970991069}
+        actionsManager:
+          actions:
+          - rid: 9011605529027936257
+        scale:
+          enabled: 1
+          interpolationType: 0
+          ease:
+            easeDataType: 0
+            animationCurve:
+              serializedVersion: 2
+              m_Curve:
+              - serializedVersion: 3
+                time: 0
+                value: 0
+                inSlope: 0
+                outSlope: 0
+                tangentMode: 0
+                weightedMode: 0
+                inWeight: 0
+                outWeight: 0
+              - serializedVersion: 3
+                time: 1
+                value: 1
+                inSlope: 0
+                outSlope: 0
+                tangentMode: 0
+                weightedMode: 0
+                inWeight: 0
+                outWeight: 0
+              m_PreInfinity: 2
+              m_PostInfinity: 2
+              m_RotationOrder: 4
+            easeType: 26
+          randomizeForEach: 0
+          zero:
+            valueType: 0
+            vector3Type: 5
+            value: {x: 0, y: 0, z: 0}
+            randomValue1: {x: 0, y: 0, z: 0}
+            randomValue2: {x: 0, y: 0, z: 0}
+            targetTransform: {fileID: 0}
+          one:
+            valueType: 0
+            vector3Type: 5
+            value: {x: 1, y: 1, z: 1}
+            randomValue1: {x: 0, y: 0, z: 0}
+            randomValue2: {x: 0, y: 0, z: 0}
+            targetTransform: {fileID: 0}
+    - rid: 9011605529027936257
+      type: {class: AnimoraActionSetScale, ns: OM.Animora.Modules, asm: Assembly-CSharp}
+      data:
+        actionName: Set Scale
+        actionGroup: 0
+        isEnabled: 0
+        orderIndex: 0
+        playDirection: 2
+        useCustomTargets: 0
+        customTargets: []
+        scale:
+          valueType: 0
+          vector3Type: 0
+          value: {x: 0, y: 0, z: 0}
+          randomValue1: {x: 0, y: 0, z: 0}
+          randomValue2: {x: 0, y: 0, z: 0}
+          targetTransform: {fileID: 0}
+--- !u!224 &1482835315432888082 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 8452726171591866237, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
+  m_PrefabInstance: {fileID: 7050960775647158383}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1522093610773890308 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8414302336313763179, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
+  m_PrefabInstance: {fileID: 7050960775647158383}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &8091902964273287245
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1522093610773890308}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a1534cbac729494f945c90efe327e10a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: AnimoraRuntime::OM.Animora.Runtime.AnimoraPlayer
+  playerUniqueID: AnimoraPlayer
+  selectedClipIndex: 0
+  playMode: 3
+  timeMode: 1
+  defaultPlayDirection: 0
+  playLoopType: 2
+  debugFlags: 0
+  timelineDuration: 0.3
+  playbackSpeed: 1
+  loopCount: 0
+  animoraPlayerEvents:
+    enabled: 0
+    onStartPlaying:
+      m_PersistentCalls:
+        m_Calls: []
+    onCompletePlaying:
+      m_PersistentCalls:
+        m_Calls: []
+    onStartLoop:
+      m_PersistentCalls:
+        m_Calls: []
+    onCompleteLoop:
+      m_PersistentCalls:
+        m_Calls: []
+    onPause:
+      m_PersistentCalls:
+        m_Calls: []
+    onResume:
+      m_PersistentCalls:
+        m_Calls: []
+    onStop:
+      m_PersistentCalls:
+        m_Calls: []
+  clipsManager:
+    clips:
+    - rid: 9011605504682098959
+  parentAnimoraPlayer: {fileID: 0}
+  references:
+    version: 2
+    RefIds:
+    - rid: 9011605504682098959
+      type: {class: AnimoraClipScale, ns: OM.Animora.Modules, asm: Assembly-CSharp}
+      data:
+        clipName: Scale
+        clipDescription: This is a scale action
+        highlightColor: {r: 0.8, g: 0.49, b: 0.8, a: 1}
+        isActive: 1
+        startTime: 0
+        duration: 0.3
+        orderIndex: 0
+        debugFlags: 0
+        playChance: 100
+        events:
+          isEnabled: 0
+          onStartPlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompletePlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onStartOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompleteOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onEnter:
+            m_PersistentCalls:
+              m_Calls: []
+          onUpdate:
+            m_PersistentCalls:
+              m_Calls: []
+          onExit:
+            m_PersistentCalls:
+              m_Calls: []
+        targets:
+          directTargets:
+          - {fileID: 1482835315432888082}
+        actionsManager:
+          actions:
+          - rid: 9011605504682098960
+        scale:
+          enabled: 1
+          interpolationType: 0
+          ease:
+            easeDataType: 0
+            animationCurve:
+              serializedVersion: 2
+              m_Curve:
+              - serializedVersion: 3
+                time: 0
+                value: 0
+                inSlope: 0
+                outSlope: 0
+                tangentMode: 0
+                weightedMode: 0
+                inWeight: 0
+                outWeight: 0
+              - serializedVersion: 3
+                time: 1
+                value: 1
+                inSlope: 0
+                outSlope: 0
+                tangentMode: 0
+                weightedMode: 0
+                inWeight: 0
+                outWeight: 0
+              m_PreInfinity: 2
+              m_PostInfinity: 2
+              m_RotationOrder: 4
+            easeType: 26
+          randomizeForEach: 0
+          zero:
+            valueType: 0
+            vector3Type: 5
+            value: {x: 0, y: 0, z: 0}
+            randomValue1: {x: 0, y: 0, z: 0}
+            randomValue2: {x: 0, y: 0, z: 0}
+            targetTransform: {fileID: 0}
+          one:
+            valueType: 0
+            vector3Type: 5
+            value: {x: 1, y: 1, z: 1}
+            randomValue1: {x: 0, y: 0, z: 0}
+            randomValue2: {x: 0, y: 0, z: 0}
+            targetTransform: {fileID: 0}
+    - rid: 9011605504682098960
+      type: {class: AnimoraActionSetScale, ns: OM.Animora.Modules, asm: Assembly-CSharp}
+      data:
+        actionName: Set Scale
+        actionGroup: 0
+        isEnabled: 0
+        orderIndex: 0
+        playDirection: 2
+        useCustomTargets: 0
+        customTargets: []
+        scale:
+          valueType: 0
+          vector3Type: 0
+          value: {x: 0, y: 0, z: 0}
+          randomValue1: {x: 0, y: 0, z: 0}
+          randomValue2: {x: 0, y: 0, z: 0}
+          targetTransform: {fileID: 0}
+--- !u!224 &2175245311293344009 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 9217194302651771238, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
+  m_PrefabInstance: {fileID: 7050960775647158383}
+  m_PrefabAsset: {fileID: 0}
+--- !u!224 &2592574512970991069 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 4764992845997630898, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
+  m_PrefabInstance: {fileID: 7050960775647158383}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &2677511763331010797 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4968145166921576578, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
+  m_PrefabInstance: {fileID: 7050960775647158383}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1031911709455934737
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2677511763331010797}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a1534cbac729494f945c90efe327e10a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: AnimoraRuntime::OM.Animora.Runtime.AnimoraPlayer
+  playerUniqueID: AnimoraPlayer
+  selectedClipIndex: 0
+  playMode: 3
+  timeMode: 1
+  defaultPlayDirection: 0
+  playLoopType: 2
+  debugFlags: 0
+  timelineDuration: 0.3
+  playbackSpeed: 1
+  loopCount: 0
+  animoraPlayerEvents:
+    enabled: 0
+    onStartPlaying:
+      m_PersistentCalls:
+        m_Calls: []
+    onCompletePlaying:
+      m_PersistentCalls:
+        m_Calls: []
+    onStartLoop:
+      m_PersistentCalls:
+        m_Calls: []
+    onCompleteLoop:
+      m_PersistentCalls:
+        m_Calls: []
+    onPause:
+      m_PersistentCalls:
+        m_Calls: []
+    onResume:
+      m_PersistentCalls:
+        m_Calls: []
+    onStop:
+      m_PersistentCalls:
+        m_Calls: []
+  clipsManager:
+    clips:
+    - rid: 9011605504682098957
+  parentAnimoraPlayer: {fileID: 0}
+  references:
+    version: 2
+    RefIds:
+    - rid: 9011605504682098957
+      type: {class: AnimoraClipScale, ns: OM.Animora.Modules, asm: Assembly-CSharp}
+      data:
+        clipName: Scale
+        clipDescription: This is a scale action
+        highlightColor: {r: 0.8, g: 0.49, b: 0.8, a: 1}
+        isActive: 1
+        startTime: 0
+        duration: 0.3
+        orderIndex: 0
+        debugFlags: 0
+        playChance: 100
+        events:
+          isEnabled: 0
+          onStartPlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompletePlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onStartOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompleteOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onEnter:
+            m_PersistentCalls:
+              m_Calls: []
+          onUpdate:
+            m_PersistentCalls:
+              m_Calls: []
+          onExit:
+            m_PersistentCalls:
+              m_Calls: []
+        targets:
+          directTargets:
+          - {fileID: 2175245311293344009}
+        actionsManager:
+          actions:
+          - rid: 9011605504682098958
+        scale:
+          enabled: 1
+          interpolationType: 0
+          ease:
+            easeDataType: 0
+            animationCurve:
+              serializedVersion: 2
+              m_Curve:
+              - serializedVersion: 3
+                time: 0
+                value: 0
+                inSlope: 0
+                outSlope: 0
+                tangentMode: 0
+                weightedMode: 0
+                inWeight: 0
+                outWeight: 0
+              - serializedVersion: 3
+                time: 1
+                value: 1
+                inSlope: 0
+                outSlope: 0
+                tangentMode: 0
+                weightedMode: 0
+                inWeight: 0
+                outWeight: 0
+              m_PreInfinity: 2
+              m_PostInfinity: 2
+              m_RotationOrder: 4
+            easeType: 26
+          randomizeForEach: 0
+          zero:
+            valueType: 0
+            vector3Type: 5
+            value: {x: 0, y: 0, z: 0}
+            randomValue1: {x: 0, y: 0, z: 0}
+            randomValue2: {x: 0, y: 0, z: 0}
+            targetTransform: {fileID: 0}
+          one:
+            valueType: 0
+            vector3Type: 5
+            value: {x: 1, y: 1, z: 1}
+            randomValue1: {x: 0, y: 0, z: 0}
+            randomValue2: {x: 0, y: 0, z: 0}
+            targetTransform: {fileID: 0}
+    - rid: 9011605504682098958
+      type: {class: AnimoraActionSetScale, ns: OM.Animora.Modules, asm: Assembly-CSharp}
+      data:
+        actionName: Set Scale
+        actionGroup: 0
+        isEnabled: 0
+        orderIndex: 0
+        playDirection: 2
+        useCustomTargets: 0
+        customTargets: []
+        scale:
+          valueType: 0
+          vector3Type: 0
+          value: {x: 0, y: 0, z: 0}
+          randomValue1: {x: 0, y: 0, z: 0}
+          randomValue2: {x: 0, y: 0, z: 0}
+          targetTransform: {fileID: 0}
+--- !u!1 &3202396193069030372 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5596629810602851211, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
+  m_PrefabInstance: {fileID: 7050960775647158383}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &4330980744206259786
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3202396193069030372}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a1534cbac729494f945c90efe327e10a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: AnimoraRuntime::OM.Animora.Runtime.AnimoraPlayer
+  playerUniqueID: AnimoraPlayer
+  selectedClipIndex: 0
+  playMode: 3
+  timeMode: 1
+  defaultPlayDirection: 0
+  playLoopType: 2
+  debugFlags: 0
+  timelineDuration: 0.3
+  playbackSpeed: 1
+  loopCount: 0
+  animoraPlayerEvents:
+    enabled: 0
+    onStartPlaying:
+      m_PersistentCalls:
+        m_Calls: []
+    onCompletePlaying:
+      m_PersistentCalls:
+        m_Calls: []
+    onStartLoop:
+      m_PersistentCalls:
+        m_Calls: []
+    onCompleteLoop:
+      m_PersistentCalls:
+        m_Calls: []
+    onPause:
+      m_PersistentCalls:
+        m_Calls: []
+    onResume:
+      m_PersistentCalls:
+        m_Calls: []
+    onStop:
+      m_PersistentCalls:
+        m_Calls: []
+  clipsManager:
+    clips:
+    - rid: 9011605504682098937
+  parentAnimoraPlayer: {fileID: 0}
+  references:
+    version: 2
+    RefIds:
+    - rid: 9011605504682098937
+      type: {class: AnimoraClipScale, ns: OM.Animora.Modules, asm: Assembly-CSharp}
+      data:
+        clipName: Scale
+        clipDescription: This is a scale action
+        highlightColor: {r: 0.4, g: 0.8, b: 0.41, a: 1}
+        isActive: 1
+        startTime: 0
+        duration: 0.3
+        orderIndex: 0
+        debugFlags: 0
+        playChance: 100
+        events:
+          isEnabled: 0
+          onStartPlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompletePlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onStartOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompleteOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onEnter:
+            m_PersistentCalls:
+              m_Calls: []
+          onUpdate:
+            m_PersistentCalls:
+              m_Calls: []
+          onExit:
+            m_PersistentCalls:
+              m_Calls: []
+        targets:
+          directTargets:
+          - {fileID: 3624566094822736644}
+        actionsManager:
+          actions:
+          - rid: 9011605504682098938
+        scale:
+          enabled: 1
+          interpolationType: 0
+          ease:
+            easeDataType: 0
+            animationCurve:
+              serializedVersion: 2
+              m_Curve:
+              - serializedVersion: 3
+                time: 0
+                value: 0
+                inSlope: 0
+                outSlope: 0
+                tangentMode: 0
+                weightedMode: 0
+                inWeight: 0
+                outWeight: 0
+              - serializedVersion: 3
+                time: 1
+                value: 1
+                inSlope: 0
+                outSlope: 0
+                tangentMode: 0
+                weightedMode: 0
+                inWeight: 0
+                outWeight: 0
+              m_PreInfinity: 2
+              m_PostInfinity: 2
+              m_RotationOrder: 4
+            easeType: 26
+          randomizeForEach: 0
+          zero:
+            valueType: 0
+            vector3Type: 5
+            value: {x: 0.4, y: 1.2, z: 1}
+            randomValue1: {x: 0, y: 0, z: 0}
+            randomValue2: {x: 0, y: 0, z: 0}
+            targetTransform: {fileID: 0}
+          one:
+            valueType: 0
+            vector3Type: 5
+            value: {x: 1, y: 1, z: 1}
+            randomValue1: {x: 0, y: 0, z: 0}
+            randomValue2: {x: 0, y: 0, z: 0}
+            targetTransform: {fileID: 0}
+    - rid: 9011605504682098938
+      type: {class: AnimoraActionSetScale, ns: OM.Animora.Modules, asm: Assembly-CSharp}
+      data:
+        actionName: Set Scale
+        actionGroup: 0
+        isEnabled: 0
+        orderIndex: 0
+        playDirection: 2
+        useCustomTargets: 0
+        customTargets: []
+        scale:
+          valueType: 0
+          vector3Type: 0
+          value: {x: 0, y: 0, z: 0}
+          randomValue1: {x: 0, y: 0, z: 0}
+          randomValue2: {x: 0, y: 0, z: 0}
+          targetTransform: {fileID: 0}
+--- !u!114 &8327152953510887777
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3202396193069030372}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 938fce054c42f40a3969e27a88d9bdd8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Coffee.UIEffect::Coffee.UIEffects.UIEffect
+  m_ToneFilter: 0
+  m_ToneIntensity: 1
+  m_ColorFilter: 0
+  m_ColorIntensity: 1
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_ColorGlow: 0
+  m_SamplingFilter: 0
+  m_SamplingIntensity: 0.5
+  m_SamplingWidth: 1
+  m_SamplingScale: 3
+  m_TransitionFilter: 0
+  m_TransitionRate: 0.5
+  m_TransitionReverse: 0
+  m_TransitionTex: {fileID: 0}
+  m_TransitionTexScale: {x: 1, y: 1}
+  m_TransitionTexOffset: {x: 0, y: 0}
+  m_TransitionTexSpeed: {x: 0, y: 0}
+  m_TransitionRotation: 0
+  m_TransitionKeepAspectRatio: 1
+  m_TransitionWidth: 0.2
+  m_TransitionSoftness: 0.2
+  m_TransitionRange:
+    m_Min: 0
+    m_Max: 1
+  m_TransitionColorFilter: 6
+  m_TransitionColor: {r: 0, g: 0.5, b: 1, a: 1}
+  m_TransitionColorGlow: 0
+  m_TransitionPatternReverse: 0
+  m_TransitionAutoPlaySpeed: 0
+  m_TransitionGradient:
+    serializedVersion: 2
+    key0: {r: 1, g: 1, b: 1, a: 1}
+    key1: {r: 1, g: 1, b: 1, a: 1}
+    key2: {r: 0, g: 0, b: 0, a: 0}
+    key3: {r: 0, g: 0, b: 0, a: 0}
+    key4: {r: 0, g: 0, b: 0, a: 0}
+    key5: {r: 0, g: 0, b: 0, a: 0}
+    key6: {r: 0, g: 0, b: 0, a: 0}
+    key7: {r: 0, g: 0, b: 0, a: 0}
+    ctime0: 0
+    ctime1: 65535
+    ctime2: 0
+    ctime3: 0
+    ctime4: 0
+    ctime5: 0
+    ctime6: 0
+    ctime7: 0
+    atime0: 0
+    atime1: 65535
+    atime2: 0
+    atime3: 0
+    atime4: 0
+    atime5: 0
+    atime6: 0
+    atime7: 0
+    m_Mode: 0
+    m_ColorSpace: -1
+    m_NumColorKeys: 2
+    m_NumAlphaKeys: 2
+  m_TargetMode: 0
+  m_TargetColor: {r: 1, g: 1, b: 1, a: 1}
+  m_TargetRange: 0.1
+  m_TargetSoftness: 0.5
+  m_BlendType: 1
+  m_SrcBlendMode: 1
+  m_DstBlendMode: 10
+  m_ShadowMode: 0
+  m_ShadowDistance: {x: 1, y: -1}
+  m_ShadowIteration: 1
+  m_ShadowFade: 0.9
+  m_ShadowMirrorScale: 0.5
+  m_ShadowBlurIntensity: 1
+  m_ShadowColorFilter: 4
+  m_ShadowColor: {r: 1, g: 1, b: 1, a: 1}
+  m_ShadowColorGlow: 0
+  m_GradationMode: 0
+  m_GradationIntensity: 1
+  m_GradationColorFilter: 1
+  m_GradationColor1: {r: 1, g: 1, b: 1, a: 1}
+  m_GradationColor2: {r: 1, g: 1, b: 1, a: 1}
+  m_GradationColor3: {r: 1, g: 1, b: 1, a: 1}
+  m_GradationColor4: {r: 1, g: 1, b: 1, a: 1}
+  m_GradationGradient:
+    serializedVersion: 2
+    key0: {r: 1, g: 1, b: 1, a: 1}
+    key1: {r: 1, g: 1, b: 1, a: 1}
+    key2: {r: 0, g: 0, b: 0, a: 0}
+    key3: {r: 0, g: 0, b: 0, a: 0}
+    key4: {r: 0, g: 0, b: 0, a: 0}
+    key5: {r: 0, g: 0, b: 0, a: 0}
+    key6: {r: 0, g: 0, b: 0, a: 0}
+    key7: {r: 0, g: 0, b: 0, a: 0}
+    ctime0: 0
+    ctime1: 65535
+    ctime2: 0
+    ctime3: 0
+    ctime4: 0
+    ctime5: 0
+    ctime6: 0
+    ctime7: 0
+    atime0: 0
+    atime1: 65535
+    atime2: 0
+    atime3: 0
+    atime4: 0
+    atime5: 0
+    atime6: 0
+    atime7: 0
+    m_Mode: 0
+    m_ColorSpace: -1
+    m_NumColorKeys: 2
+    m_NumAlphaKeys: 2
+  m_GradationOffset: 0
+  m_GradationScale: 1
+  m_GradationRotation: 0
+  m_GradationWrapMode: 0
+  m_GradationReverse: 0
+  m_AllowToModifyMeshShape: 1
+  m_EdgeMode: 1
+  m_EdgeWidth: 0.25
+  m_EdgeColorFilter: 4
+  m_EdgeColor: {r: 1, g: 1, b: 1, a: 1}
+  m_EdgeColorGlow: 0
+  m_EdgeShinyRate: 0.5
+  m_EdgeShinyWidth: 0.5
+  m_EdgeShinyAutoPlaySpeed: 1
+  m_PatternArea: 1
+  m_DetailFilter: 0
+  m_DetailIntensity: 1
+  m_DetailThreshold:
+    m_Min: 0
+    m_Max: 1
+  m_DetailColor: {r: 1, g: 1, b: 1, a: 1}
+  m_DetailTex: {fileID: 0}
+  m_DetailTexScale: {x: 1, y: 1}
+  m_DetailTexOffset: {x: 0, y: 0}
+  m_DetailTexSpeed: {x: 0, y: 0}
+  m_CustomRoot: {fileID: 0}
+  m_Flip: 0
+--- !u!224 &3613247024554254500 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 6052519529062482123, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
+  m_PrefabInstance: {fileID: 7050960775647158383}
+  m_PrefabAsset: {fileID: 0}
+--- !u!224 &3624566094822736644 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 6023283984803095403, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
+  m_PrefabInstance: {fileID: 7050960775647158383}
+  m_PrefabAsset: {fileID: 0}
+--- !u!224 &4085838247574088791 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 6442921856192400440, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
+  m_PrefabInstance: {fileID: 7050960775647158383}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &4841563327041597966 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2516029253250060897, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
+  m_PrefabInstance: {fileID: 7050960775647158383}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1286688349870368072
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4841563327041597966}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a1534cbac729494f945c90efe327e10a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: AnimoraRuntime::OM.Animora.Runtime.AnimoraPlayer
+  playerUniqueID: AnimoraPlayer
+  selectedClipIndex: 0
+  playMode: 3
+  timeMode: 1
+  defaultPlayDirection: 0
+  playLoopType: 2
+  debugFlags: 0
+  timelineDuration: 0.5
+  playbackSpeed: 1
+  loopCount: 0
+  animoraPlayerEvents:
+    enabled: 0
+    onStartPlaying:
+      m_PersistentCalls:
+        m_Calls: []
+    onCompletePlaying:
+      m_PersistentCalls:
+        m_Calls: []
+    onStartLoop:
+      m_PersistentCalls:
+        m_Calls: []
+    onCompleteLoop:
+      m_PersistentCalls:
+        m_Calls: []
+    onPause:
+      m_PersistentCalls:
+        m_Calls: []
+    onResume:
+      m_PersistentCalls:
+        m_Calls: []
+    onStop:
+      m_PersistentCalls:
+        m_Calls: []
+  clipsManager:
+    clips:
+    - rid: 9011605504682098941
+    - rid: 9011605504682098943
+    - rid: 9011605504682098949
+  parentAnimoraPlayer: {fileID: 0}
+  references:
+    version: 2
+    RefIds:
+    - rid: 9011605504682098941
+      type: {class: AnimoraClipScale, ns: OM.Animora.Modules, asm: Assembly-CSharp}
+      data:
+        clipName: Scale
+        clipDescription: This is a scale action
+        highlightColor: {r: 0.39, g: 0.38, b: 0.8, a: 1}
+        isActive: 1
+        startTime: 0
+        duration: 0.5
+        orderIndex: 0
+        debugFlags: 0
+        playChance: 100
+        events:
+          isEnabled: 0
+          onStartPlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompletePlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onStartOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompleteOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onEnter:
+            m_PersistentCalls:
+              m_Calls: []
+          onUpdate:
+            m_PersistentCalls:
+              m_Calls: []
+          onExit:
+            m_PersistentCalls:
+              m_Calls: []
+        targets:
+          directTargets:
+          - {fileID: 3613247024554254500}
+        actionsManager:
+          actions:
+          - rid: 9011605504682098942
+        scale:
+          enabled: 1
+          interpolationType: 0
+          ease:
+            easeDataType: 1
+            animationCurve:
+              serializedVersion: 2
+              m_Curve:
+              - serializedVersion: 3
+                time: 0
+                value: 0
+                inSlope: 0
+                outSlope: 0
+                tangentMode: 0
+                weightedMode: 0
+                inWeight: 0
+                outWeight: 0
+              - serializedVersion: 3
+                time: 1
+                value: 1
+                inSlope: 0
+                outSlope: 0
+                tangentMode: 0
+                weightedMode: 0
+                inWeight: 0
+                outWeight: 0
+              m_PreInfinity: 2
+              m_PostInfinity: 2
+              m_RotationOrder: 4
+            easeType: 0
+          randomizeForEach: 0
+          zero:
+            valueType: 0
+            vector3Type: 5
+            value: {x: 0.4, y: 1.2, z: 1}
+            randomValue1: {x: 0, y: 0, z: 0}
+            randomValue2: {x: 0, y: 0, z: 0}
+            targetTransform: {fileID: 0}
+          one:
+            valueType: 0
+            vector3Type: 5
+            value: {x: 1, y: 1, z: 1}
+            randomValue1: {x: 0, y: 0, z: 0}
+            randomValue2: {x: 0, y: 0, z: 0}
+            targetTransform: {fileID: 0}
+    - rid: 9011605504682098942
+      type: {class: AnimoraActionSetScale, ns: OM.Animora.Modules, asm: Assembly-CSharp}
+      data:
+        actionName: Set Scale
+        actionGroup: 0
+        isEnabled: 0
+        orderIndex: 0
+        playDirection: 2
+        useCustomTargets: 0
+        customTargets: []
+        scale:
+          valueType: 0
+          vector3Type: 0
+          value: {x: 0, y: 0, z: 0}
+          randomValue1: {x: 0, y: 0, z: 0}
+          randomValue2: {x: 0, y: 0, z: 0}
+          targetTransform: {fileID: 0}
+    - rid: 9011605504682098943
+      type: {class: AnimoraClipAnchorPosition, ns: OM.Animora.Modules, asm: Assembly-CSharp}
+      data:
+        clipName: Anchor Position
+        clipDescription: Animates the anchor position of a RectTransform.
+        highlightColor: {r: 0.8, g: 0.78, b: 0.51, a: 1}
+        isActive: 1
+        startTime: 0.08290909
+        duration: 0.3
+        orderIndex: 1
+        debugFlags: 0
+        playChance: 100
+        events:
+          isEnabled: 0
+          onStartPlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompletePlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onStartOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompleteOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onEnter:
+            m_PersistentCalls:
+              m_Calls: []
+          onUpdate:
+            m_PersistentCalls:
+              m_Calls: []
+          onExit:
+            m_PersistentCalls:
+              m_Calls: []
+        targets:
+          directTargets:
+          - {fileID: 3613247024554254500}
+        actionsManager:
+          actions:
+          - rid: 9011605504682098944
+        anchorPosition:
+          enabled: 1
+          interpolationType: 0
+          ease:
+            easeDataType: 1
+            animationCurve:
+              serializedVersion: 2
+              m_Curve:
+              - serializedVersion: 3
+                time: 0
+                value: 0
+                inSlope: 0
+                outSlope: 0
+                tangentMode: 0
+                weightedMode: 0
+                inWeight: 0
+                outWeight: 0
+              - serializedVersion: 3
+                time: 1
+                value: 1
+                inSlope: 0
+                outSlope: 0
+                tangentMode: 0
+                weightedMode: 0
+                inWeight: 0
+                outWeight: 0
+              m_PreInfinity: 2
+              m_PostInfinity: 2
+              m_RotationOrder: 4
+            easeType: 0
+          randomizeForEach: 0
+          zero:
+            valueType: 0
+            vector3Type: 5
+            value: {x: 0, y: -323, z: 0}
+            randomValue1: {x: 0, y: 0, z: 0}
+            randomValue2: {x: 0, y: 0, z: 0}
+            targetTransform: {fileID: 0}
+          one:
+            valueType: 0
+            vector3Type: 5
+            value: {x: 0, y: -192, z: 0}
+            randomValue1: {x: 0, y: 0, z: 0}
+            randomValue2: {x: 0, y: 0, z: 0}
+            targetTransform: {fileID: 0}
+    - rid: 9011605504682098944
+      type: {class: AnimoraActionSetAnchorPosition, ns: OM.Animora.Modules, asm: Assembly-CSharp}
+      data:
+        actionName: Set Anchor Position
+        actionGroup: 0
+        isEnabled: 0
+        orderIndex: 0
+        playDirection: 2
+        useCustomTargets: 0
+        customTargets: []
+        anchorPosition:
+          valueType: 0
+          vector3Type: 0
+          value: {x: 0, y: 0, z: 0}
+          randomValue1: {x: 0, y: 0, z: 0}
+          randomValue2: {x: 0, y: 0, z: 0}
+          targetTransform: {fileID: 0}
+    - rid: 9011605504682098949
+      type: {class: AnimoraClipGraphicColor, ns: OM.Animora.Modules, asm: Assembly-CSharp}
+      data:
+        clipName: Color Image
+        clipDescription: This is a set Color Image action
+        highlightColor: {r: 0.8, g: 0.33, b: 0.41, a: 1}
+        isActive: 1
+        startTime: 0
+        duration: 0.09
+        orderIndex: 2
+        debugFlags: 0
+        playChance: 100
+        events:
+          isEnabled: 0
+          onStartPlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompletePlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onStartOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompleteOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onEnter:
+            m_PersistentCalls:
+              m_Calls: []
+          onUpdate:
+            m_PersistentCalls:
+              m_Calls: []
+          onExit:
+            m_PersistentCalls:
+              m_Calls: []
+        targets:
+          directTargets:
+          - {fileID: 5980314201503488443}
+        actionsManager:
+          actions:
+          - rid: 9011605504682098950
+        color:
+          enabled: 1
+          interpolationType: 0
+          ease:
+            easeDataType: 1
+            animationCurve:
+              serializedVersion: 2
+              m_Curve:
+              - serializedVersion: 3
+                time: 0
+                value: 0
+                inSlope: 0
+                outSlope: 0
+                tangentMode: 0
+                weightedMode: 0
+                inWeight: 0
+                outWeight: 0
+              - serializedVersion: 3
+                time: 1
+                value: 1
+                inSlope: 0
+                outSlope: 0
+                tangentMode: 0
+                weightedMode: 0
+                inWeight: 0
+                outWeight: 0
+              m_PreInfinity: 2
+              m_PostInfinity: 2
+              m_RotationOrder: 4
+            easeType: 0
+          randomizeForEach: 0
+          zero:
+            valueType: 0
+            vector3Type: 5
+            value: {r: 1, g: 1, b: 1, a: 0}
+            randomValue1: {r: 0, g: 0, b: 0, a: 0}
+            randomValue2: {r: 0, g: 0, b: 0, a: 0}
+            targetTransform: {fileID: 0}
+          one:
+            valueType: 0
+            vector3Type: 5
+            value: {r: 1, g: 1, b: 1, a: 1}
+            randomValue1: {r: 0, g: 0, b: 0, a: 0}
+            randomValue2: {r: 0, g: 0, b: 0, a: 0}
+            targetTransform: {fileID: 0}
+    - rid: 9011605504682098950
+      type: {class: AnimoraActionSetGraphicColor, ns: OM.Animora.Modules, asm: Assembly-CSharp}
+      data:
+        actionName: Set Color
+        actionGroup: 0
+        isEnabled: 0
+        orderIndex: 0
+        playDirection: 2
+        useCustomTargets: 0
+        customTargets: []
+        color:
+          valueType: 0
+          vector3Type: 0
+          value: {r: 0, g: 0, b: 0, a: 0}
+          randomValue1: {r: 0, g: 0, b: 0, a: 0}
+          randomValue2: {r: 0, g: 0, b: 0, a: 0}
+          targetTransform: {fileID: 0}
 --- !u!114 &5980314201503488443 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 3685162079972473300, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
   m_PrefabInstance: {fileID: 7050960775647158383}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 4841563327041597966}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
+--- !u!1 &6069587198487281300 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3882536163260423931, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
+  m_PrefabInstance: {fileID: 7050960775647158383}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &4590314700530849561
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6069587198487281300}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a1534cbac729494f945c90efe327e10a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: AnimoraRuntime::OM.Animora.Runtime.AnimoraPlayer
+  playerUniqueID: AnimoraPlayer
+  selectedClipIndex: 1
+  playMode: 3
+  timeMode: 1
+  defaultPlayDirection: 0
+  playLoopType: 2
+  debugFlags: 0
+  timelineDuration: 0.6
+  playbackSpeed: 1
+  loopCount: 0
+  animoraPlayerEvents:
+    enabled: 0
+    onStartPlaying:
+      m_PersistentCalls:
+        m_Calls: []
+    onCompletePlaying:
+      m_PersistentCalls:
+        m_Calls: []
+    onStartLoop:
+      m_PersistentCalls:
+        m_Calls: []
+    onCompleteLoop:
+      m_PersistentCalls:
+        m_Calls: []
+    onPause:
+      m_PersistentCalls:
+        m_Calls: []
+    onResume:
+      m_PersistentCalls:
+        m_Calls: []
+    onStop:
+      m_PersistentCalls:
+        m_Calls: []
+  clipsManager:
+    clips:
+    - rid: 9011605504682098963
+    - rid: 9011605504682098964
+    - rid: 9011605504682098965
+  parentAnimoraPlayer: {fileID: 0}
+  references:
+    version: 2
+    RefIds:
+    - rid: 9011605504682098963
+      type: {class: AnimoraClipNestedPlayer, ns: OM.Animora.Modules, asm: Assembly-CSharp}
+      data:
+        clipName: Star_2
+        clipDescription: Plays a nested player
+        highlightColor: {r: 0.8, g: 0.33, b: 0.41, a: 1}
+        isActive: 1
+        startTime: 0.15
+        duration: 0.3
+        orderIndex: 1
+        debugFlags: 0
+        playChance: 100
+        events:
+          isEnabled: 0
+          onStartPlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompletePlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onStartOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompleteOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onEnter:
+            m_PersistentCalls:
+              m_Calls: []
+          onUpdate:
+            m_PersistentCalls:
+              m_Calls: []
+          onExit:
+            m_PersistentCalls:
+              m_Calls: []
+        nestedPlayer: {fileID: 1031911709455934737}
+    - rid: 9011605504682098964
+      type: {class: AnimoraClipNestedPlayer, ns: OM.Animora.Modules, asm: Assembly-CSharp}
+      data:
+        clipName: Star_1
+        clipDescription: Plays a nested player
+        highlightColor: {r: 0.8, g: 0.33, b: 0.41, a: 1}
+        isActive: 1
+        startTime: 0
+        duration: 0.3
+        orderIndex: 0
+        debugFlags: 0
+        playChance: 100
+        events:
+          isEnabled: 0
+          onStartPlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompletePlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onStartOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompleteOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onEnter:
+            m_PersistentCalls:
+              m_Calls: []
+          onUpdate:
+            m_PersistentCalls:
+              m_Calls: []
+          onExit:
+            m_PersistentCalls:
+              m_Calls: []
+        nestedPlayer: {fileID: 8091902964273287245}
+    - rid: 9011605504682098965
+      type: {class: AnimoraClipNestedPlayer, ns: OM.Animora.Modules, asm: Assembly-CSharp}
+      data:
+        clipName: Star_3
+        clipDescription: Plays a nested player
+        highlightColor: {r: 0.8, g: 0.33, b: 0.41, a: 1}
+        isActive: 1
+        startTime: 0.3
+        duration: 0.3
+        orderIndex: 2
+        debugFlags: 0
+        playChance: 100
+        events:
+          isEnabled: 0
+          onStartPlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompletePlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onStartOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompleteOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onEnter:
+            m_PersistentCalls:
+              m_Calls: []
+          onUpdate:
+            m_PersistentCalls:
+              m_Calls: []
+          onExit:
+            m_PersistentCalls:
+              m_Calls: []
+        nestedPlayer: {fileID: 7805101990487401734}
 --- !u!224 &7719599597098077597 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 791381848691240434, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
   m_PrefabInstance: {fileID: 7050960775647158383}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &8128771063436501062 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1230953024846954537, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
+  m_PrefabInstance: {fileID: 7050960775647158383}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &7805101990487401734
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8128771063436501062}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a1534cbac729494f945c90efe327e10a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: AnimoraRuntime::OM.Animora.Runtime.AnimoraPlayer
+  playerUniqueID: AnimoraPlayer
+  selectedClipIndex: 0
+  playMode: 3
+  timeMode: 1
+  defaultPlayDirection: 0
+  playLoopType: 2
+  debugFlags: 0
+  timelineDuration: 0.3
+  playbackSpeed: 1
+  loopCount: 0
+  animoraPlayerEvents:
+    enabled: 0
+    onStartPlaying:
+      m_PersistentCalls:
+        m_Calls: []
+    onCompletePlaying:
+      m_PersistentCalls:
+        m_Calls: []
+    onStartLoop:
+      m_PersistentCalls:
+        m_Calls: []
+    onCompleteLoop:
+      m_PersistentCalls:
+        m_Calls: []
+    onPause:
+      m_PersistentCalls:
+        m_Calls: []
+    onResume:
+      m_PersistentCalls:
+        m_Calls: []
+    onStop:
+      m_PersistentCalls:
+        m_Calls: []
+  clipsManager:
+    clips:
+    - rid: 9011605504682098961
+  parentAnimoraPlayer: {fileID: 0}
+  references:
+    version: 2
+    RefIds:
+    - rid: 9011605504682098961
+      type: {class: AnimoraClipScale, ns: OM.Animora.Modules, asm: Assembly-CSharp}
+      data:
+        clipName: Scale
+        clipDescription: This is a scale action
+        highlightColor: {r: 0.8, g: 0.49, b: 0.8, a: 1}
+        isActive: 1
+        startTime: 0
+        duration: 0.3
+        orderIndex: 0
+        debugFlags: 0
+        playChance: 100
+        events:
+          isEnabled: 0
+          onStartPlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompletePlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onStartOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompleteOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onEnter:
+            m_PersistentCalls:
+              m_Calls: []
+          onUpdate:
+            m_PersistentCalls:
+              m_Calls: []
+          onExit:
+            m_PersistentCalls:
+              m_Calls: []
+        targets:
+          directTargets:
+          - {fileID: 4085838247574088791}
+        actionsManager:
+          actions:
+          - rid: 9011605504682098962
+        scale:
+          enabled: 1
+          interpolationType: 0
+          ease:
+            easeDataType: 0
+            animationCurve:
+              serializedVersion: 2
+              m_Curve:
+              - serializedVersion: 3
+                time: 0
+                value: 0
+                inSlope: 0
+                outSlope: 0
+                tangentMode: 0
+                weightedMode: 0
+                inWeight: 0
+                outWeight: 0
+              - serializedVersion: 3
+                time: 1
+                value: 1
+                inSlope: 0
+                outSlope: 0
+                tangentMode: 0
+                weightedMode: 0
+                inWeight: 0
+                outWeight: 0
+              m_PreInfinity: 2
+              m_PostInfinity: 2
+              m_RotationOrder: 4
+            easeType: 26
+          randomizeForEach: 0
+          zero:
+            valueType: 0
+            vector3Type: 5
+            value: {x: 0, y: 0, z: 0}
+            randomValue1: {x: 0, y: 0, z: 0}
+            randomValue2: {x: 0, y: 0, z: 0}
+            targetTransform: {fileID: 0}
+          one:
+            valueType: 0
+            vector3Type: 5
+            value: {x: 1, y: 1, z: 1}
+            randomValue1: {x: 0, y: 0, z: 0}
+            randomValue2: {x: 0, y: 0, z: 0}
+            targetTransform: {fileID: 0}
+    - rid: 9011605504682098962
+      type: {class: AnimoraActionSetScale, ns: OM.Animora.Modules, asm: Assembly-CSharp}
+      data:
+        actionName: Set Scale
+        actionGroup: 0
+        isEnabled: 0
+        orderIndex: 0
+        playDirection: 2
+        useCustomTargets: 0
+        customTargets: []
+        scale:
+          valueType: 0
+          vector3Type: 0
+          value: {x: 0, y: 0, z: 0}
+          randomValue1: {x: 0, y: 0, z: 0}
+          randomValue2: {x: 0, y: 0, z: 0}
+          targetTransform: {fileID: 0}
+--- !u!1 &8495215733846891775 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1458914235821702288, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
+  m_PrefabInstance: {fileID: 7050960775647158383}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &8758743245695991959
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8495215733846891775}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a1534cbac729494f945c90efe327e10a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: AnimoraRuntime::OM.Animora.Runtime.AnimoraPlayer
+  playerUniqueID: AnimoraPlayer
+  selectedClipIndex: 0
+  playMode: 3
+  timeMode: 1
+  defaultPlayDirection: 0
+  playLoopType: 2
+  debugFlags: 0
+  timelineDuration: 0.3
+  playbackSpeed: 1
+  loopCount: 0
+  animoraPlayerEvents:
+    enabled: 0
+    onStartPlaying:
+      m_PersistentCalls:
+        m_Calls: []
+    onCompletePlaying:
+      m_PersistentCalls:
+        m_Calls: []
+    onStartLoop:
+      m_PersistentCalls:
+        m_Calls: []
+    onCompleteLoop:
+      m_PersistentCalls:
+        m_Calls: []
+    onPause:
+      m_PersistentCalls:
+        m_Calls: []
+    onResume:
+      m_PersistentCalls:
+        m_Calls: []
+    onStop:
+      m_PersistentCalls:
+        m_Calls: []
+  clipsManager:
+    clips:
+    - rid: 9011605504682098939
+  parentAnimoraPlayer: {fileID: 0}
+  references:
+    version: 2
+    RefIds:
+    - rid: 9011605504682098939
+      type: {class: AnimoraClipScale, ns: OM.Animora.Modules, asm: Assembly-CSharp}
+      data:
+        clipName: Scale
+        clipDescription: This is a scale action
+        highlightColor: {r: 0.39, g: 0.38, b: 0.8, a: 1}
+        isActive: 1
+        startTime: 0
+        duration: 0.3
+        orderIndex: 0
+        debugFlags: 0
+        playChance: 100
+        events:
+          isEnabled: 0
+          onStartPlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompletePlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onStartOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompleteOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onEnter:
+            m_PersistentCalls:
+              m_Calls: []
+          onUpdate:
+            m_PersistentCalls:
+              m_Calls: []
+          onExit:
+            m_PersistentCalls:
+              m_Calls: []
+        targets:
+          directTargets:
+          - {fileID: 527642485443320325}
+        actionsManager:
+          actions:
+          - rid: 9011605504682098940
+        scale:
+          enabled: 1
+          interpolationType: 0
+          ease:
+            easeDataType: 0
+            animationCurve:
+              serializedVersion: 2
+              m_Curve:
+              - serializedVersion: 3
+                time: 0
+                value: 0
+                inSlope: 0
+                outSlope: 0
+                tangentMode: 0
+                weightedMode: 0
+                inWeight: 0
+                outWeight: 0
+              - serializedVersion: 3
+                time: 1
+                value: 1
+                inSlope: 0
+                outSlope: 0
+                tangentMode: 0
+                weightedMode: 0
+                inWeight: 0
+                outWeight: 0
+              m_PreInfinity: 2
+              m_PostInfinity: 2
+              m_RotationOrder: 4
+            easeType: 26
+          randomizeForEach: 0
+          zero:
+            valueType: 0
+            vector3Type: 5
+            value: {x: 0.4, y: 1.2, z: 1}
+            randomValue1: {x: 0, y: 0, z: 0}
+            randomValue2: {x: 0, y: 0, z: 0}
+            targetTransform: {fileID: 0}
+          one:
+            valueType: 0
+            vector3Type: 5
+            value: {x: 1, y: 1, z: 1}
+            randomValue1: {x: 0, y: 0, z: 0}
+            randomValue2: {x: 0, y: 0, z: 0}
+            targetTransform: {fileID: 0}
+    - rid: 9011605504682098940
+      type: {class: AnimoraActionSetScale, ns: OM.Animora.Modules, asm: Assembly-CSharp}
+      data:
+        actionName: Set Scale
+        actionGroup: 0
+        isEnabled: 0
+        orderIndex: 0
+        playDirection: 2
+        useCustomTargets: 0
+        customTargets: []
+        scale:
+          valueType: 0
+          vector3Type: 0
+          value: {x: 0, y: 0, z: 0}
+          randomValue1: {x: 0, y: 0, z: 0}
+          randomValue2: {x: 0, y: 0, z: 0}
+          targetTransform: {fileID: 0}
 --- !u!1001 &8717681486749075298
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1271,6 +3480,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 3471362990955983807}
     m_Modifications:
+    - target: {fileID: 4748541825738354518, guid: e249138c3e8c145ffa512ae23cae2438, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4901296698282230454, guid: e249138c3e8c145ffa512ae23cae2438, type: 3}
       propertyPath: m_Name
       value: NextArrow_Button
@@ -1309,11 +3522,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6680006269395901779, guid: e249138c3e8c145ffa512ae23cae2438, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 200
+      value: 140
       objectReference: {fileID: 0}
     - target: {fileID: 6680006269395901779, guid: e249138c3e8c145ffa512ae23cae2438, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 200
+      value: 180
+      objectReference: {fileID: 0}
+    - target: {fileID: 6680006269395901779, guid: e249138c3e8c145ffa512ae23cae2438, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6680006269395901779, guid: e249138c3e8c145ffa512ae23cae2438, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6680006269395901779, guid: e249138c3e8c145ffa512ae23cae2438, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6680006269395901779, guid: e249138c3e8c145ffa512ae23cae2438, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1363,6 +3588,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7478342818664142611, guid: e249138c3e8c145ffa512ae23cae2438, type: 3}
+      propertyPath: m_Type
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7478342818664142611, guid: e249138c3e8c145ffa512ae23cae2438, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 5826329469782705028, guid: f1fe3d76bb81dad47adc6a866645a5f6, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1370,6 +3603,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 4901296698282230454, guid: e249138c3e8c145ffa512ae23cae2438, type: 3}
       insertIndex: -1
       addedObject: {fileID: 6114065797632589264}
+    - targetCorrespondingSourceObject: {fileID: 4901296698282230454, guid: e249138c3e8c145ffa512ae23cae2438, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1484172911910972099}
   m_SourcePrefab: {fileID: 100100000, guid: e249138c3e8c145ffa512ae23cae2438, type: 3}
 --- !u!224 &2616392719422200369 stripped
 RectTransform:
@@ -1410,6 +3646,161 @@ MonoBehaviour:
       _entity: {fileID: 11400000, guid: 0680a3fa16bfe944b91aaa167171683e, type: 2}
       ID: 0
       <DebugObject>k__BackingField: {fileID: 4395384040564573652}
+--- !u!114 &1484172911910972099
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4395384040564573652}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a1534cbac729494f945c90efe327e10a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: AnimoraRuntime::OM.Animora.Runtime.AnimoraPlayer
+  playerUniqueID: AnimoraPlayer
+  selectedClipIndex: 0
+  playMode: 2
+  timeMode: 1
+  defaultPlayDirection: 0
+  playLoopType: 2
+  debugFlags: 0
+  timelineDuration: 0.3
+  playbackSpeed: 1
+  loopCount: 0
+  animoraPlayerEvents:
+    enabled: 0
+    onStartPlaying:
+      m_PersistentCalls:
+        m_Calls: []
+    onCompletePlaying:
+      m_PersistentCalls:
+        m_Calls: []
+    onStartLoop:
+      m_PersistentCalls:
+        m_Calls: []
+    onCompleteLoop:
+      m_PersistentCalls:
+        m_Calls: []
+    onPause:
+      m_PersistentCalls:
+        m_Calls: []
+    onResume:
+      m_PersistentCalls:
+        m_Calls: []
+    onStop:
+      m_PersistentCalls:
+        m_Calls: []
+  clipsManager:
+    clips:
+    - rid: 9011605504682098931
+  parentAnimoraPlayer: {fileID: 0}
+  references:
+    version: 2
+    RefIds:
+    - rid: 9011605504682098931
+      type: {class: AnimoraClipScale, ns: OM.Animora.Modules, asm: Assembly-CSharp}
+      data:
+        clipName: NextArrow
+        clipDescription: This is a scale action
+        highlightColor: {r: 0.8, g: 0.49, b: 0.8, a: 1}
+        isActive: 1
+        startTime: 0
+        duration: 0.3
+        orderIndex: 0
+        debugFlags: 0
+        playChance: 100
+        events:
+          isEnabled: 0
+          onStartPlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompletePlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onStartOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompleteOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onEnter:
+            m_PersistentCalls:
+              m_Calls: []
+          onUpdate:
+            m_PersistentCalls:
+              m_Calls: []
+          onExit:
+            m_PersistentCalls:
+              m_Calls: []
+        targets:
+          directTargets:
+          - {fileID: 2616392719422200369}
+        actionsManager:
+          actions:
+          - rid: 9011605504682098932
+        scale:
+          enabled: 1
+          interpolationType: 0
+          ease:
+            easeDataType: 0
+            animationCurve:
+              serializedVersion: 2
+              m_Curve:
+              - serializedVersion: 3
+                time: 0
+                value: 0
+                inSlope: 0
+                outSlope: 0
+                tangentMode: 0
+                weightedMode: 0
+                inWeight: 0
+                outWeight: 0
+              - serializedVersion: 3
+                time: 1
+                value: 1
+                inSlope: 0
+                outSlope: 0
+                tangentMode: 0
+                weightedMode: 0
+                inWeight: 0
+                outWeight: 0
+              m_PreInfinity: 2
+              m_PostInfinity: 2
+              m_RotationOrder: 4
+            easeType: 26
+          randomizeForEach: 0
+          zero:
+            valueType: 0
+            vector3Type: 5
+            value: {x: 0, y: 0, z: 0}
+            randomValue1: {x: 0, y: 0, z: 0}
+            randomValue2: {x: 0, y: 0, z: 0}
+            targetTransform: {fileID: 0}
+          one:
+            valueType: 0
+            vector3Type: 5
+            value: {x: 1, y: 1, z: 1}
+            randomValue1: {x: 0, y: 0, z: 0}
+            randomValue2: {x: 0, y: 0, z: 0}
+            targetTransform: {fileID: 0}
+    - rid: 9011605504682098932
+      type: {class: AnimoraActionSetScale, ns: OM.Animora.Modules, asm: Assembly-CSharp}
+      data:
+        actionName: Set Scale
+        actionGroup: 0
+        isEnabled: 0
+        orderIndex: 0
+        playDirection: 2
+        useCustomTargets: 0
+        customTargets: []
+        scale:
+          valueType: 0
+          vector3Type: 0
+          value: {x: 0, y: 0, z: 0}
+          randomValue1: {x: 0, y: 0, z: 0}
+          randomValue2: {x: 0, y: 0, z: 0}
+          targetTransform: {fileID: 0}
 --- !u!1001 &9037367060373182284
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1418,6 +3809,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 3471362990955983807}
     m_Modifications:
+    - target: {fileID: 4748541825738354518, guid: e249138c3e8c145ffa512ae23cae2438, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4901296698282230454, guid: e249138c3e8c145ffa512ae23cae2438, type: 3}
       propertyPath: m_Name
       value: PreviousArrow_Button
@@ -1460,11 +3855,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6680006269395901779, guid: e249138c3e8c145ffa512ae23cae2438, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 200
+      value: 140
       objectReference: {fileID: 0}
     - target: {fileID: 6680006269395901779, guid: e249138c3e8c145ffa512ae23cae2438, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 200
+      value: 180
+      objectReference: {fileID: 0}
+    - target: {fileID: 6680006269395901779, guid: e249138c3e8c145ffa512ae23cae2438, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6680006269395901779, guid: e249138c3e8c145ffa512ae23cae2438, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6680006269395901779, guid: e249138c3e8c145ffa512ae23cae2438, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6680006269395901779, guid: e249138c3e8c145ffa512ae23cae2438, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1514,6 +3921,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7478342818664142611, guid: e249138c3e8c145ffa512ae23cae2438, type: 3}
+      propertyPath: m_Type
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7478342818664142611, guid: e249138c3e8c145ffa512ae23cae2438, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 2666845500136164236, guid: 6da917c79bd7a1247b76b2efcd2ec473, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1521,6 +3936,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 4901296698282230454, guid: e249138c3e8c145ffa512ae23cae2438, type: 3}
       insertIndex: -1
       addedObject: {fileID: 3099336661765618717}
+    - targetCorrespondingSourceObject: {fileID: 4901296698282230454, guid: e249138c3e8c145ffa512ae23cae2438, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7717404764317465907}
   m_SourcePrefab: {fileID: 100100000, guid: e249138c3e8c145ffa512ae23cae2438, type: 3}
 --- !u!224 &2440681870198147615 stripped
 RectTransform:
@@ -1550,6 +3968,161 @@ MonoBehaviour:
       _entity: {fileID: 11400000, guid: 0680a3fa16bfe944b91aaa167171683e, type: 2}
       ID: 0
       <DebugObject>k__BackingField: {fileID: 4138748775826216442}
+--- !u!114 &7717404764317465907
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4138748775826216442}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a1534cbac729494f945c90efe327e10a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: AnimoraRuntime::OM.Animora.Runtime.AnimoraPlayer
+  playerUniqueID: AnimoraPlayer
+  selectedClipIndex: 0
+  playMode: 3
+  timeMode: 1
+  defaultPlayDirection: 0
+  playLoopType: 2
+  debugFlags: 0
+  timelineDuration: 0.3
+  playbackSpeed: 1
+  loopCount: 0
+  animoraPlayerEvents:
+    enabled: 0
+    onStartPlaying:
+      m_PersistentCalls:
+        m_Calls: []
+    onCompletePlaying:
+      m_PersistentCalls:
+        m_Calls: []
+    onStartLoop:
+      m_PersistentCalls:
+        m_Calls: []
+    onCompleteLoop:
+      m_PersistentCalls:
+        m_Calls: []
+    onPause:
+      m_PersistentCalls:
+        m_Calls: []
+    onResume:
+      m_PersistentCalls:
+        m_Calls: []
+    onStop:
+      m_PersistentCalls:
+        m_Calls: []
+  clipsManager:
+    clips:
+    - rid: 9011605504682098928
+  parentAnimoraPlayer: {fileID: 0}
+  references:
+    version: 2
+    RefIds:
+    - rid: 9011605504682098928
+      type: {class: AnimoraClipScale, ns: OM.Animora.Modules, asm: Assembly-CSharp}
+      data:
+        clipName: PreviousArrow
+        clipDescription: This is a scale action
+        highlightColor: {r: 0.8, g: 0.49, b: 0.8, a: 1}
+        isActive: 1
+        startTime: 0
+        duration: 0.3
+        orderIndex: 0
+        debugFlags: 0
+        playChance: 100
+        events:
+          isEnabled: 0
+          onStartPlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompletePlaying:
+            m_PersistentCalls:
+              m_Calls: []
+          onStartOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onCompleteOneLoop:
+            m_PersistentCalls:
+              m_Calls: []
+          onEnter:
+            m_PersistentCalls:
+              m_Calls: []
+          onUpdate:
+            m_PersistentCalls:
+              m_Calls: []
+          onExit:
+            m_PersistentCalls:
+              m_Calls: []
+        targets:
+          directTargets:
+          - {fileID: 2440681870198147615}
+        actionsManager:
+          actions:
+          - rid: 9011605504682098929
+        scale:
+          enabled: 1
+          interpolationType: 0
+          ease:
+            easeDataType: 0
+            animationCurve:
+              serializedVersion: 2
+              m_Curve:
+              - serializedVersion: 3
+                time: 0
+                value: 0
+                inSlope: 0
+                outSlope: 0
+                tangentMode: 0
+                weightedMode: 0
+                inWeight: 0
+                outWeight: 0
+              - serializedVersion: 3
+                time: 1
+                value: 1
+                inSlope: 0
+                outSlope: 0
+                tangentMode: 0
+                weightedMode: 0
+                inWeight: 0
+                outWeight: 0
+              m_PreInfinity: 2
+              m_PostInfinity: 2
+              m_RotationOrder: 4
+            easeType: 26
+          randomizeForEach: 0
+          zero:
+            valueType: 0
+            vector3Type: 5
+            value: {x: 0, y: 0, z: 0}
+            randomValue1: {x: 0, y: 0, z: 0}
+            randomValue2: {x: 0, y: 0, z: 0}
+            targetTransform: {fileID: 0}
+          one:
+            valueType: 0
+            vector3Type: 5
+            value: {x: 1, y: 1, z: 1}
+            randomValue1: {x: 0, y: 0, z: 0}
+            randomValue2: {x: 0, y: 0, z: 0}
+            targetTransform: {fileID: 0}
+    - rid: 9011605504682098929
+      type: {class: AnimoraActionSetScale, ns: OM.Animora.Modules, asm: Assembly-CSharp}
+      data:
+        actionName: Set Scale
+        actionGroup: 0
+        isEnabled: 0
+        orderIndex: 0
+        playDirection: 2
+        useCustomTargets: 0
+        customTargets: []
+        scale:
+          valueType: 0
+          vector3Type: 0
+          value: {x: 0, y: 0, z: 0}
+          randomValue1: {x: 0, y: 0, z: 0}
+          randomValue2: {x: 0, y: 0, z: 0}
+          targetTransform: {fileID: 0}
 --- !u!114 &4355967080633825745 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 4690689839520378525, guid: e249138c3e8c145ffa512ae23cae2438, type: 3}
