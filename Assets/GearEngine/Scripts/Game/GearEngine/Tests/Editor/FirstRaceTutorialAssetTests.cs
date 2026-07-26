@@ -4,7 +4,6 @@ using GearEngine.GearEngine.Presentation.UI.Tags;
 using NUnit.Framework;
 using Scaffold;
 using Scaffold.Tutorial.Data;
-using Scaffold.Tutorial.ScaffoldIntegration;
 using UnityEditor;
 using UnityEngine;
 
@@ -39,9 +38,6 @@ namespace GearEngine.GearEngine.Tests.Editor
             GameObject prefab =
                 tutorial.TutorialProgressController.gameObject;
             Assert.That(prefab.GetComponent<Blackboard>(), Is.Not.Null);
-            Assert.That(
-                prefab.GetComponent<ScaffoldTutorialAdapter>(),
-                Is.Not.Null);
 
             Block[] blocks = prefab.GetComponents<Block>();
             Assert.That(
@@ -52,6 +48,7 @@ namespace GearEngine.GearEngine.Tests.Editor
                     "FTUE_02_START_RACE",
                     "FTUE_03_COMPLETE"
                 }));
+            Assert.That(blocks[0]._EventHandler, Is.TypeOf<GameStarted>());
 
             AssertActionTypes(
                 blocks[0],

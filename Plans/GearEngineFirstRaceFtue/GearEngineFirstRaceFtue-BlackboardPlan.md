@@ -22,7 +22,6 @@ Use the tutorial prefab structure already supported by Scaffold:
 
 - `Blackboard`
 - `TutorialProgressController`
-- `ScaffoldTutorialAdapter`
 
 Use the existing Blackboard actions:
 
@@ -34,8 +33,9 @@ Use the existing Blackboard actions:
 - `Wait For Target Click`
 - `Stop Blackboard`
 
-`ScaffoldTutorialAdapter` reports the Blackboard block name as the tutorial step name, so
-the block names below are also the analytics step IDs.
+The first block uses Scaffold's `Game Started` event handler, so the Blackboard starts
+its own sequence after the tutorial prefab is instantiated. No adapter starts or advances
+the Blackboard.
 
 ## Target references
 
@@ -65,26 +65,12 @@ Action order:
    - Drop target: `TutorialBoard`
    - This action also restricts input to the configured drag and drop targets.
 3. `Clear UI Focus`
+4. `Send Message`
+   - Message: `gear_placed`
 
 Result: the player has performed the core board interaction once.
 
-### `FTUE_02_PLACE_ANOTHER_GEAR` (optional)
-
-Include this block only when one placement does not communicate the board interaction
-well enough.
-
-Action order:
-
-1. `Show UI Focus`
-   - Target: the next available `TutorialGear`
-2. `Wait For Target Drop`
-   - Drag target: `TutorialGear`
-   - Drop target: `TutorialBoard`
-3. `Clear UI Focus`
-
-Result: the player repeats the learned action with less explanation.
-
-### `FTUE_03_START_RACE`
+### `FTUE_02_START_RACE`
 
 Action order:
 
@@ -94,15 +80,16 @@ Action order:
 2. `Wait For Target Click`
    - Target: `RaceButton`
 3. `Clear UI Focus`
+4. `Send Message`
+   - Message: `race_started`
 
 Result: the player starts the first race.
 
-### `FTUE_04_COMPLETE`
+### `FTUE_03_COMPLETE`
 
 Action order:
 
 1. Complete the current `TutorialProgressController`.
-2. `Stop Blackboard`
 
 The small generic `Complete Tutorial` action calls
 `TutorialProgressController.CompleteProgress(false)` on the tutorial prefab. A matching
@@ -115,7 +102,8 @@ skip variant is unnecessary for this short sequence.
 - Let the tutorial prefab own all visual focus, input filtering, waits, and action order.
 - Keep the existing `TutorialController` and `TutorialProgressController`; do not add
   another FTUE session manager.
-- Use the current tutorial step analytics produced by `ScaffoldTutorialAdapter`.
+- Let `Game Started` start the first Blackboard block. Subsequent blocks start from
+  Blackboard messages.
 - Do not add ad gating, reward staging, race-result phases, tutorial board seeding, or
   resume reconstruction in this first version.
 
@@ -123,10 +111,10 @@ skip variant is unnecessary for this short sequence.
 
 - The focused gear can be dragged and other unrelated UI is blocked during the wait.
 - Dropping on the board advances the tutorial without requiring a specific cell.
-- The optional second placement can be removed without code changes.
 - The Race button is the only clickable target during its step.
 - Focus and input filters are cleared when each wait completes.
-- Completing the last block reports tutorial completion and stops the Blackboard.
+- Completing the last block reports tutorial completion; the tutorial controller then
+  deactivates the tutorial prefab.
 
 ## Optional follow-up
 

@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 6337998509460797099}
   - component: {fileID: 1011049582648254622}
   - component: {fileID: 7477327881227392170}
-  - component: {fileID: 6077904781085023927}
   - component: {fileID: 9101030691978988502}
   - component: {fileID: 2222477785763389618}
   - component: {fileID: 2810998444184320449}
@@ -105,18 +104,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a241464edd99344eeb4d70793087eacb, type: 3}
   m_Name:
   m_EditorClassIdentifier: Scaffold.Tutorial::Scaffold.Tutorial.Controllers.TutorialProgressController
---- !u!114 &6077904781085023927
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2518864306015288433}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 06ccc161a07724689b9bb995a74a45d9, type: 3}
-  m_Name:
-  m_EditorClassIdentifier: Scaffold.Tutorial::Scaffold.Tutorial.ScaffoldIntegration.ScaffoldTutorialAdapter
 --- !u!114 &9101030691978988502
 MonoBehaviour:
   m_ObjectHideFlags: 0
