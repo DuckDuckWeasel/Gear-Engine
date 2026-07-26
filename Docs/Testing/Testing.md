@@ -6,6 +6,8 @@ This guide explains how to execute automated checks in this repository and how t
 
 For test authoring standards, coverage strategy, examples, and best practices, see [AutomatedTesting.md](AutomatedTesting.md).
 
+For the selected Unity Build Automation verification stage, report contract, evidence sidecars, and Android/macOS matrix, see [CloudVerification.md](CloudVerification.md).
+
 ## Testing suite configuration
 
 Coverage default assembly filters and asmdef audit rules (excluded GUIDs or assembly name strings, and wildcard patterns for first-party script assemblies) are loaded from `.agents/TestingSuite.config.json`. Copy `.agents/TestingSuite.config.example.json` when adding a second product prefix (for example `NewGameProject.*`); the loader is `.agents/TestingSuite.Config.ps1` (`Get-TestingSuiteConfig`). If the JSON file is absent, scripts use the same built-in defaults as before.
