@@ -1,5 +1,99 @@
 # Unity Error Check Report
 
+## 2026-07-26 — Feature Commit Verification
+
+- Timestamp: `2026-07-26 12:38:00 -03`.
+- Checked log: `/Users/leonardosilva/Library/Logs/Unity/Editor.log`.
+- Parser result: `[]` — No errors found.
+- `Assembly-CSharp-Editor.csproj --no-restore`: completed with zero errors and zero warnings.
+- The repository static gate passed after scoped formatting and trailing-whitespace cleanup.
+- `Assembly-CSharp.csproj --no-restore` did not complete while the Unity Editor held the generated-project compiler state. It was cancelled after five minutes without diagnostics.
+- Affected generated-project builds encountered the same active-Editor compiler lock and were cancelled without diagnostics.
+
+### Fix Applied
+
+The feature-commit preparation pass applied the repository formatter to changed C# files
+through their owning generated projects and corrected the remaining naming diagnostics in
+`AnimoraActionWithTargetsDrawer`.
+
+### Remaining Issues
+
+The offline runtime compilation completion gate was not established while the project was
+open in Unity. Source-file structure verification also reports legacy multi-type source files
+and the new Blackboard partial-class files; these require a dedicated structural refactor and
+were not changed as part of commit preparation.
+
+## 2026-07-26 — Wait For Target Click Input Context
+
+- Timestamp: `2026-07-26 11:34:00 -03`.
+- Checked log: `/Users/leonardosilva/Library/Logs/Unity/Editor.log`.
+- Parser result: `[]` — No errors found.
+- `Scaffold.Input.csproj --no-restore`: completed with zero errors.
+- `Game.GearEngine.csproj --no-restore`: completed with zero errors.
+- `Game.GearEngine.Tests.csproj --no-restore`: completed with zero errors.
+- `Assembly-CSharp.csproj --no-restore`: completed with zero errors.
+- `Assembly-CSharp-Editor.csproj --no-restore`: completed with zero errors and zero warnings.
+- Changed C# files passed scoped formatting, style, and source-file structure checks.
+
+### Fix Applied
+
+Wait-for-input actions now resolve the input service and its event bus as one context.
+This prevents the raycaster from publishing a click through one bus while the action
+listens on another in partially injected or isolated tutorial scenes. Installed input
+services publish their paired global context, while only locally created fallback
+services are ticked manually.
+
+### Verification Limitation
+
+The focused EditMode regression test could not produce NUnit XML because the project was
+already open in Unity and the batch process could not initialize its licensing/database
+state. The bounded run was stopped after making no progress. Its contextual report and
+Editor log are under `Artifacts/TestResults/20260726-112832/`.
+
+## 2026-07-26 — Tutorial Focus Runtime Offset Alignment
+
+- Checked log: `/Users/leonardosilva/Documents/MatheusCohen/Gear Engine/Logs/Editor.log`.
+- Latest parser result: `[]` — No errors found.
+- Unity imported and compiled `TutorialFocusService.cs`, `FocusPresetSOEditor.cs`, and `TutorialFocusLayoutTests.cs`.
+- The Unity EditMode run executed both new offset regression tests successfully.
+- Individual generated-project formatting completed for the changed C# files.
+- Changed files passed source-file structure verification and `git diff --check`.
+
+### Fix Applied
+
+Runtime offsets no longer receive an additional target-canvas scale factor after they
+have already been expressed in screen pixels. The runtime now uses center-anchored,
+screen-to-canvas local positioning, while the inspector preview derives its IMGUI scale
+from the same shared 20-pixel unit.
+
+### Verification Limitation
+
+Direct `dotnet build` commands for the generated Unity projects did not complete because
+shared MSBuild processes remained locked while the Unity Editor was active. They were not
+terminated to avoid disrupting the open project. Unity's own compilation succeeded, as
+demonstrated by the completed EditMode run. The repository lint wrapper also cannot load
+the generated solution because it contains two projects named
+`Unity.Multiplayer.Tools.NetStats`; formatting was therefore run against the individual
+generated projects.
+
+## 2026-07-26 — Conditional Invoke Action Inspector Fields
+
+- Timestamp: `2026-07-26 10:58:00 -03`.
+- Checked logs: `/Users/leonardosilva/Library/Logs/Unity/Editor.log` and `/Users/leonardosilva/Documents/MatheusCohen/Gear Engine/Logs/Editor.log`.
+- Parser result: `[]` for both logs — No errors found.
+- Unity imported `InvokeActionEditorUtility.cs`, `InvokeActionCommandEditor.cs`, and `InvokeActionPropertyVisibilityTests.cs`, and regenerated `Game.GearEngine.Tests.csproj` with the new test.
+- `Assembly-CSharp-Editor.csproj --no-restore`: completed with zero errors and zero warnings.
+- `ScaffoldEditor.csproj` and `Game.GearEngine.Editor.csproj`: scoped whitespace and style formatting completed.
+- All three task C# files passed source-file structure verification and `git diff --check`.
+
+### Fix Applied
+
+The Invoke Action inspector now delegates field visibility to `ActionBase.IsPropertyVisible` when drawing standalone actions, grouped actions, and grouped-action height calculations. This allows `ShowUIFocus` to hide its layout override fields while `_overridePresetLayout` is false and reveal them when it is true.
+
+### Verification Limitation
+
+The generated solution cannot be used by `dotnet format` because it contains two projects named `Unity.Multiplayer.Tools.NetStats`. Subsequent direct runtime and test-assembly builds did not complete because shared MSBuild processes remained locked while the Unity Editor was open. They were not terminated to avoid disrupting the active Editor. The focused EditMode regression test was therefore added but not executed in batch mode.
+
 ## 2026-07-23 — WaitForTargetClickAction Script Asset Name
 
 - Fixed Unity's `ExtensionOfNativeClass` error by renaming `WaitForTargetClick.cs` and its `.meta` file to `WaitForTargetClickAction.cs`, matching the public class name while preserving the GUID.
