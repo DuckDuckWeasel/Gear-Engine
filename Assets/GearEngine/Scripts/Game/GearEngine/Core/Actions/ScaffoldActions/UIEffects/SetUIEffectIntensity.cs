@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Scaffold
 {
-    [CommandInfo("UI Effects", "Set Intensity", "Sets one of the UIEffect animated intensity channels.")]
+    [CommandInfo("UI Effects", "Set UI Effect Intensity", "Sets one of the UIEffect animated intensity channels.")]
     [AddComponentMenu("")]
     [Serializable]
     public class SetUIEffectIntensity : UIEffectActionBase
@@ -17,8 +17,10 @@ namespace Scaffold
             Transition,
         }
 
+        [Tooltip("The Channel")]
         [SerializeField] protected IntensityChannel channel = IntensityChannel.Transition;
 
+        [Tooltip("The Intensity")]
         [SerializeField] protected FloatData intensity = new FloatData(1f);
 
         public override void OnEnter()

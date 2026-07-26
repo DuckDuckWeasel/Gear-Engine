@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Scaffold
 {
-    [CommandInfo("UI Effects", "Control Tweener", "Plays, pauses, stops, resets, or manually advances a UIEffectTweener.")]
+    [CommandInfo("UI Effects", "Control UI Effect Tweener", "Plays, pauses, stops, resets, or manually advances a UIEffectTweener.")]
     [AddComponentMenu("")]
     [Serializable]
     public class ControlUIEffectTweener : ActionBase

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using Coffee.UIEffects;
+using GearEngine.GearEngine.Presentation.UI.Tags.Highlight;
 using GearEngine.Presentation.UI.Effects;
 using NUnit.Framework;
 using Scaffold;
@@ -20,10 +21,27 @@ namespace GearEngine.GearEngine.Tests.Editor
         private UIEffectPreset _preset;
         private MaterialUIEffectPreset _configuration;
         private Material _material;
+        private FocusPresetSO _focusPreset;
+        private GameObject _focusCanvas;
 
         [TearDown]
         public void TearDown()
         {
+            if (TutorialFocusService.TryGetInstance(out TutorialFocusService focusService))
+            {
+                focusService.ClearFocus();
+            }
+
+            if (_focusCanvas != null)
+            {
+                UnityEngine.Object.DestroyImmediate(_focusCanvas);
+            }
+
+            if (_focusPreset != null)
+            {
+                UnityEngine.Object.DestroyImmediate(_focusPreset);
+            }
+
             if (_preset != null)
             {
                 UnityEngine.Object.DestroyImmediate(_preset);
@@ -342,6 +360,40 @@ namespace GearEngine.GearEngine.Tests.Editor
 
             Assert.That(graphic.material, Is.SameAs(originalMaterial));
             Assert.That(nativeEffect.enabled, Is.True);
+        }
+
+        [Test]
+        public void ClearAllUIEffects_ClearsActiveTutorialFocus()
+        {
+            _target = new GameObject(
+                "FocusTarget",
+                typeof(RectTransform),
+                typeof(Canvas),
+                typeof(GraphicRaycaster),
+                typeof(Image));
+            Canvas targetCanvas = _target.GetComponent<Canvas>();
+            _focusPreset = ScriptableObject.CreateInstance<FocusPresetSO>();
+            _focusPreset.useDarkOverlay = true;
+
+            TutorialFocusService focusService = TutorialFocusService.Instance;
+            focusService.FocusOn(
+                _target.GetComponent<RectTransform>(),
+                _focusPreset,
+                IndicatorAnchor.MiddleCenter,
+                Vector2.zero,
+                Vector2.zero,
+                0f,
+                false);
+            _focusCanvas = GameObject.Find("TutorialFocusCanvas");
+            Assert.That(_focusCanvas, Is.Not.Null);
+            Assert.That(_focusCanvas.activeSelf, Is.True);
+            Assert.That(targetCanvas.overrideSorting, Is.True);
+
+            ClearAllUIEffects action = new ClearAllUIEffects();
+            action.OnEnter();
+
+            Assert.That(_focusCanvas.activeSelf, Is.False);
+            Assert.That(targetCanvas.overrideSorting, Is.False);
         }
 
         private GameObject CreateUiTarget()

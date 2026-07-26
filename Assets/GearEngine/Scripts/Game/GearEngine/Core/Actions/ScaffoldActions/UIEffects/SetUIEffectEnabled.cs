@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Scaffold
 {
-    [CommandInfo("UI Effects", "Set Enabled", "Enables or disables a UIEffect on a UIEffect or target GameObject.")]
+    [CommandInfo("UI Effects", "Set UI Effect Enabled", "Enables or disables a UIEffect on a UIEffect or target GameObject.")]
     [AddComponentMenu("")]
     [Serializable]
     public class SetUIEffectEnabled : UIEffectActionBase

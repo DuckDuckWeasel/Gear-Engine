@@ -7,7 +7,7 @@ namespace Scaffold
     /// <summary>
     /// Applies a native or material-backed UI effect preset.
     /// </summary>
-    [CommandInfo("UI Effects", "Apply Effect", "Applies a UIEffect preset or a self-animated UI material.")]
+    [CommandInfo("UI Effects", "Apply UI Effect", "Applies a UIEffect preset or a self-animated UI material.")]
     [AddComponentMenu("")]
     [Serializable]
     public class ApplyUIEffectPreset : UIEffectActionBase
@@ -30,6 +30,7 @@ namespace Scaffold
             if (effectPreset != null && TryResolveEffect(addIfMissing.Value, out UIEffect effect))
             {
                 effect.ExecutePreset(effectPreset, append.Value);
+                ScaffoldUIEffectRegistry.Track(effect);
             }
             else
             {
@@ -55,6 +56,7 @@ namespace Scaffold
             if (preset != null && TryResolveEffect(addIfMissing.Value, out UIEffect effect))
             {
                 effect.ExecutePreset(preset, append.Value);
+                ScaffoldUIEffectRegistry.Track(effect);
             }
         }
 

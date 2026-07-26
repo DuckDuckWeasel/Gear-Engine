@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Scaffold
 {
-    [CommandInfo("UI Effects", "Clear Effect", "Resets a UIEffect to its default preset.")]
+    [CommandInfo("UI Effects", "Clear UI Effect", "Resets a UIEffect to its default preset.")]
     [AddComponentMenu("")]
     [Serializable]
     public class ClearUIEffect : UIEffectActionBase

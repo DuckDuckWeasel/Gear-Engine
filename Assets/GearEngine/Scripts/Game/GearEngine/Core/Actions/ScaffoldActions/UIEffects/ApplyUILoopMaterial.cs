@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 namespace Scaffold
 {
-    [CommandInfo("UI Effects", "Apply Loop Material", "Applies a self-animated material to a UGUI Graphic.")]
+    [CommandInfo("UI Effects", "Apply UI Loop Material", "Applies a self-animated material to a UGUI Graphic.")]
     [AddComponentMenu("")]
     [Serializable]
     public class ApplyUILoopMaterial : ActionBase

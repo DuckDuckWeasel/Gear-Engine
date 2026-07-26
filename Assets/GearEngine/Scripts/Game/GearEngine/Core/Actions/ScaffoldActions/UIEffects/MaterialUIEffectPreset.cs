@@ -19,6 +19,7 @@ namespace Scaffold
 
         public Material MaterialPreset => materialPreset;
 
+        [Tooltip("The Disable native ui effect")]
         public bool DisableNativeUiEffect => disableNativeUiEffect;
 
         public void Execute(UIEffect target, bool append)

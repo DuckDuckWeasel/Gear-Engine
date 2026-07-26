@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 namespace Scaffold
 {
-    [CommandInfo("UI Effects", "Clear Loop Material", "Restores the material that was active before a loop material was applied.")]
+    [CommandInfo("UI Effects", "Clear UI Loop Material", "Restores the material that was active before a loop material was applied.")]
     [AddComponentMenu("")]
     [Serializable]
     public class ClearUILoopMaterial : ActionBase

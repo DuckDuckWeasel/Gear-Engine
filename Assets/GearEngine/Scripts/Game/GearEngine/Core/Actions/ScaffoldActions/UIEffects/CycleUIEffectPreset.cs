@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 namespace Scaffold
 {
-    [CommandInfo("UI Effects", "Cycle Preset", "Applies the next UIEffect preset and describes the applied effect.")]
+    [CommandInfo("UI Effects", "Cycle UI Effect Preset", "Applies the next UIEffect preset and describes the applied effect.")]
     [AddComponentMenu("")]
     [Serializable]
     public class CycleUIEffectPreset : UIEffectActionBase
