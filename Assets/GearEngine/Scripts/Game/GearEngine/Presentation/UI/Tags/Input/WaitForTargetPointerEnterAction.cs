@@ -13,15 +13,13 @@ using GearEngine.GearEngine.Extensions;
 using GearEngine.GearEngine.Presentation.UI.Tags;
 using GearEngine.GearEngine.Presentation.UI.Input;
 
-namespace GearEngine.GearEngine.Presentation.UI.Actions
+namespace GearEngine.Actions.Input
 {
+    [CommandInfo("Input", "Wait For Target Pointer Enter", "Waits until the pointer enters a specific target.")]
     [Serializable]
-    public class WaitForTargetPointerEnterAction : ActionBase
+    public class WaitForTargetPointerEnterAction : WaitForInputActionBase
     {
         public TargetReference target = new TargetReference();
-
-        [Inject] private IInputFilterService _inputService;
-        [Inject] private IEventBus _eventBus;
 
         private bool isTargetPointered = false;
 
@@ -29,13 +27,7 @@ namespace GearEngine.GearEngine.Presentation.UI.Actions
         {
             isTargetPointered = false;
 
-            if (_inputService == null || _eventBus == null)
-            {
-                this.TryInject();
-
-                if (_eventBus == null) _eventBus = new Scaffold.Events.EventController();
-                if (_inputService == null) _inputService = new Scaffold.Input.InputFilterService(_eventBus);
-            }
+            InitializeInputService();
 
             // Provide filtering for UI pointer enter based on target reference
             _inputService.FilterForPointerEnterTarget(target);
@@ -61,7 +53,7 @@ namespace GearEngine.GearEngine.Presentation.UI.Actions
             else
             {
                 // Fallback to parents
-                var tagComponent = enteredObj.GetComponentInParent<TagComponent>();
+                TagComponent tagComponent = enteredObj.GetComponentInParent<TagComponent>();
                 if (tagComponent != null && target.IsMatch(tagComponent.gameObject))
                 {
                     isTargetPointered = true;
@@ -71,7 +63,11 @@ namespace GearEngine.GearEngine.Presentation.UI.Actions
 
         private IEnumerator WaitForTargetPointerEnterCoroutine()
         {
-            yield return new WaitUntil(() => isTargetPointered);
+            while (!isTargetPointered)
+            {
+                TickFallbackIfNeeded();
+                yield return null;
+            }
 
             Cleanup();
             Continue();
@@ -92,7 +88,11 @@ namespace GearEngine.GearEngine.Presentation.UI.Actions
 
         public override string GetSummary()
         {
-            if (target == null) return "Error: No Target";
+            if (target == null)
+            {
+                return "Error: No Target";
+            }
+
             return target.GetSummary();
         }
     }

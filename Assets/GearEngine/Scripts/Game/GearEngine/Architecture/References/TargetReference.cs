@@ -30,10 +30,10 @@ namespace GearEngine.Core.Architecture.References
 
         [Tooltip("References a global variable registered in the system (e.g. Fungus).")]
         public string globalVariableName;
-        
+
         [Tooltip("A list of multiple explicit targets.")]
         public System.Collections.Generic.List<TargetReferenceItem> references = new System.Collections.Generic.List<TargetReferenceItem>();
-        
+
         /// <summary>
         /// External systems can inject a global resolver here, to allow TargetReference 
         /// to find string-based variables without coupling the Core to third-party assets.
@@ -53,16 +53,19 @@ namespace GearEngine.Core.Architecture.References
                 case TargetResolutionStrategy.DirectReference:
                     return directReference;
                 case TargetResolutionStrategy.GlobalVariable:
-                    return (GlobalResolver != null && !string.IsNullOrEmpty(globalVariableName)) 
-                        ? GlobalResolver.Resolve(globalVariableName) 
+                    return (GlobalResolver != null && !string.IsNullOrEmpty(globalVariableName))
+                        ? GlobalResolver.Resolve(globalVariableName)
                         : null;
                 case TargetResolutionStrategy.MultipleReferences:
                     if (references != null && references.Count > 0)
                     {
-                        foreach (var item in references)
+                        foreach (TargetReferenceItem item in references)
                         {
-                            var go = item.Resolve();
-                            if (go != null) return go; // Returns the first valid one
+                            GameObject go = item.Resolve();
+                            if (go != null)
+                            {
+                                return go; // Returns the first valid one
+                            }
                         }
                     }
                     return null;
@@ -81,25 +84,34 @@ namespace GearEngine.Core.Architecture.References
         /// </summary>
         public System.Collections.Generic.List<GameObject> ResolveAll()
         {
-            var list = new System.Collections.Generic.List<GameObject>();
-            
+            System.Collections.Generic.List<GameObject> list = new System.Collections.Generic.List<GameObject>();
+
             if (strategy == TargetResolutionStrategy.DirectReference)
             {
-                if (directReference != null) list.Add(directReference);
+                if (directReference != null)
+                {
+                    list.Add(directReference);
+                }
             }
             else if (strategy == TargetResolutionStrategy.GlobalVariable)
             {
-                var go = (GlobalResolver != null && !string.IsNullOrEmpty(globalVariableName)) ? GlobalResolver.Resolve(globalVariableName) : null;
-                if (go != null) list.Add(go);
+                GameObject go = (GlobalResolver != null && !string.IsNullOrEmpty(globalVariableName)) ? GlobalResolver.Resolve(globalVariableName) : null;
+                if (go != null)
+                {
+                    list.Add(go);
+                }
             }
             else if (strategy == TargetResolutionStrategy.MultipleReferences)
             {
                 if (references != null)
                 {
-                    foreach (var item in references)
+                    foreach (TargetReferenceItem item in references)
                     {
-                        var go = item.Resolve();
-                        if (go != null && !list.Contains(go)) list.Add(go);
+                        GameObject go = item.Resolve();
+                        if (go != null && !list.Contains(go))
+                        {
+                            list.Add(go);
+                        }
                     }
                 }
             }
@@ -126,7 +138,10 @@ namespace GearEngine.Core.Architecture.References
                     return $"[{references?.Count ?? 0} Targets]";
                 case TargetResolutionStrategy.Tags:
                     if (tagFilter.soTags != null && tagFilter.soTags.Count > 0)
+                    {
                         return tagFilter.soTags[0] != null ? tagFilter.soTags[0].name + (tagFilter.soTags.Count > 1 ? "..." : "") : "None";
+                    }
+
                     return "None";
                 default:
                     return "None";
@@ -138,21 +153,32 @@ namespace GearEngine.Core.Architecture.References
         /// </summary>
         public bool IsMatch(GameObject target)
         {
-            if (target == null) return false;
+            if (target == null)
+            {
+                return false;
+            }
 
             switch (strategy)
             {
                 case TargetResolutionStrategy.DirectReference:
-                    return target == directReference;
+                    return directReference != null && (target == directReference || target.transform.IsChildOf(directReference.transform));
                 case TargetResolutionStrategy.GlobalVariable:
-                    if (GlobalResolver == null || string.IsNullOrEmpty(globalVariableName)) return false;
-                    return target == GlobalResolver.Resolve(globalVariableName);
+                    if (GlobalResolver == null || string.IsNullOrEmpty(globalVariableName))
+                    {
+                        return false;
+                    }
+
+                    GameObject globalObj = GlobalResolver.Resolve(globalVariableName);
+                    return globalObj != null && (target == globalObj || target.transform.IsChildOf(globalObj.transform));
                 case TargetResolutionStrategy.MultipleReferences:
                     if (references != null)
                     {
-                        foreach (var item in references)
+                        foreach (TargetReferenceItem item in references)
                         {
-                            if (item.Resolve() == target) return true;
+                            if (item.Resolve() == target)
+                            {
+                                return true;
+                            }
                         }
                     }
                     return false;

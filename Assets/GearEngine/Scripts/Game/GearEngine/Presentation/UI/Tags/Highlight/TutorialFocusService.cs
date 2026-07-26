@@ -3,11 +3,14 @@ using UnityEngine.UI;
 using VContainer.Unity;
 using System.Collections.Generic;
 using Coffee.UIEffects;
+using GearEngine.GearEngine.Extensions;
 
 namespace GearEngine.GearEngine.Presentation.UI.Tags.Highlight
 {
     public class TutorialFocusService : IInitializable
     {
+        internal const float k_OffsetPixelsPerUnit = 20f;
+
         private static TutorialFocusService _instance;
         public static TutorialFocusService Instance
         {
@@ -22,10 +25,16 @@ namespace GearEngine.GearEngine.Presentation.UI.Tags.Highlight
             }
         }
 
+        public static bool TryGetInstance(out TutorialFocusService instance)
+        {
+            instance = _instance;
+            return instance != null;
+        }
+
         private GameObject _focusCanvasGo;
         private Canvas _focusCanvas;
         private Image _darkOverlay;
-        
+
         private List<Component> _addedOverrideComponents = new List<Component>();
         private GameObject _currentIndicator;
         private UIEffect _currentUIEffect;
@@ -34,23 +43,23 @@ namespace GearEngine.GearEngine.Presentation.UI.Tags.Highlight
         {
             _focusCanvasGo = new GameObject("TutorialFocusCanvas");
             UnityEngine.Object.DontDestroyOnLoad(_focusCanvasGo);
-            
+
             _focusCanvas = _focusCanvasGo.AddComponent<Canvas>();
             _focusCanvas.renderMode = RenderMode.ScreenSpaceOverlay;
             _focusCanvas.sortingOrder = 30000;
-            
+
             _focusCanvasGo.AddComponent<GraphicRaycaster>();
-            
+
             GameObject overlayGo = new GameObject("DarkOverlay");
             overlayGo.transform.SetParent(_focusCanvasGo.transform, false);
             _darkOverlay = overlayGo.AddComponent<Image>();
-            
+
             RectTransform rect = _darkOverlay.rectTransform;
             rect.anchorMin = Vector2.zero;
             rect.anchorMax = Vector2.one;
             rect.offsetMin = Vector2.zero;
             rect.offsetMax = Vector2.zero;
-            
+
             _focusCanvasGo.SetActive(false);
         }
 
@@ -58,7 +67,10 @@ namespace GearEngine.GearEngine.Presentation.UI.Tags.Highlight
 
         public void FocusOn(RectTransform target, FocusPresetSO preset, IndicatorAnchor anchor, Vector2 customAnchor, Vector2 positionOffset, float directionOffset, bool aimToAnchor)
         {
-            if (target == null || preset == null) return;
+            if (target == null || preset == null)
+            {
+                return;
+            }
 
             if (_focusCanvasGo == null)
             {
@@ -74,10 +86,13 @@ namespace GearEngine.GearEngine.Presentation.UI.Tags.Highlight
             }
 
             Canvas rootCanvas = target.GetComponentInParent<Canvas>();
-            if (rootCanvas != null) rootCanvas = rootCanvas.rootCanvas;
-            
+            if (rootCanvas != null)
+            {
+                rootCanvas = rootCanvas.rootCanvas;
+            }
+
             bool is3DTarget = false;
-            
+
             if (rootCanvas != null)
             {
                 _focusCanvas.renderMode = rootCanvas.renderMode;
@@ -93,7 +108,11 @@ namespace GearEngine.GearEngine.Presentation.UI.Tags.Highlight
                 if (rootScaler != null)
                 {
                     CanvasScaler focusScaler = _focusCanvasGo.GetComponent<CanvasScaler>();
-                    if (focusScaler == null) focusScaler = _focusCanvasGo.AddComponent<CanvasScaler>();
+                    if (focusScaler == null)
+                    {
+                        focusScaler = _focusCanvasGo.AddComponent<CanvasScaler>();
+                    }
+
                     focusScaler.uiScaleMode = rootScaler.uiScaleMode;
                     focusScaler.referenceResolution = rootScaler.referenceResolution;
                     focusScaler.screenMatchMode = rootScaler.screenMatchMode;
@@ -129,18 +148,23 @@ namespace GearEngine.GearEngine.Presentation.UI.Tags.Highlight
                     _currentTargetCanvasState.originalOrder = targetCanvas.sortingOrder;
                 }
                 _currentTargetCanvasState.canvas = targetCanvas;
-                
+
                 targetCanvas.overrideSorting = true;
                 targetCanvas.sortingOrder = _focusCanvas.sortingOrder + 1;
 
                 GraphicRaycaster targetRaycaster = target.GetComponent<GraphicRaycaster>();
                 if (targetRaycaster == null)
                 {
-                    targetRaycaster = target.gameObject.AddComponent<GraphicRaycaster>();
+                    targetRaycaster = target.gameObject.AddComponent<Scaffold.Input.FilteredGraphicRaycaster>();
+                    targetRaycaster.TryInject();
                     _currentTargetCanvasState.raycasterWasAdded = true;
                 }
                 else
                 {
+                    if (!(targetRaycaster is Scaffold.Input.FilteredGraphicRaycaster))
+                    {
+                        Debug.LogWarning("[TutorialFocusService] Target has a GraphicRaycaster that is NOT a FilteredGraphicRaycaster. Pointer Enter/Click events might not fire for this target.");
+                    }
                     _currentTargetCanvasState.raycasterWasAdded = false;
                 }
                 _currentTargetCanvasState.raycaster = targetRaycaster;
@@ -170,34 +194,37 @@ namespace GearEngine.GearEngine.Presentation.UI.Tags.Highlight
             if (preset.indicatorPrefab != null)
             {
                 _currentIndicator = UnityEngine.Object.Instantiate(preset.indicatorPrefab, _focusCanvasGo.transform);
-                
+
                 Canvas indCanvas = _currentIndicator.GetComponent<Canvas>();
-                if (indCanvas == null) indCanvas = _currentIndicator.AddComponent<Canvas>();
+                if (indCanvas == null)
+                {
+                    indCanvas = _currentIndicator.AddComponent<Canvas>();
+                }
+
                 indCanvas.overrideSorting = true;
                 indCanvas.sortingOrder = _focusCanvas.sortingOrder + 2;
 
                 RectTransform indRect = _currentIndicator.GetComponent<RectTransform>();
                 if (indRect != null)
                 {
-                    // Copy target's anchors and pivot as requested, but keep its original sizeDelta
-                    indRect.anchorMin = target.anchorMin;
-                    indRect.anchorMax = target.anchorMax;
-                    indRect.pivot = target.pivot;
+                    indRect.anchorMin = new Vector2(0.5f, 0.5f);
+                    indRect.anchorMax = new Vector2(0.5f, 0.5f);
+                    indRect.pivot = new Vector2(0.5f, 0.5f);
 
                     Vector3[] corners = new Vector3[4];
                     target.GetWorldCorners(corners);
                     // corners: 0 = BottomLeft, 1 = TopLeft, 2 = TopRight, 3 = BottomRight
                     Vector3 bl = corners[0];
                     Vector3 tr = corners[2];
-                    
+
                     Vector2 anchorVec = GetAnchorVector(anchor, customAnchor);
-                    
+
                     Vector3 targetPos = new Vector3(
                         Mathf.Lerp(bl.x, tr.x, anchorVec.x),
                         Mathf.Lerp(bl.y, tr.y, anchorVec.y),
                         bl.z
                     );
-                    
+
                     Vector3 centerPos = new Vector3(
                         Mathf.Lerp(bl.x, tr.x, 0.5f),
                         Mathf.Lerp(bl.y, tr.y, 0.5f),
@@ -208,23 +235,26 @@ namespace GearEngine.GearEngine.Presentation.UI.Tags.Highlight
                     Vector2 screenTargetPos = RectTransformUtility.WorldToScreenPoint(cam, targetPos);
                     Vector2 screenCenterPos = RectTransformUtility.WorldToScreenPoint(cam, centerPos);
 
-                    // Calculate normal direction (outward from center to anchor) in screen space
-                    Vector2 directionOutward = (screenTargetPos - screenCenterPos).normalized;
-                    if (directionOutward.sqrMagnitude < 0.01f)
-                    {
-                        directionOutward = Vector2.up; // Fallback if anchor is exactly Center
-                    }
+                    Vector2 finalScreenPos = CalculateIndicatorScreenPosition(
+                        screenTargetPos,
+                        screenCenterPos,
+                        positionOffset,
+                        directionOffset);
 
-                    // Scale offsets by canvas scaleFactor for resolution independence
-                    // 20f is the base unit: 1 direction/offset unit = 20 canvas units
-                    float scaleFactor = rootCanvas != null ? rootCanvas.scaleFactor : 1f;
-                    float pixelDirOffset = directionOffset * 20f * scaleFactor;
-                    Vector2 pixelPosOffset = positionOffset * 20f * scaleFactor;
-                    
-                    Vector2 finalScreenPos = screenTargetPos + pixelPosOffset + (directionOutward * pixelDirOffset);
-                    
-                    RectTransformUtility.ScreenPointToWorldPointInRectangle(_focusCanvas.GetComponent<RectTransform>(), finalScreenPos, cam, out Vector3 finalWorldPos);
-                    indRect.position = finalWorldPos;
+                    Canvas.ForceUpdateCanvases();
+                    RectTransform focusCanvasRect = _focusCanvas.GetComponent<RectTransform>();
+                    if (RectTransformUtility.ScreenPointToLocalPointInRectangle(
+                            focusCanvasRect,
+                            finalScreenPos,
+                            cam,
+                            out Vector2 finalCanvasPosition))
+                    {
+                        indRect.anchoredPosition = finalCanvasPosition;
+                    }
+                    else
+                    {
+                        Debug.LogError("[TutorialFocusService] Failed to convert the indicator screen position into focus canvas coordinates.");
+                    }
 
                     // Aim to anchor: rotate so the indicator points from its position toward the target center
                     if (aimToAnchor)
@@ -233,7 +263,7 @@ namespace GearEngine.GearEngine.Presentation.UI.Tags.Highlight
                         float angle = Vector2.SignedAngle(Vector2.up, aimDirection);
                         indRect.rotation = Quaternion.Euler(0, 0, angle);
                     }
-                    
+
                     // Disable raycasts on the indicator so it never blocks clicks/hovers
                     Graphic[] graphics = _currentIndicator.GetComponentsInChildren<Graphic>(true);
                     foreach (Graphic g in graphics)
@@ -249,6 +279,23 @@ namespace GearEngine.GearEngine.Presentation.UI.Tags.Highlight
                 _currentUIEffect = target.gameObject.AddComponent<UIEffect>();
                 _currentUIEffect.ExecutePreset(preset.uiEffectPreset, false);
             }
+        }
+
+        internal static Vector2 CalculateIndicatorScreenPosition(
+            Vector2 anchorScreenPosition,
+            Vector2 centerScreenPosition,
+            Vector2 positionOffset,
+            float directionOffset)
+        {
+            Vector2 directionOutward = (anchorScreenPosition - centerScreenPosition).normalized;
+            if (directionOutward.sqrMagnitude < 0.01f)
+            {
+                directionOutward = Vector2.up;
+            }
+
+            return anchorScreenPosition +
+                   (positionOffset * k_OffsetPixelsPerUnit) +
+                   (directionOutward * directionOffset * k_OffsetPixelsPerUnit);
         }
 
         public void ClearFocus()
@@ -277,7 +324,7 @@ namespace GearEngine.GearEngine.Presentation.UI.Tags.Highlight
                         _currentTargetCanvasState.canvas.sortingOrder = _currentTargetCanvasState.originalOrder;
                     }
                 }
-                
+
                 if (_currentTargetCanvasState.sortingGroup != null)
                 {
                     if (_currentTargetCanvasState.wasSortingGroupAdded)
@@ -294,8 +341,15 @@ namespace GearEngine.GearEngine.Presentation.UI.Tags.Highlight
                 _currentTargetCanvasState = null;
             }
 
-            if (_currentIndicator != null) UnityEngine.Object.Destroy(_currentIndicator);
-            if (_currentUIEffect != null) UnityEngine.Object.Destroy(_currentUIEffect);
+            if (_currentIndicator != null)
+            {
+                UnityEngine.Object.Destroy(_currentIndicator);
+            }
+
+            if (_currentUIEffect != null)
+            {
+                UnityEngine.Object.Destroy(_currentUIEffect);
+            }
 
             if (_focusCanvasGo != null)
             {
@@ -305,7 +359,10 @@ namespace GearEngine.GearEngine.Presentation.UI.Tags.Highlight
 
         private void RunDestructionWorkaround(GameObject targetGo)
         {
-            if (targetGo == null) return;
+            if (targetGo == null)
+            {
+                return;
+            }
             // A simple trick to rebuild the graphic without triggering OnEnable/OnDisable 
             // is to modify the hierarchy slightly or mark layouts dirty.
             // But the most robust way that avoids OnEnable logic is toggling the Graphic component.

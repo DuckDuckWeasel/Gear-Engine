@@ -13,6 +13,18 @@ namespace GearEngine.GearEngine.Presentation.UI.Tags
         [Tooltip("Native Unity tags assigned to this object (Bitmask mode).")]
         [SerializeField] private UnityNativeTagMask nativeTags;
 
+        public static readonly HashSet<TagComponent> Instances = new HashSet<TagComponent>();
+
+        private void OnEnable()
+        {
+            Instances.Add(this);
+        }
+
+        private void OnDisable()
+        {
+            Instances.Remove(this);
+        }
+
         public bool HasAnyTag(IEnumerable<TagSO> tagsToCheck)
         {
             if (tagsToCheck == null)
@@ -20,7 +32,7 @@ namespace GearEngine.GearEngine.Presentation.UI.Tags
                 return false;
             }
 
-            foreach (var t in tagsToCheck)
+            foreach (TagSO t in tagsToCheck)
             {
                 if (HasTag(t))
                 {
@@ -47,7 +59,7 @@ namespace GearEngine.GearEngine.Presentation.UI.Tags
             {
                 return false;
             }
-            
+
             return nativeTags.HasTag(unityTag);
         }
 

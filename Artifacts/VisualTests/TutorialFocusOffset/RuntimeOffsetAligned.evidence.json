@@ -1,0 +1,9 @@
+{
+  "scenario": "Tutorial focus runtime offset alignment",
+  "source": "Interactive Unity Game view",
+  "criteria": [
+    "The indicator is placed outside and above the MOUSE OVER target.",
+    "The indicator no longer overlaps the target content."
+  ],
+  "capturedAt": "2026-07-26T11:21:40-03:00"
+}

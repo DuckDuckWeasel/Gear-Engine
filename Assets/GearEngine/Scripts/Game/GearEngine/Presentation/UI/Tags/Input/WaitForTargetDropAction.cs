@@ -14,18 +14,16 @@ using GearEngine.Core.Actions;
 using GearEngine.GearEngine.Extensions;
 using GearEngine.GearEngine.Presentation.UI.Input;
 
-namespace GearEngine.GearEngine.Presentation.UI.Actions
+namespace GearEngine.Actions.Input
 {
+    [CommandInfo("Input", "Wait For Target Drop", "Waits until a drag target is dropped onto a drop target.")]
     [Serializable]
-    public class WaitForTargetDropAction : ActionBase
+    public class WaitForTargetDropAction : WaitForInputActionBase
     {
         public TargetReference dragTarget = new TargetReference();
         public TargetReference dropTarget = new TargetReference();
 
         public bool checkDroppedGameObject = false;
-
-        [Inject] private IInputFilterService _inputService;
-        [Inject] private IEventBus _eventBus;
 
         private bool isTargetDropped = false;
 
@@ -33,13 +31,7 @@ namespace GearEngine.GearEngine.Presentation.UI.Actions
         {
             isTargetDropped = false;
 
-            if (_inputService == null || _eventBus == null)
-            {
-                this.TryInject();
-
-                if (_eventBus == null) _eventBus = new Scaffold.Events.EventController();
-                if (_inputService == null) _inputService = new Scaffold.Input.InputFilterService(_eventBus);
-            }
+            InitializeInputService();
 
             _inputService.FilterForButtonDownTarget(dragTarget);
             _inputService.FilterForDropEnterTarget(checkDroppedGameObject, dropTarget);
@@ -76,9 +68,11 @@ namespace GearEngine.GearEngine.Presentation.UI.Actions
 
         private IEnumerator WaitForTargetDropCoroutine()
         {
-            Debug.Log($"[WaitForTargetDrop] Waiting for target drop with the required tags and condition.");
-
-            yield return new WaitUntil(() => isTargetDropped);
+            while (!isTargetDropped)
+            {
+                TickFallbackIfNeeded();
+                yield return null;
+            }
 
             Debug.Log($"[WaitForTargetDrop] Target with the required tags and condition has been dropped!");
 
@@ -98,7 +92,11 @@ namespace GearEngine.GearEngine.Presentation.UI.Actions
 
         public override string GetSummary()
         {
-            if (dragTarget == null || dropTarget == null) return "Error: No Target";
+            if (dragTarget == null || dropTarget == null)
+            {
+                return "Error: No Target";
+            }
+
             return $"{dragTarget.GetSummary()} -> {dropTarget.GetSummary()}";
         }
     }

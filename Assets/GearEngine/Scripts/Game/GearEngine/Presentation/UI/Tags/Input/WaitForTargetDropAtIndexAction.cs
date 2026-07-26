@@ -13,7 +13,7 @@ using GearEngine.Core.Actions;
 using GearEngine.GearEngine.Extensions;
 using GearEngine.GearEngine.Presentation.UI.Input;
 
-namespace GearEngine.GearEngine.Presentation.UI.Actions
+namespace GearEngine.Actions.Input
 {
     [Serializable]
     public class DropTargetConfig
@@ -22,11 +22,10 @@ namespace GearEngine.GearEngine.Presentation.UI.Actions
         public List<int> allowedNodeIndices = new List<int>();
     }
 
+    [CommandInfo("Input", "Wait For Target Drop At Index", "Waits until a drag target is dropped onto a specific slot index.")]
     [Serializable]
-    public class WaitForTargetDropAtIndexAction : ActionBase
+    public class WaitForTargetDropAtIndexAction : WaitForInputActionBase
     {
-        [Inject] private IInputFilterService _inputService;
-        [Inject] private IEventBus _eventBus;
 
         [Header("Drag-side Target")]
         public TargetReference dragTarget = new TargetReference();
@@ -34,14 +33,14 @@ namespace GearEngine.GearEngine.Presentation.UI.Actions
         [Header("Drop-side configurations")]
         [SerializeField]
         private List<DropTargetConfig> dropConfigs = new List<DropTargetConfig>();
-        
+
         [SerializeField]
         private bool checkGameObject = false;
 
         private bool isTargetDropped;
         public override void OnEnter()
         {
-            
+
             if (dropConfigs == null || dropConfigs.Count == 0)
             {
                 Debug.LogError($"[WaitForTargetDropAtIndex] Invalid configuration.");
@@ -49,20 +48,14 @@ namespace GearEngine.GearEngine.Presentation.UI.Actions
                 return;
             }
 
-            if (_inputService == null || _eventBus == null)
-            {
-                this.TryInject();
-
-                if (_eventBus == null) _eventBus = new Scaffold.Events.EventController();
-                if (_inputService == null) _inputService = new Scaffold.Input.InputFilterService(_eventBus);
-            }
+            InitializeInputService();
 
             // Provide filtering for UI highlights/raycasts based on target references
             _inputService.FilterForButtonDownTarget(dragTarget);
             _inputService.FilterForPointerEnterTarget(dragTarget);
 
             List<TargetReference> dropTargetRefs = new List<TargetReference>();
-            foreach (var cfg in dropConfigs)
+            foreach (DropTargetConfig cfg in dropConfigs)
             {
                 dropTargetRefs.Add(cfg.target);
             }
@@ -98,13 +91,15 @@ namespace GearEngine.GearEngine.Presentation.UI.Actions
 
                 List<GameObject> allMatching = GetAllMatchingObjects(dropConfig.target);
                 int indexToCheck = allMatching.IndexOf(go);
-                
+
                 // Also check if index was from the parent component
                 if (indexToCheck < 0)
                 {
                     TagComponent parentTagComp = go.GetComponentInParent<TagComponent>();
                     if (parentTagComp != null)
+                    {
                         indexToCheck = allMatching.IndexOf(parentTagComp.gameObject);
+                    }
                 }
 
                 if (indexToCheck >= 0 && dropConfig.allowedNodeIndices.Contains(indexToCheck))
@@ -130,7 +125,11 @@ namespace GearEngine.GearEngine.Presentation.UI.Actions
 
         private IEnumerator WaitForDrop()
         {
-            yield return new WaitUntil(() => isTargetDropped);
+            while (!isTargetDropped)
+            {
+                TickFallbackIfNeeded();
+                yield return null;
+            }
         }
 
         private void Finish(bool success)
@@ -187,7 +186,11 @@ namespace GearEngine.GearEngine.Presentation.UI.Actions
 
         public override string GetSummary()
         {
-            if (dragTarget == null) return "Error: No Drag Target";
+            if (dragTarget == null)
+            {
+                return "Error: No Drag Target";
+            }
+
             int count = dropConfigs != null ? dropConfigs.Count : 0;
             return $"{dragTarget.GetSummary()} -> [{count} Slots]";
         }

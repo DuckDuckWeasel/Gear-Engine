@@ -6,7 +6,8 @@
         "Scaffold.Events",
         "Unity.TextMeshPro",
         "Unity.ResourceManager",
-        "Unity.Addressables"
+        "Unity.Addressables",
+        "Unity.InputSystem"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

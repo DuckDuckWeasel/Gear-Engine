@@ -10,7 +10,9 @@
         "Scaffold.Navigation",
         "Scaffold.Navigation.Container",
         "GearEngine.Core.Config",
-        "Scaffold.Tutorial"
+        "Scaffold.Tutorial",
+        "Scaffold.Input",
+        "Scaffold.Input.Container"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

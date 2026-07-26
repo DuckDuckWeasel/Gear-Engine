@@ -22,4 +22,4 @@ MonoBehaviour:
   directionOffset: 3
   aimToAnchor: 1
   useUIEffect: 1
-  uiEffectPreset: {fileID: 11400000, guid: 8e1f52a88aa69404a9316e9bef0bbe57, type: 2}
+  uiEffectPreset: {fileID: 11400000, guid: b3e2f58e3c8944b1daf1e15e51c3e2e9, type: 2}

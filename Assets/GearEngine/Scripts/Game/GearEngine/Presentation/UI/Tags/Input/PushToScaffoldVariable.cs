@@ -6,6 +6,8 @@ using GearEngine.Core.Architecture.References;
 
 namespace GearEngine.GearEngine.Presentation.UI.Actions
 {
+    [CommandInfo("Variable", "Push To Scaffold Variable", "Registers a target GameObject to a Scaffold global variable.")]
+    [AddComponentMenu("")]
     [Serializable]
     public class PushToScaffoldVariable : ActionBase
     {
@@ -23,7 +25,10 @@ namespace GearEngine.GearEngine.Presentation.UI.Actions
 
         private void RegisterToGlobal()
         {
-            if (string.IsNullOrEmpty(globalVariableKey)) return;
+            if (string.IsNullOrEmpty(globalVariableKey))
+            {
+                return;
+            }
 
             GameObject targetGO = target.Resolve();
             if (targetGO == null)
@@ -34,15 +39,15 @@ namespace GearEngine.GearEngine.Presentation.UI.Actions
 
             if (ScaffoldManager.Instance != null && ScaffoldManager.Instance.GlobalVariables != null)
             {
-                var globalVars = ScaffoldManager.Instance.GlobalVariables;
-                
+                GlobalVariables globalVars = ScaffoldManager.Instance.GlobalVariables;
+
                 // Get or add the variable in the global blackboard
-                var goVar = globalVars.GetOrAddVariable<GameObject>(
-                    globalVariableKey, 
-                    targetGO, 
+                VariableBase<GameObject> goVar = globalVars.GetOrAddVariable<GameObject>(
+                    globalVariableKey,
+                    targetGO,
                     typeof(GameObjectVariable)
                 );
-                
+
                 if (goVar != null)
                 {
                     goVar.Value = targetGO;
@@ -57,7 +62,10 @@ namespace GearEngine.GearEngine.Presentation.UI.Actions
         public override string GetSummary()
         {
             if (string.IsNullOrEmpty(globalVariableKey) || target == null)
+            {
                 return "Error: Missing setup";
+            }
+
             return $"{target.GetSummary()} -> {globalVariableKey}";
         }
     }

@@ -1,49 +1,45 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Scaffold;
-using UnityEngine;
-using GearEngine.Core.Architecture.References;
 using GearEngine.Core.Actions;
-using VContainer;
-using Scaffold.Input.Contracts;
-using Scaffold.Input.Events;
-using Scaffold.Events.Contracts;
-using GearEngine.GearEngine.Extensions;
+using GearEngine.Core.Architecture.References;
 using GearEngine.GearEngine.Presentation.UI.Tags;
 using GearEngine.GearEngine.Presentation.UI.Input;
+using Scaffold;
+using Scaffold.Input.Events;
+using UnityEngine;
 
-namespace GearEngine.GearEngine.Presentation.UI.Actions
+namespace GearEngine.Actions.Input
 {
+    [CommandInfo("Input", "Wait For Target Click", "Waits until a specific target is clicked.")]
     [Serializable]
-    public class WaitForTargetClickAction : ActionBase
+    public class WaitForTargetClickAction : WaitForInputActionBase
     {
         public TargetReference target = new TargetReference();
 
-        [Inject] private IInputFilterService _inputService;
-        [Inject] private IEventBus _eventBus;
-
-        private bool isTargetClicked = false;
+        private readonly List<TargetClickRelay> clickRelays = new List<TargetClickRelay>();
+        private bool isTargetClicked;
+        private Coroutine waitCoroutine;
 
         public override void OnEnter()
         {
             isTargetClicked = false;
-
-            if (_inputService == null || _eventBus == null)
+            if (target == null)
             {
-                this.TryInject();
-
-                if (_eventBus == null) _eventBus = new Scaffold.Events.EventController();
-                if (_inputService == null) _inputService = new Scaffold.Input.InputFilterService(_eventBus);
+                Debug.LogError("[WaitForTargetClickAction] Target reference is missing.");
+                Fail();
+                return;
             }
 
-            // Provide filtering for UI clicks based on target reference
+            InitializeInputService();
+            RegisterTargetRelays();
+
             _inputService.FilterForButtonDownTarget(target);
-            _inputService.FilterForButtonUpTarget(target); // Click often requires Down and Up on the same target
+            _inputService.FilterForButtonUpTarget(target);
 
             _eventBus.AddListener<ScreenClickedEvent>(OnClicked);
 
-            hostCommand.StartCoroutine(WaitForTargetClickCoroutine());
+            waitCoroutine = hostCommand.StartCoroutine(WaitForTargetClickCoroutine());
         }
 
         private void OnClicked(ScreenClickedEvent signal)
@@ -55,31 +51,88 @@ namespace GearEngine.GearEngine.Presentation.UI.Actions
 
             GameObject clickedObj = signal.TopResult.gameObject;
 
-            if (target.IsMatch(clickedObj))
+            Transform current = clickedObj.transform;
+            while (current != null)
             {
-                isTargetClicked = true;
-            }
-            else
-            {
-                // Fallback to parents
-                var tagComponent = clickedObj.GetComponentInParent<TagComponent>();
-                if (tagComponent != null && target.IsMatch(tagComponent.gameObject))
+                if (target.IsMatch(current.gameObject))
                 {
                     isTargetClicked = true;
+                    return;
                 }
+
+                current = current.parent;
             }
+        }
+
+        private void OnTargetClicked()
+        {
+            isTargetClicked = true;
         }
 
         private IEnumerator WaitForTargetClickCoroutine()
         {
-            yield return new WaitUntil(() => isTargetClicked);
+            while (!isTargetClicked)
+            {
+                TickFallbackIfNeeded();
+                yield return null;
+            }
 
+            waitCoroutine = null;
             Cleanup();
             Continue();
         }
 
+        private void RegisterTargetRelays()
+        {
+            clickRelays.Clear();
+            HashSet<GameObject> resolvedTargets = new HashSet<GameObject>();
+
+            if (target.strategy == TargetResolutionStrategy.Tags)
+            {
+                foreach (TagComponent tagComponent in TagComponent.Instances)
+                {
+                    if (tagComponent != null && target.IsMatch(tagComponent.gameObject))
+                    {
+                        resolvedTargets.Add(tagComponent.gameObject);
+                    }
+                }
+            }
+            else
+            {
+                foreach (GameObject resolvedTarget in target.ResolveAll())
+                {
+                    if (resolvedTarget != null)
+                    {
+                        resolvedTargets.Add(resolvedTarget);
+                    }
+                }
+            }
+
+            foreach (GameObject resolvedTarget in resolvedTargets)
+            {
+                TargetClickRelay relay = resolvedTarget.GetComponent<TargetClickRelay>();
+                if (relay == null)
+                {
+                    relay = resolvedTarget.AddComponent<TargetClickRelay>();
+                }
+
+                relay.AddListener(OnTargetClicked);
+                clickRelays.Add(relay);
+            }
+        }
+
         private void Cleanup()
         {
+            foreach (TargetClickRelay relay in clickRelays)
+            {
+                if (relay != null)
+                {
+                    relay.RemoveListener(OnTargetClicked);
+                }
+            }
+
+            clickRelays.Clear();
+
             if (_eventBus != null)
             {
                 _eventBus.RemoveListener<ScreenClickedEvent>(OnClicked);
@@ -92,9 +145,24 @@ namespace GearEngine.GearEngine.Presentation.UI.Actions
             }
         }
 
+        public override void OnStopExecuting()
+        {
+            if (hostCommand != null && waitCoroutine != null)
+            {
+                hostCommand.StopCoroutine(waitCoroutine);
+                waitCoroutine = null;
+            }
+
+            Cleanup();
+        }
+
         public override string GetSummary()
         {
-            if (target == null) return "Error: No Target";
+            if (target == null)
+            {
+                return "Error: No Target";
+            }
+
             return target.GetSummary();
         }
     }

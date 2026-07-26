@@ -20,29 +20,38 @@ namespace GearEngine.GearEngine.Editor
                 if (iterator.name == "m_Script")
                 {
                     using (new EditorGUI.DisabledScope(true))
+                    {
                         EditorGUILayout.PropertyField(iterator, true);
+                    }
+
                     continue;
                 }
 
                 if (iterator.name == "customIndicatorAnchor")
                 {
-                    var anchorProp = serializedObject.FindProperty("indicatorAnchor");
+                    SerializedProperty anchorProp = serializedObject.FindProperty("indicatorAnchor");
                     if (anchorProp.enumValueIndex != (int)IndicatorAnchor.Custom)
+                    {
                         continue;
+                    }
                 }
 
                 if (iterator.name == "overlayColor" || iterator.name == "blockClicksOutside")
                 {
-                    var useDarkProp = serializedObject.FindProperty("useDarkOverlay");
+                    SerializedProperty useDarkProp = serializedObject.FindProperty("useDarkOverlay");
                     if (!useDarkProp.boolValue)
+                    {
                         continue;
+                    }
                 }
 
                 if (iterator.name == "uiEffectPreset")
                 {
-                    var useUIEffectProp = serializedObject.FindProperty("useUIEffect");
+                    SerializedProperty useUIEffectProp = serializedObject.FindProperty("useUIEffect");
                     if (!useUIEffectProp.boolValue)
+                    {
                         continue;
+                    }
                 }
 
                 EditorGUILayout.PropertyField(iterator, true);
@@ -62,17 +71,51 @@ namespace GearEngine.GearEngine.Editor
 
                 Coffee.UIEffects.UIEffectPreset p = preset.uiEffectPreset;
                 string text = "";
-                if (p.m_ToneFilter != Coffee.UIEffects.ToneFilter.None) text += $"- Tone: {p.m_ToneFilter}\n";
-                if (p.m_ColorFilter != Coffee.UIEffects.ColorFilter.None) text += $"- Color: {p.m_ColorFilter}\n";
-                if (p.m_SamplingFilter != Coffee.UIEffects.SamplingFilter.None) text += $"- Filter/Blur: {p.m_SamplingFilter}\n";
-                if (p.m_TransitionFilter != Coffee.UIEffects.TransitionFilter.None) text += $"- Transition: {p.m_TransitionFilter}\n";
-                if (p.m_ShadowMode != Coffee.UIEffects.ShadowMode.None) text += $"- Shadow: {p.m_ShadowMode}\n";
-                if (p.m_GradationMode != Coffee.UIEffects.GradationMode.None) text += $"- Gradation: {p.m_GradationMode}\n";
-                if (p.m_EdgeMode != Coffee.UIEffects.EdgeMode.None) text += $"- Edge/Shiny: {p.m_EdgeMode}\n";
-                if (p.m_DetailFilter != Coffee.UIEffects.DetailFilter.None) text += $"- Detail: {p.m_DetailFilter}\n";
-                
-                if (string.IsNullOrEmpty(text)) text = "Preset has no active filters enabled.";
-                
+                if (p.m_ToneFilter != Coffee.UIEffects.ToneFilter.None)
+                {
+                    text += $"- Tone: {p.m_ToneFilter}\n";
+                }
+
+                if (p.m_ColorFilter != Coffee.UIEffects.ColorFilter.None)
+                {
+                    text += $"- Color: {p.m_ColorFilter}\n";
+                }
+
+                if (p.m_SamplingFilter != Coffee.UIEffects.SamplingFilter.None)
+                {
+                    text += $"- Filter/Blur: {p.m_SamplingFilter}\n";
+                }
+
+                if (p.m_TransitionFilter != Coffee.UIEffects.TransitionFilter.None)
+                {
+                    text += $"- Transition: {p.m_TransitionFilter}\n";
+                }
+
+                if (p.m_ShadowMode != Coffee.UIEffects.ShadowMode.None)
+                {
+                    text += $"- Shadow: {p.m_ShadowMode}\n";
+                }
+
+                if (p.m_GradationMode != Coffee.UIEffects.GradationMode.None)
+                {
+                    text += $"- Gradation: {p.m_GradationMode}\n";
+                }
+
+                if (p.m_EdgeMode != Coffee.UIEffects.EdgeMode.None)
+                {
+                    text += $"- Edge/Shiny: {p.m_EdgeMode}\n";
+                }
+
+                if (p.m_DetailFilter != Coffee.UIEffects.DetailFilter.None)
+                {
+                    text += $"- Detail: {p.m_DetailFilter}\n";
+                }
+
+                if (string.IsNullOrEmpty(text))
+                {
+                    text = "Preset has no active filters enabled.";
+                }
+
                 EditorGUILayout.HelpBox(text.TrimEnd(), MessageType.Info);
             }
 
@@ -80,23 +123,26 @@ namespace GearEngine.GearEngine.Editor
             Rect separator = EditorGUILayout.GetControlRect(false, 1);
             EditorGUI.DrawRect(separator, new Color(0.5f, 0.5f, 0.5f, 1));
             EditorGUILayout.Space(10);
-            
+
             GUILayout.Label("Live Focus Preview", EditorStyles.boldLabel);
-            
+
             Rect previewRect = GUILayoutUtility.GetRect(256, 256, GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(false));
-            
+
             if (Event.current.type == EventType.Repaint)
             {
                 DrawFakePreview(previewRect, preset);
             }
         }
 
-        private void DrawFakePreview(Rect rect, FocusPresetSO preset)
+        public static void DrawFakePreview(Rect rect, FocusPresetSO preset)
         {
             // 1. Draw dark background
             EditorGUI.DrawRect(rect, new Color(0.15f, 0.15f, 0.15f, 1f));
 
-            if (preset == null) return;
+            if (preset == null)
+            {
+                return;
+            }
 
             // 2. Draw Overlay
             if (preset.useDarkOverlay)
@@ -109,7 +155,7 @@ namespace GearEngine.GearEngine.Editor
             // 3. Draw Target
             Vector2 targetSize = new Vector2(100, 50);
             Rect targetRect = new Rect(rect.center.x - targetSize.x / 2, rect.center.y - targetSize.y / 2, targetSize.x, targetSize.y);
-            
+
             EditorGUI.DrawRect(targetRect, Color.white);
             GUIStyle textStyle = new GUIStyle(GUI.skin.label) { alignment = TextAnchor.MiddleCenter };
             textStyle.normal.textColor = Color.black;
@@ -117,12 +163,16 @@ namespace GearEngine.GearEngine.Editor
 
             // 4. Indicator
             Vector2 anchorPos = GetAnchorPosition(targetRect, preset.indicatorAnchor, preset.customIndicatorAnchor);
-            
-            Vector2 directionOutward = (anchorPos - targetRect.center).normalized;
-            if (directionOutward == Vector2.zero) directionOutward = new Vector2(0, -1); // Up in IMGUI
 
-            float previewDirOffset = preset.directionOffset * 10f;
-            Vector2 previewPosOffset = preset.indicatorOffset * 10f;
+            Vector2 directionOutward = (anchorPos - targetRect.center).normalized;
+            if (directionOutward == Vector2.zero)
+            {
+                directionOutward = new Vector2(0, -1); // Up in IMGUI
+            }
+
+            float previewOffsetScale = GetPreviewOffsetScale(EditorGUIUtility.pixelsPerPoint);
+            float previewDirOffset = preset.directionOffset * previewOffsetScale;
+            Vector2 previewPosOffset = preset.indicatorOffset * previewOffsetScale;
             previewPosOffset.y = -previewPosOffset.y; // In IMGUI, Y points down, so negate Y for preview to match Unity space
 
             Vector2 indicatorCenter = anchorPos + previewPosOffset + (directionOutward * previewDirOffset);
@@ -150,7 +200,7 @@ namespace GearEngine.GearEngine.Editor
             Texture2D indTex = null;
             if (preset.indicatorPrefab != null)
             {
-                var image = preset.indicatorPrefab.GetComponent<UnityEngine.UI.Image>();
+                UnityEngine.UI.Image image = preset.indicatorPrefab.GetComponent<UnityEngine.UI.Image>();
                 if (image != null && image.sprite != null)
                 {
                     indTex = image.sprite.texture;
@@ -169,7 +219,12 @@ namespace GearEngine.GearEngine.Editor
             GUI.matrix = oldMatrix;
         }
 
-        private Vector2 GetAnchorPosition(Rect targetRect, IndicatorAnchor anchor, Vector2 customAnchor)
+        public static float GetPreviewOffsetScale(float pixelsPerPoint)
+        {
+            return TutorialFocusService.k_OffsetPixelsPerUnit / Mathf.Max(1f, pixelsPerPoint);
+        }
+
+        public static Vector2 GetAnchorPosition(Rect targetRect, IndicatorAnchor anchor, Vector2 customAnchor)
         {
             switch (anchor)
             {
@@ -182,7 +237,7 @@ namespace GearEngine.GearEngine.Editor
                 case IndicatorAnchor.BottomLeft: return new Vector2(targetRect.xMin, targetRect.yMax);
                 case IndicatorAnchor.MiddleLeft: return new Vector2(targetRect.xMin, targetRect.center.y);
                 case IndicatorAnchor.MiddleCenter: return targetRect.center;
-                case IndicatorAnchor.Custom: 
+                case IndicatorAnchor.Custom:
                     return new Vector2(
                         Mathf.Lerp(targetRect.xMin, targetRect.xMax, customAnchor.x),
                         Mathf.Lerp(targetRect.yMax, targetRect.yMin, customAnchor.y) // Y inverted for IMGUI
