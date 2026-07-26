@@ -16,6 +16,7 @@ namespace Scaffold
     public class AssertCommand : ActionBase
     {
         [SerializeField]
+        [Tooltip("The Message")]
         protected StringData message;
 
         [SerializeField]
@@ -29,6 +30,7 @@ namespace Scaffold
         }
 
         [SerializeField]
+        [Tooltip("The Method")]
         protected Method method;
 
         public override void OnEnter()
@@ -44,7 +46,7 @@ namespace Scaffold
                     break;
 
                 default:
-                break;
+                    break;
             }
 
             Continue();
@@ -53,9 +55,14 @@ namespace Scaffold
         public override string GetSummary()
         {
             if (a == null)
+            {
                 return "Error: No A variable";
+            }
+
             if (b == null)
+            {
                 return "Error: No B variable";
+            }
 
             return a.Key + " " + method.ToString() + " " + b.Key;
         }

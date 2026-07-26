@@ -15,23 +15,24 @@ namespace Scaffold
     [Serializable]
     public class TextureProperty : BaseVariableProperty
     {
-		//generated property
-        public enum Property 
-        { 
-            Width, 
-            Height, 
-            IsReadable, 
-            AnisoLevel, 
-            MipMapBias, 
-            TexelSize, 
+        //generated property
+        public enum Property
+        {
+            Width,
+            Height,
+            IsReadable,
+            AnisoLevel,
+            MipMapBias,
+            TexelSize,
         }
 
-		
+
         [SerializeField]
         protected Property property;
-		
+
         [SerializeField]
         [VariableProperty(typeof(TextureVariable))]
+        [Tooltip("The Texture var")]
         protected TextureVariable textureVar;
 
         [SerializeField]
@@ -39,19 +40,20 @@ namespace Scaffold
                           typeof(BooleanVariable),
                           typeof(FloatVariable),
                           typeof(Vector2Variable))]
+        [Tooltip("The In out var")]
         protected Variable inOutVar;
 
         public override void OnEnter()
         {
-            var ioi = inOutVar as IntegerVariable;
+            IntegerVariable ioi = inOutVar as IntegerVariable;
 #if UNITY_2019_2_OR_NEWER
-            var iob = inOutVar as BooleanVariable;
+            BooleanVariable iob = inOutVar as BooleanVariable;
 #endif
-            var iof = inOutVar as FloatVariable;
-            var iov2 = inOutVar as Vector2Variable;
+            FloatVariable iof = inOutVar as FloatVariable;
+            Vector2Variable iov2 = inOutVar as Vector2Variable;
 
 
-            var target = textureVar.Value;
+            Texture target = textureVar.Value;
 
             switch (getOrSet)
             {
@@ -134,7 +136,9 @@ namespace Scaffold
         public override bool HasReference(Variable variable)
         {
             if (textureVar == variable || inOutVar == variable)
+            {
                 return true;
+            }
 
             return false;
         }

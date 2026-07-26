@@ -24,14 +24,19 @@ namespace Scaffold
 
         //[Tooltip("Where the result of the function is stored.")]
         [SerializeField]
+        [Tooltip("The Out value")]
         protected FloatData outValue;
 
         public override void OnEnter()
         {
             if (clampResult)
+            {
                 outValue.Value = Mathf.InverseLerp(a.Value, b.Value, value.Value);
+            }
             else
+            {
                 outValue.Value = (value.Value - a.Value) / (b.Value - a.Value);
+            }
 
             Continue();
         }
@@ -39,7 +44,9 @@ namespace Scaffold
         public override string GetSummary()
         {
             if (outValue.floatRef == null)
+            {
                 return "Error: no out value selected";
+            }
 
             return outValue.floatRef.Key + " = [" + a.Value.ToString() + "-" + b.Value.ToString() + "]";
         }

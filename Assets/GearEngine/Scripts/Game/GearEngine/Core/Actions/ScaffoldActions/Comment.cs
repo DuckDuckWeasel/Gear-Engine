@@ -8,17 +8,21 @@ namespace Scaffold
     /// <summary>
     /// Use comments to record design notes and reminders about your game.
     /// </summary>
-    [CommandInfo("", 
-                 "Comment", 
+    [CommandInfo("Utility",
+                 "Comment",
                  "Use comments to record design notes and reminders about your game.")]
     [Serializable]
     public class Comment : ActionBase
-    {   
+    {
+        public override bool IsComment()
+        {
+            return true;
+        }
         [Tooltip("Name of Commenter")]
         [SerializeField] protected string commenterName = "";
 
         [Tooltip("Text to display for this comment")]
-        [TextArea(2,4)]
+        [TextArea(2, 4)]
         [SerializeField] protected string commentText = "";
 
         #region Public members

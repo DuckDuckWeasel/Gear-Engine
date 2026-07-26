@@ -376,10 +376,7 @@ namespace Scaffold
 
         private static bool IsCommandWeightEligible(Command command)
         {
-            return command != null &&
-                   command.enabled &&
-                   command.GetType().Name != "CommentAction" &&
-                   command.GetType().Name != "LabelAction";
+            return command != null && command.IsWeightEligible();
         }
 
         /// <summary>
@@ -991,7 +988,7 @@ namespace Scaffold
             for (int i = 0; i < CommandList.Count; i++)
             {
                 Command command = CommandList[i];
-                if (command.GetType().Name == "LabelAction")
+                if (command.IsLabel())
                 {
                     // TODO: ActionBase doesn't have Key. Skip for now.
                 }

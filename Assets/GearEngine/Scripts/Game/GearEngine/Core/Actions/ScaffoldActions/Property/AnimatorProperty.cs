@@ -9,59 +9,60 @@ namespace Scaffold
     // <summary>
     /// Get or Set a property of a Animator component
     /// </summary>
-    [CommandInfo("Property", 
+    [CommandInfo("Property",
                  "Animator",
                  "Get or Set a property of a Animator component")]
     [Serializable]
     public class AnimatorProperty : BaseVariableProperty
     {
-		//generated property
-        public enum Property 
-        { 
-            IsOptimizable, 
-            IsHuman, 
-            HasRootMotion, 
-            HumanScale, 
-            IsInitialized, 
-            DeltaPosition, 
-            DeltaRotation, 
-            Velocity, 
-            AngularVelocity, 
-            RootPosition, 
-            RootRotation, 
-            ApplyRootMotion, 
-            HasTransformHierarchy, 
-            GravityWeight, 
-            BodyPosition, 
-            BodyRotation, 
-            StabilizeFeet, 
-            LayerCount, 
-            ParameterCount, 
-            FeetPivotActive, 
-            PivotWeight, 
-            PivotPosition, 
-            IsMatchingTarget, 
-            Speed, 
-            TargetPosition, 
-            TargetRotation, 
-            PlaybackTime, 
-            RecorderStartTime, 
-            RecorderStopTime, 
-            HasBoundPlayables, 
-            LayersAffectMassCenter, 
-            LeftFeetBottomHeight, 
-            RightFeetBottomHeight, 
-            LogWarnings, 
-            FireEvents, 
-            KeepAnimatorControllerStateOnDisable, 
+        //generated property
+        public enum Property
+        {
+            IsOptimizable,
+            IsHuman,
+            HasRootMotion,
+            HumanScale,
+            IsInitialized,
+            DeltaPosition,
+            DeltaRotation,
+            Velocity,
+            AngularVelocity,
+            RootPosition,
+            RootRotation,
+            ApplyRootMotion,
+            HasTransformHierarchy,
+            GravityWeight,
+            BodyPosition,
+            BodyRotation,
+            StabilizeFeet,
+            LayerCount,
+            ParameterCount,
+            FeetPivotActive,
+            PivotWeight,
+            PivotPosition,
+            IsMatchingTarget,
+            Speed,
+            TargetPosition,
+            TargetRotation,
+            PlaybackTime,
+            RecorderStartTime,
+            RecorderStopTime,
+            HasBoundPlayables,
+            LayersAffectMassCenter,
+            LeftFeetBottomHeight,
+            RightFeetBottomHeight,
+            LogWarnings,
+            FireEvents,
+            KeepAnimatorControllerStateOnDisable,
         }
 
-		
+
         [SerializeField]
         protected Property property;
-		
+
         [SerializeField]
         [VariableProperty(typeof(AnimatorVariable))]
+        [Tooltip("The Animator var")]
         protected AnimatorVariable animatorVar;
 
         [SerializeField]
@@ -70,18 +71,19 @@ namespace Scaffold
                           typeof(Vector3Variable),
                           typeof(QuaternionVariable),
                           typeof(IntegerVariable))]
+        [Tooltip("The In out var")]
         protected Variable inOutVar;
 
         public override void OnEnter()
         {
-            var iob = inOutVar as BooleanVariable;
-            var iof = inOutVar as FloatVariable;
-            var iov = inOutVar as Vector3Variable;
-            var ioq = inOutVar as QuaternionVariable;
-            var ioi = inOutVar as IntegerVariable;
+            BooleanVariable iob = inOutVar as BooleanVariable;
+            FloatVariable iof = inOutVar as FloatVariable;
+            Vector3Variable iov = inOutVar as Vector3Variable;
+            QuaternionVariable ioq = inOutVar as QuaternionVariable;
+            IntegerVariable ioi = inOutVar as IntegerVariable;
 
 
-            var target = animatorVar.Value;
+            Animator target = animatorVar.Value;
 
             switch (getOrSet)
             {
@@ -194,7 +196,7 @@ namespace Scaffold
                             iob.Value = target.fireEvents;
                             break;
 #if UNITY_2019_2_OR_NEWER
-                case Property.KeepAnimatorControllerStateOnDisable:
+                        case Property.KeepAnimatorControllerStateOnDisable:
                             iob.Value = target.keepAnimatorStateOnDisable;
                             break;
 #endif
@@ -254,7 +256,7 @@ namespace Scaffold
                             target.keepAnimatorStateOnDisable = iob.Value;
                             break;
 #endif
-                default:
+                        default:
                             Debug.Log("Unsupported get or set attempted");
                             break;
                     }
@@ -289,7 +291,9 @@ namespace Scaffold
         public override bool HasReference(Variable variable)
         {
             if (animatorVar == variable || inOutVar == variable)
+            {
                 return true;
+            }
 
             return false;
         }

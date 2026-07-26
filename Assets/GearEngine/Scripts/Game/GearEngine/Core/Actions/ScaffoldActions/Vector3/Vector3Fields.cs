@@ -21,9 +21,11 @@ namespace Scaffold
             Get,
             Set,
         }
+        [Tooltip("The Get or set")]
         public GetSet getOrSet = GetSet.Get;
 
         [SerializeField]
+        [Tooltip("The Vec3")]
         protected Vector3Data vec3;
 
         [SerializeField]
@@ -35,7 +37,7 @@ namespace Scaffold
             {
                 case GetSet.Get:
 
-                    var v = vec3.Value;
+                    Vector3 v = vec3.Value;
 
                     x.Value = v.x;
                     y.Value = v.y;
@@ -69,7 +71,9 @@ namespace Scaffold
         public override bool HasReference(Variable variable)
         {
             if (vec3.vector3Ref == variable || x.floatRef == variable || y.floatRef == variable || z.floatRef == variable)
+            {
                 return true;
+            }
 
             return false;
         }

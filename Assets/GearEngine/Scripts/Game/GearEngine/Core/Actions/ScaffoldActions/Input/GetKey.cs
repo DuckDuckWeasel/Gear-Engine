@@ -15,6 +15,7 @@ namespace Scaffold
     public class GetKey : ActionBase
     {
         [SerializeField]
+        [Tooltip("The Key code")]
         protected KeyCode keyCode = KeyCode.None;
 
         [Tooltip("Optional, secondary or negative keycode. For booleans will also set to true, for int and float will set to -1.")]
@@ -28,6 +29,7 @@ namespace Scaffold
         [SerializeField]
         [Tooltip("Optional, secondary or negative keycode. For booleans will also set to true, for int and float will set to -1." +
             "Only used if KeyCode is KeyCode.None, expects a name of the key to use.")]
+
         protected StringData keyCodeNameNegative = new StringData(string.Empty);
 
         public enum InputKeyQueryType
@@ -168,7 +170,9 @@ namespace Scaffold
         public override bool HasReference(Variable variable)
         {
             if (keyCodeName.stringRef == variable || outValue == variable || keyCodeNameNegative.stringRef == variable)
+            {
                 return true;
+            }
 
             return false;
         }

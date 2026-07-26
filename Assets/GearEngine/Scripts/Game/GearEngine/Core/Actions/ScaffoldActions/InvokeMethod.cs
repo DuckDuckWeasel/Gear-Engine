@@ -1,6 +1,6 @@
 using GearEngine.Core.Actions;
 
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using System.Reflection;
 using System.Collections.Generic;
@@ -14,8 +14,8 @@ namespace Scaffold
     /// <summary>
     /// Invokes a method of a component via reflection. Supports passing multiple parameters and storing returned values in a Scaffold variable.
     /// </summary>
-    [CommandInfo("Scripting", 
-                 "Invoke Method", 
+    [CommandInfo("Scripting",
+                 "Invoke Method",
                  "Invokes a method of a component via reflection. Supports passing multiple parameters and storing returned values in a Scaffold variable.")]
     [Serializable]
     public class InvokeMethod : ActionBase
@@ -71,8 +71,11 @@ namespace Scaffold
         [SerializeField] protected CallMode callMode;
 
         protected Type componentType;
+        [Tooltip("The Obj component")]
         protected Component objComponent;
+        [Tooltip("The Parameter types")]
         protected Type[] parameterTypes = null;
+        [Tooltip("The Obj method")]
         protected MethodInfo objMethod;
 
         protected virtual void Awake()
@@ -114,8 +117,8 @@ namespace Scaffold
 
             for (int i = 0; i < methodParameters.Length; i++)
             {
-                var item = methodParameters[i];
-                var objType = ReflectionHelper.GetType(item.objValue.typeAssemblyname);
+                InvokeMethodParameter item = methodParameters[i];
+                Type objType = ReflectionHelper.GetType(item.objValue.typeAssemblyname);
 
                 types[i] = objType;
             }
@@ -126,11 +129,11 @@ namespace Scaffold
         protected virtual object[] GetParameterValues()
         {
             object[] values = new object[methodParameters.Length];
-            var blackboard = GetBlackboard();
+            Blackboard blackboard = GetBlackboard();
 
             for (int i = 0; i < methodParameters.Length; i++)
             {
-                var item = methodParameters[i];
+                InvokeMethodParameter item = methodParameters[i];
 
                 if (string.IsNullOrEmpty(item.variableKey))
                 {
@@ -139,69 +142,25 @@ namespace Scaffold
                 else
                 {
                     object objValue = null;
+                    Variable variable = blackboard.GetVariable(item.variableKey);
 
-                    switch (item.objValue.typeFullname)
+                    if (variable != null)
                     {
-                        case "System.Int32":
-                            var intvalue = blackboard.GetVariable<IntegerVariable>(item.variableKey);
-                            if (intvalue != null)
-                                objValue = intvalue.Value;
-                            break;
-                        case "System.Boolean":
-                            var boolean = blackboard.GetVariable<BooleanVariable>(item.variableKey);
-                            if (boolean != null)
-                                objValue = boolean.Value;
-                            break;
-                        case "System.Single":
-                            var floatvalue = blackboard.GetVariable<FloatVariable>(item.variableKey);
-                            if (floatvalue != null)
-                                objValue = floatvalue.Value;
-                            break;
-                        case "System.String":
-                            var stringvalue = blackboard.GetVariable<StringVariable>(item.variableKey);
-                            if (stringvalue != null)
-                                objValue = stringvalue.Value;
-                            break;
-                        case "UnityEngine.Color":
-                            var color = blackboard.GetVariable<ColorVariable>(item.variableKey);
-                            if (color != null)
-                                objValue = color.Value;
-                            break;
-                        case "UnityEngine.GameObject":
-                            var gameObj = blackboard.GetVariable<GameObjectVariable>(item.variableKey);
-                            if (gameObj != null)
-                                objValue = gameObj.Value;
-                            break;
-                        case "UnityEngine.Material":
-                            var material = blackboard.GetVariable<MaterialVariable>(item.variableKey);
-                            if (material != null)
-                                objValue = material.Value;
-                            break;
-                        case "UnityEngine.Sprite":
-                            var sprite = blackboard.GetVariable<SpriteVariable>(item.variableKey);
-                            if (sprite != null)
-                                objValue = sprite.Value;
-                            break;
-                        case "UnityEngine.Texture":
-                            var texture = blackboard.GetVariable<TextureVariable>(item.variableKey);
-                            if (texture != null)
-                                objValue = texture.Value;
-                            break;
-                        case "UnityEngine.Vector2":
-                            var vector2 = blackboard.GetVariable<Vector2Variable>(item.variableKey);
-                            if (vector2 != null)
-                                objValue = vector2.Value;
-                            break;
-                        case "UnityEngine.Vector3":
-                            var vector3 = blackboard.GetVariable<Vector3Variable>(item.variableKey);
-                            if (vector3 != null)
-                                objValue = vector3.Value;
-                            break;
-                        default:
-                            var obj = blackboard.GetVariable<ObjectVariable>(item.variableKey);
-                            if (obj != null)
-                                objValue = obj.Value;
-                            break;
+                        switch (variable)
+                        {
+                            case IntegerVariable iVar: objValue = iVar.Value; break;
+                            case BooleanVariable bVar: objValue = bVar.Value; break;
+                            case FloatVariable fVar: objValue = fVar.Value; break;
+                            case StringVariable sVar: objValue = sVar.Value; break;
+                            case ColorVariable cVar: objValue = cVar.Value; break;
+                            case GameObjectVariable goVar: objValue = goVar.Value; break;
+                            case MaterialVariable mVar: objValue = mVar.Value; break;
+                            case SpriteVariable spVar: objValue = spVar.Value; break;
+                            case TextureVariable tVar: objValue = tVar.Value; break;
+                            case Vector2Variable v2Var: objValue = v2Var.Value; break;
+                            case Vector3Variable v3Var: objValue = v3Var.Value; break;
+                            case ObjectVariable oVar: objValue = oVar.Value; break;
+                        }
                     }
 
                     values[i] = objValue;
@@ -211,48 +170,30 @@ namespace Scaffold
             return values;
         }
 
-        protected virtual void SetVariable(string key, object value, string returnType)
+        protected virtual void SetVariable(string key, object value)
         {
-            var blackboard = GetBlackboard();
+            Blackboard blackboard = GetBlackboard();
+            Variable variable = blackboard.GetVariable(key);
 
-            switch (returnType)
+            if (variable == null)
             {
-                case "System.Int32":
-                    blackboard.GetVariable<IntegerVariable>(key).Value = (int)value;
-                    break;
-                case "System.Boolean":
-                    blackboard.GetVariable<BooleanVariable>(key).Value = (bool)value;
-                    break;
-                case "System.Single":
-                    blackboard.GetVariable<FloatVariable>(key).Value = (float)value;
-                    break;
-                case "System.String":
-                    blackboard.GetVariable<StringVariable>(key).Value = (string)value;
-                    break;
-                case "UnityEngine.Color":
-                    blackboard.GetVariable<ColorVariable>(key).Value = (UnityEngine.Color)value;
-                    break;
-                case "UnityEngine.GameObject":
-                    blackboard.GetVariable<GameObjectVariable>(key).Value = (UnityEngine.GameObject)value;
-                    break;
-                case "UnityEngine.Material":
-                    blackboard.GetVariable<MaterialVariable>(key).Value = (UnityEngine.Material)value;
-                    break;
-                case "UnityEngine.Sprite":
-                    blackboard.GetVariable<SpriteVariable>(key).Value = (UnityEngine.Sprite)value;
-                    break;
-                case "UnityEngine.Texture":
-                    blackboard.GetVariable<TextureVariable>(key).Value = (UnityEngine.Texture)value;
-                    break;
-                case "UnityEngine.Vector2":
-                    blackboard.GetVariable<Vector2Variable>(key).Value = (UnityEngine.Vector2)value;
-                    break;
-                case "UnityEngine.Vector3":
-                    blackboard.GetVariable<Vector3Variable>(key).Value = (UnityEngine.Vector3)value;
-                    break;
-                default:
-                    blackboard.GetVariable<ObjectVariable>(key).Value = (UnityEngine.Object)value;
-                    break;
+                return;
+            }
+
+            switch (variable)
+            {
+                case IntegerVariable iVar: iVar.Value = (int)value; break;
+                case BooleanVariable bVar: bVar.Value = (bool)value; break;
+                case FloatVariable fVar: fVar.Value = (float)value; break;
+                case StringVariable sVar: sVar.Value = (string)value; break;
+                case ColorVariable cVar: cVar.Value = (UnityEngine.Color)value; break;
+                case GameObjectVariable goVar: goVar.Value = (UnityEngine.GameObject)value; break;
+                case MaterialVariable mVar: mVar.Value = (UnityEngine.Material)value; break;
+                case SpriteVariable spVar: spVar.Value = (UnityEngine.Sprite)value; break;
+                case TextureVariable tVar: tVar.Value = (UnityEngine.Texture)value; break;
+                case Vector2Variable v2Var: v2Var.Value = (UnityEngine.Vector2)value; break;
+                case Vector3Variable v3Var: v3Var.Value = (UnityEngine.Vector3)value; break;
+                case ObjectVariable oVar: oVar.Value = (UnityEngine.Object)value; break;
             }
         }
 
@@ -275,11 +216,11 @@ namespace Scaffold
 
                 if (returnValueType != "System.Collections.IEnumerator")
                 {
-                    var objReturnValue = objMethod.Invoke(objComponent, GetParameterValues());
+                    object objReturnValue = objMethod.Invoke(objComponent, GetParameterValues());
 
                     if (saveReturnValue)
                     {
-                        SetVariable(returnValueVariableKey, objReturnValue, returnValueType);
+                        SetVariable(returnValueVariableKey, objReturnValue);
                     }
 
                     Continue();
@@ -292,7 +233,7 @@ namespace Scaffold
                     {
                         Continue();
                     }
-                    else if(callMode == CallMode.Stop)
+                    else if (callMode == CallMode.Stop)
                     {
                         StopParentBlock();
                     }
@@ -300,8 +241,8 @@ namespace Scaffold
             }
             catch (System.Exception ex)
             {
-                Debug.LogError("Error: " + ex.Message);
-            }      
+                Debug.LogError($"[InvokeMethod] Error invoking '{targetMethod}' on {targetComponentText}: {ex.Message}\n{ex.StackTrace}");
+            }
         }
 
         public override Color GetButtonColor()
@@ -331,69 +272,86 @@ namespace Scaffold
     public class InvokeMethodParameter
     {
         [SerializeField]
+        [Tooltip("The Obj value")]
         public ObjectValue objValue;
 
         [SerializeField]
+        [Tooltip("The Variable key")]
         public string variableKey;
     }
 
     [System.Serializable]
     public class ObjectValue
     {
+        [Tooltip("The Type assemblyname")]
         public string typeAssemblyname;
+        [Tooltip("The Type fullname")]
         public string typeFullname;
 
+        [Tooltip("The Int value")]
         public int intValue;
+        [Tooltip("The Bool value")]
         public bool boolValue;
+        [Tooltip("The Float value")]
         public float floatValue;
+        [Tooltip("The String value")]
         public string stringValue;
 
+        [Tooltip("The Color value")]
         public Color colorValue;
+        [Tooltip("The Game object value")]
         public GameObject gameObjectValue;
+        [Tooltip("The Material value")]
         public Material materialValue;
         public UnityEngine.Object objectValue;
+        [Tooltip("The Sprite value")]
         public Sprite spriteValue;
+        [Tooltip("The Texture value")]
         public Texture textureValue;
+        [Tooltip("The Vector2 value")]
         public Vector2 vector2Value;
+        [Tooltip("The Vector3 value")]
         public Vector3 vector3Value;
 
         public object GetValue()
         {
             switch (typeFullname)
             {
-            case "System.Int32":
-                return intValue;
-            case "System.Boolean":
-                return boolValue;
-            case "System.Single":
-                return floatValue;
-            case "System.String":
-                return stringValue;
-            case "UnityEngine.Color":
-                return colorValue;
-            case "UnityEngine.GameObject":
-                return gameObjectValue;
-            case "UnityEngine.Material":
-                return materialValue;
-            case "UnityEngine.Sprite":
-                return spriteValue;
-            case "UnityEngine.Texture":
-                return textureValue;
-            case "UnityEngine.Vector2":
-                return vector2Value;
-            case "UnityEngine.Vector3":
-                return vector3Value;
-            default:
-                var objType = ReflectionHelper.GetType(typeAssemblyname);
+                case "System.Int32":
+                    return intValue;
+                case "System.Boolean":
+                    return boolValue;
+                case "System.Single":
+                    return floatValue;
+                case "System.String":
+                    return stringValue;
+                case "UnityEngine.Color":
+                    return colorValue;
+                case "UnityEngine.GameObject":
+                    return gameObjectValue;
+                case "UnityEngine.Material":
+                    return materialValue;
+                case "UnityEngine.Sprite":
+                    return spriteValue;
+                case "UnityEngine.Texture":
+                    return textureValue;
+                case "UnityEngine.Vector2":
+                    return vector2Value;
+                case "UnityEngine.Vector3":
+                    return vector3Value;
+                default:
+                    Type objType = ReflectionHelper.GetType(typeAssemblyname);
 
-                if (objType.IsSubclassOf(typeof(UnityEngine.Object)))
-                {
-                    return objectValue;
-                }
-                else if (objType.IsEnum())
-                    return System.Enum.ToObject(objType, intValue);
+                    if (objType.IsSubclassOf(typeof(UnityEngine.Object)))
+                    {
+                        return objectValue;
+                    }
+                    else if (objType.IsEnum())
+                    {
+                        return System.Enum.ToObject(objType, intValue);
+                    }
 
-                break;
+                    break;
             }
 
             return null;
@@ -407,7 +365,9 @@ namespace Scaffold
         public static System.Type GetType(string AssemblyQualifiedNameTypeName)
         {
             if (types.ContainsKey(AssemblyQualifiedNameTypeName) && types[AssemblyQualifiedNameTypeName] != null)
+            {
                 return types[AssemblyQualifiedNameTypeName];
+            }
 
             types[AssemblyQualifiedNameTypeName] = AppDomain.CurrentDomain.GetAssemblies().
                 SelectMany(x => x.GetTypes())

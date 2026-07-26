@@ -8,11 +8,11 @@ namespace Scaffold
     /// <summary>
     /// Moves the camera to a location specified by a View object.
     /// </summary>
-    [CommandInfo("Camera", 
-                 "Move To View", 
+    [CommandInfo("Camera",
+                 "Move To View",
                  "Moves the camera to a location specified by a View object.")]
     [Serializable]
-    public class MoveToView : ActionBase 
+    public class MoveToView : ActionBase
     {
         [Tooltip("Time for move effect to complete")]
         [SerializeField] protected float duration = 1;
@@ -39,10 +39,6 @@ namespace Scaffold
             }
 
             targetCamera = Camera.main;
-            if (targetCamera == null)
-            {
-                targetCamera = GameObject.FindObjectOfType<Camera>();
-            }
         }
 
         public virtual void Start()
@@ -62,13 +58,14 @@ namespace Scaffold
                 return;
             }
 
-            var cameraManager = ScaffoldManager.Instance.CameraManager;
+            CameraManager cameraManager = ScaffoldManager.Instance.CameraManager;
 
             Vector3 targetPosition = targetView.gameObject.transform.position;
             Quaternion targetRotation = targetView.gameObject.transform.rotation;
             float targetSize = targetView.ViewSize;
 
-            cameraManager.PanToPosition(targetCamera, targetPosition, targetRotation, targetSize, duration, delegate {
+            cameraManager.PanToPosition(targetCamera, targetPosition, targetRotation, targetSize, duration, delegate
+            {
                 if (waitUntilFinished)
                 {
                     Continue();
@@ -83,7 +80,7 @@ namespace Scaffold
 
         public override void OnStopExecuting()
         {
-            var cameraManager = ScaffoldManager.Instance.CameraManager;
+            CameraManager cameraManager = ScaffoldManager.Instance.CameraManager;
 
             cameraManager.Stop();
         }

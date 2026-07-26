@@ -24,20 +24,23 @@ namespace Scaffold
                  "Fade UI",
                  "Fades a UI object")]
     [Serializable]
-    public class FadeUI : TweenUI 
+    public class FadeUI : TweenUI
     {
+        [Tooltip("The Fade mode")]
         [SerializeField] protected FadeMode fadeMode = FadeMode.Alpha;
 
+        [Tooltip("The Target color")]
         [SerializeField] protected ColorData targetColor = new ColorData(Color.white);
 
+        [Tooltip("The Target alpha")]
         [SerializeField] protected FloatData targetAlpha = new FloatData(1f);
 
         protected override void ApplyTween(GameObject go)
         {
-            var images = go.GetComponentsInChildren<Image>();
+            Image[] images = go.GetComponentsInChildren<Image>();
             for (int i = 0; i < images.Length; i++)
             {
-                var image = images[i];
+                Image image = images[i];
                 if (Mathf.Approximately(duration, 0f))
                 {
                     switch (fadeMode)
@@ -66,10 +69,10 @@ namespace Scaffold
                 }
             }
 
-            var texts = go.GetComponentsInChildren<Text>();
+            Text[] texts = go.GetComponentsInChildren<Text>();
             for (int i = 0; i < texts.Length; i++)
             {
-                var text = texts[i];
+                Text text = texts[i];
                 if (Mathf.Approximately(duration, 0f))
                 {
                     switch (fadeMode)
@@ -98,10 +101,10 @@ namespace Scaffold
                 }
             }
 
-            var textMeshes = go.GetComponentsInChildren<TextMesh>();
+            TextMesh[] textMeshes = go.GetComponentsInChildren<TextMesh>();
             for (int i = 0; i < textMeshes.Length; i++)
             {
-                var textMesh = textMeshes[i];
+                TextMesh textMesh = textMeshes[i];
                 if (Mathf.Approximately(duration, 0f))
                 {
                     switch (fadeMode)
@@ -131,56 +134,56 @@ namespace Scaffold
             }
 
 #if UNITY_2018_1_OR_NEWER
-            var tmpros = go.GetComponentsInChildren<TMPro.TMP_Text>();
+            TMPro.TMP_Text[] tmpros = go.GetComponentsInChildren<TMPro.TMP_Text>();
             for (int i = 0; i < tmpros.Length; i++)
             {
-            
-                var tmpro = tmpros[i];
+
+                TMPro.TMP_Text tmpro = tmpros[i];
                 if (Mathf.Approximately(duration, 0f))
                 {
                     switch (fadeMode)
                     {
-                    case FadeMode.Alpha:
-                        Color tempColor = tmpro.color;
-                        tempColor.a = targetAlpha;
-                        tmpro.color = tempColor;
-                        break;
-                    case FadeMode.Color:
-                        tmpro.color = targetColor;
-                        break;
+                        case FadeMode.Alpha:
+                            Color tempColor = tmpro.color;
+                            tempColor.a = targetAlpha;
+                            tmpro.color = tempColor;
+                            break;
+                        case FadeMode.Color:
+                            tmpro.color = targetColor;
+                            break;
                     }
                 }
                 else
                 {
                     switch (fadeMode)
                     {
-                    case FadeMode.Alpha:
-                        LeanTween.value(tmpro.gameObject.gameObject, tmpro.color.a, targetAlpha.Value, duration)
-                                 .setEase(tweenType)
-                                 .setOnUpdate((float alphaValue) =>
-                                 {
-                                     Color tempColor = tmpro.color;
-                                     tempColor.a = alphaValue;
-                                     tmpro.color = tempColor;
-                                 });
-                        break;
-                    case FadeMode.Color:
-                        LeanTween.value(tmpro.gameObject.gameObject, tmpro.color, targetColor.Value, duration)
-                                 .setEase(tweenType)
-                                 .setOnUpdate((Color colorValue) =>
-                                 {
-                                     tmpro.color = colorValue;
-                                 });
-                        break;
+                        case FadeMode.Alpha:
+                            LeanTween.value(tmpro.gameObject.gameObject, tmpro.color.a, targetAlpha.Value, duration)
+                                     .setEase(tweenType)
+                                     .setOnUpdate((float alphaValue) =>
+                                     {
+                                         Color tempColor = tmpro.color;
+                                         tempColor.a = alphaValue;
+                                         tmpro.color = tempColor;
+                                     });
+                            break;
+                        case FadeMode.Color:
+                            LeanTween.value(tmpro.gameObject.gameObject, tmpro.color, targetColor.Value, duration)
+                                     .setEase(tweenType)
+                                     .setOnUpdate((Color colorValue) =>
+                                     {
+                                         tmpro.color = colorValue;
+                                     });
+                            break;
                     }
                 }
             }
 #endif
             //canvas groups don't support color but we can anim the alpha IN the color
-            var canvasGroups = go.GetComponentsInChildren<CanvasGroup>();
+            CanvasGroup[] canvasGroups = go.GetComponentsInChildren<CanvasGroup>();
             for (int i = 0; i < canvasGroups.Length; i++)
             {
-                var canvasGroup = canvasGroups[i];
+                CanvasGroup canvasGroup = canvasGroups[i];
                 if (Mathf.Approximately(duration, 0f))
                 {
                     switch (fadeMode)
@@ -190,7 +193,7 @@ namespace Scaffold
                             break;
                         case FadeMode.Color:
                             canvasGroup.alpha = targetColor.Value.a;
-                        break;
+                            break;
                     }
                 }
                 else
@@ -202,7 +205,7 @@ namespace Scaffold
                             break;
                         case FadeMode.Color:
                             LeanTween.alphaCanvas(canvasGroup, targetColor.Value.a, duration).setEase(tweenType);
-                        break;
+                            break;
                     }
                 }
             }
@@ -216,7 +219,7 @@ namespace Scaffold
             }
             else if (fadeMode == FadeMode.Color)
             {
-                return targetColor.Value.ToString()  + " color";
+                return targetColor.Value.ToString() + " color";
             }
 
             return "";

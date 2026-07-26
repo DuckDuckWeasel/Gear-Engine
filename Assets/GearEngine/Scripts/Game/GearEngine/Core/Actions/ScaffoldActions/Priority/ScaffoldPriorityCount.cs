@@ -17,6 +17,7 @@ namespace Scaffold
     public class ScaffoldPriorityCount : ActionBase
     {
         [VariableProperty(typeof(IntegerVariable))]
+        [Tooltip("The Out var")]
         public IntegerVariable outVar;
 
         public override void OnEnter()
@@ -28,7 +29,7 @@ namespace Scaffold
 
         public override string GetSummary()
         {
-            if(outVar == null)
+            if (outVar == null)
             {
                 return "Error: No out var supplied";
             }

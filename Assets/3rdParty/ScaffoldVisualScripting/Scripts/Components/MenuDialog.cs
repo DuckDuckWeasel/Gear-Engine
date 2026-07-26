@@ -57,12 +57,8 @@ namespace Scaffold
         {
             if (ActiveMenuDialog == null)
             {
-                // Use first Menu Dialog found in the scene (if any)
-                var md = GameObject.FindObjectOfType<MenuDialog>();
-                if (md != null)
-                {
-                    ActiveMenuDialog = md;
-                }
+                // MenuDialog should ideally register itself in Awake.
+                // If we reach here and it's null, we just skip FindObjectOfType and spawn the prefab.
 
                 if (ActiveMenuDialog == null)
                 {
@@ -83,6 +79,11 @@ namespace Scaffold
 
         protected virtual void Awake()
         {
+            if (ActiveMenuDialog == null)
+            {
+                ActiveMenuDialog = this;
+            }
+
             Button[] optionButtons = GetComponentsInChildren<Button>();
             cachedButtons = optionButtons;
 
@@ -102,7 +103,7 @@ namespace Scaffold
         // This method will automatically instantiate one if none exists.
         protected virtual void CheckEventSystem()
         {
-            EventSystem eventSystem = GameObject.FindObjectOfType<EventSystem>();
+            EventSystem eventSystem = EventSystem.current;
             if (eventSystem == null)
             {
                 // Auto spawn an Event System from the prefab
@@ -175,21 +176,23 @@ namespace Scaffold
             StopAllCoroutines();
 
             //if something was shown notify that we are ending
-            if(nextOptionIndex != 0)
+            if (nextOptionIndex != 0)
+            {
                 MenuSignals.DoMenuEnd(this);
+            }
 
             nextOptionIndex = 0;
 
-            var optionButtons = CachedButtons;
+            Button[] optionButtons = CachedButtons;
             for (int i = 0; i < optionButtons.Length; i++)
             {
-                var button = optionButtons[i];
+                Button button = optionButtons[i];
                 button.onClick.RemoveAllListeners();
             }
 
             for (int i = 0; i < optionButtons.Length; i++)
             {
-                var button = optionButtons[i];
+                Button button = optionButtons[i];
                 if (button != null)
                 {
                     button.transform.SetSiblingIndex(i);
@@ -209,7 +212,7 @@ namespace Scaffold
         /// </summary>
         public virtual void HideSayDialog()
         {
-            var sayDialog = SayDialog.GetSayDialog();
+            SayDialog sayDialog = SayDialog.GetSayDialog();
             if (sayDialog != null)
             {
                 sayDialog.FadeWhenDone = true;
@@ -227,7 +230,7 @@ namespace Scaffold
         /// <param name="targetBlock">Block to execute when the option is selected.</param>
         public virtual bool AddOption(string text, bool interactable, bool hideOption, Block targetBlock)
         {
-            var block = targetBlock;
+            Block block = targetBlock;
             UnityEngine.Events.UnityAction action = delegate
             {
                 EventSystem.current.SetSelectedGameObject(null);
@@ -237,7 +240,7 @@ namespace Scaffold
                 HideSayDialog();
                 if (block != null)
                 {
-                    var blackboard = block.GetBlackboard();
+                    Blackboard blackboard = block.GetBlackboard();
                     gameObject.SetActive(false);
                     // Use a coroutine to call the block on the next frame
                     // Have to use the Blackboard gameobject as the MenuDialog is now inactive
@@ -293,17 +296,21 @@ namespace Scaffold
                 return false;
             }
             //if first option notify that a menu has started
-            if(nextOptionIndex == 0)
+            if (nextOptionIndex == 0)
+            {
                 MenuSignals.DoMenuStart(this);
+            }
 
-            var button = cachedButtons[nextOptionIndex];
-            
+            Button button = cachedButtons[nextOptionIndex];
+
             //move forward for next call
             nextOptionIndex++;
 
             //don't need to set anything on it
             if (hideOption)
+            {
                 return true;
+            }
 
             button.gameObject.SetActive(true);
             button.interactable = interactable;
@@ -322,7 +329,7 @@ namespace Scaffold
             }
 
             button.onClick.AddListener(action);
-            
+
             return true;
         }
 
@@ -399,11 +406,12 @@ namespace Scaffold
         /// </summary>
         public virtual int DisplayedOptionsCount
         {
-            get {
+            get
+            {
                 int count = 0;
                 for (int i = 0; i < cachedButtons.Length; i++)
                 {
-                    var button = cachedButtons[i];
+                    Button button = cachedButtons[i];
                     if (button.gameObject.activeSelf)
                     {
                         count++;
@@ -413,17 +421,17 @@ namespace Scaffold
             }
         }
 
-		/// <summary>
-		/// Shuffle the parent order of the cached buttons, allows for randomising button order, buttons are auto reordered when cleared
-		/// </summary>
-		public void Shuffle(System.Random r)
-		{
-			for (int i = 0; i < CachedButtons.Length; i++)
-			{
-				CachedButtons[i].transform.SetSiblingIndex(r.Next(CachedButtons.Length));
-			}
-		}
+        /// <summary>
+        /// Shuffle the parent order of the cached buttons, allows for randomising button order, buttons are auto reordered when cleared
+        /// </summary>
+        public void Shuffle(System.Random r)
+        {
+            for (int i = 0; i < CachedButtons.Length; i++)
+            {
+                CachedButtons[i].transform.SetSiblingIndex(r.Next(CachedButtons.Length));
+            }
+        }
 
         #endregion
-    }    
+    }
 }

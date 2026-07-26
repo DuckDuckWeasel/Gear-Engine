@@ -10,8 +10,8 @@ namespace Scaffold
     /// <summary>
     /// Rotates a game object by the specified angles over time.
     /// </summary>
-    [CommandInfo("iTween", 
-                 "Rotate Add", 
+    [CommandInfo("iTween",
+                 "Rotate Add",
                  "Rotates a game object by the specified angles over time.")]
     [AddComponentMenu("")]
     [ExecuteInEditMode]
@@ -49,21 +49,5 @@ namespace Scaffold
 
         #endregion
 
-        #region Backwards compatibility
-
-        [HideInInspector] [FormerlySerializedAs("offset")] public Vector3 offsetOLD;
-
-        protected override void OnEnable()
-        {
-            base.OnEnable();
-
-            if (offsetOLD != default(Vector3))
-            {
-                offset.Value = offsetOLD;
-                offsetOLD = default(Vector3);
-            }
-        }
-
-        #endregion
     }
 }

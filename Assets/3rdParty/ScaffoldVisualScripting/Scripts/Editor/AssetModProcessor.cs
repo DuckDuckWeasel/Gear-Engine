@@ -11,7 +11,7 @@ namespace Scaffold.EditorUtils
         public static string[] OnWillSaveAssets(string[] paths)
         {
             string sceneName = "";
-            
+
             foreach (string path in paths)
             {
                 if (path.Contains(".unity"))
@@ -19,14 +19,14 @@ namespace Scaffold.EditorUtils
                     sceneName = Path.GetFileNameWithoutExtension(path);
                 }
             }
-            
+
             if (sceneName.Length == 0)
             {
                 return paths;
             }
 
             // Reset these variables before save so that they won't cause a git conflict
-            Blackboard[] blackboards = UnityEngine.Object.FindObjectsOfType<Blackboard>();
+            System.Collections.Generic.List<Blackboard> blackboards = Blackboard.CachedBlackboards;
             foreach (Blackboard f in blackboards)
             {
                 if (!f.SaveSelection)

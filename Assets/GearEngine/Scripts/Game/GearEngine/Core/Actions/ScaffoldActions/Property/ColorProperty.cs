@@ -15,39 +15,41 @@ namespace Scaffold
     [Serializable]
     public class ColorProperty : BaseVariableProperty
     {
-		//generated property
-        public enum Property 
-        { 
-            R, 
-            G, 
-            B, 
-            A, 
-            Grayscale, 
-            Linear, 
-            Gamma, 
-            MaxColorComponent, 
+        //generated property
+        public enum Property
+        {
+            R,
+            G,
+            B,
+            A,
+            Grayscale,
+            Linear,
+            Gamma,
+            MaxColorComponent,
         }
 
-		
+
         [SerializeField]
         protected Property property;
-		
+
         [SerializeField]
         [VariableProperty(typeof(ColorVariable))]
+        [Tooltip("The Color var")]
         protected ColorVariable colorVar;
 
         [SerializeField]
         [VariableProperty(typeof(FloatVariable),
                           typeof(ColorVariable))]
+        [Tooltip("The In out var")]
         protected Variable inOutVar;
 
         public override void OnEnter()
         {
-            var iof = inOutVar as FloatVariable;
-            var iocol = inOutVar as ColorVariable;
+            FloatVariable iof = inOutVar as FloatVariable;
+            ColorVariable iocol = inOutVar as ColorVariable;
 
 
-            var target = colorVar.Value;
+            Color target = colorVar.Value;
 
             switch (getOrSet)
             {
@@ -132,7 +134,9 @@ namespace Scaffold
         public override bool HasReference(Variable variable)
         {
             if (colorVar == variable || inOutVar == variable)
+            {
                 return true;
+            }
 
             return false;
         }

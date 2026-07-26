@@ -15,40 +15,42 @@ namespace Scaffold
     [Serializable]
     public class QuaternionProperty : BaseVariableProperty
     {
-		//generated property
-        public enum Property 
-        { 
-            X, 
-            Y, 
-            Z, 
-            W, 
-            EulerAngles, 
-            Normalized, 
+        //generated property
+        public enum Property
+        {
+            X,
+            Y,
+            Z,
+            W,
+            EulerAngles,
+            Normalized,
         }
 
-		
+
         [SerializeField]
         protected Property property;
-		
+
         [SerializeField]
+        [Tooltip("The Quaternion data")]
         protected QuaternionData quaternionData;
 
         [SerializeField]
         [VariableProperty(typeof(FloatVariable),
                           typeof(Vector3Variable),
                           typeof(QuaternionVariable))]
+        [Tooltip("The In out var")]
         protected Variable inOutVar;
 
         public override void OnEnter()
         {
-            var iof = inOutVar as FloatVariable;
-            var iov = inOutVar as Vector3Variable;
+            FloatVariable iof = inOutVar as FloatVariable;
+            Vector3Variable iov = inOutVar as Vector3Variable;
 #if UNITY_2019_2_OR_NEWER
-            var ioq = inOutVar as QuaternionVariable;
+            QuaternionVariable ioq = inOutVar as QuaternionVariable;
 #endif
 
 
-            var target = quaternionData.Value;
+            Quaternion target = quaternionData.Value;
 
             switch (getOrSet)
             {
@@ -132,7 +134,9 @@ namespace Scaffold
         public override bool HasReference(Variable variable)
         {
             if (quaternionData.quaternionRef == variable || inOutVar == variable)
+            {
                 return true;
+            }
 
             return false;
         }

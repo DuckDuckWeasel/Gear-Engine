@@ -17,6 +17,7 @@ namespace Scaffold
     public class GetAxis : ActionBase
     {
         [SerializeField]
+        [Tooltip("The Axis name")]
         protected StringData axisName;
 
         [Tooltip("If true, calls GetAxisRaw instead of GetAxis")]
@@ -54,7 +55,9 @@ namespace Scaffold
         public override bool HasReference(Variable variable)
         {
             if (axisName.stringRef == variable || outValue.floatRef == variable)
+            {
                 return true;
+            }
 
             return false;
         }

@@ -1,7 +1,7 @@
 using System;
 using GearEngine.Core.Actions;
 
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 namespace Scaffold
@@ -9,7 +9,7 @@ namespace Scaffold
     /// <summary>
     /// Do multiple say and portrait commands in a single block of text. Format is: [character] [portrait] [stage position] [hide] [<<< | >>>] [clear | noclear] [wait | nowait] [fade | nofade] [: Story text].
     /// </summary>
-    [CommandInfo("Narrative", 
+    [CommandInfo("Narrative",
                  "Conversation",
                  "Do multiple say and portrait commands in a single block of text. Format is: [character] [portrait] [stage position] [hide] [<<< | >>>] [clear | noclear] [wait | nowait] [fade | nofade] [: Story text]")]
     [AddComponentMenu("")]
@@ -17,11 +17,15 @@ namespace Scaffold
     [Serializable]
     public class Conversation : ActionBase
     {
+        [Tooltip("The Conversation text")]
         [SerializeField] protected StringDataMulti conversationText;
 
+        [Tooltip("The Conversation manager")]
         protected ConversationManager conversationManager = new ConversationManager();
 
+        [Tooltip("The Clear previous")]
         [SerializeField] protected BooleanData clearPrevious = new BooleanData(true);
+        [Tooltip("The Wait for input")]
         [SerializeField] protected BooleanData waitForInput = new BooleanData(true);
         [Tooltip("a wait for seconds added to each item of the conversation.")]
         [SerializeField] protected FloatData waitForSeconds = new FloatData(0);
@@ -34,7 +38,7 @@ namespace Scaffold
 
         protected virtual IEnumerator DoConversation()
         {
-            var blackboard = GetBlackboard();
+            Blackboard blackboard = GetBlackboard();
             string subbedText = blackboard.SubstituteVariables(conversationText.Value);
 
             conversationManager.ClearPrev = clearPrevious;
@@ -66,7 +70,7 @@ namespace Scaffold
 
         public override bool HasReference(Variable variable)
         {
-            return clearPrevious.booleanRef == variable || waitForInput.booleanRef == variable || 
+            return clearPrevious.booleanRef == variable || waitForInput.booleanRef == variable ||
                 waitForSeconds.floatRef == variable || fadeWhenDone.booleanRef == variable ||
                 base.HasReference(variable);
         }
@@ -80,10 +84,12 @@ namespace Scaffold
         {
             base.RefreshVariableCache();
 
-            var f = GetBlackboard();
+            Blackboard f = GetBlackboard();
 
-            if(!string.IsNullOrEmpty(conversationText.Value))
+            if (!string.IsNullOrEmpty(conversationText.Value))
+            {
                 f.DetermineSubstituteVariables(conversationText, referencedVariables);
+            }
         }
 #endif
         #endregion Editor caches

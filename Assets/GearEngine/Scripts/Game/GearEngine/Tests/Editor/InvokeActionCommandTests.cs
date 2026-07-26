@@ -27,8 +27,8 @@ namespace GearEngine.GearEngine.Tests.Editor
             TestInvokeActionCommand command = CreateCommand(CompositeExecutionMethod.Sequence);
             DeferredAction firstAction = new DeferredAction();
             DeferredAction secondAction = new DeferredAction();
-            command.actions.Add(firstAction);
-            command.actions.Add(secondAction);
+            command.actions.Add(new InvokeActionCommand.ActionWrapper(firstAction));
+            command.actions.Add(new InvokeActionCommand.ActionWrapper(secondAction));
 
             command.OnEnter();
 
@@ -51,8 +51,8 @@ namespace GearEngine.GearEngine.Tests.Editor
             TestInvokeActionCommand command = CreateCommand(CompositeExecutionMethod.Parallel);
             DeferredAction firstAction = new DeferredAction();
             DeferredAction secondAction = new DeferredAction();
-            command.actions.Add(firstAction);
-            command.actions.Add(secondAction);
+            command.actions.Add(new InvokeActionCommand.ActionWrapper(firstAction));
+            command.actions.Add(new InvokeActionCommand.ActionWrapper(secondAction));
 
             command.OnEnter();
 
@@ -71,8 +71,8 @@ namespace GearEngine.GearEngine.Tests.Editor
         {
             TestInvokeActionCommand command = CreateCommand(CompositeExecutionMethod.Sequence);
             DeferredAction firstAction = new DeferredAction { Progress = 0.35f };
-            command.actions.Add(firstAction);
-            command.actions.Add(new DeferredAction());
+            command.actions.Add(new InvokeActionCommand.ActionWrapper(firstAction));
+            command.actions.Add(new InvokeActionCommand.ActionWrapper(new DeferredAction()));
 
             command.OnEnter();
 
@@ -87,8 +87,8 @@ namespace GearEngine.GearEngine.Tests.Editor
         public void ExecutionProgress_DoesNotInventLinearProgressForParallelActions()
         {
             TestInvokeActionCommand command = CreateCommand(CompositeExecutionMethod.Parallel);
-            command.actions.Add(new DeferredAction { Progress = 0.25f });
-            command.actions.Add(new DeferredAction { Progress = 0.75f });
+            command.actions.Add(new InvokeActionCommand.ActionWrapper(new DeferredAction { Progress = 0.25f }));
+            command.actions.Add(new InvokeActionCommand.ActionWrapper(new DeferredAction { Progress = 0.75f }));
 
             command.OnEnter();
 
@@ -101,8 +101,8 @@ namespace GearEngine.GearEngine.Tests.Editor
             TestInvokeActionCommand command = CreateCommand(CompositeExecutionMethod.Selector);
             DeferredAction failure = new DeferredAction();
             DeferredAction success = new DeferredAction();
-            command.actions.Add(failure);
-            command.actions.Add(success);
+            command.actions.Add(new InvokeActionCommand.ActionWrapper(failure));
+            command.actions.Add(new InvokeActionCommand.ActionWrapper(success));
 
             command.OnEnter();
             failure.Complete(ActionExecutionStatus.Failure);
@@ -133,8 +133,8 @@ namespace GearEngine.GearEngine.Tests.Editor
             TestInvokeActionCommand command = CreateCommand(CompositeExecutionMethod.Sequence);
             DeferredAction firstAction = new DeferredAction();
             DeferredAction secondAction = new DeferredAction();
-            command.actions.Add(firstAction);
-            command.actions.Add(secondAction);
+            command.actions.Add(new InvokeActionCommand.ActionWrapper(firstAction));
+            command.actions.Add(new InvokeActionCommand.ActionWrapper(secondAction));
 
             command.OnEnter();
             firstAction.Complete(ActionExecutionStatus.Failure);
@@ -149,7 +149,7 @@ namespace GearEngine.GearEngine.Tests.Editor
         {
             TestInvokeActionCommand command = CreateCommand(CompositeExecutionMethod.Sequence);
             DeferredAction action = new DeferredAction();
-            command.actions.Add(action);
+            command.actions.Add(new InvokeActionCommand.ActionWrapper(action));
             command.OnEnter();
             action.Complete(ActionExecutionStatus.Failure);
             Assert.That(command.LastExecutionStatus, Is.EqualTo(ActionExecutionStatus.Failure));
@@ -169,9 +169,9 @@ namespace GearEngine.GearEngine.Tests.Editor
             DeferredAction firstAction = new DeferredAction();
             DeferredAction secondAction = new DeferredAction();
             DeferredAction thirdAction = new DeferredAction();
-            command.actions.Add(firstAction);
-            command.actions.Add(secondAction);
-            command.actions.Add(thirdAction);
+            command.actions.Add(new InvokeActionCommand.ActionWrapper(firstAction));
+            command.actions.Add(new InvokeActionCommand.ActionWrapper(secondAction));
+            command.actions.Add(new InvokeActionCommand.ActionWrapper(thirdAction));
 
             command.OnEnter();
             firstAction.Complete(ActionExecutionStatus.Failure);
@@ -190,8 +190,8 @@ namespace GearEngine.GearEngine.Tests.Editor
             TestInvokeActionCommand command = CreateCommand(CompositeExecutionMethod.Selector);
             DeferredAction firstAction = new DeferredAction();
             DeferredAction secondAction = new DeferredAction();
-            command.actions.Add(firstAction);
-            command.actions.Add(secondAction);
+            command.actions.Add(new InvokeActionCommand.ActionWrapper(firstAction));
+            command.actions.Add(new InvokeActionCommand.ActionWrapper(secondAction));
 
             command.OnEnter();
             firstAction.Complete(ActionExecutionStatus.Failure);
@@ -208,9 +208,9 @@ namespace GearEngine.GearEngine.Tests.Editor
             DeferredAction lowUtilityAction = new DeferredAction();
             DeferredAction highUtilityAction = new DeferredAction();
             DeferredAction mediumUtilityAction = new DeferredAction();
-            command.actions.Add(lowUtilityAction);
-            command.actions.Add(highUtilityAction);
-            command.actions.Add(mediumUtilityAction);
+            command.actions.Add(new InvokeActionCommand.ActionWrapper(lowUtilityAction));
+            command.actions.Add(new InvokeActionCommand.ActionWrapper(highUtilityAction));
+            command.actions.Add(new InvokeActionCommand.ActionWrapper(mediumUtilityAction));
             command.SetActionUtility(0, 1f);
             command.SetActionUtility(1, 3f);
             command.SetActionUtility(2, 2f);
@@ -229,9 +229,9 @@ namespace GearEngine.GearEngine.Tests.Editor
             DeferredAction lowUtilityAction = new DeferredAction();
             DeferredAction highUtilityAction = new DeferredAction();
             DeferredAction mediumUtilityAction = new DeferredAction();
-            command.actions.Add(lowUtilityAction);
-            command.actions.Add(highUtilityAction);
-            command.actions.Add(mediumUtilityAction);
+            command.actions.Add(new InvokeActionCommand.ActionWrapper(lowUtilityAction));
+            command.actions.Add(new InvokeActionCommand.ActionWrapper(highUtilityAction));
+            command.actions.Add(new InvokeActionCommand.ActionWrapper(mediumUtilityAction));
             command.SetActionUtility(0, 1f);
             command.SetActionUtility(1, 3f);
             command.SetActionUtility(2, 2f);
@@ -254,8 +254,8 @@ namespace GearEngine.GearEngine.Tests.Editor
             TestInvokeActionCommand command = CreateCommand(CompositeExecutionMethod.UtilitySelector);
             DeferredAction lowUtilityAction = new DeferredAction();
             DeferredAction highUtilityAction = new DeferredAction();
-            command.actions.Add(lowUtilityAction);
-            command.actions.Add(highUtilityAction);
+            command.actions.Add(new InvokeActionCommand.ActionWrapper(lowUtilityAction));
+            command.actions.Add(new InvokeActionCommand.ActionWrapper(highUtilityAction));
             command.SetActionUtility(0, 1f);
             command.SetActionUtility(1, 2f);
 
@@ -273,8 +273,8 @@ namespace GearEngine.GearEngine.Tests.Editor
             TestInvokeActionCommand command = CreateCommand(CompositeExecutionMethod.UtilitySelector);
             DeferredAction firstAction = new DeferredAction();
             DeferredAction secondAction = new DeferredAction();
-            command.actions.Add(firstAction);
-            command.actions.Add(secondAction);
+            command.actions.Add(new InvokeActionCommand.ActionWrapper(firstAction));
+            command.actions.Add(new InvokeActionCommand.ActionWrapper(secondAction));
             command.SetActionUtility(0, 3f);
             command.SetActionUtility(1, 1f);
 
@@ -298,8 +298,8 @@ namespace GearEngine.GearEngine.Tests.Editor
             TestInvokeActionCommand command = CreateCommand(CompositeExecutionMethod.UtilitySelector);
             DeferredAction constantUtilityAction = new DeferredAction();
             DeferredAction variableUtilityAction = new DeferredAction();
-            command.actions.Add(constantUtilityAction);
-            command.actions.Add(variableUtilityAction);
+            command.actions.Add(new InvokeActionCommand.ActionWrapper(constantUtilityAction));
+            command.actions.Add(new InvokeActionCommand.ActionWrapper(variableUtilityAction));
             command.SetActionUtility(0, 2f);
             FloatVariable utilityVariable = _hostObject.AddComponent<FloatVariable>();
             utilityVariable.Value = 1f;
@@ -323,8 +323,8 @@ namespace GearEngine.GearEngine.Tests.Editor
             TestInvokeActionCommand command = CreateCommand(CompositeExecutionMethod.UtilitySelector);
             DeferredAction blockedAction = new DeferredAction();
             DeferredAction competingAction = new DeferredAction();
-            command.actions.Add(blockedAction);
-            command.actions.Add(competingAction);
+            command.actions.Add(new InvokeActionCommand.ActionWrapper(blockedAction));
+            command.actions.Add(new InvokeActionCommand.ActionWrapper(competingAction));
             command.SetActionUtility(0, 3f);
             command.SetActionUtility(1, 1f);
             command.SetUtilityBlockedDuringExecution(0, true);
@@ -343,8 +343,8 @@ namespace GearEngine.GearEngine.Tests.Editor
             TestInvokeActionCommand command = CreateCommand(CompositeExecutionMethod.Parallel);
             DeferredAction firstAction = new DeferredAction();
             DeferredAction secondAction = new DeferredAction();
-            command.actions.Add(firstAction);
-            command.actions.Add(secondAction);
+            command.actions.Add(new InvokeActionCommand.ActionWrapper(firstAction));
+            command.actions.Add(new InvokeActionCommand.ActionWrapper(secondAction));
 
             command.OnEnter();
             firstAction.Complete(ActionExecutionStatus.Failure);
@@ -365,9 +365,9 @@ namespace GearEngine.GearEngine.Tests.Editor
             DeferredAction firstAction = new DeferredAction();
             DeferredAction secondAction = new DeferredAction();
             DeferredAction thirdAction = new DeferredAction();
-            command.actions.Add(firstAction);
-            command.actions.Add(secondAction);
-            command.actions.Add(thirdAction);
+            command.actions.Add(new InvokeActionCommand.ActionWrapper(firstAction));
+            command.actions.Add(new InvokeActionCommand.ActionWrapper(secondAction));
+            command.actions.Add(new InvokeActionCommand.ActionWrapper(thirdAction));
 
             command.OnEnter();
             firstAction.Complete(ActionExecutionStatus.Failure);
@@ -388,8 +388,8 @@ namespace GearEngine.GearEngine.Tests.Editor
             command.AwaitMode = CompositeAwaitMode.WaitAny;
             DeferredAction firstAction = new DeferredAction();
             DeferredAction secondAction = new DeferredAction();
-            command.actions.Add(firstAction);
-            command.actions.Add(secondAction);
+            command.actions.Add(new InvokeActionCommand.ActionWrapper(firstAction));
+            command.actions.Add(new InvokeActionCommand.ActionWrapper(secondAction));
 
             command.OnEnter();
             firstAction.Complete(ActionExecutionStatus.Failure);
@@ -406,8 +406,8 @@ namespace GearEngine.GearEngine.Tests.Editor
             command.AwaitMode = CompositeAwaitMode.WaitNone;
             DeferredAction firstAction = new DeferredAction();
             DeferredAction secondAction = new DeferredAction();
-            command.actions.Add(firstAction);
-            command.actions.Add(secondAction);
+            command.actions.Add(new InvokeActionCommand.ActionWrapper(firstAction));
+            command.actions.Add(new InvokeActionCommand.ActionWrapper(secondAction));
 
             command.OnEnter();
 
@@ -425,8 +425,8 @@ namespace GearEngine.GearEngine.Tests.Editor
             command.SetRandomValues(0.5f, 0.5f);
             DeferredAction zeroWeightAction = new DeferredAction();
             DeferredAction weightedAction = new DeferredAction();
-            command.actions.Add(zeroWeightAction);
-            command.actions.Add(weightedAction);
+            command.actions.Add(new InvokeActionCommand.ActionWrapper(zeroWeightAction));
+            command.actions.Add(new InvokeActionCommand.ActionWrapper(weightedAction));
             command.SetActionWeight(0, 0f);
             command.SetActionWeight(1, 100f);
 
@@ -444,9 +444,9 @@ namespace GearEngine.GearEngine.Tests.Editor
         public void ActionWeights_AutomaticallyBalanceEnabledActions()
         {
             TestInvokeActionCommand command = CreateCommand(CompositeExecutionMethod.Sequence);
-            command.actions.Add(new DeferredAction());
-            command.actions.Add(new DeferredAction());
-            command.actions.Add(new DeferredAction());
+            command.actions.Add(new InvokeActionCommand.ActionWrapper(new DeferredAction()));
+            command.actions.Add(new InvokeActionCommand.ActionWrapper(new DeferredAction()));
+            command.actions.Add(new InvokeActionCommand.ActionWrapper(new DeferredAction()));
 
             Assert.That(command.GetActionWeight(0), Is.EqualTo(100f / 3f).Within(0.001f));
             Assert.That(command.GetActionWeight(1), Is.EqualTo(100f / 3f).Within(0.001f));
@@ -463,9 +463,9 @@ namespace GearEngine.GearEngine.Tests.Editor
         public void ActionWeightOverrides_ReserveTheirWeightAndBalanceTheRemainder()
         {
             TestInvokeActionCommand command = CreateCommand(CompositeExecutionMethod.Sequence);
-            command.actions.Add(new DeferredAction());
-            command.actions.Add(new DeferredAction());
-            command.actions.Add(new DeferredAction());
+            command.actions.Add(new InvokeActionCommand.ActionWrapper(new DeferredAction()));
+            command.actions.Add(new InvokeActionCommand.ActionWrapper(new DeferredAction()));
+            command.actions.Add(new InvokeActionCommand.ActionWrapper(new DeferredAction()));
 
             command.SetActionWeight(0, 40f);
             command.SetActionWeight(1, 20f);
@@ -499,9 +499,9 @@ namespace GearEngine.GearEngine.Tests.Editor
             DeferredAction firstAction = new DeferredAction();
             DeferredAction secondAction = new DeferredAction();
             DeferredAction thirdAction = new DeferredAction();
-            command.actions.Add(firstAction);
-            command.actions.Add(secondAction);
-            command.actions.Add(thirdAction);
+            command.actions.Add(new InvokeActionCommand.ActionWrapper(firstAction));
+            command.actions.Add(new InvokeActionCommand.ActionWrapper(secondAction));
+            command.actions.Add(new InvokeActionCommand.ActionWrapper(thirdAction));
             command.SetActionWeight(0, 100f);
             command.SetActionWeight(1, 0f);
             command.SetActionWeight(2, 0f);
@@ -532,8 +532,8 @@ namespace GearEngine.GearEngine.Tests.Editor
 
             DeferredAction firstAction = new DeferredAction();
             DeferredAction secondAction = new DeferredAction();
-            command.actions.Add(firstAction);
-            command.actions.Add(secondAction);
+            command.actions.Add(new InvokeActionCommand.ActionWrapper(firstAction));
+            command.actions.Add(new InvokeActionCommand.ActionWrapper(secondAction));
 
             command.OnEnter();
             Assert.That(secondAction.ExecuteCount, Is.EqualTo(1));
@@ -552,8 +552,8 @@ namespace GearEngine.GearEngine.Tests.Editor
             TestInvokeActionCommand command = CreateCommand(CompositeExecutionMethod.Parallel);
             DeferredAction firstAction = new DeferredAction();
             DeferredAction secondAction = new DeferredAction();
-            command.actions.Add(firstAction);
-            command.actions.Add(secondAction);
+            command.actions.Add(new InvokeActionCommand.ActionWrapper(firstAction));
+            command.actions.Add(new InvokeActionCommand.ActionWrapper(secondAction));
 
             command.OnEnter();
             command.OnStopExecuting();
@@ -569,8 +569,8 @@ namespace GearEngine.GearEngine.Tests.Editor
             TestInvokeActionCommand command = CreateCommand(CompositeExecutionMethod.Parallel);
             DeferredAction interruptedAction = new DeferredAction();
             PerformInterruption interruptionAction = new PerformInterruption();
-            command.actions.Add(interruptedAction);
-            command.actions.Add(interruptionAction);
+            command.actions.Add(new InvokeActionCommand.ActionWrapper(interruptedAction));
+            command.actions.Add(new InvokeActionCommand.ActionWrapper(interruptionAction));
             interruptionAction.TargetActionIds.Add(command.GetActionId(0));
 
             command.OnEnter();
@@ -585,7 +585,7 @@ namespace GearEngine.GearEngine.Tests.Editor
         {
             TestInvokeActionCommand targetCommand = CreateCommand(CompositeExecutionMethod.Parallel);
             DeferredAction interruptedAction = new DeferredAction();
-            targetCommand.actions.Add(interruptedAction);
+            targetCommand.actions.Add(new InvokeActionCommand.ActionWrapper(interruptedAction));
 
             TestInvokeActionCommand interruptionCommand =
                 _hostObject.AddComponent<TestInvokeActionCommand>();
@@ -594,7 +594,7 @@ namespace GearEngine.GearEngine.Tests.Editor
             {
                 TargetCommand = targetCommand,
             };
-            interruptionCommand.actions.Add(interruptionAction);
+            interruptionCommand.actions.Add(new InvokeActionCommand.ActionWrapper(interruptionAction));
             interruptionAction.TargetActionIds.Add(targetCommand.GetActionId(0));
 
             targetCommand.OnEnter();
@@ -612,8 +612,8 @@ namespace GearEngine.GearEngine.Tests.Editor
             TestInvokeActionCommand command = CreateCommand(CompositeExecutionMethod.Sequence);
             DeferredAction firstAction = new DeferredAction();
             DeferredAction secondAction = new DeferredAction();
-            command.actions.Add(firstAction);
-            command.actions.Add(secondAction);
+            command.actions.Add(new InvokeActionCommand.ActionWrapper(firstAction));
+            command.actions.Add(new InvokeActionCommand.ActionWrapper(secondAction));
             string firstActionId = command.GetActionId(0);
             string secondActionId = command.GetActionId(1);
 
@@ -631,8 +631,8 @@ namespace GearEngine.GearEngine.Tests.Editor
             TestInvokeActionCommand command = CreateCommand(CompositeExecutionMethod.UtilitySelector);
             DeferredAction firstAction = new DeferredAction();
             DeferredAction secondAction = new DeferredAction();
-            command.actions.Add(firstAction);
-            command.actions.Add(secondAction);
+            command.actions.Add(new InvokeActionCommand.ActionWrapper(firstAction));
+            command.actions.Add(new InvokeActionCommand.ActionWrapper(secondAction));
             command.SetActionUtility(0, 7f);
             command.SetUtilityBlockedDuringExecution(0, true);
             command.SetActionWeight(0, 35f);
@@ -652,7 +652,7 @@ namespace GearEngine.GearEngine.Tests.Editor
             TestInvokeActionCommand source = CreateCommand(CompositeExecutionMethod.UtilitySelector);
             TestInvokeActionCommand destination = _hostObject.AddComponent<TestInvokeActionCommand>();
             DeferredAction action = new DeferredAction();
-            source.actions.Add(action);
+            source.actions.Add(new InvokeActionCommand.ActionWrapper(action));
             source.SetActionUtility(0, 8f);
             source.SetUtilityBlockedDuringExecution(0, true);
 
@@ -675,8 +675,8 @@ namespace GearEngine.GearEngine.Tests.Editor
             TestInvokeActionCommand command = CreateCommand(CompositeExecutionMethod.Sequence);
             DeferredAction disabledAction = new DeferredAction();
             DeferredAction enabledAction = new DeferredAction();
-            command.actions.Add(disabledAction);
-            command.actions.Add(enabledAction);
+            command.actions.Add(new InvokeActionCommand.ActionWrapper(disabledAction));
+            command.actions.Add(new InvokeActionCommand.ActionWrapper(enabledAction));
             command.SetActionEnabled(0, false);
 
             command.OnEnter();
@@ -695,7 +695,7 @@ namespace GearEngine.GearEngine.Tests.Editor
             TestInvokeActionCommand source = CreateCommand(CompositeExecutionMethod.Sequence);
             TestInvokeActionCommand destination = _hostObject.AddComponent<TestInvokeActionCommand>();
             DeferredAction action = new DeferredAction();
-            source.actions.Add(action);
+            source.actions.Add(new InvokeActionCommand.ActionWrapper(action));
             source.SetActionEnabled(0, false);
 
             bool removed = source.TryRemoveAction(0, out IAction movedAction, out bool enabled);
@@ -713,7 +713,7 @@ namespace GearEngine.GearEngine.Tests.Editor
             TestInvokeActionCommand source = CreateCommand(CompositeExecutionMethod.Sequence);
             TestInvokeActionCommand destination = _hostObject.AddComponent<TestInvokeActionCommand>();
             DeferredAction action = new DeferredAction();
-            source.actions.Add(action);
+            source.actions.Add(new InvokeActionCommand.ActionWrapper(action));
             source.enabled = false;
 
             bool removed = source.TryRemoveAction(0, out IAction movedAction, out bool enabled);
@@ -730,8 +730,8 @@ namespace GearEngine.GearEngine.Tests.Editor
             TestInvokeActionCommand command = CreateCommand(CompositeExecutionMethod.Sequence);
             DeferredAction firstAction = new DeferredAction();
             DeferredAction secondAction = new DeferredAction();
-            command.actions.Add(firstAction);
-            command.actions.Add(secondAction);
+            command.actions.Add(new InvokeActionCommand.ActionWrapper(firstAction));
+            command.actions.Add(new InvokeActionCommand.ActionWrapper(secondAction));
             command.SetActionEnabled(0, false);
 
             bool moved = command.TryMoveAction(0, 1);
@@ -748,7 +748,7 @@ namespace GearEngine.GearEngine.Tests.Editor
             TestInvokeActionCommand command = CreateCommand(CompositeExecutionMethod.Sequence);
             DeferredAction existingAction = new DeferredAction();
             DeferredAction addedAction = new DeferredAction();
-            command.actions.Add(existingAction);
+            command.actions.Add(new InvokeActionCommand.ActionWrapper(existingAction));
 
             command.InsertAction(command.actions.Count, addedAction, true);
 
@@ -774,8 +774,8 @@ namespace GearEngine.GearEngine.Tests.Editor
         public void RemovingAnActionFromAGroup_PreservesTheGroupPresentationState()
         {
             TestInvokeActionCommand command = CreateCommand(CompositeExecutionMethod.Sequence);
-            command.actions.Add(new DeferredAction());
-            command.actions.Add(new DeferredAction());
+            command.actions.Add(new InvokeActionCommand.ActionWrapper(new DeferredAction()));
+            command.actions.Add(new InvokeActionCommand.ActionWrapper(new DeferredAction()));
 
             bool removed = command.TryRemoveAction(0, out _, out _);
 
@@ -797,8 +797,8 @@ namespace GearEngine.GearEngine.Tests.Editor
                 _hostObject.AddComponent<InvokeActionCommand>();
             If condition = new If();
             End end = new End();
-            conditionCommand.actions.Add(condition);
-            endCommand.actions.Add(end);
+            conditionCommand.actions.Add(new InvokeActionCommand.ActionWrapper(condition));
+            endCommand.actions.Add(new InvokeActionCommand.ActionWrapper(end));
             track.Commands.Add(conditionCommand);
             track.Commands.Add(endCommand);
             conditionCommand.ParentBlock = block;

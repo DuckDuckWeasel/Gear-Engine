@@ -9,8 +9,8 @@ namespace Scaffold
     /// <summary>
     /// Resets a trigger parameter on an Animator component.
     /// </summary>
-    [CommandInfo("Animation", 
-                 "Reset Anim Trigger", 
+    [CommandInfo("Animation",
+                 "Reset Anim Trigger",
                  "Resets a trigger parameter on an Animator component.")]
     [AddComponentMenu("")]
     [ExecuteInEditMode]
@@ -58,26 +58,5 @@ namespace Scaffold
 
         #endregion
 
-        #region Backwards compatibility
-
-        [HideInInspector] [FormerlySerializedAs("animator")] public Animator animatorOLD;
-        [HideInInspector] [FormerlySerializedAs("parameterName")] public string parameterNameOLD = "";
-
-        protected virtual void OnEnable()
-        {
-            if (animatorOLD != null)
-            {
-                animator.Value = animatorOLD;
-                animatorOLD = null;
-            }
-
-            if (parameterNameOLD != "")
-            {
-                parameterName.Value = parameterNameOLD;
-                parameterNameOLD = "";
-            }
-        }
-
-        #endregion
     }
 }

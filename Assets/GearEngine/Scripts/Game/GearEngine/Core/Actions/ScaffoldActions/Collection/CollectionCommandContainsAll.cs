@@ -19,6 +19,7 @@ namespace Scaffold
         protected BooleanData inSameOrder = new BooleanData(false);
 
         [VariableProperty(typeof(BooleanVariable))]
+        [Tooltip("The Result")]
         [SerializeField] protected BooleanVariable result;
 
         protected override void OnEnterInner()

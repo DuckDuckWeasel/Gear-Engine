@@ -24,8 +24,8 @@ namespace Scaffold
     /// <summary>
     /// Sends a message to either the owner Blackboard or all Blackboards in the scene. Blocks can listen for this message using a Message Received event handler.
     /// </summary>
-    [CommandInfo("Flow", 
-                 "Send Message", 
+    [CommandInfo("Flow",
+                 "Send Message",
                  "Sends a message to either the owner Blackboard or all Blackboards in the scene. Blocks can listen for this message using a Message Received event handler.")]
     [AddComponentMenu("")]
     [ExecuteInEditMode]
@@ -48,22 +48,25 @@ namespace Scaffold
                 return;
             }
 
-            MessageReceived[] receivers = null;
             if (messageTarget == MessageTarget.SameBlackboard)
             {
-                receivers = host.GetComponents<MessageReceived>();
+                MessageReceived[] receivers = host.GetComponents<MessageReceived>();
+                if (receivers != null)
+                {
+                    for (int i = 0; i < receivers.Length; i++)
+                    {
+                        receivers[i].OnSendScaffoldMessage(message.Value);
+                    }
+                }
             }
             else
             {
-                receivers = GameObject.FindObjectsOfType<MessageReceived>();
-            }
-
-            if (receivers != null)
-            {
-                for (int i = 0; i < receivers.Length; i++)
+                foreach (MessageReceived receiver in Blackboard.MessageReceivers)
                 {
-                    var receiver = receivers[i];
-                    receiver.OnSendScaffoldMessage(message.Value);
+                    if (receiver != null)
+                    {
+                        receiver.OnSendScaffoldMessage(message.Value);
+                    }
                 }
             }
 
@@ -76,10 +79,10 @@ namespace Scaffold
             {
                 return "Error: No message specified";
             }
-            
+
             return message.Value;
         }
-        
+
         public override Color GetButtonColor()
         {
             return new Color32(235, 191, 217, 255);
@@ -92,19 +95,5 @@ namespace Scaffold
 
         #endregion
 
-        #region Backwards compatibility
-
-        [HideInInspector] [FormerlySerializedAs("message")] public string messageOLD = "";
-
-        protected virtual void OnEnable()
-        {
-            if (messageOLD != "")
-            {
-                message.Value = messageOLD;
-                messageOLD = "";
-            }
-        }
-
-        #endregion
     }
 }

@@ -15,10 +15,12 @@ namespace Scaffold
     public class ForEach : Condition, ICollectionCompatible
     {
         [SerializeField]
+        [Tooltip("The Collection")]
         protected CollectionData collection;
 
         [SerializeField]
         [VariableProperty(compatibleVariableName = "collection")]
+        [Tooltip("The Item")]
         protected Variable item;
 
         [SerializeField]
@@ -31,7 +33,7 @@ namespace Scaffold
 
         protected override void PreEvaluate()
         {
-            var previousIndex = ParentTrack != null ? ParentTrack.PreviousActiveCommandIndex : ParentBlock.PreviousActiveCommandIndex;
+            int previousIndex = ParentTrack != null ? ParentTrack.PreviousActiveCommandIndex : ParentBlock.PreviousActiveCommandIndex;
             //if we came from the end then we are already looping, if not this is first loop so prep
             if (previousIndex != endCommand.CommandIndex)
             {
@@ -41,7 +43,7 @@ namespace Scaffold
 
         protected override bool EvaluateCondition()
         {
-            var col = collection.Value;
+            Collection col = collection.Value;
             curIndex.Value++;
             if (curIndex < col.Count)
             {
@@ -71,17 +73,26 @@ namespace Scaffold
         bool ICollectionCompatible.IsVarCompatibleWithCollection(Variable variable, string compatibleWith)
         {
             if (compatibleWith == "collection")
+            {
                 return collection.Value == null ? false : collection.Value.IsElementCompatible(variable);
+            }
             else
+            {
                 return true;
+            }
         }
 
         public override string GetSummary()
         {
             if (item == null)
+            {
                 return "Error: No item var";
+            }
+
             if (collection.Value == null)
+            {
                 return "Error: No collection";
+            }
 
             return item.Key + " in " + collection.Value.name;
         }

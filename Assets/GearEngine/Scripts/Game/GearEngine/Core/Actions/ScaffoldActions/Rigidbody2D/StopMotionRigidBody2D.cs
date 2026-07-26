@@ -17,6 +17,7 @@ namespace Scaffold
     public class StopMotionRigidBody2D : ActionBase
     {
         [SerializeField]
+        [Tooltip("The Rb")]
         protected Rigidbody2DData rb;
 
         public enum Motion
@@ -27,6 +28,7 @@ namespace Scaffold
         }
 
         [SerializeField]
+        [Tooltip("The Motion to stop")]
         protected Motion motionToStop = Motion.AngularAndLinearVelocity;
 
         public override void OnEnter()
@@ -63,7 +65,9 @@ namespace Scaffold
         public override bool HasReference(Variable variable)
         {
             if (rb.rigidbody2DRef == variable)
+            {
                 return true;
+            }
 
             return false;
         }

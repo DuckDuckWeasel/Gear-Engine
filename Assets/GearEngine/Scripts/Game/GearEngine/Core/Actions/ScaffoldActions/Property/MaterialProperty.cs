@@ -15,25 +15,26 @@ namespace Scaffold
     [Serializable]
     public class MaterialProperty : BaseVariableProperty
     {
-		//generated property
-        public enum Property 
-        { 
-            Color, 
-            MainTexture, 
-            MainTextureOffset, 
-            MainTextureScale, 
-            RenderQueue, 
-            DoubleSidedGI, 
-            EnableInstancing, 
-            PassCount, 
+        //generated property
+        public enum Property
+        {
+            Color,
+            MainTexture,
+            MainTextureOffset,
+            MainTextureScale,
+            RenderQueue,
+            DoubleSidedGI,
+            EnableInstancing,
+            PassCount,
         }
 
-		
+
         [SerializeField]
         protected Property property;
-		
+
         [SerializeField]
         [VariableProperty(typeof(MaterialVariable))]
+        [Tooltip("The Material var")]
         protected MaterialVariable materialVar;
 
         [SerializeField]
@@ -42,18 +43,19 @@ namespace Scaffold
                           typeof(Vector2Variable),
                           typeof(IntegerVariable),
                           typeof(BooleanVariable))]
+        [Tooltip("The In out var")]
         protected Variable inOutVar;
 
         public override void OnEnter()
         {
-            var iocol = inOutVar as ColorVariable;
-            var iotex = inOutVar as TextureVariable;
-            var iov2 = inOutVar as Vector2Variable;
-            var ioi = inOutVar as IntegerVariable;
-            var iob = inOutVar as BooleanVariable;
+            ColorVariable iocol = inOutVar as ColorVariable;
+            TextureVariable iotex = inOutVar as TextureVariable;
+            Vector2Variable iov2 = inOutVar as Vector2Variable;
+            IntegerVariable ioi = inOutVar as IntegerVariable;
+            BooleanVariable iob = inOutVar as BooleanVariable;
 
 
-            var target = materialVar.Value;
+            Material target = materialVar.Value;
 
             switch (getOrSet)
             {
@@ -149,7 +151,9 @@ namespace Scaffold
         public override bool HasReference(Variable variable)
         {
             if (materialVar == variable || inOutVar == variable)
+            {
                 return true;
+            }
 
             return false;
         }

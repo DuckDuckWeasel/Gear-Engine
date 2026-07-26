@@ -9,8 +9,8 @@ namespace Scaffold
     /// <summary>
     /// Makes a sprite visible / invisible by setting the color alpha.
     /// </summary>
-    [CommandInfo("Sprite", 
-                 "Show Sprite", 
+    [CommandInfo("Sprite",
+                 "Show Sprite",
                  "Makes a sprite visible / invisible by setting the color alpha.")]
     [AddComponentMenu("")]
     [ExecuteInEditMode]
@@ -41,10 +41,10 @@ namespace Scaffold
             {
                 if (affectChildren)
                 {
-                    var spriteRenderers = spriteRenderer.gameObject.gameObject.GetComponentsInChildren<SpriteRenderer>();
+                    SpriteRenderer[] spriteRenderers = spriteRenderer.gameObject.gameObject.GetComponentsInChildren<SpriteRenderer>();
                     for (int i = 0; i < spriteRenderers.Length; i++)
                     {
-                        var sr = spriteRenderers[i];
+                        SpriteRenderer sr = spriteRenderers[i];
                         SetSpriteAlpha(sr, visible.Value);
                     }
                 }
@@ -79,19 +79,5 @@ namespace Scaffold
 
         #endregion
 
-        #region Backwards compatibility
-
-        [HideInInspector] [FormerlySerializedAs("visible")] public bool visibleOLD;
-
-        protected virtual void OnEnable()
-        {
-            if (visibleOLD != default(bool))
-            {
-                visible.Value = visibleOLD;
-                visibleOLD = default(bool);
-            }
-        }
-
-        #endregion
     }
 }

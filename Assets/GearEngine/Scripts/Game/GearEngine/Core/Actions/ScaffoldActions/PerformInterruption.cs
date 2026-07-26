@@ -26,6 +26,7 @@ namespace Scaffold
             set => targetCommand = value;
         }
 
+        [Tooltip("The Target action ids")]
         public IList<string> TargetActionIds => targetActionIds;
 
         public bool InterruptSuccess

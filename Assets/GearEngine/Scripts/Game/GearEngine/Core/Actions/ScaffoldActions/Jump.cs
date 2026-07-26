@@ -9,8 +9,8 @@ namespace Scaffold
     /// <summary>
     /// Move execution to a specific Label command in the same block.
     /// </summary>
-    [CommandInfo("Flow", 
-                 "Jump", 
+    [CommandInfo("Flow",
+                 "Jump",
                  "Move execution to a specific Label command in the same block")]
     [AddComponentMenu("")]
     [ExecuteInEditMode]
@@ -30,10 +30,10 @@ namespace Scaffold
                 return;
             }
 
-            var commandList = ParentTrack != null ? ParentTrack.Commands : ParentBlock.CommandList;
+            System.Collections.Generic.List<Command> commandList = ParentTrack != null ? ParentTrack.Commands : ParentBlock.CommandList;
             for (int i = 0; i < commandList.Count; i++)
             {
-                var command = commandList[i];
+                Command command = commandList[i];
                 Label label = command as object as Label;
                 if (label != null && label.Key == targetLabel.Value)
                 {
@@ -70,19 +70,5 @@ namespace Scaffold
 
         #endregion
 
-        #region Backwards compatibility
-
-        [HideInInspector] [FormerlySerializedAs("targetLabel")] public Label targetLabelOLD;
-
-        protected virtual void OnEnable()
-        {
-            if (targetLabelOLD != null)
-            {
-                targetLabel.Value = targetLabelOLD.Key;
-                targetLabelOLD = null;
-            }
-        }
-
-        #endregion
     }
 }

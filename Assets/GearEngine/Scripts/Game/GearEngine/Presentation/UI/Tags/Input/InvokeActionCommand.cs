@@ -14,17 +14,27 @@ namespace GearEngine.GearEngine.Presentation.UI.Input
     [AddComponentMenu("")]
     public class InvokeActionCommand : Command, ICompositeExecutionStatusProvider
     {
+        [Serializable]
+        public struct ActionWrapper
+        {
+            [SerializeReference]
+            public IAction action;
+
+            public bool enabled;
+            public string id;
+            public InvokeActionUtilitySettings utilitySettings;
+
+            public ActionWrapper(IAction action)
+            {
+                this.action = action;
+                this.enabled = true;
+                this.id = Guid.NewGuid().ToString("N");
+                this.utilitySettings = new InvokeActionUtilitySettings(0f, false);
+            }
+        }
+
         [Tooltip("The pure C# actions to execute.")]
-        [SerializeReference]
-        public List<IAction> actions = new List<IAction>();
-
-        [SerializeField] private List<bool> actionEnabled = new List<bool>();
-
-        [SerializeField] private List<string> actionIds = new List<string>();
-
-        [SerializeField]
-        private List<InvokeActionUtilitySettings> actionUtilitySettings =
-            new List<InvokeActionUtilitySettings>();
+        public List<ActionWrapper> actions = new List<ActionWrapper>();
 
         [SerializeField] private bool displayAsGroup;
 
@@ -84,68 +94,74 @@ namespace GearEngine.GearEngine.Presentation.UI.Input
         public float GetActionUtility(int index)
         {
             EnsureActionMetadata();
-            return index >= 0 && index < actionUtilitySettings.Count
-                ? actionUtilitySettings[index].Utility
+            return index >= 0 && index < actions.Count
+                ? actions[index].utilitySettings.Utility
                 : float.NegativeInfinity;
         }
 
         public void SetActionUtility(int index, float utility)
         {
             EnsureActionMetadata();
-            if (index < 0 || index >= actionUtilitySettings.Count)
+            if (index < 0 || index >= actions.Count)
             {
                 return;
             }
 
-            InvokeActionUtilitySettings settings = actionUtilitySettings[index];
+            ActionWrapper wrapper = actions[index];
+            InvokeActionUtilitySettings settings = wrapper.utilitySettings;
             settings.SetUtility(utility);
-            actionUtilitySettings[index] = settings;
+            wrapper.utilitySettings = settings;
+            actions[index] = wrapper;
         }
 
         public void SetActionUtilityData(int index, FloatData utility)
         {
             EnsureActionMetadata();
-            if (index < 0 || index >= actionUtilitySettings.Count)
+            if (index < 0 || index >= actions.Count)
             {
                 return;
             }
 
-            InvokeActionUtilitySettings settings = actionUtilitySettings[index];
+            ActionWrapper wrapper = actions[index];
+            InvokeActionUtilitySettings settings = wrapper.utilitySettings;
             settings.SetUtility(utility);
-            actionUtilitySettings[index] = settings;
+            wrapper.utilitySettings = settings;
+            actions[index] = wrapper;
         }
 
         public bool IsUtilityBlockedDuringExecution(int index)
         {
             EnsureActionMetadata();
-            return index >= 0 && index < actionUtilitySettings.Count &&
-                   actionUtilitySettings[index].BlockDuringExecution;
+            return index >= 0 && index < actions.Count &&
+                   actions[index].utilitySettings.BlockDuringExecution;
         }
 
         public void SetUtilityBlockedDuringExecution(int index, bool shouldBlock)
         {
             EnsureActionMetadata();
-            if (index < 0 || index >= actionUtilitySettings.Count)
+            if (index < 0 || index >= actions.Count)
             {
                 return;
             }
 
-            InvokeActionUtilitySettings settings = actionUtilitySettings[index];
+            ActionWrapper wrapper = actions[index];
+            InvokeActionUtilitySettings settings = wrapper.utilitySettings;
             settings.SetBlockDuringExecution(shouldBlock);
-            actionUtilitySettings[index] = settings;
+            wrapper.utilitySettings = settings;
+            actions[index] = wrapper;
         }
 
         public float GetActionWeight(int index)
         {
             EnsureActionMetadata();
-            if (index < 0 || index >= actionUtilitySettings.Count || !IsActionEnabled(index))
+            if (index < 0 || index >= actions.Count || !IsActionEnabled(index))
             {
                 return 0f;
             }
 
             GetEnabledActionWeightBalance(out float overrideTotal, out int automaticActionCount);
 
-            InvokeActionUtilitySettings selectedSettings = actionUtilitySettings[index];
+            InvokeActionUtilitySettings selectedSettings = actions[index].utilitySettings;
             if (overrideTotal >= 100f)
             {
                 return selectedSettings.HasWeightOverride && overrideTotal > 0f
@@ -181,7 +197,7 @@ namespace GearEngine.GearEngine.Presentation.UI.Input
                     continue;
                 }
 
-                InvokeActionUtilitySettings settings = actionUtilitySettings[actionIndex];
+                InvokeActionUtilitySettings settings = actions[actionIndex].utilitySettings;
                 if (settings.HasWeightOverride)
                 {
                     overrideTotal += settings.Weight;
@@ -195,48 +211,54 @@ namespace GearEngine.GearEngine.Presentation.UI.Input
         public void SetActionWeight(int index, float weight)
         {
             EnsureActionMetadata();
-            if (index < 0 || index >= actionUtilitySettings.Count)
+            if (index < 0 || index >= actions.Count)
             {
                 return;
             }
 
-            InvokeActionUtilitySettings settings = actionUtilitySettings[index];
+            ActionWrapper wrapper = actions[index];
+            InvokeActionUtilitySettings settings = wrapper.utilitySettings;
             settings.SetWeight(weight);
-            actionUtilitySettings[index] = settings;
+            wrapper.utilitySettings = settings;
+            actions[index] = wrapper;
         }
 
         public bool HasActionWeightOverride(int index)
         {
             EnsureActionMetadata();
-            return index >= 0 && index < actionUtilitySettings.Count &&
-                   actionUtilitySettings[index].HasWeightOverride;
+            return index >= 0 && index < actions.Count &&
+                   actions[index].utilitySettings.HasWeightOverride;
         }
 
         public void ClearActionWeightOverride(int index)
         {
             EnsureActionMetadata();
-            if (index < 0 || index >= actionUtilitySettings.Count)
+            if (index < 0 || index >= actions.Count)
             {
                 return;
             }
 
-            InvokeActionUtilitySettings settings = actionUtilitySettings[index];
+            ActionWrapper wrapper = actions[index];
+            InvokeActionUtilitySettings settings = wrapper.utilitySettings;
             settings.ClearWeightOverride();
-            actionUtilitySettings[index] = settings;
+            wrapper.utilitySettings = settings;
+            actions[index] = wrapper;
         }
 
         public bool IsActionEnabled(int index)
         {
             return index >= 0 && index < actions.Count &&
-                   (index >= actionEnabled.Count || actionEnabled[index]);
+                   actions[index].enabled;
         }
 
         public void SetActionEnabled(int index, bool enabled)
         {
             EnsureActionMetadata();
-            if (index >= 0 && index < actionEnabled.Count)
+            if (index >= 0 && index < actions.Count)
             {
-                actionEnabled[index] = enabled;
+                ActionWrapper wrapper = actions[index];
+                wrapper.enabled = enabled;
+                actions[index] = wrapper;
             }
         }
 
@@ -248,11 +270,7 @@ namespace GearEngine.GearEngine.Presentation.UI.Input
             }
 
             EnsureActionMetadata();
-            List<IAction> sourceActions = new List<IAction>(actions);
-            List<bool> sourceEnabledStates = new List<bool>(actionEnabled);
-            List<string> sourceActionIds = new List<string>(actionIds);
-            List<InvokeActionUtilitySettings> sourceUtilitySettings =
-                new List<InvokeActionUtilitySettings>(actionUtilitySettings);
+            List<ActionWrapper> sourceActions = new List<ActionWrapper>(actions);
             for (int i = 0; i < sourceIndices.Count; i++)
             {
                 int sourceIndex = sourceIndices[i];
@@ -262,9 +280,6 @@ namespace GearEngine.GearEngine.Presentation.UI.Input
                 }
 
                 actions[i] = sourceActions[sourceIndex];
-                actionEnabled[i] = sourceEnabledStates[sourceIndex];
-                actionIds[i] = sourceActionIds[sourceIndex];
-                actionUtilitySettings[i] = sourceUtilitySettings[sourceIndex];
             }
         }
 
@@ -289,17 +304,15 @@ namespace GearEngine.GearEngine.Presentation.UI.Input
                 return false;
             }
 
-            action = actions[index];
-            enabled = this.enabled && actionEnabled[index];
+            ActionWrapper wrapper = actions[index];
+            action = wrapper.action;
+            enabled = this.enabled && wrapper.enabled;
+            utilitySettings = wrapper.utilitySettings;
             if (actions.Count > 1)
             {
                 displayAsGroup = true;
             }
             actions.RemoveAt(index);
-            actionEnabled.RemoveAt(index);
-            actionIds.RemoveAt(index);
-            utilitySettings = actionUtilitySettings[index];
-            actionUtilitySettings.RemoveAt(index);
             return true;
         }
 
@@ -316,10 +329,10 @@ namespace GearEngine.GearEngine.Presentation.UI.Input
         {
             EnsureActionMetadata();
             index = Mathf.Clamp(index, 0, actions.Count);
-            actions.Insert(index, action);
-            actionEnabled.Insert(index, enabled);
-            actionIds.Insert(index, CreateActionId());
-            actionUtilitySettings.Insert(index, utilitySettings);
+            ActionWrapper wrapper = new ActionWrapper(action);
+            wrapper.enabled = enabled;
+            wrapper.utilitySettings = utilitySettings;
+            actions.Insert(index, wrapper);
             if (actions.Count > 1)
             {
                 displayAsGroup = true;
@@ -356,26 +369,17 @@ namespace GearEngine.GearEngine.Presentation.UI.Input
                 return true;
             }
 
-            IAction action = actions[sourceIndex];
-            bool enabled = actionEnabled[sourceIndex];
-            string actionId = actionIds[sourceIndex];
-            InvokeActionUtilitySettings utilitySettings = actionUtilitySettings[sourceIndex];
+            ActionWrapper wrapper = actions[sourceIndex];
             actions.RemoveAt(sourceIndex);
-            actionEnabled.RemoveAt(sourceIndex);
-            actionIds.RemoveAt(sourceIndex);
-            actionUtilitySettings.RemoveAt(sourceIndex);
-            actions.Insert(destinationIndex, action);
-            actionEnabled.Insert(destinationIndex, enabled);
-            actionIds.Insert(destinationIndex, actionId);
-            actionUtilitySettings.Insert(destinationIndex, utilitySettings);
+            actions.Insert(destinationIndex, wrapper);
             return true;
         }
 
         public string GetActionId(int actionIndex)
         {
             EnsureActionMetadata();
-            return actionIndex >= 0 && actionIndex < actionIds.Count
-                ? actionIds[actionIndex]
+            return actionIndex >= 0 && actionIndex < actions.Count
+                ? actions[actionIndex].id
                 : string.Empty;
         }
 
@@ -399,7 +403,7 @@ namespace GearEngine.GearEngine.Presentation.UI.Input
             if (!IsActionRunning(actionIndex) ||
                 actionIndex < 0 ||
                 actionIndex >= actions.Count ||
-                actions[actionIndex] is not IActionProgressProvider progressProvider)
+                actions[actionIndex].action is not IActionProgressProvider progressProvider)
             {
                 return false;
             }
@@ -435,82 +439,23 @@ namespace GearEngine.GearEngine.Presentation.UI.Input
             bool metadataChanged = false;
             if (actions == null)
             {
-                actions = new List<IAction>();
+                actions = new List<ActionWrapper>();
                 metadataChanged = true;
             }
-
-            if (actionEnabled == null)
+            for (int i = 0; i < actions.Count; i++)
             {
-                actionEnabled = new List<bool>();
-                metadataChanged = true;
-            }
-
-            if (actionIds == null)
-            {
-                actionIds = new List<string>();
-                metadataChanged = true;
-            }
-
-            if (actionUtilitySettings == null)
-            {
-                actionUtilitySettings = new List<InvokeActionUtilitySettings>();
-                metadataChanged = true;
-            }
-
-            while (actionEnabled.Count < actions.Count)
-            {
-                actionEnabled.Add(true);
-                metadataChanged = true;
-            }
-
-            while (actionIds.Count < actions.Count)
-            {
-                actionIds.Add(CreateActionId());
-                metadataChanged = true;
-            }
-
-            while (actionUtilitySettings.Count < actions.Count)
-            {
-                actionUtilitySettings.Add(new InvokeActionUtilitySettings(0f, false));
-                metadataChanged = true;
-            }
-
-            if (actionEnabled.Count > actions.Count)
-            {
-                actionEnabled.RemoveRange(actions.Count, actionEnabled.Count - actions.Count);
-                metadataChanged = true;
-            }
-
-            if (actionIds.Count > actions.Count)
-            {
-                actionIds.RemoveRange(actions.Count, actionIds.Count - actions.Count);
-                metadataChanged = true;
-            }
-
-            if (actionUtilitySettings.Count > actions.Count)
-            {
-                actionUtilitySettings.RemoveRange(
-                    actions.Count,
-                    actionUtilitySettings.Count - actions.Count);
-                metadataChanged = true;
-            }
-
-            for (int actionIndex = 0; actionIndex < actionIds.Count; actionIndex++)
-            {
-                if (string.IsNullOrEmpty(actionIds[actionIndex]))
+                ActionWrapper wrapper = actions[i];
+                if (string.IsNullOrEmpty(wrapper.id))
                 {
-                    actionIds[actionIndex] = CreateActionId();
+                    wrapper.id = CreateActionId();
                     metadataChanged = true;
                 }
-
-                InvokeActionUtilitySettings settings = actionUtilitySettings[actionIndex];
-                if (settings.MigrateWeightOverride())
+                if (wrapper.utilitySettings.MigrateWeightOverride())
                 {
-                    actionUtilitySettings[actionIndex] = settings;
                     metadataChanged = true;
                 }
+                actions[i] = wrapper;
             }
-
             return metadataChanged;
         }
 
@@ -521,7 +466,7 @@ namespace GearEngine.GearEngine.Presentation.UI.Input
             LastExecutionStatus = ActionExecutionStatus.Success;
             LastCompositeExecutionStatus = CompositeExecutionStatus.Success;
             CreateCompositeRunner();
-            int lastExecutedActionIndex = actionIds.IndexOf(lastExecutedActionId);
+            int lastExecutedActionIndex = actions.FindIndex(w => w.id == lastExecutedActionId);
             if (ShouldAvoidRepeatingLastAction())
             {
                 compositeRunner.StartWithoutRepeatingLast(
@@ -559,7 +504,7 @@ namespace GearEngine.GearEngine.Presentation.UI.Input
             List<int> targetIndexes = new List<int>();
             foreach (string targetActionId in targetActionIds)
             {
-                int actionIndex = actionIds.IndexOf(targetActionId);
+                int actionIndex = actions.FindIndex(w => w.id == targetActionId);
                 if (actionIndex >= 0 && !targetIndexes.Contains(actionIndex))
                 {
                     targetIndexes.Add(actionIndex);
@@ -604,7 +549,7 @@ namespace GearEngine.GearEngine.Presentation.UI.Input
             {
                 int capturedIndex = actionIndex;
                 InvokeActionCompositeTask task = new InvokeActionCompositeTask(
-                    actions[capturedIndex],
+                    actions[capturedIndex].action,
                     () => IsActionEnabled(capturedIndex),
                     () => GetActionUtility(capturedIndex),
                     () => GetActionWeight(capturedIndex),
@@ -660,9 +605,9 @@ namespace GearEngine.GearEngine.Presentation.UI.Input
             }
 
             int lastExecutedActionIndex = compositeRunner.LastStartedTaskIndex;
-            if (lastExecutedActionIndex >= 0 && lastExecutedActionIndex < actionIds.Count)
+            if (lastExecutedActionIndex >= 0 && lastExecutedActionIndex < actions.Count)
             {
-                lastExecutedActionId = actionIds[lastExecutedActionIndex];
+                lastExecutedActionId = actions[lastExecutedActionIndex].id;
             }
         }
 
@@ -680,7 +625,7 @@ namespace GearEngine.GearEngine.Presentation.UI.Input
 
             if (actions.Count == 1)
             {
-                return actions[0] != null ? actions[0].GetType().Name : "None";
+                return actions[0].action != null ? actions[0].action.GetType().Name : "None";
             }
 
             return $"{actions.Count} Actions";
@@ -693,8 +638,9 @@ namespace GearEngine.GearEngine.Presentation.UI.Input
                 return false;
             }
 
-            foreach (IAction action in actions)
+            foreach (ActionWrapper wrapper in actions)
             {
+                IAction action = wrapper.action;
                 if (action is ActionBase actionBase && actionBase.OpenBlock())
                 {
                     return true;
@@ -710,8 +656,9 @@ namespace GearEngine.GearEngine.Presentation.UI.Input
                 return false;
             }
 
-            foreach (IAction action in actions)
+            foreach (ActionWrapper wrapper in actions)
             {
+                IAction action = wrapper.action;
                 if (action is ActionBase actionBase && actionBase.CloseBlock())
                 {
                     return true;
@@ -723,17 +670,14 @@ namespace GearEngine.GearEngine.Presentation.UI.Input
         public override bool HasReference(Variable variable)
         {
             EnsureActionMetadata();
-            foreach (InvokeActionUtilitySettings settings in actionUtilitySettings)
+            foreach (ActionWrapper wrapper in actions)
             {
-                if (settings.HasReference(variable))
+                if (wrapper.utilitySettings.HasReference(variable))
                 {
                     return true;
                 }
-            }
 
-            foreach (IAction action in actions)
-            {
-                if (action is ActionBase actionBase && actionBase.HasReference(variable))
+                if (wrapper.action is ActionBase actionBase && actionBase.HasReference(variable))
                 {
                     return true;
                 }

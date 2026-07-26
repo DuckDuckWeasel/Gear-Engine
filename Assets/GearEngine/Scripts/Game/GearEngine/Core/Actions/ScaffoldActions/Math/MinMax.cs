@@ -16,8 +16,8 @@ namespace Scaffold
     {
         public enum Function
         {
-           Min,
-           Max
+            Min,
+            Max
         }
 
         [Tooltip("Min Or Max")]
@@ -30,6 +30,7 @@ namespace Scaffold
 
         //[Tooltip("Where the result of the function is stored.")]
         [SerializeField]
+        [Tooltip("The Out value")]
         protected FloatData outValue;
 
         public override void OnEnter()

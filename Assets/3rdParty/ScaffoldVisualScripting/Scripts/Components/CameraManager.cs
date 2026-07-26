@@ -19,7 +19,7 @@ namespace Scaffold
         [SerializeField] protected Texture2D swipePanIcon;
 
         [Tooltip("Position of continue and swipe icons in normalized screen space coords. (0,0) = top left, (1,1) = bottom right")]
-        [SerializeField] protected Vector2 swipeIconPosition = new Vector2(1,0);
+        [SerializeField] protected Vector2 swipeIconPosition = new Vector2(1, 0);
 
         [Tooltip("Set the camera z coordinate to a fixed value every frame.")]
         [SerializeField] protected bool setCameraZ = true;
@@ -31,7 +31,7 @@ namespace Scaffold
         [SerializeField] protected Camera swipeCamera;
 
         protected float fadeAlpha = 0f;
-        
+
         // Swipe panning control
         protected bool swipePanActive;
 
@@ -39,8 +39,8 @@ namespace Scaffold
         protected View swipePanViewA;
         protected View swipePanViewB;
         protected Vector3 previousMousePos;
-        
-		//Coroutine handles for panning and fading commands
+
+        //Coroutine handles for panning and fading commands
         protected LTDescr fadeTween, sizeTween, camPosTween, camRotTween;
 
         protected class CameraView
@@ -49,9 +49,9 @@ namespace Scaffold
             public Quaternion cameraRot;
             public float cameraSize;
         };
-        
+
         protected Dictionary<string, CameraView> storedViews = new Dictionary<string, CameraView>();
-        
+
         protected virtual void OnGUI()
         {
             if (swipePanActive)
@@ -63,24 +63,24 @@ namespace Scaffold
                     float y = Screen.height * swipeIconPosition.y;
                     float width = swipePanIcon.width;
                     float height = swipePanIcon.height;
-                    
+
                     x = Mathf.Max(x, 0);
                     y = Mathf.Max(y, 0);
                     x = Mathf.Min(x, Screen.width - width);
                     y = Mathf.Min(y, Screen.height - height);
-                    
+
                     Rect rect = new Rect(x, y, width, height);
                     GUI.DrawTexture(rect, swipePanIcon);
                 }
             }
-            
+
             // Draw full screen fade texture
             if (fadeAlpha > 0f &&
                 screenFadeTexture != null)
             {
                 // 1 = scene fully visible
                 // 0 = scene fully obscured
-                GUI.color = new Color(1,1,1, fadeAlpha);    
+                GUI.color = new Color(1, 1, 1, fadeAlpha);
                 GUI.depth = -1000;
                 GUI.DrawTexture(new Rect(0, 0, Screen.width, Screen.height), screenFadeTexture);
             }
@@ -101,8 +101,8 @@ namespace Scaffold
 
             camera.transform.position = new Vector3(camera.transform.position.x, camera.transform.position.y, cameraZ);
         }
-        
-        protected virtual void Update() 
+
+        protected virtual void Update()
         {
             if (!swipePanActive)
             {
@@ -116,7 +116,7 @@ namespace Scaffold
             }
 
             Vector3 delta = Vector3.zero;
-            
+
             if (Input.touchCount > 0)
             {
                 if (Input.GetTouch(0).phase == TouchPhase.Moved)
@@ -124,12 +124,12 @@ namespace Scaffold
                     delta = Input.GetTouch(0).deltaPosition;
                 }
             }
-            
+
             if (Input.GetMouseButtonDown(0))
             {
-                previousMousePos = Input.mousePosition; 
+                previousMousePos = Input.mousePosition;
             }
-            else if (Input.GetMouseButton(0)) 
+            else if (Input.GetMouseButton(0))
             {
                 delta = Input.mousePosition - previousMousePos;
                 previousMousePos = Input.mousePosition;
@@ -139,59 +139,59 @@ namespace Scaffold
             cameraDelta.x *= -2f * swipeSpeedMultiplier;
             cameraDelta.y *= -2f * swipeSpeedMultiplier;
             cameraDelta.z = 0f;
-            
+
             Vector3 cameraPos = swipeCamera.transform.position;
-            
+
             cameraPos += cameraDelta;
-            
+
             swipeCamera.transform.position = CalcCameraPosition(cameraPos, swipePanViewA, swipePanViewB);
-            swipeCamera.orthographicSize = CalcCameraSize(cameraPos, swipePanViewA, swipePanViewB); 
+            swipeCamera.orthographicSize = CalcCameraSize(cameraPos, swipePanViewA, swipePanViewB);
         }
-        
+
         // Clamp camera position to region defined by the two views
         protected virtual Vector3 CalcCameraPosition(Vector3 pos, View viewA, View viewB)
         {
             Vector3 safePos = pos;
-            
+
             // Clamp camera position to region defined by the two views
             safePos.x = Mathf.Max(safePos.x, Mathf.Min(viewA.transform.position.x, viewB.transform.position.x));
             safePos.x = Mathf.Min(safePos.x, Mathf.Max(viewA.transform.position.x, viewB.transform.position.x));
             safePos.y = Mathf.Max(safePos.y, Mathf.Min(viewA.transform.position.y, viewB.transform.position.y));
             safePos.y = Mathf.Min(safePos.y, Mathf.Max(viewA.transform.position.y, viewB.transform.position.y));
-            
+
             return safePos;
         }
-        
+
         // Smoothly interpolate camera orthographic size based on relative position to two views
         protected virtual float CalcCameraSize(Vector3 pos, View viewA, View viewB)
         {
             // Get ray and point in same space
             Vector3 toViewB = viewB.transform.position - viewA.transform.position;
             Vector3 localPos = pos - viewA.transform.position;
-            
+
             // Normalize
             float distance = toViewB.magnitude;
             toViewB /= distance;
             localPos /= distance;
-            
+
             // Project point onto ray
             float t = Vector3.Dot(toViewB, localPos);
             t = Mathf.Clamp01(t); // Not really necessary but no harm
-            
+
             float cameraSize = Mathf.Lerp(viewA.ViewSize, viewB.ViewSize, t);
-            
+
             return cameraSize;
         }
 
         #region Public members
-        
+
         /// <summary>
         /// Creates a flat colored texture.
         /// </summary>
         public static Texture2D CreateColorTexture(Color color, int width, int height)
         {
             Color[] pixels = new Color[width * height];
-            for (int i = 0; i < pixels.Length; i++) 
+            for (int i = 0; i < pixels.Length; i++)
             {
                 pixels[i] = color;
             }
@@ -199,9 +199,9 @@ namespace Scaffold
             texture.SetPixels(pixels);
             texture.Apply();
 
-            return texture;     
+            return texture;
         }
-            
+
         /// <summary>
         /// Full screen texture used for screen fade effect.
         /// </summary>
@@ -218,7 +218,10 @@ namespace Scaffold
             if (Mathf.Approximately(fadeDuration, 0))
             {
                 fadeAlpha = targetAlpha;
-                if (fadeAction != null) fadeAction();
+                if (fadeAction != null)
+                {
+                    fadeAction();
+                }
             }
             else
             {
@@ -228,9 +231,12 @@ namespace Scaffold
                     .setOnComplete(() =>
                     {
                         fadeAlpha = targetAlpha;
-                        var tempFadeActin = fadeAction;
+                        Action tempFadeActin = fadeAction;
                         fadeAction = null;
-                        if (tempFadeActin != null) tempFadeActin();
+                        if (tempFadeActin != null)
+                        {
+                            tempFadeActin();
+                        }
                     });
             }
         }
@@ -238,8 +244,8 @@ namespace Scaffold
         /// <summary>
         /// Fade out, move camera to view and then fade back in.
         /// </summary>
-        public virtual void FadeToView(Camera camera, View view, float fadeDuration, bool fadeOut, Action fadeAction, 
-            LeanTweenType fadeType = LeanTweenType.easeInOutQuad, LeanTweenType sizeTweenType = LeanTweenType.easeInOutQuad, 
+        public virtual void FadeToView(Camera camera, View view, float fadeDuration, bool fadeOut, Action fadeAction,
+            LeanTweenType fadeType = LeanTweenType.easeInOutQuad, LeanTweenType sizeTweenType = LeanTweenType.easeInOutQuad,
             LeanTweenType posTweenType = LeanTweenType.easeInOutQuad, LeanTweenType rotTweenType = LeanTweenType.easeInOutQuad)
         {
             swipePanActive = false;
@@ -260,13 +266,15 @@ namespace Scaffold
             }
 
             // Fade out
-            Fade(1f, outDuration, delegate {
+            Fade(1f, outDuration, delegate
+            {
 
                 // Snap to new view
                 PanToPosition(camera, view.transform.position, view.transform.rotation, view.ViewSize, 0f, null, sizeTweenType, posTweenType, rotTweenType);
 
                 // Fade in
-                Fade(0f, inDuration, delegate {
+                Fade(0f, inDuration, delegate
+                {
                     if (fadeAction != null)
                     {
                         fadeAction();
@@ -282,6 +290,16 @@ namespace Scaffold
         {
             StopFadeTween();
             StopPosTweens();
+        }
+
+        protected virtual void OnDisable()
+        {
+            Stop();
+        }
+
+        protected virtual void OnDestroy()
+        {
+            Stop();
         }
 
         protected void StopFadeTween()
@@ -324,7 +342,7 @@ namespace Scaffold
                 return;
             }
 
-            if(setCameraZ)
+            if (setCameraZ)
             {
                 targetPosition.z = camera.transform.position.z;
             }
@@ -355,7 +373,11 @@ namespace Scaffold
                     .setOnComplete(() =>
                     {
                         camera.orthographicSize = targetSize;
-                        if (arriveAction != null) arriveAction();
+                        if (arriveAction != null)
+                        {
+                            arriveAction();
+                        }
+
                         sizeTween = null;
                     });
 
@@ -395,9 +417,10 @@ namespace Scaffold
             Vector3 cameraPos = camera.transform.position;
 
             Vector3 targetPosition = CalcCameraPosition(cameraPos, swipePanViewA, swipePanViewB);
-            float targetSize = CalcCameraSize(cameraPos, swipePanViewA, swipePanViewB); 
+            float targetSize = CalcCameraSize(cameraPos, swipePanViewA, swipePanViewB);
 
-            PanToPosition(camera, targetPosition, Quaternion.identity, targetSize, duration, delegate {
+            PanToPosition(camera, targetPosition, Quaternion.identity, targetSize, duration, delegate
+            {
 
                 swipePanActive = true;
                 swipeCamera = camera;
@@ -406,7 +429,7 @@ namespace Scaffold
                 {
                     arriveAction();
                 }
-            }); 
+            });
         }
 
         /// <summary>

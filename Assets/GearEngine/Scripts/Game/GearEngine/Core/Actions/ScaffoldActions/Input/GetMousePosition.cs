@@ -1,6 +1,6 @@
 using System;
 using GearEngine.Core.Actions;
-﻿using UnityEngine;
+using UnityEngine;
 
 namespace Scaffold
 {
@@ -15,6 +15,7 @@ namespace Scaffold
     {
         [VariableProperty(typeof(Vector2Variable))]
         [SerializeField]
+        [Tooltip("The Screen position")]
         protected Vector2Variable screenPosition;
 
         [Tooltip("If null, Camera.main is used")]
@@ -22,14 +23,17 @@ namespace Scaffold
 
         [VariableProperty(typeof(Vector2Variable))]
         [SerializeField]
+        [Tooltip("The View position")]
         protected Vector2Variable viewPosition;
 
         [VariableProperty(typeof(Vector3Variable))]
         [SerializeField]
+        [Tooltip("The World position")]
         protected Vector3Variable worldPosition;
 
         [VariableProperty(typeof(Vector3Variable))]
         [SerializeField]
+        [Tooltip("The World direction")]
         protected Vector3Variable worldDirection;
 
         public override void OnEnter()
@@ -51,14 +55,14 @@ namespace Scaffold
 
             if (worldPosition != null)
             {
-                var screenWithZ = UnityEngine.Input.mousePosition;
+                Vector3 screenWithZ = UnityEngine.Input.mousePosition;
                 screenWithZ.z = castCamera.nearClipPlane;
                 worldPosition.Value = castCamera.ScreenToWorldPoint(screenWithZ);
             }
 
             if (worldDirection != null)
             {
-                var screenWithZ = UnityEngine.Input.mousePosition;
+                Vector3 screenWithZ = UnityEngine.Input.mousePosition;
                 screenWithZ.z = castCamera.nearClipPlane;
                 worldDirection.Value = castCamera.ScreenPointToRay(screenWithZ).direction;
             }

@@ -12,6 +12,7 @@ namespace Scaffold
     public abstract class CollectionBaseTwoCollectionCommand : CollectionBaseCommand
     {
         [SerializeField]
+        [Tooltip("The Rhs collection")]
         protected CollectionData rhsCollection;
 
         public override void OnEnter()
@@ -34,10 +35,14 @@ namespace Scaffold
         public override string GetSummary()
         {
             if (collection.Value == null)
+            {
                 return "Error: no collection selected";
+            }
 
             if (rhsCollection.Value == null)
+            {
                 return "Error: no variable selected";
+            }
 
             if (collection.Value.ContainedType() != rhsCollection.Value.ContainedType())
             {

@@ -2,6 +2,7 @@ using System;
 using GearEngine.Core.Actions;
 
 using UnityEngine;
+using Ami.BroAudio;
 
 namespace Scaffold
 {
@@ -14,11 +15,11 @@ namespace Scaffold
     [Serializable]
     public class SetAudioVolume : ActionBase
     {
-        [Range(0,1)]
+        [Range(0, 1)]
         [Tooltip("Global volume level for audio played using Play Music and Play Sound")]
         [SerializeField] protected float volume = 1f;
 
-        [Range(0,30)]
+        [Range(0, 30)]
         [Tooltip("Time to fade between current volume level and target volume level.")]
         [SerializeField] protected float fadeDuration = 1f;
 
@@ -29,19 +30,21 @@ namespace Scaffold
 
         public override void OnEnter()
         {
-            var musicManager = ScaffoldManager.Instance.MusicManager;
+            BroAudio.SetVolume(BroAudioType.All, volume, fadeDuration);
 
-            musicManager.SetAudioVolume(volume, fadeDuration, () => {
-                if (waitUntilFinished)
-                {
-                    Continue();
-                }
-            });
-
-            if (!waitUntilFinished)
+            if (waitUntilFinished && fadeDuration > 0f)
+            {
+                Invoke(nameof(DoContinue), fadeDuration);
+            }
+            else
             {
                 Continue();
             }
+        }
+
+        private void DoContinue()
+        {
+            Continue();
         }
 
         public override string GetSummary()

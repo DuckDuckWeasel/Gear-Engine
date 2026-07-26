@@ -11,7 +11,7 @@ namespace Scaffold
                       "Drag Started",
                       "The block will execute when the player starts dragging an object.")]
     [AddComponentMenu("")]
-    public class DragStarted : EventHandler, ISerializationCallbackReceiver
+    public class DragStarted : EventHandler
     {
         public class DragStartedEvent
         {
@@ -26,10 +26,7 @@ namespace Scaffold
         [VariableProperty(typeof(GameObjectVariable))]
         [SerializeField] protected GameObjectVariable draggableRef;
 
-        [SerializeField] protected List<Draggable2D> draggableObjects;
-
-        [HideInInspector]
-        [SerializeField] protected Draggable2D draggableObject;
+        [SerializeField] protected List<Draggable2D> draggableObjects = new List<Draggable2D>();
 
         protected EventDispatcher eventDispatcher;
 
@@ -52,26 +49,7 @@ namespace Scaffold
             OnDragStarted(evt.DraggableObject);
         }
 
-        #region Compatibility
 
-        void ISerializationCallbackReceiver.OnAfterDeserialize()
-        {
-            //add any dragableobject already present to list for backwards compatability
-            if (draggableObject != null)
-            {
-                if (!draggableObjects.Contains(draggableObject))
-                {
-                    draggableObjects.Add(draggableObject);
-                }
-                draggableObject = null;
-            }
-        }
-
-        void ISerializationCallbackReceiver.OnBeforeSerialize()
-        {
-        }
-
-        #endregion Compatibility
 
         #region Public members
 

@@ -15,24 +15,25 @@ namespace Scaffold
     [Serializable]
     public class GameObjectProperty : BaseVariableProperty
     {
-		//generated property
-        public enum Property 
-        { 
-            Transform, 
-            Layer, 
-            ActiveSelf, 
-            ActiveInHierarchy, 
-            IsStatic, 
-            Tag, 
-            GameObject, 
+        //generated property
+        public enum Property
+        {
+            Transform,
+            Layer,
+            ActiveSelf,
+            ActiveInHierarchy,
+            IsStatic,
+            Tag,
+            GameObject,
         }
 
-		
+
         [SerializeField]
         protected Property property;
-		
+
         [SerializeField]
         [VariableProperty(typeof(GameObjectVariable))]
+        [Tooltip("The Game object var")]
         protected GameObjectVariable gameObjectVar;
 
         [SerializeField]
@@ -41,18 +42,19 @@ namespace Scaffold
                           typeof(BooleanVariable),
                           typeof(StringVariable),
                           typeof(GameObjectVariable))]
+        [Tooltip("The In out var")]
         protected Variable inOutVar;
 
         public override void OnEnter()
         {
-            var iot = inOutVar as TransformVariable;
-            var ioi = inOutVar as IntegerVariable;
-            var iob = inOutVar as BooleanVariable;
-            var ios = inOutVar as StringVariable;
-            var iogo = inOutVar as GameObjectVariable;
+            TransformVariable iot = inOutVar as TransformVariable;
+            IntegerVariable ioi = inOutVar as IntegerVariable;
+            BooleanVariable iob = inOutVar as BooleanVariable;
+            StringVariable ios = inOutVar as StringVariable;
+            GameObjectVariable iogo = inOutVar as GameObjectVariable;
 
 
-            var target = gameObjectVar.Value;
+            GameObject target = gameObjectVar.Value;
 
             switch (getOrSet)
             {
@@ -133,7 +135,9 @@ namespace Scaffold
         public override bool HasReference(Variable variable)
         {
             if (gameObjectVar == variable || inOutVar == variable)
+            {
                 return true;
+            }
 
             return false;
         }

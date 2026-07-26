@@ -11,7 +11,7 @@ namespace Scaffold
                       "Drag Cancelled",
                       "The block will execute when the player drags an object and releases it without dropping it on a target object.")]
     [AddComponentMenu("")]
-    public class DragCancelled : EventHandler, ISerializationCallbackReceiver
+    public class DragCancelled : EventHandler
     {
         public class DragCancelledEvent
         {
@@ -27,10 +27,7 @@ namespace Scaffold
         [SerializeField] protected GameObjectVariable draggableRef;
 
         [Tooltip("Draggable object to listen for drag events on")]
-        [SerializeField] protected List<Draggable2D> draggableObjects;
-
-        [HideInInspector]
-        [SerializeField] protected Draggable2D draggableObject;
+        [SerializeField] protected List<Draggable2D> draggableObjects = new List<Draggable2D>();
 
         protected EventDispatcher eventDispatcher;
 
@@ -53,26 +50,7 @@ namespace Scaffold
             OnDragCancelled(evt.DraggableObject);
         }
 
-        #region Compatibility
 
-        void ISerializationCallbackReceiver.OnAfterDeserialize()
-        {
-            //add any dragableobject already present to list for backwards compatability
-            if (draggableObject != null)
-            {
-                if (!draggableObjects.Contains(draggableObject))
-                {
-                    draggableObjects.Add(draggableObject);
-                }
-                draggableObject = null;
-            }
-        }
-
-        void ISerializationCallbackReceiver.OnBeforeSerialize()
-        {
-        }
-
-        #endregion Compatibility
 
         #region Public members
 

@@ -10,8 +10,8 @@ namespace Scaffold
     /// <summary>
     /// Rotates a game object from the specified angles back to its starting orientation over time.
     /// </summary>
-    [CommandInfo("iTween", 
-                 "Rotate From", 
+    [CommandInfo("iTween",
+                 "Rotate From",
                  "Rotates a game object from the specified angles back to its starting orientation over time.")]
     [AddComponentMenu("")]
     [ExecuteInEditMode]
@@ -59,28 +59,5 @@ namespace Scaffold
 
         #endregion
 
-        #region Backwards compatibility
-
-        [HideInInspector] [FormerlySerializedAs("fromTransform")] public Transform fromTransformOLD;
-        [HideInInspector] [FormerlySerializedAs("fromRotation")] public Vector3 fromRotationOLD;
-
-        protected override void OnEnable()
-        {
-            base.OnEnable();
-
-            if (fromTransformOLD != null)
-            {
-                fromTransform.Value = fromTransformOLD;
-                fromTransformOLD = null;
-            }
-
-            if (fromRotationOLD != default(Vector3))
-            {
-                fromRotation.Value = fromRotationOLD;
-                fromRotationOLD = default(Vector3);
-            }
-        }
-
-        #endregion
     }
 }

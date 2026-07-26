@@ -1,7 +1,7 @@
 using System;
 using GearEngine.Core.Actions;
 
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.Serialization;
 
 namespace Scaffold
@@ -9,8 +9,8 @@ namespace Scaffold
     /// <summary>
     /// Stops an active iTween by name.
     /// </summary>
-    [CommandInfo("iTween", 
-                 "Stop Tween", 
+    [CommandInfo("iTween",
+                 "Stop Tween",
                  "Stops an active iTween by name.")]
     [AddComponentMenu("")]
     [ExecuteInEditMode]
@@ -35,19 +35,5 @@ namespace Scaffold
 
         #endregion
 
-        #region Backwards compatibility
-
-        [HideInInspector] [FormerlySerializedAs("tweenName")] public string tweenNameOLD = "";
-
-        protected virtual void OnEnable()
-        {
-            if (tweenNameOLD != "")
-            {
-                tweenName.Value = tweenNameOLD;
-                tweenNameOLD = "";
-            }
-        }
-
-        #endregion
     }
 }

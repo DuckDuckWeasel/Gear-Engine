@@ -15,25 +15,26 @@ namespace Scaffold
     [Serializable]
     public class ControllerColliderHitProperty : BaseVariableProperty
     {
-		//generated property
-        public enum Property 
-        { 
-            Collider, 
-            Rigidbody, 
-            GameObject, 
-            Transform, 
-            Point, 
-            Normal, 
-            MoveDirection, 
-            MoveLength, 
+        //generated property
+        public enum Property
+        {
+            Collider,
+            Rigidbody,
+            GameObject,
+            Transform,
+            Point,
+            Normal,
+            MoveDirection,
+            MoveLength,
         }
 
-		
+
         [SerializeField]
         protected Property property;
-		
+
         [SerializeField]
         [VariableProperty(typeof(ControllerColliderHitVariable))]
+        [Tooltip("The Controller collider hit var")]
         protected ControllerColliderHitVariable controllerColliderHitVar;
 
         [SerializeField]
@@ -43,19 +44,20 @@ namespace Scaffold
                           typeof(TransformVariable),
                           typeof(Vector3Variable),
                           typeof(FloatVariable))]
+        [Tooltip("The In out var")]
         protected Variable inOutVar;
 
         public override void OnEnter()
         {
-            var ioc = inOutVar as ColliderVariable;
-            var iorb = inOutVar as RigidbodyVariable;
-            var iogo = inOutVar as GameObjectVariable;
-            var iot = inOutVar as TransformVariable;
-            var iov = inOutVar as Vector3Variable;
-            var iof = inOutVar as FloatVariable;
+            ColliderVariable ioc = inOutVar as ColliderVariable;
+            RigidbodyVariable iorb = inOutVar as RigidbodyVariable;
+            GameObjectVariable iogo = inOutVar as GameObjectVariable;
+            TransformVariable iot = inOutVar as TransformVariable;
+            Vector3Variable iov = inOutVar as Vector3Variable;
+            FloatVariable iof = inOutVar as FloatVariable;
 
 
-            var target = controllerColliderHitVar.Value;
+            ControllerColliderHit target = controllerColliderHitVar.Value;
 
             switch (getOrSet)
             {
@@ -130,7 +132,9 @@ namespace Scaffold
         public override bool HasReference(Variable variable)
         {
             if (controllerColliderHitVar == variable || inOutVar == variable)
+            {
                 return true;
+            }
 
             return false;
         }

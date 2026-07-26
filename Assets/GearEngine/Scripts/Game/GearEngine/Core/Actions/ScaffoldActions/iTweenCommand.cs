@@ -1,7 +1,7 @@
 using System;
 using GearEngine.Core.Actions;
 
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.Serialization;
 
 namespace Scaffold
@@ -74,10 +74,10 @@ namespace Scaffold
             if (stopPreviousTweens)
             {
                 // Force any existing iTweens on this target object to complete immediately
-                var tweens = targetObject.Value.GetComponents<iTween>();
+                iTween[] tweens = targetObject.Value.GetComponents<iTween>();
                 for (int i = 0; i < tweens.Length; i++)
                 {
-                    var tween = tweens[i];
+                    iTween tween = tweens[i];
                     tween.time = 0;
                     tween.SendMessage("Update");
                 }
@@ -92,7 +92,7 @@ namespace Scaffold
         }
 
         public virtual void DoTween()
-        {}
+        { }
 
         public override string GetSummary()
         {
@@ -117,33 +117,5 @@ namespace Scaffold
 
         #endregion
 
-        #region Backwards compatibility
-
-        [HideInInspector] [FormerlySerializedAs("target")] [FormerlySerializedAs("targetObject")] public GameObject targetObjectOLD;
-        [HideInInspector] [FormerlySerializedAs("tweenName")] public string tweenNameOLD = "";
-        [HideInInspector] [FormerlySerializedAs("duration")] public float durationOLD;
-
-        protected virtual void OnEnable()
-        {
-            if (targetObjectOLD != null)
-            {
-                targetObject.Value = targetObjectOLD;
-                targetObjectOLD = null;
-            }
-
-            if (tweenNameOLD != "")
-            {
-                tweenName.Value = tweenNameOLD;
-                tweenNameOLD = "";
-            }
-
-            if (durationOLD != default(float))
-            {
-                duration.Value = durationOLD;
-                durationOLD = default(float);
-            }       
-        }
-
-        #endregion
     }
 }

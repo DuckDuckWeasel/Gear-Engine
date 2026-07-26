@@ -10,8 +10,8 @@ namespace Scaffold
     /// <summary>
     /// Applies a jolt of force to a GameObject's position and wobbles it back to its initial position.
     /// </summary>
-    [CommandInfo("iTween", 
-                 "Punch Position", 
+    [CommandInfo("iTween",
+                 "Punch Position",
                  "Applies a jolt of force to a GameObject's position and wobbles it back to its initial position.")]
     [AddComponentMenu("")]
     [ExecuteInEditMode]
@@ -48,21 +48,5 @@ namespace Scaffold
 
         #endregion
 
-        #region Backwards compatibility
-
-        [HideInInspector] [FormerlySerializedAs("amount")] public Vector3 amountOLD;
-
-        protected override void OnEnable()
-        {
-            base.OnEnable();
-
-            if (amountOLD != default(Vector3))
-            {
-                amount.Value = amountOLD;
-                amountOLD = default(Vector3);
-            }
-        }
-
-        #endregion
     }
 }

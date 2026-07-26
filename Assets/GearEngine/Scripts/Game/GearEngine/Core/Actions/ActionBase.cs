@@ -10,6 +10,7 @@ namespace GearEngine.Core.Actions
     /// and GetBlackboard() so that existing command logic can remain mostly untouched.
     /// </summary>
     [Serializable]
+    [TriInspector.DrawWithTriInspector]
     public abstract class ActionBase : IAction, IActionWithStatus, IInterruptibleAction, IMonoBehaviourConsumer, IBlackboardConsumer, ICommandContextConsumer, IStringLocationIdentifier
     {
         protected MonoBehaviour host;
@@ -217,6 +218,24 @@ namespace GearEngine.Core.Actions
 
         /// <summary>
         /// Legacy summary method. Can be used if we ever need a custom summary drawer.
+        /// </summary>
+        public virtual bool IsComment()
+        {
+            return false;
+        }
+
+        public virtual bool IsLabel()
+        {
+            return false;
+        }
+
+        public virtual bool IsWeightEligible()
+        {
+            return true;
+        }
+
+        /// <summary>
+        /// Legacy formatting methods
         /// </summary>
         public virtual string GetSummary()
         {

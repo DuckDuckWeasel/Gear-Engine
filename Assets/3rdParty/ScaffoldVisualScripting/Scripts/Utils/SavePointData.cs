@@ -25,7 +25,7 @@ namespace Scaffold
 
         protected static SavePointData Create(string _savePointKey, string _savePointDescription, string _sceneName)
         {
-            var savePointData = new SavePointData();
+            SavePointData savePointData = new SavePointData();
 
             savePointData.savePointKey = _savePointKey;
             savePointData.savePointDescription = _savePointDescription;
@@ -62,10 +62,10 @@ namespace Scaffold
         /// </summary>
         public static string Encode(string _savePointKey, string _savePointDescription, string _sceneName)
         {
-            var savePointData = Create(_savePointKey, _savePointDescription, _sceneName);
+            SavePointData savePointData = Create(_savePointKey, _savePointDescription, _sceneName);
 
             // Look for a SaveData component in the scene to populate the save data items.
-            var saveData = GameObject.FindObjectOfType<SaveData>();
+            SaveData saveData = SaveData.Instance;
             if (saveData != null)
             {
                 saveData.Encode(savePointData.SaveDataItems);
@@ -79,11 +79,12 @@ namespace Scaffold
         /// </summary>
         public static void Decode(string saveDataJSON)
         {
-            var savePointData = JsonUtility.FromJson<SavePointData>(saveDataJSON);
+            SavePointData savePointData = JsonUtility.FromJson<SavePointData>(saveDataJSON);
 
             UnityAction<Scene, LoadSceneMode> onSceneLoadedAction = null;
 
-            onSceneLoadedAction = (scene, mode) =>  {
+            onSceneLoadedAction = (scene, mode) =>
+            {
                 // Additive scene loads and non-matching scene loads could happen if the client is using the
                 // SceneManager directly. We just ignore these events and hope they know what they're doing!
                 if (mode == LoadSceneMode.Additive ||
@@ -95,7 +96,7 @@ namespace Scaffold
                 SceneManager.sceneLoaded -= onSceneLoadedAction;
 
                 // Look for a SaveData component in the scene to process the save data items.
-                var saveData = GameObject.FindObjectOfType<SaveData>();
+                SaveData saveData = SaveData.Instance;
                 if (saveData != null)
                 {
                     saveData.Decode(savePointData.SaveDataItems);
@@ -103,10 +104,10 @@ namespace Scaffold
 
                 SaveManagerSignals.DoSavePointLoaded(savePointData.savePointKey);
             };
-                
+
             SceneManager.sceneLoaded += onSceneLoadedAction;
             SceneManager.LoadScene(savePointData.SceneName);
-        }     
+        }
 
         #endregion
     }

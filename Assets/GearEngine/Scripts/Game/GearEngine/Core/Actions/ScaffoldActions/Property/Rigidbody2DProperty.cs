@@ -15,33 +15,34 @@ namespace Scaffold
     [Serializable]
     public class Rigidbody2DProperty : BaseVariableProperty
     {
-		//generated property
-        public enum Property 
-        { 
-            Position, 
-            Rotation, 
-            Velocity, 
-            AngularVelocity, 
-            UseAutoMass, 
-            Mass, 
-            CenterOfMass, 
-            WorldCenterOfMass, 
-            Inertia, 
-            Drag, 
-            AngularDrag, 
-            GravityScale, 
-            UseFullKinematicContacts, 
-            IsKinematic, 
-            FreezeRotation, 
-            Simulated, 
-            AttachedColliderCount, 
+        //generated property
+        public enum Property
+        {
+            Position,
+            Rotation,
+            Velocity,
+            AngularVelocity,
+            UseAutoMass,
+            Mass,
+            CenterOfMass,
+            WorldCenterOfMass,
+            Inertia,
+            Drag,
+            AngularDrag,
+            GravityScale,
+            UseFullKinematicContacts,
+            IsKinematic,
+            FreezeRotation,
+            Simulated,
+            AttachedColliderCount,
         }
 
-		
+
         [SerializeField]
         protected Property property;
-		
+
         [SerializeField]
+        [Tooltip("The Rigidbody2 d data")]
         protected Rigidbody2DData rigidbody2DData;
 
         [SerializeField]
@@ -49,17 +50,18 @@ namespace Scaffold
                           typeof(FloatVariable),
                           typeof(BooleanVariable),
                           typeof(IntegerVariable))]
+        [Tooltip("The In out var")]
         protected Variable inOutVar;
 
         public override void OnEnter()
         {
-            var iov2 = inOutVar as Vector2Variable;
-            var iof = inOutVar as FloatVariable;
-            var iob = inOutVar as BooleanVariable;
-            var ioi = inOutVar as IntegerVariable;
+            Vector2Variable iov2 = inOutVar as Vector2Variable;
+            FloatVariable iof = inOutVar as FloatVariable;
+            BooleanVariable iob = inOutVar as BooleanVariable;
+            IntegerVariable ioi = inOutVar as IntegerVariable;
 
 
-            var target = rigidbody2DData.Value;
+            Rigidbody2D target = rigidbody2DData.Value;
 
             switch (getOrSet)
             {
@@ -206,7 +208,9 @@ namespace Scaffold
         public override bool HasReference(Variable variable)
         {
             if (rigidbody2DData.rigidbody2DRef == variable || inOutVar == variable)
+            {
                 return true;
+            }
 
             return false;
         }

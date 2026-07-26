@@ -9,6 +9,7 @@ namespace Scaffold
     [AddComponentMenu("")]
     public sealed class ReturnActionStatus : ActionBase
     {
+        [Tooltip("The Success")]
         [SerializeField] private BooleanData success = new BooleanData(true);
 
         public bool Success

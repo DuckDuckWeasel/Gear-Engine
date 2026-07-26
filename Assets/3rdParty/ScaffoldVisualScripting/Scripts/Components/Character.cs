@@ -31,12 +31,18 @@ namespace Scaffold
         [SerializeField] protected SayDialog setSayDialog;
 
         [FormerlySerializedAs("notes")]
-        [TextArea(5,10)]
+        [TextArea(5, 10)]
         [SerializeField] protected string description;
 
         protected PortraitState portaitState = new PortraitState();
 
         protected static List<Character> activeCharacters = new List<Character>();
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void ResetStatics()
+        {
+            activeCharacters.Clear();
+        }
 
         protected virtual void OnEnable()
         {
@@ -149,11 +155,19 @@ namespace Scaffold
         public int Compare(Character x, Character y)
         {
             if (x == y)
+            {
                 return 0;
+            }
+
             if (y == null)
+            {
                 return 1;
+            }
+
             if (x == null)
+            {
                 return -1;
+            }
 
             return x.name.CompareTo(y.name);
         }

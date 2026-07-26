@@ -16,7 +16,9 @@
         "Fungus",
         "FungusEditor",
         "Scaffold",
-        "ScaffoldEditor"
+        "ScaffoldEditor",
+        "TriInspector",
+        "TriInspector.Editor"
     ],
     "includePlatforms": [
         "Editor"

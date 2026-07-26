@@ -15,36 +15,37 @@ namespace Scaffold
     [Serializable]
     public class RigidbodyProperty : BaseVariableProperty
     {
-		//generated property
-        public enum Property 
-        { 
-            Velocity, 
-            AngularVelocity, 
-            Drag, 
-            AngularDrag, 
-            Mass, 
-            UseGravity, 
-            MaxDepenetrationVelocity, 
-            IsKinematic, 
-            FreezeRotation, 
-            CenterOfMass, 
-            WorldCenterOfMass, 
-            InertiaTensorRotation, 
-            InertiaTensor, 
-            DetectCollisions, 
-            Position, 
-            Rotation, 
-            SolverIterations, 
-            SolverVelocityIterations, 
-            SleepThreshold, 
-            MaxAngularVelocity, 
+        //generated property
+        public enum Property
+        {
+            Velocity,
+            AngularVelocity,
+            Drag,
+            AngularDrag,
+            Mass,
+            UseGravity,
+            MaxDepenetrationVelocity,
+            IsKinematic,
+            FreezeRotation,
+            CenterOfMass,
+            WorldCenterOfMass,
+            InertiaTensorRotation,
+            InertiaTensor,
+            DetectCollisions,
+            Position,
+            Rotation,
+            SolverIterations,
+            SolverVelocityIterations,
+            SleepThreshold,
+            MaxAngularVelocity,
         }
 
-		
+
         [SerializeField]
         protected Property property;
-		
+
         [SerializeField]
+        [Tooltip("The Rigidbody data")]
         protected RigidbodyData rigidbodyData;
 
         [SerializeField]
@@ -53,18 +54,19 @@ namespace Scaffold
                           typeof(BooleanVariable),
                           typeof(QuaternionVariable),
                           typeof(IntegerVariable))]
+        [Tooltip("The In out var")]
         protected Variable inOutVar;
 
         public override void OnEnter()
         {
-            var iov = inOutVar as Vector3Variable;
-            var iof = inOutVar as FloatVariable;
-            var iob = inOutVar as BooleanVariable;
-            var ioq = inOutVar as QuaternionVariable;
-            var ioi = inOutVar as IntegerVariable;
+            Vector3Variable iov = inOutVar as Vector3Variable;
+            FloatVariable iof = inOutVar as FloatVariable;
+            BooleanVariable iob = inOutVar as BooleanVariable;
+            QuaternionVariable ioq = inOutVar as QuaternionVariable;
+            IntegerVariable ioi = inOutVar as IntegerVariable;
 
 
-            var target = rigidbodyData.Value;
+            Rigidbody target = rigidbodyData.Value;
 
             switch (getOrSet)
             {
@@ -232,7 +234,9 @@ namespace Scaffold
         public override bool HasReference(Variable variable)
         {
             if (rigidbodyData.rigidbodyRef == variable || inOutVar == variable)
+            {
                 return true;
+            }
 
             return false;
         }

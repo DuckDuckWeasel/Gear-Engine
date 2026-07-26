@@ -6,14 +6,14 @@ using UnityEditor;
 
 namespace Scaffold.EditorUtils
 {
-    [CustomEditor (typeof(SaveMenu), true)]
-    public class SaveMenuEditor : Editor 
+    [CustomEditor(typeof(SaveMenu), true)]
+    public class SaveMenuEditor : Editor
     {
         public override void OnInspectorGUI()
         {
-            if (GUILayout.Button(new GUIContent("Delete Save Data", "Deletes the save data associated with the Save Data Key from PlayerPrefs")))
+            if (GUILayout.Button(new GUIContent("Delete Save Data", "Deletes the save data associated with the Save Data Key")))
             {
-                var saveMenu = target as SaveMenu;
+                SaveMenu saveMenu = target as SaveMenu;
 
                 if (saveMenu != null)
                 {

@@ -69,7 +69,7 @@ namespace GearEngine.GearEngine.Editor
             object currentAction = property.managedReferenceValue;
             for (int actionIndex = 0; actionIndex < targetCommand.actions.Count; actionIndex++)
             {
-                if (ReferenceEquals(targetCommand.actions[actionIndex], currentAction))
+                if (ReferenceEquals(targetCommand.actions[actionIndex].action, currentAction))
                 {
                     continue;
                 }
@@ -77,7 +77,7 @@ namespace GearEngine.GearEngine.Editor
                 string actionId = targetCommand.GetActionId(actionIndex);
                 bool isSelected = ContainsId(targetActionIdsProperty, actionId);
                 lineRect.y += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
-                string actionName = InvokeActionEditorUtility.GetDisplayName(targetCommand.actions[actionIndex]);
+                string actionName = InvokeActionEditorUtility.GetDisplayName(targetCommand.actions[actionIndex].action);
                 bool shouldSelect = EditorGUI.ToggleLeft(lineRect, actionName, isSelected);
                 if (shouldSelect != isSelected)
                 {
@@ -110,9 +110,9 @@ namespace GearEngine.GearEngine.Editor
 
             object currentAction = property.managedReferenceValue;
             int selectableActionCount = 0;
-            foreach (IAction action in targetCommand.actions)
+            foreach (InvokeActionCommand.ActionWrapper wrapper in targetCommand.actions)
             {
-                if (!ReferenceEquals(action, currentAction))
+                if (!ReferenceEquals(wrapper.action, currentAction))
                 {
                     selectableActionCount++;
                 }

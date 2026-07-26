@@ -21,8 +21,10 @@ namespace Scaffold
         protected IntegerData duplicatesToPutInBag = new IntegerData(0);
 
         [SerializeField]
+        [Tooltip("The Current index")]
         protected IntegerData currentIndex = new IntegerData(int.MaxValue);
 
+        [Tooltip("The Is init")]
         protected bool isInit = false;
 
         protected override void OnEnterInner()
@@ -44,7 +46,7 @@ namespace Scaffold
 
         protected void Init()
         {
-            var startingCount = collection.Value.Count;
+            int startingCount = collection.Value.Count;
             for (int i = 0; i < duplicatesToPutInBag.Value; i++)
             {
                 for (int j = 0; j < startingCount; j++)

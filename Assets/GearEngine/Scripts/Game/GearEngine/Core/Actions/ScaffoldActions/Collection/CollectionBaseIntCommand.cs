@@ -12,6 +12,7 @@ namespace Scaffold
     public abstract class CollectionBaseIntCommand : CollectionBaseCommand
     {
         [SerializeField]
+        [Tooltip("The Integer")]
         protected IntegerData integer;
 
         public override void OnEnter()
@@ -34,7 +35,9 @@ namespace Scaffold
         public override string GetSummary()
         {
             if (collection.Value == null)
+            {
                 return "Error: no collection selected";
+            }
 
             return integer.Value.ToString() + " on " + collection.Value.name;
         }

@@ -18,7 +18,9 @@ namespace Scaffold.EditorUtils
             get
             {
                 if (_commandTypes == null || _commandTypes.Count == 0)
+                {
                     CacheCommandTypes();
+                }
 
                 return _commandTypes;
             }
@@ -27,17 +29,18 @@ namespace Scaffold.EditorUtils
         static void CacheCommandTypes()
         {
             _commandTypes = EditorExtensions.FindDerivedTypes(typeof(Command)).Where(x => !x.IsAbstract).ToList();
-            
+
             // Also find all IAction types that have the CommandInfoAttribute
-            var allTypes = AppDomain.CurrentDomain.GetAssemblies().SelectMany(a => {
+            IEnumerable<Type> allTypes = AppDomain.CurrentDomain.GetAssemblies().SelectMany(a =>
+            {
                 try { return a.GetTypes(); } catch { return new Type[0]; }
             });
-            
+
             Type actionType = Type.GetType("GearEngine.Core.Actions.IAction, Game.GearEngine");
             if (actionType != null)
             {
-                var actionTypes = allTypes.Where(t => t != null && actionType.IsAssignableFrom(t) && !t.IsAbstract && !typeof(Command).IsAssignableFrom(t));
-                foreach(var t in actionTypes)
+                IEnumerable<Type> actionTypes = allTypes.Where(t => t != null && actionType.IsAssignableFrom(t) && !t.IsAbstract && !typeof(Command).IsAssignableFrom(t));
+                foreach (Type t in actionTypes)
                 {
                     if (t.GetCustomAttributes(typeof(CommandInfoAttribute), false).Length > 0)
                     {
@@ -63,7 +66,7 @@ namespace Scaffold.EditorUtils
 
         protected override void SelectByOrigIndex(int index)
         {
-            var commandType = (index >= 0 && index < CommandTypes.Count) ? CommandTypes[index] : null;
+            Type commandType = (index >= 0 && index < CommandTypes.Count) ? CommandTypes[index] : null;
             AddCommandCallback(commandType);
         }
 
@@ -71,10 +74,10 @@ namespace Scaffold.EditorUtils
         {
             filteredAttributes = GetFilteredSupportedCommands(curBlock.GetBlackboard());
 
-            foreach (var item in filteredAttributes)
+            foreach (KeyValuePair<Type, CommandInfoAttribute> item in filteredAttributes)
             {
                 //force lookup to orig index here to account for commmand lists being filtered by users
-                var newFilteredItem = new FilteredListItem(CommandTypes.IndexOf(item.Key), (item.Value.Category.Length > 0 ? item.Value.Category + CATEGORY_CHAR : "") + item.Value.CommandName, item.Value.HelpText);
+                FilteredListItem newFilteredItem = new FilteredListItem(CommandTypes.IndexOf(item.Key), (item.Value.Category.Length > 0 ? item.Value.Category + CATEGORY_CHAR : "") + item.Value.CommandName, item.Value.HelpText);
                 allItems.Add(newFilteredItem);
             }
         }
@@ -86,7 +89,7 @@ namespace Scaffold.EditorUtils
 
             if (!ScaffoldEditorPreferences.useLegacyMenus)
             {
-                var win = new CommandSelectorPopupWindowContent(currentHandlerName,
+                CommandSelectorPopupWindowContent win = new CommandSelectorPopupWindowContent(currentHandlerName,
                     width, (int)(height - EditorGUIUtility.singleLineHeight * 3));
                 PopupWindow.Show(position, win);
             }
@@ -110,7 +113,7 @@ namespace Scaffold.EditorUtils
 
             return filteredAttributes;
         }
-        
+
 
         static protected void DoOlderMenu()
         {
@@ -118,7 +121,7 @@ namespace Scaffold.EditorUtils
 
             // Build menu list
 
-            foreach (var keyPair in filteredAttributes)
+            foreach (KeyValuePair<Type, CommandInfoAttribute> keyPair in filteredAttributes)
             {
                 GUIContent menuItem;
                 if (keyPair.Value.Category == "")
@@ -149,17 +152,17 @@ namespace Scaffold.EditorUtils
 
         static protected void AddCommandCallback(Type commandType)
         {
-            var block = curBlock;
+            Block block = curBlock;
             if (block == null || commandType == null)
             {
                 return;
             }
 
-            var blackboard = (Blackboard)block.GetBlackboard();
+            Blackboard blackboard = (Blackboard)block.GetBlackboard();
 
             // Use index of last selected command in list, or end of list if nothing selected.
             int index = -1;
-            foreach (var command in blackboard.SelectedCommands)
+            foreach (Command command in blackboard.SelectedCommands)
             {
                 if (command.CommandIndex + 1 > index)
                 {
@@ -183,15 +186,20 @@ namespace Scaffold.EditorUtils
                 if (wrapperType != null)
                 {
                     newCommand = Undo.AddComponent(block.gameObject, wrapperType) as Command;
-                    var newAction = Activator.CreateInstance(commandType);
-                    
-                    var actionsField = wrapperType.GetField("actions", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
+                    object newAction = Activator.CreateInstance(commandType);
+
+                    System.Reflection.FieldInfo actionsField = wrapperType.GetField("actions", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
                     if (actionsField != null)
                     {
-                        var list = actionsField.GetValue(newCommand) as System.Collections.IList;
+                        System.Collections.IList list = actionsField.GetValue(newCommand) as System.Collections.IList;
                         if (list != null)
                         {
-                            list.Add(newAction);
+                            Type actionWrapperType = wrapperType.GetNestedType("ActionWrapper", System.Reflection.BindingFlags.Public);
+                            if (actionWrapperType != null)
+                            {
+                                object wrapperInstance = Activator.CreateInstance(actionWrapperType, new object[] { newAction });
+                                list.Add(wrapperInstance);
+                            }
                         }
                     }
                 }

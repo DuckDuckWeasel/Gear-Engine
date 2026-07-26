@@ -29,11 +29,11 @@ namespace Scaffold
     /// <summary>
     /// Controls the stage on which character portraits are displayed.
     /// </summary>
-    [CommandInfo("Narrative", 
+    [CommandInfo("Narrative",
                  "Control Stage",
                  "Controls the stage on which character portraits are displayed.")]
     [Serializable]
-    public class ControlStage : ControlWithDisplay<StageDisplayType> 
+    public class ControlStage : ControlWithDisplay<StageDisplayType>
     {
         [Tooltip("Stage to display characters on")]
         [SerializeField] protected Stage stage;
@@ -48,11 +48,11 @@ namespace Scaffold
 
         [Tooltip("Fade Duration")]
         [SerializeField] protected float fadeDuration;
-        
+
         [Tooltip("Wait until the tween has finished before executing the next command")]
         [SerializeField] protected bool waitUntilFinished = false;
 
-        protected virtual void Show(Stage stage, bool visible) 
+        protected virtual void Show(Stage stage, bool visible)
         {
             float duration = (fadeDuration == 0) ? float.Epsilon : fadeDuration;
             float targetAlpha = visible ? 1f : 0f;
@@ -64,19 +64,21 @@ namespace Scaffold
                 return;
             }
 
-            LeanTween.value(canvasGroup.gameObject.gameObject, canvasGroup.alpha, targetAlpha, duration).setOnUpdate( (float alpha) => {
+            LeanTween.value(canvasGroup.gameObject.gameObject, canvasGroup.alpha, targetAlpha, duration).setOnUpdate((float alpha) =>
+            {
                 canvasGroup.alpha = alpha;
-            }).setOnComplete( () => {
+            }).setOnComplete(() =>
+            {
                 OnComplete();
             });
         }
 
         protected virtual void MoveToFront(Stage stage)
         {
-            var activeStages = Stage.ActiveStages;
+            System.Collections.Generic.List<Stage> activeStages = Stage.ActiveStages;
             for (int i = 0; i < activeStages.Count; i++)
             {
-                var s = activeStages[i];
+                Stage s = activeStages[i];
                 if (s == stage)
                 {
                     s.PortraitCanvas.sortingOrder = 1;
@@ -88,23 +90,23 @@ namespace Scaffold
             }
         }
 
-        protected virtual void UndimAllPortraits(Stage stage) 
+        protected virtual void UndimAllPortraits(Stage stage)
         {
             stage.DimPortraits = false;
-            var charactersOnStage = stage.CharactersOnStage;
+            System.Collections.Generic.List<Character> charactersOnStage = stage.CharactersOnStage;
             for (int i = 0; i < charactersOnStage.Count; i++)
             {
-                var character = charactersOnStage[i];
+                Character character = charactersOnStage[i];
                 stage.SetDimmed(character, false);
             }
         }
 
-        protected virtual void DimNonSpeakingPortraits(Stage stage) 
+        protected virtual void DimNonSpeakingPortraits(Stage stage)
         {
             stage.DimPortraits = true;
         }
 
-        protected virtual void OnComplete() 
+        protected virtual void OnComplete()
         {
             if (waitUntilFinished)
             {
@@ -124,10 +126,10 @@ namespace Scaffold
             }
 
             // Selected "use default Portrait Stage"
-            if (stage == null)           
+            if (stage == null)
             {
                 // If no default specified, try to get any portrait stage in the scene
-                stage = FindObjectOfType<Stage>();
+                stage = Stage.GetActiveStage();
 
                 // If portrait stage does not exist, do nothing
                 if (stage == null)
@@ -136,13 +138,13 @@ namespace Scaffold
                     return;
                 }
             }
-           
+
             // Selected "use default Portrait Stage"
             if (display == StageDisplayType.Swap)            // Default portrait stage selected
             {
                 if (replacedStage == null)        // If no default specified, try to get any portrait stage in the scene
                 {
-                    replacedStage = GameObject.FindObjectOfType<Stage>();
+                    replacedStage = Stage.GetActiveStage();
                 }
                 // If portrait stage does not exist, do nothing
                 if (replacedStage == null)
@@ -156,27 +158,27 @@ namespace Scaffold
             {
                 fadeDuration = stage.FadeDuration;
             }
-            switch(display)
+            switch (display)
             {
-            case (StageDisplayType.Show):
-                Show(stage, true);
-                break;
-            case (StageDisplayType.Hide):
-                Show(stage, false);
-                break;
-            case (StageDisplayType.Swap):
-                Show(stage, true);
-                Show(replacedStage, false);
-                break;
-            case (StageDisplayType.MoveToFront):
-                MoveToFront(stage);
-                break;
-            case (StageDisplayType.UndimAllPortraits):
-                UndimAllPortraits(stage);
-                break;
-            case (StageDisplayType.DimNonSpeakingPortraits):
-                DimNonSpeakingPortraits(stage);
-                break;
+                case (StageDisplayType.Show):
+                    Show(stage, true);
+                    break;
+                case (StageDisplayType.Hide):
+                    Show(stage, false);
+                    break;
+                case (StageDisplayType.Swap):
+                    Show(stage, true);
+                    Show(replacedStage, false);
+                    break;
+                case (StageDisplayType.MoveToFront):
+                    MoveToFront(stage);
+                    break;
+                case (StageDisplayType.UndimAllPortraits):
+                    UndimAllPortraits(stage);
+                    break;
+                case (StageDisplayType.DimNonSpeakingPortraits):
+                    DimNonSpeakingPortraits(stage);
+                    break;
             }
 
             if (!waitUntilFinished)
@@ -203,7 +205,7 @@ namespace Scaffold
             }
             return displaySummary + stageSummary;
         }
-        
+
         public override Color GetButtonColor()
         {
             return new Color32(230, 200, 250, 255);

@@ -9,44 +9,48 @@ using MoonSharp.Interpreter;
 
 namespace Scaffold
 {
-	[Serializable]
-    public class LuaCondition : Condition 
-	{
+    [Serializable]
+    public class LuaCondition : Condition
+    {
         [Tooltip("Lua Environment to use to execute this Lua script (null for global)")]
         [SerializeField] protected LuaEnvironment luaEnvironment;
 
-		[Tooltip("The lua comparison string to run; implicitly prepends 'return' onto this")]
-		[TextArea]
-		public string luaCompareString;
+        [Tooltip("The lua comparison string to run; implicitly prepends 'return' onto this")]
+        [TextArea]
+        public string luaCompareString;
+        [Tooltip("The Initialised")]
         protected bool initialised;
+        [Tooltip("The Friendly name")]
         protected string friendlyName = "";
+        [Tooltip("The Lua function")]
         protected Closure luaFunction;
 
-		protected override bool EvaluateCondition()
-		{
-			bool condition = false;
-            luaEnvironment.RunLuaFunction(luaFunction, false, (returnValue) => {
-				if( returnValue != null )
-				{
-					condition = returnValue.Boolean;
-				}
-				else
-				{
-					Debug.LogWarning("No return value from " + friendlyName);
-				}
+        protected override bool EvaluateCondition()
+        {
+            bool condition = false;
+            luaEnvironment.RunLuaFunction(luaFunction, false, (returnValue) =>
+            {
+                if (returnValue != null)
+                {
+                    condition = returnValue.Boolean;
+                }
+                else
+                {
+                    Debug.LogWarning("No return value from " + friendlyName);
+                }
             });
-			return condition;
-		}
+            return condition;
+        }
 
-		protected override bool HasNeededProperties()
-		{
-			return !string.IsNullOrEmpty(luaCompareString);
-		}
+        protected override bool HasNeededProperties()
+        {
+            return !string.IsNullOrEmpty(luaCompareString);
+        }
 
         protected virtual void Start()
         {
             InitExecuteLua();
-		}
+        }
 
         protected virtual string GetLuaString()
         {
@@ -69,13 +73,13 @@ namespace Scaffold
             Blackboard blackboard = GetBlackboard();
 
             // See if a Lua Environment has been assigned to this Blackboard
-            if (luaEnvironment == null)        
+            if (luaEnvironment == null)
             {
                 luaEnvironment = blackboard.LuaEnv;
             }
-            
+
             // No Lua Environment specified so just use any available or create one.
-            if (luaEnvironment == null)        
+            if (luaEnvironment == null)
             {
                 luaEnvironment = LuaEnvironment.GetLua();
             }
@@ -88,32 +92,32 @@ namespace Scaffold
             {
                 Table globals = luaEnvironment.Interpreter.Globals;
                 if (globals != null)
-				{
-                	globals[blackboard.LuaBindingName] = blackboard;
-				}
+                {
+                    globals[blackboard.LuaBindingName] = blackboard;
+                }
             }
 
             // Always initialise when playing in the editor.
             // Allows the user to edit the Lua script while the game is playing.
-            if ( !(Application.isPlaying && Application.isEditor) )
+            if (!(Application.isPlaying && Application.isEditor))
             {
                 initialised = true;
             }
 
         }
 
-		#region Public members
+        #region Public members
 
-		public override string GetSummary()
-		{
-			if (string.IsNullOrEmpty(luaCompareString))
-			{
-				return "Error: no lua compare string provided";
-			}
+        public override string GetSummary()
+        {
+            if (string.IsNullOrEmpty(luaCompareString))
+            {
+                return "Error: no lua compare string provided";
+            }
 
-			return luaCompareString;
-		}
+            return luaCompareString;
+        }
 
-		#endregion
-	}
+        #endregion
+    }
 }

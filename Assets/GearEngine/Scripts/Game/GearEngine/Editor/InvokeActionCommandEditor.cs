@@ -18,9 +18,6 @@ namespace GearEngine.GearEngine.Editor
 
         private ReorderableList _actionsList;
         private SerializedProperty _actionsProperty;
-        private SerializedProperty _actionEnabledProperty;
-        private SerializedProperty _actionIdsProperty;
-        private SerializedProperty _actionUtilitySettingsProperty;
         private int _lastSynchronizedActionIndex = -1;
         private static readonly List<ActionClipboardEntry> ActionClipboard =
             new List<ActionClipboardEntry>();
@@ -41,9 +38,6 @@ namespace GearEngine.GearEngine.Editor
             }
 
             _actionsProperty = serializedObject.FindProperty("actions");
-            _actionEnabledProperty = serializedObject.FindProperty("actionEnabled");
-            _actionIdsProperty = serializedObject.FindProperty("actionIds");
-            _actionUtilitySettingsProperty = serializedObject.FindProperty("actionUtilitySettings");
             SynchronizeActionMetadata();
             CreateActionsList();
         }
@@ -150,7 +144,7 @@ namespace GearEngine.GearEngine.Editor
 
         private void DrawStandaloneAction()
         {
-            SerializedProperty actionProperty = _actionsProperty.GetArrayElementAtIndex(0);
+            SerializedProperty actionProperty = _actionsProperty.GetArrayElementAtIndex(0).FindPropertyRelative("action");
             SerializedProperty property = actionProperty.Copy();
             SerializedProperty endProperty = property.GetEndProperty();
             bool enterChildren = true;
@@ -158,6 +152,13 @@ namespace GearEngine.GearEngine.Editor
                    !SerializedProperty.EqualContents(property, endProperty))
             {
                 enterChildren = false;
+                if (!InvokeActionEditorUtility.IsPropertyVisible(
+                        actionProperty.managedReferenceValue as IAction,
+                        property.name))
+                {
+                    continue;
+                }
+
                 EditorGUILayout.PropertyField(property, true);
             }
         }
@@ -180,14 +181,15 @@ namespace GearEngine.GearEngine.Editor
                 return false;
             }
 
-            action = invokeAction.actions[0];
+            action = invokeAction.actions[0].action;
             return action != null;
         }
 
         private void DrawActionElement(Rect rect, int index, bool isActive, bool isFocused)
         {
-            SerializedProperty actionProperty = _actionsProperty.GetArrayElementAtIndex(index);
-            SerializedProperty enabledProperty = _actionEnabledProperty.GetArrayElementAtIndex(index);
+            SerializedProperty wrapperProperty = _actionsProperty.GetArrayElementAtIndex(index);
+            SerializedProperty actionProperty = wrapperProperty.FindPropertyRelative("action");
+            SerializedProperty enabledProperty = wrapperProperty.FindPropertyRelative("enabled");
             const float ToggleWidth = 20f;
             const float WeightWidth = 58f;
             const float PercentageToggleWidth = 20f;
@@ -238,51 +240,11 @@ namespace GearEngine.GearEngine.Editor
                 return;
             }
 
-            IAction action = actionProperty.managedReferenceValue as IAction;
-            int originalIndentLevel = EditorGUI.indentLevel;
-            EditorGUI.indentLevel = 0;
-            Rect foldoutRect = new Rect(
-                headerRect.x,
-                headerRect.y,
-                20f,
-                headerRect.height);
-            Rect actionNameRect = new Rect(
-                foldoutRect.xMax,
-                headerRect.y,
-                headerRect.width - foldoutRect.width,
-                headerRect.height);
-            Rect issueBadgeRect = new Rect(
-                actionNameRect.xMax - EditorGUIUtility.singleLineHeight,
-                actionNameRect.y,
-                EditorGUIUtility.singleLineHeight,
-                actionNameRect.height);
-            bool hasIssue = InvokeActionEditorUtility.DrawActionIssueBadge(
-                issueBadgeRect,
-                action);
-            if (hasIssue)
-            {
-                actionNameRect.width -= issueBadgeRect.width;
-            }
-            try
-            {
-                actionProperty.isExpanded = EditorGUI.Foldout(
-                    foldoutRect,
-                    actionProperty.isExpanded,
-                    GUIContent.none,
-                    false);
-                GUI.Label(
-                    actionNameRect,
-                    InvokeActionEditorUtility.GetDisplayName(action),
-                    EditorStyles.boldLabel);
-            }
-            finally
-            {
-                EditorGUI.indentLevel = originalIndentLevel;
-            }
-
+            // The foldout and type picker will be drawn by TriInspector!
+            // We just need to check if it's expanded to draw the rest of the utility settings.
             if (!actionProperty.isExpanded)
             {
-                return;
+                return; // Actually, if we don't draw utility settings when collapsed, return is fine.
             }
 
             float propertiesHeight = GetActionPropertiesHeight(actionProperty);
@@ -298,8 +260,7 @@ namespace GearEngine.GearEngine.Editor
                 return;
             }
 
-            SerializedProperty settingsProperty =
-                _actionUtilitySettingsProperty.GetArrayElementAtIndex(index);
+            SerializedProperty settingsProperty = wrapperProperty.FindPropertyRelative("utilitySettings");
             SerializedProperty utilityProperty = settingsProperty.FindPropertyRelative("utility");
             SerializedProperty blockProperty = settingsProperty.FindPropertyRelative("blockDuringExecution");
             float utilityHeight = EditorGUI.GetPropertyHeight(utilityProperty, true);
@@ -344,8 +305,7 @@ namespace GearEngine.GearEngine.Editor
             }
             if (EditorGUI.EndChangeCheck())
             {
-                SerializedProperty settingsProperty =
-                    _actionUtilitySettingsProperty.GetArrayElementAtIndex(index);
+                SerializedProperty settingsProperty = _actionsProperty.GetArrayElementAtIndex(index).FindPropertyRelative("utilitySettings");
                 settingsProperty.FindPropertyRelative("weight").floatValue =
                     Mathf.Clamp(requestedWeight, 0f, 100f);
                 settingsProperty.FindPropertyRelative("weightInitialized").boolValue = true;
@@ -366,8 +326,7 @@ namespace GearEngine.GearEngine.Editor
                 return;
             }
 
-            SerializedProperty actionSettings =
-                _actionUtilitySettingsProperty.GetArrayElementAtIndex(index);
+            SerializedProperty actionSettings = _actionsProperty.GetArrayElementAtIndex(index).FindPropertyRelative("utilitySettings");
             if (requestedOverride)
             {
                 actionSettings.FindPropertyRelative("weight").floatValue = weight;
@@ -468,11 +427,9 @@ namespace GearEngine.GearEngine.Editor
             {
                 ActionClipboardEntry entry = ScriptableObject.CreateInstance<ActionClipboardEntry>();
                 entry.hideFlags = HideFlags.HideAndDontSave;
-                entry.action = invokeAction.actions[actionIndex];
+                entry.action = invokeAction.actions[actionIndex].action;
                 entry.isEnabled = invokeAction.IsActionEnabled(actionIndex);
-                entry.utilitySettings = (InvokeActionUtilitySettings)_actionUtilitySettingsProperty
-                    .GetArrayElementAtIndex(actionIndex)
-                    .boxedValue;
+                entry.utilitySettings = invokeAction.actions[actionIndex].utilitySettings;
                 ActionClipboard.Add(entry);
             }
         }
@@ -555,17 +512,12 @@ namespace GearEngine.GearEngine.Editor
             foreach (ActionClipboardEntry entry in ActionClipboard)
             {
                 _actionsProperty.InsertArrayElementAtIndex(insertIndex);
-                _actionEnabledProperty.InsertArrayElementAtIndex(insertIndex);
-                _actionIdsProperty.InsertArrayElementAtIndex(insertIndex);
-                _actionUtilitySettingsProperty.InsertArrayElementAtIndex(insertIndex);
-
-                _actionsProperty.GetArrayElementAtIndex(insertIndex).managedReferenceValue = entry.action;
-                _actionsProperty.GetArrayElementAtIndex(insertIndex).isExpanded = true;
-                _actionEnabledProperty.GetArrayElementAtIndex(insertIndex).boolValue = entry.isEnabled;
-                _actionIdsProperty.GetArrayElementAtIndex(insertIndex).stringValue =
-                    Guid.NewGuid().ToString("N");
-                _actionUtilitySettingsProperty.GetArrayElementAtIndex(insertIndex).boxedValue =
-                    entry.utilitySettings;
+                SerializedProperty wrapperProp = _actionsProperty.GetArrayElementAtIndex(insertIndex);
+                wrapperProp.FindPropertyRelative("action").managedReferenceValue = entry.action;
+                wrapperProp.FindPropertyRelative("action").isExpanded = true;
+                wrapperProp.FindPropertyRelative("enabled").boolValue = entry.isEnabled;
+                wrapperProp.FindPropertyRelative("id").stringValue = System.Guid.NewGuid().ToString("N");
+                wrapperProp.FindPropertyRelative("utilitySettings").boxedValue = entry.utilitySettings;
                 insertIndex++;
             }
 
@@ -590,9 +542,6 @@ namespace GearEngine.GearEngine.Editor
             {
                 int actionIndex = selectedIndices[selectionIndex];
                 _actionsProperty.DeleteArrayElementAtIndex(actionIndex);
-                _actionEnabledProperty.DeleteArrayElementAtIndex(actionIndex);
-                _actionIdsProperty.DeleteArrayElementAtIndex(actionIndex);
-                _actionUtilitySettingsProperty.DeleteArrayElementAtIndex(actionIndex);
             }
 
             serializedObject.ApplyModifiedProperties();
@@ -623,6 +572,13 @@ namespace GearEngine.GearEngine.Editor
                        IsActionChildProperty(actionProperty, property))
                 {
                     enterChildren = false;
+                    if (!InvokeActionEditorUtility.IsPropertyVisible(
+                            actionProperty.managedReferenceValue as IAction,
+                            property.name))
+                    {
+                        continue;
+                    }
+
                     float propertyHeight = EditorGUI.GetPropertyHeight(property, true);
                     Rect propertyRect = new Rect(
                         propertiesRect.x,
@@ -641,7 +597,8 @@ namespace GearEngine.GearEngine.Editor
 
         private float GetActionElementHeight(int index)
         {
-            SerializedProperty actionProperty = _actionsProperty.GetArrayElementAtIndex(index);
+            SerializedProperty wrapperProperty = _actionsProperty.GetArrayElementAtIndex(index);
+            SerializedProperty actionProperty = wrapperProperty.FindPropertyRelative("action");
             float height = EditorGUIUtility.singleLineHeight;
             if (actionProperty.managedReferenceValue != null && actionProperty.isExpanded)
             {
@@ -655,8 +612,7 @@ namespace GearEngine.GearEngine.Editor
                 return height;
             }
 
-            SerializedProperty settingsProperty =
-                _actionUtilitySettingsProperty.GetArrayElementAtIndex(index);
+            SerializedProperty settingsProperty = wrapperProperty.FindPropertyRelative("utilitySettings");
             SerializedProperty utilityProperty = settingsProperty.FindPropertyRelative("utility");
             height += EditorGUI.GetPropertyHeight(utilityProperty, true);
             height += EditorGUIUtility.singleLineHeight;
@@ -673,6 +629,13 @@ namespace GearEngine.GearEngine.Editor
                    IsActionChildProperty(actionProperty, property))
             {
                 enterChildren = false;
+                if (!InvokeActionEditorUtility.IsPropertyVisible(
+                        actionProperty.managedReferenceValue as IAction,
+                        property.name))
+                {
+                    continue;
+                }
+
                 height += EditorGUI.GetPropertyHeight(property, true) +
                           EditorGUIUtility.standardVerticalSpacing;
             }
@@ -723,16 +686,13 @@ namespace GearEngine.GearEngine.Editor
             serializedObject.Update();
 
             _actionsProperty.InsertArrayElementAtIndex(insertIndex);
-            _actionEnabledProperty.InsertArrayElementAtIndex(insertIndex);
-            _actionIdsProperty.InsertArrayElementAtIndex(insertIndex);
-            _actionUtilitySettingsProperty.InsertArrayElementAtIndex(insertIndex);
-            _actionEnabledProperty.GetArrayElementAtIndex(insertIndex).boolValue = true;
-            _actionIdsProperty.GetArrayElementAtIndex(insertIndex).stringValue = Guid.NewGuid().ToString("N");
-            _actionUtilitySettingsProperty.GetArrayElementAtIndex(insertIndex).boxedValue =
-                new InvokeActionUtilitySettings(0f, false);
-            SerializedProperty actionProperty = _actionsProperty.GetArrayElementAtIndex(insertIndex);
-            actionProperty.managedReferenceValue = Activator.CreateInstance(actionType);
-            actionProperty.isExpanded = true;
+            SerializedProperty wrapperProp = _actionsProperty.GetArrayElementAtIndex(insertIndex);
+            wrapperProp.FindPropertyRelative("enabled").boolValue = true;
+            wrapperProp.FindPropertyRelative("id").stringValue = Guid.NewGuid().ToString("N");
+            wrapperProp.FindPropertyRelative("utilitySettings").boxedValue = new InvokeActionUtilitySettings(0f, false);
+            SerializedProperty actionProp = wrapperProp.FindPropertyRelative("action");
+            actionProp.managedReferenceValue = Activator.CreateInstance(actionType);
+            wrapperProp.isExpanded = true;
             // Actions added through this Inspector belong to an explicit Action Invoker,
             // even when it currently contains only one action.
             serializedObject.FindProperty("displayAsGroup").boolValue = true;
@@ -755,9 +715,6 @@ namespace GearEngine.GearEngine.Editor
                 serializedObject.FindProperty("displayAsGroup").boolValue = true;
             }
             _actionsProperty.DeleteArrayElementAtIndex(list.index);
-            _actionEnabledProperty.DeleteArrayElementAtIndex(list.index);
-            _actionIdsProperty.DeleteArrayElementAtIndex(list.index);
-            _actionUtilitySettingsProperty.DeleteArrayElementAtIndex(list.index);
             serializedObject.ApplyModifiedProperties();
             EditorUtility.SetDirty(target);
             SelectClosestAction(list.index);
@@ -765,27 +722,6 @@ namespace GearEngine.GearEngine.Editor
 
         private void ReorderEnabledStates(ReorderableList list, int oldIndex, int newIndex)
         {
-            if (oldIndex < 0 || oldIndex >= _actionEnabledProperty.arraySize ||
-                newIndex < 0 || newIndex >= _actionEnabledProperty.arraySize)
-            {
-                return;
-            }
-
-            bool enabled = _actionEnabledProperty.GetArrayElementAtIndex(oldIndex).boolValue;
-            string actionId = _actionIdsProperty.GetArrayElementAtIndex(oldIndex).stringValue;
-            InvokeActionUtilitySettings utilitySettings =
-                (InvokeActionUtilitySettings)_actionUtilitySettingsProperty
-                    .GetArrayElementAtIndex(oldIndex)
-                    .boxedValue;
-            _actionEnabledProperty.DeleteArrayElementAtIndex(oldIndex);
-            _actionEnabledProperty.InsertArrayElementAtIndex(newIndex);
-            _actionEnabledProperty.GetArrayElementAtIndex(newIndex).boolValue = enabled;
-            _actionIdsProperty.DeleteArrayElementAtIndex(oldIndex);
-            _actionIdsProperty.InsertArrayElementAtIndex(newIndex);
-            _actionIdsProperty.GetArrayElementAtIndex(newIndex).stringValue = actionId;
-            _actionUtilitySettingsProperty.DeleteArrayElementAtIndex(oldIndex);
-            _actionUtilitySettingsProperty.InsertArrayElementAtIndex(newIndex);
-            _actionUtilitySettingsProperty.GetArrayElementAtIndex(newIndex).boxedValue = utilitySettings;
             serializedObject.ApplyModifiedProperties();
             EditorUtility.SetDirty(target);
             InvokeActionEditorSelection.Select(target as InvokeActionCommand, newIndex);
@@ -830,50 +766,14 @@ namespace GearEngine.GearEngine.Editor
 
         private void SynchronizeActionMetadata()
         {
-            while (_actionEnabledProperty.arraySize < _actionsProperty.arraySize)
+            for (int actionIndex = 0; actionIndex < _actionsProperty.arraySize; actionIndex++)
             {
-                _actionEnabledProperty.InsertArrayElementAtIndex(_actionEnabledProperty.arraySize);
-                _actionEnabledProperty.GetArrayElementAtIndex(_actionEnabledProperty.arraySize - 1).boolValue = true;
-            }
-
-            while (_actionEnabledProperty.arraySize > _actionsProperty.arraySize)
-            {
-                _actionEnabledProperty.DeleteArrayElementAtIndex(_actionEnabledProperty.arraySize - 1);
-            }
-
-            while (_actionIdsProperty.arraySize < _actionsProperty.arraySize)
-            {
-                _actionIdsProperty.InsertArrayElementAtIndex(_actionIdsProperty.arraySize);
-                _actionIdsProperty.GetArrayElementAtIndex(_actionIdsProperty.arraySize - 1).stringValue = Guid.NewGuid().ToString("N");
-            }
-
-            while (_actionIdsProperty.arraySize > _actionsProperty.arraySize)
-            {
-                _actionIdsProperty.DeleteArrayElementAtIndex(_actionIdsProperty.arraySize - 1);
-            }
-
-            while (_actionUtilitySettingsProperty.arraySize < _actionsProperty.arraySize)
-            {
-                int newSettingsIndex = _actionUtilitySettingsProperty.arraySize;
-                _actionUtilitySettingsProperty.InsertArrayElementAtIndex(newSettingsIndex);
-                _actionUtilitySettingsProperty.GetArrayElementAtIndex(newSettingsIndex).boxedValue =
-                    new InvokeActionUtilitySettings(0f, false);
-            }
-
-            while (_actionUtilitySettingsProperty.arraySize > _actionsProperty.arraySize)
-            {
-                _actionUtilitySettingsProperty.DeleteArrayElementAtIndex(
-                    _actionUtilitySettingsProperty.arraySize - 1);
-            }
-
-            for (int actionIndex = 0; actionIndex < _actionIdsProperty.arraySize; actionIndex++)
-            {
-                SerializedProperty actionIdProperty = _actionIdsProperty.GetArrayElementAtIndex(actionIndex);
+                SerializedProperty wrapperProp = _actionsProperty.GetArrayElementAtIndex(actionIndex);
+                SerializedProperty actionIdProperty = wrapperProp.FindPropertyRelative("id");
                 if (string.IsNullOrEmpty(actionIdProperty.stringValue))
                 {
                     actionIdProperty.stringValue = Guid.NewGuid().ToString("N");
                 }
-
             }
         }
 

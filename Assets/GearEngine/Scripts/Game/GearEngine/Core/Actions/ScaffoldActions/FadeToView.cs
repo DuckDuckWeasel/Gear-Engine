@@ -8,11 +8,11 @@ namespace Scaffold
     /// <summary>
     /// Fades the camera out and in again at a position specified by a View object.
     /// </summary>
-    [CommandInfo("Camera", 
-                 "Fade To View", 
+    [CommandInfo("Camera",
+                 "Fade To View",
                  "Fades the camera out and in again at a position specified by a View object.")]
     [Serializable]
-    public class FadeToView : ActionBase 
+    public class FadeToView : ActionBase
     {
         [Tooltip("Time for fade effect to complete")]
         [SerializeField] protected float duration = 1f;
@@ -53,10 +53,6 @@ namespace Scaffold
             }
 
             targetCamera = Camera.main;
-            if (targetCamera == null)
-            {
-                targetCamera = GameObject.FindObjectOfType<Camera>();
-            }
         }
 
         #region Public members
@@ -76,7 +72,7 @@ namespace Scaffold
                 return;
             }
 
-            var cameraManager = ScaffoldManager.Instance.CameraManager;
+            CameraManager cameraManager = ScaffoldManager.Instance.CameraManager;
 
             if (fadeTexture)
             {
@@ -87,7 +83,8 @@ namespace Scaffold
                 cameraManager.ScreenFadeTexture = CameraManager.CreateColorTexture(fadeColor, 32, 32);
             }
 
-            cameraManager.FadeToView(targetCamera, targetView, duration, fadeOut, delegate { 
+            cameraManager.FadeToView(targetCamera, targetView, duration, fadeOut, delegate
+            {
                 if (waitUntilFinished)
                 {
                     Continue();
@@ -102,7 +99,7 @@ namespace Scaffold
 
         public override void OnStopExecuting()
         {
-            var cameraManager = ScaffoldManager.Instance.CameraManager;
+            CameraManager cameraManager = ScaffoldManager.Instance.CameraManager;
 
             cameraManager.Stop();
         }

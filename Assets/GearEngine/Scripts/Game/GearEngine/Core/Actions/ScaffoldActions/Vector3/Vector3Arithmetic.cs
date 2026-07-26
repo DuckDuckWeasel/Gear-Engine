@@ -28,6 +28,7 @@ namespace Scaffold
         }
 
         [SerializeField]
+        [Tooltip("The Operation")]
         protected Operation operation = Operation.Add;
 
         public override void OnEnter()
@@ -77,7 +78,9 @@ namespace Scaffold
         public override bool HasReference(Variable variable)
         {
             if (lhs.vector3Ref == variable || rhs.vector3Ref == variable || output.vector3Ref == variable)
+            {
                 return true;
+            }
 
             return false;
         }

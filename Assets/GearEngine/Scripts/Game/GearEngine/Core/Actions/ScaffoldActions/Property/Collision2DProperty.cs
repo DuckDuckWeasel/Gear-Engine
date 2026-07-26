@@ -15,26 +15,27 @@ namespace Scaffold
     [Serializable]
     public class Collision2DProperty : BaseVariableProperty
     {
-		//generated property
-        public enum Property 
-        { 
-            Rigidbody, 
-            OtherRigidbody, 
-            Transform, 
-            GameObject, 
-            RelativeVelocity, 
-            Enabled, 
-            Collider, 
-            OtherCollider, 
-            ContactCount, 
+        //generated property
+        public enum Property
+        {
+            Rigidbody,
+            OtherRigidbody,
+            Transform,
+            GameObject,
+            RelativeVelocity,
+            Enabled,
+            Collider,
+            OtherCollider,
+            ContactCount,
         }
 
-		
+
         [SerializeField]
         protected Property property;
-		
+
         [SerializeField]
         [VariableProperty(typeof(Collision2DVariable))]
+        [Tooltip("The Collision2 d var")]
         protected Collision2DVariable collision2DVar;
 
         [SerializeField]
@@ -45,22 +46,23 @@ namespace Scaffold
                           typeof(Vector2Variable),
                           typeof(BooleanVariable),
                           typeof(IntegerVariable))]
+        [Tooltip("The In out var")]
         protected Variable inOutVar;
 
         public override void OnEnter()
         {
-            var ioc2d = inOutVar as Collider2DVariable;
-            var iorb2d = inOutVar as Rigidbody2DVariable;
-            var iot = inOutVar as TransformVariable;
-            var iogo = inOutVar as GameObjectVariable;
-            var iov2 = inOutVar as Vector2Variable;
-            var iob = inOutVar as BooleanVariable;
+            Collider2DVariable ioc2d = inOutVar as Collider2DVariable;
+            Rigidbody2DVariable iorb2d = inOutVar as Rigidbody2DVariable;
+            TransformVariable iot = inOutVar as TransformVariable;
+            GameObjectVariable iogo = inOutVar as GameObjectVariable;
+            Vector2Variable iov2 = inOutVar as Vector2Variable;
+            BooleanVariable iob = inOutVar as BooleanVariable;
 #if UNITY_2019_2_OR_NEWER
-            var ioi = inOutVar as IntegerVariable;
+            IntegerVariable ioi = inOutVar as IntegerVariable;
 #endif
 
 
-            var target = collision2DVar.Value;
+            UnityEngine.Collision2D target = collision2DVar.Value;
 
             switch (getOrSet)
             {
@@ -140,7 +142,9 @@ namespace Scaffold
         public override bool HasReference(Variable variable)
         {
             if (collision2DVar == variable || inOutVar == variable)
+            {
                 return true;
+            }
 
             return false;
         }

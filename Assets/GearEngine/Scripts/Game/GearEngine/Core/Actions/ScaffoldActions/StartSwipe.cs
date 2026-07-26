@@ -8,11 +8,11 @@ namespace Scaffold
     /// <summary>
     /// Activates swipe panning mode where the player can pan the camera within the area between viewA & viewB.
     /// </summary>
-    [CommandInfo("Camera", 
-                 "Start Swipe", 
+    [CommandInfo("Camera",
+                 "Start Swipe",
                  "Activates swipe panning mode where the player can pan the camera within the area between viewA & viewB.")]
     [Serializable]
-    public class StartSwipe : ActionBase 
+    public class StartSwipe : ActionBase
     {
         [Tooltip("Defines one extreme of the scrollable area that the player can pan around")]
         [SerializeField] protected View viewA;
@@ -37,10 +37,6 @@ namespace Scaffold
             {
                 targetCamera = Camera.main;
             }
-            if (targetCamera == null)
-            {
-                targetCamera = GameObject.FindObjectOfType<Camera>();
-            }
         }
 
         public override void OnEnter()
@@ -53,9 +49,9 @@ namespace Scaffold
                 return;
             }
 
-            var cameraManager = ScaffoldManager.Instance.CameraManager;
+            CameraManager cameraManager = ScaffoldManager.Instance.CameraManager;
 
-            cameraManager.StartSwipePan(targetCamera, viewA, viewB, duration, speedMultiplier, () => Continue() );
+            cameraManager.StartSwipePan(targetCamera, viewA, viewB, duration, speedMultiplier, () => Continue());
         }
 
         public override string GetSummary()

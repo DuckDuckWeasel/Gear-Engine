@@ -15,7 +15,7 @@ namespace Scaffold
                       "The block will execute when the player drags an object and successfully drops it on a target object.")]
     [AddComponentMenu("")]
     [ExecuteInEditMode]
-    public class DragCompleted : EventHandler, ISerializationCallbackReceiver
+    public class DragCompleted : EventHandler
     {
         public class DragCompletedEvent
         {
@@ -33,17 +33,9 @@ namespace Scaffold
         [VariableProperty(typeof(GameObjectVariable))]
         [SerializeField] protected GameObjectVariable targetRef;
 
-        [Tooltip("Draggable object to listen for drag events on")]
-        [HideInInspector]
-        [SerializeField] protected Draggable2D draggableObject;
+        [SerializeField] protected List<Draggable2D> draggableObjects = new List<Draggable2D>();
 
-        [SerializeField] protected List<Draggable2D> draggableObjects;
-
-        [Tooltip("Drag target object to listen for drag events on")]
-        [HideInInspector]
-        [SerializeField] protected Collider2D targetObject;
-
-        [SerializeField] protected List<Collider2D> targetObjects;
+        [SerializeField] protected List<Collider2D> targetObjects = new List<Collider2D>();
 
         // There's no way to poll if an object is touching another object, so
         // we have to listen to the callbacks and track the touching state ourselves.
@@ -102,40 +94,7 @@ namespace Scaffold
             OnDragExited(evt.DraggableObject, evt.TargetCollider);
         }
 
-        #region Compatibility
 
-        void ISerializationCallbackReceiver.OnAfterDeserialize()
-        {
-            //presentl using awake due to errors on non main thread access of targetCollider
-        }
-
-        void ISerializationCallbackReceiver.OnBeforeSerialize()
-        {
-        }
-
-        private void Awake()
-        {
-            //add any dragableobject already present to list for backwards compatability
-            if (draggableObject != null)
-            {
-                if (!draggableObjects.Contains(draggableObject))
-                {
-                    draggableObjects.Add(draggableObject);
-                }
-            }
-
-            if (targetObject != null)
-            {
-                if (!targetObjects.Contains(targetObject))
-                {
-                    targetObjects.Add(targetObject);
-                }
-            }
-            draggableObject = null;
-            targetObject = null;
-        }
-
-        #endregion Compatibility
 
         #region Public members
 

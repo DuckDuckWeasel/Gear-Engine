@@ -80,6 +80,12 @@ namespace Scaffold.EditorUtils
                 : ObjectNames.NicifyVariableName(actionType.Name);
         }
 
+        public static bool IsPropertyVisible(IAction action, string propertyName)
+        {
+            return !(action is ActionBase actionBase) ||
+                   actionBase.IsPropertyVisible(propertyName);
+        }
+
         private static string GetHeaderSummary(string summary)
         {
             if (string.IsNullOrWhiteSpace(summary))

@@ -15,23 +15,24 @@ namespace Scaffold
     [Serializable]
     public class CollisionProperty : BaseVariableProperty
     {
-		//generated property
-        public enum Property 
-        { 
-            RelativeVelocity, 
-            Rigidbody, 
-            Collider, 
-            Transform, 
-            GameObject, 
-            Impulse, 
+        //generated property
+        public enum Property
+        {
+            RelativeVelocity,
+            Rigidbody,
+            Collider,
+            Transform,
+            GameObject,
+            Impulse,
         }
 
-		
+
         [SerializeField]
         protected Property property;
-		
+
         [SerializeField]
         [VariableProperty(typeof(CollisionVariable))]
+        [Tooltip("The Collision var")]
         protected CollisionVariable collisionVar;
 
         [SerializeField]
@@ -40,18 +41,19 @@ namespace Scaffold
                           typeof(ColliderVariable),
                           typeof(TransformVariable),
                           typeof(GameObjectVariable))]
+        [Tooltip("The In out var")]
         protected Variable inOutVar;
 
         public override void OnEnter()
         {
-            var iov = inOutVar as Vector3Variable;
-            var iorb = inOutVar as RigidbodyVariable;
-            var ioc = inOutVar as ColliderVariable;
-            var iot = inOutVar as TransformVariable;
-            var iogo = inOutVar as GameObjectVariable;
+            Vector3Variable iov = inOutVar as Vector3Variable;
+            RigidbodyVariable iorb = inOutVar as RigidbodyVariable;
+            ColliderVariable ioc = inOutVar as ColliderVariable;
+            TransformVariable iot = inOutVar as TransformVariable;
+            GameObjectVariable iogo = inOutVar as GameObjectVariable;
 
 
-            var target = collisionVar.Value;
+            UnityEngine.Collision target = collisionVar.Value;
 
             switch (getOrSet)
             {
@@ -120,7 +122,9 @@ namespace Scaffold
         public override bool HasReference(Variable variable)
         {
             if (collisionVar == variable || inOutVar == variable)
+            {
                 return true;
+            }
 
             return false;
         }

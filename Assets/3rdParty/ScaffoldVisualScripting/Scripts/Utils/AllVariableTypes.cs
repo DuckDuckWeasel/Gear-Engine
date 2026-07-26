@@ -17,35 +17,35 @@ namespace Scaffold
             Any
         }
 
-        public static readonly System.Type[] AllScaffoldVarTypes = new System.Type[]
+        private static System.Type[] _allScaffoldVarTypes;
+        public static System.Type[] AllScaffoldVarTypes
         {
-            typeof(AnimatorVariable),
-            typeof(AudioSourceVariable),
-            typeof(BooleanVariable),
-            typeof(CollectionVariable),
-            typeof(Collider2DVariable),
-            typeof(ColliderVariable),
-            typeof(Collision2DVariable),
-            typeof(CollisionVariable),
-            typeof(ColorVariable),
-            typeof(ControllerColliderHitVariable),
-            typeof(FloatVariable),
-            typeof(GameObjectVariable),
-            typeof(IntegerVariable),
-            typeof(MaterialVariable),
-            typeof(Matrix4x4Variable),
-            typeof(ObjectVariable),
-            typeof(QuaternionVariable),
-            typeof(Rigidbody2DVariable),
-            typeof(RigidbodyVariable),
-            typeof(SpriteVariable),
-            typeof(StringVariable),
-            typeof(TextureVariable),
-            typeof(TransformVariable),
-            typeof(Vector2Variable),
-            typeof(Vector3Variable),
-            typeof(Vector4Variable),
-        };
+            get
+            {
+                if (_allScaffoldVarTypes == null)
+                {
+                    List<System.Type> types = new System.Collections.Generic.List<System.Type>();
+                    System.Type baseType = typeof(Variable);
+                    foreach (System.Reflection.Assembly assembly in System.AppDomain.CurrentDomain.GetAssemblies())
+                    {
+                        if (assembly.IsDynamic)
+                        {
+                            continue;
+                        }
+
+                        foreach (System.Type type in assembly.GetExportedTypes())
+                        {
+                            if (type.IsSubclassOf(baseType) && !type.IsAbstract)
+                            {
+                                types.Add(type);
+                            }
+                        }
+                    }
+                    _allScaffoldVarTypes = types.ToArray();
+                }
+                return _allScaffoldVarTypes;
+            }
+        }
     }
 
     /// <summary>
@@ -249,14 +249,14 @@ namespace Scaffold
                 new TypeActions( "stringData",
                     (anyVar, compareOperator) =>
                     {
-                        var subbedRHS = anyVar.variable.GetBlackboard().SubstituteVariables(anyVar.data.stringData.Value);
-                        return anyVar.variable.Evaluate(compareOperator, subbedRHS); 
+                        string subbedRHS = anyVar.variable.GetBlackboard().SubstituteVariables(anyVar.data.stringData.Value);
+                        return anyVar.variable.Evaluate(compareOperator, subbedRHS);
                     },
                     (anyVar) => anyVar.data.stringData.GetDescription(),
                     (anyVar, setOperator) =>
                     {
-                        var subbedRHS = anyVar.variable.GetBlackboard().SubstituteVariables(anyVar.data.stringData.Value);
-                        anyVar.variable.Apply(setOperator, subbedRHS); 
+                        string subbedRHS = anyVar.variable.GetBlackboard().SubstituteVariables(anyVar.data.stringData.Value);
+                        anyVar.variable.Apply(setOperator, subbedRHS);
                     })},
             { typeof(TextureVariable),
                 new TypeActions( "textureData",
@@ -294,10 +294,14 @@ namespace Scaffold
         public void RefreshVariableCacheHelper(Blackboard f, ref List<Variable> referencedVariables)
         {
             if (variable is StringVariable asStringVar && asStringVar != null && !string.IsNullOrEmpty(asStringVar.Value))
+            {
                 f.DetermineSubstituteVariables(asStringVar.Value, referencedVariables);
+            }
 
             if (!string.IsNullOrEmpty(data.stringData.Value))
+            {
                 f.DetermineSubstituteVariables(data.stringData.Value, referencedVariables);
+            }
         }
 #endif
 

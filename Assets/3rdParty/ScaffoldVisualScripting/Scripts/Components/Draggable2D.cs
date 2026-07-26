@@ -1,5 +1,5 @@
 
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.Serialization;
 using System.Collections.Generic;
@@ -31,8 +31,7 @@ namespace Scaffold
         [Tooltip("Mouse texture to use when hovering mouse over object")]
         [SerializeField] protected Texture2D hoverCursor;
 
-        [Tooltip("Use the UI Event System to check for drag events. Clicks that hit an overlapping UI object will be ignored. Camera must have a PhysicsRaycaster component, or a Physics2DRaycaster for 2D colliders.")]
-        [SerializeField] protected bool useEventSystem;
+
 
         [SerializeField] protected bool beingDragged;
 
@@ -57,7 +56,7 @@ namespace Scaffold
 
         public void UnregisterHandler(DragCompleted handler)
         {
-            if(dragCompletedHandlers.Contains(handler))
+            if (dragCompletedHandlers.Contains(handler))
             {
                 dragCompletedHandlers.Remove(handler);
             }
@@ -75,26 +74,26 @@ namespace Scaffold
             }
         }
 
-        protected virtual void OnTriggerEnter2D(Collider2D other) 
+        protected virtual void OnTriggerEnter2D(Collider2D other)
         {
             if (!dragEnabled)
             {
                 return;
             }
 
-            var eventDispatcher = ScaffoldManager.Instance.EventDispatcher;
+            EventDispatcher eventDispatcher = ScaffoldManager.Instance.EventDispatcher;
 
             eventDispatcher.Raise(new DragEntered.DragEnteredEvent(this, other));
         }
 
-        protected virtual void OnTriggerExit2D(Collider2D other) 
+        protected virtual void OnTriggerExit2D(Collider2D other)
         {
             if (!dragEnabled)
             {
                 return;
             }
 
-            var eventDispatcher = ScaffoldManager.Instance.EventDispatcher;
+            EventDispatcher eventDispatcher = ScaffoldManager.Instance.EventDispatcher;
 
             eventDispatcher.Raise(new DragExited.DragExitedEvent(this, other));
         }
@@ -111,7 +110,7 @@ namespace Scaffold
 
             startingPosition = transform.position;
 
-            var eventDispatcher = ScaffoldManager.Instance.EventDispatcher;
+            EventDispatcher eventDispatcher = ScaffoldManager.Instance.EventDispatcher;
 
             eventDispatcher.Raise(new DragStarted.DragStartedEvent(this));
         }
@@ -139,12 +138,12 @@ namespace Scaffold
                 return;
             }
 
-            var eventDispatcher = ScaffoldManager.Instance.EventDispatcher;
+            EventDispatcher eventDispatcher = ScaffoldManager.Instance.EventDispatcher;
             bool dragCompleted = false;
 
             for (int i = 0; i < dragCompletedHandlers.Count; i++)
             {
-                var handler = dragCompletedHandlers[i];
+                DragCompleted handler = dragCompletedHandlers[i];
                 if (handler != null && handler.DraggableObjects.Contains(this))
                 {
                     if (handler.IsOverTarget())
@@ -165,7 +164,7 @@ namespace Scaffold
                     LeanTween.move(gameObject, startingPosition, returnDuration).setEase(LeanTweenType.easeOutExpo);
                 }
             }
-            else if(returnOnCompleted)
+            else if (returnOnCompleted)
             {
                 LeanTween.move(gameObject, startingPosition, returnDuration).setEase(LeanTweenType.easeOutExpo);
             }
@@ -193,49 +192,7 @@ namespace Scaffold
             Cursor.SetCursor(cursorTexture, Vector2.zero, CursorMode.Auto);
         }
 
-        #region Legacy OnMouseX methods
 
-        protected virtual void OnMouseDown()
-        {
-            if (!useEventSystem)
-            {
-                DoBeginDrag();
-            }
-        }
-
-        protected virtual void OnMouseDrag()
-        {
-            if (!useEventSystem)
-            {
-                DoDrag();
-            }
-        }
-
-        protected virtual void OnMouseUp()
-        {
-            if (!useEventSystem)
-            {
-                DoEndDrag();
-            }
-        }
-
-        protected virtual void OnMouseEnter()
-        {
-            if (!useEventSystem)
-            {
-                DoPointerEnter();
-            }
-        }
-        
-        protected virtual void OnMouseExit()
-        {
-            if (!useEventSystem)
-            {
-                DoPointerExit();
-            }
-        }
-
-        #endregion
 
         #region Public members
 
@@ -251,10 +208,7 @@ namespace Scaffold
 
         public void OnBeginDrag(PointerEventData eventData)
         {
-            if (useEventSystem)
-            {
-                DoBeginDrag();
-            }
+            DoBeginDrag();
         }
 
         #endregion
@@ -263,10 +217,7 @@ namespace Scaffold
 
         public void OnDrag(PointerEventData eventData)
         {
-            if (useEventSystem)
-            {
-                DoDrag();
-            }
+            DoDrag();
         }
 
         #endregion
@@ -275,10 +226,7 @@ namespace Scaffold
 
         public void OnEndDrag(PointerEventData eventData)
         {
-            if (useEventSystem)
-            {
-                DoEndDrag();
-            }
+            DoEndDrag();
         }
 
         #endregion
@@ -287,10 +235,7 @@ namespace Scaffold
 
         public void OnPointerEnter(PointerEventData eventData)
         {
-            if (useEventSystem)
-            {
-                DoPointerEnter();
-            }
+            DoPointerEnter();
         }
 
         #endregion
@@ -299,10 +244,7 @@ namespace Scaffold
 
         public void OnPointerExit(PointerEventData eventData)
         {
-            if (useEventSystem)
-            {
-                DoPointerExit();
-            }
+            DoPointerExit();
         }
 
         #endregion

@@ -15,38 +15,39 @@ namespace Scaffold
     [Serializable]
     public class Matrix4x4Property : BaseVariableProperty
     {
-		//generated property
-        public enum Property 
-        { 
-            M00, 
-            M10, 
-            M20, 
-            M30, 
-            M01, 
-            M11, 
-            M21, 
-            M31, 
-            M02, 
-            M12, 
-            M22, 
-            M32, 
-            M03, 
-            M13, 
-            M23, 
-            M33, 
-            Inverse, 
-            Transpose, 
-            Rotation, 
-            LossyScale, 
-            IsIdentity, 
-            Determinant, 
+        //generated property
+        public enum Property
+        {
+            M00,
+            M10,
+            M20,
+            M30,
+            M01,
+            M11,
+            M21,
+            M31,
+            M02,
+            M12,
+            M22,
+            M32,
+            M03,
+            M13,
+            M23,
+            M33,
+            Inverse,
+            Transpose,
+            Rotation,
+            LossyScale,
+            IsIdentity,
+            Determinant,
         }
 
-		
+
         [SerializeField]
         protected Property property;
-		
+
         [SerializeField]
+        [Tooltip("The Matrix4x4 data")]
         protected Matrix4x4Data matrix4x4Data;
 
         [SerializeField]
@@ -55,18 +56,19 @@ namespace Scaffold
                           typeof(Vector3Variable),
                           typeof(BooleanVariable),
                           typeof(Matrix4x4Variable))]
+        [Tooltip("The In out var")]
         protected Variable inOutVar;
 
         public override void OnEnter()
         {
-            var iof = inOutVar as FloatVariable;
-            var ioq = inOutVar as QuaternionVariable;
-            var iov = inOutVar as Vector3Variable;
-            var iob = inOutVar as BooleanVariable;
-            var iom4 = inOutVar as Matrix4x4Variable;
+            FloatVariable iof = inOutVar as FloatVariable;
+            QuaternionVariable ioq = inOutVar as QuaternionVariable;
+            Vector3Variable iov = inOutVar as Vector3Variable;
+            BooleanVariable iob = inOutVar as BooleanVariable;
+            Matrix4x4Variable iom4 = inOutVar as Matrix4x4Variable;
 
 
-            var target = matrix4x4Data.Value;
+            Matrix4x4 target = matrix4x4Data.Value;
 
             switch (getOrSet)
             {
@@ -229,7 +231,9 @@ namespace Scaffold
         public override bool HasReference(Variable variable)
         {
             if (matrix4x4Data.matrix4x4Ref == variable || inOutVar == variable)
+            {
                 return true;
+            }
 
             return false;
         }

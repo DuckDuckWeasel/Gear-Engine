@@ -10,8 +10,8 @@ namespace Scaffold
     /// <summary>
     /// Moves a game object from a specified position back to its starting position over time. The position can be defined by a host.transform in another object (using To Transform) or by setting an absolute position (using To Position, if To Transform is set to None).
     /// </summary>
-    [CommandInfo("iTween", 
-                 "Move From", 
+    [CommandInfo("iTween",
+                 "Move From",
                  "Moves a game object from a specified position back to its starting position over time. The position can be defined by a host.transform in another object (using To Transform) or by setting an absolute position (using To Position, if To Transform is set to None).")]
     [AddComponentMenu("")]
     [ExecuteInEditMode]
@@ -59,28 +59,5 @@ namespace Scaffold
 
         #endregion
 
-        #region Backwards compatibility
-
-        [HideInInspector] [FormerlySerializedAs("fromTransform")] public Transform fromTransformOLD;
-        [HideInInspector] [FormerlySerializedAs("fromPosition")] public Vector3 fromPositionOLD;
-
-        protected override void OnEnable()
-        {
-            base.OnEnable();
-
-            if (fromTransformOLD != null)
-            {
-                fromTransform.Value = fromTransformOLD;
-                fromTransformOLD = null;
-            }
-
-            if (fromPositionOLD != default(Vector3))
-            {
-                fromPosition.Value = fromPositionOLD;
-                fromPositionOLD = default(Vector3);
-            }
-        }
-
-        #endregion
     }
 }

@@ -21,7 +21,9 @@ namespace Scaffold
         [SerializeField] protected FloatData duration = new FloatData(1);
 
         private float waitStartedAt;
+        [Tooltip("The Active wait duration")]
         private float activeWaitDuration;
+        [Tooltip("The Is waiting")]
         private bool isWaiting;
 
         protected virtual void OnWaitComplete()
@@ -75,19 +77,5 @@ namespace Scaffold
 
         #endregion
 
-        #region Backwards compatibility
-
-        [HideInInspector][FormerlySerializedAs("duration")] public float durationOLD;
-
-        protected virtual void OnEnable()
-        {
-            if (durationOLD != default(float))
-            {
-                duration.Value = durationOLD;
-                durationOLD = default(float);
-            }
-        }
-
-        #endregion
     }
 }

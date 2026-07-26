@@ -5,8 +5,8 @@ using GearEngine.GearEngine.Presentation.UI.Tags;
 
 namespace Scaffold
 {
-    [CommandInfo("Tags", 
-                 "Tag Event", 
+    [CommandInfo("Tags",
+                 "Tag Event",
                  "Sends an event to all Blackboards on GameObjects that possess a specific TagSO.")]
     [AddComponentMenu("")]
     [Serializable]
@@ -27,13 +27,12 @@ namespace Scaffold
             }
 
             // Find all TagComponents in the scene
-            var tagComponents = GameObject.FindObjectsOfType<TagComponent>();
-            foreach (var tc in tagComponents)
+            foreach (TagComponent tc in TagComponent.Instances)
             {
                 if (tc.HasTag(targetTag))
                 {
                     // Find EventHandlers on the TagComponent's GameObject or children
-                    var receivers = tc.GetComponentsInChildren<TagEventReceived>();
+                    TagEventReceived[] receivers = tc.GetComponentsInChildren<TagEventReceived>();
                     for (int i = 0; i < receivers.Length; i++)
                     {
                         receivers[i].OnTagEventReceived(eventName.Value);
@@ -46,8 +45,16 @@ namespace Scaffold
 
         public override string GetSummary()
         {
-            if (targetTag == null) return "Error: No Tag specified";
-            if (string.IsNullOrEmpty(eventName.Value)) return "Error: No event specified";
+            if (targetTag == null)
+            {
+                return "Error: No Tag specified";
+            }
+
+            if (string.IsNullOrEmpty(eventName.Value))
+            {
+                return "Error: No event specified";
+            }
+
             return $"Tag: {targetTag.name}, Event: {eventName.Value}";
         }
 

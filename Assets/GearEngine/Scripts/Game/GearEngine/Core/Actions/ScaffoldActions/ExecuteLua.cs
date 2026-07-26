@@ -37,9 +37,11 @@ namespace Scaffold
 
         protected string friendlyName = "";
 
+        [Tooltip("The Initialised")]
         protected bool initialised;
 
         // Stores the compiled Lua code for fast execution later.
+        [Tooltip("The Lua function")]
         protected Closure luaFunction;
 
         protected virtual void Start()
@@ -113,59 +115,47 @@ namespace Scaffold
                 return;
             }
 
-            // Store the return value in a Scaffold Variable
-            System.Type variableType = returnVariable.GetType();
-            if (variableType == typeof(BooleanVariable) && returnValue.Type == DataType.Boolean)
+            switch (returnVariable)
             {
-                (returnVariable as BooleanVariable).Value = returnValue.Boolean;
-            }
-            else if (variableType == typeof(IntegerVariable) && returnValue.Type == DataType.Number)
-            {
-                (returnVariable as IntegerVariable).Value = (int)returnValue.Number;
-            }
-            else if (variableType == typeof(FloatVariable) && returnValue.Type == DataType.Number)
-            {
-                (returnVariable as FloatVariable).Value = (float)returnValue.Number;
-            }
-            else if (variableType == typeof(StringVariable) && returnValue.Type == DataType.String)
-            {
-                (returnVariable as StringVariable).Value = returnValue.String;
-            }
-            else if (variableType == typeof(ColorVariable) && returnValue.Type == DataType.UserData)
-            {
-                (returnVariable as ColorVariable).Value = returnValue.CheckUserDataType<Color>("ExecuteLua.StoreReturnVariable");
-            }
-            else if (variableType == typeof(GameObjectVariable) && returnValue.Type == DataType.UserData)
-            {
-                (returnVariable as GameObjectVariable).Value = returnValue.CheckUserDataType<GameObject>("ExecuteLua.StoreReturnVariable");
-            }
-            else if (variableType == typeof(MaterialVariable) && returnValue.Type == DataType.UserData)
-            {
-                (returnVariable as MaterialVariable).Value = returnValue.CheckUserDataType<Material>("ExecuteLua.StoreReturnVariable");
-            }
-            else if (variableType == typeof(ObjectVariable) && returnValue.Type == DataType.UserData)
-            {
-                (returnVariable as ObjectVariable).Value = returnValue.CheckUserDataType<UnityEngine.Object>("ExecuteLua.StoreReturnVariable");
-            }
-            else if (variableType == typeof(SpriteVariable) && returnValue.Type == DataType.UserData)
-            {
-                (returnVariable as SpriteVariable).Value = returnValue.CheckUserDataType<Sprite>("ExecuteLua.StoreReturnVariable");
-            }
-            else if (variableType == typeof(TextureVariable) && returnValue.Type == DataType.UserData)
-            {
-                (returnVariable as TextureVariable).Value = returnValue.CheckUserDataType<Texture>("ExecuteLua.StoreReturnVariable");
-            }
-            else if (variableType == typeof(Vector2Variable) && returnValue.Type == DataType.UserData)
-            {
-                (returnVariable as Vector2Variable).Value = returnValue.CheckUserDataType<Vector2>("ExecuteLua.StoreReturnVariable");
-            }
-            else if (variableType == typeof(Vector3Variable) && returnValue.Type == DataType.UserData)
-            {
-                (returnVariable as Vector3Variable).Value = returnValue.CheckUserDataType<Vector3>("ExecuteLua.StoreReturnVariable");
-            }
-            else
-            {
-                Debug.LogError("Failed to convert " + returnValue.Type.ToLuaTypeString() + " return type to " + variableType.ToString());
+                case BooleanVariable b when returnValue.Type == DataType.Boolean:
+                    b.Value = returnValue.Boolean;
+                    break;
+                case IntegerVariable i when returnValue.Type == DataType.Number:
+                    i.Value = (int)returnValue.Number;
+                    break;
+                case FloatVariable f when returnValue.Type == DataType.Number:
+                    f.Value = (float)returnValue.Number;
+                    break;
+                case StringVariable s when returnValue.Type == DataType.String:
+                    s.Value = returnValue.String;
+                    break;
+                case ColorVariable c when returnValue.Type == DataType.UserData:
+                    c.Value = returnValue.CheckUserDataType<Color>("ExecuteLua.StoreReturnVariable");
+                    break;
+                case GameObjectVariable go when returnValue.Type == DataType.UserData:
+                    go.Value = returnValue.CheckUserDataType<GameObject>("ExecuteLua.StoreReturnVariable");
+                    break;
+                case MaterialVariable m when returnValue.Type == DataType.UserData:
+                    m.Value = returnValue.CheckUserDataType<Material>("ExecuteLua.StoreReturnVariable");
+                    break;
+                case ObjectVariable o when returnValue.Type == DataType.UserData:
+                    o.Value = returnValue.CheckUserDataType<UnityEngine.Object>("ExecuteLua.StoreReturnVariable");
+                    break;
+                case SpriteVariable sp when returnValue.Type == DataType.UserData:
+                    sp.Value = returnValue.CheckUserDataType<Sprite>("ExecuteLua.StoreReturnVariable");
+                    break;
+                case TextureVariable t when returnValue.Type == DataType.UserData:
+                    t.Value = returnValue.CheckUserDataType<Texture>("ExecuteLua.StoreReturnVariable");
+                    break;
+                case Vector2Variable v2 when returnValue.Type == DataType.UserData:
+                    v2.Value = returnValue.CheckUserDataType<Vector2>("ExecuteLua.StoreReturnVariable");
+                    break;
+                case Vector3Variable v3 when returnValue.Type == DataType.UserData:
+                    v3.Value = returnValue.CheckUserDataType<Vector3>("ExecuteLua.StoreReturnVariable");
+                    break;
+                default:
+                    Debug.LogError("Failed to convert " + returnValue.Type.ToLuaTypeString() + " return type to " + returnVariable.GetType().ToString());
+                    break;
             }
         }
 

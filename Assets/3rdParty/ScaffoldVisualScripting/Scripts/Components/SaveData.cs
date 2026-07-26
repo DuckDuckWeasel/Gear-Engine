@@ -20,6 +20,16 @@ namespace Scaffold
         [Tooltip("A list of Blackboard objects whose variables will be encoded in the save data. Boolean, Integer, Float and String variables are supported.")]
         [SerializeField] protected List<Blackboard> blackboards = new List<Blackboard>();
 
+        public static SaveData Instance { get; private set; }
+
+        protected virtual void Awake()
+        {
+            if (Instance == null)
+            {
+                Instance = this;
+            }
+        }
+
         #region Public methods
 
         /// <summary>
@@ -29,13 +39,13 @@ namespace Scaffold
         {
             for (int i = 0; i < blackboards.Count; i++)
             {
-                var blackboard = blackboards[i];
-                var blackboardData = BlackboardData.Encode(blackboard);
+                Blackboard blackboard = blackboards[i];
+                BlackboardData blackboardData = BlackboardData.Encode(blackboard);
 
-                var saveDataItem = SaveDataItem.Create(BlackboardDataKey, JsonUtility.ToJson(blackboardData));
+                SaveDataItem saveDataItem = SaveDataItem.Create(BlackboardDataKey, JsonUtility.ToJson(blackboardData));
                 saveDataItems.Add(saveDataItem);
 
-                var narrativeLogItem = SaveDataItem.Create(NarrativeLogKey, ScaffoldManager.Instance.NarrativeLog.GetJsonHistory());
+                SaveDataItem narrativeLogItem = SaveDataItem.Create(NarrativeLogKey, ScaffoldManager.Instance.NarrativeLog.GetJsonHistory());
                 saveDataItems.Add(narrativeLogItem);
             }
         }
@@ -47,7 +57,7 @@ namespace Scaffold
         {
             for (int i = 0; i < saveDataItems.Count; i++)
             {
-                var saveDataItem = saveDataItems[i];
+                SaveDataItem saveDataItem = saveDataItems[i];
                 if (saveDataItem == null)
                 {
                     continue;
@@ -55,7 +65,7 @@ namespace Scaffold
 
                 if (saveDataItem.DataType == BlackboardDataKey)
                 {
-                    var blackboardData = JsonUtility.FromJson<BlackboardData>(saveDataItem.Data);
+                    BlackboardData blackboardData = JsonUtility.FromJson<BlackboardData>(saveDataItem.Data);
                     if (blackboardData == null)
                     {
                         Debug.LogError("Failed to decode Blackboard save data item");

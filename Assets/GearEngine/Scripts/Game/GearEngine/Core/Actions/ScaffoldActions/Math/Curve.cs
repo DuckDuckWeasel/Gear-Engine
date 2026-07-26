@@ -15,6 +15,7 @@ namespace Scaffold
     public class Curve : BaseUnaryMathCommand
     {
         [SerializeField]
+        [Tooltip("The Curve")]
         protected AnimationCurve curve = AnimationCurve.Linear(0, 0, 1, 1);
 
         public override void OnEnter()

@@ -10,8 +10,8 @@ namespace Scaffold
     /// <summary>
     /// Rotates a GameObject to look at a supplied Transform or Vector3 over time.
     /// </summary>
-    [CommandInfo("iTween", 
-                 "Look To", 
+    [CommandInfo("iTween",
+                 "Look To",
                  "Rotates a GameObject to look at a supplied Transform or Vector3 over time.")]
     [AddComponentMenu("")]
     [ExecuteInEditMode]
@@ -43,15 +43,15 @@ namespace Scaffold
             }
             switch (axis)
             {
-            case iTweenAxis.X:
-                tweenParams.Add("axis", "x");
-                break;
-            case iTweenAxis.Y:
-                tweenParams.Add("axis", "y");
-                break;
-            case iTweenAxis.Z:
-                tweenParams.Add("axis", "z");
-                break;
+                case iTweenAxis.X:
+                    tweenParams.Add("axis", "x");
+                    break;
+                case iTweenAxis.Y:
+                    tweenParams.Add("axis", "y");
+                    break;
+                case iTweenAxis.Z:
+                    tweenParams.Add("axis", "z");
+                    break;
             }
             tweenParams.Add("time", duration.Value);
             tweenParams.Add("easetype", easeType);
@@ -70,28 +70,5 @@ namespace Scaffold
 
         #endregion
 
-        #region Backwards compatibility
-
-        [HideInInspector] [FormerlySerializedAs("toTransform")] public Transform toTransformOLD;
-        [HideInInspector] [FormerlySerializedAs("toPosition")] public Vector3 toPositionOLD;
-
-        protected override void OnEnable()
-        {
-            base.OnEnable();
-
-            if (toTransformOLD != null)
-            {
-                toTransform.Value = toTransformOLD;
-                toTransformOLD = null;
-            }
-
-            if (toPositionOLD != default(Vector3))
-            {
-                toPosition.Value = toPositionOLD;
-                toPositionOLD = default(Vector3);
-            }
-        }
-
-        #endregion
     }
 }

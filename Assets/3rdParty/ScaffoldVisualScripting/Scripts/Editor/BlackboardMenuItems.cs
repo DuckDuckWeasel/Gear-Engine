@@ -1,5 +1,5 @@
 
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEditor;
 
 namespace Scaffold.EditorUtils
@@ -13,16 +13,16 @@ namespace Scaffold.EditorUtils
             go.transform.position = Vector3.zero;
 
             // This is the latest version of Blackboard, so no need to update.
-            var blackboard = go.GetComponent<Blackboard>();
+            Blackboard blackboard = go.GetComponent<Blackboard>();
             if (blackboard != null)
             {
                 blackboard.Version = ScaffoldConstants.CurrentVersion;
             }
 
             // Only the first created Blackboard in the scene should have a default GameStarted block
-            if (GameObject.FindObjectsOfType<Blackboard>().Length > 1)
+            if (Blackboard.CachedBlackboards.Count > 1)
             {
-                var block = go.GetComponent<Block>();
+                Block block = go.GetComponent<Block>();
                 GameObject.DestroyImmediate(block._EventHandler);
                 block._EventHandler = null;
             }
@@ -37,7 +37,7 @@ namespace Scaffold.EditorUtils
         [MenuItem("Tools/Scaffold/Utilities/Export Scaffold Package")]
         static void ExportScaffoldPackageFull()
         {
-            ExportScaffoldPackage( new string[] {"Assets/Scaffold", "Assets/ScaffoldExamples" });
+            ExportScaffoldPackage(new string[] { "Assets/Scaffold", "Assets/ScaffoldExamples" });
         }
 
         [MenuItem("Tools/Scaffold/Utilities/Export Scaffold Package - Lite")]
@@ -78,7 +78,7 @@ namespace Scaffold.EditorUtils
             }
 
             Selection.activeGameObject = go;
-            
+
             Undo.RegisterCreatedObjectUndo(go, "Create Object");
 
             return go;

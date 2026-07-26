@@ -10,8 +10,8 @@ namespace Scaffold
     /// <summary>
     /// Randomly shakes a GameObject's rotation by a diminishing amount over time.
     /// </summary>
-    [CommandInfo("iTween", 
-                 "Shake Rotation", 
+    [CommandInfo("iTween",
+                 "Shake Rotation",
                  "Randomly shakes a GameObject's rotation by a diminishing amount over time.")]
     [AddComponentMenu("")]
     [ExecuteInEditMode]
@@ -48,21 +48,5 @@ namespace Scaffold
 
         #endregion
 
-        #region Backwards compatibility
-
-        [HideInInspector] [FormerlySerializedAs("amount")] public Vector3 amountOLD;
-
-        protected override void OnEnable()
-        {
-            base.OnEnable();
-
-            if (amountOLD != default(Vector3))
-            {
-                amount.Value = amountOLD;
-                amountOLD = default(Vector3);
-            }
-        }
-
-        #endregion
-    }    
+    }
 }

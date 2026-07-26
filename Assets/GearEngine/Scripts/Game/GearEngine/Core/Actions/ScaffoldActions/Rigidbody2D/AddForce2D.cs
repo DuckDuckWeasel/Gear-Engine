@@ -17,9 +17,11 @@ namespace Scaffold
     public class AddForce2D : ActionBase
     {
         [SerializeField]
+        [Tooltip("The Rb")]
         protected Rigidbody2DData rb;
 
         [SerializeField]
+        [Tooltip("The Force mode")]
         protected ForceMode2D forceMode = ForceMode2D.Force;
 
         public enum ForceFunction
@@ -30,6 +32,7 @@ namespace Scaffold
         }
 
         [SerializeField]
+        [Tooltip("The Force function")]
         protected ForceFunction forceFunction = ForceFunction.AddForce;
 
         [Tooltip("Vector of force to be added")]
@@ -79,7 +82,9 @@ namespace Scaffold
         {
             if (rb.rigidbody2DRef == variable || force.vector2Ref == variable || forceScaleFactor.floatRef == variable ||
                 atPosition.vector2Ref == variable)
+            {
                 return true;
+            }
 
             return false;
         }

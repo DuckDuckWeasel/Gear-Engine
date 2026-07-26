@@ -15,36 +15,38 @@ namespace Scaffold
     [Serializable]
     public class ColliderProperty : BaseVariableProperty
     {
-		//generated property
-        public enum Property 
-        { 
-            Enabled, 
-            AttachedRigidbody, 
-            IsTrigger, 
-            ContactOffset, 
+        //generated property
+        public enum Property
+        {
+            Enabled,
+            AttachedRigidbody,
+            IsTrigger,
+            ContactOffset,
         }
 
-		
+
         [SerializeField]
         protected Property property;
-		
+
         [SerializeField]
+        [Tooltip("The Collider data")]
         protected ColliderData colliderData;
 
         [SerializeField]
         [VariableProperty(typeof(BooleanVariable),
                           typeof(RigidbodyVariable),
                           typeof(FloatVariable))]
+        [Tooltip("The In out var")]
         protected Variable inOutVar;
 
         public override void OnEnter()
         {
-            var iob = inOutVar as BooleanVariable;
-            var iorb = inOutVar as RigidbodyVariable;
-            var iof = inOutVar as FloatVariable;
+            BooleanVariable iob = inOutVar as BooleanVariable;
+            RigidbodyVariable iorb = inOutVar as RigidbodyVariable;
+            FloatVariable iof = inOutVar as FloatVariable;
 
 
-            var target = colliderData.Value;
+            Collider target = colliderData.Value;
 
             switch (getOrSet)
             {
@@ -116,7 +118,9 @@ namespace Scaffold
         public override bool HasReference(Variable variable)
         {
             if (colliderData.colliderRef == variable || inOutVar == variable)
+            {
                 return true;
+            }
 
             return false;
         }

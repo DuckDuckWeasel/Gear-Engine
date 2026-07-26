@@ -13,6 +13,7 @@ namespace Scaffold
     {
         [SerializeField]
         [VariableProperty(typeof(IntegerVariable))]
+        [Tooltip("The Integer")]
         protected IntegerVariable integer;
 
         public override void OnEnter()
@@ -33,13 +34,19 @@ namespace Scaffold
         public override string GetSummary()
         {
             if (collection.Value == null)
+            {
                 return "Error: no collection selected";
+            }
 
             if (variableToUse == null)
+            {
                 return "Error: no variable selected";
+            }
 
             if (integer == null)
+            {
                 return "Error: no integer selected";
+            }
 
             return integer.Key + " on " + variableToUse.Key + " in " + collection.Value.name;
         }

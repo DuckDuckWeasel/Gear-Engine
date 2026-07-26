@@ -1,5 +1,5 @@
 
-﻿using UnityEngine;
+using UnityEngine;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -39,18 +39,18 @@ namespace Scaffold
 
         protected static Dictionary<string, string> localizedStrings = new Dictionary<string, string>();
 
-        #if UNITY_5_4_OR_NEWER
-        #else
-        public virtual void OnLevelWasLoaded(int level) 
+#if UNITY_5_4_OR_NEWER
+#else
+        public virtual void OnLevelWasLoaded(int level)
         {
             LevelWasLoaded();
         }
-        #endif
+#endif
 
         protected virtual void LevelWasLoaded()
         {
             // Check if a language has been selected using the Set Language command in a previous scene.
-            string mostRecentLanguage = UnityEngine.PlayerPrefs.GetString("Scaffold_SetLanguage", "");
+            string mostRecentLanguage = Blackboard.SaveService.GetString("Scaffold_SetLanguage", "");
             if (!string.IsNullOrEmpty(mostRecentLanguage))
             {
                 // This language will be used when Start() is called
@@ -63,20 +63,32 @@ namespace Scaffold
             LevelWasLoaded();
         }
 
+        public static Localization Instance { get; private set; }
+
         protected virtual void OnEnable()
         {
+            if (Instance == null)
+            {
+                Instance = this;
+            }
+
             StringSubstituter.RegisterHandler(this);
-            #if UNITY_5_4_OR_NEWER
+#if UNITY_5_4_OR_NEWER
             UnityEngine.SceneManagement.SceneManager.activeSceneChanged += SceneManager_activeSceneChanged;
-            #endif
+#endif
         }
 
         protected virtual void OnDisable()
         {
+            if (Instance == this)
+            {
+                Instance = null;
+            }
+
             StringSubstituter.UnregisterHandler(this);
-            #if UNITY_5_4_OR_NEWER
+#if UNITY_5_4_OR_NEWER
             UnityEngine.SceneManagement.SceneManager.activeSceneChanged -= SceneManager_activeSceneChanged;
-            #endif
+#endif
         }
 
         protected virtual void Start()
@@ -106,18 +118,43 @@ namespace Scaffold
             initialized = true;
         }
 
-        // Build a cache of all the localizeable objects in the scene
         protected virtual void CacheLocalizeableObjects()
         {
-            UnityEngine.Object[] objects = Resources.FindObjectsOfTypeAll(typeof(Component));
-            for (int i = 0; i < objects.Length; i++)
+            // Add commands from blackboards
+            foreach (Blackboard blackboard in Blackboard.CachedBlackboards)
             {
-                var o = objects[i];
-                ILocalizable localizable = o as ILocalizable;
-                if (localizable != null)
+                if (blackboard == null)
                 {
-                    localizeableObjects[localizable.GetStringId()] = localizable;
+                    continue;
                 }
+
+                Block[] blocks = blackboard.GetComponents<Block>();
+                foreach (Block block in blocks)
+                {
+                    if (block == null)
+                    {
+                        continue;
+                    }
+
+                    foreach (Command command in block.CommandList)
+                    {
+                        if (command is ILocalizable localizable)
+                        {
+                            localizeableObjects[localizable.GetStringId()] = localizable;
+                        }
+                    }
+                }
+            }
+
+            // Add characters
+            foreach (Character character in Character.ActiveCharacters)
+            {
+                if (character == null)
+                {
+                    continue;
+                }
+
+                localizeableObjects[character.GetStringId()] = character;
             }
         }
 
@@ -130,48 +167,52 @@ namespace Scaffold
 
             // Add localizable commands in same order as command list to make it
             // easier to localise / edit standard text.
-            var blackboards = GameObject.FindObjectsOfType<Blackboard>();
-            for (int i = 0; i < blackboards.Length; i++)
+            foreach (Blackboard blackboard in Blackboard.CachedBlackboards)
             {
-                var blackboard = blackboards[i];
-                var blocks = blackboard.GetComponents<Block>();
-
-                for (int j = 0; j < blocks.Length; j++)
+                if (blackboard == null)
                 {
-                    var block = blocks[j];
-                    var commandList = block.CommandList;
-                    for (int k = 0; k < commandList.Count; k++)
+                    continue;
+                }
+
+                Block[] blocks = blackboard.GetComponents<Block>();
+                foreach (Block block in blocks)
+                {
+                    if (block == null)
                     {
-                        var command = commandList[k];
-                        ILocalizable localizable = command as ILocalizable;
-                        if (localizable != null)
+                        continue;
+                    }
+
+                    foreach (Command command in block.CommandList)
+                    {
+                        if (command is ILocalizable localizable)
                         {
-                            TextItem textItem = new TextItem();
-                            textItem.standardText = localizable.GetStandardText();
-                            textItem.description = localizable.GetDescription();
-                            textItems[localizable.GetStringId()] = textItem;
+                            string stringId = localizable.GetStringId();
+                            if (!textItems.ContainsKey(stringId))
+                            {
+                                TextItem textItem = new TextItem();
+                                textItem.standardText = localizable.GetStandardText();
+                                textItem.description = localizable.GetDescription();
+                                textItems[stringId] = textItem;
+                            }
                         }
                     }
                 }
             }
 
-            // Add everything else that's localizable (including inactive objects)
-            UnityEngine.Object[] objects = Resources.FindObjectsOfTypeAll(typeof(Component));
-            for (int i = 0; i < objects.Length; i++)
+            // Add characters
+            foreach (Character character in Character.ActiveCharacters)
             {
-                var o = objects[i];
-                ILocalizable localizable = o as ILocalizable;
-                if (localizable != null)
+                if (character == null)
                 {
-                    string stringId = localizable.GetStringId();
-                    if (textItems.ContainsKey(stringId))
-                    {
-                        // Already added
-                        continue;
-                    }
+                    continue;
+                }
+
+                string stringId = character.GetStringId();
+                if (!textItems.ContainsKey(stringId))
+                {
                     TextItem textItem = new TextItem();
-                    textItem.standardText = localizable.GetStandardText();
-                    textItem.description = localizable.GetDescription();
+                    textItem.standardText = character.GetStandardText();
+                    textItem.description = character.GetDescription();
                     textItems[stringId] = textItem;
                 }
             }
@@ -195,7 +236,7 @@ namespace Scaffold
 
             // Parse header row
             string[] columnNames = csvTable[0];
-            
+
             for (int i = 1; i < csvTable.Length; ++i)
             {
                 string[] fields = csvTable[i];
@@ -204,13 +245,13 @@ namespace Scaffold
                     // No standard text or localized string fields present
                     continue;
                 }
-                
+
                 string stringId = fields[0];
 
                 if (!textItems.ContainsKey(stringId))
                 {
-                    if (stringId.StartsWith("CHARACTER.") || 
-                        stringId.StartsWith("SAY.") || 
+                    if (stringId.StartsWith("CHARACTER.") ||
+                        stringId.StartsWith("SAY.") ||
                         stringId.StartsWith("MENU.") ||
                         stringId.StartsWith("WRITE.") ||
                         stringId.StartsWith("SETTEXT."))
@@ -237,7 +278,7 @@ namespace Scaffold
                     }
                     string languageCode = columnNames[j];
                     string languageEntry = CSVSupport.Unescape(fields[j]);
-                    
+
                     if (languageEntry.Length > 0)
                     {
                         textItem.localizedStrings[languageCode] = languageEntry;
@@ -251,7 +292,7 @@ namespace Scaffold
         /// <summary>
         /// Looks up the specified string in the localized strings table.
         /// For this to work, a localization file and active language must have been set previously.
-        /// Return null if the string is not found.            
+        /// Return null if the string is not found.
         /// </summary>
         public static string GetLocalizedString(string stringId)
         {
@@ -308,9 +349,9 @@ namespace Scaffold
 
             // Build CSV header row and a list of the language codes currently in use
             string csvHeader = "Key,Description,Standard";
-            var languageCodes = new List<string>();
-            var values = textItems.Values;
-            foreach (var textItem in values)
+            List<string> languageCodes = new List<string>();
+            Dictionary<string, TextItem>.ValueCollection values = textItems.Values;
+            foreach (TextItem textItem in values)
             {
                 foreach (string languageCode in textItem.localizedStrings.Keys)
                 {
@@ -325,8 +366,8 @@ namespace Scaffold
             // Build the CSV file using collected text items
             int rowCount = 0;
             string csvData = csvHeader + "\n";
-            var keys = textItems.Keys;
-            foreach (var stringId in keys)
+            Dictionary<string, TextItem>.KeyCollection keys = textItems.Keys;
+            foreach (string stringId in keys)
             {
                 TextItem textItem = textItems[stringId];
 
@@ -336,7 +377,7 @@ namespace Scaffold
 
                 for (int i = 0; i < languageCodes.Count; i++)
                 {
-                    var languageCode = languageCodes[i];
+                    string languageCode = languageCodes[i];
                     if (textItem.localizedStrings.ContainsKey(languageCode))
                     {
                         row += "," + CSVSupport.Escape(textItem.localizedStrings[languageCode]);
@@ -486,8 +527,8 @@ namespace Scaffold
 
             string textData = "";
             int rowCount = 0;
-            var keys = textItems.Keys;
-            foreach (var stringId in keys)
+            Dictionary<string, TextItem>.KeyCollection keys = textItems.Keys;
+            foreach (string stringId in keys)
             {
                 TextItem languageItem = textItems[stringId];
 
@@ -506,7 +547,7 @@ namespace Scaffold
         /// </summary>
         public virtual void SetStandardText(string textData)
         {
-            var lines = textData.Split('\n');
+            string[] lines = textData.Split('\n');
 
             int updatedCount = 0;
 
@@ -514,8 +555,8 @@ namespace Scaffold
             string buffer = "";
             for (int i = 0; i < lines.Length; i++)
             {
-                // Check for string id line 
-                var line = lines[i];
+                // Check for string id line
+                string line = lines[i];
                 if (line.StartsWith("#"))
                 {
                     if (stringId.Length > 0)
@@ -564,7 +605,7 @@ namespace Scaffold
             bool modified = false;
 
             // Match the regular expression pattern against a text string.
-            var results = r.Matches(input.ToString());
+            MatchCollection results = r.Matches(input.ToString());
             for (int i = 0; i < results.Count; i++)
             {
                 Match match = results[i];

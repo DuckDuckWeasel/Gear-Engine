@@ -10,7 +10,7 @@ using UnityEditorInternal;
 namespace Scaffold.EditorUtils
 {
     [CustomEditor(typeof(Command), true)]
-    public class CommandEditor : Editor
+    public class CommandEditor : TriInspector.Editors.TriEditor
     {
         #region statics
         public static Command selectedCommand;
@@ -46,12 +46,18 @@ namespace Scaffold.EditorUtils
 
         public virtual void OnEnable()
         {
+            base.OnEnable();
             if (NullTargetCheck()) // Check for an orphaned editor instance
             {
                 return;
             }
 
             reorderableLists = new Dictionary<string, ReorderableList>();
+        }
+
+        public virtual void OnDisable()
+        {
+            base.OnDisable();
         }
 
         public virtual void DrawCommandInspectorGUI()
@@ -484,68 +490,7 @@ namespace Scaffold.EditorUtils
 
         public virtual void DrawCommandGUI()
         {
-            Command t = target as Command;
-
-            // Code below was copied from here
-            // http://answers.unity3d.com/questions/550829/how-to-add-a-script-field-in-custom-inspector.html
-
-            // Users should not be able to change the MonoScript for the command using the usual Script field.
-            // Doing so could cause block.commandList to contain null entries.
-            // To avoid this we manually display all properties, except for m_Script.
-            serializedObject.Update();
-            SerializedProperty iterator = serializedObject.GetIterator();
-            bool enterChildren = true;
-            while (iterator.NextVisible(enterChildren))
-            {
-                enterChildren = false;
-
-                if (iterator.name == "m_Script")
-                {
-                    continue;
-                }
-
-                if (!t.IsPropertyVisible(iterator.name))
-                {
-                    continue;
-                }
-
-                if (iterator.isArray &&
-                    t.IsReorderableArray(iterator.name))
-                {
-                    ReorderableList reordList = null;
-                    reorderableLists.TryGetValue(iterator.displayName, out reordList);
-                    if (reordList == null)
-                    {
-                        SerializedProperty locSerProp = iterator.Copy();
-                        //create and insert
-                        reordList = new ReorderableList(serializedObject, locSerProp, true, false, true, true)
-                        {
-                            drawHeaderCallback = (Rect rect) =>
-                            {
-                                EditorGUI.LabelField(rect, locSerProp.displayName);
-                            },
-                            drawElementCallback = (Rect rect, int index, bool isActive, bool isFocused) =>
-                            {
-                                EditorGUI.PropertyField(rect, locSerProp.GetArrayElementAtIndex(index));
-                            },
-                            elementHeightCallback = (int index) =>
-                            {
-                                return EditorGUI.GetPropertyHeight(locSerProp.GetArrayElementAtIndex(index), null, true);// + EditorGUIUtility.singleLineHeight;
-                            }
-                        };
-
-                        reorderableLists.Add(iterator.displayName, reordList);
-                    }
-
-                    reordList.DoLayoutList();
-                }
-                else
-                {
-                    EditorGUILayout.PropertyField(iterator, true, new GUILayoutOption[0]);
-                }
-            }
-
-            serializedObject.ApplyModifiedProperties();
+            base.OnInspectorGUI();
         }
 
         protected virtual string GetCommandDisplayName(Command command, CommandInfoAttribute commandInfo)

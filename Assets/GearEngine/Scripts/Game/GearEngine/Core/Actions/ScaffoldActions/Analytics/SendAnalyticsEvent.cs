@@ -37,7 +37,7 @@ namespace Scaffold
                 return;
             }
 
-            var evt = new DynamicAnalyticsEvent(eventName.Value);
+            DynamicAnalyticsEvent evt = new DynamicAnalyticsEvent(eventName.Value);
 
             // Populate string parameters
             if (stringKeys != null && stringValues != null)
@@ -66,7 +66,7 @@ namespace Scaffold
             }
 
             SendEvent(evt);
-            
+
             Continue();
         }
 
@@ -78,18 +78,18 @@ namespace Scaffold
                 return;
             }
 
-            var scope = host.GetComponentInParent<LifetimeScope>();
+            LifetimeScope scope = host.GetComponentInParent<LifetimeScope>();
             if (scope != null && scope.Container != null)
             {
                 try
                 {
-                    var analyticsService = scope.Container.Resolve<IAnalyticsService>();
+                    IAnalyticsService analyticsService = scope.Container.Resolve<IAnalyticsService>();
                     analyticsService.Record(evt);
                     return;
                 }
-                catch (VContainer.VContainerException)
+                catch (VContainer.VContainerException ex)
                 {
-                    Debug.LogWarning("[SendAnalyticsEvent] Could not resolve IAnalyticsService from the LifetimeScope.");
+                    Debug.LogError($"[SendAnalyticsEvent] Could not resolve IAnalyticsService from the LifetimeScope: {ex.Message}\n{ex.StackTrace}");
                 }
             }
             else
@@ -100,13 +100,17 @@ namespace Scaffold
 
         public override string GetSummary()
         {
-            if (string.IsNullOrEmpty(eventName.Value)) return "Error: No Event Name";
+            if (string.IsNullOrEmpty(eventName.Value))
+            {
+                return "Error: No Event Name";
+            }
+
             return eventName.Value;
         }
-        
-        public override Color GetButtonColor() 
-        { 
-            return new Color32(173, 216, 230, 255); 
+
+        public override Color GetButtonColor()
+        {
+            return new Color32(173, 216, 230, 255);
         }
     }
 }

@@ -2,14 +2,15 @@ using System;
 using GearEngine.Core.Actions;
 
 using UnityEngine;
+using Ami.BroAudio;
 
 namespace Scaffold
 {
     /// <summary>
     /// Stops the currently playing game music.
     /// </summary>
-    [CommandInfo("Audio", 
-                 "Stop Ambiance", 
+    [CommandInfo("Audio",
+                 "Stop Ambiance",
                  "Stops the currently playing game ambiance.")]
     [Serializable]
     public class StopAmbiance : ActionBase
@@ -18,10 +19,7 @@ namespace Scaffold
 
         public override void OnEnter()
         {
-            var musicManager = ScaffoldManager.Instance.MusicManager;
-
-            musicManager.StopAmbiance();
-
+            BroAudio.Stop(BroAudioType.Ambience);
             Continue();
         }
 

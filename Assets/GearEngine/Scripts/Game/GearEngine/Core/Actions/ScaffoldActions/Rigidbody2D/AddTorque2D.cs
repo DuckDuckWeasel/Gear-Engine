@@ -17,9 +17,11 @@ namespace Scaffold
     public class AddTorque2D : ActionBase
     {
         [SerializeField]
+        [Tooltip("The Rb")]
         protected Rigidbody2DData rb;
 
         [SerializeField]
+        [Tooltip("The Force mode")]
         protected ForceMode2D forceMode = ForceMode2D.Force;
 
         [Tooltip("Amount of torque to be added")]
@@ -47,11 +49,13 @@ namespace Scaffold
         {
             return new Color32(235, 191, 217, 255);
         }
-        
+
         public override bool HasReference(Variable variable)
         {
             if (rb.rigidbody2DRef == variable || force.floatRef == variable)
+            {
                 return true;
+            }
 
             return false;
         }

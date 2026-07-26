@@ -8,7 +8,6 @@ namespace Scaffold
     /// Scaffold manager singleton. Manages access to all Scaffold singletons in a consistent manner.
     /// </summary>
     [RequireComponent(typeof(CameraManager))]
-    [RequireComponent(typeof(MusicManager))]
     [RequireComponent(typeof(EventDispatcher))]
     [RequireComponent(typeof(GlobalVariables))]
 #if UNITY_5_3_OR_NEWER
@@ -21,17 +20,22 @@ namespace Scaffold
         private static volatile ScaffoldManager instance;  // The keyword "volatile" is friendly to the multi-thread.
         private static readonly object _lock = new object();  // The keyword "readonly" is friendly to the multi-thread.
 
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void ResetStatics()
+        {
+            instance = null;
+        }
+
         private void Awake()
         {
             if (instance != this && instance != null)
-            {                    
+            {
                 Destroy(instance.gameObject);
             }
             instance = this;
             DontDestroyOnLoad(gameObject);
 
             CameraManager = GetComponent<CameraManager>();
-            MusicManager = GetComponent<MusicManager>();
             EventDispatcher = GetComponent<EventDispatcher>();
             GlobalVariables = GetComponent<GlobalVariables>();
 #if UNITY_5_3_OR_NEWER
@@ -45,11 +49,6 @@ namespace Scaffold
         /// Gets the camera manager singleton instance.
         /// </summary>
         public CameraManager CameraManager { get; private set; }
-
-        /// <summary>
-        /// Gets the music manager singleton instance.
-        /// </summary>
-        public MusicManager MusicManager { get; private set; }
 
         /// <summary>
         /// Gets the event dispatcher singleton instance.
@@ -66,7 +65,7 @@ namespace Scaffold
         /// Gets the save manager singleton instance.
         /// </summary>
         public SaveManager SaveManager { get; private set; }
-        
+
         /// <summary>
         /// Gets the history manager singleton instance.
         /// </summary>
@@ -88,16 +87,11 @@ namespace Scaffold
 
                 if (instance == null)
                 {
-                    // Attempt to find an existing instance in the scene
-                    instance = FindObjectOfType<ScaffoldManager>();
-                    if (instance == null)
-                    {
-                        // If no instance exists, create a new one
-                        GameObject go = new GameObject("ScaffoldManager");
-                        DontDestroyOnLoad(go);
-                        instance = go.AddComponent<ScaffoldManager>();
-                        Debug.Log("ScaffoldManager instance was created automatically.");
-                    }
+                    // If no instance exists, create a new one
+                    GameObject go = new GameObject("ScaffoldManager");
+                    DontDestroyOnLoad(go);
+                    instance = go.AddComponent<ScaffoldManager>();
+                    Debug.Log("ScaffoldManager instance was created automatically.");
                 }
 
                 return instance;

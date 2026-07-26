@@ -10,15 +10,15 @@ namespace Scaffold
     /// <summary>
     /// Sets the text property on a UI Text object and/or an Input Field object.
     /// </summary>
-    [CommandInfo("UI", 
-                 "Set Text", 
+    [CommandInfo("UI",
+                 "Set Text",
                  "Sets the text property on a UI Text object and/or an Input Field object.")]
     [Serializable]
-    public class SetText : ActionBase, ILocalizable 
+    public class SetText : ActionBase, ILocalizable
     {
         [Tooltip("Text object to set text on. Can be a UI Text, Text Field or Text Mesh object.")]
         [SerializeField] protected GameObject targetTextObject;
-        
+
         [Tooltip("String value to assign to the text object")]
         [FormerlySerializedAs("stringData")]
         [SerializeField] protected StringDataMulti text;
@@ -30,9 +30,9 @@ namespace Scaffold
 
         public override void OnEnter()
         {
-            var blackboard = GetBlackboard();
+            Blackboard blackboard = GetBlackboard();
             string newText = blackboard.SubstituteVariables(text.Value);
-            
+
             if (targetTextObject == null)
             {
                 Continue();
@@ -49,17 +49,17 @@ namespace Scaffold
 
             Continue();
         }
-        
+
         public override string GetSummary()
         {
             if (targetTextObject != null)
             {
                 return targetTextObject.name + " : " + text.Value;
             }
-            
+
             return "Error: No text object selected";
         }
-        
+
         public override Color GetButtonColor()
         {
             return new Color32(235, 191, 217, 255);
@@ -79,7 +79,7 @@ namespace Scaffold
         {
             base.RefreshVariableCache();
 
-            var f = GetBlackboard();
+            Blackboard f = GetBlackboard();
 
             f.DetermineSubstituteVariables(text, referencedVariables);
         }
@@ -102,7 +102,7 @@ namespace Scaffold
         {
             return description;
         }
-        
+
         public virtual string GetStringId()
         {
             // String id for Set Text commands is SETTEXT.<Localization Id>.<Command id>
@@ -111,20 +111,5 @@ namespace Scaffold
 
         #endregion
 
-        #region Backwards compatibility
-
-        // Backwards compatibility with Scaffold v2.1.2
-        [HideInInspector]
-        [FormerlySerializedAs("textObject")]
-        public Text _textObjectObsolete;
-        protected virtual void OnEnable()
-        {
-            if (_textObjectObsolete != null)
-            {
-                targetTextObject = _textObjectObsolete.gameObject.gameObject;
-            }
-        }
-
-        #endregion
-    }    
+    }
 }

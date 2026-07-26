@@ -9,8 +9,8 @@ namespace Scaffold
     /// <summary>
     /// Sets a game object in the scene to be active / inactive.
     /// </summary>
-    [CommandInfo("Scripting", 
-                 "Set Active", 
+    [CommandInfo("Scripting",
+                 "Set Active",
                  "Sets a game object in the scene to be active / inactive.")]
     [AddComponentMenu("")]
     [ExecuteInEditMode]
@@ -22,7 +22,7 @@ namespace Scaffold
 
         [Tooltip("Set to true to enable the game object")]
         [SerializeField] protected BooleanData activeState;
-    
+
         #region Public members
 
         public override void OnEnter()
@@ -52,25 +52,11 @@ namespace Scaffold
 
         public override bool HasReference(Variable variable)
         {
-            return targetGameObject.gameObjectRef == variable || activeState.booleanRef == variable || 
+            return targetGameObject.gameObjectRef == variable || activeState.booleanRef == variable ||
                 base.HasReference(variable);
         }
 
         #endregion
 
-        #region Backwards compatibility
-
-        [HideInInspector] [FormerlySerializedAs("targetGameObject")] public GameObject targetGameObjectOLD;
-
-        protected virtual void OnEnable()
-        {
-            if (targetGameObjectOLD != null)
-            {
-                targetGameObject.Value = targetGameObjectOLD;
-                targetGameObjectOLD = null;
-            }
-        }
-
-        #endregion
     }
 }

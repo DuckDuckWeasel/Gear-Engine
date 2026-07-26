@@ -16,20 +16,23 @@ namespace Scaffold
     {
         //[Tooltip("LHS Value ")]
         [SerializeField]
+        [Tooltip("The Initial range lower")]
         protected FloatData initialRangeLower = new FloatData(0), initialRangeUpper = new FloatData(1), value;
-        
+
         [SerializeField]
+        [Tooltip("The New range lower")]
         protected FloatData newRangeLower = new FloatData(0), newRangeUpper = new FloatData(1);
-        
+
         [SerializeField]
+        [Tooltip("The Out value")]
         protected FloatData outValue;
 
         public override void OnEnter()
         {
-            var p = value.Value - initialRangeLower.Value;
+            float p = value.Value - initialRangeLower.Value;
             p /= initialRangeUpper.Value - initialRangeLower.Value;
 
-            var res = p * (newRangeUpper.Value - newRangeLower.Value);
+            float res = p * (newRangeUpper.Value - newRangeLower.Value);
             res += newRangeLower.Value;
 
             outValue.Value = res;

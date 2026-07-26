@@ -20,8 +20,9 @@ namespace Scaffold
             Repeat,
             PingPong
         }
-        
+
         [SerializeField]
+        [Tooltip("The Mode")]
         protected Mode mode = Mode.Clamp;
 
         //[Tooltip("LHS Value ")]
@@ -34,9 +35,9 @@ namespace Scaffold
 
         public override void OnEnter()
         {
-            var l = lower.Value;
-            var u = upper.Value;
-            var v = value.Value;
+            float l = lower.Value;
+            float u = upper.Value;
+            float v = value.Value;
 
             switch (mode)
             {
@@ -59,7 +60,9 @@ namespace Scaffold
         public override string GetSummary()
         {
             if (outValue.floatRef == null)
+            {
                 return "Error: no output value selected";
+            }
 
             return outValue.floatRef.Key + " = " + Mode.Clamp.ToString() + (mode != Mode.Clamp ? " & " + mode.ToString() : "");
         }

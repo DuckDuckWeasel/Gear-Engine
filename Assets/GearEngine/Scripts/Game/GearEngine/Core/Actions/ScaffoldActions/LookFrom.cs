@@ -10,8 +10,8 @@ namespace Scaffold
     /// <summary>
     /// Instantly rotates a GameObject to look at the supplied Vector3 then returns it to it's starting rotation over time.
     /// </summary>
-    [CommandInfo("iTween", 
-                 "Look From", 
+    [CommandInfo("iTween",
+                 "Look From",
                  "Instantly rotates a GameObject to look at the supplied Vector3 then returns it to it's starting rotation over time.")]
     [AddComponentMenu("")]
     [ExecuteInEditMode]
@@ -43,15 +43,15 @@ namespace Scaffold
             }
             switch (axis)
             {
-            case iTweenAxis.X:
-                tweenParams.Add("axis", "x");
-                break;
-            case iTweenAxis.Y:
-                tweenParams.Add("axis", "y");
-                break;
-            case iTweenAxis.Z:
-                tweenParams.Add("axis", "z");
-                break;
+                case iTweenAxis.X:
+                    tweenParams.Add("axis", "x");
+                    break;
+                case iTweenAxis.Y:
+                    tweenParams.Add("axis", "y");
+                    break;
+                case iTweenAxis.Z:
+                    tweenParams.Add("axis", "z");
+                    break;
             }
             tweenParams.Add("time", duration.Value);
             tweenParams.Add("easetype", easeType);
@@ -70,28 +70,5 @@ namespace Scaffold
 
         #endregion
 
-        #region Backwards compatibility
-
-        [HideInInspector] [FormerlySerializedAs("fromTransform")] public Transform fromTransformOLD;
-        [HideInInspector] [FormerlySerializedAs("fromPosition")] public Vector3 fromPositionOLD;
-
-        protected override void OnEnable()
-        {
-            base.OnEnable();
-
-            if (fromTransformOLD != null)
-            {
-                fromTransform.Value = fromTransformOLD;
-                fromTransformOLD = null;
-            }
-
-            if (fromPositionOLD != default(Vector3))
-            {
-                fromPosition.Value = fromPositionOLD;
-                fromPositionOLD = default(Vector3);
-            }
-        }
-
-        #endregion
     }
 }

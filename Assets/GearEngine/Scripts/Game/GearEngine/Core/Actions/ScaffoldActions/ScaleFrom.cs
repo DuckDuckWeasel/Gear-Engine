@@ -10,8 +10,8 @@ namespace Scaffold
     /// <summary>
     /// Changes a game object's scale to the specified value and back to its original scale over time.
     /// </summary>
-    [CommandInfo("iTween", 
-                 "Scale From", 
+    [CommandInfo("iTween",
+                 "Scale From",
                  "Changes a game object's scale to the specified value and back to its original scale over time.")]
     [AddComponentMenu("")]
     [ExecuteInEditMode]
@@ -55,28 +55,5 @@ namespace Scaffold
 
         #endregion
 
-        #region Backwards compatibility
-
-        [HideInInspector] [FormerlySerializedAs("fromTransform")] public Transform fromTransformOLD;
-        [HideInInspector] [FormerlySerializedAs("fromScale")] public Vector3 fromScaleOLD;
-
-        protected override void OnEnable()
-        {
-            base.OnEnable();
-
-            if (fromTransformOLD != null)
-            {
-                fromTransform.Value = fromTransformOLD;
-                fromTransformOLD = null;
-            }
-
-            if (fromScaleOLD != default(Vector3))
-            {
-                fromScale.Value = fromScaleOLD;
-                fromScaleOLD = default(Vector3);
-            }
-        }
-
-        #endregion
     }
 }

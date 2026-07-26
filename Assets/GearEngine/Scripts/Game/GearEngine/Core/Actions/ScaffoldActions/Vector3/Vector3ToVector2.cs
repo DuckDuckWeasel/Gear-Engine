@@ -17,10 +17,12 @@ namespace Scaffold
     public class Vector3ToVector2 : ActionBase
     {
         [SerializeField]
+        [Tooltip("The Vec3")]
         protected Vector3Data vec3;
 
 
         [SerializeField]
+        [Tooltip("The Vec2")]
         protected Vector2Data vec2;
 
         public override void OnEnter()
@@ -49,7 +51,9 @@ namespace Scaffold
         public override bool HasReference(Variable variable)
         {
             if (variable == vec3.vector3Ref || variable == vec2.vector2Ref)
+            {
                 return true;
+            }
 
             return false;
         }

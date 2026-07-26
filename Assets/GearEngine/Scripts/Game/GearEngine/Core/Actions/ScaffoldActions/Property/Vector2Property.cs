@@ -15,36 +15,38 @@ namespace Scaffold
     [Serializable]
     public class Vector2Property : BaseVariableProperty
     {
-		//generated property
-        public enum Property 
-        { 
-            X, 
-            Y, 
-            Normalized, 
-            Magnitude, 
-            SqrMagnitude, 
+        //generated property
+        public enum Property
+        {
+            X,
+            Y,
+            Normalized,
+            Magnitude,
+            SqrMagnitude,
         }
 
-		
+
         [SerializeField]
         protected Property property;
-		
+
         [SerializeField]
         [VariableProperty(typeof(Vector2Variable))]
+        [Tooltip("The Vector2 var")]
         protected Vector2Variable vector2Var;
 
         [SerializeField]
         [VariableProperty(typeof(FloatVariable),
                           typeof(Vector2Variable))]
+        [Tooltip("The In out var")]
         protected Variable inOutVar;
 
         public override void OnEnter()
         {
-            var iof = inOutVar as FloatVariable;
-            var iov2 = inOutVar as Vector2Variable;
+            FloatVariable iof = inOutVar as FloatVariable;
+            Vector2Variable iov2 = inOutVar as Vector2Variable;
 
 
-            var target = vector2Var.Value;
+            Vector2 target = vector2Var.Value;
 
             switch (getOrSet)
             {
@@ -114,7 +116,9 @@ namespace Scaffold
         public override bool HasReference(Variable variable)
         {
             if (vector2Var == variable || inOutVar == variable)
+            {
                 return true;
+            }
 
             return false;
         }

@@ -12,6 +12,7 @@ namespace Scaffold
     [Serializable]
     public abstract class Condition : ActionBase
     {
+        [Tooltip("The End command")]
         protected End endCommand;
 
         public override void OnEnter()
@@ -261,9 +262,9 @@ namespace Scaffold
                 return null;
             }
 
-            foreach (IAction action in invokeActionCommand.actions)
+            foreach (InvokeActionCommand.ActionWrapper wrapper in invokeActionCommand.actions)
             {
-                if (action is TAction typedAction)
+                if (wrapper.action is TAction typedAction)
                 {
                     return typedAction;
                 }

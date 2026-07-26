@@ -15,25 +15,26 @@ namespace Scaffold
     [Serializable]
     public class Collider2DProperty : BaseVariableProperty
     {
-		//generated property
-        public enum Property 
-        { 
-            Density, 
-            IsTrigger, 
-            UsedByEffector, 
-            UsedByComposite, 
-            Offset, 
-            AttachedRigidbody, 
-            ShapeCount, 
-            Friction, 
-            Bounciness, 
+        //generated property
+        public enum Property
+        {
+            Density,
+            IsTrigger,
+            UsedByEffector,
+            UsedByComposite,
+            Offset,
+            AttachedRigidbody,
+            ShapeCount,
+            Friction,
+            Bounciness,
         }
 
-		
+
         [SerializeField]
         protected Property property;
-		
+
         [SerializeField]
+        [Tooltip("The Collider2 d data")]
         protected Collider2DData collider2DData;
 
         [SerializeField]
@@ -42,18 +43,19 @@ namespace Scaffold
                           typeof(Vector2Variable),
                           typeof(Rigidbody2DVariable),
                           typeof(IntegerVariable))]
+        [Tooltip("The In out var")]
         protected Variable inOutVar;
 
         public override void OnEnter()
         {
-            var iof = inOutVar as FloatVariable;
-            var iob = inOutVar as BooleanVariable;
-            var iov2 = inOutVar as Vector2Variable;
-            var iorb2d = inOutVar as Rigidbody2DVariable;
-            var ioi = inOutVar as IntegerVariable;
+            FloatVariable iof = inOutVar as FloatVariable;
+            BooleanVariable iob = inOutVar as BooleanVariable;
+            Vector2Variable iov2 = inOutVar as Vector2Variable;
+            Rigidbody2DVariable iorb2d = inOutVar as Rigidbody2DVariable;
+            IntegerVariable ioi = inOutVar as IntegerVariable;
 
 
-            var target = collider2DData.Value;
+            Collider2D target = collider2DData.Value;
 
             switch (getOrSet)
             {
@@ -146,7 +148,9 @@ namespace Scaffold
         public override bool HasReference(Variable variable)
         {
             if (collider2DData.collider2DRef == variable || inOutVar == variable)
+            {
                 return true;
+            }
 
             return false;
         }

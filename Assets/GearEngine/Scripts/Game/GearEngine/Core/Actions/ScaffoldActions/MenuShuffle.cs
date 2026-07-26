@@ -10,38 +10,39 @@ namespace Scaffold
     /// <summary>
     /// Shuffle the order of the items in a Scaffold Menu
     /// </summary>
-    [CommandInfo("Narrative", 
-                 "Menu Shuffle", 
-		"Shuffle the order of the items in a Scaffold Menu")]
+    [CommandInfo("Narrative",
+                 "Menu Shuffle",
+        "Shuffle the order of the items in a Scaffold Menu")]
     [AddComponentMenu("")]
     [ExecuteInEditMode]
     [Serializable]
     public class MenuShuffle : ActionBase
     {
-		public enum Mode
-		{
-			Every,
-			Once
-		}
-		[SerializeField]
-		[Tooltip("Determines if the order is shuffled everytime this command is it (Every) or if it is consistent when returned to but random (Once)")]
-		protected Mode shuffleMode = Mode.Once;
+        public enum Mode
+        {
+            Every,
+            Once
+        }
+        [SerializeField]
+        [Tooltip("Determines if the order is shuffled everytime this command is it (Every) or if it is consistent when returned to but random (Once)")]
+        protected Mode shuffleMode = Mode.Once;
 
-		private int seed = -1;
+        [Tooltip("The Seed")]
+        private int seed = -1;
 
         public override void OnEnter()
         {
-            var menuDialog = MenuDialog.GetMenuDialog();
+            MenuDialog menuDialog = MenuDialog.GetMenuDialog();
 
-			//if we shuffle every time or we haven't shuffled yet
-			if(shuffleMode == Mode.Every || seed == -1)
-			{
-				seed = UnityEngine.Random.Range(0,1000000);
-			}
+            //if we shuffle every time or we haven't shuffled yet
+            if (shuffleMode == Mode.Every || seed == -1)
+            {
+                seed = UnityEngine.Random.Range(0, 1000000);
+            }
 
             if (menuDialog != null)
             {
-				menuDialog.Shuffle(new System.Random(seed));
+                menuDialog.Shuffle(new System.Random(seed));
             }
 
             Continue();

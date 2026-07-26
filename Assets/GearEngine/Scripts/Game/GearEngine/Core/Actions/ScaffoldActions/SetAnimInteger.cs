@@ -9,8 +9,8 @@ namespace Scaffold
     /// <summary>
     /// Sets an integer parameter on an Animator component to control a Unity animation.
     /// </summary>
-    [CommandInfo("Animation", 
-                 "Set Anim Integer", 
+    [CommandInfo("Animation",
+                 "Set Anim Integer",
                  "Sets an integer parameter on an Animator component to control a Unity animation")]
     [AddComponentMenu("")]
     [ExecuteInEditMode]
@@ -55,32 +55,11 @@ namespace Scaffold
 
         public override bool HasReference(Variable variable)
         {
-            return animator.animatorRef == variable || parameterName.stringRef == variable || value.integerRef == variable || 
+            return animator.animatorRef == variable || parameterName.stringRef == variable || value.integerRef == variable ||
                 base.HasReference(variable);
         }
 
         #endregion
 
-        #region Backwards compatibility
-
-        [HideInInspector] [FormerlySerializedAs("animator")] public Animator animatorOLD;
-        [HideInInspector] [FormerlySerializedAs("parameterName")] public string parameterNameOLD = "";
-
-        protected virtual void OnEnable()
-        {
-            if (animatorOLD != null)
-            {
-                animator.Value = animatorOLD;
-                animatorOLD = null;
-            }
-
-            if (parameterNameOLD != "")
-            {
-                parameterName.Value = parameterNameOLD;
-                parameterNameOLD = "";
-            }
-        }
-
-        #endregion
     }
 }

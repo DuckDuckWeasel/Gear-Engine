@@ -15,22 +15,23 @@ namespace Scaffold
     [Serializable]
     public class SpriteProperty : BaseVariableProperty
     {
-		//generated property
-        public enum Property 
-        { 
-            Border, 
-            PixelsPerUnit, 
-            Pivot, 
-            Packed, 
-            TextureRectOffset, 
+        //generated property
+        public enum Property
+        {
+            Border,
+            PixelsPerUnit,
+            Pivot,
+            Packed,
+            TextureRectOffset,
         }
 
-		
+
         [SerializeField]
         protected Property property;
-		
+
         [SerializeField]
         [VariableProperty(typeof(SpriteVariable))]
+        [Tooltip("The Sprite var")]
         protected SpriteVariable spriteVar;
 
         [SerializeField]
@@ -38,17 +39,18 @@ namespace Scaffold
                           typeof(FloatVariable),
                           typeof(Vector2Variable),
                           typeof(BooleanVariable))]
+        [Tooltip("The In out var")]
         protected Variable inOutVar;
 
         public override void OnEnter()
         {
-            var iov4 = inOutVar as Vector4Variable;
-            var iof = inOutVar as FloatVariable;
-            var iov2 = inOutVar as Vector2Variable;
-            var iob = inOutVar as BooleanVariable;
+            Vector4Variable iov4 = inOutVar as Vector4Variable;
+            FloatVariable iof = inOutVar as FloatVariable;
+            Vector2Variable iov2 = inOutVar as Vector2Variable;
+            BooleanVariable iob = inOutVar as BooleanVariable;
 
 
-            var target = spriteVar.Value;
+            Sprite target = spriteVar.Value;
 
             switch (getOrSet)
             {
@@ -114,7 +116,9 @@ namespace Scaffold
         public override bool HasReference(Variable variable)
         {
             if (spriteVar == variable || inOutVar == variable)
+            {
                 return true;
+            }
 
             return false;
         }

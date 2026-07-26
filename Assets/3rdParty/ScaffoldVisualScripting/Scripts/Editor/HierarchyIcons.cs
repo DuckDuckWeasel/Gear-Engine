@@ -45,9 +45,11 @@ namespace Scaffold
             blackboardIDs.Clear();
 
             if (EditorUtils.ScaffoldEditorPreferences.hideBlackboardIconInHierarchy)
+            {
                 return;
+            }
 
-            var blackboards = GameObject.FindObjectsOfType<Blackboard>();
+            List<Blackboard> blackboards = Blackboard.CachedBlackboards;
 
             blackboardIDs = blackboards.Select(x => x.gameObject.GetEntityId()).Distinct().ToList();
             blackboardIDs.Sort((a, b) => a.CompareTo(b));
@@ -56,14 +58,16 @@ namespace Scaffold
         //Draw icon if the isntance id is in our cached list
         static void HierarchyIconCallback(UnityEngine.EntityId instanceID, Rect selectionRect)
         {
-            if(initalHierarchyCheckFlag)
+            if (initalHierarchyCheckFlag)
             {
                 HierarchyChanged();
                 initalHierarchyCheckFlag = false;
             }
 
             if (EditorUtils.ScaffoldEditorPreferences.hideBlackboardIconInHierarchy)
+            {
                 return;
+            }
 
             // place the icon to the left of the element
             Rect r = new Rect(selectionRect);
@@ -79,7 +83,9 @@ namespace Scaffold
             //binary search as it is much faster to cache and int bin search than GetComponent
             //  should be less GC too
             if (blackboardIDs.BinarySearch(instanceID, new EntityIdComparer()) >= 0)
+            {
                 GUI.Label(r, TextureIcon);
+            }
         }
 
         class EntityIdComparer : IComparer<UnityEngine.EntityId>

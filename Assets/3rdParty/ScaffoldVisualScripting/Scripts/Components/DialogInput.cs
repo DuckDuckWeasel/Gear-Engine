@@ -1,5 +1,5 @@
 
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.EventSystems;
 
 namespace Scaffold
@@ -57,7 +57,7 @@ namespace Scaffold
         // This method will automatically instantiate one if none exists.
         protected virtual void CheckEventSystem()
         {
-            EventSystem eventSystem = GameObject.FindObjectOfType<EventSystem>();
+            EventSystem eventSystem = EventSystem.current;
             if (eventSystem == null)
             {
                 // Auto spawn an Event System from the prefab
@@ -69,7 +69,7 @@ namespace Scaffold
                 }
             }
         }
-            
+
         protected virtual void Update()
         {
             if (EventSystem.current == null)
@@ -93,32 +93,32 @@ namespace Scaffold
 
             switch (clickMode)
             {
-            case ClickMode.Disabled:
-                break;
-            case ClickMode.ClickAnywhere:
-                if (Input.GetMouseButtonDown(0))
-                {
-                    SetClickAnywhereClickedFlag();
-                }
-                break;
-            case ClickMode.ClickOnDialog:
-                if (dialogClickedFlag)
-                {
-                    SetNextLineFlag();
-                    dialogClickedFlag = false;
-                }
-                break;
+                case ClickMode.Disabled:
+                    break;
+                case ClickMode.ClickAnywhere:
+                    if (Input.GetMouseButtonDown(0))
+                    {
+                        SetClickAnywhereClickedFlag();
+                    }
+                    break;
+                case ClickMode.ClickOnDialog:
+                    if (dialogClickedFlag)
+                    {
+                        SetNextLineFlag();
+                        dialogClickedFlag = false;
+                    }
+                    break;
             }
 
             if (ignoreClickTimer > 0f)
             {
-                ignoreClickTimer = Mathf.Max (ignoreClickTimer - Time.deltaTime, 0f);
+                ignoreClickTimer = Mathf.Max(ignoreClickTimer - Time.deltaTime, 0f);
             }
 
             if (ignoreMenuClicks)
             {
                 // Ignore input events if a Menu is being displayed
-                if (MenuDialog.ActiveMenuDialog != null && 
+                if (MenuDialog.ActiveMenuDialog != null &&
                     MenuDialog.ActiveMenuDialog.IsActive() &&
                     MenuDialog.ActiveMenuDialog.DisplayedOptionsCount > 0)
                 {
@@ -130,10 +130,10 @@ namespace Scaffold
             // Tell any listeners to move to the next line
             if (nextLineInputFlag)
             {
-                var inputListeners = gameObject.GetComponentsInChildren<IDialogInputListener>();
+                IDialogInputListener[] inputListeners = gameObject.GetComponentsInChildren<IDialogInputListener>();
                 for (int i = 0; i < inputListeners.Length; i++)
                 {
-                    var inputListener = inputListeners[i];
+                    IDialogInputListener inputListener = inputListeners[i];
                     inputListener.OnNextLineEvent();
                 }
                 nextLineInputFlag = false;
@@ -147,7 +147,7 @@ namespace Scaffold
         /// </summary>
         public virtual void SetNextLineFlag()
         {
-            if(writer.IsWaitingForInput || writer.IsWriting)
+            if (writer.IsWaitingForInput || writer.IsWriting)
             {
                 nextLineInputFlag = true;
             }

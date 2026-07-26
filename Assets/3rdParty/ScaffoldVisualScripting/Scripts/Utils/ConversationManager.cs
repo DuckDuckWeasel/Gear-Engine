@@ -55,10 +55,10 @@ namespace Scaffold
         /// trimmed from the start and end.
         protected static string[] Split(string stringToSplit)
         {
-            var results = new List<string>();
+            List<string> results = new List<string>();
 
             bool inQuote = false;
-            var currentToken = new StringBuilder();
+            StringBuilder currentToken = new StringBuilder();
             for (int index = 0; index < stringToSplit.Length; ++index)
             {
                 char currentCharacter = stringToSplit[index];
@@ -72,8 +72,11 @@ namespace Scaffold
                 {
                     // We've come to the end of a token, so we find the token,
                     // trim it and add it to the collection of results...
-                    string result = currentToken.ToString().Trim( new [] { ' ', '\n', '\t', '\"'} );
-                    if (result != "") results.Add(result);
+                    string result = currentToken.ToString().Trim(new[] { ' ', '\n', '\t', '\"' });
+                    if (result != "")
+                    {
+                        results.Add(result);
+                    }
 
                     // We start a new token...
                     currentToken = new StringBuilder();
@@ -88,7 +91,7 @@ namespace Scaffold
 
             // We've come to the end of the string, so we add the last token...
             string lastResult = currentToken.ToString().Trim();
-            if (lastResult != "") 
+            if (lastResult != "")
             {
                 results.Add(lastResult);
             }
@@ -122,7 +125,7 @@ namespace Scaffold
         {
             //find SimpleScript say strings with portrait options
             //You can test regex matches here: http://regexstorm.net/tester
-            var sayRegex = new Regex(ConversationTextBodyRegex);
+            Regex sayRegex = new Regex(ConversationTextBodyRegex);
             MatchCollection sayMatches = sayRegex.Matches(conv);
 
             for (int i = 0; i < sayMatches.Count; i++)
@@ -149,7 +152,7 @@ namespace Scaffold
                     separateParams = new string[0];
                 }
 
-                var item = new RawConversationItem() { sayParams = separateParams, text = text };
+                RawConversationItem item = new RawConversationItem() { sayParams = separateParams, text = text };
 
                 itemAction(item);
             }
@@ -166,12 +169,12 @@ namespace Scaffold
 
         protected virtual List<ConversationItem> Parse(string conv)
         {
-            var items = new List<ConversationItem>();
+            List<ConversationItem> items = new List<ConversationItem>();
 
             Character currentCharacter = null;
             PreParse(conv, (ia) =>
             {
-                var item = CreateConversationItem(ia.sayParams, ia.text, currentCharacter);
+                ConversationItem item = CreateConversationItem(ia.sayParams, ia.text, currentCharacter);
 
                 // Previous speaking character is the default for next conversation item
                 currentCharacter = item.Character;
@@ -191,7 +194,7 @@ namespace Scaffold
         /// <param name="currentCharacter">The currently speaking character.</param>
         protected virtual ConversationItem CreateConversationItem(string[] sayParams, string text, Character currentCharacter)
         {
-            var item = new ConversationItem();
+            ConversationItem item = new ConversationItem();
             item.ClearPrev = ClearPrev;
             item.FadeDone = FadeDone;
             item.WaitForInput = WaitForInput;
@@ -199,9 +202,9 @@ namespace Scaffold
             // Populate the story text to be written
             item.Text = text;
 
-            if(WaitForSeconds > 0)
+            if (WaitForSeconds > 0)
             {
-                item.Text += "{w=" + WaitForSeconds.ToString() +"}";
+                item.Text += "{w=" + WaitForSeconds.ToString() + "}";
             }
 
             if (sayParams == null || sayParams.Length == 0)
@@ -267,9 +270,9 @@ namespace Scaffold
             }
 
             //if still no charcter was found but we found a partial we use it for backcompat but warn user
-            if(item.Character == null && partialCharacter != null)
+            if (item.Character == null && partialCharacter != null)
             {
-                Debug.LogWarning("Conversation Manager Character Partial Match; found '" + sayParams[characterParamIndexPartial] + 
+                Debug.LogWarning("Conversation Manager Character Partial Match; found '" + sayParams[characterParamIndexPartial] +
                     "' and will use " + partialCharacter.NameText + "\n Recommend modifying conversation and characters so they match exactly.");
 
                 characterIndex = characterParamIndexPartial;
@@ -289,7 +292,7 @@ namespace Scaffold
                 for (int i = 0; i < sayParams.Length; i++)
                 {
                     if (i != characterIndex &&
-                        string.Compare(sayParams[i], "hide", true) == 0 )
+                        string.Compare(sayParams[i], "hide", true) == 0)
                     {
                         hideIndex = i;
                         item.Hide = true;
@@ -308,26 +311,34 @@ namespace Scaffold
                         (string.Compare(sayParams[i], ">>>", true) == 0
                          || string.Compare(sayParams[i], "<<<", true) == 0))
                     {
-                        if (string.Compare(sayParams[i], ">>>", true) == 0) item.FacingDirection = FacingDirection.Right;
-                        if (string.Compare(sayParams[i], "<<<", true) == 0) item.FacingDirection = FacingDirection.Left;
+                        if (string.Compare(sayParams[i], ">>>", true) == 0)
+                        {
+                            item.FacingDirection = FacingDirection.Right;
+                        }
+
+                        if (string.Compare(sayParams[i], "<<<", true) == 0)
+                        {
+                            item.FacingDirection = FacingDirection.Left;
+                        }
+
                         flipIndex = i;
                         item.Flip = true;
                         break;
                     }
                 }
             }
-                
+
             // Next see if we can find a portrait for this character
             int portraitIndex = -1;
             if (item.Character != null)
             {
                 for (int i = 0; i < sayParams.Length; i++)
                 {
-                    if (item.Portrait == null && 
+                    if (item.Portrait == null &&
                         item.Character != null &&
-                        i != characterIndex && 
+                        i != characterIndex &&
                         i != hideIndex &&
-                        i != flipIndex) 
+                        i != flipIndex)
                     {
                         Sprite s = item.Character.GetPortrait(sayParams[i]);
                         if (s != null)
@@ -371,7 +382,7 @@ namespace Scaffold
         public virtual void PopulateCharacterCache()
         {
             // cache characters for faster lookup
-            characters = UnityEngine.Object.FindObjectsOfType<Character>();
+            characters = Character.ActiveCharacters.ToArray();
         }
 
         /// <summary>
@@ -384,7 +395,7 @@ namespace Scaffold
                 yield break;
             }
 
-            var conversationItems = Parse(conv);
+            List<ConversationItem> conversationItems = Parse(conv);
 
             if (conversationItems.Count == 0)
             {
@@ -410,7 +421,7 @@ namespace Scaffold
                 currentPortrait = item.Portrait;
                 currentPosition = item.Position;
 
-                var sayDialog = GetSayDialog(currentCharacter);
+                SayDialog sayDialog = GetSayDialog(currentCharacter);
 
                 if (sayDialog == null)
                 {
@@ -418,14 +429,14 @@ namespace Scaffold
                     yield break;
                 }
 
-                if (currentCharacter != null && 
+                if (currentCharacter != null &&
                     currentCharacter != previousCharacter)
                 {
                     sayDialog.SetCharacter(currentCharacter);
                 }
 
                 //Handle stage changes
-                var stage = Stage.GetActiveStage();
+                Stage stage = Stage.GetActiveStage();
 
                 if (currentCharacter != null &&
                     !currentCharacter.State.onScreen &&
@@ -441,7 +452,7 @@ namespace Scaffold
                         currentPosition != currentCharacter.State.position ||
                         (currentCharacter.State.display == DisplayType.Hide && !item.Hide)))
                 {
-                    var portraitOptions = new PortraitOptions(true);
+                    PortraitOptions portraitOptions = new PortraitOptions(true);
                     portraitOptions.display = item.Hide ? DisplayType.Hide : DisplayType.Show;
                     portraitOptions.character = currentCharacter;
                     portraitOptions.fromPosition = currentCharacter.State.position;
@@ -449,7 +460,10 @@ namespace Scaffold
                     portraitOptions.portrait = currentPortrait;
 
                     //Flip option - Flip the opposite direction the character is currently facing
-                    if (item.Flip) portraitOptions.facing = item.FacingDirection;
+                    if (item.Flip)
+                    {
+                        portraitOptions.facing = item.FacingDirection;
+                    }
 
                     // Do a move tween if the character is already on screen and not yet at the specified position
                     if (currentCharacter.State.onScreen &&
@@ -476,9 +490,11 @@ namespace Scaffold
 
                 previousCharacter = currentCharacter;
 
-                if (!string.IsNullOrEmpty(item.Text)) { 
+                if (!string.IsNullOrEmpty(item.Text))
+                {
                     exitSayWait = false;
-                    sayDialog.Say(item.Text, item.ClearPrev, item.WaitForInput, item.FadeDone, true, false, null, () => {
+                    sayDialog.Say(item.Text, item.ClearPrev, item.WaitForInput, item.FadeDone, true, false, null, () =>
+                    {
                         exitSayWait = true;
                     });
 

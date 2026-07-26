@@ -13,6 +13,7 @@ namespace Scaffold
     {
         [SerializeField]
         [VariableProperty(compatibleVariableName = "collection")]
+        [Tooltip("The Variable to use")]
         protected Variable variableToUse;
 
         public override void OnEnter()
@@ -35,10 +36,14 @@ namespace Scaffold
         public override string GetSummary()
         {
             if (collection.Value == null)
+            {
                 return "Error: no collection selected";
+            }
 
             if (variableToUse == null)
+            {
                 return "Error: no variable selected";
+            }
 
             return variableToUse.Key + " to " + collection.Value.name;
         }
@@ -46,9 +51,13 @@ namespace Scaffold
         bool ICollectionCompatible.IsVarCompatibleWithCollection(Variable variable, string compatibleWith)
         {
             if (compatibleWith == "collection")
+            {
                 return collection.Value == null ? false : collection.Value.IsElementCompatible(variable);
+            }
             else
+            {
                 return true;
+            }
         }
     }
 }

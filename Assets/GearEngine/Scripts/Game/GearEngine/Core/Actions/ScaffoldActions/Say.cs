@@ -2,20 +2,22 @@ using System;
 using GearEngine.Core.Actions;
 
 using UnityEngine;
+using Ami.BroAudio;
 
 namespace Scaffold
 {
     /// <summary>
     /// Writes text in a dialog box.
     /// </summary>
-    [CommandInfo("Narrative", 
-                 "Say", 
+    [CommandInfo("Narrative",
+                 "Say",
                  "Writes text in a dialog box.")]
     [Serializable]
     public class Say : ActionBase, ILocalizable
     {
         // Removed this tooltip as users's reported it obscures the text box
-        [TextArea(5,10)]
+        [TextArea(5, 10)]
+        [Tooltip("The Story text")]
         [SerializeField] public string storyText = "";
 
         [Tooltip("Notes about this story text for other authors, localization, etc.")]
@@ -33,8 +35,11 @@ namespace Scaffold
         [Tooltip("Legacy portrait override retained for existing commands.")]
         [SerializeField] protected Sprite portrait;
 
-        [Tooltip("Voiceover audio to play when writing the text")]
-        [SerializeField] protected AudioClip voiceOverClip;
+        [Tooltip("Legacy: standard AudioClip variable or object to play when writing the text")]
+        [SerializeField] protected AudioClipData voiceOverClipData;
+
+        [Tooltip("BroAudio SoundID to play when writing the text. (Takes priority over AudioClip)")]
+        [SerializeField] protected SoundID voiceOverSound;
 
         [Tooltip("Always show this Say text when the command is executed multiple times")]
         [SerializeField] protected bool showAlways = true;
@@ -107,14 +112,14 @@ namespace Scaffold
                 SayDialog.ActiveSayDialog = setSayDialog;
             }
 
-            var sayDialog = SayDialog.GetSayDialog();
+            SayDialog sayDialog = SayDialog.GetSayDialog();
             if (sayDialog == null)
             {
                 Continue();
                 return;
             }
-    
-            var blackboard = GetBlackboard();
+
+            Blackboard blackboard = GetBlackboard();
 
             sayDialog.SetActive(true);
 
@@ -123,10 +128,10 @@ namespace Scaffold
 
             string displayText = storyText;
 
-            var activeCustomTags = CustomTag.activeCustomTags;
+            System.Collections.Generic.List<CustomTag> activeCustomTags = CustomTag.activeCustomTags;
             for (int i = 0; i < activeCustomTags.Count; i++)
             {
-                var ct = activeCustomTags[i];
+                CustomTag ct = activeCustomTags[i];
                 displayText = displayText.Replace(ct.TagStartSymbol, ct.ReplaceTagStartWith);
                 if (ct.TagEndSymbol != "" && ct.ReplaceTagEndWith != "")
                 {
@@ -135,17 +140,33 @@ namespace Scaffold
             }
 
             string subbedText = blackboard.SubstituteVariables(displayText);
-            
-            if(waitForComplete)
+
+            if (voiceOverSound.IsValid())
             {
-                sayDialog.Say(subbedText, !extendPrevious, waitForClick, fadeWhenDone, stopVoiceover, waitForVO, voiceOverClip, delegate 
+                BroAudio.Play(voiceOverSound);
+            }
+
+            if (waitForComplete)
+            {
+                sayDialog.Say(subbedText, !extendPrevious, waitForClick, fadeWhenDone, stopVoiceover, waitForVO, voiceOverClipData.Value, delegate
                 {
+                    if (stopVoiceover && voiceOverSound.IsValid())
+                    {
+                        BroAudio.Stop(voiceOverSound);
+                    }
+
                     Continue();
                 });
             }
             else
             {
-                sayDialog.Say(subbedText, !extendPrevious, waitForClick, fadeWhenDone, stopVoiceover, waitForVO, voiceOverClip, delegate {});
+                sayDialog.Say(subbedText, !extendPrevious, waitForClick, fadeWhenDone, stopVoiceover, waitForVO, voiceOverClipData.Value, delegate
+                {
+                    if (stopVoiceover && voiceOverSound.IsValid())
+                    {
+                        BroAudio.Stop(voiceOverSound);
+                    }
+                });
                 Continue();
             }
         }
@@ -177,7 +198,12 @@ namespace Scaffold
 
         public override void OnStopExecuting()
         {
-            var sayDialog = SayDialog.GetSayDialog();
+            if (voiceOverSound.IsValid())
+            {
+                BroAudio.Stop(voiceOverSound);
+            }
+
+            SayDialog sayDialog = SayDialog.GetSayDialog();
             if (sayDialog == null)
             {
                 return;
@@ -204,7 +230,7 @@ namespace Scaffold
         {
             return description;
         }
-        
+
         public virtual string GetStringId()
         {
             // String id for Say commands is SAY.<Localization Id>.<Command id>.[Character Name]

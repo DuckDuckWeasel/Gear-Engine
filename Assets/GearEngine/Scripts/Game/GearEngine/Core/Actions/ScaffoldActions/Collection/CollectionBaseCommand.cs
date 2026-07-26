@@ -12,6 +12,7 @@ namespace Scaffold
     public abstract class CollectionBaseCommand : ActionBase
     {
         [SerializeField]
+        [Tooltip("The Collection")]
         protected CollectionData collection;
 
         public override Color GetButtonColor()
@@ -27,7 +28,9 @@ namespace Scaffold
         public override string GetSummary()
         {
             if (collection.Value == null)
+            {
                 return "Error: no collection selected";
+            }
 
             return collection.Value.name;
         }

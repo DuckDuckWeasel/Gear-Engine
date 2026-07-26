@@ -9,8 +9,8 @@ namespace Scaffold
     /// <summary>
     /// Sets a float parameter on an Animator component to control a Unity animation.
     /// </summary>
-    [CommandInfo("Animation", 
-                 "Set Anim Float", 
+    [CommandInfo("Animation",
+                 "Set Anim Float",
                  "Sets a float parameter on an Animator component to control a Unity animation")]
     [AddComponentMenu("")]
     [ExecuteInEditMode]
@@ -61,26 +61,5 @@ namespace Scaffold
 
         #endregion
 
-        #region Backwards compatibility
-
-        [HideInInspector] [FormerlySerializedAs("animator")] public Animator animatorOLD;
-        [HideInInspector] [FormerlySerializedAs("parameterName")] public string parameterNameOLD = "";
-
-        protected virtual void OnEnable()
-        {
-            if (animatorOLD != null)
-            {
-                animator.Value = animatorOLD;
-                animatorOLD = null;
-            }
-
-            if (parameterNameOLD != "")
-            {
-                parameterName.Value = parameterNameOLD;
-                parameterNameOLD = "";
-            }
-        }
-
-        #endregion
     }
 }

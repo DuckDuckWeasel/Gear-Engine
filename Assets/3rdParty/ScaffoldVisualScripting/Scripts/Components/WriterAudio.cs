@@ -1,5 +1,5 @@
 
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections.Generic;
 
 namespace Scaffold
@@ -21,7 +21,7 @@ namespace Scaffold
     public class WriterAudio : MonoBehaviour, IWriterListener
     {
         [Tooltip("Volume level of writing sound effects")]
-        [Range(0,1)]
+        [Range(0, 1)]
         [SerializeField] protected float volume = 1f;
 
         [Tooltip("Loop the audio when in Sound Effect mode. Has no effect in Beeps mode.")]
@@ -149,6 +149,7 @@ namespace Scaffold
             targetVolume = 0f;
             targetAudioSource.loop = false;
             playBeeps = false;
+
             playingVoiceover = false;
         }
 
@@ -186,7 +187,7 @@ namespace Scaffold
             }
             Play(audioClip);
         }
-        
+
         public virtual void OnPause()
         {
             if (playingVoiceover)
@@ -195,7 +196,7 @@ namespace Scaffold
             }
             Pause();
         }
-        
+
         public virtual void OnResume()
         {
             if (playingVoiceover)
@@ -204,7 +205,7 @@ namespace Scaffold
             }
             Resume();
         }
-        
+
         public virtual void OnEnd(bool stopAudio)
         {
             if (stopAudio)
@@ -244,12 +245,12 @@ namespace Scaffold
 
         public virtual void OnVoiceover(AudioClip voiceOverClip)
         {
+            playingVoiceover = true;
+
             if (targetAudioSource == null)
             {
                 return;
             }
-
-            playingVoiceover = true;
 
             targetAudioSource.volume = volume;
             targetVolume = volume;

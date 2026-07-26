@@ -8,12 +8,16 @@ namespace Scaffold
     /// <summary>
     /// Marks a position in the command list for execution to jump to.
     /// </summary>
-    [CommandInfo("Flow", 
-                 "Label", 
+    [CommandInfo("Flow",
+                 "Label",
                  "Marks a position in the command list for execution to jump to.")]
     [Serializable]
     public class Label : ActionBase
     {
+        public override bool IsLabel()
+        {
+            return true;
+        }
         [Tooltip("Display name for the label")]
         [SerializeField] protected string key = "";
 

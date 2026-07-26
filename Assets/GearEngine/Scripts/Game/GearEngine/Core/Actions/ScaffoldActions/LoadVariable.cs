@@ -8,8 +8,8 @@ namespace Scaffold
     /// <summary>
     /// Loads a saved value and stores it in a Boolean, Integer, Float or String variable. If the key is not found then the variable is not modified.
     /// </summary>
-    [CommandInfo("Variable", 
-                 "Load Variable", 
+    [CommandInfo("Variable",
+                 "Load Variable",
                  "Loads a saved value and stores it in a Boolean, Integer, Float or String variable. If the key is not found then the variable is not modified.")]
     [Serializable]
     public class LoadVariable : ActionBase
@@ -19,20 +19,21 @@ namespace Scaffold
 
         [Tooltip("Variable to store the value in.")]
         [VariableProperty(typeof(BooleanVariable),
-                          typeof(IntegerVariable), 
-                          typeof(FloatVariable), 
+                          typeof(IntegerVariable),
+                          typeof(FloatVariable),
                           typeof(StringVariable))]
+
         [SerializeField] protected Variable variable;
 
         #region Public members
 
         public override void OnEnter()
         {
-            var blackboard = GetBlackboard();
+            Blackboard blackboard = GetBlackboard();
 
             // Prepend the current save profile (if any) and make sure all inputs are valid
             string prefsKey = SetSaveProfile.SaveProfile + "_" + blackboard.SubstituteVariables(key);
-            bool validKey = key != "" && PlayerPrefs.HasKey(prefsKey);
+            bool validKey = key != "" && Blackboard.SaveService.HasKey(prefsKey);
             bool validVariable = variable != null;
 
             if (!validKey || !validVariable)
@@ -41,52 +42,32 @@ namespace Scaffold
                 return;
             }
 
-            System.Type variableType = variable.GetType();
-
-            if (variableType == typeof(BooleanVariable))
+            switch (variable)
             {
-                BooleanVariable booleanVariable = variable as BooleanVariable;
-                if (booleanVariable != null)
-                {
-                    // PlayerPrefs does not have bool accessors, so just use int
-                    booleanVariable.Value = (PlayerPrefs.GetInt(prefsKey) == 1);
-                }
-            }
-            else if (variableType == typeof(IntegerVariable))
-            {
-                IntegerVariable integerVariable = variable as IntegerVariable;
-                if (integerVariable != null)
-                {
-                    integerVariable.Value = PlayerPrefs.GetInt(prefsKey);
-                }
-            }
-            else if (variableType == typeof(FloatVariable))
-            {
-                FloatVariable floatVariable = variable as FloatVariable;
-                if (floatVariable != null)
-                {
-                    floatVariable.Value = PlayerPrefs.GetFloat(prefsKey);
-                }
-            }
-            else if (variableType == typeof(StringVariable))
-            {
-                StringVariable stringVariable = variable as StringVariable;
-                if (stringVariable != null)
-                {
-                    stringVariable.Value = PlayerPrefs.GetString(prefsKey);
-                }
+                case BooleanVariable booleanVariable:
+                    booleanVariable.Value = Blackboard.SaveService.GetInt(prefsKey) == 1;
+                    break;
+                case IntegerVariable integerVariable:
+                    integerVariable.Value = Blackboard.SaveService.GetInt(prefsKey);
+                    break;
+                case FloatVariable floatVariable:
+                    floatVariable.Value = Blackboard.SaveService.GetFloat(prefsKey);
+                    break;
+                case StringVariable stringVariable:
+                    stringVariable.Value = Blackboard.SaveService.GetString(prefsKey);
+                    break;
             }
 
             Continue();
         }
-        
+
         public override string GetSummary()
         {
             if (key.Length == 0)
             {
                 return "Error: No stored value key selected";
             }
-        
+
             if (variable == null)
             {
                 return "Error: No variable selected";
@@ -113,7 +94,7 @@ namespace Scaffold
         {
             base.RefreshVariableCache();
 
-            var f = GetBlackboard();
+            Blackboard f = GetBlackboard();
 
             f.DetermineSubstituteVariables(key, referencedVariables);
         }

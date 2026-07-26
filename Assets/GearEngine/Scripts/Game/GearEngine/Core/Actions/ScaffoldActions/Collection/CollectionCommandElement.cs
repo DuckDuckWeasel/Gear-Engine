@@ -21,9 +21,11 @@ namespace Scaffold
         }
 
         [SerializeField]
+        [Tooltip("The Index")]
         protected IntegerData index;
 
         [SerializeField]
+        [Tooltip("The Getset")]
         protected GetSet getset = GetSet.Get;
 
         protected override void OnEnterInner()

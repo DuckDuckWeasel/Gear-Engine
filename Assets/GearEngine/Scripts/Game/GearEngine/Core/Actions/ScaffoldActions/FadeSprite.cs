@@ -9,8 +9,8 @@ namespace Scaffold
     /// <summary>
     /// Fades a sprite to a target color over a period of time.
     /// </summary>
-    [CommandInfo("Sprite", 
-                 "Fade Sprite", 
+    [CommandInfo("Sprite",
+                 "Fade Sprite",
                  "Fades a sprite to a target color over a period of time.")]
     [AddComponentMenu("")]
     [ExecuteInEditMode]
@@ -39,7 +39,8 @@ namespace Scaffold
                 return;
             }
 
-            SpriteFader.FadeSprite(spriteRenderer, targetColor.Value, duration.Value, Vector2.zero, delegate {
+            SpriteFader.FadeSprite(spriteRenderer, targetColor.Value, duration.Value, Vector2.zero, delegate
+            {
                 if (waitUntilFinished)
                 {
                     Continue();
@@ -75,25 +76,5 @@ namespace Scaffold
 
         #endregion
 
-        #region Backwards compatibility
-
-        [HideInInspector] [FormerlySerializedAs("duration")] public float durationOLD;
-        [HideInInspector] [FormerlySerializedAs("targetColor")] public Color targetColorOLD;
-
-        protected virtual void OnEnable()
-        {
-            if (durationOLD != default(float))
-            {
-                duration.Value = durationOLD;
-                durationOLD = default(float);
-            }
-            if (targetColorOLD != default(Color))
-            {
-                targetColor.Value = targetColorOLD;
-                targetColorOLD = default(Color);
-            }
-        }
-
-        #endregion
     }
 }

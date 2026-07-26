@@ -20,16 +20,19 @@ namespace Scaffold
             LerpUnclamped,
             LerpAngle
         }
-        
+
         [SerializeField]
+        [Tooltip("The Mode")]
         protected Mode mode = Mode.Lerp;
 
         //[Tooltip("LHS Value ")]
         [SerializeField]
+        [Tooltip("The A")]
         protected FloatData a = new FloatData(0), b = new FloatData(1), percentage;
 
         //[Tooltip("Where the result of the function is stored.")]
         [SerializeField]
+        [Tooltip("The Out value")]
         protected FloatData outValue;
 
         public override void OnEnter()

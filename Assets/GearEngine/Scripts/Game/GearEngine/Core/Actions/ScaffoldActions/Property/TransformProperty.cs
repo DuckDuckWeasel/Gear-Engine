@@ -18,35 +18,36 @@ namespace Scaffold
     [Serializable]
     public class TransformProperty : BaseVariableProperty
     {
-		//generated property
-        public enum Property 
-        { 
-            ChildCount, 
-            EulerAngles, 
-            Forward, 
-            HasChanged, 
-            HierarchyCapacity, 
-            HierarchyCount, 
-            LocalEulerAngles, 
-            LocalPosition, 
-            LocalScale, 
-            LossyScale, 
-            Parent, 
-            Position, 
-            Right, 
-            Root, 
-            Up, 
-            Rotation, 
-            LocalRotation, 
-            WorldToLocalMatrix, 
-            LocalToWorldMatrix, 
+        //generated property
+        public enum Property
+        {
+            ChildCount,
+            EulerAngles,
+            Forward,
+            HasChanged,
+            HierarchyCapacity,
+            HierarchyCount,
+            LocalEulerAngles,
+            LocalPosition,
+            LocalScale,
+            LossyScale,
+            Parent,
+            Position,
+            Right,
+            Root,
+            Up,
+            Rotation,
+            LocalRotation,
+            WorldToLocalMatrix,
+            LocalToWorldMatrix,
         }
 
-		
+
         [SerializeField]
         protected Property property = Property.Position;
 
         [SerializeField]
+        [Tooltip("The Transform data")]
         protected TransformData transformData;
 
         [SerializeField]
@@ -56,18 +57,19 @@ namespace Scaffold
                           typeof(Matrix4x4Variable),
                           typeof(IntegerVariable),
                           typeof(BooleanVariable))]
+        [Tooltip("The In out var")]
         protected Variable inOutVar;
 
         public override void OnEnter()
         {
-            var iov = inOutVar as Vector3Variable;
-            var ioq = inOutVar as QuaternionVariable;
-            var iot = inOutVar as TransformVariable;
-            var iom4 = inOutVar as Matrix4x4Variable;
-            var ioi = inOutVar as IntegerVariable;
-            var iob = inOutVar as BooleanVariable;
+            Vector3Variable iov = inOutVar as Vector3Variable;
+            QuaternionVariable ioq = inOutVar as QuaternionVariable;
+            TransformVariable iot = inOutVar as TransformVariable;
+            Matrix4x4Variable iom4 = inOutVar as Matrix4x4Variable;
+            IntegerVariable ioi = inOutVar as IntegerVariable;
+            BooleanVariable iob = inOutVar as BooleanVariable;
 
-            var target = transformData.Value;
+            Transform target = transformData.Value;
 
             switch (getOrSet)
             {
@@ -214,7 +216,9 @@ namespace Scaffold
         public override bool HasReference(Variable variable)
         {
             if (transformData.transformRef == variable || inOutVar == variable)
+            {
                 return true;
+            }
 
             return false;
         }

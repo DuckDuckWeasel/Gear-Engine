@@ -9,9 +9,9 @@ namespace Scaffold
     /// <summary>
     /// Spawns a new object based on a reference to a scene or prefab game object.
     /// </summary>
-    [CommandInfo("Scripting", 
-                 "Spawn Object", 
-                 "Spawns a new object based on a reference to a scene or prefab game object.", 
+    [CommandInfo("Scripting",
+                 "Spawn Object",
+                 "Spawns a new object based on a reference to a scene or prefab game object.",
         Priority = 10)]
     [CommandInfo("GameObject",
                  "Instantiate",
@@ -56,7 +56,7 @@ namespace Scaffold
 
             if (parentTransform.Value != null)
             {
-                newObject = GameObject.Instantiate(sourceObject.Value,parentTransform.Value);
+                newObject = GameObject.Instantiate(sourceObject.Value, parentTransform.Value);
             }
             else
             {
@@ -87,7 +87,7 @@ namespace Scaffold
 
             return sourceObject.Value.name;
         }
-        
+
         public override Color GetButtonColor()
         {
             return new Color32(235, 191, 217, 255);
@@ -98,44 +98,14 @@ namespace Scaffold
             if (sourceObject.gameObjectRef == variable || parentTransform.transformRef == variable ||
                 spawnAtSelf.booleanRef == variable || spawnPosition.vector3Ref == variable ||
                 spawnRotation.vector3Ref == variable)
+            {
                 return true;
+            }
 
             return false;
         }
 
         #endregion
 
-        #region Backwards compatibility
-
-        [HideInInspector] [FormerlySerializedAs("sourceObject")] public GameObject sourceObjectOLD;
-        [HideInInspector] [FormerlySerializedAs("parentTransform")] public Transform parentTransformOLD;
-        [HideInInspector] [FormerlySerializedAs("spawnPosition")] public Vector3 spawnPositionOLD;
-        [HideInInspector] [FormerlySerializedAs("spawnRotation")] public Vector3 spawnRotationOLD;
-
-        protected virtual void OnEnable()
-        {
-            if (sourceObjectOLD != null)
-            {
-                sourceObject.Value = sourceObjectOLD;
-                sourceObjectOLD = null;
-            }
-            if (parentTransformOLD != null)
-            {
-                parentTransform.Value = parentTransformOLD;
-                parentTransformOLD = null;
-            }
-            if (spawnPositionOLD != default(Vector3))
-            {
-                spawnPosition.Value = spawnPositionOLD;
-                spawnPositionOLD = default(Vector3);
-            }
-            if (spawnRotationOLD != default(Vector3))
-            {
-                spawnRotation.Value = spawnRotationOLD;
-                spawnRotationOLD = default(Vector3);
-            }
-        }
-
-        #endregion
     }
 }

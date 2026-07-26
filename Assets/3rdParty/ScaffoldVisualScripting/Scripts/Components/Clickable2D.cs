@@ -17,8 +17,7 @@ namespace Scaffold
         [Tooltip("Mouse texture to use when hovering mouse over object")]
         [SerializeField] protected Texture2D hoverCursor;
 
-        [Tooltip("Use the UI Event System to check for clicks. Clicks that hit an overlapping UI object will be ignored. Camera must have a PhysicsRaycaster component, or a Physics2DRaycaster for 2D colliders.")]
-        [SerializeField] protected bool useEventSystem;
+
 
         protected virtual void ChangeCursor(Texture2D cursorTexture)
         {
@@ -37,7 +36,7 @@ namespace Scaffold
                 return;
             }
 
-            var eventDispatcher = ScaffoldManager.Instance.EventDispatcher;
+            EventDispatcher eventDispatcher = ScaffoldManager.Instance.EventDispatcher;
 
             eventDispatcher.Raise(new ObjectClicked.ObjectClickedEvent(this));
         }
@@ -53,33 +52,7 @@ namespace Scaffold
             UnityEngine.Cursor.SetCursor(null, Vector2.zero, UnityEngine.CursorMode.Auto);
         }
 
-        #region Legacy OnMouseX methods
 
-        protected virtual void OnMouseDown()
-        {
-            if (!useEventSystem)
-            {
-                DoPointerClick();
-            }
-        }
-
-        protected virtual void OnMouseEnter()
-        {
-            if (!useEventSystem)
-            {
-                DoPointerEnter();
-            }
-        }
-
-        protected virtual void OnMouseExit()
-        {
-            if (!useEventSystem)
-            {
-                DoPointerExit();
-            }
-        }
-
-        #endregion
 
         #region Public members
 
@@ -94,10 +67,7 @@ namespace Scaffold
 
         public void OnPointerClick(PointerEventData eventData)
         {
-            if (useEventSystem)
-            {
-                DoPointerClick();
-            }
+            DoPointerClick();
         }
 
         #endregion
@@ -106,10 +76,7 @@ namespace Scaffold
 
         public void OnPointerEnter(PointerEventData eventData)
         {
-            if (useEventSystem)
-            {
-                DoPointerEnter();
-            }
+            DoPointerEnter();
         }
 
         #endregion
@@ -118,10 +85,7 @@ namespace Scaffold
 
         public void OnPointerExit(PointerEventData eventData)
         {
-            if (useEventSystem)
-            {
-                DoPointerExit();
-            }
+            DoPointerExit();
         }
 
         #endregion

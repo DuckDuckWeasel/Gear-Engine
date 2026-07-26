@@ -10,8 +10,8 @@ namespace Scaffold
     /// <summary>
     /// Displays a timer bar and executes a target block if the player fails to select a menu option in time.
     /// </summary>
-    [CommandInfo("Narrative", 
-                 "Menu Timer", 
+    [CommandInfo("Narrative",
+                 "Menu Timer",
                  "Displays a timer bar and executes a target block if the player fails to select a menu option in time.")]
     [AddComponentMenu("")]
     [ExecuteInEditMode]
@@ -29,7 +29,7 @@ namespace Scaffold
 
         public override void OnEnter()
         {
-            var menuDialog = MenuDialog.GetMenuDialog();
+            MenuDialog menuDialog = MenuDialog.GetMenuDialog();
 
             if (menuDialog != null &&
                 targetBlock != null)
@@ -45,7 +45,7 @@ namespace Scaffold
             if (targetBlock != null)
             {
                 connectedBlocks.Add(targetBlock);
-            }       
+            }
         }
 
         public override string GetSummary()
@@ -73,22 +73,8 @@ namespace Scaffold
         {
             return block == targetBlock;
         }
-        
-        #endregion
-
-        #region Backwards compatibility
-
-        [HideInInspector] [FormerlySerializedAs("duration")] public float durationOLD;
-
-        protected virtual void OnEnable()
-        {
-            if (durationOLD != default(float))
-            {
-                duration.Value = durationOLD;
-                durationOLD = default(float);
-            }
-        }
 
         #endregion
+
     }
 }

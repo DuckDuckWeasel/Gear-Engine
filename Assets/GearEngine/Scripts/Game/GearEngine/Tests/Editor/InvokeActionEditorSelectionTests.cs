@@ -21,8 +21,8 @@ namespace GearEngine.GearEngine.Tests.Editor
         {
             hostObject = new GameObject("InvokeActionEditorSelectionTests");
             command = hostObject.AddComponent<InvokeActionCommand>();
-            command.actions.Add(new CameraZoom());
-            command.actions.Add(new SendAnalyticsEvent());
+            command.actions.Add(new InvokeActionCommand.ActionWrapper(new CameraZoom()));
+            command.actions.Add(new InvokeActionCommand.ActionWrapper(new SendAnalyticsEvent()));
         }
 
         [TearDown]
@@ -43,7 +43,7 @@ namespace GearEngine.GearEngine.Tests.Editor
         [Test]
         public void GetDisplayName_UsesTheActionCommandInfoName()
         {
-            Assert.That(InvokeActionEditorUtility.GetDisplayName(command.actions[1]), Is.EqualTo("Send Event"));
+            Assert.That(InvokeActionEditorUtility.GetDisplayName(command.actions[1].action), Is.EqualTo("Send Event"));
         }
 
         [Test]
@@ -262,7 +262,7 @@ namespace GearEngine.GearEngine.Tests.Editor
         [Test]
         public void ExpandedActionListItem_IncludesVisibleActionPropertyHeight()
         {
-            command.actions[0] = new PlayAnimState();
+            command.actions[0] = new InvokeActionCommand.ActionWrapper(new PlayAnimState());
             SerializedObject serializedCommand = new SerializedObject(command);
             SerializedProperty actionProperty = serializedCommand
                 .FindProperty("actions")
@@ -602,7 +602,7 @@ namespace GearEngine.GearEngine.Tests.Editor
             block.EnsureTracksInitialized();
             command = hostObject.AddComponent<InvokeActionCommand>();
             IAction extractedAction = new CameraZoom();
-            command.actions.Add(extractedAction);
+            command.actions.Add(new InvokeActionCommand.ActionWrapper(extractedAction));
             command.DisplayAsGroup = true;
             command.ParentBlock = block;
             command.ItemId = blackboard.NextItemId();
@@ -662,7 +662,7 @@ namespace GearEngine.GearEngine.Tests.Editor
             Block block = hostObject.AddComponent<Block>();
             block.EnsureTracksInitialized();
             command = hostObject.AddComponent<InvokeActionCommand>();
-            command.actions.Add(new CameraZoom());
+            command.actions.Add(new InvokeActionCommand.ActionWrapper(new CameraZoom()));
             command.DisplayAsGroup = true;
             command.ParentBlock = block;
             command.ItemId = blackboard.NextItemId();
@@ -736,7 +736,7 @@ namespace GearEngine.GearEngine.Tests.Editor
         public void CanAcceptActionDrop_RejectsAStandaloneActionWrapper()
         {
             InvokeActionCommand standaloneAction = hostObject.AddComponent<InvokeActionCommand>();
-            standaloneAction.actions.Add(new CameraZoom());
+            standaloneAction.actions.Add(new InvokeActionCommand.ActionWrapper(new CameraZoom()));
 
             bool canAcceptDrop = InvokeActionEditorUtility.CanAcceptActionDrop(standaloneAction);
 
@@ -777,36 +777,7 @@ namespace GearEngine.GearEngine.Tests.Editor
             Assert.That(targetObject.FieldType, Is.EqualTo(typeof(GameObjectData)));
         }
 
-        [Test]
-        public void CallStringMethod_MigratesLegacyValuesToTheUnifiedValueReferences()
-        {
-            CallStringMethod callStringMethod = new CallStringMethod();
-            GameObject legacyTarget = new GameObject("Legacy Call Target");
-            typeof(CallStringMethod).GetField("targetObject", BindingFlags.Instance | BindingFlags.NonPublic)
-                .SetValue(callStringMethod, legacyTarget);
-            typeof(CallStringMethod).GetField("methodName", BindingFlags.Instance | BindingFlags.NonPublic)
-                .SetValue(callStringMethod, "HandleCall");
-            typeof(CallStringMethod).GetField("delay", BindingFlags.Instance | BindingFlags.NonPublic)
-                .SetValue(callStringMethod, 0.5f);
 
-            callStringMethod.OnAfterDeserialize();
-
-            GameObjectData targetData = (GameObjectData)typeof(CallStringMethod)
-                .GetField("targetObjectData", BindingFlags.Instance | BindingFlags.NonPublic)
-                .GetValue(callStringMethod);
-            StringData methodNameData = (StringData)typeof(CallStringMethod)
-                .GetField("methodNameData", BindingFlags.Instance | BindingFlags.NonPublic)
-                .GetValue(callStringMethod);
-            FloatData delayData = (FloatData)typeof(CallStringMethod)
-                .GetField("delayData", BindingFlags.Instance | BindingFlags.NonPublic)
-                .GetValue(callStringMethod);
-
-            Assert.That(targetData.Value, Is.SameAs(legacyTarget));
-            Assert.That(methodNameData.Value, Is.EqualTo("HandleCall"));
-            Assert.That(delayData.Value, Is.EqualTo(0.5f));
-
-            UnityEngine.Object.DestroyImmediate(legacyTarget);
-        }
 
         [Serializable]
         private sealed class WarningSummaryAction : ActionBase

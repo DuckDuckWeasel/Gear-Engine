@@ -10,8 +10,8 @@ namespace Scaffold
     /// <summary>
     /// Randomly shakes a GameObject's position by a diminishing amount over time.
     /// </summary>
-    [CommandInfo("iTween", 
-                 "Shake Position", 
+    [CommandInfo("iTween",
+                 "Shake Position",
                  "Randomly shakes a GameObject's position by a diminishing amount over time.")]
     [AddComponentMenu("")]
     [ExecuteInEditMode]
@@ -36,15 +36,15 @@ namespace Scaffold
             tweenParams.Add("amount", amount.Value);
             switch (axis)
             {
-            case iTweenAxis.X:
-                tweenParams.Add("axis", "x");
-                break;
-            case iTweenAxis.Y:
-                tweenParams.Add("axis", "y");
-                break;
-            case iTweenAxis.Z:
-                tweenParams.Add("axis", "z");
-                break;
+                case iTweenAxis.X:
+                    tweenParams.Add("axis", "x");
+                    break;
+                case iTweenAxis.Y:
+                    tweenParams.Add("axis", "y");
+                    break;
+                case iTweenAxis.Z:
+                    tweenParams.Add("axis", "z");
+                    break;
             }
             tweenParams.Add("time", duration.Value);
             tweenParams.Add("easetype", easeType);
@@ -63,21 +63,5 @@ namespace Scaffold
 
         #endregion
 
-        #region Backwards compatibility
-
-        [HideInInspector] [FormerlySerializedAs("amount")] public Vector3 amountOLD;
-
-        protected override void OnEnable()
-        {
-            base.OnEnable();
-
-            if (amountOLD != default(Vector3))
-            {
-                amount.Value = amountOLD;
-                amountOLD = default(Vector3);
-            }
-        }
-
-        #endregion
-    }    
+    }
 }

@@ -10,8 +10,8 @@ namespace Scaffold
     /// <summary>
     /// Moves a game object by a specified offset over time.
     /// </summary>
-    [CommandInfo("iTween", 
-                 "Move Add", 
+    [CommandInfo("iTween",
+                 "Move Add",
                  "Moves a game object by a specified offset over time.")]
     [AddComponentMenu("")]
     [ExecuteInEditMode]
@@ -49,21 +49,5 @@ namespace Scaffold
 
         #endregion
 
-        #region Backwards compatibility
-
-        [HideInInspector] [FormerlySerializedAs("offset")] public Vector3 offsetOLD;
-
-        protected override void OnEnable()
-        {
-            base.OnEnable();
-
-            if (offsetOLD != default(Vector3))
-            {
-                offset.Value = offsetOLD;
-                offsetOLD = default(Vector3);
-            }
-        }
-
-        #endregion
     }
 }

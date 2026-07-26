@@ -14,6 +14,7 @@ namespace Scaffold
     [Serializable]
     public class DestroyOnLoad : ActionBase
     {
+        [Tooltip("The Target")]
         [SerializeField] protected GameObjectData target;
 
         public override void OnEnter()

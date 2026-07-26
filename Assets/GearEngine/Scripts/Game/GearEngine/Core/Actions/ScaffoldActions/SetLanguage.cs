@@ -1,7 +1,7 @@
 using System;
 using GearEngine.Core.Actions;
 
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.Serialization;
 
 namespace Scaffold
@@ -9,8 +9,8 @@ namespace Scaffold
     /// <summary>
     /// Set the active language for the scene. A Localization object with a localization file must be present in the scene.
     /// </summary>
-    [CommandInfo("Narrative", 
-                 "Set Language", 
+    [CommandInfo("Narrative",
+                 "Set Language",
                  "Set the active language for the scene. A Localization object with a localization file must be present in the scene.")]
     [AddComponentMenu("")]
     [ExecuteInEditMode]
@@ -18,7 +18,7 @@ namespace Scaffold
     public class SetLanguage : ActionBase
     {
         [Tooltip("Code of the language to set. e.g. ES, DE, JA")]
-        [SerializeField] protected StringData languageCode = new StringData(); 
+        [SerializeField] protected StringData languageCode = new StringData();
 
         #region Public members
 
@@ -26,7 +26,7 @@ namespace Scaffold
 
         public override void OnEnter()
         {
-            Localization localization = GameObject.FindObjectOfType<Localization>();
+            Localization localization = Localization.Instance;
             if (localization != null)
             {
                 localization.SetActiveLanguage(languageCode.Value, true);
@@ -56,19 +56,5 @@ namespace Scaffold
 
         #endregion
 
-        #region Backwards compatibility
-
-        [HideInInspector] [FormerlySerializedAs("languageCode")] public string languageCodeOLD = "";
-
-        protected virtual void OnEnable()
-        {
-            if (languageCodeOLD != "")
-            {
-                languageCode.Value = languageCodeOLD;
-                languageCodeOLD = "";
-            }
-        }
-
-        #endregion
     }
 }

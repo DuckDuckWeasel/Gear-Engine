@@ -20,6 +20,7 @@ namespace Scaffold
         }
 
         [SerializeField]
+        [Tooltip("The Cast type")]
         protected CastType castType = CastType.Ray;
 
         [Tooltip("Starting point/origin or centre of shape")]
@@ -60,7 +61,7 @@ namespace Scaffold
 
         public override void OnEnter()
         {
-            var col = collection.Value;
+            Collection col = collection.Value;
 
             if (col != null)
             {
@@ -85,7 +86,7 @@ namespace Scaffold
                         break;
 
                     default:
-                    break;
+                        break;
                 }
 
                 PutCollidersIntoGameObjectCollection(resHits);
@@ -98,7 +99,7 @@ namespace Scaffold
         {
             if (resHits != null)
             {
-                var col = collection.Value;
+                Collection col = collection.Value;
                 for (int i = 0; i < resHits.Length; i++)
                 {
                     col.Add(resHits[i].collider.gameObject.gameObject);
@@ -121,11 +122,15 @@ namespace Scaffold
         public override string GetSummary()
         {
             if (collection.Value == null)
+            {
                 return "Error: no collection selected";
+            }
 
             //TODO we could support more than just GOs
             if (!(collection.Value is GameObjectCollection))
+            {
                 return "Error: collection is not GameObjectCollection";
+            }
 
             return castType.ToString() + ", store in " + collection.Value.name;
         }
@@ -133,13 +138,19 @@ namespace Scaffold
         public override bool IsPropertyVisible(string propertyName)
         {
             if (castType == CastType.Capsule && propertyName == "capsulePosition2")
+            {
                 return true;
+            }
 
             if ((castType == CastType.Capsule || castType == CastType.Sphere) && propertyName == "radius")
+            {
                 return true;
+            }
 
             if (castType == CastType.Box && (propertyName == "boxHalfExtends" || propertyName == "boxOrientation"))
+            {
                 return true;
+            }
 
             return base.IsPropertyVisible(propertyName);
         }

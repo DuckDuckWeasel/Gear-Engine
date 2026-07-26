@@ -9,7 +9,7 @@ namespace Scaffold
                  "Call String Method",
                  "Calls a named method on a GameObject using the GameObject.SendMessage() system.")]
     [Serializable]
-    public class CallStringMethod : ActionBase, ISerializationCallbackReceiver
+    public class CallStringMethod : ActionBase
     {
         [Tooltip("Target monobehavior which contains the method we want to call")]
         [SerializeField][InspectorName("Target Object")] protected GameObjectData targetObjectData;
@@ -79,51 +79,6 @@ namespace Scaffold
                    delayData.floatRef == variable ||
                    base.HasReference(variable);
         }
-
-        #region Backwards compatibility
-
-        public void OnBeforeSerialize()
-        {
-        }
-
-        public void OnAfterDeserialize()
-        {
-            MigrateTargetObject();
-            MigrateMethodName();
-            MigrateDelay();
-        }
-
-        private void MigrateTargetObject()
-        {
-            if (targetObjectData.gameObjectVal == null && targetObject != null)
-            {
-                targetObjectData.gameObjectVal = targetObject;
-                targetObjectData.source = VariableDataSource.Direct;
-                targetObject = null;
-            }
-        }
-
-        private void MigrateMethodName()
-        {
-            if (string.IsNullOrEmpty(methodNameData.stringVal) && !string.IsNullOrEmpty(methodName))
-            {
-                methodNameData.stringVal = methodName;
-                methodNameData.source = VariableDataSource.Direct;
-                methodName = "";
-            }
-        }
-
-        private void MigrateDelay()
-        {
-            if (Mathf.Approximately(delayData.floatVal, 0f) && !Mathf.Approximately(delay, 0f))
-            {
-                delayData.floatVal = delay;
-                delayData.source = VariableDataSource.Direct;
-                delay = 0f;
-            }
-        }
-
-        #endregion
 
         #endregion
     }

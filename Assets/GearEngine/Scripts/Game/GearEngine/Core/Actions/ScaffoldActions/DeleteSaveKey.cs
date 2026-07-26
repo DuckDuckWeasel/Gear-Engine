@@ -8,8 +8,8 @@ namespace Scaffold
     /// <summary>
     /// Deletes a saved value from permanent storage.
     /// </summary>
-    [CommandInfo("Variable", 
-                 "Delete Save Key", 
+    [CommandInfo("Variable",
+                 "Delete Save Key",
                  "Deletes a saved value from permanent storage.")]
     [Serializable]
     public class DeleteSaveKey : ActionBase
@@ -26,17 +26,17 @@ namespace Scaffold
                 Continue();
                 return;
             }
-            
-            var blackboard = GetBlackboard();
-            
+
+            Blackboard blackboard = GetBlackboard();
+
             // Prepend the current save profile (if any)
             string prefsKey = SetSaveProfile.SaveProfile + "_" + blackboard.SubstituteVariables(key);
-            
-            PlayerPrefs.DeleteKey(prefsKey);
+
+            Blackboard.SaveService.DeleteKey(prefsKey);
 
             Continue();
         }
-        
+
         public override string GetSummary()
         {
             if (key.Length == 0)
@@ -46,7 +46,7 @@ namespace Scaffold
 
             return key;
         }
-        
+
         public override Color GetButtonColor()
         {
             return new Color32(235, 191, 217, 255);
@@ -60,7 +60,7 @@ namespace Scaffold
         {
             base.RefreshVariableCache();
 
-            var f = GetBlackboard();
+            Blackboard f = GetBlackboard();
 
             f.DetermineSubstituteVariables(key, referencedVariables);
         }

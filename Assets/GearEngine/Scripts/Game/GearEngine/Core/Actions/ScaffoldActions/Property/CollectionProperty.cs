@@ -15,38 +15,40 @@ namespace Scaffold
     [Serializable]
     public class CollectionProperty : BaseVariableProperty
     {
-		//generated property
-        public enum Property 
-        { 
-            Capacity, 
-            Count, 
-            IsFixedSize, 
-            IsReadOnly, 
-            IsSynchronized, 
-            Name, 
+        //generated property
+        public enum Property
+        {
+            Capacity,
+            Count,
+            IsFixedSize,
+            IsReadOnly,
+            IsSynchronized,
+            Name,
         }
 
-		
+
         [SerializeField]
         protected Property property;
-		
+
         [SerializeField]
+        [Tooltip("The Collection data")]
         protected CollectionData collectionData;
 
         [SerializeField]
         [VariableProperty(typeof(IntegerVariable),
                           typeof(BooleanVariable),
                           typeof(StringVariable))]
+        [Tooltip("The In out var")]
         protected Variable inOutVar;
 
         public override void OnEnter()
         {
-            var ioi = inOutVar as IntegerVariable;
-            var iob = inOutVar as BooleanVariable;
-            var ios = inOutVar as StringVariable;
+            IntegerVariable ioi = inOutVar as IntegerVariable;
+            BooleanVariable iob = inOutVar as BooleanVariable;
+            StringVariable ios = inOutVar as StringVariable;
 
 
-            var target = collectionData.Value;
+            Collection target = collectionData.Value;
 
             switch (getOrSet)
             {
@@ -118,7 +120,9 @@ namespace Scaffold
         public override bool HasReference(Variable variable)
         {
             if (collectionData.collectionRef == variable || inOutVar == variable)
+            {
                 return true;
+            }
 
             return false;
         }

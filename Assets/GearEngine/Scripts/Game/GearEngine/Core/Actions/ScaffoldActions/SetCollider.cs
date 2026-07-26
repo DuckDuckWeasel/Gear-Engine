@@ -9,12 +9,12 @@ namespace Scaffold
     /// <summary>
     /// Sets all collider (2d or 3d) components on the target objects to be active / inactive.
     /// </summary>
-    [CommandInfo("Sprite", 
-                 "Set Collider", 
+    [CommandInfo("Sprite",
+                 "Set Collider",
                  "Sets all collider (2d or 3d) components on the target objects to be active / inactive")]
     [Serializable]
     public class SetCollider : ActionBase
-    {       
+    {
         [Tooltip("A list of gameobjects containing collider components to be set active / inactive")]
         [SerializeField] protected List<GameObject> targetObjects = new List<GameObject>();
 
@@ -26,21 +26,21 @@ namespace Scaffold
 
         protected virtual void SetColliderActive(GameObject go)
         {
-            if (go != null)     
+            if (go != null)
             {
                 // 3D objects
-                var colliders = go.GetComponentsInChildren<Collider>();
+                Collider[] colliders = go.GetComponentsInChildren<Collider>();
                 for (int i = 0; i < colliders.Length; i++)
                 {
-                    var c = colliders[i];
+                    Collider c = colliders[i];
                     c.enabled = activeState.Value;
                 }
 
                 // 2D objects
-                var collider2Ds = go.GetComponentsInChildren<Collider2D>();
+                Collider2D[] collider2Ds = go.GetComponentsInChildren<Collider2D>();
                 for (int i = 0; i < collider2Ds.Length; i++)
                 {
-                    var c = collider2Ds[i];
+                    Collider2D c = collider2Ds[i];
                     c.enabled = activeState.Value;
                 }
             }
@@ -48,11 +48,11 @@ namespace Scaffold
 
         #region Public members
 
-        public override void OnEnter()  
+        public override void OnEnter()
         {
             for (int i = 0; i < targetObjects.Count; i++)
             {
-                var go = targetObjects[i];
+                GameObject go = targetObjects[i];
                 SetColliderActive(go);
             }
 
@@ -61,16 +61,16 @@ namespace Scaffold
             {
                 taggedObjects = GameObject.FindGameObjectsWithTag(targetTag);
             }
-            catch
+            catch (Exception ex)
             {
-                // The tag has not been declared in this scene
+                Debug.LogError($"[SetCollider] Failed to find game objects with tag '{targetTag}': {ex.Message}\n{ex.StackTrace}");
             }
 
             if (taggedObjects != null)
             {
                 for (int i = 0; i < taggedObjects.Length; i++)
                 {
-                    var go = taggedObjects[i];
+                    GameObject go = taggedObjects[i];
                     SetColliderActive(go);
                 }
             }
@@ -91,10 +91,10 @@ namespace Scaffold
                 return "Disable " + count + " collider objects.";
             }
         }
-        
+
         public override Color GetButtonColor()
         {
-            return new Color32(235, 191, 217, 255); 
+            return new Color32(235, 191, 217, 255);
         }
 
         public override bool IsReorderableArray(string propertyName)
@@ -109,5 +109,5 @@ namespace Scaffold
 
         #endregion
     }
-        
+
 }

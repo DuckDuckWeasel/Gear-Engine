@@ -35,6 +35,7 @@ namespace Scaffold
     public class ThrowException : ActionBase
     {
         [SerializeField]
+        [Tooltip("The Message")]
         protected StringData message;
 
         public override void OnEnter()

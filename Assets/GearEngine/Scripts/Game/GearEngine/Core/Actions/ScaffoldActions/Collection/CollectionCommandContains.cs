@@ -15,6 +15,7 @@ namespace Scaffold
     public class CollectionCommandContains : CollectionBaseVarCommand
     {
         [VariableProperty(typeof(BooleanVariable))]
+        [Tooltip("The Result")]
         [SerializeField] protected BooleanVariable result;
 
         protected override void OnEnterInner()

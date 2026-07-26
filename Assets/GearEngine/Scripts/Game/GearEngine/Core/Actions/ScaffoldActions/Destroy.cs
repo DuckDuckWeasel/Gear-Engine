@@ -31,9 +31,13 @@ namespace Scaffold
             if (targetGameObject.Value != null)
             {
                 if (destroyInXSeconds.Value != 0)
+                {
                     global::UnityEngine.Object.Destroy(targetGameObject, destroyInXSeconds.Value);
+                }
                 else
+                {
                     global::UnityEngine.Object.Destroy(targetGameObject.Value);
+                }
             }
 
             Continue();
@@ -57,26 +61,14 @@ namespace Scaffold
         public override bool HasReference(Variable variable)
         {
             if (targetGameObject.gameObjectRef == variable || destroyInXSeconds.floatRef == variable)
+            {
                 return true;
+            }
 
             return false;
         }
 
         #endregion
 
-        #region Backwards compatibility
-
-        [HideInInspector] [FormerlySerializedAs("targetGameObject")] public GameObject targetGameObjectOLD;
-
-        protected virtual void OnEnable()
-        {
-            if (targetGameObjectOLD != null)
-            {
-                targetGameObject.Value = targetGameObjectOLD;
-                targetGameObjectOLD = null;
-            }
-        }
-
-        #endregion
     }
 }

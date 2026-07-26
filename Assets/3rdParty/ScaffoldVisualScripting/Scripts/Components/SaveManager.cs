@@ -13,9 +13,15 @@ namespace Scaffold
     /// -webgl would require additional js to force a sync of FS.syncfs
     /// -webplayer does not implement system io
     /// </summary>
-    public class SaveManager : MonoBehaviour 
+    public class SaveManager : MonoBehaviour
     {
         protected static SaveHistory saveHistory = new SaveHistory();
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void ResetStatics()
+        {
+            saveHistory = new SaveHistory();
+        }
 
         public static string STORAGE_DIRECTORY { get { return Application.persistentDataPath + "/ScaffoldSaves/"; } }
 
@@ -26,11 +32,11 @@ namespace Scaffold
 
         protected virtual bool ReadSaveHistory(string saveDataKey)
         {
-            var historyData = string.Empty;
+            string historyData = string.Empty;
 #if UNITY_WEBPLAYER || UNITY_WEBGL
-            historyData = PlayerPrefs.GetString(saveDataKey);
+            historyData = Blackboard.SaveService.GetString(saveDataKey);
 #else
-            var fullFilePath = GetFullFilePath(saveDataKey);
+            string fullFilePath = GetFullFilePath(saveDataKey);
             if (System.IO.File.Exists(fullFilePath))
             {
                 historyData = System.IO.File.ReadAllText(fullFilePath);
@@ -38,7 +44,7 @@ namespace Scaffold
 #endif//UNITY_WEBPLAYER
             if (!string.IsNullOrEmpty(historyData))
             {
-                var tempSaveHistory = JsonUtility.FromJson<SaveHistory>(historyData);
+                SaveHistory tempSaveHistory = JsonUtility.FromJson<SaveHistory>(historyData);
                 if (tempSaveHistory != null)
                 {
                     saveHistory = tempSaveHistory;
@@ -51,19 +57,19 @@ namespace Scaffold
 
         protected virtual bool WriteSaveHistory(string saveDataKey)
         {
-            var historyData = JsonUtility.ToJson(saveHistory, true);
+            string historyData = JsonUtility.ToJson(saveHistory, true);
             if (!string.IsNullOrEmpty(historyData))
             {
 #if UNITY_WEBPLAYER || UNITY_WEBGL
-                PlayerPrefs.SetString(saveDataKey, historyData);
-                PlayerPrefs.Save();
+                Blackboard.SaveService.SetString(saveDataKey, historyData);
+                Blackboard.SaveService.Save();
 #else
-                var fileLoc = GetFullFilePath(saveDataKey);
-                
+                string fileLoc = GetFullFilePath(saveDataKey);
+
                 //make sure the dir exists
                 System.IO.FileInfo file = new System.IO.FileInfo(fileLoc);
                 file.Directory.Create();
-                
+
                 System.IO.File.WriteAllText(fileLoc, historyData);
 #endif//UNITY_WEBPLAYER
                 return true;
@@ -128,7 +134,7 @@ namespace Scaffold
 
         protected virtual void OnSavePointLoaded(string savePointKey)
         {
-            var key = savePointKey;
+            string key = savePointKey;
             loadAction = () => ExecuteBlocks(key);
         }
 
@@ -203,7 +209,7 @@ namespace Scaffold
         public void Load(string saveDataKey)
         {
             // Set a load action to be executed on next update
-            var key = saveDataKey;
+            string key = saveDataKey;
             loadAction = () => LoadSavedGame(key);
         }
 
@@ -213,10 +219,10 @@ namespace Scaffold
         public static void Delete(string saveDataKey)
         {
 #if UNITY_WEBPLAYER || UNITY_WEBGL
-            PlayerPrefs.DeleteKey(saveDataKey);
-            PlayerPrefs.Save();
+            Blackboard.SaveService.DeleteKey(saveDataKey);
+            Blackboard.SaveService.Save();
 #else
-            var fullFilePath = GetFullFilePath(saveDataKey);
+            string fullFilePath = GetFullFilePath(saveDataKey);
             if (System.IO.File.Exists(fullFilePath))
             {
                 System.IO.File.Delete(fullFilePath);
@@ -230,12 +236,12 @@ namespace Scaffold
         public bool SaveDataExists(string saveDataKey)
         {
 #if UNITY_WEBPLAYER || UNITY_WEBGL
-            return PlayerPrefs.HasKey(saveDataKey);
+            return Blackboard.SaveService.HasKey(saveDataKey);
 #else
-            var fullFilePath = GetFullFilePath(saveDataKey);
+            string fullFilePath = GetFullFilePath(saveDataKey);
             return System.IO.File.Exists(fullFilePath);
 #endif//UNITY_WEBPLAYER
-            }
+        }
 
         /// <summary>
         /// Creates a new Save Point using a key and description, and adds it to the Save History.
@@ -293,7 +299,7 @@ namespace Scaffold
             return saveHistory.GetDebugInfo();
         }
 
-#endregion
+        #endregion
     }
 }
 

@@ -2,6 +2,7 @@ using System;
 using GearEngine.Core.Actions;
 
 using UnityEngine;
+using Ami.BroAudio;
 
 namespace Scaffold
 {
@@ -14,13 +15,13 @@ namespace Scaffold
     [Serializable]
     public class SetAudioPitch : ActionBase
     {
-        [Range(0,1)]
+        [Range(0, 1)]
         [Tooltip("Global pitch level for audio played using the Play Music and Play Sound commands")]
         [SerializeField] protected float pitch = 1;
 
-        [Range(0,30)]
+        [Range(0, 30)]
         [Tooltip("Time to fade between current pitch level and target pitch level.")]
-        [SerializeField] protected float fadeDuration; 
+        [SerializeField] protected float fadeDuration;
 
         [Tooltip("Wait until the pitch change has finished before executing next command")]
         [SerializeField] protected bool waitUntilFinished = true;
@@ -29,21 +30,21 @@ namespace Scaffold
 
         public override void OnEnter()
         {
-            System.Action onComplete = () => {
-                if (waitUntilFinished)
-                {
-                    Continue();
-                }
-            };
+            BroAudio.SetPitch(BroAudioType.All, pitch, fadeDuration);
 
-            var musicManager = ScaffoldManager.Instance.MusicManager;
-
-            musicManager.SetAudioPitch(pitch, fadeDuration, onComplete);
-
-            if (!waitUntilFinished)
+            if (waitUntilFinished && fadeDuration > 0f)
+            {
+                Invoke(nameof(DoContinue), fadeDuration);
+            }
+            else
             {
                 Continue();
             }
+        }
+
+        private void DoContinue()
+        {
+            Continue();
         }
 
         public override string GetSummary()

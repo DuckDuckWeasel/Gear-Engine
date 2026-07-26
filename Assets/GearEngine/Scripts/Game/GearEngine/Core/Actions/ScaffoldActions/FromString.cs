@@ -31,9 +31,9 @@ namespace Scaffold
                 {
                     asDouble = System.Convert.ToDouble(sourceString.Value, System.Globalization.CultureInfo.CurrentCulture);
                 }
-                catch (System.Exception)
+                catch (System.Exception ex)
                 {
-                    Debug.LogWarning("Failed to parse as number: " + sourceString.Value);
+                    Debug.LogError("[FromString] Failed to parse as number: " + sourceString.Value + "\n" + ex);
                 }
 
                 IntegerVariable intOutVar = outValue as IntegerVariable;

@@ -552,7 +552,7 @@ namespace Scaffold.EditorUtils
             CommandInfoAttribute commandInfo = CommandEditor.GetCommandInfo(invokeAction.GetType());
             string commandName = commandInfo != null ? commandInfo.CommandName : invokeAction.GetType().Name;
             string groupName = isConditionalGroup
-                ? InvokeActionEditorUtility.GetDisplayName(invokeAction.actions[0])
+                ? InvokeActionEditorUtility.GetDisplayName(invokeAction.actions[0].action)
                 : commandName;
             bool isExpanded = !IsInvokeActionGroupCollapsed(invokeAction);
 
@@ -654,7 +654,7 @@ namespace Scaffold.EditorUtils
                     EditorGUIUtility.singleLineHeight);
 
                 string actionName = actionIndex < actionCount
-                    ? InvokeActionEditorUtility.GetDisplayName(invokeAction.actions[actionIndex])
+                    ? InvokeActionEditorUtility.GetDisplayName(invokeAction.actions[actionIndex].action)
                     : string.Empty;
                 bool enabled = actionIndex < actionCount &&
                                invokeAction.IsActionEnabled(actionIndex);
@@ -689,7 +689,7 @@ namespace Scaffold.EditorUtils
                         float weightOffset = showsWeight
                             ? WeightFieldWidth + WeightOverrideWidth
                             : 0f;
-                        IAction action = invokeAction.actions[actionIndex];
+                        IAction action = invokeAction.actions[actionIndex].action;
                         const float issueWidth = 18f;
                         Rect issueRect = new Rect(
                             actionRect.xMax - 44f - weightOffset - issueWidth,
@@ -782,7 +782,7 @@ namespace Scaffold.EditorUtils
             bool hasAction = invokeAction.actions != null && invokeAction.actions.Count == 1;
             bool acceptsActionDrop = InvokeActionEditorUtility.CanAcceptActionDrop(invokeAction);
             string actionName = hasAction
-                ? InvokeActionEditorUtility.GetDisplayName(invokeAction.actions[0])
+                ? InvokeActionEditorUtility.GetDisplayName(invokeAction.actions[0].action)
                 : "Action Invoker";
             Rect actionRect = new Rect(position.x, position.y - 2f, position.width, position.height + 5f);
             bool showsCommandWeight = ShouldShowCommandWeight(block, invokeAction);
@@ -812,7 +812,7 @@ namespace Scaffold.EditorUtils
                         EditorGUIUtility.singleLineHeight);
                     if (InvokeActionEditorUtility.DrawActionIssueBadge(
                             issueRect,
-                            invokeAction.actions[0]))
+                            invokeAction.actions[0].action))
                     {
                         reservedWidth += issueWidth;
                     }
@@ -924,7 +924,7 @@ namespace Scaffold.EditorUtils
         {
             return invokeAction.actions != null &&
                    invokeAction.actions.Count > 0 &&
-                   invokeAction.actions[0] is ActionBase action &&
+                   invokeAction.actions[0].action is ActionBase action &&
                    action.OpenBlock();
         }
 

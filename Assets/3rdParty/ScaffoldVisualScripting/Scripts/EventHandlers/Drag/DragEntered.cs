@@ -15,7 +15,7 @@ namespace Scaffold
                       "The block will execute when the player is dragging an object which starts touching the target object.")]
     [AddComponentMenu("")]
     [ExecuteInEditMode]
-    public class DragEntered : EventHandler, ISerializationCallbackReceiver
+    public class DragEntered : EventHandler
     {
         public class DragEnteredEvent
         {
@@ -35,17 +35,9 @@ namespace Scaffold
         [VariableProperty(typeof(GameObjectVariable))]
         [SerializeField] protected GameObjectVariable targetRef;
 
-        [Tooltip("Draggable object to listen for drag events on")]
-        [HideInInspector]
-        [SerializeField] protected Draggable2D draggableObject;
+        [SerializeField] protected List<Draggable2D> draggableObjects = new List<Draggable2D>();
 
-        [SerializeField] protected List<Draggable2D> draggableObjects;
-
-        [Tooltip("Drag target object to listen for drag events on")]
-        [HideInInspector]
-        [SerializeField] protected Collider2D targetObject;
-
-        [SerializeField] protected List<Collider2D> targetObjects;
+        [SerializeField] protected List<Collider2D> targetObjects = new List<Collider2D>();
 
         protected EventDispatcher eventDispatcher;
 
@@ -74,39 +66,7 @@ namespace Scaffold
             OnDragEntered(evt.DraggableObject, evt.TargetCollider);
         }
 
-        #region Compatibility
 
-        void ISerializationCallbackReceiver.OnAfterDeserialize()
-        {
-        }
-
-        void ISerializationCallbackReceiver.OnBeforeSerialize()
-        {
-        }
-
-        private void Awake()
-        {
-            //add any dragableobject already present to list for backwards compatability
-            if (draggableObject != null)
-            {
-                if (!draggableObjects.Contains(draggableObject))
-                {
-                    draggableObjects.Add(draggableObject);
-                }
-            }
-
-            if (targetObject != null)
-            {
-                if (!targetObjects.Contains(targetObject))
-                {
-                    targetObjects.Add(targetObject);
-                }
-            }
-            draggableObject = null;
-            targetObject = null;
-        }
-
-        #endregion Compatibility
 
         #region Public members
 
