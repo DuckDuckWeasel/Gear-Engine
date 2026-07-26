@@ -11,6 +11,7 @@ using Scaffold.Ads;
 using Scaffold.Ads.Levelplay;
 using Scaffold.AppFlow;
 using Scaffold.Navigation.Contracts;
+using Scaffold.Tutorial.Data;
 using UnityEngine;
 
 namespace GearEngine.App.Bootstrap
@@ -27,6 +28,13 @@ namespace GearEngine.App.Bootstrap
         [SerializeField]
         private AdPlacementKeySO rerollPlacementKey;
 
+        [Header("Tutorial")]
+        [SerializeField]
+        private TutorialWrapper tutorialWrapper;
+
+        [SerializeField]
+        private TutorialSO setupTutorial;
+
         [Header("Simulation")]
         [SerializeField]
         private SimulationConfigBase simulationConfig;
@@ -34,7 +42,7 @@ namespace GearEngine.App.Bootstrap
         [Header("Race session defaults")]
         [SerializeField]
         private RaceSessionDefaultsSO raceSessionDefaults;
-        
+
         [SerializeField]
         private LevelPlayAdConfigurationSO adConfig;
 
@@ -48,20 +56,22 @@ namespace GearEngine.App.Bootstrap
                 featureToggle,
                 raceSessionDefaults,
                 simulationConfig,
-                rerollPlacementKey);
+                rerollPlacementKey,
+                tutorialWrapper,
+                setupTutorial);
         }
 
         protected override Task OnReadyAsync(CancellationToken ct)
         {
             try
             {
-                
+
                 ToolbarController toolbarController = Host.Resolve<ToolbarController>();
                 if (toolbarController != null)
                 {
                     toolbarController.gameObject.SetActive(true);
                 }
-                
+
                 INavigation navigation = Host.Resolve<INavigation>();
                 navigation.Open(new MainViewModel());
             }

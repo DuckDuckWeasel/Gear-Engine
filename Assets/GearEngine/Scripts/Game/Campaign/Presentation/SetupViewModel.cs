@@ -9,6 +9,8 @@ using GearEngine.GearEngine.Nodes;
 using Scaffold.Events.Contracts;
 using Scaffold.MVVM;
 using Scaffold.Navigation.Contracts;
+using Scaffold.Tutorial.Controllers;
+using Scaffold.Tutorial.Data;
 using UnityEngine;
 using VContainer;
 
@@ -32,6 +34,8 @@ namespace GearEngine.Campaign.Presentation
         [Inject] private IInventoryService inventoryService;
         [Inject] private IGearPresentationTransferService presentationTransferService;
         [Inject] private IGearLoadoutService loadoutService;
+        [Inject] private TutorialController tutorialController;
+        [Inject] private TutorialSO setupTutorial;
 
         protected override void Initialize()
         {
@@ -59,6 +63,11 @@ namespace GearEngine.Campaign.Presentation
 
             Board.OnBoardClicked += ShowItemPreview;
             Inventory.OnInventoryClicked += ShowItemPreview;
+
+            if (tutorialController != null && setupTutorial != null)
+            {
+                tutorialController.StartTutorial(setupTutorial.Id);
+            }
         }
 
         protected override void OnClosed()
@@ -84,8 +93,11 @@ namespace GearEngine.Campaign.Presentation
 
         private void ShowItemPreview(GearItemData gearData)
         {
-            if (gearData == null) return;
-            
+            if (gearData == null)
+            {
+                return;
+            }
+
             ItemSlotViewModel tempSlot = new ItemSlotViewModel(gearData, _ => { }, 1);
             ItemPopupViewModel popup = new ItemPopupViewModel(new[] { tempSlot }, 0, null);
             navigation.Open(popup);
