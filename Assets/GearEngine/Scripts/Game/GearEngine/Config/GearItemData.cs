@@ -63,6 +63,8 @@ namespace GearEngine.GearEngine.Config
         public Sprite Icon => UIIcon;
         [Tooltip("Relative size modifier for this specific gear (1.0 is default), applied to the GearVisual child of ViewPrefab.")]
         public float RelativeScaleMultiplier = 1.0f;
+        [Tooltip("Initial visual and trigger phase in degrees. Used by the Core Gear to keep contact timing aligned with its sprite.")]
+        public float InitialRotationOffset;
         public TriggerPattern TriggerPattern = TriggerPattern.FourWay;
         public bool IsInteractable = true;
         public bool IsMovable = true;
@@ -116,6 +118,7 @@ namespace GearEngine.GearEngine.Config
                 ViewPrefab = ViewPrefab,
                 UIIcon = UIIcon,
                 RelativeScaleMultiplier = RelativeScaleMultiplier,
+                InitialRotationOffset = InitialRotationOffset,
                 TriggerPattern = TriggerPattern,
                 IsInteractable = IsInteractable,
                 IsMovable = IsMovable,

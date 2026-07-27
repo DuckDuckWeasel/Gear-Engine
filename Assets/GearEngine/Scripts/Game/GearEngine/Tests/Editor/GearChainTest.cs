@@ -63,6 +63,41 @@ namespace GearEngine.GearEngine.Tests.Editor
             core.Dispose();
         }
 
+        [Test]
+        public void CoreHit_UsesInitialRotationOffsetForContactTiming()
+        {
+            EventController eventBus = new EventController();
+            GridManager grid = new GridManager();
+            GearItemData coreData = new GearItemData
+            {
+                Id = "core",
+                BaseRotationSpeed = 100f,
+                InitialRotationOffset = 22.5f,
+                TriggerPattern = TriggerPattern.FourWay,
+            };
+            GearItemData connectedData = new GearItemData
+            {
+                TriggerPattern = TriggerPattern.FourWay,
+                TriggerSpinDegrees = 90f,
+            };
+
+            CoreGearNode core = CreateCore(grid, eventBus, coreData);
+            BaseGearNode right = CreateConnectedGear(
+                grid,
+                eventBus,
+                connectedData,
+                Vector2Int.right);
+
+            core.NodeUpdate(1f, 1f);
+            Assert.That(right.CurrentRotation, Is.Zero);
+
+            core.NodeUpdate(0.2f, 1f);
+            Assert.That(right.CurrentRotation, Is.EqualTo(270f));
+
+            right.Dispose();
+            core.Dispose();
+        }
+
         private static CoreGearNode CreateCore(
             GridManager grid,
             EventController eventBus,

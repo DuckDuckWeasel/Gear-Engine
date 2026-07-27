@@ -82,10 +82,10 @@ namespace GearEngine.GearEngine.Tests.Editor
         }
 
         [Test]
-        public void Track_DrivesRotationTowardStaggeredTarget_FromMotorDistance()
+        public void Track_OffsetsOnlyCoreWithoutChangingAdjacentPhase()
         {
             BoardLayoutSO layout = ScriptableObject.CreateInstance<BoardLayoutSO>();
-            layout.StaggeredRotationOffset = 30f;
+            layout.StaggeredRotationOffset = 17f;
 
             Transform slot0 = new GameObject("Slot0").transform;
             Transform slot1 = new GameObject("Slot1").transform;
@@ -114,7 +114,12 @@ namespace GearEngine.GearEngine.Tests.Editor
             motorVisual.transform.SetParent(motorRoot.transform, false);
             GearView motorGearView = motorRoot.AddComponent<GearView>();
             motorGearView.WireTestReferences(motorVisual.transform);
-            motorGearView.ApplyConfig(new GearItemData { RelativeScaleMultiplier = 1f, Id = "motor" });
+            motorGearView.ApplyConfig(new GearItemData
+            {
+                RelativeScaleMultiplier = 1f,
+                InitialRotationOffset = 30f,
+                Id = "motor",
+            });
 
             GameObject gearRoot = new GameObject("GearRoot");
             GameObject gearVisual = new GameObject("GearVisual");
@@ -127,7 +132,12 @@ namespace GearEngine.GearEngine.Tests.Editor
             {
                 Position = new Vector2Int(1, 0),
                 CurrentRotation = 0f,
-                ConfigData = new GearItemData { Id = "motor", MaxCharge = 0f },
+                ConfigData = new GearItemData
+                {
+                    Id = "motor",
+                    InitialRotationOffset = 30f,
+                    MaxCharge = 0f,
+                },
             };
 
             FakeGridNode node = new FakeGridNode
@@ -147,8 +157,10 @@ namespace GearEngine.GearEngine.Tests.Editor
                 InvokeGearViewUpdate(motorGearView);
             }
 
-            float z = gearVisual.transform.localEulerAngles.z;
-            Assert.Less(Mathf.Abs(Mathf.DeltaAngle(z, 30f)), 5f);
+            float coreRotation = motorVisual.transform.localEulerAngles.z;
+            float adjacentRotation = gearVisual.transform.localEulerAngles.z;
+            Assert.Less(Mathf.Abs(Mathf.DeltaAngle(coreRotation, 30f)), 5f);
+            Assert.Less(Mathf.Abs(Mathf.DeltaAngle(adjacentRotation, 17f)), 5f);
 
             Object.DestroyImmediate(host);
             Object.DestroyImmediate(gearRoot);
