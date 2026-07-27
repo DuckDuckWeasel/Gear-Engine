@@ -57,7 +57,7 @@ namespace GearEngine.GearEngine.Visuals
             }
 
             ApplyScale(config.RelativeScaleMultiplier);
-            ApplySprites(config.UIIcon);
+            ApplyIcon(config.UIIcon);
         }
 
         public void SetRotationTarget(float zDegrees, bool snap = false)
@@ -140,15 +140,11 @@ namespace GearEngine.GearEngine.Visuals
             gearVisual.localScale = new Vector3(baseScale, baseScale, baseScale);
         }
 
-        private void ApplySprites(Sprite sprite)
+        private void ApplyIcon(Sprite sprite)
         {
             if (sprite == null)
             {
                 return;
-            }
-            if (gearImage != null)
-            {
-                gearImage.sprite = sprite;
             }
             if (chargeFillImage != null)
             {

@@ -8,13 +8,15 @@ namespace GearEngine.GearEngine.Presentation.UI
     {
         public static GameObject Spawn(GameObject source, RectTransform parent)
         {
-            if (source == null)
+            if (source == null || parent == null)
             {
                 return null;
             }
 
+            RectTransform sourceRect = source.transform as RectTransform;
             GameObject clone = UnityEngine.Object.Instantiate(source, parent);
             clone.name = source.name + "_DragPreview";
+            NormalizeRectTransform(clone.transform as RectTransform, sourceRect, parent);
             DisableInteractionRecursively(clone);
             return clone;
         }
@@ -44,6 +46,43 @@ namespace GearEngine.GearEngine.Presentation.UI
             Canvas canvas = parentRect.GetComponentInParent<Canvas>();
             Camera eventCamera = canvas != null && canvas.renderMode != RenderMode.ScreenSpaceOverlay ? canvas.worldCamera : null;
             return RectTransformUtility.ScreenPointToLocalPointInRectangle(parentRect, screenPosition, eventCamera, out localPoint);
+        }
+
+        private static void NormalizeRectTransform(
+            RectTransform previewRect,
+            RectTransform sourceRect,
+            RectTransform parent)
+        {
+            if (previewRect == null || sourceRect == null)
+            {
+                return;
+            }
+
+            previewRect.anchorMin = new Vector2(0.5f, 0.5f);
+            previewRect.anchorMax = new Vector2(0.5f, 0.5f);
+            previewRect.pivot = sourceRect.pivot;
+            previewRect.sizeDelta = GetSizeInParentSpace(sourceRect, parent);
+            previewRect.localScale = Vector3.one;
+        }
+
+        private static Vector2 GetSizeInParentSpace(
+            RectTransform sourceRect,
+            RectTransform parent)
+        {
+            Vector3 sourceScale = sourceRect.lossyScale;
+            Vector3 parentScale = parent.lossyScale;
+            float widthScale = SafeScaleRatio(sourceScale.x, parentScale.x);
+            float heightScale = SafeScaleRatio(sourceScale.y, parentScale.y);
+            return new Vector2(
+                sourceRect.rect.width * widthScale,
+                sourceRect.rect.height * heightScale);
+        }
+
+        private static float SafeScaleRatio(float sourceScale, float parentScale)
+        {
+            return Mathf.Abs(parentScale) > Mathf.Epsilon
+                ? Mathf.Abs(sourceScale / parentScale)
+                : 1f;
         }
 
         private static void DisableInteractionRecursively(GameObject go)

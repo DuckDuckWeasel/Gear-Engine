@@ -158,6 +158,32 @@ namespace GearEngine.GearEngine.Tests.Runtime
             Assert.That(dragService.StartedCount, Is.Zero);
         }
 
+        [UnityTest]
+        public IEnumerator ExplicitPreviewSource_RendersGearAtSourceSize()
+        {
+            RectTransform gearVisual = CreateFixedRect(
+                "GearVisual",
+                source.transform,
+                new Vector2(96f, 80f));
+            gearVisual.gameObject.AddComponent<Image>();
+            source.SetPreviewSource(gearVisual.gameObject);
+            source.BuildPayload =
+                eventData => new DragPayload("gear", eventData.position);
+
+            source.OnBeginDrag(CreatePointer(ScreenCenter()));
+            yield return null;
+
+            Transform preview = dragOverlay.Find("GearVisual_DragPreview");
+            Assert.IsNotNull(preview);
+            RectTransform previewRect = (RectTransform)preview;
+            Assert.That(previewRect.rect.width, Is.EqualTo(96f).Within(0.01f));
+            Assert.That(previewRect.rect.height, Is.EqualTo(80f).Within(0.01f));
+            Assert.IsTrue(preview.GetComponent<Image>().enabled);
+
+            source.OnEndDrag(CreatePointer(ScreenCenter()));
+            yield return null;
+        }
+
         private ScreenSpaceDragTargetStub CreateTarget(string targetName, bool acceptsPayload)
         {
             RectTransform targetRect = CreateFullScreenRect(targetName, canvasObject.transform);
@@ -187,6 +213,20 @@ namespace GearEngine.GearEngine.Tests.Runtime
             rect.anchorMax = Vector2.one;
             rect.offsetMin = Vector2.zero;
             rect.offsetMax = Vector2.zero;
+            return rect;
+        }
+
+        private static RectTransform CreateFixedRect(
+            string objectName,
+            Transform parent,
+            Vector2 size)
+        {
+            GameObject gameObject = new GameObject(objectName, typeof(RectTransform));
+            RectTransform rect = gameObject.GetComponent<RectTransform>();
+            rect.SetParent(parent, false);
+            rect.anchorMin = new Vector2(0.5f, 0.5f);
+            rect.anchorMax = new Vector2(0.5f, 0.5f);
+            rect.sizeDelta = size;
             return rect;
         }
 

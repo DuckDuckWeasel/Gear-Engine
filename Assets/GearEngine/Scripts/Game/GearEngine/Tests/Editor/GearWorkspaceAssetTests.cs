@@ -1,5 +1,6 @@
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using GearEngine.GearEngine.Config;
 using GearEngine.GearEngine.Presentation.UI;
 using GearEngine.GearEngine.Visuals;
@@ -95,6 +96,65 @@ namespace GearEngine.GearEngine.Tests.Editor
             Assert.That(sceneYaml, Does.Not.Contain("1bb691964ce722a4ba6aed0bf6fb73c1"));
             Assert.That(sceneYaml, Does.Not.Contain("ba83461cca946410a94c4343a45a483e"));
             Assert.That(sceneYaml, Does.Not.Contain("5c0f2c75741614be083b530936f65100"));
+        }
+
+        [Test]
+        public void TrashPlacement_AlignsAboveTopRightBoardCell()
+        {
+            GameObject parentObject = new GameObject("Workspace", typeof(RectTransform));
+            RectTransform parent = parentObject.GetComponent<RectTransform>();
+            parent.sizeDelta = new Vector2(1000f, 1000f);
+            RectTransform cell = CreateRect(
+                "TopRightCell",
+                parent,
+                new Vector2(100f, 100f),
+                new Vector2(200f, 100f));
+            RectTransform trashRect = CreateRect(
+                "Trash",
+                parent,
+                new Vector2(180f, 96f),
+                Vector2.zero);
+            TrashDropZoneViewComponent trash =
+                trashRect.gameObject.AddComponent<TrashDropZoneViewComponent>();
+            trash.SetReferences(trashRect, null, null, null);
+            BoardLayoutSO layout = ScriptableObject.CreateInstance<BoardLayoutSO>();
+            layout.TrashZoneYOffset = 24f;
+            trash.SetBoardPresentation(layout);
+
+            FieldInfo topRightCellField = typeof(TrashDropZoneViewComponent)
+                .GetField("topRightCell", BindingFlags.Instance | BindingFlags.NonPublic);
+            Assert.IsNotNull(topRightCellField);
+            topRightCellField.SetValue(trash, cell);
+            MethodInfo placementMethod = typeof(TrashDropZoneViewComponent)
+                .GetMethod(
+                    "ApplyScreenSpacePlacement",
+                    BindingFlags.Instance | BindingFlags.NonPublic);
+            Assert.IsNotNull(placementMethod);
+
+            placementMethod.Invoke(trash, null);
+
+            Assert.That(trashRect.anchoredPosition.x, Is.EqualTo(200f).Within(0.01f));
+            Assert.That(trashRect.anchoredPosition.y, Is.EqualTo(222f).Within(0.01f));
+
+            Object.DestroyImmediate(layout);
+            Object.DestroyImmediate(parentObject);
+        }
+
+        private static RectTransform CreateRect(
+            string objectName,
+            Transform parent,
+            Vector2 size,
+            Vector2 anchoredPosition)
+        {
+            GameObject gameObject = new GameObject(objectName, typeof(RectTransform));
+            RectTransform rect = gameObject.GetComponent<RectTransform>();
+            rect.SetParent(parent, false);
+            rect.anchorMin = new Vector2(0.5f, 0.5f);
+            rect.anchorMax = new Vector2(0.5f, 0.5f);
+            rect.pivot = new Vector2(0.5f, 0.5f);
+            rect.sizeDelta = size;
+            rect.anchoredPosition = anchoredPosition;
+            return rect;
         }
 
         private static GameObject LoadPrefab(string path)

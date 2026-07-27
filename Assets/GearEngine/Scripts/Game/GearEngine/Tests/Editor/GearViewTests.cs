@@ -58,6 +58,35 @@ namespace GearEngine.GearEngine.Tests.Editor
             Object.DestroyImmediate(second.gameObject);
         }
 
+        [Test]
+        public void ApplyConfig_PreservesGearBodyAndAssignsIconToChargeImage()
+        {
+            Texture2D bodyTexture = new Texture2D(4, 4);
+            Texture2D iconTexture = new Texture2D(4, 4);
+            Sprite bodySprite = Sprite.Create(
+                bodyTexture,
+                new Rect(0f, 0f, 4f, 4f),
+                new Vector2(0.5f, 0.5f));
+            Sprite iconSprite = Sprite.Create(
+                iconTexture,
+                new Rect(0f, 0f, 4f, 4f),
+                new Vector2(0.5f, 0.5f));
+            GearView view = CreateViewWithChargeImage(source: null, out Image chargeImage);
+            Image bodyImage = view.transform.GetChild(0).GetComponent<Image>();
+            bodyImage.sprite = bodySprite;
+
+            view.ApplyConfig(new GearItemData { UIIcon = iconSprite });
+
+            Assert.That(bodyImage.sprite, Is.SameAs(bodySprite));
+            Assert.That(chargeImage.sprite, Is.SameAs(iconSprite));
+
+            Object.DestroyImmediate(view.gameObject);
+            Object.DestroyImmediate(bodySprite);
+            Object.DestroyImmediate(iconSprite);
+            Object.DestroyImmediate(bodyTexture);
+            Object.DestroyImmediate(iconTexture);
+        }
+
         private static GearView CreateViewWithChargeImage(Material source, out Image chargeImage)
         {
             GameObject root = new GameObject("ViewRoot", typeof(RectTransform));

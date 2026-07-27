@@ -13,17 +13,17 @@ namespace GearEngine.GearEngine.Tests.Editor
     [TestFixture]
     public sealed class GearWorkspaceVisualTests
     {
-        private const string ArtifactDirectory =
+        private const string k_artifactDirectory =
             "Artifacts/VisualTests/GearWorkspaceScreenSpace";
-        private const string WorkspacePath =
+        private const string k_workspacePath =
             "Assets/GearEngine/Prefabs/Gears/PFB_GearWorkspace.prefab";
-        private const string GridSlotPath =
+        private const string k_gridSlotPath =
             "Assets/GearEngine/Prefabs/Gears/Gears/GridSlotView.prefab";
-        private const string InventorySlotPath =
+        private const string k_inventorySlotPath =
             "Assets/GearEngine/Prefabs/Gears/Gears/GearSlot.prefab";
-        private const string RulesPath =
+        private const string k_rulesPath =
             "Assets/GearEngine/Data/Gear/BasicBoardRules.asset";
-        private const string LayoutPath =
+        private const string k_layoutPath =
             "Assets/GearEngine/Data/Gear/BasicBoardLayout.asset";
 
         [TestCase("Baseline", 1080, 1920, 80, 80)]
@@ -50,9 +50,9 @@ namespace GearEngine.GearEngine.Tests.Editor
                     height,
                     topInset,
                     bottomInset);
-                PopulateBoard(workspace);
+                RectTransform topRightCell = PopulateBoard(workspace);
                 PopulateInventory(workspace);
-                RevealTrash(workspace);
+                RectTransform trashRect = RevealTrash(workspace, topRightCell);
 
                 string artifactPath = Capture(
                     scenario,
@@ -67,6 +67,7 @@ namespace GearEngine.GearEngine.Tests.Editor
                 Assert.IsNotNull(workspaceRect);
                 Assert.That(workspaceRect.anchorMin.y, Is.GreaterThanOrEqualTo(0f));
                 Assert.That(workspaceRect.anchorMax.y, Is.LessThanOrEqualTo(1f));
+                AssertTrashIsAboveCell(trashRect, topRightCell);
                 Assert.That(new FileInfo(artifactPath).Length, Is.GreaterThan(10_000));
             }
             finally
@@ -120,7 +121,7 @@ namespace GearEngine.GearEngine.Tests.Editor
             int topInset,
             int bottomInset)
         {
-            GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(WorkspacePath);
+            GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(k_workspacePath);
             Assert.IsNotNull(prefab);
             GameObject instance = Object.Instantiate(prefab, canvasRect, false);
             GearWorkspaceView workspace = instance.GetComponent<GearWorkspaceView>();
@@ -136,11 +137,11 @@ namespace GearEngine.GearEngine.Tests.Editor
             return workspace;
         }
 
-        private static void PopulateBoard(GearWorkspaceView workspace)
+        private static RectTransform PopulateBoard(GearWorkspaceView workspace)
         {
-            BoardRulesSO rules = AssetDatabase.LoadAssetAtPath<BoardRulesSO>(RulesPath);
-            BoardLayoutSO layout = AssetDatabase.LoadAssetAtPath<BoardLayoutSO>(LayoutPath);
-            GameObject slotPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(GridSlotPath);
+            BoardRulesSO rules = AssetDatabase.LoadAssetAtPath<BoardRulesSO>(k_rulesPath);
+            BoardLayoutSO layout = AssetDatabase.LoadAssetAtPath<BoardLayoutSO>(k_layoutPath);
+            GameObject slotPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(k_gridSlotPath);
             SerializedObject boardObject = new SerializedObject(workspace.Board);
             RectTransform gridRoot =
                 boardObject.FindProperty("gridRoot").objectReferenceValue as RectTransform;
@@ -162,6 +163,8 @@ namespace GearEngine.GearEngine.Tests.Editor
                     }
                 }
             }
+
+            return gridRoot.GetChild(gridRoot.childCount - 1) as RectTransform;
         }
 
         private static void PopulateInventory(GearWorkspaceView workspace)
@@ -171,7 +174,7 @@ namespace GearEngine.GearEngine.Tests.Editor
             SerializedObject inventoryObject = new SerializedObject(inventory);
             RectTransform itemsContainer =
                 inventoryObject.FindProperty("itemsContainer").objectReferenceValue as RectTransform;
-            GameObject slotPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(InventorySlotPath);
+            GameObject slotPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(k_inventorySlotPath);
             GearItemData[] gears = LoadGearData();
 
             for (int i = 0; i < Mathf.Min(gears.Length, 5); i++)
@@ -183,13 +186,30 @@ namespace GearEngine.GearEngine.Tests.Editor
             }
         }
 
-        private static void RevealTrash(GearWorkspaceView workspace)
+        private static RectTransform RevealTrash(
+            GearWorkspaceView workspace,
+            RectTransform topRightCell)
         {
             TrashDropZoneViewComponent trash =
                 workspace.GetComponentInChildren<TrashDropZoneViewComponent>(true);
+            trash.SetBoardPresentation(workspace.Board.BoardLayout, topRightCell);
             trash.gameObject.SetActive(true);
             CanvasGroup canvasGroup = trash.GetComponent<CanvasGroup>();
             canvasGroup.alpha = 1f;
+            return trash.transform as RectTransform;
+        }
+
+        private static void AssertTrashIsAboveCell(
+            RectTransform trashRect,
+            RectTransform topRightCell)
+        {
+            Vector3[] trashCorners = new Vector3[4];
+            Vector3[] cellCorners = new Vector3[4];
+            trashRect.GetWorldCorners(trashCorners);
+            topRightCell.GetWorldCorners(cellCorners);
+
+            Assert.That(trashCorners[0].y, Is.GreaterThan(cellCorners[1].y));
+            Assert.That(trashRect.position.x, Is.EqualTo(topRightCell.position.x).Within(0.5f));
         }
 
         private static GearItemData[] LoadGearData()
@@ -221,7 +241,7 @@ namespace GearEngine.GearEngine.Tests.Editor
             out RenderTexture renderTexture,
             out Texture2D capture)
         {
-            string directory = Path.GetFullPath(ArtifactDirectory);
+            string directory = Path.GetFullPath(k_artifactDirectory);
             Directory.CreateDirectory(directory);
             string artifactPath = Path.Combine(directory, $"{scenario}.png");
             renderTexture = new RenderTexture(width, height, 24, RenderTextureFormat.ARGB32);

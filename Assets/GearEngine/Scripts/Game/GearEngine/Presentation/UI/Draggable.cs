@@ -32,6 +32,11 @@ namespace GearEngine.GearEngine.Presentation.UI
             hideSourceWhileDragging = hide;
         }
 
+        public void SetPreviewSource(GameObject source)
+        {
+            previewSource = source;
+        }
+
         public void Configure(IDragService service, RectTransform overlay)
         {
             if (service == null)

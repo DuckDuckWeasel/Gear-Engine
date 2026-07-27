@@ -12,6 +12,43 @@ namespace GearEngine.GearEngine.Tests.Editor
     [TestFixture]
     public sealed class DragTargetFinderUiTests
     {
+        [Test]
+        public void DragPreview_StretchSource_PreservesRenderedSize()
+        {
+            GameObject sourceParentObject = new GameObject(
+                "SourceParent",
+                typeof(RectTransform));
+            RectTransform sourceParent =
+                sourceParentObject.GetComponent<RectTransform>();
+            sourceParent.sizeDelta = new Vector2(120f, 100f);
+            GameObject sourceObject = new GameObject(
+                "Source",
+                typeof(RectTransform),
+                typeof(Image));
+            RectTransform source = sourceObject.GetComponent<RectTransform>();
+            source.SetParent(sourceParent, false);
+            source.anchorMin = Vector2.zero;
+            source.anchorMax = Vector2.one;
+            source.offsetMin = Vector2.zero;
+            source.offsetMax = Vector2.zero;
+
+            GameObject overlayObject = new GameObject(
+                "Overlay",
+                typeof(RectTransform));
+            RectTransform overlay = overlayObject.GetComponent<RectTransform>();
+            overlay.sizeDelta = new Vector2(1080f, 1920f);
+
+            GameObject preview = DragPreview.Spawn(sourceObject, overlay);
+            RectTransform previewRect = preview.GetComponent<RectTransform>();
+
+            Assert.That(previewRect.rect.size.x, Is.EqualTo(120f).Within(0.01f));
+            Assert.That(previewRect.rect.size.y, Is.EqualTo(100f).Within(0.01f));
+
+            Object.DestroyImmediate(preview);
+            Object.DestroyImmediate(sourceParentObject);
+            Object.DestroyImmediate(overlayObject);
+        }
+
         private GameObject eventSystemObject;
         private GameObject canvasObject;
 

@@ -141,7 +141,7 @@ namespace GearEngine.GearEngine.Presentation.UI
                 return;
             }
             ConfigureSlotDrag(drag, gear);
-            ApplyGearVisualAndDrag(slotView, gear);
+            ApplyGearVisualAndDrag(slotView, drag, gear);
         }
 
         private void ConfigureSlotDrag(Draggable drag, GearItemData gear)
@@ -168,7 +168,10 @@ namespace GearEngine.GearEngine.Presentation.UI
             }
         }
 
-        private void ApplyGearVisualAndDrag(GearInventorySlotView slotView, GearItemData gear)
+        private void ApplyGearVisualAndDrag(
+            GearInventorySlotView slotView,
+            Draggable drag,
+            GearItemData gear)
         {
             if (gear.ViewPrefab == null)
             {
@@ -184,6 +187,7 @@ namespace GearEngine.GearEngine.Presentation.UI
                 return;
             }
             ConfigureInventoryGearView(view);
+            drag.SetPreviewSource(view.gameObject);
             slotView.Bind(gear, viewModel);
         }
 
