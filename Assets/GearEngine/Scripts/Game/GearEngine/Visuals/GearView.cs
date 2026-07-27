@@ -220,7 +220,15 @@ namespace GearEngine.GearEngine.Visuals
         {
             Transform rotateTarget = gearVisual != null ? gearVisual : transform;
             float rotation = animatedBaseRotationZ + visualRotationOffset + rapidSpinOffset;
-            rotateTarget.localRotation = Quaternion.Euler(0f, 0f, rotation);
+            Quaternion visualRotation = Quaternion.Euler(0f, 0f, rotation);
+            rotateTarget.localRotation = visualRotation;
+            if (chargeFillImage != null && chargeFillImage.transform != rotateTarget)
+            {
+                chargeFillImage.rectTransform.localRotation =
+                    chargeFillImage.transform.parent == rotateTarget
+                        ? Quaternion.identity
+                        : visualRotation;
+            }
         }
 
         private void UpdateChargeFill()

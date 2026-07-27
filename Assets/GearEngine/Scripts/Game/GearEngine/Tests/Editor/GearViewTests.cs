@@ -38,6 +38,24 @@ namespace GearEngine.GearEngine.Tests.Editor
         }
 
         [Test]
+        public void SetRotationTarget_SnapRotatesBodyAndIconTogether()
+        {
+            GearView view = CreateViewWithChargeImage(source: null, out Image chargeImage);
+            Transform gearVisual = view.transform.Find("GearVisual");
+
+            view.SetRotationTarget(47f, snap: true);
+
+            Assert.That(
+                Mathf.Abs(Mathf.DeltaAngle(gearVisual.localEulerAngles.z, 47f)),
+                Is.LessThan(0.001f));
+            Assert.That(
+                Mathf.Abs(Mathf.DeltaAngle(chargeImage.rectTransform.localEulerAngles.z, 47f)),
+                Is.LessThan(0.001f));
+
+            Object.DestroyImmediate(view.gameObject);
+        }
+
+        [Test]
         public void ChargeFill_TwoViews_UseIndependentMaterialInstances()
         {
             Material source = AssetDatabase.LoadAssetAtPath<Material>(
