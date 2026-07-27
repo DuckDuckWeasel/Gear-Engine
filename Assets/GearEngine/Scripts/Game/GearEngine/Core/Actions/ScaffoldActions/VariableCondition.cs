@@ -7,31 +7,6 @@ using UnityEngine;
 
 namespace Scaffold
 {
-    /// <summary>
-    /// class for a single condition. A list of this is used for multiple conditions.
-    /// </summary>
-    [System.Serializable]
-    public class ConditionExpression
-    {
-        [Tooltip("The Compare operator")]
-        [SerializeField] protected CompareOperator compareOperator;
-        [Tooltip("The Any var")]
-        [SerializeField] protected AnyVariableAndDataPair anyVar;
-
-        public virtual AnyVariableAndDataPair AnyVar { get { return anyVar; } }
-        public virtual CompareOperator CompareOperator { get { return compareOperator; } }
-
-        public ConditionExpression()
-        {
-        }
-
-        public ConditionExpression(CompareOperator op, AnyVariableAndDataPair variablePair)
-        {
-            compareOperator = op;
-            anyVar = variablePair;
-        }
-    }
-
     [Serializable]
     public abstract class VariableCondition : Condition
     {
@@ -158,24 +133,5 @@ namespace Scaffold
             }
             return false;
         }
-
-
-
-        #region Editor caches
-#if UNITY_EDITOR
-        protected override void RefreshVariableCache()
-        {
-            base.RefreshVariableCache();
-
-            if (conditions != null)
-            {
-                foreach (ConditionExpression item in conditions)
-                {
-                    item.AnyVar.RefreshVariableCacheHelper(GetBlackboard(), ref referencedVariables);
-                }
-            }
-        }
-#endif
-        #endregion Editor caches
     }
 }

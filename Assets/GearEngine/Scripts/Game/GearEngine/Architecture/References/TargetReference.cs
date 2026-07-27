@@ -4,14 +4,6 @@ using GearEngine.GearEngine.Presentation.UI.Tags;
 
 namespace GearEngine.Core.Architecture.References
 {
-    public enum TargetResolutionStrategy
-    {
-        DirectReference,
-        Tags,
-        GlobalVariable,
-        MultipleReferences
-    }
-
     /// <summary>
     /// A robust way to reference a GameObject target from anywhere (Scene, Prefab, ScriptableObject).
     /// Allows the designer to choose the best strategy to find the target.
@@ -35,33 +27,27 @@ namespace GearEngine.Core.Architecture.References
         public System.Collections.Generic.List<TargetReferenceItem> references = new System.Collections.Generic.List<TargetReferenceItem>();
 
         /// <summary>
-        /// External systems can inject a global resolver here, to allow TargetReference 
-        /// to find string-based variables without coupling the Core to third-party assets.
-        /// </summary>
-        public static ITargetResolver GlobalResolver { get; set; }
-
-        /// <summary>
         /// Attempts to get the exact target object right now.
         /// Useful if you need the object instance (e.g. to move it).
         /// Note: Tags strategy cannot "find" an object directly unless you pass candidates. 
         /// Use IsMatch() for Tag validation.
         /// </summary>
-        public GameObject Resolve()
+        public GameObject Resolve(ITargetResolver resolver = null)
         {
             switch (strategy)
             {
                 case TargetResolutionStrategy.DirectReference:
                     return directReference;
                 case TargetResolutionStrategy.GlobalVariable:
-                    return (GlobalResolver != null && !string.IsNullOrEmpty(globalVariableName))
-                        ? GlobalResolver.Resolve(globalVariableName)
+                    return (resolver != null && !string.IsNullOrEmpty(globalVariableName))
+                        ? resolver.Resolve(globalVariableName)
                         : null;
                 case TargetResolutionStrategy.MultipleReferences:
                     if (references != null && references.Count > 0)
                     {
                         foreach (TargetReferenceItem item in references)
                         {
-                            GameObject go = item.Resolve();
+                            GameObject go = item.Resolve(resolver);
                             if (go != null)
                             {
                                 return go; // Returns the first valid one
@@ -82,7 +68,8 @@ namespace GearEngine.Core.Architecture.References
         /// <summary>
         /// Attempts to get ALL valid targets if the strategy supports multiple (e.g. MultipleReferences).
         /// </summary>
-        public System.Collections.Generic.List<GameObject> ResolveAll()
+        public System.Collections.Generic.List<GameObject> ResolveAll(
+            ITargetResolver resolver = null)
         {
             System.Collections.Generic.List<GameObject> list = new System.Collections.Generic.List<GameObject>();
 
@@ -95,7 +82,10 @@ namespace GearEngine.Core.Architecture.References
             }
             else if (strategy == TargetResolutionStrategy.GlobalVariable)
             {
-                GameObject go = (GlobalResolver != null && !string.IsNullOrEmpty(globalVariableName)) ? GlobalResolver.Resolve(globalVariableName) : null;
+                GameObject go =
+                    resolver != null && !string.IsNullOrEmpty(globalVariableName)
+                        ? resolver.Resolve(globalVariableName)
+                        : null;
                 if (go != null)
                 {
                     list.Add(go);
@@ -107,7 +97,7 @@ namespace GearEngine.Core.Architecture.References
                 {
                     foreach (TargetReferenceItem item in references)
                     {
-                        GameObject go = item.Resolve();
+                        GameObject go = item.Resolve(resolver);
                         if (go != null && !list.Contains(go))
                         {
                             list.Add(go);
@@ -151,7 +141,9 @@ namespace GearEngine.Core.Architecture.References
         /// <summary>
         /// Validates if a given target GameObject matches the criteria defined in this reference.
         /// </summary>
-        public bool IsMatch(GameObject target)
+        public bool IsMatch(
+            GameObject target,
+            ITargetResolver resolver = null)
         {
             if (target == null)
             {
@@ -163,19 +155,19 @@ namespace GearEngine.Core.Architecture.References
                 case TargetResolutionStrategy.DirectReference:
                     return directReference != null && (target == directReference || target.transform.IsChildOf(directReference.transform));
                 case TargetResolutionStrategy.GlobalVariable:
-                    if (GlobalResolver == null || string.IsNullOrEmpty(globalVariableName))
+                    if (resolver == null || string.IsNullOrEmpty(globalVariableName))
                     {
                         return false;
                     }
 
-                    GameObject globalObj = GlobalResolver.Resolve(globalVariableName);
+                    GameObject globalObj = resolver.Resolve(globalVariableName);
                     return globalObj != null && (target == globalObj || target.transform.IsChildOf(globalObj.transform));
                 case TargetResolutionStrategy.MultipleReferences:
                     if (references != null)
                     {
                         foreach (TargetReferenceItem item in references)
                         {
-                            if (item.Resolve() == target)
+                            if (item.Resolve(resolver) == target)
                             {
                                 return true;
                             }

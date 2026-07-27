@@ -3,8 +3,6 @@ using GearEngine.Core.Actions.ScaffoldActions.Analytics;
 using System;
 using UnityEngine;
 using Scaffold.Analytics;
-using VContainer;
-using VContainer.Unity;
 
 namespace Scaffold
 {
@@ -72,30 +70,7 @@ namespace Scaffold
 
         private void SendEvent(DynamicAnalyticsEvent evt)
         {
-            if (host == null)
-            {
-                Debug.LogWarning("[SendAnalyticsEvent] Host is null, cannot resolve IAnalyticsService.");
-                return;
-            }
-
-            LifetimeScope scope = host.GetComponentInParent<LifetimeScope>();
-            if (scope != null && scope.Container != null)
-            {
-                try
-                {
-                    IAnalyticsService analyticsService = scope.Container.Resolve<IAnalyticsService>();
-                    analyticsService.Record(evt);
-                    return;
-                }
-                catch (VContainer.VContainerException ex)
-                {
-                    Debug.LogError($"[SendAnalyticsEvent] Could not resolve IAnalyticsService from the LifetimeScope: {ex.Message}\n{ex.StackTrace}");
-                }
-            }
-            else
-            {
-                Debug.LogWarning("[SendAnalyticsEvent] No LifetimeScope found on or above the executing host.");
-            }
+            Context.EventBus.Publish(evt);
         }
 
         public override string GetSummary()

@@ -15,6 +15,14 @@ namespace Scaffold.VisualScripting
 
         [SerializeField] private string name = "Blackboard";
 
+        public string LocalizationId
+        {
+            get => localizationId;
+            set => localizationId = value ?? string.Empty;
+        }
+
+        [SerializeField] private string localizationId = string.Empty;
+
         public List<BlockDefinition> Blocks => blocks;
 
         [SerializeField] private List<BlockDefinition> blocks = new List<BlockDefinition>();

@@ -7,6 +7,9 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Text;
 using Ideafixxxer.CsvParser;
+using Scaffold.VisualScripting;
+using Scaffold.VisualScripting.Authoring;
+using Scaffold.VisualScripting.Unity;
 
 namespace Scaffold
 {
@@ -37,7 +40,7 @@ namespace Scaffold
 
         protected bool initialized;
 
-        protected static Dictionary<string, string> localizedStrings = new Dictionary<string, string>();
+        protected static Dictionary<string, string> s_localizedStrings = new Dictionary<string, string>();
 
 #if UNITY_5_4_OR_NEWER
 #else
@@ -49,13 +52,6 @@ namespace Scaffold
 
         protected virtual void LevelWasLoaded()
         {
-            // Check if a language has been selected using the Set Language command in a previous scene.
-            string mostRecentLanguage = Blackboard.SaveService.GetString("Scaffold_SetLanguage", "");
-            if (!string.IsNullOrEmpty(mostRecentLanguage))
-            {
-                // This language will be used when Start() is called
-                activeLanguage = mostRecentLanguage;
-            }
         }
 
         private void SceneManager_activeSceneChanged(UnityEngine.SceneManagement.Scene arg0, UnityEngine.SceneManagement.Scene arg1)
@@ -120,30 +116,9 @@ namespace Scaffold
 
         protected virtual void CacheLocalizeableObjects()
         {
-            // Add commands from blackboards
-            foreach (Blackboard blackboard in Blackboard.CachedBlackboards)
+            foreach (ILocalizable localizable in EnumerateLocalizableActions())
             {
-                if (blackboard == null)
-                {
-                    continue;
-                }
-
-                Block[] blocks = blackboard.GetComponents<Block>();
-                foreach (Block block in blocks)
-                {
-                    if (block == null)
-                    {
-                        continue;
-                    }
-
-                    foreach (Command command in block.CommandList)
-                    {
-                        if (command is ILocalizable localizable)
-                        {
-                            localizeableObjects[localizable.GetStringId()] = localizable;
-                        }
-                    }
-                }
+                localizeableObjects[localizable.GetStringId()] = localizable;
             }
 
             // Add characters
@@ -165,37 +140,15 @@ namespace Scaffold
         {
             Dictionary<string, TextItem> textItems = new Dictionary<string, TextItem>();
 
-            // Add localizable commands in same order as command list to make it
-            // easier to localise / edit standard text.
-            foreach (Blackboard blackboard in Blackboard.CachedBlackboards)
+            foreach (ILocalizable localizable in EnumerateLocalizableActions())
             {
-                if (blackboard == null)
+                string stringId = localizable.GetStringId();
+                if (!textItems.ContainsKey(stringId))
                 {
-                    continue;
-                }
-
-                Block[] blocks = blackboard.GetComponents<Block>();
-                foreach (Block block in blocks)
-                {
-                    if (block == null)
-                    {
-                        continue;
-                    }
-
-                    foreach (Command command in block.CommandList)
-                    {
-                        if (command is ILocalizable localizable)
-                        {
-                            string stringId = localizable.GetStringId();
-                            if (!textItems.ContainsKey(stringId))
-                            {
-                                TextItem textItem = new TextItem();
-                                textItem.standardText = localizable.GetStandardText();
-                                textItem.description = localizable.GetDescription();
-                                textItems[stringId] = textItem;
-                            }
-                        }
-                    }
+                    TextItem textItem = new TextItem();
+                    textItem.standardText = localizable.GetStandardText();
+                    textItem.description = localizable.GetDescription();
+                    textItems[stringId] = textItem;
                 }
             }
 
@@ -218,6 +171,46 @@ namespace Scaffold
             }
 
             return textItems;
+        }
+
+        private static IEnumerable<ILocalizable> EnumerateLocalizableActions()
+        {
+            BlackboardBehaviour[] behaviours = FindObjectsByType<BlackboardBehaviour>(
+                FindObjectsInactive.Include,
+                FindObjectsSortMode.None);
+            foreach (BlackboardBehaviour behaviour in behaviours)
+            {
+                BlackboardDefinition definition;
+                try
+                {
+                    definition = behaviour.IsRuntimeAvailable
+                        ? behaviour.Runtime.Definition
+                        : behaviour.DefinitionReference.ResolveDefinition();
+                }
+                catch (BlackboardDefinitionResolutionException)
+                {
+                    continue;
+                }
+
+                foreach (BlockDefinition block in definition.Blocks)
+                {
+                    foreach (ActionTrackDefinition track in block.Tracks)
+                    {
+                        if (track?.ActionList == null)
+                        {
+                            continue;
+                        }
+
+                        foreach (Scaffold.VisualScripting.IAction action in track.ActionList.Actions)
+                        {
+                            if (action is ILocalizable localizable)
+                            {
+                                yield return localizable;
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -296,14 +289,14 @@ namespace Scaffold
         /// </summary>
         public static string GetLocalizedString(string stringId)
         {
-            if (localizedStrings == null)
+            if (s_localizedStrings == null)
             {
                 return null;
             }
 
-            if (localizedStrings.ContainsKey(stringId))
+            if (s_localizedStrings.ContainsKey(stringId))
             {
-                return localizedStrings[stringId];
+                return s_localizedStrings[stringId];
             }
 
             return null;
@@ -416,7 +409,7 @@ namespace Scaffold
                 return;
             }
 
-            localizedStrings.Clear();
+            s_localizedStrings.Clear();
 
             CsvParser csvParser = new CsvParser();
             string[][] csvTable = csvParser.Parse(localizationFile.text);
@@ -460,7 +453,7 @@ namespace Scaffold
                         continue;
                     }
 
-                    localizedStrings[fields[0]] = fields[languageIndex];
+                    s_localizedStrings[fields[0]] = fields[languageIndex];
                 }
 
                 // Early out unless we've been told to force the scene text to update.
@@ -488,7 +481,7 @@ namespace Scaffold
 
                 if (languageEntry.Length > 0)
                 {
-                    localizedStrings[stringId] = languageEntry;
+                    s_localizedStrings[stringId] = languageEntry;
                     PopulateTextProperty(stringId, languageEntry);
                 }
             }
@@ -600,7 +593,7 @@ namespace Scaffold
             Init();
 
             // Instantiate the regular expression object.
-            Regex r = new Regex(Blackboard.SubstituteVariableRegexString);
+            Regex r = new Regex("{\\$.*?}");
 
             bool modified = false;
 

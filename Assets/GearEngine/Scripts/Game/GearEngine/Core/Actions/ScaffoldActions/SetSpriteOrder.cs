@@ -1,7 +1,7 @@
 using System;
 using GearEngine.Core.Actions;
 
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections.Generic;
 
 namespace Scaffold
@@ -9,11 +9,11 @@ namespace Scaffold
     /// <summary>
     /// Controls the render order of sprites by setting the Order In Layer property of a list of sprites.
     /// </summary>
-    [CommandInfo("Sprite", 
-                 "Set Sprite Order", 
+    [CommandInfo("Sprite",
+                 "Set Sprite Order",
                  "Controls the render order of sprites by setting the Order In Layer property of a list of sprites.")]
     [Serializable]
-    public class SetSpriteOrder : ActionBase 
+    public class SetSpriteOrder : ActionBase
     {
         [Tooltip("List of sprites to set the order in layer property on")]
         [SerializeField] protected List<SpriteRenderer> targetSprites = new List<SpriteRenderer>();
@@ -27,19 +27,19 @@ namespace Scaffold
         {
             for (int i = 0; i < targetSprites.Count; i++)
             {
-                var spriteRenderer = targetSprites[i];
+                SpriteRenderer spriteRenderer = targetSprites[i];
                 spriteRenderer.sortingOrder = orderInLayer;
             }
 
             Continue();
         }
-        
+
         public override string GetSummary()
         {
             string summary = "";
             for (int i = 0; i < targetSprites.Count; i++)
             {
-                var spriteRenderer = targetSprites[i];
+                SpriteRenderer spriteRenderer = targetSprites[i];
                 if (spriteRenderer == null)
                 {
                     continue;
@@ -58,7 +58,7 @@ namespace Scaffold
 
             return summary + " = " + orderInLayer.Value;
         }
-        
+
         public override Color GetButtonColor()
         {
             return new Color32(235, 191, 217, 255);
@@ -74,7 +74,7 @@ namespace Scaffold
             return false;
         }
 
-        public override void OnCommandAdded(Block parentBlock)
+        public override void OnCommandAdded(Scaffold.VisualScripting.BlockDefinition parentBlock)
         {
             // Add a default empty entry
             targetSprites.Add(null);

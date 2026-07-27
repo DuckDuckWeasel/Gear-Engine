@@ -11,6 +11,17 @@ namespace Scaffold
     [Serializable]
     public class CycleUIEffectPreset : UIEffectActionBase
     {
+        [Tooltip("The UIEffect component to modify. Takes precedence over Target GameObject.")]
+        [SerializeField] private UIEffect targetEffect;
+
+        [Tooltip("A dynamic target. This enables use inside a For Each loop over GameObjects.")]
+        [SerializeField] private GameObjectData targetGameObject;
+
+        protected override UIEffect TargetEffect => targetEffect;
+
+        protected override GameObjectData TargetGameObject =>
+            targetGameObject;
+
         [Tooltip("The UI Text updated after each preset is applied.")]
         [SerializeField] protected Text targetLabel;
 
@@ -34,7 +45,7 @@ namespace Scaffold
             UIEffectPreset preset = presets[currentIndex];
             if (preset != null && TryResolveEffect(true, out UIEffect effect))
             {
-                effect.ExecutePreset(preset, false);
+                ApplyPreset(effect, preset, false);
                 UpdateLabel(preset);
             }
 

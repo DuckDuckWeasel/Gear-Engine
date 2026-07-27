@@ -8,17 +8,25 @@ namespace Scaffold
     /// <summary>
     /// Deactivates swipe panning mode.
     /// </summary>
-    [CommandInfo("Camera", 
-                 "Stop Swipe", 
+    [CommandInfo("Camera",
+                 "Stop Swipe",
                  "Deactivates swipe panning mode.")]
     [Serializable]
-    public class StopSwipe : ActionBase 
+    public class StopSwipe : ActionBase
     {
+        [SerializeField] private CameraManager cameraManager;
+
         #region Public members
 
         public override void OnEnter()
         {
-            var cameraManager = ScaffoldManager.Instance.CameraManager;
+            if (cameraManager == null)
+            {
+                Debug.LogError(
+                    "[StopSwipe] A CameraManager reference is required.");
+                Fail();
+                return;
+            }
 
             cameraManager.StopSwipePan();
 

@@ -40,8 +40,8 @@ namespace Scaffold
 
         protected virtual IEnumerator DoConversation()
         {
-            Blackboard blackboard = GetBlackboard();
-            string subbedText = blackboard.SubstituteVariables(conversationText.Value);
+            Scaffold.VisualScripting.Blackboard blackboard = GetBlackboard();
+            string subbedText = blackboard.Substitute(conversationText.Value);
 
             conversationManager.ClearPrev = clearPrevious;
             conversationManager.WaitForInput = waitForInput;
@@ -75,20 +75,5 @@ namespace Scaffold
         #endregion
 
 
-        #region Editor caches
-#if UNITY_EDITOR
-        protected override void RefreshVariableCache()
-        {
-            base.RefreshVariableCache();
-
-            Blackboard f = GetBlackboard();
-
-            if (!string.IsNullOrEmpty(conversationText.Value))
-            {
-                f.DetermineSubstituteVariables(conversationText, referencedVariables);
-            }
-        }
-#endif
-        #endregion Editor caches
     }
 }

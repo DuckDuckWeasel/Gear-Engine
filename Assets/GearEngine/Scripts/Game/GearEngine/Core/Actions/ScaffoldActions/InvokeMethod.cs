@@ -197,7 +197,7 @@ namespace Scaffold
         protected virtual object[] GetParameterValues()
         {
             object[] values = new object[methodParameters.Length];
-            Blackboard currentBlackboard = GetBlackboard();
+            VisualScripting.Blackboard currentBlackboard = GetBlackboard();
             for (int i = 0; i < methodParameters.Length; i++)
             {
                 values[i] = ResolveParameterValue(methodParameters[i], currentBlackboard);
@@ -206,87 +206,32 @@ namespace Scaffold
             return values;
         }
 
-        private object ResolveParameterValue(InvokeMethodParameter parameter, Blackboard currentBlackboard)
+        private object ResolveParameterValue(
+            InvokeMethodParameter parameter,
+            Scaffold.VisualScripting.Blackboard currentBlackboard)
         {
             if (string.IsNullOrEmpty(parameter.VariableKey))
             {
                 return parameter.ObjectValue.GetValue();
             }
 
-            Variable variable = currentBlackboard.GetVariable(parameter.VariableKey);
-            return GetVariableValue(variable);
-        }
-
-        private object GetVariableValue(Variable variable)
-        {
-            object scalarValue = GetScalarVariableValue(variable);
-            return scalarValue ?? GetUnityVariableValue(variable);
-        }
-
-        private object GetScalarVariableValue(Variable variable)
-        {
-            switch (variable)
-            {
-                case IntegerVariable item: return item.Value;
-                case BooleanVariable item: return item.Value;
-                case FloatVariable item: return item.Value;
-                case StringVariable item: return item.Value;
-                default: return null;
-            }
-        }
-
-        private object GetUnityVariableValue(Variable variable)
-        {
-            switch (variable)
-            {
-                case ColorVariable item: return item.Value;
-                case GameObjectVariable item: return item.Value;
-                case MaterialVariable item: return item.Value;
-                case SpriteVariable item: return item.Value;
-                case TextureVariable item: return item.Value;
-                case Vector2Variable item: return item.Value;
-                case Vector3Variable item: return item.Value;
-                case ObjectVariable item: return item.Value;
-                default: return null;
-            }
+            return currentBlackboard.TryGetVariable(
+                parameter.VariableKey,
+                out Scaffold.VisualScripting.VariableCellBase cell)
+                    ? cell.UntypedValue
+                    : null;
         }
 
         protected virtual void SetVariable(string key, object value)
         {
-            Variable variable = GetBlackboard().GetVariable(key);
-            if (variable == null || SetScalarVariable(variable, value))
+            if (!GetBlackboard().TryGetVariable(
+                    key,
+                    out Scaffold.VisualScripting.VariableCellBase cell))
             {
                 return;
             }
 
-            SetUnityVariable(variable, value);
-        }
-
-        private bool SetScalarVariable(Variable variable, object value)
-        {
-            switch (variable)
-            {
-                case IntegerVariable item: item.Value = (int)value; return true;
-                case BooleanVariable item: item.Value = (bool)value; return true;
-                case FloatVariable item: item.Value = (float)value; return true;
-                case StringVariable item: item.Value = (string)value; return true;
-                default: return false;
-            }
-        }
-
-        private void SetUnityVariable(Variable variable, object value)
-        {
-            switch (variable)
-            {
-                case ColorVariable item: item.Value = (Color)value; break;
-                case GameObjectVariable item: item.Value = (GameObject)value; break;
-                case MaterialVariable item: item.Value = (Material)value; break;
-                case SpriteVariable item: item.Value = (Sprite)value; break;
-                case TextureVariable item: item.Value = (Texture)value; break;
-                case Vector2Variable item: item.Value = (Vector2)value; break;
-                case Vector3Variable item: item.Value = (Vector3)value; break;
-                case ObjectVariable item: item.Value = (UnityEngine.Object)value; break;
-            }
+            cell.UntypedValue = value;
         }
 
         private void LogInvocationError(Exception exception)

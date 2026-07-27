@@ -16,7 +16,7 @@ namespace Scaffold
     [AddComponentMenu("")]
     [ExecuteInEditMode]
     [Serializable]
-    public class MoveTo : iTweenCommand
+    public class MoveTo : ITweenCommand
     {
         [Tooltip("Target host.transform that the GameObject will move to")]
         [SerializeField] protected TransformData toTransform;
@@ -45,9 +45,6 @@ namespace Scaffold
             tweenParams.Add("easetype", easeType);
             tweenParams.Add("looptype", loopType);
             tweenParams.Add("isLocal", isLocal);
-            tweenParams.Add("oncomplete", "OniTweenComplete");
-            tweenParams.Add("oncompletetarget", host.gameObject);
-            tweenParams.Add("oncompleteparams", this);
             iTween.MoveTo(targetObject.Value, tweenParams);
         }
 

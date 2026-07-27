@@ -45,7 +45,7 @@ namespace Scaffold
                 return "Error: no variable selected";
             }
 
-            return variableToUse.Key + " to " + collection.Value.name;
+            return variableToUse.Key + " to " + collection.Value.Name;
         }
 
         bool ICollectionCompatible.IsVarCompatibleWithCollection(Variable variable, string compatibleWith)

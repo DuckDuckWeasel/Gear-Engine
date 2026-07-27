@@ -16,7 +16,7 @@ namespace Scaffold
     [AddComponentMenu("")]
     [ExecuteInEditMode]
     [Serializable]
-    public class LookTo : iTweenCommand
+    public class LookTo : ITweenCommand
     {
         [Tooltip("Target host.transform that the GameObject will look at")]
         [SerializeField] protected TransformData toTransform;
@@ -25,7 +25,7 @@ namespace Scaffold
         [SerializeField] protected Vector3Data toPosition;
 
         [Tooltip("Restricts rotation to the supplied axis only")]
-        [SerializeField] protected iTweenAxis axis;
+        [SerializeField] protected ITweenAxis axis;
 
         #region Public members
 
@@ -43,22 +43,19 @@ namespace Scaffold
             }
             switch (axis)
             {
-                case iTweenAxis.X:
+                case ITweenAxis.X:
                     tweenParams.Add("axis", "x");
                     break;
-                case iTweenAxis.Y:
+                case ITweenAxis.Y:
                     tweenParams.Add("axis", "y");
                     break;
-                case iTweenAxis.Z:
+                case ITweenAxis.Z:
                     tweenParams.Add("axis", "z");
                     break;
             }
             tweenParams.Add("time", duration.Value);
             tweenParams.Add("easetype", easeType);
             tweenParams.Add("looptype", loopType);
-            tweenParams.Add("oncomplete", "OniTweenComplete");
-            tweenParams.Add("oncompletetarget", host.gameObject);
-            tweenParams.Add("oncompleteparams", this);
             iTween.LookTo(targetObject.Value, tweenParams);
         }
 

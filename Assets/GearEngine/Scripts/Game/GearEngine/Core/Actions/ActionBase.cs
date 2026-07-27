@@ -2,11 +2,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
-using Scaffold;
+using GearEngine.Core.Architecture.References;
 using Scaffold.VisualScripting;
 using UnityEngine;
-using Blackboard = Scaffold.Blackboard;
-using Block = Scaffold.Block;
 using CoreActionExecutionStatus =
     Scaffold.VisualScripting.ActionExecutionStatus;
 
@@ -16,156 +14,99 @@ namespace GearEngine.Core.Actions
     [TriInspector.DrawWithTriInspector]
     public abstract class ActionBase :
         Scaffold.VisualScripting.ActionBase,
-        IAction,
-        IActionWithStatus,
-        IInterruptibleAction,
-        IMonoBehaviourConsumer,
-        IBlackboardConsumer,
-        ICommandContextConsumer,
-        IStringLocationIdentifier
+        Scaffold.IStringLocationIdentifier
     {
-        public virtual int ItemId
-        {
-            get { return hostCommand != null ? hostCommand.ItemId : -1; }
-            set
-            {
-                if (hostCommand != null)
-                {
-                    hostCommand.ItemId = value;
-                }
-            }
-        }
+        public int ItemId => GetStableItemId(DefinitionId.Value);
 
-        public virtual string ErrorMessage
-        {
-            get { return hostCommand != null ? hostCommand.ErrorMessage : ""; }
-        }
+        public virtual string ErrorMessage => string.Empty;
 
         public virtual int IndentLevel
         {
-            get { return hostCommand != null ? hostCommand.IndentLevel : 0; }
-            set
-            {
-                if (hostCommand != null)
-                {
-                    hostCommand.IndentLevel = value;
-                }
-            }
+            get => indentLevel;
+            set => indentLevel = Math.Max(value, 0);
         }
 
-        public virtual int CommandIndex
-        {
-            get { return hostCommand != null ? hostCommand.CommandIndex : 0; }
-            set
-            {
-                if (hostCommand != null)
-                {
-                    hostCommand.CommandIndex = value;
-                }
-            }
-        }
+        [SerializeField] private int indentLevel;
 
-        public virtual bool IsExecuting
-        {
-            get { return hostCommand != null ? hostCommand.IsExecuting : false; }
-            set
-            {
-                if (hostCommand != null)
-                {
-                    hostCommand.IsExecuting = value;
-                }
-            }
-        }
+        public int CommandIndex => IsExecutionActive ? Context.ActionIndex : -1;
 
-        public virtual Block ParentBlock
-        {
-            get { return hostCommand != null ? hostCommand.ParentBlock : null; }
-            set
-            {
-                if (hostCommand != null)
-                {
-                    hostCommand.ParentBlock = value;
-                }
-            }
-        }
+        public int PreviousCommandIndex =>
+            IsExecutionActive ? Context.PreviousActionIndex : -1;
 
-        public virtual CommandTrack ParentTrack
-        {
-            get { return hostCommand != null ? hostCommand.ParentTrack : null; }
-            set
-            {
-                if (hostCommand != null)
-                {
-                    hostCommand.ParentTrack = value;
-                }
-            }
-        }
+        public IReadOnlyList<Scaffold.VisualScripting.IAction> CurrentActions =>
+            IsExecutionActive
+                ? Context.ActionList.Definition.Actions
+                : Array.Empty<Scaffold.VisualScripting.IAction>();
 
-        protected bool CanRunScheduledWork =>
-            IsExecutionActive ||
-            blackboard != null ||
-            host != null ||
-            hostCommand != null;
+        public bool IsExecuting => IsExecutionActive;
 
-        protected float CurrentDeltaTime =>
-            IsExecutionActive ? Context.TimeSource.DeltaTime : Time.deltaTime;
+        public Scaffold.VisualScripting.Block ParentBlock =>
+            IsExecutionActive ? Context.Block : null;
 
-        protected double CurrentElapsedSeconds =>
-            IsExecutionActive ? Context.TimeSource.ElapsedSeconds : Time.timeAsDouble;
+        public ActionTrack ParentTrack =>
+            IsExecutionActive ? Context.Track : null;
 
-        [NonSerialized, BlackboardTransient]
-        protected MonoBehaviour host;
+        protected bool CanRunScheduledWork => IsExecutionActive;
 
-        [NonSerialized, BlackboardTransient]
-        protected Blackboard blackboard;
+        protected float CurrentDeltaTime => Context.TimeSource.DeltaTime;
 
-        [NonSerialized, BlackboardTransient]
-        protected Command hostCommand;
-
-        [NonSerialized, BlackboardTransient]
-        protected Action onCompleteCallback;
-
-        [NonSerialized, BlackboardTransient]
-        protected Action<ActionExecutionStatus> onStatusCompleteCallback;
+        protected double CurrentElapsedSeconds => Context.TimeSource.ElapsedSeconds;
 
         protected List<Scaffold.Variable> referencedVariables =
             new List<Scaffold.Variable>();
 
-        [NonSerialized, BlackboardTransient]
-        private bool actionCompleted;
+        protected ITargetResolver TargetResolver =>
+            IsExecutionActive
+                ? new BlackboardTargetResolver(Context.Blackboard.Variables)
+                : null;
+
+        protected GameObject ResolveTarget(TargetReference targetReference)
+        {
+            return targetReference?.Resolve(TargetResolver);
+        }
+
+        protected IReadOnlyList<GameObject> ResolveTargets(
+            TargetReference targetReference)
+        {
+            IReadOnlyList<GameObject> targets =
+                targetReference?.ResolveAll(TargetResolver);
+            return targets ?? Array.Empty<GameObject>();
+        }
+
+        protected bool IsTargetMatch(
+            TargetReference targetReference,
+            GameObject target)
+        {
+            return targetReference != null &&
+                targetReference.IsMatch(target, TargetResolver);
+        }
 
         [NonSerialized, BlackboardTransient]
         private List<IDisposable> scheduledWork;
 
-        public virtual void SetHost(MonoBehaviour host)
+        private sealed class BlackboardTargetResolver : ITargetResolver
         {
-            this.host = host;
-        }
+            public BlackboardTargetResolver(BlackboardVariableSet variables)
+            {
+                this.variables = variables ??
+                    throw new ArgumentNullException(nameof(variables));
+            }
 
-        public virtual void SetBlackboard(Blackboard blackboard)
-        {
-            this.blackboard = blackboard;
-        }
+            private readonly BlackboardVariableSet variables;
 
-        public virtual void SetCommandContext(Command hostCommand)
-        {
-            this.hostCommand = hostCommand;
-        }
+            public GameObject Resolve(string variableName)
+            {
+                if (!variables.TryGet(
+                        variableName,
+                        out VariableCellBase cell))
+                {
+                    return null;
+                }
 
-        public void Execute(Action onComplete)
-        {
-            onCompleteCallback = onComplete;
-            onStatusCompleteCallback = null;
-            actionCompleted = false;
-            OnEnter();
-        }
-
-        public void ExecuteWithStatus(Action<ActionExecutionStatus> onComplete)
-        {
-            onCompleteCallback = null;
-            onStatusCompleteCallback = onComplete;
-            actionCompleted = false;
-            OnEnter();
+                return cell is VariableCell<GameObject> gameObjectCell
+                    ? gameObjectCell.Value
+                    : null;
+            }
         }
 
         protected sealed override void OnExecute()
@@ -180,76 +121,39 @@ namespace GearEngine.Core.Actions
 
         public virtual void Continue()
         {
-            CompleteAction(ActionExecutionStatus.Success);
+            CompleteAction(CoreActionExecutionStatus.Success);
         }
 
         public new virtual void Fail()
         {
-            CompleteAction(ActionExecutionStatus.Failure);
+            CompleteAction(CoreActionExecutionStatus.Failure);
         }
 
         public override void Interrupt()
         {
             CancelScheduledWork();
-            if (IsExecutionActive)
-            {
-                OnStopExecuting();
-                base.Interrupt();
-                return;
-            }
-
-            if (actionCompleted)
+            if (!IsExecutionActive)
             {
                 return;
             }
 
-            actionCompleted = true;
-            onCompleteCallback = null;
-            onStatusCompleteCallback = null;
             OnStopExecuting();
+            base.Interrupt();
         }
 
         public virtual void Continue(int nextCommandIndex)
         {
-            if (IsExecutionActive)
-            {
-                JumpTo(nextCommandIndex);
-                return;
-            }
-
-            CancelCompletionCallback();
-            if (hostCommand is global::GearEngine.GearEngine.Presentation.UI.Input.InvokeActionCommand invokeCmd)
-            {
-                invokeCmd.CancelSequence();
-            }
-            if (hostCommand != null)
-            {
-                hostCommand.Continue(nextCommandIndex);
-            }
+            JumpTo(nextCommandIndex);
         }
 
         public virtual void StopParentBlock()
         {
-            if (IsExecutionActive)
-            {
-                StopBlock();
-                return;
-            }
-
-            CancelCompletionCallback();
-            if (hostCommand is global::GearEngine.GearEngine.Presentation.UI.Input.InvokeActionCommand invokeCmd)
-            {
-                invokeCmd.CancelSequence();
-            }
-            if (hostCommand != null && hostCommand.ParentBlock != null)
-            {
-                hostCommand.ParentBlock.Stop();
-            }
+            StopBlock();
         }
 
-        public virtual Blackboard GetBlackboard()
+        public Blackboard GetBlackboard()
         {
-            return blackboard;
+            return Context.Blackboard;
         }
 
         public virtual bool IsComment()
@@ -269,7 +173,7 @@ namespace GearEngine.Core.Actions
 
         public virtual string GetSummary()
         {
-            return "";
+            return string.Empty;
         }
 
         public virtual Color GetButtonColor()
@@ -287,15 +191,15 @@ namespace GearEngine.Core.Actions
             return false;
         }
 
-        public virtual void OnCommandAdded(Block parentBlock)
+        public virtual void OnCommandAdded(BlockDefinition parentBlock)
         {
         }
 
-        public virtual void OnCommandRemoved(Block parentBlock)
+        public virtual void OnCommandRemoved(BlockDefinition parentBlock)
         {
         }
 
-        public virtual bool HasReference(Variable variable)
+        public virtual bool HasReference(Scaffold.Variable variable)
         {
             return false;
         }
@@ -312,62 +216,46 @@ namespace GearEngine.Core.Actions
         {
         }
 
-        protected virtual void CompleteAction(ActionExecutionStatus status)
+        public virtual bool IsReorderableArray(string propertyName)
         {
-            if (IsExecutionActive)
-            {
-                CompleteCoreAction(status);
-                return;
-            }
-
-            CompleteLegacyAction(status);
+            return false;
         }
 
-        private void CompleteCoreAction(ActionExecutionStatus status)
+        protected virtual void RefreshVariableCache()
+        {
+        }
+
+        public virtual bool IsPropertyVisible(string propertyName)
+        {
+            return true;
+        }
+
+        public virtual void OnValidate()
+        {
+        }
+
+        public virtual void GetConnectedBlocks(ref List<BlockDefinition> connectedBlocks)
+        {
+        }
+
+        public virtual string GetLocationIdentifier()
+        {
+            return GetType().Name;
+        }
+
+        protected virtual void CompleteAction(CoreActionExecutionStatus status)
         {
             CancelScheduledWork();
-            Complete(ToCoreStatus(status));
-        }
-
-        private void CompleteLegacyAction(ActionExecutionStatus status)
-        {
-            if (actionCompleted)
-            {
-                return;
-            }
-
-            actionCompleted = true;
-            Action completion = onCompleteCallback;
-            Action<ActionExecutionStatus> statusCompletion = onStatusCompleteCallback;
-            onCompleteCallback = null;
-            onStatusCompleteCallback = null;
-            completion?.Invoke();
-            statusCompletion?.Invoke(status);
-        }
-
-        private void CancelCompletionCallback()
-        {
-            CancelScheduledWork();
-            actionCompleted = true;
-            onCompleteCallback = null;
-            onStatusCompleteCallback = null;
+            Complete(status);
         }
 
         protected void Invoke(string methodName, float delay)
         {
-            if (IsExecutionActive)
-            {
-                ScheduleCoreInvocation(methodName, delay);
-                return;
-            }
-
-            RunRoutine(InvokeCoroutine(methodName, delay));
-        }
-
-        private IEnumerator InvokeCoroutine(string methodName, float delay)
-        {
-            yield return new WaitForSeconds(delay);
-            InvokeScheduledMethod(methodName);
+            TimeSpan duration = TimeSpan.FromSeconds(Math.Max(delay, 0f));
+            IDisposable handle = Schedule(
+                duration,
+                () => InvokeScheduledMethod(methodName));
+            GetScheduledWork().Add(handle);
         }
 
         protected IDisposable RunRoutine(IEnumerator routine, bool detached = false)
@@ -377,7 +265,7 @@ namespace GearEngine.Core.Actions
                 throw new ArgumentNullException(nameof(routine));
             }
 
-            IDisposable handle = IsExecutionActive ? Context.Scheduler.ScheduleRoutine(routine) : StartLegacyRoutine(routine);
+            IDisposable handle = Context.Scheduler.ScheduleRoutine(routine);
             if (!detached)
             {
                 GetScheduledWork().Add(handle);
@@ -386,43 +274,96 @@ namespace GearEngine.Core.Actions
             return handle;
         }
 
-        private void ScheduleCoreInvocation(string methodName, float delay)
+        protected void RunTask(
+            Func<System.Threading.Tasks.Task> operation,
+            string operationName)
         {
-            TimeSpan duration = TimeSpan.FromSeconds(Math.Max(delay, 0f));
-            IDisposable handle = Schedule(duration, () => InvokeScheduledMethod(methodName));
-            GetScheduledWork().Add(handle);
+            if (operation == null)
+            {
+                throw new ArgumentNullException(nameof(operation));
+            }
+
+            try
+            {
+                System.Threading.Tasks.Task task = operation.Invoke();
+                if (task == null)
+                {
+                    throw new InvalidOperationException(
+                        $"{operationName} returned a null Task.");
+                }
+
+                RunRoutine(WaitForTask(task, operationName));
+            }
+            catch (Exception exception)
+            {
+                ReportTaskFailure(operationName, exception);
+                Fail();
+            }
         }
 
-        private IDisposable StartLegacyRoutine(IEnumerator routine)
+        private IEnumerator WaitForTask(
+            System.Threading.Tasks.Task task,
+            string operationName)
         {
-            MonoBehaviour runner = GetLegacyRoutineRunner();
-            if (runner == null)
+            while (!task.IsCompleted)
             {
-                throw new InvalidOperationException("No legacy coroutine runner is available.");
+                yield return null;
             }
 
-            Coroutine coroutine = runner.StartCoroutine(routine);
-            return new LegacyCoroutineHandle(runner, coroutine);
+            if (task.IsCanceled)
+            {
+                InvalidOperationException exception =
+                    new InvalidOperationException(
+                        $"{operationName} was canceled.");
+                ReportTaskFailure(operationName, exception);
+                Fail();
+                yield break;
+            }
+
+            if (task.IsFaulted)
+            {
+                Exception exception =
+                    task.Exception?.GetBaseException() ??
+                    new InvalidOperationException(
+                        $"{operationName} failed without an exception.");
+                ReportTaskFailure(operationName, exception);
+                Fail();
+                yield break;
+            }
+
+            Continue();
         }
 
-        private MonoBehaviour GetLegacyRoutineRunner()
+        private void ReportTaskFailure(
+            string operationName,
+            Exception exception)
         {
-            if (blackboard != null)
-            {
-                return blackboard;
-            }
+            string message =
+                $"[{GetType().Name}] {operationName} failed: {exception}";
+            Context.Logger.Error(message, exception);
+            Debug.LogError(message);
+        }
 
-            if (host != null)
+        private static int GetStableItemId(string value)
+        {
+            unchecked
             {
-                return host;
-            }
+                int hash = 17;
+                for (int index = 0; index < value.Length; index++)
+                {
+                    hash = hash * 31 + value[index];
+                }
 
-            return hostCommand;
+                return hash;
+            }
         }
 
         private void InvokeScheduledMethod(string methodName)
         {
-            const BindingFlags flags = BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public;
+            const BindingFlags flags =
+                BindingFlags.Instance |
+                BindingFlags.NonPublic |
+                BindingFlags.Public;
             MethodInfo method = GetType().GetMethod(methodName, flags);
             method?.Invoke(this, null);
         }
@@ -450,18 +391,6 @@ namespace GearEngine.Core.Actions
             }
 
             return scheduledWork;
-        }
-
-        public virtual bool IsReorderableArray(string propertyName) { return false; }
-        protected virtual void RefreshVariableCache() { }
-        public virtual bool IsPropertyVisible(string propertyName) { return true; }
-        public virtual void OnValidate() { }
-        public virtual void GetConnectedBlocks(ref System.Collections.Generic.List<Block> connectedBlocks) { }
-        public virtual string GetLocationIdentifier() { return GetType().Name; }
-
-        private static CoreActionExecutionStatus ToCoreStatus(ActionExecutionStatus status)
-        {
-            return status == ActionExecutionStatus.Success ? CoreActionExecutionStatus.Success : CoreActionExecutionStatus.Failure;
         }
     }
 }

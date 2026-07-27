@@ -46,6 +46,12 @@ namespace Scaffold.VisualScripting
 
         public IBlackboardLogger Logger => Services.Logger;
 
+        public IBlackboardRegistry Registry => Services.Registry;
+
+        public string LocalizationId => Definition.LocalizationId;
+
+        public string SaveProfile { get; set; } = string.Empty;
+
         public bool HasStarted { get; private set; }
 
         public bool IsEnabled => isEnabled;
@@ -170,13 +176,18 @@ namespace Scaffold.VisualScripting
 
         public bool ExecuteBlock(Block block, Action<ActionExecutionStatus> onComplete = null)
         {
+            return ExecuteBlock(block, 0, onComplete);
+        }
+
+        public bool ExecuteBlock(Block block, int firstTaskIndex, Action<ActionExecutionStatus> onComplete = null)
+        {
             ThrowIfDisposed();
             if (!CanExecute(block))
             {
                 return false;
             }
 
-            block.Execute(onComplete ?? IgnoreCompletion);
+            block.Execute(firstTaskIndex, onComplete ?? IgnoreCompletion);
             return true;
         }
 
@@ -202,9 +213,23 @@ namespace Scaffold.VisualScripting
 
         public void Reset()
         {
+            Reset(true, true);
+        }
+
+        public void Reset(bool resetExecutionFeedback, bool resetVariables)
+        {
             ThrowIfDisposed();
             StopAllInternal();
-            Variables.Reset();
+            if (resetVariables)
+            {
+                Variables.Reset();
+            }
+
+            if (!resetExecutionFeedback)
+            {
+                return;
+            }
+
             foreach (Block block in blocks)
             {
                 block.ResetExecutionFeedback();
@@ -433,7 +458,7 @@ namespace Scaffold.VisualScripting
             return block != null && blocksById.TryGetValue(block.Definition.DefinitionId, out Block owned) && ReferenceEquals(block, owned);
         }
 
-        private Block FindBlock(string blockName)
+        public Block FindBlock(string blockName)
         {
             if (string.IsNullOrWhiteSpace(blockName))
             {

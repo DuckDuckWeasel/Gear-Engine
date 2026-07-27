@@ -1,37 +1,66 @@
-using Scaffold;
+using System;
 using Scaffold.Tutorial.Controllers;
+using Scaffold.VisualScripting;
+using Scaffold.VisualScripting.Unity;
 using UnityEngine;
 
 namespace Scaffold.Tutorial.ScaffoldIntegration
 {
-    [RequireComponent(typeof(Blackboard), typeof(TutorialProgressController))]
-    public class ScaffoldTutorialAdapter : MonoBehaviour
+    [RequireComponent(
+        typeof(BlackboardBehaviour),
+        typeof(TutorialProgressController))]
+    public sealed class ScaffoldTutorialAdapter : MonoBehaviour
     {
-        private Blackboard blackboard;
+        private BlackboardBehaviour blackboardBehaviour;
         private TutorialProgressController tutorialController;
+        private IDisposable blockStartedSubscription;
 
         private void Awake()
         {
-            blackboard = GetComponent<Blackboard>();
+            blackboardBehaviour = GetComponent<BlackboardBehaviour>();
             tutorialController = GetComponent<TutorialProgressController>();
         }
 
         private void OnEnable()
         {
-            BlockSignals.OnBlockStart += HandleBlockStart;
+            Subscribe();
+        }
+
+        private void Start()
+        {
+            Subscribe();
         }
 
         private void OnDisable()
         {
-            BlockSignals.OnBlockStart -= HandleBlockStart;
+            blockStartedSubscription?.Dispose();
+            blockStartedSubscription = null;
         }
 
-        private void HandleBlockStart(Block block)
+        private void Subscribe()
         {
-            if (block.GetBlackboard() == blackboard)
+            if (blockStartedSubscription != null ||
+                blackboardBehaviour == null ||
+                !blackboardBehaviour.IsRuntimeAvailable)
             {
-                tutorialController.NotifyStepReached(block.BlockName);
+                return;
             }
+
+            blockStartedSubscription =
+                blackboardBehaviour.Runtime.EventBus.Subscribe<
+                    BlackboardBlockStartedEvent>(HandleBlockStarted);
+        }
+
+        private void HandleBlockStarted(
+            BlackboardBlockStartedEvent eventValue)
+        {
+            if (eventValue.RuntimeInstanceId !=
+                blackboardBehaviour.Runtime.RuntimeInstanceId)
+            {
+                return;
+            }
+
+            tutorialController.NotifyStepReached(eventValue.BlockName);
         }
     }
 }

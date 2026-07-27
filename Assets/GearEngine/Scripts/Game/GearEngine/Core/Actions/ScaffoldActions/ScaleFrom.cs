@@ -16,7 +16,7 @@ namespace Scaffold
     [AddComponentMenu("")]
     [ExecuteInEditMode]
     [Serializable]
-    public class ScaleFrom : iTweenCommand
+    public class ScaleFrom : ITweenCommand
     {
         [Tooltip("Target host.transform that the GameObject will scale from")]
         [SerializeField] protected TransformData fromTransform;
@@ -41,9 +41,6 @@ namespace Scaffold
             tweenParams.Add("time", duration.Value);
             tweenParams.Add("easetype", easeType);
             tweenParams.Add("looptype", loopType);
-            tweenParams.Add("oncomplete", "OniTweenComplete");
-            tweenParams.Add("oncompletetarget", host.gameObject);
-            tweenParams.Add("oncompleteparams", this);
             iTween.ScaleFrom(targetObject.Value, tweenParams);
         }
 

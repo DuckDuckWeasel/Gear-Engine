@@ -10,7 +10,7 @@ namespace Scaffold
     [Serializable]
     public class GetRotation : ActionBase
     {
-        [Tooltip("The Transform to get the rotation from. If left empty, uses the GameObject this Block is attached to.")]
+        [Tooltip("The Transform to get the rotation from.")]
         [SerializeField] protected TransformData targetTransform;
 
         [Tooltip("If true, gets the local rotation instead of world rotation.")]
@@ -22,15 +22,15 @@ namespace Scaffold
 
         public override void OnEnter()
         {
-            Transform t = (targetTransform.Value != null) ? targetTransform.Value : GetBlackboard().transform;
-            if (t != null && outRotation != null)
+            Transform t = targetTransform.Value;
+            if (t == null || outRotation == null)
             {
-                if (isLocal)
-                    outRotation.Value = t.localEulerAngles;
-                else
-                    outRotation.Value = t.eulerAngles;
+                Debug.LogError("[GetRotation] A target Transform and output variable are required.");
+                Fail();
+                return;
             }
 
+            outRotation.Value = isLocal ? t.localEulerAngles : t.eulerAngles;
             Continue();
         }
 
@@ -40,8 +40,8 @@ namespace Scaffold
             {
                 return "Error: No out variable selected";
             }
-            
-            string tName = (targetTransform.Value != null) ? targetTransform.Value.name : "Owner";
+
+            string tName = targetTransform.Value != null ? targetTransform.Value.name : "Missing Transform";
             return tName + " to " + outRotation.Key;
         }
 

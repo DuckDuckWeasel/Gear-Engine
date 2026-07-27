@@ -4,6 +4,7 @@ using UnityEngine.UI;
 using System.Collections;
 using UnityEngine.EventSystems;
 using System.Linq;
+using System;
 using MoonSharp.Interpreter;
 
 namespace Scaffold
@@ -22,11 +23,6 @@ namespace Scaffold
         private int nextOptionIndex;
 
         #region Public members
-
-        /// <summary>
-        /// Currently active Menu Dialog used to display Menu options
-        /// </summary>
-        public static MenuDialog ActiveMenuDialog { get; set; }
 
         /// <summary>
         /// A cached list of button objects in the menu dialog.
@@ -50,40 +46,8 @@ namespace Scaffold
 
 
 
-        /// <summary>
-        /// Returns a menu dialog by searching for one in the scene or creating one if none exists.
-        /// </summary>
-        public static MenuDialog GetMenuDialog()
-        {
-            if (ActiveMenuDialog == null)
-            {
-                // MenuDialog should ideally register itself in Awake.
-                // If we reach here and it's null, we just skip FindObjectOfType and spawn the prefab.
-
-                if (ActiveMenuDialog == null)
-                {
-                    // Auto spawn a menu dialog object from the prefab
-                    GameObject prefab = Resources.Load<GameObject>("Prefabs/MenuDialog");
-                    if (prefab != null)
-                    {
-                        GameObject go = Instantiate(prefab) as GameObject;
-                        go.SetActive(false);
-                        go.name = "MenuDialog";
-                        ActiveMenuDialog = go.GetComponent<MenuDialog>();
-                    }
-                }
-            }
-
-            return ActiveMenuDialog;
-        }
-
         protected virtual void Awake()
         {
-            if (ActiveMenuDialog == null)
-            {
-                ActiveMenuDialog = this;
-            }
-
             Button[] optionButtons = GetComponentsInChildren<Button>();
             cachedButtons = optionButtons;
 
@@ -123,7 +87,9 @@ namespace Scaffold
             Canvas.ForceUpdateCanvases();
         }
 
-        protected virtual IEnumerator WaitForTimeout(float timeoutDuration, Block targetBlock)
+        protected virtual IEnumerator WaitForTimeout(
+            float timeoutDuration,
+            Action onTimeout)
         {
             float elapsedTime = 0;
 
@@ -147,16 +113,7 @@ namespace Scaffold
 
             HideSayDialog();
 
-            if (targetBlock != null)
-            {
-                targetBlock.StartExecution();
-            }
-        }
-
-        protected IEnumerator CallBlock(Block block)
-        {
-            yield return new WaitForEndOfFrame();
-            block.StartExecution();
+            onTimeout?.Invoke();
         }
 
         protected IEnumerator CallLuaClosure(LuaEnvironment luaEnv, Closure callback)
@@ -220,17 +177,20 @@ namespace Scaffold
         }
 
         /// <summary>
-        /// Adds the option to the list of displayed options. Calls a Block when selected.
+        /// Adds an option and invokes a callback when selected.
         /// Will cause the Menu dialog to become visible if it is not already visible.
         /// </summary>
         /// <returns><c>true</c>, if the option was added successfully.</returns>
         /// <param name="text">The option text to display on the button.</param>
         /// <param name="interactable">If false, the option is displayed but is not selectable.</param>
         /// <param name="hideOption">If true, the option is not displayed but the menu knows that option can or did exist</param>
-        /// <param name="targetBlock">Block to execute when the option is selected.</param>
-        public virtual bool AddOption(string text, bool interactable, bool hideOption, Block targetBlock)
+        /// <param name="onSelected">Callback invoked when the option is selected.</param>
+        public virtual bool AddOption(
+            string text,
+            bool interactable,
+            bool hideOption,
+            Action onSelected)
         {
-            Block block = targetBlock;
             UnityEngine.Events.UnityAction action = delegate
             {
                 EventSystem.current.SetSelectedGameObject(null);
@@ -238,14 +198,8 @@ namespace Scaffold
                 // Stop timeout
                 Clear();
                 HideSayDialog();
-                if (block != null)
-                {
-                    Blackboard blackboard = block.GetBlackboard();
-                    gameObject.SetActive(false);
-                    // Use a coroutine to call the block on the next frame
-                    // Have to use the Blackboard gameobject as the MenuDialog is now inactive
-                    blackboard.StartCoroutine(CallBlock(block));
-                }
+                gameObject.SetActive(false);
+                onSelected?.Invoke();
             };
 
             return AddOption(text, interactable, hideOption, action);
@@ -337,15 +291,15 @@ namespace Scaffold
         /// Show a timer during which the player can select an option. Calls a Block when the timer expires.
         /// </summary>
         /// <param name="duration">The duration during which the player can select an option.</param>
-        /// <param name="targetBlock">Block to execute if the player does not select an option in time.</param>
-        public virtual void ShowTimer(float duration, Block targetBlock)
+        /// <param name="onTimeout">Callback invoked if the timer expires.</param>
+        public virtual void ShowTimer(float duration, Action onTimeout)
         {
             if (cachedSlider != null)
             {
                 cachedSlider.gameObject.SetActive(true);
                 gameObject.SetActive(true);
                 StopAllCoroutines();
-                StartCoroutine(WaitForTimeout(duration, targetBlock));
+                StartCoroutine(WaitForTimeout(duration, onTimeout));
             }
             else
             {

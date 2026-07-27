@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using GearEngine.Core.Actions;
-using GearEngine.GearEngine.Presentation.UI.Input;
 using Scaffold;
+using Scaffold.VisualScripting;
+using Scaffold.VisualScripting.Unity;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -15,29 +16,29 @@ namespace GearEngine.GearEngine.Editor
     [InitializeOnLoad]
     internal static class ExecutionMatrixSceneBuilder
     {
-        private const string ScenePath = "Assets/GearEngine/Scenes/Test/Test Tutorial Scene.unity";
-        private const string ContainerName = "Execution Matrix";
-        private const string RequestPath = "Temp/GenerateExecutionMatrixScene.request";
+        internal const string k_scenePath = "Assets/GearEngine/Scenes/Test/TestTutorialScene.unity";
+        private const string k_containerName = "Execution Matrix";
+        private const string k_requestPath = "Temp/GenerateExecutionMatrixScene.request";
 
-        private static readonly FieldInfo DebugLogMessageField = typeof(DebugLog).GetField(
+        private static readonly FieldInfo s_debugLogMessageField = typeof(DebugLog).GetField(
             "logMessage",
             BindingFlags.Instance | BindingFlags.NonPublic);
 
-        private static readonly IReadOnlyList<ExecutionCase> Cases = new[]
+        private static readonly IReadOnlyList<ExecutionCase> s_cases = new[]
         {
-            new ExecutionCase("Sequence - Ordered", CompositeExecutionMethod.Sequence, CompositeOrderMode.Ordered),
-            new ExecutionCase("Sequence - Random", CompositeExecutionMethod.Sequence, CompositeOrderMode.Random),
-            new ExecutionCase("Sequence - Shuffle", CompositeExecutionMethod.Sequence, CompositeOrderMode.Shuffle),
-            new ExecutionCase("Selector - Ordered", CompositeExecutionMethod.Selector, CompositeOrderMode.Ordered),
-            new ExecutionCase("Selector - Random", CompositeExecutionMethod.Selector, CompositeOrderMode.Random),
-            new ExecutionCase("Selector - Shuffle", CompositeExecutionMethod.Selector, CompositeOrderMode.Shuffle),
-            new ExecutionCase("Parallel - Wait All", CompositeExecutionMethod.Parallel, CompositeAwaitMode.WaitAll),
-            new ExecutionCase("Parallel - Wait Any", CompositeExecutionMethod.Parallel, CompositeAwaitMode.WaitAny),
-            new ExecutionCase("Parallel - Wait None", CompositeExecutionMethod.Parallel, CompositeAwaitMode.WaitNone),
-            new ExecutionCase("Parallel Selector - Wait All", CompositeExecutionMethod.ParallelSelector, CompositeAwaitMode.WaitAll),
-            new ExecutionCase("Parallel Selector - Wait Any", CompositeExecutionMethod.ParallelSelector, CompositeAwaitMode.WaitAny),
-            new ExecutionCase("Parallel Selector - Wait None", CompositeExecutionMethod.ParallelSelector, CompositeAwaitMode.WaitNone),
-            new ExecutionCase("Utility Selector - Utility", CompositeExecutionMethod.UtilitySelector),
+            new ExecutionCase("Sequence - Ordered", ActionListExecutionMethod.Sequence, ActionListOrderMode.Ordered),
+            new ExecutionCase("Sequence - Random", ActionListExecutionMethod.Sequence, ActionListOrderMode.Random),
+            new ExecutionCase("Sequence - Shuffle", ActionListExecutionMethod.Sequence, ActionListOrderMode.Shuffle),
+            new ExecutionCase("Selector - Ordered", ActionListExecutionMethod.Selector, ActionListOrderMode.Ordered),
+            new ExecutionCase("Selector - Random", ActionListExecutionMethod.Selector, ActionListOrderMode.Random),
+            new ExecutionCase("Selector - Shuffle", ActionListExecutionMethod.Selector, ActionListOrderMode.Shuffle),
+            new ExecutionCase("Parallel - Wait All", ActionListExecutionMethod.Parallel, ActionListAwaitMode.WaitAll),
+            new ExecutionCase("Parallel - Wait Any", ActionListExecutionMethod.Parallel, ActionListAwaitMode.WaitAny),
+            new ExecutionCase("Parallel - Wait None", ActionListExecutionMethod.Parallel, ActionListAwaitMode.WaitNone),
+            new ExecutionCase("Parallel Selector - Wait All", ActionListExecutionMethod.ParallelSelector, ActionListAwaitMode.WaitAll),
+            new ExecutionCase("Parallel Selector - Wait Any", ActionListExecutionMethod.ParallelSelector, ActionListAwaitMode.WaitAny),
+            new ExecutionCase("Parallel Selector - Wait None", ActionListExecutionMethod.ParallelSelector, ActionListAwaitMode.WaitNone),
+            new ExecutionCase("Utility Selector - Utility", ActionListExecutionMethod.UtilitySelector),
         };
 
         static ExecutionMatrixSceneBuilder()
@@ -61,14 +62,14 @@ namespace GearEngine.GearEngine.Editor
 
         private static void TryProcessPendingRequest()
         {
-            if (!File.Exists(RequestPath))
+            if (!File.Exists(k_requestPath))
             {
                 return;
             }
 
             try
             {
-                File.Delete(RequestPath);
+                File.Delete(k_requestPath);
                 GenerateAndSave();
             }
             catch (Exception exception)
@@ -78,123 +79,88 @@ namespace GearEngine.GearEngine.Editor
             }
         }
 
-        private static void GenerateAndSave()
+        internal static void GenerateAndSave()
         {
             Scene scene = EditorSceneManager.GetActiveScene();
-            if (!string.Equals(scene.path, ScenePath, StringComparison.Ordinal))
+            if (!string.Equals(scene.path, k_scenePath, StringComparison.Ordinal))
             {
                 throw new InvalidOperationException(
-                    $"Open '{ScenePath}' before generating the execution matrix.");
+                    $"Open '{k_scenePath}' before generating the execution matrix.");
             }
 
-            GameObject existingContainer = GameObject.Find(ContainerName);
+            GameObject existingContainer = GameObject.Find(k_containerName);
             if (existingContainer != null && existingContainer.scene == scene)
             {
                 UnityEngine.Object.DestroyImmediate(existingContainer);
             }
 
-            GameObject container = new GameObject(ContainerName);
+            GameObject container = new GameObject(k_containerName);
             SceneManager.MoveGameObjectToScene(container, scene);
-            foreach (ExecutionCase executionCase in Cases)
+            BlackboardLifetimeScope lifetimeScope = container.AddComponent<BlackboardLifetimeScope>();
+            BlackboardBehaviour behaviour = container.AddComponent<BlackboardBehaviour>();
+            BlackboardDefinition definition = new BlackboardDefinition
             {
-                CreateExecutionCase(container.transform, executionCase);
+                Name = "Execution Matrix",
+            };
+            foreach (ExecutionCase executionCase in s_cases)
+            {
+                BlockDefinition block = CreateExecutionCase(executionCase);
+                definition.Blocks.Add(block);
+                int blockIndex = definition.Blocks.Count - 1;
+                behaviour.AuthoringMetadata.BlockLayouts.Add(
+                    new Scaffold.VisualScripting.Authoring.BlockAuthoringMetadata(
+                        block.DefinitionId,
+                        new Rect(
+                            40f + blockIndex % 3 * 340f,
+                            40f + blockIndex / 3 * 220f,
+                            300f,
+                            180f)));
             }
 
+            behaviour.DefinitionReference.SetDirect(definition);
+            EditorUtility.SetDirty(lifetimeScope);
+            EditorUtility.SetDirty(behaviour);
             EditorSceneManager.MarkSceneDirty(scene);
             if (!EditorSceneManager.SaveScene(scene))
             {
-                throw new InvalidOperationException($"Unity could not save '{ScenePath}'.");
+                throw new InvalidOperationException($"Unity could not save '{k_scenePath}'.");
             }
 
             Selection.activeGameObject = container;
-            Debug.Log($"[ExecutionMatrix] Generated {Cases.Count} execution cases in '{ScenePath}'.");
+            Debug.Log($"[ExecutionMatrix] Generated {s_cases.Count} execution cases in '{k_scenePath}'.");
         }
 
-        private static void CreateExecutionCase(
-            Transform container,
-            ExecutionCase executionCase)
+        private static BlockDefinition CreateExecutionCase(ExecutionCase executionCase)
         {
-            GameObject host = new GameObject(executionCase.Name);
-            host.transform.SetParent(container, false);
-
-            Blackboard blackboard = host.AddComponent<Blackboard>();
-            Block block = blackboard.CreateBlock(Vector2.zero);
-            block.BlockName = executionCase.Name;
-            block.ExecutionMethod = executionCase.ExecutionMethod;
-            block.OrderMode = executionCase.OrderMode;
-            block.AwaitMode = executionCase.AwaitMode;
-
-            GameStarted gameStarted = host.AddComponent<GameStarted>();
-            gameStarted.ParentBlock = block;
-            block._EventHandler = gameStarted;
-
-            InvokeActionCommand firstCommand = block.CommandList.Count > 0
-                ? block.CommandList[0] as InvokeActionCommand
-                : null;
-            if (firstCommand == null)
+            BlockDefinition block = new BlockDefinition
             {
-                firstCommand = host.AddComponent<InvokeActionCommand>();
-                block.CommandList.Add(firstCommand);
-            }
-
-            ConfigureCommand(
-                firstCommand,
-                blackboard,
-                block,
-                CreateDebugLog($"[{executionCase.Name}] Start"),
-                10f);
-            AddCommand(host, blackboard, block, new Wait(), 20f);
-            AddCommand(
-                host,
-                blackboard,
-                block,
-                CreateDebugLog($"[{executionCase.Name}] End"),
-                30f);
-
-            CommandTrack primaryTrack = block.Tracks[0];
-            for (int commandIndex = 0; commandIndex < primaryTrack.Commands.Count; commandIndex++)
+                Name = executionCase.Name,
+                Trigger = new GameStartedTriggerDefinition(),
+                ExecutionMethod = executionCase.ExecutionMethod,
+                OrderMode = executionCase.OrderMode,
+                AwaitMode = executionCase.AwaitMode,
+            };
+            ActionTrackDefinition track = new ActionTrackDefinition
             {
-                Command command = primaryTrack.Commands[commandIndex];
-                command.ParentBlock = block;
-                command.ParentTrack = primaryTrack;
-                command.CommandIndex = commandIndex;
-            }
+                Name = "Primary",
+            };
+            track.ActionList.Actions.Add(CreateDebugLog($"[{executionCase.Name}] Start", 10f));
+            track.ActionList.Actions.Add(new Wait { Utility = 20f });
+            track.ActionList.Actions.Add(CreateDebugLog($"[{executionCase.Name}] End", 30f));
+            block.Tracks.Add(track);
+            return block;
         }
 
-        private static void AddCommand(
-            GameObject host,
-            Blackboard blackboard,
-            Block block,
-            IAction action,
-            float utility)
+        private static DebugLog CreateDebugLog(string message, float utility)
         {
-            InvokeActionCommand command = host.AddComponent<InvokeActionCommand>();
-            block.CommandList.Add(command);
-            ConfigureCommand(command, blackboard, block, action, utility);
-        }
-
-        private static void ConfigureCommand(
-            InvokeActionCommand command,
-            Blackboard blackboard,
-            Block block,
-            IAction action,
-            float utility)
-        {
-            command.ItemId = blackboard.NextItemId();
-            command.ParentBlock = block;
-            command.CompositeUtility = utility;
-            command.InsertAction(0, action, true);
-        }
-
-        private static DebugLog CreateDebugLog(string message)
-        {
-            if (DebugLogMessageField == null)
+            if (s_debugLogMessageField == null)
             {
                 throw new MissingFieldException(typeof(DebugLog).FullName, "logMessage");
             }
 
             DebugLog debugLog = new DebugLog();
-            DebugLogMessageField.SetValue(debugLog, new StringDataMulti(message));
+            s_debugLogMessageField.SetValue(debugLog, new StringDataMulti(message));
+            debugLog.Utility = utility;
             return debugLog;
         }
 
@@ -202,33 +168,33 @@ namespace GearEngine.GearEngine.Editor
         {
             public ExecutionCase(
                 string name,
-                CompositeExecutionMethod executionMethod,
-                CompositeOrderMode orderMode = CompositeOrderMode.Ordered)
+                ActionListExecutionMethod executionMethod,
+                ActionListOrderMode orderMode = ActionListOrderMode.Ordered)
             {
                 Name = name;
                 ExecutionMethod = executionMethod;
                 OrderMode = orderMode;
-                AwaitMode = CompositeAwaitMode.WaitAll;
+                AwaitMode = ActionListAwaitMode.WaitAll;
             }
 
             public ExecutionCase(
                 string name,
-                CompositeExecutionMethod executionMethod,
-                CompositeAwaitMode awaitMode)
+                ActionListExecutionMethod executionMethod,
+                ActionListAwaitMode awaitMode)
             {
                 Name = name;
                 ExecutionMethod = executionMethod;
-                OrderMode = CompositeOrderMode.Ordered;
+                OrderMode = ActionListOrderMode.Ordered;
                 AwaitMode = awaitMode;
             }
 
             public string Name { get; }
 
-            public CompositeExecutionMethod ExecutionMethod { get; }
+            public ActionListExecutionMethod ExecutionMethod { get; }
 
-            public CompositeOrderMode OrderMode { get; }
+            public ActionListOrderMode OrderMode { get; }
 
-            public CompositeAwaitMode AwaitMode { get; }
+            public ActionListAwaitMode AwaitMode { get; }
         }
     }
 }

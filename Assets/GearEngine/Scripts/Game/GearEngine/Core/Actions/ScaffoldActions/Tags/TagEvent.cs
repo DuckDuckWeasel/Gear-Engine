@@ -26,19 +26,8 @@ namespace Scaffold
                 return;
             }
 
-            // Find all TagComponents in the scene
-            foreach (TagComponent tc in TagComponent.Instances)
-            {
-                if (tc.HasTag(targetTag))
-                {
-                    // Find EventHandlers on the TagComponent's GameObject or children
-                    TagEventReceived[] receivers = tc.GetComponentsInChildren<TagEventReceived>();
-                    for (int i = 0; i < receivers.Length; i++)
-                    {
-                        receivers[i].OnTagEventReceived(eventName.Value);
-                    }
-                }
-            }
+            Context.EventBus.Publish(
+                new TagBlackboardEvent(targetTag, eventName.Value));
 
             Continue();
         }
@@ -63,4 +52,5 @@ namespace Scaffold
             return new Color32(235, 191, 217, 255);
         }
     }
+
 }

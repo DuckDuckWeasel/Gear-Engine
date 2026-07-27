@@ -32,7 +32,7 @@ namespace Scaffold
                 return "Error: no collection selected";
             }
 
-            return collection.Value.name;
+            return collection.Value.Name;
         }
     }
 }

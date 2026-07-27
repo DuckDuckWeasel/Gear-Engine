@@ -4,6 +4,12 @@ param(
     [int]$TimeoutMinutes = 10,
     [int]$AnalyzerTestsTimeoutMinutes = 10,
     [switch]$IncludeTestAssemblies,
+    [string[]]$BuildProjectNames = @(
+        "Scaffold.VisualScripting.Core.csproj",
+        "Scaffold.VisualScripting.Authoring.csproj",
+        "Scaffold.VisualScripting.Unity.csproj",
+        "Scaffold.VisualScripting.Editor.csproj"
+    ),
     # Use when Windows Application Control / WDAC blocks Scaffold.Mvvm.Analyzers.dll during dotnet test (0x800711C7).
     [switch]$SkipMvvmAnalyzerTests
 )
@@ -42,6 +48,34 @@ function Resolve-SolutionPath {
     }
 
     return $solutionFiles[0]
+}
+
+function New-AnalyzerSolutionCopy {
+    param(
+        [Parameter(Mandatory = $true)]
+        [System.IO.FileInfo]$Solution,
+        [Parameter(Mandatory = $true)]
+        [string]$ResolvedProjectPath
+    )
+
+    $copyPath = Join-Path $ResolvedProjectPath (
+        ".AnalyzerGate-" + [guid]::NewGuid().ToString("N") + ".sln")
+    $normalizedLines = foreach ($line in Get-Content -LiteralPath $Solution.FullName) {
+        if ($line -match '^Project\("(?<type>[^"]+)"\) = "[^"]+", "(?<path>[^"]+\.csproj)", "(?<id>[^"]+)"$') {
+            $projectName = [System.IO.Path]::GetFileNameWithoutExtension(
+                $matches['path'])
+            'Project("{0}") = "{1}", "{2}", "{3}"' -f
+                $matches['type'],
+                $projectName,
+                $matches['path'],
+                $matches['id']
+        } else {
+            $line
+        }
+    }
+
+    [System.IO.File]::WriteAllLines($copyPath, $normalizedLines)
+    return $copyPath
 }
 
 function Try-GetRelativePath {
@@ -114,15 +148,11 @@ function Should-IncludeBuildLine {
     return -not (Is-TestAssemblyProject -ProjectPath $projectPath)
 }
 
-function Escape-CmdDoubleQuotes {
-    param([Parameter(Mandatory = $true)][string]$Text)
-    return $Text.Replace('"', '""')
-}
-
-function Invoke-CmdDotNet {
+function Invoke-DotNet {
     <#
-        Runs `dotnet ...` under cmd.exe with merged stdout/stderr to a log file (avoids pipe deadlocks
-        and matches real exit codes). Returns @{ ExitCode = int; LogPath = string }.
+        Runs `dotnet ...` directly with asynchronous output reads, avoiding pipe deadlocks
+        while preserving the real process exit code on Windows, macOS, and Linux.
+        Returns @{ ExitCode = int; LogPath = string }.
     #>
     param(
         [Parameter(Mandatory = $true)]
@@ -132,49 +162,105 @@ function Invoke-CmdDotNet {
         [int]$TimeoutMilliseconds = -1
     )
 
-    $escapedArgs = @()
-    foreach ($a in $DotNetArguments) {
-        if ($null -eq $a) {
-            continue
-        }
-        if ($a -match '[\s"]') {
-            $escapedArgs += ('"' + (Escape-CmdDoubleQuotes -Text $a) + '"')
-        } else {
-            $escapedArgs += $a
+    $psi = New-Object System.Diagnostics.ProcessStartInfo
+    $psi.FileName = "dotnet"
+    foreach ($argument in $DotNetArguments) {
+        if ($null -ne $argument) {
+            [void]$psi.ArgumentList.Add($argument)
         }
     }
-
-    $dotnetLine = "dotnet " + ($escapedArgs -join " ")
-    $logEsc = Escape-CmdDoubleQuotes -Text $LogFilePath
-    $tail = "$dotnetLine > `"$logEsc`" 2>&1"
-
-    $psi = New-Object System.Diagnostics.ProcessStartInfo
-    $psi.FileName = "cmd.exe"
-    $psi.Arguments = "/c $tail"
     $psi.UseShellExecute = $false
     $psi.CreateNoWindow = $true
-    $psi.RedirectStandardOutput = $false
-    $psi.RedirectStandardError = $false
+    $psi.RedirectStandardOutput = $true
+    $psi.RedirectStandardError = $true
+    $psi.Environment["DOTNET_ROLL_FORWARD"] = "Major"
 
     $p = New-Object System.Diagnostics.Process
     $p.StartInfo = $psi
     [void]$p.Start()
+    $standardOutputTask = $p.StandardOutput.ReadToEndAsync()
+    $standardErrorTask = $p.StandardError.ReadToEndAsync()
+    $timedOut = $false
 
     if ($TimeoutMilliseconds -gt 0) {
         $didExit = $p.WaitForExit($TimeoutMilliseconds)
         if (-not $didExit) {
+            $timedOut = $true
             try {
-                $p.Kill()
+                $p.Kill($true)
             } catch {
+                try {
+                    $p.Kill()
+                } catch {
+                }
             }
-
-            return @{ ExitCode = -1; LogPath = $LogFilePath }
+            $p.WaitForExit()
         }
     } else {
         $p.WaitForExit()
     }
 
-    return @{ ExitCode = [int]$p.ExitCode; LogPath = $LogFilePath }
+    $standardOutput = $standardOutputTask.GetAwaiter().GetResult()
+    $standardError = $standardErrorTask.GetAwaiter().GetResult()
+    $combinedOutput = $standardOutput
+    if (-not [string]::IsNullOrEmpty($standardError)) {
+        if (-not [string]::IsNullOrEmpty($combinedOutput) -and
+            -not $combinedOutput.EndsWith([Environment]::NewLine)) {
+            $combinedOutput += [Environment]::NewLine
+        }
+        $combinedOutput += $standardError
+    }
+    [System.IO.File]::WriteAllText($LogFilePath, $combinedOutput)
+
+    $exitCode = if ($timedOut) { -1 } else { [int]$p.ExitCode }
+    return @{ ExitCode = $exitCode; LogPath = $LogFilePath }
+}
+
+function Sync-UnityScriptAssemblyOutputs {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$ResolvedProjectPath,
+        [Parameter(Mandatory = $true)]
+        [string[]]$BuildProjects
+    )
+
+    $scriptAssembliesPath = Join-Path $ResolvedProjectPath "Library/ScriptAssemblies"
+    if (-not (Test-Path -LiteralPath $scriptAssembliesPath)) {
+        return 0
+    }
+
+    $referenceNames = @(
+        foreach ($buildProject in $BuildProjects) {
+            foreach ($match in Select-String `
+                -LiteralPath $buildProject `
+                -Pattern '<ProjectReference Include="(?<path>[^"]+\.csproj)"' `
+                -AllMatches) {
+                foreach ($projectMatch in $match.Matches) {
+                    [System.IO.Path]::GetFileNameWithoutExtension(
+                        $projectMatch.Groups["path"].Value)
+                }
+            }
+        }
+    ) | Sort-Object -Unique
+
+    $copiedCount = 0
+    foreach ($referenceName in $referenceNames) {
+        $sourcePath = Join-Path $scriptAssembliesPath ($referenceName + ".dll")
+        if (-not (Test-Path -LiteralPath $sourcePath)) {
+            continue
+        }
+
+        $outputDirectory = Join-Path $ResolvedProjectPath (
+            "Temp/Bin/Debug/" + $referenceName)
+        $null = New-Item -ItemType Directory -Path $outputDirectory -Force
+        Copy-Item `
+            -LiteralPath $sourcePath `
+            -Destination (Join-Path $outputDirectory ($referenceName + ".dll")) `
+            -Force
+        $copiedCount++
+    }
+
+    return $copiedCount
 }
 
 # Runs analyzer unit tests, then builds the solution and prints deduplicated Scaffold analyzer diagnostics (SCA + SCM).
@@ -223,7 +309,7 @@ if ($analyzerTestsProjects.Count -gt 0) {
 
         try {
             $testsTimeoutMilliseconds = $AnalyzerTestsTimeoutMinutes * 60 * 1000
-            $testRun = Invoke-CmdDotNet `
+            $testRun = Invoke-DotNet `
                 -DotNetArguments @("test", $testsProject.Path, "-c", "Release", "--nologo") `
                 -LogFilePath $testsLogPath `
                 -TimeoutMilliseconds $testsTimeoutMilliseconds
@@ -268,23 +354,30 @@ if ($analyzerTestsProjects.Count -gt 0) {
     }
 }
 
-$selectedSolution = Resolve-SolutionPath -ResolvedProjectPath $resolvedProjectPath
-if ($null -eq $selectedSolution) {
+$buildProjects = @(
+    $BuildProjectNames |
+        ForEach-Object { Join-Path $resolvedProjectPath $_ } |
+        Where-Object { Test-Path -LiteralPath $_ }
+)
+if ($buildProjects.Count -eq 0) {
     Write-Output "TOTAL:0"
-    Write-Output "NOTE:No .sln file found at project root. Analyzer check skipped."
+    Write-Output "NOTE:No configured analyzer build projects were found. Analyzer build skipped."
     exit 0
 }
 
-Write-Output ("NOTE:Using solution '{0}'." -f $selectedSolution.Name)
+Write-Output ("NOTE:Building {0} configured project(s) without transitive project rebuilds." -f $buildProjects.Count)
+$syncedAssemblyCount = Sync-UnityScriptAssemblyOutputs `
+    -ResolvedProjectPath $resolvedProjectPath `
+    -BuildProjects $buildProjects
+Write-Output ("NOTE:Synced {0} Unity ScriptAssemblies dependency output(s)." -f $syncedAssemblyCount)
 if (-not $IncludeTestAssemblies.IsPresent) {
     Write-Output "NOTE:Excluding diagnostics from test assemblies (use -IncludeTestAssemblies to include them)."
 }
 
 $tempRoot = Join-Path ([System.IO.Path]::GetTempPath()) ("dotnet-build-check-" + [guid]::NewGuid().ToString("N"))
 $null = New-Item -ItemType Directory -Path $tempRoot -Force
-$buildLogPath = Join-Path $tempRoot "build.log"
 $buildOutput = @()
-$buildExitCode = -1
+$buildExitCode = 0
 
 try {
     if ($TimeoutMinutes -lt 1) {
@@ -292,22 +385,44 @@ try {
     }
 
     $buildTimeoutMilliseconds = $TimeoutMinutes * 60 * 1000
-    $buildRun = Invoke-CmdDotNet `
-        -DotNetArguments @("build", $selectedSolution.FullName, "--no-incremental", "-p:MaxCpuCount=1") `
-        -LogFilePath $buildLogPath `
-        -TimeoutMilliseconds $buildTimeoutMilliseconds
+    for ($projectIndex = 0; $projectIndex -lt $buildProjects.Count; $projectIndex++) {
+        $buildProject = $buildProjects[$projectIndex]
+        $buildLogPath = Join-Path $tempRoot ("build-{0}.log" -f $projectIndex)
+        $buildRun = Invoke-DotNet `
+            -DotNetArguments @(
+                "build",
+                $buildProject,
+                "--no-incremental",
+                "-p:BuildProjectReferences=false",
+                "-p:MaxCpuCount=1",
+                "--verbosity:minimal",
+                "-warnAsMessage:MSB3277"
+            ) `
+            -LogFilePath $buildLogPath `
+            -TimeoutMilliseconds $buildTimeoutMilliseconds
 
-    $buildExitCode = $buildRun.ExitCode
+        if ($buildRun.ExitCode -eq -1) {
+            Write-Output "BUILD_EXIT:-1"
+            Write-Output "TOTAL:-1"
+            Write-Output ("BLOCKER:Analyzer build for '{0}' timed out after {1} minute(s)." -f
+                ([System.IO.Path]::GetFileName($buildProject)),
+                $TimeoutMinutes)
+            exit 1
+        }
 
-    if ($buildExitCode -eq -1) {
-        Write-Output "BUILD_EXIT:-1"
-        Write-Output "TOTAL:-1"
-        Write-Output ("BLOCKER:Analyzer build timed out after {0} minute(s)." -f $TimeoutMinutes)
-        exit 1
-    }
+        if ($buildRun.ExitCode -ne 0) {
+            $buildExitCode = $buildRun.ExitCode
+        }
 
-    if (Test-Path $buildLogPath) {
-        $buildOutput += @(Get-Content $buildLogPath -ErrorAction SilentlyContinue)
+        if (Test-Path $buildLogPath) {
+            $buildOutput += @(
+                Get-Content $buildLogPath -ErrorAction SilentlyContinue |
+                    Where-Object {
+                        $_ -match ": (warning|error) (SCA[0-9]+|SCM[0-9]+)" -or
+                        $_ -match "\berror\b"
+                    }
+            )
+        }
     }
 }
 finally {
@@ -408,7 +523,12 @@ foreach ($line in $scaffoldAnalyzerLines) {
 
 # Compiler / tooling errors (not SCA/SCM analyzer codes). MSBuild engine errors use MSBxxxx.
 $blockers = $filteredBuildOutput |
-    Where-Object { $_ -match ": error " -and $_ -notmatch ": error SCA[0-9]+" -and $_ -notmatch ": error SCM[0-9]+" -and $_ -notmatch "MSB" } |
+    Where-Object {
+        $_ -match "\berror\b" -and
+        $_ -notmatch "^\s*[0-9]+\s+Error\(s\)\s*$" -and
+        $_ -notmatch ": error SCA[0-9]+" -and
+        $_ -notmatch ": error SCM[0-9]+"
+    } |
     Sort-Object -Unique
 
 foreach ($line in $blockers) {

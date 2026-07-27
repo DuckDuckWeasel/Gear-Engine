@@ -10,8 +10,10 @@ namespace Scaffold
     /// <summary>
     /// A singleton game object which displays a simple UI for the Narrative Log.
     /// </summary>
-    public class NarrativeLogMenu : MonoBehaviour 
+    public class NarrativeLogMenu : MonoBehaviour
     {
+        [SerializeField] private NarrativeLog narrativeLog;
+
         [Tooltip("Contains the overall aesthetic of each entry.")]
         [SerializeField] protected NarrativeLogEntryDisplay entryDisplayPrefab;
 
@@ -28,30 +30,30 @@ namespace Scaffold
         [SerializeField] protected int maxCharacters = 10000;
 
         protected TextAdapter narLogViewtextAdapter = new TextAdapter();
-        
+
         [Tooltip("The CanvasGroup containing the save menu buttons")]
         [SerializeField] protected CanvasGroup narrativeLogMenuGroup;
 
-        protected static bool narrativeLogActive = false;
-        
+        protected static bool s_narrativeLogActive = false;
+
         protected AudioSource clickAudioSource;
 
         protected LTDescr fadeTween;
 
-        protected static NarrativeLogMenu instance;
+        protected static NarrativeLogMenu s_instance;
 
         protected virtual void Awake()
         {
             if (showLog)
             {
                 // Only one instance of NarrativeLogMenu may exist
-                if (instance != null)
+                if (s_instance != null)
                 {
                     Destroy(gameObject);
                     return;
                 }
 
-                instance = this;
+                s_instance = this;
 
                 GameObject.DontDestroyOnLoad(this);
 
@@ -69,7 +71,7 @@ namespace Scaffold
 
         protected virtual void Start()
         {
-            if (!narrativeLogActive)
+            if (!s_narrativeLogActive)
             {
                 narrativeLogMenuGroup.alpha = 0f;
             }
@@ -81,18 +83,12 @@ namespace Scaffold
         protected virtual void OnEnable()
         {
             WriterSignals.OnWriterState += OnWriterState;
-            SaveManagerSignals.OnSavePointLoaded += OnSavePointLoaded;
-            SaveManagerSignals.OnSaveReset += OnSaveReset;
-            BlockSignals.OnBlockEnd += OnBlockEnd;
             NarrativeLog.OnNarrativeAdded += OnNarrativeAdded;
         }
-                
+
         protected virtual void OnDisable()
         {
             WriterSignals.OnWriterState -= OnWriterState;
-            SaveManagerSignals.OnSavePointLoaded -= OnSavePointLoaded;
-            SaveManagerSignals.OnSaveReset -= OnSaveReset;
-            BlockSignals.OnBlockEnd -= OnBlockEnd;
             NarrativeLog.OnNarrativeAdded -= OnNarrativeAdded;
         }
 
@@ -109,31 +105,11 @@ namespace Scaffold
             }
         }
 
-        protected virtual void OnSavePointLoaded(string savePointKey)
-        {
-            UpdateNarrativeLogText();
-        }
-
-        protected virtual void OnSaveReset()
-        {
-            ScaffoldManager.Instance.NarrativeLog.Clear();
-            UpdateNarrativeLogText();
-        }
-
-        protected virtual void OnBlockEnd (Block block)
-        {
-            // At block end update to get the last line of the block
-            bool defaultPreviousLines = previousLines;
-            previousLines = false;
-            UpdateNarrativeLogText();
-            previousLines = defaultPreviousLines;
-        }
-
         protected void UpdateNarrativeLogText()
         {
-            if (narrativeLogView.enabled)
+            if (narrativeLogView.enabled && narrativeLog != null)
             {
-                var prettyHistory = ScaffoldManager.Instance.NarrativeLog.GetPrettyHistory();
+                string prettyHistory = narrativeLog.GetPrettyHistory();
 
                 if (prettyHistory.Length > maxCharacters)
                 {
@@ -165,34 +141,38 @@ namespace Scaffold
                 fadeTween = null;
             }
 
-            if (narrativeLogActive)
+            if (s_narrativeLogActive)
             {
                 // Switch menu off
                 LeanTween.value(narrativeLogMenuGroup.gameObject, narrativeLogMenuGroup.alpha, 0f, .2f)
                     .setEase(LeanTweenType.easeOutQuint)
-                    .setOnUpdate((t) => {
-                    narrativeLogMenuGroup.alpha = t;
-                }).setOnComplete(() => {
-                    narrativeLogMenuGroup.alpha = 0f;
-                });
-                
+                    .setOnUpdate((t) =>
+                    {
+                        narrativeLogMenuGroup.alpha = t;
+                    }).setOnComplete(() =>
+                    {
+                        narrativeLogMenuGroup.alpha = 0f;
+                    });
+
             }
             else
             {
                 // Switch menu on
                 LeanTween.value(narrativeLogMenuGroup.gameObject, narrativeLogMenuGroup.alpha, 1f, .2f)
                     .setEase(LeanTweenType.easeOutQuint)
-                    .setOnUpdate((t) => {
-                    narrativeLogMenuGroup.alpha = t;
-                }).setOnComplete(() => {
-                    narrativeLogMenuGroup.alpha = 1f;
-                });
-                
+                    .setOnUpdate((t) =>
+                    {
+                        narrativeLogMenuGroup.alpha = t;
+                    }).setOnComplete(() =>
+                    {
+                        narrativeLogMenuGroup.alpha = 1f;
+                    });
+
             }
 
-            narrativeLogActive = !narrativeLogActive;
+            s_narrativeLogActive = !s_narrativeLogActive;
         }
-    
+
         #endregion
     }
 }

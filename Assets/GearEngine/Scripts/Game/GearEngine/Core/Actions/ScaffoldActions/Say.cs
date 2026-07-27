@@ -77,7 +77,7 @@ namespace Scaffold
         /// <summary>
         /// Character that is speaking.
         /// </summary>
-        public virtual Character _Character { get { return ResolveCharacter(); } }
+        public virtual Character Character { get { return ResolveCharacter(); } }
 
         /// <summary>
         /// Portrait that represents speaking character.
@@ -119,7 +119,7 @@ namespace Scaffold
                 return;
             }
 
-            Blackboard blackboard = GetBlackboard();
+            Scaffold.VisualScripting.Blackboard blackboard = GetBlackboard();
 
             sayDialog.SetActive(true);
 
@@ -139,7 +139,7 @@ namespace Scaffold
                 }
             }
 
-            string subbedText = blackboard.SubstituteVariables(displayText);
+            string subbedText = blackboard.Substitute(displayText);
 
             if (voiceOverSound.IsValid())
             {

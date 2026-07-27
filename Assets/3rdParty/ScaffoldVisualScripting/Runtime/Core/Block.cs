@@ -19,6 +19,8 @@ namespace Scaffold.VisualScripting
 
         public BlockDefinition Definition { get; }
 
+        public string BlockName => Definition.Name;
+
         public IReadOnlyList<ActionTrack> Tracks => tracks;
 
         public ExecutionId ExecutionId { get; private set; }
@@ -27,6 +29,8 @@ namespace Scaffold.VisualScripting
 
         public ActionExecutionStatus LastExecutionStatus => runner.LastExecutionStatus;
 
+        public int ExecutionCount { get; private set; }
+
         private readonly Func<float> getRandomValue;
         private readonly List<ActionTrack> tracks = new List<ActionTrack>();
         private readonly List<BlockActionEntry> entries = new List<BlockActionEntry>();
@@ -34,8 +38,14 @@ namespace Scaffold.VisualScripting
         private readonly CompositeExecutionRunner runner;
         private Action<ActionExecutionStatus> completion;
         private int lastExecutedTaskIndex = -1;
+        private int startTaskIndex;
 
         public void Execute(Action<ActionExecutionStatus> onComplete)
+        {
+            Execute(0, onComplete);
+        }
+
+        public void Execute(int firstTaskIndex, Action<ActionExecutionStatus> onComplete)
         {
             ThrowIfDisposed();
             if (State == BlockExecutionState.Executing)
@@ -43,7 +53,15 @@ namespace Scaffold.VisualScripting
                 throw new InvalidOperationException($"Block '{Definition.Name}' is already executing.");
             }
 
+            startTaskIndex = Math.Max(firstTaskIndex, 0);
             BeginExecution(onComplete);
+            ExecutionCount++;
+            Blackboard.EventBus.Publish(
+                new BlackboardBlockStartedEvent(
+                    Blackboard.RuntimeInstanceId,
+                    Definition.DefinitionId,
+                    Definition.Name,
+                    ExecutionId));
             StartRunner();
         }
 
@@ -69,6 +87,11 @@ namespace Scaffold.VisualScripting
         public bool IsActionRunning(int taskIndex)
         {
             return runner.IsTaskRunning(taskIndex);
+        }
+
+        public bool IsExecuting()
+        {
+            return State == BlockExecutionState.Executing;
         }
 
         public bool TryGetActionStatus(int taskIndex, out ActionExecutionStatus status)
@@ -159,6 +182,12 @@ namespace Scaffold.VisualScripting
         private void StartRunner()
         {
             RememberLastTask();
+            if (startTaskIndex > 0)
+            {
+                StartAtConfiguredTask();
+                return;
+            }
+
             if (ShouldAvoidRepeatingLastAction())
             {
                 runner.StartWithoutRepeatingLast(Definition.ExecutionMethod, Definition.AwaitMode, Definition.OrderMode, lastExecutedTaskIndex, Complete);
@@ -166,6 +195,11 @@ namespace Scaffold.VisualScripting
             }
 
             runner.Start(Definition.ExecutionMethod, Definition.AwaitMode, Definition.OrderMode, Complete);
+        }
+
+        private void StartAtConfiguredTask()
+        {
+            runner.StartAt(Definition.ExecutionMethod, Definition.AwaitMode, Definition.OrderMode, startTaskIndex, Complete);
         }
 
         private bool ShouldAvoidRepeatingLastAction()
@@ -179,6 +213,13 @@ namespace Scaffold.VisualScripting
             State = BlockExecutionState.Idle;
             Action<ActionExecutionStatus> callback = completion;
             completion = null;
+            Blackboard.EventBus.Publish(
+                new BlackboardBlockCompletedEvent(
+                    Blackboard.RuntimeInstanceId,
+                    Definition.DefinitionId,
+                    Definition.Name,
+                    ExecutionId,
+                    status));
             callback.Invoke(status);
         }
 

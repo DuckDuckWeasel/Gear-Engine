@@ -61,20 +61,27 @@ namespace GearEngine.Actions.Input
 
         private void ConfigureFilters()
         {
-            _inputService.FilterForButtonDownTarget(DragTarget);
-            _inputService.FilterForPointerEnterTarget(DragTarget);
+            inputService.FilterForButtonDownTarget(
+                DragTarget,
+                TargetResolver);
+            inputService.FilterForPointerEnterTarget(
+                DragTarget,
+                TargetResolver);
             List<TargetReference> dropTargets = new List<TargetReference>();
             foreach (DropTargetConfig config in dropConfigs)
             {
                 dropTargets.Add(config.Target);
             }
-            _inputService.FilterForDropEnterTargets(checkGameObject, dropTargets);
+            inputService.FilterForDropEnterTargets(
+                checkGameObject,
+                dropTargets,
+                TargetResolver);
         }
 
         private void Subscribe()
         {
-            _eventBus.AddListener<ScreenDroppedEvent>(OnDrop);
-            _eventBus.AddListener<ScreenPointerExitEvent>(OnPointerExit);
+            eventBus.AddListener<ScreenDroppedEvent>(OnDrop);
+            eventBus.AddListener<ScreenPointerExitEvent>(OnPointerExit);
         }
 
         private void OnDrop(ScreenDroppedEvent signal)
@@ -109,7 +116,7 @@ namespace GearEngine.Actions.Input
         {
             foreach (DropTargetConfig dropConfig in dropConfigs)
             {
-                if (IsTargetMatch(dropConfig.Target, droppedObject))
+                if (IsDroppedObjectMatch(dropConfig.Target, droppedObject))
                 {
                     return dropConfig;
                 }
@@ -118,15 +125,18 @@ namespace GearEngine.Actions.Input
             return null;
         }
 
-        private bool IsTargetMatch(TargetReference targetReference, GameObject droppedObject)
+        private bool IsDroppedObjectMatch(
+            TargetReference targetReference,
+            GameObject droppedObject)
         {
-            if (targetReference.IsMatch(droppedObject))
+            if (base.IsTargetMatch(targetReference, droppedObject))
             {
                 return true;
             }
 
             TagComponent parentTag = droppedObject.GetComponentInParent<TagComponent>();
-            return parentTag != null && targetReference.IsMatch(parentTag.gameObject);
+            return parentTag != null &&
+                base.IsTargetMatch(targetReference, parentTag.gameObject);
         }
 
         private int ResolveDroppedIndex(GameObject droppedObject, List<GameObject> allMatching)
@@ -181,13 +191,13 @@ namespace GearEngine.Actions.Input
 
         private void Cleanup()
         {
-            if (_eventBus != null)
+            if (eventBus != null)
             {
-                _eventBus.RemoveListener<ScreenDroppedEvent>(OnDrop);
-                _eventBus.RemoveListener<ScreenPointerExitEvent>(OnPointerExit);
+                eventBus.RemoveListener<ScreenDroppedEvent>(OnDrop);
+                eventBus.RemoveListener<ScreenPointerExitEvent>(OnPointerExit);
             }
 
-            _inputService?.ClearAllFilters();
+            inputService?.ClearAllFilters();
         }
 
         private List<GameObject> GetAllMatchingObjects(TargetReference targetRef)
@@ -208,10 +218,11 @@ namespace GearEngine.Actions.Input
 
         private void AddTaggedObjects(TargetReference targetRef, List<GameObject> list)
         {
-            TagComponent[] allComponents = UnityEngine.Object.FindObjectsOfType<TagComponent>();
+            TagComponent[] allComponents =
+                UnityEngine.Object.FindObjectsByType<TagComponent>();
             foreach (TagComponent component in allComponents)
             {
-                if (targetRef.IsMatch(component.gameObject))
+                if (IsDroppedObjectMatch(targetRef, component.gameObject))
                 {
                     list.Add(component.gameObject);
                 }
@@ -220,7 +231,8 @@ namespace GearEngine.Actions.Input
 
         private void AddResolvedObjects(TargetReference targetRef, List<GameObject> list)
         {
-            List<GameObject> resolvedTargets = targetRef.ResolveAll();
+            IReadOnlyList<GameObject> resolvedTargets =
+                ResolveTargets(targetRef);
             if (resolvedTargets != null)
             {
                 list.AddRange(resolvedTargets);

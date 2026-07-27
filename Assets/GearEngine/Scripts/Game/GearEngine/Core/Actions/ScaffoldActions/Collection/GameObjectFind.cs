@@ -17,11 +17,11 @@ namespace Scaffold
 
         public override void OnEnter()
         {
-            var col = collection.Value;
+            Collection col = collection.Value;
 
             if (col != null)
             {
-                var res = GameObject.FindGameObjectsWithTag(tagString.Value);
+                GameObject[] res = GameObject.FindGameObjectsWithTag(tagString.Value);
 
                 for (int i = 0; i < res.Length; i++)
                 {
@@ -40,12 +40,16 @@ namespace Scaffold
         public override string GetSummary()
         {
             if (collection.Value == null)
+            {
                 return "Error: no collection selected";
+            }
 
             if (!(collection.Value is GameObjectCollection))
+            {
                 return "Error: collection is not GameObjectCollection";
+            }
 
-            return tagString.Value + " GOs, store in " + collection.Value.name;
+            return tagString.Value + " GOs, store in " + collection.Value.Name;
         }
     }
 }

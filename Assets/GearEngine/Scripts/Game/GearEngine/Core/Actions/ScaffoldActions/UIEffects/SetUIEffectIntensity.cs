@@ -9,6 +9,17 @@ namespace Scaffold
     [Serializable]
     public class SetUIEffectIntensity : UIEffectActionBase
     {
+        [Tooltip("The UIEffect component to modify. Takes precedence over Target GameObject.")]
+        [SerializeField] private UIEffect targetEffect;
+
+        [Tooltip("A dynamic target. This enables use inside a For Each loop over GameObjects.")]
+        [SerializeField] private GameObjectData targetGameObject;
+
+        protected override UIEffect TargetEffect => targetEffect;
+
+        protected override GameObjectData TargetGameObject =>
+            targetGameObject;
+
         public enum IntensityChannel
         {
             Tone,

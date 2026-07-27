@@ -8,8 +8,8 @@ namespace Scaffold
     /// <summary>
     /// Controls a character portrait.
     /// </summary>
-    [CommandInfo("Narrative", 
-                 "Portrait", 
+    [CommandInfo("Narrative",
+                 "Portrait",
                  "Controls a character portrait.")]
     [Serializable]
     public class Portrait : ControlWithDisplay<DisplayType>
@@ -64,17 +64,17 @@ namespace Scaffold
         /// <summary>
         /// Stage to display portrait on.
         /// </summary>
-        public virtual Stage _Stage { get { return stage; } set { stage = value; } }
+        public virtual Stage Stage { get { return stage; } set { stage = value; } }
 
         /// <summary>
         /// Character to display.
         /// </summary>
-        public virtual Character _Character { get { return character; } set { character = value; } }
+        public virtual Character Character { get { return character; } set { character = value; } }
 
         /// <summary>
         /// Portrait to display.
         /// </summary>
-        public virtual Sprite _Portrait { get { return portrait; } set { portrait = value; } }
+        public virtual Sprite PortraitSprite { get { return portrait; } set { portrait = value; } }
 
         /// <summary>
         /// Move the portrait from/to this offset position.
@@ -84,12 +84,12 @@ namespace Scaffold
         /// <summary>
         /// Move the portrait from this position.
         /// </summary>
-        public virtual RectTransform FromPosition { get { return fromPosition; } set { fromPosition = value;} }
+        public virtual RectTransform FromPosition { get { return fromPosition; } set { fromPosition = value; } }
 
         /// <summary>
         /// Move the portrait to this position.
         /// </summary>
-        public virtual RectTransform ToPosition { get { return toPosition; } set { toPosition = value;} }
+        public virtual RectTransform ToPosition { get { return toPosition; } set { toPosition = value; } }
 
         /// <summary>
         /// Direction character is facing.
@@ -135,7 +135,7 @@ namespace Scaffold
             }
 
             PortraitOptions options = new PortraitOptions();
-            
+
             options.character = character;
             options.replacedCharacter = replacedCharacter;
             options.portrait = portrait;
@@ -153,9 +153,9 @@ namespace Scaffold
             options.waitUntilFinished = waitUntilFinished;
 
             stage.RunPortraitCommand(options, Continue);
-            
+
         }
-        
+
         public override string GetSummary()
         {
             if (display == DisplayType.None && character == null)
@@ -178,7 +178,7 @@ namespace Scaffold
             string stageSummary = "";
             string portraitSummary = "";
             string facingSummary = "";
-            
+
             displaySummary = StringFormatter.SplitCamelCase(display.ToString());
 
             if (display == DisplayType.Replace)
@@ -194,7 +194,7 @@ namespace Scaffold
             {
                 stageSummary = " on \"" + stage.name + "\"";
             }
-            
+
             if (portrait != null)
             {
                 portraitSummary = " " + portrait.name;
@@ -244,13 +244,13 @@ namespace Scaffold
 
             return displaySummary + " \"" + characterSummary + portraitSummary + "\"" + stageSummary + facingSummary + fromPositionSummary + toPositionSummary;
         }
-        
+
         public override Color GetButtonColor()
         {
             return new Color32(230, 200, 250, 255);
         }
-        
-        public override void OnCommandAdded(Block parentBlock)
+
+        public override void OnCommandAdded(Scaffold.VisualScripting.BlockDefinition parentBlock)
         {
             //Default to display type: show
             display = DisplayType.Show;

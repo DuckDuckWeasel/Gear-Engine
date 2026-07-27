@@ -10,7 +10,7 @@ namespace Scaffold
     [Serializable]
     public class SetScale : ActionBase
     {
-        [Tooltip("The Transform to scale. If left empty, uses the GameObject this Block is attached to.")]
+        [Tooltip("The Transform to scale.")]
         [SerializeField] protected TransformData targetTransform;
 
         [Tooltip("The scale to set the Transform to.")]
@@ -18,12 +18,15 @@ namespace Scaffold
 
         public override void OnEnter()
         {
-            Transform t = (targetTransform.Value != null) ? targetTransform.Value : GetBlackboard().transform;
-            if (t != null)
+            Transform t = targetTransform.Value;
+            if (t == null)
             {
-                t.localScale = scale.Value;
+                Debug.LogError("[SetScale] A target Transform is required.");
+                Fail();
+                return;
             }
 
+            t.localScale = scale.Value;
             Continue();
         }
 
@@ -31,7 +34,7 @@ namespace Scaffold
         {
             if (targetTransform.Value == null)
             {
-                return "Owner to " + scale.Value.ToString();
+                return "Error: No target Transform";
             }
             return targetTransform.Value.name + " to " + scale.Value.ToString();
         }

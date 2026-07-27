@@ -34,10 +34,10 @@ namespace GearEngine.Actions.Input
             InitializeInputService();
             RegisterTargetRelays();
 
-            _inputService.FilterForButtonDownTarget(Target);
-            _inputService.FilterForButtonUpTarget(Target);
+            inputService.FilterForButtonDownTarget(Target, TargetResolver);
+            inputService.FilterForButtonUpTarget(Target, TargetResolver);
 
-            _eventBus.AddListener<ScreenClickedEvent>(OnClicked);
+            eventBus.AddListener<ScreenClickedEvent>(OnClicked);
 
             waitHandle = RunRoutine(WaitForTargetClickCoroutine());
         }
@@ -54,7 +54,7 @@ namespace GearEngine.Actions.Input
             Transform current = clickedObj.transform;
             while (current != null)
             {
-                if (Target.IsMatch(current.gameObject))
+                if (IsTargetMatch(Target, current.gameObject))
                 {
                     isTargetClicked = true;
                     return;
@@ -119,7 +119,8 @@ namespace GearEngine.Actions.Input
         {
             foreach (TagComponent tagComponent in TagComponent.Instances)
             {
-                if (tagComponent != null && Target.IsMatch(tagComponent.gameObject))
+                if (tagComponent != null &&
+                    IsTargetMatch(Target, tagComponent.gameObject))
                 {
                     resolvedTargets.Add(tagComponent.gameObject);
                 }
@@ -128,7 +129,7 @@ namespace GearEngine.Actions.Input
 
         private void AddResolvedTargets(HashSet<GameObject> resolvedTargets)
         {
-            foreach (GameObject resolvedTarget in Target.ResolveAll())
+            foreach (GameObject resolvedTarget in ResolveTargets(Target))
             {
                 if (resolvedTarget != null)
                 {
@@ -166,15 +167,15 @@ namespace GearEngine.Actions.Input
 
         private void ClearInputSubscriptions()
         {
-            if (_eventBus != null)
+            if (eventBus != null)
             {
-                _eventBus.RemoveListener<ScreenClickedEvent>(OnClicked);
+                eventBus.RemoveListener<ScreenClickedEvent>(OnClicked);
             }
 
-            if (_inputService != null)
+            if (inputService != null)
             {
-                _inputService.ClearButtonDownFilters();
-                _inputService.ClearButtonUpFilters();
+                inputService.ClearButtonDownFilters();
+                inputService.ClearButtonUpFilters();
             }
         }
 

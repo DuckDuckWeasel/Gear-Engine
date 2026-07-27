@@ -78,7 +78,8 @@ namespace Scaffold.VisualScripting
 
             private void StoreValue(object value)
             {
-                if (valueTarget != null)
+                if (valueTarget != null &&
+                    !valueTarget.DefinitionId.IsEmpty)
                 {
                     Context.Variables.Resolve(valueTarget).UntypedValue = value;
                 }

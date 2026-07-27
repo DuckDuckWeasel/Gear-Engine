@@ -57,6 +57,23 @@ namespace Scaffold.VisualScripting
             StartInternal(method, await, ordering, lastTaskIndex, onComplete);
         }
 
+        public void StartAt(ActionListExecutionMethod method, ActionListAwaitMode await, ActionListOrderMode ordering, int taskIndex, Action<ActionExecutionStatus> onComplete)
+        {
+            Stop();
+            Configure(method, await, ordering, onComplete);
+            ResetForStart();
+            order = orderBuilder.Build(method, ordering);
+            IsExecuting = true;
+            if (taskIndex > 0 &&
+                method == ActionListExecutionMethod.Sequence &&
+                ordering == ActionListOrderMode.Ordered)
+            {
+                orderIndex = Math.Min(taskIndex, order.Count);
+            }
+
+            BeginExecution();
+        }
+
         public void Tick()
         {
             if (!CanReevaluateUtility())

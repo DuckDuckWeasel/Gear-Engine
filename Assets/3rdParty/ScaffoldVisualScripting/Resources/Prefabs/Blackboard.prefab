@@ -3,14 +3,14 @@
 --- !u!1 &142980
 GameObject:
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 4
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
   m_Component:
-  - 4: {fileID: 467082}
-  - 114: {fileID: 11430050}
-  - 114: {fileID: 11433304}
-  - 114: {fileID: 11462346}
+  - component: {fileID: 467082}
+  - component: {fileID: 1271090961230311695}
+  - component: {fileID: 3562373014148461840}
   m_Layer: 0
   m_Name: Blackboard
   m_TagString: Untagged
@@ -20,119 +20,103 @@ GameObject:
   m_IsActive: 1
 --- !u!4 &467082
 Transform:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 142980}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 0
---- !u!114 &11430050
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1271090961230311695
 MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 142980}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7a334fe2ffb574b3583ff3b18b4792d3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  version: 1
-  scrollPos: {x: 0, y: 0}
-  variablesScrollPos: {x: 0, y: 0}
-  variablesExpanded: 1
-  blockViewHeight: 400
-  zoom: 1
-  scrollViewRect:
-    serializedVersion: 2
-    x: -343
-    y: -340
-    width: 1114
-    height: 859
-  selectedBlock: {fileID: 11433304}
-  selectedCommands: []
-  variables: []
-  description: 
-  stepPause: 0
-  colorCommands: 1
-  hideComponents: 1
-  saveSelection: 1
-  localizationId: 
-  showLineNumbers: 0
-  hideCommands: []
-  luaEnvironment: {fileID: 0}
-  luaBindingName: blackboard
---- !u!114 &11433304
+  m_Script: {fileID: 11500000, guid: 859b6cc93d2e64d5d9cce0764c518e90, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Scaffold.VisualScripting.Unity::Scaffold.VisualScripting.Unity.BlackboardLifetimeScope
+  parentReference:
+    TypeName:
+  autoRun: 1
+  autoInjectGameObjects: []
+--- !u!114 &3562373014148461840
 MonoBehaviour:
-  m_ObjectHideFlags: 2
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 142980}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3d3d73aef2cfc4f51abf34ac00241f60, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  nodeRect:
-    serializedVersion: 2
-    x: 67
-    y: 70
-    width: 120
-    height: 40
-  itemId: 0
-  blockName: New Block
-  description: 
-  eventHandler: {fileID: 11462346}
-  commandList: []
---- !u!114 &11462346
-MonoBehaviour:
-  m_ObjectHideFlags: 2
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 142980}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d2f6487d21a03404cb21b245f0242e79, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  parentBlock: {fileID: 11433304}
---- !u!1001 &100100000
-Prefab:
-  m_ObjectHideFlags: 1
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 0}
-      propertyPath: commandList.Array.size
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 0}
-      propertyPath: selectedCommands.Array.size
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 0}
-      propertyPath: hideComponents
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 0}
-      propertyPath: selectedBlock
-      value: 
-      objectReference: {fileID: 11433304}
-    - target: {fileID: 0}
-      propertyPath: commandList.Array.data[0]
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 0}
-      propertyPath: selectedCommands.Array.data[0]
-      value: 
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-  m_ParentPrefab: {fileID: 0}
-  m_RootGameObject: {fileID: 142980}
-  m_IsPrefabParent: 1
+  m_Script: {fileID: 11500000, guid: 22768aba6818d42f8814efc0e87773a8, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Scaffold.VisualScripting.Unity::Scaffold.VisualScripting.Unity.BlackboardBehaviour
+  definitionReference:
+    source: 0
+    directDefinition:
+      definitionId: 1ccf32442f5d4cbd82a78ff502586f95
+      name: Blackboard
+      blocks:
+      - definitionId: 4bfb3b63af85488ead4d1167e4e3d2d9
+        name: New Block
+        trigger:
+          rid: 3466830060293455872
+        executionMethod: 0
+        awaitMode: 0
+        orderMode: 0
+        avoidRepeatingLastAction: 0
+        tracks:
+        - definitionId: dcf1ae4e71944e4080cd14224575dccf
+          name: Primary
+          actionList:
+            definitionId: eb09004da9484590a9eeffe986e19c5b
+            executionMethod: 0
+            awaitMode: 0
+            orderMode: 0
+            avoidRepeatingLastAction: 0
+            actions: []
+      variables: []
+    definitionAsset: {fileID: 0}
+    variableId:
+      value:
+  authoringMetadata:
+    scrollPosition: {x: 0, y: 0}
+    zoom: 1
+    selectedBlockId:
+      value:
+    selectedTrackId:
+      value:
+    selectedActionIds: []
+    blockLayouts:
+    - blockId:
+        value: 4bfb3b63af85488ead4d1167e4e3d2d9
+      position:
+        serializedVersion: 2
+        x: 80
+        y: 80
+        width: 300
+        height: 180
+      useCustomTint: 0
+      tint: {r: 1, g: 1, b: 1, a: 1}
+      expanded: 1
+    actionGroups: []
+  sourceBehaviour: {fileID: 0}
+  references:
+    version: 2
+    RefIds:
+    - rid: 3466830060293455872
+      type: {class: GameStartedTriggerDefinition, ns: Scaffold.VisualScripting, asm: Scaffold.VisualScripting.Core}
+      data:
+        definitionId: 9bfb058350c644fba8ff6d6aef1c2b5a
+        enabled: 1
+        waitForFrames: 1

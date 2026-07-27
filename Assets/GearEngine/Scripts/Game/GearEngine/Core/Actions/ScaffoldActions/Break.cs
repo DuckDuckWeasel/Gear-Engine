@@ -20,11 +20,10 @@ namespace Scaffold
         public override void OnEnter()
         {
             Condition loopingCond = null;
-            var trackCommands = ParentTrack != null ? ParentTrack.Commands : ParentBlock.CommandList;
             // Find index of previous looping command
             for (int i = CommandIndex - 1; i >= 0; --i)
             {
-                Condition cond = trackCommands[i] as object as Condition;
+                Condition cond = CurrentActions[i] as Condition;
                 if (cond != null && cond.IsLooping)
                 {
                     loopingCond = cond;
@@ -50,5 +49,5 @@ namespace Scaffold
         }
 
         #endregion
-    }    
+    }
 }

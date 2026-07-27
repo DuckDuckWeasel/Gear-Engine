@@ -2,8 +2,6 @@ using System;
 using GearEngine.Core.Actions;
 
 using UnityEngine;
-using UnityEngine.Serialization;
-using System.Collections.Generic;
 
 namespace Scaffold
 {
@@ -16,46 +14,41 @@ namespace Scaffold
     [AddComponentMenu("")]
     [ExecuteInEditMode]
     [Serializable]
-    public class MenuTimer : ActionBase, IBlockCaller
+    public class MenuTimer : ActionBase
     {
         [Tooltip("Length of time to display the timer for")]
         [SerializeField] protected FloatData duration = new FloatData(1);
 
-        [FormerlySerializedAs("targetSequence")]
-        [Tooltip("Block to execute when the timer expires")]
-        [SerializeField] protected Block targetBlock;
+        [Tooltip("Menu Dialog that displays the timer")]
+        [SerializeField] private MenuDialog menuDialog;
+
+        [Tooltip("Name of the Block to execute when the timer expires")]
+        [SerializeField] private StringData targetBlockName = new StringData();
 
         #region Public members
 
         public override void OnEnter()
         {
-            MenuDialog menuDialog = MenuDialog.GetMenuDialog();
-
             if (menuDialog != null &&
-                targetBlock != null)
+                !string.IsNullOrWhiteSpace(targetBlockName.Value))
             {
-                menuDialog.ShowTimer(duration.Value, targetBlock);
+                VisualScripting.Blackboard blackboard = GetBlackboard();
+                menuDialog.ShowTimer(
+                    duration.Value,
+                    () => blackboard.ExecuteBlock(targetBlockName.Value));
             }
 
             Continue();
         }
 
-        public override void GetConnectedBlocks(ref List<Block> connectedBlocks)
-        {
-            if (targetBlock != null)
-            {
-                connectedBlocks.Add(targetBlock);
-            }
-        }
-
         public override string GetSummary()
         {
-            if (targetBlock == null)
+            if (string.IsNullOrWhiteSpace(targetBlockName.Value))
             {
                 return "Error: No target block selected";
             }
 
-            return targetBlock.BlockName;
+            return targetBlockName.Value;
         }
 
         public override Color GetButtonColor()
@@ -66,12 +59,8 @@ namespace Scaffold
         public override bool HasReference(Variable variable)
         {
             return duration.floatRef == variable ||
+                targetBlockName.stringRef == variable ||
                 base.HasReference(variable);
-        }
-
-        public bool MayCallBlock(Block block)
-        {
-            return block == targetBlock;
         }
 
         #endregion

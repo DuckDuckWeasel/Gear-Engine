@@ -1,6 +1,7 @@
 using System;
 using Coffee.UIEffects;
 using GearEngine.Core.Actions;
+using GearEngine.Presentation.UI.Effects;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -12,21 +13,19 @@ namespace Scaffold
     [Serializable]
     public abstract class UIEffectActionBase : ActionBase
     {
-        [Tooltip("The UIEffect component to modify. Takes precedence over Target GameObject.")]
-        [SerializeField] protected UIEffect targetEffect;
+        protected abstract UIEffect TargetEffect { get; }
 
-        [Tooltip("A dynamic target. This enables use inside a For Each loop over GameObjects.")]
-        [SerializeField] protected GameObjectData targetGameObject;
+        protected abstract GameObjectData TargetGameObject { get; }
 
         protected bool TryResolveEffect(bool addIfMissing, out UIEffect effect)
         {
-            effect = targetEffect;
+            effect = TargetEffect;
             if (effect != null)
             {
                 return true;
             }
 
-            GameObject target = targetGameObject.Value;
+            GameObject target = TargetGameObject.Value;
             if (target == null)
             {
                 return false;
@@ -44,35 +43,51 @@ namespace Scaffold
         protected bool TryResolveGraphic(out Graphic graphic)
         {
             graphic = null;
-            if (targetEffect != null)
+            if (TargetEffect != null)
             {
-                return targetEffect.TryGetComponent(out graphic);
+                return TargetEffect.TryGetComponent(out graphic);
             }
 
-            GameObject target = targetGameObject.Value;
+            GameObject target = TargetGameObject.Value;
             return target != null && target.TryGetComponent(out graphic);
+        }
+
+        protected void ApplyPreset(
+            UIEffect effect,
+            UIEffectPreset preset,
+            bool append)
+        {
+            if (preset is not IUIEffectPresetExecutor &&
+                effect.TryGetComponent(
+                    out UILoopMaterialEffect materialEffect))
+            {
+                materialEffect.Clear();
+            }
+
+            effect.ExecutePreset(preset, append);
         }
 
         protected string GetTargetDescription()
         {
-            if (targetEffect != null)
+            if (TargetEffect != null)
             {
-                return targetEffect.name;
+                return TargetEffect.name;
             }
 
-            if (targetGameObject.gameObjectRef != null)
+            if (TargetGameObject.gameObjectRef != null)
             {
-                return targetGameObject.GetDescription();
+                return TargetGameObject.GetDescription();
             }
 
-            return targetGameObject.Value != null
-                ? targetGameObject.Value.name
+            return TargetGameObject.Value != null
+                ? TargetGameObject.Value.name
                 : "Error: No UIEffect or target GameObject";
         }
 
         public override bool HasReference(Variable variable)
         {
-            return targetGameObject.gameObjectRef == variable || base.HasReference(variable);
+            return TargetGameObject.gameObjectRef == variable ||
+                base.HasReference(variable);
         }
     }
 }

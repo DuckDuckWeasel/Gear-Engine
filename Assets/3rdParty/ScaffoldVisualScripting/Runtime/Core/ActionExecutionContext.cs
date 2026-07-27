@@ -4,7 +4,7 @@ namespace Scaffold.VisualScripting
 {
     public sealed class ActionExecutionContext
     {
-        public ActionExecutionContext(Blackboard blackboard, Block block, ActionTrack track, ActionList actionList, IActionFlowController flowController, ExecutionId blockExecutionId, ExecutionId trackExecutionId, ExecutionId actionListExecutionId, ExecutionId actionExecutionId)
+        public ActionExecutionContext(Blackboard blackboard, Block block, ActionTrack track, ActionList actionList, IActionFlowController flowController, ExecutionId blockExecutionId, ExecutionId trackExecutionId, ExecutionId actionListExecutionId, ExecutionId actionExecutionId, int actionIndex = -1, int previousActionIndex = -1)
         {
             Blackboard = blackboard ?? throw new ArgumentNullException(nameof(blackboard));
             Block = block;
@@ -15,6 +15,8 @@ namespace Scaffold.VisualScripting
             TrackExecutionId = trackExecutionId;
             ActionListExecutionId = actionListExecutionId;
             ActionExecutionId = actionExecutionId;
+            ActionIndex = actionIndex;
+            PreviousActionIndex = previousActionIndex;
         }
 
         public Blackboard Blackboard { get; }
@@ -35,6 +37,8 @@ namespace Scaffold.VisualScripting
 
         public IBlackboardLogger Logger => Blackboard.Logger;
 
+        public IBlackboardRegistry Registry => Blackboard.Registry;
+
         public IActionFlowController FlowController { get; }
 
         public BlackboardRuntimeInstanceId RuntimeInstanceId => Blackboard.RuntimeInstanceId;
@@ -46,5 +50,9 @@ namespace Scaffold.VisualScripting
         public ExecutionId ActionListExecutionId { get; }
 
         public ExecutionId ActionExecutionId { get; }
+
+        public int ActionIndex { get; }
+
+        public int PreviousActionIndex { get; }
     }
 }

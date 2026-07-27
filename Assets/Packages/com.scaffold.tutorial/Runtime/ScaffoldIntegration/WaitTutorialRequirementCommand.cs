@@ -1,41 +1,54 @@
+using System;
 using System.Collections;
-using Scaffold;
-using UnityEngine;
-
-using Scaffold.Tutorial.Requirements;
 using Cysharp.Threading.Tasks;
+using Scaffold.Tutorial.Requirements;
+using Scaffold.VisualScripting;
+using UnityEngine;
 
 namespace Scaffold.Tutorial.ScaffoldIntegration
 {
-    [CommandInfo("Tutorial", "Wait Tutorial Requirement", "Waits until the specified tutorial requirement is met.")]
-    public class WaitTutorialRequirementCommand : Command
+    [Serializable]
+    public sealed class WaitTutorialRequirementCommand :
+        Scaffold.VisualScripting.ActionBase
     {
         [SerializeField]
         [Tooltip("The requirement to evaluate before continuing.")]
-        private TutorialRequirementReference requirement = new TutorialRequirementReference();
+        private TutorialRequirementReference requirement =
+            new TutorialRequirementReference();
 
+        [NonSerialized, BlackboardTransient]
+        private IDisposable scheduledRoutine;
 
-        public override void OnEnter()
+        protected override void OnExecute()
         {
-            if (requirement == null || requirement.Value == null)
+            if (requirement?.Value == null)
             {
-                Continue();
+                Succeed();
                 return;
             }
 
-            StartCoroutine(WaitForRequirement());
+            scheduledRoutine = Context.Scheduler.ScheduleRoutine(
+                WaitForRequirement());
         }
-        
+
+        protected override void OnInterrupted()
+        {
+            scheduledRoutine?.Dispose();
+            scheduledRoutine = null;
+        }
+
+        public string GetSummary()
+        {
+            return requirement?.Value == null
+                ? "Error: No Requirement specified"
+                : "Wait for Requirement";
+        }
+
         private IEnumerator WaitForRequirement()
         {
             yield return requirement.Value.WaitUntilMetAsync().ToCoroutine();
-            Continue();
-        }
-
-        public override string GetSummary()
-        {
-            if (requirement == null || requirement.Value == null) return "Error: No Requirement specified";
-            return "Wait for Requirement";
+            scheduledRoutine = null;
+            Succeed();
         }
     }
 }

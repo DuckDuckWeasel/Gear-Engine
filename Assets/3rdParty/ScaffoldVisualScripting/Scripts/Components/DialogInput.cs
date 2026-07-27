@@ -5,21 +5,6 @@ using UnityEngine.EventSystems;
 namespace Scaffold
 {
     /// <summary>
-    /// Supported modes for clicking through a Say Dialog.
-    /// </summary>
-    public enum ClickMode
-    {
-        /// <summary> Clicking disabled. </summary>
-        Disabled,
-        /// <summary> Click anywhere on screen to advance. </summary>
-        ClickAnywhere,
-        /// <summary> Click anywhere on Say Dialog to advance. </summary>
-        ClickOnDialog,
-        /// <summary> Click on continue button to advance. </summary>
-        ClickOnButton
-    }
-
-    /// <summary>
     /// Input handler for say dialogs.
     /// </summary>
     public class DialogInput : MonoBehaviour
@@ -35,6 +20,9 @@ namespace Scaffold
 
         [Tooltip("Ignore input if a Menu dialog is currently active")]
         [SerializeField] protected bool ignoreMenuClicks = true;
+
+        [Tooltip("Optional Menu Dialog whose active options suppress dialog input.")]
+        [SerializeField] private MenuDialog menuDialog;
 
         protected bool dialogClickedFlag;
 
@@ -118,9 +106,9 @@ namespace Scaffold
             if (ignoreMenuClicks)
             {
                 // Ignore input events if a Menu is being displayed
-                if (MenuDialog.ActiveMenuDialog != null &&
-                    MenuDialog.ActiveMenuDialog.IsActive() &&
-                    MenuDialog.ActiveMenuDialog.DisplayedOptionsCount > 0)
+                if (menuDialog != null &&
+                    menuDialog.IsActive() &&
+                    menuDialog.DisplayedOptionsCount > 0)
                 {
                     dialogClickedFlag = false;
                     nextLineInputFlag = false;

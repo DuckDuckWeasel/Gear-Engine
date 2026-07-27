@@ -1,7 +1,6 @@
 using System;
+using System.Collections.Generic;
 using GearEngine.Core.Actions;
-using GearEngine.GearEngine.Presentation.UI.Input;
-
 using UnityEngine;
 
 namespace Scaffold
@@ -107,22 +106,25 @@ namespace Scaffold
             }
 
             int indent = startCommand.IndentLevel;
-            System.Collections.Generic.List<Command> trackCommands = startCommand.ParentTrack != null
-                ? startCommand.ParentTrack.Commands
-                : startCommand.ParentBlock.CommandList;
-            for (int i = startCommand.CommandIndex + 1; i < trackCommands.Count; ++i)
+            IReadOnlyList<Scaffold.VisualScripting.IAction> actions =
+                startCommand.CurrentActions;
+            for (int i = startCommand.CommandIndex + 1; i < actions.Count; ++i)
             {
-                Command command = trackCommands[i];
-
-                if (command.IndentLevel == indent)
+                ActionBase action = actions[i] as ActionBase;
+                if (action == null)
                 {
-                    End end = FindWrappedAction<End>(command);
+                    continue;
+                }
+
+                if (action.IndentLevel == indent)
+                {
+                    End end = action as End;
                     if (end != null)
                     {
                         return end;
                     }
                 }
-                else if (command.IndentLevel < indent)
+                else if (action.IndentLevel < indent)
                 {
                     //managed to be less indent than the inner but not find and end, this shouldn't occur
                     // but may be user error or bad data, makes sense for completeness here
@@ -200,44 +202,40 @@ namespace Scaffold
             }
 
             // Find the next Else, ElseIf or End command at the same indent level as this If command
-            System.Collections.Generic.List<Command> trackCommands = ParentTrack != null
-                ? ParentTrack.Commands
-                : ParentBlock.CommandList;
-            for (int i = CommandIndex + 1; i < trackCommands.Count; ++i)
+            IReadOnlyList<Scaffold.VisualScripting.IAction> actions =
+                CurrentActions;
+            for (int i = CommandIndex + 1; i < actions.Count; ++i)
             {
-                Command nextCommand = trackCommands[i];
-
-                if (nextCommand == null)
+                ActionBase nextAction = actions[i] as ActionBase;
+                if (nextAction == null)
                 {
                     continue;
                 }
 
                 // Find next command at same indent level as this If command
                 // Skip disabled commands, comments & labels
-                ActionBase nextAction = FindWrappedAction<ActionBase>(nextCommand);
-                if (nextAction == null ||
-                    nextAction is Comment ||
+                if (nextAction is Comment ||
                     nextAction is Label ||
-                    nextCommand.IndentLevel != IndentLevel)
+                    nextAction.IndentLevel != IndentLevel)
                 {
                     continue;
                 }
 
-                Else elseAction = FindWrappedAction<Else>(nextCommand);
-                End endAction = FindWrappedAction<End>(nextCommand);
+                Else elseAction = nextAction as Else;
+                End endAction = nextAction as End;
                 if (elseAction != null || endAction != null)
                 {
-                    if (i >= trackCommands.Count - 1)
+                    if (i >= actions.Count - 1)
                     {
                         // Nothing follows the Else/End in this track, so let this track finish
                         // naturally rather than stopping the whole Block (other tracks may still be running).
-                        Continue(trackCommands.Count);
+                        Continue(actions.Count);
                         return;
                     }
                     else
                     {
                         // Execute command immediately after the Else or End command
-                        Continue(nextCommand.CommandIndex + 1);
+                        Continue(i + 1);
                         return;
                     }
                 }
@@ -251,26 +249,6 @@ namespace Scaffold
 
             // No matching End command found, so just stop the block
             StopParentBlock();
-        }
-
-        private static TAction FindWrappedAction<TAction>(Command command)
-            where TAction : ActionBase
-        {
-            InvokeActionCommand invokeActionCommand = command as InvokeActionCommand;
-            if (invokeActionCommand == null || invokeActionCommand.actions == null)
-            {
-                return null;
-            }
-
-            foreach (InvokeActionCommand.ActionWrapper wrapper in invokeActionCommand.actions)
-            {
-                if (wrapper.action is TAction typedAction)
-                {
-                    return typedAction;
-                }
-            }
-
-            return null;
         }
 
         /// <summary>
@@ -299,16 +277,19 @@ namespace Scaffold
         /// <returns></returns>
         protected virtual bool DoesPassElifSanityCheck()
         {
-            Command prevCmd = ParentTrack != null ? ParentTrack.GetPreviousActiveCommand() : ParentBlock.GetPreviousActiveCommand();
-            System.Type previousCommandType = prevCmd != null ? prevCmd.GetType() : null;
-            int prevCmdIndent = prevCmd != null ? prevCmd.IndentLevel : -1;
+            ActionBase previousAction = PreviousCommandIndex >= 0 &&
+                PreviousCommandIndex < CurrentActions.Count
+                    ? CurrentActions[PreviousCommandIndex] as ActionBase
+                    : null;
+            int previousIndent = previousAction != null
+                ? previousAction.IndentLevel
+                : -1;
 
             //handle our matching if or else if in the chain failing and moving to us,
             //  need to make sure it is the same indent level
-            if (prevCmd == null ||
-                prevCmdIndent != IndentLevel ||
-                !previousCommandType.IsSubclassOf(typeof(Condition)) ||
-                (prevCmd as object as object as Condition).IsLooping)
+            if (!(previousAction is Condition previousCondition) ||
+                previousIndent != IndentLevel ||
+                previousCondition.IsLooping)
             {
                 return false;
             }

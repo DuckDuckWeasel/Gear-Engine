@@ -1,9 +1,11 @@
 using UnityEditor;
 using UnityEngine;
-using Scaffold;
 using System.Linq;
 using System.Collections.Generic;
 using GearEngine.Core.Architecture.Editor.References;
+using Scaffold.VisualScripting;
+using Scaffold.VisualScripting.Authoring;
+using Scaffold.VisualScripting.Unity;
 
 namespace GearEngine.GearEngine.Editor
 {
@@ -15,14 +17,27 @@ namespace GearEngine.GearEngine.Editor
             // Inject the method into the Core's TargetReferenceDrawer to keep the architecture clean
             TargetReferenceDrawer.GetGlobalVariableNames = () =>
             {
-                var blackboards = Resources.FindObjectsOfTypeAll<Blackboard>();
-                var globalVars = new List<string>();
+                BlackboardBehaviour[] blackboards =
+                    Resources.FindObjectsOfTypeAll<BlackboardBehaviour>();
+                List<string> globalVars = new List<string>();
 
-                foreach (var blackboard in blackboards)
+                foreach (BlackboardBehaviour blackboard in blackboards)
                 {
-                    foreach (var variable in blackboard.Variables)
+                    BlackboardDefinition definition;
+                    try
                     {
-                        if (variable.Scope == VariableScope.Global)
+                        definition = blackboard.IsRuntimeAvailable
+                            ? blackboard.Runtime.Definition
+                            : blackboard.DefinitionReference.ResolveDefinition();
+                    }
+                    catch (BlackboardDefinitionResolutionException)
+                    {
+                        continue;
+                    }
+
+                    foreach (VariableDefinitionBase variable in definition.Variables)
+                    {
+                        if (variable.Scope == VariableScope.InjectedGlobal)
                         {
                             globalVars.Add(variable.Key);
                         }

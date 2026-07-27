@@ -1,50 +1,41 @@
 using System;
 using GearEngine.Core.Actions;
-
 using UnityEngine;
 
 namespace Scaffold
 {
-    /// <summary>
-    /// Deletes a saved value from permanent storage.
-    /// </summary>
-    [CommandInfo("Variable",
-                 "Delete Save Key",
-                 "Deletes a saved value from permanent storage.")]
+    [CommandInfo(
+        "Variable",
+        "Delete Save Slot",
+        "Delete the current Blackboard's data from a persistent slot.")]
     [Serializable]
     public class DeleteSaveKey : ActionBase
     {
-        [Tooltip("Name of the saved value. Supports variable substition e.g. \"player_{$PlayerNumber}")]
-        [SerializeField] protected string key = "";
-
-        #region Public members
+        [Tooltip(
+            "Save slot. Supports Blackboard variable substitution.")]
+        [SerializeField] private string key = string.Empty;
 
         public override void OnEnter()
         {
-            if (key == "")
+            if (string.IsNullOrWhiteSpace(key))
             {
-                Continue();
+                Debug.LogError("[DeleteSaveKey] A save slot is required.");
+                Fail();
                 return;
             }
 
-            Blackboard blackboard = GetBlackboard();
-
-            // Prepend the current save profile (if any)
-            string prefsKey = SetSaveProfile.SaveProfile + "_" + blackboard.SubstituteVariables(key);
-
-            Blackboard.SaveService.DeleteKey(prefsKey);
-
-            Continue();
+            VisualScripting.Blackboard blackboard = GetBlackboard();
+            string slot = BuildSlot(blackboard);
+            RunTask(
+                () => blackboard.DeleteSaveAsync(slot),
+                $"Deleting Blackboard slot '{slot}'");
         }
 
         public override string GetSummary()
         {
-            if (key.Length == 0)
-            {
-                return "Error: No stored value key selected";
-            }
-
-            return key;
+            return string.IsNullOrWhiteSpace(key)
+                ? "Error: No save slot selected"
+                : key;
         }
 
         public override Color GetButtonColor()
@@ -52,19 +43,13 @@ namespace Scaffold
             return new Color32(235, 191, 217, 255);
         }
 
-        #endregion
-
-        #region Editor caches
-#if UNITY_EDITOR
-        protected override void RefreshVariableCache()
+        private string BuildSlot(
+            Scaffold.VisualScripting.Blackboard blackboard)
         {
-            base.RefreshVariableCache();
-
-            Blackboard f = GetBlackboard();
-
-            f.DetermineSubstituteVariables(key, referencedVariables);
+            string slot = blackboard.Substitute(key);
+            return string.IsNullOrWhiteSpace(blackboard.SaveProfile)
+                ? slot
+                : $"{blackboard.SaveProfile}_{slot}";
         }
-#endif
-        #endregion Editor caches
     }
 }

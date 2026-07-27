@@ -33,10 +33,15 @@ namespace GearEngine.Actions.Input
 
             InitializeInputService();
 
-            _inputService.FilterForButtonDownTarget(DragTarget);
-            _inputService.FilterForDropEnterTarget(CheckDroppedGameObject, DropTarget);
+            inputService.FilterForButtonDownTarget(
+                DragTarget,
+                TargetResolver);
+            inputService.FilterForDropEnterTarget(
+                CheckDroppedGameObject,
+                DropTarget,
+                TargetResolver);
 
-            _eventBus.AddListener<ScreenDroppedEvent>(OnDrop);
+            eventBus.AddListener<ScreenDroppedEvent>(OnDrop);
 
             RunRoutine(WaitForTargetDropCoroutine());
         }
@@ -62,13 +67,14 @@ namespace GearEngine.Actions.Input
 
         private bool IsValidDropTarget(GameObject droppedObject)
         {
-            if (DropTarget.IsMatch(droppedObject))
+            if (IsTargetMatch(DropTarget, droppedObject))
             {
                 return true;
             }
 
             TagComponent tagComponent = droppedObject.GetComponentInParent<TagComponent>();
-            return tagComponent != null && DropTarget.IsMatch(tagComponent.gameObject);
+            return tagComponent != null &&
+                IsTargetMatch(DropTarget, tagComponent.gameObject);
         }
 
         private IEnumerator WaitForTargetDropCoroutine()
@@ -93,13 +99,13 @@ namespace GearEngine.Actions.Input
 
         private void Cleanup()
         {
-            if (_inputService != null)
+            if (inputService != null)
             {
-                _inputService.ClearButtonDownFilters();
-                _inputService.ClearButtonUpFilters();
+                inputService.ClearButtonDownFilters();
+                inputService.ClearButtonUpFilters();
             }
 
-            _eventBus?.RemoveListener<ScreenDroppedEvent>(OnDrop);
+            eventBus?.RemoveListener<ScreenDroppedEvent>(OnDrop);
         }
 
         public override string GetSummary()

@@ -1,158 +1,88 @@
+using System;
+using System.Collections.Generic;
 using GearEngine.Core.Actions;
-
 using UnityEngine;
 using UnityEngine.Serialization;
-using System.Collections.Generic;
-using System;
+using CoreActionExecutionStatus =
+    Scaffold.VisualScripting.ActionExecutionStatus;
+using CoreBlackboard = Scaffold.VisualScripting.Blackboard;
+using CoreBlock = Scaffold.VisualScripting.Block;
 
 namespace Scaffold
 {
-    [CommandInfo("Flow",
-                 "Call",
-                 "Execute another block in the same Blackboard as the command, or in a different Blackboard.")]
+    [CommandInfo(
+        "Flow",
+        "Call",
+        "Execute another Block in the current or a registered Blackboard runtime.")]
     [Serializable]
-    public class Call : ActionBase, IBlockCaller
+    public class Call : ActionBase
     {
-        [Tooltip("Blackboard which contains the block to execute. If none is specified then the current Blackboard is used.")]
-        [SerializeField] protected Blackboard targetBlackboard;
+        [Tooltip(
+            "Optional runtime instance ID. Leave empty to use the current Blackboard.")]
+        [SerializeField] private string targetRuntimeInstanceId = string.Empty;
 
         [FormerlySerializedAs("targetSequence")]
-        [Tooltip("Block to start executing")]
-        [SerializeField] protected Block targetBlock;
+        [Tooltip("Name of the Block to execute")]
+        [SerializeField] private StringData targetBlockName = new StringData();
 
         [Tooltip("Label to start execution at. Takes priority over startIndex.")]
-        [SerializeField] protected StringData startLabel = new StringData();
+        [SerializeField] private StringData startLabel = new StringData();
 
-        [Tooltip("Command index to start executing")]
+        [Tooltip("Action index to start executing")]
         [FormerlySerializedAs("commandIndex")]
-        [SerializeField] protected int startIndex;
+        [SerializeField] private int startIndex;
 
-        [Tooltip("Select if the calling block should stop or continue executing commands, or wait until the called block finishes.")]
-        [SerializeField] protected CallMode callMode;
-
-        #region Public members
+        [Tooltip(
+            "Select whether the caller stops, continues, or waits for the called Block.")]
+        [SerializeField] private CallMode callMode;
 
         public override void OnEnter()
         {
-            if (targetBlock != null && !TryCallTarget())
+            if (!TryResolveTarget(out CoreBlackboard blackboard, out CoreBlock block))
             {
+                Debug.LogError(
+                    $"[Call] Block '{targetBlockName.Value}' could not be resolved.");
+                Fail();
+                return;
+            }
+
+            if (ReferenceEquals(ParentBlock, block))
+            {
+                Continue(ResolveStartIndex(block));
+                return;
+            }
+
+            if (block.IsExecuting())
+            {
+                Debug.LogWarning(
+                    $"[Call] Block '{block.BlockName}' is already executing.");
+                Continue();
+                return;
+            }
+
+            Action<CoreActionExecutionStatus> completion =
+                callMode == CallMode.WaitUntilFinished
+                    ? _ => Continue()
+                    : null;
+            bool executed = blackboard.ExecuteBlock(
+                block,
+                ResolveStartIndex(block),
+                completion);
+            if (!executed)
+            {
+                Fail();
                 return;
             }
 
             CompleteCaller();
         }
 
-        private bool TryCallTarget()
-        {
-            if (IsSelfCall())
-            {
-                Continue(0);
-                return false;
-            }
-            if (IsTargetRunning())
-            {
-                Continue();
-                return false;
-            }
-
-            ExecuteTarget(ResolveStartIndex(), CreateCompletion());
-            return true;
-        }
-
-        private bool IsSelfCall()
-        {
-            return ParentBlock != null && ParentBlock.Equals(targetBlock);
-        }
-
-        private bool IsTargetRunning()
-        {
-            if (!targetBlock.IsExecuting())
-            {
-                return false;
-            }
-
-            Debug.LogWarning(targetBlock.BlockName + " cannot be called/executed, it is already running.");
-            return true;
-        }
-
-        private int ResolveStartIndex()
-        {
-            if (startLabel.Value == "")
-            {
-                return startIndex;
-            }
-
-            int labelIndex = targetBlock.GetLabelIndex(startLabel.Value);
-            return labelIndex == -1 ? startIndex : labelIndex;
-        }
-
-        private Action CreateCompletion()
-        {
-            return callMode == CallMode.WaitUntilFinished ? () => Continue() : null;
-        }
-
-        private void ExecuteTarget(int index, Action completion)
-        {
-            StopBeforeCall();
-            if (IsLocalTarget())
-            {
-                bool detached = callMode != CallMode.WaitUntilFinished;
-                RunRoutine(targetBlock.Execute(index, completion), detached);
-                return;
-            }
-
-            targetBlackboard.ExecuteBlock(targetBlock, index, completion);
-        }
-
-        private void StopBeforeCall()
-        {
-            if (callMode == CallMode.StopThenCall)
-            {
-                StopParentBlock();
-            }
-        }
-
-        private bool IsLocalTarget()
-        {
-            return targetBlackboard == null || targetBlackboard.Equals(GetBlackboard());
-        }
-
-        private void CompleteCaller()
-        {
-            if (callMode == CallMode.Stop)
-            {
-                StopParentBlock();
-            }
-            if (callMode == CallMode.Continue)
-            {
-                Continue();
-            }
-        }
-
-        public override void GetConnectedBlocks(ref List<Block> connectedBlocks)
-        {
-            if (targetBlock != null)
-            {
-                connectedBlocks.Add(targetBlock);
-            }
-        }
-
         public override string GetSummary()
         {
-            string summary = "";
-
-            if (targetBlock == null)
-            {
-                summary = "<None>";
-            }
-            else
-            {
-                summary = targetBlock.BlockName;
-            }
-
-            summary += " : " + callMode.ToString();
-
-            return summary;
+            string blockName = string.IsNullOrWhiteSpace(targetBlockName.Value)
+                ? "<None>"
+                : targetBlockName.Value;
+            return $"{blockName} : {callMode}";
         }
 
         public override Color GetButtonColor()
@@ -162,14 +92,74 @@ namespace Scaffold
 
         public override bool HasReference(Variable variable)
         {
-            return startLabel.stringRef == variable || base.HasReference(variable);
+            return targetBlockName.stringRef == variable ||
+                startLabel.stringRef == variable ||
+                base.HasReference(variable);
         }
 
-        public bool MayCallBlock(Block block)
+        private bool TryResolveTarget(
+            out CoreBlackboard blackboard,
+            out CoreBlock block)
         {
-            return block == targetBlock;
+            blackboard = ResolveBlackboard();
+            block = blackboard?.FindBlock(targetBlockName.Value);
+            return blackboard != null && block != null;
         }
 
-        #endregion
+        private CoreBlackboard ResolveBlackboard()
+        {
+            if (string.IsNullOrWhiteSpace(targetRuntimeInstanceId))
+            {
+                return GetBlackboard();
+            }
+
+            Scaffold.VisualScripting.BlackboardRuntimeInstanceId runtimeId =
+                new Scaffold.VisualScripting.BlackboardRuntimeInstanceId(
+                    targetRuntimeInstanceId);
+            return Context.Registry.TryGet(
+                    runtimeId,
+                    out Scaffold.VisualScripting.IBlackboardHandle handle)
+                ? handle as CoreBlackboard
+                : null;
+        }
+
+        private int ResolveStartIndex(CoreBlock block)
+        {
+            if (string.IsNullOrWhiteSpace(startLabel.Value) ||
+                block.Definition.Tracks.Count == 0)
+            {
+                return Math.Max(startIndex, 0);
+            }
+
+            List<VisualScripting.IAction> actions =
+                block.Definition.Tracks[0].ActionList.Actions;
+            for (int index = 0; index < actions.Count; index++)
+            {
+                if (actions[index] is Label label &&
+                    label.Key == startLabel.Value)
+                {
+                    return index + 1;
+                }
+            }
+
+            return Math.Max(startIndex, 0);
+        }
+
+        private void CompleteCaller()
+        {
+            if (callMode == CallMode.WaitUntilFinished)
+            {
+                return;
+            }
+
+            if (callMode == CallMode.Stop ||
+                callMode == CallMode.StopThenCall)
+            {
+                StopParentBlock();
+                return;
+            }
+
+            Continue();
+        }
     }
 }

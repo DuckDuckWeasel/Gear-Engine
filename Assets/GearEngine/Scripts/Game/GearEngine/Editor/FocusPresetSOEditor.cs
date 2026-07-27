@@ -221,7 +221,7 @@ namespace GearEngine.GearEngine.Editor
 
         public static float GetPreviewOffsetScale(float pixelsPerPoint)
         {
-            return TutorialFocusService.k_OffsetPixelsPerUnit / Mathf.Max(1f, pixelsPerPoint);
+            return TutorialFocusService.k_offsetPixelsPerUnit / Mathf.Max(1f, pixelsPerPoint);
         }
 
         public static Vector2 GetAnchorPosition(Rect targetRect, IndicatorAnchor anchor, Vector2 customAnchor)

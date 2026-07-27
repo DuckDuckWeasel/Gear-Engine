@@ -17,6 +17,8 @@
         "Fungus",
         "FungusEditor",
         "Scaffold",
+        "Scaffold.VisualScripting.Authoring",
+        "Scaffold.VisualScripting.Unity",
         "ScaffoldEditor",
         "TriInspector",
         "TriInspector.Editor"

@@ -14,6 +14,8 @@ namespace Scaffold
     [Serializable]
     public class MoveToView : ActionBase
     {
+        [SerializeField] private CameraManager cameraManager;
+
         [Tooltip("Time for move effect to complete")]
         [SerializeField] protected float duration = 1;
 
@@ -51,14 +53,20 @@ namespace Scaffold
         public override void OnEnter()
         {
             AcquireCamera();
+            if (cameraManager == null)
+            {
+                Debug.LogError(
+                    "[MoveToView] A CameraManager reference is required.");
+                Fail();
+                return;
+            }
+
             if (targetCamera == null ||
                 targetView == null)
             {
                 Continue();
                 return;
             }
-
-            CameraManager cameraManager = ScaffoldManager.Instance.CameraManager;
 
             Vector3 targetPosition = targetView.gameObject.transform.position;
             Quaternion targetRotation = targetView.gameObject.transform.rotation;
@@ -80,9 +88,7 @@ namespace Scaffold
 
         public override void OnStopExecuting()
         {
-            CameraManager cameraManager = ScaffoldManager.Instance.CameraManager;
-
-            cameraManager.Stop();
+            cameraManager?.Stop();
         }
 
         public override string GetSummary()

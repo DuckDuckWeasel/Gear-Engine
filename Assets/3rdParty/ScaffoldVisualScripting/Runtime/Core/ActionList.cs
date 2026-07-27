@@ -34,6 +34,7 @@ namespace Scaffold.VisualScripting
         private ExecutionId blockExecutionId;
         private ExecutionId trackExecutionId;
         private int lastExecutedActionIndex = -1;
+        private int previousActionIndex = -1;
         private bool disposed;
 
         public void Execute(Action<ActionExecutionStatus> onComplete)
@@ -111,6 +112,7 @@ namespace Scaffold.VisualScripting
             blockExecutionId = parentBlockExecutionId;
             trackExecutionId = parentTrackExecutionId;
             ExecutionId = ExecutionId.New();
+            previousActionIndex = -1;
         }
 
         private void CreateTasks()
@@ -126,7 +128,9 @@ namespace Scaffold.VisualScripting
         internal ActionExecutionContext CreateContext(int actionIndex, IActionFlowController flowController)
         {
             ExecutionId actionExecutionId = ExecutionId.New();
-            return new ActionExecutionContext(Blackboard, Block, Track, this, flowController, blockExecutionId, trackExecutionId, ExecutionId, actionExecutionId);
+            ActionExecutionContext context = new ActionExecutionContext(Blackboard, Block, Track, this, flowController, blockExecutionId, trackExecutionId, ExecutionId, actionExecutionId, actionIndex, previousActionIndex);
+            previousActionIndex = actionIndex;
+            return context;
         }
 
         private void StartRunner(Action<ActionExecutionStatus> onComplete)

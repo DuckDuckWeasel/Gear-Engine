@@ -14,12 +14,14 @@ namespace Scaffold
     [Serializable]
     public class DebugBreak : ActionBase
     {
-        [SerializeField] new protected BooleanData enabled = new BooleanData(true);
+        [SerializeField] protected BooleanData enabled = new BooleanData(true);
 
         public override void OnEnter()
         {
             if (enabled.Value)
+            {
                 Debug.Break();
+            }
 
             Continue();
         }

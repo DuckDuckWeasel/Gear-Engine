@@ -1,7 +1,11 @@
 [CmdletBinding()]
 param(
     [string]$ProjectPath = (Get-Location).Path,
-    [string[]]$ScriptsRoots = @("Assets/Scripts", "Packages"),
+    [string[]]$ScriptsRoots = @(
+        "Assets/Scripts",
+        "Assets/3rdParty/ScaffoldVisualScripting",
+        "Packages"
+    ),
     [string[]]$ExcludedAssemblyNames,
     [string[]]$ExcludedGuidReferences
 )
@@ -58,11 +62,30 @@ foreach ($resolvedScriptsRoot in $resolvedScriptsRoots) {
 }
 $asmdefs = @($asmdefs | Sort-Object -Property FullName)
 
+$referenceAsmdefs = @($asmdefs)
+$assetsRoot = Join-Path $resolvedProjectPath "Assets"
+if (Test-Path $assetsRoot) {
+    $referenceAsmdefs += @(
+        Get-ChildItem -Path $assetsRoot -Recurse -File -Filter *.asmdef |
+            Sort-Object -Property FullName
+    )
+}
+if (Test-Path $packageCacheRoot) {
+    $referenceAsmdefs += @(
+        Get-ChildItem -Path $packageCacheRoot -Recurse -File -Filter *.asmdef |
+            Sort-Object -Property FullName
+    )
+}
+$referenceAsmdefs = @(
+    $referenceAsmdefs |
+        Sort-Object -Property FullName -Unique
+)
+
 $nameToPath = @{}
 $guidToPath = @{}
 $issues = New-Object System.Collections.Generic.List[object]
 
-foreach ($asmdef in $asmdefs) {
+foreach ($asmdef in $referenceAsmdefs) {
     $json = Get-Content $asmdef.FullName -Raw | ConvertFrom-Json
     if (-not [string]::IsNullOrWhiteSpace($json.name)) {
         $nameToPath[$json.name] = $asmdef.FullName
@@ -109,7 +132,7 @@ foreach ($asmdef in $asmdefs) {
                         Type      = "MissingScriptsGuidReference"
                         Assembly  = $asmdef.FullName
                         Reference = $referenceValue
-                        Detail    = "GUID does not match an asmdef under Assets/Scripts, Assets/Packages/com.scaffold.*, Library/PackageCache/com.scaffold.*, or Packages."
+                        Detail    = "GUID does not match an asmdef under Assets, Library/PackageCache, or Packages."
                     })
             }
 
@@ -130,7 +153,7 @@ foreach ($asmdef in $asmdefs) {
                     Type      = "MissingScriptsAssemblyName"
                     Assembly  = $asmdef.FullName
                     Reference = $referenceValue
-                    Detail    = "Assembly name does not match any asmdef under Assets/Scripts, Assets/Packages/com.scaffold.*, Library/PackageCache/com.scaffold.*, or Packages."
+                    Detail    = "Assembly name does not match any asmdef under Assets, Library/PackageCache, or Packages."
                 })
         }
     }

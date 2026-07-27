@@ -3,6 +3,10 @@ using UnityEngine;
 using Scaffold;
 using GearEngine.Core.Actions;
 using GearEngine.Core.Architecture.References;
+using RuntimeVariableCellBase =
+    Scaffold.VisualScripting.VariableCellBase;
+using RuntimeGameObjectCell =
+    Scaffold.VisualScripting.VariableCell<UnityEngine.GameObject>;
 
 namespace GearEngine.GearEngine.Presentation.UI.Actions
 {
@@ -30,33 +34,30 @@ namespace GearEngine.GearEngine.Presentation.UI.Actions
                 return;
             }
 
-            GameObject targetGO = target.Resolve();
+            GameObject targetGO = ResolveTarget(target);
             if (targetGO == null)
             {
                 Debug.LogWarning($"[PushToScaffoldVariable] Could not resolve target for key {globalVariableKey}");
                 return;
             }
 
-            if (ScaffoldManager.Instance != null && ScaffoldManager.Instance.GlobalVariables != null)
-            {
-                GlobalVariables globalVars = ScaffoldManager.Instance.GlobalVariables;
-
-                // Get or add the variable in the global blackboard
-                VariableBase<GameObject> goVar = globalVars.GetOrAddVariable<GameObject>(
+            if (!GetBlackboard().Variables.TryGet(
                     globalVariableKey,
-                    targetGO,
-                    typeof(GameObjectVariable)
-                );
-
-                if (goVar != null)
-                {
-                    goVar.Value = targetGO;
-                }
-            }
-            else
+                    out RuntimeVariableCellBase cell))
             {
-                Debug.LogWarning("[PushToScaffoldVariable] Could not find ScaffoldManager.GlobalVariables to register: " + globalVariableKey);
+                Debug.LogError(
+                    $"[PushToScaffoldVariable] Blackboard variable '{globalVariableKey}' was not found.");
+                return;
             }
+
+            if (cell is RuntimeGameObjectCell gameObjectCell)
+            {
+                gameObjectCell.Value = targetGO;
+                return;
+            }
+
+            Debug.LogError(
+                $"[PushToScaffoldVariable] Blackboard variable '{globalVariableKey}' is not a GameObject cell.");
         }
 
         public override string GetSummary()

@@ -6,26 +6,13 @@ using UnityEngine;
 namespace Scaffold
 {
     /// <summary>
-    /// Type of log message. Maps directly to Unity's log types.
-    /// </summary>
-    public enum DebugLogType
-    {
-        /// <summary> Informative log message. </summary>
-        Info,
-        /// <summary> Warning log message. </summary>
-        Warning,
-        /// <summary> Error log message. </summary>
-        Error
-    }
-
-    /// <summary>
     /// Writes a log message to the debug console.
     /// </summary>
-    [CommandInfo("Scripting", 
-                 "Debug Log", 
+    [CommandInfo("Scripting",
+                 "Debug Log",
                  "Writes a log message to the debug console.")]
     [Serializable]
-    public class DebugLog : ActionBase 
+    public class DebugLog : ActionBase
     {
         [Tooltip("Display type of debug log info")]
         [SerializeField] protected DebugLogType logType;
@@ -35,22 +22,22 @@ namespace Scaffold
 
         #region Public members
 
-        public override void OnEnter ()
+        public override void OnEnter()
         {
-            var blackboard = GetBlackboard();
-            string message = blackboard.SubstituteVariables(logMessage.Value);
+            VisualScripting.Blackboard blackboard = GetBlackboard();
+            string message = blackboard.Substitute(logMessage.Value);
 
             switch (logType)
             {
-            case DebugLogType.Info:
-                Debug.Log(message);
-                break;
-            case DebugLogType.Warning:
-                Debug.LogWarning(message);
-                break;
-            case DebugLogType.Error:
-                Debug.LogError(message);
-                break;
+                case DebugLogType.Info:
+                    Debug.Log(message);
+                    break;
+                case DebugLogType.Warning:
+                    Debug.LogWarning(message);
+                    break;
+                case DebugLogType.Error:
+                    Debug.LogError(message);
+                    break;
             }
 
             Continue();
@@ -73,17 +60,5 @@ namespace Scaffold
 
         #endregion
 
-        #region Editor caches
-#if UNITY_EDITOR
-        protected override void RefreshVariableCache()
-        {
-            base.RefreshVariableCache();
-
-            var f = GetBlackboard();
-
-            f.DetermineSubstituteVariables(logMessage.Value, referencedVariables);
-        }
-#endif
-        #endregion Editor caches
     }
 }

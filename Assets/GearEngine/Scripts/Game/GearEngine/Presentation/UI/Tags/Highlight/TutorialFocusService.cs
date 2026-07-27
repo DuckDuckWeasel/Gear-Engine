@@ -9,61 +9,65 @@ namespace GearEngine.GearEngine.Presentation.UI.Tags.Highlight
 {
     public class TutorialFocusService : IInitializable
     {
-        internal const float k_OffsetPixelsPerUnit = 20f;
+        internal const float k_offsetPixelsPerUnit = 20f;
 
-        private static TutorialFocusService _instance;
+        private static TutorialFocusService s_instance;
         public static TutorialFocusService Instance
         {
             get
             {
-                if (_instance == null)
+                if (s_instance == null)
                 {
-                    _instance = new TutorialFocusService();
-                    _instance.Initialize();
+                    s_instance = new TutorialFocusService();
+                    s_instance.Initialize();
                 }
-                return _instance;
+                return s_instance;
             }
         }
 
         public static bool TryGetInstance(out TutorialFocusService instance)
         {
-            instance = _instance;
+            instance = s_instance;
             return instance != null;
         }
 
-        private GameObject _focusCanvasGo;
-        private Canvas _focusCanvas;
-        private Image _darkOverlay;
+        private GameObject focusCanvasGameObject;
+        private Canvas focusCanvas;
+        private Image darkOverlay;
 
-        private List<Component> _addedOverrideComponents = new List<Component>();
-        private GameObject _currentIndicator;
-        private UIEffect _currentUIEffect;
+        private List<Component> addedOverrideComponents = new List<Component>();
+        private GameObject currentIndicator;
+        private UIEffect currentUiEffect;
 
         public void Initialize()
         {
-            _focusCanvasGo = new GameObject("TutorialFocusCanvas");
-            UnityEngine.Object.DontDestroyOnLoad(_focusCanvasGo);
+            focusCanvasGameObject = new GameObject("TutorialFocusCanvas");
+            if (Application.isPlaying)
+            {
+                UnityEngine.Object.DontDestroyOnLoad(
+                    focusCanvasGameObject);
+            }
 
-            _focusCanvas = _focusCanvasGo.AddComponent<Canvas>();
-            _focusCanvas.renderMode = RenderMode.ScreenSpaceOverlay;
-            _focusCanvas.sortingOrder = 30000;
+            focusCanvas = focusCanvasGameObject.AddComponent<Canvas>();
+            focusCanvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            focusCanvas.sortingOrder = 30000;
 
-            _focusCanvasGo.AddComponent<GraphicRaycaster>();
+            focusCanvasGameObject.AddComponent<GraphicRaycaster>();
 
             GameObject overlayGo = new GameObject("DarkOverlay");
-            overlayGo.transform.SetParent(_focusCanvasGo.transform, false);
-            _darkOverlay = overlayGo.AddComponent<Image>();
+            overlayGo.transform.SetParent(focusCanvasGameObject.transform, false);
+            darkOverlay = overlayGo.AddComponent<Image>();
 
-            RectTransform rect = _darkOverlay.rectTransform;
+            RectTransform rect = darkOverlay.rectTransform;
             rect.anchorMin = Vector2.zero;
             rect.anchorMax = Vector2.one;
             rect.offsetMin = Vector2.zero;
             rect.offsetMax = Vector2.zero;
 
-            _focusCanvasGo.SetActive(false);
+            focusCanvasGameObject.SetActive(false);
         }
 
-        private TargetCanvasState _currentTargetCanvasState;
+        private TargetCanvasState currentTargetCanvasState;
 
         public void FocusOn(RectTransform target, FocusPresetSO preset, IndicatorAnchor anchor, Vector2 customAnchor, Vector2 positionOffset, float directionOffset, bool aimToAnchor)
         {
@@ -72,7 +76,7 @@ namespace GearEngine.GearEngine.Presentation.UI.Tags.Highlight
                 return;
             }
 
-            if (_focusCanvasGo == null)
+            if (focusCanvasGameObject == null)
             {
                 Initialize();
             }
@@ -80,9 +84,9 @@ namespace GearEngine.GearEngine.Presentation.UI.Tags.Highlight
             // Setup Dark Overlay
             if (preset.useDarkOverlay)
             {
-                _darkOverlay.color = preset.overlayColor;
-                _darkOverlay.raycastTarget = preset.blockClicksOutside;
-                _focusCanvasGo.SetActive(true);
+                darkOverlay.color = preset.overlayColor;
+                darkOverlay.raycastTarget = preset.blockClicksOutside;
+                focusCanvasGameObject.SetActive(true);
             }
 
             Canvas rootCanvas = target.GetComponentInParent<Canvas>();
@@ -95,22 +99,22 @@ namespace GearEngine.GearEngine.Presentation.UI.Tags.Highlight
 
             if (rootCanvas != null)
             {
-                _focusCanvas.renderMode = rootCanvas.renderMode;
+                focusCanvas.renderMode = rootCanvas.renderMode;
                 if (rootCanvas.renderMode == RenderMode.ScreenSpaceCamera || rootCanvas.renderMode == RenderMode.WorldSpace)
                 {
-                    _focusCanvas.worldCamera = rootCanvas.worldCamera;
-                    _focusCanvas.planeDistance = rootCanvas.planeDistance - 1f;
+                    focusCanvas.worldCamera = rootCanvas.worldCamera;
+                    focusCanvas.planeDistance = rootCanvas.planeDistance - 1f;
                 }
-                _focusCanvas.sortingLayerID = rootCanvas.sortingLayerID;
+                focusCanvas.sortingLayerID = rootCanvas.sortingLayerID;
 
                 // Copy CanvasScaler settings so offset units scale with resolution
                 CanvasScaler rootScaler = rootCanvas.GetComponent<CanvasScaler>();
                 if (rootScaler != null)
                 {
-                    CanvasScaler focusScaler = _focusCanvasGo.GetComponent<CanvasScaler>();
+                    CanvasScaler focusScaler = focusCanvasGameObject.GetComponent<CanvasScaler>();
                     if (focusScaler == null)
                     {
-                        focusScaler = _focusCanvasGo.AddComponent<CanvasScaler>();
+                        focusScaler = focusCanvasGameObject.AddComponent<CanvasScaler>();
                     }
 
                     focusScaler.uiScaleMode = rootScaler.uiScaleMode;
@@ -124,13 +128,13 @@ namespace GearEngine.GearEngine.Presentation.UI.Tags.Highlight
             {
                 // Target is a 3D Object or Sprite outside a Canvas!
                 is3DTarget = true;
-                _focusCanvas.renderMode = RenderMode.ScreenSpaceCamera;
-                _focusCanvas.worldCamera = Camera.main;
-                _focusCanvas.planeDistance = 5f; // Place it close to the camera
-                _focusCanvas.sortingLayerID = UnityEngine.SortingLayer.NameToID("Default");
+                focusCanvas.renderMode = RenderMode.ScreenSpaceCamera;
+                focusCanvas.worldCamera = Camera.main;
+                focusCanvas.planeDistance = 5f; // Place it close to the camera
+                focusCanvas.sortingLayerID = UnityEngine.SortingLayer.NameToID("Default");
             }
 
-            _currentTargetCanvasState = new TargetCanvasState();
+            currentTargetCanvasState = new TargetCanvasState();
 
             if (!is3DTarget)
             {
@@ -139,25 +143,25 @@ namespace GearEngine.GearEngine.Presentation.UI.Tags.Highlight
                 if (targetCanvas == null)
                 {
                     targetCanvas = target.gameObject.AddComponent<Canvas>();
-                    _currentTargetCanvasState.wasAdded = true;
+                    currentTargetCanvasState.wasAdded = true;
                 }
                 else
                 {
-                    _currentTargetCanvasState.wasAdded = false;
-                    _currentTargetCanvasState.originalOverride = targetCanvas.overrideSorting;
-                    _currentTargetCanvasState.originalOrder = targetCanvas.sortingOrder;
+                    currentTargetCanvasState.wasAdded = false;
+                    currentTargetCanvasState.originalOverride = targetCanvas.overrideSorting;
+                    currentTargetCanvasState.originalOrder = targetCanvas.sortingOrder;
                 }
-                _currentTargetCanvasState.canvas = targetCanvas;
+                currentTargetCanvasState.canvas = targetCanvas;
 
                 targetCanvas.overrideSorting = true;
-                targetCanvas.sortingOrder = _focusCanvas.sortingOrder + 1;
+                targetCanvas.sortingOrder = focusCanvas.sortingOrder + 1;
 
                 GraphicRaycaster targetRaycaster = target.GetComponent<GraphicRaycaster>();
                 if (targetRaycaster == null)
                 {
                     targetRaycaster = target.gameObject.AddComponent<Scaffold.Input.FilteredGraphicRaycaster>();
                     targetRaycaster.TryInject();
-                    _currentTargetCanvasState.raycasterWasAdded = true;
+                    currentTargetCanvasState.raycasterWasAdded = true;
                 }
                 else
                 {
@@ -165,9 +169,9 @@ namespace GearEngine.GearEngine.Presentation.UI.Tags.Highlight
                     {
                         Debug.LogWarning("[TutorialFocusService] Target has a GraphicRaycaster that is NOT a FilteredGraphicRaycaster. Pointer Enter/Click events might not fire for this target.");
                     }
-                    _currentTargetCanvasState.raycasterWasAdded = false;
+                    currentTargetCanvasState.raycasterWasAdded = false;
                 }
-                _currentTargetCanvasState.raycaster = targetRaycaster;
+                currentTargetCanvasState.raycaster = targetRaycaster;
             }
             else
             {
@@ -176,35 +180,35 @@ namespace GearEngine.GearEngine.Presentation.UI.Tags.Highlight
                 if (sortingGroup == null)
                 {
                     sortingGroup = target.gameObject.AddComponent<UnityEngine.Rendering.SortingGroup>();
-                    _currentTargetCanvasState.wasSortingGroupAdded = true;
+                    currentTargetCanvasState.wasSortingGroupAdded = true;
                 }
                 else
                 {
-                    _currentTargetCanvasState.wasSortingGroupAdded = false;
-                    _currentTargetCanvasState.originalSortingLayer = sortingGroup.sortingLayerID;
-                    _currentTargetCanvasState.originalSortingOrder = sortingGroup.sortingOrder;
+                    currentTargetCanvasState.wasSortingGroupAdded = false;
+                    currentTargetCanvasState.originalSortingLayer = sortingGroup.sortingLayerID;
+                    currentTargetCanvasState.originalSortingOrder = sortingGroup.sortingOrder;
                 }
-                _currentTargetCanvasState.sortingGroup = sortingGroup;
+                currentTargetCanvasState.sortingGroup = sortingGroup;
 
-                sortingGroup.sortingLayerID = _focusCanvas.sortingLayerID;
-                sortingGroup.sortingOrder = _focusCanvas.sortingOrder + 1;
+                sortingGroup.sortingLayerID = focusCanvas.sortingLayerID;
+                sortingGroup.sortingOrder = focusCanvas.sortingOrder + 1;
             }
 
             // Spawn Indicator
             if (preset.indicatorPrefab != null)
             {
-                _currentIndicator = UnityEngine.Object.Instantiate(preset.indicatorPrefab, _focusCanvasGo.transform);
+                currentIndicator = UnityEngine.Object.Instantiate(preset.indicatorPrefab, focusCanvasGameObject.transform);
 
-                Canvas indCanvas = _currentIndicator.GetComponent<Canvas>();
+                Canvas indCanvas = currentIndicator.GetComponent<Canvas>();
                 if (indCanvas == null)
                 {
-                    indCanvas = _currentIndicator.AddComponent<Canvas>();
+                    indCanvas = currentIndicator.AddComponent<Canvas>();
                 }
 
                 indCanvas.overrideSorting = true;
-                indCanvas.sortingOrder = _focusCanvas.sortingOrder + 2;
+                indCanvas.sortingOrder = focusCanvas.sortingOrder + 2;
 
-                RectTransform indRect = _currentIndicator.GetComponent<RectTransform>();
+                RectTransform indRect = currentIndicator.GetComponent<RectTransform>();
                 if (indRect != null)
                 {
                     indRect.anchorMin = new Vector2(0.5f, 0.5f);
@@ -242,7 +246,7 @@ namespace GearEngine.GearEngine.Presentation.UI.Tags.Highlight
                         directionOffset);
 
                     Canvas.ForceUpdateCanvases();
-                    RectTransform focusCanvasRect = _focusCanvas.GetComponent<RectTransform>();
+                    RectTransform focusCanvasRect = focusCanvas.GetComponent<RectTransform>();
                     if (RectTransformUtility.ScreenPointToLocalPointInRectangle(
                             focusCanvasRect,
                             finalScreenPos,
@@ -265,7 +269,7 @@ namespace GearEngine.GearEngine.Presentation.UI.Tags.Highlight
                     }
 
                     // Disable raycasts on the indicator so it never blocks clicks/hovers
-                    Graphic[] graphics = _currentIndicator.GetComponentsInChildren<Graphic>(true);
+                    Graphic[] graphics = currentIndicator.GetComponentsInChildren<Graphic>(true);
                     foreach (Graphic g in graphics)
                     {
                         g.raycastTarget = false;
@@ -276,8 +280,8 @@ namespace GearEngine.GearEngine.Presentation.UI.Tags.Highlight
             // Apply UIEffect
             if (preset.useUIEffect && preset.uiEffectPreset != null)
             {
-                _currentUIEffect = target.gameObject.AddComponent<UIEffect>();
-                _currentUIEffect.ExecutePreset(preset.uiEffectPreset, false);
+                currentUiEffect = target.gameObject.AddComponent<UIEffect>();
+                currentUiEffect.ExecutePreset(preset.uiEffectPreset, false);
             }
         }
 
@@ -294,66 +298,66 @@ namespace GearEngine.GearEngine.Presentation.UI.Tags.Highlight
             }
 
             return anchorScreenPosition +
-                   (positionOffset * k_OffsetPixelsPerUnit) +
-                   (directionOutward * directionOffset * k_OffsetPixelsPerUnit);
+                   (positionOffset * k_offsetPixelsPerUnit) +
+                   (directionOutward * directionOffset * k_offsetPixelsPerUnit);
         }
 
         public void ClearFocus()
         {
-            if (_currentTargetCanvasState != null)
+            if (currentTargetCanvasState != null)
             {
-                if (_currentTargetCanvasState.raycaster != null)
+                if (currentTargetCanvasState.raycaster != null)
                 {
-                    if (_currentTargetCanvasState.raycasterWasAdded)
+                    if (currentTargetCanvasState.raycasterWasAdded)
                     {
-                        UnityEngine.Object.Destroy(_currentTargetCanvasState.raycaster);
+                        UnityEngine.Object.Destroy(currentTargetCanvasState.raycaster);
                     }
                 }
 
-                if (_currentTargetCanvasState.canvas != null)
+                if (currentTargetCanvasState.canvas != null)
                 {
-                    if (_currentTargetCanvasState.wasAdded)
+                    if (currentTargetCanvasState.wasAdded)
                     {
-                        Canvas canvasToDestroy = _currentTargetCanvasState.canvas;
+                        Canvas canvasToDestroy = currentTargetCanvasState.canvas;
                         canvasToDestroy.enabled = false;
                         UnityEngine.Object.Destroy(canvasToDestroy);
                     }
                     else
                     {
-                        _currentTargetCanvasState.canvas.overrideSorting = _currentTargetCanvasState.originalOverride;
-                        _currentTargetCanvasState.canvas.sortingOrder = _currentTargetCanvasState.originalOrder;
+                        currentTargetCanvasState.canvas.overrideSorting = currentTargetCanvasState.originalOverride;
+                        currentTargetCanvasState.canvas.sortingOrder = currentTargetCanvasState.originalOrder;
                     }
                 }
 
-                if (_currentTargetCanvasState.sortingGroup != null)
+                if (currentTargetCanvasState.sortingGroup != null)
                 {
-                    if (_currentTargetCanvasState.wasSortingGroupAdded)
+                    if (currentTargetCanvasState.wasSortingGroupAdded)
                     {
-                        UnityEngine.Object.Destroy(_currentTargetCanvasState.sortingGroup);
+                        UnityEngine.Object.Destroy(currentTargetCanvasState.sortingGroup);
                     }
                     else
                     {
-                        _currentTargetCanvasState.sortingGroup.sortingLayerID = _currentTargetCanvasState.originalSortingLayer;
-                        _currentTargetCanvasState.sortingGroup.sortingOrder = _currentTargetCanvasState.originalSortingOrder;
+                        currentTargetCanvasState.sortingGroup.sortingLayerID = currentTargetCanvasState.originalSortingLayer;
+                        currentTargetCanvasState.sortingGroup.sortingOrder = currentTargetCanvasState.originalSortingOrder;
                     }
                 }
 
-                _currentTargetCanvasState = null;
+                currentTargetCanvasState = null;
             }
 
-            if (_currentIndicator != null)
+            if (currentIndicator != null)
             {
-                UnityEngine.Object.Destroy(_currentIndicator);
+                UnityEngine.Object.Destroy(currentIndicator);
             }
 
-            if (_currentUIEffect != null)
+            if (currentUiEffect != null)
             {
-                UnityEngine.Object.Destroy(_currentUIEffect);
+                UnityEngine.Object.Destroy(currentUiEffect);
             }
 
-            if (_focusCanvasGo != null)
+            if (focusCanvasGameObject != null)
             {
-                _focusCanvasGo.SetActive(false);
+                focusCanvasGameObject.SetActive(false);
             }
         }
 
@@ -373,14 +377,14 @@ namespace GearEngine.GearEngine.Presentation.UI.Tags.Highlight
                 g.Rebuild(CanvasUpdate.PreRender);
             }
             // If SetAllDirty isn't enough, we wait for end of frame and toggle canvas renderer
-            // Since TutorialFocusService is not a MonoBehaviour, we use the _focusCanvasGo to run the coroutine
-            if (_focusCanvasGo != null)
+            // Since TutorialFocusService is not a MonoBehaviour, we use the focusCanvasGameObject to run the coroutine
+            if (focusCanvasGameObject != null)
             {
-                MonoBehaviour runner = _focusCanvasGo.GetComponent<MonoBehaviour>();
+                MonoBehaviour runner = focusCanvasGameObject.GetComponent<MonoBehaviour>();
                 if (runner == null)
                 {
                     // Add a dummy MonoBehaviour just to run the coroutine
-                    runner = _focusCanvasGo.AddComponent<CoroutineRunner>();
+                    runner = focusCanvasGameObject.AddComponent<CoroutineRunner>();
                 }
                 runner.StartCoroutine(DestructionWorkaroundCoroutine(targetGo));
             }

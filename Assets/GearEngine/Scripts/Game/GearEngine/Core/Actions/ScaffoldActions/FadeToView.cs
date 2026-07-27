@@ -14,6 +14,8 @@ namespace Scaffold
     [Serializable]
     public class FadeToView : ActionBase
     {
+        [SerializeField] private CameraManager cameraManager;
+
         [Tooltip("Time for fade effect to complete")]
         [SerializeField] protected float duration = 1f;
 
@@ -65,14 +67,20 @@ namespace Scaffold
         public override void OnEnter()
         {
             AcquireCamera();
+            if (cameraManager == null)
+            {
+                Debug.LogError(
+                    "[FadeToView] A CameraManager reference is required.");
+                Fail();
+                return;
+            }
+
             if (targetCamera == null ||
                 targetView == null)
             {
                 Continue();
                 return;
             }
-
-            CameraManager cameraManager = ScaffoldManager.Instance.CameraManager;
 
             if (fadeTexture)
             {
@@ -99,9 +107,7 @@ namespace Scaffold
 
         public override void OnStopExecuting()
         {
-            CameraManager cameraManager = ScaffoldManager.Instance.CameraManager;
-
-            cameraManager.Stop();
+            cameraManager?.Stop();
         }
 
         public override string GetSummary()

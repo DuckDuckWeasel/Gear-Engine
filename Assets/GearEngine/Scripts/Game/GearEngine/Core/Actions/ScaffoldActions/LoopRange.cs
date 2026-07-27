@@ -39,9 +39,8 @@ namespace Scaffold
 
         protected override void PreEvaluate()
         {
-            var previousIndex = ParentTrack != null ? ParentTrack.PreviousActiveCommandIndex : ParentBlock.PreviousActiveCommandIndex;
             //if we came from the end then we are already looping, if not this is first loop so prep
-            if (previousIndex != endCommand.CommandIndex)
+            if (PreviousCommandIndex != endCommand.CommandIndex)
             {
                 counter.Value = startingValue.Value;
             }
@@ -67,7 +66,9 @@ namespace Scaffold
         {
             // no infinite loops
             if (step.Value == 0)
+            {
                 step.Value = 1;
+            }
 
             //no negative steps, we do that automatically
             step.Value = Mathf.Abs(step.Value);

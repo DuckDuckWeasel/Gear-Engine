@@ -38,7 +38,7 @@ serialization will be removed after all consumers are cut over.
 - [x] Milestone 6: add the Unity wrapper, callback relays, factories, and VContainer
   composition.
 - [x] Milestone 7: rewrite editor authoring for managed definitions.
-- [ ] Milestone 8: cut over assets and tests, rename the space-containing test scene,
+- [x] Milestone 8: cut over assets and tests, rename the space-containing test scene,
   and remove legacy components.
 - [ ] Milestone 9: complete documentation, the compilation loop, all test suites,
   analyzer checks, the macOS validation gate, and this retrospective.
@@ -117,6 +117,17 @@ serialization will be removed after all consumers are cut over.
 - Managed-reference Undo is reliable when the owning asset or component is recorded
   as a complete object before mutation. Graph operations therefore mutate definitions
   through one Undo-aware controller rather than relying on component add/remove APIs.
+- Unity serializes concrete managed-reference fields more reliably than inherited
+  private Unity-object fields. UI-effect action targets therefore live on their
+  concrete definitions while shared execution helpers remain on the plain base.
+- Input System action tests require `InputTestFixture`; directly enabling synthetic
+  actions against native devices made the legacy tests machine-dependent.
+- The macOS gate had two repository-infrastructure defects: its asmdef audit ignored
+  `Assets/3rdParty` and PackageCache reference maps, and its analyzer runner launched
+  Windows `cmd.exe`. The audit now resolves all Unity assembly locations, while the
+  analyzer runner executes cross-platform `dotnet`, reuses Unity ScriptAssemblies for
+  generated project references, and analyzes only the four new first-party
+  Visual Scripting assemblies.
 
 ## Decision Log
 
@@ -224,6 +235,25 @@ selection, search, validation, automatic layout, tint, source navigation, raw
 serialized detail editing, and play-mode execution feedback. Its focused EditMode
 fixture passes 7/7 cases, and all 19 changed C# files pass formatting, analyzers, and
 one-top-level-type verification.
+
+Milestone 8 completed the breaking cutover. The Blackboard prefab, execution-matrix
+scene, tutorial test scene, builders, Gear actions, tutorial adapter, UI/input actions,
+and tests now consume managed definitions and the plain runtime. The space-containing
+scene was replaced by `TestTutorialScene.unity`. Legacy Blackboard, Block, Command,
+EventHandler, Variable, save-manager, hidden-global, action-invoker, and legacy editor
+components were deleted. A scan of 148 removed script GUIDs found zero references in
+tracked scenes, prefabs, or assets. Core forbidden-API scans found no `MonoBehaviour`,
+`GetComponent`, `AddComponent`, `StartCoroutine`, `GameObject.Find`, or mutable
+service-locator execution path.
+
+Final Milestone 8 evidence is 53/53 Core EditMode tests, 7/7 managed-authoring
+EditMode tests, 5/5 Unity adapter PlayMode tests, 17/17 UI-effect action tests, 6/6
+Gear action-context bridge tests, 2/2 Gear action-runtime PlayMode tests, and 2/2
+Input System wait-action tests. The managed UI-effect catalog also passed and produced
+its contact-sheet evidence. All 161 changed C# files pass formatting and
+one-top-level-type verification. The repaired macOS gate reports asmdef audit
+`TOTAL:0`, pragma gate `TOTAL:0`, Unity compilation `PASS`, analyzer `TOTAL:0`, and no
+analyzer blockers.
 
 ## Context and Orientation
 
@@ -408,6 +438,9 @@ red.
   `Logs/Tests/BlackboardRuntimeRefactor/Milestone6/CoreRegression/`
 - Milestone 7 managed authoring results:
   `Logs/Tests/BlackboardRuntimeRefactor/Milestone7/AuthoringFinal/`
+- Milestone 8 final Core, authoring, Unity adapter, Gear action, input, and UI-effect
+  results:
+  `Logs/Tests/BlackboardRuntimeRefactor/Milestone8/`
 - Full repository gate baseline on 2026-07-27:
   compilation precheck passed; EditMode reported 248 passed and 59 failed; PlayMode
   exited without results; the asmdef and analyzer infrastructure blockers listed in

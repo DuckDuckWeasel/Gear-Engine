@@ -30,9 +30,11 @@ namespace GearEngine.Actions.Input
             InitializeInputService();
 
             // Provide filtering for UI pointer enter based on target reference
-            _inputService.FilterForPointerEnterTarget(Target);
+            inputService.FilterForPointerEnterTarget(
+                Target,
+                TargetResolver);
 
-            _eventBus.AddListener<ScreenPointerEnterEvent>(OnPointerEnter);
+            eventBus.AddListener<ScreenPointerEnterEvent>(OnPointerEnter);
 
             RunRoutine(WaitForTargetPointerEnterCoroutine());
         }
@@ -50,13 +52,14 @@ namespace GearEngine.Actions.Input
 
         private bool IsTargetMatch(GameObject enteredObject)
         {
-            if (Target.IsMatch(enteredObject))
+            if (IsTargetMatch(Target, enteredObject))
             {
                 return true;
             }
 
             TagComponent tagComponent = enteredObject.GetComponentInParent<TagComponent>();
-            return tagComponent != null && Target.IsMatch(tagComponent.gameObject);
+            return tagComponent != null &&
+                IsTargetMatch(Target, tagComponent.gameObject);
         }
 
         private IEnumerator WaitForTargetPointerEnterCoroutine()
@@ -79,14 +82,14 @@ namespace GearEngine.Actions.Input
 
         private void Cleanup()
         {
-            if (_eventBus != null)
+            if (eventBus != null)
             {
-                _eventBus.RemoveListener<ScreenPointerEnterEvent>(OnPointerEnter);
+                eventBus.RemoveListener<ScreenPointerEnterEvent>(OnPointerEnter);
             }
 
-            if (_inputService != null)
+            if (inputService != null)
             {
-                _inputService.ClearPointerEnterFilters();
+                inputService.ClearPointerEnterFilters();
             }
         }
 

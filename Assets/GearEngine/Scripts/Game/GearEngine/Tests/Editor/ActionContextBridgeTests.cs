@@ -93,17 +93,6 @@ namespace GearEngine.GearEngine.Tests.Editor
             Assert.That(clone.DefinitionId, Is.EqualTo(source.DefinitionId));
         }
 
-        [Test]
-        public void LegacyActionExecution_RemainsAvailableDuringCutover()
-        {
-            ReturnActionStatus action = new ReturnActionStatus();
-            bool completed = false;
-
-            action.Execute(() => completed = true);
-
-            Assert.That(completed, Is.True);
-        }
-
         private static CoreActionExecutionStatus Execute(
             Scaffold.VisualScripting.IAction action)
         {

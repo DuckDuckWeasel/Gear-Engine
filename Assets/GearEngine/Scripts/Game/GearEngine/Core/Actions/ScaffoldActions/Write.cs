@@ -53,8 +53,8 @@ namespace Scaffold
             }
 
             ApplyTextColor(writer);
-            Blackboard blackboard = GetBlackboard();
-            string newText = blackboard.SubstituteVariables(text.Value);
+            Scaffold.VisualScripting.Blackboard blackboard = GetBlackboard();
+            string newText = blackboard.Substitute(text.Value);
             StartWrite(writer, newText);
         }
 

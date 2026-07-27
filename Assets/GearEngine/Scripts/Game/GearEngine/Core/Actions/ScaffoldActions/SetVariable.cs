@@ -36,7 +36,7 @@ namespace Scaffold
         /// <summary>
         /// The type of math operation to be performed.
         /// </summary>
-        public virtual SetOperator _SetOperator { get { return setOperator; } }
+        public virtual SetOperator SetOperator { get { return setOperator; } }
 
         public override void OnEnter()
         {
@@ -71,22 +71,5 @@ namespace Scaffold
         }
 
         #endregion
-
-
-
-        #region Editor caches
-#if UNITY_EDITOR
-        protected override void RefreshVariableCache()
-        {
-            base.RefreshVariableCache();
-
-            if (anyVar != null)
-            {
-                anyVar.RefreshVariableCacheHelper(GetBlackboard(), ref referencedVariables);
-            }
-        }
-#endif
-        #endregion Editor caches
-
     }
 }

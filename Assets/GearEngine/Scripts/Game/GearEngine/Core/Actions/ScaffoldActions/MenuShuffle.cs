@@ -27,13 +27,14 @@ namespace Scaffold
         [Tooltip("Determines if the order is shuffled everytime this command is it (Every) or if it is consistent when returned to but random (Once)")]
         protected Mode shuffleMode = Mode.Once;
 
+        [Tooltip("Menu Dialog whose displayed options will be shuffled")]
+        [SerializeField] private MenuDialog menuDialog;
+
         [Tooltip("The Seed")]
         private int seed = -1;
 
         public override void OnEnter()
         {
-            MenuDialog menuDialog = MenuDialog.GetMenuDialog();
-
             //if we shuffle every time or we haven't shuffled yet
             if (shuffleMode == Mode.Every || seed == -1)
             {
