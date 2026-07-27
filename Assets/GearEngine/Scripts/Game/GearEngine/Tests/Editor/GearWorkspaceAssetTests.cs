@@ -175,7 +175,9 @@ namespace GearEngine.GearEngine.Tests.Editor
                 Assert.That(boardViewProperty.objectReferenceValue, Is.SameAs(boardView));
                 Assert.That(activeRaceBoardProperty.objectReferenceValue, Is.SameAs(boardView));
                 Assert.That(boardView.transform.parent, Is.SameAs(setupView.transform.parent));
-                Assert.IsTrue(boardView.gameObject.activeSelf);
+                Assert.IsFalse(
+                    boardView.gameObject.activeSelf,
+                    "The shared BoardView must remain inactive on initial Main Scene load.");
                 Assert.That(boardView.transform.localScale.x, Is.GreaterThan(0.01f));
                 Assert.That(boardView.transform.localScale.y, Is.GreaterThan(0.01f));
                 Assert.That(boardView.transform.localScale.z, Is.GreaterThan(0.01f));
