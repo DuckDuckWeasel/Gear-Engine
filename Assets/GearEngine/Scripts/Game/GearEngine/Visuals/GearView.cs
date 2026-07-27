@@ -2,22 +2,21 @@ using System;
 using GearEngine.GearEngine.Config;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 using DG.Tweening;
 
 namespace GearEngine.GearEngine.Visuals
 {
-    /// <summary>
-    /// Board-agnostic gear visual. Board-side BoardGearAnimator pushes rotation, charge fill, and reparent;
-    /// inventory only calls <see cref="ApplyConfig"/> and optional fill preview.
-    /// </summary>
     public class GearView : ItemView, IPointerClickHandler, IPointerDownHandler, IPointerUpHandler
     {
-        public event Action OnClicked;
         [SerializeField]
         private Transform gearVisual;
 
         [SerializeField]
-        private SpriteRenderer chargeFillRenderer;
+        private Image gearImage;
+
+        [SerializeField]
+        private Image chargeFillImage;
 
         [SerializeField]
         private float rotationLerpSpeed = 15f;
@@ -28,12 +27,17 @@ namespace GearEngine.GearEngine.Visuals
         [SerializeField]
         private float settleLerpSpeed = 20f;
 
+        [SerializeField]
+        private float presentationScaleMultiplier = 1.38f;
+
+        [SerializeField]
+        private float iconScaleMultiplier = 1.15f;
+
         private float targetRotationZ;
         private float currentVisualFill;
         private float targetVisualFill = -1f;
-        private MaterialPropertyBlock propertyBlock;
+        private Material chargeMaterialInstance;
 
-        private float animatedBaseRotationZ;
         private float visualRotationOffset;
         private float rapidSpinSpeed = 0f;
         private bool hasInitializedRotation = false;
@@ -41,11 +45,13 @@ namespace GearEngine.GearEngine.Visuals
         private float rapidSpinScalePhase = 0f;
         private float rapidSpinOffset = 0f;
 
-        /// <summary>Editor tests: assigns serialized references without a prefab asset.</summary>
-        internal void WireTestReferences(Transform gearVisualRef, SpriteRenderer chargeRef = null)
+        public event Action OnClicked;
+
+        internal void WireTestReferences(Transform gearVisualRef, Image gearImageRef = null, Image chargeImageRef = null)
         {
             gearVisual = gearVisualRef;
-            chargeFillRenderer = chargeRef;
+            gearImage = gearImageRef;
+            chargeFillImage = chargeImageRef;
         }
 
         public void ApplyConfig(GearItemData config)
@@ -55,16 +61,8 @@ namespace GearEngine.GearEngine.Visuals
                 return;
             }
 
-            if (gearVisual != null)
-            {
-                baseScale = config.RelativeScaleMultiplier;
-                gearVisual.localScale = new Vector3(baseScale, baseScale, baseScale);
-            }
-
-            if (config.UIIcon != null && chargeFillRenderer != null)
-            {
-                chargeFillRenderer.sprite = config.UIIcon;
-            }
+            ApplyScale(config.RelativeScaleMultiplier);
+            ApplyIcon(config.UIIcon);
         }
 
         public void SetRotationTarget(float zDegrees, bool snap = false)
@@ -72,30 +70,21 @@ namespace GearEngine.GearEngine.Visuals
             targetRotationZ = zDegrees;
             if (!hasInitializedRotation || snap)
             {
-                animatedBaseRotationZ = zDegrees;
                 hasInitializedRotation = true;
+                ApplyRotation(snap: true);
             }
         }
 
-        /// <param name="normalized01">Fill amount 0..1.</param>
-        /// <param name="snap">If true, applies immediately (no lerp).</param>
         public void SetChargeFillTarget(float normalized01, bool snap = false)
         {
             targetVisualFill = Mathf.Clamp01(normalized01);
             if (snap)
             {
                 currentVisualFill = targetVisualFill;
-                if (chargeFillRenderer != null)
-                {
-                    if (propertyBlock == null) propertyBlock = new MaterialPropertyBlock();
-                    chargeFillRenderer.GetPropertyBlock(propertyBlock);
-                    propertyBlock.SetFloat("_FillAmount", currentVisualFill);
-                    chargeFillRenderer.SetPropertyBlock(propertyBlock);
-                }
+                ApplyChargeFill();
             }
         }
 
-        /// <summary>Clears charge fill driving so <see cref="Update"/> does not write the material.</summary>
         public void ClearChargeFillTarget()
         {
             targetVisualFill = -1f;
@@ -111,7 +100,14 @@ namespace GearEngine.GearEngine.Visuals
 
         public void SettleNow()
         {
-            transform.localPosition = Vector3.zero;
+            if (transform is RectTransform rect)
+            {
+                rect.anchoredPosition = Vector2.zero;
+            }
+            else
+            {
+                transform.localPosition = Vector3.zero;
+            }
         }
 
         public void PlayChargeCompleteFeedback()
@@ -132,57 +128,158 @@ namespace GearEngine.GearEngine.Visuals
 
         private void Update()
         {
-            transform.localPosition = Vector3.Lerp(transform.localPosition, Vector3.zero, Time.deltaTime * settleLerpSpeed);
+            SettleToOrigin();
+            UpdateRapidSpin();
+            ApplyRotation();
+            UpdateChargeFill();
+        }
 
-            Transform rotateTarget = gearVisual != null ? gearVisual : transform;
-            
-            animatedBaseRotationZ = Mathf.LerpAngle(animatedBaseRotationZ, targetRotationZ, Time.deltaTime * rotationLerpSpeed);
+        private void ApplyScale(float scale)
+        {
+            if (gearVisual == null)
+            {
+                return;
+            }
+            baseScale = scale * presentationScaleMultiplier;
+            gearVisual.localScale = new Vector3(baseScale, baseScale, baseScale);
+            if (chargeFillImage != null)
+            {
+                chargeFillImage.rectTransform.localScale =
+                    new Vector3(iconScaleMultiplier, iconScaleMultiplier, iconScaleMultiplier);
+            }
+        }
 
+        private void ApplyIcon(Sprite sprite)
+        {
+            if (sprite == null)
+            {
+                return;
+            }
+            if (chargeFillImage != null)
+            {
+                chargeFillImage.sprite = sprite;
+            }
+        }
+
+        private void SettleToOrigin()
+        {
+            if (transform is RectTransform rect)
+            {
+                rect.anchoredPosition = Vector2.Lerp(rect.anchoredPosition, Vector2.zero, Time.deltaTime * settleLerpSpeed);
+            }
+        }
+
+        private void UpdateRapidSpin()
+        {
             if (rapidSpinSpeed != 0f)
             {
-                rapidSpinOffset -= rapidSpinSpeed * Time.deltaTime;
-                
-                rapidSpinScalePhase += Time.deltaTime * 25f;
-                float scaleMod = 1f + (Mathf.Sin(rapidSpinScalePhase) * 0.05f);
-                if (gearVisual != null)
-                {
-                    gearVisual.localScale = Vector3.one * (baseScale * scaleMod);
-                }
+                ApplyRapidSpin();
+                return;
             }
-            else 
+            RecoverRapidSpinOffset();
+            RecoverRapidSpinScale();
+        }
+
+        private void ApplyRapidSpin()
+        {
+            rapidSpinOffset -= rapidSpinSpeed * Time.deltaTime;
+            rapidSpinScalePhase += Time.deltaTime * 25f;
+            float scaleMod = 1f + (Mathf.Sin(rapidSpinScalePhase) * 0.05f);
+            if (gearVisual != null)
             {
-                if (rapidSpinOffset != 0f)
-                {
-                    float currentMod = rapidSpinOffset % 360f;
-                    if (currentMod > 0) currentMod -= 360f;
-                    
-                    if (Mathf.Abs(currentMod) < 0.5f || Mathf.Abs(currentMod + 360f) < 0.5f)
-                    {
-                        rapidSpinOffset = 0f;
-                    }
-                    else
-                    {
-                        rapidSpinOffset = Mathf.Lerp(currentMod, -360f, Time.deltaTime * 15f);
-                    }
-                }
-                
-                if (gearVisual != null && Mathf.Abs(gearVisual.localScale.x - baseScale) > 0.001f)
-                {
-                    float currentScale = Mathf.Lerp(gearVisual.localScale.x, baseScale, Time.deltaTime * 15f);
-                    gearVisual.localScale = Vector3.one * currentScale;
-                }
+                gearVisual.localScale = Vector3.one * (baseScale * scaleMod);
+            }
+        }
+
+        private void RecoverRapidSpinOffset()
+        {
+            if (rapidSpinOffset == 0f)
+            {
+                return;
+            }
+            float currentMod = rapidSpinOffset % 360f;
+            currentMod = currentMod > 0f ? currentMod - 360f : currentMod;
+            bool isSettled = Mathf.Abs(currentMod) < 0.5f || Mathf.Abs(currentMod + 360f) < 0.5f;
+            rapidSpinOffset = isSettled ? 0f : Mathf.Lerp(currentMod, -360f, Time.deltaTime * 15f);
+        }
+
+        private void RecoverRapidSpinScale()
+        {
+            if (gearVisual == null || Mathf.Abs(gearVisual.localScale.x - baseScale) <= 0.001f)
+            {
+                return;
+            }
+            float currentScale = Mathf.Lerp(gearVisual.localScale.x, baseScale, Time.deltaTime * 15f);
+            gearVisual.localScale = Vector3.one * currentScale;
+        }
+
+        private void ApplyRotation(bool snap = false)
+        {
+            Transform rotateTarget = gearVisual != null ? gearVisual : transform;
+            float rotation = targetRotationZ + visualRotationOffset + rapidSpinOffset;
+            Quaternion targetRotation = Quaternion.Euler(0f, 0f, rotation);
+            rotateTarget.localRotation = snap
+                ? targetRotation
+                : Quaternion.Lerp(
+                    rotateTarget.localRotation,
+                    targetRotation,
+                    Time.deltaTime * rotationLerpSpeed);
+        }
+
+        private void UpdateChargeFill()
+        {
+            if (targetVisualFill < 0f || chargeFillImage == null)
+            {
+                return;
+            }
+            currentVisualFill = Mathf.Lerp(currentVisualFill, targetVisualFill, Time.deltaTime * fillLerpSpeed);
+            ApplyChargeFill();
+        }
+
+        private void ApplyChargeFill()
+        {
+            if (chargeFillImage == null)
+            {
+                return;
+            }
+            EnsureChargeMaterial();
+            if (chargeMaterialInstance == null)
+            {
+                return;
+            }
+            chargeMaterialInstance.SetFloat("_FillAmount", currentVisualFill);
+            chargeFillImage.SetMaterialDirty();
+        }
+
+        private void EnsureChargeMaterial()
+        {
+            if (chargeMaterialInstance != null)
+            {
+                return;
+            }
+            Material sourceMaterial = chargeFillImage.material;
+            if (sourceMaterial == null)
+            {
+                return;
+            }
+            chargeMaterialInstance = new Material(sourceMaterial) { name = $"{sourceMaterial.name}_Instance" };
+            chargeFillImage.material = chargeMaterialInstance;
+        }
+
+        private void OnDestroy()
+        {
+            if (chargeMaterialInstance == null)
+            {
+                return;
             }
 
-            rotateTarget.localRotation = Quaternion.Euler(0, 0, animatedBaseRotationZ + visualRotationOffset + rapidSpinOffset);
-
-            if (targetVisualFill >= 0f && chargeFillRenderer != null)
+            if (Application.isPlaying)
             {
-                currentVisualFill = Mathf.Lerp(currentVisualFill, targetVisualFill, Time.deltaTime * fillLerpSpeed);
-                
-                if (propertyBlock == null) propertyBlock = new MaterialPropertyBlock();
-                chargeFillRenderer.GetPropertyBlock(propertyBlock);
-                propertyBlock.SetFloat("_FillAmount", currentVisualFill);
-                chargeFillRenderer.SetPropertyBlock(propertyBlock);
+                Destroy(chargeMaterialInstance);
+            }
+            else
+            {
+                DestroyImmediate(chargeMaterialInstance);
             }
         }
 

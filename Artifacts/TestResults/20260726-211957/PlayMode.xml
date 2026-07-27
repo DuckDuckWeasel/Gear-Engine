@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="7" result="Passed" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-07-27 00:20:25Z" end-time="2026-07-27 00:20:26Z" duration="0.0603537">
+  <test-suite type="TestSuite" id="1069" name="Scaffold" fullname="Scaffold" runstate="Runnable" testcasecount="41" result="Passed" start-time="2026-07-27 00:20:25Z" end-time="2026-07-27 00:20:26Z" duration="0.060354" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1034" name="Game.GearEngine.RuntimeTests.dll" fullname="/Users/leonardosilva/Documents/MatheusCohen/Gear Engine/Library/ScriptAssemblies/Game.GearEngine.RuntimeTests.dll" runstate="Runnable" testcasecount="22" result="Passed" start-time="2026-07-27 00:20:25Z" end-time="2026-07-27 00:20:26Z" duration="0.054650" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="71176" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1035" name="GearEngine" fullname="GearEngine" runstate="Runnable" testcasecount="7" result="Passed" start-time="2026-07-27 00:20:25Z" end-time="2026-07-27 00:20:26Z" duration="0.053400" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1036" name="GearEngine" fullname="GearEngine.GearEngine" runstate="Runnable" testcasecount="7" result="Passed" start-time="2026-07-27 00:20:25Z" end-time="2026-07-27 00:20:26Z" duration="0.052730" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestSuite" id="1037" name="Tests" fullname="GearEngine.GearEngine.Tests" runstate="Runnable" testcasecount="7" result="Passed" start-time="2026-07-27 00:20:25Z" end-time="2026-07-27 00:20:26Z" duration="0.052104" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="TestSuite" id="1038" name="Runtime" fullname="GearEngine.GearEngine.Tests.Runtime" runstate="Runnable" testcasecount="7" result="Passed" start-time="2026-07-27 00:20:25Z" end-time="2026-07-27 00:20:26Z" duration="0.051479" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-suite type="TestFixture" id="1001" name="ScreenSpaceDragPlayModeTests" fullname="GearEngine.GearEngine.Tests.Runtime.ScreenSpaceDragPlayModeTests" classname="GearEngine.GearEngine.Tests.Runtime.ScreenSpaceDragPlayModeTests" runstate="Runnable" testcasecount="7" result="Passed" start-time="2026-07-27 00:20:25Z" end-time="2026-07-27 00:20:26Z" duration="0.050736" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-suite type="ParameterizedMethod" id="1006" name="DragBetweenUiZones_DeliversScreenPosition" fullname="GearEngine.GearEngine.Tests.Runtime.ScreenSpaceDragPlayModeTests.DragBetweenUiZones_DeliversScreenPosition" classname="GearEngine.GearEngine.Tests.Runtime.ScreenSpaceDragPlayModeTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-07-27 00:20:25Z" end-time="2026-07-27 00:20:26Z" duration="0.038741" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+                  <properties>
+                    <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  </properties>
+                  <test-case id="1002" name="DragBetweenUiZones_DeliversScreenPosition(&quot;Inventory&quot;,&quot;Board&quot;)" fullname="GearEngine.GearEngine.Tests.Runtime.ScreenSpaceDragPlayModeTests.DragBetweenUiZones_DeliversScreenPosition(&quot;Inventory&quot;,&quot;Board&quot;)" methodname="DragBetweenUiZones_DeliversScreenPosition" classname="GearEngine.GearEngine.Tests.Runtime.ScreenSpaceDragPlayModeTests" runstate="Runnable" seed="1438924279" result="Passed" start-time="2026-07-27 00:20:25Z" end-time="2026-07-27 00:20:25Z" duration="0.022150" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                    <output><![CDATA[There are 2 event systems in the scene. Please ensure there is always exactly one event system in the scene
+There are 2 event systems in the scene. Please ensure there is always exactly one event system in the scene
+There are 2 event systems in the scene. Please ensure there is always exactly one event system in the scene
+There are 2 event systems in the scene. Please ensure there is always exactly one event system in the scene
+There are 2 event systems in the scene. Please ensure there is always exactly one event system in the scene
+]]></output>
+                  </test-case>
+                  <test-case id="1003" name="DragBetweenUiZones_DeliversScreenPosition(&quot;Board&quot;,&quot;Board&quot;)" fullname="GearEngine.GearEngine.Tests.Runtime.ScreenSpaceDragPlayModeTests.DragBetweenUiZones_DeliversScreenPosition(&quot;Board&quot;,&quot;Board&quot;)" methodname="DragBetweenUiZones_DeliversScreenPosition" classname="GearEngine.GearEngine.Tests.Runtime.ScreenSpaceDragPlayModeTests" runstate="Runnable" seed="227975606" result="Passed" start-time="2026-07-27 00:20:25Z" end-time="2026-07-27 00:20:25Z" duration="0.004434" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                    <output><![CDATA[There are 2 event systems in the scene. Please ensure there is always exactly one event system in the scene
+There are 2 event systems in the scene. Please ensure there is always exactly one event system in the scene
+There are 2 event systems in the scene. Please ensure there is always exactly one event system in the scene
+There are 2 event systems in the scene. Please ensure there is always exactly one event system in the scene
+There are 2 event systems in the scene. Please ensure there is always exactly one event system in the scene
+]]></output>
+                  </test-case>
+                  <test-case id="1004" name="DragBetweenUiZones_DeliversScreenPosition(&quot;Board&quot;,&quot;Inventory&quot;)" fullname="GearEngine.GearEngine.Tests.Runtime.ScreenSpaceDragPlayModeTests.DragBetweenUiZones_DeliversScreenPosition(&quot;Board&quot;,&quot;Inventory&quot;)" methodname="DragBetweenUiZones_DeliversScreenPosition" classname="GearEngine.GearEngine.Tests.Runtime.ScreenSpaceDragPlayModeTests" runstate="Runnable" seed="1963903901" result="Passed" start-time="2026-07-27 00:20:25Z" end-time="2026-07-27 00:20:25Z" duration="0.004331" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                    <output><![CDATA[There are 2 event systems in the scene. Please ensure there is always exactly one event system in the scene
+There are 2 event systems in the scene. Please ensure there is always exactly one event system in the scene
+There are 2 event systems in the scene. Please ensure there is always exactly one event system in the scene
+There are 2 event systems in the scene. Please ensure there is always exactly one event system in the scene
+There are 2 event systems in the scene. Please ensure there is always exactly one event system in the scene
+]]></output>
+                  </test-case>
+                  <test-case id="1005" name="DragBetweenUiZones_DeliversScreenPosition(&quot;Board&quot;,&quot;Trash&quot;)" fullname="GearEngine.GearEngine.Tests.Runtime.ScreenSpaceDragPlayModeTests.DragBetweenUiZones_DeliversScreenPosition(&quot;Board&quot;,&quot;Trash&quot;)" methodname="DragBetweenUiZones_DeliversScreenPosition" classname="GearEngine.GearEngine.Tests.Runtime.ScreenSpaceDragPlayModeTests" runstate="Runnable" seed="106889432" result="Passed" start-time="2026-07-27 00:20:25Z" end-time="2026-07-27 00:20:26Z" duration="0.003434" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                    <output><![CDATA[There are 2 event systems in the scene. Please ensure there is always exactly one event system in the scene
+There are 2 event systems in the scene. Please ensure there is always exactly one event system in the scene
+There are 2 event systems in the scene. Please ensure there is always exactly one event system in the scene
+There are 2 event systems in the scene. Please ensure there is always exactly one event system in the scene
+There are 2 event systems in the scene. Please ensure there is always exactly one event system in the scene
+]]></output>
+                  </test-case>
+                </test-suite>
+                <test-case id="1008" name="DropWithoutTarget_CancelsDragAndRestoresLifecycle" fullname="GearEngine.GearEngine.Tests.Runtime.ScreenSpaceDragPlayModeTests.DropWithoutTarget_CancelsDragAndRestoresLifecycle" methodname="DropWithoutTarget_CancelsDragAndRestoresLifecycle" classname="GearEngine.GearEngine.Tests.Runtime.ScreenSpaceDragPlayModeTests" runstate="Runnable" seed="218215140" result="Passed" start-time="2026-07-27 00:20:26Z" end-time="2026-07-27 00:20:26Z" duration="0.003108" asserts="0">
+                  <properties>
+                    <property name="_JOINTYPE" value="UnityCombinatorial" />
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <output><![CDATA[There are 2 event systems in the scene. Please ensure there is always exactly one event system in the scene
+There are 2 event systems in the scene. Please ensure there is always exactly one event system in the scene
+There are 2 event systems in the scene. Please ensure there is always exactly one event system in the scene
+There are 2 event systems in the scene. Please ensure there is always exactly one event system in the scene
+]]></output>
+                </test-case>
+                <test-case id="1007" name="InvalidDrop_IsRejectedAndDragIsCancelled" fullname="GearEngine.GearEngine.Tests.Runtime.ScreenSpaceDragPlayModeTests.InvalidDrop_IsRejectedAndDragIsCancelled" methodname="InvalidDrop_IsRejectedAndDragIsCancelled" classname="GearEngine.GearEngine.Tests.Runtime.ScreenSpaceDragPlayModeTests" runstate="Runnable" seed="1718783607" result="Passed" start-time="2026-07-27 00:20:26Z" end-time="2026-07-27 00:20:26Z" duration="0.002493" asserts="0">
+                  <properties>
+                    <property name="_JOINTYPE" value="UnityCombinatorial" />
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <output><![CDATA[There are 2 event systems in the scene. Please ensure there is always exactly one event system in the scene
+There are 2 event systems in the scene. Please ensure there is always exactly one event system in the scene
+There are 2 event systems in the scene. Please ensure there is always exactly one event system in the scene
+There are 2 event systems in the scene. Please ensure there is always exactly one event system in the scene
+]]></output>
+                </test-case>
+                <test-case id="1009" name="ReadOnlySource_DoesNotStartDrag" fullname="GearEngine.GearEngine.Tests.Runtime.ScreenSpaceDragPlayModeTests.ReadOnlySource_DoesNotStartDrag" methodname="ReadOnlySource_DoesNotStartDrag" classname="GearEngine.GearEngine.Tests.Runtime.ScreenSpaceDragPlayModeTests" runstate="Runnable" seed="1390355339" result="Passed" start-time="2026-07-27 00:20:26Z" end-time="2026-07-27 00:20:26Z" duration="0.002273" asserts="0">
+                  <properties>
+                    <property name="_JOINTYPE" value="UnityCombinatorial" />
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <output><![CDATA[There are 2 event systems in the scene. Please ensure there is always exactly one event system in the scene
+There are 2 event systems in the scene. Please ensure there is always exactly one event system in the scene
+There are 2 event systems in the scene. Please ensure there is always exactly one event system in the scene
+There are 2 event systems in the scene. Please ensure there is always exactly one event system in the scene
+Saving results to: /Users/leonardosilva/Library/Application Support/DDW/Scaffold/TestResults.xml
+]]></output>
+                </test-case>
+              </test-suite>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

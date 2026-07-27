@@ -33,6 +33,7 @@ RectTransform:
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 812000000000000002}
   - {fileID: 9201267281539919262}
   - {fileID: 882077152458590215}
   - {fileID: 3998427144750663878}
@@ -121,8 +122,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Game.Campaign::GearEngine.Campaign.Presentation.RoguelikeView
   type: 0
   boardView: {fileID: 0}
-  inventoryView: {fileID: 0}
-  trashDropZone: {fileID: 0}
+  inventory: {fileID: 812000000000000003}
   perkOptionViews:
   - {fileID: 4924588770951724641}
   - {fileID: 8053583864429470062}
@@ -1803,3 +1803,128 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a1534cbac729494f945c90efe327e10a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: AnimoraRuntime::OM.Animora.Runtime.AnimoraPlayer
+--- !u!1001 &812000000000000001
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 9100000012345002}
+    m_Modifications:
+    - target: {fileID: 7117210366275758624, guid: ba83461cca946410a94c4343a45a483e, type: 3}
+      propertyPath: m_Name
+      value: GearInventoryViewComponent
+      objectReference: {fileID: 0}
+    - target: {fileID: 7413944919245685368, guid: ba83461cca946410a94c4343a45a483e, type: 3}
+      propertyPath: m_Pivot.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7413944919245685368, guid: ba83461cca946410a94c4343a45a483e, type: 3}
+      propertyPath: m_Pivot.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7413944919245685368, guid: ba83461cca946410a94c4343a45a483e, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0.95
+      objectReference: {fileID: 0}
+    - target: {fileID: 7413944919245685368, guid: ba83461cca946410a94c4343a45a483e, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7413944919245685368, guid: ba83461cca946410a94c4343a45a483e, type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0.05
+      objectReference: {fileID: 0}
+    - target: {fileID: 7413944919245685368, guid: ba83461cca946410a94c4343a45a483e, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0.015
+      objectReference: {fileID: 0}
+    - target: {fileID: 7413944919245685368, guid: ba83461cca946410a94c4343a45a483e, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7413944919245685368, guid: ba83461cca946410a94c4343a45a483e, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7413944919245685368, guid: ba83461cca946410a94c4343a45a483e, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7413944919245685368, guid: ba83461cca946410a94c4343a45a483e, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7413944919245685368, guid: ba83461cca946410a94c4343a45a483e, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7413944919245685368, guid: ba83461cca946410a94c4343a45a483e, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7413944919245685368, guid: ba83461cca946410a94c4343a45a483e, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7413944919245685368, guid: ba83461cca946410a94c4343a45a483e, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7413944919245685368, guid: ba83461cca946410a94c4343a45a483e, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7413944919245685368, guid: ba83461cca946410a94c4343a45a483e, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7413944919245685368, guid: ba83461cca946410a94c4343a45a483e, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7413944919245685368, guid: ba83461cca946410a94c4343a45a483e, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7413944919245685368, guid: ba83461cca946410a94c4343a45a483e, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7413944919245685368, guid: ba83461cca946410a94c4343a45a483e, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7413944919245685368, guid: ba83461cca946410a94c4343a45a483e, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7413944919245685368, guid: ba83461cca946410a94c4343a45a483e, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7413944919245685368, guid: ba83461cca946410a94c4343a45a483e, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: ba83461cca946410a94c4343a45a483e, type: 3}
+--- !u!224 &812000000000000002 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 7413944919245685368, guid: ba83461cca946410a94c4343a45a483e, type: 3}
+  m_PrefabInstance: {fileID: 812000000000000001}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &812000000000000003 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1944606547811722807, guid: ba83461cca946410a94c4343a45a483e, type: 3}
+  m_PrefabInstance: {fileID: 812000000000000001}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7d513bc507ea442789dedcb9ea884e65, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Presentation.UI.GearInventoryViewComponent

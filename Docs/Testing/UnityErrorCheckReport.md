@@ -232,3 +232,33 @@ The stale 6000.5.3 licensing client was terminated and Gear Engine was launched 
 ## Remaining Issue
 
 The Unity Editor must be closed before the focused EditMode test run can produce NUnit XML, an Editor log, and screenshot evidence without conflicting with the open project.
+## 2026-07-27 — Setup BoardView Sibling Ownership
+
+- Checked log: `/Users/leonardosilva/Library/Logs/Unity/Editor.log`.
+- Latest parser result: `[]` — No compiler errors or managed exceptions found.
+- `Assembly-CSharp.csproj --no-restore`: completed with zero errors.
+- `Assembly-CSharp-Editor.csproj --no-restore`: completed with zero errors.
+- Unity compilation precheck passed in the isolated project copy.
+- Focused EditMode run passed 20/20 tests with NUnit XML and Editor-log artifacts.
+
+### Fixes Applied
+
+- Removed the obsolete missing `UIAudioEventTrigger` component from
+  `StartRace_Button.prefab`, allowing Setup to save.
+- Created `PFB_BoardView.prefab` as the Setup screen-space Board composition.
+- Moved `BoardViewComponent`, `TrashDropZoneViewComponent`, and `DragOverlay` out of
+  `Setup View.prefab`; Main Scene now owns the BoardView as a sibling and injects its
+  reference into the Setup instance.
+- Kept `GearInventoryViewComponent` in Setup and configured it to use the BoardView drag
+  overlay.
+- Removed two duplicate legacy-input EventSystem roots. Main Scene retains its original
+  Input System EventSystem, and the regression test confirms that it is the only active
+  EventSystem.
+- Relinked Setup to the sibling BoardView and verified that both Canvases use the same
+  event camera.
+
+### Remaining Issues
+
+The complete `Game.GearEngine.Tests` EditMode assembly has 26 pre-existing failures outside
+the affected fixtures. The focused Board ownership, capacity, and prefab-integrity fixtures
+are clean.

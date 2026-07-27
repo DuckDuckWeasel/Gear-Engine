@@ -1,6 +1,7 @@
 using UnityEngine;
 using Scaffold.Events.Contracts;
 using Ami.BroAudio;
+using GearEngine.GearEngine.Config;
 
 namespace GearEngine.GearEngine.Nodes
 {
@@ -15,10 +16,16 @@ namespace GearEngine.GearEngine.Nodes
         [SerializeField]
         private float slowdownTimer = 0f;
 
+        public override void Initialize(Vector2Int position, GearItemData configData)
+        {
+            base.Initialize(position, configData);
+            lastFiredRotation = configData?.InitialRotationOffset ?? 0f;
+        }
+
         public override void ResetSimulationState()
         {
             base.ResetSimulationState();
-            lastFiredRotation = 0f;
+            lastFiredRotation = ConfigData?.InitialRotationOffset ?? 0f;
             slowdownTimer = 0f;
         }
 

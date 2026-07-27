@@ -32,7 +32,7 @@ namespace GearEngine.GearEngine.Presentation.UI
             }
 
             PrimeEntrySlot(node, view);
-            float stagger = ComputeStagger(node.Position, FindMotorPosition());
+            float stagger = ComputeStagger(node, FindMotorPosition());
             CommitEntry(node, view, node.Position, stagger);
             view.SetRotationTarget(-node.CurrentRotation + stagger);
             ApplyChargeVisual(node, view, snap: true);
@@ -113,7 +113,7 @@ namespace GearEngine.GearEngine.Presentation.UI
         private void RefreshReparentAndStagger(IGridNode node, ref Entry e, Vector2Int? motor)
         {
             e.LastPos = node.Position;
-            e.StaggerOffset = ComputeStagger(node.Position, motor);
+            e.StaggerOffset = ComputeStagger(node, motor);
             Transform p = slotFn?.Invoke(node.Position);
             if (p != null)
             {
@@ -160,15 +160,22 @@ namespace GearEngine.GearEngine.Presentation.UI
             return null;
         }
 
-        private float ComputeStagger(Vector2Int pos, Vector2Int? motorPos)
+        private float ComputeStagger(IGridNode node, Vector2Int? motorPos)
         {
-            if (layout == null || !motorPos.HasValue)
+            if (node == null || layout == null || !motorPos.HasValue)
             {
                 return 0f;
             }
 
-            int distance = Mathf.Abs(pos.x - motorPos.Value.x) + Mathf.Abs(pos.y - motorPos.Value.y);
-            return (distance % 2 == 0) ? 0f : layout.StaggeredRotationOffset;
+            int distance = Mathf.Abs(node.Position.x - motorPos.Value.x) +
+                Mathf.Abs(node.Position.y - motorPos.Value.y);
+            bool isCoreGear = distance == 0;
+            if (isCoreGear)
+            {
+                return node.ConfigData?.InitialRotationOffset ?? 0f;
+            }
+
+            return distance % 2 != 0 ? layout.StaggeredRotationOffset : 0f;
         }
 
         private struct Entry

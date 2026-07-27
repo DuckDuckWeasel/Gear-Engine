@@ -1,4 +1,3 @@
-using GearEngine.GearEngine;
 using GearEngine.GearEngine.Visuals;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -7,15 +6,17 @@ namespace GearEngine.GearEngine.Presentation.UI
 {
     internal static class DragPreview
     {
-        public static GameObject Spawn(GameObject source, Transform parent)
+        public static GameObject Spawn(GameObject source, RectTransform parent)
         {
-            if (source == null)
+            if (source == null || parent == null)
             {
                 return null;
             }
 
+            RectTransform sourceRect = source.transform as RectTransform;
             GameObject clone = UnityEngine.Object.Instantiate(source, parent);
             clone.name = source.name + "_DragPreview";
+            NormalizeRectTransform(clone.transform as RectTransform, sourceRect, parent);
             DisableInteractionRecursively(clone);
             return clone;
         }
@@ -27,49 +28,61 @@ namespace GearEngine.GearEngine.Presentation.UI
                 return;
             }
 
-            RectTransform rt = preview.transform as RectTransform;
-            if (rt != null)
+            RectTransform rect = preview.transform as RectTransform;
+            RectTransform parentRect = rect != null ? rect.parent as RectTransform : null;
+            if (rect == null || parentRect == null)
             {
-                Camera cam = e.pressEventCamera;
-                Canvas canvas = rt.GetComponentInParent<Canvas>();
-                if (canvas != null && canvas.renderMode != RenderMode.ScreenSpaceOverlay)
-                {
-                    cam = canvas.worldCamera;
-                }
-
-                if (RectTransformUtility.ScreenPointToWorldPointInRectangle(
-                        rt.parent as RectTransform,
-                        e.position,
-                        cam,
-                        out Vector3 world))
-                {
-                    rt.position = world;
-                }
+                return;
             }
-            else
+
+            if (TryResolveLocalPoint(parentRect, e.position, out Vector2 localPoint))
             {
-                Camera cam = e.pressEventCamera != null ? e.pressEventCamera : Camera.main;
-                if (cam == null)
-                {
-                    return;
-                }
-
-                // Project the cursor onto the preview's parent plane so the preview
-                // tracks the cursor in the same space the source lived in (e.g. the
-                // board plane for board gears). Falling back to (cam.position.z) was
-                // brittle: it required the camera to sit at (_, _, -depth) and the
-                // parent to be at the world origin, neither of which holds when a
-                // FrustumFitAnchor places the board off-center.
-                Transform parent = preview.transform.parent;
-                Vector3 planeOrigin = parent != null ? parent.position : preview.transform.position;
-                Vector3 planeNormal = parent != null ? parent.forward : Vector3.forward;
-                Plane plane = new Plane(planeNormal, planeOrigin);
-                Ray ray = cam.ScreenPointToRay(e.position);
-                if (plane.Raycast(ray, out float enter))
-                {
-                    preview.transform.position = ray.GetPoint(enter);
-                }
+                rect.anchoredPosition = localPoint;
             }
+        }
+
+        private static bool TryResolveLocalPoint(RectTransform parentRect, Vector2 screenPosition, out Vector2 localPoint)
+        {
+            Canvas canvas = parentRect.GetComponentInParent<Canvas>();
+            Camera eventCamera = canvas != null && canvas.renderMode != RenderMode.ScreenSpaceOverlay ? canvas.worldCamera : null;
+            return RectTransformUtility.ScreenPointToLocalPointInRectangle(parentRect, screenPosition, eventCamera, out localPoint);
+        }
+
+        private static void NormalizeRectTransform(
+            RectTransform previewRect,
+            RectTransform sourceRect,
+            RectTransform parent)
+        {
+            if (previewRect == null || sourceRect == null)
+            {
+                return;
+            }
+
+            previewRect.anchorMin = new Vector2(0.5f, 0.5f);
+            previewRect.anchorMax = new Vector2(0.5f, 0.5f);
+            previewRect.pivot = sourceRect.pivot;
+            previewRect.sizeDelta = GetSizeInParentSpace(sourceRect, parent);
+            previewRect.localScale = Vector3.one;
+        }
+
+        private static Vector2 GetSizeInParentSpace(
+            RectTransform sourceRect,
+            RectTransform parent)
+        {
+            Vector3 sourceScale = sourceRect.lossyScale;
+            Vector3 parentScale = parent.lossyScale;
+            float widthScale = SafeScaleRatio(sourceScale.x, parentScale.x);
+            float heightScale = SafeScaleRatio(sourceScale.y, parentScale.y);
+            return new Vector2(
+                sourceRect.rect.width * widthScale,
+                sourceRect.rect.height * heightScale);
+        }
+
+        private static float SafeScaleRatio(float sourceScale, float parentScale)
+        {
+            return Mathf.Abs(parentScale) > Mathf.Epsilon
+                ? Mathf.Abs(sourceScale / parentScale)
+                : 1f;
         }
 
         private static void DisableInteractionRecursively(GameObject go)
@@ -84,25 +97,20 @@ namespace GearEngine.GearEngine.Presentation.UI
 
             cg.blocksRaycasts = false;
             cg.interactable = false;
-            foreach (Collider2D c in go.GetComponentsInChildren<Collider2D>(true))
-            {
-                c.enabled = false;
-            }
+            DisableGearViews(go);
+            DisableDraggables(go);
+        }
 
-            foreach (Collider c in go.GetComponentsInChildren<Collider>(true))
-            {
-                c.enabled = false;
-            }
-
-            // The preview is a static visual snapshot; logic components that drive its
-            // transform (e.g. GearView's settle-to-slot lerp) would otherwise pull the
-            // preview to the parent's origin instead of the cursor. Draggable on the
-            // clone would let the preview itself start a nested drag.
+        private static void DisableGearViews(GameObject go)
+        {
             foreach (GearView gv in go.GetComponentsInChildren<GearView>(true))
             {
                 gv.enabled = false;
             }
+        }
 
+        private static void DisableDraggables(GameObject go)
+        {
             foreach (Draggable d in go.GetComponentsInChildren<Draggable>(true))
             {
                 d.enabled = false;

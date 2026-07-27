@@ -9,13 +9,10 @@ namespace GearEngine.Campaign.Presentation
     public sealed class RoguelikeView : View<RoguelikeViewModel>
     {
         [SerializeField]
-        private BoardViewComponent boardView;
+        private BoardView boardView;
 
         [SerializeField]
-        private GearInventoryViewComponent inventoryView;
-
-        [SerializeField]
-        private TrashDropZoneViewComponent trashDropZone;
+        private GearInventoryViewComponent inventory;
 
         [SerializeField]
         private ItemSlotView[] perkOptionViews;
@@ -48,23 +45,23 @@ namespace GearEngine.Campaign.Presentation
 
         private void BindGearSubtree()
         {
-            boardView.gameObject.SetActive(true);
-            DragServiceRegistry.Register(viewModel.DragService);
-            boardView.Bind(viewModel.Board);
-            inventoryView.gameObject.SetActive(true);
-            inventoryView.Bind(viewModel.Inventory);
-            inventoryView.RebuildAndFit();
-            trashDropZone.gameObject.SetActive(true);
-            trashDropZone.SetDragService(viewModel.DragService);
-            trashDropZone.SetBoardPresentation(boardView.BoardLayout, viewModel.Board.BoardRules);
-            trashDropZone.Bind(viewModel.TrashZone);
-            trashDropZone.ApplyInitialPlacement();
+            boardView.BindInteractive(
+                viewModel.Board,
+                viewModel.TrashZone,
+                viewModel.DragService);
+            inventory.gameObject.SetActive(true);
+            inventory.SetDragContext(viewModel.DragService, boardView.DragOverlay);
+            inventory.Bind(viewModel.Inventory);
+            inventory.RebuildAndFit();
         }
 
         private void RebuildPerkSelection()
         {
-            if (perkOptionViews == null) return;
-            
+            if (perkOptionViews == null)
+            {
+                return;
+            }
+
             for (int i = 0; i < perkOptionViews.Length; i++)
             {
                 if (i < viewModel.PerkOptions.Count)
@@ -117,9 +114,13 @@ namespace GearEngine.Campaign.Presentation
 
         private void ValidateHierarchy()
         {
-            RequireReference(boardView, nameof(boardView));
-            RequireReference(inventoryView, nameof(inventoryView));
-            RequireReference(trashDropZone, nameof(trashDropZone));
+            if (boardView == null)
+            {
+                throw new InvalidOperationException(
+                    "[RoguelikeView] boardView must be assigned on the scene instance.");
+            }
+
+            RequireReference(inventory, nameof(inventory));
             RequireReference(continueButton, nameof(continueButton));
             if (perkOptionViews == null)
             {
@@ -132,7 +133,7 @@ namespace GearEngine.Campaign.Presentation
             if (field == null)
             {
                 throw new InvalidOperationException(
-                    $"[RoguelikeView] {name} must be assigned on the scene instance (shared World gear UI / controls).");
+                    $"[RoguelikeView] {name} must be assigned in the Roguelike prefab.");
             }
         }
 
@@ -146,9 +147,11 @@ namespace GearEngine.Campaign.Presentation
 
         private void ToggleGearPanels(bool isActive)
         {
-            if (boardView != null) boardView.gameObject.SetActive(isActive);
-            if (inventoryView != null) inventoryView.gameObject.SetActive(isActive);
-            if (trashDropZone != null) trashDropZone.gameObject.SetActive(isActive);
+            boardView?.SetVisible(isActive);
+            if (inventory != null)
+            {
+                inventory.gameObject.SetActive(isActive);
+            }
         }
     }
 }

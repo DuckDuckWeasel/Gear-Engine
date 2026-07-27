@@ -2,20 +2,20 @@ using UnityEngine;
 
 namespace GearEngine.GearEngine.Presentation.UI
 {
-    /// <summary>
-    /// Data passed between drag sources and targets during lifecycle and drop resolution.
-    /// </summary>
     public readonly struct DragPayload
     {
-        public readonly object Data;
-        public readonly Vector3 WorldPosition;
-
-        public DragPayload(object data, Vector3 worldPos)
+        public DragPayload(object data, Vector2 screenPosition)
         {
             Data = data;
-            WorldPosition = worldPos;
+            ScreenPosition = screenPosition;
         }
 
-        public T GetData<T>() where T : class => Data as T;
+        public readonly object Data;
+        public readonly Vector2 ScreenPosition;
+
+        public T GetData<T>() where T : class
+        {
+            return Data as T;
+        }
     }
 }

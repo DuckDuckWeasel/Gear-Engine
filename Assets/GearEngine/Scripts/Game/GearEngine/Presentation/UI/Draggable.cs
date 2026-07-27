@@ -1,21 +1,14 @@
 using System;
-using System.Collections.Generic;
+using GearEngine.GearEngine;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 namespace GearEngine.GearEngine.Presentation.UI
 {
     public sealed class Draggable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
     {
-        private static bool warnedMissingDragServiceRegistry;
-
         public bool IsInteractable { get; set; } = true;
-
-        /// <summary>
-        /// When non-null, the drag preview is parented here instead of <see cref="Component.transform"/>'s parent
-        /// (e.g. board space root for grid gears so the preview does not follow the cell slot).
-        /// </summary>
-        public Transform PreviewParent { get; set; }
 
         public Func<PointerEventData, DragPayload> BuildPayload;
         public Action<IDragTarget> OnDropAccepted;
@@ -29,51 +22,54 @@ namespace GearEngine.GearEngine.Presentation.UI
         [SerializeField]
         private bool hideSourceWhileDragging;
 
+        private IDragService dragService;
+        private RectTransform dragOverlay;
+        private GameObject preview;
+        private Graphic[] hiddenGraphics = Array.Empty<Graphic>();
+
         public void SetHideSourceWhileDragging(bool hide)
         {
             hideSourceWhileDragging = hide;
         }
 
-        private GameObject preview;
-        private readonly List<Renderer> hiddenRenderers = new List<Renderer>();
+        public void SetPreviewSource(GameObject source)
+        {
+            previewSource = source;
+        }
+
+        public void Configure(IDragService service, RectTransform overlay)
+        {
+            if (service == null)
+            {
+                throw new ArgumentNullException(nameof(service));
+            }
+
+            if (overlay == null)
+            {
+                throw new ArgumentNullException(nameof(overlay));
+            }
+
+            dragService = service;
+            dragOverlay = overlay;
+        }
 
         public void OnBeginDrag(PointerEventData e)
         {
-            if (!IsInteractable || BuildPayload == null)
+            if (!IsInteractable || BuildPayload == null || dragService == null || dragOverlay == null)
             {
                 return;
             }
 
             DragPayload payload = BuildPayload(e);
             GameObject source = previewSource != null ? previewSource : gameObject;
-            Transform parent = ResolvePreviewParent();
-            preview = DragPreview.Spawn(source, parent);
+            preview = DragPreview.Spawn(source, dragOverlay);
             DragPreview.MoveTo(preview, e);
             if (hideSourceWhileDragging)
             {
-                // Hiding via Renderer.enabled (rather than GameObject.SetActive(false))
-                // keeps this Draggable Behaviour active so EventSystem still dispatches
-                // OnDrag / OnEndDrag to it. Disabling the GameObject would also disable
-                // this component (isActiveAndEnabled == false), and Unity's
-                // ExecuteEvents.ShouldSendToComponent would silently drop those events,
-                // leaving the preview stranded and the source forever hidden.
-                HideSourceRenderers();
+                HideSourceGraphics();
             }
 
-            if (DragServiceRegistry.Instance == null)
-            {
-                if (!warnedMissingDragServiceRegistry)
-                {
-                    warnedMissingDragServiceRegistry = true;
-                    Debug.LogWarning(
-                        "[Draggable] DragServiceRegistry.Instance is null. Call DragServiceRegistry.Register(IDragService) " +
-                        "from the scene root view during OnBind so drag lifecycle listeners (e.g. trash zone) run.");
-                }
-            }
-            else
-            {
-                DragServiceRegistry.Instance.StartDrag(payload);
-            }
+            dragService.StartDrag(payload);
         }
 
         public void OnDrag(PointerEventData e)
@@ -99,16 +95,10 @@ namespace GearEngine.GearEngine.Presentation.UI
         private void ProcessDrop(PointerEventData e)
         {
             DragPayload payload = BuildPayload != null ? BuildPayload(e) : default;
-            Camera cam = Camera.main;
-            IDragTarget target = cam != null ? DragTargetFinder.Find(payload, e.position, cam) : null;
+            IDragTarget target = DragTargetFinder.Find(payload, e.position);
             bool consumed = target != null && target.OnDrop(payload);
             if (consumed)
             {
-                // Hand the source visual the preview's last world position before the
-                // listener reparents/animates it. Otherwise (e.g. swap) the source stays
-                // pinned to its old slot, gets reparented worldPositionStays=true, and the
-                // settle lerp slides it from old slot -> new slot, which reads as a snap.
-                // Starting from the cursor keeps the motion continuous with the preview.
                 if (hideSourceWhileDragging && preview != null)
                 {
                     transform.position = preview.transform.position;
@@ -122,25 +112,6 @@ namespace GearEngine.GearEngine.Presentation.UI
             }
         }
 
-        private Transform ResolvePreviewParent()
-        {
-            if (PreviewParent != null)
-            {
-                return PreviewParent;
-            }
-
-            // Default: the root canvas, so the preview floats above any layout groups
-            // along the source's ancestor chain (otherwise the preview becomes a phantom
-            // laid-out child and its position is overwritten every layout pass).
-            Canvas canvas = GetComponentInParent<Canvas>();
-            if (canvas != null)
-            {
-                return canvas.rootCanvas.transform;
-            }
-
-            return transform.parent;
-        }
-
         private void TeardownPreviewAndDragService()
         {
             if (preview != null)
@@ -151,39 +122,37 @@ namespace GearEngine.GearEngine.Presentation.UI
             preview = null;
             if (hideSourceWhileDragging)
             {
-                RestoreSourceRenderers();
+                RestoreSourceGraphics();
             }
 
-            DragServiceRegistry.Instance?.EndDrag();
+            dragService?.EndDrag();
         }
 
-        private void HideSourceRenderers()
+        private void HideSourceGraphics()
         {
-            hiddenRenderers.Clear();
-            Renderer[] renderers = GetComponentsInChildren<Renderer>(true);
-            for (int i = 0; i < renderers.Length; i++)
+            hiddenGraphics = GetComponentsInChildren<Graphic>(true);
+            for (int i = 0; i < hiddenGraphics.Length; i++)
             {
-                Renderer r = renderers[i];
-                if (r != null && r.enabled)
+                Graphic graphic = hiddenGraphics[i];
+                if (graphic != null)
                 {
-                    hiddenRenderers.Add(r);
-                    r.enabled = false;
+                    graphic.enabled = false;
                 }
             }
         }
 
-        private void RestoreSourceRenderers()
+        private void RestoreSourceGraphics()
         {
-            for (int i = 0; i < hiddenRenderers.Count; i++)
+            for (int i = 0; i < hiddenGraphics.Length; i++)
             {
-                Renderer r = hiddenRenderers[i];
-                if (r != null)
+                Graphic graphic = hiddenGraphics[i];
+                if (graphic != null)
                 {
-                    r.enabled = true;
+                    graphic.enabled = true;
                 }
             }
 
-            hiddenRenderers.Clear();
+            hiddenGraphics = Array.Empty<Graphic>();
         }
     }
 }

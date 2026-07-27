@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using DG.Tweening;
 using GearEngine.GearEngine;
 using GearEngine.GearEngine.Config;
 using GearEngine.GearEngine.Nodes;
@@ -10,6 +11,7 @@ using GearEngine.GearEngine.Services.Board;
 using NUnit.Framework;
 using TMPro;
 using UnityEngine;
+using UnityEngine.TestTools;
 
 namespace GearEngine.GearEngine.Tests.Editor
 {
@@ -49,9 +51,13 @@ namespace GearEngine.GearEngine.Tests.Editor
 
             public bool IsSimulationRunning => false;
 
-            public int CurrentBoardGearCount => 0;
+            public int CurrentCount { get; set; }
 
-            public int MaxAllowedBoardGears => 99;
+            public int MaximumCount { get; set; } = 99;
+
+            public int CurrentBoardGearCount => CurrentCount;
+
+            public int MaxAllowedBoardGears => MaximumCount;
 
             public bool ContainsMotorCog => true;
 
@@ -99,7 +105,7 @@ namespace GearEngine.GearEngine.Tests.Editor
                     return null;
                 }
 
-                var o = new OwnedGear { InstanceId = Guid.NewGuid().ToString("N"), Config = gear };
+                OwnedGear o = new OwnedGear { InstanceId = Guid.NewGuid().ToString("N"), Config = gear };
                 owned.Add(o);
                 InventoryChanged?.Invoke();
                 return o;
@@ -128,7 +134,9 @@ namespace GearEngine.GearEngine.Tests.Editor
         {
             GearInventoryViewComponent component = CreateBoundInventoryView(out RectTransform container, out _);
 
+            ExpectMissingViewLogs();
             component.RebuildAndFit();
+            ExpectMissingViewLogs();
             component.RebuildAndFit();
 
             Assert.AreEqual(3, container.childCount);
@@ -141,18 +149,58 @@ namespace GearEngine.GearEngine.Tests.Editor
 
             Assert.AreEqual(0, container.childCount);
 
+            ExpectMissingViewLogs();
             component.RebuildAndFit();
 
             Assert.AreEqual(3, container.childCount);
+        }
+
+        [Test]
+        public void BuildSlotPayload_FullBoard_DoesNotAnimateBeforeDrop()
+        {
+            GearInventoryViewComponent component = CreateBoundInventoryView(
+                out _,
+                out GearInventoryViewModel viewModel,
+                out TextMeshProUGUI label,
+                currentCount: 6,
+                maximumCount: 6);
+            MethodInfo buildPayload = typeof(GearInventoryViewComponent)
+                .GetMethod("BuildSlotPayload", BindingFlags.Instance | BindingFlags.NonPublic);
+            Assert.IsNotNull(buildPayload);
+
+            buildPayload.Invoke(
+                component,
+                new object[] { viewModel.TrayItems[0], Vector2.zero });
+
+            Assert.IsFalse(DOTween.IsTweening(label.transform));
         }
 
         private static GearInventoryViewComponent CreateBoundInventoryView(
             out RectTransform itemsContainerOut,
             out GearInventoryViewModel viewModel)
         {
-            var inventory = new ListInventoryService();
-            var engine = new FakeEngine();
-            var board = new TrayTestBoardService();
+            return CreateBoundInventoryView(
+                out itemsContainerOut,
+                out viewModel,
+                out _,
+                currentCount: 0,
+                maximumCount: 99);
+        }
+
+        private static GearInventoryViewComponent CreateBoundInventoryView(
+            out RectTransform itemsContainerOut,
+            out GearInventoryViewModel viewModel,
+            out TextMeshProUGUI capacityLabel,
+            int currentCount,
+            int maximumCount)
+        {
+            ListInventoryService inventory = new ListInventoryService();
+            FakeEngine engine = new FakeEngine();
+            TrayTestBoardService board = new TrayTestBoardService
+            {
+                CurrentCount = currentCount,
+                MaximumCount = maximumCount,
+            };
 
             GearItem g0 = CreateGearConfig("g0");
             GearItem g1 = CreateGearConfig("g1");
@@ -163,43 +211,60 @@ namespace GearEngine.GearEngine.Tests.Editor
 
             viewModel = new GearInventoryViewModel(engine, board, inventory);
 
-            var root = new GameObject("InventoryRoot");
-            var containerGo = new GameObject("ItemsContainer", typeof(RectTransform));
+            GameObject root = new GameObject("InventoryRoot");
+            GameObject containerGo = new GameObject("ItemsContainer", typeof(RectTransform));
             containerGo.transform.SetParent(root.transform, false);
-            var containerRect = containerGo.GetComponent<RectTransform>();
+            RectTransform containerRect = containerGo.GetComponent<RectTransform>();
 
-            var slotPrefab = new GameObject("SlotPrefab", typeof(RectTransform));
+            GameObject slotPrefab = new GameObject("SlotPrefab", typeof(RectTransform));
             slotPrefab.AddComponent<Draggable>();
             GearInventorySlotView slotViewComp = slotPrefab.AddComponent<GearInventorySlotView>();
-            var visualContainer = new GameObject("VisualContainer", typeof(RectTransform));
+            GameObject visualContainer = new GameObject("VisualContainer", typeof(RectTransform));
             visualContainer.transform.SetParent(slotPrefab.transform, false);
             SetPrivateField(slotViewComp, "visualContainer", visualContainer.transform);
 
-            var labelGo = new GameObject("LimitLabel", typeof(RectTransform));
+            GameObject labelGo = new GameObject("LimitLabel", typeof(RectTransform));
             labelGo.transform.SetParent(root.transform, false);
-            var label = labelGo.AddComponent<TextMeshProUGUI>();
+            TextMeshProUGUI label = labelGo.AddComponent<TextMeshProUGUI>();
 
             GearInventoryViewComponent component = root.AddComponent<GearInventoryViewComponent>();
             SetPrivateField(component, "itemsContainer", containerRect);
             SetPrivateField(component, "slotPrefab", slotPrefab);
             SetPrivateField(component, "inventoryLimitLabel", label);
+            GameObject overlay = new GameObject("DragOverlay", typeof(RectTransform));
+            overlay.transform.SetParent(root.transform, false);
+            component.SetDragContext(new DragService(), overlay.GetComponent<RectTransform>());
 
             component.Bind(viewModel);
 
             itemsContainerOut = containerRect;
+            capacityLabel = label;
             return component;
         }
 
         private static GearItem CreateGearConfig(string id)
         {
-            var gc = ScriptableObject.CreateInstance<GearItem>();
-            var so = new UnityEditor.SerializedObject(gc);
-            var dp = so.FindProperty("data");
+            GearItem gc = ScriptableObject.CreateInstance<GearItem>();
+            UnityEditor.SerializedObject so = new UnityEditor.SerializedObject(gc);
+            UnityEditor.SerializedProperty dp = so.FindProperty("data");
             Assert.IsNotNull(dp);
-            dp.FindPropertyRelative("Id").stringValue = id;
+            dp.FindPropertyRelative("id").stringValue = id;
             dp.FindPropertyRelative("Category").enumValueIndex = (int)GearCategory.Base;
             so.ApplyModifiedProperties();
             return gc;
+        }
+
+        private static void ExpectMissingViewLogs()
+        {
+            LogAssert.Expect(
+                LogType.Error,
+                "[GearInventoryView] Gear 'g0' has no ViewPrefab; inventory visual skipped.");
+            LogAssert.Expect(
+                LogType.Error,
+                "[GearInventoryView] Gear 'g1' has no ViewPrefab; inventory visual skipped.");
+            LogAssert.Expect(
+                LogType.Error,
+                "[GearInventoryView] Gear 'g2' has no ViewPrefab; inventory visual skipped.");
         }
 
         private static void SetPrivateField(object target, string name, object value)

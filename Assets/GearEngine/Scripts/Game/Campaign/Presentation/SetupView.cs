@@ -11,9 +11,9 @@ namespace GearEngine.Campaign.Presentation
     public sealed class SetupView : View<SetupViewModel>
     {
         [SerializeField] private TrackViewComponent track;
-        [SerializeField] private BoardViewComponent boardView;
-        [SerializeField] private GearInventoryViewComponent inventoryView;
-        [SerializeField] private TrashDropZoneViewComponent trashDropZone;
+        [SerializeField] private BoardView boardView;
+        [SerializeField] private GearInventoryViewComponent inventory;
+        [SerializeField] private BoardCapacityChipView boardCapacityChip;
         [SerializeField] private Button raceButton;
         [SerializeField] private Button returnToMainButton;
         [SerializeField] private FrustumFitAnchor[] openTransitionAnchors;
@@ -22,32 +22,29 @@ namespace GearEngine.Campaign.Presentation
         protected override void OnBind()
         {
             ValidateHierarchy();
-            if (track == null)
+            if (track == null || boardView == null)
             {
                 throw new InvalidOperationException(
-                    "[SetupView] Track must be assigned on the scene instance (not baked into the prefab).");
+                    "[SetupView] Track and BoardView must be assigned on the scene instance.");
             }
 
             track.Bind(viewModel.Track);
-
-            DragServiceRegistry.Register(viewModel.DragService);
-            boardView.Bind(viewModel.Board);
-            inventoryView.Bind(viewModel.Inventory);
-            trashDropZone.gameObject.SetActive(true);
-            trashDropZone.SetDragService(viewModel.DragService);
-            trashDropZone.SetBoardPresentation(boardView.BoardLayout, viewModel.Board.BoardRules);
-            trashDropZone.Bind(viewModel.TrashZone);
-            trashDropZone.ApplyInitialPlacement();
+            boardView.BindInteractive(
+                viewModel.Board,
+                viewModel.TrashZone,
+                viewModel.DragService);
+            inventory.SetDragContext(viewModel.DragService, boardView.DragOverlay);
+            inventory.Bind(viewModel.Inventory);
+            inventory.RebuildAndFit();
+            boardCapacityChip.Bind(viewModel.Board);
         }
 
         protected override void OnOpen(bool wasHidden)
         {
             base.OnOpen(wasHidden);
             track.gameObject.SetActive(true);
-            boardView.gameObject.SetActive(true);
-            inventoryView.gameObject.SetActive(true);
-            trashDropZone.gameObject.SetActive(true);
-            
+            boardView.SetVisible(true);
+
             raceButton.onClick.RemoveListener(OnRaceClicked);
             raceButton.onClick.AddListener(OnRaceClicked);
             returnToMainButton.onClick.RemoveListener(OnReturnClicked);
@@ -57,9 +54,9 @@ namespace GearEngine.Campaign.Presentation
                 this,
                 openTransitionAnchors,
                 openTransitionDurationSeconds,
-                onComplete: () => {
-                    inventoryView.RebuildAndFit();
-                    if (boardView != null) boardView.SpinAllGearsOnceVisual();
+                onComplete: () =>
+                {
+                    boardView.Board.SpinAllGearsOnceVisual();
                 });
         }
 
@@ -73,25 +70,17 @@ namespace GearEngine.Campaign.Presentation
 
             raceButton.onClick.RemoveListener(OnRaceClicked);
             returnToMainButton.onClick.RemoveListener(OnReturnClicked);
-            if (trashDropZone != null)
-            {
-                trashDropZone.gameObject.SetActive(false);
-            }
-
-            if (inventoryView != null)
-            {
-                inventoryView.gameObject.SetActive(false);
-            }
-
-            if (boardView != null)
-            {
-                boardView.gameObject.SetActive(false);
-            }
 
             if (track != null)
             {
                 track.gameObject.SetActive(false);
             }
+        }
+
+        protected override void OnUnbind()
+        {
+            boardCapacityChip?.Unbind();
+            base.OnUnbind();
         }
 
         private void OnRaceClicked()
@@ -111,6 +100,7 @@ namespace GearEngine.Campaign.Presentation
             try
             {
                 viewModel?.ReturnClicked();
+                boardView?.SetVisible(false);
             }
             catch (Exception ex)
             {
@@ -120,9 +110,8 @@ namespace GearEngine.Campaign.Presentation
 
         private void ValidateHierarchy()
         {
-            RequireReference(boardView, nameof(boardView));
-            RequireReference(inventoryView, nameof(inventoryView));
-            RequireReference(trashDropZone, nameof(trashDropZone));
+            RequireReference(inventory, nameof(inventory));
+            RequireReference(boardCapacityChip, nameof(boardCapacityChip));
             RequireReference(raceButton, nameof(raceButton));
             RequireReference(returnToMainButton, nameof(returnToMainButton));
         }
@@ -132,7 +121,7 @@ namespace GearEngine.Campaign.Presentation
             if (field == null)
             {
                 throw new InvalidOperationException(
-                    $"[SetupView] {name} must be assigned on the scene instance (shared World gear UI / controls).");
+                    $"[SetupView] {name} must be assigned in the Setup prefab.");
             }
         }
     }
