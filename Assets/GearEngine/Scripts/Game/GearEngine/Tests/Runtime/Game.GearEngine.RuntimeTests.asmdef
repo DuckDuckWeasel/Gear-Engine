@@ -5,6 +5,7 @@
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner",
         "Game.GearEngine",
+        "GUID:685e4d6c92c3a4bbd8762ad6a14eee15",
         "Scaffold"
     ],
     "includePlatforms": [],

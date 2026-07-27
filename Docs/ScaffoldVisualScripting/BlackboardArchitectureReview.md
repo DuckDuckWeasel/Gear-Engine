@@ -442,7 +442,7 @@ Required acceptance evidence for the refactor:
 7. `.agents/scripts/validate-changes.sh` passes for final macOS acceptance; the
    repository's `.cmd` shim is not acceptance evidence.
 
-### Implementation pattern checkpoint: Milestone 3
+### Implementation pattern checkpoint: Milestone 4
 
 - **Observer:** `BlackboardEventBus` owns typed subscriptions and returns disposable
   handles. Disposal removes listeners symmetrically, avoiding the unremoved-listener
@@ -459,21 +459,37 @@ Required acceptance evidence for the refactor:
 - **Singleton anti-pattern:** no new mutable singleton or service locator was added.
   The only static `Instance` in Core is an immutable stateless reference-equality
   comparer used by graph traversal.
-- **Pending Strategy / Command extraction:** composite execution still lives in the
-  legacy path and remains the focus of Milestone 4. The variable and service layer has
-  no dependency on a concrete Command, host component, or coroutine.
+- **Strategy:** `CompositeExecutionRunner` is now the shared plain-C# engine behind
+  `ActionList` and `Block`. Composite mode, await mode, ordering, weighting, utility
+  reevaluation, repeat prevention, interruption, and feedback are selected from
+  definitions rather than a component type switch.
+- **Command:** Core `IAction` and `ActionBase` execute through immutable
+  `ActionExecutionContext` values and status callbacks. Flow jumps use
+  `IActionFlowController`; Core stores no MonoBehaviour or concrete Command.
+- **Adapter:** the Gear action base temporarily translates the legacy component runner
+  into the Core contract while pre-cutover consumers remain. Scheduler-backed delays
+  and IEnumerators use the same Core ports. The legacy overload is explicitly excluded
+  from the target API and is deleted in Milestone 8.
+- **Observer:** event-wait and input actions now remove listeners symmetrically on
+  completion, interruption, and failure.
+- **Complexity:** changed action methods were decomposed to the repository's analyzer
+  limits and helper declarations follow their call graph. The final changed-C#
+  analyzer and file-structure gates are clean.
 
-Review-time evidence:
+Milestone 4 evidence:
 
-- Agent-efficiency static verification passed.
-- The latest Unity Editor log parser returned no compiler errors or exceptions.
-- Unity-generated `Assembly-CSharp.csproj` and
-  `Assembly-CSharp-Editor.csproj` were not present, so a fresh direct `dotnet build`
-  was not applicable during this review.
-- No implementation or Unity test suite was run because this change only records the
-  architectural review.
+- Plain action and composite runtime: 16 passed, 0 failed.
+- Gear context, delay, routine, cloning, interruption, and compatibility bridge:
+  7 passed, 0 failed.
+- Legacy component behavior matrix: 39 passed, 0 failed.
+- The latest Unity Editor log parser returned `[]`.
+- Core static scans contain no `MonoBehaviour`, `GetComponent`, `AddComponent`,
+  `StartCoroutine`, `GameObject.Find`, or mutable service locator.
+- All 62 changed C# files pass formatter, analyzer, and one-top-level-type checks.
 
 ## Change Log
 
 - 2026-07-27: Initial review of Blackboard, Block, Command/action-list hosting,
   triggers, variables, editor serialization, persistence, tests, and Unity boundaries.
+- 2026-07-27: Updated after Milestone 4 extracted Core action, composite, Block, track,
+  context, scheduling, flow-control, and feedback ownership from components.

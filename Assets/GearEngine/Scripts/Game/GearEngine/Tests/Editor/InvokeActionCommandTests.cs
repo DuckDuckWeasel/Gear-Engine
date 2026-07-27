@@ -819,6 +819,7 @@ namespace GearEngine.GearEngine.Tests.Editor
         private TestInvokeActionCommand CreateCommand(CompositeExecutionMethod executionMethod)
         {
             hostObject = new GameObject("InvokeActionCommandTests");
+            hostObject.AddComponent<Blackboard>();
             TestInvokeActionCommand command = hostObject.AddComponent<TestInvokeActionCommand>();
             command.ExecutionMethod = executionMethod;
             return command;
@@ -851,32 +852,21 @@ namespace GearEngine.GearEngine.Tests.Editor
         }
 
         private sealed class DeferredAction :
-            IAction,
-            IActionWithStatus,
-            IInterruptibleAction,
+            ActionBase,
             IActionProgressProvider
         {
-            private Action onComplete;
-            private Action<ActionExecutionStatus> onStatusComplete;
-
             public int ExecuteCount { get; private set; }
 
             public int InterruptCount { get; private set; }
 
             public float Progress { get; set; }
 
-            public void Execute(Action onComplete)
-            {
-                ExecuteCount++;
-                this.onComplete = onComplete;
-                onStatusComplete = null;
-            }
+            private bool active;
 
-            public void ExecuteWithStatus(Action<ActionExecutionStatus> onComplete)
+            public override void OnEnter()
             {
                 ExecuteCount++;
-                this.onComplete = null;
-                onStatusComplete = onComplete;
+                active = true;
             }
 
             public void Complete()
@@ -886,19 +876,19 @@ namespace GearEngine.GearEngine.Tests.Editor
 
             public void Complete(ActionExecutionStatus status)
             {
-                Action completion = onComplete;
-                Action<ActionExecutionStatus> statusCompletion = onStatusComplete;
-                onComplete = null;
-                onStatusComplete = null;
-                completion?.Invoke();
-                statusCompletion?.Invoke(status);
+                if (!active)
+                {
+                    return;
+                }
+
+                active = false;
+                CompleteAction(status);
             }
 
-            public void Interrupt()
+            public override void OnStopExecuting()
             {
                 InterruptCount++;
-                onComplete = null;
-                onStatusComplete = null;
+                active = false;
             }
 
             public bool TryGetExecutionProgress(out float progress)

@@ -19,7 +19,7 @@ namespace GearEngine.Actions.Input
     [Serializable]
     public class WaitForTargetPointerEnterAction : WaitForInputActionBase
     {
-        public TargetReference target = new TargetReference();
+        public TargetReference Target = new TargetReference();
 
         private bool isTargetPointered = false;
 
@@ -30,11 +30,11 @@ namespace GearEngine.Actions.Input
             InitializeInputService();
 
             // Provide filtering for UI pointer enter based on target reference
-            _inputService.FilterForPointerEnterTarget(target);
+            _inputService.FilterForPointerEnterTarget(Target);
 
             _eventBus.AddListener<ScreenPointerEnterEvent>(OnPointerEnter);
 
-            hostCommand.StartCoroutine(WaitForTargetPointerEnterCoroutine());
+            RunRoutine(WaitForTargetPointerEnterCoroutine());
         }
 
         private void OnPointerEnter(ScreenPointerEnterEvent signal)
@@ -44,21 +44,19 @@ namespace GearEngine.Actions.Input
                 return;
             }
 
-            GameObject enteredObj = signal.TopResult.gameObject;
+            GameObject enteredObject = signal.TopResult.gameObject;
+            isTargetPointered = IsTargetMatch(enteredObject);
+        }
 
-            if (target.IsMatch(enteredObj))
+        private bool IsTargetMatch(GameObject enteredObject)
+        {
+            if (Target.IsMatch(enteredObject))
             {
-                isTargetPointered = true;
+                return true;
             }
-            else
-            {
-                // Fallback to parents
-                TagComponent tagComponent = enteredObj.GetComponentInParent<TagComponent>();
-                if (tagComponent != null && target.IsMatch(tagComponent.gameObject))
-                {
-                    isTargetPointered = true;
-                }
-            }
+
+            TagComponent tagComponent = enteredObject.GetComponentInParent<TagComponent>();
+            return tagComponent != null && Target.IsMatch(tagComponent.gameObject);
         }
 
         private IEnumerator WaitForTargetPointerEnterCoroutine()
@@ -71,6 +69,12 @@ namespace GearEngine.Actions.Input
 
             Cleanup();
             Continue();
+        }
+
+        public override void OnStopExecuting()
+        {
+            Cleanup();
+            base.OnStopExecuting();
         }
 
         private void Cleanup()
@@ -88,12 +92,12 @@ namespace GearEngine.Actions.Input
 
         public override string GetSummary()
         {
-            if (target == null)
+            if (Target == null)
             {
                 return "Error: No Target";
             }
 
-            return target.GetSummary();
+            return Target.GetSummary();
         }
     }
 }

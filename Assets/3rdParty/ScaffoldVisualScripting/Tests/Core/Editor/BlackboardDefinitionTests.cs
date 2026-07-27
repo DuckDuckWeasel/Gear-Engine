@@ -336,6 +336,13 @@ namespace Scaffold.VisualScripting.Tests
 
             public bool IsExecuting => isExecuting;
 
+            public override void Execute(
+                ActionExecutionContext context,
+                Action<ActionExecutionStatus> onComplete)
+            {
+                onComplete.Invoke(ActionExecutionStatus.Success);
+            }
+
             public void SetTransientState(int cachedValue, bool executing)
             {
                 cache = cachedValue;

@@ -61,3 +61,28 @@ definition-valued templates, resets owned cells, and unregisters public cells wh
 disposed. Save records address the runtime instance and definition IDs rather than
 scene names. Event bus, Blackboard registry, time, frame scheduling, save service,
 logging, value serialization, and text substitution are explicit injected contracts.
+
+## Action execution
+
+`IAction.Execute` receives an immutable `ActionExecutionContext` and a completion
+callback carrying `ActionExecutionStatus`. The context exposes only the current plain
+Blackboard, Block, track, action list, flow controller, scheduler, time source, event
+bus, save service, logger, runtime ID, and stable execution IDs. Core actions never
+receive a `MonoBehaviour` or concrete legacy Command.
+
+`ActionList` and `Block` are plain runtime composites. They use the shared
+`CompositeExecutionRunner` Strategy engine for Sequence, Selector, Parallel, Parallel
+Selector, Utility Selector, WaitAll, WaitAny, WaitNone, ordered/random/shuffled
+selection, weights, repeat prevention, interruption, utility reevaluation, and
+execution feedback. `BlockFlowController` maps action jumps and stop requests to the
+owning plain Block.
+
+Scheduled actions use `IFrameScheduler.Schedule`, `ScheduleNextFrame`, or
+`ScheduleRoutine`. Returned handles are owned by the executing action and disposed
+when it completes or is interrupted. Unity coroutine hosts are not part of the Core
+execution path.
+
+During the pre-cutover milestones, the Gear action bridge retains a legacy execution
+overload so the characterized component runner continues compiling. This overload is
+not a Core API and is deleted with the legacy component graph during the breaking
+cutover.

@@ -7,26 +7,8 @@ using System;
 
 namespace Scaffold
 {
-    /// <summary>
-    /// Supported modes for calling a block.
-    /// </summary>
-    public enum CallMode
-    {
-        /// <summary> Stop executing the current block after calling. </summary>
-        Stop,
-        /// <summary> Continue executing the current block after calling  </summary>
-        Continue,
-        /// <summary> Wait until the called block finishes executing, then continue executing current block. </summary>
-        WaitUntilFinished,
-        /// <summary> Stop executing the current block before attempting to call. This allows for circular calls within the same frame </summary>
-        StopThenCall
-    }
-
-    /// <summary>
-    /// Execute another block in the same Blackboard as the command, or in a different Blackboard.
-    /// </summary>
-    [CommandInfo("Flow", 
-                 "Call", 
+    [CommandInfo("Flow",
+                 "Call",
                  "Execute another block in the same Blackboard as the command, or in a different Blackboard.")]
     [Serializable]
     public class Call : ActionBase, IBlockCaller
@@ -44,7 +26,7 @@ namespace Scaffold
         [Tooltip("Command index to start executing")]
         [FormerlySerializedAs("commandIndex")]
         [SerializeField] protected int startIndex;
-    
+
         [Tooltip("Select if the calling block should stop or continue executing commands, or wait until the called block finishes.")]
         [SerializeField] protected CallMode callMode;
 
@@ -52,68 +34,96 @@ namespace Scaffold
 
         public override void OnEnter()
         {
-            if (targetBlock != null)
+            if (targetBlock != null && !TryCallTarget())
             {
-                // Check if calling your own parent block
-                if (ParentBlock != null && ParentBlock.Equals(targetBlock))
-                {
-                    // Just ignore the callmode in this case, and jump to first command in list
-                    Continue(0);
-                    return;
-                }
-
-                if(targetBlock.IsExecuting())
-                {
-                    Debug.LogWarning(targetBlock.BlockName + " cannot be called/executed, it is already running.");
-                    Continue();
-                    return;
-                }
-
-                // Callback action for Wait Until Finished mode
-                Action onComplete = null;
-                if (callMode == CallMode.WaitUntilFinished)
-                {
-                    onComplete = delegate {
-                        Continue();
-                    };
-                }
-
-                // Find the command index to start execution at
-                int index = startIndex;
-                if (startLabel.Value != "")
-                {
-                    int labelIndex = targetBlock.GetLabelIndex(startLabel.Value);
-                    if (labelIndex != -1)
-                    {
-                        index = labelIndex;
-                    }
-                }
-
-                if (targetBlackboard == null ||
-                    targetBlackboard.Equals(GetBlackboard()))
-                {
-                    if (callMode == CallMode.StopThenCall)
-                    {
-                        StopParentBlock();
-                    }
-                    host.StartCoroutine(targetBlock.Execute(index, onComplete));
-                }
-                else
-                {
-                    if (callMode == CallMode.StopThenCall)
-                    {
-                        StopParentBlock();
-                    }
-                    // Execute block in another Blackboard
-                    targetBlackboard.ExecuteBlock(targetBlock, index, onComplete);
-                }
+                return;
             }
 
+            CompleteCaller();
+        }
+
+        private bool TryCallTarget()
+        {
+            if (IsSelfCall())
+            {
+                Continue(0);
+                return false;
+            }
+            if (IsTargetRunning())
+            {
+                Continue();
+                return false;
+            }
+
+            ExecuteTarget(ResolveStartIndex(), CreateCompletion());
+            return true;
+        }
+
+        private bool IsSelfCall()
+        {
+            return ParentBlock != null && ParentBlock.Equals(targetBlock);
+        }
+
+        private bool IsTargetRunning()
+        {
+            if (!targetBlock.IsExecuting())
+            {
+                return false;
+            }
+
+            Debug.LogWarning(targetBlock.BlockName + " cannot be called/executed, it is already running.");
+            return true;
+        }
+
+        private int ResolveStartIndex()
+        {
+            if (startLabel.Value == "")
+            {
+                return startIndex;
+            }
+
+            int labelIndex = targetBlock.GetLabelIndex(startLabel.Value);
+            return labelIndex == -1 ? startIndex : labelIndex;
+        }
+
+        private Action CreateCompletion()
+        {
+            return callMode == CallMode.WaitUntilFinished ? () => Continue() : null;
+        }
+
+        private void ExecuteTarget(int index, Action completion)
+        {
+            StopBeforeCall();
+            if (IsLocalTarget())
+            {
+                bool detached = callMode != CallMode.WaitUntilFinished;
+                RunRoutine(targetBlock.Execute(index, completion), detached);
+                return;
+            }
+
+            targetBlackboard.ExecuteBlock(targetBlock, index, completion);
+        }
+
+        private void StopBeforeCall()
+        {
+            if (callMode == CallMode.StopThenCall)
+            {
+                StopParentBlock();
+            }
+        }
+
+        private bool IsLocalTarget()
+        {
+            return targetBlackboard == null || targetBlackboard.Equals(GetBlackboard());
+        }
+
+        private void CompleteCaller()
+        {
             if (callMode == CallMode.Stop)
             {
                 StopParentBlock();
             }
-            else if (callMode == CallMode.Continue)
+            if (callMode == CallMode.Continue)
             {
                 Continue();
             }
@@ -124,9 +134,9 @@ namespace Scaffold
             if (targetBlock != null)
             {
                 connectedBlocks.Add(targetBlock);
-            }       
+            }
         }
-        
+
         public override string GetSummary()
         {
             string summary = "";

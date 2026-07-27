@@ -7,11 +7,8 @@ using System.Collections;
 
 namespace Scaffold
 {
-    /// <summary>
-    /// Waits for a number of frames before executing the next command in the block.
-    /// </summary>
-    [CommandInfo("Flow", 
-                 "Wait Frames", 
+    [CommandInfo("Flow",
+                 "Wait Frames",
                  "Waits for a number of frames before executing the next command in the block.")]
     [AddComponentMenu("")]
     [ExecuteInEditMode]
@@ -20,6 +17,11 @@ namespace Scaffold
     {
         [Tooltip("Number of frames to wait for")]
         [SerializeField] protected IntegerData frameCount = new IntegerData(1);
+
+        public override void OnEnter()
+        {
+            RunRoutine(WaitForFrames());
+        }
 
         protected virtual IEnumerator WaitForFrames()
         {
@@ -34,11 +36,6 @@ namespace Scaffold
         }
 
         #region Public members
-
-        public override void OnEnter()
-        {
-            host.StartCoroutine(WaitForFrames());
-        }
 
         public override string GetSummary()
         {

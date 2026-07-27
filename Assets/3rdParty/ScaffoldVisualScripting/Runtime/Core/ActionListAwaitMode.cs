@@ -4,5 +4,6 @@ namespace Scaffold.VisualScripting
     {
         WaitAll,
         WaitAny,
+        WaitNone,
     }
 }

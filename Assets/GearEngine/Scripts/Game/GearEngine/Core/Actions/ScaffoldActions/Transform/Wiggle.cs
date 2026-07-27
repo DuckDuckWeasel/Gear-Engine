@@ -12,18 +12,18 @@ namespace Scaffold
     {
         [Tooltip("The Transform to wiggle")]
         [SerializeField] protected GameObjectData targetGameObject;
-        
+
         [Tooltip("Wiggle position?")]
         [SerializeField] protected bool wigglePosition = true;
         [SerializeField] protected Vector3Data positionAmplitude = new Vector3Data(new Vector3(0.5f, 0.5f, 0.5f));
-        
+
         [Tooltip("Wiggle rotation?")]
         [SerializeField] protected bool wiggleRotation = true;
         [SerializeField] protected Vector3Data rotationAmplitude = new Vector3Data(new Vector3(10f, 10f, 10f));
 
         [Tooltip("Wiggle duration")]
         [SerializeField] protected FloatData duration = new FloatData(1f);
-        
+
         [Tooltip("Wiggle speed frequency")]
         [SerializeField] protected FloatData speed = new FloatData(10f);
 
@@ -32,9 +32,9 @@ namespace Scaffold
 
         public override void OnEnter()
         {
-            if (targetGameObject.Value != null && blackboard != null)
+            if (targetGameObject.Value != null && CanRunScheduledWork)
             {
-                blackboard.StartCoroutine(WiggleRoutine());
+                RunRoutine(WiggleRoutine(), !waitUntilFinished);
             }
             else
             {
@@ -44,48 +44,86 @@ namespace Scaffold
 
         private IEnumerator WiggleRoutine()
         {
-            Transform t = targetGameObject.Value.transform;
-            Vector3 startPos = t.localPosition;
-            Vector3 startRot = t.localEulerAngles;
+            Transform target = targetGameObject.Value.transform;
+            Vector3 startPosition = target.localPosition;
+            Vector3 startRotation = target.localEulerAngles;
             float elapsed = 0f;
-
-            if (!waitUntilFinished) Continue();
-
+            CompleteDetachedAction();
             while (elapsed < duration.Value)
             {
-                elapsed += Time.deltaTime;
-                
-                if (wigglePosition)
-                {
-                    float noiseX = (Mathf.PerlinNoise(Time.time * speed.Value, 0) - 0.5f) * 2f;
-                    float noiseY = (Mathf.PerlinNoise(0, Time.time * speed.Value) - 0.5f) * 2f;
-                    float noiseZ = (Mathf.PerlinNoise(Time.time * speed.Value, Time.time * speed.Value) - 0.5f) * 2f;
-                    t.localPosition = startPos + new Vector3(noiseX * positionAmplitude.Value.x, noiseY * positionAmplitude.Value.y, noiseZ * positionAmplitude.Value.z);
-                }
-                
-                if (wiggleRotation)
-                {
-                    float noiseX = (Mathf.PerlinNoise(Time.time * speed.Value + 10, 0) - 0.5f) * 2f;
-                    float noiseY = (Mathf.PerlinNoise(0, Time.time * speed.Value + 10) - 0.5f) * 2f;
-                    float noiseZ = (Mathf.PerlinNoise(Time.time * speed.Value + 10, Time.time * speed.Value + 10) - 0.5f) * 2f;
-                    t.localEulerAngles = startRot + new Vector3(noiseX * rotationAmplitude.Value.x, noiseY * rotationAmplitude.Value.y, noiseZ * rotationAmplitude.Value.z);
-                }
-
+                elapsed += CurrentDeltaTime;
+                float currentTime = (float)CurrentElapsedSeconds;
+                ApplyWiggle(target, startPosition, startRotation, currentTime);
                 yield return null;
             }
 
-            t.localPosition = startPos;
-            t.localEulerAngles = startRot;
+            ResetTransform(target, startPosition, startRotation);
+            CompleteAwaitedAction();
+        }
 
-            if (waitUntilFinished) Continue();
+        private void CompleteDetachedAction()
+        {
+            if (!waitUntilFinished)
+            {
+                Continue();
+            }
+        }
+
+        private void ApplyWiggle(Transform target, Vector3 startPosition, Vector3 startRotation, float currentTime)
+        {
+            if (wigglePosition)
+            {
+                ApplyPositionWiggle(target, startPosition, currentTime);
+            }
+            if (wiggleRotation)
+            {
+                ApplyRotationWiggle(target, startRotation, currentTime);
+            }
+        }
+
+        private void ApplyPositionWiggle(Transform target, Vector3 startPosition, float currentTime)
+        {
+            float noiseX = (Mathf.PerlinNoise(currentTime * speed.Value, 0) - 0.5f) * 2f;
+            float noiseY = (Mathf.PerlinNoise(0, currentTime * speed.Value) - 0.5f) * 2f;
+            float noiseZ = (Mathf.PerlinNoise(currentTime * speed.Value, currentTime * speed.Value) - 0.5f) * 2f;
+            Vector3 noise = new Vector3(noiseX, noiseY, noiseZ);
+            target.localPosition = startPosition + Vector3.Scale(noise, positionAmplitude.Value);
+        }
+
+        private void ApplyRotationWiggle(Transform target, Vector3 startRotation, float currentTime)
+        {
+            float sample = currentTime * speed.Value + 10f;
+            float noiseX = (Mathf.PerlinNoise(sample, 0) - 0.5f) * 2f;
+            float noiseY = (Mathf.PerlinNoise(0, sample) - 0.5f) * 2f;
+            float noiseZ = (Mathf.PerlinNoise(sample, sample) - 0.5f) * 2f;
+            Vector3 noise = new Vector3(noiseX, noiseY, noiseZ);
+            target.localEulerAngles = startRotation + Vector3.Scale(noise, rotationAmplitude.Value);
+        }
+
+        private void ResetTransform(Transform target, Vector3 startPosition, Vector3 startRotation)
+        {
+            target.localPosition = startPosition;
+            target.localEulerAngles = startRotation;
+        }
+
+        private void CompleteAwaitedAction()
+        {
+            if (waitUntilFinished)
+            {
+                Continue();
+            }
         }
 
         public override string GetSummary()
         {
-            if (targetGameObject.Value == null) return "Error: No target";
+            if (targetGameObject.Value == null)
+            {
+                return "Error: No target";
+            }
+
             return $"Wiggle {targetGameObject.Value.name}";
         }
-        
+
         public override Color GetButtonColor() { return new Color32(228, 237, 204, 255); }
     }
 }

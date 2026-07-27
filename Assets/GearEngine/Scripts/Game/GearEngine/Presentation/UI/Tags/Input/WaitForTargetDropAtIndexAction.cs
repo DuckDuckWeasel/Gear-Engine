@@ -15,20 +15,13 @@ using GearEngine.GearEngine.Presentation.UI.Input;
 
 namespace GearEngine.Actions.Input
 {
-    [Serializable]
-    public class DropTargetConfig
-    {
-        public TargetReference target = new TargetReference();
-        public List<int> allowedNodeIndices = new List<int>();
-    }
-
     [CommandInfo("Input", "Wait For Target Drop At Index", "Waits until a drag target is dropped onto a specific slot index.")]
     [Serializable]
     public class WaitForTargetDropAtIndexAction : WaitForInputActionBase
     {
 
         [Header("Drag-side Target")]
-        public TargetReference dragTarget = new TargetReference();
+        public TargetReference DragTarget = new TargetReference();
 
         [Header("Drop-side configurations")]
         [SerializeField]
@@ -38,84 +31,114 @@ namespace GearEngine.Actions.Input
         private bool checkGameObject = false;
 
         private bool isTargetDropped;
+        [NonSerialized] private IDisposable waitHandle;
+
         public override void OnEnter()
         {
-
-            if (dropConfigs == null || dropConfigs.Count == 0)
+            if (!ValidateConfiguration())
             {
-                Debug.LogError($"[WaitForTargetDropAtIndex] Invalid configuration.");
-                Finish(false);
                 return;
             }
 
             InitializeInputService();
+            ConfigureFilters();
+            Subscribe();
+            isTargetDropped = false;
+            waitHandle = RunRoutine(WaitForDrop());
+        }
 
-            // Provide filtering for UI highlights/raycasts based on target references
-            _inputService.FilterForButtonDownTarget(dragTarget);
-            _inputService.FilterForPointerEnterTarget(dragTarget);
-
-            List<TargetReference> dropTargetRefs = new List<TargetReference>();
-            foreach (DropTargetConfig cfg in dropConfigs)
+        private bool ValidateConfiguration()
+        {
+            if (dropConfigs != null && dropConfigs.Count > 0)
             {
-                dropTargetRefs.Add(cfg.target);
+                return true;
             }
-            _inputService.FilterForDropEnterTargets(checkGameObject, dropTargetRefs);
 
+            Debug.LogError("[WaitForTargetDropAtIndex] Invalid configuration.");
+            Finish(false);
+            return false;
+        }
+
+        private void ConfigureFilters()
+        {
+            _inputService.FilterForButtonDownTarget(DragTarget);
+            _inputService.FilterForPointerEnterTarget(DragTarget);
+            List<TargetReference> dropTargets = new List<TargetReference>();
+            foreach (DropTargetConfig config in dropConfigs)
+            {
+                dropTargets.Add(config.Target);
+            }
+            _inputService.FilterForDropEnterTargets(checkGameObject, dropTargets);
+        }
+
+        private void Subscribe()
+        {
             _eventBus.AddListener<ScreenDroppedEvent>(OnDrop);
             _eventBus.AddListener<ScreenPointerExitEvent>(OnPointerExit);
-
-            isTargetDropped = false;
-            hostCommand.StartCoroutine(WaitForDrop());
         }
 
         private void OnDrop(ScreenDroppedEvent signal)
         {
-            GameObject go = signal.DropTopResult;
-            if (go == null)
+            GameObject droppedObject = signal.DropTopResult;
+            if (droppedObject == null)
             {
                 Finish(false);
                 return;
             }
 
+            DropTargetConfig dropConfig = FindMatchingConfig(droppedObject);
+            if (dropConfig == null)
+            {
+                Finish(false);
+                return;
+            }
+
+            CompleteDrop(dropConfig, droppedObject);
+        }
+
+        private void CompleteDrop(DropTargetConfig dropConfig, GameObject droppedObject)
+        {
+            List<GameObject> allMatching = GetAllMatchingObjects(dropConfig.Target);
+            int index = ResolveDroppedIndex(droppedObject, allMatching);
+            bool success = index >= 0 && dropConfig.AllowedNodeIndices.Contains(index);
+            isTargetDropped = success;
+            Finish(success);
+        }
+
+        private DropTargetConfig FindMatchingConfig(GameObject droppedObject)
+        {
             foreach (DropTargetConfig dropConfig in dropConfigs)
             {
-                if (!dropConfig.target.IsMatch(go))
+                if (IsTargetMatch(dropConfig.Target, droppedObject))
                 {
-                    // Fallback to parents
-                    TagComponent parentTagComp = go.GetComponentInParent<TagComponent>();
-                    if (parentTagComp == null || !dropConfig.target.IsMatch(parentTagComp.gameObject))
-                    {
-                        continue;
-                    }
-                }
-
-                List<GameObject> allMatching = GetAllMatchingObjects(dropConfig.target);
-                int indexToCheck = allMatching.IndexOf(go);
-
-                // Also check if index was from the parent component
-                if (indexToCheck < 0)
-                {
-                    TagComponent parentTagComp = go.GetComponentInParent<TagComponent>();
-                    if (parentTagComp != null)
-                    {
-                        indexToCheck = allMatching.IndexOf(parentTagComp.gameObject);
-                    }
-                }
-
-                if (indexToCheck >= 0 && dropConfig.allowedNodeIndices.Contains(indexToCheck))
-                {
-                    isTargetDropped = true;
-                    Finish(true);
-                    return;
-                }
-                else
-                {
-                    Finish(false);
-                    return;
+                    return dropConfig;
                 }
             }
 
-            Finish(false);
+            return null;
+        }
+
+        private bool IsTargetMatch(TargetReference targetReference, GameObject droppedObject)
+        {
+            if (targetReference.IsMatch(droppedObject))
+            {
+                return true;
+            }
+
+            TagComponent parentTag = droppedObject.GetComponentInParent<TagComponent>();
+            return parentTag != null && targetReference.IsMatch(parentTag.gameObject);
+        }
+
+        private int ResolveDroppedIndex(GameObject droppedObject, List<GameObject> allMatching)
+        {
+            int index = allMatching.IndexOf(droppedObject);
+            if (index >= 0)
+            {
+                return index;
+            }
+
+            TagComponent parentTag = droppedObject.GetComponentInParent<TagComponent>();
+            return parentTag == null ? -1 : allMatching.IndexOf(parentTag.gameObject);
         }
 
         private void OnPointerExit(ScreenPointerExitEvent _)
@@ -134,16 +157,9 @@ namespace GearEngine.Actions.Input
 
         private void Finish(bool success)
         {
-            if (_eventBus != null)
-            {
-                _eventBus.RemoveListener<ScreenDroppedEvent>(OnDrop);
-                _eventBus.RemoveListener<ScreenPointerExitEvent>(OnPointerExit);
-            }
-
-            if (_inputService != null)
-            {
-                _inputService.ClearAllFilters();
-            }
+            Cleanup();
+            waitHandle?.Dispose();
+            waitHandle = null;
 
             if (success)
             {
@@ -151,48 +167,75 @@ namespace GearEngine.Actions.Input
             }
             else
             {
-                hostCommand.StopAllCoroutines();
+                Fail();
             }
+        }
+
+        public override void OnStopExecuting()
+        {
+            waitHandle?.Dispose();
+            waitHandle = null;
+            Cleanup();
+            base.OnStopExecuting();
+        }
+
+        private void Cleanup()
+        {
+            if (_eventBus != null)
+            {
+                _eventBus.RemoveListener<ScreenDroppedEvent>(OnDrop);
+                _eventBus.RemoveListener<ScreenPointerExitEvent>(OnPointerExit);
+            }
+
+            _inputService?.ClearAllFilters();
         }
 
         private List<GameObject> GetAllMatchingObjects(TargetReference targetRef)
         {
-            TagComponent[] allComponents = UnityEngine.Object.FindObjectsOfType<TagComponent>();
             List<GameObject> list = new List<GameObject>();
-
             if (targetRef.strategy == TargetResolutionStrategy.Tags)
             {
-                foreach (TagComponent comp in allComponents)
-                {
-                    if (targetRef.IsMatch(comp.gameObject))
-                    {
-                        list.Add(comp.gameObject);
-                    }
-                }
+                AddTaggedObjects(targetRef, list);
             }
             else
             {
-                List<GameObject> resolvedTargets = targetRef.ResolveAll();
-                if (resolvedTargets != null)
-                {
-                    list.AddRange(resolvedTargets);
-                }
+                AddResolvedObjects(targetRef, list);
             }
 
-            // Sort by sibling index as a fallback for deterministic indexing
             list.Sort((a, b) => a.transform.GetSiblingIndex().CompareTo(b.transform.GetSiblingIndex()));
             return list;
         }
 
+        private void AddTaggedObjects(TargetReference targetRef, List<GameObject> list)
+        {
+            TagComponent[] allComponents = UnityEngine.Object.FindObjectsOfType<TagComponent>();
+            foreach (TagComponent component in allComponents)
+            {
+                if (targetRef.IsMatch(component.gameObject))
+                {
+                    list.Add(component.gameObject);
+                }
+            }
+        }
+
+        private void AddResolvedObjects(TargetReference targetRef, List<GameObject> list)
+        {
+            List<GameObject> resolvedTargets = targetRef.ResolveAll();
+            if (resolvedTargets != null)
+            {
+                list.AddRange(resolvedTargets);
+            }
+        }
+
         public override string GetSummary()
         {
-            if (dragTarget == null)
+            if (DragTarget == null)
             {
                 return "Error: No Drag Target";
             }
 
             int count = dropConfigs != null ? dropConfigs.Count : 0;
-            return $"{dragTarget.GetSummary()} -> [{count} Slots]";
+            return $"{DragTarget.GetSummary()} -> [{count} Slots]";
         }
     }
 }

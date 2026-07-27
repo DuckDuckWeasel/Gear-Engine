@@ -5,26 +5,8 @@ using UnityEngine;
 
 namespace Scaffold
 {
-    /// <summary>
-    /// Text coloring mode for Write command.
-    /// </summary>
-    public enum TextColor
-    {
-        /// <summary> Don't change the text color. </summary>
-        Default,
-        /// <summary> Set the text alpha to 1. </summary>
-        SetVisible,
-        /// <summary> Set the text alpha to a value. </summary>
-        SetAlpha,
-        /// <summary> Set the text color to a value. </summary>
-        SetColor
-    }
-
-    /// <summary>
-    /// Writes content to a UI Text or Text Mesh object.
-    /// </summary>
-    [CommandInfo("UI", 
-                 "Write", 
+    [CommandInfo("UI",
+                 "Write",
                  "Writes content to a UI Text or Text Mesh object.")]
     [Serializable]
     public class Write : ActionBase, ILocalizable
@@ -53,17 +35,6 @@ namespace Scaffold
         [Tooltip("Color to apply to the text.")]
         [SerializeField] protected ColorData setColor = new ColorData(Color.white);
 
-        protected Writer GetWriter()
-        {
-            var writer = textObject.gameObject.GetComponent<Writer>();
-            if (writer == null)
-            {
-                writer = textObject.AddComponent<Writer>();
-            }
-            
-            return writer;
-        }
-
         #region Public members
 
         public override void OnEnter()
@@ -73,40 +44,38 @@ namespace Scaffold
                 Continue();
                 return;
             }
-        
-            var writer = GetWriter();
+
+            Writer writer = GetWriter();
             if (writer == null)
             {
                 Continue();
                 return;
             }
 
+            ApplyTextColor(writer);
+            Blackboard blackboard = GetBlackboard();
+            string newText = blackboard.SubstituteVariables(text.Value);
+            StartWrite(writer, newText);
+        }
+
+        private void ApplyTextColor(Writer writer)
+        {
             switch (textColor)
             {
-            case TextColor.SetAlpha:
-                writer.SetTextAlpha(setAlpha);
-                break;
-            case TextColor.SetColor:
-                writer.SetTextColor(setColor);
-                break;
-            case TextColor.SetVisible:
-                writer.SetTextAlpha(1f);
-                break;
+                case TextColor.SetAlpha: writer.SetTextAlpha(setAlpha); break;
+                case TextColor.SetColor: writer.SetTextColor(setColor); break;
+                case TextColor.SetVisible: writer.SetTextAlpha(1f); break;
             }
+        }
 
-            var blackboard = GetBlackboard();
-            string newText = blackboard.SubstituteVariables(text.Value);
-
+        private void StartWrite(Writer writer, string newText)
+        {
+            Action completion = waitUntilFinished ? Continue : null;
+            System.Collections.IEnumerator routine = writer.Write(newText, clearText, false, true, false, null, completion);
+            RunRoutine(routine, !waitUntilFinished);
             if (!waitUntilFinished)
             {
-                host.StartCoroutine(writer.Write(newText, clearText, false, true, false, null, null));
                 Continue();
-            }
-            else
-            {
-                host.StartCoroutine(writer.Write(newText, clearText, false, true, false, null,
-                             () => { Continue (); }
-                ));
             }
         }
 
@@ -130,6 +99,17 @@ namespace Scaffold
             GetWriter().Stop();
         }
 
+        protected Writer GetWriter()
+        {
+            Writer writer = textObject.gameObject.GetComponent<Writer>();
+            if (writer == null)
+            {
+                writer = textObject.AddComponent<Writer>();
+            }
+
+            return writer;
+        }
+
         #endregion
 
         #region ILocalizable implementation
@@ -148,7 +128,7 @@ namespace Scaffold
         {
             return description;
         }
-        
+
         public virtual string GetStringId()
         {
             // String id for Write commands is WRITE.<Localization Id>.<Command id>

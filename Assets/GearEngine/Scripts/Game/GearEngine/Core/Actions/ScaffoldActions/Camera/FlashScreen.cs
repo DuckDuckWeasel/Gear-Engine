@@ -13,7 +13,7 @@ namespace Scaffold
     {
         [Tooltip("The color to flash")]
         [SerializeField] protected ColorData color = new ColorData(Color.white);
-        
+
         [Tooltip("Duration of the fade out")]
         [SerializeField] protected FloatData duration = new FloatData(0.5f);
 
@@ -22,9 +22,9 @@ namespace Scaffold
 
         public override void OnEnter()
         {
-            if (blackboard != null)
+            if (CanRunScheduledWork)
             {
-                blackboard.StartCoroutine(FlashRoutine());
+                RunRoutine(FlashRoutine(), !waitUntilFinished);
             }
             else
             {
@@ -34,41 +34,53 @@ namespace Scaffold
 
         private IEnumerator FlashRoutine()
         {
-            // Create a temporary canvas and image to flash the screen
-            GameObject canvasObj = new GameObject("FlashCanvas");
-            Canvas canvas = canvasObj.AddComponent<Canvas>();
+            CreateFlash(out GameObject canvasObject, out Image image);
+            CompleteDetachedAction();
+            float elapsed = 0f;
+            Color startColor = color.Value;
+            Color endColor = new Color(startColor.r, startColor.g, startColor.b, 0f);
+            while (elapsed < duration.Value)
+            {
+                elapsed += CurrentDeltaTime;
+                image.color = Color.Lerp(startColor, endColor, elapsed / duration.Value);
+                yield return null;
+            }
+
+            GameObject.Destroy(canvasObject);
+            CompleteAwaitedAction();
+        }
+
+        private void CreateFlash(out GameObject canvasObject, out Image image)
+        {
+            canvasObject = new GameObject("FlashCanvas");
+            Canvas canvas = canvasObject.AddComponent<Canvas>();
             canvas.renderMode = RenderMode.ScreenSpaceOverlay;
             canvas.sortingOrder = 9999;
-            
-            GameObject imgObj = new GameObject("FlashImage");
-            imgObj.transform.SetParent(canvasObj.transform, false);
-            Image img = imgObj.AddComponent<Image>();
-            img.color = color.Value;
-            
-            RectTransform rect = img.rectTransform;
+            GameObject imageObject = new GameObject("FlashImage");
+            imageObject.transform.SetParent(canvasObject.transform, false);
+            image = imageObject.AddComponent<Image>();
+            image.color = color.Value;
+            ConfigureRect(image.rectTransform);
+        }
+
+        private void ConfigureRect(RectTransform rect)
+        {
             rect.anchorMin = Vector2.zero;
             rect.anchorMax = Vector2.one;
             rect.offsetMin = Vector2.zero;
             rect.offsetMax = Vector2.zero;
+        }
 
+        private void CompleteDetachedAction()
+        {
             if (!waitUntilFinished)
             {
                 Continue();
             }
+        }
 
-            float elapsed = 0f;
-            Color startColor = color.Value;
-            Color endColor = new Color(startColor.r, startColor.g, startColor.b, 0f);
-
-            while (elapsed < duration.Value)
-            {
-                elapsed += Time.deltaTime;
-                img.color = Color.Lerp(startColor, endColor, elapsed / duration.Value);
-                yield return null;
-            }
-
-            GameObject.Destroy(canvasObj);
-
+        private void CompleteAwaitedAction()
+        {
             if (waitUntilFinished)
             {
                 Continue();
@@ -79,7 +91,7 @@ namespace Scaffold
         {
             return $"Flash screen {color.Value} for {duration.Value}s";
         }
-        
+
         public override Color GetButtonColor() { return new Color32(216, 228, 240, 255); }
     }
 }

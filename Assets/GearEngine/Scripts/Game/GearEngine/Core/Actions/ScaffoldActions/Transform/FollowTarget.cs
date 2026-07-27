@@ -12,10 +12,10 @@ namespace Scaffold
     {
         [Tooltip("The GameObject that will follow")]
         [SerializeField] protected GameObjectData follower;
-        
+
         [Tooltip("The target to follow")]
         [SerializeField] protected GameObjectData target;
-        
+
         [Tooltip("Follow speed")]
         [SerializeField] protected FloatData speed = new FloatData(5f);
 
@@ -24,9 +24,9 @@ namespace Scaffold
 
         public override void OnEnter()
         {
-            if (follower.Value != null && target.Value != null && blackboard != null)
+            if (follower.Value != null && target.Value != null && CanRunScheduledWork)
             {
-                blackboard.StartCoroutine(FollowRoutine());
+                RunRoutine(FollowRoutine(), true);
             }
             Continue();
         }
@@ -36,17 +36,22 @@ namespace Scaffold
             while (follower.Value != null && target.Value != null)
             {
                 Vector3 targetPos = target.Value.transform.position + offset.Value;
-                follower.Value.transform.position = Vector3.Lerp(follower.Value.transform.position, targetPos, Time.deltaTime * speed.Value);
+                Vector3 currentPosition = follower.Value.transform.position;
+                follower.Value.transform.position = Vector3.Lerp(currentPosition, targetPos, CurrentDeltaTime * speed.Value);
                 yield return null;
             }
         }
 
         public override string GetSummary()
         {
-            if (follower.Value == null || target.Value == null) return "Error: Missing objects";
+            if (follower.Value == null || target.Value == null)
+            {
+                return "Error: Missing objects";
+            }
+
             return $"Follow {target.Value.name}";
         }
-        
+
         public override Color GetButtonColor() { return new Color32(228, 237, 204, 255); }
     }
 }

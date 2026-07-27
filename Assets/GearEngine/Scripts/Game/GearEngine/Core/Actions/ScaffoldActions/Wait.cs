@@ -6,9 +6,6 @@ using UnityEngine.Serialization;
 
 namespace Scaffold
 {
-    /// <summary>
-    /// Waits for period of time before executing the next command in the block.
-    /// </summary>
     [CommandInfo("Flow",
                  "Wait",
                  "Waits for period of time before executing the next command in the block.")]
@@ -37,7 +34,7 @@ namespace Scaffold
         public override void OnEnter()
         {
             activeWaitDuration = Mathf.Max(0f, duration.Value);
-            waitStartedAt = Time.time;
+            waitStartedAt = (float)CurrentElapsedSeconds;
             isWaiting = activeWaitDuration > 0f;
             Invoke("OnWaitComplete", activeWaitDuration);
         }
@@ -50,7 +47,8 @@ namespace Scaffold
                 return false;
             }
 
-            progress = Mathf.Clamp01((Time.time - waitStartedAt) / activeWaitDuration);
+            float elapsed = (float)CurrentElapsedSeconds - waitStartedAt;
+            progress = Mathf.Clamp01(elapsed / activeWaitDuration);
             return true;
         }
 

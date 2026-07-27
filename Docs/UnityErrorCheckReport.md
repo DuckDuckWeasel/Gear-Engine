@@ -2,7 +2,7 @@
 
 ## Check
 
-- Timestamp: 2026-07-27 11:03:42 -03
+- Timestamp: 2026-07-27 13:23:32 -03
 - Unity version: 6000.5.3f1
 - Checked log: `/Users/leonardosilva/Library/Logs/Unity/Editor.log`
 - Parser command:
@@ -21,6 +21,9 @@
 | Pure EditMode `BlackboardDefinitionTests` | 14 passed, 0 failed; Unity log contained no compiler error or exception. |
 | Pure EditMode `BlackboardVariableRuntimeTests` | 13 passed, 0 failed; Unity log contained no compiler error or exception. |
 | Milestone 3 regression `BlackboardDefinitionTests` | 14 passed, 0 failed; Unity log contained no compiler error or exception. |
+| Milestone 4 `ActionRuntimeTests` | 16 passed, 0 failed; Unity log contained no compiler error or exception. |
+| Milestone 4 `ActionContextBridgeTests` | 7 passed, 0 failed; delay and IEnumerator scheduler paths ran without a `GameObject`. |
+| Milestone 4 legacy `InvokeActionCommandTests` | 39 passed, 0 failed after the action-context and scheduler migration. |
 | Milestone 3 Unity compilation precheck | Passed with Unity 6000.5.3f1 after importing the variable/service layer. |
 | Escalated `.agents/scripts/validate-changes.sh` compilation precheck | Passed with Unity 6000.5.3f1. |
 | `dotnet build Assembly-CSharp-Editor.csproj --no-restore` | Succeeded with 0 warnings and 0 errors. |
@@ -48,11 +51,17 @@ baseline required test-only corrections:
   `System.Object` ambiguity found on first import.
 - The variable generic types now use untyped base names ending in `Base`, satisfying
   the one-top-level-type filename rule without changing runtime behavior.
+- Gear actions now route scheduled delays and IEnumerators through the injected Core
+  scheduler. Direct coroutine starts remain only in the quarantined legacy adapter
+  and actual engine-facing UI components.
+- Analyzer-driven decomposition resolved all 112 unique diagnostics found across the
+  changed legacy action surface. The final formatter, analyzer, and structure checks
+  are clean.
 
 ## Remaining issue
 
-The Unity compiler gate is clean for the final Milestone 3 sources, as demonstrated by
-the final 13-test Unity run and an empty Editor-log parser result. The standalone
+The Unity compiler gate is clean for the final Milestone 4 sources, as demonstrated by
+the final 16-, 7-, and 39-test Unity runs and an empty Editor-log parser result. The standalone
 generated runtime-project path remains an infrastructure limitation: its post-change
 attempts did not reach a compiler result or emit a diagnostic. The generated Editor
 project build is clean.

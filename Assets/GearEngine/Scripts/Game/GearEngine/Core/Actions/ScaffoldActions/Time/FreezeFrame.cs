@@ -12,7 +12,7 @@ namespace Scaffold
     {
         [Tooltip("The time scale to set during the freeze (usually 0 or very close to 0)")]
         [SerializeField] protected FloatData targetTimeScale = new FloatData(0f);
-        
+
         [Tooltip("How long to stay frozen in real unscaled seconds")]
         [SerializeField] protected FloatData freezeDuration = new FloatData(0.1f);
 
@@ -21,9 +21,9 @@ namespace Scaffold
 
         public override void OnEnter()
         {
-            if (blackboard != null)
+            if (CanRunScheduledWork)
             {
-                blackboard.StartCoroutine(FreezeRoutine());
+                RunRoutine(FreezeRoutine(), !waitUntilFinished);
             }
             else
             {
@@ -35,7 +35,7 @@ namespace Scaffold
         {
             float originalTimeScale = Time.timeScale;
             Time.timeScale = targetTimeScale.Value;
-            
+
             if (!waitUntilFinished)
             {
                 Continue();
@@ -55,7 +55,7 @@ namespace Scaffold
         {
             return $"Scale: {targetTimeScale.Value} for {freezeDuration.Value}s";
         }
-        
+
         public override Color GetButtonColor() { return new Color32(216, 228, 240, 255); }
     }
 }

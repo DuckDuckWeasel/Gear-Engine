@@ -5,7 +5,8 @@
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner",
         "Scaffold",
-        "Game.GearEngine"
+        "Game.GearEngine",
+        "Scaffold.VisualScripting.Core"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

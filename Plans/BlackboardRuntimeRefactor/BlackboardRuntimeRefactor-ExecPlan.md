@@ -32,7 +32,7 @@ serialization will be removed after all consumers are cut over.
   cycle-aware graph cloning.
 - [x] Milestone 3: add plain variables, variable stores, service contracts,
   messaging, and persistence.
-- [ ] Milestone 4: add action contexts, action lists, tracks, Blocks, and composite
+- [x] Milestone 4: add action contexts, action lists, tracks, Blocks, and composite
   execution, then migrate action families.
 - [ ] Milestone 5: add the plain Blackboard runtime and plain triggers.
 - [ ] Milestone 6: add the Unity wrapper, callback relays, factories, and VContainer
@@ -86,6 +86,19 @@ serialization will be removed after all consumers are cut over.
   remain silent until explicitly terminated. The generated Editor project builds
   cleanly; the runtime-project stall is recorded as tooling evidence rather than a
   compiler failure or pass.
+- The action migration needs a temporary compatibility edge until the breaking
+  cutover: Core execution is fully context-driven and host-free, while the existing
+  component runner still invokes a legacy overload on the Gear action bridge. That
+  overload and its concrete component context are quarantined to the legacy path and
+  are not part of the target Core API.
+- Coroutine-host usage was spread across scheduled, tween, dialog, reflection, and UI
+  input actions. Routing it through `IFrameScheduler.ScheduleRoutine` reduced direct
+  `StartCoroutine` usage to the temporary legacy bridge and actual engine-facing UI
+  components.
+- The first Milestone 4 analyzer pass found 112 unique diagnostics in changed legacy
+  action files. Decomposing long methods, enforcing declaration call order, removing
+  stale XML comments, and normalizing serialized member names brought the complete
+  changed-C# formatter/analyzer/structure gate to zero diagnostics.
 
 ## Decision Log
 
@@ -108,6 +121,11 @@ serialization will be removed after all consumers are cut over.
 - New assemblies are introduced beside the legacy implementation during bounded
   milestones. This preserves a compilable repository while features move. The legacy
   types are deleted during the explicit breaking cutover, not retained as adapters.
+- The legacy `IAction.Execute(Action)` overload and Gear component-context injection
+  exist only to keep characterized component consumers compiling before Milestone 8.
+  New runtime execution exclusively uses Core `IAction.Execute` with
+  `ActionExecutionContext`; the compatibility edge will be deleted with
+  `InvokeActionCommand` and the legacy component graph.
 - All dependency injection uses VContainer and explicit services. New mutable static
   service locators are forbidden.
 - Existing execution semantics are retained unless they exist only because of
@@ -132,6 +150,16 @@ public stores, explicitly injected globals, stable public addresses, runtime
 registries, messaging, text substitution, persistence, and service contracts for
 time, scheduling, logging, events, and save/load. Its pure EditMode fixture passes
 13/13 cases, and the Milestone 2 definition/cloning regression fixture remains 14/14.
+
+Milestone 4 introduced the immutable `ActionExecutionContext`, status completion,
+plain `ActionBase`, `ActionList`, `ActionTrack`, `Block`, flow controller, composite
+tasks, execution IDs, transient execution state, and the shared Strategy runner.
+Sequence, Selector, Parallel, Parallel Selector, Utility Selector, all await modes,
+ordering, weights, repeat prevention, interruption, flow jumps, multi-track
+flattening, utility reevaluation, and execution feedback are covered by 16/16 Core
+tests. The Gear bridge passes 7/7 tests, including delay and IEnumerator scheduling
+and disposal without a `GameObject`; the legacy behavior matrix remains 39/39. All 62
+changed C# files pass formatter, analyzer, and one-top-level-type verification.
 
 ## Context and Orientation
 
@@ -304,6 +332,12 @@ red.
   `Logs/Tests/BlackboardRuntimeRefactor/Milestone3/VariablesAndServices/`
 - Milestone 3 definition regression results:
   `Logs/Tests/BlackboardRuntimeRefactor/Milestone3/DefinitionRegression/`
+- Milestone 4 plain action/composite runtime results:
+  `Logs/Tests/BlackboardRuntimeRefactor/Milestone4/ActionRuntime/`
+- Milestone 4 Gear context and scheduler bridge results:
+  `Logs/Tests/BlackboardRuntimeRefactor/Milestone4/GearActionBridge/`
+- Milestone 4 legacy behavior-parity results:
+  `Logs/Tests/BlackboardRuntimeRefactor/Milestone4/LegacyInvokeActionRegression/`
 - Full repository gate baseline on 2026-07-27:
   compilation precheck passed; EditMode reported 248 passed and 59 failed; PlayMode
   exited without results; the asmdef and analyzer infrastructure blockers listed in

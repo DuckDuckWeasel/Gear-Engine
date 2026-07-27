@@ -5,7 +5,8 @@
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner",
         "Scaffold",
-        "ScaffoldEditor"
+        "ScaffoldEditor",
+        "Scaffold.VisualScripting.Core"
     ],
     "includePlatforms": [
         "Editor"

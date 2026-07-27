@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 
 namespace Scaffold.VisualScripting
 {
@@ -7,6 +8,8 @@ namespace Scaffold.VisualScripting
         IDisposable ScheduleNextFrame(Action callback);
 
         IDisposable Schedule(TimeSpan delay, Action callback);
+
+        IDisposable ScheduleRoutine(IEnumerator routine);
 
         void Tick(float deltaTime);
     }
