@@ -9,7 +9,10 @@ namespace GearEngine.Campaign.Presentation
     public sealed class RoguelikeView : View<RoguelikeViewModel>
     {
         [SerializeField]
-        private GearWorkspaceView workspace;
+        private BoardView boardView;
+
+        [SerializeField]
+        private GearInventoryViewComponent inventory;
 
         [SerializeField]
         private ItemSlotView[] perkOptionViews;
@@ -42,12 +45,14 @@ namespace GearEngine.Campaign.Presentation
 
         private void BindGearSubtree()
         {
-            workspace.SetVisible(true);
-            workspace.BindInteractive(
+            boardView.BindInteractive(
                 viewModel.Board,
-                viewModel.Inventory,
                 viewModel.TrashZone,
                 viewModel.DragService);
+            inventory.gameObject.SetActive(true);
+            inventory.SetDragContext(viewModel.DragService, boardView.DragOverlay);
+            inventory.Bind(viewModel.Inventory);
+            inventory.RebuildAndFit();
         }
 
         private void RebuildPerkSelection()
@@ -109,7 +114,13 @@ namespace GearEngine.Campaign.Presentation
 
         private void ValidateHierarchy()
         {
-            RequireReference(workspace, nameof(workspace));
+            if (boardView == null)
+            {
+                throw new InvalidOperationException(
+                    "[RoguelikeView] boardView must be assigned on the scene instance.");
+            }
+
+            RequireReference(inventory, nameof(inventory));
             RequireReference(continueButton, nameof(continueButton));
             if (perkOptionViews == null)
             {
@@ -136,7 +147,11 @@ namespace GearEngine.Campaign.Presentation
 
         private void ToggleGearPanels(bool isActive)
         {
-            workspace?.SetVisible(isActive);
+            boardView?.SetVisible(isActive);
+            if (inventory != null)
+            {
+                inventory.gameObject.SetActive(isActive);
+            }
         }
     }
 }

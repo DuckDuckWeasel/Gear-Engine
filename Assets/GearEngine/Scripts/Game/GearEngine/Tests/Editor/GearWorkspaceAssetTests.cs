@@ -78,18 +78,15 @@ namespace GearEngine.GearEngine.Tests.Editor
             }
         }
 
-        [TestCase(k_roguelikePath, GearWorkspaceMode.Interactive)]
-        [TestCase(k_racePath, GearWorkspaceMode.ReadOnly)]
-        public void CampaignScreen_OwnsWorkspaceWithExpectedMode(
-            string prefabPath,
-            GearWorkspaceMode expectedMode)
+        [Test]
+        public void RaceScreen_OwnsReadOnlyWorkspace()
         {
-            GameObject screen = LoadPrefab(prefabPath);
+            GameObject screen = LoadPrefab(k_racePath);
             GearWorkspaceView workspace =
                 screen.GetComponentInChildren<GearWorkspaceView>(includeInactive: true);
 
-            Assert.IsNotNull(workspace, $"{prefabPath} must own a GearWorkspaceView.");
-            Assert.That(workspace.Mode, Is.EqualTo(expectedMode));
+            Assert.IsNotNull(workspace, $"{k_racePath} must own a GearWorkspaceView.");
+            Assert.That(workspace.Mode, Is.EqualTo(GearWorkspaceMode.ReadOnly));
         }
 
         [Test]
@@ -119,6 +116,36 @@ namespace GearEngine.GearEngine.Tests.Editor
                 Is.Empty);
             Assert.That(
                 setup.GetComponentsInChildren<TrashDropZoneViewComponent>(true),
+                Is.Empty);
+        }
+
+        [Test]
+        public void RoguelikePrefab_OwnsOnlyInventoryWorkspaceContent()
+        {
+            GameObject roguelike = LoadPrefab(k_roguelikePath);
+            GearInventoryViewComponent inventory =
+                roguelike.GetComponentInChildren<GearInventoryViewComponent>(true);
+            MonoBehaviour roguelikeView = roguelike.GetComponents<MonoBehaviour>()
+                .Single(component =>
+                    component != null && component.GetType().Name == "RoguelikeView");
+            SerializedObject serializedView = new SerializedObject(roguelikeView);
+
+            Assert.IsNotNull(inventory);
+            Assert.IsTrue(inventory.gameObject.activeSelf);
+            Assert.That(
+                serializedView.FindProperty("inventory").objectReferenceValue,
+                Is.SameAs(inventory));
+            Assert.That(
+                serializedView.FindProperty("boardView").objectReferenceValue,
+                Is.Null);
+            Assert.That(
+                roguelike.GetComponentsInChildren<BoardViewComponent>(true),
+                Is.Empty);
+            Assert.That(
+                roguelike.GetComponentsInChildren<TrashDropZoneViewComponent>(true),
+                Is.Empty);
+            Assert.That(
+                roguelike.GetComponentsInChildren<GearWorkspaceView>(true),
                 Is.Empty);
         }
 
@@ -165,15 +192,23 @@ namespace GearEngine.GearEngine.Tests.Editor
                     .SelectMany(root => root.GetComponentsInChildren<MonoBehaviour>(true))
                     .Single(component =>
                         component != null && component.GetType().Name == "ActiveRaceView");
+                MonoBehaviour roguelikeView = scene.GetRootGameObjects()
+                    .SelectMany(root => root.GetComponentsInChildren<MonoBehaviour>(true))
+                    .Single(component =>
+                        component != null && component.GetType().Name == "RoguelikeView");
                 SerializedProperty boardViewProperty =
                     new SerializedObject(setupView).FindProperty("boardView");
                 SerializedProperty activeRaceBoardProperty =
                     new SerializedObject(activeRaceView).FindProperty("board");
+                SerializedProperty roguelikeBoardProperty =
+                    new SerializedObject(roguelikeView).FindProperty("boardView");
 
                 Assert.IsNotNull(boardViewProperty);
                 Assert.IsNotNull(activeRaceBoardProperty);
+                Assert.IsNotNull(roguelikeBoardProperty);
                 Assert.That(boardViewProperty.objectReferenceValue, Is.SameAs(boardView));
                 Assert.That(activeRaceBoardProperty.objectReferenceValue, Is.SameAs(boardView));
+                Assert.That(roguelikeBoardProperty.objectReferenceValue, Is.SameAs(boardView));
                 Assert.That(boardView.transform.parent, Is.SameAs(setupView.transform.parent));
                 Assert.IsFalse(
                     boardView.gameObject.activeSelf,

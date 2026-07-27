@@ -19,7 +19,8 @@
 
 ## Workspace presentation ownership
 
-- **`GearWorkspaceView`** remains the canvas-less reusable composition for Roguelike and Active Race. Roguelike binds Board, Inventory, Trash, and the drag overlay in interactive mode; Active Race binds only its Board in read-only mode.
+- **`BoardView`** is the scene-owned Board, Trash, and drag-overlay composition shared by Setup, Roguelike, and Active Race. Setup and Roguelike each keep only their own Inventory in their screen prefab and bind the shared Board interactively; Active Race binds the same Board read-only.
+- **`GearWorkspaceView`** remains the canvas-less reusable composition used by Active Race for its read-only workspace content.
 - **Setup ownership is split by screen layer.** `Setup View.prefab` owns its inventory tray and header UI. Main Scene owns a sibling `BoardView` prefab with its own screen-space Canvas; that view owns `BoardViewComponent`, `TrashDropZoneViewComponent`, and the shared drag overlay. The Setup scene instance receives that sibling through its serialized `boardView` reference.
 - **`BoardView`** is the Setup composition boundary: it binds Board and Trash to their view models, configures both Board and Inventory with the same drag overlay, and controls their joint visibility when Setup opens or closes.
 - Track, cars, environment, and race cameras remain world-space. Gear workspace visuals are `Image` and `RectTransform` components rendered by the screen's existing Canvas and `GraphicRaycaster`.

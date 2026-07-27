@@ -4,9 +4,10 @@ This ExecPlan is a living document.
 
 ## Purpose / Big Picture
 
-The Board, Inventory, Trash zone, gear visuals, and drag preview must be native Unity UI
-owned by each campaign screen. Setup and Roguelike expose the complete interactive workspace;
-Active Race exposes a read-only Board. Track, cars, and race environment remain world-space.
+The Board, Inventory, Trash zone, gear visuals, and drag preview must be native Unity UI.
+Main Scene owns one shared Board, Trash zone, and drag overlay used by Setup, Roguelike, and
+Active Race. Setup and Roguelike own their Inventory views; Active Race exposes the shared
+Board read-only. Track, cars, and race environment remain world-space.
 
 ## Progress
 
@@ -14,10 +15,9 @@ Active Race exposes a read-only Board. Track, cars, and race environment remain 
 - [x] Create `codex/grid-board-inventory-screen-space` from `main`.
 - [x] Replace world-space drag coordinates and physics target lookup with UI coordinates.
 - [x] Convert gear, grid slot, Board, Inventory, and Trash prefabs to canvas-less UI.
-- [x] Nest the workspace into Roguelike and Active Race prefabs. Keep Setup inventory in
-  its screen prefab and compose the interactive Board, Trash, and drag overlay through a
-  sibling `BoardView` instance in Main Scene.
-- [x] Remove shared Gear presentation objects and overrides from Main Scene.
+- [x] Keep Setup and Roguelike inventories in their screen prefabs. Compose their interactive
+  Board, Trash, and drag overlay through the shared `BoardView` instance in Main Scene.
+- [x] Relink Setup, Roguelike, and Active Race to the single Main Scene `BoardView`.
 - [x] Add automated functional, asset, responsive-layout, and visual verification.
 - [x] Run scoped quality gates and prepare the verified refactor milestone.
 
@@ -41,15 +41,16 @@ Active Race exposes a read-only Board. Track, cars, and race environment remain 
 - Keep `BoardLayoutSO` as view configuration, expressed in reference-resolution pixels.
 - Inject `IDragService` and the drag overlay into each `Draggable`; do not use the static
   drag-service registry for the new flow.
-- Use one canvas-less `PFB_GearWorkspace` nested beneath each owning screen Canvas.
+- Use the scene-level `PFB_BoardView` for shared Board interaction and keep
+  `PFB_GearWorkspace` only where a self-contained read-only composition is useful.
 - Apply Safe Area to the workspace root and use the 1080x1920 portrait composition baseline.
 
 ## Outcomes & Retrospective
 
-The Gear workspace is now screen-space UI owned by each campaign screen. Setup and Roguelike
-bind the complete interactive workspace; Active Race binds only the Board contained in its
-read-only workspace. Main Scene no longer owns or injects shared Board, Inventory, or Trash
-objects. Track, cars, and the rest of race presentation remain unchanged in world space.
+The Gear workspace is now screen-space UI. Main Scene owns and injects one shared Board,
+Trash zone, and drag overlay into Setup, Roguelike, and Active Race. Setup and Roguelike own
+only their Inventory views. Track, cars, and the rest of race presentation remain unchanged
+in world space.
 
 Affected verification passed with 31 EditMode tests and 7 PlayMode tests. Visual tests also
 passed at 1080x1920, 1080x2400, and 1080x1680, with every workspace element inside Safe Area.
@@ -60,9 +61,9 @@ formatting and analyzers pass in fix and check modes for all 28 affected files.
 
 `BoardViewComponent`, `GearInventoryViewComponent`, and `TrashDropZoneViewComponent` are the
 three presentation views. `GearView` renders one Gear. `Draggable` builds `DragPayload` and
-resolves an `IDragTarget`. Campaign views currently receive shared scene instances through
-serialized overrides in `Main Scene`; those references will move into their prefab-owned
-`GearWorkspaceView`.
+resolves an `IDragTarget`. Campaign views receive the shared `BoardView` scene instance
+through serialized overrides in `Main Scene`; Setup and Roguelike keep their inventories in
+their own prefabs.
 
 ## Plan of Work
 
@@ -84,8 +85,8 @@ serialized overrides in `Main Scene`; those references will move into their pref
 
 - No Gear workspace prefab contains `SpriteRenderer`, Collider, `SortingGroup`, nested Canvas,
   `PhysicsRaycaster`, or `Physics2DRaycaster`.
-- Setup and Roguelike own interactive workspace instances; Active Race owns a read-only one.
-- Main Scene has no shared Board, Inventory, or Trash presentation objects.
+- Setup and Roguelike own only their Inventory views; Active Race remains read-only.
+- Main Scene owns exactly one shared Board, Trash zone, and drag overlay composition.
 - Dragging between Inventory, Board, and Trash uses UI raycasting and screen coordinates.
 - 1080x1920, tall portrait, and short portrait layouts remain inside Safe Area.
 

@@ -6562,15 +6562,7 @@ PrefabInstance:
     - target: {fileID: 1794042893205965299, guid: d628a68ecdaeac44c84b7f3072518b94, type: 3}
       propertyPath: boardView
       value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 1794042893205965299, guid: d628a68ecdaeac44c84b7f3072518b94, type: 3}
-      propertyPath: inventoryView
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 1794042893205965299, guid: d628a68ecdaeac44c84b7f3072518b94, type: 3}
-      propertyPath: trashDropZone
-      value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 628355311}
     - target: {fileID: 2010377095255302804, guid: d628a68ecdaeac44c84b7f3072518b94, type: 3}
       propertyPath: m_AnchorMax.y
       value: 1
