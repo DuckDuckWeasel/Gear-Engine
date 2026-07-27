@@ -110,21 +110,28 @@ namespace GearEngine.GearEngine.Tests.Editor
         }
 
         [Test]
-        public void CorePrefab_UsesLargerScaleToMeshWithStandardGears()
+        public void CorePrefab_UsesOnlyItsOwnSpriteAtLargerMeshScale()
         {
             GearView prefab = AssetDatabase.LoadAssetAtPath<GearView>(
                 "Assets/GearEngine/Prefabs/Gears/Gears/CoreGearView.prefab");
             Assert.IsNotNull(prefab);
+            GearItem coreItem = AssetDatabase.LoadAssetAtPath<GearItem>(
+                "Assets/GearEngine/Data/Gear/Gear/CoreGearConfig.asset");
+            Assert.IsNotNull(coreItem);
+            GearItemData coreData = coreItem.CreateRuntimeData();
 
             GearView instance = Object.Instantiate(prefab);
-            instance.ApplyConfig(new GearItemData { RelativeScaleMultiplier = 1f });
+            instance.ApplyConfig(coreData);
 
             RectTransform gearVisual = instance.transform.Find("GearVisual") as RectTransform;
             RectTransform chargeVisual = instance.transform.Find("ChargeVisual") as RectTransform;
             Assert.IsNotNull(gearVisual);
             Assert.IsNotNull(chargeVisual);
             Assert.That(gearVisual.localScale.x, Is.EqualTo(1.55f).Within(0.001f));
-            Assert.That(chargeVisual.localScale.x, Is.EqualTo(1.15f).Within(0.001f));
+            Assert.IsFalse(chargeVisual.gameObject.activeSelf);
+            Assert.That(
+                gearVisual.GetComponent<Image>().sprite,
+                Is.SameAs(coreData.UIIcon));
 
             Object.DestroyImmediate(instance.gameObject);
         }

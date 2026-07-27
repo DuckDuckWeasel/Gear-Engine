@@ -75,7 +75,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Visuals.GearView
   gearVisual: {fileID: 8759561660699835786}
   gearImage: {fileID: 2228873025654618831}
-  chargeFillImage: {fileID: 665160332415171303}
+  chargeFillImage: {fileID: 0}
   rotationLerpSpeed: 15
   fillLerpSpeed: 10
   settleLerpSpeed: 20
@@ -112,7 +112,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &4477553418133660631
 RectTransform:
   m_ObjectHideFlags: 0
