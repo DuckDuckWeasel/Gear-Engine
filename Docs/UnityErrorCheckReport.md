@@ -26,6 +26,8 @@
 | Milestone 4 legacy `InvokeActionCommandTests` | 39 passed, 0 failed after the action-context and scheduler migration. |
 | Milestone 5 `BlackboardRuntimeLifecycleTests` | 10 passed, 0 failed; lifecycle, triggers, messages, persistence, interruption, and disposal ran without a `GameObject`. |
 | Milestone 5 replacement-Core regression | 53 passed, 0 failed across definitions, cloning, variables, actions, lifecycle, and triggers. |
+| Milestone 6 `BlackboardBehaviourTests` | 5 passed, 0 failed; wrapper/script parity, per-runtime scheduling, failure handling, callback forwarding, listener teardown, and Unity serialization passed. |
+| Milestone 6 replacement-Core regression | 53 passed, 0 failed after introducing runtime-owned service scopes and Unity composition. |
 | Milestone 3 Unity compilation precheck | Passed with Unity 6000.5.3f1 after importing the variable/service layer. |
 | Escalated `.agents/scripts/validate-changes.sh` compilation precheck | Passed with Unity 6000.5.3f1. |
 | `dotnet build Assembly-CSharp-Editor.csproj --no-restore` | Succeeded with 0 warnings and 0 errors. |
@@ -59,14 +61,21 @@ baseline required test-only corrections:
 - Analyzer-driven decomposition resolved all 112 unique diagnostics found across the
   changed legacy action surface. The final formatter, analyzer, and structure checks
   are clean.
+- The first Unity adapter run exposed VContainer selecting the seeded
+  `SystemRandomSource(int)` constructor without an integer registration. The installer
+  now registers `IRandomSource` through an explicit factory; the rerun and final run
+  both pass 5/5.
+- Unity callback delivery is isolated to `BlackboardBehaviour`,
+  `UnityCoroutineRunner`, and narrow relay components. The scheduler and UI/input
+  trigger adapters remain plain C# and clean up callbacks through disposable handles.
 
 ## Remaining issue
 
-The Unity compiler gate is clean for the final Milestone 4 sources, as demonstrated by
-the final 16-, 7-, and 39-test Unity runs and an empty Editor-log parser result. The standalone
-generated runtime-project path remains an infrastructure limitation: its post-change
-attempts did not reach a compiler result or emit a diagnostic. The generated Editor
-project build is clean.
+The Unity compiler gate is clean through Milestone 6, as demonstrated by the final
+5-test Unity adapter run, 53-test replacement-Core regression, and an empty Editor-log
+parser result. The standalone generated runtime-project path remains an infrastructure
+limitation: its post-change attempts did not reach a compiler result or emit a
+diagnostic. The generated Editor project build is clean.
 
 The repository-wide gate continues past compilation and exposes unrelated baseline
 failures: 59 EditMode failures, a PlayMode run that exits without producing XML,

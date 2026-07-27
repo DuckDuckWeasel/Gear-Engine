@@ -13,7 +13,8 @@ It can be instantiated by code without a `GameObject`; Unity hosting is optional
   contains no `MonoBehaviour`.
 - `Scaffold.VisualScripting.Authoring` owns `BlackboardDefinitionAsset` and the
   Direct, ScriptableObject, and BlackboardVariable template reference.
-- `Scaffold.VisualScripting.Unity` will own the optional wrapper and callback relays.
+- `Scaffold.VisualScripting.Unity` owns the optional wrapper, Unity service adapters,
+  VContainer registrations, and callback relays.
 
 Dependencies point from Unity to Authoring to Core. Core never depends on the wrapper.
 
@@ -91,7 +92,7 @@ cutover.
 
 `BlackboardFactory` validates and clones a template, builds isolated variable cells,
 constructs plain Blocks and trigger bindings, and registers the runtime by its unique
-instance ID. Script-created and future wrapper-created instances use this same
+instance ID. Script-created and wrapper-created instances use this same
 factory. No runtime construction step requires a `GameObject`.
 
 `Blackboard` exposes `Start`, `Enable`, `Disable`, `Tick`, block execution and stop
@@ -121,5 +122,36 @@ Built-in Core trigger definitions cover:
 
 The signal-source and polling-condition contracts contain no Unity API. A concrete
 adapter may retain an explicit Unity object reference, but the subscription and
-decision logic remain plain C#. Physics, render, animator, and pointer callbacks are
-forwarded by the Unity assembly in the next milestone.
+decision logic remain plain C#. Physics, render, and pointer callbacks are forwarded
+by the Unity assembly.
+
+## Unity hosting and composition
+
+`BlackboardBehaviour` is the optional scene wrapper. `Awake` resolves its Direct,
+ScriptableObject, or already-running BlackboardVariable source and delegates creation
+to `BlackboardFactory`. `OnEnable`, `Start`, `Update`, `OnDisable`, and `OnDestroy`
+only forward lifecycle into the plain runtime. Initialization exceptions are reported
+with `Debug.LogError`, clear the partial runtime, and disable the wrapper.
+
+`BlackboardRuntimeInstaller` registers cloning, validation, event, registry, variable,
+time, persistence, logging, random, scheduler, and factory services with VContainer.
+`IBlackboardRuntimeServicesFactory` creates one owned service scope per runtime.
+Consequently, two Blackboards produced by one container share only deliberately
+singleton services such as registries and the global store; each owns a distinct
+`UnityFrameScheduler` and disposes it with the runtime.
+
+`UnityFrameScheduler` is plain C#. It owns next-frame and delayed callbacks and
+delegates only IEnumerator execution to one injected `UnityCoroutineRunner`. The
+runner is a `MonoBehaviour` because Unity must host coroutines; no Core type depends on
+it.
+
+## Unity callback adapters
+
+Physics, pointer, render, and generic callback relays are intentionally thin
+`MonoBehaviour` receivers. They forward stable local Blackboard messages and hold no
+execution graph or trigger state.
+
+Button, input-field, and toggle signal sources are plain serializable adapters that
+retain explicit Unity UI references. They return disposable listener registrations,
+so attach and detach are symmetric. `UnityKeyTriggerCondition` is also plain and
+allows input polling through the Core polling-trigger contract.

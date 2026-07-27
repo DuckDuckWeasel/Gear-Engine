@@ -44,10 +44,11 @@ namespace Scaffold.VisualScripting.Tests
             factory = new BlackboardFactory(
                 new SerializedGraphCloner(),
                 new BlackboardDefinitionValidator(),
-                services,
+                new FixedBlackboardRuntimeServicesFactory(services),
                 new PublicVariableRegistry(),
                 new GlobalVariableStore(),
-                new SystemRandomSource(17));
+                new SystemRandomSource(17),
+                logger);
         }
 
         [TearDown]

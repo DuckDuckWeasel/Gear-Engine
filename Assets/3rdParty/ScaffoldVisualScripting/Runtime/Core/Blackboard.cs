@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Scaffold.VisualScripting
 {
-    public sealed class Blackboard : IBlackboardHandle, IDisposable
+    public sealed class Blackboard : IBlackboardHandle, IBlackboardDefinitionVariableSource, IDisposable
     {
         public Blackboard(BlackboardRuntimeInstanceId runtimeInstanceId, BlackboardVariableSet variables, IFrameScheduler scheduler, ITimeSource timeSource, IBlackboardEventBus eventBus, IBlackboardSaveService saveService, IBlackboardLogger logger) : this(new BlackboardDefinitionClone(new BlackboardDefinition(), runtimeInstanceId), variables, BlackboardRuntimeServices.CreateExecutionOnly(scheduler, timeSource, eventBus, saveService, logger), new SystemRandomSource(), false)
         {
@@ -115,6 +115,7 @@ namespace Scaffold.VisualScripting
             DisposeBlocks();
             Variables.Dispose();
             UnregisterRuntime();
+            Services.Dispose();
             disposed = true;
         }
 
@@ -220,6 +221,12 @@ namespace Scaffold.VisualScripting
         {
             ThrowIfDisposed();
             return Variables.TryGet(key, out cell);
+        }
+
+        public bool TryGetBlackboardDefinition(DefinitionId variableId, out BlackboardDefinition definition)
+        {
+            ThrowIfDisposed();
+            return Variables.TryGetBlackboardDefinition(variableId, out definition);
         }
 
         public string Substitute(string input)

@@ -2,7 +2,7 @@ using System;
 
 namespace Scaffold.VisualScripting
 {
-    public sealed class BlackboardRuntimeServices
+    public sealed class BlackboardRuntimeServices : IDisposable
     {
         public BlackboardRuntimeServices(IFrameScheduler scheduler, ITimeSource timeSource, IBlackboardEventBus eventBus, IBlackboardSaveService saveService, IBlackboardLogger logger, BlackboardVariablePersistence variablePersistence, ITextSubstitutionService textSubstitution, IBlackboardRegistry registry)
         {
@@ -40,6 +40,14 @@ namespace Scaffold.VisualScripting
         public ITextSubstitutionService TextSubstitution { get; }
 
         public IBlackboardRegistry Registry { get; }
+
+        public void Dispose()
+        {
+            if (Scheduler is IDisposable disposableScheduler)
+            {
+                disposableScheduler.Dispose();
+            }
+        }
 
         internal static BlackboardRuntimeServices CreateExecutionOnly(IFrameScheduler scheduler, ITimeSource timeSource, IBlackboardEventBus eventBus, IBlackboardSaveService saveService, IBlackboardLogger logger)
         {

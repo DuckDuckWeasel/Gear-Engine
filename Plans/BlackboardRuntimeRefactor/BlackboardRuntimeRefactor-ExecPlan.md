@@ -35,7 +35,7 @@ serialization will be removed after all consumers are cut over.
 - [x] Milestone 4: add action contexts, action lists, tracks, Blocks, and composite
   execution, then migrate action families.
 - [x] Milestone 5: add the plain Blackboard runtime and plain triggers.
-- [ ] Milestone 6: add the Unity wrapper, callback relays, factories, and VContainer
+- [x] Milestone 6: add the Unity wrapper, callback relays, factories, and VContainer
   composition.
 - [ ] Milestone 7: rewrite editor authoring for managed definitions.
 - [ ] Milestone 8: cut over assets and tests, rename the space-containing test scene,
@@ -105,6 +105,13 @@ serialization will be removed after all consumers are cut over.
 - The legacy `BlackboardEnabled` and `GameStarted` handlers both defer execution by
   frames. A reusable scheduler-owned deferred callback preserves that timing and
   cancels pending work when a runtime is disabled or disposed.
+- VContainer selected `SystemRandomSource(int)` during the first Unity adapter run.
+  Registering `IRandomSource` through an explicit factory prevents the optional seed
+  from being treated as a dependency.
+- Scheduler state must be runtime-owned. VContainer resolves a fresh
+  `UnityFrameScheduler` for every Blackboard, while one injected
+  `UnityCoroutineRunner` remains the narrow engine callback receiver used by those
+  schedulers.
 
 ## Decision Log
 
@@ -143,6 +150,12 @@ serialization will be removed after all consumers are cut over.
   detach on disable, and dispose symmetrically. Bindable sources may return payloads
   into a stable variable reference; polling conditions evaluate through the immutable
   trigger context.
+- `BlackboardRuntimeServices` is an owned disposable scope supplied through
+  `IBlackboardRuntimeServicesFactory`. A Blackboard disposes that scope and its
+  scheduler when its lifetime ends.
+- `BlackboardBehaviour` is an optional lifecycle adapter, not a second runtime path.
+  It resolves a template and delegates construction to the same `BlackboardFactory`
+  used by scripts.
 
 ## Outcomes & Retrospective
 
@@ -182,6 +195,17 @@ polling, and bindable triggers attach through injected contracts and contain no 
 lifecycle method. Its pure EditMode fixture passes 10/10 cases without a `GameObject`,
 `AddComponent`, coroutine, or `[UnityTest]`; the complete replacement-Core regression
 namespace passes 53/53 through this milestone.
+
+Milestone 6 introduced `Scaffold.VisualScripting.Unity`, the optional
+`BlackboardBehaviour`, VContainer composition, per-runtime `UnityFrameScheduler`
+instances, one narrow coroutine callback receiver, Unity time/logging/PlayerPrefs
+ports, pointer/physics/render callback relays, and plain UI/input signal adapters.
+Wrapper-created and script-created instances use the same factory and retain isolated
+runtime IDs, variables, execution state, and schedulers. Initialization failures log
+through `Debug.LogError` and disable the wrapper. The final Unity adapter fixture
+passes 5/5 PlayMode tests and the complete replacement-Core regression remains 53/53.
+All 26 changed C# files pass formatter, analyzer, and one-top-level-type verification;
+the Core forbidden-API scan and Unity error parser are empty.
 
 ## Context and Orientation
 
@@ -360,6 +384,10 @@ red.
   `Logs/Tests/BlackboardRuntimeRefactor/Milestone4/GearActionBridge/`
 - Milestone 4 legacy behavior-parity results:
   `Logs/Tests/BlackboardRuntimeRefactor/Milestone4/LegacyInvokeActionRegression/`
+- Milestone 6 Unity adapter results:
+  `Logs/Tests/BlackboardRuntimeRefactor/Milestone6/UnityAdapterFinal/`
+- Milestone 6 replacement-Core regression results:
+  `Logs/Tests/BlackboardRuntimeRefactor/Milestone6/CoreRegression/`
 - Full repository gate baseline on 2026-07-27:
   compilation precheck passed; EditMode reported 248 passed and 59 failed; PlayMode
   exited without results; the asmdef and analyzer infrastructure blockers listed in

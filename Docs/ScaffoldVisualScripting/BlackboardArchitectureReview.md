@@ -369,6 +369,32 @@ The remaining component ownership is now outside the new Core path: the optional
 wrapper and unavoidable callback relays are introduced in Milestone 6, while the
 legacy component graph continues compiling only until the breaking cutover.
 
+## Milestone 6 implementation checkpoint
+
+The Unity boundary now exists without moving execution ownership back into
+components. `BlackboardBehaviour` resolves authoring references, creates its runtime
+through the shared `BlackboardFactory`, forwards lifecycle, and disables itself after
+an actionable `Debug.LogError` when initialization fails.
+
+VContainer supplies explicit runtime services. Shared registries, event buses, and the
+global-variable store remain injected infrastructure, while
+`IBlackboardRuntimeServicesFactory` creates a distinct scheduler scope for each
+Blackboard. This prevents cloned runtimes from sharing delayed callbacks, coroutine
+handles, or disposal state.
+
+`UnityFrameScheduler` is plain C# and uses one `UnityCoroutineRunner` solely for the
+engine callback required to execute IEnumerators. Physics, pointer, render, and
+generic callback relays are the remaining component adapters. Button, input-field,
+toggle, and key-condition adapters retain explicit Unity references but keep their
+subscription and filtering logic in serializable plain classes. Listener handles
+detach symmetrically.
+
+The Unity adapter fixture passes 5/5 PlayMode cases for script/wrapper parity,
+per-runtime isolation, initialization failure, pointer forwarding, UI teardown, and
+Unity value serialization. The complete Core regression passes 53/53 EditMode cases.
+Static Core scans remain free of component, scene-search, coroutine-host, and mutable
+service-locator calls.
+
 ## Dependency Rules
 
 Allowed:
@@ -515,3 +541,6 @@ Milestone 4 evidence:
   triggers, variables, editor serialization, persistence, tests, and Unity boundaries.
 - 2026-07-27: Updated after Milestone 4 extracted Core action, composite, Block, track,
   context, scheduling, flow-control, and feedback ownership from components.
+- 2026-07-27: Updated after Milestone 6 added the optional Unity wrapper, per-runtime
+  scheduler scopes, VContainer composition, service adapters, and narrow callback
+  relays without introducing component ownership into Core.
