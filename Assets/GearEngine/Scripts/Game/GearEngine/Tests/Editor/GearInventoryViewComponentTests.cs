@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using DG.Tweening;
 using GearEngine.GearEngine;
 using GearEngine.GearEngine.Config;
 using GearEngine.GearEngine.Nodes;
@@ -50,9 +51,13 @@ namespace GearEngine.GearEngine.Tests.Editor
 
             public bool IsSimulationRunning => false;
 
-            public int CurrentBoardGearCount => 0;
+            public int CurrentCount { get; set; }
 
-            public int MaxAllowedBoardGears => 99;
+            public int MaximumCount { get; set; } = 99;
+
+            public int CurrentBoardGearCount => CurrentCount;
+
+            public int MaxAllowedBoardGears => MaximumCount;
 
             public bool ContainsMotorCog => true;
 
@@ -150,13 +155,52 @@ namespace GearEngine.GearEngine.Tests.Editor
             Assert.AreEqual(3, container.childCount);
         }
 
+        [Test]
+        public void BuildSlotPayload_FullBoard_DoesNotAnimateBeforeDrop()
+        {
+            GearInventoryViewComponent component = CreateBoundInventoryView(
+                out _,
+                out GearInventoryViewModel viewModel,
+                out TextMeshProUGUI label,
+                currentCount: 6,
+                maximumCount: 6);
+            MethodInfo buildPayload = typeof(GearInventoryViewComponent)
+                .GetMethod("BuildSlotPayload", BindingFlags.Instance | BindingFlags.NonPublic);
+            Assert.IsNotNull(buildPayload);
+
+            buildPayload.Invoke(
+                component,
+                new object[] { viewModel.TrayItems[0], Vector2.zero });
+
+            Assert.IsFalse(DOTween.IsTweening(label.transform));
+        }
+
         private static GearInventoryViewComponent CreateBoundInventoryView(
             out RectTransform itemsContainerOut,
             out GearInventoryViewModel viewModel)
         {
+            return CreateBoundInventoryView(
+                out itemsContainerOut,
+                out viewModel,
+                out _,
+                currentCount: 0,
+                maximumCount: 99);
+        }
+
+        private static GearInventoryViewComponent CreateBoundInventoryView(
+            out RectTransform itemsContainerOut,
+            out GearInventoryViewModel viewModel,
+            out TextMeshProUGUI capacityLabel,
+            int currentCount,
+            int maximumCount)
+        {
             ListInventoryService inventory = new ListInventoryService();
             FakeEngine engine = new FakeEngine();
-            TrayTestBoardService board = new TrayTestBoardService();
+            TrayTestBoardService board = new TrayTestBoardService
+            {
+                CurrentCount = currentCount,
+                MaximumCount = maximumCount,
+            };
 
             GearItem g0 = CreateGearConfig("g0");
             GearItem g1 = CreateGearConfig("g1");
@@ -194,6 +238,7 @@ namespace GearEngine.GearEngine.Tests.Editor
             component.Bind(viewModel);
 
             itemsContainerOut = containerRect;
+            capacityLabel = label;
             return component;
         }
 

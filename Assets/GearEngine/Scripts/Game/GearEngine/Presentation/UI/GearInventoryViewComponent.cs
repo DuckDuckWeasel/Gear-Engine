@@ -156,7 +156,6 @@ namespace GearEngine.GearEngine.Presentation.UI
 
         private DragPayload BuildSlotPayload(GearItemData gear, Vector2 screenPosition)
         {
-            HandleSlotDropRejected();
             return new DragPayload(gear, screenPosition);
         }
 
@@ -168,10 +167,7 @@ namespace GearEngine.GearEngine.Presentation.UI
             }
         }
 
-        private void ApplyGearVisualAndDrag(
-            GearInventorySlotView slotView,
-            Draggable drag,
-            GearItemData gear)
+        private void ApplyGearVisualAndDrag(GearInventorySlotView slotView, Draggable drag, GearItemData gear)
         {
             if (gear.ViewPrefab == null)
             {

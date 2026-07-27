@@ -25,6 +25,7 @@ namespace GearEngine.GearEngine.Presentation.UI
 
             boardService.GearPlaced += OnBoardGearPlaced;
             boardService.GearRemoved += OnBoardGearRemoved;
+            boardService.BoardLayoutChanged += OnBoardLayoutChanged;
             eventBus.AddListener<GearRotatedEvent>(OnGearRotated);
 
             RefreshSimulationRunningFromGrid();
@@ -53,18 +54,20 @@ namespace GearEngine.GearEngine.Presentation.UI
 
         [ObservableProperty] private bool interactable = true;
         [ObservableProperty] private string boardLimitText = string.Empty;
+        [ObservableProperty] private string boardCapacityText = string.Empty;
+        [ObservableProperty] private int capacityFeedbackRevision;
         [ObservableProperty] private bool isSimulationRunning;
 
         public event Action<IGridNode> OnGearPlaced;
         public event Action<IGridNode> OnGearRemoved;
         public event Action<IGridNode> OnBoardClicked;
+        public event Action<Vector2Int, string, float> OnGearTriggered;
+        public event Action<IGridNode> OnGearChargeCompleted;
 
         public void PublishCombatTextExploded(int score)
         {
             eventBus.Raise(new GearEngine.Events.CombatTextCollectedEvent(score));
         }
-        public event Action<Vector2Int, string, float> OnGearTriggered;
-        public event Action<IGridNode> OnGearChargeCompleted;
 
         internal void HandleBoardClick(IGridNode node)
         {
@@ -88,14 +91,15 @@ namespace GearEngine.GearEngine.Presentation.UI
             }
         }
 
-        private void RefreshSimulationRunningFromGrid()
+        public IGridNode GetNode(Vector2Int coord)
         {
-            IsSimulationRunning = boardService.IsSimulationRunning;
+            return boardService.GetNode(coord);
         }
 
-        public IGridNode GetNode(Vector2Int coord) => boardService.GetNode(coord);
-
-        public IEnumerable<IGridNode> GetCurrentNodes() => boardService.GetAllNodes();
+        public IEnumerable<IGridNode> GetCurrentNodes()
+        {
+            return boardService.GetAllNodes();
+        }
 
         public void LoadLayout(BoardLayoutData layout)
         {
@@ -125,15 +129,34 @@ namespace GearEngine.GearEngine.Presentation.UI
             return moved;
         }
 
-        public bool DeleteGear(IGridNode node) => boardService.TryDeleteBoardGear(node);
+        public bool DeleteGear(IGridNode node)
+        {
+            return boardService.TryDeleteBoardGear(node);
+        }
 
-        public bool HandleInventoryDrop(Vector2Int targetDropPos, GearItemData gearData) =>
-            boardService.TryPlace(targetDropPos, gearData);
+        public bool HandleInventoryDrop(Vector2Int targetDropPos, GearItemData gearData)
+        {
+            if (gearData != null &&
+                boardService.GetNode(targetDropPos) == null &&
+                CurrentBoardGearCount >= MaxAllowedBoardGears)
+            {
+                CapacityFeedbackRevision++;
+                return false;
+            }
+
+            return boardService.TryPlace(targetDropPos, gearData);
+        }
+
+        private void RefreshSimulationRunningFromGrid()
+        {
+            IsSimulationRunning = boardService.IsSimulationRunning;
+        }
 
         protected override void OnClosed()
         {
             boardService.GearPlaced -= OnBoardGearPlaced;
             boardService.GearRemoved -= OnBoardGearRemoved;
+            boardService.BoardLayoutChanged -= OnBoardLayoutChanged;
             eventBus.RemoveListener<GearRotatedEvent>(OnGearRotated);
             base.OnClosed();
         }
@@ -150,39 +173,58 @@ namespace GearEngine.GearEngine.Presentation.UI
             UpdateLabels();
         }
 
+        private void OnBoardLayoutChanged()
+        {
+            UpdateLabels();
+        }
+
         private void UpdateLabels()
         {
-            BoardLimitText = $"Board: {CurrentBoardGearCount}/{MaxAllowedBoardGears}";
+            BoardCapacityText = $"{CurrentBoardGearCount}/{MaxAllowedBoardGears}";
+            BoardLimitText = $"Board: {BoardCapacityText}";
         }
 
         private void OnGearRotated(GearRotatedEvent evt)
         {
             IGridNode node = boardService.GetNode(evt.Source);
-            if (node?.ConfigData == null) return;
+            if (node?.ConfigData == null)
+            {
+                return;
+            }
 
             OnGearChargeCompleted?.Invoke(node);
 
-            var sb = new System.Text.StringBuilder();
-            float maxDuration = 0f;
-            foreach (var ability in node.ConfigData.Abilities)
-            {
-                if (ability is IDescribable describable)
-                {
-                    sb.AppendLine(describable.GetFloatingTextDescription());
-                }
-                
-                if (ability is GearEngine.Abilities.GearAbilitySO gearAbility)
-                {
-                    float d = gearAbility.GetDuration();
-                    if (d > maxDuration) maxDuration = d;
-                }
-            }
-            
-            string text = sb.ToString().TrimEnd();
+            string text = BuildGearDescription(node.ConfigData.Abilities);
+            float maxDuration = GetMaximumAbilityDuration(node.ConfigData.Abilities);
             if (!string.IsNullOrEmpty(text))
             {
                 OnGearTriggered?.Invoke(evt.Source, text, maxDuration);
             }
+        }
+
+        private string BuildGearDescription(IEnumerable<GearAbilitySO> abilities)
+        {
+            System.Text.StringBuilder description = new System.Text.StringBuilder();
+            foreach (GearAbilitySO ability in abilities)
+            {
+                if (ability is IDescribable describable)
+                {
+                    description.AppendLine(describable.GetFloatingTextDescription());
+                }
+            }
+
+            return description.ToString().TrimEnd();
+        }
+
+        private float GetMaximumAbilityDuration(IEnumerable<GearAbilitySO> abilities)
+        {
+            float maximumDuration = 0f;
+            foreach (GearAbilitySO ability in abilities)
+            {
+                maximumDuration = Mathf.Max(maximumDuration, ability.GetDuration());
+            }
+
+            return maximumDuration;
         }
     }
 }

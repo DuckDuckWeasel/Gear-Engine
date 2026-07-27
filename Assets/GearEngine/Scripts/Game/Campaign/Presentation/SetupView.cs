@@ -12,6 +12,7 @@ namespace GearEngine.Campaign.Presentation
     {
         [SerializeField] private TrackViewComponent track;
         [SerializeField] private GearWorkspaceView workspace;
+        [SerializeField] private BoardCapacityChipView boardCapacityChip;
         [SerializeField] private Button raceButton;
         [SerializeField] private Button returnToMainButton;
         [SerializeField] private FrustumFitAnchor[] openTransitionAnchors;
@@ -33,6 +34,7 @@ namespace GearEngine.Campaign.Presentation
                 viewModel.Inventory,
                 viewModel.TrashZone,
                 viewModel.DragService);
+            boardCapacityChip.Bind(viewModel.Board);
         }
 
         protected override void OnOpen(bool wasHidden)
@@ -74,6 +76,12 @@ namespace GearEngine.Campaign.Presentation
             }
         }
 
+        protected override void OnUnbind()
+        {
+            boardCapacityChip?.Unbind();
+            base.OnUnbind();
+        }
+
         private void OnRaceClicked()
         {
             try
@@ -101,6 +109,7 @@ namespace GearEngine.Campaign.Presentation
         private void ValidateHierarchy()
         {
             RequireReference(workspace, nameof(workspace));
+            RequireReference(boardCapacityChip, nameof(boardCapacityChip));
             RequireReference(raceButton, nameof(raceButton));
             RequireReference(returnToMainButton, nameof(returnToMainButton));
         }
