@@ -70,7 +70,6 @@ namespace GearEngine.Campaign.Presentation
 
             raceButton.onClick.RemoveListener(OnRaceClicked);
             returnToMainButton.onClick.RemoveListener(OnReturnClicked);
-            boardView?.SetVisible(false);
 
             if (track != null)
             {
@@ -81,7 +80,6 @@ namespace GearEngine.Campaign.Presentation
         protected override void OnUnbind()
         {
             boardCapacityChip?.Unbind();
-            boardView?.SetVisible(false);
             base.OnUnbind();
         }
 
@@ -102,6 +100,7 @@ namespace GearEngine.Campaign.Presentation
             try
             {
                 viewModel?.ReturnClicked();
+                boardView?.SetVisible(false);
             }
             catch (Exception ex)
             {

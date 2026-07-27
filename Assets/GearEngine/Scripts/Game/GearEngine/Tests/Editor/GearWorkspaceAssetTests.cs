@@ -1,5 +1,6 @@
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using GearEngine.GearEngine.Config;
 using GearEngine.GearEngine.Presentation.UI;
 using GearEngine.GearEngine.Visuals;
@@ -160,11 +161,19 @@ namespace GearEngine.GearEngine.Tests.Editor
                     .SelectMany(root => root.GetComponentsInChildren<MonoBehaviour>(true))
                     .Single(component =>
                         component != null && component.GetType().Name == "SetupView");
+                MonoBehaviour activeRaceView = scene.GetRootGameObjects()
+                    .SelectMany(root => root.GetComponentsInChildren<MonoBehaviour>(true))
+                    .Single(component =>
+                        component != null && component.GetType().Name == "ActiveRaceView");
                 SerializedProperty boardViewProperty =
                     new SerializedObject(setupView).FindProperty("boardView");
+                SerializedProperty activeRaceBoardProperty =
+                    new SerializedObject(activeRaceView).FindProperty("board");
 
                 Assert.IsNotNull(boardViewProperty);
+                Assert.IsNotNull(activeRaceBoardProperty);
                 Assert.That(boardViewProperty.objectReferenceValue, Is.SameAs(boardView));
+                Assert.That(activeRaceBoardProperty.objectReferenceValue, Is.SameAs(boardView));
                 Assert.That(boardView.transform.parent, Is.SameAs(setupView.transform.parent));
                 Assert.IsTrue(boardView.gameObject.activeSelf);
                 Assert.That(boardView.transform.localScale.x, Is.GreaterThan(0.01f));
@@ -178,6 +187,32 @@ namespace GearEngine.GearEngine.Tests.Editor
             {
                 EditorSceneManager.CloseScene(scene, removeScene: true);
             }
+        }
+
+        [Test]
+        public void SetupClose_KeepsSharedBoardVisibleForRace()
+        {
+            GameObject setupInstance = Object.Instantiate(LoadPrefab(k_setupPath));
+            GameObject boardInstance = Object.Instantiate(LoadPrefab(k_boardViewPath));
+            MonoBehaviour setupView = setupInstance.GetComponents<MonoBehaviour>()
+                .Single(component =>
+                    component != null && component.GetType().Name == "SetupView");
+            SerializedObject serializedView = new SerializedObject(setupView);
+            serializedView.FindProperty("boardView").objectReferenceValue =
+                boardInstance.GetComponent<BoardView>();
+            serializedView.ApplyModifiedPropertiesWithoutUndo();
+            boardInstance.SetActive(true);
+
+            MethodInfo onClose = setupView.GetType().GetMethod(
+                "OnClose",
+                BindingFlags.Instance | BindingFlags.NonPublic);
+            Assert.IsNotNull(onClose);
+            onClose.Invoke(setupView, new object[] { false });
+
+            Assert.IsTrue(boardInstance.activeSelf);
+
+            Object.DestroyImmediate(boardInstance);
+            Object.DestroyImmediate(setupInstance);
         }
 
         [Test]

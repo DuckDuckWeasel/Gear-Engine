@@ -124,7 +124,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Game.Campaign::GearEngine.Campaign.Presentation.ActiveRaceView
   type: 0
   track: {fileID: 0}
-  board: {fileID: 813000000000000001}
+  board: {fileID: 0}
   telemetry: {fileID: 7146927928660000180}
   driftScore: {fileID: 3509839420084490503}
   openTransitionAnchors:

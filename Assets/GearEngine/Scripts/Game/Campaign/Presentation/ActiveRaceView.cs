@@ -17,7 +17,7 @@ namespace GearEngine.Campaign.Presentation
     public class ActiveRaceView : View<ActiveRaceViewModel>
     {
         [SerializeField] private TrackViewComponent track;
-        [SerializeField] private BoardViewComponent board;
+        [SerializeField] private BoardView board;
         [SerializeField] private TrackTelemetryViewComponent telemetry;
         [SerializeField] private RaceDriftScoreView driftScore;
         [SerializeField] private FrustumFitAnchor[] openTransitionAnchors;
@@ -53,19 +53,15 @@ namespace GearEngine.Campaign.Presentation
 
         protected override void OnBind()
         {
-            if (track == null)
+            if (track == null || board == null)
             {
                 throw new InvalidOperationException(
-                    "[ActiveRaceView] Track must be assigned on the scene instance (not baked into the prefab).");
+                    "[ActiveRaceView] Track and BoardView must be assigned on the scene instance.");
             }
 
             track.Bind(viewModel.Track);
             driftScore?.Bind(viewModel.DriftScore);
-            
-            if (board != null)
-            {
-                board.Bind(viewModel.Board);
-            }
+            board.BindReadOnly(viewModel.Board);
 
             SpawnAndBindCar();
 
@@ -80,7 +76,10 @@ namespace GearEngine.Campaign.Presentation
 
         private void LateUpdate()
         {
-            if (viewModel == null) return;
+            if (viewModel == null)
+            {
+                return;
+            }
 
             viewModel.Tick(Time.deltaTime);
 
@@ -93,7 +92,10 @@ namespace GearEngine.Campaign.Presentation
             {
                 if (lastTrackState != SimulationLifecycleState.Completed && viewModel.Track.State == SimulationLifecycleState.Completed)
                 {
-                    if (raceFinishedSound.IsValid()) BroAudio.Play(raceFinishedSound);
+                    if (raceFinishedSound.IsValid())
+                    {
+                        BroAudio.Play(raceFinishedSound);
+                    }
                 }
                 lastTrackState = viewModel.Track.State;
             }
@@ -109,11 +111,15 @@ namespace GearEngine.Campaign.Presentation
                 if (currentLapText != null)
                 {
                     int currentLapRaw = viewModel.Track.Session.CurrentLap;
-                    
+
                     // The race starts at lap 0. Crossing the line the first time completes lap 1 (currentLapRaw becomes 1).
                     if (currentLapRaw > lastDisplayedLap)
                     {
-                        if (lapCompletedSound.IsValid()) BroAudio.Play(lapCompletedSound);
+                        if (lapCompletedSound.IsValid())
+                        {
+                            BroAudio.Play(lapCompletedSound);
+                        }
+
                         currentLapText.transform.DOKill(true);
                         currentLapText.transform.DOPunchScale(Vector3.one * 0.2f, 0.3f, 5, 1f);
                     }
@@ -138,11 +144,14 @@ namespace GearEngine.Campaign.Presentation
 
         private void UpdateFakeRpmUI()
         {
-            if (currentRpmText == null || viewModel?.Car == null) return;
+            if (currentRpmText == null || viewModel?.Car == null)
+            {
+                return;
+            }
 
             if (viewModel.Track?.State == SimulationLifecycleState.Completed)
             {
-                float lerpSpeedDown = 5f; 
+                float lerpSpeedDown = 5f;
                 displayedRpm = Mathf.Lerp(displayedRpm, 0f, Time.deltaTime * lerpSpeedDown);
                 currentRpmText.text = $"{displayedRpm:F0}";
                 UpdateGearText("N");
@@ -151,17 +160,20 @@ namespace GearEngine.Campaign.Presentation
 
             float speed = viewModel.Car.Speed;
             float absSpeed = Mathf.Abs(speed);
-            
+
             float maxSpeed = viewModel.Car.MaxSpeed;
-            if (maxSpeed < 10f) maxSpeed = 200f;
-            
+            if (maxSpeed < 10f)
+            {
+                maxSpeed = 200f;
+            }
+
             int totalGears = 6;
             // Progressive distribution: lower gears have smaller speed ranges, so they shift faster
-            float[] gearSpeedPercents = { 0f, 0.12f, 0.28f, 0.48f, 0.72f, 1.00f, 1.30f }; 
-            
+            float[] gearSpeedPercents = { 0f, 0.12f, 0.28f, 0.48f, 0.72f, 1.00f, 1.30f };
+
             float shiftUpSpeed = gearSpeedPercents[currentSimulatedGear] * maxSpeed;
             float shiftDownSpeed = gearSpeedPercents[currentSimulatedGear - 1] * maxSpeed - 8f; // Hysteresis
-            
+
             if (absSpeed > shiftUpSpeed && currentSimulatedGear < totalGears)
             {
                 currentSimulatedGear++;
@@ -182,19 +194,19 @@ namespace GearEngine.Campaign.Presentation
                     viewModel.Car.RunnerService.ApplyJerk(viewModel.Car.Session.Car, severity);
                 }
             }
-            
+
             float gearMinSpeed = gearSpeedPercents[currentSimulatedGear - 1] * maxSpeed;
             float gearMaxSpeed = gearSpeedPercents[currentSimulatedGear] * maxSpeed;
             float currentGearRange = gearMaxSpeed - gearMinSpeed;
 
             float speedInGear = Mathf.Clamp(absSpeed - gearMinSpeed, 0f, currentGearRange);
-            float t = currentGearRange > 0f ? speedInGear / currentGearRange : 1f; 
-            
+            float t = currentGearRange > 0f ? speedInGear / currentGearRange : 1f;
+
             float baseRpm = currentSimulatedGear * 1000f;
             // Gear 1 targets 3000, Gear 2 targets 4000, ..., Gear 6 targets 8000
-            float targetRpm = 2000f + (currentSimulatedGear * 1000f); 
+            float targetRpm = 2000f + (currentSimulatedGear * 1000f);
             string gearString = currentSimulatedGear.ToString();
-            
+
             // Reverse state
             if (speed < -1f)
             {
@@ -218,9 +230,9 @@ namespace GearEngine.Campaign.Presentation
 
             // Simple linear interpolation without jitter for clear, readable values
             float rawRpm = Mathf.Lerp(baseRpm, targetRpm, t);
-            
+
             // Snappy drop (gear shift / brake), smooth rise (acceleration)
-            float lerpSpeed = rawRpm < displayedRpm ? 20f : 2f; 
+            float lerpSpeed = rawRpm < displayedRpm ? 20f : 2f;
             displayedRpm = Mathf.Lerp(displayedRpm, rawRpm, Time.deltaTime * lerpSpeed);
 
             // Diegetic RPM rounding (nearest 50)
@@ -231,8 +243,11 @@ namespace GearEngine.Campaign.Presentation
 
         private void UpdateGearText(string gearString)
         {
-            if (currentGearText == null) return;
-            
+            if (currentGearText == null)
+            {
+                return;
+            }
+
             if (lastDisplayedGear != gearString)
             {
                 bool isUp = false;
@@ -240,8 +255,14 @@ namespace GearEngine.Campaign.Presentation
 
                 if (int.TryParse(lastDisplayedGear, out int lastG) && int.TryParse(gearString, out int newG))
                 {
-                    if (newG > lastG) isUp = true;
-                    else if (newG < lastG) isDown = true;
+                    if (newG > lastG)
+                    {
+                        isUp = true;
+                    }
+                    else if (newG < lastG)
+                    {
+                        isDown = true;
+                    }
                 }
                 else if (gearString == "1" && (lastDisplayedGear == "N" || lastDisplayedGear == "R"))
                 {
@@ -278,15 +299,37 @@ namespace GearEngine.Campaign.Presentation
 
         private void UpdateStatsUI()
         {
-            if (viewModel?.Track?.Session?.Config == null) return;
+            if (viewModel?.Track?.Session?.Config == null)
+            {
+                return;
+            }
 
             RoguelikeCarStats stats = viewModel.Track.Session.Config.RoguelikeStats;
 
-            if (speedCapabilityText != null) speedCapabilityText.text = $"Speed Cap: {stats.SpeedCapability:F0}";
-            if (corneringSkillText != null) corneringSkillText.text = $"Cornering: {stats.CorneringSkill:F0}";
-            if (driftText != null) driftText.text = $"Drift: {stats.Drift:F0}";
-            if (precisionText != null) precisionText.text = $"Precision: {stats.Precision:F0}";
-            if (smoothnessText != null) smoothnessText.text = $"Smoothness: {stats.Smoothness:F0}";
+            if (speedCapabilityText != null)
+            {
+                speedCapabilityText.text = $"Speed Cap: {stats.SpeedCapability:F0}";
+            }
+
+            if (corneringSkillText != null)
+            {
+                corneringSkillText.text = $"Cornering: {stats.CorneringSkill:F0}";
+            }
+
+            if (driftText != null)
+            {
+                driftText.text = $"Drift: {stats.Drift:F0}";
+            }
+
+            if (precisionText != null)
+            {
+                precisionText.text = $"Precision: {stats.Precision:F0}";
+            }
+
+            if (smoothnessText != null)
+            {
+                smoothnessText.text = $"Smoothness: {stats.Smoothness:F0}";
+            }
         }
 
         private void SpawnAndBindCar()
@@ -325,7 +368,7 @@ namespace GearEngine.Campaign.Presentation
             SetRaceSceneRootsActive(true);
             if (board != null)
             {
-                board.SetAllGearsRapidSpin(true);
+                board.Board.SetAllGearsRapidSpin(true);
             }
             PlayFrustumTransitionThenStartRace();
         }
@@ -360,18 +403,29 @@ namespace GearEngine.Campaign.Presentation
 
             if (startRaceSound.IsValid())
             {
-                BroAudio.Play(startRaceSound).OnEnd(_ => 
+                BroAudio.Play(startRaceSound).OnEnd(_ =>
                 {
                     if (this != null)
                     {
-                        if (board != null) board.SetAllGearsRapidSpin(false);
-                        if (viewModel != null) viewModel.StartRaceAfterCarReady();
+                        if (board != null)
+                        {
+                            board.Board.SetAllGearsRapidSpin(false);
+                        }
+
+                        if (viewModel != null)
+                        {
+                            viewModel.StartRaceAfterCarReady();
+                        }
                     }
                 });
             }
             else
             {
-                if (board != null) board.SetAllGearsRapidSpin(false);
+                if (board != null)
+                {
+                    board.Board.SetAllGearsRapidSpin(false);
+                }
+
                 viewModel.StartRaceAfterCarReady();
             }
         }
@@ -395,10 +449,10 @@ namespace GearEngine.Campaign.Presentation
             {
                 track.Unbind();
             }
-            
+
             if (board != null)
             {
-                board.SetAllGearsRapidSpin(false);
+                board.Board.SetAllGearsRapidSpin(false);
                 board.Unbind();
             }
 
@@ -428,7 +482,7 @@ namespace GearEngine.Campaign.Presentation
 
             if (board != null)
             {
-                board.gameObject.SetActive(active);
+                board.SetVisible(active);
             }
 
             if (telemetry != null)

@@ -19,6 +19,8 @@ namespace GearEngine.GearEngine.Presentation.UI
             IDragService dragService)
         {
             ValidateReferences(dragService);
+            UnbindViews();
+            gameObject.SetActive(true);
             board.gameObject.SetActive(true);
             trash.gameObject.SetActive(true);
             board.SetWorkspaceInteractionEnabled(true);
@@ -27,6 +29,27 @@ namespace GearEngine.GearEngine.Presentation.UI
             trash.SetDragService(dragService);
             trash.Bind(trashViewModel);
             trash.ApplyInitialState();
+        }
+
+        public void BindReadOnly(BoardViewModel boardViewModel)
+        {
+            if (boardViewModel == null)
+            {
+                throw new ArgumentNullException(nameof(boardViewModel));
+            }
+
+            ValidateCommonReferences();
+            UnbindViews();
+            gameObject.SetActive(true);
+            board.gameObject.SetActive(true);
+            trash.gameObject.SetActive(false);
+            board.SetWorkspaceInteractionEnabled(false);
+            board.Bind(boardViewModel);
+        }
+
+        public void Unbind()
+        {
+            UnbindViews();
         }
 
         public void SetVisible(bool visible)
@@ -46,6 +69,15 @@ namespace GearEngine.GearEngine.Presentation.UI
 
         private void ValidateReferences(IDragService dragService)
         {
+            ValidateCommonReferences();
+            if (dragService == null)
+            {
+                throw new ArgumentNullException(nameof(dragService));
+            }
+        }
+
+        private void ValidateCommonReferences()
+        {
             if (board == null)
             {
                 throw new InvalidOperationException("[BoardView] Board is missing.");
@@ -60,11 +92,12 @@ namespace GearEngine.GearEngine.Presentation.UI
             {
                 throw new InvalidOperationException("[BoardView] Drag overlay is missing.");
             }
+        }
 
-            if (dragService == null)
-            {
-                throw new ArgumentNullException(nameof(dragService));
-            }
+        private void UnbindViews()
+        {
+            board?.Unbind();
+            trash?.Unbind();
         }
     }
 }
