@@ -1,0 +1,21 @@
+{
+    "name": "Scaffold.Input",
+    "rootNamespace": "Scaffold.Input",
+    "references": [
+        "VContainer",
+        "Scaffold.Events",
+        "Unity.TextMeshPro",
+        "Unity.ResourceManager",
+        "Unity.Addressables",
+        "Unity.InputSystem"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

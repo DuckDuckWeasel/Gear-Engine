@@ -9,7 +9,7 @@ using UnityEngine;
 
 namespace GearEngine.Campaign.Gear
 {
-    [CreateAssetMenu(fileName = "KamikazeRecoveryGear", menuName = "Gear Engine/Abilities/Group A/Kamikaze Recovery Gear")]
+    [CreateAssetMenu(fileName = "KamikazeRecoveryGear", menuName = "GearEngine/Abilities/Group A/Kamikaze Recovery Gear")]
     public sealed class KamikazeRecoveryGearAbilitySO : ActiveRaceGearAbilitySO
     {
         [Header("Recovery Burst")]

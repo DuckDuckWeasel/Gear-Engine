@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using Sirenix.OdinInspector;
+
 using UnityEngine;
 
 namespace GearEngine.Core.Config
@@ -9,9 +9,9 @@ namespace GearEngine.Core.Config
     /// Base class for ScriptableObject catalogs containing a list of items of type T.
     /// Provides consistent dictionary lookups and runtime population.
     /// </summary>
-    public abstract class BaseCatalogSO<T> : SerializedScriptableObject
+    public abstract class BaseCatalogSO<T> : ScriptableObject
     {
-        [SerializeField, ListDrawerSettings(Expanded = true)]
+        [SerializeField]
         protected T[] items = Array.Empty<T>();
 
         private readonly Dictionary<string, T> _byId = new Dictionary<string, T>(StringComparer.Ordinal);

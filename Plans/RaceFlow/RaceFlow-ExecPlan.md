@@ -93,7 +93,7 @@ The feature connects two previously isolated modules — `Game.GearEngine` (gear
 ### Flow Diagram
 
 ```mermaid
-flowchart TD
+blackboard TD
     SceneStart["Scene Start"] --> RaceScope["RaceScope.Configure()"]
     RaceScope --> NavOpen["navigator.OpenAsync(TrackPreviewViewConfig)"]
     NavOpen --> Screen1["TrackPreviewView (Screen 1)"]
@@ -111,7 +111,7 @@ flowchart TD
 ### Module Dependency Diagram
 
 ```mermaid
-flowchart LR
+blackboard LR
     subgraph RaceModule ["Game.Race (new)"]
         RaceScope
         TrackPreviewViewModel

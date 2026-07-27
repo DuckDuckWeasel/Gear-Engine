@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace GearEngine.Campaign.Gear
 {
-    [CreateAssetMenu(fileName = "QuantumLinkGear", menuName = "Gear Engine/Abilities/Group B/Quantum Link Gear")]
+    [CreateAssetMenu(fileName = "QuantumLinkGear", menuName = "GearEngine/Abilities/Group B/Quantum Link Gear")]
     public sealed class QuantumLinkGearAbilitySO : ActiveRaceGearAbilitySO
     {
         [Header("Global Battery")]

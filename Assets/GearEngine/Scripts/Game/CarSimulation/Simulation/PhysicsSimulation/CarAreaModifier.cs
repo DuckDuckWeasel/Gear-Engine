@@ -1,11 +1,11 @@
 using UnityEngine;
-using Sirenix.OdinInspector;
+using TriInspector;
 
-[InfoBox("Add this to a volume trigger (e.g. Water Puddle, Oil, Speed Bump) to dynamically modify the SplineCarRunner stats when the car passes through it.")]
 [RequireComponent(typeof(Collider))]
 public class CarAreaModifier : MonoBehaviour
 {
     [Title("Temporary Multipliers")]
+    [InfoBox("Add this to a volume trigger (e.g. Water Puddle, Oil, Speed Bump) to dynamically modify the SplineCarRunner stats when the car passes through it.")]
     [Tooltip("Multiplies the AI's max speed and safe corner speed. (e.g. 0.5 cuts speed in half like a water puddle).")]
     public float speedMultiplier = 1f;
 

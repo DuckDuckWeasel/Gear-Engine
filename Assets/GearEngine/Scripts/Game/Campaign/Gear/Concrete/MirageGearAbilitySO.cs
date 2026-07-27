@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace GearEngine.Campaign.Gear
 {
-    [CreateAssetMenu(fileName = "MirageGear", menuName = "Gear Engine/Abilities/Group D/Mirage Gear")]
+    [CreateAssetMenu(fileName = "MirageGear", menuName = "GearEngine/Abilities/Group D/Mirage Gear")]
     public sealed class MirageGearAbilitySO : ActiveRaceGearAbilitySO
     {
         private bool isBroken = false;

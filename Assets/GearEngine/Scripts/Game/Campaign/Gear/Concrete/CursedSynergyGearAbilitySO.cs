@@ -9,7 +9,7 @@ using Scaffold.Entities;
 
 namespace GearEngine.Campaign.Gear
 {
-    [CreateAssetMenu(fileName = "CursedSynergyGear", menuName = "Gear Engine/Abilities/Group B/Cursed Synergy Gear")]
+    [CreateAssetMenu(fileName = "CursedSynergyGear", menuName = "GearEngine/Abilities/Group B/Cursed Synergy Gear")]
     public sealed class CursedSynergyGearAbilitySO : ActiveRaceGearAbilitySO
     {
         [SerializeField] private VariableSO penaltyVar;

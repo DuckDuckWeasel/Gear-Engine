@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using VContainer.Unity;
-using Sirenix.OdinInspector;
+using TriInspector;
 
 namespace GearEngine.GearEngine.Manager
 {

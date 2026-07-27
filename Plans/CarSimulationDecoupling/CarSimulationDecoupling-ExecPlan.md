@@ -1345,7 +1345,7 @@ Target responsibilities:
 ## Dependency Flow Graph
 
 ```mermaid
-flowchart TD
+blackboard TD
     Scope["CarTrackScope<br/>LifetimeScope"] --> Installer["CarTrackInstaller"]
     Scope --> Bootstrap["CarTrackBootstrap<br/>MonoBehaviour + IInitializable"]
 
@@ -1375,7 +1375,7 @@ ViewModel.
 ## Execution Flow Graph
 
 ```mermaid
-flowchart TD
+blackboard TD
     A["Play Mode starts"] --> B["CarTrackScope builds DI container"]
     B --> C{"Bootstrap assigned?"}
     C -- Yes --> D["CarTrackBootstrap.Initialize()"]

@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace GearEngine.Campaign.Gear
 {
-    [CreateAssetMenu(fileName = "BrakeToBurnGear", menuName = "Gear Engine/Abilities/Group E/Brake To Burn Gear")]
+    [CreateAssetMenu(fileName = "BrakeToBurnGear", menuName = "GearEngine/Abilities/Group E/Brake To Burn Gear")]
     public sealed class BrakeToBurnGearAbilitySO : ActiveRaceGearAbilitySO
     {
         [SerializeField] private float speedThreshold = 45f;

@@ -74,7 +74,8 @@ namespace GearEngine.SceneFoundation.Bootstrap
             new AddressablesInstaller().Install(builder);
             new NavigationInstaller(navigationViewHolder, navigationSettings).Install(builder);
             new EventsInstaller().Install(builder);
-            
+            new Scaffold.Input.Container.InputFilterInstaller().Install(builder);
+
             if (globalLoadingPrefab != null)
             {
                 new GlobalLoadingInstaller(globalLoadingPrefab).Install(builder);

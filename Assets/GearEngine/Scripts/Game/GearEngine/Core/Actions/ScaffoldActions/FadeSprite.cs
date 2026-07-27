@@ -1,0 +1,80 @@
+using System;
+using GearEngine.Core.Actions;
+
+using UnityEngine;
+using UnityEngine.Serialization;
+
+namespace Scaffold
+{
+    /// <summary>
+    /// Fades a sprite to a target color over a period of time.
+    /// </summary>
+    [CommandInfo("Sprite",
+                 "Fade Sprite",
+                 "Fades a sprite to a target color over a period of time.")]
+    [AddComponentMenu("")]
+    [ExecuteInEditMode]
+    [Serializable]
+    public class FadeSprite : ActionBase
+    {
+        [Tooltip("Sprite object to be faded")]
+        [SerializeField] protected SpriteRenderer spriteRenderer;
+
+        [Tooltip("Length of time to perform the fade")]
+        [SerializeField] protected FloatData duration = new FloatData(1f);
+
+        [Tooltip("Target color to fade to. To only fade transparency level, set the color to white and set the alpha to required transparency.")]
+        [SerializeField] protected ColorData targetColor = new ColorData(Color.white);
+
+        [Tooltip("Wait until the fade has finished before executing the next command")]
+        [SerializeField] protected bool waitUntilFinished = true;
+
+        #region Public members
+
+        public override void OnEnter()
+        {
+            if (spriteRenderer == null)
+            {
+                Continue();
+                return;
+            }
+
+            SpriteFader.FadeSprite(spriteRenderer, targetColor.Value, duration.Value, Vector2.zero, delegate
+            {
+                if (waitUntilFinished)
+                {
+                    Continue();
+                }
+            });
+
+            if (!waitUntilFinished)
+            {
+                Continue();
+            }
+        }
+
+        public override string GetSummary()
+        {
+            if (spriteRenderer == null)
+            {
+                return "Error: No sprite renderer selected";
+            }
+
+            return spriteRenderer.name + " to " + targetColor.Value.ToString();
+        }
+
+        public override Color GetButtonColor()
+        {
+            return new Color32(221, 184, 169, 255);
+        }
+
+        public override bool HasReference(Variable variable)
+        {
+            return duration.floatRef == variable || targetColor.colorRef == variable ||
+                base.HasReference(variable);
+        }
+
+        #endregion
+
+    }
+}

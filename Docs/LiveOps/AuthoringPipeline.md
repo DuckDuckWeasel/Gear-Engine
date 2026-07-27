@@ -5,7 +5,7 @@ This document describes the end-to-end flow from Unity assets to Remote Config a
 ## Flow
 
 ```mermaid
-flowchart LR
+blackboard LR
   subgraph author [Author in Unity]
     catalogs[Catalogs and builders]
     catalogs --> builderSO[ConfigBuilderSO TConfig]

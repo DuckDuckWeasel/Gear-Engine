@@ -1,5 +1,9 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:Assets/GearEngine/Scenes/Test/Test Tutorial Scene.unity.meta
+guid: e2186a473226a431d92557c2855b6c56
+========
 guid: d9211eb391a824742b65aa5f76044961
+>>>>>>>> 574764b9662a685236ea1198b2ccc2fb37ae46b4:Assets/_Recovery/0 (3).unity.meta
 DefaultImporter:
   externalObjects: {}
   userData: 

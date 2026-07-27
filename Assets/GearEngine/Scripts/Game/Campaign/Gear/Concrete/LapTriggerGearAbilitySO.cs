@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace GearEngine.Campaign.Gear
 {
-    [CreateAssetMenu(fileName = "LapTriggerGear", menuName = "Gear Engine/Abilities/Lap Trigger Buff")]
+    [CreateAssetMenu(fileName = "LapTriggerGear", menuName = "GearEngine/Abilities/Lap Trigger Buff")]
     public sealed class LapTriggerGearAbilitySO : ActiveRaceGearAbilitySO
     {
         [Header("Buff Setup")]

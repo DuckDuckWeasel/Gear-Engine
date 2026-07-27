@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace GearEngine.Campaign.Gear
 {
-    [CreateAssetMenu(fileName = "SlotMachineGear", menuName = "Gear Engine/Abilities/Group D/Slot Machine Gear")]
+    [CreateAssetMenu(fileName = "SlotMachineGear", menuName = "GearEngine/Abilities/Group D/Slot Machine Gear")]
     public sealed class SlotMachineGearAbilitySO : ActiveRaceGearAbilitySO
     {
         [SerializeField] private VariableSO stat;

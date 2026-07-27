@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace GearEngine.GearEngine.Config
 {
-    [CreateAssetMenu(fileName = "BoardRules", menuName = "GearEngine/BoardRules")]
+    [CreateAssetMenu(fileName = "BoardRules", menuName = "GearEngine/Config/Board Rules")]
     public sealed class BoardRulesSO : ScriptableObject
     {
         [Header("Grid")]

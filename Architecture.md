@@ -56,7 +56,7 @@ Update trigger: changes to startup sequence, external service integrations, or r
 System context diagram:
 
 ```mermaid
-flowchart LR
+blackboard LR
     Player([Player]) --> UnityClient[Unity client]
     UnityClient --> UGS[Unity Gaming Services / Cloud]
     UnityClient --> Addressables[Addressables Content Catalog]
@@ -83,7 +83,7 @@ Update trigger: add/rename/remove assemblies or change `.asmdef` references.
 Container/module dependency diagram (trimmed extract):
 
 ```mermaid
-flowchart LR
+blackboard LR
     Infra[Infra<br/>Scope / Events / Navigation / Model / MVVM / Addressables / SceneFlow / UGS / CloudCode]
     Core[Core<br/>LiveOps / Entities / ViewModel]
     App[App<br/>Bootstrap / View]

@@ -8,12 +8,20 @@
         "Game.GearEngine.FrustumFit",
         "Scaffold.Events",
         "Scaffold.Events.Container",
+        "Scaffold.Input",
         "Scaffold.MVVM.View",
         "Scaffold.MVVM.ViewModel",
         "Scaffold.Navigation",
+        "Scaffold",
+        "ScaffoldEditor",
         "VContainer",
         "Scaffold.MVVM",
-        "Unity.TextMeshPro"
+        "Unity.TextMeshPro",
+        "Unity.InputSystem",
+        "Coffee.UIEffect",
+        "TriInspector",
+        "TriInspector.Editor",
+        "Game.GearEngine.Editor"
     ],
     "includePlatforms": [
         "Editor"

@@ -143,7 +143,7 @@ The size of the model is irrelevant. A wallet with three fields can be Tier 2 be
 ### Decision flow
 
 ```mermaid
-flowchart TD
+blackboard TD
     A["New piece of state"] --> B{"Persisted?"}
     B -->|no| T0["Tier 0: ViewModel<br/>with public setters"]
     B -->|yes| C{"Has any rule, ordering<br/>constraint, or side effect?"}

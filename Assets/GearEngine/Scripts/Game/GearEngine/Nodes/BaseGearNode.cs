@@ -1,7 +1,7 @@
 using UnityEngine;
 using Scaffold.Events.Contracts;
 using System;
-using Sirenix.OdinInspector;
+using TriInspector;
 
 namespace GearEngine.GearEngine.Nodes
 {

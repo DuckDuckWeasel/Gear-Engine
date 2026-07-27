@@ -65,6 +65,16 @@ To merge with another mechanic in one scene, add a parent `LifetimeScope` (or ch
 
 The engine boasts an extensive NUnit test suite simulating the architecture in headless isolation (without Unity components overhead). It ensures that mathematical bounds and business logic never break.
 
+### UIEffect preset catalog visual regression
+
+`Editor/UIEffectPresetCatalogSceneVisualTests.cs` is a reusable EditMode visual regression test for
+`Assets/GearEngine/Scenes/Test/UIEffectsForEachDemo.unity`. It loads the authored scene, invokes its
+`CycleUIEffectButton` through the Blackboard click route once per configured preset, verifies the
+updated preset label, and writes a single contact sheet to
+`Artifacts/VisualTests/UIEffectPresetCatalog/AllPresetsContactSheet.png`. The test reads the preset
+list from the scene action, so additions or removals from the configured catalog are covered without
+hard-coding a preset count.
+
 ### Key Covered Workflows
 1.  **Core Ticking & Triggers**:
     *   [Test_CoreGear_Rotates_And_Fires_Trigger_To_Neighbor](Tests/Test_CoreGear_Rotates_And_Fires_Trigger_To_Neighbor.md): Ensures that when a `CoreGearNode` is ticked by the engine, it completes a segment and correctly dispatches `DirectionalTriggerEvent` precisely to its connected coordinate.

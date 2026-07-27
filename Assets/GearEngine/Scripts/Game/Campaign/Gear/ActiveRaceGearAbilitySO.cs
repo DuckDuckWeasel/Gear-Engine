@@ -13,8 +13,8 @@ namespace GearEngine.Campaign.Gear
     public abstract class ActiveRaceGearAbilitySO : GearAbilitySO
     {
         protected RaceState RaceContext { get; private set; }
-        private readonly System.Collections.Generic.Dictionary<IGridNode, System.Collections.Generic.List<Scaffold.Entities.EntityModifierEntry>> nodeModifiers = new System.Collections.Generic.Dictionary<IGridNode, System.Collections.Generic.List<Scaffold.Entities.EntityModifierEntry>>();
-        private readonly System.Collections.Generic.Dictionary<Scaffold.Entities.EntityModifierEntry, float> temporaryModifiers = new System.Collections.Generic.Dictionary<Scaffold.Entities.EntityModifierEntry, float>();
+        private readonly System.Collections.Generic.Dictionary<IGridNode, System.Collections.Generic.List<(Scaffold.Entities.VariableSO, Scaffold.Entities.ModifierId)>> nodeModifiers = new System.Collections.Generic.Dictionary<IGridNode, System.Collections.Generic.List<(Scaffold.Entities.VariableSO, Scaffold.Entities.ModifierId)>>();
+        private readonly System.Collections.Generic.Dictionary<(Scaffold.Entities.VariableSO, Scaffold.Entities.ModifierId), float> temporaryModifiers = new System.Collections.Generic.Dictionary<(Scaffold.Entities.VariableSO, Scaffold.Entities.ModifierId), float>();
 
         protected IGearEngineService GearEngineContext { get; private set; }
 
@@ -30,16 +30,12 @@ namespace GearEngine.Campaign.Gear
         {
             if (RaceContext?.Car == null || variable == null) return;
             
-            var entry = new Scaffold.Entities.EntityModifierEntry(
-                variable, 
-                new Scaffold.Entities.FloatVariableValue { Value = value }
-            );
-            
-            RaceContext.Car.AddModifier(entry);
+            var modId = RaceContext.Car.AddModifier(variable, new Scaffold.Entities.FloatAddModifier(value));
+            var entry = (variable, modId);
 
             if (!nodeModifiers.ContainsKey(owner))
             {
-                nodeModifiers[owner] = new System.Collections.Generic.List<Scaffold.Entities.EntityModifierEntry>();
+                nodeModifiers[owner] = new System.Collections.Generic.List<(Scaffold.Entities.VariableSO, Scaffold.Entities.ModifierId)>();
             }
             nodeModifiers[owner].Add(entry);
 
@@ -62,7 +58,7 @@ namespace GearEngine.Campaign.Gear
                     timeLeft -= deltaTime;
                     if (timeLeft <= 0f)
                     {
-                        RaceContext.Car.RemoveModifier(mod);
+                        RaceContext.Car.RemoveModifier(mod.Item1, mod.Item2);
                         temporaryModifiers.Remove(mod);
                         modsForNode.RemoveAt(i);
                     }
@@ -81,7 +77,7 @@ namespace GearEngine.Campaign.Gear
             {
                 foreach (var mod in activeModifiers)
                 {
-                    RaceContext.Car.RemoveModifier(mod);
+                    RaceContext.Car.RemoveModifier(mod.Item1, mod.Item2);
                     temporaryModifiers.Remove(mod);
                 }
                 nodeModifiers.Remove(owner);

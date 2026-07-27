@@ -22,7 +22,7 @@ namespace GearEngine.Campaign.Gear
         public float Amount;
     }
 
-    [CreateAssetMenu(fileName = "ModifierPassiveGear", menuName = "Gear Engine/Abilities/Passive Stat Modifier")]
+    [CreateAssetMenu(fileName = "ModifierPassiveGear", menuName = "GearEngine/Abilities/Passive Stat Modifier")]
     public sealed class ModifierPassiveGearAbilitySO : PassiveRaceGearAbilitySO
     {
         [Header("Passive Stat Adjustments")]

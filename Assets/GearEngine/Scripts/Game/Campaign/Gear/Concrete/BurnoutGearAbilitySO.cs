@@ -9,7 +9,7 @@ using UnityEngine;
 
 namespace GearEngine.Campaign.Gear
 {
-    [CreateAssetMenu(fileName = "BurnoutGear", menuName = "Gear Engine/Abilities/Group A/Burnout Gear")]
+    [CreateAssetMenu(fileName = "BurnoutGear", menuName = "GearEngine/Abilities/Group A/Burnout Gear")]
     public sealed class BurnoutGearAbilitySO : ActiveRaceGearAbilitySO
     {
         [Header("Burnout Settings")]

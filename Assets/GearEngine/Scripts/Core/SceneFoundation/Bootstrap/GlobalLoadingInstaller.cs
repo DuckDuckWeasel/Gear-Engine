@@ -28,6 +28,8 @@ namespace GearEngine.SceneFoundation.Bootstrap
 
                 // Injecta as dependências (como IEventBus) da scope atual na instância global
                 builder.RegisterComponent(globalInstance);
+                
+                builder.RegisterEntryPoint<TutorialLoadingEventBinder>().AsSelf();
             }
             else
             {

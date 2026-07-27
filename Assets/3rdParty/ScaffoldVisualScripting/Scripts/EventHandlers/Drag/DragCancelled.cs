@@ -1,0 +1,91 @@
+
+using System.Collections.Generic;
+using UnityEngine;
+
+namespace Scaffold
+{
+    /// <summary>
+    /// The block will execute when the player drags an object and releases it without dropping it on a target object.
+    /// </summary>
+    [EventHandlerInfo("Sprite",
+                      "Drag Cancelled",
+                      "The block will execute when the player drags an object and releases it without dropping it on a target object.")]
+    [AddComponentMenu("")]
+    public class DragCancelled : EventHandler
+    {
+        public class DragCancelledEvent
+        {
+            public Draggable2D DraggableObject;
+
+            public DragCancelledEvent(Draggable2D draggableObject)
+            {
+                DraggableObject = draggableObject;
+            }
+        }
+
+        [VariableProperty(typeof(GameObjectVariable))]
+        [SerializeField] protected GameObjectVariable draggableRef;
+
+        [Tooltip("Draggable object to listen for drag events on")]
+        [SerializeField] protected List<Draggable2D> draggableObjects = new List<Draggable2D>();
+
+        protected EventDispatcher eventDispatcher;
+
+        protected virtual void OnEnable()
+        {
+            eventDispatcher = ScaffoldManager.Instance.EventDispatcher;
+
+            eventDispatcher.AddListener<DragCancelledEvent>(OnDragCancelledEvent);
+        }
+
+        protected virtual void OnDisable()
+        {
+            eventDispatcher.RemoveListener<DragCancelledEvent>(OnDragCancelledEvent);
+
+            eventDispatcher = null;
+        }
+
+        protected virtual void OnDragCancelledEvent(DragCancelledEvent evt)
+        {
+            OnDragCancelled(evt.DraggableObject);
+        }
+
+
+
+        #region Public members
+
+        public virtual void OnDragCancelled(Draggable2D draggableObject)
+        {
+            if (draggableObjects.Contains(draggableObject))
+            {
+                if (draggableRef != null)
+                {
+                    draggableRef.Value = draggableObject.gameObject;
+                }
+                ExecuteBlock();
+            }
+        }
+
+        public override string GetSummary()
+        {
+            string summary = "Draggable: ";
+            if (this.draggableObjects != null && this.draggableObjects.Count != 0)
+            {
+                for (int i = 0; i < this.draggableObjects.Count; i++)
+                {
+                    if (draggableObjects[i] != null)
+                    {
+                        summary += draggableObjects[i].name + ",";
+                    }
+                }
+                return summary;
+            }
+            else
+            {
+                return "None";
+            }
+        }
+
+        #endregion Public members
+    }
+}

@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace GearEngine.Campaign.Gear
 {
-    [CreateAssetMenu(fileName = "RadioactiveEngineGear", menuName = "Gear Engine/Abilities/Group C/Radioactive Engine Gear")]
+    [CreateAssetMenu(fileName = "RadioactiveEngineGear", menuName = "GearEngine/Abilities/Group C/Radioactive Engine Gear")]
     public sealed class RadioactiveEngineGearAbilitySO : ActiveRaceGearAbilitySO
     {
         [SerializeField] private VariableSO decayTarget;

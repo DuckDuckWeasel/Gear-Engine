@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace GearEngine.Campaign.Gear
 {
-    [CreateAssetMenu(fileName = "GhostGear", menuName = "Gear Engine/Abilities/Group B/Ghost Gear")]
+    [CreateAssetMenu(fileName = "GhostGear", menuName = "GearEngine/Abilities/Group B/Ghost Gear")]
     public sealed class GhostGearAbilitySO : PassiveRaceGearAbilitySO
     {
         public override void ApplyPassiveStats(ref RoguelikeCarStats stats, IGridNode owner, IGearEngineService engine)

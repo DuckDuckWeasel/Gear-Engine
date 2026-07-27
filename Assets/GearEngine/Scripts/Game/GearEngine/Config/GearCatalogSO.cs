@@ -7,7 +7,7 @@ namespace GearEngine.GearEngine.Config
     /// <summary>
     /// Resolves gear ids from LiveOps persistence to <see cref="GearItem"/> assets.
     /// </summary>
-    [CreateAssetMenu(fileName = "GearCatalog", menuName = "GearEngine/Gear Catalog")]
+    [CreateAssetMenu(fileName = "GearCatalog", menuName = "GearEngine/Config/Gear Catalog")]
     public sealed class GearCatalogSO : ScriptableObject
     {
         [SerializeField]

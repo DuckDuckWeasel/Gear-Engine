@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace GearEngine.Campaign.Gear
 {
-    [CreateAssetMenu(fileName = "TheJokerGear", menuName = "Gear Engine/Abilities/Group D/The Joker Gear")]
+    [CreateAssetMenu(fileName = "TheJokerGear", menuName = "GearEngine/Abilities/Group D/The Joker Gear")]
     public sealed class TheJokerGearAbilitySO : ActiveRaceGearAbilitySO
     {
         [SerializeField] private VariableSO s1;

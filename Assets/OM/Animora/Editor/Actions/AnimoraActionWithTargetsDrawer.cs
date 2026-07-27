@@ -17,8 +17,8 @@ namespace OM.Animora.Editor
         /// <summary>
         /// Cached dictionary of property fields by name for easy access and update handling.
         /// </summary>
-        protected readonly Dictionary<string, PropertyField> PropertyFields = new Dictionary<string, PropertyField>();
-        protected SerializedProperty MainProperty;
+        protected readonly Dictionary<string, PropertyField> propertyFields = new Dictionary<string, PropertyField>();
+        protected SerializedProperty mainProperty;
 
         /// <summary>
         /// Creates the UI layout for the property using VisualElements.
@@ -27,14 +27,21 @@ namespace OM.Animora.Editor
         /// <returns>A <see cref="VisualElement"/> containing the entire property UI.</returns>
         public override VisualElement CreatePropertyGUI(SerializedProperty property)
         {
-            MainProperty = property.Copy();
-            PropertyFields.Clear();
+            mainProperty = property.Copy();
+            propertyFields.Clear();
 
-            var root = new VisualElement();
+            VisualElement root = new VisualElement();
 
-            foreach (var childProperty in property.GetAllProperties())
+            foreach (SerializedProperty childProperty in property.GetAllProperties())
             {
                 DrawProperty(childProperty.Copy(), root);
+            }
+
+            PropertyField customTargetsField = GetPropertyField("customTargets");
+            SerializedProperty useCustomTargetsProp = mainProperty.FindPropertyRelative("useCustomTargets");
+            if (customTargetsField != null && useCustomTargetsProp != null)
+            {
+                customTargetsField.SetDisplay(useCustomTargetsProp.boolValue);
             }
 
             return root;
@@ -47,13 +54,16 @@ namespace OM.Animora.Editor
         /// <param name="parent">The parent element to add the field to.</param>
         protected virtual void DrawProperty(SerializedProperty property, VisualElement parent)
         {
-            if (!CanDrawProperty(property)) return;
+            if (!CanDrawProperty(property))
+            {
+                return;
+            }
 
-            var propertyField = new PropertyField(property);
+            PropertyField propertyField = new PropertyField(property);
             propertyField.Bind(property.serializedObject);
             parent.Add(propertyField);
 
-            PropertyFields.Add(property.name, propertyField);
+            propertyFields.Add(property.name, propertyField);
 
             propertyField.RegisterValueChangeCallback(e =>
             {
@@ -69,7 +79,7 @@ namespace OM.Animora.Editor
         /// <returns>True if the property should be drawn; otherwise, false.</returns>
         protected virtual bool CanDrawProperty(SerializedProperty property)
         {
-            var hideInInspector = property.GetAttribute<OM_HideInInspector>(true);
+            OM_HideInInspector hideInInspector = property.GetAttribute<OM_HideInInspector>(true);
             return hideInInspector == null;
         }
 
@@ -84,8 +94,8 @@ namespace OM.Animora.Editor
             // Override in subclass to react to property changes
             if (propertyName == "useCustomTargets")
             {
-                var field = GetPropertyField("customTargets");
-                field?.SetDisplay(MainProperty.FindPropertyRelative("useCustomTargets").boolValue);
+                PropertyField field = GetPropertyField("customTargets");
+                field?.SetDisplay(mainProperty.FindPropertyRelative("useCustomTargets").boolValue);
             }
         }
 
@@ -96,7 +106,7 @@ namespace OM.Animora.Editor
         /// <returns>The corresponding <see cref="PropertyField"/>, or null if not found.</returns>
         protected PropertyField GetPropertyField(string propertyName)
         {
-            return PropertyFields.GetValueOrDefault(propertyName);
+            return propertyFields.GetValueOrDefault(propertyName);
         }
     }
 }

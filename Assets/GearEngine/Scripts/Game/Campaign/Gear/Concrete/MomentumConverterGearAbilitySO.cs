@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace GearEngine.Campaign.Gear
 {
-    [CreateAssetMenu(fileName = "MomentumConverterGear", menuName = "Gear Engine/Abilities/Group C/Momentum Converter Gear")]
+    [CreateAssetMenu(fileName = "MomentumConverterGear", menuName = "GearEngine/Abilities/Group C/Momentum Converter Gear")]
     public sealed class MomentumConverterGearAbilitySO : ActiveRaceGearAbilitySO
     {
         [SerializeField] private VariableSO penaltyStat;

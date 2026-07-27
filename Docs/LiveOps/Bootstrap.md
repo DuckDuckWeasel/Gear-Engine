@@ -18,7 +18,7 @@ This document describes how the **Cloud Code backend**, **shared DTO DLL**, **Un
 ## Flow (Meta scene)
 
 ```mermaid
-flowchart LR
+blackboard LR
     subgraph Repo[Repo root]
         sln[LiveOps/LiveOps.sln]
         csmod[LiveOps/Project/LiveOps.csproj]

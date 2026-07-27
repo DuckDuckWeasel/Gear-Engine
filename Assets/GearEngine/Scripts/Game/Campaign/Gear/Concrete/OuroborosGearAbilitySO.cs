@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace GearEngine.Campaign.Gear
 {
-    [CreateAssetMenu(fileName = "OuroborosGear", menuName = "Gear Engine/Abilities/Group C/Ouroboros Gear")]
+    [CreateAssetMenu(fileName = "OuroborosGear", menuName = "GearEngine/Abilities/Group C/Ouroboros Gear")]
     public sealed class OuroborosGearAbilitySO : ActiveRaceGearAbilitySO
     {
         [SerializeField] private List<VariableSO> cycleStats;
