@@ -2710,6 +2710,8 @@ MonoBehaviour:
   boardRules: {fileID: 11400000, guid: c8936b7a974414cf6aba78a5ac6be445, type: 2}
   featureToggle: {fileID: 11400000, guid: e8f9a0b1c2d34432bcdef01234567891, type: 2}
   rerollPlacementKey: {fileID: 11400000, guid: 32c6edf84f92f45d6a49ebb59b1c1f2f, type: 2}
+  tutorialWrapper: {fileID: 11400000, guid: 1db8f5d918bb64e859dbba3c521da34b, type: 2}
+  setupTutorial: {fileID: 11400000, guid: fd12212a2802343bd842d13e1e1be500, type: 2}
   simulationConfig: {fileID: 11400000, guid: ca21ed191cc3c4e958d22c36354e8ad0, type: 2}
   raceSessionDefaults: {fileID: 11400000, guid: f4f4f4f4f4f4f4f4f4f4f4f4f4f4f4f4, type: 2}
   adConfig: {fileID: 11400000, guid: 206a1855ad7644b468ab4efd57636c47, type: 2}

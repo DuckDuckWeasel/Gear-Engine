@@ -25,6 +25,7 @@
         "Coffee.UIEffect",
         "TriInspector",
         "Scaffold",
+        "Scaffold.Tutorial",
         "GUID:2759f1476e0dc49e99119fcc9f47f6e7"
     ],
     "includePlatforms": [],

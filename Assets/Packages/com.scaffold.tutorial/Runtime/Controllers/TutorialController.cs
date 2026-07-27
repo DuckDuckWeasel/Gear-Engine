@@ -18,11 +18,11 @@ namespace Scaffold.Tutorial.Controllers
         private readonly IObjectResolver resolver;
         private readonly IEventBus eventBus;
         private readonly IAnalyticsService analyticsService;
-        
+
         // Simulating the save data/progress state
         private readonly HashSet<string> completedTutorials = new HashSet<string>();
         private string currentInProgressId;
-        
+
         private TutorialProgressController currentTutorialInstance;
 
         [Inject]
@@ -73,6 +73,13 @@ namespace Scaffold.Tutorial.Controllers
 
         public void StartTutorial(string id)
         {
+            if (string.IsNullOrWhiteSpace(id) ||
+                completedTutorials.Contains(id) ||
+                currentInProgressId == id)
+            {
+                return;
+            }
+
             currentInProgressId = id;
             _ = LoadTutorialAsync(id);
         }
@@ -127,9 +134,9 @@ namespace Scaffold.Tutorial.Controllers
             // In a real project, you'd instantiate this properly or resolve it via VContainer
             GameObject tutorialGameObject = UnityEngine.Object.Instantiate(referenceController.TutorialProgressController.gameObject);
             resolver.InjectGameObject(tutorialGameObject);
-            
+
             tutorialGameObject.SetActive(true);
-            
+
             if (currentTutorialInstance != null)
             {
                 currentTutorialInstance.OnTutorialStarted -= HandleTutorialStarted;
@@ -141,7 +148,7 @@ namespace Scaffold.Tutorial.Controllers
             currentTutorialInstance.OnTutorialStarted += HandleTutorialStarted;
             currentTutorialInstance.OnTutorialCompleted += HandleTutorialCompleted;
             currentTutorialInstance.OnTutorialStepReached += HandleTutorialStepReached;
-            
+
             currentTutorialInstance.Initialize(referenceController);
         }
 

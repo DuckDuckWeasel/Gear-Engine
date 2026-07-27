@@ -13,6 +13,7 @@
         "Scaffold.MVVM.ViewModel",
         "Scaffold.Navigation",
         "Scaffold",
+        "Scaffold.Tutorial",
         "ScaffoldEditor",
         "VContainer",
         "Scaffold.MVVM",

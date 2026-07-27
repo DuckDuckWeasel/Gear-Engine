@@ -12,19 +12,31 @@ using GearEngine.GearEngine.Bootstrap;
 using GearEngine.GearEngine.Config;
 using Scaffold.Ads;
 using Scaffold.AppFlow;
+using Scaffold.Tutorial.Controllers;
+using Scaffold.Tutorial.Data;
 using VContainer;
+using GearEngine.GearEngine.Presentation.UI.Tags.Highlight;
 
 namespace GearEngine.App.Bootstrap.Layers
 {
     public sealed class CampaignLayer : IScopeLayer
     {
-        public CampaignLayer(BoardRulesSO boardRules, GearEngineFeatureToggleSO featureToggle, RaceSessionDefaultsSO raceSessionDefaults, SimulationConfigBase simulationConfig, Scaffold.Ads.AdPlacementKeySO rerollPlacementKey = null)
+        public CampaignLayer(
+            BoardRulesSO boardRules,
+            GearEngineFeatureToggleSO featureToggle,
+            RaceSessionDefaultsSO raceSessionDefaults,
+            SimulationConfigBase simulationConfig,
+            Scaffold.Ads.AdPlacementKeySO rerollPlacementKey = null,
+            TutorialWrapper tutorialWrapper = null,
+            TutorialSO setupTutorial = null)
         {
             this.boardRules = boardRules ?? throw new ArgumentNullException(nameof(boardRules));
             this.raceSessionDefaults = raceSessionDefaults ?? throw new ArgumentNullException(nameof(raceSessionDefaults));
             this.simulationConfig = simulationConfig ?? throw new ArgumentNullException(nameof(simulationConfig));
             this.featureToggle = featureToggle ?? throw new ArgumentNullException(nameof(featureToggle));
             this.rerollPlacementKey = rerollPlacementKey ?? throw new ArgumentNullException(nameof(rerollPlacementKey));
+            this.tutorialWrapper = tutorialWrapper;
+            this.setupTutorial = setupTutorial;
         }
 
         private readonly BoardRulesSO boardRules;
@@ -32,12 +44,15 @@ namespace GearEngine.App.Bootstrap.Layers
         private readonly RaceSessionDefaultsSO raceSessionDefaults;
         private readonly SimulationConfigBase simulationConfig;
         private readonly AdPlacementKeySO rerollPlacementKey;
+        private readonly TutorialWrapper tutorialWrapper;
+        private readonly TutorialSO setupTutorial;
 
         public void Install(IContainerBuilder builder)
         {
             RegisterGameplayConfigs(builder);
             RegisterLiveOpsClientModules(builder);
             RegisterGameplayServices(builder);
+            RegisterTutorial(builder);
 
             builder.RegisterComponentInHierarchy<ToolbarController>();
         }
@@ -72,6 +87,21 @@ namespace GearEngine.App.Bootstrap.Layers
 
             builder.Register<RoguelikeRollService>(Lifetime.Singleton)
                 .As<IRoguelikeRollService>();
+        }
+
+        private void RegisterTutorial(IContainerBuilder builder)
+        {
+            if (tutorialWrapper == null || setupTutorial == null)
+            {
+                return;
+            }
+
+            builder.RegisterInstance(tutorialWrapper);
+            builder.RegisterInstance(setupTutorial);
+            builder.Register<TutorialController>(Lifetime.Singleton)
+                .AsImplementedInterfaces()
+                .AsSelf();
+            new TutorialFocusInstaller().Install(builder);
         }
     }
 }

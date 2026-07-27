@@ -1,0 +1,574 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &2518864306015288433
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4304121852687068901}
+  - component: {fileID: 6337998509460797099}
+  - component: {fileID: 1011049582648254622}
+  - component: {fileID: 7477327881227392170}
+  - component: {fileID: 9101030691978988502}
+  - component: {fileID: 2222477785763389618}
+  - component: {fileID: 2810998444184320449}
+  - component: {fileID: 3540262265873446240}
+  - component: {fileID: 5678647510813771615}
+  - component: {fileID: 8506753375853688874}
+  - component: {fileID: 6716897884984135439}
+  - component: {fileID: 523568163593409704}
+  - component: {fileID: 383446000480684152}
+  m_Layer: 0
+  m_Name: PFB_FirstRaceTutorial
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4304121852687068901
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2518864306015288433}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6337998509460797099
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2518864306015288433}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d6bacc8888852c94bab5c3b36cdf1574, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Scaffold::Scaffold.EventDispatcher
+--- !u!114 &1011049582648254622
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2518864306015288433}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a334fe2ffb574b3583ff3b18b4792d3, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Scaffold::Scaffold.Blackboard
+  version: 1
+  scrollPos: {x: 0, y: 0}
+  variablesScrollPos: {x: 0, y: 0}
+  variablesExpanded: 1
+  blockViewHeight: 400
+  zoom: 1
+  scrollViewRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 0
+    height: 0
+  selectedBlocks: []
+  selectedCommands: []
+  variables: []
+  description:
+  stepPause: 0
+  colorCommands: 1
+  hideComponents: 1
+  saveSelection: 1
+  localizationId:
+  showLineNumbers: 0
+  hideCommands: []
+  luaEnvironment: {fileID: 0}
+  luaBindingName: blackboard
+--- !u!114 &7477327881227392170
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2518864306015288433}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a241464edd99344eeb4d70793087eacb, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Scaffold.Tutorial::Scaffold.Tutorial.Controllers.TutorialProgressController
+--- !u!114 &9101030691978988502
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2518864306015288433}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d3d73aef2cfc4f51abf34ac00241f60, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Scaffold::Scaffold.Block
+  nodeRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 0
+    height: 0
+  tint: {r: 1, g: 1, b: 1, a: 1}
+  useCustomTint: 0
+  itemId: 0
+  blockName: FTUE_01_PLACE_GEAR
+  description:
+  eventHandler: {fileID: 2222477785763389618}
+  commandList: []
+  tracks:
+  - trackName: Track 0
+    commands:
+    - {fileID: 2810998444184320449}
+  executionMethod: 0
+  awaitMode: 0
+  orderMode: 0
+  avoidRepeatingLastCommand: 0
+  suppressAllAutoSelections: 0
+--- !u!114 &2222477785763389618
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2518864306015288433}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d2f6487d21a03404cb21b245f0242e79, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Scaffold::Scaffold.GameStarted
+  parentBlock: {fileID: 9101030691978988502}
+  suppressBlockAutoSelect: 0
+  waitForFrames: 2
+--- !u!114 &2810998444184320449
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2518864306015288433}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a6a0f330126b84a40b64420fcb09d831, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Presentation.UI.Input.InvokeActionCommand
+  itemId: 1
+  indentLevel: 0
+  compositeUtility: 0
+  compositeBlockDuringExecution: 0
+  compositeWeight: 0
+  compositeWeightInitialized: 0
+  compositeWeightOverride: 0
+  actions:
+  - action:
+      rid: 3466830040735678464
+    enabled: 1
+    id: 68def090a45f459db38225d82a9086ec
+    utilitySettings:
+      utility:
+        floatRef: {fileID: 0}
+        source: 0
+        floatSO: {fileID: 0}
+        floatVal: 0
+      blockDuringExecution: 0
+      weight: 0
+      weightInitialized: 0
+      weightOverride: 0
+  - action:
+      rid: 3466830040735678465
+    enabled: 1
+    id: 3828bb6689d1440281b80aae682a93fd
+    utilitySettings:
+      utility:
+        floatRef: {fileID: 0}
+        source: 0
+        floatSO: {fileID: 0}
+        floatVal: 0
+      blockDuringExecution: 0
+      weight: 0
+      weightInitialized: 0
+      weightOverride: 0
+  - action:
+      rid: 3466830040735678466
+    enabled: 1
+    id: 2af067fa67f7435fafe566b6003c722b
+    utilitySettings:
+      utility:
+        floatRef: {fileID: 0}
+        source: 0
+        floatSO: {fileID: 0}
+        floatVal: 0
+      blockDuringExecution: 0
+      weight: 0
+      weightInitialized: 0
+      weightOverride: 0
+  - action:
+      rid: 3466830040735678467
+    enabled: 1
+    id: 7c0b174cb29f444e98bd57cdb48bd130
+    utilitySettings:
+      utility:
+        floatRef: {fileID: 0}
+        source: 0
+        floatSO: {fileID: 0}
+        floatVal: 0
+      blockDuringExecution: 0
+      weight: 0
+      weightInitialized: 0
+      weightOverride: 0
+  displayAsGroup: 0
+  executionMethod: 0
+  awaitMode: 0
+  orderMode: 0
+  avoidRepeatingLastAction: 0
+  references:
+    version: 2
+    RefIds:
+    - rid: 3466830040735678464
+      type: {class: ShowUIFocus, ns: Scaffold, asm: Game.GearEngine}
+      data:
+        _target:
+          strategy: 1
+          directReference: {fileID: 0}
+          tagFilter:
+            soTags:
+            - {fileID: 11400000, guid: f015376b4d5f0466e99dc400b4d3e2c2, type: 2}
+            nativeTags:
+              tags: []
+            matchAll: 0
+          globalVariableName:
+          references: []
+        _targetIndex: 0
+        _preset: {fileID: 11400000, guid: c7f2e8f2a779e4d08b9892b9792129e0, type: 2}
+        _overridePresetLayout: 0
+        _indicatorAnchor: 1
+        _customIndicatorAnchor: {x: 0.5, y: 1}
+        _indicatorOffset: {x: 0, y: 0}
+        _directionOffset: 0
+        _aimToAnchor: 1
+    - rid: 3466830040735678465
+      type: {class: WaitForTargetDropAction, ns: GearEngine.Actions.Input, asm: Game.GearEngine}
+      data:
+        dragTarget:
+          strategy: 1
+          directReference: {fileID: 0}
+          tagFilter:
+            soTags:
+            - {fileID: 11400000, guid: f015376b4d5f0466e99dc400b4d3e2c2, type: 2}
+            nativeTags:
+              tags: []
+            matchAll: 0
+          globalVariableName:
+          references: []
+        dropTarget:
+          strategy: 1
+          directReference: {fileID: 0}
+          tagFilter:
+            soTags:
+            - {fileID: 11400000, guid: 5c2b250558aea402685c1701a76d0a37, type: 2}
+            nativeTags:
+              tags: []
+            matchAll: 0
+          globalVariableName:
+          references: []
+        checkDroppedGameObject: 0
+    - rid: 3466830040735678466
+      type: {class: ClearUIFocus, ns: Scaffold, asm: Game.GearEngine}
+      data:
+    - rid: 3466830040735678467
+      type: {class: SendMessage, ns: Scaffold, asm: Game.GearEngine}
+      data:
+        messageTarget: 0
+        message:
+          stringRef: {fileID: 0}
+          source: 0
+          stringSO: {fileID: 0}
+          stringVal: gear_placed
+--- !u!114 &3540262265873446240
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2518864306015288433}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d3d73aef2cfc4f51abf34ac00241f60, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Scaffold::Scaffold.Block
+  nodeRect:
+    serializedVersion: 2
+    x: 360
+    y: 0
+    width: 0
+    height: 0
+  tint: {r: 1, g: 1, b: 1, a: 1}
+  useCustomTint: 0
+  itemId: 2
+  blockName: FTUE_02_START_RACE
+  description:
+  eventHandler: {fileID: 5678647510813771615}
+  commandList: []
+  tracks:
+  - trackName: Track 0
+    commands:
+    - {fileID: 8506753375853688874}
+  executionMethod: 0
+  awaitMode: 0
+  orderMode: 0
+  avoidRepeatingLastCommand: 0
+  suppressAllAutoSelections: 0
+--- !u!114 &5678647510813771615
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2518864306015288433}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d7d417659cd54a6787f70f763950c34, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Scaffold::Scaffold.MessageReceived
+  parentBlock: {fileID: 3540262265873446240}
+  suppressBlockAutoSelect: 0
+  message: gear_placed
+--- !u!114 &8506753375853688874
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2518864306015288433}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a6a0f330126b84a40b64420fcb09d831, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Presentation.UI.Input.InvokeActionCommand
+  itemId: 3
+  indentLevel: 0
+  compositeUtility: 0
+  compositeBlockDuringExecution: 0
+  compositeWeight: 0
+  compositeWeightInitialized: 0
+  compositeWeightOverride: 0
+  actions:
+  - action:
+      rid: 3466830040735678468
+    enabled: 1
+    id: 80d6a576bb5c41b6a5a4a3517e39d447
+    utilitySettings:
+      utility:
+        floatRef: {fileID: 0}
+        source: 0
+        floatSO: {fileID: 0}
+        floatVal: 0
+      blockDuringExecution: 0
+      weight: 0
+      weightInitialized: 0
+      weightOverride: 0
+  - action:
+      rid: 3466830040735678469
+    enabled: 1
+    id: 7c55195522ef4ef39791d9d5478e93a1
+    utilitySettings:
+      utility:
+        floatRef: {fileID: 0}
+        source: 0
+        floatSO: {fileID: 0}
+        floatVal: 0
+      blockDuringExecution: 0
+      weight: 0
+      weightInitialized: 0
+      weightOverride: 0
+  - action:
+      rid: 3466830040735678470
+    enabled: 1
+    id: c730de86a1f04012815a79d65c83ffe9
+    utilitySettings:
+      utility:
+        floatRef: {fileID: 0}
+        source: 0
+        floatSO: {fileID: 0}
+        floatVal: 0
+      blockDuringExecution: 0
+      weight: 0
+      weightInitialized: 0
+      weightOverride: 0
+  - action:
+      rid: 3466830040735678471
+    enabled: 1
+    id: 154d09b7cbcb41918f5c3c3b3b927ea9
+    utilitySettings:
+      utility:
+        floatRef: {fileID: 0}
+        source: 0
+        floatSO: {fileID: 0}
+        floatVal: 0
+      blockDuringExecution: 0
+      weight: 0
+      weightInitialized: 0
+      weightOverride: 0
+  displayAsGroup: 0
+  executionMethod: 0
+  awaitMode: 0
+  orderMode: 0
+  avoidRepeatingLastAction: 0
+  references:
+    version: 2
+    RefIds:
+    - rid: 3466830040735678468
+      type: {class: ShowUIFocus, ns: Scaffold, asm: Game.GearEngine}
+      data:
+        _target:
+          strategy: 1
+          directReference: {fileID: 0}
+          tagFilter:
+            soTags:
+            - {fileID: 11400000, guid: c72d13c6796f9464f9efe2ccb44ba300, type: 2}
+            nativeTags:
+              tags: []
+            matchAll: 0
+          globalVariableName:
+          references: []
+        _targetIndex: 0
+        _preset: {fileID: 11400000, guid: c7f2e8f2a779e4d08b9892b9792129e0, type: 2}
+        _overridePresetLayout: 0
+        _indicatorAnchor: 1
+        _customIndicatorAnchor: {x: 0.5, y: 1}
+        _indicatorOffset: {x: 0, y: 0}
+        _directionOffset: 0
+        _aimToAnchor: 1
+    - rid: 3466830040735678469
+      type: {class: WaitForTargetClickAction, ns: GearEngine.Actions.Input, asm: Game.GearEngine}
+      data:
+        target:
+          strategy: 1
+          directReference: {fileID: 0}
+          tagFilter:
+            soTags:
+            - {fileID: 11400000, guid: c72d13c6796f9464f9efe2ccb44ba300, type: 2}
+            nativeTags:
+              tags: []
+            matchAll: 0
+          globalVariableName:
+          references: []
+    - rid: 3466830040735678470
+      type: {class: ClearUIFocus, ns: Scaffold, asm: Game.GearEngine}
+      data:
+    - rid: 3466830040735678471
+      type: {class: SendMessage, ns: Scaffold, asm: Game.GearEngine}
+      data:
+        messageTarget: 0
+        message:
+          stringRef: {fileID: 0}
+          source: 0
+          stringSO: {fileID: 0}
+          stringVal: race_started
+--- !u!114 &6716897884984135439
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2518864306015288433}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d3d73aef2cfc4f51abf34ac00241f60, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Scaffold::Scaffold.Block
+  nodeRect:
+    serializedVersion: 2
+    x: 720
+    y: 0
+    width: 0
+    height: 0
+  tint: {r: 1, g: 1, b: 1, a: 1}
+  useCustomTint: 0
+  itemId: 4
+  blockName: FTUE_03_COMPLETE
+  description:
+  eventHandler: {fileID: 523568163593409704}
+  commandList: []
+  tracks:
+  - trackName: Track 0
+    commands:
+    - {fileID: 383446000480684152}
+  executionMethod: 0
+  awaitMode: 0
+  orderMode: 0
+  avoidRepeatingLastCommand: 0
+  suppressAllAutoSelections: 0
+--- !u!114 &523568163593409704
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2518864306015288433}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d7d417659cd54a6787f70f763950c34, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Scaffold::Scaffold.MessageReceived
+  parentBlock: {fileID: 6716897884984135439}
+  suppressBlockAutoSelect: 0
+  message: race_started
+--- !u!114 &383446000480684152
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2518864306015288433}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a6a0f330126b84a40b64420fcb09d831, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Presentation.UI.Input.InvokeActionCommand
+  itemId: 5
+  indentLevel: 0
+  compositeUtility: 0
+  compositeBlockDuringExecution: 0
+  compositeWeight: 0
+  compositeWeightInitialized: 0
+  compositeWeightOverride: 0
+  actions:
+  - action:
+      rid: 3466830040735678472
+    enabled: 1
+    id: 2ea6390f845f4f3c9e7f56d1b3a4bbe1
+    utilitySettings:
+      utility:
+        floatRef: {fileID: 0}
+        source: 0
+        floatSO: {fileID: 0}
+        floatVal: 0
+      blockDuringExecution: 0
+      weight: 0
+      weightInitialized: 0
+      weightOverride: 0
+  displayAsGroup: 0
+  executionMethod: 0
+  awaitMode: 0
+  orderMode: 0
+  avoidRepeatingLastAction: 0
+  references:
+    version: 2
+    RefIds:
+    - rid: 3466830040735678472
+      type: {class: CompleteTutorial, ns: Scaffold, asm: Game.GearEngine}
+      data:

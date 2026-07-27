@@ -31,7 +31,8 @@
         "GUID:5e0b455853cd340e0813387221dfd501",
         "Unity.Mathematics",
         "BroAudio",
-        "Scaffold.Variables"
+        "Scaffold.Variables",
+        "Scaffold.Tutorial"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

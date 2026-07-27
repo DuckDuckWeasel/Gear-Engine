@@ -28,6 +28,7 @@
         "Unity.TextMeshPro",
         "UnityEngine.UI",
         "VContainer",
+        "Scaffold.Tutorial",
         "GearEngine.Core.Config",
         "Scaffold.Ads.Runtime",
         "Scaffold.Ads.Container",
