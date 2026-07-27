@@ -12,6 +12,10 @@ namespace Scaffold.VisualScripting.Unity
 
         [SerializeField] private BlackboardDefinitionReference definitionReference = new BlackboardDefinitionReference();
 
+        public BlackboardAuthoringMetadata AuthoringMetadata => authoringMetadata;
+
+        [SerializeField] private BlackboardAuthoringMetadata authoringMetadata = new BlackboardAuthoringMetadata();
+
         public BlackboardBehaviour SourceBehaviour
         {
             get => sourceBehaviour;

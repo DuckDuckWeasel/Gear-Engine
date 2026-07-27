@@ -28,6 +28,9 @@
 | Milestone 5 replacement-Core regression | 53 passed, 0 failed across definitions, cloning, variables, actions, lifecycle, and triggers. |
 | Milestone 6 `BlackboardBehaviourTests` | 5 passed, 0 failed; wrapper/script parity, per-runtime scheduling, failure handling, callback forwarding, listener teardown, and Unity serialization passed. |
 | Milestone 6 replacement-Core regression | 53 passed, 0 failed after introducing runtime-owned service scopes and Unity composition. |
+| Milestone 7 `BlackboardAuthoringControllerTests` | 7 passed, 0 failed; managed graph operations, Undo/redo, duplication, copy/paste, grouping, layout, tint, source navigation, and type discovery passed. |
+| Milestone 7 replacement-Core regression | 53 passed, 0 failed after adding authoring-only metadata. |
+| Milestone 7 Unity adapter regression | 5 passed, 0 failed after adding wrapper metadata and custom inspectors. |
 | Milestone 3 Unity compilation precheck | Passed with Unity 6000.5.3f1 after importing the variable/service layer. |
 | Escalated `.agents/scripts/validate-changes.sh` compilation precheck | Passed with Unity 6000.5.3f1. |
 | `dotnet build Assembly-CSharp-Editor.csproj --no-restore` | Succeeded with 0 warnings and 0 errors. |
@@ -68,12 +71,17 @@ baseline required test-only corrections:
 - Unity callback delivery is isolated to `BlackboardBehaviour`,
   `UnityCoroutineRunner`, and narrow relay components. The scheduler and UI/input
   trigger adapters remain plain C# and clean up callbacks through disposable handles.
+- The first Milestone 7 import rejected obsolete `Object.GetInstanceID`; source-cycle
+  detection now uses Unity 6 `EntityId`. The next import found an incomplete test
+  trigger binding; implementing its `IsEnabled` lifecycle contract produced a clean
+  7/7 run.
 
 ## Remaining issue
 
-The Unity compiler gate is clean through Milestone 6, as demonstrated by the final
-5-test Unity adapter run, 53-test replacement-Core regression, and an empty Editor-log
-parser result. The standalone generated runtime-project path remains an infrastructure
+The Unity compiler gate is clean through Milestone 7, as demonstrated by the final
+7-test managed-authoring run, 53-test Core regression, 5-test Unity adapter regression,
+and an empty Editor-log parser result. The standalone generated runtime-project path
+remains an infrastructure
 limitation: its post-change attempts did not reach a compiler result or emit a
 diagnostic. The generated Editor project build is clean.
 

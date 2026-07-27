@@ -17,5 +17,11 @@ namespace Scaffold.VisualScripting.Authoring
         [SerializeField]
         private BlackboardDefinition definition =
             new BlackboardDefinition();
+
+        public BlackboardAuthoringMetadata AuthoringMetadata => authoringMetadata;
+
+        [SerializeField]
+        private BlackboardAuthoringMetadata authoringMetadata =
+            new BlackboardAuthoringMetadata();
     }
 }

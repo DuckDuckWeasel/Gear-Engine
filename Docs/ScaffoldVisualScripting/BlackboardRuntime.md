@@ -155,3 +155,27 @@ Button, input-field, and toggle signal sources are plain serializable adapters t
 retain explicit Unity UI references. They return disposable listener registrations,
 so attach and detach are symmetric. `UnityKeyTriggerCondition` is also plain and
 allows input polling through the Core polling-trigger contract.
+
+## Managed editor authoring
+
+`Scaffold.VisualScripting.Editor` edits the managed definition graph directly. Its
+Undo-aware controller owns block, track, action, trigger, and variable creation,
+removal, reorder, duplication, copy/paste, grouping, layout, tint, and selection
+operations. These operations never add a graph node as a component.
+
+The Blackboard window resolves Direct definitions, definition assets, and nested
+templates stored in variables. Variable navigation follows the serialized
+`SourceBehaviour` chain and detects wrapper-reference cycles with Unity `EntityId`
+values. Inspectors expose explicit source switching and open the same window for
+assets and wrappers.
+
+`BlackboardAuthoringMetadata` stores graph layout, tint, grouping, zoom, scroll, and
+selection beside the owning asset or wrapper. Runtime cloning starts at
+`BlackboardDefinition`, so editor metadata never becomes execution state. Editor
+block/action duplication deep-clones managed content, preserves explicit Unity object
+references, and regenerates definition IDs. Runtime cloning continues to preserve
+those IDs.
+
+During Play Mode, the window reads status from the wrapper's plain runtime by stable
+definition ID. Feedback is observational: it does not write transient execution state
+into the serialized definition.

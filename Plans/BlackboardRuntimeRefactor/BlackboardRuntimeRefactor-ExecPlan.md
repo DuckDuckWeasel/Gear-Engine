@@ -37,7 +37,7 @@ serialization will be removed after all consumers are cut over.
 - [x] Milestone 5: add the plain Blackboard runtime and plain triggers.
 - [x] Milestone 6: add the Unity wrapper, callback relays, factories, and VContainer
   composition.
-- [ ] Milestone 7: rewrite editor authoring for managed definitions.
+- [x] Milestone 7: rewrite editor authoring for managed definitions.
 - [ ] Milestone 8: cut over assets and tests, rename the space-containing test scene,
   and remove legacy components.
 - [ ] Milestone 9: complete documentation, the compilation loop, all test suites,
@@ -112,6 +112,11 @@ serialization will be removed after all consumers are cut over.
   `UnityFrameScheduler` for every Blackboard, while one injected
   `UnityCoroutineRunner` remains the narrow engine callback receiver used by those
   schedulers.
+- Unity 6 treats `Object.GetInstanceID` as an obsolete compile error. Authoring-source
+  cycle detection uses `EntityId`, matching the current editor object-identity API.
+- Managed-reference Undo is reliable when the owning asset or component is recorded
+  as a complete object before mutation. Graph operations therefore mutate definitions
+  through one Undo-aware controller rather than relying on component add/remove APIs.
 
 ## Decision Log
 
@@ -156,6 +161,9 @@ serialization will be removed after all consumers are cut over.
 - `BlackboardBehaviour` is an optional lifecycle adapter, not a second runtime path.
   It resolves a template and delegates construction to the same `BlackboardFactory`
   used by scripts.
+- Layout, tint, grouping, zoom, scroll, and selection are authoring metadata stored on
+  the definition asset or wrapper. They are not cloned into the runtime graph and
+  cannot affect execution.
 
 ## Outcomes & Retrospective
 
@@ -206,6 +214,16 @@ through `Debug.LogError` and disable the wrapper. The final Unity adapter fixtur
 passes 5/5 PlayMode tests and the complete replacement-Core regression remains 53/53.
 All 26 changed C# files pass formatter, analyzer, and one-top-level-type verification;
 the Core forbidden-API scan and Unity error parser are empty.
+
+Milestone 7 introduced `Scaffold.VisualScripting.Editor` and an Undo-aware managed
+authoring controller. The new Blackboard window and inspectors edit Direct,
+ScriptableObject, and nested variable-provided definitions without creating Block,
+action, trigger, track, action-list, or variable components. The editor supports add,
+remove, reorder, copy/paste, duplication with regenerated IDs, action grouping,
+selection, search, validation, automatic layout, tint, source navigation, raw
+serialized detail editing, and play-mode execution feedback. Its focused EditMode
+fixture passes 7/7 cases, and all 19 changed C# files pass formatting, analyzers, and
+one-top-level-type verification.
 
 ## Context and Orientation
 
@@ -388,6 +406,8 @@ red.
   `Logs/Tests/BlackboardRuntimeRefactor/Milestone6/UnityAdapterFinal/`
 - Milestone 6 replacement-Core regression results:
   `Logs/Tests/BlackboardRuntimeRefactor/Milestone6/CoreRegression/`
+- Milestone 7 managed authoring results:
+  `Logs/Tests/BlackboardRuntimeRefactor/Milestone7/AuthoringFinal/`
 - Full repository gate baseline on 2026-07-27:
   compilation precheck passed; EditMode reported 248 passed and 59 failed; PlayMode
   exited without results; the asmdef and analyzer infrastructure blockers listed in

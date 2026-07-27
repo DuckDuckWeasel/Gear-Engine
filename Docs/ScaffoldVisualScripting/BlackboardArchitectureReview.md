@@ -395,6 +395,26 @@ Unity value serialization. The complete Core regression passes 53/53 EditMode ca
 Static Core scans remain free of component, scene-search, coroutine-host, and mutable
 service-locator calls.
 
+## Milestone 7 implementation checkpoint
+
+The replacement editor operates on managed definitions through
+`BlackboardAuthoringController`. Undo records the owning
+`BlackboardDefinitionAsset` or `BlackboardBehaviour` before each graph mutation.
+Blocks, action tracks, action lists, actions, triggers, and variables are ordinary
+serialized values throughout add, remove, reorder, duplicate, copy, paste, and
+grouping operations.
+
+Graph position, tint, zoom, scroll, grouping, and selection live in
+`BlackboardAuthoringMetadata`, which is serialized beside the asset or wrapper rather
+than inside Core runtime definitions. Automatic layout and editor selection therefore
+cannot leak into runtime clones. Duplication regenerates definition IDs while
+preserving explicit Unity object references.
+
+The new window resolves Direct, ScriptableObject, and nested BlackboardVariable
+sources, offers search and validation, exposes complete serialized detail editing,
+and reads play-mode execution feedback through stable IDs. The focused editor matrix
+passes 7/7 EditMode tests without creating component-owned graph nodes.
+
 ## Dependency Rules
 
 Allowed:
@@ -544,3 +564,6 @@ Milestone 4 evidence:
 - 2026-07-27: Updated after Milestone 6 added the optional Unity wrapper, per-runtime
   scheduler scopes, VContainer composition, service adapters, and narrow callback
   relays without introducing component ownership into Core.
+- 2026-07-27: Updated after Milestone 7 replaced component graph authoring with an
+  Undo-aware managed-definition window, inspectors, metadata model, source resolver,
+  duplication flow, and execution-feedback adapter.
