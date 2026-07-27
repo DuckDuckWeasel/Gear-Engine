@@ -28,7 +28,7 @@ serialization will be removed after all consumers are cut over.
   assembly direction.
 - [x] Milestone 1: complete the legacy inventory, behavior-parity matrix, and
   characterization baseline.
-- [ ] Milestone 2: add definitions, references, validation, stable IDs, and
+- [x] Milestone 2: add definitions, references, validation, stable IDs, and
   cycle-aware graph cloning.
 - [ ] Milestone 3: add plain variables, variable stores, service contracts,
   messaging, and persistence.
@@ -71,6 +71,11 @@ serialization will be removed after all consumers are cut over.
   five existing asmdef-audit issues, and a Windows-only analyzer launcher that calls
   `cmd.exe`. These are recorded as pre-existing final-gate blockers rather than
   attributed to the Blackboard characterization changes.
+- The custom production analyzers require ordinary documentation to live in module
+  docs rather than XML comments, properties before serialized fields, single-line
+  statements/signatures, methods under 16 lines, and acyclic declaration ordering.
+  Cycle-aware graph traversal therefore uses instance callbacks for recursive edges
+  while retaining readable, bounded methods.
 
 ## Decision Log
 
@@ -97,9 +102,15 @@ serialization will be removed after all consumers are cut over.
 
 Milestone 1 established a compilable and lint-clean baseline for the affected
 Blackboard surface. Focused evidence is 2/2 event-handler tests, 3/3 variable tests,
-19/19 block/track tests, and 39/39 action-list tests. The full retrospective will
-record the final runtime boundary, migrated surface, verification evidence,
-deliberate behavior changes, and follow-up work.
+19/19 block/track tests, and 39/39 action-list tests.
+
+Milestone 2 introduced `Scaffold.VisualScripting.Core` and
+`Scaffold.VisualScripting.Authoring` beside the legacy graph. Its pure EditMode fixture
+passes 14/14 cases covering all three template sources, managed isolation, preserved
+Unity object identity, stable definition IDs, unique runtime IDs, managed cycles,
+transient reset, validation failures, and editor ID regeneration. The full
+retrospective will record the final runtime boundary, migrated surface, verification
+evidence, deliberate behavior changes, and follow-up work.
 
 ## Context and Orientation
 
@@ -266,6 +277,8 @@ red.
   `Docs/UnityErrorCheckReport.md`
 - Focused Milestone 1 results:
   `Logs/Tests/BlackboardRuntimeRefactor/Milestone1/`
+- Milestone 2 Core definition and cloning results:
+  `Logs/Tests/BlackboardRuntimeRefactor/Milestone2/CoreDefinitions/`
 - Full repository gate baseline on 2026-07-27:
   compilation precheck passed; EditMode reported 248 passed and 59 failed; PlayMode
   exited without results; the asmdef and analyzer infrastructure blockers listed in

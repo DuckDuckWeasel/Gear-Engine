@@ -18,6 +18,7 @@
 | Focused PlayMode `BlackboardVariableTests` | 3 passed, 0 failed; Unity log contained no compiler error or exception. |
 | Focused PlayMode `BlockTrackExecutionTests` | 19 passed, 0 failed; Unity log contained no compiler error or exception. |
 | Focused EditMode `InvokeActionCommandTests` | 39 passed, 0 failed; Unity log contained no compiler error or exception. |
+| Pure EditMode `BlackboardDefinitionTests` | 14 passed, 0 failed; Unity log contained no compiler error or exception. |
 | Escalated `.agents/scripts/validate-changes.sh` compilation precheck | Passed with Unity 6000.5.3f1. |
 | `dotnet build Assembly-CSharp-Editor.csproj --no-restore --nologo` | Succeeded with 0 errors. The generated empty project emitted CS2008 and CS8021 warnings. |
 | `dotnet build Assembly-CSharp.csproj --no-restore --nologo --disable-build-servers --verbosity minimal` | MSBuild terminated after 10:03 with `Build FAILED`, 0 warnings, and 0 errors while evaluating/building 247 generated project references. |
