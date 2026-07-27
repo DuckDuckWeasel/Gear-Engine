@@ -33,6 +33,25 @@ now accepts an explicit height, and Action Invoker headers always request exactl
 Inspector line. The left foldout and name are therefore anchored to the same top row as
 the right-side weight and enabled controls.
 
+## Explicit Header Restoration
+
+The populated Action Invoker row owns its complete IMGUI header again. The renderer draws
+the foldout, the same action display name used by the compact command list, the validation
+badge, the enabled toggle, and the existing weight controls while preserving the
+reorder-handle gutter. Expanded action properties begin below that header, and a collapsed
+action occupies one row.
+
+Selecting a nested action also changes the detailed Inspector title to the selected
+action's display name. When no nested action is selected, the container retains the
+`Action Invoker` title.
+
+## Nested Expansion State
+
+Expansion now belongs consistently to the managed-reference property at
+`actions[index].action`. Adding an action or selecting a different action expands that
+nested property once. Repeated selection synchronization does not reopen an action that
+the user manually collapsed.
+
 ## Unity Assembly Reload Fix
 
 The initial regression test referenced `InvokeActionCommandEditor` directly. The generated
@@ -47,20 +66,38 @@ preserving coverage without crossing the asmdef boundary.
 - `GetActionRowContentRect_ReservesTheReorderHandleBeforeTheFoldout` asserts that the
   action header begins after the handle gutter, ends before trailing controls, remains at
   the row top, and uses a single-line height even when the expanded element is taller.
+- `ActionInvokerInspector_SeparatesActionPropertiesFromTheHeader` asserts that the
+  dedicated action-header renderer remains part of the custom editor.
 - `ExpandedActionListItem_IncludesVisibleActionPropertyHeight` asserts that an expanded
   action row reserves space for its visible action properties.
+- `ActionInvokerListItem_CollapsesToItsHeaderHeight` asserts that a collapsed nested action
+  occupies exactly one Inspector line.
 - `ActionChildPropertyCheck_ExcludesTheNextActionInTheList` asserts that one action's
   iterator cannot include the next action as a child field.
+- `SelectedActionListItem_ExpandsNestedActionOnFirstSynchronization` and
+  `AddedActionListItem_ExpandsNestedAction` assert that selection and creation expand the
+  managed-reference property rather than its wrapper.
+- `SelectedActionListItem_RemainsCollapsedAfterSelectionSynchronization` asserts that
+  repeated synchronization preserves a manual collapse.
+- The standalone and selected nested title tests compare the Inspector title directly
+  with `InvokeActionEditorUtility.GetDisplayName`, guaranteeing parity with the main list.
 
 ## Verification
 
-- Unity's own Roslyn response files compile successfully for `ScaffoldEditor`,
-  `Game.GearEngine.Editor`, and `Game.GearEngine.Tests` after removing the invalid direct
-  editor-type reference from the regression test.
-- Scoped `dotnet build` completed for the same three generated projects.
-- Scoped C# formatting and style checks passed for the three changed C# files.
-- The active project-local Unity log exposed the stale `CS0246` test compilation error
-  that prevented the corrected inspector assembly from reloading; the exact Unity compiler
-  invocation now completes with zero errors.
-- Unity batch-mode Editor tests were not run because the active project lock prevents a
-  second Editor instance from opening the project.
+- Focused EditMode fixture
+  `GearEngine.GearEngine.Tests.Editor.InvokeActionEditorSelectionTests`: 45 passed,
+  0 failed, 0 skipped, and 0 inconclusive.
+- NUnit XML, Editor log, and the contextual report are under
+  `Artifacts/TestResults/20260727-083508/`.
+- Scoped C# lint completed in `fix` and `check` modes for
+  `InvokeActionCommandEditor.cs` and `InvokeActionEditorSelectionTests.cs`; formatting,
+  style, and analyzer checks are clean.
+- Both changed C# files pass one-top-level-type source-structure validation.
+- Unity 6000.5.3f1 imported the final source, completed script compilation in 9 seconds,
+  and reloaded assemblies without C# errors or warnings.
+- The repository validation wrapper was invoked but could not run because PowerShell 7
+  (`pwsh`) is not installed. The scoped lint, structure, Unity compilation, focused tests,
+  and static repository checks provide the available equivalent evidence.
+- The worktree was registered and opened in Unity Hub. A final Inspector screenshot could
+  not be captured because macOS automation continued routing the older main-checkout Unity
+  window instead of the already-open worktree instance.

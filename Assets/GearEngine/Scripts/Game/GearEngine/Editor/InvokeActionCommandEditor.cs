@@ -14,12 +14,12 @@ namespace GearEngine.GearEngine.Editor
     [CustomEditor(typeof(InvokeActionCommand))]
     public sealed class InvokeActionCommandEditor : CommandEditor
     {
-        private const float ReorderHandleWidth = 18f;
+        private const float k_reorderHandleWidth = 18f;
 
-        private ReorderableList _actionsList;
-        private SerializedProperty _actionsProperty;
-        private int _lastSynchronizedActionIndex = -1;
-        private static readonly List<ActionClipboardEntry> ActionClipboard =
+        private ReorderableList actionsList;
+        private SerializedProperty actionsProperty;
+        private int lastSynchronizedActionIndex = -1;
+        private static readonly List<ActionClipboardEntry> s_actionClipboard =
             new List<ActionClipboardEntry>();
 
         private sealed class ActionClipboardEntry : ScriptableObject
@@ -37,7 +37,7 @@ namespace GearEngine.GearEngine.Editor
                 return;
             }
 
-            _actionsProperty = serializedObject.FindProperty("actions");
+            actionsProperty = serializedObject.FindProperty("actions");
             SynchronizeActionMetadata();
             CreateActionsList();
         }
@@ -51,7 +51,7 @@ namespace GearEngine.GearEngine.Editor
             {
                 DrawExecutionSettings(invokeAction);
                 SynchronizeSelectedAction();
-                _actionsList.DoLayoutList();
+                actionsList.DoLayoutList();
             }
             else
             {
@@ -120,7 +120,13 @@ namespace GearEngine.GearEngine.Editor
             Command command,
             CommandInfoAttribute commandInfo)
         {
-            if (TryGetStandaloneAction(command as InvokeActionCommand, out IAction action))
+            InvokeActionCommand invokeAction = command as InvokeActionCommand;
+            if (TryGetSelectedAction(invokeAction, out IAction selectedAction))
+            {
+                return InvokeActionEditorUtility.GetDisplayName(selectedAction);
+            }
+
+            if (TryGetStandaloneAction(invokeAction, out IAction action))
             {
                 return InvokeActionEditorUtility.GetDisplayName(action);
             }
@@ -130,7 +136,7 @@ namespace GearEngine.GearEngine.Editor
 
         private void CreateActionsList()
         {
-            _actionsList = new ReorderableList(serializedObject, _actionsProperty, true, true, true, true)
+            actionsList = new ReorderableList(serializedObject, actionsProperty, true, true, true, true)
             {
                 drawHeaderCallback = DrawActionsHeader,
                 drawElementCallback = DrawActionElement,
@@ -144,7 +150,7 @@ namespace GearEngine.GearEngine.Editor
 
         private void DrawStandaloneAction()
         {
-            SerializedProperty actionProperty = _actionsProperty.GetArrayElementAtIndex(0).FindPropertyRelative("action");
+            SerializedProperty actionProperty = actionsProperty.GetArrayElementAtIndex(0).FindPropertyRelative("action");
             SerializedProperty property = actionProperty.Copy();
             SerializedProperty endProperty = property.GetEndProperty();
             bool enterChildren = true;
@@ -185,36 +191,51 @@ namespace GearEngine.GearEngine.Editor
             return action != null;
         }
 
+        private static bool TryGetSelectedAction(
+            InvokeActionCommand invokeAction,
+            out IAction action)
+        {
+            action = null;
+            int selectedIndex = InvokeActionEditorSelection.GetSelectedIndex(invokeAction);
+            if (selectedIndex < 0)
+            {
+                return false;
+            }
+
+            action = invokeAction.actions[selectedIndex].action;
+            return action != null;
+        }
+
         private void DrawActionElement(Rect rect, int index, bool isActive, bool isFocused)
         {
-            SerializedProperty wrapperProperty = _actionsProperty.GetArrayElementAtIndex(index);
+            SerializedProperty wrapperProperty = actionsProperty.GetArrayElementAtIndex(index);
             SerializedProperty actionProperty = wrapperProperty.FindPropertyRelative("action");
             SerializedProperty enabledProperty = wrapperProperty.FindPropertyRelative("enabled");
-            const float ToggleWidth = 20f;
-            const float WeightWidth = 58f;
-            const float PercentageToggleWidth = 20f;
+            const float toggleWidth = 20f;
+            const float weightWidth = 58f;
+            const float percentageToggleWidth = 20f;
             bool showWeight = IsRandomOrder();
-            float controlsWidth = ToggleWidth +
-                                  (showWeight ? WeightWidth + PercentageToggleWidth : 0f);
+            float controlsWidth = toggleWidth +
+                                  (showWeight ? weightWidth + percentageToggleWidth : 0f);
             Rect headerRect = InvokeActionEditorUtility.GetActionRowContentRect(
                 rect,
-                ReorderHandleWidth,
+                k_reorderHandleWidth,
                 controlsWidth,
                 EditorGUIUtility.singleLineHeight);
             Rect weightRect = new Rect(
                 headerRect.xMax,
                 rect.y,
-                WeightWidth,
+                weightWidth,
                 EditorGUIUtility.singleLineHeight);
             Rect percentageToggleRect = new Rect(
                 weightRect.xMax,
                 rect.y,
-                PercentageToggleWidth,
+                percentageToggleWidth,
                 EditorGUIUtility.singleLineHeight);
             Rect toggleRect = new Rect(
                 showWeight ? percentageToggleRect.xMax : headerRect.xMax,
                 rect.y,
-                ToggleWidth,
+                toggleWidth,
                 EditorGUIUtility.singleLineHeight);
             DrawActionExecutionFeedback(headerRect, index);
             enabledProperty.boolValue = EditorGUI.Toggle(toggleRect, enabledProperty.boolValue);
@@ -240,11 +261,10 @@ namespace GearEngine.GearEngine.Editor
                 return;
             }
 
-            // The foldout and type picker will be drawn by TriInspector!
-            // We just need to check if it's expanded to draw the rest of the utility settings.
+            DrawActionHeader(headerRect, actionProperty);
             if (!actionProperty.isExpanded)
             {
-                return; // Actually, if we don't draw utility settings when collapsed, return is fine.
+                return;
             }
 
             float propertiesHeight = GetActionPropertiesHeight(actionProperty);
@@ -279,6 +299,51 @@ namespace GearEngine.GearEngine.Editor
             EditorGUI.PropertyField(blockRect, blockProperty, new GUIContent("Block During Execution"));
         }
 
+        private static void DrawActionHeader(
+            Rect headerRect,
+            SerializedProperty actionProperty)
+        {
+            IAction action = actionProperty.managedReferenceValue as IAction;
+            Rect foldoutRect = new Rect(
+                headerRect.x,
+                headerRect.y,
+                20f,
+                headerRect.height);
+            Rect actionNameRect = new Rect(
+                foldoutRect.xMax,
+                headerRect.y,
+                headerRect.width - foldoutRect.width,
+                headerRect.height);
+            Rect issueBadgeRect = new Rect(
+                actionNameRect.xMax - EditorGUIUtility.singleLineHeight,
+                actionNameRect.y,
+                EditorGUIUtility.singleLineHeight,
+                actionNameRect.height);
+            if (InvokeActionEditorUtility.DrawActionIssueBadge(issueBadgeRect, action))
+            {
+                actionNameRect.width -= issueBadgeRect.width;
+            }
+
+            int originalIndentLevel = EditorGUI.indentLevel;
+            EditorGUI.indentLevel = 0;
+            try
+            {
+                actionProperty.isExpanded = EditorGUI.Foldout(
+                    foldoutRect,
+                    actionProperty.isExpanded,
+                    GUIContent.none,
+                    false);
+                GUI.Label(
+                    actionNameRect,
+                    InvokeActionEditorUtility.GetDisplayName(action),
+                    EditorStyles.boldLabel);
+            }
+            finally
+            {
+                EditorGUI.indentLevel = originalIndentLevel;
+            }
+        }
+
         private void DrawWeightControls(Rect weightRect, Rect percentageToggleRect, int index)
         {
             InvokeActionCommand invokeAction = target as InvokeActionCommand;
@@ -305,7 +370,7 @@ namespace GearEngine.GearEngine.Editor
             }
             if (EditorGUI.EndChangeCheck())
             {
-                SerializedProperty settingsProperty = _actionsProperty.GetArrayElementAtIndex(index).FindPropertyRelative("utilitySettings");
+                SerializedProperty settingsProperty = actionsProperty.GetArrayElementAtIndex(index).FindPropertyRelative("utilitySettings");
                 settingsProperty.FindPropertyRelative("weight").floatValue =
                     Mathf.Clamp(requestedWeight, 0f, 100f);
                 settingsProperty.FindPropertyRelative("weightInitialized").boolValue = true;
@@ -326,7 +391,7 @@ namespace GearEngine.GearEngine.Editor
                 return;
             }
 
-            SerializedProperty actionSettings = _actionsProperty.GetArrayElementAtIndex(index).FindPropertyRelative("utilitySettings");
+            SerializedProperty actionSettings = actionsProperty.GetArrayElementAtIndex(index).FindPropertyRelative("utilitySettings");
             if (requestedOverride)
             {
                 actionSettings.FindPropertyRelative("weight").floatValue = weight;
@@ -376,7 +441,7 @@ namespace GearEngine.GearEngine.Editor
             AddActionContextMenuItem(
                 menu,
                 "Paste",
-                ActionClipboard.Count > 0,
+                s_actionClipboard.Count > 0,
                 () => PasteActionClipboard(invokeAction));
             AddActionContextMenuItem(
                 menu,
@@ -390,7 +455,7 @@ namespace GearEngine.GearEngine.Editor
                 () =>
                 {
                     InvokeActionEditorSelection.SelectAll(invokeAction);
-                    _actionsList.index = 0;
+                    actionsList.index = 0;
                 });
             menu.AddItem(
                 new GUIContent("Select None"),
@@ -398,7 +463,7 @@ namespace GearEngine.GearEngine.Editor
                 () =>
                 {
                     InvokeActionEditorSelection.Clear(invokeAction);
-                    _actionsList.index = -1;
+                    actionsList.index = -1;
                 });
             menu.ShowAsContext();
             Event.current.Use();
@@ -430,7 +495,7 @@ namespace GearEngine.GearEngine.Editor
                 entry.action = invokeAction.actions[actionIndex].action;
                 entry.isEnabled = invokeAction.IsActionEnabled(actionIndex);
                 entry.utilitySettings = invokeAction.actions[actionIndex].utilitySettings;
-                ActionClipboard.Add(entry);
+                s_actionClipboard.Add(entry);
             }
         }
 
@@ -497,7 +562,7 @@ namespace GearEngine.GearEngine.Editor
 
         private void PasteActionClipboard(InvokeActionCommand invokeAction)
         {
-            if (ActionClipboard.Count == 0)
+            if (s_actionClipboard.Count == 0)
             {
                 return;
             }
@@ -507,12 +572,12 @@ namespace GearEngine.GearEngine.Editor
             List<int> selectedIndices = InvokeActionEditorSelection.GetSelectedIndices(invokeAction);
             int insertIndex = selectedIndices.Count > 0
                 ? selectedIndices[selectedIndices.Count - 1] + 1
-                : _actionsProperty.arraySize;
+                : actionsProperty.arraySize;
             int firstInsertedIndex = insertIndex;
-            foreach (ActionClipboardEntry entry in ActionClipboard)
+            foreach (ActionClipboardEntry entry in s_actionClipboard)
             {
-                _actionsProperty.InsertArrayElementAtIndex(insertIndex);
-                SerializedProperty wrapperProp = _actionsProperty.GetArrayElementAtIndex(insertIndex);
+                actionsProperty.InsertArrayElementAtIndex(insertIndex);
+                SerializedProperty wrapperProp = actionsProperty.GetArrayElementAtIndex(insertIndex);
                 wrapperProp.FindPropertyRelative("action").managedReferenceValue = entry.action;
                 wrapperProp.FindPropertyRelative("action").isExpanded = true;
                 wrapperProp.FindPropertyRelative("enabled").boolValue = entry.isEnabled;
@@ -541,7 +606,7 @@ namespace GearEngine.GearEngine.Editor
             for (int selectionIndex = selectedIndices.Count - 1; selectionIndex >= 0; selectionIndex--)
             {
                 int actionIndex = selectedIndices[selectionIndex];
-                _actionsProperty.DeleteArrayElementAtIndex(actionIndex);
+                actionsProperty.DeleteArrayElementAtIndex(actionIndex);
             }
 
             serializedObject.ApplyModifiedProperties();
@@ -551,12 +616,12 @@ namespace GearEngine.GearEngine.Editor
 
         private static void ClearActionClipboard()
         {
-            foreach (ActionClipboardEntry entry in ActionClipboard)
+            foreach (ActionClipboardEntry entry in s_actionClipboard)
             {
                 UnityEngine.Object.DestroyImmediate(entry);
             }
 
-            ActionClipboard.Clear();
+            s_actionClipboard.Clear();
         }
 
         private static void DrawActionProperties(SerializedProperty actionProperty, Rect propertiesRect)
@@ -597,7 +662,7 @@ namespace GearEngine.GearEngine.Editor
 
         private float GetActionElementHeight(int index)
         {
-            SerializedProperty wrapperProperty = _actionsProperty.GetArrayElementAtIndex(index);
+            SerializedProperty wrapperProperty = actionsProperty.GetArrayElementAtIndex(index);
             SerializedProperty actionProperty = wrapperProperty.FindPropertyRelative("action");
             float height = EditorGUIUtility.singleLineHeight;
             if (actionProperty.managedReferenceValue != null && actionProperty.isExpanded)
@@ -654,7 +719,7 @@ namespace GearEngine.GearEngine.Editor
 
         private void ShowAddActionMenu(Rect rect, ReorderableList list)
         {
-            ShowActionMenu(rect, _actionsProperty.arraySize);
+            ShowActionMenu(rect, actionsProperty.arraySize);
         }
 
         private void ShowActionMenu(Rect rect, int insertIndex)
@@ -685,14 +750,14 @@ namespace GearEngine.GearEngine.Editor
             Undo.RecordObject(target, "Add Invoke Action");
             serializedObject.Update();
 
-            _actionsProperty.InsertArrayElementAtIndex(insertIndex);
-            SerializedProperty wrapperProp = _actionsProperty.GetArrayElementAtIndex(insertIndex);
+            actionsProperty.InsertArrayElementAtIndex(insertIndex);
+            SerializedProperty wrapperProp = actionsProperty.GetArrayElementAtIndex(insertIndex);
             wrapperProp.FindPropertyRelative("enabled").boolValue = true;
             wrapperProp.FindPropertyRelative("id").stringValue = Guid.NewGuid().ToString("N");
             wrapperProp.FindPropertyRelative("utilitySettings").boxedValue = new InvokeActionUtilitySettings(0f, false);
             SerializedProperty actionProp = wrapperProp.FindPropertyRelative("action");
             actionProp.managedReferenceValue = Activator.CreateInstance(actionType);
-            wrapperProp.isExpanded = true;
+            actionProp.isExpanded = true;
             // Actions added through this Inspector belong to an explicit Action Invoker,
             // even when it currently contains only one action.
             serializedObject.FindProperty("displayAsGroup").boolValue = true;
@@ -704,17 +769,17 @@ namespace GearEngine.GearEngine.Editor
 
         private void RemoveAction(ReorderableList list)
         {
-            if (list.index < 0 || list.index >= _actionsProperty.arraySize)
+            if (list.index < 0 || list.index >= actionsProperty.arraySize)
             {
                 return;
             }
 
             Undo.RecordObject(target, "Remove Invoke Action");
-            if (_actionsProperty.arraySize > 1)
+            if (actionsProperty.arraySize > 1)
             {
                 serializedObject.FindProperty("displayAsGroup").boolValue = true;
             }
-            _actionsProperty.DeleteArrayElementAtIndex(list.index);
+            actionsProperty.DeleteArrayElementAtIndex(list.index);
             serializedObject.ApplyModifiedProperties();
             EditorUtility.SetDirty(target);
             SelectClosestAction(list.index);
@@ -734,8 +799,8 @@ namespace GearEngine.GearEngine.Editor
 
         private void SelectClosestAction(int removedIndex)
         {
-            int closestIndex = Mathf.Min(removedIndex, _actionsProperty.arraySize - 1);
-            _actionsList.index = closestIndex;
+            int closestIndex = Mathf.Min(removedIndex, actionsProperty.arraySize - 1);
+            actionsList.index = closestIndex;
             if (closestIndex >= 0)
             {
                 InvokeActionEditorSelection.Select(target as InvokeActionCommand, closestIndex);
@@ -748,27 +813,30 @@ namespace GearEngine.GearEngine.Editor
         private void SynchronizeSelectedAction()
         {
             int selectedIndex = InvokeActionEditorSelection.GetSelectedIndex(target as InvokeActionCommand);
-            if (selectedIndex < 0 || selectedIndex >= _actionsProperty.arraySize)
+            if (selectedIndex < 0 || selectedIndex >= actionsProperty.arraySize)
             {
-                _lastSynchronizedActionIndex = -1;
+                lastSynchronizedActionIndex = -1;
                 return;
             }
 
-            _actionsList.index = selectedIndex;
-            if (_lastSynchronizedActionIndex == selectedIndex)
+            actionsList.index = selectedIndex;
+            if (lastSynchronizedActionIndex == selectedIndex)
             {
                 return;
             }
 
-            _actionsProperty.GetArrayElementAtIndex(selectedIndex).isExpanded = true;
-            _lastSynchronizedActionIndex = selectedIndex;
+            actionsProperty
+                .GetArrayElementAtIndex(selectedIndex)
+                .FindPropertyRelative("action")
+                .isExpanded = true;
+            lastSynchronizedActionIndex = selectedIndex;
         }
 
         private void SynchronizeActionMetadata()
         {
-            for (int actionIndex = 0; actionIndex < _actionsProperty.arraySize; actionIndex++)
+            for (int actionIndex = 0; actionIndex < actionsProperty.arraySize; actionIndex++)
             {
-                SerializedProperty wrapperProp = _actionsProperty.GetArrayElementAtIndex(actionIndex);
+                SerializedProperty wrapperProp = actionsProperty.GetArrayElementAtIndex(actionIndex);
                 SerializedProperty actionIdProperty = wrapperProp.FindPropertyRelative("id");
                 if (string.IsNullOrEmpty(actionIdProperty.stringValue))
                 {

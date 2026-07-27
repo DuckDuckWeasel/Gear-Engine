@@ -1,5 +1,68 @@
 # Unity Error Check Report
 
+## 2026-07-27 — Action Invoker Row Rendering Fix
+
+- Timestamp: `2026-07-27 09:06:00 -03`.
+- Focused EditMode fixture:
+  `GearEngine.GearEngine.Tests.Editor.InvokeActionEditorSelectionTests`.
+- Result: 45 passed, 0 failed, 0 skipped, and 0 inconclusive.
+- Evidence:
+  `Artifacts/TestResults/20260727-083508/EditMode.xml`,
+  `Artifacts/TestResults/20260727-083508/EditMode.log`, and
+  `Artifacts/TestResults/20260727-083508/Report.md`.
+- Focused Editor-log parser result: `[]`.
+- Unity 6000.5.3f1 opened the worktree, compiled the final source in 9 seconds, and
+  reloaded assemblies. The worktree log contains no `error CS`, `warning CS`,
+  `Compilation failed`, or `Scripts have compiler errors` entries.
+- Scoped C# lint completed in `fix` and `check` modes for the changed editor and test
+  files. Whitespace, style, analyzers, and one-top-level-type structure checks pass.
+- Agent-efficiency static verification passed with no findings.
+
+### Fixes Applied
+
+- Restored the populated row's explicit IMGUI header with the foldout, action display
+  name, validation badge, enabled toggle, and existing weight controls.
+- Kept the header outside the reorder-handle gutter and constrained collapsed rows to
+  one Inspector line.
+- Bound addition, first selection synchronization, height measurement, collapse, and
+  drawing to the nested `actions[index].action.isExpanded` property.
+- Preserved a manual collapse during repeated synchronization until the selected action
+  changes.
+- Made the detailed Inspector title use the selected nested action's
+  `InvokeActionEditorUtility.GetDisplayName`, matching the main compact list.
+- Kept the missing-action selection flow, action replacement, Execution/Order ownership,
+  compact `CommandListAdaptor`, Undo behavior, and runtime serialization unchanged.
+- Corrected the regression fixture to inspect the nested managed-reference property and
+  added coverage for creation, first selection, repeated synchronization, collapsed and
+  expanded height, explicit header ownership, and title parity.
+
+### Verification Limitations
+
+- The intended pre-fix regression run was blocked before NUnit execution because two
+  required DLLs were still Git LFS pointer files. The worktree dependencies were hydrated
+  from the shared local LFS cache before the passing post-fix run, so no pre-fix NUnit
+  failure is claimed.
+- The generated solution cannot be loaded by `dotnet format` because it contains duplicate
+  `Unity.Multiplayer.Tools.NetStats` project names. The required checks were run against
+  the two owning generated projects instead.
+- Direct generated-project builds reached the execution ceiling with zero reported errors
+  or warnings and were therefore inconclusive. Unity's own compiler and the focused Unity
+  test run completed successfully.
+- `.agents/scripts/validate-changes.sh` is environment-blocked because PowerShell 7
+  (`pwsh`) is not installed; the gate was not claimed as passed.
+- The worktree was registered and opened in Unity Hub, but macOS automation continued
+  exposing the older main-checkout Unity window. No Inspector screenshot is claimed.
+- The GUI launch log repeatedly reports a pre-existing Package Manager
+  `DirectoryNotFoundException` for
+  `Packages/com.unity.services.cloudcode/Samples~/CloudCodeScriptsDeployment`; it is
+  unrelated to Action Invoker rendering.
+
+### Remaining Issues
+
+- `BlackboardWindow.Undo_ForceRepaint` can still throw a `NullReferenceException` after
+  Undo/Redo. This remains an explicitly out-of-scope follow-up.
+- `ItemId == -1` normalization remains unchanged and is still a separate follow-up.
+
 ## 2026-07-26 — Feature Commit Verification
 
 - Timestamp: `2026-07-26 12:38:00 -03`.

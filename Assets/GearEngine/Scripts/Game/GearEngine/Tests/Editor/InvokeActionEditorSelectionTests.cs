@@ -173,11 +173,13 @@ namespace GearEngine.GearEngine.Tests.Editor
         }
 
         [Test]
-        public void StandaloneActionInvoker_UsesTheActionNameAsItsInspectorTitle()
+        public void StandaloneActionInvoker_UsesTheActionDisplayNameAsItsInspectorTitle()
         {
             command.actions.RemoveAt(1);
 
-            Assert.That(GetInspectorTitle(command), Is.EqualTo("Camera Zoom"));
+            Assert.That(
+                GetInspectorTitle(command),
+                Is.EqualTo(InvokeActionEditorUtility.GetDisplayName(command.actions[0].action)));
         }
 
         [Test]
@@ -186,6 +188,17 @@ namespace GearEngine.GearEngine.Tests.Editor
             command.DisplayAsGroup = true;
 
             Assert.That(ShouldShowActionsList(command), Is.True);
+        }
+
+        [Test]
+        public void SelectedNestedAction_UsesTheActionDisplayNameAsItsInspectorTitle()
+        {
+            command.DisplayAsGroup = true;
+            InvokeActionEditorSelection.Select(command, 0);
+
+            Assert.That(
+                GetInspectorTitle(command),
+                Is.EqualTo(InvokeActionEditorUtility.GetDisplayName(command.actions[0].action)));
         }
 
         [Test]
@@ -222,10 +235,14 @@ namespace GearEngine.GearEngine.Tests.Editor
                 MethodInfo elementHeightMethod = editor.GetType().GetMethod(
                     "GetActionElementHeight",
                     BindingFlags.Instance | BindingFlags.NonPublic);
+                MethodInfo drawHeaderMethod = editor.GetType().GetMethod(
+                    "DrawActionHeader",
+                    BindingFlags.Static | BindingFlags.NonPublic);
 
                 Assert.That(drawPropertiesMethod, Is.Not.Null);
                 Assert.That(propertiesHeightMethod, Is.Not.Null);
                 Assert.That(elementHeightMethod, Is.Not.Null);
+                Assert.That(drawHeaderMethod, Is.Not.Null);
             }
             finally
             {
@@ -239,7 +256,8 @@ namespace GearEngine.GearEngine.Tests.Editor
             SerializedObject serializedCommand = new SerializedObject(command);
             SerializedProperty actionProperty = serializedCommand
                 .FindProperty("actions")
-                .GetArrayElementAtIndex(0);
+                .GetArrayElementAtIndex(0)
+                .FindPropertyRelative("action");
             actionProperty.isExpanded = false;
 
             UnityEditor.Editor editor = UnityEditor.Editor.CreateEditor(command);
@@ -266,7 +284,8 @@ namespace GearEngine.GearEngine.Tests.Editor
             SerializedObject serializedCommand = new SerializedObject(command);
             SerializedProperty actionProperty = serializedCommand
                 .FindProperty("actions")
-                .GetArrayElementAtIndex(0);
+                .GetArrayElementAtIndex(0)
+                .FindPropertyRelative("action");
             actionProperty.isExpanded = true;
 
             UnityEditor.Editor editor = UnityEditor.Editor.CreateEditor(command);
@@ -306,10 +325,12 @@ namespace GearEngine.GearEngine.Tests.Editor
             SerializedObject serializedCommand = new SerializedObject(command);
             SerializedProperty firstActionProperty = serializedCommand
                 .FindProperty("actions")
-                .GetArrayElementAtIndex(0);
+                .GetArrayElementAtIndex(0)
+                .FindPropertyRelative("action");
             SerializedProperty secondActionProperty = serializedCommand
                 .FindProperty("actions")
-                .GetArrayElementAtIndex(1);
+                .GetArrayElementAtIndex(1)
+                .FindPropertyRelative("action");
             SerializedProperty firstChildProperty = firstActionProperty.Copy();
             bool movedToFirstChild = firstChildProperty.NextVisible(true);
             UnityEditor.Editor editor = UnityEditor.Editor.CreateEditor(command);
@@ -335,6 +356,33 @@ namespace GearEngine.GearEngine.Tests.Editor
         }
 
         [Test]
+        public void SelectedActionListItem_ExpandsNestedActionOnFirstSynchronization()
+        {
+            InvokeActionEditorSelection.Select(command, 0);
+            UnityEditor.Editor editor = UnityEditor.Editor.CreateEditor(command);
+            try
+            {
+                MethodInfo method = editor.GetType().GetMethod(
+                    "SynchronizeSelectedAction",
+                    BindingFlags.Instance | BindingFlags.NonPublic);
+                SerializedProperty actionProperty = editor.serializedObject
+                    .FindProperty("actions")
+                    .GetArrayElementAtIndex(0)
+                    .FindPropertyRelative("action");
+                actionProperty.isExpanded = false;
+
+                Assert.That(method, Is.Not.Null);
+                method.Invoke(editor, null);
+
+                Assert.That(actionProperty.isExpanded, Is.True);
+            }
+            finally
+            {
+                UnityEngine.Object.DestroyImmediate(editor);
+            }
+        }
+
+        [Test]
         public void SelectedActionListItem_RemainsCollapsedAfterSelectionSynchronization()
         {
             InvokeActionEditorSelection.Select(command, 0);
@@ -350,12 +398,39 @@ namespace GearEngine.GearEngine.Tests.Editor
                 SerializedObject serializedCommand = new SerializedObject(command);
                 SerializedProperty actionProperty = serializedCommand
                     .FindProperty("actions")
-                    .GetArrayElementAtIndex(0);
+                    .GetArrayElementAtIndex(0)
+                    .FindPropertyRelative("action");
                 actionProperty.isExpanded = false;
 
                 method.Invoke(editor, null);
 
                 Assert.That(actionProperty.isExpanded, Is.False);
+            }
+            finally
+            {
+                UnityEngine.Object.DestroyImmediate(editor);
+            }
+        }
+
+        [Test]
+        public void AddedActionListItem_ExpandsNestedAction()
+        {
+            UnityEditor.Editor editor = UnityEditor.Editor.CreateEditor(command);
+            try
+            {
+                MethodInfo method = editor.GetType().GetMethod(
+                    "AddAction",
+                    BindingFlags.Instance | BindingFlags.NonPublic);
+
+                Assert.That(method, Is.Not.Null);
+                method.Invoke(editor, new object[] { typeof(CameraZoom), command.actions.Count });
+
+                SerializedObject serializedCommand = new SerializedObject(command);
+                SerializedProperty actionProperty = serializedCommand
+                    .FindProperty("actions")
+                    .GetArrayElementAtIndex(command.actions.Count - 1)
+                    .FindPropertyRelative("action");
+                Assert.That(actionProperty.isExpanded, Is.True);
             }
             finally
             {
@@ -634,7 +709,7 @@ namespace GearEngine.GearEngine.Tests.Editor
             InvokeActionCommand extractedCommand = block.CommandList[0] as InvokeActionCommand;
             Assert.That(extractedCommand, Is.Not.Null);
             Assert.That(extractedCommand.actions, Has.Count.EqualTo(1));
-            Assert.That(extractedCommand.actions[0], Is.SameAs(extractedAction));
+            Assert.That(extractedCommand.actions[0].action, Is.SameAs(extractedAction));
             Assert.That(block.CommandList[1], Is.SameAs(command));
             Assert.That(command.actions, Is.Empty);
             Assert.That(command.DisplayAsGroup, Is.True);

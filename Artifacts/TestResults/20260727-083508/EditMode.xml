@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="45" result="Passed" total="45" passed="45" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-07-27 11:35:31Z" end-time="2026-07-27 11:35:32Z" duration="0.1475117">
+  <test-suite type="TestSuite" id="1000" name="Scaffold" fullname="Scaffold" runstate="Runnable" testcasecount="310" result="Passed" start-time="2026-07-27 11:35:31Z" end-time="2026-07-27 11:35:32Z" duration="0.147512" total="45" passed="45" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="1348" name="Game.GearEngine.Tests.dll" fullname="/Users/leonardosilva/.codex/worktrees/0907/Gear Engine/Library/ScriptAssemblies/Game.GearEngine.Tests.dll" runstate="Runnable" testcasecount="199" result="Passed" start-time="2026-07-27 11:35:31Z" end-time="2026-07-27 11:35:32Z" duration="0.137694" total="45" passed="45" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="1332" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="1349" name="GearEngine" fullname="GearEngine" runstate="Runnable" testcasecount="199" result="Passed" start-time="2026-07-27 11:35:31Z" end-time="2026-07-27 11:35:32Z" duration="0.135051" total="45" passed="45" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1350" name="GearEngine" fullname="GearEngine.GearEngine" runstate="Runnable" testcasecount="199" result="Passed" start-time="2026-07-27 11:35:31Z" end-time="2026-07-27 11:35:32Z" duration="0.132590" total="45" passed="45" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestSuite" id="1351" name="Tests" fullname="GearEngine.GearEngine.Tests" runstate="Runnable" testcasecount="199" result="Passed" start-time="2026-07-27 11:35:31Z" end-time="2026-07-27 11:35:32Z" duration="0.130279" total="45" passed="45" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="TestSuite" id="1352" name="Editor" fullname="GearEngine.GearEngine.Tests.Editor" runstate="Runnable" testcasecount="199" result="Passed" start-time="2026-07-27 11:35:31Z" end-time="2026-07-27 11:35:32Z" duration="0.127886" total="45" passed="45" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-suite type="TestFixture" id="1257" name="InvokeActionEditorSelectionTests" fullname="GearEngine.GearEngine.Tests.Editor.InvokeActionEditorSelectionTests" classname="GearEngine.GearEngine.Tests.Editor.InvokeActionEditorSelectionTests" runstate="Runnable" testcasecount="45" result="Passed" start-time="2026-07-27 11:35:31Z" end-time="2026-07-27 11:35:32Z" duration="0.121797" total="45" passed="45" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="1277" name="ActionChildPropertyCheck_ExcludesTheNextActionInTheList" fullname="GearEngine.GearEngine.Tests.Editor.InvokeActionEditorSelectionTests.ActionChildPropertyCheck_ExcludesTheNextActionInTheList" methodname="ActionChildPropertyCheck_ExcludesTheNextActionInTheList" classname="GearEngine.GearEngine.Tests.Editor.InvokeActionEditorSelectionTests" runstate="Runnable" seed="1433444016" result="Passed" start-time="2026-07-27 11:35:31Z" end-time="2026-07-27 11:35:31Z" duration="0.032404" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1268" name="ActionInvoker_UsesItsOwnDisplayName" fullname="GearEngine.GearEngine.Tests.Editor.InvokeActionEditorSelectionTests.ActionInvoker_UsesItsOwnDisplayName" methodname="ActionInvoker_UsesItsOwnDisplayName" classname="GearEngine.GearEngine.Tests.Editor.InvokeActionEditorSelectionTests" runstate="Runnable" seed="1550856340" result="Passed" start-time="2026-07-27 11:35:31Z" end-time="2026-07-27 11:35:31Z" duration="0.002758" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1282" name="ActionInvokerHeaderMenu_ShowsListSelectionOnlyForActionLists" fullname="GearEngine.GearEngine.Tests.Editor.InvokeActionEditorSelectionTests.ActionInvokerHeaderMenu_ShowsListSelectionOnlyForActionLists" methodname="ActionInvokerHeaderMenu_ShowsListSelectionOnlyForActionLists" classname="GearEngine.GearEngine.Tests.Editor.InvokeActionEditorSelectionTests" runstate="Runnable" seed="268439310" result="Passed" start-time="2026-07-27 11:35:31Z" end-time="2026-07-27 11:35:31Z" duration="0.001085" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1274" name="ActionInvokerInspector_SeparatesActionPropertiesFromTheHeader" fullname="GearEngine.GearEngine.Tests.Editor.InvokeActionEditorSelectionTests.ActionInvokerInspector_SeparatesActionPropertiesFromTheHeader" methodname="ActionInvokerInspector_SeparatesActionPropertiesFromTheHeader" classname="GearEngine.GearEngine.Tests.Editor.InvokeActionEditorSelectionTests" runstate="Runnable" seed="1036401281" result="Passed" start-time="2026-07-27 11:35:31Z" end-time="2026-07-27 11:35:31Z" duration="0.001437" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1275" name="ActionInvokerListItem_CollapsesToItsHeaderHeight" fullname="GearEngine.GearEngine.Tests.Editor.InvokeActionEditorSelectionTests.ActionInvokerListItem_CollapsesToItsHeaderHeight" methodname="ActionInvokerListItem_CollapsesToItsHeaderHeight" classname="GearEngine.GearEngine.Tests.Editor.InvokeActionEditorSelectionTests" runstate="Runnable" seed="1508638768" result="Passed" start-time="2026-07-27 11:35:31Z" end-time="2026-07-27 11:35:31Z" duration="0.002796" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1281" name="ActionInvokerListSelection_SelectAllIncludesEveryAction" fullname="GearEngine.GearEngine.Tests.Editor.InvokeActionEditorSelectionTests.ActionInvokerListSelection_SelectAllIncludesEveryAction" methodname="ActionInvokerListSelection_SelectAllIncludesEveryAction" classname="GearEngine.GearEngine.Tests.Editor.InvokeActionEditorSelectionTests" runstate="Runnable" seed="1206523040" result="Passed" start-time="2026-07-27 11:35:31Z" end-time="2026-07-27 11:35:31Z" duration="0.002502" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1265" name="ActionIssue_UsesSummarySeverityForErrorAndWarningBadges" fullname="GearEngine.GearEngine.Tests.Editor.InvokeActionEditorSelectionTests.ActionIssue_UsesSummarySeverityForErrorAndWarningBadges" methodname="ActionIssue_UsesSummarySeverityForErrorAndWarningBadges" classname="GearEngine.GearEngine.Tests.Editor.InvokeActionEditorSelectionTests" runstate="Runnable" seed="1219432159" result="Passed" start-time="2026-07-27 11:35:31Z" end-time="2026-07-27 11:35:31Z" duration="0.001098" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1292" name="ActionRowDragRect_AllowsDraggingFromTheLabelAndExcludesTheToggle" fullname="GearEngine.GearEngine.Tests.Editor.InvokeActionEditorSelectionTests.ActionRowDragRect_AllowsDraggingFromTheLabelAndExcludesTheToggle" methodname="ActionRowDragRect_AllowsDraggingFromTheLabelAndExcludesTheToggle" classname="GearEngine.GearEngine.Tests.Editor.InvokeActionEditorSelectionTests" runstate="Runnable" seed="199523660" result="Passed" start-time="2026-07-27 11:35:31Z" end-time="2026-07-27 11:35:31Z" duration="0.000395" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1280" name="AddedActionListItem_ExpandsNestedAction" fullname="GearEngine.GearEngine.Tests.Editor.InvokeActionEditorSelectionTests.AddedActionListItem_ExpandsNestedAction" methodname="AddedActionListItem_ExpandsNestedAction" classname="GearEngine.GearEngine.Tests.Editor.InvokeActionEditorSelectionTests" runstate="Runnable" seed="487631479" result="Passed" start-time="2026-07-27 11:35:31Z" end-time="2026-07-27 11:35:31Z" duration="0.007324" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1302" name="CallStringMethod_TargetObjectUsesTheUnifiedValueReference" fullname="GearEngine.GearEngine.Tests.Editor.InvokeActionEditorSelectionTests.CallStringMethod_TargetObjectUsesTheUnifiedValueReference" methodname="CallStringMethod_TargetObjectUsesTheUnifiedValueReference" classname="GearEngine.GearEngine.Tests.Editor.InvokeActionEditorSelectionTests" runstate="Runnable" seed="1915354598" result="Passed" start-time="2026-07-27 11:35:31Z" end-time="2026-07-27 11:35:31Z" duration="0.000332" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1300" name="CanAcceptActionDrop_AcceptsAnEmptyInvokeContainer" fullname="GearEngine.GearEngine.Tests.Editor.InvokeActionEditorSelectionTests.CanAcceptActionDrop_AcceptsAnEmptyInvokeContainer" methodname="CanAcceptActionDrop_AcceptsAnEmptyInvokeContainer" classname="GearEngine.GearEngine.Tests.Editor.InvokeActionEditorSelectionTests" runstate="Runnable" seed="2110738737" result="Passed" start-time="2026-07-27 11:35:31Z" end-time="2026-07-27 11:35:31Z" duration="0.000268" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1299" name="CanAcceptActionDrop_RejectsAStandaloneActionWrapper" fullname="GearEngine.GearEngine.Tests.Editor.InvokeActionEditorSelectionTests.CanAcceptActionDrop_RejectsAStandaloneActionWrapper" methodname="CanAcceptActionDrop_RejectsAStandaloneActionWrapper" classname="GearEngine.GearEngine.Tests.Editor.InvokeActionEditorSelectionTests" runstate="Runnable" seed="1171829494" result="Passed" start-time="2026-07-27 11:35:31Z" end-time="2026-07-27 11:35:31Z" duration="0.000200" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1267" name="ChildActionInspector_DoesNotExposeCompositeControlHelpers" fullname="GearEngine.GearEngine.Tests.Editor.InvokeActionEditorSelectionTests.ChildActionInspector_DoesNotExposeCompositeControlHelpers" methodname="ChildActionInspector_DoesNotExposeCompositeControlHelpers" classname="GearEngine.GearEngine.Tests.Editor.InvokeActionEditorSelectionTests" runstate="Runnable" seed="94982474" result="Passed" start-time="2026-07-27 11:35:31Z" end-time="2026-07-27 11:35:31Z" duration="0.000227" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1298" name="CommandDropRects_LeaveAnInvokeGroupCenterAvailableForNestedInsertion" fullname="GearEngine.GearEngine.Tests.Editor.InvokeActionEditorSelectionTests.CommandDropRects_LeaveAnInvokeGroupCenterAvailableForNestedInsertion" methodname="CommandDropRects_LeaveAnInvokeGroupCenterAvailableForNestedInsertion" classname="GearEngine.GearEngine.Tests.Editor.InvokeActionEditorSelectionTests" runstate="Runnable" seed="1085111837" result="Passed" start-time="2026-07-27 11:35:31Z" end-time="2026-07-27 11:35:31Z" duration="0.000348" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1297" name="CommandDropRects_UseTheFullRowToSelectAnExactStandaloneIndex" fullname="GearEngine.GearEngine.Tests.Editor.InvokeActionEditorSelectionTests.CommandDropRects_UseTheFullRowToSelectAnExactStandaloneIndex" methodname="CommandDropRects_UseTheFullRowToSelectAnExactStandaloneIndex" classname="GearEngine.GearEngine.Tests.Editor.InvokeActionEditorSelectionTests" runstate="Runnable" seed="990127792" result="Passed" start-time="2026-07-27 11:35:31Z" end-time="2026-07-27 11:35:31Z" duration="0.000221" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1285" name="CompositeOptions_ShowAwaitOnlyForParallelMethods" fullname="GearEngine.GearEngine.Tests.Editor.InvokeActionEditorSelectionTests.CompositeOptions_ShowAwaitOnlyForParallelMethods" methodname="CompositeOptions_ShowAwaitOnlyForParallelMethods" classname="GearEngine.GearEngine.Tests.Editor.InvokeActionEditorSelectionTests" runstate="Runnable" seed="1150530091" result="Passed" start-time="2026-07-27 11:35:31Z" end-time="2026-07-27 11:35:31Z" duration="0.000184" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1286" name="CompositeOptions_ShowOrderAndWeightOnlyWhenApplicable" fullname="GearEngine.GearEngine.Tests.Editor.InvokeActionEditorSelectionTests.CompositeOptions_ShowOrderAndWeightOnlyWhenApplicable" methodname="CompositeOptions_ShowOrderAndWeightOnlyWhenApplicable" classname="GearEngine.GearEngine.Tests.Editor.InvokeActionEditorSelectionTests" runstate="Runnable" seed="1421857613" result="Passed" start-time="2026-07-27 11:35:31Z" end-time="2026-07-27 11:35:31Z" duration="0.000192" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1287" name="CompositeTooltips_ReflectTheExecutionAndSecondarySelections" fullname="GearEngine.GearEngine.Tests.Editor.InvokeActionEditorSelectionTests.CompositeTooltips_ReflectTheExecutionAndSecondarySelections" methodname="CompositeTooltips_ReflectTheExecutionAndSecondarySelections" classname="GearEngine.GearEngine.Tests.Editor.InvokeActionEditorSelectionTests" runstate="Runnable" seed="1406934147" result="Passed" start-time="2026-07-27 11:35:31Z" end-time="2026-07-27 11:35:31Z" duration="0.000633" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1284" name="ConvertToBlock_CreatesTheExtractedBlockBesideTheSourceBlock" fullname="GearEngine.GearEngine.Tests.Editor.InvokeActionEditorSelectionTests.ConvertToBlock_CreatesTheExtractedBlockBesideTheSourceBlock" methodname="ConvertToBlock_CreatesTheExtractedBlockBesideTheSourceBlock" classname="GearEngine.GearEngine.Tests.Editor.InvokeActionEditorSelectionTests" runstate="Runnable" seed="1603472263" result="Passed" start-time="2026-07-27 11:35:31Z" end-time="2026-07-27 11:35:31Z" duration="0.008869" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1263" name="ExecutionFeedback_ExplainsNonDeterministicWaitSemantics" fullname="GearEngine.GearEngine.Tests.Editor.InvokeActionEditorSelectionTests.ExecutionFeedback_ExplainsNonDeterministicWaitSemantics" methodname="ExecutionFeedback_ExplainsNonDeterministicWaitSemantics" classname="GearEngine.GearEngine.Tests.Editor.InvokeActionEditorSelectionTests" runstate="Runnable" seed="1964213736" result="Passed" start-time="2026-07-27 11:35:31Z" end-time="2026-07-27 11:35:31Z" duration="0.000422" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1262" name="ExecutionFeedback_TreatsOnlyOrderedSequentialModesAsDeterministic" fullname="GearEngine.GearEngine.Tests.Editor.InvokeActionEditorSelectionTests.ExecutionFeedback_TreatsOnlyOrderedSequentialModesAsDeterministic" methodname="ExecutionFeedback_TreatsOnlyOrderedSequentialModesAsDeterministic" classname="GearEngine.GearEngine.Tests.Editor.InvokeActionEditorSelectionTests" runstate="Runnable" seed="892521774" result="Passed" start-time="2026-07-27 11:35:31Z" end-time="2026-07-27 11:35:31Z" duration="0.000214" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1276" name="ExpandedActionListItem_IncludesVisibleActionPropertyHeight" fullname="GearEngine.GearEngine.Tests.Editor.InvokeActionEditorSelectionTests.ExpandedActionListItem_IncludesVisibleActionPropertyHeight" methodname="ExpandedActionListItem_IncludesVisibleActionPropertyHeight" classname="GearEngine.GearEngine.Tests.Editor.InvokeActionEditorSelectionTests" runstate="Runnable" seed="737793046" result="Passed" start-time="2026-07-27 11:35:31Z" end-time="2026-07-27 11:35:31Z" duration="0.020513" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1273" name="ExplicitActionInvoker_ProvidesExecutionSettings" fullname="GearEngine.GearEngine.Tests.Editor.InvokeActionEditorSelectionTests.ExplicitActionInvoker_ProvidesExecutionSettings" methodname="ExplicitActionInvoker_ProvidesExecutionSettings" classname="GearEngine.GearEngine.Tests.Editor.InvokeActionEditorSelectionTests" runstate="Runnable" seed="339244056" result="Passed" start-time="2026-07-27 11:35:31Z" end-time="2026-07-27 11:35:31Z" duration="0.000874" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1271" name="ExplicitActionInvoker_ShowsAnActionsList" fullname="GearEngine.GearEngine.Tests.Editor.InvokeActionEditorSelectionTests.ExplicitActionInvoker_ShowsAnActionsList" methodname="ExplicitActionInvoker_ShowsAnActionsList" classname="GearEngine.GearEngine.Tests.Editor.InvokeActionEditorSelectionTests" runstate="Runnable" seed="1724776668" result="Passed" start-time="2026-07-27 11:35:31Z" end-time="2026-07-27 11:35:31Z" duration="0.001048" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1294" name="ExtractNestedAction_PreservesTheEmptySourceGroupAndTheExtractedAction" fullname="GearEngine.GearEngine.Tests.Editor.InvokeActionEditorSelectionTests.ExtractNestedAction_PreservesTheEmptySourceGroupAndTheExtractedAction" methodname="ExtractNestedAction_PreservesTheEmptySourceGroupAndTheExtractedAction" classname="GearEngine.GearEngine.Tests.Editor.InvokeActionEditorSelectionTests" runstate="Runnable" seed="330541016" result="Passed" start-time="2026-07-27 11:35:31Z" end-time="2026-07-27 11:35:31Z" duration="0.005734" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1266" name="GetActionRowContentRect_ReservesTheReorderHandleBeforeTheFoldout" fullname="GearEngine.GearEngine.Tests.Editor.InvokeActionEditorSelectionTests.GetActionRowContentRect_ReservesTheReorderHandleBeforeTheFoldout" methodname="GetActionRowContentRect_ReservesTheReorderHandleBeforeTheFoldout" classname="GearEngine.GearEngine.Tests.Editor.InvokeActionEditorSelectionTests" runstate="Runnable" seed="1908172803" result="Passed" start-time="2026-07-27 11:35:31Z" end-time="2026-07-27 11:35:31Z" duration="0.000353" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1260" name="GetDisplayName_AppendsTheActionSummaryWhenItIsAvailable" fullname="GearEngine.GearEngine.Tests.Editor.InvokeActionEditorSelectionTests.GetDisplayName_AppendsTheActionSummaryWhenItIsAvailable" methodname="GetDisplayName_AppendsTheActionSummaryWhenItIsAvailable" classname="GearEngine.GearEngine.Tests.Editor.InvokeActionEditorSelectionTests" runstate="Runnable" seed="1775684273" result="Passed" start-time="2026-07-27 11:35:31Z" end-time="2026-07-27 11:35:31Z" duration="0.000392" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1259" name="GetDisplayName_UsesTheActionCommandInfoName" fullname="GearEngine.GearEngine.Tests.Editor.InvokeActionEditorSelectionTests.GetDisplayName_UsesTheActionCommandInfoName" methodname="GetDisplayName_UsesTheActionCommandInfoName" classname="GearEngine.GearEngine.Tests.Editor.InvokeActionEditorSelectionTests" runstate="Runnable" seed="601823019" result="Passed" start-time="2026-07-27 11:35:32Z" end-time="2026-07-27 11:35:32Z" duration="0.000296" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1261" name="GetDisplayName_UsesTheCommandNameWhenTheSummaryReportsAnIssue" fullname="GearEngine.GearEngine.Tests.Editor.InvokeActionEditorSelectionTests.GetDisplayName_UsesTheCommandNameWhenTheSummaryReportsAnIssue" methodname="GetDisplayName_UsesTheCommandNameWhenTheSummaryReportsAnIssue" classname="GearEngine.GearEngine.Tests.Editor.InvokeActionEditorSelectionTests" runstate="Runnable" seed="1107874566" result="Passed" start-time="2026-07-27 11:35:32Z" end-time="2026-07-27 11:35:32Z" duration="0.000157" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1283" name="GetMenuPath_UsesTheFlowCategoryForPerformInterruption" fullname="GearEngine.GearEngine.Tests.Editor.InvokeActionEditorSelectionTests.GetMenuPath_UsesTheFlowCategoryForPerformInterruption" methodname="GetMenuPath_UsesTheFlowCategoryForPerformInterruption" classname="GearEngine.GearEngine.Tests.Editor.InvokeActionEditorSelectionTests" runstate="Runnable" seed="564734132" result="Passed" start-time="2026-07-27 11:35:32Z" end-time="2026-07-27 11:35:32Z" duration="0.000237" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1290" name="GetReorderDragYWithHysteresis_KeepsSmallMovementsAtTheDragOrigin" fullname="GearEngine.GearEngine.Tests.Editor.InvokeActionEditorSelectionTests.GetReorderDragYWithHysteresis_KeepsSmallMovementsAtTheDragOrigin" methodname="GetReorderDragYWithHysteresis_KeepsSmallMovementsAtTheDragOrigin" classname="GearEngine.GearEngine.Tests.Editor.InvokeActionEditorSelectionTests" runstate="Runnable" seed="1861890793" result="Passed" start-time="2026-07-27 11:35:32Z" end-time="2026-07-27 11:35:32Z" duration="0.000205" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1291" name="GetReorderDragYWithHysteresis_RequiresExtraTravelInBothDirections" fullname="GearEngine.GearEngine.Tests.Editor.InvokeActionEditorSelectionTests.GetReorderDragYWithHysteresis_RequiresExtraTravelInBothDirections" methodname="GetReorderDragYWithHysteresis_RequiresExtraTravelInBothDirections" classname="GearEngine.GearEngine.Tests.Editor.InvokeActionEditorSelectionTests" runstate="Runnable" seed="1418190006" result="Passed" start-time="2026-07-27 11:35:32Z" end-time="2026-07-27 11:35:32Z" duration="0.000164" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1293" name="HasDragStarted_RequiresMovementBeyondTheSubListThreshold" fullname="GearEngine.GearEngine.Tests.Editor.InvokeActionEditorSelectionTests.HasDragStarted_RequiresMovementBeyondTheSubListThreshold" methodname="HasDragStarted_RequiresMovementBeyondTheSubListThreshold" classname="GearEngine.GearEngine.Tests.Editor.InvokeActionEditorSelectionTests" runstate="Runnable" seed="1181001353" result="Passed" start-time="2026-07-27 11:35:32Z" end-time="2026-07-27 11:35:32Z" duration="0.000266" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1288" name="IsMergeDrop_AcceptsTheCenterOfAnEmptyInvokeAction" fullname="GearEngine.GearEngine.Tests.Editor.InvokeActionEditorSelectionTests.IsMergeDrop_AcceptsTheCenterOfAnEmptyInvokeAction" methodname="IsMergeDrop_AcceptsTheCenterOfAnEmptyInvokeAction" classname="GearEngine.GearEngine.Tests.Editor.InvokeActionEditorSelectionTests" runstate="Runnable" seed="1087035557" result="Passed" start-time="2026-07-27 11:35:32Z" end-time="2026-07-27 11:35:32Z" duration="0.000212" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1289" name="IsMergeDrop_LeavesTheRowEdgesAvailableForReordering" fullname="GearEngine.GearEngine.Tests.Editor.InvokeActionEditorSelectionTests.IsMergeDrop_LeavesTheRowEdgesAvailableForReordering" methodname="IsMergeDrop_LeavesTheRowEdgesAvailableForReordering" classname="GearEngine.GearEngine.Tests.Editor.InvokeActionEditorSelectionTests" runstate="Runnable" seed="290795213" result="Passed" start-time="2026-07-27 11:35:32Z" end-time="2026-07-27 11:35:32Z" duration="0.000143" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1296" name="ParentCommandDrag_IgnoresAPendingNestedActionDrag" fullname="GearEngine.GearEngine.Tests.Editor.InvokeActionEditorSelectionTests.ParentCommandDrag_IgnoresAPendingNestedActionDrag" methodname="ParentCommandDrag_IgnoresAPendingNestedActionDrag" classname="GearEngine.GearEngine.Tests.Editor.InvokeActionEditorSelectionTests" runstate="Runnable" seed="397193522" result="Passed" start-time="2026-07-27 11:35:32Z" end-time="2026-07-27 11:35:32Z" duration="0.000777" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1295" name="ParentDragSuppression_KeepsTheDragGutterVisibleDuringRepaint" fullname="GearEngine.GearEngine.Tests.Editor.InvokeActionEditorSelectionTests.ParentDragSuppression_KeepsTheDragGutterVisibleDuringRepaint" methodname="ParentDragSuppression_KeepsTheDragGutterVisibleDuringRepaint" classname="GearEngine.GearEngine.Tests.Editor.InvokeActionEditorSelectionTests" runstate="Runnable" seed="24811558" result="Passed" start-time="2026-07-27 11:35:32Z" end-time="2026-07-27 11:35:32Z" duration="0.000188" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1264" name="PercentageField_FormatsAtMostTwoDecimalPlaces" fullname="GearEngine.GearEngine.Tests.Editor.InvokeActionEditorSelectionTests.PercentageField_FormatsAtMostTwoDecimalPlaces" methodname="PercentageField_FormatsAtMostTwoDecimalPlaces" classname="GearEngine.GearEngine.Tests.Editor.InvokeActionEditorSelectionTests" runstate="Runnable" seed="1684498075" result="Passed" start-time="2026-07-27 11:35:32Z" end-time="2026-07-27 11:35:32Z" duration="0.001086" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1301" name="ResolveReorderSource_PreservesTheCommandCapturedBeforeUnityReordersTheList" fullname="GearEngine.GearEngine.Tests.Editor.InvokeActionEditorSelectionTests.ResolveReorderSource_PreservesTheCommandCapturedBeforeUnityReordersTheList" methodname="ResolveReorderSource_PreservesTheCommandCapturedBeforeUnityReordersTheList" classname="GearEngine.GearEngine.Tests.Editor.InvokeActionEditorSelectionTests" runstate="Runnable" seed="1913216803" result="Passed" start-time="2026-07-27 11:35:32Z" end-time="2026-07-27 11:35:32Z" duration="0.000239" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1258" name="Select_StoresTheNestedActionSelectedFromTheBlockList" fullname="GearEngine.GearEngine.Tests.Editor.InvokeActionEditorSelectionTests.Select_StoresTheNestedActionSelectedFromTheBlockList" methodname="Select_StoresTheNestedActionSelectedFromTheBlockList" classname="GearEngine.GearEngine.Tests.Editor.InvokeActionEditorSelectionTests" runstate="Runnable" seed="1788328995" result="Passed" start-time="2026-07-27 11:35:32Z" end-time="2026-07-27 11:35:32Z" duration="0.000520" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1278" name="SelectedActionListItem_ExpandsNestedActionOnFirstSynchronization" fullname="GearEngine.GearEngine.Tests.Editor.InvokeActionEditorSelectionTests.SelectedActionListItem_ExpandsNestedActionOnFirstSynchronization" methodname="SelectedActionListItem_ExpandsNestedActionOnFirstSynchronization" classname="GearEngine.GearEngine.Tests.Editor.InvokeActionEditorSelectionTests" runstate="Runnable" seed="503805474" result="Passed" start-time="2026-07-27 11:35:32Z" end-time="2026-07-27 11:35:32Z" duration="0.001009" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1279" name="SelectedActionListItem_RemainsCollapsedAfterSelectionSynchronization" fullname="GearEngine.GearEngine.Tests.Editor.InvokeActionEditorSelectionTests.SelectedActionListItem_RemainsCollapsedAfterSelectionSynchronization" methodname="SelectedActionListItem_RemainsCollapsedAfterSelectionSynchronization" classname="GearEngine.GearEngine.Tests.Editor.InvokeActionEditorSelectionTests" runstate="Runnable" seed="973434537" result="Passed" start-time="2026-07-27 11:35:32Z" end-time="2026-07-27 11:35:32Z" duration="0.000742" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1272" name="SelectedNestedAction_UsesTheActionDisplayNameAsItsInspectorTitle" fullname="GearEngine.GearEngine.Tests.Editor.InvokeActionEditorSelectionTests.SelectedNestedAction_UsesTheActionDisplayNameAsItsInspectorTitle" methodname="SelectedNestedAction_UsesTheActionDisplayNameAsItsInspectorTitle" classname="GearEngine.GearEngine.Tests.Editor.InvokeActionEditorSelectionTests" runstate="Runnable" seed="1964810015" result="Passed" start-time="2026-07-27 11:35:32Z" end-time="2026-07-27 11:35:32Z" duration="0.001055" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1269" name="StandaloneActionInvoker_DoesNotShowAnActionsList" fullname="GearEngine.GearEngine.Tests.Editor.InvokeActionEditorSelectionTests.StandaloneActionInvoker_DoesNotShowAnActionsList" methodname="StandaloneActionInvoker_DoesNotShowAnActionsList" classname="GearEngine.GearEngine.Tests.Editor.InvokeActionEditorSelectionTests" runstate="Runnable" seed="932238077" result="Passed" start-time="2026-07-27 11:35:32Z" end-time="2026-07-27 11:35:32Z" duration="0.000577" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1270" name="StandaloneActionInvoker_UsesTheActionDisplayNameAsItsInspectorTitle" fullname="GearEngine.GearEngine.Tests.Editor.InvokeActionEditorSelectionTests.StandaloneActionInvoker_UsesTheActionDisplayNameAsItsInspectorTitle" methodname="StandaloneActionInvoker_UsesTheActionDisplayNameAsItsInspectorTitle" classname="GearEngine.GearEngine.Tests.Editor.InvokeActionEditorSelectionTests" runstate="Runnable" seed="1537968519" result="Passed" start-time="2026-07-27 11:35:32Z" end-time="2026-07-27 11:35:32Z" duration="0.000506" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <output><![CDATA[Saving results to: /Users/leonardosilva/Library/Application Support/DDW/Scaffold/TestResults.xml
+]]></output>
+                </test-case>
+              </test-suite>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>
