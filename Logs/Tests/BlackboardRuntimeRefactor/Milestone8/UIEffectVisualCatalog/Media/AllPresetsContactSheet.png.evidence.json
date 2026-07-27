@@ -1,0 +1,10 @@
+{
+    "test": "GearEngine.GearEngine.Tests.Editor.UIEffectPresetCatalogSceneVisualTests.CatalogScene_ButtonClick_AppliesAndRendersEveryPreset",
+    "artifact": "AllPresetsContactSheet.png",
+    "scenario": "Each configured UIEffect preset is applied by the scene Blackboard's button-click path and captured in one contact sheet.",
+    "criteria": [
+        "All 78 configured presets are reached through Button.onClick.",
+        "Each thumbnail contains the rendered scene after its corresponding preset was applied.",
+        "The contact sheet uses 8 columns and 10 rows."
+    ]
+}

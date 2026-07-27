@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-07-27 20:04:10Z" end-time="2026-07-27 20:04:18Z" duration="7.0387554">
+  <test-suite type="TestSuite" id="1000" name="Scaffold" fullname="Scaffold" runstate="Runnable" testcasecount="278" result="Passed" start-time="2026-07-27 20:04:10Z" end-time="2026-07-27 20:04:18Z" duration="7.038755" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="1266" name="Game.GearEngine.Tests.dll" fullname="/Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/ScriptAssemblies/Game.GearEngine.Tests.dll" runstate="Runnable" testcasecount="120" result="Passed" start-time="2026-07-27 20:04:10Z" end-time="2026-07-27 20:04:18Z" duration="7.027936" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="30465" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="1267" name="GearEngine" fullname="GearEngine" runstate="Runnable" testcasecount="120" result="Passed" start-time="2026-07-27 20:04:10Z" end-time="2026-07-27 20:04:18Z" duration="7.025325" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1268" name="GearEngine" fullname="GearEngine.GearEngine" runstate="Runnable" testcasecount="120" result="Passed" start-time="2026-07-27 20:04:10Z" end-time="2026-07-27 20:04:18Z" duration="7.023013" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestSuite" id="1269" name="Tests" fullname="GearEngine.GearEngine.Tests" runstate="Runnable" testcasecount="120" result="Passed" start-time="2026-07-27 20:04:11Z" end-time="2026-07-27 20:04:18Z" duration="7.020790" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="TestSuite" id="1270" name="Editor" fullname="GearEngine.GearEngine.Tests.Editor" runstate="Runnable" testcasecount="120" result="Passed" start-time="2026-07-27 20:04:11Z" end-time="2026-07-27 20:04:18Z" duration="7.018549" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-suite type="TestFixture" id="1261" name="UIEffectPresetCatalogSceneVisualTests" fullname="GearEngine.GearEngine.Tests.Editor.UIEffectPresetCatalogSceneVisualTests" classname="GearEngine.GearEngine.Tests.Editor.UIEffectPresetCatalogSceneVisualTests" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-07-27 20:04:11Z" end-time="2026-07-27 20:04:18Z" duration="7.013146" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties>
+                  <property name="Category" value="Visual" />
+                </properties>
+                <test-case id="1262" name="CatalogScene_ButtonClick_AppliesAndRendersEveryPreset" fullname="GearEngine.GearEngine.Tests.Editor.UIEffectPresetCatalogSceneVisualTests.CatalogScene_ButtonClick_AppliesAndRendersEveryPreset" methodname="CatalogScene_ButtonClick_AppliesAndRendersEveryPreset" classname="GearEngine.GearEngine.Tests.Editor.UIEffectPresetCatalogSceneVisualTests" runstate="Runnable" seed="1205706416" result="Passed" start-time="2026-07-27 20:04:11Z" end-time="2026-07-27 20:04:18Z" duration="7.003843" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <output><![CDATA[Saving results to: /Users/leonardosilva/Library/Application Support/DDW/Scaffold/TestResults.xml
+]]></output>
+                </test-case>
+              </test-suite>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

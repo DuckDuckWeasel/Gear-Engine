@@ -2,30 +2,20 @@
 
 ## TL;DR
 
-The current Blackboard implementation does not satisfy the intended boundary.
-Individual `IAction` instances are now plain serializable C# objects, and the composite
-runner is also a plain C# object, but the runtime graph is still rooted in Unity
-components:
+This document records the component-ownership diagnosis that motivated the refactor.
+That diagnosis is now resolved: `Blackboard`, `Block`, actions, action lists, tracks,
+variables, triggers, scheduling, and execution state are plain C# runtime objects.
 
-- `Blackboard`, `Block`, `Command`, `EventHandler`, and `Variable` are
-  `MonoBehaviour` types.
-- Blocks and variables are discovered through `GetComponent` / `GetComponents`.
-- Block execution is owned by Unity coroutines and per-component `Update` methods.
-- The action list is plain data, but it is hosted and ticked by
-  `InvokeActionCommand : Command`, so it still requires a component.
-- `GameStarted` is a component because it directly consumes `Start` and starts a
-  coroutine, even though the trigger itself only needs a start signal and a frame
-  scheduler.
+`BlackboardBehaviour` is the optional Unity lifecycle wrapper. Narrow relays remain
+components only where Unity must deliver physics, collision, render, pointer, or
+coroutine callbacks. Actions may retain explicit `UnityEngine.Object` references
+without inheriting component ownership. The legacy Blackboard, Block, Command,
+EventHandler, Action Invoker, hidden-global, and save-manager components were removed
+in the breaking cutover.
 
-The target should be a plain C# `BlackboardRuntime` that owns plain Blocks, variables,
-triggers, and action lists. A single `BlackboardBehaviour` should be an optional Unity
-adapter for scene setup, serialization, lifecycle forwarding, and UnityEvent access.
-Only adapters that receive Unity callbacks should be `MonoBehaviour` types. An action
-may hold a `UnityEngine.Object` reference without becoming a `MonoBehaviour`.
-
-Review result: **architectural refactor required**. The current implementation is a
-partially migrated Command pattern, not yet a runtime that can be constructed and run
-from a script without a `GameObject`.
+Review result: **implemented and verified**. See `BlackboardRuntime.md` for the current
+public model and lifecycle. The detailed findings below remain as the decision record
+for why the replacement was necessary.
 
 ## Architectural Drivers
 
@@ -423,9 +413,7 @@ Allowed:
   `IVariableStore`, `IBlackboardRegistry`, `ISaveService`, and `ILogger`.
 - Unity adapters depending on the core and translating Unity callbacks or services.
 - Serializable action implementations holding explicit Unity object references.
-- Editor code depending on authoring definitions and migration adapters.
-- Existing legacy assemblies compiling beside the replacement until the explicit
-  breaking cutover, without creating new compatibility wrappers.
+- Editor code depending on the Authoring, Core, and Unity assemblies it edits.
 
 Forbidden:
 
@@ -444,15 +432,16 @@ Forbidden:
 
 - `BlackboardDefinition`: serializable authoring data containing stable ID, variables,
   and Blocks.
-- `BlackboardRuntime`: plain lifecycle, lookup, execution, stop/reset, substitution,
+- `Blackboard`: plain lifecycle, lookup, execution, stop/reset, substitution,
   and messaging.
-- `BlockDefinition` and `BlockRuntime`: definition separated from transient execution
+- `BlockDefinition` and `Block`: definition separated from transient execution
   state.
-- `ActionSequence`: plain action entries and composite execution settings.
-- `ActionContext`: narrow runtime capabilities supplied to actions at execution time.
-- `IVariableStore`: typed local/public/global value storage without components.
-- `ITrigger`: plain attach/detach or signal-handling contract.
-- `GameStartedTrigger`: plain trigger using `IFrameScheduler`.
+- `ActionListDefinition` and `ActionList`: plain action entries and composite
+  execution settings/state.
+- `ActionExecutionContext`: immutable runtime capabilities supplied to actions.
+- `VariableDefinition<T>` and `VariableCell<T>`: typed definition/runtime storage.
+- `TriggerDefinition` and `ITriggerBinding`: plain attach/detach contracts.
+- `GameStartedTriggerDefinition`: plain trigger using `IFrameScheduler`.
 - `BlackboardBehaviour`: optional Unity wrapper and serialization bridge.
 - Unity callback adapters: pointer, collision, UI, Input, scene, and lifecycle sources.
 
@@ -482,8 +471,8 @@ riskier to verify.
 - A separate definition/runtime model adds mapping code, but makes script creation,
   deterministic testing, cloning, save/load, and independent runtime instances
   straightforward.
-- Running the legacy and replacement assemblies side by side adds short-term
-  duplication, but keeps each pre-cutover milestone compilable.
+- Running the legacy and replacement assemblies side by side during implementation
+  added short-term duplication, but kept each pre-cutover milestone compilable.
 - Injected scheduler and event ports require composition setup, but eliminate hidden
   frame and global-state dependencies.
 - Keeping Unity references in actions means not every action assembly can set
@@ -501,8 +490,8 @@ Required acceptance evidence for the refactor:
    same behavior matrix.
 3. Unity adapter tests verify lifecycle forwarding and symmetric listener
    registration/removal.
-4. Serialization migration tests load and compare the Blackboard prefab,
-   `Test Tutorial Scene`, and `UIEffectsForEachDemo`.
+4. Serialized-asset tests load the rebuilt Blackboard prefab,
+   `TestTutorialScene`, and `UIEffectsForEachDemo`.
 5. An assembly test ensures the core has no reference to UnityAdapter, Editor, Legacy,
    or `Game.GearEngine`.
 6. Existing flow, variable, Block call, composite execution, and action tests remain
@@ -534,10 +523,9 @@ Required acceptance evidence for the refactor:
 - **Command:** Core `IAction` and `ActionBase` execute through immutable
   `ActionExecutionContext` values and status callbacks. Flow jumps use
   `IActionFlowController`; Core stores no MonoBehaviour or concrete Command.
-- **Adapter:** the Gear action base temporarily translates the legacy component runner
-  into the Core contract while pre-cutover consumers remain. Scheduler-backed delays
-  and IEnumerators use the same Core ports. The legacy overload is explicitly excluded
-  from the target API and is deleted in Milestone 8.
+- **Adapter:** Gear actions execute the Core contract directly. Scheduler-backed
+  delays and IEnumerators use the same Core ports; the legacy component overload and
+  action-invoker host were deleted in Milestone 8.
 - **Observer:** event-wait and input actions now remove listeners symmetrically on
   completion, interruption, and failure.
 - **Complexity:** changed action methods were decomposed to the repository's analyzer
@@ -567,3 +555,6 @@ Milestone 4 evidence:
 - 2026-07-27: Updated after Milestone 7 replaced component graph authoring with an
   Undo-aware managed-definition window, inspectors, metadata model, source resolver,
   duplication flow, and execution-feedback adapter.
+- 2026-07-27: Updated after Milestone 8 removed the legacy component graph, rebuilt
+  serialized consumers, migrated Gear/tutorial actions, repaired the macOS validation
+  infrastructure, and completed the clean cutover gate.

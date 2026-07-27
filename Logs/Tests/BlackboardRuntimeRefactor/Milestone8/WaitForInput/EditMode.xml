@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Passed" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-07-27 19:51:22Z" end-time="2026-07-27 19:51:22Z" duration="0.0551167">
+  <test-suite type="TestSuite" id="1000" name="Scaffold" fullname="Scaffold" runstate="Runnable" testcasecount="278" result="Passed" start-time="2026-07-27 19:51:22Z" end-time="2026-07-27 19:51:22Z" duration="0.055117" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="1266" name="Game.GearEngine.Tests.dll" fullname="/Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/ScriptAssemblies/Game.GearEngine.Tests.dll" runstate="Runnable" testcasecount="120" result="Passed" start-time="2026-07-27 19:51:22Z" end-time="2026-07-27 19:51:22Z" duration="0.046606" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="28086" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="1267" name="GearEngine" fullname="GearEngine" runstate="Runnable" testcasecount="120" result="Passed" start-time="2026-07-27 19:51:22Z" end-time="2026-07-27 19:51:22Z" duration="0.044580" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1268" name="GearEngine" fullname="GearEngine.GearEngine" runstate="Runnable" testcasecount="120" result="Passed" start-time="2026-07-27 19:51:22Z" end-time="2026-07-27 19:51:22Z" duration="0.042781" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestSuite" id="1269" name="Tests" fullname="GearEngine.GearEngine.Tests" runstate="Runnable" testcasecount="120" result="Passed" start-time="2026-07-27 19:51:22Z" end-time="2026-07-27 19:51:22Z" duration="0.040934" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="TestSuite" id="1270" name="Editor" fullname="GearEngine.GearEngine.Tests.Editor" runstate="Runnable" testcasecount="120" result="Passed" start-time="2026-07-27 19:51:22Z" end-time="2026-07-27 19:51:22Z" duration="0.039102" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-suite type="TestFixture" id="1263" name="WaitForInputActionBaseTests" fullname="GearEngine.GearEngine.Tests.Editor.WaitForInputActionBaseTests" classname="GearEngine.GearEngine.Tests.Editor.WaitForInputActionBaseTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-07-27 19:51:22Z" end-time="2026-07-27 19:51:22Z" duration="0.035357" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="1264" name="InitializeInputService_ReplacesPartialStateWithCoherentLocalServices" fullname="GearEngine.GearEngine.Tests.Editor.WaitForInputActionBaseTests.InitializeInputService_ReplacesPartialStateWithCoherentLocalServices" methodname="InitializeInputService_ReplacesPartialStateWithCoherentLocalServices" classname="GearEngine.GearEngine.Tests.Editor.WaitForInputActionBaseTests" runstate="Runnable" seed="121724361" result="Passed" start-time="2026-07-27 19:51:22Z" end-time="2026-07-27 19:51:22Z" duration="0.017314" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1265" name="PrimaryButtonState_RecognizesInputSystemMousePressAndRelease" fullname="GearEngine.GearEngine.Tests.Editor.WaitForInputActionBaseTests.PrimaryButtonState_RecognizesInputSystemMousePressAndRelease" methodname="PrimaryButtonState_RecognizesInputSystemMousePressAndRelease" classname="GearEngine.GearEngine.Tests.Editor.WaitForInputActionBaseTests" runstate="Runnable" seed="806720076" result="Passed" start-time="2026-07-27 19:51:22Z" end-time="2026-07-27 19:51:22Z" duration="0.010620" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <output><![CDATA[Saving results to: /Users/leonardosilva/Library/Application Support/DDW/Scaffold/TestResults.xml
+]]></output>
+                </test-case>
+              </test-suite>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -1,0 +1,1367 @@
+Unity Editor version:    6000.5.3f1 (c2eb47b3a2a9)
+Branch:                  6000.5/staging
+Build type:              Release
+Batch mode:              YES
+macOS version:           Version 26.5.2 (Build 25F84)
+Darwin version:          25.5.0
+Architecture:            arm64
+Running under Rosetta:   NO
+Available memory:        16384 MB
+Date:                    2026-07-27T21:28:40Z
+[Licensing::Module] Trying to connect to existing licensing client channel...
+[Licensing::IpcConnector] Successfully connected to: "LicenseClient-leonardosilva" at "2026-07-27T21:28:40.538085Z"
+Launching external process: /Applications/Unity/Hub/Editor/6000.5.3f1/Unity.app/Contents/Helpers/PackageManager/Server/UnityPackageManager
+
+COMMAND LINE ARGUMENTS:
+/Applications/Unity/Hub/Editor/6000.5.3f1/Unity.app/Contents/MacOS/Unity
+-batchmode
+-projectPath
+/Users/leonardosilva/.codex/worktrees/a62b/Gear Engine
+-runTests
+-testPlatform
+PlayMode
+-testResults
+/Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Artifacts/TestResults/20260727-182840/PlayMode.xml
+-logFile
+/Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Artifacts/TestResults/20260727-182840/PlayMode.log
+Successfully changed project path to: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine
+/Users/leonardosilva/.codex/worktrees/a62b/Gear Engine
+[UnityMemory] Configuration Parameters - Can be set up in boot.config
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-nav-mesh-worker=65536"
+    "memorysetup-temp-allocator-size-audio-worker=65536"
+    "memorysetup-temp-allocator-size-cloud-worker=32768"
+    "memorysetup-allocator-temp-initial-block-size-main=262144"
+    "memorysetup-allocator-temp-initial-block-size-worker=262144"
+    "memorysetup-temp-allocator-size-preload-manager=33554432"
+    "memorysetup-temp-allocator-size-gfx=262144"
+    "memorysetup-temp-allocator-size-background-worker=32768"
+    "memorysetup-temp-allocator-size-job-worker=262144"
+    "memorysetup-bucket-allocator-granularity=16"
+    "memorysetup-bucket-allocator-bucket-count=8"
+    "memorysetup-bucket-allocator-block-size=33554432"
+    "memorysetup-bucket-allocator-block-count=8"
+    "memorysetup-main-allocator-block-size=16777216"
+    "memorysetup-thread-allocator-block-size=16777216"
+    "memorysetup-main-allocator-mimalloc-enabled=0"
+    "memorysetup-gfx-main-allocator-block-size=16777216"
+    "memorysetup-gfx-thread-allocator-block-size=16777216"
+    "memorysetup-cache-allocator-block-size=4194304"
+    "memorysetup-typetree-allocator-block-size=2097152"
+    "memorysetup-profiler-bucket-allocator-granularity=16"
+    "memorysetup-profiler-bucket-allocator-bucket-count=8"
+    "memorysetup-profiler-bucket-allocator-block-size=33554432"
+    "memorysetup-profiler-bucket-allocator-block-count=8"
+    "memorysetup-profiler-allocator-block-size=16777216"
+    "memorysetup-profiler-editor-allocator-block-size=1048576"
+    "memorysetup-temp-allocator-size-main=16777216"
+    "memorysetup-job-temp-allocator-block-size=2097152"
+    "memorysetup-job-temp-allocator-block-size-background=1048576"
+    "memorysetup-job-temp-allocator-reduction-small-platforms=262144"
+Logging is directed to a specific file, skipping project log.Player connection [8295652736]  Target information:
+
+Player connection [8295652736]  * "[IP] 192.168.0.9 [Port] 55504 [Flags] 2 [Guid] 670658540 [EditorId] 670658540 [Version] 1048832 [Id] OSXEditor(0,MacBook-Pro.local) [Debug] 1 [PackageName] OSXEditor [ProjectName] Editor"
+
+Player connection [8295652736] Host joined multi-casting on [225.0.0.222:54997]...
+Player connection [8295652736] Host joined alternative multi-casting on [225.0.0.222:34997]...
+Input System module state changed to: Initialized.
+[Physics::Module] Initialized fallback backend.
+[Physics::Module] Id: 0xdecafbad
+[Licensing::Client] Error: HandshakeResponse reported an error:
+	ResponseCode: 505
+	ResponseStatus: Unsupported protocol version '1.18.1'.
+[Licensing::Module] Error: Failed to handshake to channel: "LicenseClient-leonardosilva"
+[Licensing::IpcConnector] LicenseClient-leonardosilva channel disconnected successfully.
+[Licensing::IpcConnector] Channel LicenseClient-leonardosilva-6000.5.3 doesn't exist
+Launching external process: /Applications/Unity/Hub/Editor/6000.5.3f1/Unity.app/Contents/Helpers/UnityLicensingClient.app/Contents/MacOS/Unity.Licensing.Client
+[Licensing::Module] Successfully launched the LicensingClient (PId: 52018)
+[Package Manager] Connected to IPC stream "Upm-52012" after 0.2 seconds.
+[Licensing::Module] Licensing is not yet initialized.
+[Licensing::IpcConnector] Successfully connected to: "LicenseClient-leonardosilva-6000.5.3" at "2026-07-27T21:28:41.252767Z"
+[Licensing::Client] Handshaking with LicensingClient:
+  Version:                 1.18.1+9fbee8e
+  Session Id:              50bfaca6347d48c6a1891e123c339235
+  Correlation Id:          a1dc352d22f87d2c359e5a575825617d
+  External correlation Id: 5287728242543096054
+  Machine Id:              UKUp3F/eO7SnOSObn2N21nAC9QY=
+[Licensing::Module] Successfully connected to LicensingClient on channel: "LicenseClient-leonardosilva-6000.5.3" (connect: 0.38s, validation: 0.04s, handshake: 0.30s)
+[Licensing::IpcConnector] Successfully connected to: "LicenseClient-leonardosilva-6000.5.3-notifications" at "2026-07-27T21:28:41.592752Z"
+[Licensing::Module] Connected to LicensingClient (PId: 52018, launch time: 0.00, total connection time: 0.72s)
+[Licensing::Module] Error: Access token is unavailable; failed to update
+[Licensing::Client] Successfully resolved entitlement details
+[Licensing::Module] License group:
+  Id: 3881518-UnityPersXXXX
+  Product: Unity Personal
+  Type: Assigned
+  Expiration: Unlimited
+[Licensing::Client] Successfully updated license, isAsync: True, time: 0.01
+[Licensing::Module] Licensing Background thread has ended after 1.07s
+[Licensing::Module] Licensing is initialized (took 0.58s).
+[Licensing::Client] Successfully resolved entitlement details
+Library Redirect Path: Library/
+[Physics::Module] Selected backend.
+[Physics::Module] Name: PhysX
+[Physics::Module] Id: 0xf2b8ea05
+[Physics::Module] SDK Version: 4.1.2
+[Physics::Module] Integration Version: 1.0.0
+[Physics::Module] Threading Mode: Multi-Threaded
+Refreshing native plugins compatible for Editor in 10.94 ms, found 0 plugins.
+Initialize engine version: 6000.5.3f1 (c2eb47b3a2a9)
+[Subsystems] Discovering subsystems at path /Applications/Unity/Hub/Editor/6000.5.3f1/Unity.app/Contents/Resources/UnitySubsystems
+[Subsystems] Discovering subsystems at path /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Assets
+GfxDevice: creating device client; kGfxThreadingModeNonThreaded
+ preferred device: Apple M2 Pro (high power)
+Metal devices available: 1
+0: Apple M2 Pro (high power)
+Using device Apple M2 Pro (high power)
+Initializing Metal device caps: Apple M2 Pro
+Mac GPU Family: 2
+Apple GPU Family: 8
+MSL Version: 3.0
+Has Float MSAA: 1
+Has Float Filtering: 1
+ReadWrite Texture Tier: 2
+Initialize mono
+Mono path[0] = '/Applications/Unity/Hub/Editor/6000.5.3f1/Unity.app/Contents/Resources/Scripting/Managed'
+Mono path[1] = '/Applications/Unity/Hub/Editor/6000.5.3f1/Unity.app/Contents/Resources/Scripting/BCLExtensions/runtime/netstandard2.1'
+Mono path[2] = '/Applications/Unity/Hub/Editor/6000.5.3f1/Unity.app/Contents/Resources/Scripting/MonoBleedingEdge/lib/mono/unityjit-macos'
+Mono config path = '/Applications/Unity/Hub/Editor/6000.5.3f1/Unity.app/Contents/Resources/Scripting/MonoBleedingEdge/etc'
+Using monoOptions --debugger-agent=transport=dt_socket,embedding=1,server=y,suspend=n,address=127.0.0.1:56012
+CodeReloadManager initialized
+ImportWorker Server TCP listen port: 0
+AcceleratorClientConnectionCallback - disconnected - :0
+Begin MonoManager ReloadAssembly
+Registering precompiled unity dll's ...
+Register platform support module: /Applications/Unity/Hub/Editor/6000.5.3f1/PlaybackEngines/MacStandaloneSupport/UnityEditor.OSXStandalone.Extensions.dll
+Registered in 0.000873 seconds.
+Native extension for OSXStandalone target not found
+Package Manager log level set to [2]
+ScheduleIndexationOnStartup MainProcess:False IndexOnStartup:False
+Mono: successfully reloaded assembly
+- Finished resetting the current domain, in  0.289 seconds
+Domain Reload Profiling: 672ms
+	BeginReloadAssembly (101ms)
+		CreateAndSetChildDomain (8ms)
+	RebuildCommonClasses (4ms)
+	RebuildNativeTypeToScriptingClass (16ms)
+	initialDomainReloadingComplete (43ms)
+	LoadAllAssembliesAndSetupDomain (219ms)
+		LoadAssemblies (92ms)
+		AnalyzeDomain (165ms)
+			TypeCache.Refresh (163ms)
+				TypeCache.ScanAssembly (149ms)
+	FinalizeReload (290ms)
+		SetupLoadedEditorAssemblies (0ms)
+			BeforeProcessingInitializeOnLoad (68ms)
+			ProcessInitializeOnLoadAttributes (68ms)
+			ProcessInitializeOnLoadMethodAttributes (97ms)
+[Licensing::Client] Successfully resolved entitlement details
+Application.AssetDatabase Initial Refresh Start
+[Package Manager] Restoring resolved packages state from cache
+[Licensing::Client] Successfully resolved entitlement details
+[Package Manager] Registered 127 packages:
+  Packages from [https://package.openupm.com]:
+    com.cysharp.unitask@2.5.11 (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.cysharp.unitask@182a3b1e0e11)
+  Packages from [https://packages.unity.com]:
+    com.unity.2d.animation@15.1.0 (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.unity.2d.animation@6d5a363ae647)
+    com.unity.2d.aseprite@5.0.3 (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.unity.2d.aseprite@d13865913efa)
+    com.unity.2d.psdimporter@14.0.3 (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.unity.2d.psdimporter@5d82044f9e43)
+    com.unity.2d.spriteshape@15.0.3 (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.unity.2d.spriteshape@fcb7ec61a58b)
+    com.unity.2d.tilemap.extras@8.0.3 (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.unity.2d.tilemap.extras@a80140457adc)
+    com.unity.2d.tooling@3.0.1 (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.unity.2d.tooling@6f06ffb033c0)
+    com.unity.addressables@2.9.1 (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.unity.addressables@8460f1c9c927)
+    com.unity.burst@1.8.29 (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.unity.burst@6bb9aca3ef38)
+    com.unity.dedicated-server@2.0.2 (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.unity.dedicated-server@a70d25d41e21)
+    com.unity.device-simulator.devices@1.0.1 (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.unity.device-simulator.devices@2af643ceec84)
+    com.unity.editorcoroutines@1.1.0 (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.unity.editorcoroutines@87a15ed012c2)
+    com.unity.ide.rider@3.0.40 (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.unity.ide.rider@e4950c6d131b)
+    com.unity.ide.visualstudio@2.0.26 (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.unity.ide.visualstudio@a99d56dec63f)
+    com.unity.inputsystem@1.19.0 (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.unity.inputsystem@21a28c3a6c83)
+    com.unity.multiplayer.center.quickstart@1.1.1 (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.unity.multiplayer.center.quickstart@c025a98340af)
+    com.unity.multiplayer.playmode@2.0.2 (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.unity.multiplayer.playmode@d8888f6ed6aa)
+    com.unity.multiplayer.tools@2.2.9 (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.unity.multiplayer.tools@f5f96dc4e38c)
+    com.unity.multiplayer.widgets@1.0.5 (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.unity.multiplayer.widgets@5e458f651b7a)
+    com.unity.netcode.gameobjects@2.13.0 (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.unity.netcode.gameobjects@0f12e689d980)
+    com.unity.recorder@5.1.6 (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.unity.recorder@f58b3db87352)
+    com.unity.remote-config@4.2.5 (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.unity.remote-config@1ad1930762f4)
+    com.unity.services.analytics@6.3.0 (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.unity.services.analytics@cde4e6cf92f9)
+    com.unity.services.ccd.management@3.0.3 (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.unity.services.ccd.management@5d4dd760cc5f)
+    com.unity.services.deployment@1.7.2 (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.unity.services.deployment@c07c64f9804b)
+    com.unity.services.levelplay@9.3.0 (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.unity.services.levelplay@eee782b8b69d)
+    com.unity.services.multiplayer@2.2.4 (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.unity.services.multiplayer@a6d6ce688d71)
+    com.unity.splines@2.9.0 (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.unity.splines@e6e1d5900acc)
+    com.unity.timeline@1.8.12 (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.unity.timeline@8cd8509afae5)
+    com.unity.visualscripting@1.9.11 (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.unity.visualscripting@8bed5ad90189)
+    com.unity.settings-manager@2.1.1 (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.unity.settings-manager@0b8638c5ce86)
+    com.unity.services.qos@1.4.1 (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.unity.services.qos@03d4b52d4980)
+    com.unity.services.core@1.18.0 (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.unity.services.core@3464cb68d709)
+    com.unity.services.wire@1.4.4 (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.unity.services.wire@aba8a6fb1fe2)
+    com.unity.nuget.newtonsoft-json@3.2.2 (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.unity.nuget.newtonsoft-json@4dfd81071c64)
+    com.unity.services.authentication@3.7.1 (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.unity.services.authentication@9a8b7a204688)
+    com.unity.services.deployment.api@1.1.3 (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.unity.services.deployment.api@9becf6da0f1a)
+    com.unity.remote-config-runtime@4.0.4 (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.unity.remote-config-runtime@06ad4d20f49e)
+    com.unity.bindings.openimageio@1.0.2 (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.unity.bindings.openimageio@94e2abc0bc65)
+    com.unity.nuget.mono-cecil@1.11.6 (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.unity.nuget.mono-cecil@ecb9724e46ff)
+    com.unity.profiling.core@1.0.3 (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.unity.profiling.core@8a49f7027d06)
+    com.unity.scriptablebuildpipeline@2.6.1 (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.unity.scriptablebuildpipeline@36e3b5898ee2)
+    com.unity.2d.common@14.0.1 (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.unity.2d.common@73badf92ba8b)
+    com.unity.localization@1.5.12 (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.unity.localization@b0a588a05f2a)
+    com.unity.test-framework.performance@3.5.0 (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.unity.test-framework.performance@8b56083ec0f0)
+    com.unity.searcher@4.9.4 (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.unity.searcher@d45a78918735)
+  Built-in packages:
+    com.unity.2d.sprite@1.0.0 (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.unity.2d.sprite@053a968eab56)
+    com.unity.2d.tilemap@1.0.0 (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.unity.2d.tilemap@592c6ccaefe1)
+    com.unity.multiplayer.center@1.0.1 (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.unity.multiplayer.center@b860850997d0)
+    com.unity.render-pipelines.universal@17.5.0 (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.unity.render-pipelines.universal@276396f56b3f)
+    com.unity.test-framework@1.7.0 (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.unity.test-framework@1405238725ab)
+    com.unity.ugui@2.5.0 (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.unity.ugui@377fd60ad87b)
+    com.unity.modules.accessibility@1.0.0 (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.unity.modules.accessibility)
+    com.unity.modules.adaptiveperformance@1.0.0 (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.unity.modules.adaptiveperformance)
+    com.unity.modules.ai@1.0.0 (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.unity.modules.ai)
+    com.unity.modules.androidjni@1.0.0 (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.unity.modules.androidjni)
+    com.unity.modules.animation@1.0.0 (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.unity.modules.animation)
+    com.unity.modules.assetbundle@1.0.0 (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.unity.modules.assetbundle)
+    com.unity.modules.audio@1.0.0 (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.unity.modules.audio)
+    com.unity.modules.cloth@1.0.0 (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.unity.modules.cloth)
+    com.unity.modules.director@1.0.0 (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.unity.modules.director)
+    com.unity.modules.imageconversion@1.0.0 (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.unity.modules.imageconversion)
+    com.unity.modules.imgui@1.0.0 (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.unity.modules.imgui)
+    com.unity.modules.jsonserialize@1.0.0 (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.unity.modules.jsonserialize)
+    com.unity.modules.particlesystem@1.0.0 (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.unity.modules.particlesystem)
+    com.unity.modules.physics@1.0.0 (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.unity.modules.physics)
+    com.unity.modules.physics2d@1.0.0 (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.unity.modules.physics2d)
+    com.unity.modules.physicscore2d@1.0.0 (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.unity.modules.physicscore2d)
+    com.unity.modules.screencapture@1.0.0 (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.unity.modules.screencapture)
+    com.unity.modules.terrain@1.0.0 (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.unity.modules.terrain)
+    com.unity.modules.terrainphysics@1.0.0 (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.unity.modules.terrainphysics)
+    com.unity.modules.tilemap@1.0.0 (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.unity.modules.tilemap)
+    com.unity.modules.ui@1.0.0 (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.unity.modules.ui)
+    com.unity.modules.uielements@1.0.0 (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.unity.modules.uielements)
+    com.unity.modules.umbra@1.0.0 (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.unity.modules.umbra)
+    com.unity.modules.unityanalytics@1.0.0 (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.unity.modules.unityanalytics)
+    com.unity.modules.unitywebrequest@1.0.0 (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.unity.modules.unitywebrequest)
+    com.unity.modules.unitywebrequestassetbundle@1.0.0 (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.unity.modules.unitywebrequestassetbundle)
+    com.unity.modules.unitywebrequestaudio@1.0.0 (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.unity.modules.unitywebrequestaudio)
+    com.unity.modules.unitywebrequesttexture@1.0.0 (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.unity.modules.unitywebrequesttexture)
+    com.unity.modules.unitywebrequestwww@1.0.0 (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.unity.modules.unitywebrequestwww)
+    com.unity.modules.vectorgraphics@1.0.0 (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.unity.modules.vectorgraphics)
+    com.unity.modules.vehicles@1.0.0 (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.unity.modules.vehicles)
+    com.unity.modules.video@1.0.0 (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.unity.modules.video)
+    com.unity.modules.wind@1.0.0 (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.unity.modules.wind)
+    com.unity.modules.xr@1.0.0 (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.unity.modules.xr)
+    com.unity.modules.subsystems@1.0.0 (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.unity.modules.subsystems)
+    com.unity.modules.hierarchycore@1.0.0 (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.unity.modules.hierarchycore)
+    com.unity.ext.nunit@2.1.0 (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.unity.ext.nunit@44f7d31723bd)
+    com.unity.mathematics@1.4.0 (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.unity.mathematics@981956d94fb6)
+    com.unity.transport@6.5.0 (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.unity.transport@0e7d0f4a8f2e)
+    com.unity.collections@6.5.0 (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.unity.collections@a43cabe808ca)
+    com.unity.render-pipelines.core@17.5.0 (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.unity.render-pipelines.core@0733e3164aa3)
+    com.unity.shadergraph@17.5.0 (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.unity.shadergraph@8aa9acb51790)
+    com.unity.render-pipelines.universal-config@17.5.0 (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.unity.render-pipelines.universal-config@fdda01c80fe3)
+  Embedded packages:
+    com.codewriter.triinspector@file:/Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Packages/com.codewriter.triinspector (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Packages/com.codewriter.triinspector)
+    com.dbrizov.naughtyattributes@file:/Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Packages/com.dbrizov.naughtyattributes (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Packages/com.dbrizov.naughtyattributes)
+    com.unity.services.cloudcode@file:/Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Packages/com.unity.services.cloudcode (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Packages/com.unity.services.cloudcode)
+    jp.hadashikick.vcontainer@file:/Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Packages/jp.hadashikick.vcontainer (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Packages/jp.hadashikick.vcontainer)
+    com.scaffold.entities@file:/Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Packages/com.scaffold.entities (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Packages/com.scaffold.entities)
+    com.scaffold.entities.states@file:/Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Packages/com.scaffold.entities.states (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Packages/com.scaffold.entities.states)
+    com.scaffold.variables@file:/Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Packages/com.scaffold.variables (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Packages/com.scaffold.variables)
+  Git packages:
+    com.ami.broaudio@https://github.com/man572142/Bro_Audio.git?path=/Assets/BroAudio (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.ami.broaudio@e0f53b67c436)
+    com.github-glitchenzo.nugetforunity@https://github.com/GlitchEnzo/NuGetForUnity.git?path=/src/NuGetForUnity (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.github-glitchenzo.nugetforunity@452a1089a478)
+    com.scaffold.addressables@https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.addressables#main (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.scaffold.addressables@3ba8d82fa829)
+    com.scaffold.ads@https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.ads#main (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.scaffold.ads@652f4f9b0fc5)
+    com.scaffold.ads.levelplay@https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.ads.levelplay#main (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.scaffold.ads.levelplay@c89684ee9f6e)
+    com.scaffold.analytics@https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.analytics#main (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.scaffold.analytics@c4a6f7e440c2)
+    com.scaffold.appflow@https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.appflow#main (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.scaffold.appflow@b69cc3abb336)
+    com.scaffold.autopacker@https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.autopacker#main (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.scaffold.autopacker@afa8b9cd6289)
+    com.scaffold.cloudcode@https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.cloudcode#main (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.scaffold.cloudcode@eb5593c458ad)
+    com.scaffold.core@https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.core#main (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.scaffold.core@6244d1165ace)
+    com.scaffold.events@https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.events#main (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.scaffold.events@20ca136775ba)
+    com.scaffold.liveops@https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.liveops#main (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.scaffold.liveops@89b777e21630)
+    com.scaffold.maps@https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.maps#main (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.scaffold.maps@9996e6fd422e)
+    com.scaffold.model@https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.model#main (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.scaffold.model@cd827fe8ffd8)
+    com.scaffold.mvvm@https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.mvvm#main (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.scaffold.mvvm@2bb6f7b8bb03)
+    com.scaffold.navigation@https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.navigation#main (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.scaffold.navigation@4ebff89ec676)
+    com.scaffold.pooling@https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.pooling#main (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.scaffold.pooling@dd3b79a549a2)
+    com.scaffold.records@https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.records#main (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.scaffold.records@75269a6612d1)
+    com.scaffold.sceneflow@https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.sceneflow#main (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.scaffold.sceneflow@a98cbe547681)
+    com.scaffold.schemas@https://github.com/ScaffoldLibrary/Schemas.git (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.scaffold.schemas@09b1ce52e83c)
+    com.scaffold.states@https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.states#main (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.scaffold.states@6c404f65830a)
+    com.scaffold.types@https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.types#main (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.scaffold.types@58c975d34fca)
+    com.scaffold.ugs@https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.ugs#main (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.scaffold.ugs@f0212343e8ea)
+    com.scaffold.view@https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.view#main (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.scaffold.view@c8681b5e4438)
+    com.scaffold.viewmodel@https://github.com/MgCohen/Scaffold.git?path=/Assets/Packages/com.scaffold.viewmodel#main (location: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/PackageCache/com.scaffold.viewmodel@6b3a95ce93e5)
+[Package Manager] com.unity.multiplayer.widgets is deprecated: Multiplayer Widgets is deprecated and will receive limited support. It remains functional in Unity 6000.3, but no further updates are planned. Use Unity Building Block - Multiplayer Session from the Asset Store for a supported alternative.
+[Subsystems] No new subsystems found in resolved package list.
+[Package Manager] Done registering packages in 0.02 seconds
+The GUID inside 'Assets/_Recovery/0 (3).unity.meta' cannot be extracted by the YAML Parser. Attempting to extract it via string matching instead. Please verify the file does not contain unexpected data.
+The GUID inside 'Assets/_Recovery/0.unity.meta' cannot be extracted by the YAML Parser. Attempting to extract it via string matching instead. Please verify the file does not contain unexpected data.
+The GUID inside 'Assets/Packages/AAGen-0.3.0/package.json.meta' cannot be extracted by the YAML Parser. Attempting to extract it via string matching instead. Please verify the file does not contain unexpected data.
+The GUID inside 'Assets/Packages/AAGen-0.3.0/README.md.meta' cannot be extracted by the YAML Parser. Attempting to extract it via string matching instead. Please verify the file does not contain unexpected data.
+The GUID inside 'Assets/Packages/LevelPlay/Editor/IronSourceSDKDependencies.xml.meta' cannot be extracted by the YAML Parser. Attempting to extract it via string matching instead. Please verify the file does not contain unexpected data.
+The GUID inside 'Assets/Packages/LevelPlay/Editor/ISUnityAdsAdapterDependencies.xml.meta' cannot be extracted by the YAML Parser. Attempting to extract it via string matching instead. Please verify the file does not contain unexpected data.
+The GUID inside 'Assets/Packages/LevelPlay/Editor/LevelPlayVersions.json.meta' cannot be extracted by the YAML Parser. Attempting to extract it via string matching instead. Please verify the file does not contain unexpected data.
+The GUID inside 'Packages/com.scaffold.addressables/package.json.meta' cannot be extracted by the YAML Parser. Attempting to extract it via string matching instead. Please verify the file does not contain unexpected data.
+The GUID inside 'Packages/com.scaffold.ads.levelplay/README.md.meta' cannot be extracted by the YAML Parser. Attempting to extract it via string matching instead. Please verify the file does not contain unexpected data.
+The GUID inside 'Packages/com.scaffold.autopacker/package.json.meta' cannot be extracted by the YAML Parser. Attempting to extract it via string matching instead. Please verify the file does not contain unexpected data.
+The GUID inside 'Packages/com.unity.services.cloudcode/Editor/Authoring/Core/Unity.Services.CloudCode.Authoring.Editor.Core.api.meta' cannot be extracted by the YAML Parser. Attempting to extract it via string matching instead. Please verify the file does not contain unexpected data.
+The GUID inside 'Packages/com.unity.services.cloudcode/Editor/Authoring/Unity.Services.CloudCode.Authoring.Editor.api.meta' cannot be extracted by the YAML Parser. Attempting to extract it via string matching instead. Please verify the file does not contain unexpected data.
+The GUID inside 'Packages/com.scaffold.navigation/Editor/ViewConfigEditor.cs.meta' cannot be extracted by the YAML Parser. Attempting to extract it via string matching instead. Please verify the file does not contain unexpected data.
+The GUID inside 'Packages/com.scaffold.addressables/Runtime/Internal.meta' cannot be extracted by the YAML Parser. Attempting to extract it via string matching instead. Please verify the file does not contain unexpected data.
+The GUID inside 'Packages/com.scaffold.navigation/Editor/Scaffold.Navigation.Editor.asmdef.meta' cannot be extracted by the YAML Parser. Attempting to extract it via string matching instead. Please verify the file does not contain unexpected data.
+The GUID inside 'Packages/com.scaffold.navigation/Editor.meta' cannot be extracted by the YAML Parser. Attempting to extract it via string matching instead. Please verify the file does not contain unexpected data.
+The GUID inside 'Packages/com.scaffold.cloudcode/Tests/CloudCodeInstallerTests.cs.meta' cannot be extracted by the YAML Parser. Attempting to extract it via string matching instead. Please verify the file does not contain unexpected data.
+The .meta file Packages/com.scaffold.addressables/Runtime/Internal.meta does not have a valid GUID and its corresponding Asset file will be ignored. If this file is not malformed, please add a GUID, or delete the .meta file and it will be recreated correctly
+The .meta file Packages/com.scaffold.cloudcode/Tests/CloudCodeInstallerTests.cs.meta does not have a valid GUID and its corresponding Asset file will be ignored. If this file is not malformed, please add a GUID, or delete the .meta file and it will be recreated correctly
+The .meta file Packages/com.scaffold.navigation/Editor.meta does not have a valid GUID and its corresponding Asset file will be ignored. If this file is not malformed, please add a GUID, or delete the .meta file and it will be recreated correctly
+The .meta file Packages/com.scaffold.navigation/Editor/Scaffold.Navigation.Editor.asmdef.meta does not have a valid GUID and its corresponding Asset file will be ignored. If this file is not malformed, please add a GUID, or delete the .meta file and it will be recreated correctly
+The .meta file Packages/com.scaffold.navigation/Editor/ViewConfigEditor.cs.meta does not have a valid GUID and its corresponding Asset file will be ignored. If this file is not malformed, please add a GUID, or delete the .meta file and it will be recreated correctly
+Script 'Packages/com.ami.broaudio/TestBootstrapper.cs' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Packages/com.ami.broaudio/TestBootstrapper.cs' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Assembly for Assembly Definition File 'Packages/com.scaffold.addressables/Editor/Scaffold.Addressables.Editor.asmdef' will not be compiled, because it has no scripts associated with it.
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:LogFormat (UnityEngine.LogType,string,object[])
+UnityEngine.Debug:LogWarningFormat (string,object[])
+UnityEditor.Scripting.ScriptCompilation.EditorCompilation:WarnIfThereAreAssembliesWithoutAnyScripts (UnityEditor.Scripting.ScriptCompilation.ScriptAssemblySettings,UnityEditor.Scripting.ScriptCompilation.ScriptAssembly[]) (at /Users/bokken/build/output/unity/unity/Editor/Mono/Scripting/ScriptCompilation/EditorCompilation.cs:814)
+UnityEditor.Scripting.ScriptCompilation.EditorCompilation:CompileScriptsWithSettings (UnityEditor.Scripting.ScriptCompilation.ScriptAssemblySettings) (at /Users/bokken/build/output/unity/unity/Editor/Mono/Scripting/ScriptCompilation/EditorCompilation.cs:871)
+UnityEditor.Scripting.ScriptCompilation.EditorCompilation:CompileScripts (UnityEditor.Scripting.ScriptCompilation.EditorScriptCompilationOptions,UnityEditor.BuildTarget,int,string[]) (at /Users/bokken/build/output/unity/unity/Editor/Mono/Scripting/ScriptCompilation/EditorCompilation.cs:748)
+UnityEditor.Scripting.ScriptCompilation.EditorCompilationInterface/<>c__DisplayClass21_0:<CompileScripts>b__0 () (at /Users/bokken/build/output/unity/unity/Editor/Mono/Scripting/ScriptCompilation/EditorCompilationInterface.cs:187)
+UnityEditor.Scripting.ScriptCompilation.EditorCompilationInterface:EmitExceptionAsError<UnityEditor.Scripting.ScriptCompilation.EditorCompilation/CompileStatus> (System.Func`1<UnityEditor.Scripting.ScriptCompilation.EditorCompilation/CompileStatus>,UnityEditor.Scripting.ScriptCompilation.EditorCompilation/CompileStatus) (at /Users/bokken/build/output/unity/unity/Editor/Mono/Scripting/ScriptCompilation/EditorCompilationInterface.cs:52)
+UnityEditor.Scripting.ScriptCompilation.EditorCompilationInterface:CompileScripts (UnityEditor.Scripting.ScriptCompilation.EditorScriptCompilationOptions,UnityEditor.BuildTarget,int,string[]) (at /Users/bokken/build/output/unity/unity/Editor/Mono/Scripting/ScriptCompilation/EditorCompilationInterface.cs:187)
+
+(Filename: /Users/bokken/build/output/unity/unity/Editor/Mono/Scripting/ScriptCompilation/EditorCompilation.cs Line: 814)
+
+Assembly for Assembly Definition File 'Packages/com.scaffold.core/Runtime/Scaffold.Core.asmdef' will not be compiled, because it has no scripts associated with it.
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:LogFormat (UnityEngine.LogType,string,object[])
+UnityEngine.Debug:LogWarningFormat (string,object[])
+UnityEditor.Scripting.ScriptCompilation.EditorCompilation:WarnIfThereAreAssembliesWithoutAnyScripts (UnityEditor.Scripting.ScriptCompilation.ScriptAssemblySettings,UnityEditor.Scripting.ScriptCompilation.ScriptAssembly[]) (at /Users/bokken/build/output/unity/unity/Editor/Mono/Scripting/ScriptCompilation/EditorCompilation.cs:814)
+UnityEditor.Scripting.ScriptCompilation.EditorCompilation:CompileScriptsWithSettings (UnityEditor.Scripting.ScriptCompilation.ScriptAssemblySettings) (at /Users/bokken/build/output/unity/unity/Editor/Mono/Scripting/ScriptCompilation/EditorCompilation.cs:871)
+UnityEditor.Scripting.ScriptCompilation.EditorCompilation:CompileScripts (UnityEditor.Scripting.ScriptCompilation.EditorScriptCompilationOptions,UnityEditor.BuildTarget,int,string[]) (at /Users/bokken/build/output/unity/unity/Editor/Mono/Scripting/ScriptCompilation/EditorCompilation.cs:748)
+UnityEditor.Scripting.ScriptCompilation.EditorCompilationInterface/<>c__DisplayClass21_0:<CompileScripts>b__0 () (at /Users/bokken/build/output/unity/unity/Editor/Mono/Scripting/ScriptCompilation/EditorCompilationInterface.cs:187)
+UnityEditor.Scripting.ScriptCompilation.EditorCompilationInterface:EmitExceptionAsError<UnityEditor.Scripting.ScriptCompilation.EditorCompilation/CompileStatus> (System.Func`1<UnityEditor.Scripting.ScriptCompilation.EditorCompilation/CompileStatus>,UnityEditor.Scripting.ScriptCompilation.EditorCompilation/CompileStatus) (at /Users/bokken/build/output/unity/unity/Editor/Mono/Scripting/ScriptCompilation/EditorCompilationInterface.cs:52)
+UnityEditor.Scripting.ScriptCompilation.EditorCompilationInterface:CompileScripts (UnityEditor.Scripting.ScriptCompilation.EditorScriptCompilationOptions,UnityEditor.BuildTarget,int,string[]) (at /Users/bokken/build/output/unity/unity/Editor/Mono/Scripting/ScriptCompilation/EditorCompilationInterface.cs:187)
+
+(Filename: /Users/bokken/build/output/unity/unity/Editor/Mono/Scripting/ScriptCompilation/EditorCompilation.cs Line: 814)
+
+Assembly for Assembly Definition File 'Packages/com.scaffold.entities.states/Runtime/Scaffold.Entities.States.asmdef' will not be compiled, because it has no scripts associated with it.
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:LogFormat (UnityEngine.LogType,string,object[])
+UnityEngine.Debug:LogWarningFormat (string,object[])
+UnityEditor.Scripting.ScriptCompilation.EditorCompilation:WarnIfThereAreAssembliesWithoutAnyScripts (UnityEditor.Scripting.ScriptCompilation.ScriptAssemblySettings,UnityEditor.Scripting.ScriptCompilation.ScriptAssembly[]) (at /Users/bokken/build/output/unity/unity/Editor/Mono/Scripting/ScriptCompilation/EditorCompilation.cs:814)
+UnityEditor.Scripting.ScriptCompilation.EditorCompilation:CompileScriptsWithSettings (UnityEditor.Scripting.ScriptCompilation.ScriptAssemblySettings) (at /Users/bokken/build/output/unity/unity/Editor/Mono/Scripting/ScriptCompilation/EditorCompilation.cs:871)
+UnityEditor.Scripting.ScriptCompilation.EditorCompilation:CompileScripts (UnityEditor.Scripting.ScriptCompilation.EditorScriptCompilationOptions,UnityEditor.BuildTarget,int,string[]) (at /Users/bokken/build/output/unity/unity/Editor/Mono/Scripting/ScriptCompilation/EditorCompilation.cs:748)
+UnityEditor.Scripting.ScriptCompilation.EditorCompilationInterface/<>c__DisplayClass21_0:<CompileScripts>b__0 () (at /Users/bokken/build/output/unity/unity/Editor/Mono/Scripting/ScriptCompilation/EditorCompilationInterface.cs:187)
+UnityEditor.Scripting.ScriptCompilation.EditorCompilationInterface:EmitExceptionAsError<UnityEditor.Scripting.ScriptCompilation.EditorCompilation/CompileStatus> (System.Func`1<UnityEditor.Scripting.ScriptCompilation.EditorCompilation/CompileStatus>,UnityEditor.Scripting.ScriptCompilation.EditorCompilation/CompileStatus) (at /Users/bokken/build/output/unity/unity/Editor/Mono/Scripting/ScriptCompilation/EditorCompilationInterface.cs:52)
+UnityEditor.Scripting.ScriptCompilation.EditorCompilationInterface:CompileScripts (UnityEditor.Scripting.ScriptCompilation.EditorScriptCompilationOptions,UnityEditor.BuildTarget,int,string[]) (at /Users/bokken/build/output/unity/unity/Editor/Mono/Scripting/ScriptCompilation/EditorCompilationInterface.cs:187)
+
+(Filename: /Users/bokken/build/output/unity/unity/Editor/Mono/Scripting/ScriptCompilation/EditorCompilation.cs Line: 814)
+
+Assembly for Assembly Definition File 'Packages/com.scaffold.entities/Tests/Runtime/Scaffold.Entities.Tests.asmdef' will not be compiled, because it has no scripts associated with it.
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:LogFormat (UnityEngine.LogType,string,object[])
+UnityEngine.Debug:LogWarningFormat (string,object[])
+UnityEditor.Scripting.ScriptCompilation.EditorCompilation:WarnIfThereAreAssembliesWithoutAnyScripts (UnityEditor.Scripting.ScriptCompilation.ScriptAssemblySettings,UnityEditor.Scripting.ScriptCompilation.ScriptAssembly[]) (at /Users/bokken/build/output/unity/unity/Editor/Mono/Scripting/ScriptCompilation/EditorCompilation.cs:814)
+UnityEditor.Scripting.ScriptCompilation.EditorCompilation:CompileScriptsWithSettings (UnityEditor.Scripting.ScriptCompilation.ScriptAssemblySettings) (at /Users/bokken/build/output/unity/unity/Editor/Mono/Scripting/ScriptCompilation/EditorCompilation.cs:871)
+UnityEditor.Scripting.ScriptCompilation.EditorCompilation:CompileScripts (UnityEditor.Scripting.ScriptCompilation.EditorScriptCompilationOptions,UnityEditor.BuildTarget,int,string[]) (at /Users/bokken/build/output/unity/unity/Editor/Mono/Scripting/ScriptCompilation/EditorCompilation.cs:748)
+UnityEditor.Scripting.ScriptCompilation.EditorCompilationInterface/<>c__DisplayClass21_0:<CompileScripts>b__0 () (at /Users/bokken/build/output/unity/unity/Editor/Mono/Scripting/ScriptCompilation/EditorCompilationInterface.cs:187)
+UnityEditor.Scripting.ScriptCompilation.EditorCompilationInterface:EmitExceptionAsError<UnityEditor.Scripting.ScriptCompilation.EditorCompilation/CompileStatus> (System.Func`1<UnityEditor.Scripting.ScriptCompilation.EditorCompilation/CompileStatus>,UnityEditor.Scripting.ScriptCompilation.EditorCompilation/CompileStatus) (at /Users/bokken/build/output/unity/unity/Editor/Mono/Scripting/ScriptCompilation/EditorCompilationInterface.cs:52)
+UnityEditor.Scripting.ScriptCompilation.EditorCompilationInterface:CompileScripts (UnityEditor.Scripting.ScriptCompilation.EditorScriptCompilationOptions,UnityEditor.BuildTarget,int,string[]) (at /Users/bokken/build/output/unity/unity/Editor/Mono/Scripting/ScriptCompilation/EditorCompilationInterface.cs:187)
+
+(Filename: /Users/bokken/build/output/unity/unity/Editor/Mono/Scripting/ScriptCompilation/EditorCompilation.cs Line: 814)
+
+Assembly for Assembly Definition File 'Assets/Packages/AAGen-0.3.0/Runtime/AAGen.Runtime.asmdef' will not be compiled, because it has no scripts associated with it.
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:LogFormat (UnityEngine.LogType,string,object[])
+UnityEngine.Debug:LogWarningFormat (string,object[])
+UnityEditor.Scripting.ScriptCompilation.EditorCompilation:WarnIfThereAreAssembliesWithoutAnyScripts (UnityEditor.Scripting.ScriptCompilation.ScriptAssemblySettings,UnityEditor.Scripting.ScriptCompilation.ScriptAssembly[]) (at /Users/bokken/build/output/unity/unity/Editor/Mono/Scripting/ScriptCompilation/EditorCompilation.cs:814)
+UnityEditor.Scripting.ScriptCompilation.EditorCompilation:CompileScriptsWithSettings (UnityEditor.Scripting.ScriptCompilation.ScriptAssemblySettings) (at /Users/bokken/build/output/unity/unity/Editor/Mono/Scripting/ScriptCompilation/EditorCompilation.cs:871)
+UnityEditor.Scripting.ScriptCompilation.EditorCompilation:CompileScripts (UnityEditor.Scripting.ScriptCompilation.EditorScriptCompilationOptions,UnityEditor.BuildTarget,int,string[]) (at /Users/bokken/build/output/unity/unity/Editor/Mono/Scripting/ScriptCompilation/EditorCompilation.cs:748)
+UnityEditor.Scripting.ScriptCompilation.EditorCompilationInterface/<>c__DisplayClass21_0:<CompileScripts>b__0 () (at /Users/bokken/build/output/unity/unity/Editor/Mono/Scripting/ScriptCompilation/EditorCompilationInterface.cs:187)
+UnityEditor.Scripting.ScriptCompilation.EditorCompilationInterface:EmitExceptionAsError<UnityEditor.Scripting.ScriptCompilation.EditorCompilation/CompileStatus> (System.Func`1<UnityEditor.Scripting.ScriptCompilation.EditorCompilation/CompileStatus>,UnityEditor.Scripting.ScriptCompilation.EditorCompilation/CompileStatus) (at /Users/bokken/build/output/unity/unity/Editor/Mono/Scripting/ScriptCompilation/EditorCompilationInterface.cs:52)
+UnityEditor.Scripting.ScriptCompilation.EditorCompilationInterface:CompileScripts (UnityEditor.Scripting.ScriptCompilation.EditorScriptCompilationOptions,UnityEditor.BuildTarget,int,string[]) (at /Users/bokken/build/output/unity/unity/Editor/Mono/Scripting/ScriptCompilation/EditorCompilationInterface.cs:187)
+
+(Filename: /Users/bokken/build/output/unity/unity/Editor/Mono/Scripting/ScriptCompilation/EditorCompilation.cs Line: 814)
+
+Assembly for Assembly Definition File 'Assets/GearEngine/Scripts/Game/CarSimulation/Editor/Game.CarSimulation.Editor.asmdef' will not be compiled, because it has no scripts associated with it.
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:LogFormat (UnityEngine.LogType,string,object[])
+UnityEngine.Debug:LogWarningFormat (string,object[])
+UnityEditor.Scripting.ScriptCompilation.EditorCompilation:WarnIfThereAreAssembliesWithoutAnyScripts (UnityEditor.Scripting.ScriptCompilation.ScriptAssemblySettings,UnityEditor.Scripting.ScriptCompilation.ScriptAssembly[]) (at /Users/bokken/build/output/unity/unity/Editor/Mono/Scripting/ScriptCompilation/EditorCompilation.cs:814)
+UnityEditor.Scripting.ScriptCompilation.EditorCompilation:CompileScriptsWithSettings (UnityEditor.Scripting.ScriptCompilation.ScriptAssemblySettings) (at /Users/bokken/build/output/unity/unity/Editor/Mono/Scripting/ScriptCompilation/EditorCompilation.cs:871)
+UnityEditor.Scripting.ScriptCompilation.EditorCompilation:CompileScripts (UnityEditor.Scripting.ScriptCompilation.EditorScriptCompilationOptions,UnityEditor.BuildTarget,int,string[]) (at /Users/bokken/build/output/unity/unity/Editor/Mono/Scripting/ScriptCompilation/EditorCompilation.cs:748)
+UnityEditor.Scripting.ScriptCompilation.EditorCompilationInterface/<>c__DisplayClass21_0:<CompileScripts>b__0 () (at /Users/bokken/build/output/unity/unity/Editor/Mono/Scripting/ScriptCompilation/EditorCompilationInterface.cs:187)
+UnityEditor.Scripting.ScriptCompilation.EditorCompilationInterface:EmitExceptionAsError<UnityEditor.Scripting.ScriptCompilation.EditorCompilation/CompileStatus> (System.Func`1<UnityEditor.Scripting.ScriptCompilation.EditorCompilation/CompileStatus>,UnityEditor.Scripting.ScriptCompilation.EditorCompilation/CompileStatus) (at /Users/bokken/build/output/unity/unity/Editor/Mono/Scripting/ScriptCompilation/EditorCompilationInterface.cs:52)
+UnityEditor.Scripting.ScriptCompilation.EditorCompilationInterface:CompileScripts (UnityEditor.Scripting.ScriptCompilation.EditorScriptCompilationOptions,UnityEditor.BuildTarget,int,string[]) (at /Users/bokken/build/output/unity/unity/Editor/Mono/Scripting/ScriptCompilation/EditorCompilationInterface.cs:187)
+
+(Filename: /Users/bokken/build/output/unity/unity/Editor/Mono/Scripting/ScriptCompilation/EditorCompilation.cs Line: 814)
+
+Assembly for Assembly Definition File 'Assets/Packages/com.scaffold.tutorial/Tests/Scaffold.Tutorial.Tests.asmdef' will not be compiled, because it has no scripts associated with it.
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:LogFormat (UnityEngine.LogType,string,object[])
+UnityEngine.Debug:LogWarningFormat (string,object[])
+UnityEditor.Scripting.ScriptCompilation.EditorCompilation:WarnIfThereAreAssembliesWithoutAnyScripts (UnityEditor.Scripting.ScriptCompilation.ScriptAssemblySettings,UnityEditor.Scripting.ScriptCompilation.ScriptAssembly[]) (at /Users/bokken/build/output/unity/unity/Editor/Mono/Scripting/ScriptCompilation/EditorCompilation.cs:814)
+UnityEditor.Scripting.ScriptCompilation.EditorCompilation:CompileScriptsWithSettings (UnityEditor.Scripting.ScriptCompilation.ScriptAssemblySettings) (at /Users/bokken/build/output/unity/unity/Editor/Mono/Scripting/ScriptCompilation/EditorCompilation.cs:871)
+UnityEditor.Scripting.ScriptCompilation.EditorCompilation:CompileScripts (UnityEditor.Scripting.ScriptCompilation.EditorScriptCompilationOptions,UnityEditor.BuildTarget,int,string[]) (at /Users/bokken/build/output/unity/unity/Editor/Mono/Scripting/ScriptCompilation/EditorCompilation.cs:748)
+UnityEditor.Scripting.ScriptCompilation.EditorCompilationInterface/<>c__DisplayClass21_0:<CompileScripts>b__0 () (at /Users/bokken/build/output/unity/unity/Editor/Mono/Scripting/ScriptCompilation/EditorCompilationInterface.cs:187)
+UnityEditor.Scripting.ScriptCompilation.EditorCompilationInterface:EmitExceptionAsError<UnityEditor.Scripting.ScriptCompilation.EditorCompilation/CompileStatus> (System.Func`1<UnityEditor.Scripting.ScriptCompilation.EditorCompilation/CompileStatus>,UnityEditor.Scripting.ScriptCompilation.EditorCompilation/CompileStatus) (at /Users/bokken/build/output/unity/unity/Editor/Mono/Scripting/ScriptCompilation/EditorCompilationInterface.cs:52)
+UnityEditor.Scripting.ScriptCompilation.EditorCompilationInterface:CompileScripts (UnityEditor.Scripting.ScriptCompilation.EditorScriptCompilationOptions,UnityEditor.BuildTarget,int,string[]) (at /Users/bokken/build/output/unity/unity/Editor/Mono/Scripting/ScriptCompilation/EditorCompilationInterface.cs:187)
+
+(Filename: /Users/bokken/build/output/unity/unity/Editor/Mono/Scripting/ScriptCompilation/EditorCompilation.cs Line: 814)
+
+Assembly for Assembly Definition File 'Packages/com.scaffold.variables/Tests/Scaffold.Variables.Tests.asmdef' will not be compiled, because it has no scripts associated with it.
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:LogFormat (UnityEngine.LogType,string,object[])
+UnityEngine.Debug:LogWarningFormat (string,object[])
+UnityEditor.Scripting.ScriptCompilation.EditorCompilation:WarnIfThereAreAssembliesWithoutAnyScripts (UnityEditor.Scripting.ScriptCompilation.ScriptAssemblySettings,UnityEditor.Scripting.ScriptCompilation.ScriptAssembly[]) (at /Users/bokken/build/output/unity/unity/Editor/Mono/Scripting/ScriptCompilation/EditorCompilation.cs:814)
+UnityEditor.Scripting.ScriptCompilation.EditorCompilation:CompileScriptsWithSettings (UnityEditor.Scripting.ScriptCompilation.ScriptAssemblySettings) (at /Users/bokken/build/output/unity/unity/Editor/Mono/Scripting/ScriptCompilation/EditorCompilation.cs:871)
+UnityEditor.Scripting.ScriptCompilation.EditorCompilation:CompileScripts (UnityEditor.Scripting.ScriptCompilation.EditorScriptCompilationOptions,UnityEditor.BuildTarget,int,string[]) (at /Users/bokken/build/output/unity/unity/Editor/Mono/Scripting/ScriptCompilation/EditorCompilation.cs:748)
+UnityEditor.Scripting.ScriptCompilation.EditorCompilationInterface/<>c__DisplayClass21_0:<CompileScripts>b__0 () (at /Users/bokken/build/output/unity/unity/Editor/Mono/Scripting/ScriptCompilation/EditorCompilationInterface.cs:187)
+UnityEditor.Scripting.ScriptCompilation.EditorCompilationInterface:EmitExceptionAsError<UnityEditor.Scripting.ScriptCompilation.EditorCompilation/CompileStatus> (System.Func`1<UnityEditor.Scripting.ScriptCompilation.EditorCompilation/CompileStatus>,UnityEditor.Scripting.ScriptCompilation.EditorCompilation/CompileStatus) (at /Users/bokken/build/output/unity/unity/Editor/Mono/Scripting/ScriptCompilation/EditorCompilationInterface.cs:52)
+UnityEditor.Scripting.ScriptCompilation.EditorCompilationInterface:CompileScripts (UnityEditor.Scripting.ScriptCompilation.EditorScriptCompilationOptions,UnityEditor.BuildTarget,int,string[]) (at /Users/bokken/build/output/unity/unity/Editor/Mono/Scripting/ScriptCompilation/EditorCompilationInterface.cs:187)
+
+(Filename: /Users/bokken/build/output/unity/unity/Editor/Mono/Scripting/ScriptCompilation/EditorCompilation.cs Line: 814)
+
+Assembly for Assembly Definition File 'Packages/com.scaffold.entities.states/Tests/Scaffold.Entities.States.Tests.asmdef' will not be compiled, because it has no scripts associated with it.
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:LogFormat (UnityEngine.LogType,string,object[])
+UnityEngine.Debug:LogWarningFormat (string,object[])
+UnityEditor.Scripting.ScriptCompilation.EditorCompilation:WarnIfThereAreAssembliesWithoutAnyScripts (UnityEditor.Scripting.ScriptCompilation.ScriptAssemblySettings,UnityEditor.Scripting.ScriptCompilation.ScriptAssembly[]) (at /Users/bokken/build/output/unity/unity/Editor/Mono/Scripting/ScriptCompilation/EditorCompilation.cs:814)
+UnityEditor.Scripting.ScriptCompilation.EditorCompilation:CompileScriptsWithSettings (UnityEditor.Scripting.ScriptCompilation.ScriptAssemblySettings) (at /Users/bokken/build/output/unity/unity/Editor/Mono/Scripting/ScriptCompilation/EditorCompilation.cs:871)
+UnityEditor.Scripting.ScriptCompilation.EditorCompilation:CompileScripts (UnityEditor.Scripting.ScriptCompilation.EditorScriptCompilationOptions,UnityEditor.BuildTarget,int,string[]) (at /Users/bokken/build/output/unity/unity/Editor/Mono/Scripting/ScriptCompilation/EditorCompilation.cs:748)
+UnityEditor.Scripting.ScriptCompilation.EditorCompilationInterface/<>c__DisplayClass21_0:<CompileScripts>b__0 () (at /Users/bokken/build/output/unity/unity/Editor/Mono/Scripting/ScriptCompilation/EditorCompilationInterface.cs:187)
+UnityEditor.Scripting.ScriptCompilation.EditorCompilationInterface:EmitExceptionAsError<UnityEditor.Scripting.ScriptCompilation.EditorCompilation/CompileStatus> (System.Func`1<UnityEditor.Scripting.ScriptCompilation.EditorCompilation/CompileStatus>,UnityEditor.Scripting.ScriptCompilation.EditorCompilation/CompileStatus) (at /Users/bokken/build/output/unity/unity/Editor/Mono/Scripting/ScriptCompilation/EditorCompilationInterface.cs:52)
+UnityEditor.Scripting.ScriptCompilation.EditorCompilationInterface:CompileScripts (UnityEditor.Scripting.ScriptCompilation.EditorScriptCompilationOptions,UnityEditor.BuildTarget,int,string[]) (at /Users/bokken/build/output/unity/unity/Editor/Mono/Scripting/ScriptCompilation/EditorCompilationInterface.cs:187)
+
+(Filename: /Users/bokken/build/output/unity/unity/Editor/Mono/Scripting/ScriptCompilation/EditorCompilation.cs Line: 814)
+
+Assembly for Assembly Definition File 'Packages/com.scaffold.entities/Editor/Scaffold.Entities.Editor.asmdef' will not be compiled, because it has no scripts associated with it.
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:LogFormat (UnityEngine.LogType,string,object[])
+UnityEngine.Debug:LogWarningFormat (string,object[])
+UnityEditor.Scripting.ScriptCompilation.EditorCompilation:WarnIfThereAreAssembliesWithoutAnyScripts (UnityEditor.Scripting.ScriptCompilation.ScriptAssemblySettings,UnityEditor.Scripting.ScriptCompilation.ScriptAssembly[]) (at /Users/bokken/build/output/unity/unity/Editor/Mono/Scripting/ScriptCompilation/EditorCompilation.cs:814)
+UnityEditor.Scripting.ScriptCompilation.EditorCompilation:CompileScriptsWithSettings (UnityEditor.Scripting.ScriptCompilation.ScriptAssemblySettings) (at /Users/bokken/build/output/unity/unity/Editor/Mono/Scripting/ScriptCompilation/EditorCompilation.cs:871)
+UnityEditor.Scripting.ScriptCompilation.EditorCompilation:CompileScripts (UnityEditor.Scripting.ScriptCompilation.EditorScriptCompilationOptions,UnityEditor.BuildTarget,int,string[]) (at /Users/bokken/build/output/unity/unity/Editor/Mono/Scripting/ScriptCompilation/EditorCompilation.cs:748)
+UnityEditor.Scripting.ScriptCompilation.EditorCompilationInterface/<>c__DisplayClass21_0:<CompileScripts>b__0 () (at /Users/bokken/build/output/unity/unity/Editor/Mono/Scripting/ScriptCompilation/EditorCompilationInterface.cs:187)
+UnityEditor.Scripting.ScriptCompilation.EditorCompilationInterface:EmitExceptionAsError<UnityEditor.Scripting.ScriptCompilation.EditorCompilation/CompileStatus> (System.Func`1<UnityEditor.Scripting.ScriptCompilation.EditorCompilation/CompileStatus>,UnityEditor.Scripting.ScriptCompilation.EditorCompilation/CompileStatus) (at /Users/bokken/build/output/unity/unity/Editor/Mono/Scripting/ScriptCompilation/EditorCompilationInterface.cs:52)
+UnityEditor.Scripting.ScriptCompilation.EditorCompilationInterface:CompileScripts (UnityEditor.Scripting.ScriptCompilation.EditorScriptCompilationOptions,UnityEditor.BuildTarget,int,string[]) (at /Users/bokken/build/output/unity/unity/Editor/Mono/Scripting/ScriptCompilation/EditorCompilationInterface.cs:187)
+
+(Filename: /Users/bokken/build/output/unity/unity/Editor/Mono/Scripting/ScriptCompilation/EditorCompilation.cs Line: 814)
+
+Assembly for Assembly Definition File 'Packages/com.scaffold.entities/Tests/Editor/Scaffold.Entities.Editor.Tests.asmdef' will not be compiled, because it has no scripts associated with it.
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:LogFormat (UnityEngine.LogType,string,object[])
+UnityEngine.Debug:LogWarningFormat (string,object[])
+UnityEditor.Scripting.ScriptCompilation.EditorCompilation:WarnIfThereAreAssembliesWithoutAnyScripts (UnityEditor.Scripting.ScriptCompilation.ScriptAssemblySettings,UnityEditor.Scripting.ScriptCompilation.ScriptAssembly[]) (at /Users/bokken/build/output/unity/unity/Editor/Mono/Scripting/ScriptCompilation/EditorCompilation.cs:814)
+UnityEditor.Scripting.ScriptCompilation.EditorCompilation:CompileScriptsWithSettings (UnityEditor.Scripting.ScriptCompilation.ScriptAssemblySettings) (at /Users/bokken/build/output/unity/unity/Editor/Mono/Scripting/ScriptCompilation/EditorCompilation.cs:871)
+UnityEditor.Scripting.ScriptCompilation.EditorCompilation:CompileScripts (UnityEditor.Scripting.ScriptCompilation.EditorScriptCompilationOptions,UnityEditor.BuildTarget,int,string[]) (at /Users/bokken/build/output/unity/unity/Editor/Mono/Scripting/ScriptCompilation/EditorCompilation.cs:748)
+UnityEditor.Scripting.ScriptCompilation.EditorCompilationInterface/<>c__DisplayClass21_0:<CompileScripts>b__0 () (at /Users/bokken/build/output/unity/unity/Editor/Mono/Scripting/ScriptCompilation/EditorCompilationInterface.cs:187)
+UnityEditor.Scripting.ScriptCompilation.EditorCompilationInterface:EmitExceptionAsError<UnityEditor.Scripting.ScriptCompilation.EditorCompilation/CompileStatus> (System.Func`1<UnityEditor.Scripting.ScriptCompilation.EditorCompilation/CompileStatus>,UnityEditor.Scripting.ScriptCompilation.EditorCompilation/CompileStatus) (at /Users/bokken/build/output/unity/unity/Editor/Mono/Scripting/ScriptCompilation/EditorCompilationInterface.cs:52)
+UnityEditor.Scripting.ScriptCompilation.EditorCompilationInterface:CompileScripts (UnityEditor.Scripting.ScriptCompilation.EditorScriptCompilationOptions,UnityEditor.BuildTarget,int,string[]) (at /Users/bokken/build/output/unity/unity/Editor/Mono/Scripting/ScriptCompilation/EditorCompilationInterface.cs:187)
+
+(Filename: /Users/bokken/build/output/unity/unity/Editor/Mono/Scripting/ScriptCompilation/EditorCompilation.cs Line: 814)
+
+Assembly for Assembly Definition File 'Assets/Packages/com.scaffold.tutorial/Container/Scaffold.Tutorial.Container.asmdef' will not be compiled, because it has no scripts associated with it.
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:LogFormat (UnityEngine.LogType,string,object[])
+UnityEngine.Debug:LogWarningFormat (string,object[])
+UnityEditor.Scripting.ScriptCompilation.EditorCompilation:WarnIfThereAreAssembliesWithoutAnyScripts (UnityEditor.Scripting.ScriptCompilation.ScriptAssemblySettings,UnityEditor.Scripting.ScriptCompilation.ScriptAssembly[]) (at /Users/bokken/build/output/unity/unity/Editor/Mono/Scripting/ScriptCompilation/EditorCompilation.cs:814)
+UnityEditor.Scripting.ScriptCompilation.EditorCompilation:CompileScriptsWithSettings (UnityEditor.Scripting.ScriptCompilation.ScriptAssemblySettings) (at /Users/bokken/build/output/unity/unity/Editor/Mono/Scripting/ScriptCompilation/EditorCompilation.cs:871)
+UnityEditor.Scripting.ScriptCompilation.EditorCompilation:CompileScripts (UnityEditor.Scripting.ScriptCompilation.EditorScriptCompilationOptions,UnityEditor.BuildTarget,int,string[]) (at /Users/bokken/build/output/unity/unity/Editor/Mono/Scripting/ScriptCompilation/EditorCompilation.cs:748)
+UnityEditor.Scripting.ScriptCompilation.EditorCompilationInterface/<>c__DisplayClass21_0:<CompileScripts>b__0 () (at /Users/bokken/build/output/unity/unity/Editor/Mono/Scripting/ScriptCompilation/EditorCompilationInterface.cs:187)
+UnityEditor.Scripting.ScriptCompilation.EditorCompilationInterface:EmitExceptionAsError<UnityEditor.Scripting.ScriptCompilation.EditorCompilation/CompileStatus> (System.Func`1<UnityEditor.Scripting.ScriptCompilation.EditorCompilation/CompileStatus>,UnityEditor.Scripting.ScriptCompilation.EditorCompilation/CompileStatus) (at /Users/bokken/build/output/unity/unity/Editor/Mono/Scripting/ScriptCompilation/EditorCompilationInterface.cs:52)
+UnityEditor.Scripting.ScriptCompilation.EditorCompilationInterface:CompileScripts (UnityEditor.Scripting.ScriptCompilation.EditorScriptCompilationOptions,UnityEditor.BuildTarget,int,string[]) (at /Users/bokken/build/output/unity/unity/Editor/Mono/Scripting/ScriptCompilation/EditorCompilationInterface.cs:187)
+
+(Filename: /Users/bokken/build/output/unity/unity/Editor/Mono/Scripting/ScriptCompilation/EditorCompilation.cs Line: 814)
+
+Assembly for Assembly Definition File 'Assets/3rdParty/ScaffoldVisualScripting/Tests/PlayMode/Scaffold.PlayModeTests.asmdef' will not be compiled, because it has no scripts associated with it.
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:LogFormat (UnityEngine.LogType,string,object[])
+UnityEngine.Debug:LogWarningFormat (string,object[])
+UnityEditor.Scripting.ScriptCompilation.EditorCompilation:WarnIfThereAreAssembliesWithoutAnyScripts (UnityEditor.Scripting.ScriptCompilation.ScriptAssemblySettings,UnityEditor.Scripting.ScriptCompilation.ScriptAssembly[]) (at /Users/bokken/build/output/unity/unity/Editor/Mono/Scripting/ScriptCompilation/EditorCompilation.cs:814)
+UnityEditor.Scripting.ScriptCompilation.EditorCompilation:CompileScriptsWithSettings (UnityEditor.Scripting.ScriptCompilation.ScriptAssemblySettings) (at /Users/bokken/build/output/unity/unity/Editor/Mono/Scripting/ScriptCompilation/EditorCompilation.cs:871)
+UnityEditor.Scripting.ScriptCompilation.EditorCompilation:CompileScripts (UnityEditor.Scripting.ScriptCompilation.EditorScriptCompilationOptions,UnityEditor.BuildTarget,int,string[]) (at /Users/bokken/build/output/unity/unity/Editor/Mono/Scripting/ScriptCompilation/EditorCompilation.cs:748)
+UnityEditor.Scripting.ScriptCompilation.EditorCompilationInterface/<>c__DisplayClass21_0:<CompileScripts>b__0 () (at /Users/bokken/build/output/unity/unity/Editor/Mono/Scripting/ScriptCompilation/EditorCompilationInterface.cs:187)
+UnityEditor.Scripting.ScriptCompilation.EditorCompilationInterface:EmitExceptionAsError<UnityEditor.Scripting.ScriptCompilation.EditorCompilation/CompileStatus> (System.Func`1<UnityEditor.Scripting.ScriptCompilation.EditorCompilation/CompileStatus>,UnityEditor.Scripting.ScriptCompilation.EditorCompilation/CompileStatus) (at /Users/bokken/build/output/unity/unity/Editor/Mono/Scripting/ScriptCompilation/EditorCompilationInterface.cs:52)
+UnityEditor.Scripting.ScriptCompilation.EditorCompilationInterface:CompileScripts (UnityEditor.Scripting.ScriptCompilation.EditorScriptCompilationOptions,UnityEditor.BuildTarget,int,string[]) (at /Users/bokken/build/output/unity/unity/Editor/Mono/Scripting/ScriptCompilation/EditorCompilationInterface.cs:187)
+
+(Filename: /Users/bokken/build/output/unity/unity/Editor/Mono/Scripting/ScriptCompilation/EditorCompilation.cs Line: 814)
+
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://unix:/tmp/ilpp.sock-d9d8cef1e455dee259ccfffda96ec1b2
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Production
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 POST http://ilpp/UnityILPP.PostProcessing/Ping - application/grpc -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'gRPC - /UnityILPP.PostProcessing/Ping'
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'gRPC - /UnityILPP.PostProcessing/Ping'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 POST http://ilpp/UnityILPP.PostProcessing/Ping - 200 - application/grpc 28.7522ms
+Starting: /Applications/Unity/Hub/Editor/6000.5.3f1/Unity.app/Contents/Resources/BuildPipeline/bee_backend --ipc --defer-dag-verification --dagfile="Library/Bee/200b0aEDbg.dag" --continue-on-failure --profile="Library/Bee/backend1.traceevents" ScriptAssemblies
+WorkingDir: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine
+DisplayProgressbar: Compiling Scripts
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 POST http://ilpp/UnityILPP.PostProcessing/ConfigurePostProcessors - application/grpc -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'gRPC - /UnityILPP.PostProcessing/ConfigurePostProcessors'
+info: Unity.ILPP.Runner.PostProcessingAssemblyLoadContext[0]
+      Resolved Unity.Burst.Cecil, Version=0.11.6.0, Culture=neutral, PublicKeyToken=50cebf1cceb9d05e with Library/PackageCache/com.unity.burst@6bb9aca3ef38/Unity.Burst.CodeGen/Unity.Burst.Cecil.dll
+info: Unity.ILPP.Runner.PostProcessingAssemblyLoadContext[0]
+      Resolved Mono.Cecil, Version=0.11.5.0, Culture=neutral, PublicKeyToken=50cebf1cceb9d05e with Library/PackageCache/com.unity.nuget.mono-cecil@ecb9724e46ff/Mono.Cecil.dll
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'gRPC - /UnityILPP.PostProcessing/ConfigurePostProcessors'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 POST http://ilpp/UnityILPP.PostProcessing/ConfigurePostProcessors - 200 - application/grpc 20.8698ms
+ExitCode: 0 Duration: 1s63ms
+[1385/3263  0s] ILPP-Configuration Library/ilpp-configuration.nevergeneratedoutput
+*** Tundra build success (1.04 seconds), 1 items updated, 3263 evaluated
+AssetDatabase: script compilation time: 1.801811s
+The GUID inside 'Assets/_Recovery/0 (3).unity.meta' cannot be extracted by the YAML Parser. Attempting to extract it via string matching instead. Please verify the file does not contain unexpected data.
+The GUID inside 'Assets/_Recovery/0.unity.meta' cannot be extracted by the YAML Parser. Attempting to extract it via string matching instead. Please verify the file does not contain unexpected data.
+The GUID inside 'Assets/Packages/AAGen-0.3.0/package.json.meta' cannot be extracted by the YAML Parser. Attempting to extract it via string matching instead. Please verify the file does not contain unexpected data.
+The GUID inside 'Assets/Packages/AAGen-0.3.0/README.md.meta' cannot be extracted by the YAML Parser. Attempting to extract it via string matching instead. Please verify the file does not contain unexpected data.
+The GUID inside 'Assets/Packages/LevelPlay/Editor/IronSourceSDKDependencies.xml.meta' cannot be extracted by the YAML Parser. Attempting to extract it via string matching instead. Please verify the file does not contain unexpected data.
+The GUID inside 'Assets/Packages/LevelPlay/Editor/ISUnityAdsAdapterDependencies.xml.meta' cannot be extracted by the YAML Parser. Attempting to extract it via string matching instead. Please verify the file does not contain unexpected data.
+The GUID inside 'Assets/Packages/LevelPlay/Editor/LevelPlayVersions.json.meta' cannot be extracted by the YAML Parser. Attempting to extract it via string matching instead. Please verify the file does not contain unexpected data.
+The GUID inside 'Packages/com.scaffold.addressables/package.json.meta' cannot be extracted by the YAML Parser. Attempting to extract it via string matching instead. Please verify the file does not contain unexpected data.
+The GUID inside 'Packages/com.scaffold.ads.levelplay/README.md.meta' cannot be extracted by the YAML Parser. Attempting to extract it via string matching instead. Please verify the file does not contain unexpected data.
+The GUID inside 'Packages/com.scaffold.autopacker/package.json.meta' cannot be extracted by the YAML Parser. Attempting to extract it via string matching instead. Please verify the file does not contain unexpected data.
+The GUID inside 'Packages/com.unity.services.cloudcode/Editor/Authoring/Core/Unity.Services.CloudCode.Authoring.Editor.Core.api.meta' cannot be extracted by the YAML Parser. Attempting to extract it via string matching instead. Please verify the file does not contain unexpected data.
+The GUID inside 'Packages/com.unity.services.cloudcode/Editor/Authoring/Unity.Services.CloudCode.Authoring.Editor.api.meta' cannot be extracted by the YAML Parser. Attempting to extract it via string matching instead. Please verify the file does not contain unexpected data.
+The GUID inside 'Packages/com.scaffold.navigation/Editor/ViewConfigEditor.cs.meta' cannot be extracted by the YAML Parser. Attempting to extract it via string matching instead. Please verify the file does not contain unexpected data.
+The GUID inside 'Packages/com.scaffold.navigation/Editor.meta' cannot be extracted by the YAML Parser. Attempting to extract it via string matching instead. Please verify the file does not contain unexpected data.
+The GUID inside 'Packages/com.scaffold.cloudcode/Tests/CloudCodeInstallerTests.cs.meta' cannot be extracted by the YAML Parser. Attempting to extract it via string matching instead. Please verify the file does not contain unexpected data.
+The GUID inside 'Packages/com.scaffold.addressables/Runtime/Internal.meta' cannot be extracted by the YAML Parser. Attempting to extract it via string matching instead. Please verify the file does not contain unexpected data.
+The GUID inside 'Packages/com.scaffold.navigation/Editor/Scaffold.Navigation.Editor.asmdef.meta' cannot be extracted by the YAML Parser. Attempting to extract it via string matching instead. Please verify the file does not contain unexpected data.
+The .meta file Packages/com.scaffold.addressables/Runtime/Internal.meta does not have a valid GUID and its corresponding Asset file will be ignored. If this file is not malformed, please add a GUID, or delete the .meta file and it will be recreated correctly
+The .meta file Packages/com.scaffold.cloudcode/Tests/CloudCodeInstallerTests.cs.meta does not have a valid GUID and its corresponding Asset file will be ignored. If this file is not malformed, please add a GUID, or delete the .meta file and it will be recreated correctly
+The .meta file Packages/com.scaffold.navigation/Editor.meta does not have a valid GUID and its corresponding Asset file will be ignored. If this file is not malformed, please add a GUID, or delete the .meta file and it will be recreated correctly
+The .meta file Packages/com.scaffold.navigation/Editor/Scaffold.Navigation.Editor.asmdef.meta does not have a valid GUID and its corresponding Asset file will be ignored. If this file is not malformed, please add a GUID, or delete the .meta file and it will be recreated correctly
+The .meta file Packages/com.scaffold.navigation/Editor/ViewConfigEditor.cs.meta does not have a valid GUID and its corresponding Asset file will be ignored. If this file is not malformed, please add a GUID, or delete the .meta file and it will be recreated correctly
+Begin MonoManager ReloadAssembly
+Total cache size 267368152
+Total cache size after purge 267368152, took 00:00:00.4551419
+Symbol file LoadedFromMemory is not a mono symbol file
+Script 'Packages/com.ami.broaudio/TestBootstrapper.cs' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+'Assets/3rdParty/UIEffect/Runtime/Timeline/Base/UIEffectTimelineUtils.cs' contains partial class of Unity.Object, exactly 1 of the partial classes needs to be in a file with the same filename. This is to know the one that can be referenced from ie. GameObjects
+'Assets/3rdParty/UIEffect/Runtime/Timeline/Base/UIEffectTimelineUtils.cs' contains partial class of Unity.Object, exactly 1 of the partial classes needs to be in a file with the same filename. This is to know the one that can be referenced from ie. GameObjects
+The GUID inside 'Assets/_Recovery/0 (3).unity.meta' cannot be extracted by the YAML Parser. Attempting to extract it via string matching instead. Please verify the file does not contain unexpected data.
+The GUID inside 'Assets/_Recovery/0.unity.meta' cannot be extracted by the YAML Parser. Attempting to extract it via string matching instead. Please verify the file does not contain unexpected data.
+The GUID inside 'Assets/Packages/AAGen-0.3.0/package.json.meta' cannot be extracted by the YAML Parser. Attempting to extract it via string matching instead. Please verify the file does not contain unexpected data.
+The GUID inside 'Assets/Packages/AAGen-0.3.0/README.md.meta' cannot be extracted by the YAML Parser. Attempting to extract it via string matching instead. Please verify the file does not contain unexpected data.
+The GUID inside 'Assets/Packages/LevelPlay/Editor/IronSourceSDKDependencies.xml.meta' cannot be extracted by the YAML Parser. Attempting to extract it via string matching instead. Please verify the file does not contain unexpected data.
+The GUID inside 'Assets/Packages/LevelPlay/Editor/ISUnityAdsAdapterDependencies.xml.meta' cannot be extracted by the YAML Parser. Attempting to extract it via string matching instead. Please verify the file does not contain unexpected data.
+The GUID inside 'Assets/Packages/LevelPlay/Editor/LevelPlayVersions.json.meta' cannot be extracted by the YAML Parser. Attempting to extract it via string matching instead. Please verify the file does not contain unexpected data.
+The GUID inside 'Packages/com.scaffold.addressables/package.json.meta' cannot be extracted by the YAML Parser. Attempting to extract it via string matching instead. Please verify the file does not contain unexpected data.
+The GUID inside 'Packages/com.scaffold.ads.levelplay/README.md.meta' cannot be extracted by the YAML Parser. Attempting to extract it via string matching instead. Please verify the file does not contain unexpected data.
+The GUID inside 'Packages/com.scaffold.autopacker/package.json.meta' cannot be extracted by the YAML Parser. Attempting to extract it via string matching instead. Please verify the file does not contain unexpected data.
+The GUID inside 'Packages/com.unity.services.cloudcode/Editor/Authoring/Core/Unity.Services.CloudCode.Authoring.Editor.Core.api.meta' cannot be extracted by the YAML Parser. Attempting to extract it via string matching instead. Please verify the file does not contain unexpected data.
+The GUID inside 'Packages/com.unity.services.cloudcode/Editor/Authoring/Unity.Services.CloudCode.Authoring.Editor.api.meta' cannot be extracted by the YAML Parser. Attempting to extract it via string matching instead. Please verify the file does not contain unexpected data.
+The GUID inside 'Packages/com.scaffold.addressables/Runtime/Internal.meta' cannot be extracted by the YAML Parser. Attempting to extract it via string matching instead. Please verify the file does not contain unexpected data.
+The GUID inside 'Packages/com.scaffold.navigation/Editor/ViewConfigEditor.cs.meta' cannot be extracted by the YAML Parser. Attempting to extract it via string matching instead. Please verify the file does not contain unexpected data.
+The GUID inside 'Packages/com.scaffold.navigation/Editor.meta' cannot be extracted by the YAML Parser. Attempting to extract it via string matching instead. Please verify the file does not contain unexpected data.
+The GUID inside 'Packages/com.scaffold.navigation/Editor/Scaffold.Navigation.Editor.asmdef.meta' cannot be extracted by the YAML Parser. Attempting to extract it via string matching instead. Please verify the file does not contain unexpected data.
+The GUID inside 'Packages/com.scaffold.cloudcode/Tests/CloudCodeInstallerTests.cs.meta' cannot be extracted by the YAML Parser. Attempting to extract it via string matching instead. Please verify the file does not contain unexpected data.
+The .meta file Packages/com.scaffold.addressables/Runtime/Internal.meta does not have a valid GUID and its corresponding Asset file will be ignored. If this file is not malformed, please add a GUID, or delete the .meta file and it will be recreated correctly
+The .meta file Packages/com.scaffold.cloudcode/Tests/CloudCodeInstallerTests.cs.meta does not have a valid GUID and its corresponding Asset file will be ignored. If this file is not malformed, please add a GUID, or delete the .meta file and it will be recreated correctly
+The .meta file Packages/com.scaffold.navigation/Editor.meta does not have a valid GUID and its corresponding Asset file will be ignored. If this file is not malformed, please add a GUID, or delete the .meta file and it will be recreated correctly
+The .meta file Packages/com.scaffold.navigation/Editor/Scaffold.Navigation.Editor.asmdef.meta does not have a valid GUID and its corresponding Asset file will be ignored. If this file is not malformed, please add a GUID, or delete the .meta file and it will be recreated correctly
+The .meta file Packages/com.scaffold.navigation/Editor/ViewConfigEditor.cs.meta does not have a valid GUID and its corresponding Asset file will be ignored. If this file is not malformed, please add a GUID, or delete the .meta file and it will be recreated correctly
+Refreshing native plugins compatible for Editor in 13.63 ms, found 4 plugins.
+Native extension for OSXStandalone target not found
+Refreshing native plugins compatible for Editor in 4.05 ms, found 4 plugins.
+ScheduleIndexationOnStartup MainProcess:True IndexOnStartup:False
+Mono: successfully reloaded assembly
+- Finished resetting the current domain, in  5.447 seconds
+Domain Reload Profiling: 6635ms
+	BeginReloadAssembly (151ms)
+		DisableScriptedObjects (40ms)
+		CreateAndSetChildDomain (33ms)
+	RebuildCommonClasses (6ms)
+	RebuildNativeTypeToScriptingClass (12ms)
+	initialDomainReloadingComplete (54ms)
+	LoadAllAssembliesAndSetupDomain (964ms)
+		LoadAssemblies (357ms)
+		AnalyzeDomain (386ms)
+			TypeCache.Refresh (232ms)
+				TypeCache.ScanAssembly (209ms)
+			BuildScriptInfoCaches (145ms)
+			ResolveRequiredComponents (7ms)
+	FinalizeReload (5448ms)
+		SetupLoadedEditorAssemblies (0ms)
+			BeforeProcessingInitializeOnLoad (81ms)
+			ProcessInitializeOnLoadAttributes (4133ms)
+			ProcessInitializeOnLoadMethodAttributes (987ms)
+		AwakeInstancesAfterBackupRestoration (12ms)
+The GUID inside 'Assets/_Recovery/0 (3).unity.meta' cannot be extracted by the YAML Parser. Attempting to extract it via string matching instead. Please verify the file does not contain unexpected data.
+The GUID inside 'Assets/_Recovery/0.unity.meta' cannot be extracted by the YAML Parser. Attempting to extract it via string matching instead. Please verify the file does not contain unexpected data.
+The GUID inside 'Assets/Packages/AAGen-0.3.0/package.json.meta' cannot be extracted by the YAML Parser. Attempting to extract it via string matching instead. Please verify the file does not contain unexpected data.
+The GUID inside 'Assets/Packages/AAGen-0.3.0/README.md.meta' cannot be extracted by the YAML Parser. Attempting to extract it via string matching instead. Please verify the file does not contain unexpected data.
+The GUID inside 'Assets/Packages/LevelPlay/Editor/IronSourceSDKDependencies.xml.meta' cannot be extracted by the YAML Parser. Attempting to extract it via string matching instead. Please verify the file does not contain unexpected data.
+The GUID inside 'Assets/Packages/LevelPlay/Editor/ISUnityAdsAdapterDependencies.xml.meta' cannot be extracted by the YAML Parser. Attempting to extract it via string matching instead. Please verify the file does not contain unexpected data.
+The GUID inside 'Assets/Packages/LevelPlay/Editor/LevelPlayVersions.json.meta' cannot be extracted by the YAML Parser. Attempting to extract it via string matching instead. Please verify the file does not contain unexpected data.
+The GUID inside 'Packages/com.scaffold.addressables/package.json.meta' cannot be extracted by the YAML Parser. Attempting to extract it via string matching instead. Please verify the file does not contain unexpected data.
+The GUID inside 'Packages/com.scaffold.ads.levelplay/README.md.meta' cannot be extracted by the YAML Parser. Attempting to extract it via string matching instead. Please verify the file does not contain unexpected data.
+The GUID inside 'Packages/com.scaffold.autopacker/package.json.meta' cannot be extracted by the YAML Parser. Attempting to extract it via string matching instead. Please verify the file does not contain unexpected data.
+The GUID inside 'Packages/com.unity.services.cloudcode/Editor/Authoring/Core/Unity.Services.CloudCode.Authoring.Editor.Core.api.meta' cannot be extracted by the YAML Parser. Attempting to extract it via string matching instead. Please verify the file does not contain unexpected data.
+The GUID inside 'Packages/com.unity.services.cloudcode/Editor/Authoring/Unity.Services.CloudCode.Authoring.Editor.api.meta' cannot be extracted by the YAML Parser. Attempting to extract it via string matching instead. Please verify the file does not contain unexpected data.
+The GUID inside 'Packages/com.scaffold.navigation/Editor/ViewConfigEditor.cs.meta' cannot be extracted by the YAML Parser. Attempting to extract it via string matching instead. Please verify the file does not contain unexpected data.
+The GUID inside 'Packages/com.scaffold.addressables/Runtime/Internal.meta' cannot be extracted by the YAML Parser. Attempting to extract it via string matching instead. Please verify the file does not contain unexpected data.
+The GUID inside 'Packages/com.scaffold.cloudcode/Tests/CloudCodeInstallerTests.cs.meta' cannot be extracted by the YAML Parser. Attempting to extract it via string matching instead. Please verify the file does not contain unexpected data.
+The GUID inside 'Packages/com.scaffold.navigation/Editor.meta' cannot be extracted by the YAML Parser. Attempting to extract it via string matching instead. Please verify the file does not contain unexpected data.
+The GUID inside 'Packages/com.scaffold.navigation/Editor/Scaffold.Navigation.Editor.asmdef.meta' cannot be extracted by the YAML Parser. Attempting to extract it via string matching instead. Please verify the file does not contain unexpected data.
+The .meta file Packages/com.scaffold.addressables/Runtime/Internal.meta does not have a valid GUID and its corresponding Asset file will be ignored. If this file is not malformed, please add a GUID, or delete the .meta file and it will be recreated correctly
+The .meta file Packages/com.scaffold.cloudcode/Tests/CloudCodeInstallerTests.cs.meta does not have a valid GUID and its corresponding Asset file will be ignored. If this file is not malformed, please add a GUID, or delete the .meta file and it will be recreated correctly
+The .meta file Packages/com.scaffold.navigation/Editor.meta does not have a valid GUID and its corresponding Asset file will be ignored. If this file is not malformed, please add a GUID, or delete the .meta file and it will be recreated correctly
+The .meta file Packages/com.scaffold.navigation/Editor/Scaffold.Navigation.Editor.asmdef.meta does not have a valid GUID and its corresponding Asset file will be ignored. If this file is not malformed, please add a GUID, or delete the .meta file and it will be recreated correctly
+The .meta file Packages/com.scaffold.navigation/Editor/ViewConfigEditor.cs.meta does not have a valid GUID and its corresponding Asset file will be ignored. If this file is not malformed, please add a GUID, or delete the .meta file and it will be recreated correctly
+The GUID inside 'Assets/_Recovery/0 (3).unity.meta' cannot be extracted by the YAML Parser. Attempting to extract it via string matching instead. Please verify the file does not contain unexpected data.
+The GUID inside 'Assets/_Recovery/0.unity.meta' cannot be extracted by the YAML Parser. Attempting to extract it via string matching instead. Please verify the file does not contain unexpected data.
+The GUID inside 'Assets/Packages/AAGen-0.3.0/package.json.meta' cannot be extracted by the YAML Parser. Attempting to extract it via string matching instead. Please verify the file does not contain unexpected data.
+The GUID inside 'Assets/Packages/AAGen-0.3.0/README.md.meta' cannot be extracted by the YAML Parser. Attempting to extract it via string matching instead. Please verify the file does not contain unexpected data.
+The GUID inside 'Assets/Packages/LevelPlay/Editor/IronSourceSDKDependencies.xml.meta' cannot be extracted by the YAML Parser. Attempting to extract it via string matching instead. Please verify the file does not contain unexpected data.
+The GUID inside 'Assets/Packages/LevelPlay/Editor/ISUnityAdsAdapterDependencies.xml.meta' cannot be extracted by the YAML Parser. Attempting to extract it via string matching instead. Please verify the file does not contain unexpected data.
+The GUID inside 'Assets/Packages/LevelPlay/Editor/LevelPlayVersions.json.meta' cannot be extracted by the YAML Parser. Attempting to extract it via string matching instead. Please verify the file does not contain unexpected data.
+The GUID inside 'Packages/com.scaffold.addressables/package.json.meta' cannot be extracted by the YAML Parser. Attempting to extract it via string matching instead. Please verify the file does not contain unexpected data.
+The GUID inside 'Packages/com.scaffold.ads.levelplay/README.md.meta' cannot be extracted by the YAML Parser. Attempting to extract it via string matching instead. Please verify the file does not contain unexpected data.
+The GUID inside 'Packages/com.scaffold.autopacker/package.json.meta' cannot be extracted by the YAML Parser. Attempting to extract it via string matching instead. Please verify the file does not contain unexpected data.
+The GUID inside 'Packages/com.unity.services.cloudcode/Editor/Authoring/Core/Unity.Services.CloudCode.Authoring.Editor.Core.api.meta' cannot be extracted by the YAML Parser. Attempting to extract it via string matching instead. Please verify the file does not contain unexpected data.
+The GUID inside 'Packages/com.unity.services.cloudcode/Editor/Authoring/Unity.Services.CloudCode.Authoring.Editor.api.meta' cannot be extracted by the YAML Parser. Attempting to extract it via string matching instead. Please verify the file does not contain unexpected data.
+The GUID inside 'Packages/com.scaffold.navigation/Editor/ViewConfigEditor.cs.meta' cannot be extracted by the YAML Parser. Attempting to extract it via string matching instead. Please verify the file does not contain unexpected data.
+The GUID inside 'Packages/com.scaffold.navigation/Editor.meta' cannot be extracted by the YAML Parser. Attempting to extract it via string matching instead. Please verify the file does not contain unexpected data.
+The GUID inside 'Packages/com.scaffold.addressables/Runtime/Internal.meta' cannot be extracted by the YAML Parser. Attempting to extract it via string matching instead. Please verify the file does not contain unexpected data.
+The GUID inside 'Packages/com.scaffold.cloudcode/Tests/CloudCodeInstallerTests.cs.meta' cannot be extracted by the YAML Parser. Attempting to extract it via string matching instead. Please verify the file does not contain unexpected data.
+The GUID inside 'Packages/com.scaffold.navigation/Editor/Scaffold.Navigation.Editor.asmdef.meta' cannot be extracted by the YAML Parser. Attempting to extract it via string matching instead. Please verify the file does not contain unexpected data.
+The .meta file Packages/com.scaffold.addressables/Runtime/Internal.meta does not have a valid GUID and its corresponding Asset file will be ignored. If this file is not malformed, please add a GUID, or delete the .meta file and it will be recreated correctly
+The .meta file Packages/com.scaffold.cloudcode/Tests/CloudCodeInstallerTests.cs.meta does not have a valid GUID and its corresponding Asset file will be ignored. If this file is not malformed, please add a GUID, or delete the .meta file and it will be recreated correctly
+The .meta file Packages/com.scaffold.navigation/Editor.meta does not have a valid GUID and its corresponding Asset file will be ignored. If this file is not malformed, please add a GUID, or delete the .meta file and it will be recreated correctly
+The .meta file Packages/com.scaffold.navigation/Editor/Scaffold.Navigation.Editor.asmdef.meta does not have a valid GUID and its corresponding Asset file will be ignored. If this file is not malformed, please add a GUID, or delete the .meta file and it will be recreated correctly
+The .meta file Packages/com.scaffold.navigation/Editor/ViewConfigEditor.cs.meta does not have a valid GUID and its corresponding Asset file will be ignored. If this file is not malformed, please add a GUID, or delete the .meta file and it will be recreated correctly
+Starting new worker id: 0 with log in /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Logs/AssetImportWorkerHW0.log
+
+Asset Pipeline Refresh (id=e754b95b17c9f4c1e9f9ae388c3d5384): Total: 11.813 seconds - Initiated by InitialRefreshV2(ForceSynchronousImport)
+	(Values over 0.05ms)
+	Summary:
+		Imports: total=0 (actual=0, local cache=0, cache server=0)
+		Asset DB Process Time: managed=0 ms, native=8315 ms
+		Asset DB Callback time: managed=214 ms, native=20 ms
+		Scripting: domain reloads=1, domain reload time=1236 ms, compile time=1803 ms, other=223 ms
+		Project Asset Count: scripts=3902, non-scripts=5548
+		Asset File Changes: new=0, changed=0, moved=0, deleted=0
+		Scan Filter Count: 1
+	InvokePackagesCallback: 22.063ms
+	ApplyChangesToAssetFolders: 0.522ms
+	Scan: 1941.532ms
+	Collect global state as custom dependencies: 2.660ms
+	CategorizeScriptCompilationAssets: 108.534ms
+	ProcessAssetsWithTransientArtifactChanges: 157.075ms
+	CategorizeAssets: 121.691ms
+	CompileScripts: 1803.166ms
+	ImportOutOfDateAssets: 5557.396ms (5497.198ms without children)
+		ReloadNativeAssets: 0.177ms
+		UnloadImportedAssets: 2.652ms
+		EnsureUptoDateAssetsAreRegisteredWithGuidPM: 1.678ms
+		ImportSchedulerStart: 55.689ms
+	PostProcessAllAssets: 214.623ms
+		MonoPostProcessAllAssets: 214.580ms
+			AssetPostprocessorProxy.OnPostprocessAllAssets 23.349ms
+			UniversalRenderPipelineGlobalSettingsPostprocessor.OnPostprocessAllAssets 12.956ms
+			WindowAssetPostprocessingWatcher.OnPostprocessAllAssets 1.870ms
+			SpeedTree9Postprocessor.OnPostprocessAllAssets 1.415ms
+			SyncVS.PostprocessSyncProject 1.303ms
+			AssetDatabaseCallbacks.OnPostprocessAllAssets 1.044ms
+			EditModeScopePostprocessor.OnPostprocessAllAssets 0.753ms
+			RenderPipelineGlobalSettingsPostprocessor.OnPostprocessAllAssets 0.475ms
+			ReferencedClipsPostProcessor.OnPostprocessAllAssets 0.399ms
+			ShaderReflectionAssetPostProcessor.OnPostprocessAllAssets 0.262ms
+			TerrainToolbarOverlayPostProcessor.OnPostprocessAllAssets 0.219ms
+			InputActionAssetPostprocessor.OnPostprocessAllAssets 0.183ms
+			ProjectSettingsPostprocessor.OnPostprocessAllAssets 0.119ms
+	UnloadStreamsBegin: 2.714ms
+	PersistCurrentRevisions: 0.230ms
+	GenerateScriptTypeHashes: 5.294ms
+	GenerateScriptTypeSerializationHashes: 8.920ms
+	Untracked: 1878.197ms
+
+Application.AssetDatabase Initial Refresh End
+Shader Hidden/ChartRasterizerHardware is not supported: GPU does not support conservative rasterization
+Launching external process: /Applications/Unity/Hub/Editor/6000.5.3f1/Unity.app/Contents/Helpers/UnityShaderCompiler
+Launched and connected shader compiler UnityShaderCompiler after 0.07 seconds
+Shader Hidden/ChartRasterizerHardware is not supported: GPU does not support conservative rasterization
+Scanning for USB devices : 0.028ms
+Initializing Unity extensions:
+Script 'Library/PackageCache/com.unity.services.multiplayer@a6d6ce688d71/Server/Unity.Services.Multiplayer.Server.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.scaffold.liveops@89b777e21630/Tests/Scaffold.LiveOps.Tests.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.unity.remote-config-runtime@06ad4d20f49e/Tests/Runtime/com.unity.remote-config-runtime.tests.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.unity.addressables@8460f1c9c927/Tests/Runtime/ResourceManager/Unity.ResourceManager.Tests.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.unity.collections@a43cabe808ca/DocCodeSamples.Tests/DocCodeSamples.Tests.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.scaffold.mvvm@2bb6f7b8bb03/Tests/Scaffold.MVVM.Tests.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.unity.multiplayer.tools@f5f96dc4e38c/Tests/Runtime/NetworkSimulator/Unity.Multiplayer.Tools.NetworkSimulator.Tests.Runtime.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.unity.services.authentication@9a8b7a204688/Server/Unity.Services.Authentication.Server.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.scaffold.addressables@3ba8d82fa829/Tests/Scaffold.Addressables.Tests.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.unity.addressables@8460f1c9c927/Tests/Runtime/Unity.Addressables.Runtime.Tests.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.scaffold.events@20ca136775ba/Tests/Scaffold.Events.Tests.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.unity.scriptablebuildpipeline@36e3b5898ee2/Tests/Runtime/TestAssets/Unity.ScriptableBuildPipelineTests.Runtime.Tests.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.unity.multiplayer.center.quickstart@c025a98340af/Tests/Runtime/Unity.Multiplayer.Center.GetStarted.Tests.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.scaffold.autopacker@afa8b9cd6289/Tests/Scaffold.Autopacker.Tests.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.unity.collections@a43cabe808ca/Unity.Collections.PerformanceTests/Unity.Collections.PerformanceTests.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.scaffold.cloudcode@eb5593c458ad/Tests/Scaffold.CloudCode.Tests.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.scaffold.model@cd827fe8ffd8/Tests/Scaffold.MVVM.Model.Tests.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.unity.timeline@8cd8509afae5/DocCodeExamples/DocCodeExamples.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.unity.localization@b0a588a05f2a/DocCodeSamples.Tests/DocCodeSamples.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.unity.multiplayer.tools@f5f96dc4e38c/Tests/Runtime/Adapters/Unity.Multiplayer.Tools.Adapters.Tests.Editor.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.unity.multiplayer.center@b860850997d0/Tests/Runtime/Unity.Multiplayer.Center.Tests.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.scaffold.viewmodel@6b3a95ce93e5/Tests/Scaffold.MVVM.ViewModel.Tests.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.unity.collections@a43cabe808ca/Unity.Collections.Tests/NativeSortTests.tt' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.unity.render-pipelines.core@0733e3164aa3/Tests/Runtime/Threading/FunctionTestsGroup.compute' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.scaffold.states@6c404f65830a/Tests/Scaffold.States.Tests.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.scaffold.navigation@4ebff89ec676/Tests/Scaffold.Navigation.Tests.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.unity.2d.psdimporter@5d82044f9e43/Tests/EditorTests/Unity.2D.Psdimporter.EditorTests.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.unity.render-pipelines.core@0733e3164aa3/Tests/Runtime/PathTracing/UniformAlbedoMetaPass.shader' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.unity.ugui@377fd60ad87b/Tests/Runtime/UGUI/UnityEngine.UI.Tests.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.scaffold.view@c8681b5e4438/Tests/Scaffold.MVVM.View.Tests.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.unity.inputsystem@21a28c3a6c83/Tests/IntegrationTests/Unity.InputSystem.IntegrationTests.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.unity.collections@a43cabe808ca/Unity.Collections.Tests.Playmode/FixedListPlayModeTests.tt' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.unity.multiplayer.widgets@5e458f651b7a/Runtime/Vivox/Unity.Multiplayer.Widgets.Vivox.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.scaffold.ugs@f0212343e8ea/Tests/Scaffold.Ugs.Tests.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.unity.ugui@377fd60ad87b/Tests/Runtime/TMP/Unity.TextMeshPro.Tests.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.unity.multiplayer.tools@f5f96dc4e38c/Adapters/MockNgo/Unity.Multiplayer.Tools.Adapters.MockNgo.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.unity.render-pipelines.universal@276396f56b3f/Tests/Runtime/Unity.RenderPipelines.Universal.Runtime.Tests.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.scaffold.sceneflow@a98cbe547681/Tests/Scaffold.SceneFlow.Tests.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.unity.multiplayer.center.quickstart@c025a98340af/Runtime/NetcodeForEntitiesExample_Deprecated/Unity.Multiplayer.Center.NetcodeForEntitiesExample.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.unity.netcode.gameobjects@0f12e689d980/Tests/Runtime/Unity.Netcode.Runtime.Tests.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.unity.multiplayer.tools@f5f96dc4e38c/Tests/Runtime/NetcodeForGameObjects/Unity.Multiplauyer.Tools.GameObjects.Tests.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.unity.scriptablebuildpipeline@36e3b5898ee2/Tests/Runtime/Unity.ScriptableBuildPipeline.Tests.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.scaffold.core@6244d1165ace/Runtime/Scaffold.Core.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.scaffold.pooling@dd3b79a549a2/Tests/Scaffold.Pooling.Tests.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.scaffold.maps@9996e6fd422e/Tests/Scaffold.Maps.Tests.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.unity.collections@a43cabe808ca/Unity.Collections.BurstCompatibilityGen/Unity.Collections.BurstCompatibilityGen.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Worker ready: AssetImportWorkerHW0 0
+[MODES] ModeService[none].Initialize
+[MODES] ModeService[none].LoadModes
+[MODES] Loading mode Default (0) for mode-current-id-Scaffold
+2026-07-27 18:28:58.608 Unity[52012:4319511] NSEventModifierFlagFunction specified to -setKeyEquivalentModifierMask: for item <NSMenuItem: 0xb82282620 Quick Recording, ke='Command-F10'>, but is only supported for system-provided menu items; will not be used
+2026-07-27 18:28:58.612 Unity[52012:4319511] NSEventModifierFlagFunction specified to -setKeyEquivalentModifierMask: for item <NSMenuItem: 0xb825d0fa0 SDF, ke='Command-F12'>, but is only supported for system-provided menu items; will not be used
+Unloading 28 Unused Serialized files (Serialized files now loaded: 0)
+Unloading 14753 unused Assets / (10.6 MB). Loaded Objects now: 15753.
+Memory consumption went from 364.7 MB to 354.2 MB.
+Total: 26.083083 ms (FindLiveObjects: 0.743833 ms CreateObjectMapping: 5.955209 ms MarkObjects: 12.615750 ms  DeleteObjects: 6.766208 ms)
+
+[Project] Loading completed in 18.277 seconds
+	Project init time: 				17.865 seconds
+		Template init time: 		0.000 seconds
+		Package Manager init time: 		0.781 seconds
+		Asset Database init time: 		0.394 seconds
+		Global illumination init time: 	0.002 seconds
+		Assemblies load time: 			0.722 seconds
+		Unity extensions init time: 	0.031 seconds
+		Asset Database refresh time: 	11.813 seconds
+	Scene opening time: 			0.252 seconds
+##utp:{"type":"ProjectInfo","version":2,"phase":"Immediate","time":1785187738784,"processId":52012,"projectLoad":18.276829209000004,"projectInit":17.865005708,"templateInit":0.0,"packageManagerInit":0.781275792,"assetDatabaseInit":0.393816792,"globalIlluminationInit":0.002188834,"assembliesLoad":0.722323167,"unityExtensionsInit":0.0305075,"assetDatabaseRefresh":11.813024167,"sceneOpening":0.251848292}
+##utp:{"type":"EditorInfo","version":2,"phase":"Immediate","time":1785187738784,"processId":52012,"editorVersion":"6000.5.3f1 (c2eb47b3a2a9)","branch":"6000.5/staging","buildType":"Release","platform":"OSX"}
+Subscribe to USB device events
+[Licensing::Client] Successfully resolved entitlement details
+Running tests for ExecutionSettings with details:
+targetPlatform =
+playerHeartbeatTimeout = 600
+filters[0] =
+   Filter with settings:
+   testMode = PlayMode
+   targetPlatform =
+   testNames = null
+   groupNames = null
+   categoryNames = null
+   assemblyNames = null
+ignoreTests = {}
+featureFlags = null
+
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+UnityEditor.TestTools.TestRunner.CommandLineTest.Executer:InitializeAndExecuteRun (string[]) (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEditor.TestRunner/CommandLineTest/Executer.cs:53)
+UnityEditor.TestTools.TestRunner.CommandLineTest.TestStarter:InitializeAndExecuteRun () (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEditor.TestRunner/CommandLineTest/TestStarter.cs:64)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+(Filename: ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEditor.TestRunner/CommandLineTest/Executer.cs Line: 53)
+
+[UnityConnectServicesConfig] config is NOT valid, switching to default
+Created GICache directory at /Users/leonardosilva/Library/Caches/com.unity3d.UnityEditor/GiCache. Took: 0.003s, timestamps: [18.280 - 18.282]
+[Licensing::Client] Successfully resolved entitlement details
+Unloading 4 Unused Serialized files (Serialized files now loaded: 0)
+Unloading 7 unused Assets / (61.2 KB). Loaded Objects now: 15774.
+Memory consumption went from 406.2 MB to 406.2 MB.
+Total: 28.496709 ms (FindLiveObjects: 0.592291 ms CreateObjectMapping: 2.521875 ms MarkObjects: 25.341417 ms  DeleteObjects: 0.040292 ms)
+
+Importing 'GUID: 690dbde0014274c0487f496d7a753760 - Path: Assets/InitTestScened929b4ae-d931-41f5-b226-a18d621a9de2.unity' with importer (DefaultImporter)
+Imported 'GUID: 690dbde0014274c0487f496d7a753760' -> (Import Result ID: '84b93533f34c800c927ac4290e596c1b') in 0.009 seconds [static dependencies only]. Details - ImportResultOutputID=66313e357361bc1f8e9c0696248d7254 DependenciesID=1f5e12111dff7b7fd8c478f9368afa53 StaticDependenciesID=37f8b043df8d61b3857b98e0cb2b8a75
+Refreshing native plugins compatible for Editor in 4.32 ms, found 4 plugins.
+
+Asset Pipeline Refresh (id=df8a3a1d0969940bb84410006136928f): Total: 0.414 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+	(Values over 0.05ms)
+	Summary:
+		Imports: total=1 (actual=1, local cache=0, cache server=0)
+		Asset DB Process Time: managed=4 ms, native=159 ms
+		Asset DB Callback time: managed=238 ms, native=11 ms
+		Scripting: domain reloads=0, domain reload time=0 ms, compile time=0 ms, other=0 ms
+		Project Asset Count: scripts=3902, non-scripts=5549
+		Asset File Changes: new=1, changed=1, moved=0, deleted=0
+		Scan Filter Count: 2
+	ApplyChangesToAssetFolders: 0.346ms
+	Scan: 14.192ms
+	Collect global state as custom dependencies: 0.076ms
+	OnSourceAssetsModified: 0.830ms
+	ProcessAssetsWithTransientArtifactChanges: 0.625ms
+	CategorizeAssets: 58.499ms
+	ImportOutOfDateAssets: 79.479ms (20.044ms without children)
+		ImportManagerImport: 10.683ms (1.246ms without children)
+		ReloadNativeAssets: 0.181ms
+		UnloadImportedAssets: 0.132ms
+		EnsureUptoDateAssetsAreRegisteredWithGuidPM: 1.120ms
+		ImportSchedulerStart: 47.312ms
+	PostProcessAllAssets: 243.732ms
+		XRBuildSystem.XRAssetImported 5.168ms
+		SpeedTreeImporter.PostprocessAllAssets 0.289ms
+		RaytracingShaderImportPostprocess 0.199ms
+		MonoPostProcessAllAssets: 237.326ms
+			AssetPostprocessor.OnPostprocessAllAssets 181.361ms
+			StyleCatalogPostProcessor.OnPostprocessAllAssets 20.576ms
+			EditorEvents.OnPostprocessAllAssets 3.952ms
+			BuilderAssetPostprocessor.OnPostprocessAllAssets 3.692ms
+			AddressablesAssetPostProcessor.OnPostprocessAllAssets 2.374ms
+			ShaderGraphAssetPostProcessor.OnPostprocessAllAssets 1.663ms
+			PostProcessor.OnPostprocessAllAssets 1.311ms
+			LocalizationAssetPostProcessor.OnPostprocessAllAssets 1.253ms
+			AssetChangedListener.OnPostprocessAllAssets 1.247ms
+			NetworkPrefabProcessor.OnPostprocessAllAssets 1.057ms
+			AudioAssetCache.OnPostprocessAllAssets 1.015ms
+			TextAssetPostProcessor.OnPostprocessAllAssets 0.964ms
+			PackageManagerResolver.OnPostprocessAllAssets 0.897ms
+			RetainedModeAssetPostprocessor.OnPostprocessAllAssets 0.872ms
+			VersionHandlerImpl.OnPostprocessAllAssets 0.865ms
+			AssetProcessor.OnPostprocessAllAssets 0.853ms
+			SpriteEditorTexturePostprocessor.OnPostprocessAllAssets 0.715ms
+			SpriteLibraryAssetPostprocessor.OnPostprocessAllAssets 0.545ms
+			SyncVS.PostprocessSyncProject 0.537ms
+			NugetAssetPostprocessor.OnPostprocessAllAssets 0.521ms
+			AssetPathToTypes.OnPostprocessAllAssets 0.517ms
+			SpriteShapeAssetPostProcessor.OnPostprocessAllAssets 0.460ms
+			AssetPostprocessorEditor.OnPostprocessAllAssets 0.431ms
+			ArtifactBrowserPostProcessor.OnPostprocessAllAssets 0.387ms
+			SpriteSlicePostprocessor.OnPostprocessAllAssets 0.368ms
+			MaterialPostprocessor.OnPostprocessAllAssets 0.357ms
+			SampleDependencyImporterPostProcessor.OnPostprocessAllAssets 0.335ms
+			TMPro_TexturePostProcessor.OnPostprocessAllAssets 0.327ms
+			IOSResolver.OnPostprocessAllAssets 0.289ms
+			UtilityWindowPostProcessor.OnPostprocessAllAssets 0.288ms
+			Postprocessor.OnPostprocessAllAssets 0.259ms
+			InputActionJsonNameModifierAssetProcessor.OnPostprocessAllAssets 0.258ms
+			PlayServicesResolver.OnPostprocessAllAssets 0.243ms
+			ConfigAssetsTracker.OnPostprocessAllAssets 0.233ms
+			AudioMixerPostprocessor.OnPostprocessAllAssets 0.229ms
+			AddressableBakeCachePostprocessor.OnPostprocessAllAssets 0.209ms
+			AssetEvents.OnPostprocessAllAssets 0.195ms
+			CgincPathSync.OnPostprocessAllAssets 0.183ms
+			AssetPostprocessorProxy.OnPostprocessAllAssets 0.179ms
+			AssetDatabaseCallbacks.OnPostprocessAllAssets 0.155ms
+			EditorResourcesPostProcessor.OnPostprocessAllAssets 0.149ms
+			PSDImportPostProcessor.OnPostprocessAllAssets 0.144ms
+			InputActionAssetPostprocessor.OnPostprocessAllAssets 0.136ms
+			SpeedTreePostProcessor.OnPostprocessAllAssets 0.116ms
+			SamplePostprocessor.OnPostprocessAllAssets 0.115ms
+			PSDImporterAssetPostProcessor.OnPostprocessAllAssets 0.103ms
+			ScenarioDriftAssetsTracker.OnPostprocessAllAssets 0.090ms
+			RenderPipelineGlobalSettingsPostprocessor.OnPostprocessAllAssets 0.051ms
+	PostAssetChangesProfiler: 5.426ms
+	GatherAllCurrentPrimaryImportResultRevisions: 0.338ms
+	PersistCurrentRevisions: 0.357ms
+	Untracked: 10.059ms
+
+Executing IPrebuildSetup for: Unity.PerformanceTesting.Editor.TestRunBuilder.
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+UnityEditor.TestTools.TestRunner.TestRun.Tasks.BuildActionTaskBase`1/<ExecuteMethods>d__8<UnityEngine.TestTools.IPrebuildSetup>:MoveNext () (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEditor.TestRunner/TestRun/Tasks/BuildActionTaskBase.cs:48)
+UnityEditor.TestTools.TestRunner.TestRun.Tasks.BuildActionTaskBase`1/<Execute>d__7<UnityEngine.TestTools.IPrebuildSetup>:MoveNext () (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEditor.TestRunner/TestRun/Tasks/BuildActionTaskBase.cs:34)
+UnityEditor.TestTools.TestRunner.TestRun.TestJobRunner:ExecuteStep () (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEditor.TestRunner/TestRun/TestJobRunner.cs:194)
+UnityEditor.TestTools.TestRunner.TestRun.TestJobRunner:ExecuteCallback () (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEditor.TestRunner/TestRun/TestJobRunner.cs:129)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+(Filename: ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEditor.TestRunner/TestRun/Tasks/BuildActionTaskBase.cs Line: 48)
+
+Thread 0x36d007000 may have been prematurely finalized
+SpriteAtlasPacking completed in 0.009907 sec
+Reloading assemblies for play mode.
+Reloading assemblies after forced synchronous recompile.
+Begin MonoManager ReloadAssembly
+2026-07-27 18:29:00.607 Unity[52012:4319511] NSEventModifierFlagFunction specified to -setKeyEquivalentModifierMask: for item <NSMenuItem: 0xb822837a0 Quick Recording, ke='Command-F10'>, but is only supported for system-provided menu items; will not be used
+2026-07-27 18:29:00.611 Unity[52012:4319511] NSEventModifierFlagFunction specified to -setKeyEquivalentModifierMask: for item <NSMenuItem: 0xb825d88c0 SDF, ke='Command-F12'>, but is only supported for system-provided menu items; will not be used
+2026-07-27 18:29:00.614 Unity[52012:4319511] NSEventModifierFlagFunction specified to -setKeyEquivalentModifierMask: for item <NSMenuItem: 0xb822838e0 Quick Recording, ke='Command-F10'>, but is only supported for system-provided menu items; will not be used
+2026-07-27 18:29:00.618 Unity[52012:4319511] NSEventModifierFlagFunction specified to -setKeyEquivalentModifierMask: for item <NSMenuItem: 0xb825cab20 SDF, ke='Command-F12'>, but is only supported for system-provided menu items; will not be used
+<CFData 0xb8c50eb20 [0x1efde8880]>{length = 6, capacity = 6, bytes = 0x5ce91ea12bbf}
+18:29:00.687 |V| RiderPlugin                    | :1                             | AppDomain.CurrentDomain.DomainUnload lifetimeDefinition.Terminate
+Symbol file LoadedFromMemory is not a mono symbol file
+Script 'Packages/com.ami.broaudio/TestBootstrapper.cs' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+'Assets/3rdParty/UIEffect/Runtime/Timeline/Base/UIEffectTimelineUtils.cs' contains partial class of Unity.Object, exactly 1 of the partial classes needs to be in a file with the same filename. This is to know the one that can be referenced from ie. GameObjects
+'Assets/3rdParty/UIEffect/Runtime/Timeline/Base/UIEffectTimelineUtils.cs' contains partial class of Unity.Object, exactly 1 of the partial classes needs to be in a file with the same filename. This is to know the one that can be referenced from ie. GameObjects
+Refreshing native plugins compatible for Editor in 6.76 ms, found 4 plugins.
+Native extension for OSXStandalone target not found
+ScheduleIndexationOnStartup MainProcess:True IndexOnStartup:False
+Mono: successfully reloaded assembly
+- Finished resetting the current domain, in  1.568 seconds
+Domain Reload Profiling: 2981ms
+	BeginReloadAssembly (873ms)
+		DisableScriptedObjects (16ms)
+		CreateAndSetChildDomain (712ms)
+	RebuildCommonClasses (6ms)
+	RebuildNativeTypeToScriptingClass (12ms)
+	initialDomainReloadingComplete (67ms)
+	LoadAllAssembliesAndSetupDomain (453ms)
+		LoadAssemblies (185ms)
+		AnalyzeDomain (34ms)
+			TypeCache.Refresh (15ms)
+			ResolveRequiredComponents (9ms)
+	FinalizeReload (1569ms)
+		SetupLoadedEditorAssemblies (0ms)
+			BeforeProcessingInitializeOnLoad (94ms)
+			ProcessInitializeOnLoadAttributes (376ms)
+			ProcessInitializeOnLoadMethodAttributes (568ms)
+		AwakeInstancesAfterBackupRestoration (176ms)
+No restricted APIs configured; Validation skipped.
+Checking 39 assemblies for restricted APIs found 0 usage(s) in 3 ms
+Refreshing native plugins compatible for Editor in 3.72 ms, found 4 plugins.
+
+Asset Pipeline Refresh (id=fa7f60173497843fcb7ec986c4954ce7): Total: 12.131 seconds - Initiated by StopAssetImportingV2(ForceSynchronousImport | ForceDomainReload)
+	(Values over 0.05ms)
+	Summary:
+		Imports: total=0 (actual=0, local cache=0, cache server=0)
+		Asset DB Process Time: managed=0 ms, native=2136 ms
+		Asset DB Callback time: managed=8195 ms, native=350 ms
+		Scripting: domain reloads=1, domain reload time=1446 ms, compile time=1 ms, other=0 ms
+		Project Asset Count: scripts=3902, non-scripts=5549
+		Asset File Changes: new=0, changed=0, moved=0, deleted=0
+		Scan Filter Count: 0
+	InvokePackagesCallback: 1.915ms
+	ApplyChangesToAssetFolders: 0.510ms
+	Collect global state as custom dependencies: 2.033ms
+	ProcessAssetsWithTransientArtifactChanges: 301.383ms
+	CategorizeAssets: 110.499ms
+	CompileScripts: 1.207ms
+	ImportOutOfDateAssets: 1660.763ms (1602.213ms without children)
+		CollectScriptTypesHashes: 2.168ms
+		ReloadNativeAssets: 1.332ms
+		UnloadImportedAssets: 0.486ms
+		EnsureUptoDateAssetsAreRegisteredWithGuidPM: 1.383ms
+		ImportSchedulerStart: 55.277ms
+	PostProcessAllAssets: 8539.761ms
+		AssemblyValidation.PostprocessAllAssets 93.969ms
+		SpriteAtlasDatabase.OnAssetPostprocessCallback 29.841ms
+		PostProcessCallbackCreateDeferredMaterials 25.361ms
+		ShaderAssetModifiedCallback 18.404ms
+		RaytracingShaderImportPostprocess 17.355ms
+		ComputeShaderImportPostprocess 16.125ms
+		SpeedTreeImporter.PostprocessAllAssets 15.684ms
+		LocalizationDatabase.AssetDatabasePostprocessCallback 7.635ms
+		BlockShaderImporter.PostprocessAllAssets 6.550ms
+		XRBuildSystem.XRAssetImported 0.671ms
+		MonoPostProcessAllAssets: 8194.679ms
+			PackageManagerResolver.OnPostprocessAllAssets 4296.036ms
+			NugetAssetPostprocessor.OnPostprocessAllAssets 721.274ms
+			ShaderGraphAssetPostProcessor.OnPostprocessAllAssets 590.890ms
+			LocalizationAssetPostProcessor.OnPostprocessAllAssets 321.593ms
+			CgincPathSync.OnPostprocessAllAssets 289.882ms
+			PostProcessor.OnPostprocessAllAssets 161.329ms
+			EditorResourcesPostProcessor.OnPostprocessAllAssets 124.827ms
+			InputActionJsonNameModifierAssetProcessor.OnPostprocessAllAssets 109.993ms
+			MaterialPostprocessor.OnPostprocessAllAssets 108.943ms
+			InputActionAssetPostprocessor.OnPostprocessAllAssets 107.607ms
+			AddressablesAssetPostProcessor.OnPostprocessAllAssets 81.505ms
+			AssetPostprocessor.OnPostprocessAllAssets 73.184ms
+			AssetPostprocessorProxy.OnPostprocessAllAssets 53.908ms
+			TextAssetPostProcessor.OnPostprocessAllAssets 34.621ms
+			SpriteSlicePostprocessor.OnPostprocessAllAssets 33.495ms
+			StyleCatalogPostProcessor.OnPostprocessAllAssets 28.087ms
+			AssetChangedListener.OnPostprocessAllAssets 23.215ms
+			AudioAssetCache.OnPostprocessAllAssets 19.693ms
+			UtilityWindowPostProcessor.OnPostprocessAllAssets 15.055ms
+			RenderPipelineGlobalSettingsPostprocessor.OnPostprocessAllAssets 14.720ms
+			SyncVS.PostprocessSyncProject 11.499ms
+			UniversalRenderPipelineGlobalSettingsPostprocessor.OnPostprocessAllAssets 10.761ms
+			SpeedTree9Postprocessor.OnPostprocessAllAssets 7.143ms
+			BuilderAssetPostprocessor.OnPostprocessAllAssets 6.346ms
+			RetainedModeAssetPostprocessor.OnPostprocessAllAssets 3.190ms
+			EditorEvents.OnPostprocessAllAssets 2.514ms
+			VersionHandlerImpl.OnPostprocessAllAssets 2.017ms
+			WindowAssetPostprocessingWatcher.OnPostprocessAllAssets 1.924ms
+			AssetDatabaseCallbacks.OnPostprocessAllAssets 1.009ms
+			SpeedTreePostProcessor.OnPostprocessAllAssets 0.922ms
+			ArtifactBrowserPostProcessor.OnPostprocessAllAssets 0.656ms
+			SpriteShapeAssetPostProcessor.OnPostprocessAllAssets 0.646ms
+			SampleDependencyImporterPostProcessor.OnPostprocessAllAssets 0.600ms
+			AssetPostprocessorEditor.OnPostprocessAllAssets 0.504ms
+			TMPro_TexturePostProcessor.OnPostprocessAllAssets 0.495ms
+			SpriteEditorTexturePostprocessor.OnPostprocessAllAssets 0.449ms
+			ShaderReflectionAssetPostProcessor.OnPostprocessAllAssets 0.420ms
+			ProjectSettingsPostprocessor.OnPostprocessAllAssets 0.398ms
+			AssetPathToTypes.OnPostprocessAllAssets 0.384ms
+			NetworkPrefabProcessor.OnPostprocessAllAssets 0.375ms
+			PlayServicesResolver.OnPostprocessAllAssets 0.337ms
+			AddressableBakeCachePostprocessor.OnPostprocessAllAssets 0.328ms
+			Postprocessor.OnPostprocessAllAssets 0.276ms
+			TerrainToolbarOverlayPostProcessor.OnPostprocessAllAssets 0.241ms
+			AudioMixerPostprocessor.OnPostprocessAllAssets 0.240ms
+			IOSResolver.OnPostprocessAllAssets 0.224ms
+			AssetEvents.OnPostprocessAllAssets 0.208ms
+			SpriteLibraryAssetPostprocessor.OnPostprocessAllAssets 0.200ms
+			ConfigAssetsTracker.OnPostprocessAllAssets 0.191ms
+			SamplePostprocessor.OnPostprocessAllAssets 0.142ms
+			ReferencedClipsPostProcessor.OnPostprocessAllAssets 0.135ms
+			EditModeScopePostprocessor.OnPostprocessAllAssets 0.122ms
+			ScenarioDriftAssetsTracker.OnPostprocessAllAssets 0.093ms
+			PSDImportPostProcessor.OnPostprocessAllAssets 0.093ms
+			AudioContainerPostProcessor.OnPostprocessAllAssets 0.085ms
+			PSDImporterAssetPostProcessor.OnPostprocessAllAssets 0.066ms
+	PostAssetChangesProfiler: 5.979ms
+	GatherAllCurrentPrimaryImportResultRevisions: 0.399ms
+	UnloadStreamsBegin: 0.176ms
+	PersistCurrentRevisions: 0.231ms
+	GenerateScriptTypeHashes: 8.079ms
+	GenerateScriptTypeSerializationHashes: 13.718ms
+	Untracked: 1501.383ms
+
+Refreshing native plugins compatible for Editor in 7.39 ms, found 4 plugins.
+[SRDebugger] No EventSystem found in scene - creating a default one. Disable this behaviour in Window -> SRDebugger -> Settings Window -> Advanced)
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:LogWarning (object)
+SRDebugger.Internal.SRDebuggerUtil:EnsureEventSystemExists () (at Assets/StompyRobot/SRDebugger/Scripts/Internal/Util.cs:58)
+SRDebugger.Services.Implementation.DebugTriggerImpl:CreateTrigger () (at Assets/StompyRobot/SRDebugger/Scripts/Services/Implementation/DebugTriggerImpl.cs:142)
+SRDebugger.Services.Implementation.DebugTriggerImpl:set_IsEnabled (bool) (at Assets/StompyRobot/SRDebugger/Scripts/Services/Implementation/DebugTriggerImpl.cs:26)
+SRDebugger.Services.Implementation.SRDebugService:.ctor () (at Assets/StompyRobot/SRDebugger/Scripts/Services/Implementation/SRDebugService.cs:84)
+System.Reflection.RuntimeConstructorInfo:InternalInvoke (object,object[],bool)
+System.RuntimeType:CreateInstanceMono (bool,bool)
+System.RuntimeType:CreateInstanceSlow (bool,bool,bool,bool)
+System.RuntimeType:CreateInstanceDefaultCtor (bool,bool,bool,bool,System.Threading.StackCrawlMark&)
+System.Activator:CreateInstance (System.Type,bool,bool)
+System.Activator:CreateInstance (System.Type,bool)
+System.Activator:CreateInstance (System.Type)
+SRF.Service.SRServiceManager:DefaultServiceConstructor (System.Type,System.Type) (at Assets/StompyRobot/SRF/Scripts/Service/SRServiceManager.cs:408)
+SRF.Service.SRServiceManager:AutoCreateService (System.Type) (at Assets/StompyRobot/SRF/Scripts/Service/SRServiceManager.cs:333)
+SRF.Service.SRServiceManager:GetServiceInternal (System.Type) (at Assets/StompyRobot/SRF/Scripts/Service/SRServiceManager.cs:114)
+SRF.Service.SRServiceManager:GetService<SRDebugger.Services.IDebugService> () (at Assets/StompyRobot/SRF/Scripts/Service/SRServiceManager.cs:66)
+SRDebug:Init () (at Assets/StompyRobot/SRDebugger/Scripts/SRDebug.cs:40)
+SRDebugger.AutoInitialize:OnLoad () (at Assets/StompyRobot/SRDebugger/Scripts/AutoInitialize.cs:40)
+
+(Filename: Assets/StompyRobot/SRDebugger/Scripts/Internal/Util.cs Line: 58)
+
+[SRDebugger] Automatically generated EventSystem is using Unity Input System (can be changed to use Legacy Input in Window -> SRDebugger -> Settings Window -> Advanced)
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:LogWarning (object)
+SRDebugger.Internal.SRDebuggerUtil:CreateDefaultEventSystem () (at Assets/StompyRobot/SRDebugger/Scripts/Internal/Util.cs:74)
+SRDebugger.Internal.SRDebuggerUtil:EnsureEventSystemExists () (at Assets/StompyRobot/SRDebugger/Scripts/Internal/Util.cs:60)
+SRDebugger.Services.Implementation.DebugTriggerImpl:CreateTrigger () (at Assets/StompyRobot/SRDebugger/Scripts/Services/Implementation/DebugTriggerImpl.cs:142)
+SRDebugger.Services.Implementation.DebugTriggerImpl:set_IsEnabled (bool) (at Assets/StompyRobot/SRDebugger/Scripts/Services/Implementation/DebugTriggerImpl.cs:26)
+SRDebugger.Services.Implementation.SRDebugService:.ctor () (at Assets/StompyRobot/SRDebugger/Scripts/Services/Implementation/SRDebugService.cs:84)
+System.Reflection.RuntimeConstructorInfo:InternalInvoke (object,object[],bool)
+System.RuntimeType:CreateInstanceMono (bool,bool)
+System.RuntimeType:CreateInstanceSlow (bool,bool,bool,bool)
+System.RuntimeType:CreateInstanceDefaultCtor (bool,bool,bool,bool,System.Threading.StackCrawlMark&)
+System.Activator:CreateInstance (System.Type,bool,bool)
+System.Activator:CreateInstance (System.Type,bool)
+System.Activator:CreateInstance (System.Type)
+SRF.Service.SRServiceManager:DefaultServiceConstructor (System.Type,System.Type) (at Assets/StompyRobot/SRF/Scripts/Service/SRServiceManager.cs:408)
+SRF.Service.SRServiceManager:AutoCreateService (System.Type) (at Assets/StompyRobot/SRF/Scripts/Service/SRServiceManager.cs:333)
+SRF.Service.SRServiceManager:GetServiceInternal (System.Type) (at Assets/StompyRobot/SRF/Scripts/Service/SRServiceManager.cs:114)
+SRF.Service.SRServiceManager:GetService<SRDebugger.Services.IDebugService> () (at Assets/StompyRobot/SRF/Scripts/Service/SRServiceManager.cs:66)
+SRDebug:Init () (at Assets/StompyRobot/SRDebugger/Scripts/SRDebug.cs:40)
+SRDebugger.AutoInitialize:OnLoad () (at Assets/StompyRobot/SRDebugger/Scripts/AutoInitialize.cs:40)
+
+(Filename: Assets/StompyRobot/SRDebugger/Scripts/Internal/Util.cs Line: 74)
+
+Loaded scene 'Temp/__Backupscenes/0.backup'
+	Deserialize:            0.868 ms
+	Integration:            628.496 ms
+	Integration of assets:  0.001 ms
+	Thread Wait Time:       0.009 ms
+	Total Operation Time:   629.374 ms
+[MODES] ModeService[none].Initialize
+[MODES] ModeService[none].LoadModes
+[Licensing::Client] Successfully resolved entitlement details
+[Licensing::Client] Successfully resolved entitlement details
+[Licensing::Client] Successfully resolved entitlement details
+[BlackboardBehaviour] Failed to initialize 'InvalidBlackboard': System.InvalidOperationException: BlackboardFactory was not injected before Awake.
+  at Scaffold.VisualScripting.Unity.BlackboardBehaviour.InitializeRuntime () [0x0000f] in /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Assets/3rdParty/ScaffoldVisualScripting/Runtime/Unity/BlackboardBehaviour.cs:111
+  at Scaffold.VisualScripting.Unity.BlackboardBehaviour.Awake () [0x00002] in /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Assets/3rdParty/ScaffoldVisualScripting/Runtime/Unity/BlackboardBehaviour.cs:64
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:LogError (object)
+Scaffold.VisualScripting.Unity.BlackboardBehaviour:HandleInitializationFailure (System.Exception) (at Assets/3rdParty/ScaffoldVisualScripting/Runtime/Unity/BlackboardBehaviour.cs:138)
+Scaffold.VisualScripting.Unity.BlackboardBehaviour:Awake () (at Assets/3rdParty/ScaffoldVisualScripting/Runtime/Unity/BlackboardBehaviour.cs:68)
+UnityEngine.GameObject:SetActive (bool)
+Scaffold.VisualScripting.Unity.Tests.BlackboardBehaviourTests/<MissingFactory_DisablesWrapperWithActionableError>d__4:MoveNext () (at Assets/3rdParty/ScaffoldVisualScripting/Tests/Unity/PlayMode/BlackboardBehaviourTests.cs:63)
+UnityEngine.TestTools.TestEnumerator/<Execute>d__7:MoveNext () (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/NUnitExtensions/Attributes/TestEnumerator.cs:44)
+UnityEngine.TestTools.EnumerableTestMethodCommand/<ExecuteEnumerableAndRecordExceptions>d__4:MoveNext () (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/NUnitExtensions/Commands/EnumerableTestMethodCommand.cs:85)
+UnityEngine.TestTools.EnumerableTestMethodCommand:AdvanceEnumerator (System.Collections.IEnumerator) (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/NUnitExtensions/Commands/EnumerableTestMethodCommand.cs:64)
+UnityEngine.TestTools.EnumerableTestMethodCommand/<ExecuteEnumerable>d__2:MoveNext () (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/NUnitExtensions/Commands/EnumerableTestMethodCommand.cs:47)
+UnityEngine.TestRunner.NUnitExtensions.Runner.UnityLogCheckDelegatingCommand/<ExecuteEnumerable>d__3:MoveNext () (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/NUnitExtensions/Runner/UnityLogCheckDelegatingCommand.cs:48)
+UnityEngine.TestTools.BeforeAfterTestCommandBase`1/<ExecuteEnumerable>d__16<NUnit.Framework.ITestAction>:MoveNext () (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/NUnitExtensions/Commands/BeforeAfterTestCommandBase.cs:212)
+UnityEngine.TestTools.BeforeAfterTestCommandBase`1/<ExecuteEnumerable>d__16<System.Reflection.MethodInfo>:MoveNext () (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/NUnitExtensions/Commands/BeforeAfterTestCommandBase.cs:212)
+UnityEngine.TestTools.BeforeAfterTestCommandBase`1/<ExecuteEnumerable>d__16<System.Reflection.MethodInfo>:MoveNext () (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/NUnitExtensions/Commands/BeforeAfterTestCommandBase.cs:212)
+UnityEngine.TestTools.BeforeAfterTestCommandBase`1/<ExecuteEnumerable>d__16<UnityEngine.TestTools.IOuterUnityTestAction>:MoveNext () (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/NUnitExtensions/Commands/BeforeAfterTestCommandBase.cs:212)
+UnityEngine.TestTools.RetryCommand/<ExecuteEnumerable>d__2:MoveNext () (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/NUnitExtensions/Commands/RetryCommand.cs:37)
+UnityEngine.TestTools.RepeatCommand/<ExecuteEnumerable>d__2:MoveNext () (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/NUnitExtensions/Commands/RepeatCommand.cs:36)
+UnityEngine.TestTools.IgnoreTestCommand/<ExecuteEnumerable>d__3:MoveNext () (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/NUnitExtensions/Commands/IgnoreTestCommand.cs:42)
+UnityEngine.TestTools.StrictCheckCommand/<ExecuteEnumerable>d__2:MoveNext () (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/NUnitExtensions/Commands/StrictCheckCommand.cs:29)
+UnityEngine.TestTools.Utils.CoroutineRunner/<WrapEnumeratorForChecks>d__8:MoveNext () (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/Utils/CoroutineRunner.cs:58)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+(Filename: Assets/3rdParty/ScaffoldVisualScripting/Runtime/Unity/BlackboardBehaviour.cs Line: 138)
+
+Saving results to: /Users/leonardosilva/Library/Application Support/DDW/Scaffold/TestResults.xml
+Saving results to: /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Artifacts/TestResults/20260727-182840/PlayMode.xml
+Thread 0x173e27000 may have been prematurely finalized
+Unloading 11 Unused Serialized files (Serialized files now loaded: 0)
+Loaded scene 'Temp/__Backupscenes/0.backup'
+	Deserialize:            0.389 ms
+	Integration:            228.957 ms
+	Integration of assets:  0.001 ms
+	Thread Wait Time:       0.009 ms
+	Total Operation Time:   229.356 ms
+Unloading 13190 unused Assets / (102.2 MB). Loaded Objects now: 15948.
+Memory consumption went from 464.5 MB to 362.2 MB.
+Total: 31.645458 ms (FindLiveObjects: 1.307750 ms CreateObjectMapping: 9.276042 ms MarkObjects: 13.821958 ms  DeleteObjects: 7.239375 ms)
+
+Executing IPostBuildCleanup for: Unity.PerformanceTesting.Editor.TestRunBuilder.
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+UnityEditor.TestTools.TestRunner.TestRun.Tasks.BuildActionTaskBase`1/<ExecuteMethods>d__8<UnityEngine.TestTools.IPostBuildCleanup>:MoveNext () (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEditor.TestRunner/TestRun/Tasks/BuildActionTaskBase.cs:48)
+UnityEditor.TestTools.TestRunner.TestRun.Tasks.BuildActionTaskBase`1/<Execute>d__7<UnityEngine.TestTools.IPostBuildCleanup>:MoveNext () (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEditor.TestRunner/TestRun/Tasks/BuildActionTaskBase.cs:34)
+UnityEditor.TestTools.TestRunner.TestRun.TestJobRunner:ExecuteStep () (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEditor.TestRunner/TestRun/TestJobRunner.cs:194)
+UnityEditor.TestTools.TestRunner.TestRun.TestJobRunner:ExecuteCallback () (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEditor.TestRunner/TestRun/TestJobRunner.cs:129)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+(Filename: ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEditor.TestRunner/TestRun/Tasks/BuildActionTaskBase.cs Line: 48)
+
+Unloading 0 Unused Serialized files (Serialized files now loaded: 0)
+Unloading 0 unused Assets / (0 B). Loaded Objects now: 15950.
+Memory consumption went from 351.1 MB to 351.1 MB.
+Total: 15.236958 ms (FindLiveObjects: 0.491750 ms CreateObjectMapping: 2.551833 ms MarkObjects: 12.181375 ms  DeleteObjects: 0.011375 ms)
+
+Refreshing native plugins compatible for Editor in 4.14 ms, found 4 plugins.
+Asset Pipeline Refresh (id=c31f9a032ae4942739b86bedfad4a5a9): Total: 0.139 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+DisplayProgressbar: Undo
+Test run completed. Exiting with code 0 (Ok). Run completed.
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+UnityEditor.TestTools.TestRunner.CommandLineTest.Executer:ExitApplication (UnityEditor.TestTools.TestRunner.CommandLineTest.Executer/ReturnCodes,string) (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEditor.TestRunner/CommandLineTest/Executer.cs:81)
+UnityEditor.TestTools.TestRunner.CommandLineTest.Executer:ExitIfRunIsCompleted () (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEditor.TestRunner/CommandLineTest/Executer.cs:74)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+(Filename: ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEditor.TestRunner/CommandLineTest/Executer.cs Line: 81)
+
+MonoPathRemapper: Attempts to remap: 212208; Successful remaps: 63242
+Serialized file version minimum: 22, current 23
+AcceleratorClientConnectionCallback - disconnected - :0
+Importing 'GUID: 00000000000000004000000000000000 - Path: ProjectSettings/ProjectSettings.asset' with importer (LibraryAssetImporter)
+Imported 'GUID: 00000000000000004000000000000000' -> (Import Result ID: 'b845e139627c6ebb6b8d32ffb47fe90d') in 0.005 seconds [static dependencies only]. Details - ImportResultOutputID=276a810dac73e1f29404d5e5f692e214 DependenciesID=7b0f6cb01ca48e3de6c61077e501065b StaticDependenciesID=d67d46831b02eebfcec982730b6ea4d8
+Importing 'GUID: 00000000000000000200000000000000 - Path: ProjectSettings/MultiplayerManager.asset' with importer (LibraryAssetImporter)
+Imported 'GUID: 00000000000000000200000000000000' -> (Import Result ID: 'b5149598d44ab0ef70401f5acd351f54') in 0.000 seconds [static dependencies only]. Details - ImportResultOutputID=cc8bc420ff0fb13a9534be625b324364 DependenciesID=4c4809a2009683628e83e407a7e0f29d StaticDependenciesID=309755bb580484955a1846ce5c91f6cd
+Importing 'GUID: 30727305f24990e4e832cfd3800137a9 - Path: Assets/Resources/DOTweenSettings.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 30727305f24990e4e832cfd3800137a9' -> (Import Result ID: 'ac15e7b1fce05ee6e1a1c4d23cf98b9e') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=be27a495d042d54cca62e2c8014424e9 DependenciesID=afbc252a7b49ad9c9bbe1df334c63941 StaticDependenciesID=949a62bf83f2170eb90da160e9144154
+Importing 'GUID: 466e1a3b5e0ba4a0b9c4fa3bb30ae19c - Path: Assets/ProjectSettings/UIEffectProjectSettings.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 466e1a3b5e0ba4a0b9c4fa3bb30ae19c' -> (Import Result ID: '145317ccc197488c8c89ffb234735790') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=89dfe3751a1455d9ba6c59ecaa7ceee7 DependenciesID=e27ad6d7020c983e44135fb507940c1d StaticDependenciesID=7d9ec7f8cee3ba8032cab6d84d1c8912
+Shutting down MSBuild server...
+Shutting down VB/C# compiler server...
+VB/C# compiler server shut down successfully.
+MSBuild server shut down successfully.
+Script 'Library/PackageCache/com.unity.services.multiplayer@a6d6ce688d71/Server/Unity.Services.Multiplayer.Server.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.scaffold.liveops@89b777e21630/Tests/Scaffold.LiveOps.Tests.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.unity.remote-config-runtime@06ad4d20f49e/Tests/Runtime/com.unity.remote-config-runtime.tests.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.unity.addressables@8460f1c9c927/Tests/Runtime/ResourceManager/Unity.ResourceManager.Tests.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.unity.collections@a43cabe808ca/DocCodeSamples.Tests/DocCodeSamples.Tests.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.scaffold.mvvm@2bb6f7b8bb03/Tests/Scaffold.MVVM.Tests.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.unity.multiplayer.tools@f5f96dc4e38c/Tests/Runtime/NetworkSimulator/Unity.Multiplayer.Tools.NetworkSimulator.Tests.Runtime.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.unity.services.authentication@9a8b7a204688/Server/Unity.Services.Authentication.Server.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.scaffold.addressables@3ba8d82fa829/Tests/Scaffold.Addressables.Tests.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.unity.addressables@8460f1c9c927/Tests/Runtime/Unity.Addressables.Runtime.Tests.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.scaffold.events@20ca136775ba/Tests/Scaffold.Events.Tests.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.unity.scriptablebuildpipeline@36e3b5898ee2/Tests/Runtime/TestAssets/Unity.ScriptableBuildPipelineTests.Runtime.Tests.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.unity.multiplayer.center.quickstart@c025a98340af/Tests/Runtime/Unity.Multiplayer.Center.GetStarted.Tests.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.scaffold.autopacker@afa8b9cd6289/Tests/Scaffold.Autopacker.Tests.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.unity.collections@a43cabe808ca/Unity.Collections.PerformanceTests/Unity.Collections.PerformanceTests.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.scaffold.cloudcode@eb5593c458ad/Tests/Scaffold.CloudCode.Tests.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.scaffold.model@cd827fe8ffd8/Tests/Scaffold.MVVM.Model.Tests.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.unity.timeline@8cd8509afae5/DocCodeExamples/DocCodeExamples.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.unity.localization@b0a588a05f2a/DocCodeSamples.Tests/DocCodeSamples.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.unity.multiplayer.tools@f5f96dc4e38c/Tests/Runtime/Adapters/Unity.Multiplayer.Tools.Adapters.Tests.Editor.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.unity.multiplayer.center@b860850997d0/Tests/Runtime/Unity.Multiplayer.Center.Tests.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.scaffold.viewmodel@6b3a95ce93e5/Tests/Scaffold.MVVM.ViewModel.Tests.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.unity.collections@a43cabe808ca/Unity.Collections.Tests/NativeSortTests.tt' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.unity.render-pipelines.core@0733e3164aa3/Tests/Runtime/Threading/FunctionTestsGroup.compute' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.scaffold.states@6c404f65830a/Tests/Scaffold.States.Tests.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.scaffold.navigation@4ebff89ec676/Tests/Scaffold.Navigation.Tests.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.unity.2d.psdimporter@5d82044f9e43/Tests/EditorTests/Unity.2D.Psdimporter.EditorTests.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.unity.render-pipelines.core@0733e3164aa3/Tests/Runtime/PathTracing/UniformAlbedoMetaPass.shader' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.unity.ugui@377fd60ad87b/Tests/Runtime/UGUI/UnityEngine.UI.Tests.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.scaffold.view@c8681b5e4438/Tests/Scaffold.MVVM.View.Tests.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.unity.inputsystem@21a28c3a6c83/Tests/IntegrationTests/Unity.InputSystem.IntegrationTests.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.unity.collections@a43cabe808ca/Unity.Collections.Tests.Playmode/FixedListPlayModeTests.tt' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.unity.multiplayer.widgets@5e458f651b7a/Runtime/Vivox/Unity.Multiplayer.Widgets.Vivox.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.scaffold.ugs@f0212343e8ea/Tests/Scaffold.Ugs.Tests.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.unity.ugui@377fd60ad87b/Tests/Runtime/TMP/Unity.TextMeshPro.Tests.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.unity.multiplayer.tools@f5f96dc4e38c/Adapters/MockNgo/Unity.Multiplayer.Tools.Adapters.MockNgo.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.unity.render-pipelines.universal@276396f56b3f/Tests/Runtime/Unity.RenderPipelines.Universal.Runtime.Tests.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.scaffold.sceneflow@a98cbe547681/Tests/Scaffold.SceneFlow.Tests.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.unity.multiplayer.center.quickstart@c025a98340af/Runtime/NetcodeForEntitiesExample_Deprecated/Unity.Multiplayer.Center.NetcodeForEntitiesExample.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.unity.netcode.gameobjects@0f12e689d980/Tests/Runtime/Unity.Netcode.Runtime.Tests.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.unity.multiplayer.tools@f5f96dc4e38c/Tests/Runtime/NetcodeForGameObjects/Unity.Multiplauyer.Tools.GameObjects.Tests.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.unity.scriptablebuildpipeline@36e3b5898ee2/Tests/Runtime/Unity.ScriptableBuildPipeline.Tests.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.scaffold.core@6244d1165ace/Runtime/Scaffold.Core.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.scaffold.pooling@dd3b79a549a2/Tests/Scaffold.Pooling.Tests.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.scaffold.maps@9996e6fd422e/Tests/Scaffold.Maps.Tests.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.unity.collections@a43cabe808ca/Unity.Collections.BurstCompatibilityGen/Unity.Collections.BurstCompatibilityGen.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Refreshing native plugins compatible for Editor in 4.08 ms, found 4 plugins.
+
+Asset Pipeline Refresh (id=e0b64308269ab41fabef2d5ed233158a): Total: 2.221 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+	(Values over 0.05ms)
+	Summary:
+		Imports: total=4 (actual=4, local cache=0, cache server=0)
+		Asset DB Process Time: managed=1 ms, native=114 ms
+		Asset DB Callback time: managed=2099 ms, native=5 ms
+		Scripting: domain reloads=0, domain reload time=0 ms, compile time=0 ms, other=0 ms
+		Project Asset Count: scripts=3902, non-scripts=5548
+		Asset File Changes: new=0, changed=1, moved=0, deleted=0
+		Scan Filter Count: 7
+	ApplyChangesToAssetFolders: 0.458ms
+	Scan: 6.630ms
+	Collect global state as custom dependencies: 0.059ms
+	OnSourceAssetsModified: 0.057ms
+	ProcessAssetsWithTransientArtifactChanges: 0.206ms
+	CategorizeAssets: 20.924ms
+	ImportOutOfDateAssets: 78.533ms (19.938ms without children)
+		ImportManagerImport: 10.227ms (1.395ms without children)
+		ReloadNativeAssets: 0.168ms
+		UnloadImportedAssets: 0.125ms
+		EnsureUptoDateAssetsAreRegisteredWithGuidPM: 1.095ms
+		ImportSchedulerStart: 46.975ms
+	PostProcessAllAssets: 2100.257ms
+		XRBuildSystem.XRAssetImported 0.686ms
+		MonoPostProcessAllAssets: 2099.437ms
+			SyncVS.PostprocessSyncProject 2084.241ms
+			UtilityWindowPostProcessor.OnPostprocessAllAssets 10.872ms
+			PackageManagerResolver.OnPostprocessAllAssets 0.894ms
+			TMPro_TexturePostProcessor.OnPostprocessAllAssets 0.619ms
+			AddressablesAssetPostProcessor.OnPostprocessAllAssets 0.462ms
+			VersionHandlerImpl.OnPostprocessAllAssets 0.208ms
+			ShaderGraphAssetPostProcessor.OnPostprocessAllAssets 0.200ms
+			EditorEvents.OnPostprocessAllAssets 0.151ms
+			AssetDatabaseCallbacks.OnPostprocessAllAssets 0.151ms
+			AssetPostprocessor.OnPostprocessAllAssets 0.101ms
+			NugetAssetPostprocessor.OnPostprocessAllAssets 0.095ms
+			AssetPostprocessorEditor.OnPostprocessAllAssets 0.091ms
+			CgincPathSync.OnPostprocessAllAssets 0.074ms
+			SpriteEditorTexturePostprocessor.OnPostprocessAllAssets 0.055ms
+	PostAssetChangesProfiler: 4.299ms
+	GatherAllCurrentPrimaryImportResultRevisions: 0.509ms
+	UnloadStreamsBegin: 0.264ms
+	PersistCurrentRevisions: 0.300ms
+	Untracked: 7.495ms
+
+Thread 0x30bcc7000 may have been prematurely finalized
+Input System module state changed to: ShutdownInProgress.
+Input Polling Thread exited.
+Input System module state changed to: Shutdown.
+[Physics::Module] Cleanup current backend.
+[Physics::Module] Id: 0xf2b8ea05
+[Licensing::IpcConnector] LicenseClient-leonardosilva-6000.5.3-notifications channel disconnected successfully.
+[Licensing::IpcConnector] LicenseClient-leonardosilva-6000.5.3 channel disconnected successfully.
+Thread 0x1709e7000 may have been prematurely finalized
+Thread 0x170aff000 may have been prematurely finalized
+Thread 0x170d2f000 may have been prematurely finalized
+Thread 0x170b8b000 may have been prematurely finalized
+Thread 0x170a73000 may have been prematurely finalized
+Thread 0x170c17000 may have been prematurely finalized
+Thread 0x170ca3000 may have been prematurely finalized
+AcceleratorClientConnectionCallback - disconnected - :0
+Thread 0x172727000 may have been prematurely finalized
+info: Microsoft.Hosting.Lifetime[0]
+      Application is shutting down...
+Cleanup mono
+CodeReloadManager destroyed
+info: Unity.ILPP.Runner.PostProcessingAssemblyLoadContext[0]
+      ALC ILPP context 1 is unloading
+18:29:18.867 |V| RiderPlugin                    | :1                             | AppDomain.CurrentDomain.DomainUnload lifetimeDefinition.Terminate
+debugger-agent: Unable to listen on 44

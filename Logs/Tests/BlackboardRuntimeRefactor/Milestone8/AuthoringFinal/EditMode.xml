@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="7" result="Passed" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-07-27 21:03:23Z" end-time="2026-07-27 21:03:23Z" duration="0.068227">
+  <test-suite type="TestSuite" id="1000" name="Scaffold" fullname="Scaffold" runstate="Runnable" testcasecount="278" result="Passed" start-time="2026-07-27 21:03:23Z" end-time="2026-07-27 21:03:23Z" duration="0.068227" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="1394" name="Scaffold.VisualScripting.Editor.Tests.dll" fullname="/Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/ScriptAssemblies/Scaffold.VisualScripting.Editor.Tests.dll" runstate="Runnable" testcasecount="7" result="Passed" start-time="2026-07-27 21:03:23Z" end-time="2026-07-27 21:03:23Z" duration="0.057358" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="43993" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="1395" name="Scaffold" fullname="Scaffold" runstate="Runnable" testcasecount="7" result="Passed" start-time="2026-07-27 21:03:23Z" end-time="2026-07-27 21:03:23Z" duration="0.056636" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1396" name="VisualScripting" fullname="Scaffold.VisualScripting" runstate="Runnable" testcasecount="7" result="Passed" start-time="2026-07-27 21:03:23Z" end-time="2026-07-27 21:03:23Z" duration="0.056339" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestSuite" id="1397" name="Editor" fullname="Scaffold.VisualScripting.Editor" runstate="Runnable" testcasecount="7" result="Passed" start-time="2026-07-27 21:03:23Z" end-time="2026-07-27 21:03:23Z" duration="0.056006" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="TestSuite" id="1398" name="Tests" fullname="Scaffold.VisualScripting.Editor.Tests" runstate="Runnable" testcasecount="7" result="Passed" start-time="2026-07-27 21:03:23Z" end-time="2026-07-27 21:03:23Z" duration="0.055749" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-suite type="TestFixture" id="1386" name="BlackboardAuthoringControllerTests" fullname="Scaffold.VisualScripting.Editor.Tests.BlackboardAuthoringControllerTests" classname="Scaffold.VisualScripting.Editor.Tests.BlackboardAuthoringControllerTests" runstate="Runnable" testcasecount="7" result="Passed" start-time="2026-07-27 21:03:23Z" end-time="2026-07-27 21:03:23Z" duration="0.054900" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="1388" name="DuplicateAndClipboard_RegenerateIdsAndPreserveUnityReferences" fullname="Scaffold.VisualScripting.Editor.Tests.BlackboardAuthoringControllerTests.DuplicateAndClipboard_RegenerateIdsAndPreserveUnityReferences" methodname="DuplicateAndClipboard_RegenerateIdsAndPreserveUnityReferences" classname="Scaffold.VisualScripting.Editor.Tests.BlackboardAuthoringControllerTests" runstate="Runnable" seed="350029379" result="Passed" start-time="2026-07-27 21:03:23Z" end-time="2026-07-27 21:03:23Z" duration="0.024403" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1392" name="DuplicationUtility_RegeneratesEveryDefinitionId" fullname="Scaffold.VisualScripting.Editor.Tests.BlackboardAuthoringControllerTests.DuplicationUtility_RegeneratesEveryDefinitionId" methodname="DuplicationUtility_RegeneratesEveryDefinitionId" classname="Scaffold.VisualScripting.Editor.Tests.BlackboardAuthoringControllerTests" runstate="Runnable" seed="2117900835" result="Passed" start-time="2026-07-27 21:03:23Z" end-time="2026-07-27 21:03:23Z" duration="0.001367" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1387" name="ManagedOperations_AuthorCompleteGraphWithoutComponents" fullname="Scaffold.VisualScripting.Editor.Tests.BlackboardAuthoringControllerTests.ManagedOperations_AuthorCompleteGraphWithoutComponents" methodname="ManagedOperations_AuthorCompleteGraphWithoutComponents" classname="Scaffold.VisualScripting.Editor.Tests.BlackboardAuthoringControllerTests" runstate="Runnable" seed="1453919837" result="Passed" start-time="2026-07-27 21:03:23Z" end-time="2026-07-27 21:03:23Z" duration="0.003630" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1390" name="ReorderGroupingLayoutTintAndSelection_AreAuthoringOnly" fullname="Scaffold.VisualScripting.Editor.Tests.BlackboardAuthoringControllerTests.ReorderGroupingLayoutTintAndSelection_AreAuthoringOnly" methodname="ReorderGroupingLayoutTintAndSelection_AreAuthoringOnly" classname="Scaffold.VisualScripting.Editor.Tests.BlackboardAuthoringControllerTests" runstate="Runnable" seed="506780645" result="Passed" start-time="2026-07-27 21:03:23Z" end-time="2026-07-27 21:03:23Z" duration="0.004476" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1391" name="Resolver_NavigatesDirectAssetAndVariableTemplates" fullname="Scaffold.VisualScripting.Editor.Tests.BlackboardAuthoringControllerTests.Resolver_NavigatesDirectAssetAndVariableTemplates" methodname="Resolver_NavigatesDirectAssetAndVariableTemplates" classname="Scaffold.VisualScripting.Editor.Tests.BlackboardAuthoringControllerTests" runstate="Runnable" seed="919273466" result="Passed" start-time="2026-07-27 21:03:23Z" end-time="2026-07-27 21:03:23Z" duration="0.002127" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1393" name="TypeCatalog_FindsPlainTriggersAndVariables" fullname="Scaffold.VisualScripting.Editor.Tests.BlackboardAuthoringControllerTests.TypeCatalog_FindsPlainTriggersAndVariables" methodname="TypeCatalog_FindsPlainTriggersAndVariables" classname="Scaffold.VisualScripting.Editor.Tests.BlackboardAuthoringControllerTests" runstate="Runnable" seed="2109328247" result="Passed" start-time="2026-07-27 21:03:23Z" end-time="2026-07-27 21:03:23Z" duration="0.002366" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1389" name="UndoRedo_RestoresManagedDefinitionMutation" fullname="Scaffold.VisualScripting.Editor.Tests.BlackboardAuthoringControllerTests.UndoRedo_RestoresManagedDefinitionMutation" methodname="UndoRedo_RestoresManagedDefinitionMutation" classname="Scaffold.VisualScripting.Editor.Tests.BlackboardAuthoringControllerTests" runstate="Runnable" seed="747058854" result="Passed" start-time="2026-07-27 21:03:23Z" end-time="2026-07-27 21:03:23Z" duration="0.005715" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <output><![CDATA[Saving results to: /Users/leonardosilva/Library/Application Support/DDW/Scaffold/TestResults.xml
+]]></output>
+                </test-case>
+              </test-suite>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

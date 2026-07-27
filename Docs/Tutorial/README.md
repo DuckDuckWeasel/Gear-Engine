@@ -1,6 +1,7 @@
 # Scaffold Tutorial Plugin
 
-This module provides a decoupled, data-driven tutorial system integrated with Fungus for visual scripting and Scaffold LiveOps (CloudCode) for progress persistence.
+This module provides a decoupled, data-driven tutorial system integrated with
+Scaffold Visual Scripting and Scaffold LiveOps for progress persistence.
 
 ## 1. What We Have Built (Current Setup)
 
@@ -16,9 +17,10 @@ The architecture is composed of three main layers:
 
 ### C. Integration Layer
 - **LiveOps / GameApi**: The `CompleteTutorialOptimisticHandler` intercepts `CompleteTutorialRequest` to immediately simulate success locally (Optimistic update) while the server processes the state change in the background.
-- **Fungus Integration**: 
-  - `TutorialProgressControllerVariable`: Allows Fungus Blackboards to hold a reference to our Controller.
-  - `WaitTutorialRequirementCommand`: A custom Fungus Command that pauses a blackboard block until a specific `TutorialRequirement` returns true.
+- **Scaffold Visual Scripting integration**:
+  - `ScaffoldTutorialAdapter`: Bridges plain Blackboard block-start events to the tutorial controller from the optional `BlackboardBehaviour` wrapper.
+  - `TutorialProgressControllerVariable`: A serializable plain-C# compatibility value for actions that need an explicit controller reference.
+  - `WaitTutorialRequirementCommand`: A managed action definition that schedules requirement polling through the Blackboard execution context.
 
 ---
 
@@ -49,20 +51,25 @@ public class ScreenStateRequirement : TutorialRequirement
 2. Add your `TUT_WelcomeHub` to the **Start Tutorials** (or Battle Tutorials) list.
 *This makes the system aware that this tutorial exists and should be checked for initialization.*
 
-### Step 4: Create the Visual Flow (Fungus)
-1. Open your scene or UI prefab and create a **Fungus Blackboard**.
-2. In the Fungus Variables window, create a new variable of type **Tutorial > TutorialProgressController**. (You can use this to call Controller methods if needed).
-3. Create a Block in Fungus for the first step (e.g., "Show Dialogue").
-4. Add the standard Fungus commands (Say, Portrait, Mask UI).
+### Step 4: Create the Visual Flow
+1. Add `BlackboardBehaviour` to the scene or UI prefab, or create a
+   `BlackboardDefinitionAsset` for a reusable flow.
+2. Choose the Direct or ScriptableObject source in the Blackboard inspector and open
+   the managed Blackboard window.
+3. Add a managed Block for the first step, such as `Show Dialogue`.
+4. Add the required managed action definitions, such as Say, Portrait, and UI focus.
+   These are serialized data; the editor does not add Block or action components.
 
 ### Step 5: Wait for Player Actions (The "Wait" Command)
 When you need the player to actually do something (like click a specific button) before the tutorial advances:
-1. In your Fungus Block, add the custom command: **Tutorial > Wait Tutorial Requirement**.
+1. In the managed Block, add **Tutorial > Wait Tutorial Requirement**.
 2. Drag and drop the specific `TutorialRequirement` ScriptableObject that represents the action you are waiting for (e.g., a `ButtonClickedRequirement` for the "Upgrade" button).
-3. The Blackboard will pause on this node until the player clicks the button (or meets the requirement), then it will resume.
+3. The plain Blackboard runtime keeps the action running through its injected
+   scheduler until the requirement succeeds, then resumes the Block.
 
 ### Step 6: Complete the Tutorial
-At the final block of your Fungus Blackboard:
-1. You can use the Fungus **Invoke Method** command to call `CompleteTutorial()` on the `TutorialProgressController`.
+At the final managed Blackboard Block:
+1. Use the managed **Invoke Method** action, or a game-specific action, to call
+   `CompleteTutorial()` on the `TutorialProgressController`.
 2. The Controller will dispatch the `CompleteTutorialRequest` to the **GameApi**.
 3. Our `CompleteTutorialOptimisticHandler` instantly validates it on the client, grants rewards if any, and updates the UI without waiting for the server roundtrip.

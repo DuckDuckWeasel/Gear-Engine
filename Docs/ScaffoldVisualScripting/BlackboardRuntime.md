@@ -15,8 +15,11 @@ It can be instantiated by code without a `GameObject`; Unity hosting is optional
   Direct, ScriptableObject, and BlackboardVariable template reference.
 - `Scaffold.VisualScripting.Unity` owns the optional wrapper, Unity service adapters,
   VContainer registrations, and callback relays.
+- `Scaffold.VisualScripting.Editor` owns managed-graph inspectors, the Blackboard
+  window, authoring operations, and execution feedback.
 
-Dependencies point from Unity to Authoring to Core. Core never depends on the wrapper.
+Dependencies point from Editor/Unity to Authoring to Core. Core never depends on the
+wrapper or editor.
 
 ## Definition ownership
 
@@ -82,11 +85,6 @@ Scheduled actions use `IFrameScheduler.Schedule`, `ScheduleNextFrame`, or
 `ScheduleRoutine`. Returned handles are owned by the executing action and disposed
 when it completes or is interrupted. Unity coroutine hosts are not part of the Core
 execution path.
-
-During the pre-cutover milestones, the Gear action bridge retains a legacy execution
-overload so the characterized component runner continues compiling. This overload is
-not a Core API and is deleted with the legacy component graph during the breaking
-cutover.
 
 ## Runtime lifecycle
 
@@ -179,3 +177,29 @@ those IDs.
 During Play Mode, the window reads status from the wrapper's plain runtime by stable
 definition ID. Feedback is observational: it does not write transient execution state
 into the serialized definition.
+
+## Breaking cutover
+
+The component-owned graph is no longer supported. Blackboard, Block, Command,
+EventHandler, Action Invoker, save-manager, hidden-global, and editor node components
+were removed together with their serialized GUIDs. Existing serialized component
+graphs require deliberate reconstruction as managed definitions; no migration shim is
+included.
+
+The rebuilt `Blackboard.prefab` contains only `BlackboardBehaviour` as the optional
+Unity host. `TestTutorialScene.unity`, the execution-matrix scene, scene builders, Gear
+actions, and tutorial integration all use the same managed definition and runtime
+APIs. Compatibility variable value classes that remain under the original namespace
+are serializable plain C# values and do not derive from `MonoBehaviour`.
+
+## Verification
+
+The Core test namespace creates, clones, starts, ticks, executes, stops, and disposes
+Blackboards without `GameObject`, `AddComponent`, coroutine hosts, or `[UnityTest]`.
+Static checks reject engine-owned execution in Core and scan scenes, prefabs, and
+assets for removed component GUIDs.
+
+The repository gate runs the asmdef reference audit, pragma policy, Unity compilation,
+and the four Visual Scripting assembly analyzer builds on macOS. Focused EditMode and
+PlayMode runs write NUnit XML, Editor logs, and contextual reports under
+`Logs/Tests/BlackboardRuntimeRefactor/`.

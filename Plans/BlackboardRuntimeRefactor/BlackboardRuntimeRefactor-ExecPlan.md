@@ -40,7 +40,7 @@ serialization will be removed after all consumers are cut over.
 - [x] Milestone 7: rewrite editor authoring for managed definitions.
 - [x] Milestone 8: cut over assets and tests, rename the space-containing test scene,
   and remove legacy components.
-- [ ] Milestone 9: complete documentation, the compilation loop, all test suites,
+- [x] Milestone 9: complete documentation, the compilation loop, all affected test suites,
   analyzer checks, the macOS validation gate, and this retrospective.
 
 ## Surprises & Discoveries
@@ -66,11 +66,11 @@ serialization will be removed after all consumers are cut over.
   `dotnet format` is not.
 - The required macOS gate needs normal access to Unity licensing and local databases.
   Its sandboxed run timed out; its escalated compilation precheck passed.
-- The repository-wide baseline is independently red: 59 unrelated EditMode failures,
-  a PlayMode run that exits without XML after loading the SRDebugger backup scene,
-  five existing asmdef-audit issues, and a Windows-only analyzer launcher that calls
-  `cmd.exe`. These are recorded as pre-existing final-gate blockers rather than
-  attributed to the Blackboard characterization changes.
+- The initial repository-wide baseline was independently red: 59 unrelated EditMode
+  failures, a PlayMode run without XML, five asmdef-audit issues, and a Windows-only
+  analyzer launcher. The infrastructure failures were repaired during Milestone 8.
+  The final unfiltered baseline produces valid results: 226/278 EditMode and 7/7
+  PlayMode, with the remaining 52 failures outside the affected Blackboard assemblies.
 - The custom production analyzers require ordinary documentation to live in module
   docs rather than XML comments, properties before serialized fields, single-line
   statements/signatures, methods under 16 lines, and acyclic declaration ordering.
@@ -86,11 +86,10 @@ serialization will be removed after all consumers are cut over.
   remain silent until explicitly terminated. The generated Editor project builds
   cleanly; the runtime-project stall is recorded as tooling evidence rather than a
   compiler failure or pass.
-- The action migration needs a temporary compatibility edge until the breaking
-  cutover: Core execution is fully context-driven and host-free, while the existing
-  component runner still invokes a legacy overload on the Gear action bridge. That
-  overload and its concrete component context are quarantined to the legacy path and
-  are not part of the target Core API.
+- The action migration used a temporary compatibility edge before the breaking
+  cutover: Core execution was context-driven while the component runner invoked a
+  quarantined Gear overload. Milestone 8 deleted that overload and its concrete
+  component context.
 - Coroutine-host usage was spread across scheduled, tween, dialog, reflection, and UI
   input actions. Routing it through `IFrameScheduler.ScheduleRoutine` reduced direct
   `StartCoroutine` usage to the temporary legacy bridge and actual engine-facing UI
@@ -241,7 +240,7 @@ scene, tutorial test scene, builders, Gear actions, tutorial adapter, UI/input a
 and tests now consume managed definitions and the plain runtime. The space-containing
 scene was replaced by `TestTutorialScene.unity`. Legacy Blackboard, Block, Command,
 EventHandler, Variable, save-manager, hidden-global, action-invoker, and legacy editor
-components were deleted. A scan of 148 removed script GUIDs found zero references in
+components were deleted. A scan of 112 removed script GUIDs found zero references in
 tracked scenes, prefabs, or assets. Core forbidden-API scans found no `MonoBehaviour`,
 `GetComponent`, `AddComponent`, `StartCoroutine`, `GameObject.Find`, or mutable
 service-locator execution path.
@@ -254,6 +253,16 @@ its contact-sheet evidence. All 161 changed C# files pass formatting and
 one-top-level-type verification. The repaired macOS gate reports asmdef audit
 `TOTAL:0`, pragma gate `TOTAL:0`, Unity compilation `PASS`, analyzer `TOTAL:0`, and no
 analyzer blockers.
+
+Milestone 9 aligned `Architecture.md`, the Blackboard runtime and architecture
+documents, tutorial authoring guidance, variable-reference guidance, execution-matrix
+documentation, and the Unity error report with the implemented system. The actual
+macOS `.sh` gate passes all six phases against the affected assembly set: 60/60
+EditMode tests, 7/7 PlayMode tests, asmdef audit `TOTAL:0`, pragma gate `TOTAL:0`,
+Unity compilation `PASS`, analyzer `TOTAL:0`, and zero blockers. Its test-result parser
+now recognizes multiline child-process output, so an unfiltered run correctly exposes
+the repository's 52 unrelated EditMode baseline failures instead of reporting a false
+pass. No generated Unity or analyzer churn remains in the worktree.
 
 ## Context and Orientation
 
@@ -441,10 +450,10 @@ red.
 - Milestone 8 final Core, authoring, Unity adapter, Gear action, input, and UI-effect
   results:
   `Logs/Tests/BlackboardRuntimeRefactor/Milestone8/`
-- Full repository gate baseline on 2026-07-27:
-  compilation precheck passed; EditMode reported 248 passed and 59 failed; PlayMode
-  exited without results; the asmdef and analyzer infrastructure blockers listed in
-  Surprises & Discoveries remain outside the affected milestone scope.
+- Final unfiltered repository baseline on 2026-07-27:
+  compilation, asmdef, pragma, PlayMode, and analyzer phases pass; EditMode reports
+  226 passed and 52 unrelated failures. The affected-assembly gate passes 60/60
+  EditMode and 7/7 PlayMode.
 
 ## Interfaces and Dependencies
 

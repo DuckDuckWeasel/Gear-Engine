@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="17" result="Passed" total="17" passed="17" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-07-27 20:08:58Z" end-time="2026-07-27 20:08:58Z" duration="0.1211381">
+  <test-suite type="TestSuite" id="1000" name="Scaffold" fullname="Scaffold" runstate="Runnable" testcasecount="278" result="Passed" start-time="2026-07-27 20:08:58Z" end-time="2026-07-27 20:08:58Z" duration="0.121138" total="17" passed="17" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="1266" name="Game.GearEngine.Tests.dll" fullname="/Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/ScriptAssemblies/Game.GearEngine.Tests.dll" runstate="Runnable" testcasecount="120" result="Passed" start-time="2026-07-27 20:08:58Z" end-time="2026-07-27 20:08:58Z" duration="0.110855" total="17" passed="17" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="30967" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="1267" name="GearEngine" fullname="GearEngine" runstate="Runnable" testcasecount="120" result="Passed" start-time="2026-07-27 20:08:58Z" end-time="2026-07-27 20:08:58Z" duration="0.108837" total="17" passed="17" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1268" name="GearEngine" fullname="GearEngine.GearEngine" runstate="Runnable" testcasecount="120" result="Passed" start-time="2026-07-27 20:08:58Z" end-time="2026-07-27 20:08:58Z" duration="0.106835" total="17" passed="17" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestSuite" id="1269" name="Tests" fullname="GearEngine.GearEngine.Tests" runstate="Runnable" testcasecount="120" result="Passed" start-time="2026-07-27 20:08:58Z" end-time="2026-07-27 20:08:58Z" duration="0.104625" total="17" passed="17" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="TestSuite" id="1270" name="Editor" fullname="GearEngine.GearEngine.Tests.Editor" runstate="Runnable" testcasecount="120" result="Passed" start-time="2026-07-27 20:08:58Z" end-time="2026-07-27 20:08:58Z" duration="0.102751" total="17" passed="17" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-suite type="TestFixture" id="1231" name="UIEffectActionsTests" fullname="GearEngine.GearEngine.Tests.Editor.UIEffectActionsTests" classname="GearEngine.GearEngine.Tests.Editor.UIEffectActionsTests" runstate="Runnable" testcasecount="17" result="Passed" start-time="2026-07-27 20:08:58Z" end-time="2026-07-27 20:08:58Z" duration="0.098166" total="17" passed="17" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="1244" name="ApplyEffect_WithBlackboardConfigurationVariable_AssignsMaterial" fullname="GearEngine.GearEngine.Tests.Editor.UIEffectActionsTests.ApplyEffect_WithBlackboardConfigurationVariable_AssignsMaterial" methodname="ApplyEffect_WithBlackboardConfigurationVariable_AssignsMaterial" classname="GearEngine.GearEngine.Tests.Editor.UIEffectActionsTests" runstate="Runnable" seed="994486301" result="Passed" start-time="2026-07-27 20:08:58Z" end-time="2026-07-27 20:08:58Z" duration="0.025225" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1243" name="ApplyEffect_WithMaterialConfiguration_AssignsMaterialAndDisablesNativeEffect" fullname="GearEngine.GearEngine.Tests.Editor.UIEffectActionsTests.ApplyEffect_WithMaterialConfiguration_AssignsMaterialAndDisablesNativeEffect" methodname="ApplyEffect_WithMaterialConfiguration_AssignsMaterialAndDisablesNativeEffect" classname="GearEngine.GearEngine.Tests.Editor.UIEffectActionsTests" runstate="Runnable" seed="799839090" result="Passed" start-time="2026-07-27 20:08:58Z" end-time="2026-07-27 20:08:58Z" duration="0.002736" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1245" name="ApplyEffect_WithNativeConfiguration_LoadsNativePreset" fullname="GearEngine.GearEngine.Tests.Editor.UIEffectActionsTests.ApplyEffect_WithNativeConfiguration_LoadsNativePreset" methodname="ApplyEffect_WithNativeConfiguration_LoadsNativePreset" classname="GearEngine.GearEngine.Tests.Editor.UIEffectActionsTests" runstate="Runnable" seed="609314666" result="Passed" start-time="2026-07-27 20:08:58Z" end-time="2026-07-27 20:08:58Z" duration="0.006503" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1242" name="ApplyLoopMaterial_AssignsMaterialAndDisablesNativeEffect" fullname="GearEngine.GearEngine.Tests.Editor.UIEffectActionsTests.ApplyLoopMaterial_AssignsMaterialAndDisablesNativeEffect" methodname="ApplyLoopMaterial_AssignsMaterialAndDisablesNativeEffect" classname="GearEngine.GearEngine.Tests.Editor.UIEffectActionsTests" runstate="Runnable" seed="547125148" result="Passed" start-time="2026-07-27 20:08:58Z" end-time="2026-07-27 20:08:58Z" duration="0.000741" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1232" name="ApplyPreset_AddsMissingEffectToDynamicTarget" fullname="GearEngine.GearEngine.Tests.Editor.UIEffectActionsTests.ApplyPreset_AddsMissingEffectToDynamicTarget" methodname="ApplyPreset_AddsMissingEffectToDynamicTarget" classname="GearEngine.GearEngine.Tests.Editor.UIEffectActionsTests" runstate="Runnable" seed="1184849817" result="Passed" start-time="2026-07-27 20:08:58Z" end-time="2026-07-27 20:08:58Z" duration="0.001070" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1247" name="AssetCatalog_AllPresetsResolveAndApply" fullname="GearEngine.GearEngine.Tests.Editor.UIEffectActionsTests.AssetCatalog_AllPresetsResolveAndApply" methodname="AssetCatalog_AllPresetsResolveAndApply" classname="GearEngine.GearEngine.Tests.Editor.UIEffectActionsTests" runstate="Runnable" seed="684685374" result="Passed" start-time="2026-07-27 20:08:58Z" end-time="2026-07-27 20:08:58Z" duration="0.027432" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1249" name="ClearAllUIEffects_ClearsActiveTutorialFocus" fullname="GearEngine.GearEngine.Tests.Editor.UIEffectActionsTests.ClearAllUIEffects_ClearsActiveTutorialFocus" methodname="ClearAllUIEffects_ClearsActiveTutorialFocus" classname="GearEngine.GearEngine.Tests.Editor.UIEffectActionsTests" runstate="Runnable" seed="1524901153" result="Passed" start-time="2026-07-27 20:08:58Z" end-time="2026-07-27 20:08:58Z" duration="0.006565" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <output><![CDATA[[TutorialFocusService] Target has a GraphicRaycaster that is NOT a FilteredGraphicRaycaster. Pointer Enter/Click events might not fire for this target.
+]]></output>
+                </test-case>
+                <test-case id="1239" name="ClearEffect_ResetsTheEffectToTheDefaultPreset" fullname="GearEngine.GearEngine.Tests.Editor.UIEffectActionsTests.ClearEffect_ResetsTheEffectToTheDefaultPreset" methodname="ClearEffect_ResetsTheEffectToTheDefaultPreset" classname="GearEngine.GearEngine.Tests.Editor.UIEffectActionsTests" runstate="Runnable" seed="726699824" result="Passed" start-time="2026-07-27 20:08:58Z" end-time="2026-07-27 20:08:58Z" duration="0.000482" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1248" name="ClearLoopMaterial_RestoresOriginalMaterialAndNativeEffect" fullname="GearEngine.GearEngine.Tests.Editor.UIEffectActionsTests.ClearLoopMaterial_RestoresOriginalMaterialAndNativeEffect" methodname="ClearLoopMaterial_RestoresOriginalMaterialAndNativeEffect" classname="GearEngine.GearEngine.Tests.Editor.UIEffectActionsTests" runstate="Runnable" seed="316766921" result="Passed" start-time="2026-07-27 20:08:58Z" end-time="2026-07-27 20:08:58Z" duration="0.000507" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1240" name="ControlTweener_SetsManualTimeOnDynamicTarget" fullname="GearEngine.GearEngine.Tests.Editor.UIEffectActionsTests.ControlTweener_SetsManualTimeOnDynamicTarget" methodname="ControlTweener_SetsManualTimeOnDynamicTarget" classname="GearEngine.GearEngine.Tests.Editor.UIEffectActionsTests" runstate="Runnable" seed="1157196922" result="Passed" start-time="2026-07-27 20:08:58Z" end-time="2026-07-27 20:08:58Z" duration="0.001608" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1241" name="CyclePreset_ReplacesTheEffectAndUpdatesTheLabel" fullname="GearEngine.GearEngine.Tests.Editor.UIEffectActionsTests.CyclePreset_ReplacesTheEffectAndUpdatesTheLabel" methodname="CyclePreset_ReplacesTheEffectAndUpdatesTheLabel" classname="GearEngine.GearEngine.Tests.Editor.UIEffectActionsTests" runstate="Runnable" seed="308785428" result="Passed" start-time="2026-07-27 20:08:58Z" end-time="2026-07-27 20:08:58Z" duration="0.003481" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1246" name="ExecutePreset_WithNativePreset_RestoresTheNativeMaterialPath" fullname="GearEngine.GearEngine.Tests.Editor.UIEffectActionsTests.ExecutePreset_WithNativePreset_RestoresTheNativeMaterialPath" methodname="ExecutePreset_WithNativePreset_RestoresTheNativeMaterialPath" classname="GearEngine.GearEngine.Tests.Editor.UIEffectActionsTests" runstate="Runnable" seed="1646716977" result="Passed" start-time="2026-07-27 20:08:58Z" end-time="2026-07-27 20:08:58Z" duration="0.000622" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1238" name="SetEnabled_UsesTheDynamicTarget" fullname="GearEngine.GearEngine.Tests.Editor.UIEffectActionsTests.SetEnabled_UsesTheDynamicTarget" methodname="SetEnabled_UsesTheDynamicTarget" classname="GearEngine.GearEngine.Tests.Editor.UIEffectActionsTests" runstate="Runnable" seed="1260056467" result="Passed" start-time="2026-07-27 20:08:58Z" end-time="2026-07-27 20:08:58Z" duration="0.000450" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-suite type="ParameterizedMethod" id="1237" name="SetIntensity_UpdatesTheSelectedChannel" fullname="GearEngine.GearEngine.Tests.Editor.UIEffectActionsTests.SetIntensity_UpdatesTheSelectedChannel" classname="GearEngine.GearEngine.Tests.Editor.UIEffectActionsTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-07-27 20:08:58Z" end-time="2026-07-27 20:08:58Z" duration="0.009550" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+                  <properties />
+                  <test-case id="1233" name="SetIntensity_UpdatesTheSelectedChannel(Tone)" fullname="GearEngine.GearEngine.Tests.Editor.UIEffectActionsTests.SetIntensity_UpdatesTheSelectedChannel(Tone)" methodname="SetIntensity_UpdatesTheSelectedChannel" classname="GearEngine.GearEngine.Tests.Editor.UIEffectActionsTests" runstate="Runnable" seed="1779270085" result="Passed" start-time="2026-07-27 20:08:58Z" end-time="2026-07-27 20:08:58Z" duration="0.000796" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                  </test-case>
+                  <test-case id="1234" name="SetIntensity_UpdatesTheSelectedChannel(Color)" fullname="GearEngine.GearEngine.Tests.Editor.UIEffectActionsTests.SetIntensity_UpdatesTheSelectedChannel(Color)" methodname="SetIntensity_UpdatesTheSelectedChannel" classname="GearEngine.GearEngine.Tests.Editor.UIEffectActionsTests" runstate="Runnable" seed="1113928170" result="Passed" start-time="2026-07-27 20:08:58Z" end-time="2026-07-27 20:08:58Z" duration="0.000230" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                  </test-case>
+                  <test-case id="1235" name="SetIntensity_UpdatesTheSelectedChannel(Sampling)" fullname="GearEngine.GearEngine.Tests.Editor.UIEffectActionsTests.SetIntensity_UpdatesTheSelectedChannel(Sampling)" methodname="SetIntensity_UpdatesTheSelectedChannel" classname="GearEngine.GearEngine.Tests.Editor.UIEffectActionsTests" runstate="Runnable" seed="835669926" result="Passed" start-time="2026-07-27 20:08:58Z" end-time="2026-07-27 20:08:58Z" duration="0.000197" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                  </test-case>
+                  <test-case id="1236" name="SetIntensity_UpdatesTheSelectedChannel(Transition)" fullname="GearEngine.GearEngine.Tests.Editor.UIEffectActionsTests.SetIntensity_UpdatesTheSelectedChannel(Transition)" methodname="SetIntensity_UpdatesTheSelectedChannel" classname="GearEngine.GearEngine.Tests.Editor.UIEffectActionsTests" runstate="Runnable" seed="232678957" result="Passed" start-time="2026-07-27 20:08:58Z" end-time="2026-07-27 20:08:58Z" duration="0.000180" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                    <output><![CDATA[Saving results to: /Users/leonardosilva/Library/Application Support/DDW/Scaffold/TestResults.xml
+]]></output>
+                  </test-case>
+                </test-suite>
+              </test-suite>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>
