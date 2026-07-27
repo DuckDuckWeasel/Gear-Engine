@@ -11,7 +11,8 @@ namespace GearEngine.Campaign.Presentation
     public sealed class SetupView : View<SetupViewModel>
     {
         [SerializeField] private TrackViewComponent track;
-        [SerializeField] private GearWorkspaceView workspace;
+        [SerializeField] private BoardView boardView;
+        [SerializeField] private GearInventoryViewComponent inventory;
         [SerializeField] private BoardCapacityChipView boardCapacityChip;
         [SerializeField] private Button raceButton;
         [SerializeField] private Button returnToMainButton;
@@ -21,19 +22,20 @@ namespace GearEngine.Campaign.Presentation
         protected override void OnBind()
         {
             ValidateHierarchy();
-            if (track == null)
+            if (track == null || boardView == null)
             {
                 throw new InvalidOperationException(
-                    "[SetupView] Track must be assigned on the scene instance (not baked into the prefab).");
+                    "[SetupView] Track and BoardView must be assigned on the scene instance.");
             }
 
             track.Bind(viewModel.Track);
-
-            workspace.BindInteractive(
+            boardView.BindInteractive(
                 viewModel.Board,
-                viewModel.Inventory,
                 viewModel.TrashZone,
                 viewModel.DragService);
+            inventory.SetDragContext(viewModel.DragService, boardView.DragOverlay);
+            inventory.Bind(viewModel.Inventory);
+            inventory.RebuildAndFit();
             boardCapacityChip.Bind(viewModel.Board);
         }
 
@@ -41,7 +43,7 @@ namespace GearEngine.Campaign.Presentation
         {
             base.OnOpen(wasHidden);
             track.gameObject.SetActive(true);
-            workspace.SetVisible(true);
+            boardView.SetVisible(true);
 
             raceButton.onClick.RemoveListener(OnRaceClicked);
             raceButton.onClick.AddListener(OnRaceClicked);
@@ -54,7 +56,7 @@ namespace GearEngine.Campaign.Presentation
                 openTransitionDurationSeconds,
                 onComplete: () =>
                 {
-                    workspace.Board.SpinAllGearsOnceVisual();
+                    boardView.Board.SpinAllGearsOnceVisual();
                 });
         }
 
@@ -68,7 +70,7 @@ namespace GearEngine.Campaign.Presentation
 
             raceButton.onClick.RemoveListener(OnRaceClicked);
             returnToMainButton.onClick.RemoveListener(OnReturnClicked);
-            workspace?.SetVisible(false);
+            boardView?.SetVisible(false);
 
             if (track != null)
             {
@@ -79,6 +81,7 @@ namespace GearEngine.Campaign.Presentation
         protected override void OnUnbind()
         {
             boardCapacityChip?.Unbind();
+            boardView?.SetVisible(false);
             base.OnUnbind();
         }
 
@@ -108,7 +111,7 @@ namespace GearEngine.Campaign.Presentation
 
         private void ValidateHierarchy()
         {
-            RequireReference(workspace, nameof(workspace));
+            RequireReference(inventory, nameof(inventory));
             RequireReference(boardCapacityChip, nameof(boardCapacityChip));
             RequireReference(raceButton, nameof(raceButton));
             RequireReference(returnToMainButton, nameof(returnToMainButton));

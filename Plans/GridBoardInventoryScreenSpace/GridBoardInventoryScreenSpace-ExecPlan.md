@@ -14,7 +14,9 @@ Active Race exposes a read-only Board. Track, cars, and race environment remain 
 - [x] Create `codex/grid-board-inventory-screen-space` from `main`.
 - [x] Replace world-space drag coordinates and physics target lookup with UI coordinates.
 - [x] Convert gear, grid slot, Board, Inventory, and Trash prefabs to canvas-less UI.
-- [x] Nest the workspace into Setup, Roguelike, and Active Race prefabs.
+- [x] Nest the workspace into Roguelike and Active Race prefabs. Keep Setup inventory in
+  its screen prefab and compose the interactive Board, Trash, and drag overlay through a
+  sibling `BoardView` instance in Main Scene.
 - [x] Remove shared Gear presentation objects and overrides from Main Scene.
 - [x] Add automated functional, asset, responsive-layout, and visual verification.
 - [x] Run scoped quality gates and prepare the verified refactor milestone.

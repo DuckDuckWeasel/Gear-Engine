@@ -417,7 +417,6 @@ GameObject:
   - component: {fileID: 7405209907058371180}
   - component: {fileID: 741409906132243246}
   - component: {fileID: 827608109728608139}
-  - component: {fileID: 4298781319885720621}
   m_Layer: 0
   m_Name: StartRace_Button
   m_TagString: Untagged
@@ -730,21 +729,3 @@ MonoBehaviour:
           randomValue1: {x: 0, y: 0, z: 0}
           randomValue2: {x: 0, y: 0, z: 0}
           targetTransform: {fileID: 0}
---- !u!114 &4298781319885720621
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7833259013974841860}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 471a6f36fb0c84273965321f132ab249, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::GearEngine.Core.ViewUtility.Audio.UIAudioEventTrigger
-  _triggers:
-  - eventID: 4
-    sound:
-      _entity: {fileID: 11400000, guid: 0680a3fa16bfe944b91aaa167171683e, type: 2}
-      ID: 0
-      <DebugObject>k__BackingField: {fileID: 7833259013974841860}

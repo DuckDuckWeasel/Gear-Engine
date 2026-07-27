@@ -115,6 +115,30 @@ namespace GearEngine.GearEngine.Tests.Editor
             Assert.That(chipProperty.objectReferenceValue, Is.SameAs(chip));
         }
 
+        [TestCase("Assets/GearEngine/Prefabs/Buttons/StartRace_Button.prefab")]
+        [TestCase("Assets/GearEngine/Prefabs/UI/Chips/chips_tracks.prefab")]
+        [TestCase("Assets/GearEngine/Prefabs/UI/Header/headerchips_group.prefab")]
+        [TestCase("Assets/GearEngine/Prefabs/Campaign/PFB_BoardView.prefab")]
+        [TestCase("Assets/GearEngine/Prefabs/Campaign/Setup View.prefab")]
+        public void SetupPrefabs_ContainNoMissingScripts(string prefabPath)
+        {
+            GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
+            Assert.IsNotNull(prefab);
+
+            string[] objectsWithMissingScripts = prefab
+                .GetComponentsInChildren<Transform>(includeInactive: true)
+                .Where(transform =>
+                    GameObjectUtility.GetMonoBehavioursWithMissingScriptCount(
+                        transform.gameObject) > 0)
+                .Select(transform => transform.name)
+                .ToArray();
+
+            Assert.That(
+                objectsWithMissingScripts,
+                Is.Empty,
+                $"{prefabPath}: {string.Join(", ", objectsWithMissingScripts)}");
+        }
+
         private static BoardViewModel CreateViewModel(StubBoardService board)
         {
             return new BoardViewModel(

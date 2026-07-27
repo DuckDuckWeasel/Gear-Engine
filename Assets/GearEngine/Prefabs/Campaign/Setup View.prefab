@@ -33,7 +33,6 @@ RectTransform:
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 811000000000000002}
   - {fileID: 3466192356750912508}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -60,6 +59,7 @@ Canvas:
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_VertexColorAlwaysGammaSpace: 0
+  m_UseReflectionProbes: 0
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
@@ -75,7 +75,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.CanvasScaler
   m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
@@ -98,7 +98,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dc42784cf147c0c48a680349fa168899, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.GraphicRaycaster
   m_IgnoreReversedGraphics: 1
   m_BlockingObjects: 0
@@ -115,11 +115,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: faf68e5a73b356141a9c55a15895a699, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Game.Campaign::GearEngine.Campaign.Presentation.SetupView
   type: 0
   track: {fileID: 0}
-  workspace: {fileID: 811000000000000003}
+  boardView: {fileID: 0}
+  inventory: {fileID: 2929504957914943641}
   boardCapacityChip: {fileID: 9100000012345015}
   raceButton: {fileID: 1989208896672883358}
   returnToMainButton: {fileID: 213117835096524570}
@@ -189,7 +190,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a1f2e3d4c5b6a7988776655443322110, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Game.GearEngine.FrustumFit::GearEngine.FrustumFit.FrustumFitAnchor
   sourceRect: {fileID: 5251239599695822447}
   worldCamera: {fileID: 0}
@@ -219,7 +220,7 @@ MonoBehaviour:
   m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -294,7 +295,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
   m_Color: {r: 0.9843137, g: 0.96862745, b: 0.9411765, a: 1}
@@ -343,6 +344,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 6104787595877741782}
   - {fileID: 5251239599695822447}
   - {fileID: 1480218433020556422}
   - {fileID: 974455004197453637}
@@ -365,7 +367,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a1534cbac729494f945c90efe327e10a, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: AnimoraRuntime::OM.Animora.Runtime.AnimoraPlayer
   playerUniqueID: AnimoraPlayer
   selectedClipIndex: 1
@@ -391,7 +393,7 @@ MonoBehaviour:
             m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
             m_IntArgument: 0
             m_FloatArgument: 0
-            m_StringArgument: 
+            m_StringArgument:
             m_BoolArgument: 0
           m_CallState: 2
     onCompletePlaying:
@@ -655,6 +657,131 @@ MonoBehaviour:
           <DebugObject>k__BackingField: {fileID: 9169491301447128323}
         stopOnExit: 0
         fadeOut: -1
+--- !u!1001 &3628511958781884078
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 3466192356750912508}
+    m_Modifications:
+    - target: {fileID: 7117210366275758624, guid: ba83461cca946410a94c4343a45a483e, type: 3}
+      propertyPath: m_Name
+      value: GearInventoryViewComponent
+      objectReference: {fileID: 0}
+    - target: {fileID: 7413944919245685368, guid: ba83461cca946410a94c4343a45a483e, type: 3}
+      propertyPath: m_Pivot.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7413944919245685368, guid: ba83461cca946410a94c4343a45a483e, type: 3}
+      propertyPath: m_Pivot.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7413944919245685368, guid: ba83461cca946410a94c4343a45a483e, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0.95
+      objectReference: {fileID: 0}
+    - target: {fileID: 7413944919245685368, guid: ba83461cca946410a94c4343a45a483e, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7413944919245685368, guid: ba83461cca946410a94c4343a45a483e, type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0.05
+      objectReference: {fileID: 0}
+    - target: {fileID: 7413944919245685368, guid: ba83461cca946410a94c4343a45a483e, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0.015
+      objectReference: {fileID: 0}
+    - target: {fileID: 7413944919245685368, guid: ba83461cca946410a94c4343a45a483e, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7413944919245685368, guid: ba83461cca946410a94c4343a45a483e, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7413944919245685368, guid: ba83461cca946410a94c4343a45a483e, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7413944919245685368, guid: ba83461cca946410a94c4343a45a483e, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7413944919245685368, guid: ba83461cca946410a94c4343a45a483e, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7413944919245685368, guid: ba83461cca946410a94c4343a45a483e, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7413944919245685368, guid: ba83461cca946410a94c4343a45a483e, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7413944919245685368, guid: ba83461cca946410a94c4343a45a483e, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7413944919245685368, guid: ba83461cca946410a94c4343a45a483e, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7413944919245685368, guid: ba83461cca946410a94c4343a45a483e, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7413944919245685368, guid: ba83461cca946410a94c4343a45a483e, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7413944919245685368, guid: ba83461cca946410a94c4343a45a483e, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7413944919245685368, guid: ba83461cca946410a94c4343a45a483e, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7413944919245685368, guid: ba83461cca946410a94c4343a45a483e, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7413944919245685368, guid: ba83461cca946410a94c4343a45a483e, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7413944919245685368, guid: ba83461cca946410a94c4343a45a483e, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7413944919245685368, guid: ba83461cca946410a94c4343a45a483e, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: ba83461cca946410a94c4343a45a483e, type: 3}
+--- !u!114 &2929504957914943641 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1944606547811722807, guid: ba83461cca946410a94c4343a45a483e, type: 3}
+  m_PrefabInstance: {fileID: 3628511958781884078}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7d513bc507ea442789dedcb9ea884e65, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Presentation.UI.GearInventoryViewComponent
+--- !u!224 &6104787595877741782 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 7413944919245685368, guid: ba83461cca946410a94c4343a45a483e, type: 3}
+  m_PrefabInstance: {fileID: 3628511958781884078}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &5838383665500139895
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -804,7 +931,7 @@ Animator:
   m_LinearVelocityBlending: 0
   m_StabilizeFeet: 0
   m_AnimatePhysics: 0
-  m_WarningMessage: 
+  m_WarningMessage:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
@@ -819,7 +946,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a1534cbac729494f945c90efe327e10a, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: AnimoraRuntime::OM.Animora.Runtime.AnimoraPlayer
   playerUniqueID: SetupLabel
   selectedClipIndex: 0
@@ -1135,7 +1262,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4156269089878555838, guid: b25d5030da6b3b241a90830c437854cc, type: 3}
       propertyPath: 'managedReferences[8490313395880329394].targets.directTargets.Array.data[0]'
-      value: 
+      value:
       objectReference: {fileID: 974455004197453637}
     - target: {fileID: 4953479163768109523, guid: b25d5030da6b3b241a90830c437854cc, type: 3}
       propertyPath: m_AnchorMax.y
@@ -1272,9 +1399,6 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 3349186252834294066, guid: b25d5030da6b3b241a90830c437854cc, type: 3}
       insertIndex: -1
       addedObject: {fileID: 213117835096524570}
-    - targetCorrespondingSourceObject: {fileID: 3349186252834294066, guid: b25d5030da6b3b241a90830c437854cc, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 6964858262028411763}
   m_SourcePrefab: {fileID: 100100000, guid: b25d5030da6b3b241a90830c437854cc, type: 3}
 --- !u!1 &656592319295976393 stripped
 GameObject:
@@ -1298,7 +1422,7 @@ Animator:
   m_LinearVelocityBlending: 0
   m_StabilizeFeet: 0
   m_AnimatePhysics: 0
-  m_WarningMessage: 
+  m_WarningMessage:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
@@ -1317,7 +1441,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
 --- !u!1 &5140967305876455302 stripped
 GameObject:
@@ -1334,7 +1458,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
   m_Navigation:
     m_Mode: 3
@@ -1377,7 +1501,7 @@ MonoBehaviour:
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: 
+          m_StringArgument:
           m_BoolArgument: 0
         m_CallState: 2
       - m_Target: {fileID: 0}
@@ -1389,27 +1513,9 @@ MonoBehaviour:
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: 
+          m_StringArgument:
           m_BoolArgument: 1
         m_CallState: 2
---- !u!114 &6964858262028411763
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5140967305876455302}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 471a6f36fb0c84273965321f132ab249, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::GearEngine.Core.ViewUtility.Audio.UIAudioEventTrigger
-  _triggers:
-  - eventID: 4
-    sound:
-      _entity: {fileID: 11400000, guid: 12fcbee1234d0084fa37a9c9583b66e5, type: 2}
-      ID: 0
-      <DebugObject>k__BackingField: {fileID: 5140967305876455302}
 --- !u!114 &5804252713776794122 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 4156269089878555838, guid: b25d5030da6b3b241a90830c437854cc, type: 3}
@@ -1419,7 +1525,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a1534cbac729494f945c90efe327e10a, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: AnimoraRuntime::OM.Animora.Runtime.AnimoraPlayer
 --- !u!1001 &9034082171422312690
 PrefabInstance:
@@ -1563,21 +1669,22 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6858067948156926248, guid: ba79c7db93477e641ac2b9a2c3a5ce18, type: 3}
       propertyPath: m_Sprite
-      value: 
+      value:
       objectReference: {fileID: 1688699239661243921, guid: a83844f25c112764c92f68c0403d549a, type: 3}
     - target: {fileID: 7405209907058371180, guid: ba79c7db93477e641ac2b9a2c3a5ce18, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Target
-      value: 
+      value:
       objectReference: {fileID: 9100000012345001}
     - target: {fileID: 7405209907058371180, guid: ba79c7db93477e641ac2b9a2c3a5ce18, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[2].m_Target
-      value: 
+      value:
       objectReference: {fileID: 0}
     - target: {fileID: 7833259013974841860, guid: ba79c7db93477e641ac2b9a2c3a5ce18, type: 3}
       propertyPath: m_Name
       value: StartRace_Button
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 741409906132243246, guid: ba79c7db93477e641ac2b9a2c3a5ce18, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -1591,7 +1698,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
 --- !u!224 &4844199940587881661 stripped
 RectTransform:
@@ -1607,38 +1714,5 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a1534cbac729494f945c90efe327e10a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: AnimoraRuntime::OM.Animora.Runtime.AnimoraPlayer
---- !u!1001 &811000000000000001
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 9100000012345002}
-    m_Modifications:
-    - target: {fileID: 2525087742547442216, guid: 8796174ce6b1d408199fdca3b5956419, type: 3}
-      propertyPath: m_Name
-      value: GearWorkspace
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 8796174ce6b1d408199fdca3b5956419, type: 3}
---- !u!224 &811000000000000002 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 9063673205065985800, guid: 8796174ce6b1d408199fdca3b5956419, type: 3}
-  m_PrefabInstance: {fileID: 811000000000000001}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &811000000000000003 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4481832911450454019, guid: 8796174ce6b1d408199fdca3b5956419, type: 3}
-  m_PrefabInstance: {fileID: 811000000000000001}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dec2f158f0bb54dbf937a3c3ce298e46, type: 3}
   m_Name:
-  m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Presentation.UI.GearWorkspaceView
+  m_EditorClassIdentifier: AnimoraRuntime::OM.Animora.Runtime.AnimoraPlayer

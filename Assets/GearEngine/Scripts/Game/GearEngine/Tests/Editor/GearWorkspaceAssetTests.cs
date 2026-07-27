@@ -6,9 +6,12 @@ using GearEngine.GearEngine.Presentation.UI;
 using GearEngine.GearEngine.Visuals;
 using NUnit.Framework;
 using UnityEditor;
+using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.InputSystem.UI;
 using UnityEngine.Rendering;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 namespace GearEngine.GearEngine.Tests.Editor
@@ -20,6 +23,8 @@ namespace GearEngine.GearEngine.Tests.Editor
             "Assets/GearEngine/Prefabs/Gears/PFB_GearWorkspace.prefab";
         private const string SetupPath =
             "Assets/GearEngine/Prefabs/Campaign/Setup View.prefab";
+        private const string BoardViewPath =
+            "Assets/GearEngine/Prefabs/Campaign/PFB_BoardView.prefab";
         private const string RoguelikePath =
             "Assets/GearEngine/Prefabs/Campaign/Campaign_RoguelikeView.prefab";
         private const string RacePath =
@@ -73,7 +78,6 @@ namespace GearEngine.GearEngine.Tests.Editor
             }
         }
 
-        [TestCase(SetupPath, GearWorkspaceMode.Interactive)]
         [TestCase(RoguelikePath, GearWorkspaceMode.Interactive)]
         [TestCase(RacePath, GearWorkspaceMode.ReadOnly)]
         public void CampaignScreen_OwnsWorkspaceWithExpectedMode(
@@ -89,13 +93,105 @@ namespace GearEngine.GearEngine.Tests.Editor
         }
 
         [Test]
-        public void MainScene_DoesNotReferenceStandaloneWorkspaceParts()
+        public void SetupPrefab_OwnsOnlyInventoryWorkspaceContent()
         {
-            string sceneYaml = File.ReadAllText(MainScenePath);
+            GameObject setup = LoadPrefab(SetupPath);
+            GearInventoryViewComponent inventory =
+                setup.GetComponentInChildren<GearInventoryViewComponent>(true);
+            MonoBehaviour setupView = setup.GetComponents<MonoBehaviour>()
+                .Single(component =>
+                    component != null && component.GetType().Name == "SetupView");
+            SerializedObject serializedView = new SerializedObject(setupView);
 
-            Assert.That(sceneYaml, Does.Not.Contain("1bb691964ce722a4ba6aed0bf6fb73c1"));
-            Assert.That(sceneYaml, Does.Not.Contain("ba83461cca946410a94c4343a45a483e"));
-            Assert.That(sceneYaml, Does.Not.Contain("5c0f2c75741614be083b530936f65100"));
+            Assert.IsNotNull(inventory);
+            Assert.That(
+                serializedView.FindProperty("inventory").objectReferenceValue,
+                Is.SameAs(inventory));
+            Assert.That(
+                serializedView.FindProperty("boardView").objectReferenceValue,
+                Is.Null);
+            Assert.That(
+                setup.GetComponentsInChildren<BoardViewComponent>(true),
+                Is.Empty);
+            Assert.That(
+                setup.GetComponentsInChildren<TrashDropZoneViewComponent>(true),
+                Is.Empty);
+        }
+
+        [Test]
+        public void BoardViewPrefab_OwnsBoardTrashAndOverlay()
+        {
+            GameObject prefab = LoadPrefab(BoardViewPath);
+            BoardView boardView = prefab.GetComponent<BoardView>();
+            SerializedObject serializedView = new SerializedObject(boardView);
+
+            Assert.IsNotNull(boardView);
+            Assert.IsNotNull(prefab.GetComponent<Canvas>());
+            Assert.That(prefab.transform.localScale, Is.EqualTo(Vector3.one));
+            Assert.That(
+                serializedView.FindProperty("board").objectReferenceValue,
+                Is.Not.Null);
+            Assert.That(
+                serializedView.FindProperty("trash").objectReferenceValue,
+                Is.Not.Null);
+            Assert.That(
+                serializedView.FindProperty("dragOverlay").objectReferenceValue,
+                Is.Not.Null);
+        }
+
+        [Test]
+        public void MainScene_OwnsBoardViewBesideSetupView()
+        {
+            Scene scene = EditorSceneManager.OpenScene(MainScenePath, OpenSceneMode.Additive);
+            try
+            {
+                BoardView boardView = scene.GetRootGameObjects()
+                    .SelectMany(root => root.GetComponentsInChildren<BoardView>(true))
+                    .Single();
+                MonoBehaviour setupView = scene.GetRootGameObjects()
+                    .SelectMany(root => root.GetComponentsInChildren<MonoBehaviour>(true))
+                    .Single(component =>
+                        component != null && component.GetType().Name == "SetupView");
+                SerializedProperty boardViewProperty =
+                    new SerializedObject(setupView).FindProperty("boardView");
+
+                Assert.IsNotNull(boardViewProperty);
+                Assert.That(boardViewProperty.objectReferenceValue, Is.SameAs(boardView));
+                Assert.That(boardView.transform.parent, Is.SameAs(setupView.transform.parent));
+                Assert.IsTrue(boardView.gameObject.activeSelf);
+                Assert.That(boardView.transform.localScale.x, Is.GreaterThan(0.01f));
+                Assert.That(boardView.transform.localScale.y, Is.GreaterThan(0.01f));
+                Assert.That(boardView.transform.localScale.z, Is.GreaterThan(0.01f));
+                Assert.That(
+                    boardView.GetComponent<Canvas>().worldCamera,
+                    Is.SameAs(setupView.GetComponent<Canvas>().worldCamera));
+            }
+            finally
+            {
+                EditorSceneManager.CloseScene(scene, removeScene: true);
+            }
+        }
+
+        [Test]
+        public void MainScene_HasSingleInputSystemEventSystem()
+        {
+            Scene scene = EditorSceneManager.OpenScene(MainScenePath, OpenSceneMode.Additive);
+            try
+            {
+                EventSystem[] eventSystems = scene.GetRootGameObjects()
+                    .SelectMany(root => root.GetComponentsInChildren<EventSystem>(true))
+                    .ToArray();
+
+                Assert.That(eventSystems, Has.Length.EqualTo(1));
+                Assert.IsNotNull(
+                    eventSystems[0].GetComponent<InputSystemUIInputModule>());
+                Assert.IsNull(
+                    eventSystems[0].GetComponent<StandaloneInputModule>());
+            }
+            finally
+            {
+                EditorSceneManager.CloseScene(scene, removeScene: true);
+            }
         }
 
         [Test]
