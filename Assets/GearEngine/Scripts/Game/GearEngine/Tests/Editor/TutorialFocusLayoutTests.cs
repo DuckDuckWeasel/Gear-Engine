@@ -7,6 +7,9 @@ namespace GearEngine.GearEngine.Tests.Editor
 {
     public class TutorialFocusLayoutTests
     {
+        [Category("CloudVerification")]
+        [Category("Tutorial")]
+        [CloudVerificationTargets(CloudVerificationTarget.Android, CloudVerificationTarget.MacOS)]
         [Test]
         public void DirectionOffset_UsesTheSameScreenDistanceAsThePreview()
         {
@@ -28,6 +31,9 @@ namespace GearEngine.GearEngine.Tests.Editor
                 Is.EqualTo(previewDistance).Within(0.001f));
         }
 
+        [Category("CloudVerification")]
+        [Category("Tutorial")]
+        [CloudVerificationTargets(CloudVerificationTarget.Android, CloudVerificationTarget.MacOS)]
         [Test]
         public void PositionOffset_IsAppliedDirectlyInScreenSpace()
         {
