@@ -27,6 +27,9 @@ namespace GearEngine.GearEngine.Visuals
         [SerializeField]
         private float settleLerpSpeed = 20f;
 
+        [SerializeField]
+        private float presentationScaleMultiplier = 1.12f;
+
         private float targetRotationZ;
         private float currentVisualFill;
         private float targetVisualFill = -1f;
@@ -67,6 +70,7 @@ namespace GearEngine.GearEngine.Visuals
             {
                 animatedBaseRotationZ = zDegrees;
                 hasInitializedRotation = true;
+                ApplyRotation();
             }
         }
 
@@ -136,7 +140,7 @@ namespace GearEngine.GearEngine.Visuals
             {
                 return;
             }
-            baseScale = scale;
+            baseScale = scale * presentationScaleMultiplier;
             gearVisual.localScale = new Vector3(baseScale, baseScale, baseScale);
         }
 

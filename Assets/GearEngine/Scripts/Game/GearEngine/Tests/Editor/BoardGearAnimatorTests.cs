@@ -84,12 +84,12 @@ namespace GearEngine.GearEngine.Tests.Editor
         [Test]
         public void Track_DrivesRotationTowardStaggeredTarget_FromMotorDistance()
         {
-            var layout = ScriptableObject.CreateInstance<BoardLayoutSO>();
+            BoardLayoutSO layout = ScriptableObject.CreateInstance<BoardLayoutSO>();
             layout.StaggeredRotationOffset = 30f;
 
-            var slot0 = new GameObject("Slot0").transform;
-            var slot1 = new GameObject("Slot1").transform;
-            var slot2 = new GameObject("Slot2").transform;
+            Transform slot0 = new GameObject("Slot0").transform;
+            Transform slot1 = new GameObject("Slot1").transform;
+            Transform slot2 = new GameObject("Slot2").transform;
             Transform GetSlot(Vector2Int p)
             {
                 if (p == Vector2Int.zero)
@@ -105,32 +105,32 @@ namespace GearEngine.GearEngine.Tests.Editor
                 return slot2;
             }
 
-            var host = new GameObject("AnimatorHost");
-            var animator = host.AddComponent<BoardGearAnimator>();
+            GameObject host = new GameObject("AnimatorHost");
+            BoardGearAnimator animator = host.AddComponent<BoardGearAnimator>();
             animator.Configure(GetSlot, layout, "motor");
 
-            var motorRoot = new GameObject("MotorRoot");
-            var motorVisual = new GameObject("MotorVisual");
+            GameObject motorRoot = new GameObject("MotorRoot");
+            GameObject motorVisual = new GameObject("MotorVisual");
             motorVisual.transform.SetParent(motorRoot.transform, false);
-            var motorGearView = motorRoot.AddComponent<GearView>();
+            GearView motorGearView = motorRoot.AddComponent<GearView>();
             motorGearView.WireTestReferences(motorVisual.transform);
             motorGearView.ApplyConfig(new GearItemData { RelativeScaleMultiplier = 1f, Id = "motor" });
 
-            var gearRoot = new GameObject("GearRoot");
-            var gearVisual = new GameObject("GearVisual");
+            GameObject gearRoot = new GameObject("GearRoot");
+            GameObject gearVisual = new GameObject("GearVisual");
             gearVisual.transform.SetParent(gearRoot.transform, false);
-            var gearView = gearRoot.AddComponent<GearView>();
+            GearView gearView = gearRoot.AddComponent<GearView>();
             gearView.WireTestReferences(gearVisual.transform);
             gearView.ApplyConfig(new GearItemData { RelativeScaleMultiplier = 1f, Id = "other" });
 
-            var motorNode = new FakeGridNode
+            FakeGridNode motorNode = new FakeGridNode
             {
                 Position = new Vector2Int(1, 0),
                 CurrentRotation = 0f,
                 ConfigData = new GearItemData { Id = "motor", MaxCharge = 0f },
             };
 
-            var node = new FakeGridNode
+            FakeGridNode node = new FakeGridNode
             {
                 Position = Vector2Int.zero,
                 CurrentRotation = 0f,
@@ -162,18 +162,18 @@ namespace GearEngine.GearEngine.Tests.Editor
         [Test]
         public void Untrack_ThenUpdate_DoesNotThrow()
         {
-            var layout = ScriptableObject.CreateInstance<BoardLayoutSO>();
-            var host = new GameObject("AnimatorHost");
-            var animator = host.AddComponent<BoardGearAnimator>();
+            BoardLayoutSO layout = ScriptableObject.CreateInstance<BoardLayoutSO>();
+            GameObject host = new GameObject("AnimatorHost");
+            BoardGearAnimator animator = host.AddComponent<BoardGearAnimator>();
             animator.Configure(_ => new GameObject("S").transform, layout, null);
 
-            var gearRoot = new GameObject("GearRoot");
-            var gv = new GameObject("GV");
+            GameObject gearRoot = new GameObject("GearRoot");
+            GameObject gv = new GameObject("GV");
             gv.transform.SetParent(gearRoot.transform, false);
-            var gearView = gearRoot.AddComponent<GearView>();
+            GearView gearView = gearRoot.AddComponent<GearView>();
             gearView.WireTestReferences(gv.transform);
 
-            var node = new FakeGridNode();
+            FakeGridNode node = new FakeGridNode();
             animator.Track(node, gearView);
             animator.Untrack(node);
 
@@ -187,15 +187,15 @@ namespace GearEngine.GearEngine.Tests.Editor
         [Test]
         public void Clear_RemovesTrackedEntries()
         {
-            var layout = ScriptableObject.CreateInstance<BoardLayoutSO>();
-            var host = new GameObject("AnimatorHost");
-            var animator = host.AddComponent<BoardGearAnimator>();
+            BoardLayoutSO layout = ScriptableObject.CreateInstance<BoardLayoutSO>();
+            GameObject host = new GameObject("AnimatorHost");
+            BoardGearAnimator animator = host.AddComponent<BoardGearAnimator>();
             animator.Configure(_ => new GameObject("S").transform, layout, null);
 
-            var gearRoot = new GameObject("GearRoot");
-            var gv = new GameObject("GV");
+            GameObject gearRoot = new GameObject("GearRoot");
+            GameObject gv = new GameObject("GV");
             gv.transform.SetParent(gearRoot.transform, false);
-            var gearView = gearRoot.AddComponent<GearView>();
+            GearView gearView = gearRoot.AddComponent<GearView>();
             gearView.WireTestReferences(gv.transform);
 
             animator.Track(new FakeGridNode(), gearView);
@@ -205,6 +205,38 @@ namespace GearEngine.GearEngine.Tests.Editor
 
             Object.DestroyImmediate(host);
             Object.DestroyImmediate(gearRoot);
+            Object.DestroyImmediate(layout);
+        }
+
+        [Test]
+        public void Update_WhileSimulationRuns_SnapsVisualToLogicalTriggerRotation()
+        {
+            BoardLayoutSO layout = ScriptableObject.CreateInstance<BoardLayoutSO>();
+            Transform slot = new GameObject("Slot").transform;
+            GameObject host = new GameObject("AnimatorHost");
+            BoardGearAnimator animator = host.AddComponent<BoardGearAnimator>();
+            animator.Configure(_ => slot, layout, null, () => true);
+
+            GameObject gearRoot = new GameObject("GearRoot");
+            GameObject gearVisual = new GameObject("GearVisual");
+            gearVisual.transform.SetParent(gearRoot.transform, false);
+            GearView gearView = gearRoot.AddComponent<GearView>();
+            gearView.WireTestReferences(gearVisual.transform);
+            gearView.ApplyConfig(new GearItemData { RelativeScaleMultiplier = 1f });
+
+            FakeGridNode node = new FakeGridNode { CurrentRotation = 0f };
+            animator.Track(node, gearView);
+            node.CurrentRotation = 90f;
+
+            InvokeAnimatorUpdate(animator);
+
+            Assert.That(
+                Mathf.Abs(Mathf.DeltaAngle(gearVisual.transform.localEulerAngles.z, -90f)),
+                Is.LessThan(0.001f));
+
+            Object.DestroyImmediate(host);
+            Object.DestroyImmediate(gearRoot);
+            Object.DestroyImmediate(slot.gameObject);
             Object.DestroyImmediate(layout);
         }
     }

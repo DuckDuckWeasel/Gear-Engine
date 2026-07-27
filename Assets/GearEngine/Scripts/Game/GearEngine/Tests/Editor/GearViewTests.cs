@@ -87,6 +87,27 @@ namespace GearEngine.GearEngine.Tests.Editor
             Object.DestroyImmediate(iconTexture);
         }
 
+        [Test]
+        public void BasePrefab_EnlargesGearBodyAndIconWithinSlot()
+        {
+            GearView prefab = AssetDatabase.LoadAssetAtPath<GearView>(
+                "Assets/GearEngine/Prefabs/Gears/Gears/BaseGearView.prefab");
+            Assert.IsNotNull(prefab);
+
+            GearView instance = Object.Instantiate(prefab);
+            instance.ApplyConfig(new GearItemData { RelativeScaleMultiplier = 1f });
+
+            RectTransform gearVisual = instance.transform.Find("GearVisual") as RectTransform;
+            RectTransform chargeVisual = instance.transform.Find("ChargeVisual") as RectTransform;
+            Assert.IsNotNull(gearVisual);
+            Assert.IsNotNull(chargeVisual);
+            Assert.That(gearVisual.localScale.x, Is.EqualTo(1.12f).Within(0.001f));
+            Assert.That(chargeVisual.anchorMin, Is.EqualTo(new Vector2(0.05f, 0.05f)));
+            Assert.That(chargeVisual.anchorMax, Is.EqualTo(new Vector2(0.95f, 0.95f)));
+
+            Object.DestroyImmediate(instance.gameObject);
+        }
+
         private static GearView CreateViewWithChargeImage(Material source, out Image chargeImage)
         {
             GameObject root = new GameObject("ViewRoot", typeof(RectTransform));
