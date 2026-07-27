@@ -268,7 +268,7 @@ namespace Scaffold.VisualScripting
             active.Remove(definition);
         }
 
-        private void ValidateNestedVariable(VariableDefinition definition, string path, ISet<BlackboardDefinition> active, ICollection<BlackboardValidationIssue> issues)
+        private void ValidateNestedVariable(VariableDefinitionBase definition, string path, ISet<BlackboardDefinition> active, ICollection<BlackboardValidationIssue> issues)
         {
             if (!(definition is BlackboardDefinitionVariable variable))
             {

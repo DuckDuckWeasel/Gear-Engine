@@ -19,10 +19,10 @@ namespace Scaffold.VisualScripting
 
         [SerializeField] private List<BlockDefinition> blocks = new List<BlockDefinition>();
 
-        public List<VariableDefinition> Variables => variables;
+        public List<VariableDefinitionBase> Variables => variables;
 
         [SerializeReference]
-        private List<VariableDefinition> variables =
-            new List<VariableDefinition>();
+        private List<VariableDefinitionBase> variables =
+            new List<VariableDefinitionBase>();
     }
 }

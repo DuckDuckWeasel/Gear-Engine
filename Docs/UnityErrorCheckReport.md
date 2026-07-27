@@ -2,7 +2,7 @@
 
 ## Check
 
-- Timestamp: 2026-07-27 09:56:48 -03
+- Timestamp: 2026-07-27 11:03:42 -03
 - Unity version: 6000.5.3f1
 - Checked log: `/Users/leonardosilva/Library/Logs/Unity/Editor.log`
 - Parser command:
@@ -19,10 +19,13 @@
 | Focused PlayMode `BlockTrackExecutionTests` | 19 passed, 0 failed; Unity log contained no compiler error or exception. |
 | Focused EditMode `InvokeActionCommandTests` | 39 passed, 0 failed; Unity log contained no compiler error or exception. |
 | Pure EditMode `BlackboardDefinitionTests` | 14 passed, 0 failed; Unity log contained no compiler error or exception. |
+| Pure EditMode `BlackboardVariableRuntimeTests` | 13 passed, 0 failed; Unity log contained no compiler error or exception. |
+| Milestone 3 regression `BlackboardDefinitionTests` | 14 passed, 0 failed; Unity log contained no compiler error or exception. |
+| Milestone 3 Unity compilation precheck | Passed with Unity 6000.5.3f1 after importing the variable/service layer. |
 | Escalated `.agents/scripts/validate-changes.sh` compilation precheck | Passed with Unity 6000.5.3f1. |
-| `dotnet build Assembly-CSharp-Editor.csproj --no-restore --nologo` | Succeeded with 0 errors. The generated empty project emitted CS2008 and CS8021 warnings. |
-| `dotnet build Assembly-CSharp.csproj --no-restore --nologo --disable-build-servers --verbosity minimal` | MSBuild terminated after 10:03 with `Build FAILED`, 0 warnings, and 0 errors while evaluating/building 247 generated project references. |
-| `dotnet build Assembly-CSharp.csproj --no-restore --no-dependencies --nologo --verbosity minimal` | MSBuild terminated after 5:02 with `Build FAILED`, 0 warnings, and 0 errors. |
+| `dotnet build Assembly-CSharp-Editor.csproj --no-restore` | Succeeded with 0 warnings and 0 errors. |
+| Initial `dotnet build Assembly-CSharp.csproj --no-restore` | Exited successfully with code 0 and no compiler output before the final managed-reset test was added. |
+| Post-change generated/scoped runtime project builds | `Assembly-CSharp.csproj` remained silent beyond three minutes and `Scaffold.VisualScripting.Core.csproj` remained silent beyond two minutes after build-server shutdown; both were terminated without a compiler diagnostic. |
 
 ## Errors found and fixes applied
 
@@ -41,15 +44,18 @@ baseline required test-only corrections:
 - Strictly internal test helpers are nested so the one-top-level-type rule is
   satisfied without turning a test `MonoBehaviour` into an attachable Editor script.
 - Changed test fields follow the repository camelCase naming policy.
+- The new Unity-object definition explicitly names `UnityEngine.Object` to avoid the
+  `System.Object` ambiguity found on first import.
+- The variable generic types now use untyped base names ending in `Base`, satisfying
+  the one-top-level-type filename rule without changing runtime behavior.
 
 ## Remaining issue
 
-The Unity compiler gate is clean, but the standalone generated
-`Assembly-CSharp.csproj` MSBuild command does not reach compilation or emit a
-diagnostic before terminating. This generated project has 247 project references.
-The issue is isolated to the external generated-project build path; Unity batch
-compilation and the focused EditMode/PlayMode runs succeed. The standalone runtime
-project command remains unresolved and therefore is not claimed as passing.
+The Unity compiler gate is clean for the final Milestone 3 sources, as demonstrated by
+the final 13-test Unity run and an empty Editor-log parser result. The standalone
+generated runtime-project path remains an infrastructure limitation: its post-change
+attempts did not reach a compiler result or emit a diagnostic. The generated Editor
+project build is clean.
 
 The repository-wide gate continues past compilation and exposes unrelated baseline
 failures: 59 EditMode failures, a PlayMode run that exits without producing XML,

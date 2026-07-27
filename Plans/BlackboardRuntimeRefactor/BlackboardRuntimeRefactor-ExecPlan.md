@@ -30,7 +30,7 @@ serialization will be removed after all consumers are cut over.
   characterization baseline.
 - [x] Milestone 2: add definitions, references, validation, stable IDs, and
   cycle-aware graph cloning.
-- [ ] Milestone 3: add plain variables, variable stores, service contracts,
+- [x] Milestone 3: add plain variables, variable stores, service contracts,
   messaging, and persistence.
 - [ ] Milestone 4: add action contexts, action lists, tracks, Blocks, and composite
   execution, then migrate action families.
@@ -76,6 +76,16 @@ serialization will be removed after all consumers are cut over.
   statements/signatures, methods under 16 lines, and acyclic declaration ordering.
   Cycle-aware graph traversal therefore uses instance callbacks for recursive edges
   while retaining readable, bounded methods.
+- The repository's one-top-level-type filename rule cannot represent both an untyped
+  base and a generic type with the same filename. The variable hierarchy therefore
+  uses `VariableDefinitionBase`/`VariableDefinition<T>` and
+  `VariableCellBase`/`VariableCell<T>`, keeping generic public APIs concise while
+  making every source filename deterministic.
+- Unity imports and executes the final Core tests cleanly, while direct post-change
+  `dotnet build` attempts for the generated runtime project and scoped Core project
+  remain silent until explicitly terminated. The generated Editor project builds
+  cleanly; the runtime-project stall is recorded as tooling evidence rather than a
+  compiler failure or pass.
 
 ## Decision Log
 
@@ -90,6 +100,11 @@ serialization will be removed after all consumers are cut over.
 - Root `BlackboardBehaviour` hosts accept Direct or ScriptableObject templates.
   BlackboardVariable templates require an already-running source Blackboard.
 - Definitions stored in variables are templates, never live Blackboard instances.
+- Local and public variable cells are owned by one runtime clone. Public cross-runtime
+  access requires an explicit runtime-instance address; injected-global cells are the
+  only deliberately shared cells and are supplied by an injected store.
+- Persistence records runtime-instance and definition IDs. It rejects data captured
+  for another runtime instead of falling back to names or scene searches.
 - New assemblies are introduced beside the legacy implementation during bounded
   milestones. This preserves a compilable repository while features move. The legacy
   types are deleted during the explicit breaking cutover, not retained as adapters.
@@ -111,6 +126,12 @@ Unity object identity, stable definition IDs, unique runtime IDs, managed cycles
 transient reset, validation failures, and editor ID regeneration. The full
 retrospective will record the final runtime boundary, migrated surface, verification
 evidence, deliberate behavior changes, and follow-up work.
+
+Milestone 3 introduced typed plain definitions and runtime cells, isolated local and
+public stores, explicitly injected globals, stable public addresses, runtime
+registries, messaging, text substitution, persistence, and service contracts for
+time, scheduling, logging, events, and save/load. Its pure EditMode fixture passes
+13/13 cases, and the Milestone 2 definition/cloning regression fixture remains 14/14.
 
 ## Context and Orientation
 
@@ -279,6 +300,10 @@ red.
   `Logs/Tests/BlackboardRuntimeRefactor/Milestone1/`
 - Milestone 2 Core definition and cloning results:
   `Logs/Tests/BlackboardRuntimeRefactor/Milestone2/CoreDefinitions/`
+- Milestone 3 variable and service results:
+  `Logs/Tests/BlackboardRuntimeRefactor/Milestone3/VariablesAndServices/`
+- Milestone 3 definition regression results:
+  `Logs/Tests/BlackboardRuntimeRefactor/Milestone3/DefinitionRegression/`
 - Full repository gate baseline on 2026-07-27:
   compilation precheck passed; EditMode reported 248 passed and 59 failed; PlayMode
   exited without results; the asmdef and analyzer infrastructure blockers listed in

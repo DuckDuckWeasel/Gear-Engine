@@ -62,10 +62,9 @@ The following invariants should govern the refactor:
 8. Existing serialized content should remain readable until an explicit migration has
    completed and been verified.
 
-The main migration decision is compatibility policy. The recommended policy is to keep
-the existing component types as temporary legacy adapters, migrate the three serialized
-Blackboard host assets currently found by the audit, and remove the adapters only after
-fixture-based verification.
+The locked migration policy is a breaking replacement. The legacy graph remains
+compilable beside the new assemblies only until the explicit asset cutover; no
+backward-compatible component adapters ship in the finished architecture.
 
 ## System Context
 
@@ -357,7 +356,8 @@ Allowed:
 - Unity adapters depending on the core and translating Unity callbacks or services.
 - Serializable action implementations holding explicit Unity object references.
 - Editor code depending on authoring definitions and migration adapters.
-- Temporary legacy components delegating to the new core during migration.
+- Existing legacy assemblies compiling beside the replacement until the explicit
+  breaking cutover, without creating new compatibility wrappers.
 
 Forbidden:
 
@@ -393,9 +393,10 @@ Forbidden:
 1. Add pure characterization tests that construct the new execution types with `new`.
 2. Extract core ports and make `CompositeExecutionRunner` independent of component
    ownership.
-3. Introduce the plain variable store and adapt legacy `Variable` components to it.
-4. Extract `ActionSequence` and `BlockRuntime`; make legacy `Block` and
-   `InvokeActionCommand` delegate to them.
+3. Introduce the plain variable store and prove it independently of legacy variable
+   components.
+4. Extract `ActionSequence` and `BlockRuntime`; migrate consumers to the new contracts
+   in bounded batches.
 5. Introduce `BlackboardRuntime`; reduce `Blackboard` to the temporary Unity wrapper.
 6. Convert `GameStarted` and other triggers into plain trigger definitions with Unity
    callback adapters.
@@ -413,8 +414,8 @@ riskier to verify.
 - A separate definition/runtime model adds mapping code, but makes script creation,
   deterministic testing, cloning, save/load, and independent runtime instances
   straightforward.
-- Temporary legacy adapters add short-term duplication, but protect existing scenes
-  and prefabs.
+- Running the legacy and replacement assemblies side by side adds short-term
+  duplication, but keeps each pre-cutover milestone compilable.
 - Injected scheduler and event ports require composition setup, but eliminate hidden
   frame and global-state dependencies.
 - Keeping Unity references in actions means not every action assembly can set
@@ -438,7 +439,29 @@ Required acceptance evidence for the refactor:
    or `Game.GearEngine`.
 6. Existing flow, variable, Block call, composite execution, and action tests remain
    green during the adapter phase.
-7. `.agents/scripts/validate-changes.cmd` passes for each implementation milestone.
+7. `.agents/scripts/validate-changes.sh` passes for final macOS acceptance; the
+   repository's `.cmd` shim is not acceptance evidence.
+
+### Implementation pattern checkpoint: Milestone 3
+
+- **Observer:** `BlackboardEventBus` owns typed subscriptions and returns disposable
+  handles. Disposal removes listeners symmetrically, avoiding the unremoved-listener
+  defect in the legacy UI trigger path.
+- **Registry:** `BlackboardRegistry` and `PublicVariableRegistry` use runtime-instance
+  and definition IDs. They replace name lookup and static active-Blackboard caches;
+  owned public registrations are removed when `BlackboardVariableSet` is disposed.
+- **Repository / Store:** `VariableStore` separates cell storage from definition data.
+  Local and public stores are clone-owned, while `IGlobalVariableStore` makes the one
+  shared scope explicit and injectable.
+- **Factory seam:** `VariableDefinition<T>.CreateCell` creates typed runtime cells.
+  Managed initial values are cloned both on creation and reset, so runtime mutation
+  cannot leak back into reusable definitions.
+- **Singleton anti-pattern:** no new mutable singleton or service locator was added.
+  The only static `Instance` in Core is an immutable stateless reference-equality
+  comparer used by graph traversal.
+- **Pending Strategy / Command extraction:** composite execution still lives in the
+  legacy path and remains the focus of Milestone 4. The variable and service layer has
+  no dependency on a concrete Command, host component, or coroutine.
 
 Review-time evidence:
 

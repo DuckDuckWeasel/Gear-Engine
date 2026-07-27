@@ -42,3 +42,22 @@ lists, dictionaries, and cycles. It intentionally retains the identity of
 `BlackboardDefinitionValidator` rejects missing ownership nodes, null actions, missing
 or duplicate definition IDs, missing definition-valued variables, and nested template
 cycles with graph paths in each diagnostic.
+
+## Variable ownership
+
+Variables are serialized `VariableDefinition<T>` values and become mutable
+`VariableCell<T>` objects only when a runtime clone is created. Built-in definitions
+cover Boolean, integer, float, string, Unity vectors, quaternion, color, matrix,
+explicit Unity object references, nested Blackboard definitions, and managed
+collections. Projects can add another typed definition without adding a component.
+
+Each runtime owns independent local and public cells. A public reference may explicitly
+address another running Blackboard by runtime-instance ID and stable definition ID.
+Injected-global cells are the only intentionally shared variable state and are supplied
+through `IGlobalVariableStore`; they never create hidden `GameObject` instances.
+
+`BlackboardVariableSet` registers public cells, resolves stable references, exposes
+definition-valued templates, resets owned cells, and unregisters public cells when
+disposed. Save records address the runtime instance and definition IDs rather than
+scene names. Event bus, Blackboard registry, time, frame scheduling, save service,
+logging, value serialization, and text substitution are explicit injected contracts.

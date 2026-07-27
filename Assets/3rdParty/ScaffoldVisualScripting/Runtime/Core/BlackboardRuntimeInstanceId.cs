@@ -18,6 +18,8 @@ namespace Scaffold.VisualScripting
 
         public string Value => value ?? string.Empty;
 
+        public bool IsEmpty => string.IsNullOrWhiteSpace(value);
+
         [SerializeField] private string value;
 
         public override bool Equals(object obj)
