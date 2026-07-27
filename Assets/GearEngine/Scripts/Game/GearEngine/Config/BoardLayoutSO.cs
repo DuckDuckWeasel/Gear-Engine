@@ -11,9 +11,6 @@ namespace GearEngine.GearEngine.Config
         [Header("Visuals")]
         public float StaggeredRotationOffset = 22.5f;
 
-        [Tooltip("Vertical pixel offset of the trash zone above the grid's top edge.")]
-        public float TrashZoneYOffset = 80f;
-
         public Vector3 GetCellLocalPosition(Vector2Int gridPos, BoardRulesSO rules, float zOffset = 0f)
         {
             if (rules == null)

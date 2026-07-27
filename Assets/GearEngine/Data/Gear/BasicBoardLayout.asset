@@ -14,4 +14,3 @@ MonoBehaviour:
   m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Config.BoardLayoutSO
   CellSpacing: 110
   StaggeredRotationOffset: 22.5
-  TrashZoneYOffset: 24

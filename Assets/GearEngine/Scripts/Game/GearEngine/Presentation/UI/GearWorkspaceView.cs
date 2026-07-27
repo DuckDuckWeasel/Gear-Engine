@@ -54,9 +54,8 @@ namespace GearEngine.GearEngine.Presentation.UI
             inventory.Bind(inventoryViewModel);
             inventory.RebuildAndFit();
             trash.SetDragService(dragService);
-            trash.SetBoardPresentation(board.BoardLayout, board.TopRightCell);
             trash.Bind(trashViewModel);
-            trash.ApplyInitialPlacement();
+            trash.ApplyInitialState();
         }
 
         public void BindReadOnly(BoardViewModel boardViewModel)

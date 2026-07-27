@@ -33,21 +33,6 @@ namespace GearEngine.GearEngine.Presentation.UI
 
         private IDragService dragService;
 
-        private BoardLayoutSO boardLayout;
-        private RectTransform topRightCell;
-
-        public void SetBoardPresentation(BoardLayoutSO layout)
-        {
-            boardLayout = layout;
-        }
-
-        public void SetBoardPresentation(BoardLayoutSO layout, RectTransform topRightBoardCell)
-        {
-            boardLayout = layout;
-            topRightCell = topRightBoardCell;
-            ApplyScreenSpacePlacement();
-        }
-
         public void SetDragService(IDragService service)
         {
             dragService = service;
@@ -225,11 +210,11 @@ namespace GearEngine.GearEngine.Presentation.UI
             rootPanel.localScale = Vector3.Lerp(rootPanel.localScale, targetScale, Time.unscaledDeltaTime * 12f);
         }
 
-        public void ApplyInitialPlacement()
+        public void ApplyInitialState()
         {
             if (viewModel == null)
             {
-                Debug.LogError("[TrashDropZone] ApplyInitialPlacement called before Bind.");
+                Debug.LogError("[TrashDropZone] ApplyInitialState called before Bind.");
                 return;
             }
 
@@ -239,7 +224,6 @@ namespace GearEngine.GearEngine.Presentation.UI
             }
             Assert.IsNotNull(rootPanel, "[TrashDropZone] rootPanel is not assigned. Trash deletion will not work.");
             Hide(immediate: true);
-            ApplyScreenSpacePlacement();
         }
 
         private bool IsTrashDisabled()
@@ -254,49 +238,6 @@ namespace GearEngine.GearEngine.Presentation.UI
                 rootPanel.gameObject.SetActive(false);
             }
             return true;
-        }
-
-        private void ApplyScreenSpacePlacement()
-        {
-            if (!TryGetPlacementParent(out RectTransform parentRect))
-            {
-                return;
-            }
-
-            NormalizeRootAnchors();
-            rootPanel.anchoredPosition = CalculateAnchoredPosition(parentRect);
-        }
-
-        private bool TryGetPlacementParent(out RectTransform parentRect)
-        {
-            parentRect = rootPanel != null ? rootPanel.parent as RectTransform : null;
-            if (rootPanel == null || topRightCell == null)
-            {
-                Debug.LogError("[TrashDropZone] Top-right Board cell is missing; Trash cannot be positioned.");
-                return false;
-            }
-            if (parentRect == null)
-            {
-                Debug.LogError("[TrashDropZone] RectTransform parent is missing; Trash cannot be positioned.");
-                return false;
-            }
-            return true;
-        }
-
-        private void NormalizeRootAnchors()
-        {
-            rootPanel.anchorMin = new Vector2(0.5f, 0.5f);
-            rootPanel.anchorMax = new Vector2(0.5f, 0.5f);
-            rootPanel.pivot = new Vector2(0.5f, 0.5f);
-        }
-
-        private Vector2 CalculateAnchoredPosition(RectTransform parentRect)
-        {
-            Vector3 cellTopWorld = topRightCell.TransformPoint(new Vector3(topRightCell.rect.center.x, topRightCell.rect.yMax, 0f));
-            Vector2 cellTopLocal = parentRect.InverseTransformPoint(cellTopWorld);
-            float verticalOffset = boardLayout != null ? boardLayout.TrashZoneYOffset : 80f;
-            float trashHalfHeight = rootPanel.rect.height * 0.5f;
-            return cellTopLocal - parentRect.rect.center + new Vector2(0f, trashHalfHeight + verticalOffset);
         }
 
         private void Hide(bool immediate)

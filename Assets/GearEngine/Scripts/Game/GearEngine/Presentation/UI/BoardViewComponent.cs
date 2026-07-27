@@ -15,8 +15,6 @@ namespace GearEngine.GearEngine.Presentation.UI
     {
         public BoardLayoutSO BoardLayout => boardLayout;
 
-        public RectTransform TopRightCell => ResolveTopRightCell();
-
         [SerializeField] private GameObject gridSlotPrefab;
         [SerializeField] private RectTransform gridRoot;
         [SerializeField] private RectTransform gearsRoot;
@@ -188,19 +186,6 @@ namespace GearEngine.GearEngine.Presentation.UI
             }
 
             return boardLayout.GetGridPosition(boardLocal, viewModel.BoardRules);
-        }
-
-        private RectTransform ResolveTopRightCell()
-        {
-            if (viewModel == null || viewModel.GridWidth <= 0 || viewModel.GridHeight <= 0)
-            {
-                return null;
-            }
-
-            Vector2Int coordinate = new Vector2Int(
-                viewModel.GridWidth - 1,
-                viewModel.GridHeight - 1);
-            return GetSlotTransform(coordinate) as RectTransform;
         }
 
         private void HandleGearPlaced(IGridNode node)

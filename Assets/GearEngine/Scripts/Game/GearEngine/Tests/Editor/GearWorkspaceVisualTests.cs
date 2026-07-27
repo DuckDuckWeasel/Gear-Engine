@@ -50,9 +50,9 @@ namespace GearEngine.GearEngine.Tests.Editor
                     height,
                     topInset,
                     bottomInset);
-                RectTransform topRightCell = PopulateBoard(workspace);
+                PopulateBoard(workspace);
                 PopulateInventory(workspace);
-                RectTransform trashRect = RevealTrash(workspace, topRightCell);
+                RevealTrash(workspace);
 
                 string artifactPath = Capture(
                     scenario,
@@ -67,7 +67,6 @@ namespace GearEngine.GearEngine.Tests.Editor
                 Assert.IsNotNull(workspaceRect);
                 Assert.That(workspaceRect.anchorMin.y, Is.GreaterThanOrEqualTo(0f));
                 Assert.That(workspaceRect.anchorMax.y, Is.LessThanOrEqualTo(1f));
-                AssertTrashIsAboveCell(trashRect, topRightCell);
                 Assert.That(new FileInfo(artifactPath).Length, Is.GreaterThan(10_000));
             }
             finally
@@ -137,7 +136,7 @@ namespace GearEngine.GearEngine.Tests.Editor
             return workspace;
         }
 
-        private static RectTransform PopulateBoard(GearWorkspaceView workspace)
+        private static void PopulateBoard(GearWorkspaceView workspace)
         {
             BoardRulesSO rules = AssetDatabase.LoadAssetAtPath<BoardRulesSO>(k_rulesPath);
             BoardLayoutSO layout = AssetDatabase.LoadAssetAtPath<BoardLayoutSO>(k_layoutPath);
@@ -163,8 +162,6 @@ namespace GearEngine.GearEngine.Tests.Editor
                     }
                 }
             }
-
-            return gridRoot.GetChild(gridRoot.childCount - 1) as RectTransform;
         }
 
         private static void PopulateInventory(GearWorkspaceView workspace)
@@ -186,30 +183,13 @@ namespace GearEngine.GearEngine.Tests.Editor
             }
         }
 
-        private static RectTransform RevealTrash(
-            GearWorkspaceView workspace,
-            RectTransform topRightCell)
+        private static void RevealTrash(GearWorkspaceView workspace)
         {
             TrashDropZoneViewComponent trash =
                 workspace.GetComponentInChildren<TrashDropZoneViewComponent>(true);
-            trash.SetBoardPresentation(workspace.Board.BoardLayout, topRightCell);
             trash.gameObject.SetActive(true);
             CanvasGroup canvasGroup = trash.GetComponent<CanvasGroup>();
             canvasGroup.alpha = 1f;
-            return trash.transform as RectTransform;
-        }
-
-        private static void AssertTrashIsAboveCell(
-            RectTransform trashRect,
-            RectTransform topRightCell)
-        {
-            Vector3[] trashCorners = new Vector3[4];
-            Vector3[] cellCorners = new Vector3[4];
-            trashRect.GetWorldCorners(trashCorners);
-            topRightCell.GetWorldCorners(cellCorners);
-
-            Assert.That(trashCorners[0].y, Is.GreaterThan(cellCorners[1].y));
-            Assert.That(trashRect.position.x, Is.EqualTo(topRightCell.position.x).Within(0.5f));
         }
 
         private static GearItemData[] LoadGearData()

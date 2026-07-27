@@ -25,9 +25,8 @@ namespace GearEngine.GearEngine.Presentation.UI
             board.SetDragContext(dragService, dragOverlay);
             board.Bind(boardViewModel);
             trash.SetDragService(dragService);
-            trash.SetBoardPresentation(board.BoardLayout, board.TopRightCell);
             trash.Bind(trashViewModel);
-            trash.ApplyInitialPlacement();
+            trash.ApplyInitialState();
         }
 
         public void SetVisible(bool visible)
