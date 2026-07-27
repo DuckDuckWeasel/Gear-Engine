@@ -34,7 +34,7 @@ serialization will be removed after all consumers are cut over.
   messaging, and persistence.
 - [x] Milestone 4: add action contexts, action lists, tracks, Blocks, and composite
   execution, then migrate action families.
-- [ ] Milestone 5: add the plain Blackboard runtime and plain triggers.
+- [x] Milestone 5: add the plain Blackboard runtime and plain triggers.
 - [ ] Milestone 6: add the Unity wrapper, callback relays, factories, and VContainer
   composition.
 - [ ] Milestone 7: rewrite editor authoring for managed definitions.
@@ -99,6 +99,12 @@ serialization will be removed after all consumers are cut over.
   action files. Decomposing long methods, enforcing declaration call order, removing
   stale XML comments, and normalizing serialized member names brought the complete
   changed-C# formatter/analyzer/structure gate to zero diagnostics.
+- Lifecycle signals must be filtered by runtime-instance ID because one injected
+  event bus may serve several independent Blackboards. Local messages therefore carry
+  an explicit target ID, while broadcasts intentionally leave the target empty.
+- The legacy `BlackboardEnabled` and `GameStarted` handlers both defer execution by
+  frames. A reusable scheduler-owned deferred callback preserves that timing and
+  cancels pending work when a runtime is disabled or disposed.
 
 ## Decision Log
 
@@ -130,6 +136,13 @@ serialization will be removed after all consumers are cut over.
   service locators are forbidden.
 - Existing execution semantics are retained unless they exist only because of
   component ownership.
+- A newly created plain runtime is enabled but not started. `Start` binds its triggers,
+  raises enabled and started lifecycle events, and is idempotent. `Disable` detaches
+  trigger sources, cancels deferred trigger work, and interrupts executing Blocks.
+- Trigger definitions own no subscriptions. Their runtime bindings attach on enable,
+  detach on disable, and dispose symmetrically. Bindable sources may return payloads
+  into a stable variable reference; polling conditions evaluate through the immutable
+  trigger context.
 
 ## Outcomes & Retrospective
 
@@ -160,6 +173,15 @@ flattening, utility reevaluation, and execution feedback are covered by 16/16 Co
 tests. The Gear bridge passes 7/7 tests, including delay and IEnumerator scheduling
 and disposal without a `GameObject`; the legacy behavior matrix remains 39/39. All 62
 changed C# files pass formatter, analyzer, and one-top-level-type verification.
+
+Milestone 5 introduced `BlackboardFactory`, the clone-owned plain `Blackboard`
+lifecycle, block lookup/execution/stop/reset, runtime ticking, variable lookup,
+targeted and broadcast messaging, text substitution, save/load/delete, registry
+ownership, and deterministic disposal. Plain GameStarted, BlackboardEnabled, message,
+polling, and bindable triggers attach through injected contracts and contain no Unity
+lifecycle method. Its pure EditMode fixture passes 10/10 cases without a `GameObject`,
+`AddComponent`, coroutine, or `[UnityTest]`; the complete replacement-Core regression
+namespace passes 53/53 through this milestone.
 
 ## Context and Orientation
 

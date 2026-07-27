@@ -65,7 +65,18 @@ namespace Scaffold.VisualScripting
                 return;
             }
 
+            ValidateTrigger(block, path, issues);
             ValidateTracks(block, path, issues);
+        }
+
+        private void ValidateTrigger(BlockDefinition block, string blockPath, ICollection<BlackboardValidationIssue> issues)
+        {
+            if (block.Trigger == null)
+            {
+                return;
+            }
+
+            block.Trigger.Validate($"{blockPath}.Trigger", issues);
         }
 
         private void ValidateTracks(BlockDefinition block, string blockPath, ICollection<BlackboardValidationIssue> issues)

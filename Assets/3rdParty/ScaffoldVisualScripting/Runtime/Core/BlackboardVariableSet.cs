@@ -59,6 +59,17 @@ namespace Scaffold.VisualScripting
             return TryResolveOwnVariable(definitionId, out cell);
         }
 
+        public bool TryGet(string key, out VariableCellBase cell)
+        {
+            if (string.IsNullOrWhiteSpace(key))
+            {
+                cell = null;
+                return false;
+            }
+
+            return TryGetByKey(localVariables, key, out cell) || TryGetByKey(publicVariables, key, out cell) || TryGetByKey(globalBindings, key, out cell);
+        }
+
         public bool TryGetBlackboardDefinition(DefinitionId variableId, out BlackboardDefinition definition)
         {
             definition = null;
@@ -190,6 +201,21 @@ namespace Scaffold.VisualScripting
         private bool TryResolveOwnVariable(DefinitionId definitionId, out VariableCellBase cell)
         {
             return localVariables.TryGet(definitionId, out cell) || publicVariables.TryGet(definitionId, out cell) || globalBindings.TryGet(definitionId, out cell);
+        }
+
+        private bool TryGetByKey(IVariableStore store, string key, out VariableCellBase cell)
+        {
+            foreach (VariableCellBase candidate in store.Cells)
+            {
+                if (string.Equals(candidate.Key, key, StringComparison.OrdinalIgnoreCase))
+                {
+                    cell = candidate;
+                    return true;
+                }
+            }
+
+            cell = null;
+            return false;
         }
 
         private VariableCellBase GetRequired(IVariableStore store, DefinitionId definitionId)

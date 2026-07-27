@@ -24,6 +24,8 @@
 | Milestone 4 `ActionRuntimeTests` | 16 passed, 0 failed; Unity log contained no compiler error or exception. |
 | Milestone 4 `ActionContextBridgeTests` | 7 passed, 0 failed; delay and IEnumerator scheduler paths ran without a `GameObject`. |
 | Milestone 4 legacy `InvokeActionCommandTests` | 39 passed, 0 failed after the action-context and scheduler migration. |
+| Milestone 5 `BlackboardRuntimeLifecycleTests` | 10 passed, 0 failed; lifecycle, triggers, messages, persistence, interruption, and disposal ran without a `GameObject`. |
+| Milestone 5 replacement-Core regression | 53 passed, 0 failed across definitions, cloning, variables, actions, lifecycle, and triggers. |
 | Milestone 3 Unity compilation precheck | Passed with Unity 6000.5.3f1 after importing the variable/service layer. |
 | Escalated `.agents/scripts/validate-changes.sh` compilation precheck | Passed with Unity 6000.5.3f1. |
 | `dotnet build Assembly-CSharp-Editor.csproj --no-restore` | Succeeded with 0 warnings and 0 errors. |

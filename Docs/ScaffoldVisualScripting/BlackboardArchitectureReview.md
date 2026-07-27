@@ -347,6 +347,28 @@ permanent runtime types.
   and Block components in one prefab and two test scenes, `GameStarted` in one prefab
   and one test scene, and `InvokeActionCommand` in two test scenes.
 
+## Milestone 5 implementation checkpoint
+
+The replacement runtime now owns an isolated cloned definition, variable cells, plain
+Blocks, action tracks, action lists, trigger bindings, and execution state.
+`BlackboardFactory` is the single construction path and accepts injected scheduling,
+time, event, save, logging, persistence, substitution, registry, public/global
+variable, and random services.
+
+Lifecycle is no longer sourced from Unity. `Blackboard.Start` publishes runtime-scoped
+startup and enabled events; `Tick` advances scheduling, polling, and Block
+reevaluation; disable and disposal symmetrically detach sources and interrupt work.
+Messages use explicit runtime targets or intentional broadcast semantics.
+
+GameStarted, BlackboardEnabled, message, polling, and bindable triggers are serializable
+plain definitions. Their clone-local bindings contain all transient subscription and
+scheduling state. The pure runtime test matrix creates, starts, ticks, messages,
+saves, loads, resets, and disposes Blackboards without a `GameObject`.
+
+The remaining component ownership is now outside the new Core path: the optional Unity
+wrapper and unavoidable callback relays are introduced in Milestone 6, while the
+legacy component graph continues compiling only until the breaking cutover.
+
 ## Dependency Rules
 
 Allowed:

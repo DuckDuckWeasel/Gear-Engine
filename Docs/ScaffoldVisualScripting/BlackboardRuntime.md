@@ -86,3 +86,40 @@ During the pre-cutover milestones, the Gear action bridge retains a legacy execu
 overload so the characterized component runner continues compiling. This overload is
 not a Core API and is deleted with the legacy component graph during the breaking
 cutover.
+
+## Runtime lifecycle
+
+`BlackboardFactory` validates and clones a template, builds isolated variable cells,
+constructs plain Blocks and trigger bindings, and registers the runtime by its unique
+instance ID. Script-created and future wrapper-created instances use this same
+factory. No runtime construction step requires a `GameObject`.
+
+`Blackboard` exposes `Start`, `Enable`, `Disable`, `Tick`, block execution and stop
+operations, `StopAll`, `Reset`, variable lookup, messaging, substitution,
+save/load/delete, and `Dispose`. A runtime starts only once. Disable detaches triggers,
+cancels scheduled trigger callbacks, and interrupts active Blocks. Dispose additionally
+removes registry and public-variable registrations and disposes all owned execution
+state.
+
+The injected frame scheduler advances before trigger polling and Block reevaluation.
+This gives delayed callbacks one deterministic execution point and keeps Utility
+Selector reevaluation in the same runtime tick.
+
+## Trigger model
+
+`TriggerDefinition` is reusable authoring data. It creates one plain
+`ITriggerBinding` per runtime clone. Bindings attach on enable, detach on disable, and
+dispose symmetrically.
+
+Built-in Core trigger definitions cover:
+
+- GameStarted and BlackboardEnabled signals with scheduler-owned frame deferral.
+- Targeted or broadcast Blackboard messages.
+- Polled conditions, including rising-edge and while-true behavior.
+- Bindable signal sources for UI or other observer-style publishers, with an optional
+  payload destination addressed by a stable variable reference.
+
+The signal-source and polling-condition contracts contain no Unity API. A concrete
+adapter may retain an explicit Unity object reference, but the subscription and
+decision logic remain plain C#. Physics, render, animator, and pointer callbacks are
+forwarded by the Unity assembly in the next milestone.
