@@ -208,36 +208,5 @@ namespace GearEngine.GearEngine.Tests.Editor
             Object.DestroyImmediate(layout);
         }
 
-        [Test]
-        public void Update_WhileSimulationRuns_SnapsVisualToLogicalTriggerRotation()
-        {
-            BoardLayoutSO layout = ScriptableObject.CreateInstance<BoardLayoutSO>();
-            Transform slot = new GameObject("Slot").transform;
-            GameObject host = new GameObject("AnimatorHost");
-            BoardGearAnimator animator = host.AddComponent<BoardGearAnimator>();
-            animator.Configure(_ => slot, layout, null, () => true);
-
-            GameObject gearRoot = new GameObject("GearRoot");
-            GameObject gearVisual = new GameObject("GearVisual");
-            gearVisual.transform.SetParent(gearRoot.transform, false);
-            GearView gearView = gearRoot.AddComponent<GearView>();
-            gearView.WireTestReferences(gearVisual.transform);
-            gearView.ApplyConfig(new GearItemData { RelativeScaleMultiplier = 1f });
-
-            FakeGridNode node = new FakeGridNode { CurrentRotation = 0f };
-            animator.Track(node, gearView);
-            node.CurrentRotation = 90f;
-
-            InvokeAnimatorUpdate(animator);
-
-            Assert.That(
-                Mathf.Abs(Mathf.DeltaAngle(gearVisual.transform.localEulerAngles.z, -90f)),
-                Is.LessThan(0.001f));
-
-            Object.DestroyImmediate(host);
-            Object.DestroyImmediate(gearRoot);
-            Object.DestroyImmediate(slot.gameObject);
-            Object.DestroyImmediate(layout);
-        }
     }
 }

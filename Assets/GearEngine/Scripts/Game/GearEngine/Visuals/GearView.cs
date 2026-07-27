@@ -38,7 +38,6 @@ namespace GearEngine.GearEngine.Visuals
         private float targetVisualFill = -1f;
         private Material chargeMaterialInstance;
 
-        private float animatedBaseRotationZ;
         private float visualRotationOffset;
         private float rapidSpinSpeed = 0f;
         private bool hasInitializedRotation = false;
@@ -71,9 +70,8 @@ namespace GearEngine.GearEngine.Visuals
             targetRotationZ = zDegrees;
             if (!hasInitializedRotation || snap)
             {
-                animatedBaseRotationZ = zDegrees;
                 hasInitializedRotation = true;
-                ApplyRotation();
+                ApplyRotation(snap: true);
             }
         }
 
@@ -131,7 +129,6 @@ namespace GearEngine.GearEngine.Visuals
         private void Update()
         {
             SettleToOrigin();
-            animatedBaseRotationZ = Mathf.LerpAngle(animatedBaseRotationZ, targetRotationZ, Time.deltaTime * rotationLerpSpeed);
             UpdateRapidSpin();
             ApplyRotation();
             UpdateChargeFill();
@@ -216,19 +213,17 @@ namespace GearEngine.GearEngine.Visuals
             gearVisual.localScale = Vector3.one * currentScale;
         }
 
-        private void ApplyRotation()
+        private void ApplyRotation(bool snap = false)
         {
             Transform rotateTarget = gearVisual != null ? gearVisual : transform;
-            float rotation = animatedBaseRotationZ + visualRotationOffset + rapidSpinOffset;
-            Quaternion visualRotation = Quaternion.Euler(0f, 0f, rotation);
-            rotateTarget.localRotation = visualRotation;
-            if (chargeFillImage != null && chargeFillImage.transform != rotateTarget)
-            {
-                chargeFillImage.rectTransform.localRotation =
-                    chargeFillImage.transform.parent == rotateTarget
-                        ? Quaternion.identity
-                        : visualRotation;
-            }
+            float rotation = targetRotationZ + visualRotationOffset + rapidSpinOffset;
+            Quaternion targetRotation = Quaternion.Euler(0f, 0f, rotation);
+            rotateTarget.localRotation = snap
+                ? targetRotation
+                : Quaternion.Lerp(
+                    rotateTarget.localRotation,
+                    targetRotation,
+                    Time.deltaTime * rotationLerpSpeed);
         }
 
         private void UpdateChargeFill()

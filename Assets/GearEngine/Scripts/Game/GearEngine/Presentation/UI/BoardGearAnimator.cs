@@ -106,8 +106,7 @@ namespace GearEngine.GearEngine.Presentation.UI
                 return;
             }
 
-            bool snapToSimulation = isSimulationRunningFn != null && isSimulationRunningFn();
-            e.View.SetRotationTarget(-node.CurrentRotation + e.StaggerOffset, snapToSimulation);
+            e.View.SetRotationTarget(-node.CurrentRotation + e.StaggerOffset);
             ApplyChargeVisual(node, e.View, snap: false);
         }
 
