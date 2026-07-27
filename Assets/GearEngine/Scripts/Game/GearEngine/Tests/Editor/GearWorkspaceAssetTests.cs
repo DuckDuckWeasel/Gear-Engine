@@ -19,17 +19,17 @@ namespace GearEngine.GearEngine.Tests.Editor
     [TestFixture]
     public sealed class GearWorkspaceAssetTests
     {
-        private const string WorkspacePath =
+        private const string k_workspacePath =
             "Assets/GearEngine/Prefabs/Gears/PFB_GearWorkspace.prefab";
-        private const string SetupPath =
+        private const string k_setupPath =
             "Assets/GearEngine/Prefabs/Campaign/Setup View.prefab";
-        private const string BoardViewPath =
+        private const string k_boardViewPath =
             "Assets/GearEngine/Prefabs/Campaign/PFB_BoardView.prefab";
-        private const string RoguelikePath =
+        private const string k_roguelikePath =
             "Assets/GearEngine/Prefabs/Campaign/Campaign_RoguelikeView.prefab";
-        private const string RacePath =
+        private const string k_racePath =
             "Assets/GearEngine/Prefabs/Campaign/Race View.prefab";
-        private const string MainScenePath =
+        private const string k_mainScenePath =
             "Assets/GearEngine/Scenes/Main Scene.unity";
 
         [Test]
@@ -44,7 +44,7 @@ namespace GearEngine.GearEngine.Tests.Editor
         [Test]
         public void Workspace_IsCanvaslessAndContainsNoWorldInteractionComponents()
         {
-            GameObject workspace = LoadPrefab(WorkspacePath);
+            GameObject workspace = LoadPrefab(k_workspacePath);
 
             Assert.That(workspace.GetComponentsInChildren<Canvas>(true), Is.Empty);
             Assert.That(workspace.GetComponentsInChildren<SpriteRenderer>(true), Is.Empty);
@@ -78,8 +78,8 @@ namespace GearEngine.GearEngine.Tests.Editor
             }
         }
 
-        [TestCase(RoguelikePath, GearWorkspaceMode.Interactive)]
-        [TestCase(RacePath, GearWorkspaceMode.ReadOnly)]
+        [TestCase(k_roguelikePath, GearWorkspaceMode.Interactive)]
+        [TestCase(k_racePath, GearWorkspaceMode.ReadOnly)]
         public void CampaignScreen_OwnsWorkspaceWithExpectedMode(
             string prefabPath,
             GearWorkspaceMode expectedMode)
@@ -95,7 +95,7 @@ namespace GearEngine.GearEngine.Tests.Editor
         [Test]
         public void SetupPrefab_OwnsOnlyInventoryWorkspaceContent()
         {
-            GameObject setup = LoadPrefab(SetupPath);
+            GameObject setup = LoadPrefab(k_setupPath);
             GearInventoryViewComponent inventory =
                 setup.GetComponentInChildren<GearInventoryViewComponent>(true);
             MonoBehaviour setupView = setup.GetComponents<MonoBehaviour>()
@@ -104,6 +104,10 @@ namespace GearEngine.GearEngine.Tests.Editor
             SerializedObject serializedView = new SerializedObject(setupView);
 
             Assert.IsNotNull(inventory);
+            Assert.IsTrue(inventory.gameObject.activeSelf);
+            Assert.That(inventory.transform.localScale.x, Is.GreaterThan(0.01f));
+            Assert.That(inventory.transform.localScale.y, Is.GreaterThan(0.01f));
+            Assert.That(inventory.transform.localScale.z, Is.GreaterThan(0.01f));
             Assert.That(
                 serializedView.FindProperty("inventory").objectReferenceValue,
                 Is.SameAs(inventory));
@@ -121,13 +125,18 @@ namespace GearEngine.GearEngine.Tests.Editor
         [Test]
         public void BoardViewPrefab_OwnsBoardTrashAndOverlay()
         {
-            GameObject prefab = LoadPrefab(BoardViewPath);
+            GameObject prefab = LoadPrefab(k_boardViewPath);
             BoardView boardView = prefab.GetComponent<BoardView>();
             SerializedObject serializedView = new SerializedObject(boardView);
 
             Assert.IsNotNull(boardView);
             Assert.IsNotNull(prefab.GetComponent<Canvas>());
             Assert.That(prefab.transform.localScale, Is.EqualTo(Vector3.one));
+            BoardViewComponent grid =
+                prefab.GetComponentInChildren<BoardViewComponent>(true);
+            Assert.IsNotNull(grid);
+            Assert.That(grid.transform.localScale.x, Is.EqualTo(1.1f));
+            Assert.That(grid.transform.localScale.y, Is.EqualTo(1.1f));
             Assert.That(
                 serializedView.FindProperty("board").objectReferenceValue,
                 Is.Not.Null);
@@ -142,7 +151,7 @@ namespace GearEngine.GearEngine.Tests.Editor
         [Test]
         public void MainScene_OwnsBoardViewBesideSetupView()
         {
-            Scene scene = EditorSceneManager.OpenScene(MainScenePath, OpenSceneMode.Additive);
+            Scene scene = EditorSceneManager.OpenScene(k_mainScenePath, OpenSceneMode.Additive);
             try
             {
                 BoardView boardView = scene.GetRootGameObjects()
@@ -175,7 +184,7 @@ namespace GearEngine.GearEngine.Tests.Editor
         [Test]
         public void MainScene_HasSingleInputSystemEventSystem()
         {
-            Scene scene = EditorSceneManager.OpenScene(MainScenePath, OpenSceneMode.Additive);
+            Scene scene = EditorSceneManager.OpenScene(k_mainScenePath, OpenSceneMode.Additive);
             try
             {
                 EventSystem[] eventSystems = scene.GetRootGameObjects()
