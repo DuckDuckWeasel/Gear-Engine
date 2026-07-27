@@ -2,6 +2,7 @@ using GearEngine.GearEngine.Config;
 using GearEngine.GearEngine.Visuals;
 using NUnit.Framework;
 using UnityEngine;
+using UnityEngine.TestTools;
 
 namespace GearEngine.GearEngine.Tests.Editor
 {
@@ -11,8 +12,9 @@ namespace GearEngine.GearEngine.Tests.Editor
         [Test]
         public void Spawn_ReturnsNull_WhenViewPrefabMissing()
         {
-            var config = new GearItemData { Id = "x", ViewPrefab = null };
-            var parent = new GameObject("Parent").transform;
+            GearItemData config = new GearItemData { Id = "x", ViewPrefab = null };
+            Transform parent = new GameObject("Parent", typeof(RectTransform)).transform;
+            LogAssert.Expect(LogType.Error, "[GearViewSpawner] Gear 'x' missing ViewPrefab.");
 
             GearView view = GearViewSpawner.Spawn(config, parent);
 
@@ -23,21 +25,21 @@ namespace GearEngine.GearEngine.Tests.Editor
         [Test]
         public void Spawn_AppliesRelativeScaleMultiplierOnce()
         {
-            var gearVisualGo = new GameObject("GearVisual");
-            var root = new GameObject("PrefabRoot");
+            GameObject gearVisualGo = new GameObject("GearVisual", typeof(RectTransform));
+            GameObject root = new GameObject("PrefabRoot", typeof(RectTransform));
             gearVisualGo.transform.SetParent(root.transform, false);
-            var gearView = root.AddComponent<GearView>();
+            GearView gearView = root.AddComponent<GearView>();
             gearView.WireTestReferences(gearVisualGo.transform);
 
-            var prefab = gearView;
-            var config = new GearItemData
+            GearView prefab = gearView;
+            GearItemData config = new GearItemData
             {
                 Id = "test",
                 ViewPrefab = prefab,
                 RelativeScaleMultiplier = 0.5f,
             };
 
-            var parent = new GameObject("Slot").transform;
+            Transform parent = new GameObject("Slot", typeof(RectTransform)).transform;
             GearView instance = GearViewSpawner.Spawn(config, parent);
 
             Assert.IsNotNull(instance);
@@ -52,16 +54,16 @@ namespace GearEngine.GearEngine.Tests.Editor
         [Test]
         public void Spawn_ResetsLocalPositionAndRotation()
         {
-            var gearVisualGo = new GameObject("GearVisual");
-            var root = new GameObject("PrefabRoot");
+            GameObject gearVisualGo = new GameObject("GearVisual", typeof(RectTransform));
+            GameObject root = new GameObject("PrefabRoot", typeof(RectTransform));
             root.transform.localPosition = new Vector3(1, 2, 3);
             root.transform.localRotation = Quaternion.Euler(0, 0, 45);
             gearVisualGo.transform.SetParent(root.transform, false);
-            var gearView = root.AddComponent<GearView>();
+            GearView gearView = root.AddComponent<GearView>();
             gearView.WireTestReferences(gearVisualGo.transform);
 
-            var config = new GearItemData { Id = "t2", ViewPrefab = gearView, RelativeScaleMultiplier = 1f };
-            var parent = new GameObject("Slot").transform;
+            GearItemData config = new GearItemData { Id = "t2", ViewPrefab = gearView, RelativeScaleMultiplier = 1f };
+            Transform parent = new GameObject("Slot", typeof(RectTransform)).transform;
             GearView instance = GearViewSpawner.Spawn(config, parent);
 
             Assert.IsNotNull(instance);

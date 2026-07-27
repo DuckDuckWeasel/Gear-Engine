@@ -16,10 +16,20 @@
 
 `CampaignLayer` registers inventory + loadout via LiveOps installers, then registers **`IBoardSlotCapacityProvider`** (via **`LoadoutClientModule`**) before `GearMechanicsInstaller`. `RaceScope` and `GearMechanicsScope` register **`EmptyInventoryService`** and **`UnlimitedBoardSlotCapacityProvider`** before the installer.
 
-## Drag presentation
+## Workspace presentation ownership
 
-- **`DragGhostController`** — Instantiates the **`GearVisual`** child from `GearConfigData.ViewPrefab` under the board’s space root (via `BoardViewComponent.GetBoardSpaceRoot()`), applies `RelativeScaleMultiplier` as local scale, and moves the ghost in world space. Used for both inventory drags (`GearInventoryViewComponent`) and board drags (`GearBoardDragHandler`) so the ghost matches placed gears without canvas/world scale ratio math.
-- **`DragHandler`** — EventSystem forwarder only: `OnDragBegin` / `OnDragMoved` / `OnDragEnd` with `PointerEventData`, plus `BuildPayload` and drop resolution via `DragTargetFinder`. Inventory slots wire these callbacks to `DragGhostController`; slot and ghost visuals use `GearView.BindForDisplay` with the authored `GearConfigData.ViewPrefab`.
+- **`GearWorkspaceView`** is a canvas-less UI composition owned by each campaign screen prefab. Setup and Roguelike bind Board, Inventory, Trash, and the drag overlay in interactive mode. Active Race binds only the Board in read-only mode.
+- **`Main Scene`** owns navigation and world presentation only. It no longer contains shared Board, Inventory, or Trash objects and does not inject scene instances into campaign screen prefabs.
+- Track, cars, environment, and race cameras remain world-space. Gear workspace visuals are `Image` and `RectTransform` components rendered by the screen's existing Canvas and `GraphicRaycaster`.
+- **`SafeAreaRectTransform`** keeps the workspace inside the current device safe area. The reference composition is 1080x1920 portrait; `BoardLayoutSO` presentation dimensions are pixels at that reference resolution.
+
+## Input and drag flow
+
+- **`DragPayload.ScreenPosition`** carries the pointer position without any camera projection or world plane.
+- **`Draggable.Configure(IDragService, RectTransform)`** receives the screen-owned drag service and workspace overlay explicitly. A drag preview is instantiated beneath that overlay and positioned with `RectTransformUtility.ScreenPointToLocalPointInRectangle` using the owning Canvas event camera.
+- **`DragTargetFinder`** accepts targets returned by EventSystem UI raycasts only. Gear interaction does not require Colliders, `PhysicsRaycaster`, `Physics2DRaycaster`, screen-to-world planes, or camera-distance fitting.
+- **`BoardScreenPositionUtility`** converts a screen pointer into Board-local pixels. `BoardLayoutSO` then maps those pixels to logical rows and columns, including staggered-row offsets. Domain coordinates, placement rules, saves, and LiveOps data remain unchanged.
+- A Gear view creates an isolated instance of its charge-fill material. This prevents charge updates on one Gear from changing another Gear's UI material state.
 
 ## Standard
 

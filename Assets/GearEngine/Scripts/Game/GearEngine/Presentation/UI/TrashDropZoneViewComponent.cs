@@ -34,13 +34,10 @@ namespace GearEngine.GearEngine.Presentation.UI
         private IDragService dragService;
 
         private BoardLayoutSO boardLayout;
-        private BoardRulesSO boardRules;
 
-        /// <summary>Wired from <see cref="GearEngineCoreViewComponent"/> before <see cref="ApplyInitialPlacement"/>.</summary>
-        public void SetBoardPresentation(BoardLayoutSO layout, BoardRulesSO rules)
+        public void SetBoardPresentation(BoardLayoutSO layout)
         {
             boardLayout = layout;
-            boardRules = rules;
         }
 
         public void SetDragService(IDragService service)
@@ -111,12 +108,6 @@ namespace GearEngine.GearEngine.Presentation.UI
             rewardLabel.text = text;
         }
 
-        public void SetHovered(bool hovered)
-        {
-            isHovered = hovered;
-            trashIcon.color = hovered ? new Color(1f, 0.4f, 0.4f, 1f) : Color.white;
-        }
-
         public void OnPointerEnter(PointerEventData eventData)
         {
             if (isShowing)
@@ -130,10 +121,16 @@ namespace GearEngine.GearEngine.Presentation.UI
             SetHovered(false);
         }
 
+        public void SetHovered(bool hovered)
+        {
+            isHovered = hovered;
+            trashIcon.color = hovered ? new Color(1f, 0.4f, 0.4f, 1f) : Color.white;
+        }
+
         void IDragLifecycleListener.OnDragStarted(DragPayload payload)
         {
             viewModel?.HandleDragStarted(payload);
-            
+
             if (viewModel != null && viewModel.IsActive)
             {
                 Show();
@@ -191,32 +188,10 @@ namespace GearEngine.GearEngine.Presentation.UI
             }
         }
 
-        private void Hide(bool immediate)
-        {
-            isShowing = false;
-            isHovered = false;
-
-            if (canvasGroup != null)
-            {
-                canvasGroup.blocksRaycasts = false;
-                canvasGroup.interactable = false;
-            }
-
-            if (immediate)
-            {
-                animationProgress = 0f;
-                if (canvasGroup != null)
-                {
-                    canvasGroup.alpha = 0f;
-                }
-            }
-        }
-
         private void Update()
         {
             TickFadeAnimation();
             TickScaleAnimation();
-            TickAutoHideWhenFaded();
         }
 
         private void TickFadeAnimation()
@@ -242,16 +217,6 @@ namespace GearEngine.GearEngine.Presentation.UI
             rootPanel.localScale = Vector3.Lerp(rootPanel.localScale, targetScale, Time.unscaledDeltaTime * 12f);
         }
 
-        private void TickAutoHideWhenFaded()
-        {
-            // Removed rootPanel.gameObject.SetActive(false) 
-            // so the ViewModel bindings keep ticking during Update()
-        }
-
-        /// <summary>
-        /// Hides the trash zone when the feature is off, otherwise prepares placement relative to the board grid.
-        /// Call after <see cref="ViewComponent{T}.Bind"/> so <see cref="TrashZoneViewModel"/> is available.
-        /// </summary>
         public void ApplyInitialPlacement()
         {
             if (viewModel == null)
@@ -260,83 +225,64 @@ namespace GearEngine.GearEngine.Presentation.UI
                 return;
             }
 
-            GearEngineFeatureToggleSO featureToggle = viewModel.FeatureToggleForTrashPlacement;
-
-            if (featureToggle != null && !featureToggle.EnableTrashDeletion)
+            if (IsTrashDisabled())
             {
-                if (rootPanel != null)
-                {
-                    rootPanel.gameObject.SetActive(false);
-                }
-
                 return;
             }
-
             Assert.IsNotNull(rootPanel, "[TrashDropZone] rootPanel is not assigned. Trash deletion will not work.");
-
             Hide(immediate: true);
-            RepositionRelativeToBoard();
+            ApplyScreenSpacePlacement();
         }
 
-        private void RepositionRelativeToBoard()
+        private bool IsTrashDisabled()
         {
-            if (rootPanel == null || boardLayout == null || boardRules == null)
+            GearEngineFeatureToggleSO featureToggle = viewModel.FeatureToggleForTrashPlacement;
+            if (featureToggle == null || featureToggle.EnableTrashDeletion)
+            {
+                return false;
+            }
+            if (rootPanel != null)
+            {
+                rootPanel.gameObject.SetActive(false);
+            }
+            return true;
+        }
+
+        private void ApplyScreenSpacePlacement()
+        {
+            if (rootPanel == null)
             {
                 return;
             }
 
-            TrashZoneAlignment alignment = TrashZoneAlignment.Right;
-            float yOffset = boardLayout.TrashZoneYOffset;
+            rootPanel.anchorMin = Vector2.one;
+            rootPanel.anchorMax = Vector2.one;
+            rootPanel.pivot = Vector2.one;
+            float verticalOffset = boardLayout != null ? boardLayout.TrashZoneYOffset : 80f;
+            rootPanel.anchoredPosition = new Vector2(-24f, -24f - verticalOffset);
+        }
 
-            Vector3 gridAnchorPoint = ComputeGridAnchor(alignment);
-            Vector2 pivot = ComputePivot(alignment);
-
-            Canvas parentCanvas = GetComponentInParent<Canvas>();
-            if (parentCanvas != null)
+        private void Hide(bool immediate)
+        {
+            isShowing = false;
+            isHovered = false;
+            if (canvasGroup != null)
             {
-                RectTransform rect = GetComponent<RectTransform>();
-                if (rect != null)
-                {
-                    CanvasPositionUtility.AnchorToWorldPosition(
-                        rect, parentCanvas, gridAnchorPoint, new Vector2(0f, yOffset), pivot);
-                }
+                canvasGroup.blocksRaycasts = false;
+                canvasGroup.interactable = false;
+            }
+            if (immediate)
+            {
+                HideImmediately();
             }
         }
 
-        private static Vector2 ComputePivot(TrashZoneAlignment alignment)
+        private void HideImmediately()
         {
-            switch (alignment)
+            animationProgress = 0f;
+            if (canvasGroup != null)
             {
-                case TrashZoneAlignment.Left:
-                    return new Vector2(0f, 0.5f);
-                case TrashZoneAlignment.Center:
-                    return new Vector2(0.5f, 0.5f);
-                case TrashZoneAlignment.Right:
-                default:
-                    return new Vector2(1f, 0.5f);
-            }
-        }
-
-        private Vector3 ComputeGridAnchor(TrashZoneAlignment alignment)
-        {
-            if (boardLayout == null || boardRules == null)
-            {
-                return Vector3.zero;
-            }
-
-            int topY = boardRules.GridHeight - 1;
-            Vector3 topLeft = boardLayout.GetCellLocalPosition(new Vector2Int(0, topY), boardRules);
-            Vector3 topRight = boardLayout.GetCellLocalPosition(new Vector2Int(boardRules.GridWidth - 1, topY), boardRules);
-
-            switch (alignment)
-            {
-                case TrashZoneAlignment.Left:
-                    return topLeft;
-                case TrashZoneAlignment.Center:
-                    return (topLeft + topRight) * 0.5f;
-                case TrashZoneAlignment.Right:
-                default:
-                    return topRight;
+                canvasGroup.alpha = 0f;
             }
         }
     }

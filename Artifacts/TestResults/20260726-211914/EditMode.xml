@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="31" result="Passed" total="31" passed="31" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-07-27 00:19:43Z" end-time="2026-07-27 00:19:44Z" duration="0.7388563">
+  <test-suite type="TestSuite" id="1000" name="Scaffold" fullname="Scaffold" runstate="Runnable" testcasecount="327" result="Passed" start-time="2026-07-27 00:19:43Z" end-time="2026-07-27 00:19:44Z" duration="0.738856" total="31" passed="31" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="1373" name="Game.GearEngine.Tests.dll" fullname="/Users/leonardosilva/Documents/MatheusCohen/Gear Engine/Library/ScriptAssemblies/Game.GearEngine.Tests.dll" runstate="Runnable" testcasecount="216" result="Passed" start-time="2026-07-27 00:19:43Z" end-time="2026-07-27 00:19:44Z" duration="0.712328" total="31" passed="31" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="70598" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="1374" name="GearEngine" fullname="GearEngine" runstate="Runnable" testcasecount="216" result="Passed" start-time="2026-07-27 00:19:43Z" end-time="2026-07-27 00:19:44Z" duration="0.711832" total="31" passed="31" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1375" name="GearEngine" fullname="GearEngine.GearEngine" runstate="Runnable" testcasecount="216" result="Passed" start-time="2026-07-27 00:19:43Z" end-time="2026-07-27 00:19:44Z" duration="0.711539" total="31" passed="31" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestSuite" id="1376" name="Tests" fullname="GearEngine.GearEngine.Tests" runstate="Runnable" testcasecount="216" result="Passed" start-time="2026-07-27 00:19:43Z" end-time="2026-07-27 00:19:44Z" duration="0.711199" total="31" passed="31" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="TestSuite" id="1377" name="Editor" fullname="GearEngine.GearEngine.Tests.Editor" runstate="Runnable" testcasecount="216" result="Passed" start-time="2026-07-27 00:19:43Z" end-time="2026-07-27 00:19:44Z" duration="0.710778" total="31" passed="31" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-suite type="TestFixture" id="1120" name="BoardGearAnimatorTests" fullname="GearEngine.GearEngine.Tests.Editor.BoardGearAnimatorTests" classname="GearEngine.GearEngine.Tests.Editor.BoardGearAnimatorTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-07-27 00:19:43Z" end-time="2026-07-27 00:19:43Z" duration="0.024855" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="1123" name="Clear_RemovesTrackedEntries" fullname="GearEngine.GearEngine.Tests.Editor.BoardGearAnimatorTests.Clear_RemovesTrackedEntries" methodname="Clear_RemovesTrackedEntries" classname="GearEngine.GearEngine.Tests.Editor.BoardGearAnimatorTests" runstate="Runnable" seed="248766749" result="Passed" start-time="2026-07-27 00:19:43Z" end-time="2026-07-27 00:19:43Z" duration="0.008718" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1121" name="Track_DrivesRotationTowardStaggeredTarget_FromMotorDistance" fullname="GearEngine.GearEngine.Tests.Editor.BoardGearAnimatorTests.Track_DrivesRotationTowardStaggeredTarget_FromMotorDistance" methodname="Track_DrivesRotationTowardStaggeredTarget_FromMotorDistance" classname="GearEngine.GearEngine.Tests.Editor.BoardGearAnimatorTests" runstate="Runnable" seed="1742102279" result="Passed" start-time="2026-07-27 00:19:43Z" end-time="2026-07-27 00:19:43Z" duration="0.006116" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1122" name="Untrack_ThenUpdate_DoesNotThrow" fullname="GearEngine.GearEngine.Tests.Editor.BoardGearAnimatorTests.Untrack_ThenUpdate_DoesNotThrow" methodname="Untrack_ThenUpdate_DoesNotThrow" classname="GearEngine.GearEngine.Tests.Editor.BoardGearAnimatorTests" runstate="Runnable" seed="867957987" result="Passed" start-time="2026-07-27 00:19:43Z" end-time="2026-07-27 00:19:43Z" duration="0.000386" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+              </test-suite>
+              <test-suite type="TestFixture" id="1124" name="BoardLayoutScreenSpaceTests" fullname="GearEngine.GearEngine.Tests.Editor.BoardLayoutScreenSpaceTests" classname="GearEngine.GearEngine.Tests.Editor.BoardLayoutScreenSpaceTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-07-27 00:19:43Z" end-time="2026-07-27 00:19:43Z" duration="0.005306" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="1125" name="GetCellLocalPosition_ReferencePixels_CentersGrid" fullname="GearEngine.GearEngine.Tests.Editor.BoardLayoutScreenSpaceTests.GetCellLocalPosition_ReferencePixels_CentersGrid" methodname="GetCellLocalPosition_ReferencePixels_CentersGrid" classname="GearEngine.GearEngine.Tests.Editor.BoardLayoutScreenSpaceTests" runstate="Runnable" seed="777753656" result="Passed" start-time="2026-07-27 00:19:43Z" end-time="2026-07-27 00:19:43Z" duration="0.003407" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1127" name="TryGetGridPosition_InsideCell_ReturnsCoordinate" fullname="GearEngine.GearEngine.Tests.Editor.BoardLayoutScreenSpaceTests.TryGetGridPosition_InsideCell_ReturnsCoordinate" methodname="TryGetGridPosition_InsideCell_ReturnsCoordinate" classname="GearEngine.GearEngine.Tests.Editor.BoardLayoutScreenSpaceTests" runstate="Runnable" seed="271574350" result="Passed" start-time="2026-07-27 00:19:43Z" end-time="2026-07-27 00:19:43Z" duration="0.000601" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1126" name="TryGetGridPosition_OutsideGrid_ReturnsFalse" fullname="GearEngine.GearEngine.Tests.Editor.BoardLayoutScreenSpaceTests.TryGetGridPosition_OutsideGrid_ReturnsFalse" methodname="TryGetGridPosition_OutsideGrid_ReturnsFalse" classname="GearEngine.GearEngine.Tests.Editor.BoardLayoutScreenSpaceTests" runstate="Runnable" seed="1193603135" result="Passed" start-time="2026-07-27 00:19:43Z" end-time="2026-07-27 00:19:43Z" duration="0.000186" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+              </test-suite>
+              <test-suite type="TestFixture" id="1128" name="BoardScreenPositionUtilityTests" fullname="GearEngine.GearEngine.Tests.Editor.BoardScreenPositionUtilityTests" classname="GearEngine.GearEngine.Tests.Editor.BoardScreenPositionUtilityTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-07-27 00:19:43Z" end-time="2026-07-27 00:19:43Z" duration="0.003353" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="1129" name="TryGetLocalPoint_OverlayCanvas_ReturnsBoardOriginAtRectCenter" fullname="GearEngine.GearEngine.Tests.Editor.BoardScreenPositionUtilityTests.TryGetLocalPoint_OverlayCanvas_ReturnsBoardOriginAtRectCenter" methodname="TryGetLocalPoint_OverlayCanvas_ReturnsBoardOriginAtRectCenter" classname="GearEngine.GearEngine.Tests.Editor.BoardScreenPositionUtilityTests" runstate="Runnable" seed="335682216" result="Passed" start-time="2026-07-27 00:19:43Z" end-time="2026-07-27 00:19:43Z" duration="0.002458" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1130" name="TryGetLocalPoint_WithMissingCanvas_ReturnsFalse" fullname="GearEngine.GearEngine.Tests.Editor.BoardScreenPositionUtilityTests.TryGetLocalPoint_WithMissingCanvas_ReturnsFalse" methodname="TryGetLocalPoint_WithMissingCanvas_ReturnsFalse" classname="GearEngine.GearEngine.Tests.Editor.BoardScreenPositionUtilityTests" runstate="Runnable" seed="1516820528" result="Passed" start-time="2026-07-27 00:19:43Z" end-time="2026-07-27 00:19:43Z" duration="0.000123" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+              </test-suite>
+              <test-suite type="TestFixture" id="1134" name="DragTargetFinderUiTests" fullname="GearEngine.GearEngine.Tests.Editor.DragTargetFinderUiTests" classname="GearEngine.GearEngine.Tests.Editor.DragTargetFinderUiTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-07-27 00:19:43Z" end-time="2026-07-27 00:19:43Z" duration="0.009128" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="1136" name="Find_WithoutEventSystem_ReturnsNull" fullname="GearEngine.GearEngine.Tests.Editor.DragTargetFinderUiTests.Find_WithoutEventSystem_ReturnsNull" methodname="Find_WithoutEventSystem_ReturnsNull" classname="GearEngine.GearEngine.Tests.Editor.DragTargetFinderUiTests" runstate="Runnable" seed="571321441" result="Passed" start-time="2026-07-27 00:19:43Z" end-time="2026-07-27 00:19:43Z" duration="0.000408" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1135" name="FindFirstAccepting_SkipsRejectedUiTargetAndReturnsAcceptingTargetBelow" fullname="GearEngine.GearEngine.Tests.Editor.DragTargetFinderUiTests.FindFirstAccepting_SkipsRejectedUiTargetAndReturnsAcceptingTargetBelow" methodname="FindFirstAccepting_SkipsRejectedUiTargetAndReturnsAcceptingTargetBelow" classname="GearEngine.GearEngine.Tests.Editor.DragTargetFinderUiTests" runstate="Runnable" seed="465893831" result="Passed" start-time="2026-07-27 00:19:43Z" end-time="2026-07-27 00:19:43Z" duration="0.007537" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+              </test-suite>
+              <test-suite type="TestFixture" id="1204" name="GearInventoryViewComponentTests" fullname="GearEngine.GearEngine.Tests.Editor.GearInventoryViewComponentTests" classname="GearEngine.GearEngine.Tests.Editor.GearInventoryViewComponentTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-07-27 00:19:43Z" end-time="2026-07-27 00:19:43Z" duration="0.047813" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="1206" name="Bind_DoesNotPopulateSlots_UntilRebuildAndFitIsCalled" fullname="GearEngine.GearEngine.Tests.Editor.GearInventoryViewComponentTests.Bind_DoesNotPopulateSlots_UntilRebuildAndFitIsCalled" methodname="Bind_DoesNotPopulateSlots_UntilRebuildAndFitIsCalled" classname="GearEngine.GearEngine.Tests.Editor.GearInventoryViewComponentTests" runstate="Runnable" seed="23663877" result="Passed" start-time="2026-07-27 00:19:43Z" end-time="2026-07-27 00:19:43Z" duration="0.040928" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <output><![CDATA[Registering view model GearInventoryViewComponent - GearInventoryViewModel
+<color=#ff99aa>[GearInventoryView]</color> Highlight overlay disabled (None selected).
+[GearInventoryView] Gear 'g0' has no ViewPrefab; inventory visual skipped.
+[GearInventoryView] Gear 'g1' has no ViewPrefab; inventory visual skipped.
+[GearInventoryView] Gear 'g2' has no ViewPrefab; inventory visual skipped.
+]]></output>
+                </test-case>
+                <test-case id="1205" name="RebuildListTwiceInOneFrame_KeepsOneSetOfSlots" fullname="GearEngine.GearEngine.Tests.Editor.GearInventoryViewComponentTests.RebuildListTwiceInOneFrame_KeepsOneSetOfSlots" methodname="RebuildListTwiceInOneFrame_KeepsOneSetOfSlots" classname="GearEngine.GearEngine.Tests.Editor.GearInventoryViewComponentTests" runstate="Runnable" seed="1552832337" result="Passed" start-time="2026-07-27 00:19:43Z" end-time="2026-07-27 00:19:43Z" duration="0.004918" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <output><![CDATA[Registering view model GearInventoryViewComponent - GearInventoryViewModel
+<color=#ff99aa>[GearInventoryView]</color> Highlight overlay disabled (None selected).
+[GearInventoryView] Gear 'g0' has no ViewPrefab; inventory visual skipped.
+[GearInventoryView] Gear 'g1' has no ViewPrefab; inventory visual skipped.
+[GearInventoryView] Gear 'g2' has no ViewPrefab; inventory visual skipped.
+[GearInventoryView] Gear 'g0' has no ViewPrefab; inventory visual skipped.
+[GearInventoryView] Gear 'g1' has no ViewPrefab; inventory visual skipped.
+[GearInventoryView] Gear 'g2' has no ViewPrefab; inventory visual skipped.
+]]></output>
+                </test-case>
+              </test-suite>
+              <test-suite type="TestFixture" id="1217" name="GearViewSpawnerTests" fullname="GearEngine.GearEngine.Tests.Editor.GearViewSpawnerTests" classname="GearEngine.GearEngine.Tests.Editor.GearViewSpawnerTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-07-27 00:19:43Z" end-time="2026-07-27 00:19:43Z" duration="0.008997" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="1219" name="Spawn_AppliesRelativeScaleMultiplierOnce" fullname="GearEngine.GearEngine.Tests.Editor.GearViewSpawnerTests.Spawn_AppliesRelativeScaleMultiplierOnce" methodname="Spawn_AppliesRelativeScaleMultiplierOnce" classname="GearEngine.GearEngine.Tests.Editor.GearViewSpawnerTests" runstate="Runnable" seed="79345575" result="Passed" start-time="2026-07-27 00:19:43Z" end-time="2026-07-27 00:19:43Z" duration="0.000886" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1220" name="Spawn_ResetsLocalPositionAndRotation" fullname="GearEngine.GearEngine.Tests.Editor.GearViewSpawnerTests.Spawn_ResetsLocalPositionAndRotation" methodname="Spawn_ResetsLocalPositionAndRotation" classname="GearEngine.GearEngine.Tests.Editor.GearViewSpawnerTests" runstate="Runnable" seed="842018065" result="Passed" start-time="2026-07-27 00:19:43Z" end-time="2026-07-27 00:19:43Z" duration="0.000449" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1218" name="Spawn_ReturnsNull_WhenViewPrefabMissing" fullname="GearEngine.GearEngine.Tests.Editor.GearViewSpawnerTests.Spawn_ReturnsNull_WhenViewPrefabMissing" methodname="Spawn_ReturnsNull_WhenViewPrefabMissing" classname="GearEngine.GearEngine.Tests.Editor.GearViewSpawnerTests" runstate="Runnable" seed="354878833" result="Passed" start-time="2026-07-27 00:19:43Z" end-time="2026-07-27 00:19:43Z" duration="0.000587" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <output><![CDATA[[GearViewSpawner] Gear 'x' missing ViewPrefab.
+]]></output>
+                </test-case>
+              </test-suite>
+              <test-suite type="TestFixture" id="1221" name="GearViewTests" fullname="GearEngine.GearEngine.Tests.Editor.GearViewTests" classname="GearEngine.GearEngine.Tests.Editor.GearViewTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-07-27 00:19:43Z" end-time="2026-07-27 00:19:43Z" duration="0.004181" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="1223" name="ChargeFill_TwoViews_UseIndependentMaterialInstances" fullname="GearEngine.GearEngine.Tests.Editor.GearViewTests.ChargeFill_TwoViews_UseIndependentMaterialInstances" methodname="ChargeFill_TwoViews_UseIndependentMaterialInstances" classname="GearEngine.GearEngine.Tests.Editor.GearViewTests" runstate="Runnable" seed="9690236" result="Passed" start-time="2026-07-27 00:19:43Z" end-time="2026-07-27 00:19:43Z" duration="0.002436" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1222" name="PureVisual_UpdateDoesNotThrow_AndLerpsRotation" fullname="GearEngine.GearEngine.Tests.Editor.GearViewTests.PureVisual_UpdateDoesNotThrow_AndLerpsRotation" methodname="PureVisual_UpdateDoesNotThrow_AndLerpsRotation" classname="GearEngine.GearEngine.Tests.Editor.GearViewTests" runstate="Runnable" seed="1262796471" result="Passed" start-time="2026-07-27 00:19:43Z" end-time="2026-07-27 00:19:43Z" duration="0.000274" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+              </test-suite>
+              <test-suite type="TestFixture" id="1224" name="GearWorkspaceAssetTests" fullname="GearEngine.GearEngine.Tests.Editor.GearWorkspaceAssetTests" classname="GearEngine.GearEngine.Tests.Editor.GearWorkspaceAssetTests" runstate="Runnable" testcasecount="7" result="Passed" start-time="2026-07-27 00:19:43Z" end-time="2026-07-27 00:19:43Z" duration="0.118804" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="1225" name="BaseGearPrefab_PreservesGuid" fullname="GearEngine.GearEngine.Tests.Editor.GearWorkspaceAssetTests.BaseGearPrefab_PreservesGuid" methodname="BaseGearPrefab_PreservesGuid" classname="GearEngine.GearEngine.Tests.Editor.GearWorkspaceAssetTests" runstate="Runnable" seed="535628416" result="Passed" start-time="2026-07-27 00:19:43Z" end-time="2026-07-27 00:19:43Z" duration="0.000116" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-suite type="ParameterizedMethod" id="1231" name="CampaignScreen_OwnsWorkspaceWithExpectedMode" fullname="GearEngine.GearEngine.Tests.Editor.GearWorkspaceAssetTests.CampaignScreen_OwnsWorkspaceWithExpectedMode" classname="GearEngine.GearEngine.Tests.Editor.GearWorkspaceAssetTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-07-27 00:19:43Z" end-time="2026-07-27 00:19:43Z" duration="0.037959" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+                  <properties />
+                  <test-case id="1228" name="CampaignScreen_OwnsWorkspaceWithExpectedMode(&quot;Assets/GearEngine/Prefabs/Campaign/Setup View.prefab&quot;,Interactive)" fullname="GearEngine.GearEngine.Tests.Editor.GearWorkspaceAssetTests.CampaignScreen_OwnsWorkspaceWithExpectedMode(&quot;Assets/GearEngine/Prefabs/Campaign/Setup View.prefab&quot;,Interactive)" methodname="CampaignScreen_OwnsWorkspaceWithExpectedMode" classname="GearEngine.GearEngine.Tests.Editor.GearWorkspaceAssetTests" runstate="Runnable" seed="816162745" result="Passed" start-time="2026-07-27 00:19:43Z" end-time="2026-07-27 00:19:43Z" duration="0.014894" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                  </test-case>
+                  <test-case id="1229" name="CampaignScreen_OwnsWorkspaceWithExpectedMode(&quot;Assets/GearEngine/Prefabs/Campaign/Campaign_RoguelikeView.prefab&quot;,Interactive)" fullname="GearEngine.GearEngine.Tests.Editor.GearWorkspaceAssetTests.CampaignScreen_OwnsWorkspaceWithExpectedMode(&quot;Assets/GearEngine/Prefabs/Campaign/Campaign_RoguelikeView.prefab&quot;,Interactive)" methodname="CampaignScreen_OwnsWorkspaceWithExpectedMode" classname="GearEngine.GearEngine.Tests.Editor.GearWorkspaceAssetTests" runstate="Runnable" seed="1268367009" result="Passed" start-time="2026-07-27 00:19:43Z" end-time="2026-07-27 00:19:43Z" duration="0.011657" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                  </test-case>
+                  <test-case id="1230" name="CampaignScreen_OwnsWorkspaceWithExpectedMode(&quot;Assets/GearEngine/Prefabs/Campaign/Race View.prefab&quot;,ReadOnly)" fullname="GearEngine.GearEngine.Tests.Editor.GearWorkspaceAssetTests.CampaignScreen_OwnsWorkspaceWithExpectedMode(&quot;Assets/GearEngine/Prefabs/Campaign/Race View.prefab&quot;,ReadOnly)" methodname="CampaignScreen_OwnsWorkspaceWithExpectedMode" classname="GearEngine.GearEngine.Tests.Editor.GearWorkspaceAssetTests" runstate="Runnable" seed="1163394745" result="Passed" start-time="2026-07-27 00:19:43Z" end-time="2026-07-27 00:19:43Z" duration="0.009890" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                  </test-case>
+                </test-suite>
+                <test-case id="1227" name="ConfiguredGearPrefabs_UseUiRenderingOnly" fullname="GearEngine.GearEngine.Tests.Editor.GearWorkspaceAssetTests.ConfiguredGearPrefabs_UseUiRenderingOnly" methodname="ConfiguredGearPrefabs_UseUiRenderingOnly" classname="GearEngine.GearEngine.Tests.Editor.GearWorkspaceAssetTests" runstate="Runnable" seed="626087483" result="Passed" start-time="2026-07-27 00:19:43Z" end-time="2026-07-27 00:19:43Z" duration="0.068545" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1232" name="MainScene_DoesNotReferenceStandaloneWorkspaceParts" fullname="GearEngine.GearEngine.Tests.Editor.GearWorkspaceAssetTests.MainScene_DoesNotReferenceStandaloneWorkspaceParts" methodname="MainScene_DoesNotReferenceStandaloneWorkspaceParts" classname="GearEngine.GearEngine.Tests.Editor.GearWorkspaceAssetTests" runstate="Runnable" seed="288020324" result="Passed" start-time="2026-07-27 00:19:43Z" end-time="2026-07-27 00:19:43Z" duration="0.008643" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1226" name="Workspace_IsCanvaslessAndContainsNoWorldInteractionComponents" fullname="GearEngine.GearEngine.Tests.Editor.GearWorkspaceAssetTests.Workspace_IsCanvaslessAndContainsNoWorldInteractionComponents" methodname="Workspace_IsCanvaslessAndContainsNoWorldInteractionComponents" classname="GearEngine.GearEngine.Tests.Editor.GearWorkspaceAssetTests" runstate="Runnable" seed="220587791" result="Passed" start-time="2026-07-27 00:19:43Z" end-time="2026-07-27 00:19:43Z" duration="0.001078" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+              </test-suite>
+              <test-suite type="TestFixture" id="1233" name="GearWorkspaceVisualTests" fullname="GearEngine.GearEngine.Tests.Editor.GearWorkspaceVisualTests" classname="GearEngine.GearEngine.Tests.Editor.GearWorkspaceVisualTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-07-27 00:19:43Z" end-time="2026-07-27 00:19:44Z" duration="0.438732" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-suite type="ParameterizedMethod" id="1237" name="Workspace_PortraitResolution_RendersInsideSafeArea" fullname="GearEngine.GearEngine.Tests.Editor.GearWorkspaceVisualTests.Workspace_PortraitResolution_RendersInsideSafeArea" classname="GearEngine.GearEngine.Tests.Editor.GearWorkspaceVisualTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-07-27 00:19:43Z" end-time="2026-07-27 00:19:44Z" duration="0.436386" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+                  <properties />
+                  <test-case id="1234" name="Workspace_PortraitResolution_RendersInsideSafeArea(&quot;Baseline&quot;,1080,1920,80,80)" fullname="GearEngine.GearEngine.Tests.Editor.GearWorkspaceVisualTests.Workspace_PortraitResolution_RendersInsideSafeArea(&quot;Baseline&quot;,1080,1920,80,80)" methodname="Workspace_PortraitResolution_RendersInsideSafeArea" classname="GearEngine.GearEngine.Tests.Editor.GearWorkspaceVisualTests" runstate="Runnable" seed="465321407" result="Passed" start-time="2026-07-27 00:19:43Z" end-time="2026-07-27 00:19:44Z" duration="0.288238" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                  </test-case>
+                  <test-case id="1235" name="Workspace_PortraitResolution_RendersInsideSafeArea(&quot;Tall&quot;,1080,2400,100,60)" fullname="GearEngine.GearEngine.Tests.Editor.GearWorkspaceVisualTests.Workspace_PortraitResolution_RendersInsideSafeArea(&quot;Tall&quot;,1080,2400,100,60)" methodname="Workspace_PortraitResolution_RendersInsideSafeArea" classname="GearEngine.GearEngine.Tests.Editor.GearWorkspaceVisualTests" runstate="Runnable" seed="2120606923" result="Passed" start-time="2026-07-27 00:19:44Z" end-time="2026-07-27 00:19:44Z" duration="0.084014" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                  </test-case>
+                  <test-case id="1236" name="Workspace_PortraitResolution_RendersInsideSafeArea(&quot;Short&quot;,1080,1680,40,40)" fullname="GearEngine.GearEngine.Tests.Editor.GearWorkspaceVisualTests.Workspace_PortraitResolution_RendersInsideSafeArea(&quot;Short&quot;,1080,1680,40,40)" methodname="Workspace_PortraitResolution_RendersInsideSafeArea" classname="GearEngine.GearEngine.Tests.Editor.GearWorkspaceVisualTests" runstate="Runnable" seed="238151492" result="Passed" start-time="2026-07-27 00:19:44Z" end-time="2026-07-27 00:19:44Z" duration="0.060715" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                  </test-case>
+                </test-suite>
+              </test-suite>
+              <test-suite type="TestFixture" id="1327" name="SafeAreaRectTransformTests" fullname="GearEngine.GearEngine.Tests.Editor.SafeAreaRectTransformTests" classname="GearEngine.GearEngine.Tests.Editor.SafeAreaRectTransformTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-07-27 00:19:44Z" end-time="2026-07-27 00:19:44Z" duration="0.005598" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-suite type="ParameterizedMethod" id="1331" name="CalculateAnchors_FullPortraitResolution_FillsParent" fullname="GearEngine.GearEngine.Tests.Editor.SafeAreaRectTransformTests.CalculateAnchors_FullPortraitResolution_FillsParent" classname="GearEngine.GearEngine.Tests.Editor.SafeAreaRectTransformTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-07-27 00:19:44Z" end-time="2026-07-27 00:19:44Z" duration="0.002606" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+                  <properties />
+                  <test-case id="1328" name="CalculateAnchors_FullPortraitResolution_FillsParent(1080,1920)" fullname="GearEngine.GearEngine.Tests.Editor.SafeAreaRectTransformTests.CalculateAnchors_FullPortraitResolution_FillsParent(1080,1920)" methodname="CalculateAnchors_FullPortraitResolution_FillsParent" classname="GearEngine.GearEngine.Tests.Editor.SafeAreaRectTransformTests" runstate="Runnable" seed="1989698720" result="Passed" start-time="2026-07-27 00:19:44Z" end-time="2026-07-27 00:19:44Z" duration="0.000497" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                  </test-case>
+                  <test-case id="1329" name="CalculateAnchors_FullPortraitResolution_FillsParent(1080,2400)" fullname="GearEngine.GearEngine.Tests.Editor.SafeAreaRectTransformTests.CalculateAnchors_FullPortraitResolution_FillsParent(1080,2400)" methodname="CalculateAnchors_FullPortraitResolution_FillsParent" classname="GearEngine.GearEngine.Tests.Editor.SafeAreaRectTransformTests" runstate="Runnable" seed="467400701" result="Passed" start-time="2026-07-27 00:19:44Z" end-time="2026-07-27 00:19:44Z" duration="0.000047" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                  </test-case>
+                  <test-case id="1330" name="CalculateAnchors_FullPortraitResolution_FillsParent(1080,1680)" fullname="GearEngine.GearEngine.Tests.Editor.SafeAreaRectTransformTests.CalculateAnchors_FullPortraitResolution_FillsParent(1080,1680)" methodname="CalculateAnchors_FullPortraitResolution_FillsParent" classname="GearEngine.GearEngine.Tests.Editor.SafeAreaRectTransformTests" runstate="Runnable" seed="1836913569" result="Passed" start-time="2026-07-27 00:19:44Z" end-time="2026-07-27 00:19:44Z" duration="0.000039" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                  </test-case>
+                </test-suite>
+                <test-case id="1332" name="CalculateAnchors_WithTopAndBottomInsets_NormalizesSafeArea" fullname="GearEngine.GearEngine.Tests.Editor.SafeAreaRectTransformTests.CalculateAnchors_WithTopAndBottomInsets_NormalizesSafeArea" methodname="CalculateAnchors_WithTopAndBottomInsets_NormalizesSafeArea" classname="GearEngine.GearEngine.Tests.Editor.SafeAreaRectTransformTests" runstate="Runnable" seed="219447128" result="Passed" start-time="2026-07-27 00:19:44Z" end-time="2026-07-27 00:19:44Z" duration="0.000126" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <output><![CDATA[Saving results to: /Users/leonardosilva/Library/Application Support/DDW/Scaffold/TestResults.xml
+]]></output>
+                </test-case>
+              </test-suite>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

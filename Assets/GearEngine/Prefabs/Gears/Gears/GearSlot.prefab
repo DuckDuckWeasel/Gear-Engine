@@ -9,9 +9,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1000000000000000104}
-  - component: {fileID: 1000000000000000110}
-  - component: {fileID: 1000000000000000111}
-  m_Layer: 0
+  - component: {fileID: 3655431137682020441}
+  m_Layer: 5
   m_Name: VisualContainer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -35,34 +34,16 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: -16, y: -16}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1000000000000000110
-MonoBehaviour:
+--- !u!222 &3655431137682020441
+CanvasRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1000000000000000103}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c3d4e5f60718293a4b5c6d7e8f90a1b2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Presentation.UI.RectContentFitter
-  padding: 0.9
---- !u!210 &1000000000000000111
-SortingGroup:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1000000000000000103}
-  m_Enabled: 1
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 50
-  m_SortAtRoot: 0
-  m_Sort3DAs2D: 0
+  m_CullTransparentMesh: 1
 --- !u!1 &2214151973688211825
 GameObject:
   m_ObjectHideFlags: 0
@@ -76,7 +57,7 @@ GameObject:
   - component: {fileID: 1151302956774792653}
   - component: {fileID: 1000000000000000101}
   - component: {fileID: 1000000000000000102}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: GearSlot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -131,9 +112,9 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 1010765282727956541, guid: a83844f25c112764c92f68c0403d549a, type: 3}
+  m_Sprite: {fileID: 3049273829435696635, guid: a83844f25c112764c92f68c0403d549a, type: 3}
   m_Type: 0
-  m_PreserveAspect: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1

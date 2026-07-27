@@ -1,0 +1,6 @@
+{
+  "test": "GearEngine.GearEngine.Tests.Editor.GearWorkspaceVisualTests.Workspace_PortraitResolution_RendersInsideSafeArea",
+  "artifact": "Tall.png",
+  "scenario": "Tall portrait workspace at 1080x2400",
+  "criteria": "Board, Inventory, Trash, and Gear UI remain inside the configured Safe Area using screen-space rendering."
+}

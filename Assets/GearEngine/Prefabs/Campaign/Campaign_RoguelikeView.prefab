@@ -33,6 +33,7 @@ RectTransform:
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 812000000000000002}
   - {fileID: 9201267281539919262}
   - {fileID: 882077152458590215}
   - {fileID: 3998427144750663878}
@@ -120,9 +121,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Game.Campaign::GearEngine.Campaign.Presentation.RoguelikeView
   type: 0
-  boardView: {fileID: 0}
-  inventoryView: {fileID: 0}
-  trashDropZone: {fileID: 0}
+  workspace: {fileID: 812000000000000003}
   perkOptionViews:
   - {fileID: 4924588770951724641}
   - {fileID: 8053583864429470062}
@@ -1803,3 +1802,36 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a1534cbac729494f945c90efe327e10a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: AnimoraRuntime::OM.Animora.Runtime.AnimoraPlayer
+--- !u!1001 &812000000000000001
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 9100000012345002}
+    m_Modifications:
+    - target: {fileID: 2525087742547442216, guid: 8796174ce6b1d408199fdca3b5956419, type: 3}
+      propertyPath: m_Name
+      value: GearWorkspace
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 8796174ce6b1d408199fdca3b5956419, type: 3}
+--- !u!224 &812000000000000002 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 9063673205065985800, guid: 8796174ce6b1d408199fdca3b5956419, type: 3}
+  m_PrefabInstance: {fileID: 812000000000000001}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &812000000000000003 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4481832911450454019, guid: 8796174ce6b1d408199fdca3b5956419, type: 3}
+  m_PrefabInstance: {fileID: 812000000000000001}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dec2f158f0bb54dbf937a3c3ce298e46, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Presentation.UI.GearWorkspaceView

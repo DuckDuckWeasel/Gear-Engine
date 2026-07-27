@@ -4,6 +4,7 @@ using Scaffold.MVVM;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Assertions;
+using UnityEngine.UI;
 using DG.Tweening;
 
 namespace GearEngine.GearEngine.Presentation.UI
@@ -15,6 +16,14 @@ namespace GearEngine.GearEngine.Presentation.UI
         [SerializeField] private TextMeshProUGUI inventoryLimitLabel;
 
         private bool inventoryUiBinding;
+        private IDragService dragService;
+        private RectTransform dragOverlay;
+
+        public void SetDragContext(IDragService service, RectTransform overlay)
+        {
+            dragService = service;
+            dragOverlay = overlay;
+        }
 
         protected override void OnBind()
         {
@@ -24,22 +33,25 @@ namespace GearEngine.GearEngine.Presentation.UI
             inventoryUiBinding = true;
             try
             {
-                if (inventoryLimitLabel != null)
-                {
-                    inventoryLimitLabel.text = string.Empty;
-                }
-
-                Bind<int, int>(() => viewModel.InventoryListRevision, OnInventoryListRevisionChanged);
-                Bind<GearItemData, GearItemData>(() => viewModel.SelectedItem, OnSelectionChanged);
-                
-                Bind<int, int>(() => viewModel.CurrentBoardGears, _ => UpdateCapacityLabel());
-                Bind<int, int>(() => viewModel.MaxBoardGears, _ => UpdateCapacityLabel());
-                UpdateCapacityLabel();
+                InitializeBindings();
             }
             finally
             {
                 inventoryUiBinding = false;
             }
+        }
+
+        private void InitializeBindings()
+        {
+            if (inventoryLimitLabel != null)
+            {
+                inventoryLimitLabel.text = string.Empty;
+            }
+            Bind<int, int>(() => viewModel.InventoryListRevision, OnInventoryListRevisionChanged);
+            Bind<GearItemData, GearItemData>(() => viewModel.SelectedItem, OnSelectionChanged);
+            Bind<int, int>(() => viewModel.CurrentBoardGears, _ => UpdateCapacityLabel());
+            Bind<int, int>(() => viewModel.MaxBoardGears, _ => UpdateCapacityLabel());
+            UpdateCapacityLabel();
         }
 
         private void UpdateCapacityLabel()
@@ -72,7 +84,6 @@ namespace GearEngine.GearEngine.Presentation.UI
             }
         }
 
-        /// <summary>Rebuilds inventory slot UI and fits gear visuals to each slot rect. Call after the owning view hierarchy is active and layout is final (e.g. after FrustumFit open transition).</summary>
         public void RebuildAndFit()
         {
             RebuildUIList();
@@ -96,16 +107,18 @@ namespace GearEngine.GearEngine.Presentation.UI
 
             for (int i = itemsContainer.childCount - 1; i >= 0; i--)
             {
-                Transform child = itemsContainer.GetChild(i);
-                if (Application.isPlaying)
-                {
-                    Destroy(child.gameObject);
-                }
-                else
-                {
-                    DestroyImmediate(child.gameObject);
-                }
+                DestroySlot(itemsContainer.GetChild(i).gameObject);
             }
+        }
+
+        private void DestroySlot(GameObject slot)
+        {
+            if (Application.isPlaying)
+            {
+                Destroy(slot);
+                return;
+            }
+            DestroyImmediate(slot);
         }
 
         private void AddPresenterForItem(GearItemData item)
@@ -122,50 +135,36 @@ namespace GearEngine.GearEngine.Presentation.UI
         private void WireGearSlot(GameObject slotObj, GearItemData gear)
         {
             GearInventorySlotView slotView = slotObj.GetComponent<GearInventorySlotView>();
-            if (slotView == null)
-            {
-                Debug.LogError("[GearInventoryView] Slot prefab must include GearInventorySlotView (see GearSlot prefab).");
-                return;
-            }
-
             Draggable drag = slotObj.GetComponent<Draggable>();
-            if (drag == null)
+            if (!ValidateSlotParts(slotView, drag))
             {
-                Debug.LogError("[GearInventoryView] Slot prefab must include Draggable (see GearSlot prefab).");
                 return;
             }
-
-            drag.SetHideSourceWhileDragging(false);
-            GearItemData capturedGear = gear;
-            drag.BuildPayload = e =>
-            {
-                if (viewModel.CurrentBoardGears >= viewModel.MaxBoardGears)
-                {
-                    PunchCapacityLabel();
-                }
-
-                Vector3 world = DragPointerUtility.GetWorldPosition(e);
-                return new DragPayload(capturedGear, world);
-            };
-
-            drag.OnDropAccepted = _ => viewModel.NotifySlotDragAccepted(capturedGear);
-            drag.OnDropRejected = () => 
-            {
-                if (viewModel.CurrentBoardGears >= viewModel.MaxBoardGears)
-                {
-                    PunchCapacityLabel();
-                }
-            };
-
+            ConfigureSlotDrag(drag, gear);
             ApplyGearVisualAndDrag(slotView, gear);
         }
 
-        private void PunchCapacityLabel()
+        private void ConfigureSlotDrag(Draggable drag, GearItemData gear)
         {
-            if (inventoryLimitLabel != null)
+            drag.SetHideSourceWhileDragging(false);
+            drag.Configure(dragService, dragOverlay);
+            GearItemData capturedGear = gear;
+            drag.BuildPayload = e => BuildSlotPayload(capturedGear, e.position);
+            drag.OnDropAccepted = _ => viewModel.NotifySlotDragAccepted(capturedGear);
+            drag.OnDropRejected = HandleSlotDropRejected;
+        }
+
+        private DragPayload BuildSlotPayload(GearItemData gear, Vector2 screenPosition)
+        {
+            HandleSlotDropRejected();
+            return new DragPayload(gear, screenPosition);
+        }
+
+        private void HandleSlotDropRejected()
+        {
+            if (viewModel.CurrentBoardGears >= viewModel.MaxBoardGears)
             {
-                inventoryLimitLabel.transform.DOKill(complete: true);
-                inventoryLimitLabel.transform.DOPunchScale(new Vector3(0.3f, 0.3f, 0.3f), 0.3f, 10, 1f);
+                PunchCapacityLabel();
             }
         }
 
@@ -184,31 +183,34 @@ namespace GearEngine.GearEngine.Presentation.UI
                 slotView.Bind(gear, viewModel);
                 return;
             }
-
-            view.SetChargeFillTarget(1f, snap: true);
-            view.SettleNow();
-
-            // Gear prefabs ship with physics colliders for board-side raycasting
-            // (PhysicsRaycaster / Physics2DRaycaster). Inside an inventory slot the gear
-            // visual sits in front of the slot's UI Image, and those colliders steal the
-            // pointer from the GraphicRaycaster - so OnBeginDrag never reaches the slot's
-            // Draggable. The slot is the drag source here, not the gear visual.
-            DisableInteractionColliders(view.gameObject);
-
+            ConfigureInventoryGearView(view);
             slotView.Bind(gear, viewModel);
         }
 
-        private static void DisableInteractionColliders(GameObject root)
+        private void ConfigureInventoryGearView(GearView view)
         {
-            foreach (Collider c in root.GetComponentsInChildren<Collider>(true))
+            view.SetChargeFillTarget(1f, snap: true);
+            view.SettleNow();
+            DisableInventoryVisualInteraction(view);
+        }
+
+        private void DisableInventoryVisualInteraction(GearView view)
+        {
+            Draggable draggable = view.GetComponent<Draggable>();
+            if (draggable != null)
             {
-                c.enabled = false;
+                draggable.enabled = false;
             }
 
-            foreach (Collider2D c in root.GetComponentsInChildren<Collider2D>(true))
+            foreach (Graphic graphic in view.GetComponentsInChildren<Graphic>(includeInactive: true))
             {
-                c.enabled = false;
+                graphic.raycastTarget = false;
             }
+        }
+
+        public bool OnDrop(DragPayload payload)
+        {
+            return CanAccept(payload);
         }
 
         public bool CanAccept(DragPayload payload)
@@ -216,9 +218,39 @@ namespace GearEngine.GearEngine.Presentation.UI
             return payload.GetData<IGridNode>()?.ConfigData?.IsReturnable == true;
         }
 
-        public bool OnDrop(DragPayload payload)
+        private bool ValidateSlotParts(GearInventorySlotView slotView, Draggable drag)
         {
-            return CanAccept(payload);
+            if (slotView == null)
+            {
+                Debug.LogError("[GearInventoryView] Slot prefab must include GearInventorySlotView (see GearSlot prefab).");
+                return false;
+            }
+            if (drag == null)
+            {
+                Debug.LogError("[GearInventoryView] Slot prefab must include Draggable (see GearSlot prefab).");
+                return false;
+            }
+            return ValidateDragContext();
+        }
+
+        private bool ValidateDragContext()
+        {
+            if (dragService != null && dragOverlay != null)
+            {
+                return true;
+            }
+            Debug.LogError("[GearInventoryView] Drag context is missing.");
+            return false;
+        }
+
+        private void PunchCapacityLabel()
+        {
+            if (inventoryLimitLabel == null)
+            {
+                return;
+            }
+            inventoryLimitLabel.transform.DOKill(complete: true);
+            inventoryLimitLabel.transform.DOPunchScale(new Vector3(0.3f, 0.3f, 0.3f), 0.3f, 10, 1f);
         }
 
         private GameObject CreateSlotObject(GearItemData item)

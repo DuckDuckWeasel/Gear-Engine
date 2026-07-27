@@ -12,7 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8f5e0b3c2d4e576f90123456789abcde, type: 3}
   m_Name: BasicBoardLayout
   m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Config.BoardLayoutSO
-  Spacing: 0.75
-  MaxDragGrabDistance: 0.75
+  CellSpacing: 110
   StaggeredRotationOffset: 22.5
-  TrashZoneYOffset: 160
+  TrashZoneYOffset: 24

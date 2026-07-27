@@ -11,9 +11,7 @@ namespace GearEngine.Campaign.Presentation
     public sealed class SetupView : View<SetupViewModel>
     {
         [SerializeField] private TrackViewComponent track;
-        [SerializeField] private BoardViewComponent boardView;
-        [SerializeField] private GearInventoryViewComponent inventoryView;
-        [SerializeField] private TrashDropZoneViewComponent trashDropZone;
+        [SerializeField] private GearWorkspaceView workspace;
         [SerializeField] private Button raceButton;
         [SerializeField] private Button returnToMainButton;
         [SerializeField] private FrustumFitAnchor[] openTransitionAnchors;
@@ -30,24 +28,19 @@ namespace GearEngine.Campaign.Presentation
 
             track.Bind(viewModel.Track);
 
-            DragServiceRegistry.Register(viewModel.DragService);
-            boardView.Bind(viewModel.Board);
-            inventoryView.Bind(viewModel.Inventory);
-            trashDropZone.gameObject.SetActive(true);
-            trashDropZone.SetDragService(viewModel.DragService);
-            trashDropZone.SetBoardPresentation(boardView.BoardLayout, viewModel.Board.BoardRules);
-            trashDropZone.Bind(viewModel.TrashZone);
-            trashDropZone.ApplyInitialPlacement();
+            workspace.BindInteractive(
+                viewModel.Board,
+                viewModel.Inventory,
+                viewModel.TrashZone,
+                viewModel.DragService);
         }
 
         protected override void OnOpen(bool wasHidden)
         {
             base.OnOpen(wasHidden);
             track.gameObject.SetActive(true);
-            boardView.gameObject.SetActive(true);
-            inventoryView.gameObject.SetActive(true);
-            trashDropZone.gameObject.SetActive(true);
-            
+            workspace.SetVisible(true);
+
             raceButton.onClick.RemoveListener(OnRaceClicked);
             raceButton.onClick.AddListener(OnRaceClicked);
             returnToMainButton.onClick.RemoveListener(OnReturnClicked);
@@ -57,9 +50,9 @@ namespace GearEngine.Campaign.Presentation
                 this,
                 openTransitionAnchors,
                 openTransitionDurationSeconds,
-                onComplete: () => {
-                    inventoryView.RebuildAndFit();
-                    if (boardView != null) boardView.SpinAllGearsOnceVisual();
+                onComplete: () =>
+                {
+                    workspace.Board.SpinAllGearsOnceVisual();
                 });
         }
 
@@ -73,20 +66,7 @@ namespace GearEngine.Campaign.Presentation
 
             raceButton.onClick.RemoveListener(OnRaceClicked);
             returnToMainButton.onClick.RemoveListener(OnReturnClicked);
-            if (trashDropZone != null)
-            {
-                trashDropZone.gameObject.SetActive(false);
-            }
-
-            if (inventoryView != null)
-            {
-                inventoryView.gameObject.SetActive(false);
-            }
-
-            if (boardView != null)
-            {
-                boardView.gameObject.SetActive(false);
-            }
+            workspace?.SetVisible(false);
 
             if (track != null)
             {
@@ -120,9 +100,7 @@ namespace GearEngine.Campaign.Presentation
 
         private void ValidateHierarchy()
         {
-            RequireReference(boardView, nameof(boardView));
-            RequireReference(inventoryView, nameof(inventoryView));
-            RequireReference(trashDropZone, nameof(trashDropZone));
+            RequireReference(workspace, nameof(workspace));
             RequireReference(raceButton, nameof(raceButton));
             RequireReference(returnToMainButton, nameof(returnToMainButton));
         }
@@ -132,7 +110,7 @@ namespace GearEngine.Campaign.Presentation
             if (field == null)
             {
                 throw new InvalidOperationException(
-                    $"[SetupView] {name} must be assigned on the scene instance (shared World gear UI / controls).");
+                    $"[SetupView] {name} must be assigned in the Setup prefab.");
             }
         }
     }
