@@ -11,53 +11,53 @@ namespace Game.GearEngine.RuntimeTests
 {
     public class BlackboardVariableTests
     {
-        private GameObject _blackboardObject;
-        private Blackboard _blackboard;
-        private Block _block;
+        private GameObject blackboardObject;
+        private Blackboard blackboard;
+        private Block block;
 
         [SetUp]
         public void Setup()
         {
-            _blackboardObject = new GameObject("TestBlackboard");
-            _blackboard = _blackboardObject.AddComponent<Blackboard>();
-            _blackboardObject.AddComponent<EventDispatcher>();
+            blackboardObject = new GameObject("TestBlackboard");
+            blackboard = blackboardObject.AddComponent<Blackboard>();
+            blackboardObject.AddComponent<EventDispatcher>();
 
-            _block = _blackboardObject.AddComponent<Block>();
-            _block.BlockName = "VarBlock";
+            block = blackboardObject.AddComponent<Block>();
+            block.BlockName = "VarBlock";
         }
 
         [TearDown]
         public void Teardown()
         {
-            if (_blackboardObject != null)
+            if (blackboardObject != null)
             {
-                Object.DestroyImmediate(_blackboardObject);
+                Object.DestroyImmediate(blackboardObject);
             }
         }
 
         private InvokeActionCommand AddCommand(IAction action)
         {
-            InvokeActionCommand cmd = _blackboardObject.AddComponent<InvokeActionCommand>();
-            cmd.ParentBlock = _block;
+            InvokeActionCommand cmd = blackboardObject.AddComponent<InvokeActionCommand>();
+            cmd.ParentBlock = block;
             cmd.actions.Add(new InvokeActionCommand.ActionWrapper(action));
-            _block.CommandList.Add(cmd);
+            block.CommandList.Add(cmd);
             return cmd;
         }
 
         [UnityTest]
         public IEnumerator Blackboard_SetVariable_ReflectsInComponent()
         {
-            IntegerVariable resultVar = _blackboardObject.AddComponent<Scaffold.IntegerVariable>();
+            IntegerVariable resultVar = blackboardObject.AddComponent<Scaffold.IntegerVariable>();
             resultVar.Key = "Score";
             resultVar.Value = 0;
-            _blackboard.Variables.Add(resultVar);
+            blackboard.Variables.Add(resultVar);
 
             // Set Score = 100
             SetVariable setVar = new SetVariable();
             TestReflectionUtils.SetupSetVariableActionInt(setVar, resultVar, Scaffold.SetOperator.Assign, 100);
             AddCommand(setVar);
 
-            _blackboard.ExecuteBlock(_block);
+            blackboard.ExecuteBlock(block);
             yield return null;
 
             Assert.That(resultVar.Value, Is.EqualTo(100));
@@ -67,7 +67,7 @@ namespace Game.GearEngine.RuntimeTests
             TestReflectionUtils.SetupSetVariableActionInt(addVar, resultVar, Scaffold.SetOperator.Add, 50);
             AddCommand(addVar);
 
-            _blackboard.ExecuteBlock(_block); // Executes both again, so it will set to 100, then add 50
+            blackboard.ExecuteBlock(block); // Executes both again, so it will set to 100, then add 50
             yield return null;
 
             Assert.That(resultVar.Value, Is.EqualTo(150));
@@ -77,15 +77,15 @@ namespace Game.GearEngine.RuntimeTests
         public IEnumerator Blackboard_CrossNodeReference_InjectsCorrectly()
         {
             // We create a float variable
-            FloatVariable timeVar = _blackboardObject.AddComponent<Scaffold.FloatVariable>();
+            FloatVariable timeVar = blackboardObject.AddComponent<Scaffold.FloatVariable>();
             timeVar.Key = "WaitTime";
             timeVar.Value = 0.5f;
-            _blackboard.Variables.Add(timeVar);
+            blackboard.Variables.Add(timeVar);
 
-            StringVariable stringVar = _blackboardObject.AddComponent<Scaffold.StringVariable>();
+            StringVariable stringVar = blackboardObject.AddComponent<Scaffold.StringVariable>();
             stringVar.Key = "State";
             stringVar.Value = "Start";
-            _blackboard.Variables.Add(stringVar);
+            blackboard.Variables.Add(stringVar);
 
             // Wait using the float variable reference
             Wait waitAction = new Wait();
@@ -99,7 +99,7 @@ namespace Game.GearEngine.RuntimeTests
             TestReflectionUtils.SetupSetVariableAction(setVar, stringVar, Scaffold.SetOperator.Assign, "End");
             AddCommand(setVar);
 
-            _blackboard.ExecuteBlock(_block);
+            blackboard.ExecuteBlock(block);
             yield return null;
 
             // Still Start
@@ -112,6 +112,35 @@ namespace Game.GearEngine.RuntimeTests
             // Wait total 0.6s -> Should be End
             yield return new WaitForSeconds(0.4f);
             Assert.That(stringVar.Value, Is.EqualTo("End"));
+        }
+
+        [Test]
+        public void VariablesWithTheSameKey_OnDifferentBlackboardsRemainIndependent()
+        {
+            IntegerVariable firstVariable = blackboardObject.AddComponent<IntegerVariable>();
+            firstVariable.Key = "Score";
+            firstVariable.Value = 10;
+            blackboard.Variables.Add(firstVariable);
+
+            GameObject secondObject = new GameObject("SecondBlackboard");
+
+            try
+            {
+                Blackboard secondBlackboard = secondObject.AddComponent<Blackboard>();
+                IntegerVariable secondVariable = secondObject.AddComponent<IntegerVariable>();
+                secondVariable.Key = "Score";
+                secondVariable.Value = 20;
+                secondBlackboard.Variables.Add(secondVariable);
+
+                firstVariable.Value = 30;
+
+                Assert.That(firstVariable.Value, Is.EqualTo(30));
+                Assert.That(secondVariable.Value, Is.EqualTo(20));
+            }
+            finally
+            {
+                Object.DestroyImmediate(secondObject);
+            }
         }
     }
 }

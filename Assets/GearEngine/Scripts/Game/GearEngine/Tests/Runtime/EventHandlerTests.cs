@@ -11,36 +11,36 @@ namespace Game.GearEngine.RuntimeTests
 {
     public class EventHandlerTests
     {
-        private GameObject _blackboardObject;
-        private Blackboard _blackboard;
+        private GameObject blackboardObject;
+        private Blackboard blackboard;
 
         [SetUp]
         public void Setup()
         {
-            _blackboardObject = new GameObject("TestBlackboard");
-            _blackboard = _blackboardObject.AddComponent<Blackboard>();
-            _blackboardObject.AddComponent<EventDispatcher>();
+            blackboardObject = new GameObject("TestBlackboard");
+            blackboard = blackboardObject.AddComponent<Blackboard>();
+            blackboardObject.AddComponent<EventDispatcher>();
         }
 
         [TearDown]
         public void Teardown()
         {
-            if (_blackboardObject != null)
+            if (blackboardObject != null)
             {
-                Object.DestroyImmediate(_blackboardObject);
+                Object.DestroyImmediate(blackboardObject);
             }
         }
 
         private Block CreateBlock(string name)
         {
-            Block block = _blackboardObject.AddComponent<Block>();
+            Block block = blackboardObject.AddComponent<Block>();
             block.BlockName = name;
             return block;
         }
 
         private InvokeActionCommand AddCommand(Block block, IAction action)
         {
-            InvokeActionCommand cmd = _blackboardObject.AddComponent<InvokeActionCommand>();
+            InvokeActionCommand cmd = blackboardObject.AddComponent<InvokeActionCommand>();
             cmd.ParentBlock = block;
             cmd.actions.Add(new InvokeActionCommand.ActionWrapper(action));
             block.CommandList.Add(cmd);
@@ -48,41 +48,82 @@ namespace Game.GearEngine.RuntimeTests
         }
 
         [UnityTest]
-        public IEnumerator GameStarted_ExecutesBlockAfterFrames()
+        public IEnumerator GameStarted_YieldsConfiguredFramesBeforeExecutingBlock()
         {
             Block block = CreateBlock("StartBlock");
 
-            StringVariable resultVar = _blackboardObject.AddComponent<Scaffold.StringVariable>();
+            StringVariable resultVar = blackboardObject.AddComponent<Scaffold.StringVariable>();
             resultVar.Key = "State";
             resultVar.Value = "Idle";
-            _blackboard.Variables.Add(resultVar);
+            blackboard.Variables.Add(resultVar);
 
             SetVariable setVar = new SetVariable();
             TestReflectionUtils.SetupSetVariableAction(setVar, resultVar, Scaffold.SetOperator.Assign, "Started");
             AddCommand(block, setVar);
 
-            GameStarted gameStarted = _blackboardObject.AddComponent<GameStarted>();
+            GameStarted gameStarted = blackboardObject.AddComponent<GameStarted>();
             gameStarted.ParentBlock = block;
+            block._EventHandler = gameStarted;
             TestReflectionUtils.SetProtectedField(gameStarted, "waitForFrames", 2);
-
-            // Trigger manual Start since UnityTest doesn't always trigger it automatically on AddComponent in some versions
-            TestReflectionUtils.SetProtectedField(gameStarted, "waitForFrames", 2);
-            System.Reflection.MethodInfo method = gameStarted.GetType().GetMethod("Start", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-            if (method != null)
-            {
-                method.Invoke(gameStarted, null);
-            }
+            gameStarted.enabled = false;
 
             Assert.That(resultVar.Value, Is.EqualTo("Idle"));
 
-            // Wait 1 frame
-            yield return null;
+            System.Reflection.MethodInfo method = gameStarted.GetType().GetMethod(
+                "GameStartCoroutine",
+                System.Reflection.BindingFlags.NonPublic |
+                System.Reflection.BindingFlags.Instance);
+            Assert.That(method, Is.Not.Null);
+
+            IEnumerator startupRoutine = (IEnumerator)method.Invoke(gameStarted, null);
+
+            Assert.That(startupRoutine.MoveNext(), Is.True);
+            Assert.That(startupRoutine.Current, Is.TypeOf<WaitForEndOfFrame>());
             Assert.That(resultVar.Value, Is.EqualTo("Idle"));
 
-            // Wait another frame
+            Assert.That(startupRoutine.MoveNext(), Is.True);
+            Assert.That(startupRoutine.Current, Is.TypeOf<WaitForEndOfFrame>());
+            Assert.That(resultVar.Value, Is.EqualTo("Idle"));
+
+            Assert.That(startupRoutine.MoveNext(), Is.False);
+
             yield return null;
-            // The Coroutine should have executed ExecuteBlock() by now
+
             Assert.That(resultVar.Value, Is.EqualTo("Started"));
+        }
+
+        [UnityTest]
+        public IEnumerator MessageReceived_ExecutesOnlyForTheConfiguredMessage()
+        {
+            Block block = CreateBlock("MessageBlock");
+
+            StringVariable resultVar = blackboardObject.AddComponent<StringVariable>();
+            resultVar.Key = "State";
+            resultVar.Value = "Idle";
+            blackboard.Variables.Add(resultVar);
+
+            SetVariable setVar = new SetVariable();
+            TestReflectionUtils.SetupSetVariableAction(
+                setVar,
+                resultVar,
+                SetOperator.Assign,
+                "MessageReceived");
+            AddCommand(block, setVar);
+
+            MessageReceived messageReceived = blackboardObject.AddComponent<MessageReceived>();
+            messageReceived.ParentBlock = block;
+            block._EventHandler = messageReceived;
+            TestReflectionUtils.SetProtectedField(messageReceived, "message", "Begin");
+
+            blackboard.SendScaffoldMessage("Other");
+            yield return null;
+
+            Assert.That(resultVar.Value, Is.EqualTo("Idle"));
+
+            blackboard.SendScaffoldMessage("Begin");
+            yield return null;
+
+            Assert.That(resultVar.Value, Is.EqualTo("MessageReceived"));
         }
     }
 }

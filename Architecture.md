@@ -101,6 +101,7 @@ Module documentation: each first-party package under `Assets/Packages/com.scaffo
 Additional repository docs:
 
 - `Docs/ConsumingScaffoldPackages.md` (UPM consumer `manifest.json` patterns for Git subpath and `file:`)
+- `Docs/ScaffoldVisualScripting/BlackboardArchitectureReview.md` (current-state review and target plain C# Blackboard boundary)
 - `Docs/Analyzers/Analyzers.md`, `Docs/Testing/Testing.md`, `Docs/Testing/AutomatedTesting.md`
 
 ## Runtime Flows

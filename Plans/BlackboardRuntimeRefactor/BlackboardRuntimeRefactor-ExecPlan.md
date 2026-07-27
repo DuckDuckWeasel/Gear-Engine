@@ -1,0 +1,291 @@
+# Replace the Blackboard component graph with a cloneable plain-C# runtime
+
+This ExecPlan is a living document. Update its Progress, Surprises & Discoveries,
+Decision Log, Outcomes & Retrospective, and Artifacts sections as implementation
+advances.
+
+## Purpose / Big Picture
+
+Replace the component-owned visual-scripting Blackboard with a reusable runtime that
+can be defined, cloned, started, ticked, stopped, and disposed without a `GameObject`.
+Unity remains an optional host and callback source, not the owner of execution state.
+
+The target definition hierarchy is:
+
+`BlackboardDefinition -> BlockDefinition -> ActionTrackDefinition -> ActionListDefinition -> IAction`
+
+A template can be stored directly, in a `BlackboardDefinitionAsset`, or in a variable
+of an already-running source Blackboard. Starting a Blackboard creates an isolated
+runtime clone, comparable to instantiating a prefab. This is a deliberate breaking
+replacement; legacy Blackboard, Block, Command, EventHandler, and Variable component
+serialization will be removed after all consumers are cut over.
+
+## Progress
+
+- [x] Review the current architecture and record why component ownership violates the
+  intended runtime boundary.
+- [x] Lock the breaking-replacement policy, template sources, cloning semantics, and
+  assembly direction.
+- [x] Milestone 1: complete the legacy inventory, behavior-parity matrix, and
+  characterization baseline.
+- [ ] Milestone 2: add definitions, references, validation, stable IDs, and
+  cycle-aware graph cloning.
+- [ ] Milestone 3: add plain variables, variable stores, service contracts,
+  messaging, and persistence.
+- [ ] Milestone 4: add action contexts, action lists, tracks, Blocks, and composite
+  execution, then migrate action families.
+- [ ] Milestone 5: add the plain Blackboard runtime and plain triggers.
+- [ ] Milestone 6: add the Unity wrapper, callback relays, factories, and VContainer
+  composition.
+- [ ] Milestone 7: rewrite editor authoring for managed definitions.
+- [ ] Milestone 8: cut over assets and tests, rename the space-containing test scene,
+  and remove legacy components.
+- [ ] Milestone 9: complete documentation, the compilation loop, all test suites,
+  analyzer checks, the macOS validation gate, and this retrospective.
+
+## Surprises & Discoveries
+
+- The existing `CompositeExecutionRunner`, `CommandTrack`, and `ICompositeTask` are
+  already plain C# extraction seams, but their owners are still components.
+- `ActionBase` is serializable plain C#, but all actions are automatically injected
+  with a `MonoBehaviour`, concrete legacy Blackboard, and concrete Command even when
+  they do not require those capabilities.
+- `GameStarted` is a component only because it consumes `Start` and a coroutine; its
+  actual behavior is a scheduled startup signal.
+- The macOS validation script is `.agents/scripts/validate-changes.sh`. The `.cmd`
+  shim is a no-op and cannot be used as acceptance evidence.
+- This worktree began detached and was moved to
+  `codex/blackboard-runtime-refactor` before implementation.
+- Several tracked binary dependencies were Git LFS pointer text in the worktree.
+  `git lfs pull` restored the assemblies required for Unity compilation.
+- The legacy `GameStarted` characterization did not assign its handler to the owning
+  Block, and action-list tests compared `ActionWrapper` values directly to actions.
+  Both were stale test assumptions, not production behavior failures.
+- Unity's generated root solution contains repeated project display names. Scoped
+  owning `.csproj` checks are authoritative for changed C# files; solution-wide
+  `dotnet format` is not.
+- The required macOS gate needs normal access to Unity licensing and local databases.
+  Its sandboxed run timed out; its escalated compilation precheck passed.
+- The repository-wide baseline is independently red: 59 unrelated EditMode failures,
+  a PlayMode run that exits without XML after loading the SRDebugger backup scene,
+  five existing asmdef-audit issues, and a Windows-only analyzer launcher that calls
+  `cmd.exe`. These are recorded as pre-existing final-gate blockers rather than
+  attributed to the Blackboard characterization changes.
+
+## Decision Log
+
+- This is a breaking replacement. No automatic serialized migration and no
+  backward-compatible component wrappers will ship.
+- Core may use Unity serialization attributes, Unity value types, and explicit
+  `UnityEngine.Object` references, but no Core type may derive from `MonoBehaviour`.
+- Runtime cloning deeply isolates managed definitions, state, collections, actions,
+  triggers, and variables while preserving referenced Unity object identities.
+- Definition IDs are stable across runtime clones. Each clone receives a distinct
+  runtime-instance ID. Editor duplication regenerates definition IDs.
+- Root `BlackboardBehaviour` hosts accept Direct or ScriptableObject templates.
+  BlackboardVariable templates require an already-running source Blackboard.
+- Definitions stored in variables are templates, never live Blackboard instances.
+- New assemblies are introduced beside the legacy implementation during bounded
+  milestones. This preserves a compilable repository while features move. The legacy
+  types are deleted during the explicit breaking cutover, not retained as adapters.
+- All dependency injection uses VContainer and explicit services. New mutable static
+  service locators are forbidden.
+- Existing execution semantics are retained unless they exist only because of
+  component ownership.
+
+## Outcomes & Retrospective
+
+Milestone 1 established a compilable and lint-clean baseline for the affected
+Blackboard surface. Focused evidence is 2/2 event-handler tests, 3/3 variable tests,
+19/19 block/track tests, and 39/39 action-list tests. The full retrospective will
+record the final runtime boundary, migrated surface, verification evidence,
+deliberate behavior changes, and follow-up work.
+
+## Context and Orientation
+
+The legacy runtime is under
+`Assets/3rdParty/ScaffoldVisualScripting/Scripts`. `Blackboard`,
+`Block`, `Command`, `EventHandler`, and `Variable` are component types in
+`Scripts/Components`. Component-based triggers are under `Scripts/EventHandlers`.
+The current plain action API and most action implementations are under
+`Assets/GearEngine/Scripts/Game/GearEngine/Core/Actions`. The component-hosted action
+list is `InvokeActionCommand` under
+`Assets/GearEngine/Scripts/Game/GearEngine/Presentation/UI/Tags/Input`.
+
+The complete baseline inventory is maintained in
+`Plans/BlackboardRuntimeRefactor/LegacyInventory.md`. The architectural findings and
+target boundary are maintained in
+`Docs/ScaffoldVisualScripting/BlackboardArchitectureReview.md`.
+
+Definitions are reusable serialized data. Runtime objects are mutable execution
+instances produced from definitions. A scheduler owns delayed and per-frame work. A
+trigger converts a signal into block execution. A relay is the smallest possible
+`MonoBehaviour` that receives a callback Unity cannot deliver to a plain object.
+
+## Plan of Work
+
+### Milestone 1: planning baseline and characterization
+
+Materialize this ExecPlan, inventory actions, variable types, handlers, editor
+operations, serialized references, and Unity callback dependencies, and add a
+behavior-parity matrix. Add characterization tests for composite execution, flow
+control, interruption, variables, messages, and startup timing. Commit only after the
+focused baseline passes.
+
+### Milestone 2: definitions, references, and cloning
+
+Create `Scaffold.VisualScripting.Core` and
+`Scaffold.VisualScripting.Authoring`. Implement definition types, stable definition
+IDs, runtime-instance IDs, Direct/ScriptableObject/BlackboardVariable references,
+validation, and a cycle-aware serialized graph cloner. The cloner must preserve
+`UnityEngine.Object` identity, preserve definition IDs, clone cycles safely, and clear
+delegates and explicitly transient fields. Add pure NUnit tests for all reference
+sources, isolation, identity, ID, invalid graph, and cycle behavior.
+
+### Milestone 3: plain variables and services
+
+Replace component variables with typed serialized definitions and runtime cells.
+Implement local, public, and injected-global stores plus stable variable references.
+Introduce interfaces for time, scheduling, events, logging, save/load, registry,
+substitution, and messaging. Persistence addresses runtime-instance IDs and definition
+IDs rather than GameObjects or names.
+
+### Milestone 4: actions, action lists, Blocks, and composites
+
+Replace the action contract with immutable `ActionExecutionContext` plus a completion
+callback carrying execution status. Make `ActionBase` context-scoped and remove stored
+component hosts. Extract plain `ActionList`, `ActionTrack`, `Block`, and their transient
+state. Reuse the existing composite strategy engine while removing component
+assumptions. Migrate actions in three bounded batches: pure/variable/flow,
+Unity-reference, then scheduled/tween/dialog actions.
+
+### Milestone 5: Blackboard runtime and triggers
+
+Implement plain Blackboard lifecycle, lookup, execution, ticking, interruption,
+reset, substitution, messages, save/load, and disposal. Convert lifecycle and message
+triggers to plain definitions. Convert UI subscriptions and polled input into bindable
+plain triggers. `GameStarted` is raised by `Blackboard.Start` through the scheduler.
+
+### Milestone 6: Unity wrapper and composition
+
+Create `Scaffold.VisualScripting.Unity`, `BlackboardBehaviour`, required callback
+relays, runtime factories, and VContainer registrations. Wrapper-created and
+script-created Blackboards use the same factory and services. Initialization failures
+are caught, logged with `Debug.LogError`, and leave the wrapper disabled.
+
+### Milestone 7: editor rewrite
+
+Make the Blackboard Window and inspectors edit managed definitions. Preserve graph
+creation, removal, reorder, grouping, tracks, copy/paste, undo/redo, search,
+validation, selection, layout, tint, source switching, asset navigation, and
+play-mode feedback. Keep authoring metadata separate from runtime state. Runtime
+cloning preserves IDs; editor duplication regenerates them.
+
+### Milestone 8: breaking cutover
+
+Rebuild the Blackboard prefab and affected scenes around `BlackboardBehaviour`.
+Rename `Test Tutorial Scene.unity` to `TestTutorialScene.unity` and update all
+references. Update builders and tests to construct definitions. Delete obsolete
+component implementations after all consumers compile. Scan every serialized asset
+for removed script GUIDs and fail if any remain.
+
+### Milestone 9: final verification and documentation
+
+Update module documentation, `Architecture.md`, this ExecPlan, and its retrospective.
+Run lint fix/check/structure for every changed C# batch, the full compilation-error
+loop, affected EditMode and PlayMode tests with NUnit XML/log/Report artifacts,
+analyzers, and `.agents/scripts/validate-changes.sh`. The final repository must have no
+compiler errors, analyzer diagnostics, test failures, removed script GUIDs, or
+uncommitted generated changes.
+
+## Concrete Steps
+
+1. Keep each milestone independently compiling and commit it only after its gate is
+   clean.
+2. Build the new assemblies beside the legacy graph, then redirect consumers in
+   bounded batches.
+3. Add pure runtime tests before deleting the corresponding component dependency.
+4. Update this document after every meaningful discovery, design adjustment,
+   verification run, and milestone commit.
+5. Run the repository efficiency workflow after changed-scope updates so verification
+   remains proportional until the final full gate.
+
+## Validation and Acceptance
+
+- Pure NUnit tests create, clone, start, tick, and execute a Blackboard without a
+  `GameObject`, `AddComponent`, coroutine, or `[UnityTest]`.
+- Clones from Direct, ScriptableObject, and parent-variable templates never share
+  mutable managed state.
+- Unity object references remain intentionally shared; definition IDs remain stable;
+  runtime-instance IDs differ.
+- Missing templates, null actions, duplicate IDs, unresolved variable sources, and
+  reference cycles fail deterministically with actionable errors.
+- Script-created and wrapper-created instances pass the same execution matrix.
+- Sequence, Selector, Parallel, Parallel Selector, Utility Selector, Await, ordering,
+  weights, repeat prevention, interruption, flow jumps, multi-track behavior,
+  scheduling, execution feedback, stop, and reset retain their current semantics.
+- `GameStarted` works with a fake frame scheduler and no Unity lifecycle method.
+- Unity relays attach and detach listeners symmetrically.
+- The editor authors the complete graph without adding Block, Command, ActionList,
+  trigger, or variable components.
+- Undo/redo, copy/paste, reorder, grouping, source switching, asset editing,
+  validation, and play-mode feedback remain functional.
+- No Core type derives from `MonoBehaviour`; no Core execution path uses
+  `GetComponent`, `AddComponent`, `StartCoroutine`, `GameObject.Find`, or a mutable
+  Singleton.
+- Rebuilt serialized assets contain no missing scripts or removed legacy GUIDs.
+- Every changed C# batch passes lint fix/check/structure.
+- Every Unity test run produces NUnit XML, an Editor-log summary, and a contextual
+  `Report.md`.
+- The final macOS gate passes with zero compiler errors, analyzer diagnostics, test
+  failures, or uncommitted generated changes.
+
+## Idempotence and Recovery
+
+New runtime work is introduced in separate folders and assemblies until the cutover,
+so a failed intermediate migration can be repaired without resurrecting deleted
+serialization. Definition validation occurs before runtime creation. Clone operations
+do not mutate source templates. Subscription and scheduled-work handles are disposed
+symmetrically. Every destructive deletion is deferred until replacement consumers
+compile and asset references are known.
+
+If a milestone gate fails, retain the milestone as uncommitted work, update
+Surprises & Discoveries with the failure, repair the smallest owning scope, and rerun
+the same gate. Never skip forward to destructive cutover while an earlier milestone is
+red.
+
+## Artifacts and Notes
+
+- Current architecture review:
+  `Docs/ScaffoldVisualScripting/BlackboardArchitectureReview.md`
+- Baseline inventory and parity matrix:
+  `Plans/BlackboardRuntimeRefactor/LegacyInventory.md`
+- Unity test artifacts will live under
+  `Logs/Tests/BlackboardRuntimeRefactor/<Milestone>/<Platform>/`.
+- Compilation audit:
+  `Docs/UnityErrorCheckReport.md`
+- Focused Milestone 1 results:
+  `Logs/Tests/BlackboardRuntimeRefactor/Milestone1/`
+- Full repository gate baseline on 2026-07-27:
+  compilation precheck passed; EditMode reported 248 passed and 59 failed; PlayMode
+  exited without results; the asmdef and analyzer infrastructure blockers listed in
+  Surprises & Discoveries remain outside the affected milestone scope.
+
+## Interfaces and Dependencies
+
+The target public dependencies point in one direction:
+
+`Scaffold.VisualScripting.Core <- Scaffold.VisualScripting.Authoring <- Scaffold.VisualScripting.Unity`
+
+Editor assemblies depend on the model assemblies they edit. Game actions depend on
+Core, not the Unity wrapper. Composition roots depend on VContainer and register
+runtime factories, schedulers, time sources, variable stores, event buses, save
+services, loggers, and relay factories. Core exposes contracts for these capabilities
+and never resolves mutable global state.
+
+The primary public model and runtime types are `BlackboardDefinition`,
+`BlockDefinition`, `ActionTrackDefinition`, `ActionListDefinition`, `IAction`,
+`ActionExecutionContext`, `Blackboard`, `Block`, `BlackboardDefinitionReference`,
+`BlackboardDefinitionVariable`, `BlackboardDefinitionAsset`,
+`IBlackboardFactory`, `IFrameScheduler`, `ITimeSource`, `IBlackboardEventBus`,
+`IBlackboardSaveService`, `IBlackboardLogger`, and variable-store contracts.

@@ -10,14 +10,14 @@ namespace GearEngine.GearEngine.Tests.Editor
 {
     public class InvokeActionCommandTests
     {
-        private GameObject _hostObject;
+        private GameObject hostObject;
 
         [TearDown]
         public void TearDown()
         {
-            if (_hostObject != null)
+            if (hostObject != null)
             {
-                UnityEngine.Object.DestroyImmediate(_hostObject);
+                UnityEngine.Object.DestroyImmediate(hostObject);
             }
         }
 
@@ -301,7 +301,7 @@ namespace GearEngine.GearEngine.Tests.Editor
             command.actions.Add(new InvokeActionCommand.ActionWrapper(constantUtilityAction));
             command.actions.Add(new InvokeActionCommand.ActionWrapper(variableUtilityAction));
             command.SetActionUtility(0, 2f);
-            FloatVariable utilityVariable = _hostObject.AddComponent<FloatVariable>();
+            FloatVariable utilityVariable = hostObject.AddComponent<FloatVariable>();
             utilityVariable.Value = 1f;
             FloatData utilityData = new FloatData(0f)
             {
@@ -588,7 +588,7 @@ namespace GearEngine.GearEngine.Tests.Editor
             targetCommand.actions.Add(new InvokeActionCommand.ActionWrapper(interruptedAction));
 
             TestInvokeActionCommand interruptionCommand =
-                _hostObject.AddComponent<TestInvokeActionCommand>();
+                hostObject.AddComponent<TestInvokeActionCommand>();
             interruptionCommand.ExecutionMethod = CompositeExecutionMethod.Sequence;
             PerformInterruption interruptionAction = new PerformInterruption
             {
@@ -620,7 +620,7 @@ namespace GearEngine.GearEngine.Tests.Editor
             bool moved = command.TryMoveAction(0, 1);
 
             Assert.That(moved, Is.True);
-            Assert.That(command.actions[0], Is.SameAs(secondAction));
+            Assert.That(command.actions[0].action, Is.SameAs(secondAction));
             Assert.That(command.GetActionId(0), Is.EqualTo(secondActionId));
             Assert.That(command.GetActionId(1), Is.EqualTo(firstActionId));
         }
@@ -640,7 +640,7 @@ namespace GearEngine.GearEngine.Tests.Editor
             bool moved = command.TryMoveAction(0, 1);
 
             Assert.That(moved, Is.True);
-            Assert.That(command.actions[1], Is.SameAs(firstAction));
+            Assert.That(command.actions[1].action, Is.SameAs(firstAction));
             Assert.That(command.GetActionUtility(1), Is.EqualTo(7f));
             Assert.That(command.IsUtilityBlockedDuringExecution(1), Is.True);
             Assert.That(command.GetActionWeight(1), Is.EqualTo(35f));
@@ -650,7 +650,7 @@ namespace GearEngine.GearEngine.Tests.Editor
         public void UtilitySettings_ArePreservedWhenAnActionMovesToAnotherGroup()
         {
             TestInvokeActionCommand source = CreateCommand(CompositeExecutionMethod.UtilitySelector);
-            TestInvokeActionCommand destination = _hostObject.AddComponent<TestInvokeActionCommand>();
+            TestInvokeActionCommand destination = hostObject.AddComponent<TestInvokeActionCommand>();
             DeferredAction action = new DeferredAction();
             source.actions.Add(new InvokeActionCommand.ActionWrapper(action));
             source.SetActionUtility(0, 8f);
@@ -664,7 +664,7 @@ namespace GearEngine.GearEngine.Tests.Editor
             destination.InsertAction(0, movedAction, enabled, utilitySettings);
 
             Assert.That(removed, Is.True);
-            Assert.That(destination.actions[0], Is.SameAs(action));
+            Assert.That(destination.actions[0].action, Is.SameAs(action));
             Assert.That(destination.GetActionUtility(0), Is.EqualTo(8f));
             Assert.That(destination.IsUtilityBlockedDuringExecution(0), Is.True);
         }
@@ -693,7 +693,7 @@ namespace GearEngine.GearEngine.Tests.Editor
         public void MovedAction_PreservesItsEnabledStateWhenInsertedIntoAnotherGroup()
         {
             TestInvokeActionCommand source = CreateCommand(CompositeExecutionMethod.Sequence);
-            TestInvokeActionCommand destination = _hostObject.AddComponent<TestInvokeActionCommand>();
+            TestInvokeActionCommand destination = hostObject.AddComponent<TestInvokeActionCommand>();
             DeferredAction action = new DeferredAction();
             source.actions.Add(new InvokeActionCommand.ActionWrapper(action));
             source.SetActionEnabled(0, false);
@@ -703,7 +703,7 @@ namespace GearEngine.GearEngine.Tests.Editor
 
             Assert.That(removed, Is.True);
             Assert.That(source.actions, Is.Empty);
-            Assert.That(destination.actions[0], Is.SameAs(action));
+            Assert.That(destination.actions[0].action, Is.SameAs(action));
             Assert.That(destination.IsActionEnabled(0), Is.False);
         }
 
@@ -711,7 +711,7 @@ namespace GearEngine.GearEngine.Tests.Editor
         public void MovedAction_PreservesTheDisabledStateOfItsSourceInvokeAction()
         {
             TestInvokeActionCommand source = CreateCommand(CompositeExecutionMethod.Sequence);
-            TestInvokeActionCommand destination = _hostObject.AddComponent<TestInvokeActionCommand>();
+            TestInvokeActionCommand destination = hostObject.AddComponent<TestInvokeActionCommand>();
             DeferredAction action = new DeferredAction();
             source.actions.Add(new InvokeActionCommand.ActionWrapper(action));
             source.enabled = false;
@@ -720,7 +720,7 @@ namespace GearEngine.GearEngine.Tests.Editor
             destination.InsertAction(0, movedAction, enabled);
 
             Assert.That(removed, Is.True);
-            Assert.That(destination.actions[0], Is.SameAs(action));
+            Assert.That(destination.actions[0].action, Is.SameAs(action));
             Assert.That(destination.IsActionEnabled(0), Is.False);
         }
 
@@ -737,8 +737,8 @@ namespace GearEngine.GearEngine.Tests.Editor
             bool moved = command.TryMoveAction(0, 1);
 
             Assert.That(moved, Is.True);
-            Assert.That(command.actions[0], Is.SameAs(secondAction));
-            Assert.That(command.actions[1], Is.SameAs(firstAction));
+            Assert.That(command.actions[0].action, Is.SameAs(secondAction));
+            Assert.That(command.actions[1].action, Is.SameAs(firstAction));
             Assert.That(command.IsActionEnabled(1), Is.False);
         }
 
@@ -753,8 +753,8 @@ namespace GearEngine.GearEngine.Tests.Editor
             command.InsertAction(command.actions.Count, addedAction, true);
 
             Assert.That(command.actions, Has.Count.EqualTo(2));
-            Assert.That(command.actions[0], Is.SameAs(existingAction));
-            Assert.That(command.actions[1], Is.SameAs(addedAction));
+            Assert.That(command.actions[0].action, Is.SameAs(existingAction));
+            Assert.That(command.actions[1].action, Is.SameAs(addedAction));
         }
 
         [Test]
@@ -766,7 +766,7 @@ namespace GearEngine.GearEngine.Tests.Editor
             command.InsertActionInGroup(0, action, true);
 
             Assert.That(command.actions, Has.Count.EqualTo(1));
-            Assert.That(command.actions[0], Is.SameAs(action));
+            Assert.That(command.actions[0].action, Is.SameAs(action));
             Assert.That(command.DisplayAsGroup, Is.True);
         }
 
@@ -787,14 +787,14 @@ namespace GearEngine.GearEngine.Tests.Editor
         [Test]
         public void Condition_FindsEndInsideInvokeActionWrapper()
         {
-            _hostObject = new GameObject("WrappedFlowControlTests");
-            _hostObject.AddComponent<Blackboard>();
-            Block block = _hostObject.AddComponent<Block>();
+            hostObject = new GameObject("WrappedFlowControlTests");
+            hostObject.AddComponent<Blackboard>();
+            Block block = hostObject.AddComponent<Block>();
             CommandTrack track = block.Tracks[0];
             InvokeActionCommand conditionCommand =
-                _hostObject.AddComponent<InvokeActionCommand>();
+                hostObject.AddComponent<InvokeActionCommand>();
             InvokeActionCommand endCommand =
-                _hostObject.AddComponent<InvokeActionCommand>();
+                hostObject.AddComponent<InvokeActionCommand>();
             If condition = new If();
             End end = new End();
             conditionCommand.actions.Add(new InvokeActionCommand.ActionWrapper(condition));
@@ -818,93 +818,94 @@ namespace GearEngine.GearEngine.Tests.Editor
 
         private TestInvokeActionCommand CreateCommand(CompositeExecutionMethod executionMethod)
         {
-            _hostObject = new GameObject("InvokeActionCommandTests");
-            TestInvokeActionCommand command = _hostObject.AddComponent<TestInvokeActionCommand>();
+            hostObject = new GameObject("InvokeActionCommandTests");
+            TestInvokeActionCommand command = hostObject.AddComponent<TestInvokeActionCommand>();
             command.ExecutionMethod = executionMethod;
             return command;
         }
-    }
 
-    public sealed class TestInvokeActionCommand : InvokeActionCommand
-    {
-        private readonly Queue<float> randomValues = new Queue<float>();
-
-        public int ContinueCount { get; private set; }
-
-        public void SetRandomValues(params float[] values)
+        private sealed class TestInvokeActionCommand : InvokeActionCommand
         {
-            randomValues.Clear();
-            foreach (float value in values)
+            private readonly Queue<float> randomValues = new Queue<float>();
+
+            public int ContinueCount { get; private set; }
+
+            public void SetRandomValues(params float[] values)
             {
-                randomValues.Enqueue(value);
+                randomValues.Clear();
+                foreach (float value in values)
+                {
+                    randomValues.Enqueue(value);
+                }
+            }
+
+            public override void Continue()
+            {
+                ContinueCount++;
+            }
+
+            protected override float GetRandomValue()
+            {
+                return randomValues.Count > 0 ? randomValues.Dequeue() : 0f;
             }
         }
 
-        public override void Continue()
+        private sealed class DeferredAction :
+            IAction,
+            IActionWithStatus,
+            IInterruptibleAction,
+            IActionProgressProvider
         {
-            ContinueCount++;
-        }
+            private Action onComplete;
+            private Action<ActionExecutionStatus> onStatusComplete;
 
-        protected override float GetRandomValue()
-        {
-            return randomValues.Count > 0 ? randomValues.Dequeue() : 0f;
-        }
-    }
+            public int ExecuteCount { get; private set; }
 
-    public sealed class DeferredAction :
-        IAction,
-        IActionWithStatus,
-        IInterruptibleAction,
-        IActionProgressProvider
-    {
-        private Action _onComplete;
-        private Action<ActionExecutionStatus> _onStatusComplete;
+            public int InterruptCount { get; private set; }
 
-        public int ExecuteCount { get; private set; }
-        public int InterruptCount { get; private set; }
+            public float Progress { get; set; }
 
-        public float Progress { get; set; }
+            public void Execute(Action onComplete)
+            {
+                ExecuteCount++;
+                this.onComplete = onComplete;
+                onStatusComplete = null;
+            }
 
-        public void Execute(Action onComplete)
-        {
-            ExecuteCount++;
-            _onComplete = onComplete;
-            _onStatusComplete = null;
-        }
+            public void ExecuteWithStatus(Action<ActionExecutionStatus> onComplete)
+            {
+                ExecuteCount++;
+                this.onComplete = null;
+                onStatusComplete = onComplete;
+            }
 
-        public void ExecuteWithStatus(Action<ActionExecutionStatus> onComplete)
-        {
-            ExecuteCount++;
-            _onComplete = null;
-            _onStatusComplete = onComplete;
-        }
+            public void Complete()
+            {
+                Complete(ActionExecutionStatus.Success);
+            }
 
-        public void Complete()
-        {
-            Complete(ActionExecutionStatus.Success);
-        }
+            public void Complete(ActionExecutionStatus status)
+            {
+                Action completion = onComplete;
+                Action<ActionExecutionStatus> statusCompletion = onStatusComplete;
+                onComplete = null;
+                onStatusComplete = null;
+                completion?.Invoke();
+                statusCompletion?.Invoke(status);
+            }
 
-        public void Complete(ActionExecutionStatus status)
-        {
-            Action completion = _onComplete;
-            Action<ActionExecutionStatus> statusCompletion = _onStatusComplete;
-            _onComplete = null;
-            _onStatusComplete = null;
-            completion?.Invoke();
-            statusCompletion?.Invoke(status);
-        }
+            public void Interrupt()
+            {
+                InterruptCount++;
+                onComplete = null;
+                onStatusComplete = null;
+            }
 
-        public void Interrupt()
-        {
-            InterruptCount++;
-            _onComplete = null;
-            _onStatusComplete = null;
-        }
-
-        public bool TryGetExecutionProgress(out float progress)
-        {
-            progress = Progress;
-            return true;
+            public bool TryGetExecutionProgress(out float progress)
+            {
+                progress = Progress;
+                return true;
+            }
         }
     }
 }
