@@ -79,6 +79,8 @@ MonoBehaviour:
   rotationLerpSpeed: 15
   fillLerpSpeed: 10
   settleLerpSpeed: 20
+  presentationScaleMultiplier: 1.55
+  iconScaleMultiplier: 1.15
 --- !u!114 &8811223344556677025
 MonoBehaviour:
   m_ObjectHideFlags: 0

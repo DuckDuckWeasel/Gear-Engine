@@ -28,7 +28,10 @@ namespace GearEngine.GearEngine.Visuals
         private float settleLerpSpeed = 20f;
 
         [SerializeField]
-        private float presentationScaleMultiplier = 1.12f;
+        private float presentationScaleMultiplier = 1.38f;
+
+        [SerializeField]
+        private float iconScaleMultiplier = 1.15f;
 
         private float targetRotationZ;
         private float currentVisualFill;
@@ -142,6 +145,11 @@ namespace GearEngine.GearEngine.Visuals
             }
             baseScale = scale * presentationScaleMultiplier;
             gearVisual.localScale = new Vector3(baseScale, baseScale, baseScale);
+            if (chargeFillImage != null)
+            {
+                chargeFillImage.rectTransform.localScale =
+                    new Vector3(iconScaleMultiplier, iconScaleMultiplier, iconScaleMultiplier);
+            }
         }
 
         private void ApplyIcon(Sprite sprite)

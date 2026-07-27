@@ -44,8 +44,8 @@ namespace GearEngine.GearEngine.Tests.Editor
 
             Assert.IsNotNull(instance);
             Transform gv = instance.transform.GetChild(0);
-            Assert.AreEqual(0.56f, gv.localScale.x, 0.001f);
-            Assert.AreEqual(0.56f, gv.localScale.y, 0.001f);
+            Assert.AreEqual(0.69f, gv.localScale.x, 0.001f);
+            Assert.AreEqual(0.69f, gv.localScale.y, 0.001f);
 
             Object.DestroyImmediate(parent.gameObject);
             Object.DestroyImmediate(root);

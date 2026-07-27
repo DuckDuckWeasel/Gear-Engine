@@ -154,14 +154,34 @@ namespace GearEngine.GearEngine.Tests.Editor
                     RectTransform slotRect = slot.transform as RectTransform;
                     slotRect.anchoredPosition =
                         layout.GetCellLocalPosition(new Vector2Int(x, y), rules);
-                    int gearIndex = (x + (y * rules.GridWidth)) % 6;
-                    if (gearIndex < gears.Length && (x + y) % 2 == 0)
+                    int gearIndex = GetBoardGearIndex(x, y);
+                    if (gearIndex >= 0 && gearIndex < gears.Length)
                     {
                         GearView view = GearViewSpawner.Spawn(gears[gearIndex], slotRect);
                         view.SetChargeFillTarget((gearIndex + 1f) / 6f, snap: true);
                     }
                 }
             }
+        }
+
+        private static int GetBoardGearIndex(int x, int y)
+        {
+            if (x == 2 && y == 1)
+            {
+                return 0;
+            }
+
+            if (y == 1 && (x == 1 || x == 3))
+            {
+                return x;
+            }
+
+            if (x == 2 && y == 0)
+            {
+                return 3;
+            }
+
+            return (x + y) % 4 == 0 ? (x + (y * 2)) % 6 : -1;
         }
 
         private static void PopulateInventory(GearWorkspaceView workspace)
@@ -251,7 +271,8 @@ namespace GearEngine.GearEngine.Tests.Editor
                 $"  \"artifact\": \"{Path.GetFileName(artifactPath)}\",\n" +
                 $"  \"scenario\": \"{scenario} portrait workspace at {width}x{height}\",\n" +
                 "  \"criteria\": \"Board, Inventory, Trash, and Gear UI remain inside the " +
-                "configured Safe Area using screen-space rendering.\"\n" +
+                "configured Safe Area; the primary cog and its orthogonal neighbors visibly " +
+                "mesh using screen-space rendering.\"\n" +
                 "}\n";
             File.WriteAllText(artifactPath + ".evidence.json", evidence);
         }
