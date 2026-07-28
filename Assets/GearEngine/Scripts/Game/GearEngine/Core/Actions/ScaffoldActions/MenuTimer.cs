@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using GearEngine.Core.Actions;
 
 using UnityEngine;
@@ -14,7 +15,7 @@ namespace Scaffold
     [AddComponentMenu("")]
     [ExecuteInEditMode]
     [Serializable]
-    public class MenuTimer : ActionBase
+    public class MenuTimer : ActionBase, Scaffold.VisualScripting.IBlockConnectionSource
     {
         [Tooltip("Length of time to display the timer for")]
         [SerializeField] protected FloatData duration = new FloatData(1);
@@ -54,6 +55,19 @@ namespace Scaffold
         public override Color GetButtonColor()
         {
             return new Color32(184, 210, 235, 255);
+        }
+
+        public void GetConnectedBlockNames(ICollection<string> blockNames)
+        {
+            if (blockNames == null)
+            {
+                throw new ArgumentNullException(nameof(blockNames));
+            }
+
+            if (!string.IsNullOrWhiteSpace(targetBlockName.Value))
+            {
+                blockNames.Add(targetBlockName.Value);
+            }
         }
 
         public override bool HasReference(Variable variable)

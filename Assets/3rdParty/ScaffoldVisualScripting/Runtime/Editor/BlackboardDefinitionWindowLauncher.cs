@@ -8,6 +8,7 @@ namespace Scaffold.VisualScripting.Editor
     public static class BlackboardDefinitionWindowLauncher
     {
         [MenuItem("Window/Scaffold/Blackboard")]
+        [MenuItem("Tools/Scaffold/Blackboard")]
         public static void OpenSelected()
         {
             Open(Selection.activeObject);

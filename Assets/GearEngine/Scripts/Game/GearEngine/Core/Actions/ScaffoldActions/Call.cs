@@ -15,7 +15,7 @@ namespace Scaffold
         "Call",
         "Execute another Block in the current or a registered Blackboard runtime.")]
     [Serializable]
-    public class Call : ActionBase
+    public class Call : ActionBase, Scaffold.VisualScripting.IBlockConnectionSource
     {
         [Tooltip(
             "Optional runtime instance ID. Leave empty to use the current Blackboard.")]
@@ -88,6 +88,19 @@ namespace Scaffold
         public override Color GetButtonColor()
         {
             return new Color32(235, 191, 217, 255);
+        }
+
+        public void GetConnectedBlockNames(ICollection<string> blockNames)
+        {
+            if (blockNames == null)
+            {
+                throw new ArgumentNullException(nameof(blockNames));
+            }
+
+            if (!string.IsNullOrWhiteSpace(targetBlockName.Value))
+            {
+                blockNames.Add(targetBlockName.Value);
+            }
         }
 
         public override bool HasReference(Variable variable)

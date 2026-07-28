@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace Scaffold.VisualScripting.Editor
 {
@@ -10,18 +11,31 @@ namespace Scaffold.VisualScripting.Editor
             this.idRegenerator = idRegenerator ?? throw new ArgumentNullException(nameof(idRegenerator));
         }
 
-        public bool HasBlock => block != null;
+        public bool HasBlock => blocks.Count > 0;
 
         public bool HasAction => action != null;
 
         private readonly SerializedGraphCloner cloner;
         private readonly DefinitionIdRegenerator idRegenerator;
-        private BlockDefinition block;
+        private readonly List<BlockDefinition> blocks = new List<BlockDefinition>();
         private IAction action;
 
         public void Copy(BlockDefinition source)
         {
-            block = cloner.CloneGraph(source ?? throw new ArgumentNullException(nameof(source)));
+            blocks.Clear();
+            blocks.Add(cloner.CloneGraph(source ?? throw new ArgumentNullException(nameof(source))));
+        }
+
+        public void Copy(IReadOnlyList<BlockDefinition> source)
+        {
+            blocks.Clear();
+            for (int index = 0; source != null && index < source.Count; index++)
+            {
+                if (source[index] != null)
+                {
+                    blocks.Add(cloner.CloneGraph(source[index]));
+                }
+            }
         }
 
         public void Copy(IAction source)
@@ -31,9 +45,27 @@ namespace Scaffold.VisualScripting.Editor
 
         public BlockDefinition PasteBlock()
         {
-            BlockDefinition clone = cloner.CloneGraph(block ?? throw new InvalidOperationException("The Blackboard block clipboard is empty."));
+            if (blocks.Count == 0)
+            {
+                throw new InvalidOperationException("The Blackboard block clipboard is empty.");
+            }
+
+            BlockDefinition clone = cloner.CloneGraph(blocks[0]);
             idRegenerator.Regenerate(clone);
             return clone;
+        }
+
+        public IReadOnlyList<BlockDefinition> PasteBlocks()
+        {
+            List<BlockDefinition> pasted = new List<BlockDefinition>();
+            for (int index = 0; index < blocks.Count; index++)
+            {
+                BlockDefinition clone = cloner.CloneGraph(blocks[index]);
+                idRegenerator.Regenerate(clone);
+                pasted.Add(clone);
+            }
+
+            return pasted;
         }
 
         public IAction PasteAction()

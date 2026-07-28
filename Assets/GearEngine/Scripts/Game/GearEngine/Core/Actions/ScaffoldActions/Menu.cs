@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using GearEngine.Core.Actions;
 
 using UnityEngine;
@@ -12,7 +13,7 @@ namespace Scaffold
                  "Menu",
                  "Displays a button in a multiple choice menu")]
     [Serializable]
-    public class Menu : ActionBase, ILocalizable
+    public class Menu : ActionBase, ILocalizable, Scaffold.VisualScripting.IBlockConnectionSource
     {
         [Tooltip("Text to display on the menu button")]
         [TextArea()]
@@ -92,6 +93,19 @@ namespace Scaffold
         public override Color GetButtonColor()
         {
             return new Color32(184, 210, 235, 255);
+        }
+
+        public void GetConnectedBlockNames(ICollection<string> blockNames)
+        {
+            if (blockNames == null)
+            {
+                throw new ArgumentNullException(nameof(blockNames));
+            }
+
+            if (!string.IsNullOrWhiteSpace(targetBlockName.Value))
+            {
+                blockNames.Add(targetBlockName.Value);
+            }
         }
 
         public override bool HasReference(Variable variable)

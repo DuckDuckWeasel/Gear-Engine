@@ -4,7 +4,9 @@
     "references": [
         "Scaffold.VisualScripting.Core",
         "Scaffold.VisualScripting.Authoring",
-        "Scaffold.VisualScripting.Unity"
+        "Scaffold.VisualScripting.Unity",
+        "Scaffold",
+        "ScaffoldEditor"
     ],
     "includePlatforms": [
         "Editor"

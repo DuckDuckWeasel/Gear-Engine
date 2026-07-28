@@ -1,12 +1,13 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Scaffold.VisualScripting.Authoring;
 using UnityEditor;
 using UnityEngine;
 
 namespace Scaffold.VisualScripting.Editor
 {
-    public sealed class BlackboardAuthoringController
+    public sealed partial class BlackboardAuthoringController
     {
         public BlackboardAuthoringController(BlackboardAuthoringTarget target, BlackboardAuthoringClipboard clipboard)
         {
@@ -363,9 +364,12 @@ namespace Scaffold.VisualScripting.Editor
 
             Definition.Blocks.RemoveAt(index);
             Metadata.BlockLayouts.RemoveAll(layout => layout.BlockId == blockId);
+            Metadata.SelectedBlockIds.Remove(blockId);
             if (Metadata.SelectedBlockId == blockId)
             {
-                Metadata.ClearSelection();
+                Metadata.SelectedBlockId = Metadata.SelectedBlockIds.Count == 0
+                    ? DefinitionId.Empty
+                    : Metadata.SelectedBlockIds[Metadata.SelectedBlockIds.Count - 1];
             }
         }
 
@@ -380,6 +384,7 @@ namespace Scaffold.VisualScripting.Editor
         {
             Metadata.ClearSelection();
             Metadata.SelectedBlockId = block.DefinitionId;
+            Metadata.SelectedBlockIds.Add(block.DefinitionId);
             GetOrCreateLayout(block.DefinitionId);
         }
 
@@ -547,6 +552,546 @@ namespace Scaffold.VisualScripting.Editor
             {
                 PrefabUtility.RecordPrefabInstancePropertyModifications(component);
             }
+        }
+        public UnityEngine.Object Owner => target.Owner;
+
+        private bool blockMoveActive;
+
+        public BlockDefinition GetBlock(DefinitionId blockId)
+        {
+            return Definition.Blocks.Find(block => block != null && block.DefinitionId == blockId);
+        }
+
+        public ActionTrackDefinition GetTrack(DefinitionId trackId)
+        {
+            return FindTrack(trackId);
+        }
+
+        public IAction GetAction(DefinitionId actionId)
+        {
+            ActionTrackDefinition track = FindOwningTrack(actionId);
+            return track?.ActionList.Actions.Find(action => action != null && action.DefinitionId == actionId);
+        }
+
+        public ActionTrackDefinition GetOwningTrack(DefinitionId actionId)
+        {
+            return FindOwningTrack(actionId);
+        }
+
+        public BlockDefinition GetOwningBlockForAction(DefinitionId actionId)
+        {
+            ActionTrackDefinition track = FindOwningTrack(actionId);
+            return track == null ? null : FindOwningBlock(track.DefinitionId);
+        }
+
+        public BlockAuthoringMetadata GetLayout(DefinitionId blockId)
+        {
+            return GetOrCreateLayout(blockId);
+        }
+
+        public void SynchronizeBlockSelection()
+        {
+            Metadata.SelectedBlockIds.RemoveAll(id => GetBlock(id) == null);
+            if (!Metadata.SelectedBlockId.IsEmpty && !Metadata.SelectedBlockIds.Contains(Metadata.SelectedBlockId))
+            {
+                Metadata.SelectedBlockIds.Add(Metadata.SelectedBlockId);
+            }
+
+            SetSelectionFallback();
+        }
+
+        public void SelectOnlyBlock(DefinitionId blockId)
+        {
+            RequireBlock(blockId);
+            BeginChange("Select Blackboard Block");
+            Metadata.ClearSelection();
+            Metadata.SelectedBlockId = blockId;
+            Metadata.SelectedBlockIds.Add(blockId);
+            GetOrCreateLayout(blockId);
+            CompleteChange();
+        }
+
+        public void ToggleBlockSelection(DefinitionId blockId)
+        {
+            RequireBlock(blockId);
+            BeginChange("Select Blackboard Blocks");
+            ToggleSelectedBlock(blockId);
+            CompleteChange();
+        }
+
+        public void SelectBlocks(IReadOnlyList<DefinitionId> blockIds)
+        {
+            BeginChange("Select Blackboard Blocks");
+            Metadata.ClearSelection();
+            AddSelectedBlocks(blockIds);
+            SetSelectionFallback();
+            CompleteChange();
+        }
+
+        public void ClearBlockSelection()
+        {
+            if (Metadata.SelectedBlockIds.Count == 0 && Metadata.SelectedBlockId.IsEmpty)
+            {
+                return;
+            }
+
+            BeginChange("Clear Blackboard Selection");
+            Metadata.ClearSelection();
+            CompleteChange();
+        }
+
+        public bool IsBlockSelected(DefinitionId blockId)
+        {
+            return Metadata.SelectedBlockIds.Contains(blockId) || Metadata.SelectedBlockId == blockId;
+        }
+
+        public void BeginBlockMove()
+        {
+            if (blockMoveActive)
+            {
+                return;
+            }
+
+            Undo.IncrementCurrentGroup();
+            Undo.RegisterCompleteObjectUndo(target.Owner, "Move Blackboard Blocks");
+            blockMoveActive = true;
+        }
+
+        public void MoveSelectedBlocks(Vector2 graphDelta)
+        {
+            if (!blockMoveActive)
+            {
+                throw new InvalidOperationException("Begin the Blackboard Block move before applying a delta.");
+            }
+
+            for (int index = 0; index < Metadata.SelectedBlockIds.Count; index++)
+            {
+                BlockAuthoringMetadata layout = GetOrCreateLayout(Metadata.SelectedBlockIds[index]);
+                layout.Position = MoveRect(layout.Position, graphDelta);
+            }
+        }
+
+        public void EndBlockMove()
+        {
+            if (!blockMoveActive)
+            {
+                return;
+            }
+
+            blockMoveActive = false;
+            CompleteChange();
+        }
+
+        public void SetViewport(Vector2 scrollPosition, float zoom)
+        {
+            Metadata.ScrollPosition = scrollPosition;
+            Metadata.Zoom = zoom;
+            CompleteChange();
+        }
+
+        public void RenameBlock(DefinitionId blockId, string name)
+        {
+            BeginChange("Rename Blackboard Block");
+            RequireBlock(blockId).Name = CreateUniqueBlockNameExcept(name, blockId);
+            CompleteChange();
+        }
+
+        public void SetBlockDescription(DefinitionId blockId, string description)
+        {
+            BeginChange("Edit Blackboard Block Description");
+            GetOrCreateLayout(blockId).Description = description;
+            CompleteChange();
+        }
+
+        public void SetBlockPosition(DefinitionId blockId, Vector2 graphPosition)
+        {
+            BeginChange("Position Blackboard Block");
+            BlockAuthoringMetadata layout = GetOrCreateLayout(blockId);
+            Rect position = layout.Position;
+            position.position = graphPosition;
+            layout.Position = position;
+            CompleteChange();
+        }
+
+        public void SetBlockExpanded(DefinitionId blockId, bool expanded)
+        {
+            BeginChange("Expand Blackboard Block");
+            GetOrCreateLayout(blockId).Expanded = expanded;
+            CompleteChange();
+        }
+
+        public void CopySelectedBlocks()
+        {
+            List<BlockDefinition> selected = GetSelectedBlocks();
+            if (selected.Count > 0)
+            {
+                clipboard.Copy(selected);
+            }
+        }
+
+        public IReadOnlyList<BlockDefinition> PasteBlocks(Vector2 graphPosition)
+        {
+            IReadOnlyList<BlockDefinition> pasted = clipboard.PasteBlocks();
+            BeginChange("Paste Blackboard Blocks");
+            AddPastedBlocks(pasted, graphPosition);
+            CompleteChange();
+            return pasted;
+        }
+
+        public IReadOnlyList<BlockDefinition> DuplicateSelectedBlocks()
+        {
+            List<BlockDefinition> selected = GetSelectedBlocks();
+            BeginChange("Duplicate Blackboard Blocks");
+            List<BlockDefinition> duplicates = CloneSelectedBlocks(selected);
+            SelectDuplicateBlocks(duplicates);
+            CompleteChange();
+            return duplicates;
+        }
+
+        public void RemoveSelectedBlocks()
+        {
+            List<DefinitionId> selected = new List<DefinitionId>(Metadata.SelectedBlockIds);
+            BeginChange("Remove Blackboard Blocks");
+            RemoveBlocks(selected);
+            Metadata.ClearSelection();
+            CompleteChange();
+        }
+
+        public void CutSelectedBlocks()
+        {
+            CopySelectedBlocks();
+            RemoveSelectedBlocks();
+        }
+
+        public bool MoveActionToTrack(DefinitionId actionId, DefinitionId destinationTrackId, int destinationIndex)
+        {
+            ActionTrackDefinition source = RequireOwningTrack(actionId);
+            ActionTrackDefinition destination = RequireTrack(destinationTrackId);
+            IAction action = RequireAction(source, actionId);
+            BeginChange("Move Blackboard Action");
+            MoveActionBetweenTracks(source, destination, action, destinationIndex);
+            CompleteChange();
+            return true;
+        }
+
+        public void SelectOnlyAction(DefinitionId trackId, DefinitionId actionId)
+        {
+            ActionTrackDefinition track = RequireTrack(trackId);
+            RequireAction(track, actionId);
+            BeginChange("Select Blackboard Action");
+            Metadata.SelectedTrackId = trackId;
+            Metadata.SelectedActionIds.Clear();
+            Metadata.SelectedActionIds.Add(actionId);
+            CompleteChange();
+        }
+
+        public void ToggleActionSelection(DefinitionId trackId, DefinitionId actionId)
+        {
+            ActionTrackDefinition track = RequireTrack(trackId);
+            RequireAction(track, actionId);
+            BeginChange("Select Blackboard Actions");
+            Metadata.SelectedTrackId = trackId;
+            if (!Metadata.SelectedActionIds.Remove(actionId))
+            {
+                Metadata.SelectedActionIds.Add(actionId);
+            }
+
+            CompleteChange();
+        }
+
+        public void SelectActionRange(DefinitionId trackId, DefinitionId actionId)
+        {
+            ActionTrackDefinition track = RequireTrack(trackId);
+            int destinationIndex = FindActionIndex(track, actionId);
+            int anchorIndex = Metadata.SelectedTrackId == trackId && Metadata.SelectedActionIds.Count > 0
+                ? FindActionIndex(track, Metadata.SelectedActionIds[Metadata.SelectedActionIds.Count - 1])
+                : -1;
+            if (anchorIndex < 0 || destinationIndex < 0)
+            {
+                SelectOnlyAction(trackId, actionId);
+                return;
+            }
+
+            BeginChange("Select Blackboard Action Range");
+            Metadata.SelectedTrackId = trackId;
+            Metadata.SelectedActionIds.Clear();
+            int first = Math.Min(anchorIndex, destinationIndex);
+            int last = Math.Max(anchorIndex, destinationIndex);
+            for (int index = first; index <= last; index++)
+            {
+                IAction action = track.ActionList.Actions[index];
+                if (action != null)
+                {
+                    Metadata.SelectedActionIds.Add(action.DefinitionId);
+                }
+            }
+
+            CompleteChange();
+        }
+
+        public void SelectAllActions(DefinitionId trackId)
+        {
+            ActionTrackDefinition track = RequireTrack(trackId);
+            BeginChange("Select All Blackboard Actions");
+            Metadata.SelectedTrackId = trackId;
+            Metadata.SelectedActionIds.Clear();
+            for (int index = 0; index < track.ActionList.Actions.Count; index++)
+            {
+                IAction action = track.ActionList.Actions[index];
+                if (action != null)
+                {
+                    Metadata.SelectedActionIds.Add(action.DefinitionId);
+                }
+            }
+
+            CompleteChange();
+        }
+
+        public void ClearActionSelection()
+        {
+            BeginChange("Clear Blackboard Action Selection");
+            Metadata.SelectedTrackId = DefinitionId.Empty;
+            Metadata.SelectedActionIds.Clear();
+            CompleteChange();
+        }
+
+        public void RemoveSelectedActions()
+        {
+            List<DefinitionId> selected = new List<DefinitionId>(Metadata.SelectedActionIds);
+            BeginChange("Remove Blackboard Actions");
+            for (int index = 0; index < selected.Count; index++)
+            {
+                RemoveActionWithoutUndo(selected[index]);
+            }
+
+            Metadata.SelectedActionIds.Clear();
+            CompleteChange();
+        }
+
+        public VariableDefinitionBase DuplicateVariable(DefinitionId variableId)
+        {
+            VariableDefinitionBase source = RequireVariable(variableId);
+            BeginChange("Duplicate Blackboard Variable");
+            VariableDefinitionBase clone = cloner.CloneGraph(source);
+            idRegenerator.Regenerate(clone);
+            clone.Key = CreateUniqueVariableKey($"{source.Key} Copy");
+            Definition.Variables.Insert(FindVariableIndex(variableId) + 1, clone);
+            CompleteChange();
+            return clone;
+        }
+
+        public void SortVariablesByName()
+        {
+            BeginChange("Sort Blackboard Variables By Name");
+            Definition.Variables.Sort(CompareVariablesByName);
+            CompleteChange();
+        }
+
+        public void SortVariablesByType()
+        {
+            BeginChange("Sort Blackboard Variables By Type");
+            Definition.Variables.Sort(CompareVariablesByType);
+            CompleteChange();
+        }
+
+        public void RecordSerializedChange(string label)
+        {
+            Undo.RegisterCompleteObjectUndo(target.Owner, label);
+        }
+
+        public void CompleteSerializedChange()
+        {
+            CompleteChange();
+        }
+
+        private void ToggleSelectedBlock(DefinitionId blockId)
+        {
+            if (Metadata.SelectedBlockIds.Remove(blockId))
+            {
+                SetSelectionFallback();
+                return;
+            }
+
+            Metadata.SelectedBlockIds.Add(blockId);
+            Metadata.SelectedBlockId = blockId;
+            GetOrCreateLayout(blockId);
+        }
+
+        private void AddSelectedBlocks(IReadOnlyList<DefinitionId> blockIds)
+        {
+            for (int index = 0; blockIds != null && index < blockIds.Count; index++)
+            {
+                if (GetBlock(blockIds[index]) != null && !Metadata.SelectedBlockIds.Contains(blockIds[index]))
+                {
+                    Metadata.SelectedBlockIds.Add(blockIds[index]);
+                }
+            }
+        }
+
+        private void SetSelectionFallback()
+        {
+            Metadata.SelectedBlockId = Metadata.SelectedBlockIds.Count == 0
+                ? DefinitionId.Empty
+                : Metadata.SelectedBlockIds[Metadata.SelectedBlockIds.Count - 1];
+        }
+
+        private Rect MoveRect(Rect source, Vector2 delta)
+        {
+            source.position += delta;
+            return source;
+        }
+
+        private string CreateUniqueBlockNameExcept(string requested, DefinitionId excludedId)
+        {
+            string baseName = string.IsNullOrWhiteSpace(requested) ? "Block" : requested;
+            string candidate = baseName;
+            for (int suffix = 2; BlockNameExists(candidate, excludedId); suffix++)
+            {
+                candidate = $"{baseName} {suffix}";
+            }
+
+            return candidate;
+        }
+
+        private bool BlockNameExists(string candidate, DefinitionId excludedId)
+        {
+            return Definition.Blocks.Exists(block =>
+                block != null &&
+                block.DefinitionId != excludedId &&
+                string.Equals(block.Name, candidate, StringComparison.Ordinal));
+        }
+
+        private List<BlockDefinition> GetSelectedBlocks()
+        {
+            SynchronizeBlockSelection();
+            List<BlockDefinition> selected = new List<BlockDefinition>();
+            for (int index = 0; index < Definition.Blocks.Count; index++)
+            {
+                BlockDefinition block = Definition.Blocks[index];
+                if (block != null && Metadata.SelectedBlockIds.Contains(block.DefinitionId))
+                {
+                    selected.Add(block);
+                }
+            }
+
+            return selected;
+        }
+
+        private void AddPastedBlocks(IReadOnlyList<BlockDefinition> pasted, Vector2 position)
+        {
+            Metadata.ClearSelection();
+            for (int index = 0; index < pasted.Count; index++)
+            {
+                BlockDefinition block = pasted[index];
+                block.Name = CreateUniqueBlockName(block.Name);
+                Definition.Blocks.Add(block);
+                Rect rect = new Rect(position + new Vector2(index * 24f, index * 24f), new Vector2(260f, 100f));
+                Metadata.BlockLayouts.Add(new BlockAuthoringMetadata(block.DefinitionId, rect));
+                Metadata.SelectedBlockIds.Add(block.DefinitionId);
+            }
+
+            SetSelectionFallback();
+        }
+
+        private List<BlockDefinition> CloneSelectedBlocks(IReadOnlyList<BlockDefinition> selected)
+        {
+            List<BlockDefinition> duplicates = new List<BlockDefinition>();
+            for (int index = 0; index < selected.Count; index++)
+            {
+                BlockDefinition source = selected[index];
+                BlockDefinition clone = cloner.CloneGraph(source);
+                idRegenerator.Regenerate(clone);
+                clone.Name = CreateUniqueBlockName($"{source.Name} Copy");
+                Definition.Blocks.Add(clone);
+                DuplicateLayout(source.DefinitionId, clone.DefinitionId);
+                duplicates.Add(clone);
+            }
+
+            return duplicates;
+        }
+
+        private void DuplicateLayout(DefinitionId sourceId, DefinitionId destinationId)
+        {
+            BlockAuthoringMetadata source = GetOrCreateLayout(sourceId);
+            Rect rect = MoveRect(source.Position, new Vector2(24f, 24f));
+            BlockAuthoringMetadata destination = new BlockAuthoringMetadata(destinationId, rect);
+            destination.Description = source.Description;
+            destination.UseCustomTint = source.UseCustomTint;
+            destination.Tint = source.Tint;
+            Metadata.BlockLayouts.Add(destination);
+        }
+
+        private void SelectDuplicateBlocks(IReadOnlyList<BlockDefinition> duplicates)
+        {
+            Metadata.ClearSelection();
+            for (int index = 0; index < duplicates.Count; index++)
+            {
+                Metadata.SelectedBlockIds.Add(duplicates[index].DefinitionId);
+            }
+
+            SetSelectionFallback();
+        }
+
+        private void RemoveBlocks(IReadOnlyList<DefinitionId> selected)
+        {
+            for (int index = Definition.Blocks.Count - 1; index >= 0; index--)
+            {
+                if (selected.Contains(Definition.Blocks[index].DefinitionId))
+                {
+                    RemoveBlockAt(index);
+                }
+            }
+        }
+
+        private void MoveActionBetweenTracks(ActionTrackDefinition source, ActionTrackDefinition destination, IAction action, int destinationIndex)
+        {
+            int sourceIndex = source.ActionList.Actions.IndexOf(action);
+            source.ActionList.Actions.RemoveAt(sourceIndex);
+            int insertIndex = Mathf.Clamp(destinationIndex, 0, destination.ActionList.Actions.Count);
+            destination.ActionList.Actions.Insert(insertIndex, action);
+            if (source.DefinitionId != destination.DefinitionId)
+            {
+                RemoveActionFromGroups(action.DefinitionId);
+            }
+
+            Metadata.SelectedTrackId = destination.DefinitionId;
+        }
+
+        private void RemoveActionFromGroups(DefinitionId actionId)
+        {
+            for (int index = 0; index < Metadata.ActionGroups.Count; index++)
+            {
+                Metadata.ActionGroups[index].ActionIds.Remove(actionId);
+            }
+
+            Metadata.ActionGroups.RemoveAll(group => group.ActionIds.Count == 0);
+        }
+
+        private void RemoveActionWithoutUndo(DefinitionId actionId)
+        {
+            ActionTrackDefinition track = FindOwningTrack(actionId);
+            int index = FindActionIndex(track, actionId);
+            if (index >= 0)
+            {
+                track.ActionList.Actions.RemoveAt(index);
+                RemoveActionMetadata(actionId);
+            }
+        }
+
+        private VariableDefinitionBase RequireVariable(DefinitionId variableId)
+        {
+            VariableDefinitionBase variable = Definition.Variables.Find(item => item != null && item.DefinitionId == variableId);
+            return variable ?? throw new InvalidOperationException($"Blackboard variable '{variableId}' was not found.");
+        }
+
+        private int CompareVariablesByName(VariableDefinitionBase left, VariableDefinitionBase right)
+        {
+            return string.Compare(left?.Key, right?.Key, StringComparison.OrdinalIgnoreCase);
+        }
+
+        private int CompareVariablesByType(VariableDefinitionBase left, VariableDefinitionBase right)
+        {
+            return string.Compare(left?.GetType().Name, right?.GetType().Name, StringComparison.OrdinalIgnoreCase);
         }
     }
 }

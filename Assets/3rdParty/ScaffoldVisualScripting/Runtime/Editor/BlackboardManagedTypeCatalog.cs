@@ -9,7 +9,9 @@ namespace Scaffold.VisualScripting.Editor
     {
         public static IReadOnlyList<Type> GetActionTypes(string search = null)
         {
-            return GetCreatableTypes<IAction>(search);
+            return GetCreatableTypes<IAction>(search)
+                .Where(HasActionMenuMetadata)
+                .ToArray();
         }
 
         public static IReadOnlyList<Type> GetTriggerTypes(string search = null)
@@ -33,12 +35,22 @@ namespace Scaffold.VisualScripting.Editor
 
         private static bool IsCreatable(Type type)
         {
-            return type != null && !type.IsAbstract && !type.IsGenericTypeDefinition;
+            return type != null &&
+                type.IsClass &&
+                type.IsVisible &&
+                !type.IsAbstract &&
+                !type.IsGenericTypeDefinition &&
+                type.GetConstructor(Type.EmptyTypes) != null;
         }
 
         private static bool MatchesSearch(Type type, string search)
         {
             return string.IsNullOrWhiteSpace(search) || type.Name.IndexOf(search, StringComparison.OrdinalIgnoreCase) >= 0;
+        }
+
+        private static bool HasActionMenuMetadata(Type type)
+        {
+            return Attribute.IsDefined(type, typeof(global::Scaffold.CommandInfoAttribute), false);
         }
     }
 }

@@ -18,7 +18,7 @@ namespace Scaffold.VisualScripting.Authoring
         public float Zoom
         {
             get => zoom;
-            set => zoom = Mathf.Clamp(value, 0.25f, 2f);
+            set => zoom = Mathf.Clamp(value, 0.25f, 1f);
         }
 
         [SerializeField] private float zoom = 1f;
@@ -30,6 +30,10 @@ namespace Scaffold.VisualScripting.Authoring
         }
 
         [SerializeField] private DefinitionId selectedBlockId;
+
+        public List<DefinitionId> SelectedBlockIds => selectedBlockIds;
+
+        [SerializeField] private List<DefinitionId> selectedBlockIds = new List<DefinitionId>();
 
         public DefinitionId SelectedTrackId
         {
@@ -54,6 +58,7 @@ namespace Scaffold.VisualScripting.Authoring
         public void ClearSelection()
         {
             selectedBlockId = DefinitionId.Empty;
+            selectedBlockIds.Clear();
             selectedTrackId = DefinitionId.Empty;
             selectedActionIds.Clear();
         }

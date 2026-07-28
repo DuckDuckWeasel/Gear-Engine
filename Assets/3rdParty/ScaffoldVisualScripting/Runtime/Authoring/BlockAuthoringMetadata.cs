@@ -48,6 +48,14 @@ namespace Scaffold.VisualScripting.Authoring
 
         [SerializeField] private Color tint = Color.white;
 
+        public string Description
+        {
+            get => description;
+            set => description = value ?? string.Empty;
+        }
+
+        [SerializeField] private string description = string.Empty;
+
         public bool Expanded
         {
             get => expanded;

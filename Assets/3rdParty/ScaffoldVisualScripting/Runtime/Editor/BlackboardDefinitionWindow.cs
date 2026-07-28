@@ -10,14 +10,25 @@ namespace Scaffold.VisualScripting.Editor
 {
     public sealed class BlackboardDefinitionWindow : EditorWindow
     {
+        private const float k_defaultAuthoringWidth = 340f;
+        private const float k_defaultInspectorWidth = 340f;
+        private const float k_minSidePanelWidth = 300f;
+        private const float k_minBoardWidth = 320f;
+
         [SerializeField] private Object sourceObject;
         [SerializeField] private string search = string.Empty;
+        [SerializeField] private float detailWidth = k_defaultAuthoringWidth;
+        [SerializeField] private float inspectorWidth = k_defaultInspectorWidth;
         [NonSerialized] private BlackboardAuthoringTarget target;
         [NonSerialized] private BlackboardAuthoringController controller;
         [NonSerialized] private BlackboardAuthoringClipboard clipboard;
+        [NonSerialized] private BlackboardGraphCanvas canvas;
+        [NonSerialized] private BlackboardDetailPanel detailPanel;
         [NonSerialized] private string resolutionError;
+
         private readonly BlackboardAuthoringTargetResolver resolver = new BlackboardAuthoringTargetResolver();
         private readonly BlackboardExecutionFeedback feedback = new BlackboardExecutionFeedback();
+        private readonly BlackboardEditorExecutionController execution = new BlackboardEditorExecutionController();
 
         public void SetSource(Object source)
         {
@@ -28,10 +39,14 @@ namespace Scaffold.VisualScripting.Editor
 
         private void OnEnable()
         {
-            CreateClipboard();
+            minSize = new Vector2(920f, 420f);
+            titleContent = new GUIContent("Blackboard", BlackboardEditorStyles.FlowGraph);
+            wantsMouseMove = true;
+            CreateEditorServices();
             Undo.undoRedoPerformed += HandleUndoRedo;
             Selection.selectionChanged += HandleSelectionChanged;
             EditorApplication.update += HandleEditorUpdate;
+            EditorApplication.playModeStateChanged += HandlePlayModeStateChanged;
             ResolveTarget();
         }
 
@@ -40,10 +55,20 @@ namespace Scaffold.VisualScripting.Editor
             Undo.undoRedoPerformed -= HandleUndoRedo;
             Selection.selectionChanged -= HandleSelectionChanged;
             EditorApplication.update -= HandleEditorUpdate;
+            EditorApplication.playModeStateChanged -= HandlePlayModeStateChanged;
+            EditorApplication.delayCall -= RebindAfterPlayModeTransition;
         }
 
         private void OnGUI()
         {
+            if (Event.current.type == EventType.MouseDown ||
+                Event.current.type == EventType.MouseMove ||
+                Event.current.type == EventType.MouseLeaveWindow)
+            {
+                Repaint();
+            }
+
+            EnsureEditorServices();
             DrawToolbar();
             if (!EnsureTarget())
             {
@@ -51,25 +76,208 @@ namespace Scaffold.VisualScripting.Editor
             }
 
             DrawValidation();
-            target.Metadata.ScrollPosition = EditorGUILayout.BeginScrollView(target.Metadata.ScrollPosition);
-            DrawDefinitionHeader();
-            DrawBlocks();
-            DrawVariables();
-            DrawSerializedDetails();
-            EditorGUILayout.EndScrollView();
+            DrawWorkspace();
         }
 
         private void DrawToolbar()
         {
             EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
-            Object selected = EditorGUILayout.ObjectField(sourceObject, typeof(Object), true);
+            DrawAddBlockButton();
+            DrawCanvasButtons();
+            DrawBackButton();
+            DrawSourceField();
+            GUILayout.FlexibleSpace();
+            DrawSearchField();
+            DrawRuntimeButtons();
+            DrawVariablesButton();
+            EditorGUILayout.EndHorizontal();
+        }
+
+        private void DrawAddBlockButton()
+        {
+            using (new EditorGUI.DisabledScope(controller == null))
+            {
+                GUIContent content = new GUIContent(BlackboardEditorStyles.Add, "Add Block");
+                if (GUILayout.Button(content, EditorStyles.toolbarButton, GUILayout.Width(28f)))
+                {
+                    BlockDefinition block = controller.AddBlock();
+                    controller.SetBlockPosition(block.DefinitionId, canvas.GetVisibleGraphCenter());
+                }
+            }
+        }
+
+        private void DrawCanvasButtons()
+        {
+            using (new EditorGUI.DisabledScope(controller == null))
+            {
+                if (GUILayout.Button(new GUIContent("Frame", "Frame all Blocks"), EditorStyles.toolbarButton))
+                {
+                    canvas.FrameAll();
+                }
+
+                if (GUILayout.Button(new GUIContent("Layout", "Automatically arrange Blocks"), EditorStyles.toolbarButton))
+                {
+                    controller.AutoLayout();
+                    canvas.FrameAll();
+                }
+            }
+        }
+
+        private void DrawSourceField()
+        {
+            GUILayout.Space(4f);
+            Object selected = EditorGUILayout.ObjectField(sourceObject, typeof(Object), true, GUILayout.MinWidth(160f));
             if (selected != sourceObject)
             {
                 SetSource(selected);
             }
 
-            search = GUILayout.TextField(search, EditorStyles.toolbarSearchField, GUILayout.MinWidth(140f));
-            EditorGUILayout.EndHorizontal();
+            if (target != null)
+            {
+                GUILayout.Label(target.DisplayName, EditorStyles.miniLabel);
+            }
+        }
+
+        private void DrawBackButton()
+        {
+            BlackboardBehaviour behaviour = sourceObject as BlackboardBehaviour;
+            bool canGoBack = behaviour != null &&
+                behaviour.DefinitionReference.Source == BlackboardDefinitionSource.BlackboardVariable &&
+                behaviour.SourceBehaviour != null;
+            using (new EditorGUI.DisabledScope(!canGoBack))
+            {
+                if (GUILayout.Button(new GUIContent("Back", "Open the source Blackboard"), EditorStyles.toolbarButton))
+                {
+                    SetSource(behaviour.SourceBehaviour);
+                }
+            }
+        }
+
+        private void DrawSearchField()
+        {
+            string nextSearch = GUILayout.TextField(search, EditorStyles.toolbarSearchField, GUILayout.Width(180f));
+            if (!string.Equals(nextSearch, search, StringComparison.Ordinal))
+            {
+                search = nextSearch;
+                Repaint();
+            }
+
+            using (new EditorGUI.DisabledScope(controller == null || string.IsNullOrWhiteSpace(search)))
+            {
+                if (GUILayout.Button(new GUIContent("Focus", "Focus the first matching Block or Action"), EditorStyles.toolbarButton))
+                {
+                    canvas.FocusFirstMatch(search);
+                }
+            }
+        }
+
+        private void DrawRuntimeButtons()
+        {
+            BlackboardBehaviour behaviour = GetSourceBehaviour();
+            bool canControl = execution.CanControl(behaviour, out string reason);
+            bool canPlayFromStart =
+                controller != null &&
+                controller.GetBlock(controller.Metadata.SelectedBlockId) != null;
+            bool canPlayFromSelected =
+                BlackboardEditorExecutionController
+                    .TryResolveSelectedActionStart(
+                        controller,
+                        out _,
+                        out _);
+            using (new EditorGUI.DisabledScope(
+                (!canPlayFromStart && !canPlayFromSelected)))
+            {
+                GUIContent play = new GUIContent(
+                    BlackboardEditorStyles.Play,
+                    "Choose where to start the selected Block");
+                if (GUILayout.Button(
+                    play,
+                    EditorStyles.toolbarDropDown,
+                    GUILayout.Width(34f)))
+                {
+                    ShowPlayMenu(
+                        behaviour,
+                        GUILayoutUtility.GetLastRect(),
+                        canControl,
+                        canPlayFromStart,
+                        canPlayFromSelected);
+                }
+            }
+
+            using (new EditorGUI.DisabledScope(!canControl || controller == null))
+            {
+                if (GUILayout.Button(new GUIContent("■", "Stop selected Block"), EditorStyles.toolbarButton, GUILayout.Width(28f)))
+                {
+                    execution.Stop(behaviour, controller.Metadata.SelectedBlockId);
+                }
+
+                if (GUILayout.Button(new GUIContent("Stop All", "Stop every running Block"), EditorStyles.toolbarButton))
+                {
+                    execution.StopAll(behaviour);
+                }
+            }
+
+            if (!canControl && Event.current.type == EventType.Repaint)
+            {
+                GUIContent tooltip = new GUIContent(string.Empty, reason);
+                GUI.Label(GUILayoutUtility.GetLastRect(), tooltip);
+            }
+        }
+
+        private void ShowPlayMenu(
+            BlackboardBehaviour behaviour,
+            Rect anchor,
+            bool canControl,
+            bool canPlayFromStart,
+            bool canPlayFromSelected)
+        {
+            GenericMenu menu = new GenericMenu();
+            if (canControl && canPlayFromStart)
+            {
+                DefinitionId blockId = controller.Metadata.SelectedBlockId;
+                menu.AddItem(
+                    new GUIContent("Play From Start"),
+                    false,
+                    () => execution.Execute(behaviour, blockId));
+            }
+            else
+            {
+                menu.AddDisabledItem(new GUIContent("Play From Start"));
+            }
+
+            if (canControl &&
+                canPlayFromSelected &&
+                BlackboardEditorExecutionController
+                    .TryResolveSelectedActionStart(
+                        controller,
+                        out DefinitionId selectedBlockId,
+                        out int selectedTaskIndex))
+            {
+                menu.AddItem(
+                    new GUIContent("Play From Selected"),
+                    false,
+                    () => execution.ExecuteFromAction(
+                        behaviour,
+                        selectedBlockId,
+                        selectedTaskIndex));
+            }
+            else
+            {
+                menu.AddDisabledItem(new GUIContent("Play From Selected"));
+            }
+
+            menu.DropDown(anchor);
+        }
+
+        private void DrawVariablesButton()
+        {
+            using (new EditorGUI.DisabledScope(detailPanel == null))
+            {
+                if (GUILayout.Button("Variables", EditorStyles.toolbarButton))
+                {
+                    detailPanel.ShowVariables();
+                }
+            }
         }
 
         private bool EnsureTarget()
@@ -86,514 +294,87 @@ namespace Scaffold.VisualScripting.Editor
         private void DrawValidation()
         {
             IReadOnlyList<BlackboardValidationIssue> issues = controller.Validate();
-            for (int index = 0; index < issues.Count; index++)
-            {
-                EditorGUILayout.HelpBox(issues[index].ToString(), MessageType.Error);
-            }
-        }
-
-        private void DrawDefinitionHeader()
-        {
-            EditorGUILayout.Space();
-            EditorGUILayout.LabelField(target.DisplayName, EditorStyles.boldLabel);
-            string name = EditorGUILayout.TextField("Definition Name", controller.Definition.Name);
-            if (!string.Equals(name, controller.Definition.Name, StringComparison.Ordinal))
-            {
-                ApplyChange("Rename Blackboard Definition", () => controller.Definition.Name = name);
-            }
-
-            DrawDefinitionActions();
-        }
-
-        private void DrawDefinitionActions()
-        {
-            EditorGUILayout.BeginHorizontal();
-            if (GUILayout.Button("Add Block"))
-            {
-                controller.AddBlock();
-            }
-
-            if (GUILayout.Button("Auto Layout"))
-            {
-                controller.AutoLayout();
-            }
-
-            DrawPasteBlockButton();
-            DrawGroupButton();
-            EditorGUILayout.EndHorizontal();
-        }
-
-        private void DrawPasteBlockButton()
-        {
-            using (new EditorGUI.DisabledScope(!clipboard.HasBlock))
-            {
-                if (GUILayout.Button("Paste Block"))
-                {
-                    controller.PasteBlock();
-                }
-            }
-        }
-
-        private void DrawGroupButton()
-        {
-            bool canGroup = !controller.Metadata.SelectedTrackId.IsEmpty && controller.Metadata.SelectedActionIds.Count > 0;
-            using (new EditorGUI.DisabledScope(!canGroup))
-            {
-                if (GUILayout.Button("Group Selected"))
-                {
-                    controller.GroupActions(controller.Metadata.SelectedTrackId, controller.Metadata.SelectedActionIds, "Group");
-                }
-            }
-        }
-
-        private void DrawBlocks()
-        {
-            EditorGUILayout.Space();
-            EditorGUILayout.LabelField("Blocks", EditorStyles.boldLabel);
-            for (int index = 0; index < controller.Definition.Blocks.Count; index++)
-            {
-                BlockDefinition block = controller.Definition.Blocks[index];
-                if (block != null && MatchesSearch(block.Name))
-                {
-                    DrawBlock(block, index);
-                }
-            }
-        }
-
-        private void DrawBlock(BlockDefinition block, int index)
-        {
-            BlockAuthoringMetadata layout = FindLayout(block.DefinitionId);
-            Color originalColor = GUI.backgroundColor;
-            GUI.backgroundColor = layout != null && layout.UseCustomTint ? layout.Tint : originalColor;
-            EditorGUILayout.BeginVertical(EditorStyles.helpBox);
-            GUI.backgroundColor = originalColor;
-            DrawBlockHeader(block, index);
-            DrawBlockTrigger(block);
-            DrawTracks(block);
-            DrawBlockGroups(block);
-            EditorGUILayout.EndVertical();
-        }
-
-        private void DrawBlockHeader(BlockDefinition block, int index)
-        {
-            EditorGUILayout.BeginHorizontal();
-            string name = EditorGUILayout.TextField(block.Name);
-            if (!string.Equals(name, block.Name, StringComparison.Ordinal))
-            {
-                ApplyChange("Rename Blackboard Block", () => block.Name = name);
-            }
-
-            DrawBlockStatus(block);
-            DrawBlockButtons(block, index);
-            EditorGUILayout.EndHorizontal();
-            DrawBlockLayout(block);
-        }
-
-        private void DrawBlockStatus(BlockDefinition block)
-        {
-            if (sourceObject is BlackboardBehaviour behaviour && feedback.TryGetBlockState(behaviour, block.DefinitionId, out BlockExecutionState state))
-            {
-                GUILayout.Label(state.ToString(), EditorStyles.miniLabel, GUILayout.Width(70f));
-            }
-        }
-
-        private void DrawBlockButtons(BlockDefinition block, int index)
-        {
-            if (GUILayout.Button("Copy", GUILayout.Width(48f)))
-            {
-                controller.CopyBlock(block.DefinitionId);
-            }
-
-            if (GUILayout.Button("Dup", GUILayout.Width(40f)))
-            {
-                controller.DuplicateBlock(block.DefinitionId);
-            }
-
-            DrawMoveBlockButtons(block, index);
-            if (GUILayout.Button("X", GUILayout.Width(24f)))
-            {
-                controller.RemoveBlock(block.DefinitionId);
-                GUIUtility.ExitGUI();
-            }
-        }
-
-        private void DrawMoveBlockButtons(BlockDefinition block, int index)
-        {
-            using (new EditorGUI.DisabledScope(index == 0))
-            {
-                if (GUILayout.Button("↑", GUILayout.Width(24f)))
-                {
-                    controller.MoveBlock(block.DefinitionId, index - 1);
-                }
-            }
-
-            using (new EditorGUI.DisabledScope(index + 1 >= controller.Definition.Blocks.Count))
-            {
-                if (GUILayout.Button("↓", GUILayout.Width(24f)))
-                {
-                    controller.MoveBlock(block.DefinitionId, index + 1);
-                }
-            }
-        }
-
-        private void DrawBlockLayout(BlockDefinition block)
-        {
-            BlockAuthoringMetadata layout = FindLayout(block.DefinitionId);
-            if (layout == null)
+            if (issues.Count == 0)
             {
                 return;
             }
 
+            string message = issues.Count == 1
+                ? issues[0].ToString()
+                : $"{issues.Count} validation issues. {issues[0]}";
+            EditorGUILayout.HelpBox(message, MessageType.Error);
+        }
+
+        private void DrawWorkspace()
+        {
+            detailWidth = ClampSidePanelWidth(
+                detailWidth,
+                position.width);
+            inspectorWidth = ClampSidePanelWidth(
+                inspectorWidth,
+                position.width);
+
             EditorGUILayout.BeginHorizontal();
-            bool customTint = EditorGUILayout.ToggleLeft("Tint", layout.UseCustomTint, GUILayout.Width(52f));
-            Color tint = EditorGUILayout.ColorField(layout.Tint);
-            GUILayout.Label($"Graph: {layout.Position.position}", EditorStyles.miniLabel);
-            EditorGUILayout.EndHorizontal();
-            if (customTint != layout.UseCustomTint || tint != layout.Tint)
-            {
-                controller.SetBlockTint(block.DefinitionId, customTint, tint);
-            }
-        }
-
-        private void DrawBlockTrigger(BlockDefinition block)
-        {
-            EditorGUILayout.BeginHorizontal();
-            GUILayout.Label(block.Trigger?.GetType().Name ?? "No Trigger", GUILayout.MinWidth(120f));
-            if (GUILayout.Button("Set Trigger", GUILayout.Width(90f)))
-            {
-                ShowTypeMenu(BlackboardManagedTypeCatalog.GetTriggerTypes(search), type => controller.SetTrigger(block.DefinitionId, type));
-            }
-
-            using (new EditorGUI.DisabledScope(block.Trigger == null))
-            {
-                if (GUILayout.Button("Clear", GUILayout.Width(50f)))
-                {
-                    controller.ClearTrigger(block.DefinitionId);
-                }
-            }
-
-            EditorGUILayout.EndHorizontal();
-        }
-
-        private void DrawTracks(BlockDefinition block)
-        {
-            for (int index = 0; index < block.Tracks.Count; index++)
-            {
-                ActionTrackDefinition track = block.Tracks[index];
-                if (track != null)
-                {
-                    DrawTrack(block, track, index);
-                }
-            }
-
-            if (GUILayout.Button("Add Track"))
-            {
-                controller.AddTrack(block.DefinitionId);
-            }
-        }
-
-        private void DrawTrack(BlockDefinition block, ActionTrackDefinition track, int index)
-        {
-            EditorGUILayout.BeginVertical("box");
-            DrawTrackHeader(block, track, index);
-            for (int actionIndex = 0; actionIndex < track.ActionList.Actions.Count; actionIndex++)
-            {
-                IAction action = track.ActionList.Actions[actionIndex];
-                if (action != null && MatchesSearch(action.GetType().Name))
-                {
-                    DrawAction(track, action, actionIndex);
-                }
-            }
-
-            DrawTrackActions(track);
+            EditorGUILayout.BeginVertical(
+                EditorStyles.helpBox,
+                GUILayout.Width(detailWidth),
+                GUILayout.ExpandHeight(true));
+            detailPanel.DrawAuthoring(
+                controller,
+                GetSourceBehaviour());
             EditorGUILayout.EndVertical();
-        }
 
-        private void DrawTrackHeader(BlockDefinition block, ActionTrackDefinition track, int index)
-        {
-            EditorGUILayout.BeginHorizontal();
-            string name = EditorGUILayout.TextField(track.Name);
-            if (!string.Equals(name, track.Name, StringComparison.Ordinal))
-            {
-                ApplyChange("Rename Blackboard Track", () => track.Name = name);
-            }
+            Rect graph = GUILayoutUtility.GetRect(
+                0f,
+                100000f,
+                0f,
+                100000f,
+                GUILayout.ExpandWidth(true),
+                GUILayout.ExpandHeight(true));
 
-            DrawMoveTrackButtons(block, track, index);
-            if (GUILayout.Button("X", GUILayout.Width(24f)))
-            {
-                controller.RemoveTrack(track.DefinitionId);
-                GUIUtility.ExitGUI();
-            }
-
+            EditorGUILayout.BeginVertical(
+                EditorStyles.helpBox,
+                GUILayout.Width(inspectorWidth),
+                GUILayout.ExpandHeight(true));
+            detailPanel.DrawInspector(controller);
+            EditorGUILayout.EndVertical();
             EditorGUILayout.EndHorizontal();
+
+            canvas.Draw(graph, controller, GetSourceBehaviour(), feedback, search);
         }
 
-        private void DrawMoveTrackButtons(BlockDefinition block, ActionTrackDefinition track, int index)
+        public static float ClampSidePanelWidth(
+            float requestedWidth,
+            float windowWidth)
         {
-            using (new EditorGUI.DisabledScope(index == 0))
-            {
-                if (GUILayout.Button("↑", GUILayout.Width(24f)))
-                {
-                    controller.MoveTrack(track.DefinitionId, index - 1);
-                }
-            }
-
-            using (new EditorGUI.DisabledScope(index + 1 >= block.Tracks.Count))
-            {
-                if (GUILayout.Button("↓", GUILayout.Width(24f)))
-                {
-                    controller.MoveTrack(track.DefinitionId, index + 1);
-                }
-            }
+            float maximum = Mathf.Max(
+                k_minSidePanelWidth,
+                (windowWidth - k_minBoardWidth) * 0.5f);
+            return Mathf.Clamp(
+                requestedWidth,
+                k_minSidePanelWidth,
+                maximum);
         }
 
-        private void DrawAction(ActionTrackDefinition track, IAction action, int index)
+        private BlackboardBehaviour GetSourceBehaviour()
         {
-            EditorGUILayout.BeginHorizontal();
-            bool selected = controller.Metadata.SelectedActionIds.Contains(action.DefinitionId);
-            bool requested = GUILayout.Toggle(selected, GUIContent.none, GUILayout.Width(18f));
-            if (selected != requested)
-            {
-                ToggleActionSelection(track.DefinitionId, action.DefinitionId);
-            }
-
-            GUILayout.Label(action.GetType().Name, GUILayout.MinWidth(130f));
-            DrawActionStatus(action);
-            DrawActionButtons(track, action, index);
-            EditorGUILayout.EndHorizontal();
+            return sourceObject as BlackboardBehaviour;
         }
 
-        private void DrawActionStatus(IAction action)
-        {
-            if (sourceObject is BlackboardBehaviour behaviour && feedback.TryGetActionStatus(behaviour, action.DefinitionId, out ActionExecutionStatus status))
-            {
-                GUILayout.Label(status.ToString(), EditorStyles.miniLabel, GUILayout.Width(80f));
-            }
-        }
-
-        private void DrawActionButtons(ActionTrackDefinition track, IAction action, int index)
-        {
-            if (GUILayout.Button("Copy", GUILayout.Width(42f)))
-            {
-                controller.CopyAction(action.DefinitionId);
-            }
-
-            if (GUILayout.Button("Dup", GUILayout.Width(38f)))
-            {
-                controller.DuplicateAction(action.DefinitionId);
-            }
-
-            DrawMoveActionButtons(track, action, index);
-            if (GUILayout.Button("X", GUILayout.Width(24f)))
-            {
-                controller.RemoveAction(action.DefinitionId);
-                GUIUtility.ExitGUI();
-            }
-        }
-
-        private void DrawMoveActionButtons(ActionTrackDefinition track, IAction action, int index)
-        {
-            using (new EditorGUI.DisabledScope(index == 0))
-            {
-                if (GUILayout.Button("↑", GUILayout.Width(24f)))
-                {
-                    controller.MoveAction(action.DefinitionId, index - 1);
-                }
-            }
-
-            using (new EditorGUI.DisabledScope(index + 1 >= track.ActionList.Actions.Count))
-            {
-                if (GUILayout.Button("↓", GUILayout.Width(24f)))
-                {
-                    controller.MoveAction(action.DefinitionId, index + 1);
-                }
-            }
-        }
-
-        private void DrawTrackActions(ActionTrackDefinition track)
-        {
-            EditorGUILayout.BeginHorizontal();
-            if (GUILayout.Button("Add Action"))
-            {
-                ShowTypeMenu(BlackboardManagedTypeCatalog.GetActionTypes(search), type => controller.AddAction(track.DefinitionId, type));
-            }
-
-            using (new EditorGUI.DisabledScope(!clipboard.HasAction))
-            {
-                if (GUILayout.Button("Paste Action"))
-                {
-                    controller.PasteAction(track.DefinitionId);
-                }
-            }
-
-            EditorGUILayout.EndHorizontal();
-        }
-
-        private void DrawBlockGroups(BlockDefinition block)
-        {
-            foreach (ActionGroupAuthoringMetadata group in controller.Metadata.ActionGroups.ToArray())
-            {
-                if (block.Tracks.Exists(track => track.DefinitionId == group.TrackId))
-                {
-                    DrawGroup(group);
-                }
-            }
-        }
-
-        private void DrawGroup(ActionGroupAuthoringMetadata group)
-        {
-            EditorGUILayout.BeginHorizontal();
-            GUILayout.Label($"Group: {group.Name} ({group.ActionIds.Count})", EditorStyles.miniLabel);
-            if (GUILayout.Button("Ungroup", GUILayout.Width(70f)))
-            {
-                controller.UngroupActions(group.GroupId);
-                GUIUtility.ExitGUI();
-            }
-
-            EditorGUILayout.EndHorizontal();
-        }
-
-        private void DrawVariables()
-        {
-            EditorGUILayout.Space();
-            EditorGUILayout.LabelField("Variables", EditorStyles.boldLabel);
-            for (int index = 0; index < controller.Definition.Variables.Count; index++)
-            {
-                VariableDefinitionBase variable = controller.Definition.Variables[index];
-                if (variable != null && MatchesSearch(variable.Key))
-                {
-                    DrawVariable(variable, index);
-                }
-            }
-
-            if (GUILayout.Button("Add Variable"))
-            {
-                ShowTypeMenu(BlackboardManagedTypeCatalog.GetVariableTypes(search), type => controller.AddVariable(type));
-            }
-        }
-
-        private void DrawVariable(VariableDefinitionBase variable, int index)
-        {
-            EditorGUILayout.BeginHorizontal();
-            GUILayout.Label(variable.GetType().Name, EditorStyles.miniLabel, GUILayout.Width(150f));
-            string key = EditorGUILayout.TextField(variable.Key);
-            if (!string.Equals(key, variable.Key, StringComparison.Ordinal))
-            {
-                ApplyChange("Rename Blackboard Variable", () => variable.Key = key);
-            }
-
-            VariableScope scope = (VariableScope)EditorGUILayout.EnumPopup(variable.Scope, GUILayout.Width(90f));
-            if (scope != variable.Scope)
-            {
-                ApplyChange("Set Blackboard Variable Scope", () => variable.Scope = scope);
-            }
-
-            DrawVariableButtons(variable, index);
-            EditorGUILayout.EndHorizontal();
-        }
-
-        private void DrawVariableButtons(VariableDefinitionBase variable, int index)
-        {
-            using (new EditorGUI.DisabledScope(index == 0))
-            {
-                if (GUILayout.Button("↑", GUILayout.Width(24f)))
-                {
-                    controller.MoveVariable(variable.DefinitionId, index - 1);
-                }
-            }
-
-            using (new EditorGUI.DisabledScope(index + 1 >= controller.Definition.Variables.Count))
-            {
-                if (GUILayout.Button("↓", GUILayout.Width(24f)))
-                {
-                    controller.MoveVariable(variable.DefinitionId, index + 1);
-                }
-            }
-
-            if (GUILayout.Button("X", GUILayout.Width(24f)))
-            {
-                controller.RemoveVariable(variable.DefinitionId);
-                GUIUtility.ExitGUI();
-            }
-        }
-
-        private void DrawSerializedDetails()
-        {
-            EditorGUILayout.Space();
-            EditorGUILayout.LabelField("Serialized Details", EditorStyles.boldLabel);
-            SerializedObject serialized = new SerializedObject(target.Owner);
-            serialized.Update();
-            DrawOwnerProperties(serialized);
-            serialized.ApplyModifiedProperties();
-        }
-
-        private void DrawOwnerProperties(SerializedObject serialized)
-        {
-            if (target.Owner is BlackboardDefinitionAsset)
-            {
-                EditorGUILayout.PropertyField(serialized.FindProperty("definition"), true);
-                EditorGUILayout.PropertyField(serialized.FindProperty("authoringMetadata"), true);
-                return;
-            }
-
-            EditorGUILayout.PropertyField(serialized.FindProperty("definitionReference"), true);
-            EditorGUILayout.PropertyField(serialized.FindProperty("sourceBehaviour"));
-            EditorGUILayout.PropertyField(serialized.FindProperty("authoringMetadata"), true);
-        }
-
-        private void ToggleActionSelection(DefinitionId trackId, DefinitionId actionId)
-        {
-            ApplyChange("Select Blackboard Action", () =>
-            {
-                controller.Metadata.SelectedTrackId = trackId;
-                if (!controller.Metadata.SelectedActionIds.Remove(actionId))
-                {
-                    controller.Metadata.SelectedActionIds.Add(actionId);
-                }
-            });
-        }
-
-        private void ShowTypeMenu(IReadOnlyList<Type> types, Action<Type> onSelected)
-        {
-            GenericMenu menu = new GenericMenu();
-            for (int index = 0; index < types.Count; index++)
-            {
-                Type type = types[index];
-                menu.AddItem(new GUIContent(type.FullName), false, () => onSelected(type));
-            }
-
-            if (types.Count == 0)
-            {
-                menu.AddDisabledItem(new GUIContent("No matching types"));
-            }
-
-            menu.ShowAsContext();
-        }
-
-        private BlockAuthoringMetadata FindLayout(DefinitionId blockId)
-        {
-            return controller.Metadata.BlockLayouts.Find(layout => layout.BlockId == blockId);
-        }
-
-        private bool MatchesSearch(string value)
-        {
-            return string.IsNullOrWhiteSpace(search) || (value ?? string.Empty).IndexOf(search, StringComparison.OrdinalIgnoreCase) >= 0;
-        }
-
-        private void ApplyChange(string label, Action change)
-        {
-            Undo.RegisterCompleteObjectUndo(target.Owner, label);
-            change.Invoke();
-            EditorUtility.SetDirty(target.Owner);
-            if (target.Owner is Component component)
-            {
-                PrefabUtility.RecordPrefabInstancePropertyModifications(component);
-            }
-        }
-
-        private void CreateClipboard()
+        private void CreateEditorServices()
         {
             clipboard = new BlackboardAuthoringClipboard(new SerializedGraphCloner(), new DefinitionIdRegenerator());
+            canvas = new BlackboardGraphCanvas();
+            detailPanel = new BlackboardDetailPanel();
+        }
+
+        private void EnsureEditorServices()
+        {
+            if (clipboard == null || canvas == null || detailPanel == null)
+            {
+                CreateEditorServices();
+                ResolveTarget();
+            }
         }
 
         private void ResolveTarget()
@@ -601,20 +382,16 @@ namespace Scaffold.VisualScripting.Editor
             target = null;
             controller = null;
             resolutionError = null;
-            if (sourceObject == null)
+            if (sourceObject == null || clipboard == null)
             {
                 return;
             }
 
-            TryResolveTarget();
-        }
-
-        private void TryResolveTarget()
-        {
             try
             {
                 target = resolver.Resolve(sourceObject);
                 controller = new BlackboardAuthoringController(target, clipboard);
+                controller.SynchronizeBlockSelection();
             }
             catch (Exception exception)
             {
@@ -642,6 +419,51 @@ namespace Scaffold.VisualScripting.Editor
             {
                 Repaint();
             }
+        }
+
+        public static bool RequiresTargetRebind(PlayModeStateChange state)
+        {
+            return state == PlayModeStateChange.EnteredPlayMode ||
+                state == PlayModeStateChange.EnteredEditMode;
+        }
+
+        private void HandlePlayModeStateChanged(PlayModeStateChange state)
+        {
+            target = null;
+            controller = null;
+            resolutionError = null;
+            EditorApplication.delayCall -= RebindAfterPlayModeTransition;
+            if (RequiresTargetRebind(state))
+            {
+                EditorApplication.delayCall += RebindAfterPlayModeTransition;
+            }
+
+            Repaint();
+        }
+
+        private void RebindAfterPlayModeTransition()
+        {
+            EditorApplication.delayCall -= RebindAfterPlayModeTransition;
+            if (sourceObject == null)
+            {
+                sourceObject = FindSelectedBlackboardSource();
+            }
+
+            ResolveTarget();
+            Repaint();
+        }
+
+        private Object FindSelectedBlackboardSource()
+        {
+            if (Selection.activeObject is BlackboardDefinitionAsset ||
+                Selection.activeObject is BlackboardBehaviour)
+            {
+                return Selection.activeObject;
+            }
+
+            return Selection.activeGameObject != null
+                ? Selection.activeGameObject.GetComponent<BlackboardBehaviour>()
+                : null;
         }
     }
 }
