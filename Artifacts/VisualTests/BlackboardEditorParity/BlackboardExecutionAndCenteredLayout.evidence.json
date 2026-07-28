@@ -1,0 +1,13 @@
+{
+  "scenario": "Blackboard action execution with a centered three-pane editor",
+  "source": "Interactive Unity Editor Play Mode regression check",
+  "criteria": [
+    "The left Block authoring pane remains visible at the narrow dock width.",
+    "The Blackboard graph remains centered between equal-width side panes.",
+    "The selected action inspector remains visible on the right.",
+    "The Game Started block executes its enabled actions.",
+    "The final Debug Log action writes \"Wait 5 seconds\" to the Console.",
+    "Returning to Edit Mode does not report an IMGUI or stale SerializedObject error."
+  ],
+  "capturedAt": "2026-07-28T17:31:59-03:00"
+}

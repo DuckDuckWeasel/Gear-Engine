@@ -1,6 +1,6 @@
 # Unity Error Check Report
 
-Date: 2026-07-28 12:32 -03
+Date: 2026-07-28 17:36 -03
 Unity: 6000.5.3f1
 Scope: Managed Blackboard editor parity restoration
 
@@ -21,7 +21,7 @@ pre-existing package/project analyzer and assembly-version warnings; the live Un
 Tundra result remains the authoritative project compilation gate.
 
 C# formatting, style diagnostics, and one-top-level-type verification pass for the
-three C# files changed by this correction. The repository
+six C# files changed by this correction. The repository
 `.agents/scripts/validate-changes.cmd` gate exits successfully.
 
 ## Compilation fixes applied
@@ -62,13 +62,29 @@ three C# files changed by this correction. The repository
 - Made action-row move and delete controls contextual to hover, with stable IMGUI
   control allocation to avoid stale controls across layout and repaint passes.
 - Added a subtle action-row hover tint that remains distinct from selection.
+- Aligned retained compatibility-value runtime resolution with the editor drawer:
+  an unconfigured wrapper uses the direct value, while configured wrappers continue
+  to resolve Blackboard variables.
+- Replaced content-driven workspace sizing with equal fixed side rectangles so the
+  Blackboard graph remains centered and the right inspector cannot be pushed
+  offscreen.
+- Guarded managed-reference rendering against stale Unity owners during Play Mode
+  transitions and guaranteed panel cleanup when Unity exits an IMGUI pass early.
+- Routed per-action execution feedback through the Block's flattened runtime task
+  runner, so the editor can identify the action that is actually executing.
+- Added a pulsing cyan current-action treatment with a solid left rail and play
+  marker.
+- Replaced the opaque native drag operation with an editor-owned drag interaction:
+  the action becomes a labeled ghost card, the destination renders a cyan insertion
+  line, and release moves the action within or across tracks.
+- Corrected same-track downward insertion after source removal.
 
 ## Current compiler check
 
-At 2026-07-28 12:32 -03, live Unity compilation and both scoped project builds
-completed with zero errors. The full shared Editor log parser returned only historical
-`TripleZStealth` exceptions whose stack traces point outside this Gear Engine
-workspace; it found no current Blackboard or Gear Engine compiler error.
+At 2026-07-28 17:36 -03, live Unity compilation and the scoped generated project
+builds completed with zero errors. The shared Editor log parser returned no current
+errors, and a repeated interactive Play Mode to Edit Mode cycle ended with zero
+Console errors.
 
 The following generated Unity projects both built successfully with zero errors:
 
@@ -77,7 +93,8 @@ The following generated Unity projects both built successfully with zero errors:
 
 The scoped `Scaffold.VisualScripting.Editor` and
 `Scaffold.VisualScripting.Editor.Tests` projects also built successfully with zero
-errors.
+errors. `Scaffold`, `Game.GearEngine.Tests`, and the two generated Assembly-CSharp
+projects also completed with zero errors.
 
 ## Verification limitation
 
@@ -95,3 +112,14 @@ vertical scrolling, absence of a horizontal scrollbar, and row-local hover contr
 The pre-existing invalid package-cache meta warning for
 `com.scaffold.navigation/Editor/ViewConfigEditor.cs.meta` remains visible but is not a
 compilation error from the Blackboard editor.
+
+The latest Play Mode evidence confirms that the Game Started block executes its
+enabled actions, the final action logs `Wait 5 seconds`, the Blackboard canvas remains
+centered between the two side panes, and the same editor returns to Edit Mode without
+an IMGUI or stale `SerializedObject` error. It also confirms that the currently
+executing action receives the cyan pulse, left rail, and play marker.
+
+The desktop automation generated only a limited synthetic drag gesture, so a full
+visual drop/reorder claim is not made from that interaction. The drag insertion edge
+and same-track index regressions are covered by the compiled editor test fixture, and
+the drag ghost and insertion rendering compile with the affected editor assembly.

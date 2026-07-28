@@ -1,0 +1,11 @@
+{
+  "scenario": "Current Blackboard action execution indicator",
+  "source": "Interactive Unity Editor Play Mode regression check",
+  "criteria": [
+    "Exactly the currently executing action row receives the cyan pulse and solid left rail.",
+    "The currently executing row displays the play marker.",
+    "Completed and pending rows do not display the current-action marker.",
+    "The center Blackboard graph remains visible while the block executes."
+  ],
+  "capturedAt": "2026-07-28T18:04:41-03:00"
+}

@@ -12,8 +12,9 @@ from the supplied screenshots and historical `BlockInspector` implementation.
 - Failed: unavailable.
 - Skipped: unavailable.
 - Total executed: unavailable.
-- The focused fixture was discovered before the final hover regression was added.
-- Four additional action-row presentation cases compile in the test assembly.
+- The focused fixture was discovered before the latest execution-source and
+  Play Mode transition regressions were added.
+- The updated editor and Gear Engine regression fixtures compile successfully.
 
 Unity requested Save or Don't Save before switching away from the modified
 `Main Scene`. The run was cancelled to preserve the user's unsaved scene, so no
@@ -32,7 +33,7 @@ current pass/fail claim is made.
 - Generated `Assembly-CSharp` build: zero errors; pre-existing package/project
   warnings remain.
 - Scoped C# formatting/style check: passed.
-- One-top-level-type structure check: passed for nine changed C# files.
+- One-top-level-type structure check: passed for six changed C# files.
 - Repository `validate-changes.cmd`: passed.
 
 ## Regression Coverage Added
@@ -57,12 +58,28 @@ current pass/fail claim is made.
   an authoring-target rebind.
 - Play From Selected resolves the selected action's flattened runtime task index
   across multiple action tracks.
+- Runtime feedback resolves action state through the Block's flattened task runner,
+  matching the runner that actually executes the actions.
+- The active action row receives a dedicated execution marker without marking
+  completed or pending rows as current.
+- Drag insertion chooses the nearest before/after edge of an action row.
+- Same-track downward dragging adjusts the insertion index after removing the source
+  action.
 - Inline action deletion removes the requested action and clears its selection.
 - Side-panel width clamping preserves a dedicated center Blackboard area at narrow
   and wide editor-window widths.
 - Action-row presentation uses distinct idle, hovered, selected, and
   selected-hovered tint strengths.
 - Action controls remain contextual to the hovered row.
+- An unspecified compatibility value source resolves its direct value when the
+  retained variable wrapper has no key or definition ID.
+- A configured compatibility wrapper continues to resolve its Blackboard variable.
+- The editor drawer normalizes unspecified compatibility sources to the same mode
+  used by runtime resolution.
+- Equal side-panel rectangles keep the Blackboard graph centered at narrow and wide
+  window widths.
+- The managed-property renderer ignores a stale Unity owner during Play Mode
+  transitions instead of constructing an invalid `SerializedObject`.
 
 ## Visual Inspection
 
@@ -97,6 +114,15 @@ current pass/fail claim is made.
 - The Blackboard graph renders independently in the center pane.
 - The selected action inspector renders independently in the right pane.
 - The three-pane layout remains correctly bound in Play Mode.
+- The Game Started block executes all four enabled actions.
+- The final Debug Log action writes `Wait 5 seconds` to the Unity Console.
+- While the block is executing, the current action has a cyan pulse, a solid cyan
+  left rail, and a play marker; the marker advances with execution.
+- Dragging an action renders a labeled ghost card at the pointer and a cyan insertion
+  line at the selected before/after edge.
+- The center Blackboard pane remains between equal-width authoring and inspector
+  panes at the current narrow dock width.
+- A repeated Play Mode to Edit Mode transition completes with zero Console errors.
 - The dirty Main Scene was preserved.
 
 ## Artifacts
@@ -126,3 +152,7 @@ current pass/fail claim is made.
 - `../../VisualTests/BlackboardEditorParity/FixedHeaderActionsScroll.evidence.json`
 - `../../VisualTests/BlackboardEditorParity/ActionRowHoverControls.jpg`
 - `../../VisualTests/BlackboardEditorParity/ActionRowHoverControls.evidence.json`
+- `../../VisualTests/BlackboardEditorParity/BlackboardExecutionAndCenteredLayout.png`
+- `../../VisualTests/BlackboardEditorParity/BlackboardExecutionAndCenteredLayout.evidence.json`
+- `../../VisualTests/BlackboardEditorParity/RunningActionIndicator.jpg`
+- `../../VisualTests/BlackboardEditorParity/RunningActionIndicator.evidence.json`

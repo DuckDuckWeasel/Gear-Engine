@@ -2956,6 +2956,196 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 231521040734453040, guid: 689dcd40046774c4b80166058bccaf5f, type: 3}
   m_PrefabInstance: {fileID: 6358256590727607001}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &587588787
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 587588789}
+  - component: {fileID: 587588788}
+  m_Layer: 0
+  m_Name: GameObject
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &587588788
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 587588787}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 22768aba6818d42f8814efc0e87773a8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Scaffold.VisualScripting.Unity::Scaffold.VisualScripting.Unity.BlackboardBehaviour
+  definitionReference:
+    source: 0
+    directDefinition:
+      definitionId: b8635838f6604197a8ac34b8e8e86ca1
+      name: Blackboard
+      localizationId: 
+      blocks:
+      - definitionId: f80c44a4c5f94242ae76fee1857941b7
+        name: Block
+        trigger:
+          rid: -2
+        executionMethod: 0
+        awaitMode: 0
+        orderMode: 0
+        avoidRepeatingLastAction: 0
+        tracks:
+        - definitionId: 9d69caf84e5c4695a2977efa68983260
+          name: Main
+          actionList:
+            definitionId: 341d9ebd0cd54692ad5aa45ded01dee9
+            executionMethod: 0
+            awaitMode: 0
+            orderMode: 0
+            avoidRepeatingLastAction: 0
+            actions:
+            - rid: 3466830076409544704
+            - rid: 3466830076409544847
+            - rid: 3466830076409544848
+            - rid: 3466830076409544849
+      variables: []
+    definitionAsset: {fileID: 0}
+    variableId:
+      value: 
+  authoringMetadata:
+    scrollPosition: {x: 193.61618, y: 155.42676}
+    zoom: 0.85366213
+    selectedBlockId:
+      value: f80c44a4c5f94242ae76fee1857941b7
+    selectedBlockIds:
+    - value: f80c44a4c5f94242ae76fee1857941b7
+    selectedTrackId:
+      value: 9d69caf84e5c4695a2977efa68983260
+    selectedActionIds:
+    - value: 88b17e4f374b405a8f98380589a09137
+    blockLayouts:
+    - blockId:
+        value: f80c44a4c5f94242ae76fee1857941b7
+      position:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 320
+        height: 180
+      useCustomTint: 0
+      tint: {r: 1, g: 1, b: 1, a: 1}
+      description: 
+      expanded: 1
+    actionGroups: []
+  sourceBehaviour: {fileID: 0}
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
+    - rid: 3466830076409544704
+      type: {class: Wait, ns: Scaffold, asm: Game.GearEngine}
+      data:
+        definitionId: bec0efd0a16941ff9177b1b33821ecbb
+        enabled: 1
+        utility: 0
+        weight: 0
+        hasWeightOverride: 0
+        blockDuringExecution: 0
+        indentLevel: 0
+        duration:
+          floatRef:
+            scope: 0
+            key: 
+            definitionId:
+              value: 
+            value: 0
+          source: 2
+          floatSO: {fileID: 0}
+          floatVal: 2
+    - rid: 3466830076409544847
+      type: {class: DebugLog, ns: Scaffold, asm: Game.GearEngine}
+      data:
+        definitionId: f4784dc756b9468fb486bd8daac874a8
+        enabled: 1
+        utility: 0
+        weight: 0
+        hasWeightOverride: 0
+        blockDuringExecution: 0
+        indentLevel: 0
+        logType: 0
+        logMessage:
+          stringRef:
+            scope: 0
+            key: 
+            definitionId:
+              value: 
+            value: 
+          source: 0
+          stringSO: {fileID: 0}
+          stringVal: 2
+    - rid: 3466830076409544848
+      type: {class: Wait, ns: Scaffold, asm: Game.GearEngine}
+      data:
+        definitionId: e801b4569f0843dda125ae10f710cf4e
+        enabled: 1
+        utility: 0
+        weight: 0
+        hasWeightOverride: 0
+        blockDuringExecution: 0
+        indentLevel: 0
+        duration:
+          floatRef:
+            scope: 0
+            key: 
+            definitionId:
+              value: 
+            value: 0
+          source: 2
+          floatSO: {fileID: 0}
+          floatVal: 5
+    - rid: 3466830076409544849
+      type: {class: DebugLog, ns: Scaffold, asm: Game.GearEngine}
+      data:
+        definitionId: 88b17e4f374b405a8f98380589a09137
+        enabled: 1
+        utility: 0
+        weight: 0
+        hasWeightOverride: 0
+        blockDuringExecution: 0
+        indentLevel: 0
+        logType: 0
+        logMessage:
+          stringRef:
+            scope: 0
+            key: 
+            definitionId:
+              value: 
+            value: 
+          source: 0
+          stringSO: {fileID: 0}
+          stringVal: Wait 5 seconds
+--- !u!4 &587588789
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 587588787}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 7.49998}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &593494352
 GameObject:
   m_ObjectHideFlags: 0
@@ -3633,6 +3823,7 @@ Canvas:
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_VertexColorAlwaysGammaSpace: 0
+  m_UseReflectionProbes: 0
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
@@ -7542,7 +7733,7 @@ Light:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1633999504}
   m_Enabled: 1
-  serializedVersion: 12
+  serializedVersion: 13
   m_Type: 1
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Intensity: 1
@@ -7594,7 +7785,7 @@ Light:
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 1
   m_ForceVisible: 0
-  m_ShadowRadius: 0
+  m_ShapeRadius: 0
   m_ShadowAngle: 0
   m_LightUnit: 1
   m_LuxAtDistance: 1
@@ -11803,6 +11994,7 @@ Canvas:
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_VertexColorAlwaysGammaSpace: 0
+  m_UseReflectionProbes: 0
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
@@ -12177,4 +12369,4 @@ SceneRoots:
   - {fileID: 1633999506}
   - {fileID: 691924211}
   - {fileID: 500010001}
-  - {fileID: 1274646437}
+  - {fileID: 587588789}
