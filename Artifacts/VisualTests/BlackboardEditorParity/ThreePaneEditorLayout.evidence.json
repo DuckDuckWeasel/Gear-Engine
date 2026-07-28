@@ -1,0 +1,10 @@
+{
+  "scenario": "Blackboard three-pane authoring layout in Edit Mode",
+  "test": "Manual Unity Editor layout inspection",
+  "criteria": [
+    "Block and Variables tabs render in the left pane.",
+    "The Blackboard graph renders independently in the center pane.",
+    "The selected action inspector renders independently in the right pane.",
+    "All three panes remain usable at the current narrow dock width."
+  ]
+}

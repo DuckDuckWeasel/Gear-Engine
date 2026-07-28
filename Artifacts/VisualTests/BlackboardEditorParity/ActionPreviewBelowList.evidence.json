@@ -1,0 +1,11 @@
+{
+  "scenario": "Blackboard selected-action preview below the main list",
+  "source": "Interactive Unity Blackboard editor window",
+  "criteria": [
+    "The Block, trigger, tracks, and action rows remain in the upper main scroll.",
+    "Exactly one selected action renders its inspector in a separate lower preview.",
+    "The lower preview remains visible at the current docked window height.",
+    "The dirty Main Scene is not saved or discarded."
+  ],
+  "capturedAt": "2026-07-27T23:19:00-03:00"
+}

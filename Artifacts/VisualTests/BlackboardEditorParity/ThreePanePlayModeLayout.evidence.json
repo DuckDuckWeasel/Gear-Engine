@@ -1,0 +1,10 @@
+{
+  "scenario": "Blackboard three-pane authoring layout in Play Mode",
+  "test": "Manual Unity Editor Play Mode layout inspection",
+  "criteria": [
+    "The left authoring pane remains bound after entering Play Mode.",
+    "The center Blackboard graph remains visible.",
+    "The right selected-action inspector remains independent and correctly bound.",
+    "Open Blackboard Window is not required to restore the layout."
+  ]
+}

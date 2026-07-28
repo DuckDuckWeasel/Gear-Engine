@@ -1,0 +1,10 @@
+{
+  "scenario": "Expand the Target managed property in the selected action preview.",
+  "source": "Interactive Unity Blackboard editor window",
+  "criteria": [
+    "Target displays its nested Direct Reference and Preset fields.",
+    "Target remains expanded after an editor repaint.",
+    "The selected action preview remains below the main action-list scroll."
+  ],
+  "capturedAt": "2026-07-28T08:33:24-03:00"
+}

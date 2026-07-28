@@ -1,0 +1,10 @@
+{
+  "scenario": "Search Add Action for Show UI Focus.",
+  "source": "Interactive Unity Blackboard editor action picker",
+  "criteria": [
+    "Exactly one Show UI Focus result is displayed.",
+    "The undocumented presentation wrapper is not offered for new authoring.",
+    "The canonical CommandInfo action remains available."
+  ],
+  "capturedAt": "2026-07-28T08:36:01-03:00"
+}

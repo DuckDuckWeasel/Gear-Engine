@@ -1,0 +1,10 @@
+{
+  "scenario": "Blackboard window after entering Play Mode",
+  "test": "Manual Unity Editor Play Mode transition",
+  "criteria": [
+    "The graph still renders the selected Block after entering Play Mode.",
+    "The detail panel preserves the normal legacy-facing layout.",
+    "Every action row shows move up, move down, and delete controls.",
+    "The lower selected-action preview remains below the main list."
+  ]
+}

@@ -161,6 +161,29 @@ Undo-aware controller owns block, track, action, trigger, and variable creation,
 removal, reorder, duplication, copy/paste, grouping, layout, tint, and selection
 operations. These operations never add a graph node as a component.
 
+Open the editor from `Window > Scaffold > Blackboard`, from a
+`BlackboardBehaviour` Inspector, or from a `BlackboardDefinitionAsset` Inspector.
+The editor restores the original graph-first workflow while keeping the managed
+definition model:
+
+- the legacy grid, node textures, color language, and graph navigation;
+- pan, pointer-centered zoom, frame, search, click/additive/rectangle selection,
+  and multi-node movement;
+- standard Copy, Cut, Paste, Duplicate, Delete, SoftDelete, context-menu, and
+  Undo/Redo commands;
+- a focused Block inspector for execution settings, triggers, tracks, actions,
+  grouping, serialized values, variables, and reference pickers;
+- searchable categorized action, trigger, and variable type selection;
+- relationship lines for managed actions that expose Block destinations through
+  `IBlockConnectionSource`; and
+- Direct, asset-backed, and nested definition navigation with a Back control.
+
+The visual layer is split into the window shell, graph canvas, detail panel,
+serialized-property renderer, type picker, connection resolver, display helpers,
+and execution controller. `BlackboardAuthoringController` remains the single
+Undo-aware mutation boundary. This separation allows the editor to look and behave
+like the previous version without reintroducing component-owned graph state.
+
 The Blackboard window resolves Direct definitions, definition assets, and nested
 templates stored in variables. Variable navigation follows the serialized
 `SourceBehaviour` chain and detects wrapper-reference cycles with Unity `EntityId`
@@ -175,8 +198,25 @@ references, and regenerates definition IDs. Runtime cloning continues to preserv
 those IDs.
 
 During Play Mode, the window reads status from the wrapper's plain runtime by stable
-definition ID. Feedback is observational: it does not write transient execution state
-into the serialized definition.
+definition ID. A live `BlackboardBehaviour` can execute the selected Block, execute
+from a selected action, stop the selected Block, or stop all Blocks. The controls are
+disabled with an explanation when there is no compatible live runtime. Feedback and
+controls operate on runtime instances only: they do not write transient execution
+state into definitions, authoring metadata, assets, or Undo history.
+
+Retained legacy `*Data` wrappers keep their serialized shape, but the editor presents
+them through one compact Direct Value, Blackboard Variable, or Scriptable Object
+selector. Blackboard Variable mode filters definitions by the wrapper value type and
+stores the stable definition ID in the compatibility reference. Older key-only
+references are upgraded when the editor can resolve an unambiguous compatible
+definition.
+
+Before a retained Gear action executes, its serialized compatibility references bind
+once to the owning `BlackboardVariableSet`. Reads and writes then use the managed
+runtime cell rather than an isolated inline value. Direct `VariableProperty` fields
+and `AnyVariableAndDataPair` use the same typed picker contract. Unity object
+definitions are accepted only when their configured initial object is assignable to
+the requested compatibility type.
 
 ## Breaking cutover
 
