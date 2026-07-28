@@ -1,0 +1,10 @@
+{
+  "test": "GearEngine.GearEngine.Tests.Editor.UIEffectPatternLayerTests.PatternInspector_ProvidesDraggableListAndPreservesIndependentValues",
+  "artifact": "ReorderedLayer0.jpeg",
+  "scenario": "Drag the former Layer 1 above Layer 0 using the Pattern Layers reorder gutter.",
+  "criteria": [
+    "The former Layer 1 data is displayed in the Layer 0 slot after the drag.",
+    "The reordered Layer 0 retains its identifying Range of 0.2784 to 0.8.",
+    "The reordered Layer 0 retains its identifying texture offset, rotation, and disabled state."
+  ]
+}

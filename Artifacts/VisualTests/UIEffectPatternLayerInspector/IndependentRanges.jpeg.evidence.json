@@ -1,0 +1,10 @@
+{
+  "test": "GearEngine.GearEngine.Tests.Editor.UIEffectPatternLayerTests.PatternInspector_ProvidesDraggableListAndPreservesIndependentValues",
+  "artifact": "IndependentRanges.jpeg",
+  "scenario": "Edit Layer 1 Range in the live UIEffect Pattern inspector while Layer 0 remains visible.",
+  "criteria": [
+    "Layer 0 keeps its independent Range maximum of 0.9.",
+    "Layer 1 accepts a different Range maximum of 0.8.",
+    "Both values remain distinct after the field edit is committed and the inspector repaints."
+  ]
+}
