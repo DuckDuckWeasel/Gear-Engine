@@ -1,4 +1,5 @@
 using UnityEngine;
+using Scaffold.VisualScripting;
 
 namespace Scaffold
 {
@@ -11,16 +12,30 @@ namespace Scaffold
 
         [System.NonSerialized] private T runtimeValue;
         [System.NonSerialized] private bool runtimeValueInitialized;
+        [System.NonSerialized] private VariableCellBase boundCell;
+
+        public override System.Type ValueType => typeof(T);
 
         public virtual T Value
         {
             get
             {
+                if (boundCell != null)
+                {
+                    return GetBoundValue();
+                }
+
                 EnsureRuntimeValue();
                 return runtimeValue;
             }
             set
             {
+                if (boundCell != null)
+                {
+                    boundCell.UntypedValue = value;
+                    return;
+                }
+
                 EnsureRuntimeValue();
                 runtimeValue = value;
             }
@@ -33,8 +48,36 @@ namespace Scaffold
 
         public override void OnReset()
         {
+            if (boundCell != null)
+            {
+                return;
+            }
+
             runtimeValue = value;
             runtimeValueInitialized = true;
+        }
+
+        public override void Bind(VariableCellBase cell)
+        {
+            if (cell == null)
+            {
+                throw new System.ArgumentNullException(nameof(cell));
+            }
+
+            if (!CanBind(cell.ValueType))
+            {
+                throw new VariableTypeMismatchException(
+                    cell.DefinitionId,
+                    typeof(T),
+                    cell.ValueType);
+            }
+
+            boundCell = cell;
+        }
+
+        public override void Unbind()
+        {
+            boundCell = null;
         }
 
         public override string ToString()
@@ -122,6 +165,31 @@ namespace Scaffold
 
             runtimeValue = value;
             runtimeValueInitialized = true;
+        }
+
+        private static bool CanBind(System.Type cellValueType)
+        {
+            return cellValueType == typeof(T) ||
+                cellValueType.IsAssignableFrom(typeof(T));
+        }
+
+        private T GetBoundValue()
+        {
+            object boundValue = boundCell.UntypedValue;
+            if (boundValue == null)
+            {
+                return default;
+            }
+
+            if (boundValue is T typedValue)
+            {
+                return typedValue;
+            }
+
+            throw new VariableTypeMismatchException(
+                boundCell.DefinitionId,
+                typeof(T),
+                boundValue.GetType());
         }
     }
 }

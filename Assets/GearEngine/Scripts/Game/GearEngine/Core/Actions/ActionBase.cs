@@ -84,6 +84,9 @@ namespace GearEngine.Core.Actions
         [NonSerialized, BlackboardTransient]
         private List<IDisposable> scheduledWork;
 
+        [NonSerialized, BlackboardTransient]
+        private bool compatibilityVariablesBound;
+
         private sealed class BlackboardTargetResolver : ITargetResolver
         {
             public BlackboardTargetResolver(BlackboardVariableSet variables)
@@ -103,14 +106,20 @@ namespace GearEngine.Core.Actions
                     return null;
                 }
 
-                return cell is VariableCell<GameObject> gameObjectCell
-                    ? gameObjectCell.Value
-                    : null;
+                return cell.UntypedValue as GameObject;
             }
         }
 
         protected sealed override void OnExecute()
         {
+            if (!compatibilityVariablesBound)
+            {
+                Scaffold.Variable.BindAll(
+                    this,
+                    Context.Blackboard.Variables);
+                compatibilityVariablesBound = true;
+            }
+
             OnEnter();
         }
 

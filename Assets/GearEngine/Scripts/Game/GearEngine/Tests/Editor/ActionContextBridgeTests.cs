@@ -2,9 +2,12 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
+using GearEngine.Core.Architecture.References;
+using GearEngine.GearEngine.Editor;
 using NUnit.Framework;
 using Scaffold;
 using Scaffold.VisualScripting;
+using UnityEngine;
 using CoreActionExecutionStatus =
     Scaffold.VisualScripting.ActionExecutionStatus;
 using CoreActionList = Scaffold.VisualScripting.ActionList;
@@ -93,6 +96,130 @@ namespace GearEngine.GearEngine.Tests.Editor
             Assert.That(clone.DefinitionId, Is.EqualTo(source.DefinitionId));
         }
 
+        [Test]
+        public void CompatibilityVariableReference_ReadsAndWritesManagedCell()
+        {
+            FloatVariableDefinition speed = new FloatVariableDefinition
+            {
+                Key = "Speed",
+                InitialValue = 3.5f,
+            };
+            CompatibilityFloatAction action =
+                new CompatibilityFloatAction();
+            action.Value.source =
+                VariableDataSource.BlackboardVariable;
+            action.Value.floatRef = new FloatVariable
+            {
+                DefinitionId = speed.DefinitionId,
+                Key = speed.Key,
+            };
+            CoreActionList list = CreateList(
+                action,
+                new TestScheduler(),
+                new VariableDefinitionBase[] { speed });
+
+            list.Execute(_ => { });
+
+            Assert.That(action.ObservedValue, Is.EqualTo(3.5f));
+            Assert.That(
+                list.Blackboard.Variables
+                    .Get<float>(
+                        new Scaffold.VisualScripting.VariableReference
+                        {
+                            DefinitionId = speed.DefinitionId,
+                            Scope = speed.Scope,
+                        })
+                    .Value,
+                Is.EqualTo(4.5f));
+        }
+
+        [Test]
+        public void TargetReference_ResolvesGameObjectFromUnityObjectCell()
+        {
+            GameObject target = new GameObject("Target");
+            try
+            {
+                UnityObjectVariableDefinition targetVariable =
+                    new UnityObjectVariableDefinition
+                    {
+                        Key = "Target",
+                        Scope = Scaffold.VisualScripting.VariableScope
+                            .InjectedGlobal,
+                        InitialValue = target,
+                    };
+                ResolveTargetAction action = new ResolveTargetAction
+                {
+                    Target = new TargetReference
+                    {
+                        strategy =
+                            TargetResolutionStrategy.GlobalVariable,
+                        globalVariableName = targetVariable.Key,
+                    },
+                };
+                CoreActionList list = CreateList(
+                    action,
+                    new TestScheduler(),
+                    new VariableDefinitionBase[] { targetVariable });
+
+                list.Execute(_ => { });
+
+                Assert.That(action.ResolvedTarget, Is.SameAs(target));
+            }
+            finally
+            {
+                UnityEngine.Object.DestroyImmediate(target);
+            }
+        }
+
+        [Test]
+        public void TargetReferencePicker_ListsOnlyGameObjectGlobals()
+        {
+            GameObject target = new GameObject("Target");
+            Texture2D texture = new Texture2D(1, 1);
+            try
+            {
+                UnityObjectVariableDefinition targetVariable =
+                    new UnityObjectVariableDefinition
+                    {
+                        Key = "Target",
+                        Scope = Scaffold.VisualScripting.VariableScope
+                            .InjectedGlobal,
+                        InitialValue = target,
+                    };
+                UnityObjectVariableDefinition textureVariable =
+                    new UnityObjectVariableDefinition
+                    {
+                        Key = "Texture",
+                        Scope = Scaffold.VisualScripting.VariableScope
+                            .InjectedGlobal,
+                        InitialValue = texture,
+                    };
+                FloatVariableDefinition scalarVariable =
+                    new FloatVariableDefinition
+                    {
+                        Key = "Speed",
+                        Scope = Scaffold.VisualScripting.VariableScope
+                            .InjectedGlobal,
+                    };
+
+                string[] options = ScaffoldGlobalVariableDropdownInjector
+                    .GetCompatibleGlobalVariableNames(
+                        new VariableDefinitionBase[]
+                        {
+                            textureVariable,
+                            scalarVariable,
+                            targetVariable,
+                        });
+
+                Assert.That(options, Is.EqualTo(new[] { "Target" }));
+            }
+            finally
+            {
+                UnityEngine.Object.DestroyImmediate(target);
+                UnityEngine.Object.DestroyImmediate(texture);
+            }
+        }
+
         private static CoreActionExecutionStatus Execute(
             Scaffold.VisualScripting.IAction action)
         {
@@ -107,10 +234,21 @@ namespace GearEngine.GearEngine.Tests.Editor
             Scaffold.VisualScripting.IAction action,
             IFrameScheduler scheduler)
         {
+            return CreateList(
+                action,
+                scheduler,
+                Array.Empty<VariableDefinitionBase>());
+        }
+
+        private static CoreActionList CreateList(
+            Scaffold.VisualScripting.IAction action,
+            IFrameScheduler scheduler,
+            IEnumerable<VariableDefinitionBase> variables)
+        {
             ActionListDefinition definition = new ActionListDefinition();
             definition.Actions.Add(action);
             return new CoreActionList(
-                CreateBlackboard(scheduler),
+                CreateBlackboard(scheduler, variables),
                 null,
                 null,
                 definition,
@@ -120,11 +258,20 @@ namespace GearEngine.GearEngine.Tests.Editor
         private static CoreBlackboard CreateBlackboard(
             IFrameScheduler scheduler)
         {
+            return CreateBlackboard(
+                scheduler,
+                Array.Empty<VariableDefinitionBase>());
+        }
+
+        private static CoreBlackboard CreateBlackboard(
+            IFrameScheduler scheduler,
+            IEnumerable<VariableDefinitionBase> definitions)
+        {
             BlackboardRuntimeInstanceId runtimeId =
                 BlackboardRuntimeInstanceId.New();
             BlackboardVariableSet variables = new BlackboardVariableSet(
                 runtimeId,
-                Array.Empty<VariableDefinitionBase>(),
+                definitions,
                 new PublicVariableRegistry(),
                 new GlobalVariableStore());
             return new CoreBlackboard(
@@ -135,6 +282,37 @@ namespace GearEngine.GearEngine.Tests.Editor
                 new BlackboardEventBus(),
                 new TestSaveService(),
                 new TestLogger());
+        }
+
+        [Serializable]
+        private sealed class CompatibilityFloatAction :
+            global::GearEngine.Core.Actions.ActionBase
+        {
+            public FloatData Value;
+
+            public float ObservedValue { get; private set; }
+
+            public override void OnEnter()
+            {
+                ObservedValue = Value.Value;
+                Value.Value += 1f;
+                Continue();
+            }
+        }
+
+        [Serializable]
+        private sealed class ResolveTargetAction :
+            global::GearEngine.Core.Actions.ActionBase
+        {
+            public TargetReference Target;
+
+            public GameObject ResolvedTarget { get; private set; }
+
+            public override void OnEnter()
+            {
+                ResolvedTarget = ResolveTarget(Target);
+                Continue();
+            }
         }
 
         private sealed class TestScheduler : IFrameScheduler

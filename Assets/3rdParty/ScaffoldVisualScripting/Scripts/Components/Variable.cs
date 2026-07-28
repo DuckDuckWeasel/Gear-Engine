@@ -1,5 +1,10 @@
 
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Reflection;
 using UnityEngine;
+using Scaffold.VisualScripting;
 
 namespace Scaffold
 {
@@ -12,6 +17,8 @@ namespace Scaffold
         [SerializeField] protected VariableScope scope;
 
         [SerializeField] protected string key = "";
+
+        [SerializeField] private DefinitionId definitionId;
 
         public string Name => Key;
 
@@ -26,6 +33,60 @@ namespace Scaffold
         /// String identifier for the variable.
         /// </summary>
         public virtual string Key { get { return key; } set { key = value; } }
+
+        /// <summary>
+        /// Stable identifier of the managed Blackboard variable selected by
+        /// this compatibility reference.
+        /// </summary>
+        public DefinitionId DefinitionId
+        {
+            get => definitionId;
+            set => definitionId = value;
+        }
+
+        /// <summary>
+        /// Value type accepted by this compatibility variable.
+        /// </summary>
+        public virtual System.Type ValueType => typeof(object);
+
+        /// <summary>
+        /// Connects this compatibility reference to a managed runtime cell.
+        /// </summary>
+        public virtual void Bind(VariableCellBase cell)
+        {
+            throw new System.InvalidOperationException(
+                $"Variable type '{GetType().Name}' does not support managed Blackboard binding.");
+        }
+
+        /// <summary>
+        /// Removes a previously established managed runtime binding.
+        /// </summary>
+        public virtual void Unbind()
+        {
+        }
+
+        /// <summary>
+        /// Connects every retained compatibility variable in a serialized
+        /// object graph to its managed Blackboard runtime cell.
+        /// </summary>
+        public static void BindAll(
+            object root,
+            BlackboardVariableSet variables)
+        {
+            if (root == null)
+            {
+                throw new ArgumentNullException(nameof(root));
+            }
+
+            if (variables == null)
+            {
+                throw new ArgumentNullException(nameof(variables));
+            }
+
+            HashSet<object> visited = new HashSet<object>(
+                ReferenceComparer.Instance);
+            Visit(root, variables, visited);
+        }
 
         /// <summary>
         /// Callback to reset the variable if the Blackboard is reset.
@@ -64,6 +125,153 @@ namespace Scaffold
         public abstract object GetValue();
 
         #endregion
+
+        private static void Visit(
+            object value,
+            BlackboardVariableSet variables,
+            ISet<object> visited)
+        {
+            if (value == null || IsTerminal(value))
+            {
+                return;
+            }
+
+            Type type = value.GetType();
+            if (!type.IsValueType && !visited.Add(value))
+            {
+                return;
+            }
+
+            if (value is Variable variable)
+            {
+                BindVariable(variable, variables);
+                return;
+            }
+
+            if (value is IEnumerable enumerable)
+            {
+                foreach (object item in enumerable)
+                {
+                    Visit(item, variables, visited);
+                }
+
+                return;
+            }
+
+            VisitFields(value, type, variables, visited);
+        }
+
+        private static void BindVariable(
+            Variable variable,
+            BlackboardVariableSet variables)
+        {
+            variable.Unbind();
+            if (!TryResolveCell(variable, variables, out VariableCellBase cell))
+            {
+                return;
+            }
+
+            try
+            {
+                variable.Bind(cell);
+            }
+            catch (Exception exception)
+            {
+                Debug.LogError(
+                    $"Failed to bind compatibility variable '{variable.Key}': " +
+                    $"{exception.Message}\n{exception.StackTrace}");
+            }
+        }
+
+        private static bool TryResolveCell(
+            Variable variable,
+            BlackboardVariableSet variables,
+            out VariableCellBase cell)
+        {
+            if (!variable.DefinitionId.IsEmpty &&
+                variables.TryGet(variable.DefinitionId, out cell))
+            {
+                return true;
+            }
+
+            return variables.TryGet(variable.Key, out cell);
+        }
+
+        private static void VisitFields(
+            object value,
+            Type type,
+            BlackboardVariableSet variables,
+            ISet<object> visited)
+        {
+            for (Type current = type;
+                 current != null;
+                 current = current.BaseType)
+            {
+                BindingFlags flags =
+                    BindingFlags.Instance |
+                    BindingFlags.Public |
+                    BindingFlags.NonPublic |
+                    BindingFlags.DeclaredOnly;
+                foreach (FieldInfo field in current.GetFields(flags))
+                {
+                    if (ShouldVisit(field))
+                    {
+                        Visit(
+                            field.GetValue(value),
+                            variables,
+                            visited);
+                    }
+                }
+            }
+        }
+
+        private static bool ShouldVisit(FieldInfo field)
+        {
+            if (field.IsStatic ||
+                field.IsNotSerialized ||
+                field.IsDefined(
+                    typeof(BlackboardTransientAttribute),
+                    true))
+            {
+                return false;
+            }
+
+            return field.IsPublic ||
+                field.IsDefined(typeof(SerializeField), true) ||
+                field.IsDefined(typeof(SerializeReference), true);
+        }
+
+        private static bool IsTerminal(object value)
+        {
+            Type type = value.GetType();
+            return value is UnityEngine.Object ||
+                type.IsPrimitive ||
+                type.IsEnum ||
+                type == typeof(string) ||
+                type == typeof(decimal) ||
+                type == typeof(DateTime) ||
+                type == typeof(TimeSpan) ||
+                type == typeof(Guid) ||
+                typeof(Delegate).IsAssignableFrom(type);
+        }
+
+        private sealed class ReferenceComparer :
+            IEqualityComparer<object>
+        {
+            public static ReferenceComparer Instance { get; } =
+                new ReferenceComparer();
+
+            public new bool Equals(object left, object right)
+            {
+                return ReferenceEquals(left, right);
+            }
+
+            public int GetHashCode(object value)
+            {
+                return System.Runtime.CompilerServices
+                    .RuntimeHelpers.GetHashCode(value);
+            }
+        }
     }
 
 }

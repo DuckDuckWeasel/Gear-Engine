@@ -1,5 +1,6 @@
 using UnityEditor;
 using UnityEngine;
+using System;
 using System.Linq;
 using System.Collections.Generic;
 using GearEngine.Core.Architecture.Editor.References;
@@ -19,7 +20,8 @@ namespace GearEngine.GearEngine.Editor
             {
                 BlackboardBehaviour[] blackboards =
                     Resources.FindObjectsOfTypeAll<BlackboardBehaviour>();
-                List<string> globalVars = new List<string>();
+                List<VariableDefinitionBase> definitions =
+                    new List<VariableDefinitionBase>();
 
                 foreach (BlackboardBehaviour blackboard in blackboards)
                 {
@@ -37,15 +39,37 @@ namespace GearEngine.GearEngine.Editor
 
                     foreach (VariableDefinitionBase variable in definition.Variables)
                     {
-                        if (variable.Scope == VariableScope.InjectedGlobal)
-                        {
-                            globalVars.Add(variable.Key);
-                        }
+                        definitions.Add(variable);
                     }
                 }
 
-                return globalVars.Distinct().OrderBy(x => x).ToArray();
+                return GetCompatibleGlobalVariableNames(definitions);
             };
+        }
+
+        public static string[] GetCompatibleGlobalVariableNames(
+            IEnumerable<VariableDefinitionBase> definitions)
+        {
+            if (definitions == null)
+            {
+                throw new ArgumentNullException(nameof(definitions));
+            }
+
+            return definitions
+                .Where(IsGameObjectGlobal)
+                .Select(variable => variable.Key)
+                .Distinct()
+                .OrderBy(key => key)
+                .ToArray();
+        }
+
+        private static bool IsGameObjectGlobal(
+            VariableDefinitionBase variable)
+        {
+            return variable != null &&
+                variable.Scope == VariableScope.InjectedGlobal &&
+                variable is UnityObjectVariableDefinition objectVariable &&
+                objectVariable.InitialValue is GameObject;
         }
     }
 }
