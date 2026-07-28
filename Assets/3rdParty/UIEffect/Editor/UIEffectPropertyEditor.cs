@@ -1,4 +1,5 @@
 ﻿using UnityEditor;
+using UnityEditorInternal;
 using UnityEngine;
 using System;
 using System.Reflection;
@@ -49,6 +50,7 @@ namespace Coffee.UIEffects.Editors
         private SerializedProperty _transitionAutoPlaySpeed;
         private SerializedProperty _transitionGradient;
         private SerializedProperty _patternLayers;
+        private ReorderableList _patternLayerList;
 
         private SerializedProperty _targetMode;
         private SerializedProperty _targetColor;
@@ -142,6 +144,7 @@ namespace Coffee.UIEffects.Editors
             _transitionAutoPlaySpeed = serializedObject.FindProperty("m_TransitionAutoPlaySpeed");
             _transitionGradient = serializedObject.FindProperty("m_TransitionGradient");
             _patternLayers = serializedObject.FindProperty("m_PatternLayers");
+            InitializePatternLayerList();
 
             s_RotationLabel.tooltip = _transitionRotation.tooltip;
             s_KeepAspectRatioLabel.tooltip = _transitionKeepAspectRatio.tooltip;
@@ -490,16 +493,15 @@ namespace Coffee.UIEffects.Editors
 
         private void DrawPatternLayers()
         {
-            if (_patternLayers == null)
+            if (_patternLayerList == null)
             {
                 return;
             }
 
+            _patternLayerList.DoLayoutList();
             for (int i = 0; i < PatternLayer.MaxCount; i++)
             {
                 SerializedProperty layer = _patternLayers.GetArrayElementAtIndex(i);
-                GUIContent label = EditorGUIUtility.TrTempContent($"Layer {i}");
-                EditorGUILayout.PropertyField(layer, label, true);
                 SerializedProperty speed = layer.FindPropertyRelative("m_TextureSpeed");
                 SerializedProperty autoPlaySpeed = layer.FindPropertyRelative("m_AutoPlaySpeed");
                 if (speed.vector2Value != Vector2.zero || !Mathf.Approximately(0, autoPlaySpeed.floatValue))
@@ -507,6 +509,36 @@ namespace Coffee.UIEffects.Editors
                     EditorApplication.QueuePlayerLoopUpdate();
                 }
             }
+        }
+
+        private void InitializePatternLayerList()
+        {
+            if (_patternLayers == null)
+            {
+                return;
+            }
+
+            _patternLayerList = new ReorderableList(serializedObject, _patternLayers, true, true, false, false)
+            {
+                drawHeaderCallback = rect => EditorGUI.LabelField(rect, "Pattern Layers"),
+                elementHeightCallback = index =>
+                {
+                    SerializedProperty layer = _patternLayers.GetArrayElementAtIndex(index);
+                    return EditorGUI.GetPropertyHeight(layer, GetPatternLayerLabel(index), true) + 4;
+                },
+                drawElementCallback = (rect, index, isActive, isFocused) =>
+                {
+                    SerializedProperty layer = _patternLayers.GetArrayElementAtIndex(index);
+                    rect.y += 2;
+                    rect.height = EditorGUI.GetPropertyHeight(layer, GetPatternLayerLabel(index), true);
+                    EditorGUI.PropertyField(rect, layer, GetPatternLayerLabel(index), true);
+                },
+            };
+        }
+
+        private static GUIContent GetPatternLayerLabel(int index)
+        {
+            return new GUIContent($"Layer {index}");
         }
 
         private void MigratePatternLayers()
