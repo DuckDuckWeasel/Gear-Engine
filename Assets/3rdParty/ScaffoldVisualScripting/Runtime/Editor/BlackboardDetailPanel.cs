@@ -13,7 +13,6 @@ namespace Scaffold.VisualScripting.Editor
         private static readonly string[] s_tabs = { "Block", "Variables" };
         private static readonly string[] s_actionHiddenFields = { "enabled", "utility", "weight", "hasWeightOverride", "blockDuringExecution", "indentLevel", "targetActionIds" };
         private static readonly string[] s_variableHiddenFields = { "key", "scope" };
-        private const string k_actionDragKey = "Scaffold.Blackboard.Action";
         private readonly AdvancedDropdownState dropdownState = new AdvancedDropdownState();
         private readonly BlackboardEditorExecutionController execution = new BlackboardEditorExecutionController();
         private readonly BlackboardExecutionFeedback feedback = new BlackboardExecutionFeedback();
@@ -23,8 +22,18 @@ namespace Scaffold.VisualScripting.Editor
         private Vector2 pendingDragStart;
         private string pendingActionDragId;
         private string pendingActionDragName;
+        private string activeActionDragId;
+        private string activeActionDragName;
+        private Vector2 actionDragPreviewPosition;
+        private float actionDragPreviewWidth = 170f;
+        private float actionDragPreviewMinX;
+        private float actionDragPreviewMaxX;
+        private DefinitionId actionDropTrackId;
+        private int actionDropIndex = -1;
         private IAction hoveredAction;
+        private string descriptionBlockId;
         private string previewActionId;
+        private bool focusDescription;
         private int selectedTab;
 
         public void DrawAuthoring(
@@ -136,6 +145,16 @@ namespace Scaffold.VisualScripting.Editor
             return hovered;
         }
 
+        public static int CalculateActionDropIndex(
+            int rowIndex,
+            Rect row,
+            float mouseY)
+        {
+            return mouseY < row.center.y
+                ? rowIndex
+                : rowIndex + 1;
+        }
+
         private void DrawSelectedActionPreview(BlackboardAuthoringController controller)
         {
             if (TryGetSelectedActionPreview(controller, out ActionTrackDefinition track, out IAction action))
@@ -200,18 +219,22 @@ namespace Scaffold.VisualScripting.Editor
             Texture2D icon = BlackboardEditorStyles.FlowGraph;
             if (icon != null)
             {
-                GUILayout.Label(icon, GUILayout.Width(38f), GUILayout.Height(38f));
+                GUILayout.Label(
+                    icon,
+                    GUILayout.Width(26f),
+                    GUILayout.Height(26f));
             }
 
-            EditorGUILayout.BeginVertical();
-            EditorGUILayout.LabelField("Block Inspector", EditorStyles.boldLabel);
-            string name = EditorGUILayout.TextField("Block Name", block.Name);
+            EditorGUILayout.LabelField(
+                "Block",
+                EditorStyles.boldLabel,
+                GUILayout.Width(42f));
+            string name = EditorGUILayout.TextField(block.Name);
             if (!string.Equals(name, block.Name, StringComparison.Ordinal))
             {
                 controller.RenameBlock(block.DefinitionId, name);
             }
 
-            EditorGUILayout.EndVertical();
             EditorGUILayout.EndHorizontal();
             DrawBlockAuthoringMetadata(controller, block);
         }
@@ -219,32 +242,123 @@ namespace Scaffold.VisualScripting.Editor
         private void DrawBlockAuthoringMetadata(BlackboardAuthoringController controller, BlockDefinition block)
         {
             BlockAuthoringMetadata layout = controller.GetLayout(block.DefinitionId);
-            bool useTint = EditorGUILayout.Toggle("Custom Tint", layout.UseCustomTint);
-            Color tint = EditorGUILayout.ColorField("Tint", layout.Tint);
+            EditorGUILayout.BeginHorizontal();
+            bool useTint = EditorGUILayout.ToggleLeft(
+                "Tint",
+                layout.UseCustomTint,
+                GUILayout.Width(44f));
+            Color tint;
+            using (new EditorGUI.DisabledScope(!useTint))
+            {
+                tint = EditorGUILayout.ColorField(
+                    GUIContent.none,
+                    layout.Tint,
+                    false,
+                    false,
+                    false,
+                    GUILayout.Width(50f));
+            }
+
+            string blockId = block.DefinitionId.Value;
+            bool editingDescription = string.Equals(
+                descriptionBlockId,
+                blockId,
+                StringComparison.Ordinal);
+            string descriptionLabel = editingDescription
+                ? "Done"
+                : GetDescriptionSummary(layout.Description);
+            if (GUILayout.Button(
+                descriptionLabel,
+                EditorStyles.miniButton))
+            {
+                descriptionBlockId = editingDescription
+                    ? null
+                    : blockId;
+                focusDescription = !editingDescription;
+            }
+
+            EditorGUILayout.EndHorizontal();
             if (useTint != layout.UseCustomTint || tint != layout.Tint)
             {
                 controller.SetBlockTint(block.DefinitionId, useTint, tint);
             }
 
-            string description = EditorGUILayout.TextArea(layout.Description, GUILayout.MinHeight(42f));
+            if (!editingDescription)
+            {
+                return;
+            }
+
+            string controlName = $"BlockDescription_{blockId}";
+            GUI.SetNextControlName(controlName);
+            string description = EditorGUILayout.TextArea(
+                layout.Description,
+                GUILayout.MinHeight(42f));
             if (!string.Equals(description, layout.Description, StringComparison.Ordinal))
             {
                 controller.SetBlockDescription(block.DefinitionId, description);
+            }
+
+            if (focusDescription)
+            {
+                GUI.FocusControl(controlName);
+                focusDescription = false;
             }
         }
 
         private void DrawBlockExecution(BlackboardAuthoringController controller, BlockDefinition block)
         {
             EditorGUILayout.Space();
+            EditorGUILayout.BeginHorizontal();
             EditorGUILayout.LabelField("Execution", EditorStyles.boldLabel);
-            ActionListExecutionMethod method = (ActionListExecutionMethod)EditorGUILayout.EnumPopup("Method", block.ExecutionMethod);
-            ActionListAwaitMode awaitMode = (ActionListAwaitMode)EditorGUILayout.EnumPopup("Await", block.AwaitMode);
-            ActionListOrderMode order = (ActionListOrderMode)EditorGUILayout.EnumPopup("Order", block.OrderMode);
-            bool avoid = EditorGUILayout.Toggle("Avoid Repeat", block.AvoidRepeatingLastAction);
+            bool avoid = EditorGUILayout.ToggleLeft(
+                "Avoid repeat",
+                block.AvoidRepeatingLastAction,
+                GUILayout.Width(96f));
+            EditorGUILayout.EndHorizontal();
+
+            EditorGUILayout.BeginHorizontal();
+            EditorGUILayout.BeginVertical();
+            EditorGUILayout.LabelField("Method", EditorStyles.miniLabel);
+            ActionListExecutionMethod method =
+                (ActionListExecutionMethod)EditorGUILayout.EnumPopup(
+                    block.ExecutionMethod);
+            EditorGUILayout.EndVertical();
+
+            EditorGUILayout.BeginVertical();
+            EditorGUILayout.LabelField("Await", EditorStyles.miniLabel);
+            ActionListAwaitMode awaitMode =
+                (ActionListAwaitMode)EditorGUILayout.EnumPopup(
+                    block.AwaitMode);
+            EditorGUILayout.EndVertical();
+
+            EditorGUILayout.BeginVertical();
+            EditorGUILayout.LabelField("Order", EditorStyles.miniLabel);
+            ActionListOrderMode order =
+                (ActionListOrderMode)EditorGUILayout.EnumPopup(
+                    block.OrderMode);
+            EditorGUILayout.EndVertical();
+            EditorGUILayout.EndHorizontal();
             if (method != block.ExecutionMethod || awaitMode != block.AwaitMode || order != block.OrderMode || avoid != block.AvoidRepeatingLastAction)
             {
                 ApplyBlockExecution(controller, block, method, awaitMode, order, avoid);
             }
+        }
+
+        private static string GetDescriptionSummary(string description)
+        {
+            if (string.IsNullOrWhiteSpace(description))
+            {
+                return "Add description...";
+            }
+
+            const int maximumLength = 34;
+            string singleLine = description
+                .Replace('\n', ' ')
+                .Replace('\r', ' ')
+                .Trim();
+            return singleLine.Length <= maximumLength
+                ? singleLine
+                : $"{singleLine.Substring(0, maximumLength - 3)}...";
         }
 
         private void ApplyBlockExecution(BlackboardAuthoringController controller, BlockDefinition block, ActionListExecutionMethod method, ActionListAwaitMode awaitMode, ActionListOrderMode order, bool avoid)
@@ -319,6 +433,7 @@ namespace Scaffold.VisualScripting.Editor
                 GUIStyle.none,
                 GUI.skin.verticalScrollbar,
                 GUILayout.ExpandHeight(true));
+            UpdateActionDragPreview();
             for (int index = 0; index < block.Tracks.Count; index++)
             {
                 ActionTrackDefinition track = block.Tracks[index];
@@ -328,6 +443,8 @@ namespace Scaffold.VisualScripting.Editor
                 }
             }
 
+            DrawActionDragPreview();
+            HandleActionDragCompletion(controller);
             EditorGUILayout.EndScrollView();
         }
 
@@ -415,7 +532,7 @@ namespace Scaffold.VisualScripting.Editor
             }
 
             HandlePreparedActionDrag();
-            DrawTrackDropTarget(controller, track);
+            DrawTrackDropTarget(track);
         }
 
         private void DrawAction(BlackboardAuthoringController controller, BlackboardBehaviour behaviour, ActionTrackDefinition track, IAction action, int index)
@@ -423,12 +540,16 @@ namespace Scaffold.VisualScripting.Editor
             Rect row = GUILayoutUtility.GetRect(0f, 28f, GUILayout.ExpandWidth(true));
             UpdateHoveredAction(action, row);
             bool hovered = ReferenceEquals(hoveredAction, action);
+            bool running = feedback.IsActionRunning(
+                behaviour,
+                action.DefinitionId);
             DrawActionBackground(
                 row,
                 action,
                 controller.Metadata.SelectedActionIds.Contains(
                     action.DefinitionId),
-                hovered);
+                hovered,
+                running);
             DrawActionRow(
                 controller,
                 behaviour,
@@ -436,7 +557,12 @@ namespace Scaffold.VisualScripting.Editor
                 action,
                 index,
                 row,
-                hovered);
+                hovered,
+                running);
+            DrawActionDropPreview(
+                track,
+                index,
+                row);
             HandleActionRowEvent(controller, behaviour, track, action, index, row);
         }
 
@@ -462,7 +588,8 @@ namespace Scaffold.VisualScripting.Editor
             Rect row,
             IAction action,
             bool selected,
-            bool hovered)
+            bool hovered,
+            bool running)
         {
             Color background = EditorGUIUtility.isProSkin
                 ? new Color(0.22f, 0.22f, 0.22f, 1f)
@@ -471,6 +598,25 @@ namespace Scaffold.VisualScripting.Editor
             Color tint = BlackboardEditorDisplay.GetTint(action);
             tint.a = GetActionRowAlpha(selected, hovered);
             EditorGUI.DrawRect(row, tint);
+            if (running)
+            {
+                float pulse = 0.12f +
+                    (Mathf.PingPong(
+                        (float)EditorApplication.timeSinceStartup * 1.8f,
+                        1f) *
+                     0.12f);
+                EditorGUI.DrawRect(
+                    row,
+                    new Color(0.12f, 0.72f, 1f, pulse));
+                EditorGUI.DrawRect(
+                    new Rect(
+                        row.x,
+                        row.y,
+                        4f,
+                        row.height),
+                    new Color(0.12f, 0.72f, 1f, 1f));
+            }
+
             GUI.Box(row, GUIContent.none);
         }
 
@@ -481,7 +627,8 @@ namespace Scaffold.VisualScripting.Editor
             IAction action,
             int index,
             Rect row,
-            bool hovered)
+            bool hovered,
+            bool running)
         {
             Rect toggleRect = new Rect(row.x + 4f, row.y + 5f, 18f, 18f);
             DrawActionEnabled(controller, action, toggleRect);
@@ -491,7 +638,12 @@ namespace Scaffold.VisualScripting.Editor
                 row.width - (hovered ? 134f : 68f),
                 20f);
             GUI.Label(labelRect, GetActionLabel(action), EditorStyles.boldLabel);
-            DrawActionStatus(behaviour, action, row, hovered);
+            DrawActionStatus(
+                behaviour,
+                action,
+                row,
+                hovered,
+                running);
             DrawActionButtons(
                 controller,
                 track,
@@ -528,12 +680,45 @@ namespace Scaffold.VisualScripting.Editor
             BlackboardBehaviour behaviour,
             IAction action,
             Rect row,
-            bool hovered)
+            bool hovered,
+            bool running)
         {
+            float statusRight = row.xMax - (hovered ? 70f : 4f);
+            if (running)
+            {
+                Rect runningRect = new Rect(
+                    statusRight - 18f,
+                    row.y + 5f,
+                    18f,
+                    18f);
+                Texture2D play = BlackboardEditorStyles.Play;
+                if (play != null)
+                {
+                    GUI.DrawTexture(
+                        runningRect,
+                        play,
+                        ScaleMode.ScaleToFit);
+                }
+                else
+                {
+                    GUI.Label(
+                        runningRect,
+                        "▶",
+                        EditorStyles.miniBoldLabel);
+                }
+
+                GUI.Label(
+                    runningRect,
+                    new GUIContent(
+                        string.Empty,
+                        "Currently executing"));
+                return;
+            }
+
             if (behaviour != null && feedback.TryGetActionStatus(behaviour, action.DefinitionId, out ActionExecutionStatus status))
             {
                 Rect statusRect = new Rect(
-                    row.xMax - (hovered ? 114f : 48f),
+                    statusRight - 48f,
                     row.y + 5f,
                     46f,
                     18f);
@@ -605,7 +790,10 @@ namespace Scaffold.VisualScripting.Editor
             if (current.type == EventType.MouseDown && current.button == 0 && row.Contains(current.mousePosition))
             {
                 SelectAction(controller, track, action, current);
-                PrepareActionDrag(action, current.mousePosition);
+                PrepareActionDrag(
+                    action,
+                    current.mousePosition,
+                    row);
                 current.Use();
             }
             else if (current.type == EventType.ContextClick && row.Contains(current.mousePosition))
@@ -613,9 +801,24 @@ namespace Scaffold.VisualScripting.Editor
                 ShowActionContextMenu(controller, behaviour, track, action);
                 current.Use();
             }
-            else if ((current.type == EventType.DragUpdated || current.type == EventType.DragPerform) && row.Contains(current.mousePosition))
+            else if (current.type == EventType.MouseDrag &&
+                row.Contains(current.mousePosition))
             {
-                AcceptActionDrop(controller, track, index, current);
+                TryActivatePreparedActionDrag(current);
+                if (string.IsNullOrWhiteSpace(
+                    activeActionDragId))
+                {
+                    return;
+                }
+
+                int destinationIndex = CalculateActionDropIndex(
+                    index,
+                    row,
+                    current.mousePosition.y);
+                UpdateActionDropTarget(
+                    track,
+                    destinationIndex,
+                    current);
             }
         }
 
@@ -636,11 +839,19 @@ namespace Scaffold.VisualScripting.Editor
             }
         }
 
-        private void PrepareActionDrag(IAction action, Vector2 mousePosition)
+        private void PrepareActionDrag(
+            IAction action,
+            Vector2 mousePosition,
+            Rect row)
         {
             pendingActionDragId = action.DefinitionId.Value;
-            pendingActionDragName = BlackboardEditorDisplay.GetName(action.GetType());
+            pendingActionDragName = GetActionLabel(action);
             pendingDragStart = mousePosition;
+            actionDragPreviewWidth = Mathf.Min(
+                170f,
+                row.width - 8f);
+            actionDragPreviewMinX = row.x + 4f;
+            actionDragPreviewMaxX = row.xMax - 4f;
         }
 
         private void HandlePreparedActionDrag()
@@ -657,16 +868,35 @@ namespace Scaffold.VisualScripting.Editor
                 return;
             }
 
-            if (current.type != EventType.MouseDrag || Vector2.Distance(pendingDragStart, current.mousePosition) < 4f)
+            if (!TryActivatePreparedActionDrag(current))
             {
                 return;
             }
 
-            DragAndDrop.PrepareStartDrag();
-            DragAndDrop.SetGenericData(k_actionDragKey, pendingActionDragId);
-            DragAndDrop.StartDrag(pendingActionDragName);
-            ClearPreparedActionDrag();
             current.Use();
+        }
+
+        private bool TryActivatePreparedActionDrag(
+            Event current)
+        {
+            if (current.type != EventType.MouseDrag ||
+                string.IsNullOrWhiteSpace(
+                    pendingActionDragId) ||
+                Vector2.Distance(
+                    pendingDragStart,
+                    current.mousePosition) < 4f)
+            {
+                return false;
+            }
+
+            activeActionDragId = pendingActionDragId;
+            activeActionDragName = pendingActionDragName;
+            actionDragPreviewPosition = current.mousePosition;
+            actionDropTrackId = default;
+            actionDropIndex = -1;
+            ClearPreparedActionDrag();
+            EditorWindow.focusedWindow?.Repaint();
+            return true;
         }
 
         private void ClearPreparedActionDrag()
@@ -675,33 +905,197 @@ namespace Scaffold.VisualScripting.Editor
             pendingActionDragName = null;
         }
 
-        private void AcceptActionDrop(BlackboardAuthoringController controller, ActionTrackDefinition track, int index, Event current)
+        private void UpdateActionDropTarget(
+            ActionTrackDefinition track,
+            int index,
+            Event current)
         {
-            string id = DragAndDrop.GetGenericData(k_actionDragKey) as string;
-            if (string.IsNullOrWhiteSpace(id))
+            if (string.IsNullOrWhiteSpace(
+                activeActionDragId))
             {
                 return;
             }
 
-            DragAndDrop.visualMode = DragAndDropVisualMode.Move;
-            if (current.type == EventType.DragPerform)
-            {
-                DragAndDrop.AcceptDrag();
-                controller.MoveActionToTrack(new DefinitionId(id), track.DefinitionId, index);
-                DragAndDrop.SetGenericData(k_actionDragKey, null);
-            }
-
+            actionDropTrackId = track.DefinitionId;
+            actionDropIndex = index;
+            EditorWindow.focusedWindow?.Repaint();
             current.Use();
         }
 
-        private void DrawTrackDropTarget(BlackboardAuthoringController controller, ActionTrackDefinition track)
+        private void DrawTrackDropTarget(
+            ActionTrackDefinition track)
         {
             Rect target = GUILayoutUtility.GetRect(0f, 8f, GUILayout.ExpandWidth(true));
             Event current = Event.current;
-            if ((current.type == EventType.DragUpdated || current.type == EventType.DragPerform) && target.Contains(current.mousePosition))
+            if (current.type == EventType.Repaint &&
+                track.ActionList.Actions.Count == 0 &&
+                actionDropTrackId == track.DefinitionId &&
+                actionDropIndex == 0)
             {
-                AcceptActionDrop(controller, track, track.ActionList.Actions.Count, current);
+                EditorGUI.DrawRect(
+                    new Rect(
+                        target.x + 2f,
+                        target.center.y - 1f,
+                        target.width - 4f,
+                        3f),
+                    new Color(0.12f, 0.72f, 1f, 1f));
             }
+
+            if (current.type == EventType.MouseDrag &&
+                target.Contains(current.mousePosition))
+            {
+                TryActivatePreparedActionDrag(current);
+                if (string.IsNullOrWhiteSpace(
+                    activeActionDragId))
+                {
+                    return;
+                }
+
+                UpdateActionDropTarget(
+                    track,
+                    track.ActionList.Actions.Count,
+                    current);
+            }
+        }
+
+        private void UpdateActionDragPreview()
+        {
+            Event current = Event.current;
+            if (current.type == EventType.MouseDown ||
+                current.type == EventType.MouseLeaveWindow ||
+                (current.type == EventType.KeyDown &&
+                 current.keyCode == KeyCode.Escape))
+            {
+                ClearPreparedActionDrag();
+                ClearActiveActionDrag();
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(
+                activeActionDragId))
+            {
+                return;
+            }
+
+            if (current.type == EventType.MouseDrag)
+            {
+                actionDragPreviewPosition =
+                    current.mousePosition;
+                actionDropTrackId = default;
+                actionDropIndex = -1;
+                EditorWindow.focusedWindow?.Repaint();
+            }
+        }
+
+        private void HandleActionDragCompletion(
+            BlackboardAuthoringController controller)
+        {
+            Event current = Event.current;
+            if (current.type != EventType.MouseUp)
+            {
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(
+                activeActionDragId))
+            {
+                return;
+            }
+
+            if (
+                !actionDropTrackId.IsEmpty &&
+                actionDropIndex >= 0)
+            {
+                controller.MoveActionToTrack(
+                    new DefinitionId(activeActionDragId),
+                    actionDropTrackId,
+                    actionDropIndex);
+            }
+
+            ClearPreparedActionDrag();
+            ClearActiveActionDrag();
+            current.Use();
+        }
+
+        private void DrawActionDragPreview()
+        {
+            if (Event.current.type != EventType.Repaint ||
+                string.IsNullOrWhiteSpace(activeActionDragId))
+            {
+                return;
+            }
+
+            Rect preview = new Rect(
+                Mathf.Clamp(
+                    actionDragPreviewPosition.x -
+                    (actionDragPreviewWidth * 0.5f),
+                    actionDragPreviewMinX,
+                    actionDragPreviewMaxX -
+                    actionDragPreviewWidth),
+                actionDragPreviewPosition.y + 12f,
+                actionDragPreviewWidth,
+                26f);
+            Rect shadow = new Rect(
+                preview.x + 2f,
+                preview.y + 2f,
+                preview.width,
+                preview.height);
+            EditorGUI.DrawRect(
+                shadow,
+                new Color(0f, 0f, 0f, 0.35f));
+            EditorGUI.DrawRect(
+                preview,
+                new Color(0.16f, 0.43f, 0.58f, 0.96f));
+            GUI.Box(preview, GUIContent.none);
+            Rect label = new Rect(
+                preview.x + 8f,
+                preview.y + 3f,
+                preview.width - 16f,
+                20f);
+            GUI.Label(
+                label,
+                $"↕ {activeActionDragName}",
+                EditorStyles.boldLabel);
+        }
+
+        private void DrawActionDropPreview(
+            ActionTrackDefinition track,
+            int index,
+            Rect row)
+        {
+            if (Event.current.type != EventType.Repaint ||
+                actionDropTrackId != track.DefinitionId)
+            {
+                return;
+            }
+
+            bool beforeRow = actionDropIndex == index;
+            bool afterLastRow =
+                index + 1 == track.ActionList.Actions.Count &&
+                actionDropIndex == track.ActionList.Actions.Count;
+            if (!beforeRow && !afterLastRow)
+            {
+                return;
+            }
+
+            float y = beforeRow
+                ? row.y - 1f
+                : row.yMax - 1f;
+            EditorGUI.DrawRect(
+                new Rect(
+                    row.x + 2f,
+                    y,
+                    row.width - 4f,
+                    3f),
+                new Color(0.12f, 0.72f, 1f, 1f));
+        }
+
+        private void ClearActiveActionDrag()
+        {
+            activeActionDragId = null;
+            activeActionDragName = null;
+            actionDropTrackId = default;
+            actionDropIndex = -1;
         }
 
         private void DrawActionDetails(BlackboardAuthoringController controller, ActionTrackDefinition track, IAction action)

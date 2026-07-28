@@ -97,6 +97,41 @@ namespace GearEngine.GearEngine.Tests.Editor
         }
 
         [Test]
+        public void UnspecifiedCompatibilitySource_WithUnconfiguredReference_UsesDirectValue()
+        {
+            StringDataMulti value = new StringDataMulti("Visible message")
+            {
+                stringRef = new StringVariable(),
+                source = VariableDataSource.Unspecified,
+            };
+
+            Assert.That(value.Value, Is.EqualTo("Visible message"));
+            Assert.That(
+                value.GetDescription(),
+                Is.EqualTo("Visible message"));
+        }
+
+        [Test]
+        public void UnspecifiedCompatibilitySource_WithConfiguredReference_UsesVariableValue()
+        {
+            StringVariable variable = new StringVariable
+            {
+                Key = "Message",
+            };
+            variable.Value = "Variable message";
+            StringDataMulti value = new StringDataMulti("Direct message")
+            {
+                stringRef = variable,
+                source = VariableDataSource.Unspecified,
+            };
+
+            Assert.That(value.Value, Is.EqualTo("Variable message"));
+            Assert.That(
+                value.GetDescription(),
+                Is.EqualTo("Message"));
+        }
+
+        [Test]
         public void CompatibilityVariableReference_ReadsAndWritesManagedCell()
         {
             FloatVariableDefinition speed = new FloatVariableDefinition

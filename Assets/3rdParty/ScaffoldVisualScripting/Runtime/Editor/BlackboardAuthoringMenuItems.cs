@@ -10,11 +10,20 @@ namespace Scaffold.VisualScripting.Editor
         [MenuItem("GameObject/Scaffold/Blackboard", false, 10)]
         public static void CreateBlackboardBehaviour()
         {
-            GameObject gameObject = new GameObject("Blackboard");
-            Undo.RegisterCreatedObjectUndo(gameObject, "Create Blackboard");
-            BlackboardBehaviour behaviour = Undo.AddComponent<BlackboardBehaviour>(gameObject);
+            BlackboardBehaviour behaviour = CreateBlackboardHost();
             Selection.activeObject = behaviour;
             BlackboardDefinitionWindowLauncher.Open(behaviour);
+        }
+
+        /// <summary>
+        /// Creates a Blackboard host with its required runtime scope.
+        /// </summary>
+        public static BlackboardBehaviour CreateBlackboardHost()
+        {
+            GameObject gameObject = new GameObject("Blackboard");
+            Undo.RegisterCreatedObjectUndo(gameObject, "Create Blackboard");
+            Undo.AddComponent<BlackboardLifetimeScope>(gameObject);
+            return Undo.AddComponent<BlackboardBehaviour>(gameObject);
         }
 
         [MenuItem("Assets/Create/Scaffold/Visual Scripting/Blackboard Definition")]

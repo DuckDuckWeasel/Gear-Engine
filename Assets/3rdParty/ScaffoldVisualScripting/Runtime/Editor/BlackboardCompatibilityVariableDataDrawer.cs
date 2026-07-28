@@ -116,7 +116,13 @@ namespace Scaffold.VisualScripting.Editor
 
             Rect content = EditorGUI.IndentedRect(position);
             Scaffold.VariableDataSource resolvedSource =
-                ResolveSource(source);
+                ResolveSource(source, variable);
+            if ((Scaffold.VariableDataSource)source.enumValueIndex ==
+                Scaffold.VariableDataSource.Unspecified)
+            {
+                source.enumValueIndex = (int)resolvedSource;
+            }
+
             SerializedProperty selectedValue = resolvedSource ==
                 Scaffold.VariableDataSource.ScriptableObject
                 ? scriptableObject
@@ -240,7 +246,9 @@ namespace Scaffold.VisualScripting.Editor
             }
 
             Scaffold.VariableDataSource resolvedSource =
-                ResolveSource(source);
+                ResolveSource(
+                    source,
+                    FindChild(property, "Ref"));
             SerializedProperty value = resolvedSource ==
                 Scaffold.VariableDataSource.ScriptableObject
                 ? FindChild(property, "SO")
@@ -620,14 +628,35 @@ namespace Scaffold.VisualScripting.Editor
             return null;
         }
 
-        private static Scaffold.VariableDataSource ResolveSource(
-            SerializedProperty source)
+        public static Scaffold.VariableDataSource ResolveSource(
+            Scaffold.VariableDataSource source,
+            string variableKey,
+            string variableDefinitionId)
         {
-            Scaffold.VariableDataSource value =
-                (Scaffold.VariableDataSource)source.enumValueIndex;
-            return value == Scaffold.VariableDataSource.Unspecified
+            if (source != Scaffold.VariableDataSource.Unspecified)
+            {
+                return source;
+            }
+
+            return string.IsNullOrWhiteSpace(variableKey) &&
+                string.IsNullOrWhiteSpace(variableDefinitionId)
                 ? Scaffold.VariableDataSource.Direct
-                : value;
+                : Scaffold.VariableDataSource.BlackboardVariable;
+        }
+
+        private static Scaffold.VariableDataSource ResolveSource(
+            SerializedProperty source,
+            SerializedProperty variable)
+        {
+            SerializedProperty key =
+                variable?.FindPropertyRelative("key");
+            SerializedProperty definitionId = variable
+                ?.FindPropertyRelative("definitionId")
+                ?.FindPropertyRelative("value");
+            return ResolveSource(
+                (Scaffold.VariableDataSource)source.enumValueIndex,
+                key?.stringValue,
+                definitionId?.stringValue);
         }
 
         private static int ToPopupIndex(

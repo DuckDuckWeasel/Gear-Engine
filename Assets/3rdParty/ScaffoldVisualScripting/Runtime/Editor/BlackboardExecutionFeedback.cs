@@ -13,9 +13,23 @@ namespace Scaffold.VisualScripting.Editor
 
         public bool TryGetActionStatus(BlackboardBehaviour behaviour, DefinitionId actionId, out ActionExecutionStatus status)
         {
-            Block block = FindActionBlock(behaviour, actionId, out ActionTrack track, out int actionIndex);
+            Block block = FindActionBlock(
+                behaviour,
+                actionId,
+                out int taskIndex);
             status = default;
-            return block != null && track.ActionList.TryGetActionStatus(actionIndex, out status);
+            return block != null &&
+                block.TryGetActionStatus(taskIndex, out status);
+        }
+
+        public bool IsActionRunning(BlackboardBehaviour behaviour, DefinitionId actionId)
+        {
+            Block block = FindActionBlock(
+                behaviour,
+                actionId,
+                out int taskIndex);
+            return block != null &&
+                block.IsActionRunning(taskIndex);
         }
 
         private Block FindBlock(BlackboardBehaviour behaviour, DefinitionId blockId)
@@ -36,47 +50,67 @@ namespace Scaffold.VisualScripting.Editor
             return null;
         }
 
-        private Block FindActionBlock(BlackboardBehaviour behaviour, DefinitionId actionId, out ActionTrack track, out int actionIndex)
+        private Block FindActionBlock(
+            BlackboardBehaviour behaviour,
+            DefinitionId actionId,
+            out int taskIndex)
         {
-            track = null;
-            actionIndex = -1;
+            taskIndex = -1;
             if (behaviour == null || !behaviour.IsRuntimeAvailable)
             {
                 return null;
             }
 
-            return FindActionInBlocks(behaviour, actionId, out track, out actionIndex);
+            return FindActionInBlocks(
+                behaviour,
+                actionId,
+                out taskIndex);
         }
 
-        private Block FindActionInBlocks(BlackboardBehaviour behaviour, DefinitionId actionId, out ActionTrack track, out int actionIndex)
+        private Block FindActionInBlocks(
+            BlackboardBehaviour behaviour,
+            DefinitionId actionId,
+            out int taskIndex)
         {
             foreach (Block block in behaviour.Runtime.Blocks)
             {
-                if (TryFindAction(block, actionId, out track, out actionIndex))
+                if (TryFindAction(
+                    block,
+                    actionId,
+                    out taskIndex))
                 {
                     return block;
                 }
             }
 
-            track = null;
-            actionIndex = -1;
+            taskIndex = -1;
             return null;
         }
 
-        private bool TryFindAction(Block block, DefinitionId actionId, out ActionTrack track, out int actionIndex)
+        private bool TryFindAction(
+            Block block,
+            DefinitionId actionId,
+            out int taskIndex)
         {
+            int trackOffset = 0;
             foreach (ActionTrack candidate in block.Tracks)
             {
-                actionIndex = candidate.Definition.ActionList.Actions.FindIndex(action => action != null && action.DefinitionId == actionId);
+                int actionIndex =
+                    candidate.Definition.ActionList.Actions.FindIndex(
+                        action =>
+                            action != null &&
+                            action.DefinitionId == actionId);
                 if (actionIndex >= 0)
                 {
-                    track = candidate;
+                    taskIndex = trackOffset + actionIndex;
                     return true;
                 }
+
+                trackOffset +=
+                    candidate.Definition.ActionList.Actions.Count;
             }
 
-            track = null;
-            actionIndex = -1;
+            taskIndex = -1;
             return false;
         }
     }

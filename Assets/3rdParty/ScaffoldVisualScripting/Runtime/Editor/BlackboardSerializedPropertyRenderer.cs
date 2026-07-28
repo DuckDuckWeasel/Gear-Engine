@@ -23,6 +23,11 @@ namespace Scaffold.VisualScripting.Editor
 
         public static bool DrawManagedReference(UnityEngine.Object owner, object target, IReadOnlyCollection<string> hiddenNames, IAction action, BlackboardDefinition definition)
         {
+            if (owner == null || target == null)
+            {
+                return false;
+            }
+
             SerializedObject serialized = new SerializedObject(owner);
             serialized.Update();
             SerializedProperty root = FindManagedReference(serialized, target);

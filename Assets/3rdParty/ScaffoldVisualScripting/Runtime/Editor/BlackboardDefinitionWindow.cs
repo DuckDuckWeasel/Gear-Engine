@@ -75,8 +75,8 @@ namespace Scaffold.VisualScripting.Editor
                 return;
             }
 
-            DrawValidation();
-            DrawWorkspace();
+            bool hasValidation = DrawValidation();
+            DrawWorkspace(hasValidation);
         }
 
         private void DrawToolbar()
@@ -291,56 +291,109 @@ namespace Scaffold.VisualScripting.Editor
             return false;
         }
 
-        private void DrawValidation()
+        private bool DrawValidation()
         {
             IReadOnlyList<BlackboardValidationIssue> issues = controller.Validate();
             if (issues.Count == 0)
             {
-                return;
+                return false;
             }
 
             string message = issues.Count == 1
                 ? issues[0].ToString()
                 : $"{issues.Count} validation issues. {issues[0]}";
             EditorGUILayout.HelpBox(message, MessageType.Error);
+            return true;
         }
 
-        private void DrawWorkspace()
+        private void DrawWorkspace(bool hasValidation)
         {
-            detailWidth = ClampSidePanelWidth(
-                detailWidth,
-                position.width);
-            inspectorWidth = ClampSidePanelWidth(
-                inspectorWidth,
-                position.width);
+            float toolbarHeight =
+                EditorGUIUtility.singleLineHeight + 2f;
+            float validationHeight = hasValidation
+                ? (EditorGUIUtility.singleLineHeight * 2f) + 6f
+                : 0f;
+            Rect workspace = new Rect(
+                0f,
+                toolbarHeight + validationHeight,
+                position.width,
+                Mathf.Max(
+                    0f,
+                    position.height -
+                    toolbarHeight -
+                    validationHeight));
+            float requestedSideWidth =
+                (detailWidth + inspectorWidth) * 0.5f;
+            CalculateWorkspaceRects(
+                workspace,
+                requestedSideWidth,
+                out Rect authoring,
+                out Rect board,
+                out Rect inspector);
+            detailWidth = authoring.width;
+            inspectorWidth = inspector.width;
 
-            EditorGUILayout.BeginHorizontal();
-            EditorGUILayout.BeginVertical(
-                EditorStyles.helpBox,
-                GUILayout.Width(detailWidth),
-                GUILayout.ExpandHeight(true));
-            detailPanel.DrawAuthoring(
+            DrawPanel(
+                authoring,
+                () => detailPanel.DrawAuthoring(
+                    controller,
+                    GetSourceBehaviour()));
+            DrawPanel(
+                inspector,
+                () => detailPanel.DrawInspector(controller));
+
+            canvas.Draw(
+                board,
                 controller,
-                GetSourceBehaviour());
-            EditorGUILayout.EndVertical();
+                GetSourceBehaviour(),
+                feedback,
+                search);
+        }
 
-            Rect graph = GUILayoutUtility.GetRect(
-                0f,
-                100000f,
-                0f,
-                100000f,
-                GUILayout.ExpandWidth(true),
-                GUILayout.ExpandHeight(true));
+        private static void DrawPanel(
+            Rect panel,
+            Action drawContent)
+        {
+            GUILayout.BeginArea(
+                panel,
+                EditorStyles.helpBox);
+            try
+            {
+                drawContent();
+            }
+            finally
+            {
+                GUILayout.EndArea();
+            }
+        }
 
-            EditorGUILayout.BeginVertical(
-                EditorStyles.helpBox,
-                GUILayout.Width(inspectorWidth),
-                GUILayout.ExpandHeight(true));
-            detailPanel.DrawInspector(controller);
-            EditorGUILayout.EndVertical();
-            EditorGUILayout.EndHorizontal();
-
-            canvas.Draw(graph, controller, GetSourceBehaviour(), feedback, search);
+        public static void CalculateWorkspaceRects(
+            Rect workspace,
+            float requestedSideWidth,
+            out Rect authoring,
+            out Rect board,
+            out Rect inspector)
+        {
+            float sideWidth = ClampSidePanelWidth(
+                requestedSideWidth,
+                workspace.width);
+            authoring = new Rect(
+                workspace.x,
+                workspace.y,
+                sideWidth,
+                workspace.height);
+            inspector = new Rect(
+                workspace.xMax - sideWidth,
+                workspace.y,
+                sideWidth,
+                workspace.height);
+            board = new Rect(
+                authoring.xMax,
+                workspace.y,
+                Mathf.Max(
+                    0f,
+                    inspector.xMin - authoring.xMax),
+                workspace.height);
         }
 
         public static float ClampSidePanelWidth(
@@ -348,11 +401,14 @@ namespace Scaffold.VisualScripting.Editor
             float windowWidth)
         {
             float maximum = Mathf.Max(
-                k_minSidePanelWidth,
+                0f,
                 (windowWidth - k_minBoardWidth) * 0.5f);
+            float minimum = Mathf.Min(
+                k_minSidePanelWidth,
+                maximum);
             return Mathf.Clamp(
                 requestedWidth,
-                k_minSidePanelWidth,
+                minimum,
                 maximum);
         }
 

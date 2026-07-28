@@ -4,7 +4,7 @@ namespace Scaffold
     {
         public static T Resolve<T>(VariableBase<T> blackboardVariable, T directValue, VariableValueSO<T> scriptableObjectValue, VariableDataSource source)
         {
-            switch (source)
+            switch (GetResolvedSource(blackboardVariable, source))
             {
                 case VariableDataSource.BlackboardVariable:
                     return blackboardVariable != null ? blackboardVariable.Value : default;
@@ -12,9 +12,8 @@ namespace Scaffold
                     return directValue;
                 case VariableDataSource.ScriptableObject:
                     return scriptableObjectValue != null ? scriptableObjectValue.Value : default;
-                case VariableDataSource.Unspecified:
                 default:
-                    return blackboardVariable != null ? blackboardVariable.Value : directValue;
+                    return directValue;
             }
         }
 
@@ -39,7 +38,9 @@ namespace Scaffold
         public static VariableDataSource GetResolvedSource<T>(VariableBase<T> blackboardVariable, VariableDataSource source)
         {
             return source == VariableDataSource.Unspecified
-                ? blackboardVariable != null ? VariableDataSource.BlackboardVariable : VariableDataSource.Direct
+                ? HasConfiguredReference(blackboardVariable)
+                    ? VariableDataSource.BlackboardVariable
+                    : VariableDataSource.Direct
                 : source;
         }
 
@@ -71,6 +72,14 @@ namespace Scaffold
             {
                 scriptableObjectValue.Value = value;
             }
+        }
+
+        private static bool HasConfiguredReference<T>(
+            VariableBase<T> blackboardVariable)
+        {
+            return blackboardVariable != null &&
+                (!blackboardVariable.DefinitionId.IsEmpty ||
+                 !string.IsNullOrWhiteSpace(blackboardVariable.Key));
         }
     }
 }

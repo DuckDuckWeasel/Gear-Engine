@@ -1047,6 +1047,12 @@ namespace Scaffold.VisualScripting.Editor
         {
             int sourceIndex = source.ActionList.Actions.IndexOf(action);
             source.ActionList.Actions.RemoveAt(sourceIndex);
+            if (source.DefinitionId == destination.DefinitionId &&
+                destinationIndex > sourceIndex)
+            {
+                destinationIndex--;
+            }
+
             int insertIndex = Mathf.Clamp(destinationIndex, 0, destination.ActionList.Actions.Count);
             destination.ActionList.Actions.Insert(insertIndex, action);
             if (source.DefinitionId != destination.DefinitionId)

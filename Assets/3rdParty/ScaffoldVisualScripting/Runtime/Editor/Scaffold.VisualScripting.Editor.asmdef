@@ -6,7 +6,8 @@
         "Scaffold.VisualScripting.Authoring",
         "Scaffold.VisualScripting.Unity",
         "Scaffold",
-        "ScaffoldEditor"
+        "ScaffoldEditor",
+        "VContainer"
     ],
     "includePlatforms": [
         "Editor"

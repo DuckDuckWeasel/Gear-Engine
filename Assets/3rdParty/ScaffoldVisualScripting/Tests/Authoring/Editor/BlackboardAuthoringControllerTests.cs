@@ -56,6 +56,22 @@ namespace Scaffold.VisualScripting.Editor.Tests
         }
 
         [Test]
+        public void BlackboardMenuHost_IncludesRuntimeLifetimeScopeBeforeBehaviour()
+        {
+            BlackboardBehaviour behaviour =
+                BlackboardAuthoringMenuItems.CreateBlackboardHost();
+            Track(behaviour.gameObject);
+            BlackboardLifetimeScope lifetimeScope =
+                behaviour.GetComponent<BlackboardLifetimeScope>();
+            Component[] components = behaviour.GetComponents<Component>();
+
+            Assert.That(lifetimeScope, Is.Not.Null);
+            Assert.That(
+                Array.IndexOf(components, lifetimeScope),
+                Is.LessThan(Array.IndexOf(components, behaviour)));
+        }
+
+        [Test]
         public void DuplicateAndClipboard_RegenerateIdsAndPreserveUnityReferences()
         {
             Texture2D texture = Track(new Texture2D(1, 1));
@@ -185,6 +201,16 @@ namespace Scaffold.VisualScripting.Editor.Tests
             Assert.That(rebuiltDetails.isExpanded, Is.True);
         }
 
+        [Test]
+        public void ManagedReferenceRenderer_IgnoresAStaleOwnerDuringPlayModeTransition()
+        {
+            bool changed = BlackboardSerializedPropertyRenderer.DrawManagedReference(
+                null,
+                new object());
+
+            Assert.That(changed, Is.False);
+        }
+
         [TestCase(typeof(GameStartedTriggerDefinition), "Game Started")]
         [TestCase(typeof(IntegerVariableDefinition), "Integer")]
         [TestCase(typeof(TestTrigger), "Test")]
@@ -305,6 +331,7 @@ namespace Scaffold.VisualScripting.Editor.Tests
         [TestCase(340f, 1200f, 340f)]
         [TestCase(600f, 1200f, 440f)]
         [TestCase(340f, 920f, 300f)]
+        [TestCase(340f, 720f, 200f)]
         public void WorkspaceSidePanels_PreserveTheCenterBoard(
             float requested,
             float windowWidth,
@@ -314,6 +341,64 @@ namespace Scaffold.VisualScripting.Editor.Tests
                 BlackboardDefinitionWindow.ClampSidePanelWidth(
                     requested,
                     windowWidth),
+                Is.EqualTo(expected));
+        }
+
+        [TestCase(720f, 340f, 200f, 320f)]
+        [TestCase(1200f, 340f, 340f, 520f)]
+        public void WorkspaceLayout_KeepsTheBoardCentered(
+            float windowWidth,
+            float requestedSideWidth,
+            float expectedSideWidth,
+            float expectedBoardWidth)
+        {
+            Rect workspace = new Rect(
+                0f,
+                0f,
+                windowWidth,
+                500f);
+
+            BlackboardDefinitionWindow.CalculateWorkspaceRects(
+                workspace,
+                requestedSideWidth,
+                out Rect authoring,
+                out Rect board,
+                out Rect inspector);
+
+            Assert.That(authoring.width, Is.EqualTo(expectedSideWidth));
+            Assert.That(inspector.width, Is.EqualTo(expectedSideWidth));
+            Assert.That(board.width, Is.EqualTo(expectedBoardWidth));
+            Assert.That(board.center.x, Is.EqualTo(workspace.center.x));
+            Assert.That(authoring.xMax, Is.EqualTo(board.xMin));
+            Assert.That(board.xMax, Is.EqualTo(inspector.xMin));
+        }
+
+        [TestCase(
+            Scaffold.VariableDataSource.Unspecified,
+            "",
+            "",
+            Scaffold.VariableDataSource.Direct)]
+        [TestCase(
+            Scaffold.VariableDataSource.Unspecified,
+            "Message",
+            "",
+            Scaffold.VariableDataSource.BlackboardVariable)]
+        [TestCase(
+            Scaffold.VariableDataSource.Direct,
+            "Message",
+            "definition",
+            Scaffold.VariableDataSource.Direct)]
+        public void CompatibilityValueSource_MatchesRuntimeResolution(
+            Scaffold.VariableDataSource source,
+            string variableKey,
+            string variableDefinitionId,
+            Scaffold.VariableDataSource expected)
+        {
+            Assert.That(
+                BlackboardCompatibilityVariableDataDrawer.ResolveSource(
+                    source,
+                    variableKey,
+                    variableDefinitionId),
                 Is.EqualTo(expected));
         }
 
@@ -334,6 +419,27 @@ namespace Scaffold.VisualScripting.Editor.Tests
             Assert.That(
                 BlackboardDetailPanel.ShouldShowActionControls(hovered),
                 Is.EqualTo(hovered));
+        }
+
+        [TestCase(2, 100f, 28f, 105f, 2)]
+        [TestCase(2, 100f, 28f, 123f, 3)]
+        public void ActionDragPreview_SelectsTheNearestInsertionEdge(
+            int rowIndex,
+            float rowY,
+            float rowHeight,
+            float mouseY,
+            int expected)
+        {
+            Assert.That(
+                BlackboardDetailPanel.CalculateActionDropIndex(
+                    rowIndex,
+                    new Rect(
+                        0f,
+                        rowY,
+                        200f,
+                        rowHeight),
+                    mouseY),
+                Is.EqualTo(expected));
         }
 
         [Test]
@@ -402,6 +508,36 @@ namespace Scaffold.VisualScripting.Editor.Tests
             Assert.That(destination.ActionList.Actions, Is.EqualTo(new[] { moved }));
             Assert.That(group.ActionIds, Is.EqualTo(new[] { first.DefinitionId }));
             Assert.That(controller.Metadata.SelectedTrackId, Is.EqualTo(destination.DefinitionId));
+        }
+
+        [Test]
+        public void MoveActionWithinTrack_AdjustsAnInsertionIndexAfterRemoval()
+        {
+            BlockDefinition block = controller.AddBlock("Actions");
+            ActionTrackDefinition track = block.Tracks[0];
+            IAction first = controller.AddAction(
+                track.DefinitionId,
+                typeof(TestAction));
+            IAction second = controller.AddAction(
+                track.DefinitionId,
+                typeof(TestAction));
+            IAction third = controller.AddAction(
+                track.DefinitionId,
+                typeof(TestAction));
+
+            controller.MoveActionToTrack(
+                first.DefinitionId,
+                track.DefinitionId,
+                2);
+
+            Assert.That(
+                track.ActionList.Actions,
+                Is.EqualTo(new[]
+                {
+                    second,
+                    first,
+                    third,
+                }));
         }
 
         [Test]
