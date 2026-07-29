@@ -6,7 +6,7 @@ using System.IO;
 namespace Scaffold.EditorUtils
 {
     [CustomEditor(typeof(Localization))]
-    public class LocalizationEditor : Editor 
+    public class LocalizationEditor : Editor
     {
         protected SerializedProperty activeLanguageProp;
         protected SerializedProperty localizationFileProp;
@@ -58,12 +58,12 @@ namespace Scaffold.EditorUtils
                                                                "localization.csv",
                                                                "csv",
                                                                "Please enter a filename to save the localization file to");
-            if (path.Length == 0) 
+            if (path.Length == 0)
             {
                 return;
             }
 
-            string csvData = localization.GetCSVData();         
+            string csvData = localization.GetCSVData();
             File.WriteAllText(path, csvData);
             AssetDatabase.ImportAsset(path);
 
@@ -79,24 +79,24 @@ namespace Scaffold.EditorUtils
         public virtual void ExportStandardText(Localization localization)
         {
             string path = EditorUtility.SaveFilePanel("Export Standard Text", "Assets/", "standard.txt", "");
-            if (path.Length == 0) 
+            if (path.Length == 0)
             {
                 return;
             }
 
             localization.ClearLocalizeableCache();
 
-            string textData = localization.GetStandardText();           
+            string textData = localization.GetStandardText();
             File.WriteAllText(path, textData);
             AssetDatabase.Refresh();
 
             ShowNotification(localization);
         }
-        
+
         public virtual void ImportStandardText(Localization localization)
         {
             string path = EditorUtility.OpenFilePanel("Import Standard Text", "Assets/", "txt");
-            if (path.Length == 0) 
+            if (path.Length == 0)
             {
                 return;
             }
@@ -111,7 +111,7 @@ namespace Scaffold.EditorUtils
 
         protected virtual void ShowNotification(Localization localization)
         {
-            BlackboardWindow.ShowNotification(localization.NotificationText);
+            Debug.Log($"[Localization] {localization.NotificationText}");
             localization.NotificationText = "";
         }
     }

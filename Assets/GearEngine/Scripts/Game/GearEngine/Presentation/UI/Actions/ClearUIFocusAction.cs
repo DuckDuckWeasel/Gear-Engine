@@ -4,18 +4,18 @@ using GearEngine.Core.Actions;
 namespace GearEngine.GearEngine.Presentation.UI.Tags.Highlight
 {
     [Serializable]
-    public class ClearUIFocusAction : IAction
+    public class ClearUIFocusAction : ActionBase
     {
-        public void Execute(System.Action onComplete)
+        public override void OnEnter()
         {
-            var focusService = TutorialFocusService.Instance;
+            TutorialFocusService focusService = TutorialFocusService.Instance;
 
             if (focusService != null)
             {
                 focusService.ClearFocus();
             }
-            
-            onComplete?.Invoke();
+
+            Continue();
         }
     }
 }

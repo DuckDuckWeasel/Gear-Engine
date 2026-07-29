@@ -48,7 +48,7 @@ namespace Scaffold
                 return "Error: no integer selected";
             }
 
-            return integer.Key + " on " + variableToUse.Key + " in " + collection.Value.name;
+            return integer.Key + " on " + variableToUse.Key + " in " + collection.Value.Name;
         }
     }
 }

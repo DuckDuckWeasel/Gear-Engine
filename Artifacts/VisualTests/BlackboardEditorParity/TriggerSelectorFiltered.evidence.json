@@ -1,0 +1,11 @@
+{
+  "scenario": "Blackboard trigger selector legacy-facing labels",
+  "source": "Interactive Unity Blackboard editor window",
+  "criteria": [
+    "The selector includes an explicit None option.",
+    "Private nested test implementations are absent.",
+    "TriggerDefinition implementation suffixes are absent from fallback labels.",
+    "The selector remains searchable."
+  ],
+  "capturedAt": "2026-07-27T23:20:00-03:00"
+}

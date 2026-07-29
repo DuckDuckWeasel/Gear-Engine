@@ -18,7 +18,7 @@ namespace Scaffold
     /// GenericCollection<T>, T[], and List<T>.
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    [AddComponentMenu("")]
+    [Serializable]
     public class GenericCollection<T> : Collection
     {
         [SerializeField]
@@ -40,7 +40,7 @@ namespace Scaffold
 
         public override int Add(object o)
         {
-            var t = Promote(o);
+            T t = Promote(o);
             if (t != null)
             {
                 return Add(t);
@@ -55,7 +55,7 @@ namespace Scaffold
 
         public override void Add(IScaffoldCollection rhsCol)
         {
-            var rhs = Promote(rhsCol);
+            GenericCollection<T> rhs = Promote(rhsCol);
             if (rhs != null)
             {
                 for (int i = 0; i < rhs.collection.Count; i++)
@@ -67,7 +67,7 @@ namespace Scaffold
 
         public override void AddUnique(object o)
         {
-            var t = Promote(o);
+            T t = Promote(o);
             if (t != null)
             {
                 if (!collection.Contains(t))
@@ -87,7 +87,7 @@ namespace Scaffold
 
         public override void AddUnique(IScaffoldCollection rhsCol)
         {
-            var rhs = Promote(rhsCol);
+            GenericCollection<T> rhs = Promote(rhsCol);
             if (rhs != null)
             {
                 for (int i = 0; i < rhs.collection.Count; i++)
@@ -109,7 +109,7 @@ namespace Scaffold
 
         public override bool Contains(object o)
         {
-            var t = Promote(o);
+            T t = Promote(o);
             if (t != null)
             {
                 return collection.Contains(t);
@@ -119,13 +119,15 @@ namespace Scaffold
 
         public override bool ContainsAllOf(IScaffoldCollection rhsCol)
         {
-            var rhs = Promote(rhsCol);
+            GenericCollection<T> rhs = Promote(rhsCol);
             if (rhs != null)
             {
                 for (int i = 0; i < rhs.collection.Count; i++)
                 {
                     if (!collection.Contains(rhs.collection[i]))
+                    {
                         return false;
+                    }
                 }
 
                 return true;
@@ -136,7 +138,7 @@ namespace Scaffold
 
         public override bool ContainsAllOfOrdered(IScaffoldCollection rhsCol)
         {
-            var rhs = Promote(rhsCol);
+            GenericCollection<T> rhs = Promote(rhsCol);
             if (rhs != null)
             {
                 if (rhs.Count == Count)
@@ -144,7 +146,9 @@ namespace Scaffold
                     for (int i = 0; i < rhs.collection.Count; i++)
                     {
                         if (!rhs.collection[i].Equals(collection[i]))
+                        {
                             return false;
+                        }
                     }
                     return true;
                 }
@@ -155,13 +159,15 @@ namespace Scaffold
 
         public override bool ContainsAnyOf(IScaffoldCollection rhsCol)
         {
-            var rhs = Promote(rhsCol);
+            GenericCollection<T> rhs = Promote(rhsCol);
             if (rhs != null)
             {
                 for (int i = 0; i < rhs.collection.Count; i++)
                 {
                     if (collection.Contains(rhs.collection[i]))
+                    {
                         return true;
+                    }
                 }
             }
 
@@ -170,7 +176,7 @@ namespace Scaffold
 
         public override void CopyFrom(IScaffoldCollection rhsCol)
         {
-            var rhs = Promote(rhsCol);
+            GenericCollection<T> rhs = Promote(rhsCol);
             if (rhs != null)
             {
                 collection.Clear();
@@ -180,7 +186,7 @@ namespace Scaffold
 
         public override void CopyFrom(Array array)
         {
-            foreach (var item in array)
+            foreach (object item in array)
             {
                 Add(item);
             }
@@ -188,7 +194,7 @@ namespace Scaffold
 
         public override void CopyFrom(IList list)
         {
-            foreach (var item in list)
+            foreach (object item in list)
             {
                 Add(item);
             }
@@ -201,13 +207,13 @@ namespace Scaffold
 
         public override void Exclusive(IScaffoldCollection rhsCol)
         {
-            var rhs = Promote(rhsCol);
+            GenericCollection<T> rhs = Promote(rhsCol);
             if (rhs != null)
             {
                 //if its in both, remove, if its only in 1 keep
                 for (int i = 0; i < rhs.collection.Count; i++)
                 {
-                    var item = rhs.collection[i];
+                    T item = rhs.collection[i];
                     if (!collection.Remove(item))
                     {
                         collection.Add(item);
@@ -246,7 +252,7 @@ namespace Scaffold
 
         public override int IndexOf(object o)
         {
-            var t = Promote(o);
+            T t = Promote(o);
             if (t != null)
             {
                 return collection.IndexOf(t);
@@ -256,7 +262,7 @@ namespace Scaffold
 
         public override void Insert(int index, object o)
         {
-            var t = Promote(o);
+            T t = Promote(o);
             if (t != null)
             {
                 collection.Insert(index, t);
@@ -265,7 +271,7 @@ namespace Scaffold
 
         public override void Intersection(IScaffoldCollection rhsCol)
         {
-            var rhs = Promote(rhsCol);
+            GenericCollection<T> rhs = Promote(rhsCol);
             if (rhs != null)
             {
                 //only things that are in us and in rhs remain
@@ -282,11 +288,13 @@ namespace Scaffold
         public override bool IsCollectionCompatible(object o)
         {
             if (o is GenericCollection<T> || o is System.Collections.Generic.IList<T>)
+            {
                 return true;
+            }
 
-            var ot = o.GetType();
-            var ote = ot.GetElementType();
-            var otgs = ot.GetGenericArguments();
+            Type ot = o.GetType();
+            Type ote = ot.GetElementType();
+            Type[] otgs = ot.GetGenericArguments();
 
             //element type only works for arrays, need to use getgenerictype with ilist<>T
             if (o is System.Array)
@@ -310,7 +318,7 @@ namespace Scaffold
 
         public override int LastIndexOf(object o)
         {
-            var t = Promote(o);
+            T t = Promote(o);
             if (t != null)
             {
                 return collection.LastIndexOf(t);
@@ -321,13 +329,15 @@ namespace Scaffold
         public override int Occurrences(object o)
         {
             int retval = 0;
-            var t = Promote(o);
+            T t = Promote(o);
             if (t != null)
             {
                 for (int i = 0; i < collection.Count; i++)
                 {
                     if (collection[i].Equals(t))
+                    {
                         retval++;
+                    }
                 }
             }
             return retval;
@@ -335,7 +345,7 @@ namespace Scaffold
 
         public override void Remove(object o)
         {
-            var t = Promote(o);
+            T t = Promote(o);
             if (t != null)
             {
                 collection.Remove(t);
@@ -344,7 +354,7 @@ namespace Scaffold
 
         public override void RemoveAll(object o)
         {
-            var t = Promote(o);
+            T t = Promote(o);
             if (t != null)
             {
                 collection.RemoveAll(x => x.Equals(t));
@@ -353,7 +363,7 @@ namespace Scaffold
 
         public override void RemoveAll(IScaffoldCollection rhsCol)
         {
-            var rhs = Promote(rhsCol);
+            GenericCollection<T> rhs = Promote(rhsCol);
             if (rhs != null)
             {
                 for (int i = rhsCol.Count - 1; i >= 0; i--)
@@ -375,9 +385,11 @@ namespace Scaffold
 
         public override void Resize(int count)
         {
-            var toAdd = count - collection.Count;
+            int toAdd = count - collection.Count;
             if (toAdd > 0)
+            {
                 collection.AddRange(System.Linq.Enumerable.Repeat(default(T), toAdd));
+            }
         }
 
         public override void Reverse()
@@ -387,7 +399,7 @@ namespace Scaffold
 
         public override void Set(int index, object o)
         {
-            var t = Promote(o);
+            T t = Promote(o);
             if (t != null)
             {
                 collection[index] = t;
@@ -403,8 +415,8 @@ namespace Scaffold
         {
             for (int i = 0; i < collection.Count; i++)
             {
-                var tmp = collection[i];
-                var rnd = UnityEngine.Random.Range(0, collection.Count);
+                T tmp = collection[i];
+                int rnd = UnityEngine.Random.Range(0, collection.Count);
                 collection[i] = collection[rnd];
                 collection[rnd] = tmp;
             }
@@ -428,7 +440,7 @@ namespace Scaffold
             }
             else if (o is VariableBase<T>)
             {
-                var oAs = o as VariableBase<T>;
+                VariableBase<T> oAs = o as VariableBase<T>;
                 return (T)oAs.Value;
             }
 

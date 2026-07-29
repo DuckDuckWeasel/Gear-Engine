@@ -143,7 +143,7 @@ namespace Scaffold
                 return "Error: collection is not GameObjectCollection";
             }
 
-            return castType.ToString() + ", store in " + collection.Value.name;
+            return castType.ToString() + ", store in " + collection.Value.Name;
         }
 
         public override bool IsPropertyVisible(string propertyName)

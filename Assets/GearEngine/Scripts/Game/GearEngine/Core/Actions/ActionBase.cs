@@ -1,224 +1,170 @@
 using System;
-using Scaffold;
+using System.Collections;
+using System.Collections.Generic;
+using System.Reflection;
+using GearEngine.Core.Architecture.References;
+using Scaffold.VisualScripting;
 using UnityEngine;
+using CoreActionExecutionStatus =
+    Scaffold.VisualScripting.ActionExecutionStatus;
 
 namespace GearEngine.Core.Actions
 {
-    /// <summary>
-    /// A base class to ease the migration of Scaffold Commands to IActions.
-    /// It implements the necessary consumers and provides legacy methods like Continue() 
-    /// and GetBlackboard() so that existing command logic can remain mostly untouched.
-    /// </summary>
     [Serializable]
     [TriInspector.DrawWithTriInspector]
-    public abstract class ActionBase : IAction, IActionWithStatus, IInterruptibleAction, IMonoBehaviourConsumer, IBlackboardConsumer, ICommandContextConsumer, IStringLocationIdentifier
+    public abstract class ActionBase :
+        Scaffold.VisualScripting.ActionBase,
+        Scaffold.IStringLocationIdentifier
     {
-        protected MonoBehaviour host;
-        protected Blackboard blackboard;
-        protected Command hostCommand;
-        protected Action onCompleteCallback;
-        protected Action<ActionExecutionStatus> onStatusCompleteCallback;
+        public int ItemId => GetStableItemId(DefinitionId.Value);
 
-        private bool actionCompleted;
-
-        // Legacy properties delegating to the host Command
-        public virtual int ItemId
-        {
-            get { return hostCommand != null ? hostCommand.ItemId : -1; }
-            set
-            {
-                if (hostCommand != null)
-                {
-                    hostCommand.ItemId = value;
-                }
-            }
-        }
-
-        public virtual string ErrorMessage
-        {
-            get { return hostCommand != null ? hostCommand.ErrorMessage : ""; }
-        }
+        public virtual string ErrorMessage => string.Empty;
 
         public virtual int IndentLevel
         {
-            get { return hostCommand != null ? hostCommand.IndentLevel : 0; }
-            set
+            get => indentLevel;
+            set => indentLevel = Math.Max(value, 0);
+        }
+
+        [SerializeField] private int indentLevel;
+
+        public int CommandIndex => IsExecutionActive ? Context.ActionIndex : -1;
+
+        public int PreviousCommandIndex =>
+            IsExecutionActive ? Context.PreviousActionIndex : -1;
+
+        public IReadOnlyList<Scaffold.VisualScripting.IAction> CurrentActions =>
+            IsExecutionActive
+                ? Context.ActionList.Definition.Actions
+                : Array.Empty<Scaffold.VisualScripting.IAction>();
+
+        public bool IsExecuting => IsExecutionActive;
+
+        public Scaffold.VisualScripting.Block ParentBlock =>
+            IsExecutionActive ? Context.Block : null;
+
+        public ActionTrack ParentTrack =>
+            IsExecutionActive ? Context.Track : null;
+
+        protected bool CanRunScheduledWork => IsExecutionActive;
+
+        protected float CurrentDeltaTime => Context.TimeSource.DeltaTime;
+
+        protected double CurrentElapsedSeconds => Context.TimeSource.ElapsedSeconds;
+
+        protected List<Scaffold.Variable> referencedVariables =
+            new List<Scaffold.Variable>();
+
+        protected ITargetResolver TargetResolver =>
+            IsExecutionActive
+                ? new BlackboardTargetResolver(Context.Blackboard.Variables)
+                : null;
+
+        protected GameObject ResolveTarget(TargetReference targetReference)
+        {
+            return targetReference?.Resolve(TargetResolver);
+        }
+
+        protected IReadOnlyList<GameObject> ResolveTargets(
+            TargetReference targetReference)
+        {
+            IReadOnlyList<GameObject> targets =
+                targetReference?.ResolveAll(TargetResolver);
+            return targets ?? Array.Empty<GameObject>();
+        }
+
+        protected bool IsTargetMatch(
+            TargetReference targetReference,
+            GameObject target)
+        {
+            return targetReference != null &&
+                targetReference.IsMatch(target, TargetResolver);
+        }
+
+        [NonSerialized, BlackboardTransient]
+        private List<IDisposable> scheduledWork;
+
+        [NonSerialized, BlackboardTransient]
+        private bool compatibilityVariablesBound;
+
+        private sealed class BlackboardTargetResolver : ITargetResolver
+        {
+            public BlackboardTargetResolver(BlackboardVariableSet variables)
             {
-                if (hostCommand != null)
+                this.variables = variables ??
+                    throw new ArgumentNullException(nameof(variables));
+            }
+
+            private readonly BlackboardVariableSet variables;
+
+            public GameObject Resolve(string variableName)
+            {
+                if (!variables.TryGet(
+                        variableName,
+                        out VariableCellBase cell))
                 {
-                    hostCommand.IndentLevel = value;
+                    return null;
                 }
+
+                return cell.UntypedValue as GameObject;
             }
         }
 
-        public virtual int CommandIndex
+        protected sealed override void OnExecute()
         {
-            get { return hostCommand != null ? hostCommand.CommandIndex : 0; }
-            set
+            if (!compatibilityVariablesBound)
             {
-                if (hostCommand != null)
-                {
-                    hostCommand.CommandIndex = value;
-                }
+                Scaffold.Variable.BindAll(
+                    this,
+                    Context.Blackboard.Variables);
+                compatibilityVariablesBound = true;
             }
-        }
 
-        public virtual bool IsExecuting
-        {
-            get { return hostCommand != null ? hostCommand.IsExecuting : false; }
-            set
-            {
-                if (hostCommand != null)
-                {
-                    hostCommand.IsExecuting = value;
-                }
-            }
-        }
-
-        public virtual Block ParentBlock
-        {
-            get { return hostCommand != null ? hostCommand.ParentBlock : null; }
-            set
-            {
-                if (hostCommand != null)
-                {
-                    hostCommand.ParentBlock = value;
-                }
-            }
-        }
-
-        /// <summary>
-        /// The CommandTrack the host Command belongs to. Delegates to the host, same as ParentBlock,
-        /// so flow-control actions (If/Else/End, loops, jumps) resolve against the track they actually
-        /// run on rather than always the Block's first track.
-        /// </summary>
-        public virtual CommandTrack ParentTrack
-        {
-            get { return hostCommand != null ? hostCommand.ParentTrack : null; }
-            set
-            {
-                if (hostCommand != null)
-                {
-                    hostCommand.ParentTrack = value;
-                }
-            }
-        }
-
-        public virtual void SetHost(MonoBehaviour host)
-        {
-            this.host = host;
-        }
-
-        public virtual void SetBlackboard(Blackboard blackboard)
-        {
-            this.blackboard = blackboard;
-        }
-
-        public virtual void SetCommandContext(Command hostCommand)
-        {
-            this.hostCommand = hostCommand;
-        }
-
-        public void Execute(Action onComplete)
-        {
-            this.onCompleteCallback = onComplete;
-            onStatusCompleteCallback = null;
-            actionCompleted = false;
             OnEnter();
         }
 
-        public void ExecuteWithStatus(Action<ActionExecutionStatus> onComplete)
-        {
-            onCompleteCallback = null;
-            onStatusCompleteCallback = onComplete;
-            actionCompleted = false;
-            OnEnter();
-        }
-
-        /// <summary>
-        /// Legacy OnEnter from Scaffold. Override this to implement the action's logic.
-        /// </summary>
         public virtual void OnEnter()
         {
             Continue();
         }
 
-        /// <summary>
-        /// Equivalent to Scaffold Command.Continue(). 
-        /// Calls the onComplete callback to advance the InvokeActionCommand sequence.
-        /// </summary>
         public virtual void Continue()
         {
-            CompleteAction(ActionExecutionStatus.Success);
+            CompleteAction(CoreActionExecutionStatus.Success);
         }
 
-        /// <summary>
-        /// Completes this action with a failure result.
-        /// </summary>
-        public virtual void Fail()
+        public new virtual void Fail()
         {
-            CompleteAction(ActionExecutionStatus.Failure);
+            CompleteAction(CoreActionExecutionStatus.Failure);
         }
 
-        /// <summary>
-        /// Stops this action without invoking its completion callback. The execution host owns
-        /// the result assigned to an interrupted child.
-        /// </summary>
-        public virtual void Interrupt()
+        public override void Interrupt()
         {
-            if (actionCompleted)
+            CancelScheduledWork();
+            if (!IsExecutionActive)
             {
                 return;
             }
 
-            actionCompleted = true;
-            onCompleteCallback = null;
-            onStatusCompleteCallback = null;
             OnStopExecuting();
+            base.Interrupt();
         }
 
-        /// <summary>
-        /// Equivalent to Scaffold Command.Continue(int).
-        /// Instructs the host InvokeActionCommand to cancel its internal sequence 
-        /// and delegates the jump to the parent Block.
-        /// </summary>
         public virtual void Continue(int nextCommandIndex)
         {
-            CancelCompletionCallback();
-            if (hostCommand is global::GearEngine.GearEngine.Presentation.UI.Input.InvokeActionCommand invokeCmd)
-            {
-                invokeCmd.CancelSequence();
-            }
-            if (hostCommand != null)
-            {
-                hostCommand.Continue(nextCommandIndex);
-            }
+            JumpTo(nextCommandIndex);
         }
 
-        /// <summary>
-        /// Equivalent to Scaffold Command.StopParentBlock().
-        /// </summary>
         public virtual void StopParentBlock()
         {
-            CancelCompletionCallback();
-            if (hostCommand is global::GearEngine.GearEngine.Presentation.UI.Input.InvokeActionCommand invokeCmd)
-            {
-                invokeCmd.CancelSequence();
-            }
-            if (hostCommand != null && hostCommand.ParentBlock != null)
-            {
-                hostCommand.ParentBlock.Stop();
-            }
+            StopBlock();
         }
 
-        public virtual Blackboard GetBlackboard()
+        public Blackboard GetBlackboard()
         {
-            return blackboard;
+            return Context.Blackboard;
         }
 
-        /// <summary>
-        /// Legacy summary method. Can be used if we ever need a custom summary drawer.
-        /// </summary>
         public virtual bool IsComment()
         {
             return false;
@@ -234,17 +180,11 @@ namespace GearEngine.Core.Actions
             return true;
         }
 
-        /// <summary>
-        /// Legacy formatting methods
-        /// </summary>
         public virtual string GetSummary()
         {
-            return "";
+            return string.Empty;
         }
 
-        /// <summary>
-        /// Legacy formatting methods
-        /// </summary>
         public virtual Color GetButtonColor()
         {
             return Color.white;
@@ -260,15 +200,15 @@ namespace GearEngine.Core.Actions
             return false;
         }
 
-        public virtual void OnCommandAdded(Block parentBlock)
+        public virtual void OnCommandAdded(BlockDefinition parentBlock)
         {
         }
 
-        public virtual void OnCommandRemoved(Block parentBlock)
+        public virtual void OnCommandRemoved(BlockDefinition parentBlock)
         {
         }
 
-        public virtual bool HasReference(Variable variable)
+        public virtual bool HasReference(Scaffold.Variable variable)
         {
             return false;
         }
@@ -285,55 +225,181 @@ namespace GearEngine.Core.Actions
         {
         }
 
-        protected virtual void CompleteAction(ActionExecutionStatus status)
+        public virtual bool IsReorderableArray(string propertyName)
         {
-            if (actionCompleted)
+            return false;
+        }
+
+        protected virtual void RefreshVariableCache()
+        {
+        }
+
+        public virtual bool IsPropertyVisible(string propertyName)
+        {
+            return true;
+        }
+
+        public virtual void OnValidate()
+        {
+        }
+
+        public virtual void GetConnectedBlocks(ref List<BlockDefinition> connectedBlocks)
+        {
+        }
+
+        public virtual string GetLocationIdentifier()
+        {
+            return GetType().Name;
+        }
+
+        protected virtual void CompleteAction(CoreActionExecutionStatus status)
+        {
+            CancelScheduledWork();
+            Complete(status);
+        }
+
+        protected void Invoke(string methodName, float delay)
+        {
+            TimeSpan duration = TimeSpan.FromSeconds(Math.Max(delay, 0f));
+            IDisposable handle = Schedule(
+                duration,
+                () => InvokeScheduledMethod(methodName));
+            GetScheduledWork().Add(handle);
+        }
+
+        protected IDisposable RunRoutine(IEnumerator routine, bool detached = false)
+        {
+            if (routine == null)
+            {
+                throw new ArgumentNullException(nameof(routine));
+            }
+
+            IDisposable handle = Context.Scheduler.ScheduleRoutine(routine);
+            if (!detached)
+            {
+                GetScheduledWork().Add(handle);
+            }
+
+            return handle;
+        }
+
+        protected void RunTask(
+            Func<System.Threading.Tasks.Task> operation,
+            string operationName)
+        {
+            if (operation == null)
+            {
+                throw new ArgumentNullException(nameof(operation));
+            }
+
+            try
+            {
+                System.Threading.Tasks.Task task = operation.Invoke();
+                if (task == null)
+                {
+                    throw new InvalidOperationException(
+                        $"{operationName} returned a null Task.");
+                }
+
+                RunRoutine(WaitForTask(task, operationName));
+            }
+            catch (Exception exception)
+            {
+                ReportTaskFailure(operationName, exception);
+                Fail();
+            }
+        }
+
+        private IEnumerator WaitForTask(
+            System.Threading.Tasks.Task task,
+            string operationName)
+        {
+            while (!task.IsCompleted)
+            {
+                yield return null;
+            }
+
+            if (task.IsCanceled)
+            {
+                InvalidOperationException exception =
+                    new InvalidOperationException(
+                        $"{operationName} was canceled.");
+                ReportTaskFailure(operationName, exception);
+                Fail();
+                yield break;
+            }
+
+            if (task.IsFaulted)
+            {
+                Exception exception =
+                    task.Exception?.GetBaseException() ??
+                    new InvalidOperationException(
+                        $"{operationName} failed without an exception.");
+                ReportTaskFailure(operationName, exception);
+                Fail();
+                yield break;
+            }
+
+            Continue();
+        }
+
+        private void ReportTaskFailure(
+            string operationName,
+            Exception exception)
+        {
+            string message =
+                $"[{GetType().Name}] {operationName} failed: {exception}";
+            Context.Logger.Error(message, exception);
+            Debug.LogError(message);
+        }
+
+        private static int GetStableItemId(string value)
+        {
+            unchecked
+            {
+                int hash = 17;
+                for (int index = 0; index < value.Length; index++)
+                {
+                    hash = hash * 31 + value[index];
+                }
+
+                return hash;
+            }
+        }
+
+        private void InvokeScheduledMethod(string methodName)
+        {
+            const BindingFlags flags =
+                BindingFlags.Instance |
+                BindingFlags.NonPublic |
+                BindingFlags.Public;
+            MethodInfo method = GetType().GetMethod(methodName, flags);
+            method?.Invoke(this, null);
+        }
+
+        private void CancelScheduledWork()
+        {
+            if (scheduledWork == null)
             {
                 return;
             }
 
-            actionCompleted = true;
-            Action completion = onCompleteCallback;
-            Action<ActionExecutionStatus> statusCompletion = onStatusCompleteCallback;
-            onCompleteCallback = null;
-            onStatusCompleteCallback = null;
-            completion?.Invoke();
-            statusCompletion?.Invoke(status);
-        }
-
-        private void CancelCompletionCallback()
-        {
-            actionCompleted = true;
-            onCompleteCallback = null;
-            onStatusCompleteCallback = null;
-        }
-
-        protected System.Collections.Generic.List<Scaffold.Variable> referencedVariables = new System.Collections.Generic.List<Scaffold.Variable>();
-
-        protected void Invoke(string methodName, float delay)
-        {
-            if (blackboard != null)
+            foreach (IDisposable handle in scheduledWork)
             {
-                blackboard.StartCoroutine(InvokeCoroutine(methodName, delay));
+                handle.Dispose();
             }
+
+            scheduledWork.Clear();
         }
 
-        private System.Collections.IEnumerator InvokeCoroutine(string methodName, float delay)
+        private List<IDisposable> GetScheduledWork()
         {
-            yield return new UnityEngine.WaitForSeconds(delay);
-            System.Reflection.MethodInfo method = GetType().GetMethod(methodName, System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Public);
-            if (method != null)
+            if (scheduledWork == null)
             {
-                method.Invoke(this, null);
+                scheduledWork = new List<IDisposable>();
             }
-        }
 
-        // Stubs to fix compilation errors in migrated classes
-        public virtual bool IsReorderableArray(string propertyName) { return false; }
-        protected virtual void RefreshVariableCache() { }
-        public virtual bool IsPropertyVisible(string propertyName) { return true; }
-        public virtual void OnValidate() { }
-        public virtual void GetConnectedBlocks(ref System.Collections.Generic.List<Block> connectedBlocks) { }
-        public virtual string GetLocationIdentifier() { return GetType().Name; }
+            return scheduledWork;
+        }
     }
 }

@@ -1,61 +1,97 @@
-# Block Inspector layout
+# Blackboard graph editor
 
-The Block Inspector organizes a selected Block into four visual areas:
+The Blackboard window restores the graph-first Scaffold authoring workflow while
+editing managed definitions rather than component-owned nodes.
 
-1. **Identity card** — flow-graph icon, unique Block Name, direct Tint swatch, and
-   Description.
-2. **Execution summary** — compact Execution, Await, and Event headers above their
-   value-only controls. It uses three columns when space permits and stacks the controls
-   vertically in a narrow Inspector.
-3. **Behaviour & Timing** — expanded by default; contains auto-selection and selected
-   event-handler settings with their help text.
-4. **Callers** — collapsed by default; computes its read-only caller list only when
-   expanded.
+## Open and navigate
 
-The Commands list and selected command editor retain their current interactions. A new
-Invoke Action initially displays `Invoke Action`; after its first action is added, the
-list item uses that action's type name as its visual summary. The detail editor remains
-headed `Invoke Action` so the enclosing collection is clear.
+Open **Window > Scaffold > Blackboard**, use **Open Blackboard Window** on a
+`BlackboardBehaviour` or `BlackboardDefinitionAsset`, or click the flow-graph icon in
+the Hierarchy. Direct, asset-backed, and nested Blackboard-variable sources all open
+in the same window. Nested sources expose **Back** to return to their source
+Blackboard.
 
-Dragging a standalone action into an Invoke Action accepts the drop over the full destination
-group, including its header, a collapsed group, and a single-action row. The active destination
-uses a blue outline and the `Drop action into Invoke Action` label. Dragging a nested action to a
-specific child still inserts at that child position; dragging a standalone action over the upper
-or lower half of a child shows an insertion line and uses that exact index. Dropping elsewhere in
-a destination group appends it.
+The canvas uses the established Scaffold grid and node textures. Pan with the middle
+mouse button or Alt-drag, zoom around the pointer with the scroll wheel, and use
+**Frame** or **Layout** from the toolbar. Search matches Block names and action
+summaries; **Focus** centers the first result.
 
-## Description and tint
+## Selection and graph commands
 
-Description starts as a single line. It grows with wrapped content up to four lines and
-then uses a vertical scroll view. This keeps empty blocks compact without hiding longer
-documentation.
+Click a Block to select it, use Shift/Cmd/Ctrl for additive selection, or drag on
+empty canvas space to box-select. Dragging a selected Block moves the complete
+selection as one Undo operation.
 
-All Inspector scroll views are vertical-only. The block and command layouts avoid fixed
-minimum widths so a narrow Inspector reflows instead of exposing a horizontal scrollbar.
+The canvas supports Add, Copy, Cut, Paste, Duplicate, Delete, Select All, and Frame
+All through its context menu and Unity's standard keyboard commands. Copied managed
+graphs regenerate every definition ID while preserving explicit Unity object
+references.
 
-The identity card always shows the tint swatch. Editing it sets the serialized tint and
-enables `useCustomTint`; there is no separate Custom Tint toggle in the Inspector.
+Call, Menu, and Menu Timer actions expose their current Block relationships as lines
+on the canvas. Missing targets remain unresolved instead of creating guessed links.
 
-## Shared IMGUI stylesheet
+## Block inspector
 
-`Scripts/Editor/BlockInspectorStyleSheet.cs` is the shared IMGUI stylesheet for the
-Block Inspector. It owns cached styles and the spacing/Description height constants used
-by the identity card, section cards, summary columns, and Description text area. Use it
-for future Block Inspector visual work instead of adding inline styles or spacing values.
+The right pane edits the selected Block:
 
-## Flow-graph icon
+- name, authoring description, and optional tint;
+- execution, await, order, and repeat settings;
+- categorized searchable trigger selection and trigger properties;
+- named action tracks and their execution settings;
+- readable action names, summaries, Enabled state, Utility/Weight options, and
+  serialized managed properties;
+- action reorder, cross-track drag/drop, grouping, duplication, deletion, range
+  selection, and interruption targets.
 
-`EditorResources/Icons/flow_graph.png` is the light-skin icon and
-`EditorResources/Icons/Pro/flow_graph.png` is its dark-skin counterpart. Both are
-registered through `ScaffoldEditorResources.FlowGraph` and are used by the Block
-Inspector and the Unity Hierarchy.
+The Block list and the selected-action inspector use separate vertical regions. The
+upper region owns the Block, trigger, track, and action-list scroll. Selecting exactly
+one action shows its help and editable properties in the lower preview region, so
+expanding action data no longer shifts or hides the main list. Drag the horizontal
+divider to allocate more space to either region.
 
-`Scripts/Editor/BlockInspector.cs.meta` separately assigns the Free flow-graph texture
-to Unity's native `(Block Inspector)` object header. It is not controlled by
-`ScaffoldEditorResources`.
+Type selectors expose only public, constructible managed definitions. Actions also
+require `CommandInfo` menu metadata, matching the legacy command selector and keeping
+internal `IAction` wrappers out of **Add Action**. Existing serialized wrappers are
+preserved for compatibility, but they cannot be added again through the picker.
+Fallback labels remove implementation suffixes such as `TriggerDefinition`,
+`ActionDefinition`, and `VariableDefinition`, and the trigger selector includes an
+explicit **None** option.
 
-After adding or renaming an editor icon, select
-`EditorResources/ScaffoldEditorResources.asset` and choose **Sync with EditorResources
-folder**. Review and commit the resulting
-`Scripts/Editor/ScaffoldEditorResourcesGenerated.cs` change together with the asset and
-its `.meta` files.
+Nested managed properties retain their disclosure state when the detail pane repaints
+or recreates its temporary `SerializedObject`. Foldouts such as **Target** and
+**Duration** therefore remain expanded while their child fields are edited.
+
+The **Variables** tab creates, duplicates, sorts, reorders, and deletes managed
+variable definitions while exposing their initial values. Stable
+`VariableReference` fields use a scope-aware managed-variable picker. Block-targeting
+actions use a Block popup instead of a raw name field.
+
+Retained value-reference fields use one compact source/value row instead of exposing
+their internal Scope, Key, and Value fields. Blackboard Variable mode lists only
+compatible managed definitions and persists the stable definition ID. Direct
+`VariableProperty` outputs and `AnyVariableAndDataPair` use the same picker; the pair
+shows only the value field matching the selected variable type. GameObject target
+menus list only injected-global Unity object variables currently configured with a
+GameObject.
+
+`Block During Execution` is an Utility Selector option and is hidden for other
+execution methods. `Indent Level` remains derived structural metadata and is not
+designer-facing.
+
+## Play Mode
+
+For a live `BlackboardBehaviour`, the toolbar and context menu expose Execute, Stop,
+Stop All, and Execute From Here. These controls call the existing plain runtime by
+stable definition ID and are disabled for assets, Edit Mode, or unavailable runtimes.
+Node and action status is observational and never writes runtime state into the
+definition.
+
+## Architecture
+
+`BlackboardAuthoringController` is the only mutation boundary. It records Undo,
+marks the asset or component dirty, and maintains selection/group metadata.
+`BlackboardAuthoringMetadata` owns graph positions, description, tint, zoom, scroll,
+and selection; none of this state is cloned into the runtime.
+
+The editor reuses `ScaffoldEditorResources` for familiar visuals, but it does not
+restore legacy Blackboard, Block, Command, EventHandler, or Variable components.

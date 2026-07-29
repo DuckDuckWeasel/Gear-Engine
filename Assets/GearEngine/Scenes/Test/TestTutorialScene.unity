@@ -1,0 +1,2073 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!29 &1
+OcclusionCullingSettings:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_OcclusionBakeSettings:
+    smallestOccluder: 5
+    smallestHole: 0.25
+    backfaceThreshold: 100
+  m_SceneGUID: 00000000000000000000000000000000
+  m_OcclusionCullingData: {fileID: 0}
+--- !u!104 &2
+RenderSettings:
+  m_ObjectHideFlags: 0
+  serializedVersion: 10
+  m_Fog: 0
+  m_FogColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+  m_FogMode: 3
+  m_FogDensity: 0.01
+  m_LinearFogStart: 0
+  m_LinearFogEnd: 300
+  m_AmbientSkyColor: {r: 0.212, g: 0.227, b: 0.259, a: 1}
+  m_AmbientEquatorColor: {r: 0.114, g: 0.125, b: 0.133, a: 1}
+  m_AmbientGroundColor: {r: 0.047, g: 0.043, b: 0.035, a: 1}
+  m_AmbientIntensity: 1
+  m_AmbientMode: 3
+  m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
+  m_SkyboxMaterial: {fileID: 0}
+  m_HaloStrength: 0.5
+  m_FlareStrength: 1
+  m_FlareFadeSpeed: 3
+  m_HaloTexture: {fileID: 0}
+  m_SpotCookie: {fileID: 10001, guid: 0000000000000000e000000000000000, type: 0}
+  m_DefaultReflectionMode: 0
+  m_DefaultReflectionResolution: 128
+  m_ReflectionBounces: 1
+  m_ReflectionIntensity: 1
+  m_CustomReflection: {fileID: 0}
+  m_Sun: {fileID: 0}
+  m_UseRadianceAmbientProbe: 0
+--- !u!157 &3
+LightmapSettings:
+  m_ObjectHideFlags: 0
+  serializedVersion: 13
+  m_BakeOnSceneLoad: 0
+  m_GISettings:
+    serializedVersion: 2
+    m_BounceScale: 1
+    m_IndirectOutputScale: 1
+    m_AlbedoBoost: 1
+    m_EnvironmentLightingMode: 0
+    m_EnableBakedLightmaps: 0
+    m_EnableRealtimeLightmaps: 0
+  m_LightmapEditorSettings:
+    serializedVersion: 12
+    m_Resolution: 2
+    m_BakeResolution: 40
+    m_AtlasSize: 1024
+    m_AO: 0
+    m_AOMaxDistance: 1
+    m_CompAOExponent: 1
+    m_CompAOExponentDirect: 0
+    m_ExtractAmbientOcclusion: 0
+    m_Padding: 2
+    m_LightmapParameters: {fileID: 0}
+    m_LightmapsBakeMode: 1
+    m_TextureCompression: 1
+    m_ReflectionCompression: 2
+    m_MixedBakeMode: 2
+    m_BakeBackend: 2
+    m_PVRSampling: 1
+    m_PVRDirectSampleCount: 32
+    m_PVRSampleCount: 512
+    m_PVRBounces: 2
+    m_PVREnvironmentSampleCount: 256
+    m_PVREnvironmentReferencePointCount: 2048
+    m_PVRFilteringMode: 1
+    m_PVRDenoiserTypeDirect: 1
+    m_PVRDenoiserTypeIndirect: 1
+    m_PVRDenoiserTypeAO: 1
+    m_PVRFilterTypeDirect: 0
+    m_PVRFilterTypeIndirect: 0
+    m_PVRFilterTypeAO: 0
+    m_PVREnvironmentMIS: 1
+    m_PVRCulling: 1
+    m_PVRFilteringGaussRadiusDirect: 1
+    m_PVRFilteringGaussRadiusIndirect: 1
+    m_PVRFilteringGaussRadiusAO: 1
+    m_PVRFilteringAtrousPositionSigmaDirect: 0.5
+    m_PVRFilteringAtrousPositionSigmaIndirect: 2
+    m_PVRFilteringAtrousPositionSigmaAO: 1
+    m_ExportTrainingData: 0
+    m_TrainingDataDestination: TrainingData
+    m_LightProbeSampleCountMultiplier: 4
+  m_LightingDataAsset: {fileID: 20201, guid: 0000000000000000f000000000000000, type: 0}
+  m_LightingSettings: {fileID: 0}
+--- !u!196 &4
+NavMeshSettings:
+  serializedVersion: 2
+  m_ObjectHideFlags: 0
+  m_BuildSettings:
+    serializedVersion: 3
+    agentTypeID: 0
+    agentRadius: 0.5
+    agentHeight: 2
+    agentSlope: 45
+    agentClimb: 0.4
+    ledgeDropHeight: 0
+    maxJumpAcrossDistance: 0
+    minRegionArea: 2
+    manualCellSize: 0
+    cellSize: 0.16666667
+    manualTileSize: 0
+    tileSize: 256
+    buildHeightMesh: 0
+    maxJobWorkers: 0
+    preserveTilesOutsideBounds: 0
+    debug:
+      m_Flags: 0
+  m_NavMeshData: {fileID: 0}
+--- !u!1 &83932037
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 83932041}
+  - component: {fileID: 83932040}
+  - component: {fileID: 83932039}
+  - component: {fileID: 83932038}
+  m_Layer: 0
+  m_Name: Camera
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &83932038
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 83932037}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a79441f348de89743a2939f4d699eac1, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.UniversalAdditionalCameraData
+  m_RenderShadows: 1
+  m_RequiresDepthTextureOption: 2
+  m_RequiresOpaqueTextureOption: 2
+  m_CameraType: 0
+  m_Cameras: []
+  m_RendererIndex: -1
+  m_VolumeLayerMask:
+    serializedVersion: 2
+    m_Bits: 1
+  m_VolumeTrigger: {fileID: 0}
+  m_VolumeFrameworkUpdateModeOption: 2
+  m_RenderPostProcessing: 0
+  m_Antialiasing: 0
+  m_AntialiasingQuality: 2
+  m_StopNaN: 0
+  m_Dithering: 0
+  m_ClearDepth: 1
+  m_AllowXRRendering: 1
+  m_AllowHDROutput: 1
+  m_UseScreenCoordOverride: 0
+  m_ScreenSizeOverride: {x: 0, y: 0, z: 0, w: 0}
+  m_ScreenCoordScaleBias: {x: 0, y: 0, z: 0, w: 0}
+  m_RequiresDepthTexture: 0
+  m_RequiresColorTexture: 0
+  m_TaaSettings:
+    m_Quality: 3
+    m_FrameInfluence: 0.1
+    m_JitterScale: 1
+    m_MipBias: 0
+    m_VarianceClampScale: 0.9
+    m_ContrastAdaptiveSharpening: 0
+  m_Version: 2
+--- !u!81 &83932039
+AudioListener:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 83932037}
+  m_Enabled: 1
+--- !u!20 &83932040
+Camera:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 83932037}
+  m_Enabled: 1
+  serializedVersion: 2
+  m_ClearFlags: 1
+  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_projectionMatrixMode: 1
+  m_GateFitMode: 2
+  m_FOVAxisMode: 0
+  m_Iso: 200
+  m_ShutterSpeed: 0.005
+  m_Aperture: 16
+  m_FocusDistance: 10
+  m_FocalLength: 50
+  m_BladeCount: 5
+  m_Curvature: {x: 2, y: 11}
+  m_BarrelClipping: 0.25
+  m_Anamorphism: 0
+  m_SensorSize: {x: 36, y: 24}
+  m_LensShift: {x: 0, y: 0}
+  m_NormalizedViewPortRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 1
+    height: 1
+  near clip plane: 0.3
+  far clip plane: 1000
+  field of view: 60
+  orthographic: 1
+  orthographic size: 0.086602546
+  m_Depth: 0
+  m_CullingMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_RenderingPath: -1
+  m_TargetTexture: {fileID: 0}
+  m_TargetDisplay: 0
+  m_TargetEye: 3
+  m_HDR: 1
+  m_AllowMSAA: 1
+  m_AllowDynamicResolution: 0
+  m_ForceIntoRT: 0
+  m_OcclusionCulling: 1
+  m_StereoConvergence: 10
+  m_StereoSeparation: 0.022
+--- !u!4 &83932041
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 83932037}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: -10}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &253973450
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 253973451}
+  - component: {fileID: 253973453}
+  - component: {fileID: 253973452}
+  m_Layer: 5
+  m_Name: Text (TMP)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &253973451
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 253973450}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 478737326}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &253973452
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 253973450}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_text: Mouse Over
+  m_isRightToLeft: 0
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontSharedMaterials: []
+  m_fontMaterial: {fileID: 0}
+  m_fontMaterials: []
+  m_fontColor32:
+    serializedVersion: 2
+    rgba: 4278190080
+  m_fontColor: {r: 0, g: 0, b: 0, a: 1}
+  m_enableVertexGradient: 0
+  m_colorMode: 3
+  m_fontColorGradient:
+    topLeft: {r: 1, g: 1, b: 1, a: 1}
+    topRight: {r: 1, g: 1, b: 1, a: 1}
+    bottomLeft: {r: 1, g: 1, b: 1, a: 1}
+    bottomRight: {r: 1, g: 1, b: 1, a: 1}
+  m_fontColorGradientPreset: {fileID: 0}
+  m_spriteAsset: {fileID: 0}
+  m_tintAllSprites: 0
+  m_StyleSheet: {fileID: 0}
+  m_TextStyleHashCode: -1183493901
+  m_overrideHtmlColors: 0
+  m_faceColor:
+    serializedVersion: 2
+    rgba: 4294967295
+  m_fontSize: 72
+  m_fontSizeBase: 80
+  m_fontWeight: 400
+  m_enableAutoSizing: 1
+  m_fontSizeMin: 18
+  m_fontSizeMax: 72
+  m_fontStyle: 17
+  m_HorizontalAlignment: 2
+  m_VerticalAlignment: 512
+  m_textAlignment: 65535
+  m_characterSpacing: 0
+  m_characterHorizontalScale: 1
+  m_wordSpacing: 0
+  m_lineSpacing: 0
+  m_lineSpacingMax: 0
+  m_paragraphSpacing: 0
+  m_charWidthMaxAdj: 0
+  m_TextWrappingMode: 1
+  m_wordWrappingRatios: 0.4
+  m_overflowMode: 0
+  m_linkedTextComponent: {fileID: 0}
+  parentLinkedComponent: {fileID: 0}
+  m_enableKerning: 0
+  m_ActiveFontFeatures: 6e72656b
+  m_enableExtraPadding: 0
+  checkPaddingRequired: 0
+  m_isRichText: 1
+  m_EmojiFallbackSupport: 1
+  m_parseCtrlCharacters: 1
+  m_isOrthographic: 1
+  m_isCullingEnabled: 0
+  m_horizontalMapping: 0
+  m_verticalMapping: 0
+  m_uvLineOffset: 0
+  m_geometrySortingOrder: 0
+  m_IsTextObjectScaleStatic: 0
+  m_VertexBufferAutoSizeReduction: 0
+  m_useMaxVisibleDescender: 1
+  m_pageToDisplay: 1
+  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_isUsingLegacyAnimationComponent: 0
+  m_isVolumetricText: 0
+  m_hasFontAssetChanged: 0
+  m_baseMaterial: {fileID: 0}
+  m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!222 &253973453
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 253973450}
+  m_CullTransparentMesh: 1
+--- !u!1 &442983550
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 442983553}
+  - component: {fileID: 442983552}
+  - component: {fileID: 442983551}
+  m_Layer: 0
+  m_Name: EventSystem
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &442983551
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 442983550}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 01614664b831546d2ae94a42149d80ac, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Unity.InputSystem::UnityEngine.InputSystem.UI.InputSystemUIInputModule
+  m_SendPointerHoverToParent: 1
+  m_MoveRepeatDelay: 0.5
+  m_MoveRepeatRate: 0.1
+  m_XRTrackingOrigin: {fileID: 0}
+  m_ActionsAsset: {fileID: -944628639613478452, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
+  m_PointAction: {fileID: -1654692200621890270, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
+  m_MoveAction: {fileID: -8784545083839296357, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
+  m_SubmitAction: {fileID: 392368643174621059, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
+  m_CancelAction: {fileID: 7727032971491509709, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
+  m_LeftClickAction: {fileID: 3001919216989983466, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
+  m_MiddleClickAction: {fileID: -2185481485913320682, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
+  m_RightClickAction: {fileID: -4090225696740746782, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
+  m_ScrollWheelAction: {fileID: 6240969308177333660, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
+  m_TrackedDevicePositionAction: {fileID: 6564999863303420839, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
+  m_TrackedDeviceOrientationAction: {fileID: 7970375526676320489, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
+  m_DeselectOnBackgroundClick: 1
+  m_PointerBehavior: 0
+  m_CursorLockBehavior: 0
+  m_ScrollDeltaPerTick: 6
+--- !u!114 &442983552
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 442983550}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 76c392e42b5098c458856cdf6ecaaaa1, type: 3}
+  m_Name:
+  m_EditorClassIdentifier:
+  m_FirstSelected: {fileID: 0}
+  m_sendNavigationEvents: 1
+  m_DragThreshold: 5
+--- !u!4 &442983553
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 442983550}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &478737325
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 478737326}
+  - component: {fileID: 478737328}
+  - component: {fileID: 478737327}
+  m_Layer: 5
+  m_Name: Image
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &478737326
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 478737325}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 253973451}
+  m_Father: {fileID: 905234846}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 500}
+  m_SizeDelta: {x: 635, y: 300}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &478737327
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 478737325}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 4833926174111549726, guid: a83844f25c112764c92f68c0403d549a, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 1
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &478737328
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 478737325}
+  m_CullTransparentMesh: 1
+--- !u!1 &692456171
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 692456172}
+  - component: {fileID: 692456174}
+  - component: {fileID: 692456173}
+  m_Layer: 5
+  m_Name: Text (TMP)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &692456172
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 692456171}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1805717741}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &692456173
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 692456171}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_text: Click
+  m_isRightToLeft: 0
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontSharedMaterials: []
+  m_fontMaterial: {fileID: 0}
+  m_fontMaterials: []
+  m_fontColor32:
+    serializedVersion: 2
+    rgba: 4278190080
+  m_fontColor: {r: 0, g: 0, b: 0, a: 1}
+  m_enableVertexGradient: 0
+  m_colorMode: 3
+  m_fontColorGradient:
+    topLeft: {r: 1, g: 1, b: 1, a: 1}
+    topRight: {r: 1, g: 1, b: 1, a: 1}
+    bottomLeft: {r: 1, g: 1, b: 1, a: 1}
+    bottomRight: {r: 1, g: 1, b: 1, a: 1}
+  m_fontColorGradientPreset: {fileID: 0}
+  m_spriteAsset: {fileID: 0}
+  m_tintAllSprites: 0
+  m_StyleSheet: {fileID: 0}
+  m_TextStyleHashCode: -1183493901
+  m_overrideHtmlColors: 0
+  m_faceColor:
+    serializedVersion: 2
+    rgba: 4294967295
+  m_fontSize: 72
+  m_fontSizeBase: 80
+  m_fontWeight: 400
+  m_enableAutoSizing: 1
+  m_fontSizeMin: 18
+  m_fontSizeMax: 72
+  m_fontStyle: 17
+  m_HorizontalAlignment: 2
+  m_VerticalAlignment: 512
+  m_textAlignment: 65535
+  m_characterSpacing: 0
+  m_characterHorizontalScale: 1
+  m_wordSpacing: 0
+  m_lineSpacing: 0
+  m_lineSpacingMax: 0
+  m_paragraphSpacing: 0
+  m_charWidthMaxAdj: 0
+  m_TextWrappingMode: 1
+  m_wordWrappingRatios: 0.4
+  m_overflowMode: 0
+  m_linkedTextComponent: {fileID: 0}
+  parentLinkedComponent: {fileID: 0}
+  m_enableKerning: 0
+  m_ActiveFontFeatures: 6e72656b
+  m_enableExtraPadding: 0
+  checkPaddingRequired: 0
+  m_isRichText: 1
+  m_EmojiFallbackSupport: 1
+  m_parseCtrlCharacters: 1
+  m_isOrthographic: 1
+  m_isCullingEnabled: 0
+  m_horizontalMapping: 0
+  m_verticalMapping: 0
+  m_uvLineOffset: 0
+  m_geometrySortingOrder: 0
+  m_IsTextObjectScaleStatic: 0
+  m_VertexBufferAutoSizeReduction: 0
+  m_useMaxVisibleDescender: 1
+  m_pageToDisplay: 1
+  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_isUsingLegacyAnimationComponent: 0
+  m_isVolumetricText: 0
+  m_hasFontAssetChanged: 0
+  m_baseMaterial: {fileID: 0}
+  m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!222 &692456174
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 692456171}
+  m_CullTransparentMesh: 1
+--- !u!1 &905234842
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 905234846}
+  - component: {fileID: 905234845}
+  - component: {fileID: 905234844}
+  - component: {fileID: 905234847}
+  m_Layer: 5
+  m_Name: Canvas
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &905234844
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 905234842}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.CanvasScaler
+  m_UiScaleMode: 1
+  m_ReferencePixelsPerUnit: 100
+  m_ScaleFactor: 1
+  m_ReferenceResolution: {x: 1920, y: 1080}
+  m_ScreenMatchMode: 0
+  m_MatchWidthOrHeight: 0
+  m_PhysicalUnit: 3
+  m_FallbackScreenDPI: 96
+  m_DefaultSpriteDPI: 96
+  m_DynamicPixelsPerUnit: 1
+  m_PresetInfoIsWorld: 0
+--- !u!223 &905234845
+Canvas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 905234842}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_RenderMode: 0
+  m_Camera: {fileID: 0}
+  m_PlaneDistance: 100
+  m_PixelPerfect: 0
+  m_ReceivesEvents: 1
+  m_OverrideSorting: 0
+  m_OverridePixelPerfect: 0
+  m_SortingBucketNormalizedSize: 0
+  m_VertexColorAlwaysGammaSpace: 0
+  m_UseReflectionProbes: 0
+  m_AdditionalShaderChannelsFlag: 25
+  m_UpdateRectTransformForStandalone: 0
+  m_SortingLayerID: 0
+  m_SortingOrder: 0
+  m_TargetDisplay: 0
+--- !u!224 &905234846
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 905234842}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 0, y: 0, z: 0}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 478737326}
+  - {fileID: 1805717741}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0, y: 0}
+--- !u!114 &905234847
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 905234842}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e13a52810d4d543308fd34e130e622d7, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Scaffold.Input::Scaffold.Input.FilteredGraphicRaycaster
+  m_IgnoreReversedGraphics: 1
+  m_BlockingObjects: 0
+  m_BlockingMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  useIndividualFilterRaycast: 0
+--- !u!1 &1511811918
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1511811921}
+  - component: {fileID: 1511811920}
+  - component: {fileID: 1511811919}
+  m_Layer: 0
+  m_Name: Execution Matrix
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1511811919
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1511811918}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 22768aba6818d42f8814efc0e87773a8, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Scaffold.VisualScripting.Unity::Scaffold.VisualScripting.Unity.BlackboardBehaviour
+  definitionReference:
+    source: 0
+    directDefinition:
+      definitionId: ab3121499c4d4248b36b984e139062a2
+      name: Execution Matrix
+      blocks:
+      - definitionId: cf7265faf135474f99a17f0e938df0b0
+        name: Sequence - Ordered
+        trigger:
+          rid: 3466830060293455876
+        executionMethod: 0
+        awaitMode: 0
+        orderMode: 0
+        avoidRepeatingLastAction: 0
+        tracks:
+        - definitionId: 3e43bf1d934e4c66a64b03b7fe1c3f79
+          name: Primary
+          actionList:
+            definitionId: 17d2b8f889884943876502433dad6272
+            executionMethod: 0
+            awaitMode: 0
+            orderMode: 0
+            avoidRepeatingLastAction: 0
+            actions:
+            - rid: 3466830060293455877
+            - rid: 3466830060293455878
+            - rid: 3466830060293455879
+      - definitionId: ef4d1bc25a184671b7cf3117cbc612cb
+        name: Sequence - Random
+        trigger:
+          rid: 3466830060293455880
+        executionMethod: 0
+        awaitMode: 0
+        orderMode: 1
+        avoidRepeatingLastAction: 0
+        tracks:
+        - definitionId: e481f2f3502f46d29e0db99e9ca8a4b2
+          name: Primary
+          actionList:
+            definitionId: 1a77fb22bb8c4220b76da2d8759ffb6e
+            executionMethod: 0
+            awaitMode: 0
+            orderMode: 0
+            avoidRepeatingLastAction: 0
+            actions:
+            - rid: 3466830060293455881
+            - rid: 3466830060293455882
+            - rid: 3466830060293455883
+      - definitionId: 66e83c22a37c46e998a9b5859f85d2aa
+        name: Sequence - Shuffle
+        trigger:
+          rid: 3466830060293455884
+        executionMethod: 0
+        awaitMode: 0
+        orderMode: 2
+        avoidRepeatingLastAction: 0
+        tracks:
+        - definitionId: b3ada4147b7f434498d295105bff89c3
+          name: Primary
+          actionList:
+            definitionId: 4d89044bc5cc435c9b6fcfc948e84e38
+            executionMethod: 0
+            awaitMode: 0
+            orderMode: 0
+            avoidRepeatingLastAction: 0
+            actions:
+            - rid: 3466830060293455885
+            - rid: 3466830060293455886
+            - rid: 3466830060293455887
+      - definitionId: 4e72eb4de58e4f4295bdc3b690a5263e
+        name: Selector - Ordered
+        trigger:
+          rid: 3466830060293455888
+        executionMethod: 1
+        awaitMode: 0
+        orderMode: 0
+        avoidRepeatingLastAction: 0
+        tracks:
+        - definitionId: f5524c75fa8a4f37b111c45364a47a8a
+          name: Primary
+          actionList:
+            definitionId: aa2989443ad6485a956c9e9919a241f0
+            executionMethod: 0
+            awaitMode: 0
+            orderMode: 0
+            avoidRepeatingLastAction: 0
+            actions:
+            - rid: 3466830060293455889
+            - rid: 3466830060293455890
+            - rid: 3466830060293455891
+      - definitionId: a689bebf5c224f8a9b8a6230055bb2fa
+        name: Selector - Random
+        trigger:
+          rid: 3466830060293455892
+        executionMethod: 1
+        awaitMode: 0
+        orderMode: 1
+        avoidRepeatingLastAction: 0
+        tracks:
+        - definitionId: 2a6b701c0d6c41748e5944f7aa85c63f
+          name: Primary
+          actionList:
+            definitionId: 6f4381acd0ab4999a4f39eeada8ea814
+            executionMethod: 0
+            awaitMode: 0
+            orderMode: 0
+            avoidRepeatingLastAction: 0
+            actions:
+            - rid: 3466830060293455893
+            - rid: 3466830060293455894
+            - rid: 3466830060293455895
+      - definitionId: fbccf7ad05024bd18fc316d7c77d569b
+        name: Selector - Shuffle
+        trigger:
+          rid: 3466830060293455896
+        executionMethod: 1
+        awaitMode: 0
+        orderMode: 2
+        avoidRepeatingLastAction: 0
+        tracks:
+        - definitionId: fd712d77abb34382b3c96f04f8650f45
+          name: Primary
+          actionList:
+            definitionId: 089b27de04714bbebd5ffc1d3510b39e
+            executionMethod: 0
+            awaitMode: 0
+            orderMode: 0
+            avoidRepeatingLastAction: 0
+            actions:
+            - rid: 3466830060293455897
+            - rid: 3466830060293455898
+            - rid: 3466830060293455899
+      - definitionId: 6c74f5d43c504d96bc2c51f212235436
+        name: Parallel - Wait All
+        trigger:
+          rid: 3466830060293455900
+        executionMethod: 2
+        awaitMode: 0
+        orderMode: 0
+        avoidRepeatingLastAction: 0
+        tracks:
+        - definitionId: ba5c0bfa44054549a6f30a52b4e51ec9
+          name: Primary
+          actionList:
+            definitionId: 41ea0e6355ca44c08ee93c6ed7f4169c
+            executionMethod: 0
+            awaitMode: 0
+            orderMode: 0
+            avoidRepeatingLastAction: 0
+            actions:
+            - rid: 3466830060293455901
+            - rid: 3466830060293455902
+            - rid: 3466830060293455903
+      - definitionId: df2a71446f6f4d1d87c439cb5aedb45a
+        name: Parallel - Wait Any
+        trigger:
+          rid: 3466830060293455904
+        executionMethod: 2
+        awaitMode: 1
+        orderMode: 0
+        avoidRepeatingLastAction: 0
+        tracks:
+        - definitionId: 36fed247f037461eae79a3d35842f772
+          name: Primary
+          actionList:
+            definitionId: 49976cd8db2446f6bce455e1fc3f4e61
+            executionMethod: 0
+            awaitMode: 0
+            orderMode: 0
+            avoidRepeatingLastAction: 0
+            actions:
+            - rid: 3466830060293455905
+            - rid: 3466830060293455906
+            - rid: 3466830060293455907
+      - definitionId: 7275718cb37c4f7f8368f944bddc977a
+        name: Parallel - Wait None
+        trigger:
+          rid: 3466830060293455908
+        executionMethod: 2
+        awaitMode: 2
+        orderMode: 0
+        avoidRepeatingLastAction: 0
+        tracks:
+        - definitionId: 4d75b7ccb8c34dc1babb8496a527490a
+          name: Primary
+          actionList:
+            definitionId: 2484e34e0c2f4d75b8f57ddde94bd14f
+            executionMethod: 0
+            awaitMode: 0
+            orderMode: 0
+            avoidRepeatingLastAction: 0
+            actions:
+            - rid: 3466830060293455909
+            - rid: 3466830060293455910
+            - rid: 3466830060293455911
+      - definitionId: fa44f4e15eb849959b9f30e9b0b46487
+        name: Parallel Selector - Wait All
+        trigger:
+          rid: 3466830060293455912
+        executionMethod: 3
+        awaitMode: 0
+        orderMode: 0
+        avoidRepeatingLastAction: 0
+        tracks:
+        - definitionId: 5865272bb16042888319167f631ffcd3
+          name: Primary
+          actionList:
+            definitionId: 96335faf2b0744bab107c51cddc93128
+            executionMethod: 0
+            awaitMode: 0
+            orderMode: 0
+            avoidRepeatingLastAction: 0
+            actions:
+            - rid: 3466830060293455913
+            - rid: 3466830060293455914
+            - rid: 3466830060293455915
+      - definitionId: fb65d0b4d44e4f0d9fcb4efa98a4c437
+        name: Parallel Selector - Wait Any
+        trigger:
+          rid: 3466830060293455916
+        executionMethod: 3
+        awaitMode: 1
+        orderMode: 0
+        avoidRepeatingLastAction: 0
+        tracks:
+        - definitionId: 8547b59c41fe4b8c89b280f44dfe62d1
+          name: Primary
+          actionList:
+            definitionId: 2c3aff6a9a9a48138e8eac2ff456a455
+            executionMethod: 0
+            awaitMode: 0
+            orderMode: 0
+            avoidRepeatingLastAction: 0
+            actions:
+            - rid: 3466830060293455917
+            - rid: 3466830060293455918
+            - rid: 3466830060293455919
+      - definitionId: 6d6b9625c2f34f87aedfa038fcdb0fb6
+        name: Parallel Selector - Wait None
+        trigger:
+          rid: 3466830060293455920
+        executionMethod: 3
+        awaitMode: 2
+        orderMode: 0
+        avoidRepeatingLastAction: 0
+        tracks:
+        - definitionId: 3f0587d46fda492999b65a281c4a91d6
+          name: Primary
+          actionList:
+            definitionId: 64810a0b4bf9411ca9a4887462352b6a
+            executionMethod: 0
+            awaitMode: 0
+            orderMode: 0
+            avoidRepeatingLastAction: 0
+            actions:
+            - rid: 3466830060293455921
+            - rid: 3466830060293455922
+            - rid: 3466830060293455923
+      - definitionId: 81859f8001594b768b5f3dc5c172b36f
+        name: Utility Selector - Utility
+        trigger:
+          rid: 3466830060293455924
+        executionMethod: 4
+        awaitMode: 0
+        orderMode: 0
+        avoidRepeatingLastAction: 0
+        tracks:
+        - definitionId: ec644b6b941549578b1d6b87a4065a44
+          name: Primary
+          actionList:
+            definitionId: 6e2f93922f5c407d93f7a95bf41e785d
+            executionMethod: 0
+            awaitMode: 0
+            orderMode: 0
+            avoidRepeatingLastAction: 0
+            actions:
+            - rid: 3466830060293455925
+            - rid: 3466830060293455926
+            - rid: 3466830060293455927
+      variables: []
+    definitionAsset: {fileID: 0}
+    variableId:
+      value:
+  authoringMetadata:
+    scrollPosition: {x: 0, y: 0}
+    zoom: 1
+    selectedBlockId:
+      value:
+    selectedTrackId:
+      value:
+    selectedActionIds: []
+    blockLayouts:
+    - blockId:
+        value: cf7265faf135474f99a17f0e938df0b0
+      position:
+        serializedVersion: 2
+        x: 40
+        y: 40
+        width: 300
+        height: 180
+      useCustomTint: 0
+      tint: {r: 1, g: 1, b: 1, a: 1}
+      expanded: 1
+    - blockId:
+        value: ef4d1bc25a184671b7cf3117cbc612cb
+      position:
+        serializedVersion: 2
+        x: 380
+        y: 40
+        width: 300
+        height: 180
+      useCustomTint: 0
+      tint: {r: 1, g: 1, b: 1, a: 1}
+      expanded: 1
+    - blockId:
+        value: 66e83c22a37c46e998a9b5859f85d2aa
+      position:
+        serializedVersion: 2
+        x: 720
+        y: 40
+        width: 300
+        height: 180
+      useCustomTint: 0
+      tint: {r: 1, g: 1, b: 1, a: 1}
+      expanded: 1
+    - blockId:
+        value: 4e72eb4de58e4f4295bdc3b690a5263e
+      position:
+        serializedVersion: 2
+        x: 40
+        y: 260
+        width: 300
+        height: 180
+      useCustomTint: 0
+      tint: {r: 1, g: 1, b: 1, a: 1}
+      expanded: 1
+    - blockId:
+        value: a689bebf5c224f8a9b8a6230055bb2fa
+      position:
+        serializedVersion: 2
+        x: 380
+        y: 260
+        width: 300
+        height: 180
+      useCustomTint: 0
+      tint: {r: 1, g: 1, b: 1, a: 1}
+      expanded: 1
+    - blockId:
+        value: fbccf7ad05024bd18fc316d7c77d569b
+      position:
+        serializedVersion: 2
+        x: 720
+        y: 260
+        width: 300
+        height: 180
+      useCustomTint: 0
+      tint: {r: 1, g: 1, b: 1, a: 1}
+      expanded: 1
+    - blockId:
+        value: 6c74f5d43c504d96bc2c51f212235436
+      position:
+        serializedVersion: 2
+        x: 40
+        y: 480
+        width: 300
+        height: 180
+      useCustomTint: 0
+      tint: {r: 1, g: 1, b: 1, a: 1}
+      expanded: 1
+    - blockId:
+        value: df2a71446f6f4d1d87c439cb5aedb45a
+      position:
+        serializedVersion: 2
+        x: 380
+        y: 480
+        width: 300
+        height: 180
+      useCustomTint: 0
+      tint: {r: 1, g: 1, b: 1, a: 1}
+      expanded: 1
+    - blockId:
+        value: 7275718cb37c4f7f8368f944bddc977a
+      position:
+        serializedVersion: 2
+        x: 720
+        y: 480
+        width: 300
+        height: 180
+      useCustomTint: 0
+      tint: {r: 1, g: 1, b: 1, a: 1}
+      expanded: 1
+    - blockId:
+        value: fa44f4e15eb849959b9f30e9b0b46487
+      position:
+        serializedVersion: 2
+        x: 40
+        y: 700
+        width: 300
+        height: 180
+      useCustomTint: 0
+      tint: {r: 1, g: 1, b: 1, a: 1}
+      expanded: 1
+    - blockId:
+        value: fb65d0b4d44e4f0d9fcb4efa98a4c437
+      position:
+        serializedVersion: 2
+        x: 380
+        y: 700
+        width: 300
+        height: 180
+      useCustomTint: 0
+      tint: {r: 1, g: 1, b: 1, a: 1}
+      expanded: 1
+    - blockId:
+        value: 6d6b9625c2f34f87aedfa038fcdb0fb6
+      position:
+        serializedVersion: 2
+        x: 720
+        y: 700
+        width: 300
+        height: 180
+      useCustomTint: 0
+      tint: {r: 1, g: 1, b: 1, a: 1}
+      expanded: 1
+    - blockId:
+        value: 81859f8001594b768b5f3dc5c172b36f
+      position:
+        serializedVersion: 2
+        x: 40
+        y: 920
+        width: 300
+        height: 180
+      useCustomTint: 0
+      tint: {r: 1, g: 1, b: 1, a: 1}
+      expanded: 1
+    actionGroups: []
+  sourceBehaviour: {fileID: 0}
+  references:
+    version: 2
+    RefIds:
+    - rid: 3466830060293455876
+      type: {class: GameStartedTriggerDefinition, ns: Scaffold.VisualScripting, asm: Scaffold.VisualScripting.Core}
+      data:
+        definitionId: 396a5fd926c54ad1bb027d93e47badbf
+        enabled: 1
+        waitForFrames: 1
+    - rid: 3466830060293455877
+      type: {class: DebugLog, ns: Scaffold, asm: Game.GearEngine}
+      data:
+        definitionId: 7116ef6ce8c64059b990e839449a678d
+        enabled: 1
+        utility: 10
+        weight: 0
+        hasWeightOverride: 0
+        blockDuringExecution: 0
+        logType: 0
+        logMessage:
+          stringRef: {fileID: 0}
+          source: 0
+          stringSO: {fileID: 0}
+          stringVal: '[Sequence - Ordered] Start'
+    - rid: 3466830060293455878
+      type: {class: Wait, ns: Scaffold, asm: Game.GearEngine}
+      data:
+        definitionId: 88aece80e2d04c149e5f835482d35365
+        enabled: 1
+        utility: 20
+        weight: 0
+        hasWeightOverride: 0
+        blockDuringExecution: 0
+        duration:
+          floatRef: {fileID: 0}
+          source: 0
+          floatSO: {fileID: 0}
+          floatVal: 1
+    - rid: 3466830060293455879
+      type: {class: DebugLog, ns: Scaffold, asm: Game.GearEngine}
+      data:
+        definitionId: 2d872a48c4c7463a988d6b3a285466a4
+        enabled: 1
+        utility: 30
+        weight: 0
+        hasWeightOverride: 0
+        blockDuringExecution: 0
+        logType: 0
+        logMessage:
+          stringRef: {fileID: 0}
+          source: 0
+          stringSO: {fileID: 0}
+          stringVal: '[Sequence - Ordered] End'
+    - rid: 3466830060293455880
+      type: {class: GameStartedTriggerDefinition, ns: Scaffold.VisualScripting, asm: Scaffold.VisualScripting.Core}
+      data:
+        definitionId: 765e3284169447dcb8ebd53d7daf6a12
+        enabled: 1
+        waitForFrames: 1
+    - rid: 3466830060293455881
+      type: {class: DebugLog, ns: Scaffold, asm: Game.GearEngine}
+      data:
+        definitionId: 2def0910c46a401bbe009d90f04ed43d
+        enabled: 1
+        utility: 10
+        weight: 0
+        hasWeightOverride: 0
+        blockDuringExecution: 0
+        logType: 0
+        logMessage:
+          stringRef: {fileID: 0}
+          source: 0
+          stringSO: {fileID: 0}
+          stringVal: '[Sequence - Random] Start'
+    - rid: 3466830060293455882
+      type: {class: Wait, ns: Scaffold, asm: Game.GearEngine}
+      data:
+        definitionId: aeecaa18dcf84fb69ccd916d8a131a89
+        enabled: 1
+        utility: 20
+        weight: 0
+        hasWeightOverride: 0
+        blockDuringExecution: 0
+        duration:
+          floatRef: {fileID: 0}
+          source: 0
+          floatSO: {fileID: 0}
+          floatVal: 1
+    - rid: 3466830060293455883
+      type: {class: DebugLog, ns: Scaffold, asm: Game.GearEngine}
+      data:
+        definitionId: e9d8d29e6ce645b68dc4c5b7ae6b9862
+        enabled: 1
+        utility: 30
+        weight: 0
+        hasWeightOverride: 0
+        blockDuringExecution: 0
+        logType: 0
+        logMessage:
+          stringRef: {fileID: 0}
+          source: 0
+          stringSO: {fileID: 0}
+          stringVal: '[Sequence - Random] End'
+    - rid: 3466830060293455884
+      type: {class: GameStartedTriggerDefinition, ns: Scaffold.VisualScripting, asm: Scaffold.VisualScripting.Core}
+      data:
+        definitionId: 5759492e43d545c48b6036d6b20c9e97
+        enabled: 1
+        waitForFrames: 1
+    - rid: 3466830060293455885
+      type: {class: DebugLog, ns: Scaffold, asm: Game.GearEngine}
+      data:
+        definitionId: 305946b42e954272af737b1f47017054
+        enabled: 1
+        utility: 10
+        weight: 0
+        hasWeightOverride: 0
+        blockDuringExecution: 0
+        logType: 0
+        logMessage:
+          stringRef: {fileID: 0}
+          source: 0
+          stringSO: {fileID: 0}
+          stringVal: '[Sequence - Shuffle] Start'
+    - rid: 3466830060293455886
+      type: {class: Wait, ns: Scaffold, asm: Game.GearEngine}
+      data:
+        definitionId: 9235683f70704e1fb652c07a3f348069
+        enabled: 1
+        utility: 20
+        weight: 0
+        hasWeightOverride: 0
+        blockDuringExecution: 0
+        duration:
+          floatRef: {fileID: 0}
+          source: 0
+          floatSO: {fileID: 0}
+          floatVal: 1
+    - rid: 3466830060293455887
+      type: {class: DebugLog, ns: Scaffold, asm: Game.GearEngine}
+      data:
+        definitionId: 970badd8b3bf43fe9ba1f1b316874846
+        enabled: 1
+        utility: 30
+        weight: 0
+        hasWeightOverride: 0
+        blockDuringExecution: 0
+        logType: 0
+        logMessage:
+          stringRef: {fileID: 0}
+          source: 0
+          stringSO: {fileID: 0}
+          stringVal: '[Sequence - Shuffle] End'
+    - rid: 3466830060293455888
+      type: {class: GameStartedTriggerDefinition, ns: Scaffold.VisualScripting, asm: Scaffold.VisualScripting.Core}
+      data:
+        definitionId: a3c023f6e382415691462fc01e32df8c
+        enabled: 1
+        waitForFrames: 1
+    - rid: 3466830060293455889
+      type: {class: DebugLog, ns: Scaffold, asm: Game.GearEngine}
+      data:
+        definitionId: 5e206aa45d4d4035b169432a85b2bebb
+        enabled: 1
+        utility: 10
+        weight: 0
+        hasWeightOverride: 0
+        blockDuringExecution: 0
+        logType: 0
+        logMessage:
+          stringRef: {fileID: 0}
+          source: 0
+          stringSO: {fileID: 0}
+          stringVal: '[Selector - Ordered] Start'
+    - rid: 3466830060293455890
+      type: {class: Wait, ns: Scaffold, asm: Game.GearEngine}
+      data:
+        definitionId: 510494c83d83439cbcd46d3a3cdb335c
+        enabled: 1
+        utility: 20
+        weight: 0
+        hasWeightOverride: 0
+        blockDuringExecution: 0
+        duration:
+          floatRef: {fileID: 0}
+          source: 0
+          floatSO: {fileID: 0}
+          floatVal: 1
+    - rid: 3466830060293455891
+      type: {class: DebugLog, ns: Scaffold, asm: Game.GearEngine}
+      data:
+        definitionId: fe0428e3b63440ad93dbc86fabe9b5b9
+        enabled: 1
+        utility: 30
+        weight: 0
+        hasWeightOverride: 0
+        blockDuringExecution: 0
+        logType: 0
+        logMessage:
+          stringRef: {fileID: 0}
+          source: 0
+          stringSO: {fileID: 0}
+          stringVal: '[Selector - Ordered] End'
+    - rid: 3466830060293455892
+      type: {class: GameStartedTriggerDefinition, ns: Scaffold.VisualScripting, asm: Scaffold.VisualScripting.Core}
+      data:
+        definitionId: a259f103102847e3aa6d50c0cfd66791
+        enabled: 1
+        waitForFrames: 1
+    - rid: 3466830060293455893
+      type: {class: DebugLog, ns: Scaffold, asm: Game.GearEngine}
+      data:
+        definitionId: a9a2e659f9024a4da934ae703cc7e33c
+        enabled: 1
+        utility: 10
+        weight: 0
+        hasWeightOverride: 0
+        blockDuringExecution: 0
+        logType: 0
+        logMessage:
+          stringRef: {fileID: 0}
+          source: 0
+          stringSO: {fileID: 0}
+          stringVal: '[Selector - Random] Start'
+    - rid: 3466830060293455894
+      type: {class: Wait, ns: Scaffold, asm: Game.GearEngine}
+      data:
+        definitionId: f162cb21c7e94e3cba613370aea9d518
+        enabled: 1
+        utility: 20
+        weight: 0
+        hasWeightOverride: 0
+        blockDuringExecution: 0
+        duration:
+          floatRef: {fileID: 0}
+          source: 0
+          floatSO: {fileID: 0}
+          floatVal: 1
+    - rid: 3466830060293455895
+      type: {class: DebugLog, ns: Scaffold, asm: Game.GearEngine}
+      data:
+        definitionId: bb7e6fd7ebed4fd297122698a88376f4
+        enabled: 1
+        utility: 30
+        weight: 0
+        hasWeightOverride: 0
+        blockDuringExecution: 0
+        logType: 0
+        logMessage:
+          stringRef: {fileID: 0}
+          source: 0
+          stringSO: {fileID: 0}
+          stringVal: '[Selector - Random] End'
+    - rid: 3466830060293455896
+      type: {class: GameStartedTriggerDefinition, ns: Scaffold.VisualScripting, asm: Scaffold.VisualScripting.Core}
+      data:
+        definitionId: 4e4d5caf995d40548dac1f422416f59d
+        enabled: 1
+        waitForFrames: 1
+    - rid: 3466830060293455897
+      type: {class: DebugLog, ns: Scaffold, asm: Game.GearEngine}
+      data:
+        definitionId: 1009bf1f3f214bfc8644169da51c85fb
+        enabled: 1
+        utility: 10
+        weight: 0
+        hasWeightOverride: 0
+        blockDuringExecution: 0
+        logType: 0
+        logMessage:
+          stringRef: {fileID: 0}
+          source: 0
+          stringSO: {fileID: 0}
+          stringVal: '[Selector - Shuffle] Start'
+    - rid: 3466830060293455898
+      type: {class: Wait, ns: Scaffold, asm: Game.GearEngine}
+      data:
+        definitionId: 450de745210947ceb20bc4c2fba66f52
+        enabled: 1
+        utility: 20
+        weight: 0
+        hasWeightOverride: 0
+        blockDuringExecution: 0
+        duration:
+          floatRef: {fileID: 0}
+          source: 0
+          floatSO: {fileID: 0}
+          floatVal: 1
+    - rid: 3466830060293455899
+      type: {class: DebugLog, ns: Scaffold, asm: Game.GearEngine}
+      data:
+        definitionId: 40de423617fe4bf689ed5bd723bd2587
+        enabled: 1
+        utility: 30
+        weight: 0
+        hasWeightOverride: 0
+        blockDuringExecution: 0
+        logType: 0
+        logMessage:
+          stringRef: {fileID: 0}
+          source: 0
+          stringSO: {fileID: 0}
+          stringVal: '[Selector - Shuffle] End'
+    - rid: 3466830060293455900
+      type: {class: GameStartedTriggerDefinition, ns: Scaffold.VisualScripting, asm: Scaffold.VisualScripting.Core}
+      data:
+        definitionId: 616e7d51c1f34c1ca4aaf934dc875d89
+        enabled: 1
+        waitForFrames: 1
+    - rid: 3466830060293455901
+      type: {class: DebugLog, ns: Scaffold, asm: Game.GearEngine}
+      data:
+        definitionId: 737afaf3d4da4d36b4d3e7b251527ad0
+        enabled: 1
+        utility: 10
+        weight: 0
+        hasWeightOverride: 0
+        blockDuringExecution: 0
+        logType: 0
+        logMessage:
+          stringRef: {fileID: 0}
+          source: 0
+          stringSO: {fileID: 0}
+          stringVal: '[Parallel - Wait All] Start'
+    - rid: 3466830060293455902
+      type: {class: Wait, ns: Scaffold, asm: Game.GearEngine}
+      data:
+        definitionId: 022427dce53843c4b61bb2e12094764d
+        enabled: 1
+        utility: 20
+        weight: 0
+        hasWeightOverride: 0
+        blockDuringExecution: 0
+        duration:
+          floatRef: {fileID: 0}
+          source: 0
+          floatSO: {fileID: 0}
+          floatVal: 1
+    - rid: 3466830060293455903
+      type: {class: DebugLog, ns: Scaffold, asm: Game.GearEngine}
+      data:
+        definitionId: d046829b00b54a0e9660092e24fbf919
+        enabled: 1
+        utility: 30
+        weight: 0
+        hasWeightOverride: 0
+        blockDuringExecution: 0
+        logType: 0
+        logMessage:
+          stringRef: {fileID: 0}
+          source: 0
+          stringSO: {fileID: 0}
+          stringVal: '[Parallel - Wait All] End'
+    - rid: 3466830060293455904
+      type: {class: GameStartedTriggerDefinition, ns: Scaffold.VisualScripting, asm: Scaffold.VisualScripting.Core}
+      data:
+        definitionId: 3068886ce421491fb821a9285e3aabbc
+        enabled: 1
+        waitForFrames: 1
+    - rid: 3466830060293455905
+      type: {class: DebugLog, ns: Scaffold, asm: Game.GearEngine}
+      data:
+        definitionId: 18bb6098db6b4b659af03b295b6a6fa3
+        enabled: 1
+        utility: 10
+        weight: 0
+        hasWeightOverride: 0
+        blockDuringExecution: 0
+        logType: 0
+        logMessage:
+          stringRef: {fileID: 0}
+          source: 0
+          stringSO: {fileID: 0}
+          stringVal: '[Parallel - Wait Any] Start'
+    - rid: 3466830060293455906
+      type: {class: Wait, ns: Scaffold, asm: Game.GearEngine}
+      data:
+        definitionId: 0326484bcd33405caef46be3ea9943d5
+        enabled: 1
+        utility: 20
+        weight: 0
+        hasWeightOverride: 0
+        blockDuringExecution: 0
+        duration:
+          floatRef: {fileID: 0}
+          source: 0
+          floatSO: {fileID: 0}
+          floatVal: 1
+    - rid: 3466830060293455907
+      type: {class: DebugLog, ns: Scaffold, asm: Game.GearEngine}
+      data:
+        definitionId: a6382b31985a43b194506ab9d1801dbd
+        enabled: 1
+        utility: 30
+        weight: 0
+        hasWeightOverride: 0
+        blockDuringExecution: 0
+        logType: 0
+        logMessage:
+          stringRef: {fileID: 0}
+          source: 0
+          stringSO: {fileID: 0}
+          stringVal: '[Parallel - Wait Any] End'
+    - rid: 3466830060293455908
+      type: {class: GameStartedTriggerDefinition, ns: Scaffold.VisualScripting, asm: Scaffold.VisualScripting.Core}
+      data:
+        definitionId: cb184647f3dd4872bc8a4ba088015a98
+        enabled: 1
+        waitForFrames: 1
+    - rid: 3466830060293455909
+      type: {class: DebugLog, ns: Scaffold, asm: Game.GearEngine}
+      data:
+        definitionId: 7f03f8eea17042c2b081a815aa9f74a0
+        enabled: 1
+        utility: 10
+        weight: 0
+        hasWeightOverride: 0
+        blockDuringExecution: 0
+        logType: 0
+        logMessage:
+          stringRef: {fileID: 0}
+          source: 0
+          stringSO: {fileID: 0}
+          stringVal: '[Parallel - Wait None] Start'
+    - rid: 3466830060293455910
+      type: {class: Wait, ns: Scaffold, asm: Game.GearEngine}
+      data:
+        definitionId: c833be47a7d04446ba880e4b83bd558d
+        enabled: 1
+        utility: 20
+        weight: 0
+        hasWeightOverride: 0
+        blockDuringExecution: 0
+        duration:
+          floatRef: {fileID: 0}
+          source: 0
+          floatSO: {fileID: 0}
+          floatVal: 1
+    - rid: 3466830060293455911
+      type: {class: DebugLog, ns: Scaffold, asm: Game.GearEngine}
+      data:
+        definitionId: b08f6b5d8c4e4b3781af926584de9a46
+        enabled: 1
+        utility: 30
+        weight: 0
+        hasWeightOverride: 0
+        blockDuringExecution: 0
+        logType: 0
+        logMessage:
+          stringRef: {fileID: 0}
+          source: 0
+          stringSO: {fileID: 0}
+          stringVal: '[Parallel - Wait None] End'
+    - rid: 3466830060293455912
+      type: {class: GameStartedTriggerDefinition, ns: Scaffold.VisualScripting, asm: Scaffold.VisualScripting.Core}
+      data:
+        definitionId: 4fc4e54b385545eb90e8b7f04b10ac51
+        enabled: 1
+        waitForFrames: 1
+    - rid: 3466830060293455913
+      type: {class: DebugLog, ns: Scaffold, asm: Game.GearEngine}
+      data:
+        definitionId: cec8d24d3b6b4935b3f1e69c2ea58c7c
+        enabled: 1
+        utility: 10
+        weight: 0
+        hasWeightOverride: 0
+        blockDuringExecution: 0
+        logType: 0
+        logMessage:
+          stringRef: {fileID: 0}
+          source: 0
+          stringSO: {fileID: 0}
+          stringVal: '[Parallel Selector - Wait All] Start'
+    - rid: 3466830060293455914
+      type: {class: Wait, ns: Scaffold, asm: Game.GearEngine}
+      data:
+        definitionId: b3fa867261924318acd981dcd4d2fdac
+        enabled: 1
+        utility: 20
+        weight: 0
+        hasWeightOverride: 0
+        blockDuringExecution: 0
+        duration:
+          floatRef: {fileID: 0}
+          source: 0
+          floatSO: {fileID: 0}
+          floatVal: 1
+    - rid: 3466830060293455915
+      type: {class: DebugLog, ns: Scaffold, asm: Game.GearEngine}
+      data:
+        definitionId: 9150ecff021f46649143b88937048918
+        enabled: 1
+        utility: 30
+        weight: 0
+        hasWeightOverride: 0
+        blockDuringExecution: 0
+        logType: 0
+        logMessage:
+          stringRef: {fileID: 0}
+          source: 0
+          stringSO: {fileID: 0}
+          stringVal: '[Parallel Selector - Wait All] End'
+    - rid: 3466830060293455916
+      type: {class: GameStartedTriggerDefinition, ns: Scaffold.VisualScripting, asm: Scaffold.VisualScripting.Core}
+      data:
+        definitionId: adebefcbe53d4196886e511b59f42403
+        enabled: 1
+        waitForFrames: 1
+    - rid: 3466830060293455917
+      type: {class: DebugLog, ns: Scaffold, asm: Game.GearEngine}
+      data:
+        definitionId: 8f72898653064e6d862bc47674de36d6
+        enabled: 1
+        utility: 10
+        weight: 0
+        hasWeightOverride: 0
+        blockDuringExecution: 0
+        logType: 0
+        logMessage:
+          stringRef: {fileID: 0}
+          source: 0
+          stringSO: {fileID: 0}
+          stringVal: '[Parallel Selector - Wait Any] Start'
+    - rid: 3466830060293455918
+      type: {class: Wait, ns: Scaffold, asm: Game.GearEngine}
+      data:
+        definitionId: 03361b1acc414d15a4b6064f3ce78e38
+        enabled: 1
+        utility: 20
+        weight: 0
+        hasWeightOverride: 0
+        blockDuringExecution: 0
+        duration:
+          floatRef: {fileID: 0}
+          source: 0
+          floatSO: {fileID: 0}
+          floatVal: 1
+    - rid: 3466830060293455919
+      type: {class: DebugLog, ns: Scaffold, asm: Game.GearEngine}
+      data:
+        definitionId: 7302545a12de4391861a91424dce3991
+        enabled: 1
+        utility: 30
+        weight: 0
+        hasWeightOverride: 0
+        blockDuringExecution: 0
+        logType: 0
+        logMessage:
+          stringRef: {fileID: 0}
+          source: 0
+          stringSO: {fileID: 0}
+          stringVal: '[Parallel Selector - Wait Any] End'
+    - rid: 3466830060293455920
+      type: {class: GameStartedTriggerDefinition, ns: Scaffold.VisualScripting, asm: Scaffold.VisualScripting.Core}
+      data:
+        definitionId: c064049e46d44565a0ef4310f8542e2b
+        enabled: 1
+        waitForFrames: 1
+    - rid: 3466830060293455921
+      type: {class: DebugLog, ns: Scaffold, asm: Game.GearEngine}
+      data:
+        definitionId: 7913d68b32e04f779772cd2739503214
+        enabled: 1
+        utility: 10
+        weight: 0
+        hasWeightOverride: 0
+        blockDuringExecution: 0
+        logType: 0
+        logMessage:
+          stringRef: {fileID: 0}
+          source: 0
+          stringSO: {fileID: 0}
+          stringVal: '[Parallel Selector - Wait None] Start'
+    - rid: 3466830060293455922
+      type: {class: Wait, ns: Scaffold, asm: Game.GearEngine}
+      data:
+        definitionId: 99d376cb22264a3cba9524ca61df1c7f
+        enabled: 1
+        utility: 20
+        weight: 0
+        hasWeightOverride: 0
+        blockDuringExecution: 0
+        duration:
+          floatRef: {fileID: 0}
+          source: 0
+          floatSO: {fileID: 0}
+          floatVal: 1
+    - rid: 3466830060293455923
+      type: {class: DebugLog, ns: Scaffold, asm: Game.GearEngine}
+      data:
+        definitionId: af1263bd9c96478cb30da9b431309c37
+        enabled: 1
+        utility: 30
+        weight: 0
+        hasWeightOverride: 0
+        blockDuringExecution: 0
+        logType: 0
+        logMessage:
+          stringRef: {fileID: 0}
+          source: 0
+          stringSO: {fileID: 0}
+          stringVal: '[Parallel Selector - Wait None] End'
+    - rid: 3466830060293455924
+      type: {class: GameStartedTriggerDefinition, ns: Scaffold.VisualScripting, asm: Scaffold.VisualScripting.Core}
+      data:
+        definitionId: 9e0860e4ed744160a5bc92a5ac5824ca
+        enabled: 1
+        waitForFrames: 1
+    - rid: 3466830060293455925
+      type: {class: DebugLog, ns: Scaffold, asm: Game.GearEngine}
+      data:
+        definitionId: 4989f23ba32b43edbeb8a6b8c532bb75
+        enabled: 1
+        utility: 10
+        weight: 0
+        hasWeightOverride: 0
+        blockDuringExecution: 0
+        logType: 0
+        logMessage:
+          stringRef: {fileID: 0}
+          source: 0
+          stringSO: {fileID: 0}
+          stringVal: '[Utility Selector - Utility] Start'
+    - rid: 3466830060293455926
+      type: {class: Wait, ns: Scaffold, asm: Game.GearEngine}
+      data:
+        definitionId: 4b4b71300a7c4a9090b2e5b82c831c21
+        enabled: 1
+        utility: 20
+        weight: 0
+        hasWeightOverride: 0
+        blockDuringExecution: 0
+        duration:
+          floatRef: {fileID: 0}
+          source: 0
+          floatSO: {fileID: 0}
+          floatVal: 1
+    - rid: 3466830060293455927
+      type: {class: DebugLog, ns: Scaffold, asm: Game.GearEngine}
+      data:
+        definitionId: 0e7270cea70944908dc40cb5cce240bb
+        enabled: 1
+        utility: 30
+        weight: 0
+        hasWeightOverride: 0
+        blockDuringExecution: 0
+        logType: 0
+        logMessage:
+          stringRef: {fileID: 0}
+          source: 0
+          stringSO: {fileID: 0}
+          stringVal: '[Utility Selector - Utility] End'
+--- !u!114 &1511811920
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1511811918}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 859b6cc93d2e64d5d9cce0764c518e90, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Scaffold.VisualScripting.Unity::Scaffold.VisualScripting.Unity.BlackboardLifetimeScope
+  parentReference:
+    TypeName:
+  autoRun: 1
+  autoInjectGameObjects: []
+--- !u!4 &1511811921
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1511811918}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1805717740
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1805717741}
+  - component: {fileID: 1805717744}
+  - component: {fileID: 1805717743}
+  - component: {fileID: 1805717742}
+  m_Layer: 5
+  m_Name: Image (1)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1805717741
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1805717740}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 692456172}
+  m_Father: {fileID: 905234846}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: -500}
+  m_SizeDelta: {x: 635, y: 300}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1805717742
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1805717740}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
+  m_Navigation:
+    m_Mode: 3
+    m_WrapAround: 0
+    m_SelectOnUp: {fileID: 0}
+    m_SelectOnDown: {fileID: 0}
+    m_SelectOnLeft: {fileID: 0}
+    m_SelectOnRight: {fileID: 0}
+  m_Transition: 1
+  m_Colors:
+    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
+    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
+    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_ColorMultiplier: 1
+    m_FadeDuration: 0.1
+  m_SpriteState:
+    m_HighlightedSprite: {fileID: 0}
+    m_PressedSprite: {fileID: 0}
+    m_SelectedSprite: {fileID: 0}
+    m_DisabledSprite: {fileID: 0}
+  m_AnimationTriggers:
+    m_NormalTrigger: Normal
+    m_HighlightedTrigger: Highlighted
+    m_PressedTrigger: Pressed
+    m_SelectedTrigger: Selected
+    m_DisabledTrigger: Disabled
+  m_Interactable: 1
+  m_TargetGraphic: {fileID: 1805717743}
+  m_OnClick:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!114 &1805717743
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1805717740}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 4833926174111549726, guid: a83844f25c112764c92f68c0403d549a, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 1
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &1805717744
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1805717740}
+  m_CullTransparentMesh: 1
+--- !u!1660057539 &9223372036854775807
+SceneRoots:
+  m_ObjectHideFlags: 0
+  m_Roots:
+  - {fileID: 83932041}
+  - {fileID: 610416767}
+  - {fileID: 905234846}
+  - {fileID: 442983553}
+  - {fileID: 1511811921}

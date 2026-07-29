@@ -1,8 +1,6 @@
 using System;
 using GearEngine.Core.Actions;
-
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace Scaffold
 {
@@ -30,14 +28,12 @@ namespace Scaffold
                 return;
             }
 
-            System.Collections.Generic.List<Command> commandList = ParentTrack != null ? ParentTrack.Commands : ParentBlock.CommandList;
-            for (int i = 0; i < commandList.Count; i++)
+            for (int i = 0; i < CurrentActions.Count; i++)
             {
-                Command command = commandList[i];
-                Label label = command as object as Label;
+                Label label = CurrentActions[i] as Label;
                 if (label != null && label.Key == targetLabel.Value)
                 {
-                    Continue(label.CommandIndex + 1);
+                    Continue(i + 1);
                     return;
                 }
             }

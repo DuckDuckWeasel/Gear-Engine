@@ -1,7 +1,7 @@
 using System;
 using GearEngine.Core.Actions;
 
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections.Generic;
 using Scaffold;
 
@@ -11,17 +11,17 @@ namespace Scaffold
     /// Abstract base class for TweenUI commands.
     /// </summary>
     [Serializable]
-    public abstract class TweenUI : ActionBase 
+    public abstract class TweenUI : ActionBase
     {
         [Tooltip("List of objects to be affected by the tween")]
         [SerializeField] protected List<GameObject> targetObjects = new List<GameObject>();
-        
+
         [Tooltip("Type of tween easing to apply")]
         [SerializeField] protected LeanTweenType tweenType = LeanTweenType.easeOutQuad;
-        
+
         [Tooltip("Wait until this command completes before continuing execution")]
         [SerializeField] protected BooleanData waitUntilFinished = new BooleanData(true);
-        
+
         [Tooltip("Time for the tween to complete")]
         [SerializeField] protected FloatData duration = new FloatData(1f);
 
@@ -29,7 +29,7 @@ namespace Scaffold
         {
             for (int i = 0; i < targetObjects.Count; i++)
             {
-                var targetObject = targetObjects[i];
+                GameObject targetObject = targetObjects[i];
                 if (targetObject == null)
                 {
                     continue;
@@ -39,7 +39,7 @@ namespace Scaffold
 
             if (waitUntilFinished)
             {
-                LeanTween.value(host.gameObject, 0f, 1f, duration).setOnComplete(OnComplete);
+                Invoke(nameof(OnComplete), duration.Value);
             }
         }
 
@@ -64,7 +64,7 @@ namespace Scaffold
                 Continue();
                 return;
             }
-            
+
             ApplyTween();
 
             if (!waitUntilFinished)
@@ -73,7 +73,7 @@ namespace Scaffold
             }
         }
 
-        public override void OnCommandAdded(Block parentBlock)
+        public override void OnCommandAdded(Scaffold.VisualScripting.BlockDefinition parentBlock)
         {
             // Add an empty slot by default. Saves an unnecessary user click.
             if (targetObjects.Count == 0)
@@ -96,11 +96,11 @@ namespace Scaffold
                 }
                 return targetObjects[0].name + " = " + GetSummaryValue();
             }
-            
+
             string objectList = "";
             for (int i = 0; i < targetObjects.Count; i++)
             {
-                var go = targetObjects[i];
+                GameObject go = targetObjects[i];
                 if (go == null)
                 {
                     continue;
@@ -114,10 +114,10 @@ namespace Scaffold
                     objectList += ", " + go.name;
                 }
             }
-            
+
             return objectList + " = " + GetSummaryValue();
         }
-        
+
         public override Color GetButtonColor()
         {
             return new Color32(180, 250, 250, 255);

@@ -39,7 +39,7 @@ namespace Scaffold
                 return "Error: no collection selected";
             }
 
-            return integer.Value.ToString() + " on " + collection.Value.name;
+            return integer.Value.ToString() + " on " + collection.Value.Name;
         }
     }
 }

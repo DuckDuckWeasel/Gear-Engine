@@ -6,26 +6,24 @@ using Scaffold.Input;
 using Scaffold.Input.Contracts;
 using System.Reflection;
 using UnityEngine.InputSystem;
-using UnityEngine.InputSystem.LowLevel;
 
 namespace GearEngine.GearEngine.Tests.Editor
 {
-    public class WaitForInputActionBaseTests
+    public class WaitForInputActionBaseTests : InputTestFixture
     {
         [Test]
-        public void InitializeInputService_ReplacesPartialInjectionWithOneGlobalContext()
+        public void InitializeInputService_ReplacesPartialStateWithCoherentLocalServices()
         {
             IEventBus orphanEventBus = new EventController();
             IInputFilterService orphanInputService = new InputFilterService(orphanEventBus);
-            IEventBus installedEventBus = new EventController();
-            IInputFilterService installedInputService = new InputFilterService(installedEventBus);
             TestWaitForInputAction action = new TestWaitForInputAction();
             action.SetInputService(orphanInputService);
 
             action.Initialize();
 
-            Assert.That(action.InputService, Is.SameAs(installedInputService));
-            Assert.That(action.EventBus, Is.SameAs(installedEventBus));
+            Assert.That(action.InputService, Is.Not.Null);
+            Assert.That(action.InputService, Is.Not.SameAs(orphanInputService));
+            Assert.That(action.EventBus, Is.Not.Null);
         }
 
         [Test]
@@ -33,24 +31,15 @@ namespace GearEngine.GearEngine.Tests.Editor
         {
             Mouse mouse = InputSystem.AddDevice<Mouse>();
 
-            try
-            {
-                InputSystem.QueueStateEvent(
-                    mouse,
-                    new MouseState().WithButton(MouseButton.Left));
-                InputSystem.Update();
+            Press(mouse.leftButton);
+            Assert.That(
+                InvokeInputStateMethod("IsPrimaryButtonPressedThisFrame"),
+                Is.True);
 
-                Assert.That(InvokeInputStateMethod("IsPrimaryButtonPressedThisFrame"), Is.True);
-
-                InputSystem.QueueStateEvent(mouse, new MouseState());
-                InputSystem.Update();
-
-                Assert.That(InvokeInputStateMethod("IsPrimaryButtonReleasedThisFrame"), Is.True);
-            }
-            finally
-            {
-                InputSystem.RemoveDevice(mouse);
-            }
+            Release(mouse.leftButton);
+            Assert.That(
+                InvokeInputStateMethod("IsPrimaryButtonReleasedThisFrame"),
+                Is.True);
         }
 
         private static bool InvokeInputStateMethod(string methodName)
@@ -65,13 +54,13 @@ namespace GearEngine.GearEngine.Tests.Editor
 
         private sealed class TestWaitForInputAction : WaitForInputActionBase
         {
-            public IInputFilterService InputService => _inputService;
+            public IInputFilterService InputService => inputService;
 
-            public IEventBus EventBus => _eventBus;
+            public IEventBus EventBus => eventBus;
 
             public void SetInputService(IInputFilterService inputService)
             {
-                _inputService = inputService;
+                this.inputService = inputService;
             }
 
             public void Initialize()

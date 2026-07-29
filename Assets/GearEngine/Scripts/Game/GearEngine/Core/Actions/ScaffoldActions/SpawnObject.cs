@@ -30,6 +30,9 @@ namespace Scaffold
         [Tooltip("If true, will use the Transfrom of this Blackboard for the position and rotation.")]
         [SerializeField] protected BooleanData spawnAtSelf = new BooleanData(false);
 
+        [Tooltip("Explicit transform used when Spawn At Reference is enabled.")]
+        [SerializeField] protected TransformData spawnReference;
+
         [Tooltip("Local position of newly spawned object.")]
         [SerializeField] protected Vector3Data spawnPosition;
 
@@ -70,7 +73,16 @@ namespace Scaffold
             }
             else
             {
-                newObject.gameObject.transform.SetPositionAndRotation(host.transform.position, host.transform.rotation);
+                Transform reference = spawnReference.Value;
+                if (reference == null)
+                {
+                    Debug.LogError("[SpawnObject] Spawn At Reference requires an explicit Transform.");
+                    UnityEngine.Object.Destroy(newObject);
+                    Fail();
+                    return;
+                }
+
+                newObject.transform.SetPositionAndRotation(reference.position, reference.rotation);
             }
 
             newlySpawnedObject.Value = newObject;
@@ -97,7 +109,7 @@ namespace Scaffold
         {
             if (sourceObject.gameObjectRef == variable || parentTransform.transformRef == variable ||
                 spawnAtSelf.booleanRef == variable || spawnPosition.vector3Ref == variable ||
-                spawnRotation.vector3Ref == variable)
+                spawnRotation.vector3Ref == variable || spawnReference.transformRef == variable)
             {
                 return true;
             }

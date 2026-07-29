@@ -2,25 +2,8 @@ using System;
 using GearEngine.Core.Actions;
 
 using UnityEngine;
-using UnityEngine.Serialization;
-
 namespace Scaffold
 {
-    /// <summary>
-    /// Supported target types for messages.
-    /// </summary>
-    public enum MessageTarget
-    {
-        /// <summary>
-        /// Send message to the Blackboard containing the SendMessage command.
-        /// </summary>
-        SameBlackboard,
-        /// <summary>
-        /// Broadcast message to all Blackboards.
-        /// </summary>
-        AllBlackboards
-    }
-
     /// <summary>
     /// Sends a message to either the owner Blackboard or all Blackboards in the scene. Blocks can listen for this message using a Message Received event handler.
     /// </summary>
@@ -50,24 +33,11 @@ namespace Scaffold
 
             if (messageTarget == MessageTarget.SameBlackboard)
             {
-                MessageReceived[] receivers = host.GetComponents<MessageReceived>();
-                if (receivers != null)
-                {
-                    for (int i = 0; i < receivers.Length; i++)
-                    {
-                        receivers[i].OnSendScaffoldMessage(message.Value);
-                    }
-                }
+                GetBlackboard().SendMessage(message.Value);
             }
             else
             {
-                foreach (MessageReceived receiver in Blackboard.MessageReceivers)
-                {
-                    if (receiver != null)
-                    {
-                        receiver.OnSendScaffoldMessage(message.Value);
-                    }
-                }
+                GetBlackboard().BroadcastMessage(message.Value);
             }
 
             Continue();

@@ -1,0 +1,10 @@
+{
+  "scenario": "Expand the Duration managed property in the selected Wait action preview.",
+  "source": "Interactive Unity Blackboard editor window",
+  "criteria": [
+    "Duration displays its nested Float Ref and Source fields.",
+    "Duration remains expanded after an editor repaint.",
+    "The selected Wait action preview remains below the main action-list scroll."
+  ],
+  "capturedAt": "2026-07-28T08:35:15-03:00"
+}

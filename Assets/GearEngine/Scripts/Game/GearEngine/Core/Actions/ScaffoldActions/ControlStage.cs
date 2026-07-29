@@ -6,27 +6,6 @@ using UnityEngine;
 namespace Scaffold
 {
     /// <summary>
-    /// Supported display operations for Stage.
-    /// </summary>
-    public enum StageDisplayType
-    {
-        /// <summary> No operation </summary>
-        None,
-        /// <summary> Show the stage and all portraits. </summary>
-        Show,
-        /// <summary> Hide the stage and all portraits. </summary>
-        Hide,
-        /// <summary> Swap the stage and all portraits with another stage. </summary>
-        Swap,
-        /// <summary> Move stage to the front. </summary>
-        MoveToFront,
-        /// <summary> Undim all portraits on the stage. </summary>
-        UndimAllPortraits,
-        /// <summary> Dim all non-speaking portraits on the stage. </summary>
-        DimNonSpeakingPortraits
-    }
-
-    /// <summary>
     /// Controls the stage on which character portraits are displayed.
     /// </summary>
     [CommandInfo("Narrative",
@@ -37,7 +16,7 @@ namespace Scaffold
     {
         [Tooltip("Stage to display characters on")]
         [SerializeField] protected Stage stage;
-        public virtual Stage _Stage { get { return stage; } }
+        public virtual Stage Stage { get { return stage; } }
 
         [Tooltip("Stage to swap with")]
         [SerializeField] protected Stage replacedStage;
@@ -211,7 +190,7 @@ namespace Scaffold
             return new Color32(230, 200, 250, 255);
         }
 
-        public override void OnCommandAdded(Block parentBlock)
+        public override void OnCommandAdded(Scaffold.VisualScripting.BlockDefinition parentBlock)
         {
             //Default to display type: show
             display = StageDisplayType.Show;

@@ -16,23 +16,23 @@ namespace Scaffold
     {
         [Tooltip("The target UI element(s) whose effects should be cleared. Use Tags or Runtime Anchors.")]
         [SerializeField]
-        private TargetReference _target = new TargetReference();
+        private TargetReference target = new TargetReference();
 
         [Tooltip("If true, clears the effect from ALL objects that match the tag. If false, clears only from the first matching object.")]
         [SerializeField]
-        private bool _clearAllMatching = true;
+        private bool clearAllMatching = true;
 
         public override void OnEnter()
         {
-            if (_target.strategy == TargetResolutionStrategy.Tags && _target.tagFilter.soTags.Count > 0)
+            if (target.strategy == TargetResolutionStrategy.Tags && target.tagFilter.soTags.Count > 0)
             {
                 foreach (TagComponent comp in TagComponent.Instances)
                 {
-                    if (_target.IsMatch(comp.gameObject))
+                    if (IsTargetMatch(target, comp.gameObject))
                     {
                         ClearEffectOnGameObject(comp.gameObject);
 
-                        if (!_clearAllMatching)
+                        if (!clearAllMatching)
                         {
                             break;
                         }
@@ -41,7 +41,7 @@ namespace Scaffold
             }
             else
             {
-                GameObject resolvedTarget = _target.Resolve();
+                GameObject resolvedTarget = ResolveTarget(target);
                 if (resolvedTarget != null)
                 {
                     ClearEffectOnGameObject(resolvedTarget);
@@ -76,9 +76,9 @@ namespace Scaffold
 
         public override bool IsPropertyVisible(string propertyName)
         {
-            if (propertyName == "_clearAllMatching")
+            if (propertyName == nameof(clearAllMatching))
             {
-                return _target != null && _target.strategy == TargetResolutionStrategy.Tags;
+                return target != null && target.strategy == TargetResolutionStrategy.Tags;
             }
             return base.IsPropertyVisible(propertyName);
         }

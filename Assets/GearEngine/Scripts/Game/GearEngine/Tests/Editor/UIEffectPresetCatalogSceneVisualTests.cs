@@ -4,13 +4,16 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using Coffee.UIEffects;
-using GearEngine.GearEngine.Presentation.UI.Input;
 using NUnit.Framework;
 using Scaffold;
+using Scaffold.VisualScripting;
+using Scaffold.VisualScripting.Authoring;
+using Scaffold.VisualScripting.Unity;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using VContainer;
 
 namespace GearEngine.GearEngine.Tests.Editor
 {
@@ -40,10 +43,19 @@ namespace GearEngine.GearEngine.Tests.Editor
         private RenderTexture thumbnailTarget;
         private Texture2D thumbnail;
         private Texture2D contactSheet;
+        private Blackboard runtime;
+        private IObjectResolver container;
+        private IDisposable startedSubscription;
 
         [TearDown]
         public void TearDown()
         {
+            startedSubscription?.Dispose();
+            startedSubscription = null;
+            runtime?.Dispose();
+            runtime = null;
+            container?.Dispose();
+            container = null;
             RestoreCanvasAndCamera();
 
             if (thumbnailTarget != null)
@@ -78,18 +90,58 @@ namespace GearEngine.GearEngine.Tests.Editor
 
             Button button = FindRequiredComponent<Button>(k_buttonName);
             Text label = FindRequiredComponent<Text>(k_labelName);
-            ButtonClicked buttonClicked = UnityEngine.Object.FindAnyObjectByType<ButtonClicked>();
-            InvokeActionCommand command = UnityEngine.Object.FindAnyObjectByType<InvokeActionCommand>();
-            Assert.That(buttonClicked, Is.Not.Null);
-            Assert.That(command, Is.Not.Null);
-
-            CycleUIEffectPreset cycleAction = command.actions.OfType<CycleUIEffectPreset>().Single();
+            BlackboardBehaviour behaviour =
+                UnityEngine.Object.FindAnyObjectByType<BlackboardBehaviour>();
+            Assert.That(behaviour, Is.Not.Null);
+            BlackboardDefinition definition =
+                behaviour.DefinitionReference.ResolveDefinition();
+            CycleUIEffectPreset templateAction = definition.Blocks
+                .SelectMany(block => block.Tracks)
+                .SelectMany(track => track.ActionList.Actions)
+                .OfType<CycleUIEffectPreset>()
+                .Single();
+            Assert.That(
+                GetField<Text>(templateAction, "targetLabel"),
+                Is.SameAs(label));
+            Assert.That(
+                GetField<GameObjectData>(
+                    templateAction,
+                    "targetGameObject").Value,
+                Is.SameAs(button.gameObject));
+            ContainerBuilder builder = new ContainerBuilder();
+            new BlackboardRuntimeInstaller().Install(builder);
+            container = builder.Build();
+            runtime = container.Resolve<BlackboardFactory>().Create(definition);
+            BindableTriggerDefinition runtimeTrigger =
+                runtime.Definition.Blocks.Single().Trigger
+                    as BindableTriggerDefinition;
+            Assert.That(runtimeTrigger, Is.Not.Null);
+            ButtonTriggerSignalSource runtimeSource =
+                runtimeTrigger.Source as ButtonTriggerSignalSource;
+            Assert.That(runtimeSource, Is.Not.Null);
+            Assert.That(runtimeSource.Target, Is.SameAs(button));
+            CycleUIEffectPreset cycleAction = runtime.Definition.Blocks
+                .SelectMany(block => block.Tracks)
+                .SelectMany(track => track.ActionList.Actions)
+                .OfType<CycleUIEffectPreset>()
+                .Single();
+            Assert.That(
+                GetField<Text>(cycleAction, "targetLabel"),
+                Is.SameAs(label));
+            Assert.That(
+                GetField<GameObjectData>(cycleAction, "targetGameObject")
+                    .Value,
+                Is.SameAs(button.gameObject));
             List<UIEffectPreset> presets = GetPresets(cycleAction);
             Assert.That(presets, Is.Not.Empty);
             Assert.That(presets.All(preset => preset != null), Is.True);
+            runtime.Start();
+            int startedBlocks = 0;
+            startedSubscription =
+                runtime.EventBus.Subscribe<BlackboardBlockStartedEvent>(
+                    _ => startedBlocks++);
 
             ConfigureCameraCapture();
-            buttonClicked.Start();
 
             int rows = Mathf.CeilToInt(presets.Count / (float)k_columns);
             contactSheet = new Texture2D(
@@ -101,6 +153,14 @@ namespace GearEngine.GearEngine.Tests.Editor
             for (int index = 0; index < presets.Count; index++)
             {
                 button.onClick.Invoke();
+                Assert.That(
+                    startedBlocks,
+                    Is.EqualTo(index + 1),
+                    $"Button click {index} did not start the runtime Block.");
+                Assert.That(
+                    GetField<int>(cycleAction, "currentIndex"),
+                    Is.EqualTo(index),
+                    $"Runtime action {index} did not execute.");
                 Canvas.ForceUpdateCanvases();
                 CaptureThumbnail();
 
@@ -125,10 +185,30 @@ namespace GearEngine.GearEngine.Tests.Editor
 
         private static List<UIEffectPreset> GetPresets(CycleUIEffectPreset cycleAction)
         {
-            const BindingFlags flags = BindingFlags.Instance | BindingFlags.NonPublic;
-            FieldInfo field = typeof(CycleUIEffectPreset).GetField("presets", flags);
-            Assert.That(field, Is.Not.Null);
-            return field.GetValue(cycleAction) as List<UIEffectPreset>;
+            return GetField<List<UIEffectPreset>>(cycleAction, "presets");
+        }
+
+        private static T GetField<T>(object instance, string fieldName)
+        {
+            Type type = instance.GetType();
+            while (type != null)
+            {
+                FieldInfo field = type.GetField(
+                    fieldName,
+                    BindingFlags.Instance |
+                    BindingFlags.NonPublic |
+                    BindingFlags.Public);
+                if (field != null)
+                {
+                    return (T)field.GetValue(instance);
+                }
+
+                type = type.BaseType;
+            }
+
+            Assert.Fail(
+                $"Field '{fieldName}' was not found on {instance.GetType().Name}.");
+            return default;
         }
 
         private void ConfigureCameraCapture()

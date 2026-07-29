@@ -1,7 +1,9 @@
+using System.Linq;
 using System.Reflection;
 using Coffee.UIEffectInternal;
 using Coffee.UIEffects;
 using NUnit.Framework;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -247,6 +249,84 @@ namespace GearEngine.GearEngine.Tests.Editor
             Assert.Throws<System.ArgumentOutOfRangeException>(() => preset.GetPatternLayer(-1));
             Assert.Throws<System.ArgumentOutOfRangeException>(() => preset.GetPatternLayer(4));
             Assert.Throws<System.ArgumentOutOfRangeException>(() => preset.SetPatternLayer(4, new PatternLayer()));
+        }
+
+        [Test]
+        public void PatternInspector_ProvidesDraggableListAndPreservesIndependentValues()
+        {
+            preset = ScriptableObject.CreateInstance<UIEffectPreset>();
+            preset.SetPatternLayer(0, new PatternLayer
+            {
+                m_Opacity = 0.1f,
+                m_Range = new MinMax01(0.1f, 0.25f),
+                m_Color = Color.red,
+            });
+            preset.SetPatternLayer(1, new PatternLayer
+            {
+                m_Opacity = 0.2f,
+                m_Range = new MinMax01(0.4f, 0.8f),
+                m_Color = Color.green,
+            });
+            UnityEditor.Editor editor = UnityEditor.Editor.CreateEditor(preset);
+
+            try
+            {
+                const BindingFlags flags = BindingFlags.Instance | BindingFlags.NonPublic;
+                FieldInfo listField = editor.GetType().BaseType?.GetField("_patternLayerList", flags);
+                object list = listField?.GetValue(editor);
+                PropertyInfo draggableProperty = list?.GetType().GetProperty("draggable");
+                FieldInfo draggableField = list?.GetType().GetField("draggable");
+                object draggable = draggableProperty?.GetValue(list) ?? draggableField?.GetValue(list);
+
+                Assert.That(list, Is.Not.Null, "The pattern inspector must use a reorderable list.");
+                Assert.That(draggable, Is.EqualTo(true));
+
+                SerializedObject serializedPreset = new SerializedObject(preset);
+                SerializedProperty layers = serializedPreset.FindProperty("m_PatternLayers");
+                layers.GetArrayElementAtIndex(1).FindPropertyRelative("m_Opacity").floatValue = 0.75f;
+                layers.GetArrayElementAtIndex(1)
+                    .FindPropertyRelative("m_Range")
+                    .FindPropertyRelative("m_Max")
+                    .floatValue = 0.9f;
+                serializedPreset.ApplyModifiedPropertiesWithoutUndo();
+
+                Assert.That(preset.GetPatternLayer(0).m_Opacity, Is.EqualTo(0.1f));
+                Assert.That(preset.GetPatternLayer(1).m_Opacity, Is.EqualTo(0.75f));
+                Assert.That(preset.GetPatternLayer(0).m_Range.min, Is.EqualTo(0.1f));
+                Assert.That(preset.GetPatternLayer(0).m_Range.max, Is.EqualTo(0.25f));
+                Assert.That(preset.GetPatternLayer(1).m_Range.min, Is.EqualTo(0.4f));
+                Assert.That(preset.GetPatternLayer(1).m_Range.max, Is.EqualTo(0.9f));
+
+                serializedPreset.Update();
+                layers.MoveArrayElement(1, 0);
+                serializedPreset.ApplyModifiedPropertiesWithoutUndo();
+
+                Assert.That(preset.GetPatternLayer(0).m_Color, Is.EqualTo(Color.green));
+                Assert.That(preset.GetPatternLayer(0).m_Range.max, Is.EqualTo(0.9f));
+                Assert.That(preset.GetPatternLayer(1).m_Color, Is.EqualTo(Color.red));
+                Assert.That(preset.GetPatternLayer(1).m_Range.max, Is.EqualTo(0.25f));
+            }
+            finally
+            {
+                Object.DestroyImmediate(editor);
+            }
+        }
+
+        [Test]
+        public void MinMaxRangeDrawer_DoesNotCachePropertiesAcrossPatternRows()
+        {
+            System.Type drawerType = TypeCache.GetTypesDerivedFrom<PropertyDrawer>()
+                .FirstOrDefault(type => type.FullName == "Coffee.UIEffectInternal.MinMaxRangeDrawer");
+
+            Assert.That(drawerType, Is.Not.Null);
+            FieldInfo[] cachedProperties = drawerType.GetFields(BindingFlags.Instance |
+                                                                BindingFlags.Public |
+                                                                BindingFlags.NonPublic)
+                .Where(field => typeof(SerializedProperty).IsAssignableFrom(field.FieldType))
+                .ToArray();
+
+            Assert.That(cachedProperties, Is.Empty,
+                "The shared property drawer must resolve Min/Max from the current row on every draw.");
         }
 
         [Test]

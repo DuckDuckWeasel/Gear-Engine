@@ -10,7 +10,7 @@ namespace Scaffold
     [Serializable]
     public class GetPosition : ActionBase
     {
-        [Tooltip("The Transform to get the position from. If left empty, uses the GameObject this Block is attached to.")]
+        [Tooltip("The Transform to get the position from.")]
         [SerializeField] protected TransformData targetTransform;
 
         [Tooltip("If true, gets the local position instead of world position.")]
@@ -22,15 +22,15 @@ namespace Scaffold
 
         public override void OnEnter()
         {
-            Transform t = (targetTransform.Value != null) ? targetTransform.Value : GetBlackboard().transform;
-            if (t != null && outPosition != null)
+            Transform t = targetTransform.Value;
+            if (t == null || outPosition == null)
             {
-                if (isLocal)
-                    outPosition.Value = t.localPosition;
-                else
-                    outPosition.Value = t.position;
+                Debug.LogError("[GetPosition] A target Transform and output variable are required.");
+                Fail();
+                return;
             }
 
+            outPosition.Value = isLocal ? t.localPosition : t.position;
             Continue();
         }
 
@@ -40,8 +40,8 @@ namespace Scaffold
             {
                 return "Error: No out variable selected";
             }
-            
-            string tName = (targetTransform.Value != null) ? targetTransform.Value.name : "Owner";
+
+            string tName = targetTransform.Value != null ? targetTransform.Value.name : "Missing Transform";
             return tName + " to " + outPosition.Key;
         }
 

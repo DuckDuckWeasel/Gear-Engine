@@ -1,0 +1,16 @@
+{
+    "name": "Scaffold.VisualScripting.Authoring",
+    "rootNamespace": "Scaffold.VisualScripting.Authoring",
+    "references": [
+        "Scaffold.VisualScripting.Core"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

@@ -12,15 +12,15 @@ namespace Scaffold
     {
         [Tooltip("The GameObject to rotate")]
         [SerializeField] protected GameObjectData targetGameObject;
-        
+
         [Tooltip("Rotation speed (degrees per second)")]
         [SerializeField] protected Vector3Data rotationSpeed = new Vector3Data(new Vector3(0, 90f, 0));
 
         public override void OnEnter()
         {
-            if (targetGameObject.Value != null && blackboard != null)
+            if (targetGameObject.Value != null && CanRunScheduledWork)
             {
-                blackboard.StartCoroutine(RotateRoutine());
+                RunRoutine(RotateRoutine(), true);
             }
             Continue(); // Always continue immediately
         }
@@ -29,17 +29,22 @@ namespace Scaffold
         {
             while (targetGameObject.Value != null)
             {
-                targetGameObject.Value.transform.Rotate(rotationSpeed.Value * Time.deltaTime);
+                targetGameObject.Value.transform.Rotate(
+                    rotationSpeed.Value * CurrentDeltaTime);
                 yield return null;
             }
         }
 
         public override string GetSummary()
         {
-            if (targetGameObject.Value == null) return "Error: No target";
+            if (targetGameObject.Value == null)
+            {
+                return "Error: No target";
+            }
+
             return $"AutoRotate {targetGameObject.Value.name}";
         }
-        
+
         public override Color GetButtonColor() { return new Color32(228, 237, 204, 255); }
     }
 }

@@ -11,7 +11,9 @@
         "Scaffold.Events",
         "Scaffold.Analytics.Runtime",
         "Unity.Services.Analytics",
-        "Scaffold.Core"
+        "Scaffold.Core",
+        "Scaffold.VisualScripting.Core",
+        "Scaffold.VisualScripting.Unity"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

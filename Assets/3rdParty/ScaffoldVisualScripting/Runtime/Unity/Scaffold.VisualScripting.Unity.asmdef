@@ -1,0 +1,19 @@
+{
+    "name": "Scaffold.VisualScripting.Unity",
+    "rootNamespace": "Scaffold.VisualScripting.Unity",
+    "references": [
+        "Scaffold.VisualScripting.Core",
+        "Scaffold.VisualScripting.Authoring",
+        "VContainer",
+        "UnityEngine.UI"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

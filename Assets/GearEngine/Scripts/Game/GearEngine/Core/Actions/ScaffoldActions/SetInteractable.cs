@@ -1,7 +1,7 @@
 using System;
 using GearEngine.Core.Actions;
 
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
 
@@ -10,11 +10,11 @@ namespace Scaffold
     /// <summary>
     /// Set the interactable state of selectable objects.
     /// </summary>
-    [CommandInfo("UI", 
-                 "Set Interactable", 
+    [CommandInfo("UI",
+                 "Set Interactable",
                  "Set the interactable state of selectable objects.")]
     [Serializable]
-    public class SetInteractable : ActionBase 
+    public class SetInteractable : ActionBase
     {
         [Tooltip("List of objects to be affected by the command")]
         [SerializeField] protected List<GameObject> targetObjects = new List<GameObject>();
@@ -34,15 +34,15 @@ namespace Scaffold
 
             for (int i = 0; i < targetObjects.Count; i++)
             {
-                var targetObject = targetObjects[i];
-                var selectables = targetObject.GetComponents<Selectable>();
+                GameObject targetObject = targetObjects[i];
+                Selectable[] selectables = targetObject.GetComponents<Selectable>();
                 for (int j = 0; j < selectables.Length; j++)
                 {
-                    var selectable = selectables[j];
+                    Selectable selectable = selectables[j];
                     selectable.interactable = interactableState.Value;
                 }
             }
-                
+
             Continue();
         }
 
@@ -60,11 +60,11 @@ namespace Scaffold
                 }
                 return targetObjects[0].name + " = " + interactableState.Value;
             }
-            
+
             string objectList = "";
             for (int i = 0; i < targetObjects.Count; i++)
             {
-                var go = targetObjects[i];
+                GameObject go = targetObjects[i];
                 if (go == null)
                 {
                     continue;
@@ -78,16 +78,16 @@ namespace Scaffold
                     objectList += ", " + go.name;
                 }
             }
-            
+
             return objectList + " = " + interactableState.Value;
         }
-        
+
         public override Color GetButtonColor()
         {
             return new Color32(180, 250, 250, 255);
         }
 
-        public override void OnCommandAdded(Block parentBlock)
+        public override void OnCommandAdded(Scaffold.VisualScripting.BlockDefinition parentBlock)
         {
             targetObjects.Add(null);
         }

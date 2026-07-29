@@ -15,9 +15,9 @@ namespace Scaffold
 
         public override void OnEnter()
         {
-            if (targetGameObject.Value != null && blackboard != null)
+            if (targetGameObject.Value != null && CanRunScheduledWork)
             {
-                blackboard.StartCoroutine(BillboardRoutine());
+                RunRoutine(BillboardRoutine(), true);
             }
             Continue();
         }
@@ -34,10 +34,14 @@ namespace Scaffold
 
         public override string GetSummary()
         {
-            if (targetGameObject.Value == null) return "Error: No target";
+            if (targetGameObject.Value == null)
+            {
+                return "Error: No target";
+            }
+
             return $"Billboard {targetGameObject.Value.name}";
         }
-        
+
         public override Color GetButtonColor() { return new Color32(228, 237, 204, 255); }
     }
 }

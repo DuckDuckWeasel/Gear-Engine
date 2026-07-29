@@ -1,116 +1,26 @@
 
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Reflection;
 using UnityEngine;
+using Scaffold.VisualScripting;
 
 namespace Scaffold
 {
     /// <summary>
-    /// Standard comparison operators.
-    /// </summary>
-    public enum CompareOperator
-    {
-        /// <summary> == mathematical operator.</summary>
-        Equals,
-        /// <summary> != mathematical operator.</summary>
-        NotEquals,
-        /// <summary> < mathematical operator.</summary>
-        LessThan,
-        /// <summary> > mathematical operator.</summary>
-        GreaterThan,
-        /// <summary> <= mathematical operator.</summary>
-        LessThanOrEquals,
-        /// <summary> >= mathematical operator.</summary>
-        GreaterThanOrEquals
-    }
-
-    /// <summary>
-    /// Mathematical operations that can be performed on variables.
-    /// </summary>
-    public enum SetOperator
-    {
-        /// <summary> = operator. </summary>
-        Assign,
-        /// <summary> =! operator. </summary>
-        Negate,
-        /// <summary> += operator. </summary>
-        Add,
-        /// <summary> -= operator. </summary>
-        Subtract,
-        /// <summary> *= operator. </summary>
-        Multiply,
-        /// <summary> /= operator. </summary>
-        Divide
-    }
-
-    /// <summary>
-    /// Scope types for Variables.
-    /// </summary>
-    public enum VariableScope
-    {
-        /// <summary> Can only be accessed by commands in the same Blackboard. </summary>
-        Private,
-        /// <summary> Can be accessed from any command in any Blackboard. </summary>
-        Public,
-        /// <summary> Creates and/or references a global variable of that name, all variables of this name and scope share the same underlying scaffold variable and exist for the duration of the instance of Unity.</summary>
-        Global,
-    }
-
-    /// <summary>
-    /// Attribute class for variables.
-    /// </summary>
-    public sealed class VariableInfoAttribute : System.Attribute
-    {
-        //Note do not use "isPreviewedOnly:true", it causes the script to fail to load without errors shown
-        public VariableInfoAttribute(string category, string variableType, int order = 0, bool isPreviewedOnly = false)
-        {
-            this.Category = category;
-            this.VariableType = variableType;
-            this.Order = order;
-            this.IsPreviewedOnly = isPreviewedOnly;
-        }
-        
-        public string Category { get; set; }
-        public string VariableType { get; set; }
-        public int Order { get; set; }
-        public bool IsPreviewedOnly { get; set; }
-    }
-
-    /// <summary>
-    /// Attribute class for variable properties.
-    /// </summary>
-    public sealed class VariablePropertyAttribute : PropertyAttribute 
-    {
-        public VariablePropertyAttribute (params System.Type[] variableTypes) 
-        {
-            this.VariableTypes = variableTypes;
-        }
-
-        public VariablePropertyAttribute(AllVariableTypes.VariableAny any)
-        {
-            VariableTypes = AllVariableTypes.AllScaffoldVarTypes;
-        }
-
-        public VariablePropertyAttribute (string defaultText, params System.Type[] variableTypes) 
-        {
-            this.defaultText = defaultText;
-            this.VariableTypes = variableTypes;
-        }
-
-        public string defaultText = "<None>";
-        public string compatibleVariableName = string.Empty;
-
-        public System.Type[] VariableTypes { get; set; }
-    }
-
-    /// <summary>
     /// Abstract base class for variables.
     /// </summary>
-    [RequireComponent(typeof(Blackboard))]
     [System.Serializable]
-    public abstract class Variable : MonoBehaviour
+    public abstract class Variable
     {
         [SerializeField] protected VariableScope scope;
 
         [SerializeField] protected string key = "";
+
+        [SerializeField] private DefinitionId definitionId;
+
+        public string Name => Key;
 
         #region Public members
 
@@ -123,6 +33,60 @@ namespace Scaffold
         /// String identifier for the variable.
         /// </summary>
         public virtual string Key { get { return key; } set { key = value; } }
+
+        /// <summary>
+        /// Stable identifier of the managed Blackboard variable selected by
+        /// this compatibility reference.
+        /// </summary>
+        public DefinitionId DefinitionId
+        {
+            get => definitionId;
+            set => definitionId = value;
+        }
+
+        /// <summary>
+        /// Value type accepted by this compatibility variable.
+        /// </summary>
+        public virtual System.Type ValueType => typeof(object);
+
+        /// <summary>
+        /// Connects this compatibility reference to a managed runtime cell.
+        /// </summary>
+        public virtual void Bind(VariableCellBase cell)
+        {
+            throw new System.InvalidOperationException(
+                $"Variable type '{GetType().Name}' does not support managed Blackboard binding.");
+        }
+
+        /// <summary>
+        /// Removes a previously established managed runtime binding.
+        /// </summary>
+        public virtual void Unbind()
+        {
+        }
+
+        /// <summary>
+        /// Connects every retained compatibility variable in a serialized
+        /// object graph to its managed Blackboard runtime cell.
+        /// </summary>
+        public static void BindAll(
+            object root,
+            BlackboardVariableSet variables)
+        {
+            if (root == null)
+            {
+                throw new ArgumentNullException(nameof(root));
+            }
+
+            if (variables == null)
+            {
+                throw new ArgumentNullException(nameof(variables));
+            }
+
+            HashSet<object> visited = new HashSet<object>(
+                ReferenceComparer.Instance);
+            Visit(root, variables, visited);
+        }
 
         /// <summary>
         /// Callback to reset the variable if the Blackboard is reset.
@@ -153,174 +117,161 @@ namespace Scaffold
         /// Does the underlying type provide support for < <= > >=
         /// </summary>
         public virtual bool IsComparisonSupported() { return false; }
-        
+
         /// <summary>
         /// Boxed or referenced value of type defined within inherited types.
         /// Not recommended for direct use, primarily intended for use in editor code.
         /// </summary>
         public abstract object GetValue();
 
-        //we are required to be on a blackboard so we provide this as a helper
-        public virtual Blackboard GetBlackboard()
-        {
-            return GetComponent<Blackboard>();
-        }
         #endregion
+
+        private static void Visit(
+            object value,
+            BlackboardVariableSet variables,
+            ISet<object> visited)
+        {
+            if (value == null || IsTerminal(value))
+            {
+                return;
+            }
+
+            Type type = value.GetType();
+            if (!type.IsValueType && !visited.Add(value))
+            {
+                return;
+            }
+
+            if (value is Variable variable)
+            {
+                BindVariable(variable, variables);
+                return;
+            }
+
+            if (value is IEnumerable enumerable)
+            {
+                foreach (object item in enumerable)
+                {
+                    Visit(item, variables, visited);
+                }
+
+                return;
+            }
+
+            VisitFields(value, type, variables, visited);
+        }
+
+        private static void BindVariable(
+            Variable variable,
+            BlackboardVariableSet variables)
+        {
+            variable.Unbind();
+            if (!TryResolveCell(variable, variables, out VariableCellBase cell))
+            {
+                return;
+            }
+
+            try
+            {
+                variable.Bind(cell);
+            }
+            catch (Exception exception)
+            {
+                Debug.LogError(
+                    $"Failed to bind compatibility variable '{variable.Key}': " +
+                    $"{exception.Message}\n{exception.StackTrace}");
+            }
+        }
+
+        private static bool TryResolveCell(
+            Variable variable,
+            BlackboardVariableSet variables,
+            out VariableCellBase cell)
+        {
+            if (!variable.DefinitionId.IsEmpty &&
+                variables.TryGet(variable.DefinitionId, out cell))
+            {
+                return true;
+            }
+
+            return variables.TryGet(variable.Key, out cell);
+        }
+
+        private static void VisitFields(
+            object value,
+            Type type,
+            BlackboardVariableSet variables,
+            ISet<object> visited)
+        {
+            for (Type current = type;
+                 current != null;
+                 current = current.BaseType)
+            {
+                BindingFlags flags =
+                    BindingFlags.Instance |
+                    BindingFlags.Public |
+                    BindingFlags.NonPublic |
+                    BindingFlags.DeclaredOnly;
+                foreach (FieldInfo field in current.GetFields(flags))
+                {
+                    if (ShouldVisit(field))
+                    {
+                        Visit(
+                            field.GetValue(value),
+                            variables,
+                            visited);
+                    }
+                }
+            }
+        }
+
+        private static bool ShouldVisit(FieldInfo field)
+        {
+            if (field.IsStatic ||
+                field.IsNotSerialized ||
+                field.IsDefined(
+                    typeof(BlackboardTransientAttribute),
+                    true))
+            {
+                return false;
+            }
+
+            return field.IsPublic ||
+                field.IsDefined(typeof(SerializeField), true) ||
+                field.IsDefined(typeof(SerializeReference), true);
+        }
+
+        private static bool IsTerminal(object value)
+        {
+            Type type = value.GetType();
+            return value is UnityEngine.Object ||
+                type.IsPrimitive ||
+                type.IsEnum ||
+                type == typeof(string) ||
+                type == typeof(decimal) ||
+                type == typeof(DateTime) ||
+                type == typeof(TimeSpan) ||
+                type == typeof(Guid) ||
+                typeof(Delegate).IsAssignableFrom(type);
+        }
+
+        private sealed class ReferenceComparer :
+            IEqualityComparer<object>
+        {
+            public static ReferenceComparer Instance { get; } =
+                new ReferenceComparer();
+
+            public new bool Equals(object left, object right)
+            {
+                return ReferenceEquals(left, right);
+            }
+
+            public int GetHashCode(object value)
+            {
+                return System.Runtime.CompilerServices
+                    .RuntimeHelpers.GetHashCode(value);
+            }
+        }
     }
 
-    /// <summary>
-    /// Generic concrete base class for variables.
-    /// </summary>
-    public abstract class VariableBase<T> : Variable
-    {
-        //caching mechanism for global static variables
-        private VariableBase<T> _globalStaicRef;
-        private VariableBase<T> globalStaicRef
-        {
-            get
-            {
-                if (_globalStaicRef != null)
-                {
-                    return _globalStaicRef;
-                }
-                else if(Application.isPlaying)
-                {
-                    return _globalStaicRef = ScaffoldManager.Instance.GlobalVariables.GetOrAddVariable(Key, value, this.GetType());
-                }
-                else
-                {
-                    return null;
-                }
-            }
-        }
-
-        [SerializeField] protected T value;
-        public virtual T Value
-        {
-            get
-            {
-                if (scope != VariableScope.Global || !Application.isPlaying)
-                {
-                    return this.value;
-                }
-                else
-                { 
-                    return globalStaicRef.value;
-                }
-            }
-            set
-            {
-                if (scope != VariableScope.Global || !Application.isPlaying)
-                {
-                    this.value = value;
-                }
-                else
-                {
-                    globalStaicRef.Value = value;
-                }
-            }
-        }
-
-        public override object GetValue()
-        {
-            return value;
-        }
-
-        protected T startValue;
-
-        public override void OnReset()
-        {
-            Value = startValue;
-        }
-        
-        public override string ToString()
-        {
-            if (Value != null)
-                return Value.ToString();
-            else
-                return "Null";
-        }
-        
-        protected virtual void Start()
-        {
-            // Remember the initial value so we can reset later on
-            startValue = Value;
-        }
-
-        //Apply to get from base system.object to T
-        public override void Apply(SetOperator op, object value)
-        {
-            if(value is T || value == null)
-            {
-                Apply(op, (T)value);
-            }
-            else if(value is VariableBase<T>)
-            {
-                VariableBase<T> vbg = value as VariableBase<T>;
-                Apply(op, vbg.Value);
-            }
-            else
-            {
-                Debug.LogError("Cannot do Apply on variable, as object type: " + value.GetType().Name + " is incompatible with " + typeof(T).Name);
-            }
-        }
-
-        public virtual void Apply(SetOperator setOperator, T value)
-        {
-            switch (setOperator)
-            {
-            case SetOperator.Assign:
-                Value = value;
-                break;
-            default:
-                Debug.LogError("The " + setOperator.ToString() + " set operator is not valid.");
-                break;
-            }
-        }
-
-        //Apply to get from base system.object to T
-        public override bool Evaluate(CompareOperator op, object value)
-        {
-            if (value is T || value == null)
-            {
-                return Evaluate(op, (T)value);
-            }
-            else if (value is VariableBase<T>)
-            {
-                var vbg = value as VariableBase<T>;
-                return Evaluate(op, vbg.Value);
-            }
-            else
-            {
-                Debug.LogError("Cannot do Evaluate on variable, as object type: " + value.GetType().Name + " is incompatible with " + typeof(T).Name);
-            }
-
-            return false;
-        }
-
-        public virtual bool Evaluate(CompareOperator compareOperator, T value)
-        {
-            bool condition = false;
-
-            switch (compareOperator)
-            {
-            case CompareOperator.Equals:
-                condition = Equals(Value, value);// Value.Equals(value);
-                break;
-            case CompareOperator.NotEquals:
-                condition = !Equals(Value, value);
-                break;
-            default:
-                Debug.LogError("The " + compareOperator.ToString() + " comparison operator is not valid.");
-                break;
-            }
-
-            return condition;
-        }
-
-        public override bool IsArithmeticSupported(SetOperator setOperator)
-        {
-            return setOperator == SetOperator.Assign || base.IsArithmeticSupported(setOperator);
-        }
-    }
 }

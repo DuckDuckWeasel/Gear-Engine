@@ -1,0 +1,12 @@
+{
+  "scenario": "Contextual action controls and row hover highlight",
+  "source": "Interactive Unity Blackboard editor window",
+  "criteria": [
+    "The hovered action row receives a stronger highlight.",
+    "Move up, move down, and delete controls render only for the hovered row.",
+    "Controls on every other action row remain hidden.",
+    "The selected-action inspector remains independent in the right pane.",
+    "The dirty Main Scene is not saved or discarded."
+  ],
+  "capturedAt": "2026-07-28T12:27:00-03:00"
+}

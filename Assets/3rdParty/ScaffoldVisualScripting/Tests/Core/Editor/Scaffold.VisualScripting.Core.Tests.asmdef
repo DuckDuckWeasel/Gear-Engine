@@ -1,0 +1,25 @@
+{
+    "name": "Scaffold.VisualScripting.Core.Tests",
+    "rootNamespace": "Scaffold.VisualScripting.Tests",
+    "references": [
+        "UnityEngine.TestRunner",
+        "UnityEditor.TestRunner",
+        "Scaffold.VisualScripting.Core",
+        "Scaffold.VisualScripting.Authoring"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "nunit.framework.dll"
+    ],
+    "autoReferenced": false,
+    "defineConstraints": [
+        "UNITY_INCLUDE_TESTS"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

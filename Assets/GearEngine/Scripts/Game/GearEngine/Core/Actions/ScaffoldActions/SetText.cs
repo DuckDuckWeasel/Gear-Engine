@@ -30,8 +30,8 @@ namespace Scaffold
 
         public override void OnEnter()
         {
-            Blackboard blackboard = GetBlackboard();
-            string newText = blackboard.SubstituteVariables(text.Value);
+            Scaffold.VisualScripting.Blackboard blackboard = GetBlackboard();
+            string newText = blackboard.Substitute(text.Value);
 
             if (targetTextObject == null)
             {
@@ -73,18 +73,6 @@ namespace Scaffold
         #endregion
 
 
-        #region Editor caches
-#if UNITY_EDITOR
-        protected override void RefreshVariableCache()
-        {
-            base.RefreshVariableCache();
-
-            Blackboard f = GetBlackboard();
-
-            f.DetermineSubstituteVariables(text, referencedVariables);
-        }
-#endif
-        #endregion Editor caches
 
         #region ILocalizable implementation
 

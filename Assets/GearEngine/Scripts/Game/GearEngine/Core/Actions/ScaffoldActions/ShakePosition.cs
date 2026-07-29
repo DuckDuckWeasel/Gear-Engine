@@ -16,7 +16,7 @@ namespace Scaffold
     [AddComponentMenu("")]
     [ExecuteInEditMode]
     [Serializable]
-    public class ShakePosition : iTweenCommand
+    public class ShakePosition : ITweenCommand
     {
         [Tooltip("A translation offset in space the GameObject will animate to")]
         [SerializeField] protected Vector3Data amount;
@@ -25,7 +25,7 @@ namespace Scaffold
         [SerializeField] protected bool isLocal;
 
         [Tooltip("Restricts rotation to the supplied axis only")]
-        [SerializeField] protected iTweenAxis axis;
+        [SerializeField] protected ITweenAxis axis;
 
         #region Public members
 
@@ -36,13 +36,13 @@ namespace Scaffold
             tweenParams.Add("amount", amount.Value);
             switch (axis)
             {
-                case iTweenAxis.X:
+                case ITweenAxis.X:
                     tweenParams.Add("axis", "x");
                     break;
-                case iTweenAxis.Y:
+                case ITweenAxis.Y:
                     tweenParams.Add("axis", "y");
                     break;
-                case iTweenAxis.Z:
+                case ITweenAxis.Z:
                     tweenParams.Add("axis", "z");
                     break;
             }
@@ -50,9 +50,6 @@ namespace Scaffold
             tweenParams.Add("easetype", easeType);
             tweenParams.Add("looptype", loopType);
             tweenParams.Add("isLocal", isLocal);
-            tweenParams.Add("oncomplete", "OniTweenComplete");
-            tweenParams.Add("oncompletetarget", host.gameObject);
-            tweenParams.Add("oncompleteparams", this);
             iTween.ShakePosition(targetObject.Value, tweenParams);
         }
 

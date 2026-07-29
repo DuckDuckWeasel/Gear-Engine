@@ -15,16 +15,16 @@ namespace GearEngine.Actions.Input
     [Serializable]
     public class WaitForTargetClickAction : WaitForInputActionBase
     {
-        public TargetReference target = new TargetReference();
+        public TargetReference Target = new TargetReference();
 
         private readonly List<TargetClickRelay> clickRelays = new List<TargetClickRelay>();
         private bool isTargetClicked;
-        private Coroutine waitCoroutine;
+        [NonSerialized] private IDisposable waitHandle;
 
         public override void OnEnter()
         {
             isTargetClicked = false;
-            if (target == null)
+            if (Target == null)
             {
                 Debug.LogError("[WaitForTargetClickAction] Target reference is missing.");
                 Fail();
@@ -34,12 +34,12 @@ namespace GearEngine.Actions.Input
             InitializeInputService();
             RegisterTargetRelays();
 
-            _inputService.FilterForButtonDownTarget(target);
-            _inputService.FilterForButtonUpTarget(target);
+            inputService.FilterForButtonDownTarget(Target, TargetResolver);
+            inputService.FilterForButtonUpTarget(Target, TargetResolver);
 
-            _eventBus.AddListener<ScreenClickedEvent>(OnClicked);
+            eventBus.AddListener<ScreenClickedEvent>(OnClicked);
 
-            waitCoroutine = hostCommand.StartCoroutine(WaitForTargetClickCoroutine());
+            waitHandle = RunRoutine(WaitForTargetClickCoroutine());
         }
 
         private void OnClicked(ScreenClickedEvent signal)
@@ -54,7 +54,7 @@ namespace GearEngine.Actions.Input
             Transform current = clickedObj.transform;
             while (current != null)
             {
-                if (target.IsMatch(current.gameObject))
+                if (IsTargetMatch(Target, current.gameObject))
                 {
                     isTargetClicked = true;
                     return;
@@ -77,51 +77,82 @@ namespace GearEngine.Actions.Input
                 yield return null;
             }
 
-            waitCoroutine = null;
+            waitHandle = null;
             Cleanup();
             Continue();
+        }
+
+        public override void OnStopExecuting()
+        {
+            waitHandle?.Dispose();
+            waitHandle = null;
+            Cleanup();
+            base.OnStopExecuting();
         }
 
         private void RegisterTargetRelays()
         {
             clickRelays.Clear();
-            HashSet<GameObject> resolvedTargets = new HashSet<GameObject>();
-
-            if (target.strategy == TargetResolutionStrategy.Tags)
-            {
-                foreach (TagComponent tagComponent in TagComponent.Instances)
-                {
-                    if (tagComponent != null && target.IsMatch(tagComponent.gameObject))
-                    {
-                        resolvedTargets.Add(tagComponent.gameObject);
-                    }
-                }
-            }
-            else
-            {
-                foreach (GameObject resolvedTarget in target.ResolveAll())
-                {
-                    if (resolvedTarget != null)
-                    {
-                        resolvedTargets.Add(resolvedTarget);
-                    }
-                }
-            }
-
+            HashSet<GameObject> resolvedTargets = ResolveTargets();
             foreach (GameObject resolvedTarget in resolvedTargets)
             {
-                TargetClickRelay relay = resolvedTarget.GetComponent<TargetClickRelay>();
-                if (relay == null)
-                {
-                    relay = resolvedTarget.AddComponent<TargetClickRelay>();
-                }
-
-                relay.AddListener(OnTargetClicked);
-                clickRelays.Add(relay);
+                AttachRelay(resolvedTarget);
             }
         }
 
+        private HashSet<GameObject> ResolveTargets()
+        {
+            HashSet<GameObject> resolvedTargets = new HashSet<GameObject>();
+            if (Target.strategy == TargetResolutionStrategy.Tags)
+            {
+                AddTaggedTargets(resolvedTargets);
+            }
+            else
+            {
+                AddResolvedTargets(resolvedTargets);
+            }
+
+            return resolvedTargets;
+        }
+
+        private void AddTaggedTargets(HashSet<GameObject> resolvedTargets)
+        {
+            foreach (TagComponent tagComponent in TagComponent.Instances)
+            {
+                if (tagComponent != null &&
+                    IsTargetMatch(Target, tagComponent.gameObject))
+                {
+                    resolvedTargets.Add(tagComponent.gameObject);
+                }
+            }
+        }
+
+        private void AddResolvedTargets(HashSet<GameObject> resolvedTargets)
+        {
+            foreach (GameObject resolvedTarget in ResolveTargets(Target))
+            {
+                if (resolvedTarget != null)
+                {
+                    resolvedTargets.Add(resolvedTarget);
+                }
+            }
+        }
+
+        private void AttachRelay(GameObject resolvedTarget)
+        {
+            TargetClickRelay relay = resolvedTarget.GetComponent<TargetClickRelay>();
+            relay = relay != null ? relay : resolvedTarget.AddComponent<TargetClickRelay>();
+            relay.AddListener(OnTargetClicked);
+            clickRelays.Add(relay);
+        }
+
         private void Cleanup()
+        {
+            RemoveRelayListeners();
+            ClearInputSubscriptions();
+        }
+
+        private void RemoveRelayListeners()
         {
             foreach (TargetClickRelay relay in clickRelays)
             {
@@ -132,38 +163,30 @@ namespace GearEngine.Actions.Input
             }
 
             clickRelays.Clear();
-
-            if (_eventBus != null)
-            {
-                _eventBus.RemoveListener<ScreenClickedEvent>(OnClicked);
-            }
-
-            if (_inputService != null)
-            {
-                _inputService.ClearButtonDownFilters();
-                _inputService.ClearButtonUpFilters();
-            }
         }
 
-        public override void OnStopExecuting()
+        private void ClearInputSubscriptions()
         {
-            if (hostCommand != null && waitCoroutine != null)
+            if (eventBus != null)
             {
-                hostCommand.StopCoroutine(waitCoroutine);
-                waitCoroutine = null;
+                eventBus.RemoveListener<ScreenClickedEvent>(OnClicked);
             }
 
-            Cleanup();
+            if (inputService != null)
+            {
+                inputService.ClearButtonDownFilters();
+                inputService.ClearButtonUpFilters();
+            }
         }
 
         public override string GetSummary()
         {
-            if (target == null)
+            if (Target == null)
             {
                 return "Error: No Target";
             }
 
-            return target.GetSummary();
+            return Target.GetSummary();
         }
     }
 }

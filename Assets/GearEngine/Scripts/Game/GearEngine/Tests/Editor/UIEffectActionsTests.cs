@@ -15,14 +15,14 @@ namespace GearEngine.GearEngine.Tests.Editor
     [TestFixture]
     public sealed class UIEffectActionsTests
     {
-        private const string UiEffectsFolder = "Assets/3rdParty/UIEffect/UIEffectPresets/UIEffects";
+        private const string k_uiEffectsFolder = "Assets/3rdParty/UIEffect/UIEffectPresets/UIEffects";
 
-        private GameObject _target;
-        private UIEffectPreset _preset;
-        private MaterialUIEffectPreset _configuration;
-        private Material _material;
-        private FocusPresetSO _focusPreset;
-        private GameObject _focusCanvas;
+        private GameObject target;
+        private UIEffectPreset preset;
+        private MaterialUIEffectPreset configuration;
+        private Material material;
+        private FocusPresetSO focusPreset;
+        private GameObject focusCanvas;
 
         [TearDown]
         public void TearDown()
@@ -32,53 +32,53 @@ namespace GearEngine.GearEngine.Tests.Editor
                 focusService.ClearFocus();
             }
 
-            if (_focusCanvas != null)
+            if (focusCanvas != null)
             {
-                UnityEngine.Object.DestroyImmediate(_focusCanvas);
+                UnityEngine.Object.DestroyImmediate(focusCanvas);
             }
 
-            if (_focusPreset != null)
+            if (focusPreset != null)
             {
-                UnityEngine.Object.DestroyImmediate(_focusPreset);
+                UnityEngine.Object.DestroyImmediate(focusPreset);
             }
 
-            if (_preset != null)
+            if (preset != null)
             {
-                UnityEngine.Object.DestroyImmediate(_preset);
+                UnityEngine.Object.DestroyImmediate(preset);
             }
 
-            if (_configuration != null)
+            if (configuration != null)
             {
-                UnityEngine.Object.DestroyImmediate(_configuration);
+                UnityEngine.Object.DestroyImmediate(configuration);
             }
 
-            if (_target != null)
+            if (target != null)
             {
-                UnityEngine.Object.DestroyImmediate(_target);
+                UnityEngine.Object.DestroyImmediate(target);
             }
 
-            if (_material != null)
+            if (material != null)
             {
-                UnityEngine.Object.DestroyImmediate(_material);
+                UnityEngine.Object.DestroyImmediate(material);
             }
         }
 
         [Test]
         public void ApplyPreset_AddsMissingEffectToDynamicTarget()
         {
-            _target = CreateUiTarget();
-            _preset = ScriptableObject.CreateInstance<UIEffectPreset>();
-            _preset.m_TransitionFilter = TransitionFilter.Fade;
-            _preset.m_TransitionRate = 0.25f;
+            target = CreateUiTarget();
+            preset = ScriptableObject.CreateInstance<UIEffectPreset>();
+            preset.m_TransitionFilter = TransitionFilter.Fade;
+            preset.m_TransitionRate = 0.25f;
 
             ApplyUIEffectPreset action = new ApplyUIEffectPreset();
-            SetField(action, "targetGameObject", new GameObjectData(_target));
-            SetField(action, "preset", _preset);
+            SetField(action, "targetGameObject", new GameObjectData(target));
+            SetField(action, "preset", preset);
             SetField(action, "addIfMissing", new BooleanData(true));
 
             action.OnEnter();
 
-            UIEffect effect = _target.GetComponent<UIEffect>();
+            UIEffect effect = target.GetComponent<UIEffect>();
             Assert.That(effect, Is.Not.Null);
             Assert.That(effect.transitionFilter, Is.EqualTo(TransitionFilter.Fade));
             Assert.That(effect.transitionRate, Is.EqualTo(0.25f));
@@ -90,8 +90,8 @@ namespace GearEngine.GearEngine.Tests.Editor
         [TestCase(SetUIEffectIntensity.IntensityChannel.Transition)]
         public void SetIntensity_UpdatesTheSelectedChannel(SetUIEffectIntensity.IntensityChannel channel)
         {
-            _target = CreateUiTarget();
-            UIEffect effect = _target.AddComponent<UIEffect>();
+            target = CreateUiTarget();
+            UIEffect effect = target.AddComponent<UIEffect>();
             SetUIEffectIntensity action = new SetUIEffectIntensity();
             SetField(action, "targetEffect", effect);
             SetField(action, "channel", channel);
@@ -113,10 +113,10 @@ namespace GearEngine.GearEngine.Tests.Editor
         [Test]
         public void SetEnabled_UsesTheDynamicTarget()
         {
-            _target = CreateUiTarget();
-            UIEffect effect = _target.AddComponent<UIEffect>();
+            target = CreateUiTarget();
+            UIEffect effect = target.AddComponent<UIEffect>();
             SetUIEffectEnabled action = new SetUIEffectEnabled();
-            SetField(action, "targetGameObject", new GameObjectData(_target));
+            SetField(action, "targetGameObject", new GameObjectData(target));
             SetField(action, "isEnabled", new BooleanData(false));
 
             action.OnEnter();
@@ -127,8 +127,8 @@ namespace GearEngine.GearEngine.Tests.Editor
         [Test]
         public void ClearEffect_ResetsTheEffectToTheDefaultPreset()
         {
-            _target = CreateUiTarget();
-            UIEffect effect = _target.AddComponent<UIEffect>();
+            target = CreateUiTarget();
+            UIEffect effect = target.AddComponent<UIEffect>();
             effect.transitionFilter = TransitionFilter.Fade;
             ClearUIEffect action = new ClearUIEffect();
             SetField(action, "targetEffect", effect);
@@ -141,12 +141,12 @@ namespace GearEngine.GearEngine.Tests.Editor
         [Test]
         public void ControlTweener_SetsManualTimeOnDynamicTarget()
         {
-            _target = CreateUiTarget();
-            _target.AddComponent<UIEffect>();
-            UIEffectTweener tweener = _target.AddComponent<UIEffectTweener>();
+            target = CreateUiTarget();
+            target.AddComponent<UIEffect>();
+            UIEffectTweener tweener = target.AddComponent<UIEffectTweener>();
             tweener.duration = 2f;
             ControlUIEffectTweener action = new ControlUIEffectTweener();
-            SetField(action, "targetGameObject", new GameObjectData(_target));
+            SetField(action, "targetGameObject", new GameObjectData(target));
             SetField(action, "operation", ControlUIEffectTweener.TweenerOperation.SetTime);
             SetField(action, "timeSeconds", new FloatData(0.75f));
 
@@ -158,22 +158,22 @@ namespace GearEngine.GearEngine.Tests.Editor
         [Test]
         public void CyclePreset_ReplacesTheEffectAndUpdatesTheLabel()
         {
-            _target = CreateUiTarget();
+            target = CreateUiTarget();
             GameObject labelObject = new GameObject("EffectLabel", typeof(RectTransform), typeof(Text));
-            labelObject.transform.SetParent(_target.transform, false);
+            labelObject.transform.SetParent(target.transform, false);
             Text label = labelObject.GetComponent<Text>();
-            _preset = ScriptableObject.CreateInstance<UIEffectPreset>();
-            _preset.m_ColorFilter = ColorFilter.Additive;
+            preset = ScriptableObject.CreateInstance<UIEffectPreset>();
+            preset.m_ColorFilter = ColorFilter.Additive;
 
             CycleUIEffectPreset action = new CycleUIEffectPreset();
-            SetField(action, "targetGameObject", new GameObjectData(_target));
+            SetField(action, "targetGameObject", new GameObjectData(target));
             SetField(action, "targetLabel", label);
-            SetField(action, "presets", new List<UIEffectPreset> { _preset });
+            SetField(action, "presets", new List<UIEffectPreset> { preset });
             SetField(action, "descriptions", new List<string> { "Adds a color glow." });
 
             action.OnEnter();
 
-            UIEffect effect = _target.GetComponent<UIEffect>();
+            UIEffect effect = target.GetComponent<UIEffect>();
             Assert.That(effect, Is.Not.Null);
             Assert.That(effect.colorFilter, Is.EqualTo(ColorFilter.Additive));
             Assert.That(label.text, Does.Contain("Adds a color glow."));
@@ -182,53 +182,53 @@ namespace GearEngine.GearEngine.Tests.Editor
         [Test]
         public void ApplyLoopMaterial_AssignsMaterialAndDisablesNativeEffect()
         {
-            _target = CreateUiTarget();
-            UIEffect nativeEffect = _target.AddComponent<UIEffect>();
-            _material = new Material(Shader.Find("UI/Default"));
+            target = CreateUiTarget();
+            UIEffect nativeEffect = target.AddComponent<UIEffect>();
+            material = new Material(Shader.Find("UI/Default"));
             ApplyUILoopMaterial action = new ApplyUILoopMaterial();
-            SetField(action, "targetGameObject", new GameObjectData(_target));
-            SetField(action, "materialPreset", _material);
+            SetField(action, "targetGameObject", new GameObjectData(target));
+            SetField(action, "materialPreset", material);
             SetField(action, "disableNativeUiEffect", new BooleanData(true));
 
             action.OnEnter();
 
-            Image graphic = _target.GetComponent<Image>();
-            Assert.That(_target.GetComponent<UILoopMaterialEffect>(), Is.Not.Null);
-            Assert.That(graphic.material, Is.SameAs(_material));
+            Image graphic = target.GetComponent<Image>();
+            Assert.That(target.GetComponent<UILoopMaterialEffect>(), Is.Not.Null);
+            Assert.That(graphic.material, Is.SameAs(material));
             Assert.That(nativeEffect.enabled, Is.False);
         }
 
         [Test]
         public void ApplyEffect_WithMaterialConfiguration_AssignsMaterialAndDisablesNativeEffect()
         {
-            _target = CreateUiTarget();
-            UIEffect nativeEffect = _target.AddComponent<UIEffect>();
-            _material = new Material(Shader.Find("UI/Default"));
-            _configuration = ScriptableObject.CreateInstance<MaterialUIEffectPreset>();
-            SetField(_configuration, "materialPreset", _material);
+            target = CreateUiTarget();
+            UIEffect nativeEffect = target.AddComponent<UIEffect>();
+            material = new Material(Shader.Find("UI/Default"));
+            configuration = ScriptableObject.CreateInstance<MaterialUIEffectPreset>();
+            SetField(configuration, "materialPreset", material);
             ApplyUIEffectPreset action = new ApplyUIEffectPreset();
-            SetField(action, "targetGameObject", new GameObjectData(_target));
-            SetField(action, "configuration", new ObjectData(_configuration));
+            SetField(action, "targetGameObject", new GameObjectData(target));
+            SetField(action, "configuration", new ObjectData(configuration));
 
             action.OnEnter();
 
-            Image graphic = _target.GetComponent<Image>();
-            Assert.That(_target.GetComponent<UILoopMaterialEffect>(), Is.Not.Null);
-            Assert.That(graphic.material, Is.SameAs(_material));
+            Image graphic = target.GetComponent<Image>();
+            Assert.That(target.GetComponent<UILoopMaterialEffect>(), Is.Not.Null);
+            Assert.That(graphic.material, Is.SameAs(material));
             Assert.That(nativeEffect.enabled, Is.False);
         }
 
         [Test]
         public void ApplyEffect_WithBlackboardConfigurationVariable_AssignsMaterial()
         {
-            _target = CreateUiTarget();
-            _material = new Material(Shader.Find("UI/Default"));
-            _configuration = ScriptableObject.CreateInstance<MaterialUIEffectPreset>();
-            SetField(_configuration, "materialPreset", _material);
-            ObjectVariable configurationVariable = _target.AddComponent<ObjectVariable>();
-            configurationVariable.Value = _configuration;
+            target = CreateUiTarget();
+            material = new Material(Shader.Find("UI/Default"));
+            configuration = ScriptableObject.CreateInstance<MaterialUIEffectPreset>();
+            SetField(configuration, "materialPreset", material);
+            ObjectVariable configurationVariable = new ObjectVariable();
+            configurationVariable.Value = configuration;
             ApplyUIEffectPreset action = new ApplyUIEffectPreset();
-            SetField(action, "targetGameObject", new GameObjectData(_target));
+            SetField(action, "targetGameObject", new GameObjectData(target));
             SetField(
                 action,
                 "configuration",
@@ -240,39 +240,49 @@ namespace GearEngine.GearEngine.Tests.Editor
 
             action.OnEnter();
 
-            Assert.That(_target.GetComponent<Image>().material, Is.SameAs(_material));
+            Assert.That(target.GetComponent<Image>().material, Is.SameAs(material));
         }
 
         [Test]
         public void ApplyEffect_WithNativeConfiguration_LoadsNativePreset()
         {
-            _target = CreateUiTarget();
-            _configuration = ScriptableObject.CreateInstance<MaterialUIEffectPreset>();
-            _configuration.m_TransitionFilter = TransitionFilter.Fade;
+            target = CreateUiTarget();
+            configuration = ScriptableObject.CreateInstance<MaterialUIEffectPreset>();
+            configuration.m_TransitionFilter = TransitionFilter.Fade;
             ApplyUIEffectPreset action = new ApplyUIEffectPreset();
-            SetField(action, "targetGameObject", new GameObjectData(_target));
-            SetField(action, "configuration", new ObjectData(_configuration));
+            SetField(action, "targetGameObject", new GameObjectData(target));
+            SetField(action, "configuration", new ObjectData(configuration));
 
             action.OnEnter();
 
-            Assert.That(_target.GetComponent<UIEffect>().transitionFilter, Is.EqualTo(TransitionFilter.Fade));
+            Assert.That(target.GetComponent<UIEffect>().transitionFilter, Is.EqualTo(TransitionFilter.Fade));
         }
 
         [Test]
         public void ExecutePreset_WithNativePreset_RestoresTheNativeMaterialPath()
         {
-            _target = CreateUiTarget();
-            UIEffect nativeEffect = _target.AddComponent<UIEffect>();
-            _material = new Material(Shader.Find("UI/Default"));
-            _configuration = ScriptableObject.CreateInstance<MaterialUIEffectPreset>();
-            SetField(_configuration, "materialPreset", _material);
-            nativeEffect.ExecutePreset(_configuration);
+            target = CreateUiTarget();
+            Material nativeMaterial =
+                target.GetComponent<Image>().material;
+            UIEffect nativeEffect = target.AddComponent<UIEffect>();
+            material = new Material(Shader.Find("UI/Default"));
+            configuration = ScriptableObject.CreateInstance<MaterialUIEffectPreset>();
+            SetField(configuration, "materialPreset", material);
+            nativeEffect.ExecutePreset(configuration);
 
-            _preset = ScriptableObject.CreateInstance<UIEffectPreset>();
-            _preset.m_TransitionFilter = TransitionFilter.Fade;
-            nativeEffect.ExecutePreset(_preset);
+            preset = ScriptableObject.CreateInstance<UIEffectPreset>();
+            preset.m_TransitionFilter = TransitionFilter.Fade;
+            ApplyUIEffectPreset action = new ApplyUIEffectPreset();
+            SetField(
+                action,
+                "targetGameObject",
+                new GameObjectData(target));
+            SetField(action, "preset", preset);
+            action.OnEnter();
 
-            Assert.That(_target.GetComponent<Image>().material, Is.Null);
+            Assert.That(
+                target.GetComponent<Image>().material,
+                Is.SameAs(nativeMaterial));
             Assert.That(nativeEffect.enabled, Is.True);
             Assert.That(nativeEffect.transitionFilter, Is.EqualTo(TransitionFilter.Fade));
         }
@@ -280,7 +290,7 @@ namespace GearEngine.GearEngine.Tests.Editor
         [Test]
         public void AssetCatalog_AllPresetsResolveAndApply()
         {
-            string[] configurationGuids = AssetDatabase.FindAssets("t:MaterialUIEffectPreset", new[] { UiEffectsFolder });
+            string[] configurationGuids = AssetDatabase.FindAssets("t:MaterialUIEffectPreset", new[] { k_uiEffectsFolder });
             Assert.That(configurationGuids, Has.Length.EqualTo(32));
 
             int materialConfigurationCount = 0;
@@ -344,18 +354,18 @@ namespace GearEngine.GearEngine.Tests.Editor
         [Test]
         public void ClearLoopMaterial_RestoresOriginalMaterialAndNativeEffect()
         {
-            _target = CreateUiTarget();
-            Image graphic = _target.GetComponent<Image>();
+            target = CreateUiTarget();
+            Image graphic = target.GetComponent<Image>();
             Material originalMaterial = graphic.material;
-            UIEffect nativeEffect = _target.AddComponent<UIEffect>();
-            _material = new Material(Shader.Find("UI/Default"));
+            UIEffect nativeEffect = target.AddComponent<UIEffect>();
+            material = new Material(Shader.Find("UI/Default"));
             ApplyUILoopMaterial applyAction = new ApplyUILoopMaterial();
-            SetField(applyAction, "targetGameObject", new GameObjectData(_target));
-            SetField(applyAction, "materialPreset", _material);
+            SetField(applyAction, "targetGameObject", new GameObjectData(target));
+            SetField(applyAction, "materialPreset", material);
             applyAction.OnEnter();
 
             ClearUILoopMaterial clearAction = new ClearUILoopMaterial();
-            SetField(clearAction, "targetGameObject", new GameObjectData(_target));
+            SetField(clearAction, "targetGameObject", new GameObjectData(target));
             clearAction.OnEnter();
 
             Assert.That(graphic.material, Is.SameAs(originalMaterial));
@@ -365,34 +375,39 @@ namespace GearEngine.GearEngine.Tests.Editor
         [Test]
         public void ClearAllUIEffects_ClearsActiveTutorialFocus()
         {
-            _target = new GameObject(
+            target = new GameObject(
+                "FocusRoot",
+                typeof(RectTransform),
+                typeof(Canvas));
+            GameObject focusTarget = new GameObject(
                 "FocusTarget",
                 typeof(RectTransform),
                 typeof(Canvas),
                 typeof(GraphicRaycaster),
                 typeof(Image));
-            Canvas targetCanvas = _target.GetComponent<Canvas>();
-            _focusPreset = ScriptableObject.CreateInstance<FocusPresetSO>();
-            _focusPreset.useDarkOverlay = true;
+            focusTarget.transform.SetParent(target.transform, false);
+            Canvas targetCanvas = focusTarget.GetComponent<Canvas>();
+            focusPreset = ScriptableObject.CreateInstance<FocusPresetSO>();
+            focusPreset.useDarkOverlay = true;
 
             TutorialFocusService focusService = TutorialFocusService.Instance;
             focusService.FocusOn(
-                _target.GetComponent<RectTransform>(),
-                _focusPreset,
+                focusTarget.GetComponent<RectTransform>(),
+                focusPreset,
                 IndicatorAnchor.MiddleCenter,
                 Vector2.zero,
                 Vector2.zero,
                 0f,
                 false);
-            _focusCanvas = GameObject.Find("TutorialFocusCanvas");
-            Assert.That(_focusCanvas, Is.Not.Null);
-            Assert.That(_focusCanvas.activeSelf, Is.True);
+            focusCanvas = GameObject.Find("TutorialFocusCanvas");
+            Assert.That(focusCanvas, Is.Not.Null);
+            Assert.That(focusCanvas.activeSelf, Is.True);
             Assert.That(targetCanvas.overrideSorting, Is.True);
 
             ClearAllUIEffects action = new ClearAllUIEffects();
             action.OnEnter();
 
-            Assert.That(_focusCanvas.activeSelf, Is.False);
+            Assert.That(focusCanvas.activeSelf, Is.False);
             Assert.That(targetCanvas.overrideSorting, Is.False);
         }
 

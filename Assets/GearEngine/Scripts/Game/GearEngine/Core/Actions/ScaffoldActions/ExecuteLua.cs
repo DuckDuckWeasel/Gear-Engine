@@ -60,34 +60,15 @@ namespace Scaffold
             }
 
             // Cache a descriptive name to use in Lua error messages
-            friendlyName = host.gameObject.name + "." + ParentBlock.BlockName + "." + "ExecuteLua #" + CommandIndex.ToString();
-
-            Blackboard blackboard = GetBlackboard();
-
-            // See if a Lua Environment has been assigned to this Blackboard
-            if (luaEnvironment == null)
-            {
-                luaEnvironment = blackboard.LuaEnv;
-            }
+            friendlyName = GetBlackboard().Definition.Name + "." + ParentBlock.BlockName + "." + "ExecuteLua #" + CommandIndex.ToString();
 
             if (luaEnvironment == null)
             {
-                // No Lua Environment specified so just use any available or create one.
-                luaEnvironment = LuaEnvironment.GetLua();
+                throw new InvalidOperationException("Execute Lua requires an explicit Lua Environment reference.");
             }
 
             string s = GetLuaString();
             luaFunction = luaEnvironment.LoadLuaFunction(s, friendlyName);
-
-            // Add a binding to the parent blackboard
-            if (blackboard.LuaBindingName != "")
-            {
-                Table globals = luaEnvironment.Interpreter.Globals;
-                if (globals != null)
-                {
-                    globals[blackboard.LuaBindingName] = blackboard;
-                }
-            }
 
             // Always initialise when playing in the editor.
             // Allows the user to edit the Lua script while the game is playing.

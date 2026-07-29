@@ -1,7 +1,7 @@
 using System;
 using GearEngine.Core.Actions;
 
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.UI;
 
@@ -10,11 +10,11 @@ namespace Scaffold
     /// <summary>
     /// Changes the Image property on a UI element.
     /// </summary>
-    [CommandInfo("UI", 
-                 "Set UI Image", 
+    [CommandInfo("UI",
+                 "Set UI Image",
                  "Changes the Image property of a list of UI Images.")]
     [Serializable]
-    public class SetUIImage : ActionBase 
+    public class SetUIImage : ActionBase
     {
         [Tooltip("List of UI Images to set the source image property on")]
         [SerializeField] protected List<Image> images = new List<Image>();
@@ -28,19 +28,19 @@ namespace Scaffold
         {
             for (int i = 0; i < images.Count; i++)
             {
-                var image = images[i];
+                Image image = images[i];
                 image.sprite = sprite;
             }
 
             Continue();
         }
-        
+
         public override string GetSummary()
         {
             string summary = "";
             for (int i = 0; i < images.Count; i++)
             {
-                var targetImage = images[i];
+                Image targetImage = images[i];
                 if (targetImage == null)
                 {
                     continue;
@@ -59,7 +59,7 @@ namespace Scaffold
 
             return summary + " = " + sprite;
         }
-        
+
         public override Color GetButtonColor()
         {
             return new Color32(235, 191, 217, 255);
@@ -75,7 +75,7 @@ namespace Scaffold
             return false;
         }
 
-        public override void OnCommandAdded(Block parentBlock)
+        public override void OnCommandAdded(Scaffold.VisualScripting.BlockDefinition parentBlock)
         {
             // Add a default empty entry
             images.Add(null);

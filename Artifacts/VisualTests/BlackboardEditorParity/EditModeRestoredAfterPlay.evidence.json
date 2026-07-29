@@ -1,0 +1,9 @@
+{
+  "scenario": "Blackboard window after returning to Edit Mode",
+  "test": "Manual Unity Editor Play Mode transition",
+  "criteria": [
+    "The graph rebinds without requiring Open Blackboard Window.",
+    "The selected Block and detail panel render normally.",
+    "The dirty scene remains unsaved."
+  ]
+}

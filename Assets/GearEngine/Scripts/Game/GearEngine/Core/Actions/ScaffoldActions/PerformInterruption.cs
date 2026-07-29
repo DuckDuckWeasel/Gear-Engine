@@ -1,8 +1,9 @@
 using System;
 using System.Collections.Generic;
 using GearEngine.Core.Actions;
-using GearEngine.GearEngine.Presentation.UI.Input;
 using UnityEngine;
+using CoreActionExecutionStatus =
+    Scaffold.VisualScripting.ActionExecutionStatus;
 
 namespace Scaffold
 {
@@ -11,20 +12,11 @@ namespace Scaffold
     [AddComponentMenu("")]
     public sealed class PerformInterruption : ActionBase
     {
-        [Tooltip("Optional Invoke Action to interrupt. Leave empty to use the current Invoke Action.")]
-        [SerializeField] private InvokeActionCommand targetCommand;
-
         [Tooltip("Stable identifiers of the nested actions that should be interrupted.")]
         [SerializeField] private List<string> targetActionIds = new List<string>();
 
         [Tooltip("The status assigned to interrupted actions and returned by this action.")]
         [SerializeField] private BooleanData interruptSuccess = new BooleanData(true);
-
-        public InvokeActionCommand TargetCommand
-        {
-            get => targetCommand;
-            set => targetCommand = value;
-        }
 
         [Tooltip("The Target action ids")]
         public IList<string> TargetActionIds => targetActionIds;
@@ -37,23 +29,27 @@ namespace Scaffold
 
         public override void OnEnter()
         {
-            InvokeActionCommand interruptionTarget = targetCommand;
-            if (interruptionTarget == null)
+            List<int> targetIndexes = new List<int>();
+            for (int index = 0; index < CurrentActions.Count; index++)
             {
-                interruptionTarget = hostCommand as InvokeActionCommand;
+                if (targetActionIds.Contains(
+                    CurrentActions[index].DefinitionId.Value))
+                {
+                    targetIndexes.Add(index);
+                }
             }
 
-            if (interruptionTarget == null)
+            if (targetIndexes.Count == 0)
             {
-                Debug.LogError("[PerformInterruption] No Invoke Action target is available.");
+                Debug.LogError("[PerformInterruption] None of the configured action IDs exist in the current Action List.");
                 Fail();
                 return;
             }
 
-            ActionExecutionStatus interruptionStatus = interruptSuccess.Value
-                ? ActionExecutionStatus.Success
-                : ActionExecutionStatus.Failure;
-            interruptionTarget.InterruptActions(targetActionIds, interruptionStatus);
+            CoreActionExecutionStatus interruptionStatus = interruptSuccess.Value
+                ? CoreActionExecutionStatus.Success
+                : CoreActionExecutionStatus.Failure;
+            Context.ActionList.InterruptActions(targetIndexes, interruptionStatus);
 
             if (interruptSuccess.Value)
             {
@@ -66,8 +62,7 @@ namespace Scaffold
 
         public override string GetSummary()
         {
-            string targetName = targetCommand == null ? "Current Invoke Action" : targetCommand.name;
-            return $"Interrupt {targetActionIds.Count} task(s) in {targetName}";
+            return $"Interrupt {targetActionIds.Count} action(s) in the current Action List";
         }
     }
 }

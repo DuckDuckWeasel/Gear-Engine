@@ -8,7 +8,7 @@ using UnityEngine;
 namespace Scaffold
 {
     [CommandInfo("Flow",
-                 "Save Point", 
+                 "Save Point",
                  "Creates a Save Point and adds it to the Save History. The player can save the Save History to persistent storage and load it again later using the Save Menu.")]
     [Serializable]
     public class SavePoint : ActionBase
@@ -72,10 +72,10 @@ namespace Scaffold
         /// <summary>
         /// Gets a string key which uniquely identifies this Save Point.
         /// </summary>
-        public string SavePointKey 
-        { 
-            get 
-            { 
+        public string SavePointKey
+        {
+            get
+            {
                 if (keyMode == KeyMode.BlockName)
                 {
                     return ParentBlock.BlockName;
@@ -86,9 +86,9 @@ namespace Scaffold
                 }
                 else
                 {
-                    return customKey; 
+                    return customKey;
                 }
-            } 
+            }
         }
 
         /// <summary>
@@ -104,7 +104,7 @@ namespace Scaffold
                 }
                 else
                 {
-                    return customDescription; 
+                    return customDescription;
                 }
             }
         }
@@ -116,16 +116,21 @@ namespace Scaffold
 
         public override void OnEnter()
         {
-            var saveManager = ScaffoldManager.Instance.SaveManager;
-
-            saveManager.AddSavePoint(SavePointKey, SavePointDescription);
-
             if (fireEvent)
             {
-                SavePointLoaded.NotifyEventHandlers(SavePointKey);
+                Context.EventBus.Publish(
+                    new BlackboardSavePointReachedEvent(
+                        Context.RuntimeInstanceId,
+                        SavePointKey,
+                        SavePointDescription,
+                        resumeOnLoad,
+                        isStartPoint));
             }
 
-            Continue();
+            VisualScripting.Blackboard blackboard = GetBlackboard();
+            RunTask(
+                () => blackboard.SaveAsync(SavePointKey),
+                $"Saving Blackboard checkpoint '{SavePointKey}'");
         }
 
         public override string GetSummary()
@@ -172,6 +177,7 @@ namespace Scaffold
 
         #endregion
     }
+
 }
 
 #endif

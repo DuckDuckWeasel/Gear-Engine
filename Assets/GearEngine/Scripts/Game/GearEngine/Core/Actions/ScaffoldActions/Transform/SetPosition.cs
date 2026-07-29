@@ -10,7 +10,7 @@ namespace Scaffold
     [Serializable]
     public class SetPosition : ActionBase
     {
-        [Tooltip("The Transform to position. If left empty, uses the GameObject this Block is attached to.")]
+        [Tooltip("The Transform to position.")]
         [SerializeField] protected TransformData targetTransform;
 
         [Tooltip("The position to set the Transform to.")]
@@ -21,13 +21,21 @@ namespace Scaffold
 
         public override void OnEnter()
         {
-            Transform t = (targetTransform.Value != null) ? targetTransform.Value : GetBlackboard().transform;
-            if (t != null)
+            Transform t = targetTransform.Value;
+            if (t == null)
             {
-                if (isLocal)
-                    t.localPosition = position.Value;
-                else
-                    t.position = position.Value;
+                Debug.LogError("[SetPosition] A target Transform is required.");
+                Fail();
+                return;
+            }
+
+            if (isLocal)
+            {
+                t.localPosition = position.Value;
+            }
+            else
+            {
+                t.position = position.Value;
             }
 
             Continue();
@@ -37,7 +45,7 @@ namespace Scaffold
         {
             if (targetTransform.Value == null)
             {
-                return "Owner to " + position.Value.ToString();
+                return "Error: No target Transform";
             }
             return targetTransform.Value.name + " to " + position.Value.ToString();
         }

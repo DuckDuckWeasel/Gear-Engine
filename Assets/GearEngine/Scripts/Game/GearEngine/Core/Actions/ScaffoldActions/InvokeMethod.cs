@@ -11,15 +11,14 @@ using System.Linq;
 
 namespace Scaffold
 {
-    /// <summary>
-    /// Invokes a method of a component via reflection. Supports passing multiple parameters and storing returned values in a Scaffold variable.
-    /// </summary>
     [CommandInfo("Scripting",
                  "Invoke Method",
                  "Invokes a method of a component via reflection. Supports passing multiple parameters and storing returned values in a Scaffold variable.")]
     [Serializable]
     public class InvokeMethod : ActionBase
     {
+        public virtual GameObject TargetObject { get { return targetObject; } }
+
         [Tooltip("A description of what this command does. Appears in the command summary.")]
         [SerializeField] protected string description = "";
 
@@ -78,171 +77,166 @@ namespace Scaffold
         [Tooltip("The Obj method")]
         protected MethodInfo objMethod;
 
-        protected virtual void Awake()
+        #region Public members
+
+        public override void OnEnter()
+        {
+            try
+            {
+                ExecuteInvocation();
+            }
+            catch (Exception exception)
+            {
+                LogInvocationError(exception);
+                Fail();
+            }
+        }
+
+        private void ExecuteInvocation()
+        {
+            if (!HasInvocationTarget())
+            {
+                Continue();
+                return;
+            }
+
+            InitializeInvocation();
+            if (returnValueType == "System.Collections.IEnumerator")
+            {
+                ExecuteEnumerator();
+                return;
+            }
+
+            ExecuteMethod();
+        }
+
+        private bool HasInvocationTarget()
+        {
+            bool hasComponent = !string.IsNullOrEmpty(targetComponentAssemblyName);
+            bool hasMethod = !string.IsNullOrEmpty(targetMethod);
+            return targetObject != null && hasComponent && hasMethod;
+        }
+
+        protected virtual void InitializeInvocation()
+        {
+            ResolveComponent();
+            ResolveMethod();
+        }
+
+        private void ResolveComponent()
         {
             if (componentType == null)
             {
                 componentType = ReflectionHelper.GetType(targetComponentAssemblyName);
             }
-
             if (objComponent == null)
             {
                 objComponent = targetObject.GetComponent(componentType);
             }
+        }
 
+        private void ResolveMethod()
+        {
             if (parameterTypes == null)
             {
                 parameterTypes = GetParameterTypes();
             }
-
             if (objMethod == null)
             {
                 objMethod = UnityEvent.GetValidMethodInfo(objComponent, targetMethod, parameterTypes);
             }
         }
 
+        protected virtual Type[] GetParameterTypes()
+        {
+            Type[] types = new Type[methodParameters.Length];
+            for (int i = 0; i < methodParameters.Length; i++)
+            {
+                InvokeMethodParameter item = methodParameters[i];
+                types[i] = ReflectionHelper.GetType(item.ObjectValue.TypeAssemblyName);
+            }
+
+            return types;
+        }
+
+        private void ExecuteEnumerator()
+        {
+            bool detached = callMode != CallMode.WaitUntilFinished;
+            RunRoutine(ExecuteCoroutine(), detached);
+            if (callMode == CallMode.Continue)
+            {
+                Continue();
+                return;
+            }
+            if (callMode == CallMode.Stop)
+            {
+                StopParentBlock();
+            }
+        }
+
         protected virtual IEnumerator ExecuteCoroutine()
         {
-            yield return host.StartCoroutine((IEnumerator)objMethod.Invoke(objComponent, GetParameterValues()));
-
+            object result = objMethod.Invoke(objComponent, GetParameterValues());
+            yield return (IEnumerator)result;
             if (callMode == CallMode.WaitUntilFinished)
             {
                 Continue();
             }
         }
 
-        protected virtual System.Type[] GetParameterTypes()
+        private void ExecuteMethod()
         {
-            System.Type[] types = new System.Type[methodParameters.Length];
-
-            for (int i = 0; i < methodParameters.Length; i++)
+            object returnValue = objMethod.Invoke(objComponent, GetParameterValues());
+            if (saveReturnValue)
             {
-                InvokeMethodParameter item = methodParameters[i];
-                Type objType = ReflectionHelper.GetType(item.objValue.typeAssemblyname);
-
-                types[i] = objType;
+                SetVariable(returnValueVariableKey, returnValue);
             }
-
-            return types;
+            Continue();
         }
 
         protected virtual object[] GetParameterValues()
         {
             object[] values = new object[methodParameters.Length];
-            Blackboard blackboard = GetBlackboard();
-
+            VisualScripting.Blackboard currentBlackboard = GetBlackboard();
             for (int i = 0; i < methodParameters.Length; i++)
             {
-                InvokeMethodParameter item = methodParameters[i];
-
-                if (string.IsNullOrEmpty(item.variableKey))
-                {
-                    values[i] = item.objValue.GetValue();
-                }
-                else
-                {
-                    object objValue = null;
-                    Variable variable = blackboard.GetVariable(item.variableKey);
-
-                    if (variable != null)
-                    {
-                        switch (variable)
-                        {
-                            case IntegerVariable iVar: objValue = iVar.Value; break;
-                            case BooleanVariable bVar: objValue = bVar.Value; break;
-                            case FloatVariable fVar: objValue = fVar.Value; break;
-                            case StringVariable sVar: objValue = sVar.Value; break;
-                            case ColorVariable cVar: objValue = cVar.Value; break;
-                            case GameObjectVariable goVar: objValue = goVar.Value; break;
-                            case MaterialVariable mVar: objValue = mVar.Value; break;
-                            case SpriteVariable spVar: objValue = spVar.Value; break;
-                            case TextureVariable tVar: objValue = tVar.Value; break;
-                            case Vector2Variable v2Var: objValue = v2Var.Value; break;
-                            case Vector3Variable v3Var: objValue = v3Var.Value; break;
-                            case ObjectVariable oVar: objValue = oVar.Value; break;
-                        }
-                    }
-
-                    values[i] = objValue;
-                }
+                values[i] = ResolveParameterValue(methodParameters[i], currentBlackboard);
             }
 
             return values;
         }
 
+        private object ResolveParameterValue(
+            InvokeMethodParameter parameter,
+            Scaffold.VisualScripting.Blackboard currentBlackboard)
+        {
+            if (string.IsNullOrEmpty(parameter.VariableKey))
+            {
+                return parameter.ObjectValue.GetValue();
+            }
+
+            return currentBlackboard.TryGetVariable(
+                parameter.VariableKey,
+                out Scaffold.VisualScripting.VariableCellBase cell)
+                    ? cell.UntypedValue
+                    : null;
+        }
+
         protected virtual void SetVariable(string key, object value)
         {
-            Blackboard blackboard = GetBlackboard();
-            Variable variable = blackboard.GetVariable(key);
-
-            if (variable == null)
+            if (!GetBlackboard().TryGetVariable(
+                    key,
+                    out Scaffold.VisualScripting.VariableCellBase cell))
             {
                 return;
             }
 
-            switch (variable)
-            {
-                case IntegerVariable iVar: iVar.Value = (int)value; break;
-                case BooleanVariable bVar: bVar.Value = (bool)value; break;
-                case FloatVariable fVar: fVar.Value = (float)value; break;
-                case StringVariable sVar: sVar.Value = (string)value; break;
-                case ColorVariable cVar: cVar.Value = (UnityEngine.Color)value; break;
-                case GameObjectVariable goVar: goVar.Value = (UnityEngine.GameObject)value; break;
-                case MaterialVariable mVar: mVar.Value = (UnityEngine.Material)value; break;
-                case SpriteVariable spVar: spVar.Value = (UnityEngine.Sprite)value; break;
-                case TextureVariable tVar: tVar.Value = (UnityEngine.Texture)value; break;
-                case Vector2Variable v2Var: v2Var.Value = (UnityEngine.Vector2)value; break;
-                case Vector3Variable v3Var: v3Var.Value = (UnityEngine.Vector3)value; break;
-                case ObjectVariable oVar: oVar.Value = (UnityEngine.Object)value; break;
-            }
+            cell.UntypedValue = value;
         }
 
-        #region Public members
-
-        /// <summary>
-        /// GameObject containing the component method to be invoked.
-        /// </summary>
-        public virtual GameObject TargetObject { get { return targetObject; } }
-
-        public override void OnEnter()
+        private void LogInvocationError(Exception exception)
         {
-            try
-            {
-                if (targetObject == null || string.IsNullOrEmpty(targetComponentAssemblyName) || string.IsNullOrEmpty(targetMethod))
-                {
-                    Continue();
-                    return;
-                }
-
-                if (returnValueType != "System.Collections.IEnumerator")
-                {
-                    object objReturnValue = objMethod.Invoke(objComponent, GetParameterValues());
-
-                    if (saveReturnValue)
-                    {
-                        SetVariable(returnValueVariableKey, objReturnValue);
-                    }
-
-                    Continue();
-                }
-                else
-                {
-                    host.StartCoroutine(ExecuteCoroutine());
-
-                    if (callMode == CallMode.Continue)
-                    {
-                        Continue();
-                    }
-                    else if (callMode == CallMode.Stop)
-                    {
-                        StopParentBlock();
-                    }
-                }
-            }
-            catch (System.Exception ex)
-            {
-                Debug.LogError($"[InvokeMethod] Error invoking '{targetMethod}' on {targetComponentText}: {ex.Message}\n{ex.StackTrace}");
-            }
+            Debug.LogError($"[InvokeMethod] Error invoking '{targetMethod}' on {targetComponentText}: {exception.Message}\n{exception.StackTrace}");
         }
 
         public override Color GetButtonColor()
@@ -268,112 +262,4 @@ namespace Scaffold
         #endregion
     }
 
-    [System.Serializable]
-    public class InvokeMethodParameter
-    {
-        [SerializeField]
-        [Tooltip("The Obj value")]
-        public ObjectValue objValue;
-
-        [SerializeField]
-        [Tooltip("The Variable key")]
-        public string variableKey;
-    }
-
-    [System.Serializable]
-    public class ObjectValue
-    {
-        [Tooltip("The Type assemblyname")]
-        public string typeAssemblyname;
-        [Tooltip("The Type fullname")]
-        public string typeFullname;
-
-        [Tooltip("The Int value")]
-        public int intValue;
-        [Tooltip("The Bool value")]
-        public bool boolValue;
-        [Tooltip("The Float value")]
-        public float floatValue;
-        [Tooltip("The String value")]
-        public string stringValue;
-
-        [Tooltip("The Color value")]
-        public Color colorValue;
-        [Tooltip("The Game object value")]
-        public GameObject gameObjectValue;
-        [Tooltip("The Material value")]
-        public Material materialValue;
-        public UnityEngine.Object objectValue;
-        [Tooltip("The Sprite value")]
-        public Sprite spriteValue;
-        [Tooltip("The Texture value")]
-        public Texture textureValue;
-        [Tooltip("The Vector2 value")]
-        public Vector2 vector2Value;
-        [Tooltip("The Vector3 value")]
-        public Vector3 vector3Value;
-
-        public object GetValue()
-        {
-            switch (typeFullname)
-            {
-                case "System.Int32":
-                    return intValue;
-                case "System.Boolean":
-                    return boolValue;
-                case "System.Single":
-                    return floatValue;
-                case "System.String":
-                    return stringValue;
-                case "UnityEngine.Color":
-                    return colorValue;
-                case "UnityEngine.GameObject":
-                    return gameObjectValue;
-                case "UnityEngine.Material":
-                    return materialValue;
-                case "UnityEngine.Sprite":
-                    return spriteValue;
-                case "UnityEngine.Texture":
-                    return textureValue;
-                case "UnityEngine.Vector2":
-                    return vector2Value;
-                case "UnityEngine.Vector3":
-                    return vector3Value;
-                default:
-                    Type objType = ReflectionHelper.GetType(typeAssemblyname);
-
-                    if (objType.IsSubclassOf(typeof(UnityEngine.Object)))
-                    {
-                        return objectValue;
-                    }
-                    else if (objType.IsEnum())
-                    {
-                        return System.Enum.ToObject(objType, intValue);
-                    }
-
-                    break;
-            }
-
-            return null;
-        }
-    }
-
-    public static class ReflectionHelper
-    {
-        static Dictionary<string, System.Type> types = new Dictionary<string, System.Type>();
-
-        public static System.Type GetType(string AssemblyQualifiedNameTypeName)
-        {
-            if (types.ContainsKey(AssemblyQualifiedNameTypeName) && types[AssemblyQualifiedNameTypeName] != null)
-            {
-                return types[AssemblyQualifiedNameTypeName];
-            }
-
-            types[AssemblyQualifiedNameTypeName] = AppDomain.CurrentDomain.GetAssemblies().
-                SelectMany(x => x.GetTypes())
-                .FirstOrDefault(x => x.AssemblyQualifiedName == AssemblyQualifiedNameTypeName);
-
-            return types[AssemblyQualifiedNameTypeName];
-        }
-    }
 }

@@ -5,14 +5,15 @@ using UnityEngine;
 
 namespace Scaffold
 {
-    public class ControlWithDisplay<TDisplayEnum> : Command
+    [Serializable]
+    public abstract class ControlWithDisplay<TDisplayEnum> : ActionBase
     {
         [Tooltip("Display type")]
         [SerializeField] protected TDisplayEnum display;
 
         protected virtual bool IsDisplayNone<TEnum>(TEnum enumValue)
         {
-            string displayTypeStr = Enum.GetName(typeof (TEnum), enumValue);
+            string displayTypeStr = Enum.GetName(typeof(TEnum), enumValue);
             return displayTypeStr == "None";
         }
 

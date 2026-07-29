@@ -10,7 +10,7 @@ namespace Scaffold
     [Serializable]
     public class SetRotation : ActionBase
     {
-        [Tooltip("The Transform to rotate. If left empty, uses the GameObject this Block is attached to.")]
+        [Tooltip("The Transform to rotate.")]
         [SerializeField] protected TransformData targetTransform;
 
         [Tooltip("The rotation to set the Transform to, in Euler angles.")]
@@ -21,13 +21,21 @@ namespace Scaffold
 
         public override void OnEnter()
         {
-            Transform t = (targetTransform.Value != null) ? targetTransform.Value : GetBlackboard().transform;
-            if (t != null)
+            Transform t = targetTransform.Value;
+            if (t == null)
             {
-                if (isLocal)
-                    t.localEulerAngles = rotation.Value;
-                else
-                    t.eulerAngles = rotation.Value;
+                Debug.LogError("[SetRotation] A target Transform is required.");
+                Fail();
+                return;
+            }
+
+            if (isLocal)
+            {
+                t.localEulerAngles = rotation.Value;
+            }
+            else
+            {
+                t.eulerAngles = rotation.Value;
             }
 
             Continue();
@@ -37,7 +45,7 @@ namespace Scaffold
         {
             if (targetTransform.Value == null)
             {
-                return "Owner to " + rotation.Value.ToString();
+                return "Error: No target Transform";
             }
             return targetTransform.Value.name + " to " + rotation.Value.ToString();
         }

@@ -33,9 +33,8 @@ namespace Scaffold
 
         protected override void PreEvaluate()
         {
-            int previousIndex = ParentTrack != null ? ParentTrack.PreviousActiveCommandIndex : ParentBlock.PreviousActiveCommandIndex;
             //if we came from the end then we are already looping, if not this is first loop so prep
-            if (previousIndex != endCommand.CommandIndex)
+            if (PreviousCommandIndex != endCommand.CommandIndex)
             {
                 curIndex.Value = -1;
             }
@@ -94,7 +93,7 @@ namespace Scaffold
                 return "Error: No collection";
             }
 
-            return item.Key + " in " + collection.Value.name;
+            return item.Key + " in " + collection.Value.Name;
         }
 
         #endregion Public members

@@ -13,21 +13,21 @@ namespace Scaffold
     {
         [Tooltip("The TMP Text component to modify")]
         [SerializeField] protected TextMeshProUGUI targetText;
-        
+
         [Tooltip("The target alpha value (0 is transparent, 1 is opaque)")]
         [SerializeField] protected FloatData targetAlpha = new FloatData(0f);
 
         [Tooltip("Duration of the fade in seconds")]
         [SerializeField] protected FloatData duration = new FloatData(1f);
-        
+
         [Tooltip("Wait until fade finishes?")]
         [SerializeField] protected bool waitUntilFinished = true;
 
         public override void OnEnter()
         {
-            if (targetText != null && blackboard != null)
+            if (targetText != null && CanRunScheduledWork)
             {
-                blackboard.StartCoroutine(FadeRoutine());
+                RunRoutine(FadeRoutine(), !waitUntilFinished);
             }
             else
             {
@@ -40,21 +40,28 @@ namespace Scaffold
             float elapsed = 0f;
             Color startColor = targetText.color;
             Color endColor = new Color(startColor.r, startColor.g, startColor.b, targetAlpha.Value);
-
-            if (!waitUntilFinished)
-            {
-                Continue();
-            }
-
+            CompleteDetachedAction();
             while (elapsed < duration.Value)
             {
-                elapsed += Time.deltaTime;
+                elapsed += CurrentDeltaTime;
                 targetText.color = Color.Lerp(startColor, endColor, elapsed / duration.Value);
                 yield return null;
             }
 
             targetText.color = endColor;
+            CompleteAwaitedAction();
+        }
 
+        private void CompleteDetachedAction()
+        {
+            if (!waitUntilFinished)
+            {
+                Continue();
+            }
+        }
+
+        private void CompleteAwaitedAction()
+        {
             if (waitUntilFinished)
             {
                 Continue();
@@ -63,10 +70,14 @@ namespace Scaffold
 
         public override string GetSummary()
         {
-            if (targetText == null) return "Error: No Target Text";
+            if (targetText == null)
+            {
+                return "Error: No Target Text";
+            }
+
             return $"Fade {targetText.name} to {targetAlpha.Value} over {duration.Value}s";
         }
-        
+
         public override Color GetButtonColor() { return new Color32(235, 191, 217, 255); }
     }
 }

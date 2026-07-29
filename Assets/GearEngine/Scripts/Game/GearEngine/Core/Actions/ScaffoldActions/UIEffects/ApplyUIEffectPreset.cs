@@ -12,6 +12,17 @@ namespace Scaffold
     [Serializable]
     public class ApplyUIEffectPreset : UIEffectActionBase
     {
+        [Tooltip("The UIEffect component to modify. Takes precedence over Target GameObject.")]
+        [SerializeField] private UIEffect targetEffect;
+
+        [Tooltip("A dynamic target. This enables use inside a For Each loop over GameObjects.")]
+        [SerializeField] private GameObjectData targetGameObject;
+
+        protected override UIEffect TargetEffect => targetEffect;
+
+        protected override GameObjectData TargetGameObject =>
+            targetGameObject;
+
         [Tooltip("The unified UI effect preset to apply directly or from an Object blackboard variable.")]
         [SerializeField] protected ObjectData configuration;
 
@@ -29,7 +40,7 @@ namespace Scaffold
             UIEffectPreset effectPreset = configuration.Value as UIEffectPreset;
             if (effectPreset != null && TryResolveEffect(addIfMissing.Value, out UIEffect effect))
             {
-                effect.ExecutePreset(effectPreset, append.Value);
+                ApplyPreset(effect, effectPreset, append.Value);
                 ScaffoldUIEffectRegistry.Track(effect);
             }
             else
@@ -55,7 +66,7 @@ namespace Scaffold
         {
             if (preset != null && TryResolveEffect(addIfMissing.Value, out UIEffect effect))
             {
-                effect.ExecutePreset(preset, append.Value);
+                ApplyPreset(effect, preset, append.Value);
                 ScaffoldUIEffectRegistry.Track(effect);
             }
         }

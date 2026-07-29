@@ -16,7 +16,7 @@ namespace Scaffold
     [AddComponentMenu("")]
     [ExecuteInEditMode]
     [Serializable]
-    public class RotateTo : iTweenCommand
+    public class RotateTo : ITweenCommand
     {
         [Tooltip("Target host.transform that the GameObject will rotate to")]
         [SerializeField] protected TransformData toTransform;
@@ -45,9 +45,6 @@ namespace Scaffold
             tweenParams.Add("easetype", easeType);
             tweenParams.Add("looptype", loopType);
             tweenParams.Add("isLocal", isLocal);
-            tweenParams.Add("oncomplete", "OniTweenComplete");
-            tweenParams.Add("oncompletetarget", host.gameObject);
-            tweenParams.Add("oncompleteparams", this);
             iTween.RotateTo(targetObject.Value, tweenParams);
         }
 

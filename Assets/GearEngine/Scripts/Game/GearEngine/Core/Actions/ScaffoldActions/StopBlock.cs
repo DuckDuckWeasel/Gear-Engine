@@ -1,22 +1,19 @@
 using System;
 using GearEngine.Core.Actions;
 
-﻿using UnityEngine;
+using UnityEngine;
 
 namespace Scaffold
 {
     /// <summary>
     /// Stops executing the named Block.
     /// </summary>
-    [CommandInfo("Flow", 
-                 "Stop Block", 
+    [CommandInfo("Flow",
+                 "Stop Block",
                  "Stops executing the named Block")]
     [Serializable]
-    public class StopBlock : ActionBase, IBlockCaller
+    public class StopBlock : ActionBase
     {
-        [Tooltip("Blackboard containing the Block. If none is specified, the parent Blackboard is used.")]
-        [SerializeField] protected Blackboard blackboard;
-
         [Tooltip("Name of the Block to stop")]
         [SerializeField] protected StringData blockName = new StringData("");
 
@@ -27,18 +24,15 @@ namespace Scaffold
             if (blockName.Value == "")
             {
                 Continue();
+                return;
             }
 
-            if (blackboard == null)
-            {
-                blackboard = (Blackboard)GetBlackboard();
-            }
-
-            var block = blackboard.FindBlock(blockName.Value);
+            VisualScripting.Block block = GetBlackboard().FindBlock(blockName.Value);
             if (block == null ||
                 !block.IsExecuting())
             {
                 Continue();
+                return;
             }
 
             block.Stop();
@@ -50,7 +44,7 @@ namespace Scaffold
         {
             return blockName;
         }
-            
+
         public override Color GetButtonColor()
         {
             return new Color32(253, 253, 150, 255);
@@ -59,13 +53,6 @@ namespace Scaffold
         public override bool HasReference(Variable variable)
         {
             return blockName.stringRef == variable || base.HasReference(variable);
-        }
-
-        public bool MayCallBlock(Block block)
-        {
-            if(blackboard != null)
-                return block == blackboard.FindBlock(blockName.Value);
-            return false;
         }
 
         #endregion

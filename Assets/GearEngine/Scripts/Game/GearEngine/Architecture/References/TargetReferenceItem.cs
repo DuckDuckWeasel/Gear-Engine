@@ -3,12 +3,6 @@ using UnityEngine;
 
 namespace GearEngine.Core.Architecture.References
 {
-    public enum TargetReferenceItemType
-    {
-        DirectReference,
-        GlobalVariable
-    }
-
     [Serializable]
     public class TargetReferenceItem
     {
@@ -21,13 +15,15 @@ namespace GearEngine.Core.Architecture.References
         [Tooltip("References a global variable registered in the system (e.g. Fungus).")]
         public string globalVariableName;
 
-        public GameObject Resolve()
+        public GameObject Resolve(ITargetResolver resolver = null)
         {
             if (type == TargetReferenceItemType.DirectReference)
+            {
                 return directReference;
-            
-            return (TargetReference.GlobalResolver != null && !string.IsNullOrEmpty(globalVariableName)) 
-                ? TargetReference.GlobalResolver.Resolve(globalVariableName) 
+            }
+
+            return (resolver != null && !string.IsNullOrEmpty(globalVariableName))
+                ? resolver.Resolve(globalVariableName)
                 : null;
         }
     }

@@ -9,6 +9,17 @@ namespace Scaffold
     [Serializable]
     public class ClearUIEffect : UIEffectActionBase
     {
+        [Tooltip("The UIEffect component to modify. Takes precedence over Target GameObject.")]
+        [SerializeField] private UIEffect targetEffect;
+
+        [Tooltip("A dynamic target. This enables use inside a For Each loop over GameObjects.")]
+        [SerializeField] private GameObjectData targetGameObject;
+
+        protected override UIEffect TargetEffect => targetEffect;
+
+        protected override GameObjectData TargetGameObject =>
+            targetGameObject;
+
         public override void OnEnter()
         {
             if (TryResolveEffect(false, out UIEffect effect))

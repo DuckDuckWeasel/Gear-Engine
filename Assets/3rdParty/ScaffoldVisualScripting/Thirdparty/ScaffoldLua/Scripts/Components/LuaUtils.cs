@@ -1,5 +1,5 @@
 
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System;
@@ -10,16 +10,6 @@ using MoonSharp.Interpreter;
 
 namespace Scaffold
 {
-    /// <summary>
-    /// Options for using the Lua ScaffoldModule.
-    /// </summary>
-    public enum ScaffoldModuleOptions
-    {
-        UseGlobalVariables, // Scaffold helper items will be available as global variables.
-        UseScaffoldVariable,  // Scaffold helper items will be available in the 'scaffold' global variable.
-        NoScaffoldModule      // The scaffold helper module will not be loaded.
-    }
-
     /// <summary>
     /// A collection of utilites to use in Lua for common Unity / Scaffold tasks.
     /// </summary>
@@ -58,12 +48,14 @@ namespace Scaffold
         /// <summary>
         /// Cached reference to the Lua Environment component.
         /// </summary>
-        protected LuaEnvironment luaEnvironment { get; set; }
+        protected LuaEnvironment LuaEnvironment { get; set; }
 
         protected StringSubstituter stringSubstituter;
 
 #if !FUNGUSLUA_STANDALONE
         protected ConversationManager conversationManager;
+
+        [SerializeField] private MenuDialog menuDialog;
 #endif
 
         protected virtual void OnEnable()
@@ -75,7 +67,7 @@ namespace Scaffold
         {
             StringSubstituter.UnregisterHandler(this);
         }
-            
+
         /// <summary>
         /// Registers all listed c# types for interop with Lua.
         /// You can also register types directly in the Awake method of any 
@@ -157,7 +149,7 @@ namespace Scaffold
             LuaBindingsBase[] bindings = GameObject.FindObjectsOfType<LuaBindingsBase>();
             foreach (LuaBindingsBase binding in bindings)
             {
-                binding.AddBindings(luaEnvironment);
+                binding.AddBindings(LuaEnvironment);
             }
         }
 
@@ -173,7 +165,7 @@ namespace Scaffold
                 return;
             }
 
-            MoonSharp.Interpreter.Script interpreter = luaEnvironment.Interpreter;
+            MoonSharp.Interpreter.Script interpreter = LuaEnvironment.Interpreter;
 
             // Require the Scaffold module and assign it to the global 'scaffold'
             Table scaffoldTable = null;
@@ -197,7 +189,7 @@ namespace Scaffold
             scaffoldTable["factory"] = UserData.CreateStatic(typeof(PODTypeFactory));
 
             // Lua Environment and Lua Utils components
-            scaffoldTable["luaenvironment"] = luaEnvironment;
+            scaffoldTable["luaenvironment"] = LuaEnvironment;
             scaffoldTable["luautils"] = this;
 
             // Provide access to the Unity Test Tools (if available).
@@ -209,7 +201,7 @@ namespace Scaffold
             }
 
             // Populate the string table by parsing the string table JSON files
-            stringTable = new Table(interpreter); 
+            stringTable = new Table(interpreter);
             scaffoldTable["stringtable"] = stringTable;
             foreach (TextAsset stringFile in stringTables)
             {
@@ -260,7 +252,7 @@ namespace Scaffold
 #endif
 
             if (scaffoldModule == ScaffoldModuleOptions.UseGlobalVariables)
-            {               
+            {
                 // Copy all items from the Scaffold table to global variables
                 foreach (TablePair p in scaffoldTable.Pairs)
                 {
@@ -320,22 +312,22 @@ namespace Scaffold
         {
             // This method could be called from the Start of another component, so
             // we need to ensure that the LuaEnvironment has been initialized.
-            if (luaEnvironment == null)
+            if (LuaEnvironment == null)
             {
-                luaEnvironment = GetComponent<LuaEnvironment>();
-                if (luaEnvironment != null)
+                LuaEnvironment = GetComponent<LuaEnvironment>();
+                if (LuaEnvironment != null)
                 {
-                    luaEnvironment.InitEnvironment();
+                    LuaEnvironment.InitEnvironment();
                 }
             }
-                    
-            if (luaEnvironment == null)
+
+            if (LuaEnvironment == null)
             {
                 UnityEngine.Debug.LogError("No Lua Environment found");
                 return false;
             }
 
-            if (luaEnvironment.Interpreter == null)
+            if (LuaEnvironment.Interpreter == null)
             {
                 UnityEngine.Debug.LogError("No Lua interpreter found");
                 return false;
@@ -343,8 +335,8 @@ namespace Scaffold
 
             // Remove all tabs from input
             input.Replace("\t", "");
-                
-            MoonSharp.Interpreter.Script interpreter = luaEnvironment.Interpreter;
+
+            MoonSharp.Interpreter.Script interpreter = LuaEnvironment.Interpreter;
 
             // Instantiate the regular expression object.
             Regex r = new Regex("\\{\\$.*?\\}");
@@ -352,7 +344,7 @@ namespace Scaffold
             bool modified = false;
 
             // Match the regular expression pattern against a text string.
-            var results = r.Matches(input.ToString());
+            MatchCollection results = r.Matches(input.ToString());
             foreach (Match match in results)
             {
                 string key = match.Value.Substring(2, match.Value.Length - 3);
@@ -473,7 +465,7 @@ namespace Scaffold
         /// <summary>
         /// Returns the current say dialog.
         /// </summary>
-        public virtual SayDialog GetSayDialog ()
+        public virtual SayDialog GetSayDialog()
         {
             return SayDialog.GetSayDialog();
         }
@@ -483,14 +475,14 @@ namespace Scaffold
         /// </summary>
         public virtual void SetMenuDialog(MenuDialog menuDialog)
         {
-            MenuDialog.ActiveMenuDialog = menuDialog;
+            this.menuDialog = menuDialog;
         }
         /// <summary>
         /// Returns the current menu dialog
         /// </summary>
         public virtual MenuDialog GetMenuDialog()
         {
-            return MenuDialog.GetMenuDialog();
+            return menuDialog;
         }
 #endif
 
@@ -499,15 +491,15 @@ namespace Scaffold
         #region LuaEnvironmentInitializer implementation
 
         public override void Initialize()
-        {   
-            luaEnvironment = GetComponent<LuaEnvironment>();
-            if (luaEnvironment == null)
+        {
+            LuaEnvironment = GetComponent<LuaEnvironment>();
+            if (LuaEnvironment == null)
             {
                 Debug.LogError("No Lua Environment found");
                 return;
             }
 
-            if (luaEnvironment.Interpreter == null)
+            if (LuaEnvironment.Interpreter == null)
             {
                 Debug.LogError("No Lua interpreter found");
                 return;
@@ -524,5 +516,5 @@ namespace Scaffold
         }
 
         #endregion
-   }
+    }
 }

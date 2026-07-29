@@ -1,124 +1,223 @@
 using System;
-using UnityEngine;
+using System.Reflection;
 using GearEngine.Core.Actions;
+using UnityEngine;
 using global::GearEngine.GearEngine.Presentation.UI.Input;
 
 namespace GearEngine.GearEngine.Presentation.UI.Actions
 {
     [Serializable]
-    public class WaitForEventAction : IAction
+    public class WaitForEventAction : ActionBase
     {
         [Tooltip("The type of event to wait for.")]
         [SubclassDropdown("AnalyticsEvent")]
-        public string eventType;
+        public string EventType;
 
-        private bool eventFired = false;
+        [NonSerialized, Scaffold.VisualScripting.BlackboardTransient]
+        private bool eventFired;
+
+        [NonSerialized, Scaffold.VisualScripting.BlackboardTransient]
         private Delegate cachedDelegate;
+
+        [NonSerialized, Scaffold.VisualScripting.BlackboardTransient]
         private Type resolvedType;
-        private Type omEventsManagerType;
-        private System.Action onCompleteCallback;
 
-        public void Execute(System.Action onComplete)
+        [NonSerialized, Scaffold.VisualScripting.BlackboardTransient]
+        private Type eventsManagerType;
+
+        [NonSerialized, Scaffold.VisualScripting.BlackboardTransient]
+        private MethodInfo unsubscribeMethod;
+
+        public override void OnEnter()
         {
-            this.onCompleteCallback = onComplete;
-            eventFired = false;
-
-            if (string.IsNullOrEmpty(eventType))
+            try
             {
-                onCompleteCallback?.Invoke();
-                return;
+                StartWaiting();
             }
-
-            resolvedType = null;
-            omEventsManagerType = null;
-            
-            foreach (var asm in AppDomain.CurrentDomain.GetAssemblies())
+            catch (Exception exception)
             {
-                if (resolvedType == null)
-                    resolvedType = asm.GetType(eventType);
-                
-                if (omEventsManagerType == null)
-                    omEventsManagerType = asm.GetType("OM.OM_EventsManager");
-
-                if (resolvedType != null && omEventsManagerType != null) 
-                    break;
-            }
-
-            if (resolvedType == null)
-            {
-                Debug.LogWarning($"[WaitForEventAction] Type {eventType} not found.");
-                onCompleteCallback?.Invoke();
-                return;
-            }
-
-            if (omEventsManagerType == null)
-            {
-                Debug.LogWarning($"[WaitForEventAction] OM.OM_EventsManager not found.");
-                onCompleteCallback?.Invoke();
-                return;
-            }
-
-            var methodInfo = GetType().GetMethod(nameof(OnEventFiredGeneric), System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
-                                      .MakeGenericMethod(resolvedType);
-            
-            var actionType = typeof(Action<>).MakeGenericType(resolvedType);
-            cachedDelegate = Delegate.CreateDelegate(actionType, this, methodInfo);
-
-            bool subscribed = false;
-            var subscribeMethod = omEventsManagerType.GetMethod("Subscribe", new Type[] { actionType });
-            if (subscribeMethod != null)
-            {
-                subscribeMethod.Invoke(null, new object[] { cachedDelegate });
-                subscribed = true;
-            }
-            else
-            {
-                var methods = omEventsManagerType.GetMethods(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
-                foreach (var m in methods)
-                {
-                    if (m.Name == "Subscribe" && m.IsGenericMethodDefinition)
-                    {
-                        var parameters = m.GetParameters();
-                        if (parameters.Length == 1 && parameters[0].ParameterType.Name == "Action`1")
-                        {
-                            m.MakeGenericMethod(resolvedType).Invoke(null, new object[] { cachedDelegate });
-                            subscribed = true;
-                            break;
-                        }
-                    }
-                }
-            }
-
-            if (!subscribed)
-            {
-                Debug.LogError($"[WaitForEventAction] Failed to find Subscribe for type {eventType}");
-                onCompleteCallback?.Invoke();
+                HandleSubscriptionError(exception);
             }
         }
 
-        private void OnEventFiredGeneric<T>(T evt)
+        public override void OnStopExecuting()
         {
-            if (eventFired) return;
-            eventFired = true;
-            
-            if (omEventsManagerType != null)
+            Unsubscribe();
+        }
+
+        private void StartWaiting()
+        {
+            ResetExecutionState();
+            if (string.IsNullOrEmpty(EventType))
             {
-                var methods = omEventsManagerType.GetMethods(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
-                foreach (var m in methods)
+                Continue();
+                return;
+            }
+
+            ResolveTypes();
+            SubscribeOrFail();
+        }
+
+        private void HandleSubscriptionError(Exception exception)
+        {
+            Debug.LogError($"[WaitForEventAction] Failed to subscribe to '{EventType}': {exception.Message}\n{exception.StackTrace}");
+            Unsubscribe();
+            Fail();
+        }
+
+        private void ResetExecutionState()
+        {
+            Unsubscribe();
+            eventFired = false;
+            resolvedType = null;
+            eventsManagerType = null;
+        }
+
+        private void ResolveTypes()
+        {
+            foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
+            {
+                resolvedType ??= assembly.GetType(EventType);
+                eventsManagerType ??= assembly.GetType("OM.OM_EventsManager");
+                if (resolvedType != null && eventsManagerType != null)
                 {
-                    if (m.Name == "Unsubscribe" && m.IsGenericMethodDefinition)
-                    {
-                        var parameters = m.GetParameters();
-                        if (parameters.Length == 1 && parameters[0].ParameterType.Name == "Action`1")
-                        {
-                            m.MakeGenericMethod(resolvedType).Invoke(null, new object[] { cachedDelegate });
-                            break;
-                        }
-                    }
+                    return;
+                }
+            }
+        }
+
+        private void SubscribeOrFail()
+        {
+            if (!ValidateResolvedTypes())
+            {
+                return;
+            }
+
+            CreateCallbackDelegate();
+            MethodInfo subscribeMethod = FindSubscriptionMethod("Subscribe");
+            unsubscribeMethod = FindSubscriptionMethod("Unsubscribe");
+            if (!ValidateSubscriptionMethods(subscribeMethod))
+            {
+                return;
+            }
+
+            subscribeMethod.Invoke(null, new object[] { cachedDelegate });
+        }
+
+        private bool ValidateResolvedTypes()
+        {
+            if (resolvedType != null && eventsManagerType != null)
+            {
+                return true;
+            }
+
+            Debug.LogError($"[WaitForEventAction] Event '{EventType}' or OM.OM_EventsManager was not found.");
+            Fail();
+            return false;
+        }
+
+        private bool ValidateSubscriptionMethods(MethodInfo subscribeMethod)
+        {
+            if (subscribeMethod != null && unsubscribeMethod != null)
+            {
+                return true;
+            }
+
+            Debug.LogError($"[WaitForEventAction] Symmetric subscription methods for '{EventType}' were not found.");
+            Fail();
+            return false;
+        }
+
+        private void CreateCallbackDelegate()
+        {
+            MethodInfo callback = GetType().GetMethod(nameof(OnEventFired), BindingFlags.NonPublic | BindingFlags.Instance);
+            MethodInfo closedCallback = callback?.MakeGenericMethod(resolvedType);
+            if (closedCallback == null)
+            {
+                throw new InvalidOperationException($"Could not create the callback for '{EventType}'.");
+            }
+
+            Type actionType = typeof(Action<>).MakeGenericType(resolvedType);
+            cachedDelegate = Delegate.CreateDelegate(actionType, this, closedCallback);
+        }
+
+        private MethodInfo FindSubscriptionMethod(string methodName)
+        {
+            Type actionType = typeof(Action<>).MakeGenericType(resolvedType);
+            MethodInfo exactMethod = eventsManagerType.GetMethod(methodName, new[] { actionType });
+            if (exactMethod != null)
+            {
+                return exactMethod;
+            }
+
+            return FindGenericSubscriptionMethod(methodName);
+        }
+
+        private MethodInfo FindGenericSubscriptionMethod(string methodName)
+        {
+            MethodInfo[] methods = eventsManagerType.GetMethods(BindingFlags.Public | BindingFlags.Static);
+            foreach (MethodInfo method in methods)
+            {
+                if (IsMatchingGenericMethod(method, methodName))
+                {
+                    return method.MakeGenericMethod(resolvedType);
                 }
             }
 
-            onCompleteCallback?.Invoke();
+            return null;
+        }
+
+        private bool IsMatchingGenericMethod(MethodInfo method, string methodName)
+        {
+            if (method.Name != methodName || !method.IsGenericMethodDefinition)
+            {
+                return false;
+            }
+
+            ParameterInfo[] parameters = method.GetParameters();
+            return parameters.Length == 1 && parameters[0].ParameterType.Name == "Action`1";
+        }
+
+        private void OnEventFired<TEvent>(TEvent eventValue)
+        {
+            if (eventFired)
+            {
+                return;
+            }
+
+            eventFired = true;
+            Unsubscribe();
+            Continue();
+        }
+
+        private void Unsubscribe()
+        {
+            if (unsubscribeMethod == null || cachedDelegate == null)
+            {
+                ClearSubscription();
+                return;
+            }
+
+            TryUnsubscribe();
+            ClearSubscription();
+        }
+
+        private void TryUnsubscribe()
+        {
+            try
+            {
+                unsubscribeMethod.Invoke(null, new object[] { cachedDelegate });
+            }
+            catch (Exception exception)
+            {
+                Debug.LogError($"[WaitForEventAction] Failed to unsubscribe from '{EventType}': {exception.Message}\n{exception.StackTrace}");
+            }
+        }
+
+        private void ClearSubscription()
+        {
+            unsubscribeMethod = null;
+            cachedDelegate = null;
         }
     }
 }

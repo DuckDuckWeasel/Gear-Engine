@@ -69,7 +69,9 @@ namespace Scaffold
 
         public override bool HasReference(Variable variable)
         {
-            return base.HasReference(variable) || duplicatesToPutInBag.integerRef == variable || currentIndex.integerRef;
+            return base.HasReference(variable) ||
+                duplicatesToPutInBag.integerRef == variable ||
+                currentIndex.integerRef == variable;
         }
 
         public override string GetSummary()

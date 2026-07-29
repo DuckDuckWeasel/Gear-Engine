@@ -99,7 +99,10 @@ namespace GearEngine.GearEngine.Presentation.UI.Input
 
         // --- NEW TARGET REFERENCE EXTENSIONS ---
 
-        public static void FilterForPointerEnterTarget(this IInputFilterService input, TargetReference targetReference)
+        public static void FilterForPointerEnterTarget(
+            this IInputFilterService input,
+            TargetReference targetReference,
+            ITargetResolver resolver = null)
         {
             input.SetPointerEnterRaycastFilter((rh) =>
             {
@@ -108,17 +111,21 @@ namespace GearEngine.GearEngine.Presentation.UI.Input
                     return false;
                 }
 
-                if (targetReference.IsMatch(rh.transform.gameObject))
+                if (targetReference.IsMatch(rh.transform.gameObject, resolver))
                 {
                     return true;
                 }
 
                 TagComponent tagComponent = rh.transform.GetComponentInParent<TagComponent>();
-                return tagComponent != null && targetReference.IsMatch(tagComponent.gameObject);
+                return tagComponent != null &&
+                    targetReference.IsMatch(tagComponent.gameObject, resolver);
             }, true);
         }
 
-        public static void FilterForButtonDownTarget(this IInputFilterService input, TargetReference targetReference)
+        public static void FilterForButtonDownTarget(
+            this IInputFilterService input,
+            TargetReference targetReference,
+            ITargetResolver resolver = null)
         {
             input.SetButtonDownRaycastFilter((rh) =>
             {
@@ -127,17 +134,22 @@ namespace GearEngine.GearEngine.Presentation.UI.Input
                     return false;
                 }
 
-                if (targetReference.IsMatch(rh.transform.gameObject))
+                if (targetReference.IsMatch(rh.transform.gameObject, resolver))
                 {
                     return true;
                 }
 
                 TagComponent tagComponent = rh.transform.GetComponentInParent<TagComponent>();
-                return tagComponent != null && targetReference.IsMatch(tagComponent.gameObject);
+                return tagComponent != null &&
+                    targetReference.IsMatch(tagComponent.gameObject, resolver);
             }, true);
         }
 
-        public static void FilterForDropEnterTarget(this IInputFilterService input, bool checkDroppedGameObject, TargetReference targetReference)
+        public static void FilterForDropEnterTarget(
+            this IInputFilterService input,
+            bool checkDroppedGameObject,
+            TargetReference targetReference,
+            ITargetResolver resolver = null)
         {
             input.SetDropRaycastFilter((rh) =>
             {
@@ -147,18 +159,22 @@ namespace GearEngine.GearEngine.Presentation.UI.Input
                 }
 
                 // Check exact hit object
-                if (targetReference.IsMatch(rh.transform.gameObject))
+                if (targetReference.IsMatch(rh.transform.gameObject, resolver))
                 {
                     return true;
                 }
 
                 // Fallback to parents
                 TagComponent tagComponent = rh.transform.GetComponentInParent<TagComponent>();
-                return tagComponent != null && targetReference.IsMatch(tagComponent.gameObject);
+                return tagComponent != null &&
+                    targetReference.IsMatch(tagComponent.gameObject, resolver);
             }, checkDroppedGameObject, true);
         }
 
-        public static void FilterForButtonUpTarget(this IInputFilterService input, TargetReference targetReference)
+        public static void FilterForButtonUpTarget(
+            this IInputFilterService input,
+            TargetReference targetReference,
+            ITargetResolver resolver = null)
         {
             input.SetButtonUpRaycastFilter((rh) =>
             {
@@ -167,17 +183,22 @@ namespace GearEngine.GearEngine.Presentation.UI.Input
                     return false;
                 }
 
-                if (targetReference.IsMatch(rh.transform.gameObject))
+                if (targetReference.IsMatch(rh.transform.gameObject, resolver))
                 {
                     return true;
                 }
 
                 TagComponent tagComponent = rh.transform.GetComponentInParent<TagComponent>();
-                return tagComponent != null && targetReference.IsMatch(tagComponent.gameObject);
+                return tagComponent != null &&
+                    targetReference.IsMatch(tagComponent.gameObject, resolver);
             }, true);
         }
 
-        public static void FilterForDropEnterTargets(this IInputFilterService input, bool checkDroppedGameObject, List<TargetReference> targetReferences)
+        public static void FilterForDropEnterTargets(
+            this IInputFilterService input,
+            bool checkDroppedGameObject,
+            List<TargetReference> targetReferences,
+            ITargetResolver resolver = null)
         {
             input.SetDropRaycastFilter((rh) =>
             {
@@ -193,13 +214,14 @@ namespace GearEngine.GearEngine.Presentation.UI.Input
                         continue;
                     }
 
-                    if (target.IsMatch(rh.transform.gameObject))
+                    if (target.IsMatch(rh.transform.gameObject, resolver))
                     {
                         return true;
                     }
 
                     TagComponent tagComponent = rh.transform.GetComponentInParent<TagComponent>();
-                    if (tagComponent != null && target.IsMatch(tagComponent.gameObject))
+                    if (tagComponent != null &&
+                        target.IsMatch(tagComponent.gameObject, resolver))
                     {
                         return true;
                     }

@@ -12,13 +12,13 @@ namespace Scaffold
     {
         [Tooltip("The Renderer component to blink")]
         [SerializeField] protected Renderer targetRenderer;
-        
+
         [Tooltip("Total duration of the blink effect")]
         [SerializeField] protected FloatData duration = new FloatData(1f);
 
         [Tooltip("How long it stays invisible each blink")]
         [SerializeField] protected FloatData offDuration = new FloatData(0.1f);
-        
+
         [Tooltip("How long it stays visible each blink")]
         [SerializeField] protected FloatData onDuration = new FloatData(0.1f);
 
@@ -27,9 +27,9 @@ namespace Scaffold
 
         public override void OnEnter()
         {
-            if (targetRenderer != null && blackboard != null)
+            if (targetRenderer != null && CanRunScheduledWork)
             {
-                blackboard.StartCoroutine(BlinkRoutine());
+                RunRoutine(BlinkRoutine(), !waitUntilFinished);
             }
             else
             {
@@ -41,24 +41,30 @@ namespace Scaffold
         {
             float elapsed = 0f;
             bool isVisible = true;
-
-            if (!waitUntilFinished)
-            {
-                Continue();
-            }
-
+            CompleteDetachedAction();
             while (elapsed < duration.Value)
             {
                 isVisible = !isVisible;
                 targetRenderer.enabled = isVisible;
-                
                 float waitTime = isVisible ? onDuration.Value : offDuration.Value;
                 yield return new WaitForSeconds(waitTime);
                 elapsed += waitTime;
             }
 
-            targetRenderer.enabled = true; // Ensure it stays on at the end
+            targetRenderer.enabled = true;
+            CompleteAwaitedAction();
+        }
 
+        private void CompleteDetachedAction()
+        {
+            if (!waitUntilFinished)
+            {
+                Continue();
+            }
+        }
+
+        private void CompleteAwaitedAction()
+        {
             if (waitUntilFinished)
             {
                 Continue();
@@ -67,10 +73,14 @@ namespace Scaffold
 
         public override string GetSummary()
         {
-            if (targetRenderer == null) return "Error: No Renderer";
+            if (targetRenderer == null)
+            {
+                return "Error: No Renderer";
+            }
+
             return $"Blink {targetRenderer.name} for {duration.Value}s";
         }
-        
+
         public override Color GetButtonColor() { return new Color32(235, 191, 217, 255); }
     }
 }

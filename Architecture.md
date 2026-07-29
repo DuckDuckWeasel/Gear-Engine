@@ -37,7 +37,7 @@ This repository is a modular Unity project with architecture controls enforced t
 
 ## Tech Stack
 
-- Engine: Unity `6000.3.x` (see `ProjectSettings/ProjectVersion.txt` for the active editor version).
+- Engine: Unity `6000.5.3f1` (see `ProjectSettings/ProjectVersion.txt` for the active editor version).
 - Language: C#
 - Architecture: MVVM
 - Dependency Injection: VContainer (`jp.hadashikick.vcontainer`)
@@ -101,7 +101,33 @@ Module documentation: each first-party package under `Assets/Packages/com.scaffo
 Additional repository docs:
 
 - `Docs/ConsumingScaffoldPackages.md` (UPM consumer `manifest.json` patterns for Git subpath and `file:`)
+- `Docs/ScaffoldVisualScripting/BlackboardArchitectureReview.md` (the component-ownership review and replacement decision)
+- `Docs/ScaffoldVisualScripting/BlackboardRuntime.md` (the current plain-C# Blackboard architecture and public lifecycle)
 - `Docs/Analyzers/Analyzers.md`, `Docs/Testing/Testing.md`, `Docs/Testing/AutomatedTesting.md`
+
+### Visual Scripting boundary
+
+The Blackboard execution graph is definition-owned and cloneable. Core definitions,
+variables, triggers, actions, scheduling contracts, persistence contracts, and runtime
+state live in `Scaffold.VisualScripting.Core`; no type in that assembly derives from
+`MonoBehaviour`. `Scaffold.VisualScripting.Authoring` stores reusable templates,
+`Scaffold.VisualScripting.Unity` supplies the optional scene wrapper and narrow Unity
+callback relays, and `Scaffold.VisualScripting.Editor` edits managed definitions.
+
+```mermaid
+flowchart LR
+    Editor["Scaffold.VisualScripting.Editor"] --> Unity["Scaffold.VisualScripting.Unity"]
+    Editor --> Authoring["Scaffold.VisualScripting.Authoring"]
+    Unity --> Authoring
+    Authoring --> Core["Scaffold.VisualScripting.Core<br/>plain C# runtime"]
+    Script["Gameplay script or NUnit test"] --> Core
+    Behaviour["BlackboardBehaviour"] --> Core
+```
+
+Both script-created and wrapper-created Blackboards use the same factory. Runtime
+cloning isolates managed execution state while preserving explicit
+`UnityEngine.Object` references. VContainer supplies factories and services; hidden
+global objects and mutable Blackboard service locators are forbidden.
 
 ## Runtime Flows
 

@@ -49,7 +49,7 @@ namespace Scaffold
                 return "Error: Collection types do not match. " + collection.Value.ContainedType().Name + " != " + rhsCollection.Value.ContainedType().Name;
             }
 
-            return collection.Value.name + " , " + rhsCollection.Value.name;
+            return collection.Value.Name + " , " + rhsCollection.Value.Name;
         }
     }
 }

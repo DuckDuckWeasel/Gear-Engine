@@ -6,9 +6,6 @@ using System.Collections;
 
 namespace Scaffold
 {
-    /// <summary>
-    /// Do multiple say and portrait commands in a single block of text. Format is: [character] [portrait] [stage position] [hide] [<<< | >>>] [clear | noclear] [wait | nowait] [fade | nofade] [: Story text].
-    /// </summary>
     [CommandInfo("Narrative",
                  "Conversation",
                  "Do multiple say and portrait commands in a single block of text. Format is: [character] [portrait] [stage position] [hide] [<<< | >>>] [clear | noclear] [wait | nowait] [fade | nofade] [: Story text]")]
@@ -36,27 +33,27 @@ namespace Scaffold
             conversationManager.PopulateCharacterCache();
         }
 
+        public override void OnEnter()
+        {
+            RunRoutine(DoConversation());
+        }
+
         protected virtual IEnumerator DoConversation()
         {
-            Blackboard blackboard = GetBlackboard();
-            string subbedText = blackboard.SubstituteVariables(conversationText.Value);
+            Scaffold.VisualScripting.Blackboard blackboard = GetBlackboard();
+            string subbedText = blackboard.Substitute(conversationText.Value);
 
             conversationManager.ClearPrev = clearPrevious;
             conversationManager.WaitForInput = waitForInput;
             conversationManager.FadeDone = fadeWhenDone;
             conversationManager.WaitForSeconds = waitForSeconds;
 
-            yield return host.StartCoroutine(conversationManager.DoConversation(subbedText));
+            yield return conversationManager.DoConversation(subbedText);
 
             Continue();
         }
 
         #region Public members
-
-        public override void OnEnter()
-        {
-            host.StartCoroutine(DoConversation());
-        }
 
         public override string GetSummary()
         {
@@ -78,20 +75,5 @@ namespace Scaffold
         #endregion
 
 
-        #region Editor caches
-#if UNITY_EDITOR
-        protected override void RefreshVariableCache()
-        {
-            base.RefreshVariableCache();
-
-            Blackboard f = GetBlackboard();
-
-            if (!string.IsNullOrEmpty(conversationText.Value))
-            {
-                f.DetermineSubstituteVariables(conversationText, referencedVariables);
-            }
-        }
-#endif
-        #endregion Editor caches
     }
 }

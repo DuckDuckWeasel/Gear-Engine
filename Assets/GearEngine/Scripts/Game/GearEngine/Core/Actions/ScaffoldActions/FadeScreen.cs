@@ -1,7 +1,7 @@
 using System;
 using GearEngine.Core.Actions;
 
-﻿using UnityEngine;
+using UnityEngine;
 
 namespace Scaffold
 {
@@ -9,13 +9,15 @@ namespace Scaffold
     /// Draws a fullscreen texture over the scene to give a fade effect. Setting Target Alpha to 1 will obscure the screen, alpha 0 will reveal the screen.
     /// If no Fade Texture is provided then a default flat color texture is used.
     /// </summary>
-    [CommandInfo("Camera", 
-                 "Fade Screen", 
+    [CommandInfo("Camera",
+                 "Fade Screen",
                  "Draws a fullscreen texture over the scene to give a fade effect. Setting Target Alpha to 1 will obscure the screen, alpha 0 will reveal the screen. " +
                  "If no Fade Texture is provided then a default flat color texture is used.")]
     [Serializable]
-    public class FadeScreen : ActionBase 
+    public class FadeScreen : ActionBase
     {
+        [SerializeField] private CameraManager cameraManager;
+
         [Tooltip("Time for fade effect to complete")]
         [SerializeField] protected float duration = 1f;
 
@@ -37,8 +39,14 @@ namespace Scaffold
 
         public override void OnEnter()
         {
-            var cameraManager = ScaffoldManager.Instance.CameraManager;
-            
+            if (cameraManager == null)
+            {
+                Debug.LogError(
+                    "[FadeScreen] A CameraManager reference is required.");
+                Fail();
+                return;
+            }
+
             if (fadeTexture)
             {
                 cameraManager.ScreenFadeTexture = fadeTexture;
@@ -47,30 +55,31 @@ namespace Scaffold
             {
                 cameraManager.ScreenFadeTexture = CameraManager.CreateColorTexture(fadeColor, 32, 32);
             }
-            
-            cameraManager.Fade(targetAlpha, duration, delegate { 
+
+            cameraManager.Fade(targetAlpha, duration, delegate
+            {
                 if (waitUntilFinished)
                 {
                     Continue();
                 }
             }, fadeTweenType);
-            
+
             if (!waitUntilFinished)
             {
                 Continue();
             }
         }
-        
+
         public override string GetSummary()
         {
             return "Fade to " + targetAlpha + " over " + duration + " seconds";
         }
-        
+
         public override Color GetButtonColor()
         {
             return new Color32(216, 228, 170, 255);
         }
 
         #endregion
-    }    
+    }
 }

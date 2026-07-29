@@ -1,20 +1,19 @@
 using System;
+using System.Collections.Generic;
 using GearEngine.Core.Actions;
 
 using UnityEngine;
-using UnityEngine.Serialization;
-using System.Collections.Generic;
 
 namespace Scaffold
 {
     /// <summary>
     /// Displays a button in a multiple choice menu.
     /// </summary>
-    [CommandInfo("Narrative", 
-                 "Menu", 
+    [CommandInfo("Narrative",
+                 "Menu",
                  "Displays a button in a multiple choice menu")]
     [Serializable]
-    public class Menu : ActionBase, ILocalizable, IBlockCaller
+    public class Menu : ActionBase, ILocalizable, Scaffold.VisualScripting.IBlockConnectionSource
     {
         [Tooltip("Text to display on the menu button")]
         [TextArea()]
@@ -23,9 +22,8 @@ namespace Scaffold
         [Tooltip("Notes about the option text for other authors, localization, etc.")]
         [SerializeField] protected string description = "";
 
-        [FormerlySerializedAs("targetSequence")]
-        [Tooltip("Block to execute when this option is selected")]
-        [SerializeField] protected Block targetBlock;
+        [Tooltip("Name of the Block to execute when this option is selected")]
+        [SerializeField] private StringData targetBlockName = new StringData();
 
         [Tooltip("Hide this option if the target block has been executed previously")]
         [SerializeField] protected bool hideIfVisited;
@@ -33,51 +31,53 @@ namespace Scaffold
         [Tooltip("If false, the menu option will be displayed but will not be selectable")]
         [SerializeField] protected BooleanData interactable = new BooleanData(true);
 
-        [Tooltip("A custom Menu Dialog to use to display this menu. All subsequent Menu commands will use this dialog.")]
-        [SerializeField] protected MenuDialog setMenuDialog;
+        [Tooltip("Menu Dialog used to display this option")]
+        [SerializeField] protected MenuDialog menuDialog;
 
         [Tooltip("If true, this option will be passed to the Menu Dialogue but marked as hidden, this can be used to hide options while maintaining a Menu Shuffle.")]
         [SerializeField] protected BooleanData hideThisOption = new BooleanData(false);
 
         #region Public members
 
-        public MenuDialog SetMenuDialog  { get { return setMenuDialog; } set { setMenuDialog = value; } }
+        public MenuDialog SetMenuDialog
+        {
+            get => menuDialog;
+            set => menuDialog = value;
+        }
 
         public override void OnEnter()
         {
-            if (setMenuDialog != null)
+            if (menuDialog == null)
             {
-                // Override the active menu dialog
-                MenuDialog.ActiveMenuDialog = setMenuDialog;
+                Debug.LogError("[Menu] A Menu Dialog reference is required.");
+                Fail();
+                return;
             }
 
-            bool hideOption = (hideIfVisited && targetBlock != null && targetBlock.GetExecutionCount() > 0) || hideThisOption.Value;
+            VisualScripting.Block targetBlock = GetBlackboard().FindBlock(targetBlockName.Value);
+            bool hideOption =
+                (hideIfVisited &&
+                    targetBlock != null &&
+                    targetBlock.ExecutionCount > 0) ||
+                hideThisOption.Value;
 
-            var menuDialog = MenuDialog.GetMenuDialog();
-                if (menuDialog != null)
-                {
-                    menuDialog.SetActive(true);
+            menuDialog.SetActive(true);
 
-                    var blackboard = GetBlackboard();
-                    string displayText = blackboard.SubstituteVariables(text);
+            VisualScripting.Blackboard blackboard = GetBlackboard();
+            string displayText = blackboard.Substitute(text);
 
-                    menuDialog.AddOption(displayText, interactable, hideOption, targetBlock);
-                }
-            
+            menuDialog.AddOption(
+                displayText,
+                interactable,
+                hideOption,
+                () => blackboard.ExecuteBlock(targetBlockName.Value));
+
             Continue();
-        }
-
-        public override void GetConnectedBlocks(ref List<Block> connectedBlocks)
-        {
-            if (targetBlock != null)
-            {
-                connectedBlocks.Add(targetBlock);
-            }       
         }
 
         public override string GetSummary()
         {
-            if (targetBlock == null)
+            if (string.IsNullOrWhiteSpace(targetBlockName.Value))
             {
                 return "Error: No target block selected";
             }
@@ -87,7 +87,7 @@ namespace Scaffold
                 return "Error: No button text selected";
             }
 
-            return text + " : " + targetBlock.BlockName;
+            return text + " : " + targetBlockName.Value;
         }
 
         public override Color GetButtonColor()
@@ -95,15 +95,25 @@ namespace Scaffold
             return new Color32(184, 210, 235, 255);
         }
 
-        public override bool HasReference(Variable variable)
+        public void GetConnectedBlockNames(ICollection<string> blockNames)
         {
-            return interactable.booleanRef == variable || hideThisOption.booleanRef == variable ||
-                base.HasReference(variable);
+            if (blockNames == null)
+            {
+                throw new ArgumentNullException(nameof(blockNames));
+            }
+
+            if (!string.IsNullOrWhiteSpace(targetBlockName.Value))
+            {
+                blockNames.Add(targetBlockName.Value);
+            }
         }
 
-        public bool MayCallBlock(Block block)
+        public override bool HasReference(Variable variable)
         {
-            return block == targetBlock;
+            return targetBlockName.stringRef == variable ||
+                interactable.booleanRef == variable ||
+                hideThisOption.booleanRef == variable ||
+                base.HasReference(variable);
         }
 
         #endregion
@@ -119,12 +129,12 @@ namespace Scaffold
         {
             text = standardText;
         }
-        
+
         public virtual string GetDescription()
         {
             return description;
         }
-        
+
         public virtual string GetStringId()
         {
             // String id for Menu commands is MENU.<Localization Id>.<Command id>
@@ -133,17 +143,5 @@ namespace Scaffold
 
         #endregion
 
-        #region Editor caches
-#if UNITY_EDITOR
-        protected override void RefreshVariableCache()
-        {
-            base.RefreshVariableCache();
-
-            var f = GetBlackboard();
-
-            f.DetermineSubstituteVariables(text, referencedVariables);
-        }
-#endif
-        #endregion Editor caches
     }
 }

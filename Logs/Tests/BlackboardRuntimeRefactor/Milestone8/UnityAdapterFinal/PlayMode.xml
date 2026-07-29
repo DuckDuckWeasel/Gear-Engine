@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="5" result="Passed" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-07-27 21:04:11Z" end-time="2026-07-27 21:04:11Z" duration="0.0937302">
+  <test-suite type="TestSuite" id="1022" name="Scaffold" fullname="Scaffold" runstate="Runnable" testcasecount="7" result="Passed" start-time="2026-07-27 21:04:11Z" end-time="2026-07-27 21:04:11Z" duration="0.093730" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1014" name="Scaffold.VisualScripting.Unity.Tests.dll" fullname="/Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/ScriptAssemblies/Scaffold.VisualScripting.Unity.Tests.dll" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-07-27 21:04:11Z" end-time="2026-07-27 21:04:11Z" duration="0.085726" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="44104" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1015" name="Scaffold" fullname="Scaffold" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-07-27 21:04:11Z" end-time="2026-07-27 21:04:11Z" duration="0.081524" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1016" name="VisualScripting" fullname="Scaffold.VisualScripting" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-07-27 21:04:11Z" end-time="2026-07-27 21:04:11Z" duration="0.080712" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestSuite" id="1017" name="Unity" fullname="Scaffold.VisualScripting.Unity" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-07-27 21:04:11Z" end-time="2026-07-27 21:04:11Z" duration="0.079871" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="TestSuite" id="1018" name="Tests" fullname="Scaffold.VisualScripting.Unity.Tests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-07-27 21:04:11Z" end-time="2026-07-27 21:04:11Z" duration="0.079257" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-suite type="TestFixture" id="1008" name="BlackboardBehaviourTests" fullname="Scaffold.VisualScripting.Unity.Tests.BlackboardBehaviourTests" classname="Scaffold.VisualScripting.Unity.Tests.BlackboardBehaviourTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-07-27 21:04:11Z" end-time="2026-07-27 21:04:11Z" duration="0.077826" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="1012" name="ButtonSignalSource_DetachesListenerSymmetrically" fullname="Scaffold.VisualScripting.Unity.Tests.BlackboardBehaviourTests.ButtonSignalSource_DetachesListenerSymmetrically" methodname="ButtonSignalSource_DetachesListenerSymmetrically" classname="Scaffold.VisualScripting.Unity.Tests.BlackboardBehaviourTests" runstate="Runnable" seed="2072310139" result="Passed" start-time="2026-07-27 21:04:11Z" end-time="2026-07-27 21:04:11Z" duration="0.011151" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1010" name="MissingFactory_DisablesWrapperWithActionableError" fullname="Scaffold.VisualScripting.Unity.Tests.BlackboardBehaviourTests.MissingFactory_DisablesWrapperWithActionableError" methodname="MissingFactory_DisablesWrapperWithActionableError" classname="Scaffold.VisualScripting.Unity.Tests.BlackboardBehaviourTests" runstate="Runnable" seed="1453792023" result="Passed" start-time="2026-07-27 21:04:11Z" end-time="2026-07-27 21:04:11Z" duration="0.010174" asserts="0">
+                  <properties>
+                    <property name="_JOINTYPE" value="UnityCombinatorial" />
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <output><![CDATA[[BlackboardBehaviour] Failed to initialize 'InvalidBlackboard': System.InvalidOperationException: BlackboardFactory was not injected before Awake.
+  at Scaffold.VisualScripting.Unity.BlackboardBehaviour.InitializeRuntime () [0x0000f] in /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Assets/3rdParty/ScaffoldVisualScripting/Runtime/Unity/BlackboardBehaviour.cs:111
+  at Scaffold.VisualScripting.Unity.BlackboardBehaviour.Awake () [0x00002] in /Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Assets/3rdParty/ScaffoldVisualScripting/Runtime/Unity/BlackboardBehaviour.cs:64
+]]></output>
+                </test-case>
+                <test-case id="1011" name="PointerRelay_ForwardsUnityCallbackAsLocalMessage" fullname="Scaffold.VisualScripting.Unity.Tests.BlackboardBehaviourTests.PointerRelay_ForwardsUnityCallbackAsLocalMessage" methodname="PointerRelay_ForwardsUnityCallbackAsLocalMessage" classname="Scaffold.VisualScripting.Unity.Tests.BlackboardBehaviourTests" runstate="Runnable" seed="930283902" result="Passed" start-time="2026-07-27 21:04:11Z" end-time="2026-07-27 21:04:11Z" duration="0.035503" asserts="0">
+                  <properties>
+                    <property name="_JOINTYPE" value="UnityCombinatorial" />
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1013" name="UnityVariableSerializer_RoundTripsPrimitiveAndVector" fullname="Scaffold.VisualScripting.Unity.Tests.BlackboardBehaviourTests.UnityVariableSerializer_RoundTripsPrimitiveAndVector" methodname="UnityVariableSerializer_RoundTripsPrimitiveAndVector" classname="Scaffold.VisualScripting.Unity.Tests.BlackboardBehaviourTests" runstate="Runnable" seed="769232336" result="Passed" start-time="2026-07-27 21:04:11Z" end-time="2026-07-27 21:04:11Z" duration="0.002447" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1009" name="WrapperAndScriptFactory_UseEquivalentIsolatedRuntimes" fullname="Scaffold.VisualScripting.Unity.Tests.BlackboardBehaviourTests.WrapperAndScriptFactory_UseEquivalentIsolatedRuntimes" methodname="WrapperAndScriptFactory_UseEquivalentIsolatedRuntimes" classname="Scaffold.VisualScripting.Unity.Tests.BlackboardBehaviourTests" runstate="Runnable" seed="1958252879" result="Passed" start-time="2026-07-27 21:04:11Z" end-time="2026-07-27 21:04:11Z" duration="0.007820" asserts="0">
+                  <properties>
+                    <property name="_JOINTYPE" value="UnityCombinatorial" />
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <output><![CDATA[Saving results to: /Users/leonardosilva/Library/Application Support/DDW/Scaffold/TestResults.xml
+]]></output>
+                </test-case>
+              </test-suite>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Passed" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-07-28 15:42:39Z" end-time="2026-07-28 15:42:39Z" duration="0.22475">
+  <test-suite type="TestSuite" id="1000" name="Scaffold" fullname="Scaffold" runstate="Runnable" testcasecount="319" result="Passed" start-time="2026-07-28 15:42:39Z" end-time="2026-07-28 15:42:39Z" duration="0.224750" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="1271" name="Game.GearEngine.Tests.dll" fullname="/private/tmp/GearEngineUIEffectVerification.MIVeSB/Library/ScriptAssemblies/Game.GearEngine.Tests.dll" runstate="Runnable" testcasecount="125" result="Passed" start-time="2026-07-28 15:42:39Z" end-time="2026-07-28 15:42:39Z" duration="0.202602" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="84115" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="1272" name="GearEngine" fullname="GearEngine" runstate="Runnable" testcasecount="125" result="Passed" start-time="2026-07-28 15:42:39Z" end-time="2026-07-28 15:42:39Z" duration="0.198727" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1273" name="GearEngine" fullname="GearEngine.GearEngine" runstate="Runnable" testcasecount="125" result="Passed" start-time="2026-07-28 15:42:39Z" end-time="2026-07-28 15:42:39Z" duration="0.195028" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestSuite" id="1274" name="Tests" fullname="GearEngine.GearEngine.Tests" runstate="Runnable" testcasecount="125" result="Passed" start-time="2026-07-28 15:42:39Z" end-time="2026-07-28 15:42:39Z" duration="0.190966" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="TestSuite" id="1275" name="Editor" fullname="GearEngine.GearEngine.Tests.Editor" runstate="Runnable" testcasecount="125" result="Passed" start-time="2026-07-28 15:42:39Z" end-time="2026-07-28 15:42:39Z" duration="0.187709" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-suite type="TestFixture" id="1253" name="UIEffectPatternLayerTests" fullname="GearEngine.GearEngine.Tests.Editor.UIEffectPatternLayerTests" classname="GearEngine.GearEngine.Tests.Editor.UIEffectPatternLayerTests" runstate="Runnable" testcasecount="9" result="Passed" start-time="2026-07-28 15:42:39Z" end-time="2026-07-28 15:42:39Z" duration="0.126870" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties>
+                  <property name="Category" value="Unit" />
+                </properties>
+                <test-case id="1261" name="MinMaxRangeDrawer_DoesNotCachePropertiesAcrossPatternRows" fullname="GearEngine.GearEngine.Tests.Editor.UIEffectPatternLayerTests.MinMaxRangeDrawer_DoesNotCachePropertiesAcrossPatternRows" methodname="MinMaxRangeDrawer_DoesNotCachePropertiesAcrossPatternRows" classname="GearEngine.GearEngine.Tests.Editor.UIEffectPatternLayerTests" runstate="Runnable" seed="765044524" result="Passed" start-time="2026-07-28 15:42:39Z" end-time="2026-07-28 15:42:39Z" duration="0.014957" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1260" name="PatternInspector_ProvidesDraggableListAndPreservesIndependentValues" fullname="GearEngine.GearEngine.Tests.Editor.UIEffectPatternLayerTests.PatternInspector_ProvidesDraggableListAndPreservesIndependentValues" methodname="PatternInspector_ProvidesDraggableListAndPreservesIndependentValues" classname="GearEngine.GearEngine.Tests.Editor.UIEffectPatternLayerTests" runstate="Runnable" seed="76454732" result="Passed" start-time="2026-07-28 15:42:39Z" end-time="2026-07-28 15:42:39Z" duration="0.078780" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <output><![CDATA[Saving results to: /Users/leonardosilva/Library/Application Support/DDW/Scaffold/TestResults.xml
+]]></output>
+                </test-case>
+              </test-suite>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -14,6 +14,8 @@ namespace Scaffold
     [Serializable]
     public class StartSwipe : ActionBase
     {
+        [SerializeField] private CameraManager cameraManager;
+
         [Tooltip("Defines one extreme of the scrollable area that the player can pan around")]
         [SerializeField] protected View viewA;
 
@@ -41,6 +43,19 @@ namespace Scaffold
 
         public override void OnEnter()
         {
+            if (targetCamera == null)
+            {
+                targetCamera = Camera.main;
+            }
+
+            if (cameraManager == null)
+            {
+                Debug.LogError(
+                    "[StartSwipe] A CameraManager reference is required.");
+                Fail();
+                return;
+            }
+
             if (targetCamera == null ||
                 viewA == null ||
                 viewB == null)
@@ -48,8 +63,6 @@ namespace Scaffold
                 Continue();
                 return;
             }
-
-            CameraManager cameraManager = ScaffoldManager.Instance.CameraManager;
 
             cameraManager.StartSwipePan(targetCamera, viewA, viewB, duration, speedMultiplier, () => Continue());
         }

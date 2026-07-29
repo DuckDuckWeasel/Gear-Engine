@@ -1,0 +1,12 @@
+{
+  "scenario": "Blackboard fixed block header with action-only scrolling",
+  "source": "Interactive Unity Blackboard editor window",
+  "criteria": [
+    "Block identity, execution, trigger, and the Action Tracks header remain visible.",
+    "Only the track and action list uses vertical scrolling.",
+    "The left authoring pane does not render a horizontal scrollbar.",
+    "Action controls remain hidden while no action row is hovered.",
+    "The dirty Main Scene is not saved or discarded."
+  ],
+  "capturedAt": "2026-07-28T12:27:00-03:00"
+}

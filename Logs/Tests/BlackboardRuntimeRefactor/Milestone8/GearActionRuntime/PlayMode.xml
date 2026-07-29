@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Passed" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-07-27 20:10:56Z" end-time="2026-07-27 20:10:56Z" duration="0.0347942">
+  <test-suite type="TestSuite" id="1022" name="Scaffold" fullname="Scaffold" runstate="Runnable" testcasecount="7" result="Passed" start-time="2026-07-27 20:10:56Z" end-time="2026-07-27 20:10:56Z" duration="0.034794" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1004" name="Game.GearEngine.RuntimeTests.dll" fullname="/Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/ScriptAssemblies/Game.GearEngine.RuntimeTests.dll" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-07-27 20:10:56Z" end-time="2026-07-27 20:10:56Z" duration="0.028934" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="33038" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1005" name="Game" fullname="Game" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-07-27 20:10:56Z" end-time="2026-07-27 20:10:56Z" duration="0.027152" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1006" name="GearEngine" fullname="Game.GearEngine" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-07-27 20:10:56Z" end-time="2026-07-27 20:10:56Z" duration="0.026529" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestSuite" id="1007" name="RuntimeTests" fullname="Game.GearEngine.RuntimeTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-07-27 20:10:56Z" end-time="2026-07-27 20:10:56Z" duration="0.026018" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="TestFixture" id="1001" name="GearActionRuntimeTests" fullname="Game.GearEngine.RuntimeTests.GearActionRuntimeTests" classname="Game.GearEngine.RuntimeTests.GearActionRuntimeTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-07-27 20:10:56Z" end-time="2026-07-27 20:10:56Z" duration="0.025122" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1002" name="ReturnStatus_ExecutesWithoutGameObject" fullname="Game.GearEngine.RuntimeTests.GearActionRuntimeTests.ReturnStatus_ExecutesWithoutGameObject" methodname="ReturnStatus_ExecutesWithoutGameObject" classname="Game.GearEngine.RuntimeTests.GearActionRuntimeTests" runstate="Runnable" seed="624401674" result="Passed" start-time="2026-07-27 20:10:56Z" end-time="2026-07-27 20:10:56Z" duration="0.015201" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1003" name="Wait_UsesInjectedSchedulerWithoutCoroutineHost" fullname="Game.GearEngine.RuntimeTests.GearActionRuntimeTests.Wait_UsesInjectedSchedulerWithoutCoroutineHost" methodname="Wait_UsesInjectedSchedulerWithoutCoroutineHost" classname="Game.GearEngine.RuntimeTests.GearActionRuntimeTests" runstate="Runnable" seed="602380023" result="Passed" start-time="2026-07-27 20:10:56Z" end-time="2026-07-27 20:10:56Z" duration="0.001325" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Saving results to: /Users/leonardosilva/Library/Application Support/DDW/Scaffold/TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

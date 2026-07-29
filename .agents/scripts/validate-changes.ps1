@@ -19,6 +19,12 @@ $ErrorActionPreference = "Stop"
 
 $scriptDirectory = Split-Path -Parent $PSCommandPath
 . (Join-Path $scriptDirectory (Join-Path "lib" "InvokeChildScript.ps1"))
+$resolvedAssemblyNames = @(
+    $AssemblyNames |
+        ForEach-Object { $_ -split "[,;]" } |
+        ForEach-Object { $_.Trim() } |
+        Where-Object { -not [string]::IsNullOrWhiteSpace($_) }
+)
 
 if ($TestTimeoutMinutes -gt 0) {
     $EditModeTimeoutMinutes = $TestTimeoutMinutes
@@ -143,7 +149,7 @@ if ($SkipTests) {
         TestPlatform = "EditMode"
     }
     if ($UnityPath) { $editModeArgs.UnityPath = $UnityPath }
-    if ($AssemblyNames -and $AssemblyNames.Count -gt 0) { $editModeArgs.AssemblyNames = $AssemblyNames }
+    if ($resolvedAssemblyNames.Count -gt 0) { $editModeArgs.AssemblyNames = $resolvedAssemblyNames }
 
     if ($compilationExitCode -eq 0) {
         try {
@@ -151,9 +157,9 @@ if ($SkipTests) {
             $editModeOutput = @($editModeResult.Output)
             $editModeExitCode = [int]$editModeResult.ExitCode
             foreach ($line in $editModeOutput) { Write-Host $line }
-            if ($editModeOutput | Where-Object { $_ -match "^Status:\s+Blocked\b" }) {
+            if ($editModeOutput | Where-Object { $_ -match "(?m)^Status:\s+Blocked\b" }) {
                 $editModeExitCode = 1
-            } elseif ($editModeOutput | Where-Object { $_ -match "Failed:\s+[1-9]\d*\s*$" }) {
+            } elseif ($editModeOutput | Where-Object { $_ -match "(?m)^Failed:\s+[1-9]\d*\s*$" }) {
                 $editModeExitCode = 2
             }
         } catch {
@@ -174,7 +180,7 @@ if ($SkipTests) {
         TestPlatform = "PlayMode"
     }
     if ($UnityPath) { $playModeArgs.UnityPath = $UnityPath }
-    if ($AssemblyNames -and $AssemblyNames.Count -gt 0) { $playModeArgs.AssemblyNames = $AssemblyNames }
+    if ($resolvedAssemblyNames.Count -gt 0) { $playModeArgs.AssemblyNames = $resolvedAssemblyNames }
 
     if ($compilationExitCode -eq 0) {
         try {
@@ -182,9 +188,9 @@ if ($SkipTests) {
             $playModeOutput = @($playModeResult.Output)
             $playModeExitCode = [int]$playModeResult.ExitCode
             foreach ($line in $playModeOutput) { Write-Host $line }
-            if ($playModeOutput | Where-Object { $_ -match "^Status:\s+Blocked\b" }) {
+            if ($playModeOutput | Where-Object { $_ -match "(?m)^Status:\s+Blocked\b" }) {
                 $playModeExitCode = 1
-            } elseif ($playModeOutput | Where-Object { $_ -match "Failed:\s+[1-9]\d*\s*$" }) {
+            } elseif ($playModeOutput | Where-Object { $_ -match "(?m)^Failed:\s+[1-9]\d*\s*$" }) {
                 $playModeExitCode = 2
             }
         } catch {

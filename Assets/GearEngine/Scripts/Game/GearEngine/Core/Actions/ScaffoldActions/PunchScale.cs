@@ -16,7 +16,7 @@ namespace Scaffold
     [AddComponentMenu("")]
     [ExecuteInEditMode]
     [Serializable]
-    public class PunchScale : iTweenCommand
+    public class PunchScale : ITweenCommand
     {
         [Tooltip("A scale offset in space the GameObject will animate to")]
         [SerializeField] protected Vector3Data amount;
@@ -31,9 +31,6 @@ namespace Scaffold
             tweenParams.Add("time", duration.Value);
             tweenParams.Add("easetype", easeType);
             tweenParams.Add("looptype", loopType);
-            tweenParams.Add("oncomplete", "OniTweenComplete");
-            tweenParams.Add("oncompletetarget", host.gameObject);
-            tweenParams.Add("oncompleteparams", this);
             iTween.PunchScale(targetObject.Value, tweenParams);
         }
 

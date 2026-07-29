@@ -56,7 +56,7 @@ namespace Scaffold
                 return "Error: No variable selected";
             }
 
-            return targetTextObject.name + " : " + stringVariable.name;
+            return targetTextObject.name + " : " + stringVariable.Name;
         }
 
         public override Color GetButtonColor()

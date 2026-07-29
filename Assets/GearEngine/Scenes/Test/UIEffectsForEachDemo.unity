@@ -200,7 +200,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Text
   m_Material: {fileID: 0}
   m_Color: {r: 0, g: 0, b: 0, a: 1}
@@ -264,7 +264,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a79441f348de89743a2939f4d699eac1, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.UniversalAdditionalCameraData
   m_RenderShadows: 1
   m_RequiresDepthTextureOption: 2
@@ -372,51 +372,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &551551541
-GameObject:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 551551543}
-  - component: {fileID: 551551542}
-  m_Layer: 0
-  m_Name: _ScaffoldState
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &551551542
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 551551541}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 61dddfdc5e0e44ca298d8f46f7f5a915, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Scaffold::Scaffold.ScaffoldState
-  selectedBlackboard: {fileID: 820933064}
---- !u!4 &551551543
-Transform:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 551551541}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &699192720
 GameObject:
   m_ObjectHideFlags: 0
@@ -446,7 +401,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
   m_Navigation:
     m_Mode: 3
@@ -490,7 +445,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -587,7 +542,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dc42784cf147c0c48a680349fa168899, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.GraphicRaycaster
   m_IgnoreReversedGraphics: 1
   m_BlockingObjects: 0
@@ -604,7 +559,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.CanvasScaler
   m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
@@ -650,8 +605,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 820933060}
-  - component: {fileID: 820933064}
-  - component: {fileID: 820933063}
   - component: {fileID: 820933062}
   - component: {fileID: 820933061}
   m_Layer: 0
@@ -678,68 +631,101 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &820933061
 MonoBehaviour:
-  m_ObjectHideFlags: 2
+  m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 820933059}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 10eaeba5e91be479e95d4fa48679f549, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Scaffold::Scaffold.ButtonClicked
-  parentBlock: {fileID: 820933063}
-  suppressBlockAutoSelect: 0
-  targetButton: {fileID: 699192721}
---- !u!114 &820933062
-MonoBehaviour:
-  m_ObjectHideFlags: 2
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 820933059}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a6a0f330126b84a40b64420fcb09d831, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Presentation.UI.Input.InvokeActionCommand
-  itemId: 1
-  indentLevel: 0
-  compositeUtility: 0
-  compositeBlockDuringExecution: 0
-  compositeWeight: 0
-  compositeWeightInitialized: 0
-  compositeWeightOverride: 0
-  actions:
-  - rid: 3466829874012356839
-  actionEnabled: 01
-  actionIds:
-  - 7ff4380986d548dfb0e26674de5b09a0
-  actionUtilitySettings:
-  - utility:
-      floatRef: {fileID: 0}
-      source: 0
-      floatSO: {fileID: 0}
-      floatVal: 0
-    blockDuringExecution: 0
-    weight: 0
-    weightInitialized: 0
-    weightOverride: 0
-  displayAsGroup: 0
-  executionMethod: 0
-  awaitMode: 0
-  orderMode: 0
-  avoidRepeatingLastAction: 0
+  m_Script: {fileID: 11500000, guid: 22768aba6818d42f8814efc0e87773a8, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Scaffold.VisualScripting.Unity::Scaffold.VisualScripting.Unity.BlackboardBehaviour
+  definitionReference:
+    source: 0
+    directDefinition:
+      definitionId: 111d74f81f70457ea3299b0a61ac5237
+      name: UI Effects Click
+      localizationId:
+      blocks:
+      - definitionId: d710d302f8ac4994824dfbd289423356
+        name: Apply Next UIEffect On Click
+        trigger:
+          rid: 3466830060293455873
+        executionMethod: 0
+        awaitMode: 0
+        orderMode: 0
+        avoidRepeatingLastAction: 0
+        tracks:
+        - definitionId: bdfab61c985043c4af51766ad08f8d43
+          name: Primary
+          actionList:
+            definitionId: 940c96ca57a84a558371f0edf084230f
+            executionMethod: 0
+            awaitMode: 0
+            orderMode: 0
+            avoidRepeatingLastAction: 0
+            actions:
+            - rid: 3466830060293455874
+      variables: []
+    definitionAsset: {fileID: 0}
+    variableId:
+      value:
+  authoringMetadata:
+    scrollPosition: {x: 0, y: 0}
+    zoom: 1
+    selectedBlockId:
+      value:
+    selectedTrackId:
+      value:
+    selectedActionIds: []
+    blockLayouts:
+    - blockId:
+        value: d710d302f8ac4994824dfbd289423356
+      position:
+        serializedVersion: 2
+        x: 80
+        y: 80
+        width: 300
+        height: 180
+      useCustomTint: 0
+      tint: {r: 1, g: 1, b: 1, a: 1}
+      expanded: 1
+    actionGroups: []
+  sourceBehaviour: {fileID: 0}
   references:
     version: 2
     RefIds:
-    - rid: 3466829874012356839
+    - rid: 3466830060293455873
+      type: {class: BindableTriggerDefinition, ns: Scaffold.VisualScripting, asm: Scaffold.VisualScripting.Core}
+      data:
+        definitionId: 8e55ae850e634a26b9b0bd47f1dd24da
+        enabled: 1
+        source:
+          rid: 3466830060293455875
+        valueTarget:
+          scope: 0
+          definitionId:
+            value:
+          sourceRuntimeInstanceId:
+            value:
+    - rid: 3466830060293455874
       type: {class: CycleUIEffectPreset, ns: Scaffold, asm: Game.GearEngine}
       data:
+        definitionId: 11f1f712d9134c0cb2cdca9bf1c1dae2
+        enabled: 1
+        utility: 0
+        weight: 0
+        hasWeightOverride: 0
+        blockDuringExecution: 0
+        indentLevel: 0
         targetEffect: {fileID: 0}
         targetGameObject:
-          gameObjectRef: {fileID: 0}
-          source: 0
+          gameObjectRef:
+            scope: 0
+            key:
+            value: {fileID: 0}
+          source: 2
           gameObjectSO: {fileID: 0}
           gameObjectVal: {fileID: 699192720}
         targetLabel: {fileID: 203611766}
@@ -828,41 +814,11 @@ MonoBehaviour:
         - 'Outline: Draws a high-contrast outline around the button.'
         - 'Shiny Sweep: Adds a shiny edge sweep across the button.'
         currentIndex: -1
---- !u!114 &820933063
-MonoBehaviour:
-  m_ObjectHideFlags: 2
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 820933059}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3d3d73aef2cfc4f51abf34ac00241f60, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Scaffold::Scaffold.Block
-  nodeRect:
-    serializedVersion: 2
-    x: 0
-    y: 0
-    width: 211.95312
-    height: 40
-  tint: {r: 1, g: 1, b: 1, a: 1}
-  useCustomTint: 0
-  itemId: 0
-  blockName: Apply Next UIEffect On Click
-  description: 
-  eventHandler: {fileID: 820933061}
-  commandList: []
-  tracks:
-  - trackName: Track 0
-    commands:
-    - {fileID: 820933062}
-  executionMethod: 0
-  awaitMode: 0
-  orderMode: 0
-  avoidRepeatingLastCommand: 0
-  suppressAllAutoSelections: 0
---- !u!114 &820933064
+    - rid: 3466830060293455875
+      type: {class: ButtonTriggerSignalSource, ns: Scaffold.VisualScripting.Unity, asm: Scaffold.VisualScripting.Unity}
+      data:
+        target: {fileID: 699192721}
+--- !u!114 &820933062
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -871,34 +827,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 820933059}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7a334fe2ffb574b3583ff3b18b4792d3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Scaffold::Scaffold.Blackboard
-  version: 1
-  scrollPos: {x: 179, y: 144}
-  variablesScrollPos: {x: 0, y: 0}
-  variablesExpanded: 1
-  blockViewHeight: 400
-  zoom: 1
-  scrollViewRect:
-    serializedVersion: 2
-    x: 0
-    y: 0
-    width: 0
-    height: 0
-  selectedBlocks: []
-  selectedCommands: []
-  variables: []
-  description: 
-  stepPause: 0
-  colorCommands: 1
-  hideComponents: 1
-  saveSelection: 1
-  localizationId: 
-  showLineNumbers: 0
-  hideCommands: []
-  luaEnvironment: {fileID: 0}
-  luaBindingName: blackboard
+  m_Script: {fileID: 11500000, guid: 859b6cc93d2e64d5d9cce0764c518e90, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Scaffold.VisualScripting.Unity::Scaffold.VisualScripting.Unity.BlackboardLifetimeScope
+  parentReference:
+    TypeName:
+  autoRun: 1
+  autoInjectGameObjects: []
 --- !u!1 &1865597432
 GameObject:
   m_ObjectHideFlags: 0
@@ -942,7 +877,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4f231c4fb786f3946a6b90b886c48677, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.EventSystems.StandaloneInputModule
   m_SendPointerHoverToParent: 1
   m_HorizontalAxis: Horizontal
@@ -962,7 +897,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 76c392e42b5098c458856cdf6ecaaaa1, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.EventSystems.EventSystem
   m_FirstSelected: {fileID: 0}
   m_sendNavigationEvents: 1
@@ -972,5 +907,4 @@ SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 98354662}
-  - {fileID: 551551543}
   - {fileID: 471675955}

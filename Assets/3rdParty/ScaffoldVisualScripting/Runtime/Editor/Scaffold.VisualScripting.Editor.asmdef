@@ -1,0 +1,23 @@
+{
+    "name": "Scaffold.VisualScripting.Editor",
+    "rootNamespace": "Scaffold.VisualScripting.Editor",
+    "references": [
+        "Scaffold.VisualScripting.Core",
+        "Scaffold.VisualScripting.Authoring",
+        "Scaffold.VisualScripting.Unity",
+        "Scaffold",
+        "ScaffoldEditor",
+        "VContainer"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

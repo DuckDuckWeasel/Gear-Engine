@@ -1,0 +1,357 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="53" result="Passed" total="53" passed="53" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-07-27 21:02:39Z" end-time="2026-07-27 21:02:39Z" duration="0.1147864">
+  <test-suite type="TestSuite" id="1000" name="Scaffold" fullname="Scaffold" runstate="Runnable" testcasecount="278" result="Passed" start-time="2026-07-27 21:02:39Z" end-time="2026-07-27 21:02:39Z" duration="0.114786" total="53" passed="53" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="1382" name="Scaffold.VisualScripting.Core.Tests.dll" fullname="/Users/leonardosilva/.codex/worktrees/a62b/Gear Engine/Library/ScriptAssemblies/Scaffold.VisualScripting.Core.Tests.dll" runstate="Runnable" testcasecount="53" result="Passed" start-time="2026-07-27 21:02:39Z" end-time="2026-07-27 21:02:39Z" duration="0.105778" total="53" passed="53" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="43750" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="1383" name="Scaffold" fullname="Scaffold" runstate="Runnable" testcasecount="53" result="Passed" start-time="2026-07-27 21:02:39Z" end-time="2026-07-27 21:02:39Z" duration="0.105256" total="53" passed="53" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1384" name="VisualScripting" fullname="Scaffold.VisualScripting" runstate="Runnable" testcasecount="53" result="Passed" start-time="2026-07-27 21:02:39Z" end-time="2026-07-27 21:02:39Z" duration="0.104924" total="53" passed="53" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestSuite" id="1385" name="Tests" fullname="Scaffold.VisualScripting.Tests" runstate="Runnable" testcasecount="53" result="Passed" start-time="2026-07-27 21:02:39Z" end-time="2026-07-27 21:02:39Z" duration="0.104553" total="53" passed="53" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="TestFixture" id="1325" name="ActionRuntimeTests" fullname="Scaffold.VisualScripting.Tests.ActionRuntimeTests" classname="Scaffold.VisualScripting.Tests.ActionRuntimeTests" runstate="Runnable" testcasecount="16" result="Passed" start-time="2026-07-27 21:02:39Z" end-time="2026-07-27 21:02:39Z" duration="0.040445" total="16" passed="16" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1335" name="AvoidRepeat_DoesNotStartThePreviousRandomAction" fullname="Scaffold.VisualScripting.Tests.ActionRuntimeTests.AvoidRepeat_DoesNotStartThePreviousRandomAction" methodname="AvoidRepeat_DoesNotStartThePreviousRandomAction" classname="Scaffold.VisualScripting.Tests.ActionRuntimeTests" runstate="Runnable" seed="1468625338" result="Passed" start-time="2026-07-27 21:02:39Z" end-time="2026-07-27 21:02:39Z" duration="0.016679" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1339" name="Block_FlattensMultipleTracksUsingSharedCompositeSemantics" fullname="Scaffold.VisualScripting.Tests.ActionRuntimeTests.Block_FlattensMultipleTracksUsingSharedCompositeSemantics" methodname="Block_FlattensMultipleTracksUsingSharedCompositeSemantics" classname="Scaffold.VisualScripting.Tests.ActionRuntimeTests" runstate="Runnable" seed="1729309455" result="Passed" start-time="2026-07-27 21:02:39Z" end-time="2026-07-27 21:02:39Z" duration="0.003177" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1340" name="Context_ExposesRuntimeServicesAndStableExecutionIdentifiers" fullname="Scaffold.VisualScripting.Tests.ActionRuntimeTests.Context_ExposesRuntimeServicesAndStableExecutionIdentifiers" methodname="Context_ExposesRuntimeServicesAndStableExecutionIdentifiers" classname="Scaffold.VisualScripting.Tests.ActionRuntimeTests" runstate="Runnable" seed="8043317" result="Passed" start-time="2026-07-27 21:02:39Z" end-time="2026-07-27 21:02:39Z" duration="0.001113" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1338" name="FlowJump_SkipsToRequestedAction" fullname="Scaffold.VisualScripting.Tests.ActionRuntimeTests.FlowJump_SkipsToRequestedAction" methodname="FlowJump_SkipsToRequestedAction" classname="Scaffold.VisualScripting.Tests.ActionRuntimeTests" runstate="Runnable" seed="323333426" result="Passed" start-time="2026-07-27 21:02:39Z" end-time="2026-07-27 21:02:39Z" duration="0.000898" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1341" name="InterruptActions_RecordsFeedbackAndResetClearsIt" fullname="Scaffold.VisualScripting.Tests.ActionRuntimeTests.InterruptActions_RecordsFeedbackAndResetClearsIt" methodname="InterruptActions_RecordsFeedbackAndResetClearsIt" classname="Scaffold.VisualScripting.Tests.ActionRuntimeTests" runstate="Runnable" seed="990030302" result="Passed" start-time="2026-07-27 21:02:39Z" end-time="2026-07-27 21:02:39Z" duration="0.001797" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1329" name="Parallel_WaitAllCompletesAfterEveryAction" fullname="Scaffold.VisualScripting.Tests.ActionRuntimeTests.Parallel_WaitAllCompletesAfterEveryAction" methodname="Parallel_WaitAllCompletesAfterEveryAction" classname="Scaffold.VisualScripting.Tests.ActionRuntimeTests" runstate="Runnable" seed="1842371644" result="Passed" start-time="2026-07-27 21:02:39Z" end-time="2026-07-27 21:02:39Z" duration="0.000558" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1330" name="ParallelSelector_SucceedsWhenAnyActionSucceeds" fullname="Scaffold.VisualScripting.Tests.ActionRuntimeTests.ParallelSelector_SucceedsWhenAnyActionSucceeds" methodname="ParallelSelector_SucceedsWhenAnyActionSucceeds" classname="Scaffold.VisualScripting.Tests.ActionRuntimeTests" runstate="Runnable" seed="1658072033" result="Passed" start-time="2026-07-27 21:02:39Z" end-time="2026-07-27 21:02:39Z" duration="0.000147" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1328" name="Selector_StopsAtFirstSuccess" fullname="Scaffold.VisualScripting.Tests.ActionRuntimeTests.Selector_StopsAtFirstSuccess" methodname="Selector_StopsAtFirstSuccess" classname="Scaffold.VisualScripting.Tests.ActionRuntimeTests" runstate="Runnable" seed="1077260983" result="Passed" start-time="2026-07-27 21:02:39Z" end-time="2026-07-27 21:02:39Z" duration="0.000159" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1326" name="Sequence_ExecutesInOrderAndCompletesSuccessfully" fullname="Scaffold.VisualScripting.Tests.ActionRuntimeTests.Sequence_ExecutesInOrderAndCompletesSuccessfully" methodname="Sequence_ExecutesInOrderAndCompletesSuccessfully" classname="Scaffold.VisualScripting.Tests.ActionRuntimeTests" runstate="Runnable" seed="2140533" result="Passed" start-time="2026-07-27 21:02:39Z" end-time="2026-07-27 21:02:39Z" duration="0.000151" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1327" name="Sequence_StopsAtFirstFailure" fullname="Scaffold.VisualScripting.Tests.ActionRuntimeTests.Sequence_StopsAtFirstFailure" methodname="Sequence_StopsAtFirstFailure" classname="Scaffold.VisualScripting.Tests.ActionRuntimeTests" runstate="Runnable" seed="298835906" result="Passed" start-time="2026-07-27 21:02:39Z" end-time="2026-07-27 21:02:39Z" duration="0.000116" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1334" name="Shuffle_UsesInjectedRandomSource" fullname="Scaffold.VisualScripting.Tests.ActionRuntimeTests.Shuffle_UsesInjectedRandomSource" methodname="Shuffle_UsesInjectedRandomSource" classname="Scaffold.VisualScripting.Tests.ActionRuntimeTests" runstate="Runnable" seed="1231773949" result="Passed" start-time="2026-07-27 21:02:39Z" end-time="2026-07-27 21:02:39Z" duration="0.000286" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1337" name="UtilitySelector_BlockDuringExecutionPreventsReevaluation" fullname="Scaffold.VisualScripting.Tests.ActionRuntimeTests.UtilitySelector_BlockDuringExecutionPreventsReevaluation" methodname="UtilitySelector_BlockDuringExecutionPreventsReevaluation" classname="Scaffold.VisualScripting.Tests.ActionRuntimeTests" runstate="Runnable" seed="457894402" result="Passed" start-time="2026-07-27 21:02:39Z" end-time="2026-07-27 21:02:39Z" duration="0.000574" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1336" name="UtilitySelector_ReevaluatesAndInterruptsForHigherUtility" fullname="Scaffold.VisualScripting.Tests.ActionRuntimeTests.UtilitySelector_ReevaluatesAndInterruptsForHigherUtility" methodname="UtilitySelector_ReevaluatesAndInterruptsForHigherUtility" classname="Scaffold.VisualScripting.Tests.ActionRuntimeTests" runstate="Runnable" seed="522526460" result="Passed" start-time="2026-07-27 21:02:39Z" end-time="2026-07-27 21:02:39Z" duration="0.000222" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1331" name="WaitAny_CompletesListAndStopInterruptsDetachedAction" fullname="Scaffold.VisualScripting.Tests.ActionRuntimeTests.WaitAny_CompletesListAndStopInterruptsDetachedAction" methodname="WaitAny_CompletesListAndStopInterruptsDetachedAction" classname="Scaffold.VisualScripting.Tests.ActionRuntimeTests" runstate="Runnable" seed="1680944721" result="Passed" start-time="2026-07-27 21:02:39Z" end-time="2026-07-27 21:02:39Z" duration="0.000347" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1332" name="WaitNone_CompletesImmediatelyAndStopInterruptsDetachedActions" fullname="Scaffold.VisualScripting.Tests.ActionRuntimeTests.WaitNone_CompletesImmediatelyAndStopInterruptsDetachedActions" methodname="WaitNone_CompletesImmediatelyAndStopInterruptsDetachedActions" classname="Scaffold.VisualScripting.Tests.ActionRuntimeTests" runstate="Runnable" seed="1912522847" result="Passed" start-time="2026-07-27 21:02:39Z" end-time="2026-07-27 21:02:39Z" duration="0.000203" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1333" name="WeightedRandom_PrioritizesSelectedWeight" fullname="Scaffold.VisualScripting.Tests.ActionRuntimeTests.WeightedRandom_PrioritizesSelectedWeight" methodname="WeightedRandom_PrioritizesSelectedWeight" classname="Scaffold.VisualScripting.Tests.ActionRuntimeTests" runstate="Runnable" seed="639275492" result="Passed" start-time="2026-07-27 21:02:39Z" end-time="2026-07-27 21:02:39Z" duration="0.000249" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="1342" name="BlackboardDefinitionTests" fullname="Scaffold.VisualScripting.Tests.BlackboardDefinitionTests" classname="Scaffold.VisualScripting.Tests.BlackboardDefinitionTests" runstate="Runnable" testcasecount="14" result="Passed" start-time="2026-07-27 21:02:39Z" end-time="2026-07-27 21:02:39Z" duration="0.025567" total="14" passed="14" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1346" name="BlackboardVariableReference_UsesRunningSourceAndCreatesIndependentInstances" fullname="Scaffold.VisualScripting.Tests.BlackboardDefinitionTests.BlackboardVariableReference_UsesRunningSourceAndCreatesIndependentInstances" methodname="BlackboardVariableReference_UsesRunningSourceAndCreatesIndependentInstances" classname="Scaffold.VisualScripting.Tests.BlackboardDefinitionTests" runstate="Runnable" seed="1315275223" result="Passed" start-time="2026-07-27 21:02:39Z" end-time="2026-07-27 21:02:39Z" duration="0.007773" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1347" name="CloneGraph_PreservesManagedCycles" fullname="Scaffold.VisualScripting.Tests.BlackboardDefinitionTests.CloneGraph_PreservesManagedCycles" methodname="CloneGraph_PreservesManagedCycles" classname="Scaffold.VisualScripting.Tests.BlackboardDefinitionTests" runstate="Runnable" seed="358928412" result="Passed" start-time="2026-07-27 21:02:39Z" end-time="2026-07-27 21:02:39Z" duration="0.000904" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1348" name="CloneGraph_ResetsDelegatesAndTransientState" fullname="Scaffold.VisualScripting.Tests.BlackboardDefinitionTests.CloneGraph_ResetsDelegatesAndTransientState" methodname="CloneGraph_ResetsDelegatesAndTransientState" classname="Scaffold.VisualScripting.Tests.BlackboardDefinitionTests" runstate="Runnable" seed="1305834387" result="Passed" start-time="2026-07-27 21:02:39Z" end-time="2026-07-27 21:02:39Z" duration="0.000371" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1343" name="CoreAssembly_ContainsNoMonoBehaviourTypes" fullname="Scaffold.VisualScripting.Tests.BlackboardDefinitionTests.CoreAssembly_ContainsNoMonoBehaviourTypes" methodname="CoreAssembly_ContainsNoMonoBehaviourTypes" classname="Scaffold.VisualScripting.Tests.BlackboardDefinitionTests" runstate="Runnable" seed="628331395" result="Passed" start-time="2026-07-27 21:02:39Z" end-time="2026-07-27 21:02:39Z" duration="0.001055" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1344" name="DirectReference_InstantiatesIndependentGraphsWithStableDefinitionIds" fullname="Scaffold.VisualScripting.Tests.BlackboardDefinitionTests.DirectReference_InstantiatesIndependentGraphsWithStableDefinitionIds" methodname="DirectReference_InstantiatesIndependentGraphsWithStableDefinitionIds" classname="Scaffold.VisualScripting.Tests.BlackboardDefinitionTests" runstate="Runnable" seed="630828543" result="Passed" start-time="2026-07-27 21:02:39Z" end-time="2026-07-27 21:02:39Z" duration="0.001244" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1356" name="EditorDuplication_RegeneratesDefinitionIdsWithoutBreakingCycles" fullname="Scaffold.VisualScripting.Tests.BlackboardDefinitionTests.EditorDuplication_RegeneratesDefinitionIdsWithoutBreakingCycles" methodname="EditorDuplication_RegeneratesDefinitionIdsWithoutBreakingCycles" classname="Scaffold.VisualScripting.Tests.BlackboardDefinitionTests" runstate="Runnable" seed="1782055472" result="Passed" start-time="2026-07-27 21:02:39Z" end-time="2026-07-27 21:02:39Z" duration="0.000969" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1350" name="Instantiate_MissingAsset_ThrowsActionableError" fullname="Scaffold.VisualScripting.Tests.BlackboardDefinitionTests.Instantiate_MissingAsset_ThrowsActionableError" methodname="Instantiate_MissingAsset_ThrowsActionableError" classname="Scaffold.VisualScripting.Tests.BlackboardDefinitionTests" runstate="Runnable" seed="362476332" result="Passed" start-time="2026-07-27 21:02:39Z" end-time="2026-07-27 21:02:39Z" duration="0.002099" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1349" name="Instantiate_MissingDirectTemplate_ThrowsActionableError" fullname="Scaffold.VisualScripting.Tests.BlackboardDefinitionTests.Instantiate_MissingDirectTemplate_ThrowsActionableError" methodname="Instantiate_MissingDirectTemplate_ThrowsActionableError" classname="Scaffold.VisualScripting.Tests.BlackboardDefinitionTests" runstate="Runnable" seed="785783110" result="Passed" start-time="2026-07-27 21:02:39Z" end-time="2026-07-27 21:02:39Z" duration="0.000224" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1352" name="Instantiate_UnresolvedVariable_ThrowsActionableError" fullname="Scaffold.VisualScripting.Tests.BlackboardDefinitionTests.Instantiate_UnresolvedVariable_ThrowsActionableError" methodname="Instantiate_UnresolvedVariable_ThrowsActionableError" classname="Scaffold.VisualScripting.Tests.BlackboardDefinitionTests" runstate="Runnable" seed="610891172" result="Passed" start-time="2026-07-27 21:02:39Z" end-time="2026-07-27 21:02:39Z" duration="0.000318" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1351" name="Instantiate_VariableWithoutRunningSource_ThrowsStartupError" fullname="Scaffold.VisualScripting.Tests.BlackboardDefinitionTests.Instantiate_VariableWithoutRunningSource_ThrowsStartupError" methodname="Instantiate_VariableWithoutRunningSource_ThrowsStartupError" classname="Scaffold.VisualScripting.Tests.BlackboardDefinitionTests" runstate="Runnable" seed="1804536328" result="Passed" start-time="2026-07-27 21:02:39Z" end-time="2026-07-27 21:02:39Z" duration="0.000315" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1345" name="ScriptableObjectReference_ClonesManagedStateAndPreservesUnityObjectIdentity" fullname="Scaffold.VisualScripting.Tests.BlackboardDefinitionTests.ScriptableObjectReference_ClonesManagedStateAndPreservesUnityObjectIdentity" methodname="ScriptableObjectReference_ClonesManagedStateAndPreservesUnityObjectIdentity" classname="Scaffold.VisualScripting.Tests.BlackboardDefinitionTests" runstate="Runnable" seed="1277203539" result="Passed" start-time="2026-07-27 21:02:39Z" end-time="2026-07-27 21:02:39Z" duration="0.004318" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1354" name="Validate_DuplicateDefinitionId_ReportsBothOwners" fullname="Scaffold.VisualScripting.Tests.BlackboardDefinitionTests.Validate_DuplicateDefinitionId_ReportsBothOwners" methodname="Validate_DuplicateDefinitionId_ReportsBothOwners" classname="Scaffold.VisualScripting.Tests.BlackboardDefinitionTests" runstate="Runnable" seed="1603974013" result="Passed" start-time="2026-07-27 21:02:39Z" end-time="2026-07-27 21:02:39Z" duration="0.000975" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1355" name="Validate_NestedTemplateCycle_ThrowsDeterministically" fullname="Scaffold.VisualScripting.Tests.BlackboardDefinitionTests.Validate_NestedTemplateCycle_ThrowsDeterministically" methodname="Validate_NestedTemplateCycle_ThrowsDeterministically" classname="Scaffold.VisualScripting.Tests.BlackboardDefinitionTests" runstate="Runnable" seed="2060467026" result="Passed" start-time="2026-07-27 21:02:39Z" end-time="2026-07-27 21:02:39Z" duration="0.000378" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1353" name="Validate_NullAction_ReportsItsGraphPath" fullname="Scaffold.VisualScripting.Tests.BlackboardDefinitionTests.Validate_NullAction_ReportsItsGraphPath" methodname="Validate_NullAction_ReportsItsGraphPath" classname="Scaffold.VisualScripting.Tests.BlackboardDefinitionTests" runstate="Runnable" seed="2063825204" result="Passed" start-time="2026-07-27 21:02:39Z" end-time="2026-07-27 21:02:39Z" duration="0.000279" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="1357" name="BlackboardRuntimeLifecycleTests" fullname="Scaffold.VisualScripting.Tests.BlackboardRuntimeLifecycleTests" classname="Scaffold.VisualScripting.Tests.BlackboardRuntimeLifecycleTests" runstate="Runnable" testcasecount="10" result="Passed" start-time="2026-07-27 21:02:39Z" end-time="2026-07-27 21:02:39Z" duration="0.026159" total="10" passed="10" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1363" name="BindableTrigger_AttachesAndDetachesSymmetrically" fullname="Scaffold.VisualScripting.Tests.BlackboardRuntimeLifecycleTests.BindableTrigger_AttachesAndDetachesSymmetrically" methodname="BindableTrigger_AttachesAndDetachesSymmetrically" classname="Scaffold.VisualScripting.Tests.BlackboardRuntimeLifecycleTests" runstate="Runnable" seed="1227866480" result="Passed" start-time="2026-07-27 21:02:39Z" end-time="2026-07-27 21:02:39Z" duration="0.008587" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1360" name="EnableDisable_AttachesTriggersAndCancelsScheduledWork" fullname="Scaffold.VisualScripting.Tests.BlackboardRuntimeLifecycleTests.EnableDisable_AttachesTriggersAndCancelsScheduledWork" methodname="EnableDisable_AttachesTriggersAndCancelsScheduledWork" classname="Scaffold.VisualScripting.Tests.BlackboardRuntimeLifecycleTests" runstate="Runnable" seed="465688462" result="Passed" start-time="2026-07-27 21:02:39Z" end-time="2026-07-27 21:02:39Z" duration="0.002203" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1359" name="Factory_CreatesIndependentRuntimeGraphs" fullname="Scaffold.VisualScripting.Tests.BlackboardRuntimeLifecycleTests.Factory_CreatesIndependentRuntimeGraphs" methodname="Factory_CreatesIndependentRuntimeGraphs" classname="Scaffold.VisualScripting.Tests.BlackboardRuntimeLifecycleTests" runstate="Runnable" seed="1415614170" result="Passed" start-time="2026-07-27 21:02:39Z" end-time="2026-07-27 21:02:39Z" duration="0.001006" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1358" name="GameStarted_StartsOnScheduledFrameWithoutGameObject" fullname="Scaffold.VisualScripting.Tests.BlackboardRuntimeLifecycleTests.GameStarted_StartsOnScheduledFrameWithoutGameObject" methodname="GameStarted_StartsOnScheduledFrameWithoutGameObject" classname="Scaffold.VisualScripting.Tests.BlackboardRuntimeLifecycleTests" runstate="Runnable" seed="2048693853" result="Passed" start-time="2026-07-27 21:02:39Z" end-time="2026-07-27 21:02:39Z" duration="0.000752" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1361" name="LocalMessage_TargetsOnlyTheReceivingRuntime" fullname="Scaffold.VisualScripting.Tests.BlackboardRuntimeLifecycleTests.LocalMessage_TargetsOnlyTheReceivingRuntime" methodname="LocalMessage_TargetsOnlyTheReceivingRuntime" classname="Scaffold.VisualScripting.Tests.BlackboardRuntimeLifecycleTests" runstate="Runnable" seed="589214769" result="Passed" start-time="2026-07-27 21:02:39Z" end-time="2026-07-27 21:02:39Z" duration="0.001215" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1362" name="PollingTrigger_CanUsePlainVariableCondition" fullname="Scaffold.VisualScripting.Tests.BlackboardRuntimeLifecycleTests.PollingTrigger_CanUsePlainVariableCondition" methodname="PollingTrigger_CanUsePlainVariableCondition" classname="Scaffold.VisualScripting.Tests.BlackboardRuntimeLifecycleTests" runstate="Runnable" seed="1501020248" result="Passed" start-time="2026-07-27 21:02:39Z" end-time="2026-07-27 21:02:39Z" duration="0.001472" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1366" name="Registry_RemovesDisposedRuntime" fullname="Scaffold.VisualScripting.Tests.BlackboardRuntimeLifecycleTests.Registry_RemovesDisposedRuntime" methodname="Registry_RemovesDisposedRuntime" classname="Scaffold.VisualScripting.Tests.BlackboardRuntimeLifecycleTests" runstate="Runnable" seed="297511775" result="Passed" start-time="2026-07-27 21:02:39Z" end-time="2026-07-27 21:02:39Z" duration="0.000468" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1365" name="Reset_StopsActionsAndRestoresVariables" fullname="Scaffold.VisualScripting.Tests.BlackboardRuntimeLifecycleTests.Reset_StopsActionsAndRestoresVariables" methodname="Reset_StopsActionsAndRestoresVariables" classname="Scaffold.VisualScripting.Tests.BlackboardRuntimeLifecycleTests" runstate="Runnable" seed="2138044107" result="Passed" start-time="2026-07-27 21:02:39Z" end-time="2026-07-27 21:02:39Z" duration="0.001023" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1364" name="SaveLoad_UsesRuntimeAndStableVariableIds" fullname="Scaffold.VisualScripting.Tests.BlackboardRuntimeLifecycleTests.SaveLoad_UsesRuntimeAndStableVariableIds" methodname="SaveLoad_UsesRuntimeAndStableVariableIds" classname="Scaffold.VisualScripting.Tests.BlackboardRuntimeLifecycleTests" runstate="Runnable" seed="1036521020" result="Passed" start-time="2026-07-27 21:02:39Z" end-time="2026-07-27 21:02:39Z" duration="0.005573" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1367" name="Substitute_UsesRuntimeVariableValues" fullname="Scaffold.VisualScripting.Tests.BlackboardRuntimeLifecycleTests.Substitute_UsesRuntimeVariableValues" methodname="Substitute_UsesRuntimeVariableValues" classname="Scaffold.VisualScripting.Tests.BlackboardRuntimeLifecycleTests" runstate="Runnable" seed="1540931200" result="Passed" start-time="2026-07-27 21:02:39Z" end-time="2026-07-27 21:02:39Z" duration="0.000957" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="1368" name="BlackboardVariableRuntimeTests" fullname="Scaffold.VisualScripting.Tests.BlackboardVariableRuntimeTests" classname="Scaffold.VisualScripting.Tests.BlackboardVariableRuntimeTests" runstate="Runnable" testcasecount="13" result="Passed" start-time="2026-07-27 21:02:39Z" end-time="2026-07-27 21:02:39Z" duration="0.010447" total="13" passed="13" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1378" name="BlackboardRegistry_UsesRuntimeInstanceIdentity" fullname="Scaffold.VisualScripting.Tests.BlackboardVariableRuntimeTests.BlackboardRegistry_UsesRuntimeInstanceIdentity" methodname="BlackboardRegistry_UsesRuntimeInstanceIdentity" classname="Scaffold.VisualScripting.Tests.BlackboardVariableRuntimeTests" runstate="Runnable" seed="312309967" result="Passed" start-time="2026-07-27 21:02:39Z" end-time="2026-07-27 21:02:39Z" duration="0.000341" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1369" name="ClonedBlackboards_DoNotShareLocalOrPublicCells" fullname="Scaffold.VisualScripting.Tests.BlackboardVariableRuntimeTests.ClonedBlackboards_DoNotShareLocalOrPublicCells" methodname="ClonedBlackboards_DoNotShareLocalOrPublicCells" classname="Scaffold.VisualScripting.Tests.BlackboardVariableRuntimeTests" runstate="Runnable" seed="1189680772" result="Passed" start-time="2026-07-27 21:02:39Z" end-time="2026-07-27 21:02:39Z" duration="0.001745" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1380" name="ClonedCollectionDefinitions_DoNotShareManagedItems" fullname="Scaffold.VisualScripting.Tests.BlackboardVariableRuntimeTests.ClonedCollectionDefinitions_DoNotShareManagedItems" methodname="ClonedCollectionDefinitions_DoNotShareManagedItems" classname="Scaffold.VisualScripting.Tests.BlackboardVariableRuntimeTests" runstate="Runnable" seed="435818140" result="Passed" start-time="2026-07-27 21:02:39Z" end-time="2026-07-27 21:02:39Z" duration="0.000722" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1381" name="CollectionCell_DoesNotAliasDefinitionAndResetRestoresPristineValue" fullname="Scaffold.VisualScripting.Tests.BlackboardVariableRuntimeTests.CollectionCell_DoesNotAliasDefinitionAndResetRestoresPristineValue" methodname="CollectionCell_DoesNotAliasDefinitionAndResetRestoresPristineValue" classname="Scaffold.VisualScripting.Tests.BlackboardVariableRuntimeTests" runstate="Runnable" seed="74006448" result="Passed" start-time="2026-07-27 21:02:39Z" end-time="2026-07-27 21:02:39Z" duration="0.000449" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1373" name="DefinitionVariableSource_ReturnsDefinitionNotRuntime" fullname="Scaffold.VisualScripting.Tests.BlackboardVariableRuntimeTests.DefinitionVariableSource_ReturnsDefinitionNotRuntime" methodname="DefinitionVariableSource_ReturnsDefinitionNotRuntime" classname="Scaffold.VisualScripting.Tests.BlackboardVariableRuntimeTests" runstate="Runnable" seed="1874300943" result="Passed" start-time="2026-07-27 21:02:39Z" end-time="2026-07-27 21:02:39Z" duration="0.000488" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1372" name="Dispose_RemovesOnlyOwnedPublicRegistrations" fullname="Scaffold.VisualScripting.Tests.BlackboardVariableRuntimeTests.Dispose_RemovesOnlyOwnedPublicRegistrations" methodname="Dispose_RemovesOnlyOwnedPublicRegistrations" classname="Scaffold.VisualScripting.Tests.BlackboardVariableRuntimeTests" runstate="Runnable" seed="1632805068" result="Passed" start-time="2026-07-27 21:02:39Z" end-time="2026-07-27 21:02:39Z" duration="0.000828" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1377" name="EventBus_DisposalDetachesSubscriptionSymmetrically" fullname="Scaffold.VisualScripting.Tests.BlackboardVariableRuntimeTests.EventBus_DisposalDetachesSubscriptionSymmetrically" methodname="EventBus_DisposalDetachesSubscriptionSymmetrically" classname="Scaffold.VisualScripting.Tests.BlackboardVariableRuntimeTests" runstate="Runnable" seed="1898189256" result="Passed" start-time="2026-07-27 21:02:39Z" end-time="2026-07-27 21:02:39Z" duration="0.000267" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1371" name="InjectedGlobalReference_ExplicitlySharesOneCell" fullname="Scaffold.VisualScripting.Tests.BlackboardVariableRuntimeTests.InjectedGlobalReference_ExplicitlySharesOneCell" methodname="InjectedGlobalReference_ExplicitlySharesOneCell" classname="Scaffold.VisualScripting.Tests.BlackboardVariableRuntimeTests" runstate="Runnable" seed="543156312" result="Passed" start-time="2026-07-27 21:02:39Z" end-time="2026-07-27 21:02:39Z" duration="0.000292" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1375" name="Persistence_RejectsAnotherRuntimeAndLogsTheFailure" fullname="Scaffold.VisualScripting.Tests.BlackboardVariableRuntimeTests.Persistence_RejectsAnotherRuntimeAndLogsTheFailure" methodname="Persistence_RejectsAnotherRuntimeAndLogsTheFailure" classname="Scaffold.VisualScripting.Tests.BlackboardVariableRuntimeTests" runstate="Runnable" seed="1137308123" result="Passed" start-time="2026-07-27 21:02:39Z" end-time="2026-07-27 21:02:39Z" duration="0.000611" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1374" name="Persistence_UsesRuntimeAndDefinitionIds" fullname="Scaffold.VisualScripting.Tests.BlackboardVariableRuntimeTests.Persistence_UsesRuntimeAndDefinitionIds" methodname="Persistence_UsesRuntimeAndDefinitionIds" classname="Scaffold.VisualScripting.Tests.BlackboardVariableRuntimeTests" runstate="Runnable" seed="821821195" result="Passed" start-time="2026-07-27 21:02:39Z" end-time="2026-07-27 21:02:39Z" duration="0.000437" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1370" name="PublicReference_CanAddressOneSpecificRunningBlackboard" fullname="Scaffold.VisualScripting.Tests.BlackboardVariableRuntimeTests.PublicReference_CanAddressOneSpecificRunningBlackboard" methodname="PublicReference_CanAddressOneSpecificRunningBlackboard" classname="Scaffold.VisualScripting.Tests.BlackboardVariableRuntimeTests" runstate="Runnable" seed="1552455728" result="Passed" start-time="2026-07-27 21:02:39Z" end-time="2026-07-27 21:02:39Z" duration="0.000268" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1376" name="TextSubstitution_UsesInjectedVariableSet" fullname="Scaffold.VisualScripting.Tests.BlackboardVariableRuntimeTests.TextSubstitution_UsesInjectedVariableSet" methodname="TextSubstitution_UsesInjectedVariableSet" classname="Scaffold.VisualScripting.Tests.BlackboardVariableRuntimeTests" runstate="Runnable" seed="1674289291" result="Passed" start-time="2026-07-27 21:02:39Z" end-time="2026-07-27 21:02:39Z" duration="0.000193" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1379" name="UntypedAssignment_RejectsIncompatibleValues" fullname="Scaffold.VisualScripting.Tests.BlackboardVariableRuntimeTests.UntypedAssignment_RejectsIncompatibleValues" methodname="UntypedAssignment_RejectsIncompatibleValues" classname="Scaffold.VisualScripting.Tests.BlackboardVariableRuntimeTests" runstate="Runnable" seed="1461907127" result="Passed" start-time="2026-07-27 21:02:39Z" end-time="2026-07-27 21:02:39Z" duration="0.000323" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Saving results to: /Users/leonardosilva/Library/Application Support/DDW/Scaffold/TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

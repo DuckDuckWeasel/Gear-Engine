@@ -20,10 +20,10 @@ namespace GearEngine.Actions.Input
     [Serializable]
     public class WaitForTargetDropAction : WaitForInputActionBase
     {
-        public TargetReference dragTarget = new TargetReference();
-        public TargetReference dropTarget = new TargetReference();
+        public TargetReference DragTarget = new TargetReference();
+        public TargetReference DropTarget = new TargetReference();
 
-        public bool checkDroppedGameObject = false;
+        public bool CheckDroppedGameObject = false;
 
         private bool isTargetDropped = false;
 
@@ -33,12 +33,17 @@ namespace GearEngine.Actions.Input
 
             InitializeInputService();
 
-            _inputService.FilterForButtonDownTarget(dragTarget);
-            _inputService.FilterForDropEnterTarget(checkDroppedGameObject, dropTarget);
+            inputService.FilterForButtonDownTarget(
+                DragTarget,
+                TargetResolver);
+            inputService.FilterForDropEnterTarget(
+                CheckDroppedGameObject,
+                DropTarget,
+                TargetResolver);
 
-            _eventBus.AddListener<ScreenDroppedEvent>(OnDrop);
+            eventBus.AddListener<ScreenDroppedEvent>(OnDrop);
 
-            hostCommand.StartCoroutine(WaitForTargetDropCoroutine());
+            RunRoutine(WaitForTargetDropCoroutine());
         }
 
         private void OnDrop(ScreenDroppedEvent screenDroppedSignal)
@@ -51,19 +56,25 @@ namespace GearEngine.Actions.Input
 
             GameObject droppedObj = screenDroppedSignal.DropTopResult.gameObject;
 
-            // First check if the direct object matches
-            if (!dropTarget.IsMatch(droppedObj))
+            if (!IsValidDropTarget(droppedObj))
             {
-                // Fallback to checking parent just in case, similar to previous logic
-                TagComponent tagComponent = droppedObj.GetComponentInParent<TagComponent>();
-                if (tagComponent == null || !dropTarget.IsMatch(tagComponent.gameObject))
-                {
-                    Debug.Log($"[WaitForTargetDrop] Dropped target does not match the required target reference. Method: {nameof(OnDrop)}");
-                    return;
-                }
+                Debug.Log($"[WaitForTargetDrop] Dropped target does not match the required target reference. Method: {nameof(OnDrop)}");
+                return;
             }
 
             isTargetDropped = true;
+        }
+
+        private bool IsValidDropTarget(GameObject droppedObject)
+        {
+            if (IsTargetMatch(DropTarget, droppedObject))
+            {
+                return true;
+            }
+
+            TagComponent tagComponent = droppedObject.GetComponentInParent<TagComponent>();
+            return tagComponent != null &&
+                IsTargetMatch(DropTarget, tagComponent.gameObject);
         }
 
         private IEnumerator WaitForTargetDropCoroutine()
@@ -76,28 +87,35 @@ namespace GearEngine.Actions.Input
 
             Debug.Log($"[WaitForTargetDrop] Target with the required tags and condition has been dropped!");
 
-            if (_inputService != null)
-            {
-                _inputService.ClearButtonDownFilters();
-                _inputService.ClearButtonUpFilters();
-            }
-
-            if (_eventBus != null)
-            {
-                _eventBus.RemoveListener<ScreenDroppedEvent>(OnDrop);
-            }
-
+            Cleanup();
             Continue();
+        }
+
+        public override void OnStopExecuting()
+        {
+            Cleanup();
+            base.OnStopExecuting();
+        }
+
+        private void Cleanup()
+        {
+            if (inputService != null)
+            {
+                inputService.ClearButtonDownFilters();
+                inputService.ClearButtonUpFilters();
+            }
+
+            eventBus?.RemoveListener<ScreenDroppedEvent>(OnDrop);
         }
 
         public override string GetSummary()
         {
-            if (dragTarget == null || dropTarget == null)
+            if (DragTarget == null || DropTarget == null)
             {
                 return "Error: No Target";
             }
 
-            return $"{dragTarget.GetSummary()} -> {dropTarget.GetSummary()}";
+            return $"{DragTarget.GetSummary()} -> {DropTarget.GetSummary()}";
         }
     }
 }

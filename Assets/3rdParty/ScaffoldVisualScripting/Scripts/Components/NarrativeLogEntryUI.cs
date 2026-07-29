@@ -22,10 +22,6 @@ namespace Scaffold
         protected virtual void Awake()
         {
             canvasGroup = GetComponent<CanvasGroup>();
-            var tmp = ScaffoldManager.Instance.NarrativeLog;
-            // Make sure to update the UI when new entries are added to or
-            // cleared from the log.
-            //using the scaffoldmanager to ensure that the narrativeLog is inited
             NarrativeLog.OnNarrativeAdded += OnNarrativeAdded;
             NarrativeLog.OnNarrativeLogClear += Clear;
 
@@ -36,7 +32,7 @@ namespace Scaffold
         {
             for (int i = 0; i < entryDisplays.Count; i++)
             {
-                var entryDisplay = entryDisplays[i];
+                NarrativeLogEntryDisplay entryDisplay = entryDisplays[i];
                 Destroy(entryDisplay.gameObject);
             }
 
@@ -60,7 +56,7 @@ namespace Scaffold
         protected virtual void OnNarrativeAdded(NarrativeLogEntry entryAdded)
         {
             // Create a display for the new entry, and have it show in the UI.
-            var newEntryDisplay = Instantiate(entryDisplayPrefab);
+            NarrativeLogEntryDisplay newEntryDisplay = Instantiate(entryDisplayPrefab);
             newEntryDisplay.transform.SetParent(entryHolder, false);
             newEntryDisplay.ToDisplay = entryAdded;
             entryDisplays.Add(newEntryDisplay);
@@ -80,13 +76,8 @@ namespace Scaffold
 
         protected virtual void OnDestroy()
         {
-            var fManInst = ScaffoldManager.Instance;
-            // Avoid this responding to signals when being destroyed.
-            if (fManInst != null)
-            {
-                NarrativeLog.OnNarrativeAdded -= OnNarrativeAdded;
-                NarrativeLog.OnNarrativeLogClear -= Clear;
-            }
+            NarrativeLog.OnNarrativeAdded -= OnNarrativeAdded;
+            NarrativeLog.OnNarrativeLogClear -= Clear;
         }
     }
 }

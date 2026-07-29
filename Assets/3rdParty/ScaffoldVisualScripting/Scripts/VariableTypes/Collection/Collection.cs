@@ -6,12 +6,11 @@ using UnityEngine;
 namespace Scaffold
 {
     /// <summary>
-    /// Provides a common and complete MonoBehavior based reference point for ScaffoldCollection.
+    /// Provides a common serializable reference point for Scaffold collections.
     /// Scaffold.GenericCollection inherits from this.
     /// </summary>
-    [AddComponentMenu("")]
     [System.Serializable]
-    public abstract class Collection : MonoBehaviour, IScaffoldCollection
+    public abstract class Collection : IScaffoldCollection
     {
         public abstract int Capacity { get; set; }
         public abstract int Count { get; }
@@ -19,8 +18,7 @@ namespace Scaffold
         public bool IsReadOnly { get { return false; } }
         public bool IsSynchronized { get { return false; } }
         public object SyncRoot { get { return null; } }
-        public string Name { get { return name; } }
-
+        public string Name { get { return GetType().Name; } }
         public object this[int index] { get { return Get(index); } set { Set(index, value); } }
 
         public abstract int Add(object o);

@@ -1,0 +1,13 @@
+{
+  "scenario": "Retained compatibility value reference in the selected Wait action preview",
+  "source": "Interactive Unity Blackboard editor window",
+  "criteria": [
+    "Duration renders as one compact row instead of exposing Scope, Key, and Value internals.",
+    "The source selector offers Direct Value, Blackboard Variable, and Scriptable Object.",
+    "Block During Execution is hidden for a Sequence track.",
+    "Derived Indent Level metadata is not exposed.",
+    "The selected action preview remains below the main action-list scroll.",
+    "The dirty Main Scene is not saved or discarded."
+  ],
+  "capturedAt": "2026-07-28T09:47:19-03:00"
+}

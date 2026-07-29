@@ -13,24 +13,24 @@ namespace Scaffold
     {
         [Tooltip("The TMP Text component to modify")]
         [SerializeField] protected TextMeshProUGUI targetText;
-        
+
         [Tooltip("The number to start from")]
         [SerializeField] protected FloatData startValue = new FloatData(0);
-        
+
         [Tooltip("The number to count to")]
         [SerializeField] protected FloatData endValue = new FloatData(100);
 
         [Tooltip("Duration of the counting animation in seconds")]
         [SerializeField] protected FloatData duration = new FloatData(1f);
-        
+
         [Tooltip("Wait until counting finishes?")]
         [SerializeField] protected bool waitUntilFinished = true;
 
         public override void OnEnter()
         {
-            if (targetText != null && blackboard != null)
+            if (targetText != null && CanRunScheduledWork)
             {
-                blackboard.StartCoroutine(CountRoutine());
+                RunRoutine(CountRoutine(), !waitUntilFinished);
             }
             else
             {
@@ -41,22 +41,29 @@ namespace Scaffold
         private IEnumerator CountRoutine()
         {
             float elapsed = 0f;
-
-            if (!waitUntilFinished)
-            {
-                Continue();
-            }
-
+            CompleteDetachedAction();
             while (elapsed < duration.Value)
             {
-                elapsed += Time.deltaTime;
+                elapsed += CurrentDeltaTime;
                 float currentVal = Mathf.Lerp(startValue.Value, endValue.Value, elapsed / duration.Value);
                 targetText.text = Mathf.RoundToInt(currentVal).ToString();
                 yield return null;
             }
 
             targetText.text = endValue.Value.ToString();
+            CompleteAwaitedAction();
+        }
 
+        private void CompleteDetachedAction()
+        {
+            if (!waitUntilFinished)
+            {
+                Continue();
+            }
+        }
+
+        private void CompleteAwaitedAction()
+        {
             if (waitUntilFinished)
             {
                 Continue();
@@ -65,10 +72,14 @@ namespace Scaffold
 
         public override string GetSummary()
         {
-            if (targetText == null) return "Error: No Target Text";
+            if (targetText == null)
+            {
+                return "Error: No Target Text";
+            }
+
             return $"Count to {endValue.Value} over {duration.Value}s";
         }
-        
+
         public override Color GetButtonColor() { return new Color32(235, 191, 217, 255); }
     }
 }

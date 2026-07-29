@@ -11,11 +11,11 @@ namespace Scaffold
     /// <summary>
     /// Changes the sprite on a SpriteRenderer.
     /// </summary>
-    [CommandInfo("Sprite", 
-                 "Set Sprite", 
+    [CommandInfo("Sprite",
+                 "Set Sprite",
                  "Changes the sprite property of a list of Sprite Renderers.")]
     [Serializable]
-    public class SetSprite : ActionBase 
+    public class SetSprite : ActionBase
     {
         [Tooltip("List of sprites to set the sprite property on")]
         [SerializeField] protected List<SpriteRenderer> spriteRenderers = new List<SpriteRenderer>();
@@ -29,19 +29,19 @@ namespace Scaffold
         {
             for (int i = 0; i < spriteRenderers.Count; i++)
             {
-                var spriteRenderer = spriteRenderers[i];
+                SpriteRenderer spriteRenderer = spriteRenderers[i];
                 spriteRenderer.sprite = sprite;
             }
 
             Continue();
         }
-        
+
         public override string GetSummary()
         {
             string summary = "";
             for (int i = 0; i < spriteRenderers.Count; i++)
             {
-                var spriteRenderer = spriteRenderers[i];
+                SpriteRenderer spriteRenderer = spriteRenderers[i];
                 if (spriteRenderer == null)
                 {
                     continue;
@@ -60,7 +60,7 @@ namespace Scaffold
 
             return summary + " = " + sprite;
         }
-        
+
         public override Color GetButtonColor()
         {
             return new Color32(235, 191, 217, 255);
@@ -76,7 +76,7 @@ namespace Scaffold
             return false;
         }
 
-        public override void OnCommandAdded(Block parentBlock)
+        public override void OnCommandAdded(Scaffold.VisualScripting.BlockDefinition parentBlock)
         {
             // Add a default empty entry
             spriteRenderers.Add(null);
