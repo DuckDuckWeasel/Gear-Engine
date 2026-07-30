@@ -13,16 +13,17 @@ namespace GearEngine.GearEngine.Tests.Editor
             GameObject gameObject = new GameObject("Tutorial");
             try
             {
-                Blackboard blackboard = gameObject.AddComponent<Blackboard>();
                 TutorialProgressController progressController =
                     gameObject.AddComponent<TutorialProgressController>();
                 bool completed = false;
                 progressController.OnTutorialCompleted += (_, skipped) =>
                     completed = !skipped;
 
-                CompleteTutorial action = new CompleteTutorial();
-                action.SetBlackboard(blackboard);
-                action.Execute(() => { });
+                CompleteTutorial action = new CompleteTutorial
+                {
+                    ProgressController = progressController,
+                };
+                action.OnEnter();
 
                 Assert.That(completed, Is.True);
             }

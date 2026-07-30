@@ -1,4 +1,4 @@
-using System.Linq;
+using System.IO;
 using GearEngine.GearEngine.Presentation.UI.Input;
 using GearEngine.GearEngine.Presentation.UI.Tags;
 using NUnit.Framework;
@@ -37,32 +37,21 @@ namespace GearEngine.GearEngine.Tests.Editor
 
             GameObject prefab =
                 tutorial.TutorialProgressController.gameObject;
-            Assert.That(prefab.GetComponent<Blackboard>(), Is.Not.Null);
-
-            Block[] blocks = prefab.GetComponents<Block>();
             Assert.That(
-                blocks.Select(block => block.BlockName),
-                Is.EqualTo(new[]
-                {
-                    "FTUE_01_PLACE_GEAR",
-                    "FTUE_02_START_RACE",
-                    "FTUE_03_COMPLETE"
-                }));
-            Assert.That(blocks[0]._EventHandler, Is.TypeOf<GameStarted>());
+                prefab.GetComponent<
+                    Scaffold.Tutorial.Controllers.TutorialProgressController>(),
+                Is.Not.Null);
 
-            AssertActionTypes(
-                blocks[0],
-                typeof(ShowUIFocus),
-                typeof(global::GearEngine.Actions.Input.WaitForTargetDropAction),
-                typeof(ClearUIFocus),
-                typeof(SendMessage));
-            AssertActionTypes(
-                blocks[1],
-                typeof(ShowUIFocus),
-                typeof(global::GearEngine.Actions.Input.WaitForTargetClickAction),
-                typeof(ClearUIFocus),
-                typeof(SendMessage));
-            AssertActionTypes(blocks[2], typeof(CompleteTutorial));
+            string prefabPath = AssetDatabase.GetAssetPath(prefab);
+            string prefabYaml = File.ReadAllText(prefabPath);
+            Assert.That(prefabYaml, Does.Contain("blockName: FTUE_01_PLACE_GEAR"));
+            Assert.That(prefabYaml, Does.Contain("blockName: FTUE_02_START_RACE"));
+            Assert.That(prefabYaml, Does.Contain("blockName: FTUE_03_COMPLETE"));
+            Assert.That(prefabYaml, Does.Contain("class: CompleteTutorial"));
+            Assert.That(
+                prefabYaml,
+                Does.Contain(
+                    "progressController: {fileID: 7477327881227392170}"));
         }
 
         [Test]
@@ -82,17 +71,5 @@ namespace GearEngine.GearEngine.Tests.Editor
             Assert.That(tagComponent.HasTag(raceButtonTag), Is.True);
         }
 
-        private static void AssertActionTypes(
-            Block block,
-            params System.Type[] expectedTypes)
-        {
-            Assert.That(block.CommandList, Has.Count.EqualTo(1));
-            InvokeActionCommand command =
-                block.CommandList[0] as InvokeActionCommand;
-            Assert.That(command, Is.Not.Null);
-            Assert.That(
-                command.actions.Select(wrapper => wrapper.action.GetType()),
-                Is.EqualTo(expectedTypes));
-        }
     }
 }

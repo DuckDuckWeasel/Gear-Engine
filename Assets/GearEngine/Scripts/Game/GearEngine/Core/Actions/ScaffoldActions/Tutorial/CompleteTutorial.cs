@@ -13,18 +13,21 @@ namespace Scaffold
     [Serializable]
     public sealed class CompleteTutorial : ActionBase
     {
+        public TutorialProgressController ProgressController
+        {
+            get => progressController;
+            set => progressController = value;
+        }
+
+        [SerializeField] private TutorialProgressController progressController;
+
         public override void OnEnter()
         {
-            TutorialProgressController progressController =
-                blackboard != null
-                    ? blackboard.GetComponent<TutorialProgressController>()
-                    : null;
-
             if (progressController == null)
             {
                 Debug.LogError(
-                    "[CompleteTutorial] The Blackboard has no " +
-                    "TutorialProgressController.");
+                    "[CompleteTutorial] No TutorialProgressController " +
+                    "reference was configured.");
                 Fail();
                 return;
             }

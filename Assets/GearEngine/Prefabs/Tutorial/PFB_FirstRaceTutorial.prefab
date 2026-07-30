@@ -572,3 +572,4 @@ MonoBehaviour:
     - rid: 3466830040735678472
       type: {class: CompleteTutorial, ns: Scaffold, asm: Game.GearEngine}
       data:
+        progressController: {fileID: 7477327881227392170}
