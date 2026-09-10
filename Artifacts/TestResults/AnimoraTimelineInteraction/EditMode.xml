@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="5" result="Passed" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-07-30 18:02:14Z" end-time="2026-07-30 18:02:16Z" duration="1.7052465">
+  <test-suite type="TestSuite" id="1000" name="Scaffold" fullname="Scaffold" runstate="Runnable" testcasecount="383" result="Passed" start-time="2026-07-30 18:02:14Z" end-time="2026-07-30 18:02:16Z" duration="1.705247" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="1371" name="OM.TimelineCreator.Editor.Tests.dll" fullname="/private/tmp/animora-timeline-final.rV0ASw/Library/ScriptAssemblies/OM.TimelineCreator.Editor.Tests.dll" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-07-30 18:02:14Z" end-time="2026-07-30 18:02:16Z" duration="1.695078" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="76749" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="1372" name="OM" fullname="OM" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-07-30 18:02:14Z" end-time="2026-07-30 18:02:16Z" duration="1.694698" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1373" name="TimelineCreator" fullname="OM.TimelineCreator" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-07-30 18:02:14Z" end-time="2026-07-30 18:02:16Z" duration="1.694364" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestSuite" id="1374" name="Tests" fullname="OM.TimelineCreator.Tests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-07-30 18:02:14Z" end-time="2026-07-30 18:02:16Z" duration="1.694017" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="TestSuite" id="1375" name="Editor" fullname="OM.TimelineCreator.Tests.Editor" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-07-30 18:02:14Z" end-time="2026-07-30 18:02:16Z" duration="1.693676" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-suite type="TestFixture" id="1365" name="OM_TimelineInteractionTests" fullname="OM.TimelineCreator.Tests.Editor.OM_TimelineInteractionTests" classname="OM.TimelineCreator.Tests.Editor.OM_TimelineInteractionTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-07-30 18:02:14Z" end-time="2026-07-30 18:02:16Z" duration="1.692976" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="1369" name="ClickingSelectedTrack_KeepsSelectionUntilBackgroundClick" fullname="OM.TimelineCreator.Tests.Editor.OM_TimelineInteractionTests.ClickingSelectedTrack_KeepsSelectionUntilBackgroundClick" methodname="ClickingSelectedTrack_KeepsSelectionUntilBackgroundClick" classname="OM.TimelineCreator.Tests.Editor.OM_TimelineInteractionTests" runstate="Runnable" seed="1382808480" result="Passed" start-time="2026-07-30 18:02:14Z" end-time="2026-07-30 18:02:16Z" duration="1.077611" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1367" name="MouseDownWithoutThreshold_DoesNotStartDrag" fullname="OM.TimelineCreator.Tests.Editor.OM_TimelineInteractionTests.MouseDownWithoutThreshold_DoesNotStartDrag" methodname="MouseDownWithoutThreshold_DoesNotStartDrag" classname="OM.TimelineCreator.Tests.Editor.OM_TimelineInteractionTests" runstate="Runnable" seed="1792836929" result="Passed" start-time="2026-07-30 18:02:16Z" end-time="2026-07-30 18:02:16Z" duration="0.553907" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1368" name="MovementBeyondThreshold_StartsDragAndSuppressesClick" fullname="OM.TimelineCreator.Tests.Editor.OM_TimelineInteractionTests.MovementBeyondThreshold_StartsDragAndSuppressesClick" methodname="MovementBeyondThreshold_StartsDragAndSuppressesClick" classname="OM.TimelineCreator.Tests.Editor.OM_TimelineInteractionTests" runstate="Runnable" seed="230986380" result="Passed" start-time="2026-07-30 18:02:16Z" end-time="2026-07-30 18:02:16Z" duration="0.010158" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1366" name="NestedChildClick_RoutesToClosestInteractiveAncestor" fullname="OM.TimelineCreator.Tests.Editor.OM_TimelineInteractionTests.NestedChildClick_RoutesToClosestInteractiveAncestor" methodname="NestedChildClick_RoutesToClosestInteractiveAncestor" classname="OM.TimelineCreator.Tests.Editor.OM_TimelineInteractionTests" runstate="Runnable" seed="2123925247" result="Passed" start-time="2026-07-30 18:02:16Z" end-time="2026-07-30 18:02:16Z" duration="0.032763" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1370" name="SelectionAndDragging_SwapDescriptionAndTimingDetails" fullname="OM.TimelineCreator.Tests.Editor.OM_TimelineInteractionTests.SelectionAndDragging_SwapDescriptionAndTimingDetails" methodname="SelectionAndDragging_SwapDescriptionAndTimingDetails" classname="OM.TimelineCreator.Tests.Editor.OM_TimelineInteractionTests" runstate="Runnable" seed="1973426286" result="Passed" start-time="2026-07-30 18:02:16Z" end-time="2026-07-30 18:02:16Z" duration="0.010224" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <output><![CDATA[Saving results to: /Users/leonardosilva/Library/Application Support/DDW/Scaffold/TestResults.xml
+]]></output>
+                </test-case>
+              </test-suite>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

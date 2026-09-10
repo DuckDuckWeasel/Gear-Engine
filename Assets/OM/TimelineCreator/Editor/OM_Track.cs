@@ -1,9 +1,9 @@
 using System.Collections.Generic;
-using OM.Editor; 
+using OM.Editor;
 using OM.TimelineCreator.Runtime;
-using UnityEditor; 
+using UnityEditor;
 using UnityEngine;
-using UnityEngine.UIElements; 
+using UnityEngine.UIElements;
 
 namespace OM.TimelineCreator.Editor
 {
@@ -60,23 +60,23 @@ namespace OM.TimelineCreator.Editor
         /// <summary>
         /// Stores the starting position of the mouse when a drag operation begins on the track clip.
         /// </summary>
-        private Vector2 _dragStartPosition;
+        private Vector2 dragStartPosition;
 
         /// <summary>
         /// Stores the start time of the clip when a drag operation begins.
         /// </summary>
-        private float _dragStartTime;
+        private float dragStartTime;
 
         /// <summary>
         /// The order index currently being previewed during a drag operation (i.e. where the track
         /// would land if dropped right now). Committed to the underlying clip data in <see cref="EndDrag"/>.
         /// </summary>
-        private int _dragPreviewIndex;
+        private int dragPreviewIndex;
 
         /// <summary>
         /// Reference to the visual snapping line displayed during drag operations.
         /// </summary>
-        private OM_SnappingLine _snappingLine;
+        private OM_SnappingLine snappingLine;
 
         /// <summary>
         /// Gets the icon associated with the clip type for display on the track.
@@ -92,7 +92,7 @@ namespace OM.TimelineCreator.Editor
         public OM_SnappingLine GetSnappingLine()
         {
             // Lazily initialize the snapping line reference if needed
-            return _snappingLine ??= Timeline.Body.SnappingLine;
+            return snappingLine ??= Timeline.Body.SnappingLine;
         }
 
         /// <summary>
@@ -109,7 +109,10 @@ namespace OM.TimelineCreator.Editor
         /// <param name="value">The desired active state.</param>
         public void SetActive(bool value)
         {
-            if (IsActive == value) return; // Avoid redundant operations
+            if (IsActive == value)
+            {
+                return; // Avoid redundant operations
+            }
 
             IsActive = value;
             TrackClip.OnIsActiveChanged(value); // Update visual clip state
@@ -176,7 +179,7 @@ namespace OM.TimelineCreator.Editor
             AddToClassList("no-animation"); // Initially disable animations for setup
 
             // Apply styling based on clip height and spacing defined in OM_TimelineUtil
-            style.height = OM_TimelineUtil.ClipHeight + OM_TimelineUtil.ClipSpaceBetween;
+            style.height = OM_TimelineUtil.k_clipHeight + OM_TimelineUtil.k_clipSpaceBetween;
             style.position = Position.Absolute; // Position is controlled explicitly
             style.left = 0; // Start at the left edge
             style.width = new StyleLength(new Length(100, LengthUnit.Percent)); // Span the full width
@@ -294,9 +297,12 @@ namespace OM.TimelineCreator.Editor
         public IEnumerable<OM_Track<T, TTrack>> GetNeighbourTracks()
         {
             int currentIndex = GetTrackIndex();
-            foreach (var track in Timeline.TracksList)
+            foreach (OM_Track<T, TTrack> track in Timeline.TracksList)
             {
-                if (track == this) continue; // Skip self
+                if (track == this)
+                {
+                    continue; // Skip self
+                }
 
                 int trackIndex = track.GetTrackIndex();
                 // Return tracks directly above or below
@@ -315,9 +321,9 @@ namespace OM.TimelineCreator.Editor
         public void StartDrag(Vector2 mousePosition)
         {
             // Store initial state for delta calculations
-            _dragStartPosition = new Vector2(TrackClip.layout.x, layout.y); // Use layout.y for vertical position
-            _dragStartTime = GetStartTime();
-            _dragPreviewIndex = GetTrackIndex(); // No reorder previewed yet
+            dragStartPosition = new Vector2(TrackClip.layout.x, layout.y); // Use layout.y for vertical position
+            dragStartTime = GetStartTime();
+            dragPreviewIndex = GetTrackIndex(); // No reorder previewed yet
 
             BringToFront(); // Ensure the dragged track is rendered on top
             this.AddClassNames("no-animation"); // Disable animations during drag
@@ -336,9 +342,9 @@ namespace OM.TimelineCreator.Editor
         public void Drag(Vector2 delta, Vector2 mousePosition)
         {
             // Calculate potential new horizontal position in seconds
-            var newXInSeconds = (_dragStartPosition.x + delta.x) / Timeline.GetPixelPerSecond();
+            float newXInSeconds = (dragStartPosition.x + delta.x) / Timeline.GetPixelPerSecond();
             // Calculate potential new vertical position
-            var newY = _dragStartPosition.y + delta.y; // Use stored Y
+            float newY = dragStartPosition.y + delta.y; // Use stored Y
 
             // Clamp horizontal position within timeline bounds, considering clip duration
             newXInSeconds = Mathf.Clamp(newXInSeconds, 0, Timeline.TimelinePlayer.GetTimelineDuration() - GetDuration());
@@ -350,13 +356,13 @@ namespace OM.TimelineCreator.Editor
 
             // Determine the order index the dragged track is currently hovering over (i.e. where it
             // would land if dropped now, requiring the mouse to pass the midpoint of the target slot).
-            var newIndex = GetIndexOfClipBasedOnPosition(Timeline, newY);
+            int newIndex = GetIndexOfClipBasedOnPosition(Timeline, newY);
 
             // Only live-preview the reorder (no data mutation, no Undo) so the displaced track shows
             // where it will end up. The actual reorder is committed once, in EndDrag.
-            if (newIndex != _dragPreviewIndex)
+            if (newIndex != dragPreviewIndex)
             {
-                _dragPreviewIndex = newIndex;
+                dragPreviewIndex = newIndex;
                 Timeline.PreviewMoveTrack(this, newIndex);
             }
 
@@ -376,32 +382,35 @@ namespace OM.TimelineCreator.Editor
         private void HandleSnapping(ref float newXInSeconds)
         {
             // Only snap if enabled in settings
-            if (!OM_TimelineSettings.Instance.UseSnapping) return;
+            if (!OM_TimelineSettings.Instance.UseSnapping)
+            {
+                return;
+            }
 
             // Calculate the snapping range in seconds based on pixel setting
-            var snapRange = OM_TimelineSettings.Instance.SnappingValue / Timeline.GetPixelPerSecond();
+            float snapRange = OM_TimelineSettings.Instance.SnappingValue / Timeline.GetPixelPerSecond();
             float duration = GetDuration(); // Cache duration
 
             // --- Snap to Timeline Boundaries ---
             // Snap start time to timeline start (0)
             if (Mathf.Abs(newXInSeconds) < snapRange)
             {
-                 newXInSeconds = 0;
-                 GetSnappingLine().SetPosition(true, 0, layout.center.y); // Show snap line at timeline start
-                 return; // Snapped, no need to check neighbors
+                newXInSeconds = 0;
+                GetSnappingLine().SetPosition(true, 0, layout.center.y); // Show snap line at timeline start
+                return; // Snapped, no need to check neighbors
             }
-             // Snap end time to timeline end
+            // Snap end time to timeline end
             float timelineDuration = Timeline.TimelinePlayer.GetTimelineDuration();
             if (Mathf.Abs(newXInSeconds + duration - timelineDuration) < snapRange)
             {
-                 newXInSeconds = timelineDuration - duration;
-                 GetSnappingLine().SetPosition(true, timelineDuration * Timeline.GetPixelPerSecond(), layout.center.y); // Show snap line at timeline end
-                 return; // Snapped
+                newXInSeconds = timelineDuration - duration;
+                GetSnappingLine().SetPosition(true, timelineDuration * Timeline.GetPixelPerSecond(), layout.center.y); // Show snap line at timeline end
+                return; // Snapped
             }
 
 
             // --- Snap to Neighboring Clips ---
-            foreach (var neighbourTrack in GetNeighbourTracks())
+            foreach (OM_Track<T, TTrack> neighbourTrack in GetNeighbourTracks())
             {
                 float neighbourStart = neighbourTrack.GetStartTime();
                 float neighbourEnd = neighbourTrack.GetEndTime();
@@ -426,14 +435,14 @@ namespace OM.TimelineCreator.Editor
                     return; // Snapped
                 }
 
-                 // Snap Start -> Neighbour End
+                // Snap Start -> Neighbour End
                 if (OM_Utility.IsWithinRange(newXInSeconds, neighbourEnd, snapRange))
                 {
                     newXInSeconds = neighbourEnd;
                     GetSnappingLine().SetPosition(true, neighbourLayoutXMax, layout.center.y);
-                     GetSnappingLine().SetFromTo(layout.center, neighbourTrack.layout.center);
+                    GetSnappingLine().SetFromTo(layout.center, neighbourTrack.layout.center);
                     return; // Snapped
-                 }
+                }
 
                 // Snap End -> Neighbour Start
                 if (OM_Utility.IsWithinRange(newXInSeconds + duration, neighbourStart, snapRange))
@@ -442,7 +451,7 @@ namespace OM.TimelineCreator.Editor
                     GetSnappingLine().SetPosition(true, neighbourLayoutX, layout.center.y); // Use neighbour's start X
                     GetSnappingLine().SetFromTo(layout.center, neighbourTrack.layout.center);
                     return; // Snapped
-                 }
+                }
             }
 
             // If no snapping occurred, hide the snapping line
@@ -458,15 +467,15 @@ namespace OM.TimelineCreator.Editor
         public void EndDrag(Vector2 delta, Vector2 mousePosition)
         {
             SetIsDragging(false); // Clear the dragging flag
-            bool reordered = _dragPreviewIndex != GetTrackIndex();
+            bool reordered = dragPreviewIndex != GetTrackIndex();
             if (reordered)
             {
-                MoveTrack(_dragPreviewIndex); // Commit the previewed reorder (this already refreshes every track)
+                MoveTrack(dragPreviewIndex); // Commit the previewed reorder (this already refreshes every track)
             }
 
-            if (!Mathf.Approximately(_dragStartTime, GetStartTime()))
+            if (!Mathf.Approximately(dragStartTime, GetStartTime()))
             {
-                OnPositionChanged(_dragStartTime, GetStartTime()); // Let derived tracks commit a horizontal reorder
+                OnPositionChanged(dragStartTime, GetStartTime()); // Let derived tracks commit a horizontal reorder
             }
 
             this.RemoveFromClassList("no-animation"); // Re-enable animations
@@ -486,9 +495,8 @@ namespace OM.TimelineCreator.Editor
             }
 
             GetSnappingLine().SetPosition(false, Vector2.zero); // Hide snapping line
-            TrackClip.Details.SetDisplay(false); // Hide details label
-             // Potentially trigger timeline validation after drag
-             // Timeline.TimelinePlayer.OnValidate();
+            // Potentially trigger timeline validation after drag
+            // Timeline.TimelinePlayer.OnValidate();
         }
 
         /// <summary>
@@ -525,15 +533,7 @@ namespace OM.TimelineCreator.Editor
             switch (mouseButton)
             {
                 case MouseButton.LeftMouse:
-                    // If already selected, deselect (select null). Otherwise, select this track.
-                    if (Timeline.SelectedTrack == this)
-                    {
-                        Timeline.SelectTrack(null);
-                    }
-                    else
-                    {
-                        Timeline.SelectTrack(this);
-                    }
+                    Timeline.SelectTrack(this);
                     break;
                 case MouseButton.RightMouse:
                     // Show the context menu for this track
@@ -553,9 +553,9 @@ namespace OM.TimelineCreator.Editor
         private static int GetIndexOfClipBasedOnPosition(OM_Timeline<T, TTrack> timeline, float newY)
         {
             // Adjust Y position to be relative to the center of the potential track slot
-            newY += OM_TimelineUtil.ClipHeight / 2;
+            newY += OM_TimelineUtil.k_clipHeight / 2;
             // Calculate index based on total height of a track slot
-            var index = Mathf.FloorToInt(newY / (OM_TimelineUtil.ClipHeight + OM_TimelineUtil.ClipSpaceBetween));
+            int index = Mathf.FloorToInt(newY / (OM_TimelineUtil.k_clipHeight + OM_TimelineUtil.k_clipSpaceBetween));
             // Clamp index within the valid range of existing tracks
             index = Mathf.Clamp(index, 0, timeline.TracksList.Count - 1);
             return index;
@@ -567,12 +567,22 @@ namespace OM.TimelineCreator.Editor
         /// <param name="value">True if dragging, false otherwise.</param>
         public void SetIsDragging(bool value)
         {
-            if (IsDragging == value) return; // Avoid redundant updates
+            if (IsDragging == value)
+            {
+                return; // Avoid redundant updates
+            }
+
             IsDragging = value;
 
             // Add/remove class for potential CSS styling during drag
-            if (value) this.AddToClassList("no-animation");
-            else this.RemoveFromClassList("no-animation");
+            if (value)
+            {
+                this.AddToClassList("no-animation");
+            }
+            else
+            {
+                this.RemoveFromClassList("no-animation");
+            }
 
             // Notify the visual clip representation
             TrackClip.OnIsDraggingChanged(value);
@@ -584,7 +594,11 @@ namespace OM.TimelineCreator.Editor
         /// <param name="value">True if selected, false otherwise.</param>
         public void SetIsSelected(bool value)
         {
-            if (IsSelected == value) return; // Avoid redundant updates
+            if (IsSelected == value)
+            {
+                return; // Avoid redundant updates
+            }
+
             IsSelected = value;
             // Notify the visual clip representation
             TrackClip.OnIsSelectedChanged(value);
@@ -645,8 +659,8 @@ namespace OM.TimelineCreator.Editor
             Clip.SetDuration(newDuration);
             // Notify timeline that a transform property changed (affects layout/snapping)
             Timeline.OnTrackTransformChanged(this);
-             // Potentially trigger validation
-             // Timeline.TimelinePlayer.OnValidate();
+            // Potentially trigger validation
+            // Timeline.TimelinePlayer.OnValidate();
         }
 
         /// <summary>
@@ -680,7 +694,7 @@ namespace OM.TimelineCreator.Editor
         /// </summary>
         public virtual void UpdateTop()
         {
-            style.top = GetTrackIndex() * (OM_TimelineUtil.ClipHeight + OM_TimelineUtil.ClipSpaceBetween);
+            style.top = GetTrackIndex() * (OM_TimelineUtil.k_clipHeight + OM_TimelineUtil.k_clipSpaceBetween);
         }
 
         /// <summary>
@@ -691,7 +705,7 @@ namespace OM.TimelineCreator.Editor
         /// <param name="index">The order index whose slot position to preview.</param>
         public void SetPreviewIndex(int index)
         {
-            style.top = index * (OM_TimelineUtil.ClipHeight + OM_TimelineUtil.ClipSpaceBetween);
+            style.top = index * (OM_TimelineUtil.k_clipHeight + OM_TimelineUtil.k_clipSpaceBetween);
         }
 
         /// <summary>
@@ -707,7 +721,7 @@ namespace OM.TimelineCreator.Editor
         /// </summary>
         protected virtual void DrawContextMenu()
         {
-            var menu = new GenericMenu();
+            GenericMenu menu = new GenericMenu();
             // Add standard menu items
             menu.AddItem(new GUIContent("Delete"), false, () => { Timeline.DeleteTrack(this); });
             menu.AddItem(new GUIContent("Duplicate"), false, () => { Timeline.DuplicateTrack(this); });
@@ -736,8 +750,8 @@ namespace OM.TimelineCreator.Editor
         {
             // Ensure the corresponding clip data is removed from the runtime player
             Timeline.TimelinePlayer.RemoveClip(Clip);
-             // Potentially trigger validation
-             // Timeline.TimelinePlayer.OnValidate();
+            // Potentially trigger validation
+            // Timeline.TimelinePlayer.OnValidate();
         }
 
         /// <summary>
@@ -748,8 +762,8 @@ namespace OM.TimelineCreator.Editor
         {
             // Ensure the corresponding clip data is duplicated in the runtime player
             Timeline.TimelinePlayer.DuplicateClip(Clip);
-             // Potentially trigger validation
-             // Timeline.TimelinePlayer.OnValidate();
+            // Potentially trigger validation
+            // Timeline.TimelinePlayer.OnValidate();
         }
 
         /// <summary>
@@ -764,7 +778,7 @@ namespace OM.TimelineCreator.Editor
             this.SetActive(Clip.IsActive); // Update active state visuals
 
             // Check for errors in the clip data and update the error icon accordingly
-            if (Clip.IsActive && Clip.HasError(out var error))
+            if (Clip.IsActive && Clip.HasError(out string error))
             {
                 TrackClip.UpdateErrorIcon(true, error); // Show error icon with tooltip
             }
@@ -783,8 +797,8 @@ namespace OM.TimelineCreator.Editor
         /// <returns>The created and initialized <see cref="OM_TrackClip{T, TTrack}"/> instance.</returns>
         protected virtual OM_TrackClip<T, TTrack> CreateAndGetClip()
         {
-             // Default implementation creates a standard OM_TrackClip
-            var trackClipInstance = new OM_TrackClip<T, TTrack>(this);
+            // Default implementation creates a standard OM_TrackClip
+            OM_TrackClip<T, TTrack> trackClipInstance = new OM_TrackClip<T, TTrack>(this);
             trackClipInstance.Init(); // Initialize the created clip element
             return trackClipInstance;
             // Derived classes might override this to create custom TrackClip visuals

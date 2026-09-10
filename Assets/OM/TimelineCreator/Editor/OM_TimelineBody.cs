@@ -13,23 +13,23 @@ namespace OM.TimelineCreator.Editor
     /// </summary>
     /// <typeparam name="T">The type of the data clip, derived from <see cref="OM_ClipBase"/>.</typeparam>
     /// <typeparam name="TTrack">The concrete type of the track, derived from <see cref="OM_Track{T, TTrack}"/>.</typeparam>
-    public class OM_TimelineBody<T,TTrack> :
+    public class OM_TimelineBody<T, TTrack> :
         VisualElement, IOM_DragControlClickable // Implements clickable interface for background clicks
         where T : OM_ClipBase
-        where TTrack : OM_Track<T,TTrack>
+        where TTrack : OM_Track<T, TTrack>
     {
         /// <summary>
         /// Reference to the parent Timeline UI element.
         /// </summary>
-        private readonly OM_Timeline<T,TTrack> _timeline;
+        private readonly OM_Timeline<T, TTrack> timeline;
         /// <summary>
         /// The minimum calculated height for the body area, ensuring it doesn't collapse completely when empty.
         /// </summary>
-        private readonly float _minHeight;
+        private readonly float minHeight;
         /// <summary>
         /// The visual element responsible for drawing the background grid lines.
         /// </summary>
-        private readonly OM_TimelineBackground _background;
+        private readonly OM_TimelineBackground background;
 
         /// <summary>
         /// Gets the container VisualElement that holds all the track (<see cref="OM_Track{T, TTrack}"/>) elements.
@@ -51,33 +51,33 @@ namespace OM.TimelineCreator.Editor
         /// <summary>
         /// Stores the mouse position when a drag operation (like selection) starts (commented out).
         /// </summary>
-        private Vector2 _startMousePosition;
+        private Vector2 startMousePosition;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="OM_TimelineBody{T, TTrack}"/> class.
         /// Sets up the structure with background, track container, and overlay container.
         /// </summary>
         /// <param name="timeline">The parent timeline instance.</param>
-        public OM_TimelineBody(OM_Timeline<T,TTrack> timeline)
+        public OM_TimelineBody(OM_Timeline<T, TTrack> timeline)
         {
-            _timeline = timeline;
+            this.timeline = timeline;
             // Assign name and USS class for identification and styling
             name = "OM_TimelineBody";
             AddToClassList("timeline-body");
 
             // Calculate minimum height based on showing a few empty track slots
-            _minHeight = 5 * (OM_TimelineUtil.ClipHeight + OM_TimelineUtil.ClipSpaceBetween);
+            minHeight = 5 * (OM_TimelineUtil.k_clipHeight + OM_TimelineUtil.k_clipSpaceBetween);
 
             // Create and add the background grid element
-            _background = new OM_TimelineBackground();
-            Add(_background);
+            background = new OM_TimelineBackground();
+            Add(background);
 
             // Create the container for track elements
             TracksContainer = new VisualElement()
-                // Ignore mouse events directly on the container itself; events are handled by tracks or background
+               // Ignore mouse events directly on the container itself; events are handled by tracks or background
                .SetPickingMode(PickingMode.Ignore);
             TracksContainer.AddToClassList("tracks-container"); // USS class for styling
-            TracksContainer.style.height = _minHeight; // Set initial minimum height
+            TracksContainer.style.height = minHeight; // Set initial minimum height
             Add(TracksContainer); // Add track container on top of the background
 
             // Create the overlay container
@@ -98,22 +98,22 @@ namespace OM.TimelineCreator.Editor
         /// Adds a track's visual element to the <see cref="TracksContainer"/>.
         /// </summary>
         /// <param name="track">The track element to add.</param>
-        public void AddTrack(OM_Track<T,TTrack> track)
+        public void AddTrack(OM_Track<T, TTrack> track)
         {
             TracksContainer.Add(track); // Add track to the container
             UpdateHeight(); // Recalculate body height
-            _background.MarkDirtyRepaint(); // Mark background for redraw (grid lines)
+            background.MarkDirtyRepaint(); // Mark background for redraw (grid lines)
         }
 
         /// <summary>
         /// Removes a track's visual element from the <see cref="TracksContainer"/>.
         /// </summary>
         /// <param name="track">The track element to remove.</param>
-        public void RemoveTrack(OM_Track<T,TTrack> track)
+        public void RemoveTrack(OM_Track<T, TTrack> track)
         {
             TracksContainer.Remove(track); // Remove track from container
             UpdateHeight(); // Recalculate body height
-            _background.MarkDirtyRepaint(); // Mark background for redraw
+            background.MarkDirtyRepaint(); // Mark background for redraw
         }
 
         /// <summary>
@@ -123,19 +123,19 @@ namespace OM.TimelineCreator.Editor
         {
             TracksContainer.Clear(); // Remove all children tracks
             UpdateHeight(); // Recalculate body height
-            _background.MarkDirtyRepaint(); // Mark background for redraw
+            background.MarkDirtyRepaint(); // Mark background for redraw
         }
 
         /// <summary>
         /// Updates the height of the <see cref="TracksContainer"/> based on the number of tracks currently in the timeline.
-        /// Ensures the height doesn't fall below the calculated minimum height (<see cref="_minHeight"/>).
+        /// Ensures the height doesn't fall below the calculated minimum height.
         /// </summary>
         public void UpdateHeight()
         {
             // Calculate required height based on number of tracks and standard spacing
-            var height = _timeline.TracksList.Count * (OM_TimelineUtil.ClipHeight + OM_TimelineUtil.ClipSpaceBetween);
+            float height = timeline.TracksList.Count * (OM_TimelineUtil.k_clipHeight + OM_TimelineUtil.k_clipSpaceBetween);
             // Ensure height is at least the minimum calculated height
-            height = Mathf.Max(height, _minHeight);
+            height = Mathf.Max(height, minHeight);
             // Apply the calculated height to the tracks container
             TracksContainer.style.height = height;
             // The body VisualElement itself should probably auto-size or be managed by its parent.
@@ -155,11 +155,11 @@ namespace OM.TimelineCreator.Editor
             {
                 case MouseButton.LeftMouse:
                     // Left-clicking the background deselects any currently selected track
-                    _timeline.SelectTrack(null);
+                    timeline.SelectTrack(null);
                     break;
                 case MouseButton.RightMouse:
                     // Right-clicking the background shows the timeline's main context menu
-                    _timeline.ShowContextMenu(e.mousePosition); // Use event's mousePosition for context menu
+                    timeline.ShowContextMenu(e.mousePosition); // Use event's mousePosition for context menu
                     break;
             }
         }

@@ -1,10 +1,10 @@
 using OM.Editor;
-using OM.TimelineCreator.Runtime; 
+using OM.TimelineCreator.Runtime;
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.UIElements; 
+using UnityEngine.UIElements;
 
-namespace OM.TimelineCreator.Editor 
+namespace OM.TimelineCreator.Editor
 {
     /// <summary>
     /// Represents the visual UI element for a single clip on a timeline track in the editor.
@@ -61,7 +61,7 @@ namespace OM.TimelineCreator.Editor
 
         /// <summary>Gets the Button used to ping/highlight the associated asset or GameObject (optional).</summary>
         public Button PingButton { get; private set; } // May not be present in all versions
-        
+
         public Label DescriptionLabel { get; private set; } // May not be present in all versions
 
         /// <summary>
@@ -85,9 +85,9 @@ namespace OM.TimelineCreator.Editor
         public void Init()
         {
             // Set base height based on utility constants
-            style.height = OM_TimelineUtil.ClipHeight;
+            style.height = OM_TimelineUtil.k_clipHeight;
             // Position above the track base, accounting for spacing
-            style.top = OM_TimelineUtil.ClipSpaceBetween * 0.5f;
+            style.top = OM_TimelineUtil.k_clipSpaceBetween * 0.5f;
 
             // --- Create Body Container ---
             Body = new VisualElement().SetPickingMode(PickingMode.Ignore); // Ignore picks on body itself
@@ -113,26 +113,28 @@ namespace OM.TimelineCreator.Editor
             ColoredLine = new OM_ColoredLine(Clip?.HighlightColor ?? Color.grey);
             Body.Add(ColoredLine); // Add line inside the Body
 
-            DescriptionLabel = new Label(Clip?.ClipDescription);
-            DescriptionLabel.SetPickingMode(PickingMode.Ignore); // Ignore picks on description
-            DescriptionLabel.style.position = Position.Absolute; // Absolute positioning
-            DescriptionLabel.style.width = new StyleLength(new Length(100, LengthUnit.Percent)); // Full width
-            DescriptionLabel.style.height = new StyleLength(new Length(100, LengthUnit.Percent)); // Full height
-            DescriptionLabel.style.unityTextAlign = TextAnchor.MiddleCenter; // Center text
-            DescriptionLabel.style.fontSize = 12;
-            DescriptionLabel.style.color = new Color(0.62f, 0.62f, 0.8f); // Dim text color
-            DescriptionLabel.style.top = 5; // Position above the clip
-            Body.Add(DescriptionLabel);
-            
+            VisualElement textContainer = new VisualElement()
+                .SetPickingMode(PickingMode.Ignore)
+                .AddClassNames("clip-text-container");
+            Body.Add(textContainer);
+
             // --- Create Title Label ---
-            Title = new Label(Clip?.ClipName ?? "Clip").SetName("clip-name");
-            Title.SetPickingMode(PickingMode.Ignore); // Ignore picks on title
-            Title.style.position = Position.Absolute; // Absolute positioning
-            Title.style.width = new StyleLength(new Length(100, LengthUnit.Percent)); // Full width
-            Title.style.height = new StyleLength(new Length(100, LengthUnit.Percent)); // Full height
-            Title.style.unityTextAlign = TextAnchor.MiddleCenter; // Center text
-            Title.style.top = -8;
-            Body.Add(Title); // Add title inside the Body
+            Title = new Label(Clip?.ClipName ?? "Clip")
+                .SetName("clip-name")
+                .SetPickingMode(PickingMode.Ignore);
+            textContainer.Add(Title);
+
+            // --- Create Secondary Labels ---
+            DescriptionLabel = new Label(Clip?.ClipDescription)
+                .SetPickingMode(PickingMode.Ignore)
+                .AddClassNames("clip-secondary-text");
+            textContainer.Add(DescriptionLabel);
+
+            Details = new Label("")
+                .SetPickingMode(PickingMode.Ignore)
+                .AddClassNames("clip-secondary-text");
+            Details.SetDisplay(false);
+            textContainer.Add(Details);
 
             // --- Create Selection Outline ---
             Outline = new VisualElement().SetPickingMode(PickingMode.Ignore);
@@ -154,19 +156,8 @@ namespace OM.TimelineCreator.Editor
             HoverOutline.SetDisplay(false); // Initially hidden
             Add(HoverOutline); // Add hover outline as sibling
 
-            // --- Create Details Label (for timing info) ---
-            Details = new Label("").SetPickingMode(PickingMode.Ignore);
-            Details.style.position = Position.Absolute;
-            Details.style.width = new StyleLength(new Length(100, LengthUnit.Percent));
-            Details.style.top = -14; // Position above the clip
-            Details.style.unityTextAlign = TextAnchor.LowerLeft; // Align text
-            Details.style.fontSize = 10;
-            Details.style.color = new Color(0.62f, 0.62f, 0.8f); // Dim text color
-            Details.SetDisplay(false); // Initially hidden (shown on drag/selection)
-            Add(Details); // Add details label as sibling
-
             // --- Create Icon ---
-            var iconContainer = new VisualElement().SetPickingMode(PickingMode.Ignore);
+            VisualElement iconContainer = new VisualElement().SetPickingMode(PickingMode.Ignore);
             iconContainer.style.position = Position.Absolute;
             iconContainer.style.height = new StyleLength(new Length(100, LengthUnit.Percent));
             iconContainer.style.left = 10; // Indent from left edge
@@ -186,7 +177,7 @@ namespace OM.TimelineCreator.Editor
             iconContainer.Add(Icon); // Add icon to its container
 
             // --- Create Error Icon ---
-            var errorContainer = new VisualElement().SetPickingMode(PickingMode.Ignore);
+            VisualElement errorContainer = new VisualElement().SetPickingMode(PickingMode.Ignore);
             errorContainer.style.position = Position.Absolute;
             errorContainer.style.height = new StyleLength(new Length(100, LengthUnit.Percent));
             errorContainer.style.right = 5; // Position near the right edge
@@ -215,7 +206,11 @@ namespace OM.TimelineCreator.Editor
             // Hover effects for the main clip body
             this.RegisterCallback<MouseEnterEvent>(e =>
             {
-                if (Track.IsSelected) return; // Don't show hover if already selected
+                if (Track.IsSelected)
+                {
+                    return; // Don't show hover if already selected
+                }
+
                 HoverOutline.SetDisplay(true);
             });
             this.RegisterCallback<MouseOutEvent>(e =>
@@ -235,7 +230,11 @@ namespace OM.TimelineCreator.Editor
         /// </summary>
         public void UpdateDetails()
         {
-            if (Track == null) return;
+            if (Track == null)
+            {
+                return;
+            }
+
             Details.text = $"{Track.GetStartTime():0.00} - {Track.GetDuration():0.00} - {Track.GetEndTime():0.00}";
         }
 
@@ -328,7 +327,7 @@ namespace OM.TimelineCreator.Editor
                 Outline?.SetDisplay(false); // Hide selection outline
                 // Hover outline visibility is handled by MouseEnter/MouseOut
             }
-             Details?.SetDisplay(value || Track.IsDragging); // Show details when selected or dragged
+            UpdateSecondaryTextVisibility();
         }
 
         /// <summary>
@@ -341,14 +340,21 @@ namespace OM.TimelineCreator.Editor
             if (value)
             {
                 this.AddToClassList("no-animation"); // Disable smooth transitions
-                 Details?.SetDisplay(true); // Show details while dragging
             }
             else
             {
                 this.RemoveFromClassList("no-animation"); // Re-enable transitions
-                 Details?.SetDisplay(Track.IsSelected); // Details visibility reverts to selection state
-                 UpdateDetails(); // Refresh details text after drag ends
+                UpdateDetails(); // Refresh details text after drag ends
             }
+
+            UpdateSecondaryTextVisibility();
+        }
+
+        private void UpdateSecondaryTextVisibility()
+        {
+            bool showDetails = Track.IsSelected || Track.IsDragging;
+            DescriptionLabel?.SetDisplay(!showDetails);
+            Details?.SetDisplay(showDetails);
         }
 
         /// <summary>
@@ -357,7 +363,10 @@ namespace OM.TimelineCreator.Editor
         /// </summary>
         public virtual void UpdateTrackClip()
         {
-            if (Track == null) return;
+            if (Track == null)
+            {
+                return;
+            }
             // Update horizontal position based on start time and timeline scale
             style.left = Track.GetStartTime() * Track.Timeline.GetPixelPerSecond();
             // Update width based on duration and timeline scale

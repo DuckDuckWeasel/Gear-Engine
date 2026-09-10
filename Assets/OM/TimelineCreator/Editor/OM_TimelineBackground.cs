@@ -35,27 +35,27 @@ namespace OM.TimelineCreator.Editor
         private static void GenerateVisualContent(MeshGenerationContext context)
         {
             // Get the current dimensions (width and height) of this VisualElement from the layout system.
-            var height = context.visualElement.layout.height;
-            var width = context.visualElement.layout.width;
+            float height = context.visualElement.layout.height;
+            float width = context.visualElement.layout.width;
 
             // Get the 2D drawing interface from the context.
-            var painter = context.painter2D;
+            Painter2D painter = context.painter2D;
 
             // Set the color and width for the grid lines using constants from OM_TimelineUtil.
-            painter.strokeColor = OM_TimelineUtil.BackgroundLineColor;
-            painter.lineWidth = OM_TimelineUtil.BackgroundLineSize;
+            painter.strokeColor = OM_TimelineUtil.s_backgroundLineColor;
+            painter.lineWidth = OM_TimelineUtil.k_backgroundLineSize;
 
             // Calculate the number of horizontal grid lines needed based on the standard clip height and spacing.
-            var verticalCount = Mathf.RoundToInt(height / (OM_TimelineUtil.ClipHeight + OM_TimelineUtil.ClipSpaceBetween));
+            int verticalCount = Mathf.RoundToInt(height / (OM_TimelineUtil.k_clipHeight + OM_TimelineUtil.k_clipSpaceBetween));
 
             // Begin defining the path for the lines.
             painter.BeginPath();
 
             // Draw the horizontal lines (one line per track slot boundary).
-            for (var i = 0; i < verticalCount - 1; i++) // Loop up to count-1 because we draw boundaries between slots
+            for (int i = 0; i < verticalCount - 1; i++) // Loop up to count-1 because we draw boundaries between slots
             {
                 // Calculate the Y offset for the current horizontal line.
-                var offsetY = (i + 1) * (OM_TimelineUtil.ClipHeight + OM_TimelineUtil.ClipSpaceBetween);
+                float offsetY = (i + 1) * (OM_TimelineUtil.k_clipHeight + OM_TimelineUtil.k_clipSpaceBetween);
                 // Move the drawing cursor to the start of the line (left edge).
                 painter.MoveTo(new Vector2(0, offsetY));
                 // Draw the line to the end (right edge).
@@ -67,14 +67,14 @@ namespace OM.TimelineCreator.Editor
             // for simple time markers or might need adjustment based on actual time units/zoom.
             // Let's assume it's for rough visual guides every 10% of the width.
             const int numberOfVerticalDivisions = 10; // Define how many vertical sections
-            var horizontalCount = numberOfVerticalDivisions; // Number of lines to draw is related
-            var widthOffset = width / numberOfVerticalDivisions; // Calculate spacing between vertical lines
+            int horizontalCount = numberOfVerticalDivisions; // Number of lines to draw is related
+            float widthOffset = width / numberOfVerticalDivisions; // Calculate spacing between vertical lines
 
             // Draw the vertical lines.
-            for (var i = 0; i < horizontalCount -1; i++) // Loop to draw lines dividing the sections
+            for (int i = 0; i < horizontalCount - 1; i++) // Loop to draw lines dividing the sections
             {
                 // Calculate the X offset for the current vertical line.
-                var offsetX = (i + 1) * widthOffset;
+                float offsetX = (i + 1) * widthOffset;
                 // Move the drawing cursor to the start of the line (top edge).
                 painter.MoveTo(new Vector2(offsetX, 0));
                 // Draw the line to the end (bottom edge).
