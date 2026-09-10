@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "1.0.0",
+  "template": "lycan-scrollytelling",
+  "adapter": "Artifacts/Marketing/Tools/PackageReadableArtifacts.py",
+  "canonicalSource": "Docs/Marketing/GameConceptCreativeBriefClient.md",
+  "canonicalSourceSha256": "649d69874160f08e73157f192f9b04efd733f91980b5d2306d8ea6881558932d",
+  "upstreamOutput": "/Users/leonardosilva/Documents/HTML:PDF Edit/ReportGenerator/outputs/game-concept-creative-brief-client",
+  "outputDirectory": "Artifacts/Marketing/Reports/GameConceptCreativeBriefClient",
+  "builtAt": "2026-08-29T01:04:39.438657+00:00",
+  "media": [
+    {
+      "source": "Artifacts/Marketing/Evidence/GeneratedConcepts/GearEngineRouteBoard.png",
+      "packaged": "assets/media/GearEngineRouteBoard.png",
+      "sha256": "9ea4a97c0d974e0be4250864a2a422aac213ad8533279547910ee561fc4e747f"
+    },
+    {
+      "source": "Artifacts/Marketing/BrandExploration/GearEngineRouteMark512.png",
+      "packaged": "assets/media/GearEngineRouteMark512.png",
+      "sha256": "34942d5dd78b182b328167bf1fd463c6778cc5ee3a6f4496979e1861b6d15799"
+    },
+    {
+      "source": "Artifacts/Marketing/Evidence/GeneratedConcepts/CogRunnerRouteBoard.png",
+      "packaged": "assets/media/CogRunnerRouteBoard.png",
+      "sha256": "d5c4d6c028010a9c685938dd3dd7f8da2684bc78888df9249f993aa587b9f68c"
+    },
+    {
+      "source": "Artifacts/Marketing/BrandExploration/CogRunnerRouteMark512.png",
+      "packaged": "assets/media/CogRunnerRouteMark512.png",
+      "sha256": "949ca9d8405c4577e66dae77fff4cac3ce860784a791c04cf22c55dc9ef86c38"
+    },
+    {
+      "source": "Artifacts/Marketing/Evidence/GeneratedConcepts/ClockworkApexRouteBoard.png",
+      "packaged": "assets/media/ClockworkApexRouteBoard.png",
+      "sha256": "88b24f0d4c35752f4ddbf2cd23f7864843f738aa5ed6c0d86da1448251fedf5a"
+    },
+    {
+      "source": "Artifacts/Marketing/BrandExploration/ClockworkApexRouteMark512.png",
+      "packaged": "assets/media/ClockworkApexRouteMark512.png",
+      "sha256": "223844ec79730f1c476303bc47000d4e8e57ccd2ef9cf1624b93593faaa864e9"
+    }
+  ],
+  "html": {
+    "path": "index.html",
+    "sha256": "ec35015e612463e6dcb5b87b7ba86fc4d7f6dbf4786bffcd5e6b7ffc7c5ce93d",
+    "interactiveApp": "InteractiveApp.html"
+  },
+  "pdf": {
+    "path": "GameConceptCreativeBriefClient.pdf",
+    "sha256": "871513c5bd14d0b2f1f6b01a63ae7e125dc6bf2b83809950944caef306b0880d"
+  }
+}

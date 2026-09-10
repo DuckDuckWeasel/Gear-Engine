@@ -1,0 +1,65 @@
+{
+  "Artifacts/Marketing/Evidence/Historical/InitialGearSystem/BaseGear.png": {
+    "commitId": "8eca297db59f759eec4c564bb9e6ad21ea46a767",
+    "date": "2026-04-14T17:39:24-03:00",
+    "originalPath": "Assets/GearEngine/Art/Sprites/BaseGear.png",
+    "milestone": "InitialGearSystem",
+    "note": "Pre-refactor mechanical visual vocabulary"
+  },
+  "Artifacts/Marketing/Evidence/Historical/InitialGearSystem/CoreGear.png": {
+    "commitId": "8eca297db59f759eec4c564bb9e6ad21ea46a767",
+    "date": "2026-04-14T17:39:24-03:00",
+    "originalPath": "Assets/GearEngine/Art/Sprites/CoreGear.png",
+    "milestone": "InitialGearSystem",
+    "note": "Pre-refactor core gear asset"
+  },
+  "Artifacts/Marketing/Evidence/Historical/ImportedUi/CogRunnerScreen1Ref.png": {
+    "commitId": "5b4413b1865e1e14bd007ba6823a3b5b551733b2",
+    "date": "2026-05-13T10:08:34-03:00",
+    "originalPath": "Assets/GearEngine/Art/UI/Cog Runner Screen 1 Ref.png",
+    "milestone": "ImportedUi",
+    "note": "Imported UI reference; not a runtime capture"
+  },
+  "Artifacts/Marketing/Evidence/Historical/ImportedUi/AtlasCogRunner.png": {
+    "commitId": "5b4413b1865e1e14bd007ba6823a3b5b551733b2",
+    "date": "2026-05-13T10:08:34-03:00",
+    "originalPath": "Assets/GearEngine/Art/UI/Atlas Cog Runner.png",
+    "milestone": "ImportedUi",
+    "note": "Imported UI atlas"
+  },
+  "Artifacts/Marketing/Evidence/Historical/DesignSystemIteration/NewTrackUnlocked.png": {
+    "commitId": "9e691af5d5b2f155a30daf2a99ccfb2c15cb02b0",
+    "date": "2026-06-05T09:25:13-03:00",
+    "originalPath": "Assets/GearEngine/Art/UI/New Track Unlocked.png",
+    "milestone": "DesignSystemIteration",
+    "note": "Modern UI Pack milestone asset"
+  },
+  "Artifacts/Marketing/Evidence/Historical/JulyGameplayIntegration/GameIcon.png": {
+    "commitId": "4d2aa3d576fc56e14868e60f50c01986d308ae15",
+    "date": "2026-07-03T06:31:53-03:00",
+    "originalPath": "Assets/GearEngine/Art/Splash Screen/Game Icon.png",
+    "milestone": "JulyGameplayIntegration",
+    "note": "Pop-art racing identity introduced by July milestone"
+  },
+  "Artifacts/Marketing/Evidence/Historical/JulyGameplayIntegration/Boost.png": {
+    "commitId": "4d2aa3d576fc56e14868e60f50c01986d308ae15",
+    "date": "2026-07-03T06:31:53-03:00",
+    "originalPath": "Assets/GearEngine/Art/Sprites/GearIcons/Boost.png",
+    "milestone": "JulyGameplayIntegration",
+    "note": "Implemented gear-content visual asset"
+  },
+  "Artifacts/Marketing/Evidence/Historical/ResultScreenVfxBranch/RewardBackground.png": {
+    "commitId": "c555f825b40151379fd1fc80fbe8289fd21f388a",
+    "date": "2026-08-03T12:08:19-03:00",
+    "originalPath": "Assets/GearEngine/Art/UI/Cards&Rewards/Background_Resize.png",
+    "milestone": "ResultScreenVfxBranch",
+    "note": "Reward presentation asset present on result-screen VFX branch"
+  },
+  "Artifacts/Marketing/Evidence/Historical/ResultScreenVfxBranch/LegendaryRewardCard.png": {
+    "commitId": "c555f825b40151379fd1fc80fbe8289fd21f388a",
+    "date": "2026-08-03T12:08:19-03:00",
+    "originalPath": "Assets/GearEngine/Art/UI/Cards&Rewards/Card_Legendary_Goldenstar.png",
+    "milestone": "ResultScreenVfxBranch",
+    "note": "Legendary reward card asset present on result-screen VFX branch"
+  }
+}

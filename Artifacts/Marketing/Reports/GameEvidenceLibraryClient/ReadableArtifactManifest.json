@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "1.0.0",
+  "template": "lycan-scrollytelling",
+  "adapter": "Artifacts/Marketing/Tools/PackageReadableArtifacts.py",
+  "canonicalSource": "Docs/Marketing/GameEvidenceLibraryClient.md",
+  "canonicalSourceSha256": "b8130b64c24fd7e72f75530a5c179b0e3955b582f80a94455d99a63a73d17a04",
+  "upstreamOutput": "/Users/leonardosilva/Documents/HTML:PDF Edit/ReportGenerator/outputs/game-evidence-library-client",
+  "outputDirectory": "Artifacts/Marketing/Reports/GameEvidenceLibraryClient",
+  "builtAt": "2026-08-29T01:04:23.257506+00:00",
+  "media": [
+    {
+      "source": "Artifacts/VisualTests/GearWorkspaceScreenSpace/Baseline.png",
+      "packaged": "assets/media/Baseline.png",
+      "sha256": "6ff973cbd65b37659eae722a7cc1a8b9ce174169c7223ea5791328340a321276"
+    },
+    {
+      "source": "Assets/GearEngine/Art/Splash Screen/Game Icon.png",
+      "packaged": "assets/media/GameIcon.png",
+      "sha256": "496a913c945728bffd11519ff523dadf5bd2cfc97f9e97ae8a186a88f60726b3"
+    },
+    {
+      "source": "Assets/GearEngine/Art/UI/Cog Runner Screen 1 Ref.png",
+      "packaged": "assets/media/CogRunnerScreen1Ref.png",
+      "sha256": "84e1658beee89116ecea0cb5b1163526ef96cbe1d78edbd4b9da3de5567f3197"
+    },
+    {
+      "source": "Artifacts/Marketing/Evidence/ContactSheets/EvidenceContactSheet01.png",
+      "packaged": "assets/media/EvidenceContactSheet01.png",
+      "sha256": "09f291ecfce3fbdb8106ac01303ee8384f3c6304fbeff4b0f38cf25f4d1e824f"
+    },
+    {
+      "source": "Artifacts/Marketing/Evidence/VideoEvolution/T_VideoEvolutionTimeline.png",
+      "packaged": "assets/media/T_VideoEvolutionTimeline.png",
+      "sha256": "13651eb4b29785ff02b8c882eb997cd94544af829f5fbc32ddae7fb54b141c63"
+    },
+    {
+      "source": "Artifacts/Marketing/Evidence/VideoEvolution/T_LatestBuildAiReferenceSheet.png",
+      "packaged": "assets/media/T_LatestBuildAiReferenceSheet.png",
+      "sha256": "4cfe190c3f39329de98f7606f7f2ed74f51de9994477d16f76240036bedb4841"
+    }
+  ],
+  "html": {
+    "path": "index.html",
+    "sha256": "9b54c62faca35a5ca1219924e447a1333d7fcda565dc11581248c0c76a1b96d1",
+    "interactiveApp": "InteractiveApp.html"
+  },
+  "pdf": {
+    "path": "GameEvidenceLibraryClient.pdf",
+    "sha256": "9675c2fcc292888f1489963f5c35c66dd9f61845b86afcd5b0e031d9c0d3ea57"
+  }
+}

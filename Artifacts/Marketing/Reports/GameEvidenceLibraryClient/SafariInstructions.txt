@@ -1,0 +1,3 @@
+Safari-ready launch: double-click OpenReportInSafari.command.
+
+Safari restricts application modules opened directly through file://. The launcher starts an offline local static server; it does not use a backend or the internet. Keep the Terminal window open while reading the report.

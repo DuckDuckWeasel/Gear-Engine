@@ -1,0 +1,74 @@
+{
+  "schemaVersion": "1.0.0",
+  "updatedAt": "2026-08-28",
+  "project": "Gear Engine",
+  "phase": "IdentityRouteSelection",
+  "canonicalRoute": null,
+  "scopeBoundary": {
+    "unityRuntimeChanges": false,
+    "productionStoreAssetsBeforeApproval": false,
+    "reconstructedGameplayAsProof": false
+  },
+  "evidenceLabels": [
+    "CurrentBuild",
+    "HistoricalBuild",
+    "RepositoryAsset",
+    "InferredReconstruction",
+    "GeneratedConcept",
+    "MissingReference"
+  ],
+  "verifiedProductFacts": [
+    "The player configures a modular gear board or loadout.",
+    "A race resolves the mechanical consequences of the configured system.",
+    "The result feeds rewards and roguelike upgrade selection.",
+    "The intended campaign loop repeats configuration, race, result, reward, and progression."
+  ],
+  "captureConstraint": "Unity 6000.5.3f1 is not installed on this host, so the complete current runtime flow cannot be captured in this phase.",
+  "referenceRoles": [
+    {
+      "path": "Assets/GearEngine/Art/Splash Screen/Game Icon.png",
+      "role": "Current identity and illustration reference",
+      "preserve": ["racing subject", "comic energy", "red vehicle emphasis"]
+    },
+    {
+      "path": "Assets/GearEngine/Art/UI/Cog Runner Screen 1 Ref.png",
+      "role": "Imported UI direction reference",
+      "preserve": ["portrait mobile framing", "warm cream surfaces", "accessible hierarchy"]
+    },
+    {
+      "path": "Artifacts/VisualTests/GearWorkspaceScreenSpace/Baseline.png",
+      "role": "Current build evidence reference",
+      "preserve": ["gear-board density", "mechanical configuration premise"]
+    }
+  ],
+  "routes": [
+    {
+      "id": "RouteA",
+      "name": "Gear Engine",
+      "status": "AwaitingSelection",
+      "claimType": "EvolutionOfWorkingTitle",
+      "board": "Artifacts/Marketing/Evidence/GeneratedConcepts/GearEngineRouteBoard.png",
+      "mark": "Artifacts/Marketing/BrandExploration/GearEngineRouteMark.svg"
+    },
+    {
+      "id": "RouteB",
+      "name": "Cog Runner",
+      "status": "AwaitingSelection",
+      "claimType": "EvolutionOfImportedUiName",
+      "board": "Artifacts/Marketing/Evidence/GeneratedConcepts/CogRunnerRouteBoard.png",
+      "mark": "Artifacts/Marketing/BrandExploration/CogRunnerRouteMark.svg"
+    },
+    {
+      "id": "RouteC",
+      "name": "Clockwork Apex",
+      "status": "AwaitingSelection",
+      "claimType": "NewConsumerFacingCandidate",
+      "board": "Artifacts/Marketing/Evidence/GeneratedConcepts/ClockworkApexRouteBoard.png",
+      "mark": "Artifacts/Marketing/BrandExploration/ClockworkApexRouteMark.svg"
+    }
+  ],
+  "approvalGate": {
+    "requiredDecision": "Select RouteA, RouteB, or RouteC before production brand, UI/UX, store, press, pitch, and trailer assets proceed.",
+    "legalNote": "Search checks are preliminary only. Professional trademark clearance remains required."
+  }
+}

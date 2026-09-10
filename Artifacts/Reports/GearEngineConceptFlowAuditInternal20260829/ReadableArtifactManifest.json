@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "audience": "internal",
+  "templateId": "lycan-scrollytelling-static-v1",
+  "canonicalSource": "/Users/leonardosilva/Documents/MatheusCohen/Gear Engine/Docs/Reports/GearEngineConceptFlowAuditInternal20260829.md",
+  "sourceCopy": "/Users/leonardosilva/Documents/MatheusCohen/Gear Engine/Artifacts/Reports/GearEngineConceptFlowAuditInternal20260829/GearEngineConceptFlowAuditInternal20260829.md",
+  "outputDirectory": "/Users/leonardosilva/Documents/MatheusCohen/Gear Engine/Artifacts/Reports/GearEngineConceptFlowAuditInternal20260829",
+  "entryPoint": "index.html",
+  "runtimeMode": "static-pre-rendered",
+  "adapter": "Global ReportGenerator followed by English localization and removal of the failing module-hydration entry point. The pre-rendered DOM and fallback navigation remain authoritative.",
+  "sourceSha256": "89c7d3b280df06ec27a49801be079d63fa0a2f1561453a5a601cdb06e1378e94",
+  "htmlSha256": "a7dc12e2f082442e4fd8dba035532ef1cf88b370b7f0594ccfc5d8c1d365a524",
+  "builtAt": "2026-08-29T03:53:03Z"
+}

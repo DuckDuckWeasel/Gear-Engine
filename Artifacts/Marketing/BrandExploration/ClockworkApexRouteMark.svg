@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" role="img" aria-labelledby="title description">
+  <title id="title">Clockwork Apex route mark concept</title>
+  <desc id="description">A precise clockwork ring cut by a magenta apex racing line.</desc>
+  <rect width="1024" height="1024" rx="224" fill="#081126"/>
+  <path fill="#D6FF2F" fill-rule="evenodd" d="M512 170a342 342 0 1 1 0 684 342 342 0 0 1 0-684zm0 112a230 230 0 1 0 0 460 230 230 0 0 0 0-460z"/>
+  <path fill="#081126" d="M512 170 566 282 458 282zM854 512 742 566 742 458zM512 854 458 742 566 742zM170 512 282 458 282 566z"/>
+  <path fill="#FF2D9D" d="M206 760 512 234l306 526-70 41-236-405-236 405z"/>
+  <path fill="#081126" d="M318 738 512 404l194 334-72 42-122-210-122 210z"/>
+  <path fill="#EAF0F8" fill-rule="evenodd" d="M512 320a192 192 0 1 1 0 384 192 192 0 0 1 0-384zm0 62a130 130 0 1 0 0 260 130 130 0 0 0 0-260z"/>
+  <circle cx="512" cy="512" r="54" fill="#D6FF2F"/>
+</svg>

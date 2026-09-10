@@ -1,0 +1,46 @@
+{
+  "schemaVersion": "1.0.0",
+  "template": "lycan-scrollytelling",
+  "adapter": "Artifacts/Marketing/Tools/PackageReadableArtifacts.py",
+  "canonicalSource": "Docs/Marketing/GORnSubmissionPressKitClient.md",
+  "canonicalSourceSha256": "a1eb63baf0b18f29ccba0d5db685763c4121b9304a8fa15f2f82887b389e22df",
+  "upstreamOutput": "/Users/leonardosilva/Documents/HTML:PDF Edit/ReportGenerator/outputs/gorn-submission-press-kit-client",
+  "outputDirectory": "Artifacts/Marketing/Reports/GORnSubmissionPressKitClient",
+  "builtAt": "2026-08-29T01:04:17.169231+00:00",
+  "media": [
+    {
+      "source": "Artifacts/Marketing/Evidence/VideoEvolution/LatestBuildFrames/T_CurrentRaceActionFigureEight.png",
+      "packaged": "assets/media/T_CurrentRaceActionFigureEight.png",
+      "sha256": "27c17cf2c0dbe51da1355a5f2eff0cff49c2658835e5ef8eb286cce935a8be6b"
+    },
+    {
+      "source": "Artifacts/Marketing/Evidence/VideoEvolution/LatestBuildFrames/T_CurrentRewardSelection.png",
+      "packaged": "assets/media/T_CurrentRewardSelection.png",
+      "sha256": "5d82bdd585249de1b9d4bd53826c4a1cdb03c507e8fb7770f8f17a9a79ec5aac"
+    },
+    {
+      "source": "Artifacts/Marketing/Evidence/VideoEvolution/LatestBuildFrames/T_CurrentStorage.png",
+      "packaged": "assets/media/T_CurrentStorage.png",
+      "sha256": "7a6888c5b7c43e1292e4994593b8ec1cc5a5efc090aa5bad42df57a35b152ae4"
+    },
+    {
+      "source": "Assets/GearEngine/Art/Splash Screen/Game Icon.png",
+      "packaged": "assets/media/GameIcon.png",
+      "sha256": "496a913c945728bffd11519ff523dadf5bd2cfc97f9e97ae8a186a88f60726b3"
+    },
+    {
+      "source": "Artifacts/Marketing/BrandExploration/GearEngineRouteMark512.png",
+      "packaged": "assets/media/GearEngineRouteMark512.png",
+      "sha256": "34942d5dd78b182b328167bf1fd463c6778cc5ee3a6f4496979e1861b6d15799"
+    }
+  ],
+  "html": {
+    "path": "index.html",
+    "sha256": "1cfadd2d59e4144831442d12d0b73cc22ccd02681eb2ef909a3af5d91ec42317",
+    "interactiveApp": "InteractiveApp.html"
+  },
+  "pdf": {
+    "path": "GORnSubmissionPressKitClient.pdf",
+    "sha256": "ae7b2ea7ba67c784766b46f108a6cf3cf002b65ebd5e5cb2108223df95bbe284"
+  }
+}

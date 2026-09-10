@@ -1,0 +1,20 @@
+{
+  "schemaVersion": "1.0.0",
+  "template": "lycan-scrollytelling",
+  "adapter": "Artifacts/Marketing/Tools/PackageReadableArtifacts.py",
+  "canonicalSource": "Plans/GameMarketingKit/GameMarketingKit-ExecPlan.md",
+  "canonicalSourceSha256": "661d84a114e27f07d0e781f05afaee5b4fcd556359b5670ea3c277c76cb96c91",
+  "upstreamOutput": "/Users/leonardosilva/Documents/HTML:PDF Edit/ReportGenerator/outputs/game-marketing-kit-exec-plan",
+  "outputDirectory": "Artifacts/Marketing/Reports/GameMarketingKitExecPlan",
+  "builtAt": "2026-08-29T01:04:17.216486+00:00",
+  "media": [],
+  "html": {
+    "path": "index.html",
+    "sha256": "e89f4b3afb9772ff3a18dabbbbb9c2aebd078e092e84ee0165c8358ae574c213",
+    "interactiveApp": null
+  },
+  "pdf": {
+    "path": "GameMarketingKit-ExecPlan.pdf",
+    "sha256": "2d367f3a9b455bbc660956f20c218ab4fd2bd46af21147de980dad83e38dff75"
+  }
+}
