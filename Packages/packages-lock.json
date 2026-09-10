@@ -1,11 +1,11 @@
 {
   "dependencies": {
     "com.ami.broaudio": {
-      "version": "https://github.com/man572142/Bro_Audio.git?path=/Assets/BroAudio",
+      "version": "https://github.com/man572142/Bro_Audio.git?path=/Assets/BroAudio#c283ce1145cfa1cf6d3bd25fd440f6b2a1ee5ceb",
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "37a528ce8ddbb7789e68e61517cdfc489595cda1"
+      "hash": "c283ce1145cfa1cf6d3bd25fd440f6b2a1ee5ceb"
     },
     "com.codewriter.triinspector": {
       "version": "file:com.codewriter.triinspector",
@@ -401,7 +401,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.burst": {
-      "version": "1.8.29",
+      "version": "1.8.30",
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -467,7 +467,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.inputsystem": {
-      "version": "1.19.0",
+      "version": "1.20.0",
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -519,7 +519,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.multiplayer.tools": {
-      "version": "2.2.9",
+      "version": "2.2.10",
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -543,7 +543,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.netcode.gameobjects": {
-      "version": "2.13.0",
+      "version": "2.13.1",
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -574,7 +574,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.recorder": {
-      "version": "5.1.6",
+      "version": "5.1.7",
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -648,7 +648,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.searcher": {
-      "version": "4.9.4",
+      "version": "4.9.5",
       "depth": 2,
       "source": "registry",
       "dependencies": {},
@@ -666,7 +666,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.services.authentication": {
-      "version": "3.7.1",
+      "version": "3.7.3",
       "depth": 1,
       "source": "registry",
       "dependencies": {
@@ -742,19 +742,19 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.services.multiplayer": {
-      "version": "2.2.4",
+      "version": "2.3.0",
       "depth": 0,
       "source": "registry",
       "dependencies": {
-        "com.unity.transport": "2.6.0",
-        "com.unity.collections": "2.2.1",
+        "com.unity.transport": "2.7.3",
+        "com.unity.collections": "2.6.7",
         "com.unity.services.qos": "1.4.1",
-        "com.unity.services.core": "1.16.0",
+        "com.unity.services.core": "1.18.0",
         "com.unity.services.wire": "1.4.4",
-        "com.unity.services.deployment": "1.7.1",
+        "com.unity.services.deployment": "1.7.2",
         "com.unity.nuget.newtonsoft-json": "3.2.2",
         "com.unity.modules.unitywebrequest": "1.0.0",
-        "com.unity.services.authentication": "3.6.0"
+        "com.unity.services.authentication": "3.7.0"
       },
       "url": "https://packages.unity.com"
     },
@@ -864,11 +864,11 @@
       }
     },
     "com.unity.visualscripting": {
-      "version": "1.9.11",
+      "version": "1.9.12",
       "depth": 0,
       "source": "registry",
       "dependencies": {
-        "com.unity.ugui": "1.0.0",
+        "com.unity.ugui": "2.0.0",
         "com.unity.modules.jsonserialize": "1.0.0"
       },
       "url": "https://packages.unity.com"
