@@ -17,6 +17,12 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Scripts/Addressables/Addressables Bootstrap.unity
     guid: f336c141a8afd449fa80ebd146956f42
+  - enabled: 1
+    path: Assets/GearEngine/Scenes/Test/UITransitions/UITransitionsGallery.unity
+    guid: 0af612d48c3204439a6cba26dcc2d52b
+  - enabled: 1
+    path: Assets/GearEngine/Scenes/Test/UITransitions/UITransitionsDestination.unity
+    guid: d2f353b814a7d4d888cc8d610812f5f6
   m_configObjects:
     com.unity.addressableassets: {fileID: 11400000, guid: 00c603be39aa849d78b3ff2b67ca8a81, type: 2}
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
