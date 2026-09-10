@@ -1,3 +1,4 @@
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
@@ -7,22 +8,40 @@ namespace GearEngine.App.Bootstrap.Layers
 {
     internal sealed class MinimumDelayTask : IAsyncInitializable
     {
-        private readonly float _startupTime;
-        private readonly float _minimumLoadingTimeSeconds;
+        private readonly float startupTime;
+        private readonly float minimumLoadingTimeSeconds;
 
         public MinimumDelayTask(float startupTime, float minimumLoadingTimeSeconds)
         {
-            _startupTime = startupTime;
-            _minimumLoadingTimeSeconds = minimumLoadingTimeSeconds;
+            this.startupTime = startupTime;
+            this.minimumLoadingTimeSeconds = minimumLoadingTimeSeconds;
         }
 
         public async Task InitializeAsync(CancellationToken cancellationToken)
         {
-            float elapsed = Time.realtimeSinceStartup - _startupTime;
-            if (elapsed < _minimumLoadingTimeSeconds)
+            try
             {
-                int delayMs = Mathf.RoundToInt((_minimumLoadingTimeSeconds - elapsed) * 1000f);
-                await Task.Delay(delayMs, cancellationToken);
+                float elapsed = Time.realtimeSinceStartup - startupTime;
+                float remainingSeconds = minimumLoadingTimeSeconds - elapsed;
+                if (remainingSeconds <= 0f)
+                {
+                    return;
+                }
+
+                float delayEndsAt = Time.realtimeSinceStartup + remainingSeconds;
+                while (Time.realtimeSinceStartup < delayEndsAt)
+                {
+                    await Awaitable.NextFrameAsync(cancellationToken);
+                }
+            }
+            catch (OperationCanceledException)
+            {
+                throw;
+            }
+            catch (Exception exception)
+            {
+                Debug.LogError($"[MinimumDelayTask] Failed while waiting for the minimum loading duration. {exception}");
+                throw;
             }
         }
     }

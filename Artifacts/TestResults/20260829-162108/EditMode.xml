@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Passed" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-08-29 19:22:12Z" end-time="2026-08-29 19:22:12Z" duration="0.0477312">
+  <test-suite type="TestSuite" id="1000" name="Scaffold" fullname="Scaffold" runstate="Runnable" testcasecount="391" result="Passed" start-time="2026-08-29 19:22:12Z" end-time="2026-08-29 19:22:12Z" duration="0.047731" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="1030" name="Game.App.Bootstrap.Tests.dll" fullname="/Users/leonardosilva/Documents/MatheusCohen/Gear Engine/Library/ScriptAssemblies/Game.App.Bootstrap.Tests.dll" runstate="Runnable" testcasecount="22" result="Passed" start-time="2026-08-29 19:22:12Z" end-time="2026-08-29 19:22:12Z" duration="0.032643" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="22813" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="1031" name="GearEngine" fullname="GearEngine" runstate="Runnable" testcasecount="22" result="Passed" start-time="2026-08-29 19:22:12Z" end-time="2026-08-29 19:22:12Z" duration="0.031762" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1032" name="App" fullname="GearEngine.App" runstate="Runnable" testcasecount="22" result="Passed" start-time="2026-08-29 19:22:12Z" end-time="2026-08-29 19:22:12Z" duration="0.031029" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestSuite" id="1033" name="Bootstrap" fullname="GearEngine.App.Bootstrap" runstate="Runnable" testcasecount="22" result="Passed" start-time="2026-08-29 19:22:12Z" end-time="2026-08-29 19:22:12Z" duration="0.030338" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="TestSuite" id="1034" name="Tests" fullname="GearEngine.App.Bootstrap.Tests" runstate="Runnable" testcasecount="22" result="Passed" start-time="2026-08-29 19:22:12Z" end-time="2026-08-29 19:22:12Z" duration="0.029554" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-suite type="TestSuite" id="1035" name="Editor" fullname="GearEngine.App.Bootstrap.Tests.Editor" runstate="Runnable" testcasecount="22" result="Passed" start-time="2026-08-29 19:22:12Z" end-time="2026-08-29 19:22:12Z" duration="0.028695" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-suite type="TestFixture" id="1026" name="WebGlStartupTests" fullname="GearEngine.App.Bootstrap.Tests.Editor.WebGlStartupTests" classname="GearEngine.App.Bootstrap.Tests.Editor.WebGlStartupTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-08-29 19:22:12Z" end-time="2026-08-29 19:22:12Z" duration="0.026394" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+                  <properties />
+                  <test-case id="1027" name="LoadingTemplate_PlaysMutedLoopingVideoUntilUnitySignalsReady" fullname="GearEngine.App.Bootstrap.Tests.Editor.WebGlStartupTests.LoadingTemplate_PlaysMutedLoopingVideoUntilUnitySignalsReady" methodname="LoadingTemplate_PlaysMutedLoopingVideoUntilUnitySignalsReady" classname="GearEngine.App.Bootstrap.Tests.Editor.WebGlStartupTests" runstate="Runnable" seed="1956428448" result="Passed" start-time="2026-08-29 19:22:12Z" end-time="2026-08-29 19:22:12Z" duration="0.009305" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                  </test-case>
+                  <test-case id="1028" name="SubmissionBuild_UsesHashedFilesAndDecompressionFallback" fullname="GearEngine.App.Bootstrap.Tests.Editor.WebGlStartupTests.SubmissionBuild_UsesHashedFilesAndDecompressionFallback" methodname="SubmissionBuild_UsesHashedFilesAndDecompressionFallback" classname="GearEngine.App.Bootstrap.Tests.Editor.WebGlStartupTests" runstate="Runnable" seed="420895695" result="Passed" start-time="2026-08-29 19:22:12Z" end-time="2026-08-29 19:22:12Z" duration="0.000811" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                  </test-case>
+                  <test-case id="1029" name="UgsLayer_InitializesAnalyticsAfterUnityServices" fullname="GearEngine.App.Bootstrap.Tests.Editor.WebGlStartupTests.UgsLayer_InitializesAnalyticsAfterUnityServices" methodname="UgsLayer_InitializesAnalyticsAfterUnityServices" classname="GearEngine.App.Bootstrap.Tests.Editor.WebGlStartupTests" runstate="Runnable" seed="1946082832" result="Passed" start-time="2026-08-29 19:22:12Z" end-time="2026-08-29 19:22:12Z" duration="0.005142" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                    <output><![CDATA[Saving results to: /Users/leonardosilva/Library/Application Support/DDW/Scaffold/TestResults.xml
+]]></output>
+                  </test-case>
+                </test-suite>
+              </test-suite>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

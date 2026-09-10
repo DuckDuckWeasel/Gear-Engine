@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Passed" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-08-29 13:34:22Z" end-time="2026-08-29 13:34:22Z" duration="0.0526882">
+  <test-suite type="TestSuite" id="1000" name="Scaffold" fullname="Scaffold" runstate="Runnable" testcasecount="387" result="Passed" start-time="2026-08-29 13:34:22Z" end-time="2026-08-29 13:34:22Z" duration="0.052688" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="1024" name="Game.App.Bootstrap.Tests.dll" fullname="/Users/leonardosilva/Documents/MatheusCohen/Gear Engine/Library/ScriptAssemblies/Game.App.Bootstrap.Tests.dll" runstate="Runnable" testcasecount="18" result="Passed" start-time="2026-08-29 13:34:22Z" end-time="2026-08-29 13:34:22Z" duration="0.036548" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="10182" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="1025" name="GearEngine" fullname="GearEngine" runstate="Runnable" testcasecount="18" result="Passed" start-time="2026-08-29 13:34:22Z" end-time="2026-08-29 13:34:22Z" duration="0.035960" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1026" name="App" fullname="GearEngine.App" runstate="Runnable" testcasecount="18" result="Passed" start-time="2026-08-29 13:34:22Z" end-time="2026-08-29 13:34:22Z" duration="0.035551" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestSuite" id="1027" name="Bootstrap" fullname="GearEngine.App.Bootstrap" runstate="Runnable" testcasecount="18" result="Passed" start-time="2026-08-29 13:34:22Z" end-time="2026-08-29 13:34:22Z" duration="0.035224" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="TestSuite" id="1028" name="Tests" fullname="GearEngine.App.Bootstrap.Tests" runstate="Runnable" testcasecount="18" result="Passed" start-time="2026-08-29 13:34:22Z" end-time="2026-08-29 13:34:22Z" duration="0.034880" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-suite type="TestSuite" id="1029" name="Editor" fullname="GearEngine.App.Bootstrap.Tests.Editor" runstate="Runnable" testcasecount="18" result="Passed" start-time="2026-08-29 13:34:22Z" end-time="2026-08-29 13:34:22Z" duration="0.034504" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-suite type="TestFixture" id="1001" name="BootstrapLoadingManagerTests" fullname="GearEngine.App.Bootstrap.Tests.Editor.BootstrapLoadingManagerTests" classname="GearEngine.App.Bootstrap.Tests.Editor.BootstrapLoadingManagerTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-08-29 13:34:22Z" end-time="2026-08-29 13:34:22Z" duration="0.032830" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+                  <properties />
+                  <test-case id="1003" name="ConfigureLoadingVideo_UsesMutedLoopingUrlPlayback" fullname="GearEngine.App.Bootstrap.Tests.Editor.BootstrapLoadingManagerTests.ConfigureLoadingVideo_UsesMutedLoopingUrlPlayback" methodname="ConfigureLoadingVideo_UsesMutedLoopingUrlPlayback" classname="GearEngine.App.Bootstrap.Tests.Editor.BootstrapLoadingManagerTests" runstate="Runnable" seed="1171107009" result="Passed" start-time="2026-08-29 13:34:22Z" end-time="2026-08-29 13:34:22Z" duration="0.021549" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                  </test-case>
+                  <test-case id="1002" name="ShowFallback_DisplaysConfiguredTexture_WhenVideoIsUnavailable" fullname="GearEngine.App.Bootstrap.Tests.Editor.BootstrapLoadingManagerTests.ShowFallback_DisplaysConfiguredTexture_WhenVideoIsUnavailable" methodname="ShowFallback_DisplaysConfiguredTexture_WhenVideoIsUnavailable" classname="GearEngine.App.Bootstrap.Tests.Editor.BootstrapLoadingManagerTests" runstate="Runnable" seed="1955140940" result="Passed" start-time="2026-08-29 13:34:22Z" end-time="2026-08-29 13:34:22Z" duration="0.001701" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                    <output><![CDATA[Saving results to: /Users/leonardosilva/Library/Application Support/DDW/Scaffold/TestResults.xml
+]]></output>
+                  </test-case>
+                </test-suite>
+              </test-suite>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

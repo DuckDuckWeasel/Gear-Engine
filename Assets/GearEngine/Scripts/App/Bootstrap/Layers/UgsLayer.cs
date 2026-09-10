@@ -1,6 +1,6 @@
 using Scaffold.AppFlow;
-using Scaffold.Ugs.Container;
 using Scaffold.Analytics;
+using Scaffold.Ugs.Container;
 using VContainer;
 
 namespace GearEngine.App.Bootstrap.Layers
@@ -10,7 +10,11 @@ namespace GearEngine.App.Bootstrap.Layers
         public void Install(IContainerBuilder builder)
         {
             new UgsInstaller().Install(builder);
-            new AnalyticsInstaller().Install(builder);
+            builder.Register<AnalyticsService>(Lifetime.Singleton)
+                .AsSelf()
+                .As<IAnalyticsService>();
+            builder.Register<UgsAnalyticsInitializer>(Lifetime.Singleton)
+                .As<IAsyncInitializable>();
         }
     }
 }

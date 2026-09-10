@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#080b10">
+    <title>{{{ PRODUCT_NAME }}}</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background: #080b10;
+      }
+
+      * { box-sizing: border-box; }
+
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        overflow: hidden;
+        background: #080b10;
+      }
+
+      body {
+        display: grid;
+        place-items: center;
+      }
+
+      #unity-container {
+        position: relative;
+        width: min(100vw, calc(100vh * 9 / 16));
+        height: min(100vh, calc(100vw * 16 / 9));
+        max-width: 540px;
+        max-height: 960px;
+        overflow: hidden;
+        background: #080b10;
+        box-shadow: 0 24px 80px rgb(0 0 0 / 55%);
+      }
+
+      #unity-canvas {
+        display: block;
+        width: 100%;
+        height: 100%;
+        background: #080b10;
+      }
+
+      #loading-overlay {
+        position: absolute;
+        inset: 0;
+        z-index: 10;
+        display: grid;
+        align-items: end;
+        isolation: isolate;
+        overflow: hidden;
+        background: #080b10;
+        opacity: 1;
+        visibility: visible;
+        transition: opacity 420ms ease, visibility 420ms step-end;
+      }
+
+      #loading-overlay.is-complete {
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+      }
+
+      #loading-video,
+      #loading-fallback {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      #loading-video {
+        z-index: -2;
+        background: #080b10;
+      }
+
+      #loading-fallback {
+        z-index: -3;
+        background:
+          radial-gradient(circle at 50% 35%, rgb(255 197 61 / 22%), transparent 34%),
+          linear-gradient(180deg, #171d27 0%, #080b10 72%);
+      }
+
+      #loading-overlay::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        background: linear-gradient(180deg, transparent 44%, rgb(3 5 8 / 86%) 100%);
+      }
+
+      .loading-panel {
+        width: 100%;
+        padding: clamp(24px, 6vh, 56px) clamp(22px, 7vw, 40px);
+        color: #fff7e8;
+        text-shadow: 0 2px 12px rgb(0 0 0 / 70%);
+      }
+
+      .loading-eyebrow {
+        margin: 0 0 8px;
+        color: #ffd15a;
+        font-size: 0.75rem;
+        font-weight: 800;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+      }
+
+      .loading-row {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 16px;
+      }
+
+      #loading-status {
+        margin: 0;
+        font-size: clamp(1rem, 3.8vw, 1.2rem);
+        font-weight: 750;
+      }
+
+      #loading-percentage {
+        min-width: 4ch;
+        color: #ffd15a;
+        font-variant-numeric: tabular-nums;
+        font-weight: 850;
+        text-align: right;
+      }
+
+      .progress-track {
+        height: 8px;
+        margin-top: 14px;
+        overflow: hidden;
+        border: 1px solid rgb(255 255 255 / 18%);
+        border-radius: 999px;
+        background: rgb(3 5 8 / 58%);
+      }
+
+      #loading-progress {
+        width: 100%;
+        height: 100%;
+        border-radius: inherit;
+        background: linear-gradient(90deg, #f6a91a, #ffdc67);
+        box-shadow: 0 0 22px rgb(255 190 48 / 58%);
+        transform: scaleX(0);
+        transform-origin: left center;
+        will-change: transform;
+      }
+
+      #loading-detail {
+        min-height: 1.25rem;
+        margin: 10px 0 0;
+        color: rgb(255 247 232 / 74%);
+        font-size: 0.78rem;
+        line-height: 1.5;
+      }
+
+      #retry-button {
+        display: none;
+        min-width: 44px;
+        min-height: 44px;
+        margin-top: 14px;
+        padding: 10px 18px;
+        border: 0;
+        border-radius: 999px;
+        color: #14100a;
+        background: #ffd15a;
+        font: inherit;
+        font-weight: 800;
+        cursor: pointer;
+      }
+
+      #retry-button:focus-visible {
+        outline: 3px solid #ffffff;
+        outline-offset: 3px;
+      }
+
+      #unity-warning {
+        position: absolute;
+        top: 0;
+        right: 0;
+        left: 0;
+        z-index: 20;
+      }
+
+      .unity-banner {
+        padding: 10px 14px;
+        color: #ffffff;
+        background: #9f2424;
+        font-size: 0.85rem;
+      }
+
+      @media (max-aspect-ratio: 9 / 16) {
+        #unity-container {
+          width: 100vw;
+          height: 100vh;
+          max-width: none;
+          max-height: none;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        #loading-overlay { transition: none; }
+        #loading-progress { will-change: auto; }
+      }
+    </style>
+  </head>
+  <body>
+    <main id="unity-container">
+      <canvas id="unity-canvas" width={{{ WIDTH }}} height={{{ HEIGHT }}} tabindex="-1" aria-label="Tela do jogo {{{ PRODUCT_NAME }}}"></canvas>
+      <section id="loading-overlay" aria-live="polite" aria-busy="true">
+        <div id="loading-fallback" aria-hidden="true"></div>
+        <video id="loading-video" autoplay muted loop playsinline preload="auto" aria-hidden="true">
+          <source src="StreamingAssets/GearEngineLoadingLoop.mp4" type="video/mp4">
+        </video>
+        <div class="loading-panel">
+          <p class="loading-eyebrow">Gear Engine</p>
+          <div class="loading-row">
+            <p id="loading-status">Preparando a corrida</p>
+            <span id="loading-percentage" aria-hidden="true">0%</span>
+          </div>
+          <div id="loading-meter" class="progress-track" role="progressbar" aria-label="Progresso do carregamento" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+            <div id="loading-progress"></div>
+          </div>
+          <p id="loading-detail">Baixando os arquivos do jogo…</p>
+          <button id="retry-button" type="button">Tentar novamente</button>
+        </div>
+      </section>
+      <div id="unity-warning"></div>
+    </main>
+    <noscript>Este jogo precisa do JavaScript para funcionar.</noscript>
+    <script>
+      var canvas = document.querySelector("#unity-canvas");
+      var overlay = document.querySelector("#loading-overlay");
+      var loadingVideo = document.querySelector("#loading-video");
+      var loadingStatus = document.querySelector("#loading-status");
+      var loadingDetail = document.querySelector("#loading-detail");
+      var loadingPercentage = document.querySelector("#loading-percentage");
+      var loadingProgress = document.querySelector("#loading-progress");
+      var loadingMeter = document.querySelector("#loading-meter");
+      var retryButton = document.querySelector("#retry-button");
+      var displayedProgress = 0;
+      var targetProgress = 0;
+      var lastProgressAt = performance.now();
+      var loadingComplete = false;
+      var unityStarted = false;
+
+      function unityShowBanner(message, type) {
+        var warningBanner = document.querySelector("#unity-warning");
+        var banner = document.createElement("div");
+        banner.className = "unity-banner";
+        banner.textContent = message;
+        warningBanner.appendChild(banner);
+        if (type !== "error") {
+          window.setTimeout(function () { banner.remove(); }, 5000);
+        }
+      }
+
+      function setLoadingCopy() {
+        if (unityStarted) {
+          loadingStatus.textContent = "Ligando os motores";
+          loadingDetail.textContent = "Finalizando os sistemas e preparando a primeira tela…";
+          return;
+        }
+
+        if (performance.now() - lastProgressAt > 12000) {
+          loadingDetail.textContent = "Ainda estamos preparando tudo — o primeiro acesso pode demorar um pouco mais.";
+        } else if (targetProgress >= 0.8) {
+          loadingDetail.textContent = "Preparando o jogo para este navegador…";
+        } else {
+          loadingDetail.textContent = "Baixando os arquivos do jogo…";
+        }
+      }
+
+      function renderProgress() {
+        var distance = targetProgress - displayedProgress;
+        if (distance > 0.0005) {
+          displayedProgress += Math.max(0.0015, distance * 0.075);
+          displayedProgress = Math.min(displayedProgress, targetProgress);
+        }
+
+        var percentage = Math.round(displayedProgress * 100);
+        loadingProgress.style.transform = "scaleX(" + displayedProgress.toFixed(4) + ")";
+        loadingPercentage.textContent = percentage + "%";
+        loadingMeter.setAttribute("aria-valuenow", String(percentage));
+        if (!loadingComplete) {
+          setLoadingCopy();
+        }
+        window.requestAnimationFrame(renderProgress);
+      }
+
+      function reportProgress(progress) {
+        var nextProgress = Math.max(targetProgress, Math.min(1, progress));
+        if (nextProgress > targetProgress) {
+          targetProgress = nextProgress;
+          lastProgressAt = performance.now();
+        }
+      }
+
+      function completeLoading() {
+        if (loadingComplete) {
+          return;
+        }
+
+        loadingComplete = true;
+        targetProgress = 1;
+        displayedProgress = 1;
+        loadingStatus.textContent = "Tudo pronto";
+        loadingDetail.textContent = "";
+        loadingPercentage.textContent = "100%";
+        loadingProgress.style.transform = "scaleX(1)";
+        loadingMeter.setAttribute("aria-valuenow", "100");
+        overlay.setAttribute("aria-busy", "false");
+        overlay.classList.add("is-complete");
+        window.setTimeout(function () { loadingVideo.pause(); }, 450);
+      }
+
+      function showLoadingError(message) {
+        loadingStatus.textContent = "Não foi possível iniciar o jogo";
+        loadingDetail.textContent = String(message || "Verifique sua conexão e tente novamente.");
+        retryButton.style.display = "inline-block";
+        overlay.setAttribute("aria-busy", "false");
+      }
+
+      window.gearEngineLoadingReady = completeLoading;
+      retryButton.addEventListener("click", function () { window.location.reload(); });
+
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        loadingVideo.addEventListener("loadeddata", function () { loadingVideo.pause(); }, { once: true });
+      } else {
+        loadingVideo.play().catch(function () {
+          loadingDetail.textContent = "Baixando os arquivos do jogo…";
+        });
+      }
+
+      window.requestAnimationFrame(renderProgress);
+
+      var buildUrl = "Build";
+      var loaderUrl = buildUrl + "/{{{ LOADER_FILENAME }}}";
+      var config = {
+        arguments: [],
+        dataUrl: buildUrl + "/{{{ DATA_FILENAME }}}",
+        frameworkUrl: buildUrl + "/{{{ FRAMEWORK_FILENAME }}}",
+#if USE_WASM
+        codeUrl: buildUrl + "/{{{ CODE_FILENAME }}}",
+#endif
+#if SYMBOLS_FILENAME
+        symbolsUrl: buildUrl + "/{{{ SYMBOLS_FILENAME }}}",
+#endif
+        streamingAssetsUrl: "StreamingAssets",
+        companyName: {{{ JSON.stringify(COMPANY_NAME) }}},
+        productName: {{{ JSON.stringify(PRODUCT_NAME) }}},
+        productVersion: {{{ JSON.stringify(PRODUCT_VERSION) }}},
+        devicePixelRatio: 1,
+        autoSyncPersistentDataPath: true,
+        showBanner: unityShowBanner,
+      };
+
+#if BACKGROUND_FILENAME
+      canvas.style.background = "url('" + buildUrl + "/{{{ BACKGROUND_FILENAME.replace(/'/g, '%27') }}}') center / cover";
+#endif
+
+      var loaderScript = document.createElement("script");
+      loaderScript.src = loaderUrl;
+      loaderScript.onload = function () {
+        createUnityInstance(canvas, config, reportProgress).then(function (unityInstance) {
+          unityStarted = true;
+          targetProgress = Math.max(targetProgress, 0.98);
+          setLoadingCopy();
+          window.unityInstance = unityInstance;
+          window.setTimeout(function () {
+            if (!overlay.classList.contains("is-complete")) {
+              completeLoading();
+            }
+          }, 30000);
+        }).catch(showLoadingError);
+      };
+      loaderScript.onerror = function () {
+        showLoadingError("The game loader could not be downloaded. Check your connection and try again.");
+      };
+      document.body.appendChild(loaderScript);
+    </script>
+  </body>
+</html>

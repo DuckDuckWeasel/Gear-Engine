@@ -1,0 +1,11 @@
+{
+  "test": "GearEngine.WebGL.BrowserDeployment.Ready",
+  "scenario": "WebGL deployment after the Unity bootstrap ready signal",
+  "criteria": [
+    "The loading overlay reaches 100 percent and becomes hidden.",
+    "The video pauses after the transition completes.",
+    "The playable game screen is visible with zero browser console errors."
+  ],
+  "artifact": "WebGlSmoothReady.png",
+  "url": "http://127.0.0.1:8081/"
+}

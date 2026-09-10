@@ -1,0 +1,11 @@
+{
+  "test": "GearEngine.WebGL.BrowserDeployment.Loading",
+  "scenario": "Fresh WebGL deployment while Unity data and WebAssembly initialize",
+  "criteria": [
+    "The loading overlay remains visible before bootstrap completion.",
+    "The muted 540x960 loading video is actively playing.",
+    "Progress and current loading-stage text remain visible and readable."
+  ],
+  "artifact": "WebGlSmoothLoading.png",
+  "url": "http://127.0.0.1:8081/"
+}
