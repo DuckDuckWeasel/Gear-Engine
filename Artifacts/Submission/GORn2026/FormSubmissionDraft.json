@@ -1,0 +1,41 @@
+{
+  "form": {
+    "title": "PONG - Mostra de Jogos GO!RN 2026",
+    "url": "https://docs.google.com/forms/d/e/1FAIpQLScJTBNtcnca9Y3xAEQhYoifEpOl0Zi8cNSg0OZQiJ02x1O0tg/viewform",
+    "submissionStatus": "NaoEnviado"
+  },
+  "page1": {
+    "email": "s2leoj@gmail.com",
+    "ibgeIntermediateRegion": null,
+    "responsiblePersonName": null,
+    "cpf": null,
+    "phone": null,
+    "consentVoluntaryUnpaidParticipation": null,
+    "consentAttendBothEventDays": null,
+    "consentImageAndVoiceUse": null
+  },
+  "page2": {
+    "gameTitle": "Gear Engine",
+    "gameTitleStatus": "TituloAtualDoProjeto",
+    "studioName": null,
+    "cnpj": null,
+    "downloadableGameUrl": "https://gear-engine-gorn-2026.web.app",
+    "downloadableGameStatus": "HospedagemPublicaVerificada",
+    "downloadableGameSha256": "365f4fb669c47d3346565078d0909e0fb938d180393bd3257305b0a280fc1462",
+    "installationInstructions": "Abra o link público da versão WebGL diretamente no navegador. Não é necessário instalar. Use uma janela vertical ou alta, mantenha conexão com a internet e aguarde até 90 segundos no primeiro acesso com um perfil limpo.",
+    "gameAccessCode": null,
+    "pressKitUrl": "https://gear-engine-gorn-2026.web.app/PressKit/",
+    "pressKitVisibility": "PublicoVerificado",
+    "pressKitAccessCode": null,
+    "willDonateGamificationGifts": null,
+    "giftDescription": null
+  },
+  "requiredBeforeSubmission": [
+    "Confirmar nome da pessoa responsável, CPF, telefone e região geográfica intermediária do IBGE.",
+    "Confirmar os três consentimentos legais e de presença.",
+    "Confirmar se o expositor doará brindes para gamificação.",
+    "Confirmar o título Gear Engine para a inscrição ou informar outro título.",
+    "Publicar o press kit com acesso de visualização sem solicitação de permissão e verificar em sessão desconectada.",
+    "Inserir a URL pública e verificada da versão WebGL jogável."
+  ]
+}

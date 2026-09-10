@@ -1,0 +1,24 @@
+{
+  "artifact": "GearEngineWebGLDemo.zip",
+  "target": "WebGL",
+  "unityVersion": "6000.5.9f1",
+  "scene": "Assets/GearEngine/Scenes/Main Scene.unity",
+  "addressablesLocationCount": 33,
+  "playerSizeBytes": 36278438,
+  "archiveSha256": "365f4fb669c47d3346565078d0909e0fb938d180393bd3257305b0a280fc1462",
+  "archiveIntegrity": "Passed",
+  "runtimeVerification": {
+    "status": "PassedWithKnownWarnings",
+    "startupOutcome": "Succeeded",
+    "loadingOverlayHidden": true,
+    "visibleScreen": "Race selection main screen",
+    "knownConstraint": "Internet is required for Unity Services and LiveOps startup; clean-profile startup time is variable and may take up to 90 seconds.",
+    "knownWarnings": [
+      "Unconfigured remote Addressables catalog check returns HTTP 400 but local catalog initialization completes.",
+      "Analytics reports an initialization warning.",
+      "The embedded splash video is unsupported on WebGL.",
+      "Existing missing-script warnings remain on tutorial and legacy button objects."
+    ]
+  },
+  "sourceBuild": "Created from an isolated temporary project copy to preserve the open Unity project and unrelated working-tree changes."
+}

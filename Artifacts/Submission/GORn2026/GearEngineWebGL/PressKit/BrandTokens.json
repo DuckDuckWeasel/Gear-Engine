@@ -1,0 +1,50 @@
+{
+  "schemaVersion": "1.0.0",
+  "brand": "Gear Engine",
+  "sourceInvariant": "Assets/GearEngine/Art/Splash Screen/Game Icon.png",
+  "color": {
+    "asphalt": "#0B0F14",
+    "pitWall": "#151C24",
+    "pitWallElevated": "#202A35",
+    "raceWhite": "#FFF8E8",
+    "smoke": "#C8D0D8",
+    "racingRed": "#EF3E2F",
+    "victoryYellow": "#FFD43B",
+    "trackBlue": "#18AEEA",
+    "grassGreen": "#43B649",
+    "focus": "#FFD43B"
+  },
+  "typography": {
+    "display": "Oswald Variable",
+    "body": "Inter Variable",
+    "fallbackDisplay": "Arial Narrow, sans-serif",
+    "fallbackBody": "Arial, sans-serif",
+    "displayWeight": 700,
+    "bodyWeight": 450,
+    "minimumBodySizePx": 16
+  },
+  "spacing": {
+    "xs": 4,
+    "sm": 8,
+    "md": 16,
+    "lg": 24,
+    "xl": 40,
+    "xxl": 64
+  },
+  "radius": {
+    "control": 8,
+    "card": 16,
+    "hero": 24
+  },
+  "motion": {
+    "fastMs": 140,
+    "standardMs": 220,
+    "reducedMotion": "Disable non-essential transforms and smooth scrolling"
+  },
+  "accessibility": {
+    "minimumTextContrast": "WCAG AA 4.5:1",
+    "minimumLargeTextContrast": "WCAG AA 3:1",
+    "minimumTargetPx": 44,
+    "focusOutline": "3px solid #FFD43B"
+  }
+}

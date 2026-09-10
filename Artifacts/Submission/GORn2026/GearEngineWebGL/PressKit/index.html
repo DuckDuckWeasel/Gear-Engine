@@ -1,0 +1,2154 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Gear Engine is a systems-driven racing prototype. Configure the machine, race, study the result, and rebuild.">
+  <meta name="theme-color" content="#071017">
+  <title>Gear Engine — Build the Car. Run the Race.</title>
+  <link rel="icon" href="Media/GearEngineSplashLogo.png">
+  <style>
+    @font-face {
+      font-family: "Oswald";
+      src: url("Fonts/OswaldVariable.woff2") format("woff2");
+      font-weight: 200 700;
+      font-display: swap;
+    }
+
+    @font-face {
+      font-family: "Inter";
+      src: url("Fonts/InterVariable.woff2") format("woff2");
+      font-weight: 100 900;
+      font-display: swap;
+    }
+
+    :root {
+      --ink: #0a1319;
+      --black: #05090c;
+      --cream: #f6f0df;
+      --paper: #fffaf0;
+      --red: #ed2f1c;
+      --blue: #0d9ee8;
+      --yellow: #ffc800;
+      --green: #49b949;
+      --white: #fff;
+      --muted: #c9d1d4;
+      --line: rgba(8, 18, 24, .18);
+      --shadow: 0 18px 50px rgba(0, 0, 0, .26);
+      --content: 1180px;
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: 88px;
+      background: var(--black);
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--cream);
+      font-family: "Inter", Arial, sans-serif;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      position: fixed;
+      z-index: 30;
+      inset: 0;
+      pointer-events: none;
+      content: "";
+      opacity: .04;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 120 120' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.55'/%3E%3C/svg%3E");
+    }
+
+    img,
+    video {
+      display: block;
+      max-width: 100%;
+    }
+
+    a {
+      color: inherit;
+    }
+
+    button,
+    a {
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    :focus-visible {
+      outline: 3px solid var(--yellow);
+      outline-offset: 4px;
+    }
+
+    .skip-link {
+      position: fixed;
+      z-index: 1000;
+      top: 8px;
+      left: 8px;
+      padding: 10px 14px;
+      color: var(--ink);
+      background: var(--yellow);
+      font-weight: 800;
+      transform: translateY(-160%);
+    }
+
+    .skip-link:focus {
+      transform: none;
+    }
+
+    .container {
+      width: min(calc(100% - 48px), var(--content));
+      margin-inline: auto;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin: 0 0 14px;
+      color: var(--red);
+      font: 800 13px/1 "Inter", sans-serif;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+    }
+
+    .eyebrow::before {
+      width: 36px;
+      height: 7px;
+      content: "";
+      background: repeating-linear-gradient(110deg, var(--red) 0 9px, transparent 9px 13px);
+    }
+
+    .display {
+      margin: 0;
+      font: 700 clamp(46px, 6vw, 88px)/.94 "Oswald", Impact, sans-serif;
+      letter-spacing: -.035em;
+      text-transform: uppercase;
+    }
+
+    .section-title {
+      margin: 0;
+      font: 700 clamp(38px, 4.4vw, 64px)/.98 "Oswald", Impact, sans-serif;
+      letter-spacing: -.025em;
+      text-transform: uppercase;
+    }
+
+    .button {
+      display: inline-flex;
+      min-height: 52px;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 24px;
+      border: 2px solid var(--ink);
+      color: var(--ink);
+      background: var(--yellow);
+      box-shadow: 4px 4px 0 var(--ink);
+      font: 800 15px/1 "Inter", sans-serif;
+      letter-spacing: .035em;
+      text-decoration: none;
+      text-transform: uppercase;
+      transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
+    }
+
+    .button:hover {
+      background: #ffd936;
+      box-shadow: 7px 7px 0 var(--ink);
+      transform: translate(-3px, -3px);
+    }
+
+    .button--dark {
+      border-color: rgba(255, 255, 255, .55);
+      color: var(--white);
+      background: rgba(5, 9, 12, .72);
+      box-shadow: 4px 4px 0 rgba(255, 255, 255, .2);
+    }
+
+    .play-link {
+      position: relative;
+      isolation: isolate;
+      overflow: hidden;
+    }
+
+    .play-link::before {
+      position: absolute;
+      z-index: 2;
+      inset: 3px;
+      border: 2px solid rgba(255, 255, 255, .76);
+      content: "";
+      opacity: 0;
+      pointer-events: none;
+      animation: cta-frame 4.8s ease-out infinite;
+    }
+
+    .play-link::after {
+      position: absolute;
+      z-index: 1;
+      top: -70%;
+      bottom: -70%;
+      left: -48%;
+      width: 34%;
+      content: "";
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .72), transparent);
+      pointer-events: none;
+      transform: skewX(-18deg);
+      animation: cta-sweep 4.8s cubic-bezier(.65, 0, .2, 1) infinite;
+    }
+
+    @keyframes cta-sweep {
+      0%, 62% {
+        left: -48%;
+      }
+
+      82%, 100% {
+        left: 118%;
+      }
+    }
+
+    @keyframes cta-frame {
+      0%, 60%, 86%, 100% {
+        opacity: 0;
+      }
+
+      68% {
+        opacity: .7;
+      }
+    }
+
+    .site-header {
+      position: fixed;
+      z-index: 100;
+      top: 0;
+      right: 0;
+      left: 0;
+      color: var(--white);
+      transition: background .25s ease, box-shadow .25s ease;
+    }
+
+    .site-header.is-scrolled {
+      background: rgba(5, 13, 18, .94);
+      box-shadow: 0 8px 28px rgba(0, 0, 0, .2);
+      backdrop-filter: blur(12px);
+    }
+
+    .nav {
+      display: grid;
+      min-height: 82px;
+      align-items: center;
+      grid-template-columns: auto 1fr auto;
+      gap: 42px;
+    }
+
+    .wordmark {
+      display: inline-flex;
+      width: 140px;
+      align-items: center;
+      text-decoration: none;
+    }
+
+    .wordmark img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 42px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .nav-links a {
+      position: relative;
+      color: var(--white);
+      font: 800 13px/1 "Inter", sans-serif;
+      letter-spacing: .075em;
+      text-decoration: none;
+      text-transform: uppercase;
+      text-shadow: 0 2px 12px rgba(0, 0, 0, .65);
+    }
+
+    .nav-links a::after {
+      position: absolute;
+      right: 0;
+      bottom: -8px;
+      left: 0;
+      height: 3px;
+      content: "";
+      background: var(--yellow);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform .2s ease;
+    }
+
+    .nav-links a:hover::after,
+    .nav-links a[aria-current="location"]::after {
+      transform: scaleX(1);
+    }
+
+    .header-cta {
+      min-height: 46px;
+      border-color: var(--yellow);
+      color: var(--white);
+      background: rgba(3, 13, 19, .42);
+      box-shadow: none;
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 12px;
+    }
+
+    .language-toggle {
+      min-width: 68px;
+      min-height: 42px;
+      padding: 8px 11px;
+      border: 1px solid rgba(255, 255, 255, .52);
+      color: var(--white);
+      background: rgba(5, 13, 18, .58);
+      font: 800 12px/1 "Inter", sans-serif;
+      letter-spacing: .055em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: border-color .18s ease, background .18s ease;
+    }
+
+    .language-toggle:hover {
+      border-color: var(--yellow);
+      background: rgba(5, 13, 18, .86);
+    }
+
+    .menu-toggle {
+      display: none;
+      width: 46px;
+      height: 46px;
+      border: 1px solid rgba(255, 255, 255, .5);
+      color: var(--white);
+      background: rgba(5, 13, 18, .7);
+      font: 700 23px/1 sans-serif;
+      cursor: pointer;
+    }
+
+    .hero {
+      position: relative;
+      min-height: 820px;
+      color: var(--ink);
+      background: var(--cream) url("Media/GearEngineSplashLogo.png") center / cover no-repeat;
+      isolation: isolate;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      position: absolute;
+      z-index: 1;
+      inset: 0;
+      content: "";
+      background:
+        linear-gradient(90deg, rgba(246, 240, 223, .98) 0%, rgba(246, 240, 223, .96) 32%, rgba(246, 240, 223, .28) 57%, rgba(5, 9, 12, .08) 100%),
+        linear-gradient(180deg, rgba(2, 8, 12, .55) 0, transparent 21%, transparent 77%, rgba(2, 8, 12, .38) 100%);
+    }
+
+    .hero::after {
+      position: absolute;
+      z-index: 2;
+      right: -2%;
+      bottom: -1px;
+      left: -2%;
+      height: 46px;
+      content: "";
+      background: linear-gradient(to bottom, transparent, #0a171e 76%);
+      clip-path: polygon(0 44%, 9% 30%, 18% 48%, 29% 28%, 40% 45%, 52% 23%, 63% 44%, 75% 29%, 87% 48%, 100% 34%, 100% 100%, 0 100%);
+    }
+
+    .hero-video {
+      position: absolute;
+      z-index: 0;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .hero-inner {
+      position: relative;
+      z-index: 3;
+      display: flex;
+      min-height: 820px;
+      align-items: center;
+      padding-top: 100px;
+      padding-bottom: 145px;
+    }
+
+    .hero-copy {
+      width: min(620px, 58%);
+    }
+
+    .hero .display span {
+      display: block;
+    }
+
+    .hero-deck {
+      max-width: 600px;
+      margin: 24px 0 28px;
+      font-size: clamp(17px, 1.6vw, 21px);
+      line-height: 1.52;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+    }
+
+    .proof-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 28px;
+    }
+
+    .proof-chip {
+      padding: 8px 11px;
+      border: 1px solid rgba(8, 18, 24, .3);
+      background: rgba(255, 250, 240, .74);
+      font-size: 12px;
+      font-weight: 750;
+      letter-spacing: .035em;
+      text-transform: uppercase;
+      backdrop-filter: blur(5px);
+    }
+
+    .core-loop {
+      position: relative;
+      z-index: 4;
+      margin-top: -96px;
+      padding: 72px 0 84px;
+      color: var(--white);
+      background:
+        radial-gradient(circle at 70% 20%, rgba(13, 158, 232, .12), transparent 34%),
+        linear-gradient(150deg, #0a171e, #04090c 70%);
+    }
+
+    .core-loop::after,
+    .progression::before,
+    .concept-vision::before {
+      position: absolute;
+      z-index: 5;
+      right: 0;
+      left: 0;
+      height: 34px;
+      content: "";
+      clip-path: polygon(0 0, 100% 0, 100% 58%, 93% 76%, 85% 53%, 76% 72%, 66% 48%, 56% 70%, 46% 51%, 36% 74%, 27% 50%, 18% 70%, 9% 52%, 0 68%);
+      pointer-events: none;
+    }
+
+    .core-loop::after {
+      bottom: -16px;
+      background: #05090c;
+    }
+
+    .section-head {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 40px;
+      margin-bottom: 30px;
+    }
+
+    .section-head .eyebrow {
+      color: var(--yellow);
+    }
+
+    .section-head .eyebrow::before {
+      background: repeating-linear-gradient(110deg, var(--yellow) 0 9px, transparent 9px 13px);
+    }
+
+    .section-note {
+      max-width: 480px;
+      margin: 0 0 5px;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .loop-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+
+    .loop-card {
+      position: relative;
+      min-width: 0;
+      border: 2px solid rgba(255, 255, 255, .82);
+      color: var(--ink);
+      background: var(--paper);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .loop-card:nth-child(3) {
+      background: #c8edff;
+    }
+
+    .loop-copy {
+      display: grid;
+      padding: 20px;
+      grid-template-columns: auto 1fr;
+      gap: 15px;
+    }
+
+    .loop-number {
+      color: var(--red);
+      font: 700 38px/.9 "Oswald", sans-serif;
+    }
+
+    .loop-card h3 {
+      margin: 0 0 7px;
+      font: 700 28px/1 "Oswald", sans-serif;
+      text-transform: uppercase;
+    }
+
+    .loop-card p {
+      margin: 0;
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
+    .loop-image {
+      position: relative;
+      display: grid;
+      height: 290px;
+      place-items: center;
+      border-top: 1px solid var(--line);
+      background: #10191f;
+      overflow: hidden;
+    }
+
+    .loop-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .loop-image--concept {
+      background: var(--cream);
+    }
+
+    .loop-image--concept img {
+      object-fit: cover;
+    }
+
+    .loop-image--configure img {
+      object-position: center 45%;
+    }
+
+    .loop-image--race img {
+      object-position: center 46%;
+    }
+
+    .loop-image--upgrade img {
+      object-position: center 44%;
+    }
+
+    .concept-stamp {
+      position: absolute;
+      z-index: 2;
+      right: 10px;
+      bottom: 10px;
+      padding: 7px 9px;
+      border: 1px solid rgba(255, 255, 255, .7);
+      color: var(--white);
+      background: rgba(5, 13, 18, .82);
+      font-size: 10px;
+      font-weight: 850;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      backdrop-filter: blur(5px);
+    }
+
+    .build {
+      position: relative;
+      z-index: 3;
+      padding: 112px 0 100px;
+      background:
+        radial-gradient(circle at 55% 40%, rgba(255, 200, 0, .1), transparent 28%),
+        linear-gradient(rgba(246, 240, 223, .84), rgba(246, 240, 223, .91)),
+        var(--cream) url("Media/T_WebPaperSpeedTexture.webp") center / cover no-repeat;
+    }
+
+    .build::after,
+    .progression::after,
+    .concept-vision::after {
+      position: absolute;
+      z-index: 0;
+      right: 0;
+      bottom: -1px;
+      left: 0;
+      height: 62px;
+      content: "";
+      opacity: .72;
+      pointer-events: none;
+      -webkit-mask-image: linear-gradient(to bottom, transparent, #000);
+      mask-image: linear-gradient(to bottom, transparent, #000);
+    }
+
+    .build::after {
+      background: linear-gradient(112deg, var(--red) 0 38%, #121a20 38% 77%, var(--blue) 77% 100%);
+    }
+
+    .build > .container,
+    .progression > .container,
+    .concept-vision > .container {
+      position: relative;
+      z-index: 1;
+    }
+
+    .build-grid {
+      display: grid;
+      align-items: center;
+      grid-template-columns: .78fr 1.2fr .78fr;
+      gap: 42px;
+    }
+
+    .build-copy p {
+      max-width: 330px;
+      margin: 20px 0 24px;
+      font-size: 17px;
+      line-height: 1.55;
+    }
+
+    .check-list {
+      display: grid;
+      gap: 12px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      font-weight: 750;
+    }
+
+    .check-list li {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .check-list li::before {
+      display: grid;
+      width: 21px;
+      height: 21px;
+      color: var(--white);
+      background: var(--green);
+      border-radius: 50%;
+      content: "✓";
+      font-size: 13px;
+      place-items: center;
+    }
+
+    .device {
+      position: relative;
+      width: min(100%, 470px);
+      margin: auto;
+      padding: 12px;
+      border: 2px solid #cfc5aa;
+      background: #e9ddc0;
+      box-shadow: 12px 12px 0 rgba(8, 18, 24, .12);
+      transform: rotate(-1.2deg);
+    }
+
+    .device::before {
+      position: absolute;
+      z-index: 2;
+      top: 18px;
+      left: 50%;
+      width: 48px;
+      height: 5px;
+      content: "";
+      background: rgba(255, 255, 255, .5);
+      border-radius: 4px;
+      transform: translateX(-50%);
+    }
+
+    .device img {
+      width: 100%;
+      max-height: 570px;
+      object-fit: contain;
+      background: var(--ink);
+    }
+
+    .track-art {
+      position: relative;
+      min-height: 330px;
+    }
+
+    .track-art svg {
+      width: 100%;
+      height: auto;
+      filter: drop-shadow(8px 10px 0 rgba(8, 18, 24, .13));
+      transform: rotate(7deg);
+    }
+
+    .track-label {
+      position: absolute;
+      right: 4px;
+      bottom: 0;
+      padding: 9px 12px;
+      border: 2px solid var(--ink);
+      background: var(--yellow);
+      font: 700 17px/1 "Oswald", sans-serif;
+      text-transform: uppercase;
+      transform: rotate(-3deg);
+    }
+
+    .evidence {
+      position: relative;
+      z-index: 2;
+      padding: 100px 0;
+      color: var(--white);
+      background: linear-gradient(112deg, var(--red) 0 38%, #121a20 38% 77%, var(--blue) 77% 100%);
+      overflow: hidden;
+    }
+
+    .evidence::before {
+      position: absolute;
+      inset: 0;
+      content: "";
+      opacity: .16;
+      background: repeating-linear-gradient(115deg, transparent 0 18px, rgba(255, 255, 255, .25) 18px 21px);
+      transform: skewX(-12deg) scale(1.2);
+    }
+
+    .evidence-grid {
+      position: relative;
+      display: grid;
+      align-items: center;
+      grid-template-columns: .72fr 1.28fr;
+      gap: 54px;
+    }
+
+    .evidence-copy .section-title {
+      max-width: 420px;
+    }
+
+    .evidence-copy p {
+      max-width: 430px;
+      margin: 22px 0;
+      font-size: 17px;
+      line-height: 1.55;
+    }
+
+    .telemetry {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .telemetry span {
+      padding: 9px 12px;
+      border: 1px solid rgba(255, 255, 255, .35);
+      background: rgba(5, 9, 12, .28);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .video-panel {
+      padding: 12px;
+      border: 2px solid rgba(255, 255, 255, .72);
+      background: #071017;
+      box-shadow: 14px 14px 0 rgba(0, 0, 0, .23);
+    }
+
+    .video-label {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 8px 4px 15px;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .video-label span:last-child {
+      color: var(--green);
+    }
+
+    .gameplay-video {
+      width: 100%;
+      max-height: 610px;
+      background: #03080b;
+      object-fit: contain;
+    }
+
+    .progression {
+      position: relative;
+      z-index: 1;
+      padding: 108px 0 92px;
+      background:
+        linear-gradient(rgba(246, 240, 223, .86), rgba(246, 240, 223, .92)),
+        var(--cream) url("Media/T_WebPaperSpeedTexture.webp") center / cover no-repeat;
+    }
+
+    .progression::before {
+      top: -16px;
+      bottom: auto;
+      background: linear-gradient(112deg, var(--red) 0 38%, #121a20 38% 77%, var(--blue) 77% 100%);
+    }
+
+    .progression::after {
+      background: #071017;
+    }
+
+    .progression-head {
+      margin-bottom: 36px;
+      text-align: center;
+    }
+
+    .progression-head p {
+      margin: 13px 0 0;
+      font-size: 17px;
+    }
+
+    .reward-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+
+    .reward-card {
+      display: flex;
+      flex-direction: column;
+      border: 2px solid var(--ink);
+      background: var(--paper);
+      box-shadow: 6px 6px 0 var(--ink);
+      overflow: hidden;
+      transition: transform .2s ease, box-shadow .2s ease;
+    }
+
+    .reward-card:hover {
+      box-shadow: 10px 10px 0 var(--ink);
+      transform: translate(-4px, -4px);
+    }
+
+    .reward-card h3 {
+      min-height: 78px;
+      display: grid;
+      margin: 0;
+      padding: 14px;
+      text-align: center;
+      font: 700 23px/1.05 "Oswald", sans-serif;
+      text-transform: uppercase;
+      place-items: center;
+    }
+
+    .reward-card:nth-child(1) h3 {
+      background: #cbefc1;
+    }
+
+    .reward-card:nth-child(2) h3 {
+      background: #c5ebff;
+    }
+
+    .reward-card:nth-child(3) h3 {
+      background: #ffe16b;
+    }
+
+    .reward-image {
+      display: grid;
+      flex: 0 0 410px;
+      height: 410px;
+      overflow: hidden;
+      place-items: center;
+      border-top: 1px solid var(--line);
+      background: #0c151a;
+      isolation: isolate;
+    }
+
+    .reward-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .reward-caption {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex: 1;
+      align-items: center;
+      min-height: 78px;
+      margin: 0;
+      padding: 16px;
+      border-top: 2px solid var(--ink);
+      background: var(--paper);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .media {
+      padding: 104px 0;
+      color: var(--white);
+      background:
+        radial-gradient(circle at 85% 10%, rgba(13, 158, 232, .18), transparent 30%),
+        #071017;
+    }
+
+    .media .section-head {
+      align-items: center;
+    }
+
+    .media-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 12px;
+    }
+
+    .promotional-key-art {
+      margin: 0 0 30px;
+      border: 2px solid rgba(255, 255, 255, .45);
+      background: #020608;
+      box-shadow: 8px 8px 0 var(--yellow);
+      overflow: hidden;
+    }
+
+    .promotional-key-art a {
+      display: block;
+    }
+
+    .promotional-key-art img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    .promotional-key-art figcaption {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 24px;
+      padding: 16px 18px 18px;
+      border-top: 2px solid rgba(255, 255, 255, .22);
+      color: rgba(255, 255, 255, .72);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .promotional-key-art figcaption strong {
+      flex: 0 0 auto;
+      color: var(--yellow);
+      font: 700 18px/1 "Oswald", sans-serif;
+      letter-spacing: .045em;
+      text-transform: uppercase;
+    }
+
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+
+    .gallery figure {
+      position: relative;
+      margin: 0;
+      border: 1px solid rgba(255, 255, 255, .28);
+      background: #020608;
+      overflow: hidden;
+    }
+
+    .gallery img {
+      width: 100%;
+      height: 390px;
+      object-fit: contain;
+      transition: transform .35s ease;
+    }
+
+    .gallery figure:hover img {
+      transform: scale(1.025);
+    }
+
+    .gallery figcaption {
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      padding: 28px 12px 11px;
+      background: linear-gradient(transparent, rgba(0, 0, 0, .88));
+      font: 700 15px/1 "Oswald", sans-serif;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+
+    .concept-vision {
+      position: relative;
+      padding: 108px 0;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 88% 8%, rgba(13, 158, 232, .13), transparent 29%),
+        linear-gradient(rgba(246, 240, 223, .87), rgba(246, 240, 223, .93)),
+        var(--cream) url("Media/T_WebPaperSpeedTexture.webp") center / cover no-repeat;
+    }
+
+    .concept-vision::before {
+      top: -16px;
+      bottom: auto;
+      background: #071017;
+    }
+
+    .concept-vision::after {
+      background: #0a151c;
+    }
+
+    .concept-vision .section-head {
+      align-items: center;
+    }
+
+    .concept-vision .eyebrow {
+      color: var(--red);
+    }
+
+    .concept-vision .section-note {
+      color: #36444b;
+    }
+
+    .concept-disclosure {
+      margin: 0 0 28px;
+      padding: 18px 20px;
+      border: 2px solid var(--ink);
+      border-left: 10px solid var(--yellow);
+      background: var(--paper);
+      box-shadow: 5px 5px 0 rgba(8, 18, 24, .14);
+      font-size: 14px;
+      line-height: 1.55;
+    }
+
+    .concept-disclosure strong {
+      display: block;
+      margin-bottom: 5px;
+      font: 700 18px/1 "Oswald", sans-serif;
+      letter-spacing: .055em;
+      text-transform: uppercase;
+    }
+
+    .concept-gallery {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .concept-gallery figure {
+      margin: 0;
+      border: 2px solid var(--ink);
+      background: var(--paper);
+      box-shadow: 6px 6px 0 var(--ink);
+      overflow: hidden;
+    }
+
+    .concept-gallery figure:first-child {
+      grid-column: 1 / -1;
+    }
+
+    .concept-gallery a {
+      display: block;
+      background: #eee5d2;
+    }
+
+    .concept-gallery img {
+      width: 100%;
+      aspect-ratio: 9 / 16;
+      object-fit: contain;
+    }
+
+    .concept-gallery figure:first-child img {
+      aspect-ratio: 16 / 9;
+      max-height: 620px;
+    }
+
+    .concept-gallery figcaption {
+      min-height: 76px;
+      padding: 14px 15px 16px;
+      border-top: 1px solid var(--line);
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    .concept-gallery figcaption strong {
+      display: block;
+      margin-bottom: 4px;
+      font: 700 18px/1 "Oswald", sans-serif;
+      text-transform: uppercase;
+    }
+
+    .final-cta {
+      position: relative;
+      min-height: 360px;
+      display: grid;
+      color: var(--white);
+      background: #0a151c url("Media/GearEngineSplashLogo.png") center 55% / cover no-repeat;
+      place-items: center;
+      text-align: center;
+      isolation: isolate;
+    }
+
+    .final-cta::before {
+      position: absolute;
+      z-index: -1;
+      inset: 0;
+      content: "";
+      background: linear-gradient(90deg, rgba(5, 9, 12, .9), rgba(5, 9, 12, .6), rgba(5, 9, 12, .82));
+    }
+
+    .final-cta h2 {
+      max-width: 780px;
+      margin: 0 0 24px;
+      font: 700 clamp(44px, 6vw, 78px)/.94 "Oswald", sans-serif;
+      letter-spacing: -.025em;
+      text-transform: uppercase;
+      text-shadow: 0 5px 24px #000;
+    }
+
+    .final-cta h2 span:last-child {
+      color: var(--yellow);
+    }
+
+    .site-footer {
+      padding: 34px 24px 42px;
+      color: var(--white);
+      background: #020406;
+      text-align: center;
+    }
+
+    .footer-lockup {
+      width: min(260px, 64vw);
+      margin: 0 auto 15px;
+    }
+
+    .footer-links {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px 22px;
+    }
+
+    .footer-link {
+      color: rgba(255, 255, 255, .82);
+      font-size: 14px;
+      text-underline-offset: 4px;
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(14px);
+      transition:
+        opacity .72s cubic-bezier(.2, .7, .2, 1),
+        transform .72s cubic-bezier(.2, .7, .2, 1);
+    }
+
+    .reveal.is-visible {
+      opacity: 1;
+      transform: none;
+    }
+
+    .page-transition {
+      position: fixed;
+      z-index: 900;
+      inset: 0;
+      display: grid;
+      color: var(--ink);
+      background: var(--yellow);
+      clip-path: polygon(0 0, 0 0, -15% 100%, -15% 100%);
+      opacity: 0;
+      pointer-events: none;
+      place-items: center;
+      transition:
+        clip-path .45s cubic-bezier(.8, 0, .2, 1),
+        opacity .18s ease;
+    }
+
+    .page-transition.is-active {
+      clip-path: polygon(0 0, 115% 0, 100% 100%, -15% 100%);
+      opacity: 1;
+    }
+
+    .page-transition span {
+      font: 700 clamp(45px, 9vw, 120px)/1 "Oswald", sans-serif;
+      letter-spacing: -.04em;
+      text-transform: uppercase;
+      transform: skewX(-8deg);
+    }
+
+    @media (max-width: 1020px) {
+      .nav {
+        gap: 22px;
+      }
+
+      .nav-links {
+        gap: 22px;
+      }
+
+      .hero-copy {
+        width: 68%;
+      }
+
+      .loop-image {
+        height: 250px;
+      }
+
+      .build-grid {
+        grid-template-columns: .78fr 1.15fr;
+      }
+
+      .track-art {
+        display: none;
+      }
+
+      .gallery {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .concept-gallery {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 760px) {
+      html {
+        scroll-padding-top: 70px;
+      }
+
+      .container {
+        width: min(calc(100% - 30px), var(--content));
+      }
+
+      .nav {
+        min-height: 70px;
+        grid-template-columns: 1fr auto auto;
+        gap: 10px;
+      }
+
+      .wordmark {
+        width: 110px;
+      }
+
+      .menu-toggle {
+        display: block;
+        grid-column: 3;
+        grid-row: 1;
+      }
+
+      .header-cta {
+        display: none;
+      }
+
+      .nav-actions {
+        grid-column: 2;
+        grid-row: 1;
+      }
+
+      .language-toggle {
+        min-width: 62px;
+        min-height: 40px;
+        padding-inline: 8px;
+      }
+
+      .nav-links {
+        position: absolute;
+        top: 70px;
+        right: 15px;
+        left: 15px;
+        display: none;
+        align-items: stretch;
+        padding: 18px;
+        background: rgba(5, 13, 18, .97);
+        box-shadow: var(--shadow);
+        flex-direction: column;
+        gap: 0;
+      }
+
+      .nav-links.is-open {
+        display: flex;
+      }
+
+      .nav-links a {
+        display: block;
+        padding: 15px 4px;
+      }
+
+      .hero {
+        min-height: 890px;
+        background-position: 64% top;
+      }
+
+      .hero::before {
+        background:
+          linear-gradient(180deg, rgba(3, 10, 14, .25) 0, transparent 36%, var(--cream) 61%, var(--cream) 100%);
+      }
+
+      .hero-video {
+        height: 58%;
+        object-position: 63% center;
+      }
+
+      .hero-inner {
+        min-height: 890px;
+        align-items: flex-end;
+        padding-top: 390px;
+        padding-bottom: 130px;
+      }
+
+      .hero-copy {
+        width: 100%;
+      }
+
+      .hero-deck {
+        margin-block: 18px 22px;
+        font-size: 16px;
+      }
+
+      .proof-row {
+        margin-top: 20px;
+      }
+
+      .core-loop {
+        margin-top: -72px;
+        padding-top: 56px;
+      }
+
+      .core-loop::after,
+      .progression::before,
+      .concept-vision::before {
+        height: 28px;
+      }
+
+      .core-loop::after {
+        bottom: -13px;
+      }
+
+      .progression::before,
+      .concept-vision::before {
+        top: -13px;
+      }
+
+      .build::after,
+      .progression::after,
+      .concept-vision::after {
+        height: 48px;
+      }
+
+      .section-head {
+        display: block;
+      }
+
+      .section-note {
+        margin-top: 15px;
+      }
+
+      .loop-grid,
+      .reward-grid,
+      .build-grid,
+      .evidence-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .loop-image {
+        height: 420px;
+      }
+
+      .build,
+      .progression,
+      .media {
+        padding-block: 84px;
+      }
+
+      .build-grid {
+        gap: 48px;
+      }
+
+      .build-copy p {
+        max-width: none;
+      }
+
+      .device {
+        max-width: 430px;
+      }
+
+      .evidence {
+        padding-block: 86px;
+        background: linear-gradient(165deg, var(--red) 0 35%, #121a20 35% 78%, var(--blue) 78%);
+      }
+
+      .evidence-grid {
+        gap: 38px;
+      }
+
+      .reward-image {
+        flex-basis: 480px;
+        height: 480px;
+      }
+
+      .media .section-head {
+        display: grid;
+        gap: 22px;
+      }
+
+      .media-actions {
+        justify-content: flex-start;
+      }
+
+      .promotional-key-art figcaption {
+        display: block;
+      }
+
+      .promotional-key-art figcaption strong {
+        display: block;
+        margin-bottom: 8px;
+      }
+    }
+
+    @media (max-width: 500px) {
+      .display {
+        font-size: 47px;
+      }
+
+      .section-title {
+        font-size: 42px;
+      }
+
+      .hero-actions .button,
+      .media-actions .button {
+        width: 100%;
+      }
+
+      .proof-chip {
+        font-size: 11px;
+      }
+
+      .loop-image,
+      .reward-image {
+        height: 360px;
+      }
+
+      .reward-image {
+        flex-basis: 360px;
+      }
+
+      .gallery {
+        grid-template-columns: 1fr;
+      }
+
+      .concept-gallery {
+        grid-template-columns: 1fr;
+      }
+
+      .concept-gallery figure:first-child {
+        grid-column: auto;
+      }
+
+      .gallery img {
+        height: 520px;
+      }
+
+      .telemetry {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html {
+        scroll-behavior: auto;
+      }
+
+      *,
+      *::before,
+      *::after {
+        scroll-behavior: auto !important;
+        transition-duration: .01ms !important;
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+      }
+
+      .hero-video {
+        display: none;
+      }
+
+      .reveal {
+        opacity: 1;
+        transform: none;
+      }
+
+      .play-link::before,
+      .play-link::after {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main" data-i18n="skipToContent">Skip to content</a>
+
+  <header class="site-header" id="site-header">
+    <nav class="nav container" aria-label="Primary navigation" data-i18n-aria="primaryNavigation">
+      <a class="wordmark" href="#game" aria-label="Gear Engine home" data-i18n-aria="homeLabel"><img src="Media/T_GearEngineLogoRacingFinal.png" width="1446" height="645" alt="" decoding="sync"></a>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="#game" data-i18n="navGame">Game</a></li>
+        <li><a href="#how-it-plays" data-i18n="navHowItPlays">How it plays</a></li>
+        <li><a href="#media" data-i18n="navMedia">Media</a></li>
+        <li><a href="#product-vision" data-i18n="navProductVision">Product vision</a></li>
+      </ul>
+      <div class="nav-actions">
+        <button class="language-toggle" id="language-toggle" type="button" aria-label="Mudar para português" aria-pressed="false">PT-BR</button>
+        <a class="button button--dark header-cta play-link" href="../" data-i18n="playPrototype">Play the prototype</a>
+      </div>
+      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="nav-links" aria-label="Open navigation">☰</button>
+    </nav>
+  </header>
+
+  <main id="main">
+    <section class="hero" id="game" aria-labelledby="hero-title">
+      <video class="hero-video" id="hero-video" autoplay muted loop playsinline preload="metadata" poster="Media/GearEngineSplashLogo.png" aria-hidden="true">
+        <source src="Media/GearEngineHeroLoop.webm" type="video/webm">
+        <source src="Media/GearEngineHeroLoop.mp4" type="video/mp4">
+      </video>
+      <div class="hero-inner container">
+        <div class="hero-copy reveal">
+          <p class="eyebrow" data-i18n="heroEyebrow">A racing game built around tinkering</p>
+          <h1 class="display" id="hero-title">
+            <span data-i18n="heroTitleLine1">Build the car.</span>
+            <span data-i18n="heroTitleLine2">See what it can do.</span>
+          </h1>
+          <p class="hero-deck" data-i18n="heroDeck">Swap parts, hit the track, and learn from every lap. A better setup makes a better race.</p>
+          <div class="hero-actions">
+            <a class="button play-link" href="../" data-i18n="playPrototype">Play the prototype</a>
+            <a class="button button--dark" href="GearEnginePublicPressKit.zip" download data-i18n="downloadPressKit">Download press kit</a>
+          </div>
+          <div class="proof-row" aria-label="Prototype highlights" data-i18n-aria="prototypeHighlights">
+            <span class="proof-chip" data-i18n="proofPlayable">Playable WebGL prototype</span>
+            <span class="proof-chip" data-i18n="proofTracks">Figure-eight and oval tracks</span>
+            <span class="proof-chip" data-i18n="proofFootage">Current-build footage below</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="core-loop" aria-labelledby="loop-title">
+      <div class="container">
+        <div class="section-head reveal">
+          <div>
+            <p class="eyebrow" data-i18n="loopEyebrow">How a run works</p>
+            <h2 class="section-title" id="loop-title" data-i18n="loopTitle">Change the setup. Run it again.</h2>
+          </div>
+          <p class="section-note" data-i18n="loopNote">The concept art sketches the idea. Real footage and complete screenshots from the current build are further down.</p>
+        </div>
+        <div class="loop-grid">
+          <article class="loop-card reveal">
+            <div class="loop-copy">
+              <span class="loop-number">1.</span>
+              <div>
+                <h3 data-i18n="loopConfigureTitle">Set up the car</h3>
+                <p data-i18n="loopConfigureBody">Choose systems, assemble the setup, and define your approach.</p>
+              </div>
+            </div>
+            <div class="loop-image loop-image--concept loop-image--configure">
+              <img src="Media/T_GearEngineProductVisionPortrait.png" alt="Gear Engine concept visualization of a configured machine on a figure-eight circuit, not final gameplay" data-i18n-alt="loopConfigureAlt">
+              <span class="concept-stamp" data-i18n="conceptVisualization">Concept visualization</span>
+            </div>
+          </article>
+          <article class="loop-card reveal">
+            <div class="loop-copy">
+              <span class="loop-number">2.</span>
+              <div>
+                <h3 data-i18n="loopRaceTitle">Put it on track</h3>
+                <p data-i18n="loopRaceBody">Hit the track and watch every system interact under pressure.</p>
+              </div>
+            </div>
+            <div class="loop-image loop-image--concept loop-image--race">
+              <img src="Media/T_GearEngineProductVisionLandscape.png" alt="Gear Engine concept visualization of the red race car and configured systems, not final gameplay" data-i18n-alt="loopRaceAlt">
+              <span class="concept-stamp" data-i18n="conceptVisualization">Concept visualization</span>
+            </div>
+          </article>
+          <article class="loop-card reveal">
+            <div class="loop-copy">
+              <span class="loop-number">3.</span>
+              <div>
+                <h3 data-i18n="loopUpgradeTitle">Build on the result</h3>
+                <p data-i18n="loopUpgradeBody">Study the outcome, claim a reward, and build the next iteration.</p>
+              </div>
+            </div>
+            <div class="loop-image loop-image--concept loop-image--upgrade">
+              <img src="Media/T_GearEngineRewardConcept.png" alt="Gear Engine concept visualization of reward selection and machine upgrades, not final gameplay" data-i18n-alt="loopUpgradeAlt">
+              <span class="concept-stamp" data-i18n="conceptVisualization">Concept visualization</span>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="build" id="how-it-plays" aria-labelledby="build-title">
+      <div class="container build-grid">
+        <div class="build-copy reveal">
+          <p class="eyebrow" data-i18n="buildEyebrow">Make it yours</p>
+          <h2 class="section-title" id="build-title" data-i18n="buildTitle">There’s more than one way to go fast.</h2>
+          <p data-i18n="buildBody">Mix systems, look for useful interactions, and discover what works through play rather than a prescribed build.</p>
+          <ul class="check-list">
+            <li data-i18n="buildListCombine">Combine systems</li>
+            <li data-i18n="buildListSynergies">Find emergent synergies</li>
+            <li data-i18n="buildListEdge">Create your own edge</li>
+          </ul>
+        </div>
+        <div class="device reveal">
+          <img src="Media/T_CurrentMenuFigureEight.png" alt="Complete current-build configuration interface" data-i18n-alt="buildInterfaceAlt">
+        </div>
+        <div class="track-art reveal" aria-hidden="true">
+          <svg viewBox="0 0 430 330" role="img">
+            <path d="M86 48c61-33 104 17 128 64 22-43 70-94 132-59 80 45 15 127-39 160-41 25-53 36-67 75-11 30-51 28-61-2-13-38-26-50-67-74C54 178-5 97 86 48Z" fill="none" stroke="#071017" stroke-width="42" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M86 48c61-33 104 17 128 64 22-43 70-94 132-59 80 45 15 127-39 160-41 25-53 36-67 75-11 30-51 28-61-2-13-38-26-50-67-74C54 178-5 97 86 48Z" fill="none" stroke="#f6f0df" stroke-width="3" stroke-dasharray="10 11" stroke-linecap="round"/>
+            <path d="M246 278l40 14-15 20-39-15Z" fill="#fff"/>
+            <path d="M246 278l10 4-8 20-10-4Zm20 7 10 4-8 20-10-4Zm20 7 8 3-8 20-8-3Z" fill="#071017"/>
+          </svg>
+          <span class="track-label" data-i18n="trackLabel">Find the line</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="evidence" aria-labelledby="evidence-title">
+      <div class="container evidence-grid">
+        <div class="evidence-copy reveal">
+          <p class="eyebrow" data-i18n="evidenceEyebrow">Learn from every lap</p>
+          <h2 class="section-title" id="evidence-title" data-i18n="evidenceTitle">The track tells you what worked.</h2>
+          <p data-i18n="evidenceBody">Every run generates readable feedback. Compare behavior, understand what your setup changed, and take that insight back to the workshop.</p>
+          <div class="telemetry" aria-label="Available race feedback" data-i18n-aria="raceFeedbackLabel">
+            <span data-i18n="telemetryLive">Live race state</span>
+            <span data-i18n="telemetryLap">Lap performance</span>
+            <span data-i18n="telemetrySystem">System behavior</span>
+            <span data-i18n="telemetryOutcome">Run outcome</span>
+          </div>
+        </div>
+        <div class="video-panel reveal">
+          <div class="video-label">
+            <span data-i18n="verifiedFootage">Verified current-build footage</span>
+            <span data-i18n="sixtySeconds">60 seconds</span>
+          </div>
+          <video class="gameplay-video" controls playsinline preload="metadata" poster="Media/T_GearEngineBestMoments60sPoster.png">
+            <source src="Media/GearEngineBestMoments60s.mp4" type="video/mp4">
+            <span data-i18n="videoFallback">Your browser does not support HTML video.</span>
+          </video>
+        </div>
+      </div>
+    </section>
+
+    <section class="progression" aria-labelledby="progression-title">
+      <div class="container">
+        <div class="progression-head reveal">
+          <h2 class="section-title" id="progression-title" data-i18n="progressionTitle">Finish the race. Start the next build.</h2>
+          <p data-i18n="progressionBody">Check the result, choose what to add, and try a better setup.</p>
+        </div>
+        <div class="reward-grid">
+          <article class="reward-card reveal">
+            <h3 data-i18n="rewardResultTitle">See how you did</h3>
+            <div class="reward-image">
+              <img src="Media/T_CurrentResult.png" alt="Complete current Gear Engine race result screen" data-i18n-alt="rewardResultAlt">
+            </div>
+            <p class="reward-caption" data-i18n="rewardResultBody">A clear outcome closes the run and gives the next decision context.</p>
+          </article>
+          <article class="reward-card reveal">
+            <h3 data-i18n="rewardSelectionTitle">Pick what comes next</h3>
+            <div class="reward-image">
+              <img src="Media/T_CurrentRewardSelection.png" alt="Complete current Gear Engine reward selection screen" data-i18n-alt="rewardSelectionAlt">
+            </div>
+            <p class="reward-caption" data-i18n="rewardSelectionBody">New options turn progression into another systems decision.</p>
+          </article>
+          <article class="reward-card reveal">
+            <h3 data-i18n="rewardStorageTitle">Build the next version</h3>
+            <div class="reward-image">
+              <img src="Media/T_CurrentStorage.png" alt="Complete current Gear Engine storage screen" data-i18n-alt="rewardStorageAlt">
+            </div>
+            <p class="reward-caption" data-i18n="rewardStorageBody">The workshop keeps the loop tangible: inspect, reorganize, and prepare.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="media" id="media" aria-labelledby="media-title">
+      <div class="container">
+        <div class="section-head reveal">
+          <div>
+            <p class="eyebrow" data-i18n="mediaEyebrow">The game today</p>
+            <h2 class="section-title" id="media-title" data-i18n="mediaTitle">See what’s playable now.</h2>
+          </div>
+          <div class="media-actions">
+            <a class="button" href="GearEnginePublicPressKit.zip" download data-i18n="downloadPressKit">Download press kit</a>
+            <a class="button button--dark" href="BrandKit.html" data-i18n="openBrandKit">Open brand kit</a>
+          </div>
+        </div>
+        <figure class="promotional-key-art reveal">
+          <a href="Media/T_GearEnginePlayNowPoster.png" target="_blank" rel="noreferrer">
+            <img src="Media/T_GearEnginePlayNowPoster.png" width="1942" height="809" alt="Gear Engine promotional racing poster with a red number 77 car, Play Now headline, and QR code" data-i18n-alt="promotionalKeyArtAlt">
+          </a>
+          <figcaption><strong data-i18n="promotionalKeyArtTitle">Promotional key art</strong><span data-i18n="promotionalKeyArtBody">Official promotional artwork with an embedded play QR code. This is not a gameplay capture.</span></figcaption>
+        </figure>
+        <div class="gallery">
+          <figure class="reveal">
+            <img src="Media/T_CurrentRaceActionOval.png" alt="Current Gear Engine race action on the oval track" data-i18n-alt="mediaOvalActionAlt">
+            <figcaption data-i18n="mediaOvalAction">Oval race action</figcaption>
+          </figure>
+          <figure class="reveal">
+            <img src="Media/T_CurrentMenuOval.png" alt="Current Gear Engine setup menu on the oval track" data-i18n-alt="mediaOvalSetupAlt">
+            <figcaption data-i18n="mediaOvalSetup">Oval setup</figcaption>
+          </figure>
+          <figure class="reveal">
+            <img src="Media/T_CurrentRaceActionFigureEight.png" alt="Current Gear Engine race action on the figure-eight track" data-i18n-alt="mediaFigureEightAlt">
+            <figcaption data-i18n="mediaFigureEight">Figure-eight action</figcaption>
+          </figure>
+          <figure class="reveal">
+            <img src="Media/T_CurrentStorage.png" alt="Current Gear Engine storage interface" data-i18n-alt="mediaStorageAlt">
+            <figcaption data-i18n="mediaStorage">System storage</figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <section class="concept-vision" id="product-vision" aria-labelledby="concept-title">
+      <div class="container">
+        <div class="section-head reveal">
+          <div>
+            <p class="eyebrow" data-i18n="conceptEyebrow">What comes next</p>
+            <h2 class="section-title" id="concept-title" data-i18n="conceptTitle">Here’s where we want to take it.</h2>
+          </div>
+          <p class="section-note" data-i18n="conceptNote">Early visual ideas for setup, races, results, rewards, maps, and rankings.</p>
+        </div>
+        <p class="concept-disclosure reveal"><strong data-i18n="conceptDisclosureTitle">Concept art — not final gameplay</strong><span data-i18n="conceptDisclosureBody">These AI-generated images communicate intended visual direction and possible future product states. They do not represent implemented screens or verified gameplay.</span></p>
+        <div class="concept-gallery">
+          <figure class="reveal"><a href="Media/T_GearEngineProductVisionLandscape.png" target="_blank" rel="noreferrer"><img loading="lazy" src="Media/T_GearEngineProductVisionLandscape.png" alt="Landscape product vision showing a mechanical loadout beside a racing car" data-i18n-alt="conceptSystemAlt"></a><figcaption><strong data-i18n="conceptSystemTitle">System and race vision</strong><span data-i18n="conceptSystemBody">The mechanical build and track performance presented as one product story.</span></figcaption></figure>
+          <figure class="reveal"><a href="Media/T_GearEngineProductVisionPortrait.png" target="_blank" rel="noreferrer"><img loading="lazy" src="Media/T_GearEngineProductVisionPortrait.png" alt="Portrait product vision for a mobile mechanical loadout" data-i18n-alt="conceptMobileAlt"></a><figcaption><strong data-i18n="conceptMobileTitle">Mobile loadout</strong><span data-i18n="conceptMobileBody">Compact preparation and vehicle-system composition.</span></figcaption></figure>
+          <figure class="reveal"><a href="Media/T_GearEngineMatchResultConcept.png" target="_blank" rel="noreferrer"><img loading="lazy" src="Media/T_GearEngineMatchResultConcept.png" alt="Concept art for a post-race result screen" data-i18n-alt="conceptResultAlt"></a><figcaption><strong data-i18n="conceptResultTitle">Race result</strong><span data-i18n="conceptResultBody">A celebratory outcome and clear path into the next decision.</span></figcaption></figure>
+          <figure class="reveal"><a href="Media/T_GearEngineRewardConcept.png" target="_blank" rel="noreferrer"><img loading="lazy" src="Media/T_GearEngineRewardConcept.png" alt="Concept art for selecting one of three rewards" data-i18n-alt="conceptRewardAlt"></a><figcaption><strong data-i18n="conceptRewardTitle">Reward selection</strong><span data-i18n="conceptRewardBody">A focused choice that changes the next mechanical build.</span></figcaption></figure>
+          <figure class="reveal"><a href="Media/T_GearEngineLocalMapConcept.png" target="_blank" rel="noreferrer"><img loading="lazy" src="Media/T_GearEngineLocalMapConcept.png" alt="Concept art for selecting a local racing circuit" data-i18n-alt="conceptLocalAlt"></a><figcaption><strong data-i18n="conceptLocalTitle">Local circuits</strong><span data-i18n="conceptLocalBody">Distinct track silhouettes and selection context.</span></figcaption></figure>
+          <figure class="reveal"><a href="Media/T_GearEngineWorldMapConcept.png" target="_blank" rel="noreferrer"><img loading="lazy" src="Media/T_GearEngineWorldMapConcept.png" alt="Concept art for a world tour map with racing regions" data-i18n-alt="conceptWorldAlt"></a><figcaption><strong data-i18n="conceptWorldTitle">World tour</strong><span data-i18n="conceptWorldBody">A possible campaign layer connecting multiple racing regions.</span></figcaption></figure>
+          <figure class="reveal"><a href="Media/T_GearEngineRankingConcept.png" target="_blank" rel="noreferrer"><img loading="lazy" src="Media/T_GearEngineRankingConcept.png" alt="Concept art for a best-times ranking screen" data-i18n-alt="conceptRankingAlt"></a><figcaption><strong data-i18n="conceptRankingTitle">Best times</strong><span data-i18n="conceptRankingBody">A possible secondary view for personal or competitive results.</span></figcaption></figure>
+        </div>
+      </div>
+    </section>
+
+    <section class="final-cta" aria-labelledby="final-title">
+      <div class="container reveal">
+        <h2 id="final-title"><span data-i18n="finalTitle">Think your setup will work?</span> <span data-i18n="finalAccent">Take it for a spin.</span></h2>
+        <a class="button play-link" href="../" data-i18n="playPrototype">Play the prototype</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <img class="footer-lockup" src="Media/T_LeonardoLycanLockup.png" alt="Leonardo Lycan">
+    <div class="footer-links">
+      <a class="footer-link" href="https://leonardolycan.com">leonardolycan.com</a>
+      <a class="footer-link" href="https://www.linkedin.com/in/matheus-cohen/" data-i18n="linkedinLabel">Matheus Cohen on LinkedIn</a>
+    </div>
+  </footer>
+
+  <div class="page-transition" id="page-transition" aria-hidden="true">
+    <span data-i18n="raceReady">Race ready</span>
+  </div>
+
+  <script>
+    (() => {
+      const header = document.getElementById("site-header");
+      const menuToggle = document.querySelector(".menu-toggle");
+      const navLinks = document.getElementById("nav-links");
+      const sectionLinks = Array.from(navLinks.querySelectorAll('a[href^="#"]'));
+      const linkedSections = sectionLinks
+        .map((link) => ({ link, section: document.querySelector(link.hash) }))
+        .filter(({ section }) => section);
+      const heroVideo = document.getElementById("hero-video");
+      const transition = document.getElementById("page-transition");
+      const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+      const languageToggle = document.getElementById("language-toggle");
+      const descriptionMeta = document.querySelector('meta[name="description"]');
+      const translations = {
+        en: {
+          documentTitle: "Gear Engine — Build the Car. Run the Race.",
+          documentDescription: "Gear Engine is a systems-driven racing prototype. Configure the machine, race, study the result, and rebuild.",
+          skipToContent: "Skip to content",
+          primaryNavigation: "Primary navigation",
+          homeLabel: "Gear Engine home",
+          navGame: "Game",
+          navHowItPlays: "How it plays",
+          navMedia: "Media",
+          navProductVision: "Product vision",
+          playPrototype: "Play the prototype",
+          downloadPressKit: "Download press kit",
+          openBrandKit: "Open brand kit",
+          openNavigation: "Open navigation",
+          closeNavigation: "Close navigation",
+          languageToggleLabel: "Switch to Brazilian Portuguese",
+          heroEyebrow: "A racing game built around tinkering",
+          heroTitleLine1: "Build the car.",
+          heroTitleLine2: "See what it can do.",
+          heroDeck: "Swap parts, hit the track, and learn from every lap. A better setup makes a better race.",
+          prototypeHighlights: "Prototype highlights",
+          proofPlayable: "Playable WebGL prototype",
+          proofTracks: "Figure-eight and oval tracks",
+          proofFootage: "Current-build footage below",
+          loopEyebrow: "How a run works",
+          loopTitle: "Change the setup. Run it again.",
+          loopNote: "The concept art sketches the idea. Real footage and complete screenshots from the current build are further down.",
+          loopConfigureTitle: "Set up the car",
+          loopConfigureBody: "Choose systems, assemble the setup, and define your approach.",
+          loopConfigureAlt: "Gear Engine concept visualization of a configured machine on a figure-eight circuit, not final gameplay",
+          loopRaceTitle: "Put it on track",
+          loopRaceBody: "Hit the track and watch every system interact under pressure.",
+          loopRaceAlt: "Gear Engine concept visualization of the red race car and configured systems, not final gameplay",
+          loopUpgradeTitle: "Build on the result",
+          loopUpgradeBody: "Study the outcome, claim a reward, and build the next iteration.",
+          loopUpgradeAlt: "Gear Engine concept visualization of reward selection and machine upgrades, not final gameplay",
+          conceptVisualization: "Concept visualization",
+          buildEyebrow: "Make it yours",
+          buildTitle: "There’s more than one way to go fast.",
+          buildBody: "Mix systems, look for useful interactions, and discover what works through play rather than a prescribed build.",
+          buildListCombine: "Combine systems",
+          buildListSynergies: "Find emergent synergies",
+          buildListEdge: "Create your own edge",
+          buildInterfaceAlt: "Complete current-build configuration interface",
+          trackLabel: "Find the line",
+          evidenceEyebrow: "Learn from every lap",
+          evidenceTitle: "The track tells you what worked.",
+          evidenceBody: "Every run generates readable feedback. Compare behavior, understand what your setup changed, and take that insight back to the workshop.",
+          raceFeedbackLabel: "Available race feedback",
+          telemetryLive: "Live race state",
+          telemetryLap: "Lap performance",
+          telemetrySystem: "System behavior",
+          telemetryOutcome: "Run outcome",
+          verifiedFootage: "Verified current-build footage",
+          sixtySeconds: "60 seconds",
+          videoFallback: "Your browser does not support HTML video.",
+          progressionTitle: "Finish the race. Start the next build.",
+          progressionBody: "Check the result, choose what to add, and try a better setup.",
+          rewardResultTitle: "See how you did",
+          rewardResultAlt: "Complete current Gear Engine race result screen",
+          rewardResultBody: "A clear outcome closes the run and gives the next decision context.",
+          rewardSelectionTitle: "Pick what comes next",
+          rewardSelectionAlt: "Complete current Gear Engine reward selection screen",
+          rewardSelectionBody: "New options turn progression into another systems decision.",
+          rewardStorageTitle: "Build the next version",
+          rewardStorageAlt: "Complete current Gear Engine storage screen",
+          rewardStorageBody: "The workshop keeps the loop tangible: inspect, reorganize, and prepare.",
+          mediaEyebrow: "The game today",
+          mediaTitle: "See what’s playable now.",
+          promotionalKeyArtAlt: "Gear Engine promotional racing poster with a red number 77 car, Play Now headline, and QR code",
+          promotionalKeyArtTitle: "Promotional key art",
+          promotionalKeyArtBody: "Official promotional artwork with an embedded play QR code. This is not a gameplay capture.",
+          mediaOvalActionAlt: "Current Gear Engine race action on the oval track",
+          mediaOvalAction: "Oval race action",
+          mediaOvalSetupAlt: "Current Gear Engine setup menu on the oval track",
+          mediaOvalSetup: "Oval setup",
+          mediaFigureEightAlt: "Current Gear Engine race action on the figure-eight track",
+          mediaFigureEight: "Figure-eight action",
+          mediaStorageAlt: "Current Gear Engine storage interface",
+          mediaStorage: "System storage",
+          conceptEyebrow: "What comes next",
+          conceptTitle: "Here’s where we want to take it.",
+          conceptNote: "Early visual ideas for setup, races, results, rewards, maps, and rankings.",
+          conceptDisclosureTitle: "Concept art — not final gameplay",
+          conceptDisclosureBody: "These AI-generated images communicate intended visual direction and possible future product states. They do not represent implemented screens or verified gameplay.",
+          conceptSystemAlt: "Landscape product vision showing a mechanical loadout beside a racing car",
+          conceptSystemTitle: "System and race vision",
+          conceptSystemBody: "The mechanical build and track performance presented as one product story.",
+          conceptMobileAlt: "Portrait product vision for a mobile mechanical loadout",
+          conceptMobileTitle: "Mobile loadout",
+          conceptMobileBody: "Compact preparation and vehicle-system composition.",
+          conceptResultAlt: "Concept art for a post-race result screen",
+          conceptResultTitle: "Race result",
+          conceptResultBody: "A celebratory outcome and clear path into the next decision.",
+          conceptRewardAlt: "Concept art for selecting one of three rewards",
+          conceptRewardTitle: "Reward selection",
+          conceptRewardBody: "A focused choice that changes the next mechanical build.",
+          conceptLocalAlt: "Concept art for selecting a local racing circuit",
+          conceptLocalTitle: "Local circuits",
+          conceptLocalBody: "Distinct track silhouettes and selection context.",
+          conceptWorldAlt: "Concept art for a world tour map with racing regions",
+          conceptWorldTitle: "World tour",
+          conceptWorldBody: "A possible campaign layer connecting multiple racing regions.",
+          conceptRankingAlt: "Concept art for a best-times ranking screen",
+          conceptRankingTitle: "Best times",
+          conceptRankingBody: "A possible secondary view for personal or competitive results.",
+          finalTitle: "Think your setup will work?",
+          finalAccent: "Take it for a spin.",
+          linkedinLabel: "Matheus Cohen on LinkedIn",
+          raceReady: "Race ready"
+        },
+        "pt-BR": {
+          documentTitle: "Gear Engine — Monte o carro. Corra. Aprenda.",
+          documentDescription: "Gear Engine é um protótipo de corrida movido por sistemas. Configure a máquina, corra, analise o resultado e reconstrua.",
+          skipToContent: "Pular para o conteúdo",
+          primaryNavigation: "Navegação principal",
+          homeLabel: "Página inicial do Gear Engine",
+          navGame: "Jogo",
+          navHowItPlays: "Como funciona",
+          navMedia: "Mídia",
+          navProductVision: "Visão do produto",
+          playPrototype: "Jogar o protótipo",
+          downloadPressKit: "Baixar press kit",
+          openBrandKit: "Abrir brand kit",
+          openNavigation: "Abrir navegação",
+          closeNavigation: "Fechar navegação",
+          languageToggleLabel: "Mudar para inglês",
+          heroEyebrow: "Um jogo de corrida feito para experimentar",
+          heroTitleLine1: "Monte o carro.",
+          heroTitleLine2: "Descubra o que ele faz.",
+          heroDeck: "Troque peças, vá para a pista e aprenda a cada volta. Uma configuração melhor faz uma corrida melhor.",
+          prototypeHighlights: "Destaques do protótipo",
+          proofPlayable: "Protótipo WebGL jogável",
+          proofTracks: "Pistas em oito e oval",
+          proofFootage: "Vídeos da versão atual abaixo",
+          loopEyebrow: "Como funciona uma corrida",
+          loopTitle: "Mude a configuração. Corra de novo.",
+          loopNote: "A arte conceitual apresenta a ideia. Mais abaixo estão vídeos reais e capturas completas da versão atual.",
+          loopConfigureTitle: "Prepare o carro",
+          loopConfigureBody: "Escolha sistemas, monte a configuração e defina sua abordagem.",
+          loopConfigureAlt: "Visualização conceitual do Gear Engine com uma máquina configurada em uma pista em oito; não representa a jogabilidade final",
+          loopRaceTitle: "Leve para a pista",
+          loopRaceBody: "Entre na pista e veja cada sistema interagir sob pressão.",
+          loopRaceAlt: "Visualização conceitual do Gear Engine com o carro vermelho e os sistemas configurados; não representa a jogabilidade final",
+          loopUpgradeTitle: "Use o resultado",
+          loopUpgradeBody: "Analise o resultado, escolha uma recompensa e monte a próxima versão.",
+          loopUpgradeAlt: "Visualização conceitual do Gear Engine com seleção de recompensa e melhorias da máquina; não representa a jogabilidade final",
+          conceptVisualization: "Visualização conceitual",
+          buildEyebrow: "Faça do seu jeito",
+          buildTitle: "Existe mais de uma forma de ser rápido.",
+          buildBody: "Combine sistemas, procure interações úteis e descubra o que funciona jogando, sem depender de uma configuração prescrita.",
+          buildListCombine: "Combine sistemas",
+          buildListSynergies: "Encontre sinergias emergentes",
+          buildListEdge: "Crie sua própria vantagem",
+          buildInterfaceAlt: "Interface completa de configuração da versão atual",
+          trackLabel: "Encontre o traçado",
+          evidenceEyebrow: "Aprenda a cada volta",
+          evidenceTitle: "A pista mostra o que funcionou.",
+          evidenceBody: "Cada corrida gera informações claras. Compare o comportamento, entenda o que sua configuração mudou e leve esse aprendizado de volta para a oficina.",
+          raceFeedbackLabel: "Informações disponíveis da corrida",
+          telemetryLive: "Estado da corrida ao vivo",
+          telemetryLap: "Desempenho por volta",
+          telemetrySystem: "Comportamento dos sistemas",
+          telemetryOutcome: "Resultado da corrida",
+          verifiedFootage: "Vídeo verificado da versão atual",
+          sixtySeconds: "60 segundos",
+          videoFallback: "Seu navegador não oferece suporte a vídeo HTML.",
+          progressionTitle: "Termine a corrida. Comece a próxima montagem.",
+          progressionBody: "Confira o resultado, escolha o que adicionar e teste uma configuração melhor.",
+          rewardResultTitle: "Veja como você foi",
+          rewardResultAlt: "Tela completa de resultado da corrida na versão atual do Gear Engine",
+          rewardResultBody: "Um resultado claro encerra a corrida e dá contexto para a próxima decisão.",
+          rewardSelectionTitle: "Escolha o próximo passo",
+          rewardSelectionAlt: "Tela completa de seleção de recompensa na versão atual do Gear Engine",
+          rewardSelectionBody: "Novas opções transformam a progressão em outra decisão de sistemas.",
+          rewardStorageTitle: "Monte a próxima versão",
+          rewardStorageAlt: "Tela completa de armazenamento na versão atual do Gear Engine",
+          rewardStorageBody: "A oficina mantém o ciclo concreto: inspecione, reorganize e prepare.",
+          mediaEyebrow: "O jogo hoje",
+          mediaTitle: "Veja o que já está jogável.",
+          promotionalKeyArtAlt: "Cartaz promocional do Gear Engine com carro de corrida vermelho número 77, chamada Jogue Agora e código QR",
+          promotionalKeyArtTitle: "Arte promocional",
+          promotionalKeyArtBody: "Arte promocional oficial com código QR para jogar. Esta imagem não é uma captura de gameplay.",
+          mediaOvalActionAlt: "Ação de corrida atual do Gear Engine na pista oval",
+          mediaOvalAction: "Corrida na pista oval",
+          mediaOvalSetupAlt: "Menu atual de configuração do Gear Engine na pista oval",
+          mediaOvalSetup: "Configuração da pista oval",
+          mediaFigureEightAlt: "Ação de corrida atual do Gear Engine na pista em oito",
+          mediaFigureEight: "Corrida na pista em oito",
+          mediaStorageAlt: "Interface atual de armazenamento do Gear Engine",
+          mediaStorage: "Armazenamento de sistemas",
+          conceptEyebrow: "O que vem depois",
+          conceptTitle: "É para onde queremos levar o jogo.",
+          conceptNote: "Ideias visuais iniciais para configurações, corridas, resultados, recompensas, mapas e rankings.",
+          conceptDisclosureTitle: "Arte conceitual — não é a jogabilidade final",
+          conceptDisclosureBody: "Estas imagens geradas por IA comunicam a direção visual pretendida e possíveis estados futuros do produto. Elas não representam telas implementadas nem jogabilidade verificada.",
+          conceptSystemAlt: "Visão de produto em paisagem com uma configuração mecânica ao lado de um carro de corrida",
+          conceptSystemTitle: "Visão dos sistemas e da corrida",
+          conceptSystemBody: "A montagem mecânica e o desempenho na pista apresentados como uma única história de produto.",
+          conceptMobileAlt: "Visão de produto em retrato para uma configuração mecânica em dispositivo móvel",
+          conceptMobileTitle: "Configuração mobile",
+          conceptMobileBody: "Preparação compacta e composição dos sistemas do veículo.",
+          conceptResultAlt: "Arte conceitual de uma tela de resultado pós-corrida",
+          conceptResultTitle: "Resultado da corrida",
+          conceptResultBody: "Um resultado comemorativo com um caminho claro para a próxima decisão.",
+          conceptRewardAlt: "Arte conceitual para escolher uma de três recompensas",
+          conceptRewardTitle: "Seleção de recompensa",
+          conceptRewardBody: "Uma escolha focada que muda a próxima montagem mecânica.",
+          conceptLocalAlt: "Arte conceitual para selecionar um circuito de corrida local",
+          conceptLocalTitle: "Circuitos locais",
+          conceptLocalBody: "Traçados distintos e contexto para escolher a pista.",
+          conceptWorldAlt: "Arte conceitual de um mapa de turnê mundial com regiões de corrida",
+          conceptWorldTitle: "Turnê mundial",
+          conceptWorldBody: "Uma possível camada de campanha conectando várias regiões de corrida.",
+          conceptRankingAlt: "Arte conceitual de uma tela de ranking dos melhores tempos",
+          conceptRankingTitle: "Melhores tempos",
+          conceptRankingBody: "Uma possível visão secundária para resultados pessoais ou competitivos.",
+          finalTitle: "Acha que sua configuração vai funcionar?",
+          finalAccent: "Leve para a pista.",
+          linkedinLabel: "Matheus Cohen no LinkedIn",
+          raceReady: "Pronto para correr"
+        }
+      };
+      let heroVisible = true;
+      let sectionUpdateFrame = 0;
+
+      const getCurrentCopy = () => translations[document.documentElement.lang] || translations.en;
+
+      const getStoredLanguage = () => {
+        try {
+          return window.localStorage.getItem("gearEngineLanguage");
+        } catch {
+          return null;
+        }
+      };
+
+      const storeLanguage = (language) => {
+        try {
+          window.localStorage.setItem("gearEngineLanguage", language);
+        } catch {
+          return;
+        }
+      };
+
+      const applyLanguage = (language) => {
+        const copy = translations[language] || translations.en;
+        document.documentElement.lang = language;
+        document.title = copy.documentTitle;
+        descriptionMeta.setAttribute("content", copy.documentDescription);
+
+        document.querySelectorAll("[data-i18n]").forEach((element) => {
+          element.textContent = copy[element.dataset.i18n];
+        });
+
+        document.querySelectorAll("[data-i18n-alt]").forEach((element) => {
+          element.setAttribute("alt", copy[element.dataset.i18nAlt]);
+        });
+
+        document.querySelectorAll("[data-i18n-aria]").forEach((element) => {
+          element.setAttribute("aria-label", copy[element.dataset.i18nAria]);
+        });
+
+        languageToggle.textContent = language === "en" ? "PT-BR" : "EN";
+        languageToggle.setAttribute("aria-label", copy.languageToggleLabel);
+        languageToggle.setAttribute("aria-pressed", String(language === "pt-BR"));
+        menuToggle.setAttribute("aria-label", navLinks.classList.contains("is-open") ? copy.closeNavigation : copy.openNavigation);
+        storeLanguage(language);
+      };
+
+      const storedLanguage = getStoredLanguage();
+      const browserLanguage = window.navigator.language.toLowerCase().startsWith("pt") ? "pt-BR" : "en";
+      applyLanguage(storedLanguage === "pt-BR" || storedLanguage === "en" ? storedLanguage : browserLanguage);
+
+      const updateHeader = () => {
+        header.classList.toggle("is-scrolled", window.scrollY > 36);
+      };
+
+      const updateCurrentSection = () => {
+        sectionUpdateFrame = 0;
+        const readingLine = window.scrollY + Math.min(window.innerHeight * .28, 220);
+        let currentSection = linkedSections[0];
+
+        linkedSections.forEach((item) => {
+          if (item.section.offsetTop <= readingLine) currentSection = item;
+        });
+
+        linkedSections.forEach(({ link }) => {
+          if (link === currentSection.link) {
+            link.setAttribute("aria-current", "location");
+          } else {
+            link.removeAttribute("aria-current");
+          }
+        });
+      };
+
+      const requestCurrentSectionUpdate = () => {
+        if (sectionUpdateFrame) return;
+        sectionUpdateFrame = window.requestAnimationFrame(updateCurrentSection);
+      };
+
+      const syncHeroPlayback = () => {
+        if (!heroVideo || reduceMotion.matches) return;
+        if (heroVisible && !document.hidden) {
+          heroVideo.play().catch(() => {});
+        } else {
+          heroVideo.pause();
+        }
+      };
+
+      updateHeader();
+      updateCurrentSection();
+      window.addEventListener("scroll", updateHeader, { passive: true });
+      window.addEventListener("scroll", requestCurrentSectionUpdate, { passive: true });
+      window.addEventListener("resize", requestCurrentSectionUpdate);
+      window.addEventListener("load", requestCurrentSectionUpdate);
+      document.addEventListener("visibilitychange", syncHeroPlayback);
+
+      menuToggle.addEventListener("click", () => {
+        const open = !navLinks.classList.contains("is-open");
+        const copy = getCurrentCopy();
+        navLinks.classList.toggle("is-open", open);
+        menuToggle.setAttribute("aria-expanded", String(open));
+        menuToggle.setAttribute("aria-label", open ? copy.closeNavigation : copy.openNavigation);
+      });
+
+      languageToggle.addEventListener("click", () => {
+        applyLanguage(document.documentElement.lang === "pt-BR" ? "en" : "pt-BR");
+      });
+
+      navLinks.addEventListener("click", (event) => {
+        if (event.target.closest("a")) {
+          navLinks.classList.remove("is-open");
+          menuToggle.setAttribute("aria-expanded", "false");
+          menuToggle.setAttribute("aria-label", getCurrentCopy().openNavigation);
+        }
+      });
+
+      if ("IntersectionObserver" in window) {
+        const revealObserver = new IntersectionObserver((entries, observer) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add("is-visible");
+              observer.unobserve(entry.target);
+            }
+          });
+        }, { threshold: .12 });
+
+        document.querySelectorAll(".reveal").forEach((element) => revealObserver.observe(element));
+
+        if (heroVideo) {
+          const heroObserver = new IntersectionObserver(([entry]) => {
+            heroVisible = entry.isIntersecting;
+            syncHeroPlayback();
+          }, { threshold: .08 });
+          heroObserver.observe(document.querySelector(".hero"));
+        }
+      } else {
+        document.querySelectorAll(".reveal").forEach((element) => element.classList.add("is-visible"));
+      }
+
+      document.querySelectorAll(".play-link").forEach((link) => {
+        link.addEventListener("click", (event) => {
+          if (reduceMotion.matches) return;
+          event.preventDefault();
+          transition.classList.add("is-active");
+          window.setTimeout(() => {
+            window.location.href = link.href;
+          }, 430);
+        });
+      });
+    })();
+  </script>
+</body>
+</html>

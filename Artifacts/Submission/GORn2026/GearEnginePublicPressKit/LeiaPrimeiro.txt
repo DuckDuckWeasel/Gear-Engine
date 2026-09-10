@@ -1,0 +1,12 @@
+GEAR ENGINE — PRESS KIT PÚBLICO
+
+Jogue diretamente no navegador:
+https://gear-engine-gorn-2026.web.app
+
+Press kit visual público:
+https://gear-engine-gorn-2026.web.app/PressKit/
+
+As imagens na pasta Screenshots são frames sem alterações da versão atual registrada.
+A pasta Logos contém a identidade baseada na splash original do jogo.
+A pasta KeyArt contém a arte promocional oficial com o QR code para jogar.
+A build não faz parte deste arquivo: ela está hospedada e acessível pelo link acima.

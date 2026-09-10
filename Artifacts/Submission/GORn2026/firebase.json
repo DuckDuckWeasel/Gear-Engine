@@ -1,0 +1,54 @@
+{
+  "hosting": {
+    "site": "gear-engine-gorn-2026",
+    "public": "GearEngineWebGL",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/*.py",
+      "**/*.command",
+      "**/*.bat",
+      "**/*.sh",
+      "ReadMe.txt"
+    ],
+    "headers": [
+      {
+        "source": "**/*.html",
+        "headers": [
+          { "key": "Cache-Control", "value": "no-cache, no-store, must-revalidate" }
+        ]
+      },
+      {
+        "source": "**/*.json",
+        "headers": [
+          { "key": "Cache-Control", "value": "no-cache, no-store, must-revalidate" }
+        ]
+      },
+      {
+        "source": "**/*.unityweb",
+        "headers": [
+          { "key": "Content-Encoding", "value": "br" },
+          { "key": "Cache-Control", "value": "public,max-age=0,must-revalidate" }
+        ]
+      },
+      {
+        "source": "**/*.wasm.unityweb",
+        "headers": [
+          { "key": "Content-Type", "value": "application/wasm" }
+        ]
+      },
+      {
+        "source": "**/*.js.unityweb",
+        "headers": [
+          { "key": "Content-Type", "value": "application/javascript" }
+        ]
+      },
+      {
+        "source": "**/*.data.unityweb",
+        "headers": [
+          { "key": "Content-Type", "value": "application/octet-stream" }
+        ]
+      }
+    ]
+  }
+}

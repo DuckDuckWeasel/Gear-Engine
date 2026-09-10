@@ -1,0 +1,26 @@
+GEAR ENGINE — WEBGL EVALUATION BUILD
+
+1. Download GearEngineWebGLDemo.zip.
+2. Extract the complete archive; do not run it from inside the ZIP.
+3. Start a local web server from the extracted folder:
+   - macOS: double-click RunGearEngine.command. If macOS blocks it, right-click it and choose Open.
+   - Windows: double-click RunGearEngine.bat.
+   - Linux: run ./RunGearEngine.sh from a terminal.
+4. Open http://127.0.0.1:8080 in Chrome, Edge, Firefox, or Safari.
+5. Use a portrait or tall browser window. Keep the terminal window open while playing.
+6. To stop the local server, return to the terminal window and press Control+C.
+
+The launcher uses Python 3 when available. If Python 3 is unavailable, serve the extracted
+folder with any static HTTP server. Opening index.html directly from file:// is unsupported
+because browsers block Unity WebGL data requests in that mode.
+
+Suggested evaluation path:
+- Open the main flow.
+- Configure the gear loadout.
+- Start a race and observe the mechanical feedback.
+- Review the result.
+- Select a reward.
+- Return to storage and inspect an item.
+
+Status: evaluation prototype. Final compatibility with the GO!RN event computer remains
+pending until its hardware and operating-system specifications are supplied.

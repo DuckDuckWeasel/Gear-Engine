@@ -1,0 +1,1093 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <meta name="description" content="Gear Engine digital brand system for portfolio, press, and product-facing applications.">
+  <link rel="icon" href="Media/GearEngineSplashLogo.png">
+  <title>Gear Engine — Brand Kit</title>
+  <style>
+    @font-face {
+      font-family: "Oswald";
+      src: url("Fonts/OswaldVariable.woff2") format("woff2");
+      font-style: normal;
+      font-weight: 200 700;
+      font-display: swap;
+    }
+
+    @font-face {
+      font-family: "Inter";
+      src: url("Fonts/InterVariable.woff2") format("woff2");
+      font-style: normal;
+      font-weight: 100 900;
+      font-display: swap;
+    }
+
+    :root {
+      --asphalt: #0b0f14;
+      --pit-wall: #151c24;
+      --pit-wall-elevated: #202a35;
+      --race-white: #fff8e8;
+      --smoke: #c8d0d8;
+      --racing-red: #ef3e2f;
+      --victory-yellow: #ffd43b;
+      --track-blue: #18aeea;
+      --grass-green: #43b649;
+      --border: rgba(255, 248, 232, 0.16);
+      --border-strong: rgba(255, 248, 232, 0.34);
+      --shadow: 0 20px 60px rgba(0, 0, 0, 0.28);
+      --content: 1180px;
+      --radius-control: 8px;
+      --radius-card: 16px;
+      --radius-hero: 24px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: 92px;
+    }
+
+    body {
+      margin: 0;
+      min-width: 0;
+      overflow-x: hidden;
+      background:
+        radial-gradient(circle at 88% 8%, rgba(24, 174, 234, 0.11), transparent 27rem),
+        linear-gradient(180deg, #0b0f14 0%, #10161d 52%, #0b0f14 100%);
+      color: var(--race-white);
+      font: 450 1rem/1.65 "Inter", Arial, sans-serif;
+    }
+
+    a {
+      color: inherit;
+    }
+
+    img {
+      display: block;
+      max-width: 100%;
+      height: auto;
+    }
+
+    :focus-visible {
+      outline: 3px solid var(--victory-yellow);
+      outline-offset: 3px;
+    }
+
+    .skip-link {
+      position: fixed;
+      z-index: 100;
+      top: 12px;
+      left: 12px;
+      padding: 12px 16px;
+      border-radius: var(--radius-control);
+      background: var(--victory-yellow);
+      color: var(--asphalt);
+      font-weight: 800;
+      transform: translateY(-160%);
+    }
+
+    .skip-link:focus {
+      transform: translateY(0);
+    }
+
+    .speed-stripe {
+      height: 8px;
+      background: linear-gradient(
+        90deg,
+        var(--racing-red) 0 42%,
+        var(--victory-yellow) 42% 70%,
+        var(--track-blue) 70% 100%
+      );
+    }
+
+    .site-nav {
+      position: sticky;
+      z-index: 20;
+      top: 0;
+      border-bottom: 1px solid var(--border);
+      background: rgba(11, 15, 20, 0.94);
+      backdrop-filter: blur(14px);
+    }
+
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      gap: 22px;
+      width: min(var(--content), calc(100% - 48px));
+      min-height: 64px;
+      margin: 0 auto;
+    }
+
+    .nav-brand {
+      flex: 0 0 auto;
+      font: 700 1rem/1 "Oswald", "Arial Narrow", sans-serif;
+      letter-spacing: 0.08em;
+      text-decoration: none;
+      text-transform: uppercase;
+    }
+
+    .nav-links {
+      display: flex;
+      flex: 1 1 auto;
+      gap: 4px;
+      overflow-x: auto;
+      overscroll-behavior-inline: contain;
+      scrollbar-width: thin;
+    }
+
+    .nav-links a {
+      display: inline-flex;
+      flex: 0 0 auto;
+      align-items: center;
+      min-height: 44px;
+      padding: 8px 12px;
+      border-radius: var(--radius-control);
+      color: var(--smoke);
+      font-size: 0.88rem;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .nav-links a:hover {
+      background: var(--pit-wall-elevated);
+      color: var(--race-white);
+    }
+
+    main,
+    .footer-inner {
+      width: min(var(--content), calc(100% - 48px));
+      margin-inline: auto;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(280px, 0.9fr) minmax(0, 1.35fr);
+      gap: clamp(32px, 6vw, 88px);
+      align-items: center;
+      min-height: min(760px, calc(100vh - 72px));
+      padding: 72px 0 64px;
+    }
+
+    .hero-mark {
+      padding: clamp(24px, 5vw, 52px);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-hero);
+      background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.06), transparent 54%),
+        var(--pit-wall);
+      box-shadow: var(--shadow);
+    }
+
+    .hero-mark img {
+      width: 100%;
+      filter: drop-shadow(0 18px 22px rgba(0, 0, 0, 0.35));
+    }
+
+    .eyebrow,
+    .status,
+    .card-label {
+      font: 700 0.78rem/1.2 "Oswald", "Arial Narrow", sans-serif;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .eyebrow {
+      margin: 0 0 14px;
+      color: var(--victory-yellow);
+    }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 22px;
+      padding: 8px 10px;
+      border: 1px solid rgba(67, 182, 73, 0.42);
+      border-radius: 999px;
+      background: rgba(67, 182, 73, 0.1);
+      color: var(--race-white);
+    }
+
+    .status::before {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--grass-green);
+      content: "";
+    }
+
+    h1,
+    h2,
+    h3 {
+      font-family: "Oswald", "Arial Narrow", sans-serif;
+      font-weight: 700;
+      line-height: 1;
+      text-transform: uppercase;
+      text-wrap: balance;
+    }
+
+    h1 {
+      max-width: 760px;
+      margin: 0;
+      font-size: clamp(4rem, 10vw, 7.5rem);
+      letter-spacing: -0.035em;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: clamp(2.35rem, 5vw, 4.25rem);
+      letter-spacing: -0.02em;
+    }
+
+    h3 {
+      margin: 0 0 12px;
+      font-size: 1.42rem;
+      letter-spacing: 0.01em;
+    }
+
+    .lede {
+      max-width: 700px;
+      margin: 24px 0 0;
+      color: var(--smoke);
+      font-size: clamp(1.08rem, 2vw, 1.3rem);
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 30px;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 48px;
+      padding: 12px 18px;
+      border: 2px solid transparent;
+      border-radius: var(--radius-control);
+      font-weight: 800;
+      text-decoration: none;
+    }
+
+    .button-primary {
+      background: var(--victory-yellow);
+      color: var(--asphalt);
+    }
+
+    .button-primary:hover {
+      background: #ffe36c;
+    }
+
+    .button-secondary {
+      border-color: var(--border-strong);
+      background: transparent;
+      color: var(--race-white);
+    }
+
+    .button-secondary:hover {
+      border-color: var(--race-white);
+      background: var(--pit-wall);
+    }
+
+    .hero-note {
+      max-width: 680px;
+      margin-top: 22px;
+      color: var(--smoke);
+      font-size: 0.92rem;
+    }
+
+    section {
+      scroll-margin-top: 92px;
+    }
+
+    .section {
+      padding: 78px 0;
+      border-top: 1px solid var(--border);
+    }
+
+    .section-heading {
+      display: grid;
+      grid-template-columns: minmax(220px, 0.65fr) minmax(0, 1.35fr);
+      gap: 36px;
+      align-items: end;
+      margin-bottom: 34px;
+    }
+
+    .section-heading p {
+      max-width: 720px;
+      margin: 0;
+      color: var(--smoke);
+    }
+
+    .grid {
+      display: grid;
+      gap: 16px;
+    }
+
+    .grid-2 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .grid-3 {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .card {
+      min-width: 0;
+      padding: 24px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-card);
+      background: var(--pit-wall);
+    }
+
+    .card > :last-child {
+      margin-bottom: 0;
+    }
+
+    .card-label {
+      margin: 0 0 12px;
+      color: var(--victory-yellow);
+    }
+
+    .card p,
+    .card li {
+      color: var(--smoke);
+    }
+
+    .card strong {
+      color: var(--race-white);
+    }
+
+    .asset-card {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .asset-preview {
+      display: grid;
+      place-items: center;
+      min-height: 220px;
+      padding: 24px;
+      overflow: hidden;
+      border-radius: 12px;
+      background:
+        linear-gradient(45deg, rgba(255, 255, 255, 0.035) 25%, transparent 25%, transparent 75%, rgba(255, 255, 255, 0.035) 75%),
+        linear-gradient(45deg, rgba(255, 255, 255, 0.035) 25%, transparent 25%, transparent 75%, rgba(255, 255, 255, 0.035) 75%),
+        #10161d;
+      background-position: 0 0, 12px 12px;
+      background-size: 24px 24px;
+    }
+
+    .asset-preview-square img {
+      width: min(100%, 260px);
+      border-radius: 14px;
+    }
+
+    .asset-preview-endorser img {
+      width: min(100%, 300px);
+    }
+
+    .asset-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: auto;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      min-height: 28px;
+      padding: 4px 9px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      color: var(--smoke);
+      font-size: 0.78rem;
+      font-weight: 700;
+    }
+
+    .swatches {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .swatch {
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      min-height: 184px;
+      padding: 18px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-card);
+      color: var(--asphalt);
+    }
+
+    .swatch.dark {
+      color: var(--race-white);
+    }
+
+    .swatch span,
+    .swatch code {
+      display: block;
+    }
+
+    .swatch span {
+      font-weight: 850;
+    }
+
+    .swatch code {
+      margin-top: 2px;
+      font: 700 0.9rem/1.3 ui-monospace, "SFMono-Regular", Consolas, monospace;
+    }
+
+    .swatch small {
+      margin-top: 12px;
+      font-weight: 650;
+      line-height: 1.35;
+    }
+
+    .asphalt { background: var(--asphalt); }
+    .pit-wall { background: var(--pit-wall); }
+    .pit-wall-elevated { background: var(--pit-wall-elevated); }
+    .race-white { background: var(--race-white); }
+    .smoke { background: var(--smoke); }
+    .racing-red { background: var(--racing-red); }
+    .victory-yellow { background: var(--victory-yellow); }
+    .track-blue { background: var(--track-blue); }
+    .grass-green { background: var(--grass-green); }
+
+    .contrast-note {
+      margin-top: 18px;
+      padding: 18px 20px;
+      border-left: 5px solid var(--racing-red);
+      border-radius: 0 var(--radius-control) var(--radius-control) 0;
+      background: rgba(239, 62, 47, 0.09);
+      color: var(--smoke);
+    }
+
+    .contrast-note strong {
+      color: var(--race-white);
+    }
+
+    .type-sample {
+      overflow-wrap: anywhere;
+    }
+
+    .type-display {
+      margin: 6px 0 20px;
+      font: 700 clamp(2.8rem, 7vw, 5.6rem)/0.92 "Oswald", "Arial Narrow", sans-serif;
+      letter-spacing: -0.03em;
+      text-transform: uppercase;
+    }
+
+    .type-body {
+      max-width: 650px;
+      margin: 0;
+      color: var(--smoke);
+      font-size: 1.05rem;
+    }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .flow li {
+      position: relative;
+      padding: 24px 20px 22px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-card);
+      background: var(--pit-wall);
+    }
+
+    .flow b {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--victory-yellow);
+      font: 700 1.55rem/1 "Oswald", "Arial Narrow", sans-serif;
+      text-transform: uppercase;
+    }
+
+    .flow span {
+      color: var(--smoke);
+    }
+
+    .action-demo {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+      margin-top: 20px;
+    }
+
+    .demo-primary,
+    .demo-secondary,
+    .demo-destructive {
+      min-height: 48px;
+      padding: 12px 18px;
+      border: 0;
+      border-radius: var(--radius-control);
+      color: var(--asphalt);
+      font: 800 0.94rem/1 "Inter", Arial, sans-serif;
+    }
+
+    .demo-primary { background: var(--victory-yellow); }
+    .demo-secondary { background: var(--track-blue); }
+    .demo-destructive { background: var(--racing-red); }
+
+    .rules-list {
+      margin: 0;
+      padding-left: 1.3rem;
+    }
+
+    .rules-list li + li {
+      margin-top: 10px;
+    }
+
+    .do-card {
+      border-top: 5px solid var(--grass-green);
+    }
+
+    .dont-card {
+      border-top: 5px solid var(--racing-red);
+    }
+
+    details {
+      border: 1px solid var(--border);
+      border-radius: var(--radius-card);
+      background: var(--pit-wall);
+    }
+
+    details + details {
+      margin-top: 12px;
+    }
+
+    summary {
+      display: flex;
+      align-items: center;
+      min-height: 52px;
+      padding: 14px 18px;
+      color: var(--race-white);
+      cursor: pointer;
+      font-weight: 800;
+    }
+
+    .details-content {
+      padding: 0 18px 18px;
+      color: var(--smoke);
+    }
+
+    .details-content ul {
+      margin-bottom: 0;
+    }
+
+    .download-panel {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(260px, 0.8fr);
+      gap: 28px;
+      align-items: center;
+      padding: clamp(28px, 6vw, 60px);
+      border: 1px solid rgba(255, 212, 59, 0.36);
+      border-radius: var(--radius-hero);
+      background:
+        linear-gradient(135deg, rgba(255, 212, 59, 0.1), transparent 45%),
+        var(--pit-wall);
+      box-shadow: var(--shadow);
+    }
+
+    .download-panel p {
+      color: var(--smoke);
+    }
+
+    .download-actions {
+      display: grid;
+      gap: 12px;
+    }
+
+    footer {
+      margin-top: 78px;
+      border-top: 1px solid var(--border);
+      background: var(--pit-wall);
+    }
+
+    .footer-inner {
+      display: flex;
+      justify-content: space-between;
+      gap: 32px;
+      align-items: center;
+      padding: 36px 0;
+    }
+
+    .footer-inner p {
+      max-width: 700px;
+      margin: 0;
+      color: var(--smoke);
+      font-size: 0.9rem;
+    }
+
+    .footer-lockup {
+      width: 180px;
+      flex: 0 0 auto;
+    }
+
+    @media (max-width: 959px) {
+      .hero {
+        grid-template-columns: 1fr;
+        min-height: 0;
+      }
+
+      .hero-mark {
+        width: min(100%, 620px);
+      }
+
+      .section-heading,
+      .download-panel {
+        grid-template-columns: 1fr;
+      }
+
+      .grid-3,
+      .swatches {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .flow {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 639px) {
+      html {
+        scroll-padding-top: 78px;
+      }
+
+      .nav-inner,
+      main,
+      .footer-inner {
+        width: min(100% - 36px, var(--content));
+      }
+
+      .nav-inner {
+        gap: 10px;
+      }
+
+      .nav-brand {
+        font-size: 0.86rem;
+      }
+
+      .hero {
+        padding: 46px 0 52px;
+      }
+
+      .hero-mark {
+        padding: 22px;
+      }
+
+      h1 {
+        font-size: clamp(3.4rem, 19vw, 5rem);
+      }
+
+      .section {
+        padding: 58px 0;
+      }
+
+      .grid-2,
+      .grid-3,
+      .swatches {
+        grid-template-columns: 1fr;
+      }
+
+      .actions,
+      .action-demo {
+        display: grid;
+      }
+
+      .button,
+      .demo-primary,
+      .demo-secondary,
+      .demo-destructive {
+        width: 100%;
+      }
+
+      .asset-preview {
+        min-height: 180px;
+      }
+
+      .footer-inner {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html {
+        scroll-behavior: auto;
+      }
+
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+
+    @media print {
+      .site-nav,
+      .actions,
+      .download-actions,
+      .skip-link {
+        display: none;
+      }
+
+      body {
+        background: #fff;
+        color: #111;
+      }
+
+      main,
+      .footer-inner {
+        width: 100%;
+      }
+
+      .section,
+      footer {
+        break-inside: avoid;
+        border-color: #bbb;
+      }
+
+      .card,
+      details,
+      .download-panel,
+      .hero-mark {
+        border-color: #bbb;
+        background: #fff;
+        box-shadow: none;
+      }
+
+      .card p,
+      .card li,
+      .section-heading p,
+      .lede,
+      .hero-note,
+      .details-content,
+      .download-panel p,
+      .footer-inner p {
+        color: #333;
+      }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Skip to brand guide</a>
+  <div class="speed-stripe" aria-hidden="true"></div>
+
+  <nav class="site-nav" aria-label="Brand kit sections">
+    <div class="nav-inner">
+      <a class="nav-brand" href="#top">Gear Engine</a>
+      <div class="nav-links">
+        <a href="#identity">Identity</a>
+        <a href="#color">Color</a>
+        <a href="#type">Type</a>
+        <a href="#interface">Interface</a>
+        <a href="#content">Content</a>
+        <a href="#accessibility">Accessibility</a>
+        <a href="#assets">Assets</a>
+      </div>
+    </div>
+  </nav>
+
+  <main id="main-content">
+    <header class="hero" id="top">
+      <div class="hero-mark">
+        <img src="Media/T_GearEngineLogoRacingFinal.png" alt="Gear Engine racing wordmark with white letters, red racing lines, and a checkered finish">
+      </div>
+      <div>
+        <p class="eyebrow">Digital brand system · Portfolio and press</p>
+        <div class="status">Version 1.1 · Working standard</div>
+        <h1>Build. Race. Improve.</h1>
+        <p class="lede">A practical identity system for a game about configuring a mechanical system, watching the race, and improving the next run.</p>
+        <div class="actions" aria-label="Brand kit actions">
+          <a class="button button-primary" href="BrandTokens.json" download>Download brand tokens</a>
+          <a class="button button-secondary" href="./">Return to press kit</a>
+        </div>
+        <p class="hero-note">The current wordmark is an approved raster application. Production vector reconstruction and rights review remain open handoff items.</p>
+      </div>
+    </header>
+
+    <section class="section" id="identity" aria-labelledby="identity-title">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">01 · Identity</p>
+          <h2 id="identity-title">One product, three roles</h2>
+        </div>
+        <p>Gear Engine owns the game identity. The red-car illustration serves compact and illustrative placements. Leonardo Lycan identifies the portfolio owner and remains an endorsement—not the game logo.</p>
+      </div>
+
+      <div class="grid grid-3">
+        <article class="card asset-card">
+          <div class="asset-preview">
+            <img src="Media/T_GearEngineLogoRacingFinal.png" alt="Current Gear Engine racing wordmark">
+          </div>
+          <div>
+            <p class="card-label">Primary marketing mark</p>
+            <h3>Racing wordmark</h3>
+            <p>Use for portfolio heroes, press pages, banners, and campaign identity. Preserve the lettering, red track accents, and checkered finish.</p>
+          </div>
+          <div class="asset-meta">
+            <span class="tag">Current</span>
+            <span class="tag">PNG RGBA</span>
+            <span class="tag">1446 × 645</span>
+          </div>
+        </article>
+
+        <article class="card asset-card">
+          <div class="asset-preview asset-preview-square">
+            <img src="Media/GearEngineSplashLogo.png" alt="Red number 77 race car crossing the finish line in a comic-style stadium">
+          </div>
+          <div>
+            <p class="card-label">Compact and illustrative</p>
+            <h3>Game illustration</h3>
+            <p>Use where the full wordmark would be too small, or where the game needs an illustrative icon/splash image.</p>
+          </div>
+          <div class="asset-meta">
+            <span class="tag">Approved invariant</span>
+            <span class="tag">1024 × 1024</span>
+            <span class="tag">JPEG data</span>
+          </div>
+        </article>
+
+        <article class="card asset-card">
+          <div class="asset-preview asset-preview-endorser">
+            <img src="Media/T_LeonardoLycanLockup.png" alt="Leonardo Lycan portfolio lockup">
+          </div>
+          <div>
+            <p class="card-label">Owner attribution</p>
+            <h3>Portfolio endorsement</h3>
+            <p>Use in footers, credits, and case-study attribution. Keep it smaller and spatially separate from the game mark.</p>
+          </div>
+          <div class="asset-meta">
+            <span class="tag">Related entity</span>
+            <span class="tag">Not game logo</span>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" id="color" aria-labelledby="color-title">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">02 · Color</p>
+          <h2 id="color-title">Racing energy, readable surfaces</h2>
+        </div>
+        <p>Dark neutrals carry content. Yellow identifies the normal primary action; blue is secondary or informational; red carries brand motion and destructive/error meaning; green confirms success.</p>
+      </div>
+
+      <div class="grid swatches" aria-label="Gear Engine color palette">
+        <div class="swatch dark asphalt"><span>Asphalt</span><code>#0B0F14</code><small>Page background</small></div>
+        <div class="swatch dark pit-wall"><span>Pit Wall</span><code>#151C24</code><small>Cards and panels</small></div>
+        <div class="swatch dark pit-wall-elevated"><span>Pit Wall Elevated</span><code>#202A35</code><small>Raised surface</small></div>
+        <div class="swatch race-white"><span>Race White</span><code>#FFF8E8</code><small>Primary text</small></div>
+        <div class="swatch smoke"><span>Smoke</span><code>#C8D0D8</code><small>Secondary text</small></div>
+        <div class="swatch racing-red"><span>Racing Red</span><code>#EF3E2F</code><small>Motion and error</small></div>
+        <div class="swatch victory-yellow"><span>Victory Yellow</span><code>#FFD43B</code><small>Primary action and focus</small></div>
+        <div class="swatch track-blue"><span>Track Blue</span><code>#18AEEA</code><small>Secondary and information</small></div>
+        <div class="swatch grass-green"><span>Grass Green</span><code>#43B649</code><small>Success and ready</small></div>
+      </div>
+
+      <p class="contrast-note"><strong>Contrast rule:</strong> use Asphalt text on Yellow, Blue, Green, and Red fills. Race White on Racing Red is only 3.67:1 and is not suitable for normal-size text. Color must never be the only status cue.</p>
+    </section>
+
+    <section class="section" id="type" aria-labelledby="type-title">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">03 · Typography</p>
+          <h2 id="type-title">Fast headings, calm instructions</h2>
+        </div>
+        <p>Oswald supplies compact racing cadence for short display copy. Inter keeps instructions, controls, metadata, and long-form reading clear.</p>
+      </div>
+
+      <div class="grid grid-2">
+        <article class="card type-sample">
+          <p class="card-label">Oswald Variable · Display</p>
+          <p class="type-display">Build the drive</p>
+          <p>Use uppercase only for short headings, labels, and race metrics. Do not set paragraphs or error explanations in condensed type.</p>
+        </article>
+        <article class="card type-sample">
+          <p class="card-label">Inter Variable · Body and UI</p>
+          <p class="type-body">Configure the motor and gears, run the track, inspect the result, and make one informed change before the next race.</p>
+          <p>Start body copy at 16 px. Use sentence case and direct verbs for controls and instructions.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" id="interface" aria-labelledby="interface-title">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">04 · Interface</p>
+          <h2 id="interface-title">One next action per state</h2>
+        </div>
+        <p>Decision load should follow the player's current intent. Keep the next useful action perceptually first, then place supporting actions near the content they affect.</p>
+      </div>
+
+      <ol class="flow" aria-label="Gear Engine core loop">
+        <li><b>Build</b><span>Configure a valid motor-and-gear system.</span></li>
+        <li><b>Race</b><span>Watch the system perform on the current track.</span></li>
+        <li><b>Improve</b><span>Read the result and change the next run.</span></li>
+      </ol>
+
+      <div class="grid grid-2" style="margin-top: 16px;">
+        <article class="card">
+          <p class="card-label">Contextual hierarchy</p>
+          <h3>Controls communicate priority</h3>
+          <div class="action-demo" aria-label="Non-interactive action style examples">
+            <span class="demo-primary">Race now</span>
+            <span class="demo-secondary">View storage</span>
+            <span class="demo-destructive">Delete gear</span>
+          </div>
+          <p>Yellow is the normal primary action. Blue is secondary/informational. Red requires a destructive or error label—never color alone.</p>
+        </article>
+        <article class="card">
+          <p class="card-label">State completeness</p>
+          <h3>Every flow needs recovery</h3>
+          <ul class="rules-list">
+            <li>Loading states name what is happening and retain orientation.</li>
+            <li>Disabled actions explain what enables them when their presence teaches the sequence.</li>
+            <li>Errors persist until the person can retry or return to a safe state.</li>
+            <li>Navigation and resize preserve meaningful context.</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" id="content" aria-labelledby="content-title">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">05 · Content</p>
+          <h2 id="content-title">Show the cause and effect</h2>
+        </div>
+        <p>The voice is direct, energetic, and factual: name the action, explain what changes, and show evidence. Concept work must remain visibly separate from the current build.</p>
+      </div>
+
+      <div class="grid grid-2">
+        <article class="card do-card">
+          <p class="card-label">Do</p>
+          <h3>Make evidence legible</h3>
+          <ul class="rules-list">
+            <li>Use build, configure, race, observe, and improve.</li>
+            <li>Label media as current build, historical, concept, or promotional composite.</li>
+            <li>Keep enough interface context to prove the feature.</li>
+            <li>Use native video controls and factual poster frames.</li>
+          </ul>
+        </article>
+        <article class="card dont-card">
+          <p class="card-label">Do not</p>
+          <h3>Do not turn direction into a claim</h3>
+          <ul class="rules-list">
+            <li>Do not present concept maps, rankings, or rewards as shipped gameplay.</li>
+            <li>Do not alter gameplay outcomes, currencies, or telemetry in factual evidence.</li>
+            <li>Do not claim launch, traction, certification, or platform support without proof.</li>
+            <li>Do not autoplay media with sound.</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" id="accessibility" aria-labelledby="accessibility-title">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">06 · Accessibility</p>
+          <h2 id="accessibility-title">A baseline, not a claim</h2>
+        </div>
+        <p>The portfolio and press-kit experience targets WCAG 2.2 AA. Static inspection cannot establish conformance; keyboard, zoom, reflow, contrast, and assistive-technology paths still require human validation.</p>
+      </div>
+
+      <div class="grid grid-3">
+        <article class="card">
+          <p class="card-label">Perceivable</p>
+          <h3>Text and evidence</h3>
+          <p>Normal text targets 4.5:1. Meaningful images have descriptive alternatives. Status never depends on color alone.</p>
+        </article>
+        <article class="card">
+          <p class="card-label">Operable</p>
+          <h3>Keyboard and touch</h3>
+          <p>Controls remain keyboard accessible, show a 3 px yellow focus outline, and use 44 × 44 px targets for touch-oriented surfaces.</p>
+        </article>
+        <article class="card">
+          <p class="card-label">Adaptable</p>
+          <h3>Reflow and motion</h3>
+          <p>Content becomes one column on compact widths without page-level horizontal scrolling, and reduced-motion preferences remove nonessential motion.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" id="assets" aria-labelledby="assets-title">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">07 · Assets and handoff</p>
+          <h2 id="assets-title">Use what is approved</h2>
+        </div>
+        <p>The current package is suitable for digital portfolio and press applications. Manufacturing, trademark submission, and long-term production need deterministic masters and documented rights.</p>
+      </div>
+
+      <details open>
+        <summary>Current production boundaries</summary>
+        <div class="details-content">
+          <ul>
+            <li>The racing wordmark is an approved raster application, not a verified vector master.</li>
+            <li>The square illustration is JPEG-encoded despite its `.png` filename.</li>
+            <li>The Leonardo Lycan lockup is a separate portfolio identity.</li>
+            <li>Exploratory route marks and concept assets are not default identity assets.</li>
+          </ul>
+        </div>
+      </details>
+
+      <details>
+        <summary>Release handoff checklist</summary>
+        <div class="details-content">
+          <ul>
+            <li>Rebuild and approve the racing wordmark as a deterministic vector master.</li>
+            <li>Produce approved monochrome, reversed, reduced, and app-icon variants.</li>
+            <li>Record provenance, ownership, approval date, and modification rights.</li>
+            <li>Verify font distribution rights for each target.</li>
+            <li>Test compact, medium, expanded, keyboard, touch, zoom/reflow, and reduced-motion behavior.</li>
+          </ul>
+        </div>
+      </details>
+    </section>
+
+    <section class="section" aria-labelledby="download-title">
+      <div class="download-panel">
+        <div>
+          <p class="eyebrow">Ready to apply</p>
+          <h2 id="download-title">Start with the tokens</h2>
+          <p>Use the JSON file for exact machine-readable values. Return to the press kit for gameplay evidence, logos, video, and project context.</p>
+        </div>
+        <div class="download-actions">
+          <a class="button button-primary" href="BrandTokens.json" download>Download BrandTokens.json</a>
+          <a class="button button-secondary" href="Media/T_GearEngineLogoRacingFinal.png" download>Download current wordmark</a>
+          <a class="button button-secondary" href="./">Return to press kit</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+      <p>Gear Engine product identity · Portfolio and press-kit standard · Version 1.1 · Last verified 2026-09-10. No claim of trademark uniqueness or release readiness is made.</p>
+      <img class="footer-lockup" src="Media/T_LeonardoLycanLockup.png" alt="Leonardo Lycan portfolio">
+    </div>
+  </footer>
+</body>
+</html>
