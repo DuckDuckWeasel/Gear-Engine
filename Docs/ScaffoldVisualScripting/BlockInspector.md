@@ -43,11 +43,17 @@ The right pane edits the selected Block:
 - action reorder, cross-track drag/drop, grouping, duplication, deletion, range
   selection, and interruption targets.
 
-The Block list and the selected-action inspector use separate vertical regions. The
-upper region owns the Block, trigger, track, and action-list scroll. Selecting exactly
-one action shows its help and editable properties in the lower preview region, so
-expanding action data no longer shifts or hides the main list. Drag the horizontal
-divider to allocate more space to either region.
+The Block list and the selected-action inspector use independent side panes around the
+graph. Selecting exactly one action shows its help and editable properties in the
+right pane, so expanding action data no longer shifts or hides the main list. Drag
+either vertical divider to resize its pane. The **Panels** toolbar menu can hide either
+pane or restore the default layout when the graph needs more space.
+
+The `BlackboardBehaviour` component Inspector deliberately keeps Direct definitions
+compact. It exposes the definition source, a read-only graph summary, validation
+status, runtime state, and **Open Blackboard Window**. Blocks, Tracks, Actions,
+Variables, and stable definition IDs are edited only through the Blackboard window so
+all changes pass through the Undo-aware authoring controller.
 
 Type selectors expose only public, constructible managed definitions. Actions also
 require `CommandInfo` menu metadata, matching the legacy command selector and keeping

@@ -327,7 +327,7 @@ namespace Scaffold.VisualScripting.Editor.Tests
                 Is.Empty);
         }
 
-        [TestCase(100f, 1200f, 300f)]
+        [TestCase(100f, 1200f, 240f)]
         [TestCase(340f, 1200f, 340f)]
         [TestCase(600f, 1200f, 440f)]
         [TestCase(340f, 920f, 300f)]
@@ -371,6 +371,61 @@ namespace Scaffold.VisualScripting.Editor.Tests
             Assert.That(board.center.x, Is.EqualTo(workspace.center.x));
             Assert.That(authoring.xMax, Is.EqualTo(board.xMin));
             Assert.That(board.xMax, Is.EqualTo(inspector.xMin));
+        }
+
+        [Test]
+        public void WorkspaceLayout_AllowsIndependentAndHiddenPanels()
+        {
+            Rect workspace = new Rect(
+                0f,
+                0f,
+                1200f,
+                500f);
+
+            BlackboardDefinitionWindow.CalculateWorkspaceRects(
+                workspace,
+                420f,
+                260f,
+                true,
+                false,
+                out Rect authoring,
+                out Rect board,
+                out Rect inspector);
+
+            Assert.That(authoring.width, Is.EqualTo(420f));
+            Assert.That(inspector.width, Is.Zero);
+            Assert.That(board.width, Is.EqualTo(780f));
+        }
+
+        [Test]
+        public void DirectDefinitionReferenceDrawer_DoesNotExposeGraphTree()
+        {
+            BlackboardBehaviour behaviour =
+                CreateBehaviour("CompactInspector");
+            SerializedObject serializedBehaviour =
+                new SerializedObject(behaviour);
+            SerializedProperty reference =
+                serializedBehaviour.FindProperty("definitionReference");
+            SerializedProperty directDefinition =
+                reference.FindPropertyRelative("directDefinition");
+            SerializedProperty blocks =
+                directDefinition.FindPropertyRelative("blocks");
+            directDefinition.isExpanded = true;
+            blocks.isExpanded = true;
+            blocks.arraySize = 3;
+            serializedBehaviour.ApplyModifiedPropertiesWithoutUndo();
+
+            BlackboardDefinitionReferenceDrawer drawer =
+                new BlackboardDefinitionReferenceDrawer();
+            float expectedHeight =
+                (EditorGUIUtility.singleLineHeight * 2f) +
+                EditorGUIUtility.standardVerticalSpacing;
+
+            Assert.That(
+                drawer.GetPropertyHeight(
+                    reference,
+                    GUIContent.none),
+                Is.EqualTo(expectedHeight));
         }
 
         [TestCase(

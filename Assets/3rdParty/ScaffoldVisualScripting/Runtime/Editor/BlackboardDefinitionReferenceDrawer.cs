@@ -10,22 +10,73 @@ namespace Scaffold.VisualScripting.Editor
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
         {
             SerializedProperty sourceProperty = property.FindPropertyRelative("source");
-            SerializedProperty valueProperty = FindValueProperty(property, sourceProperty);
-            return EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing + EditorGUI.GetPropertyHeight(valueProperty, true);
+            BlackboardDefinitionSource source =
+                (BlackboardDefinitionSource)sourceProperty.enumValueIndex;
+            float valueHeight = source == BlackboardDefinitionSource.Direct
+                ? EditorGUIUtility.singleLineHeight
+                : EditorGUI.GetPropertyHeight(
+                    FindValueProperty(property, source),
+                    true);
+            return EditorGUIUtility.singleLineHeight +
+                EditorGUIUtility.standardVerticalSpacing +
+                valueHeight;
         }
 
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
             SerializedProperty sourceProperty = property.FindPropertyRelative("source");
-            Rect sourceRect = CreateSourceRect(position);
-            EditorGUI.PropertyField(sourceRect, sourceProperty, label);
-            Rect valueRect = CreateValueRect(position, sourceRect);
-            EditorGUI.PropertyField(valueRect, FindValueProperty(property, sourceProperty), true);
+            EditorGUI.BeginProperty(position, label, property);
+            try
+            {
+                Rect sourceRect = CreateSourceRect(position);
+                EditorGUI.PropertyField(sourceRect, sourceProperty, label);
+                DrawValue(
+                    CreateValueRect(position, sourceRect),
+                    property,
+                    (BlackboardDefinitionSource)sourceProperty.enumValueIndex);
+            }
+            finally
+            {
+                EditorGUI.EndProperty();
+            }
         }
 
-        private SerializedProperty FindValueProperty(SerializedProperty property, SerializedProperty sourceProperty)
+        private void DrawValue(
+            Rect position,
+            SerializedProperty property,
+            BlackboardDefinitionSource source)
         {
-            BlackboardDefinitionSource source = (BlackboardDefinitionSource)sourceProperty.enumValueIndex;
+            EditorGUI.indentLevel++;
+            try
+            {
+                if (source == BlackboardDefinitionSource.Direct)
+                {
+                    EditorGUI.LabelField(
+                        position,
+                        "Managed in the Blackboard window",
+                        EditorStyles.miniLabel);
+                    return;
+                }
+
+                GUIContent label = source == BlackboardDefinitionSource.ScriptableObject
+                    ? new GUIContent("Definition Asset")
+                    : new GUIContent("Definition Variable");
+                EditorGUI.PropertyField(
+                    position,
+                    FindValueProperty(property, source),
+                    label,
+                    true);
+            }
+            finally
+            {
+                EditorGUI.indentLevel--;
+            }
+        }
+
+        private SerializedProperty FindValueProperty(
+            SerializedProperty property,
+            BlackboardDefinitionSource source)
+        {
             if (source == BlackboardDefinitionSource.Direct)
             {
                 return property.FindPropertyRelative("directDefinition");

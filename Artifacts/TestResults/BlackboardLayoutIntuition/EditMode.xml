@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-07-30 19:41:55Z" end-time="2026-07-30 19:41:55Z" duration="0.1535011">
+  <test-suite type="TestSuite" id="1000" name="Scaffold" fullname="Scaffold" runstate="Runnable" testcasecount="385" result="Passed" start-time="2026-07-30 19:41:55Z" end-time="2026-07-30 19:41:55Z" duration="0.153501" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="1528" name="Scaffold.VisualScripting.Editor.Tests.dll" fullname="/Users/leonardosilva/Documents/MatheusCohen/Gear Engine/Library/ScriptAssemblies/Scaffold.VisualScripting.Editor.Tests.dll" runstate="Runnable" testcasecount="56" result="Passed" start-time="2026-07-30 19:41:55Z" end-time="2026-07-30 19:41:55Z" duration="0.124538" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="2929" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="1529" name="Scaffold" fullname="Scaffold" runstate="Runnable" testcasecount="56" result="Passed" start-time="2026-07-30 19:41:55Z" end-time="2026-07-30 19:41:55Z" duration="0.122758" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1530" name="VisualScripting" fullname="Scaffold.VisualScripting" runstate="Runnable" testcasecount="56" result="Passed" start-time="2026-07-30 19:41:55Z" end-time="2026-07-30 19:41:55Z" duration="0.120654" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestSuite" id="1531" name="Editor" fullname="Scaffold.VisualScripting.Editor" runstate="Runnable" testcasecount="56" result="Passed" start-time="2026-07-30 19:41:55Z" end-time="2026-07-30 19:41:55Z" duration="0.118420" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="TestSuite" id="1532" name="Tests" fullname="Scaffold.VisualScripting.Editor.Tests" runstate="Runnable" testcasecount="56" result="Passed" start-time="2026-07-30 19:41:55Z" end-time="2026-07-30 19:41:55Z" duration="0.116492" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-suite type="TestFixture" id="1463" name="BlackboardAuthoringControllerTests" fullname="Scaffold.VisualScripting.Editor.Tests.BlackboardAuthoringControllerTests" classname="Scaffold.VisualScripting.Editor.Tests.BlackboardAuthoringControllerTests" runstate="Runnable" testcasecount="56" result="Passed" start-time="2026-07-30 19:41:55Z" end-time="2026-07-30 19:41:55Z" duration="0.114171" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="1505" name="DirectDefinitionReferenceDrawer_DoesNotExposeGraphTree" fullname="Scaffold.VisualScripting.Editor.Tests.BlackboardAuthoringControllerTests.DirectDefinitionReferenceDrawer_DoesNotExposeGraphTree" methodname="DirectDefinitionReferenceDrawer_DoesNotExposeGraphTree" classname="Scaffold.VisualScripting.Editor.Tests.BlackboardAuthoringControllerTests" runstate="Runnable" seed="1348124056" result="Passed" start-time="2026-07-30 19:41:55Z" end-time="2026-07-30 19:41:55Z" duration="0.088600" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <output><![CDATA[Saving results to: /Users/leonardosilva/Library/Application Support/DDW/Scaffold/TestResults.xml
+]]></output>
+                </test-case>
+              </test-suite>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

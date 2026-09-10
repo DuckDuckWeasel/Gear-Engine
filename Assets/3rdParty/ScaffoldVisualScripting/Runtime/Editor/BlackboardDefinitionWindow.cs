@@ -10,15 +10,20 @@ namespace Scaffold.VisualScripting.Editor
 {
     public sealed class BlackboardDefinitionWindow : EditorWindow
     {
-        private const float k_defaultAuthoringWidth = 340f;
-        private const float k_defaultInspectorWidth = 340f;
-        private const float k_minSidePanelWidth = 300f;
+        private const float k_defaultAuthoringWidth = 280f;
+        private const float k_defaultInspectorWidth = 280f;
+        private const float k_minSidePanelWidth = 240f;
         private const float k_minBoardWidth = 320f;
+        private const float k_splitterWidth = 6f;
+        private const int k_authoringSplitter = 1;
+        private const int k_inspectorSplitter = 2;
 
         [SerializeField] private Object sourceObject;
         [SerializeField] private string search = string.Empty;
         [SerializeField] private float detailWidth = k_defaultAuthoringWidth;
         [SerializeField] private float inspectorWidth = k_defaultInspectorWidth;
+        [SerializeField] private bool showAuthoringPanel = true;
+        [SerializeField] private bool showInspectorPanel = true;
         [NonSerialized] private BlackboardAuthoringTarget target;
         [NonSerialized] private BlackboardAuthoringController controller;
         [NonSerialized] private BlackboardAuthoringClipboard clipboard;
@@ -39,7 +44,7 @@ namespace Scaffold.VisualScripting.Editor
 
         private void OnEnable()
         {
-            minSize = new Vector2(920f, 420f);
+            minSize = new Vector2(840f, 420f);
             titleContent = new GUIContent("Blackboard", BlackboardEditorStyles.FlowGraph);
             wantsMouseMove = true;
             CreateEditorServices();
@@ -89,7 +94,7 @@ namespace Scaffold.VisualScripting.Editor
             GUILayout.FlexibleSpace();
             DrawSearchField();
             DrawRuntimeButtons();
-            DrawVariablesButton();
+            DrawPanelsButton();
             EditorGUILayout.EndHorizontal();
         }
 
@@ -269,15 +274,67 @@ namespace Scaffold.VisualScripting.Editor
             menu.DropDown(anchor);
         }
 
-        private void DrawVariablesButton()
+        private void ShowVariablesPanel()
         {
-            using (new EditorGUI.DisabledScope(detailPanel == null))
+            if (detailPanel == null)
             {
-                if (GUILayout.Button("Variables", EditorStyles.toolbarButton))
-                {
-                    detailPanel.ShowVariables();
-                }
+                return;
             }
+
+            showAuthoringPanel = true;
+            detailPanel.ShowVariables();
+            Repaint();
+        }
+
+        private void DrawPanelsButton()
+        {
+            if (!GUILayout.Button(
+                    "Panels",
+                    EditorStyles.toolbarDropDown))
+            {
+                return;
+            }
+
+            GenericMenu menu = new GenericMenu();
+            menu.AddItem(
+                new GUIContent("Authoring"),
+                showAuthoringPanel,
+                ToggleAuthoringPanel);
+            menu.AddItem(
+                new GUIContent("Action Inspector"),
+                showInspectorPanel,
+                ToggleInspectorPanel);
+            menu.AddSeparator(string.Empty);
+            menu.AddItem(
+                new GUIContent("Show Variables"),
+                false,
+                ShowVariablesPanel);
+            menu.AddItem(
+                new GUIContent("Reset Layout"),
+                false,
+                ResetPanelLayout);
+            menu.DropDown(GUILayoutUtility.GetLastRect());
+        }
+
+        private void ToggleAuthoringPanel()
+        {
+            showAuthoringPanel = !showAuthoringPanel;
+            Repaint();
+        }
+
+        private void ToggleInspectorPanel()
+        {
+            showInspectorPanel = !showInspectorPanel;
+            Repaint();
+        }
+
+        private void ResetPanelLayout()
+        {
+            detailWidth = k_defaultAuthoringWidth;
+            inspectorWidth = k_defaultInspectorWidth;
+            showAuthoringPanel = true;
+            showInspectorPanel = true;
+            Repaint();
         }
 
         private bool EnsureTarget()
@@ -322,25 +379,32 @@ namespace Scaffold.VisualScripting.Editor
                     position.height -
                     toolbarHeight -
                     validationHeight));
-            float requestedSideWidth =
-                (detailWidth + inspectorWidth) * 0.5f;
             CalculateWorkspaceRects(
                 workspace,
-                requestedSideWidth,
+                detailWidth,
+                inspectorWidth,
+                showAuthoringPanel,
+                showInspectorPanel,
                 out Rect authoring,
                 out Rect board,
                 out Rect inspector);
-            detailWidth = authoring.width;
-            inspectorWidth = inspector.width;
+            UpdateVisiblePanelWidths(authoring, inspector);
 
-            DrawPanel(
-                authoring,
-                () => detailPanel.DrawAuthoring(
-                    controller,
-                    GetSourceBehaviour()));
-            DrawPanel(
-                inspector,
-                () => detailPanel.DrawInspector(controller));
+            if (showAuthoringPanel)
+            {
+                DrawPanel(
+                    authoring,
+                    () => detailPanel.DrawAuthoring(
+                        controller,
+                        GetSourceBehaviour()));
+            }
+
+            if (showInspectorPanel)
+            {
+                DrawPanel(
+                    inspector,
+                    () => detailPanel.DrawInspector(controller));
+            }
 
             canvas.Draw(
                 board,
@@ -348,6 +412,178 @@ namespace Scaffold.VisualScripting.Editor
                 GetSourceBehaviour(),
                 feedback,
                 search);
+            DrawWorkspaceSplitters(
+                workspace,
+                authoring,
+                inspector);
+        }
+
+        private void UpdateVisiblePanelWidths(
+            Rect authoring,
+            Rect inspector)
+        {
+            if (showAuthoringPanel)
+            {
+                detailWidth = authoring.width;
+            }
+
+            if (showInspectorPanel)
+            {
+                inspectorWidth = inspector.width;
+            }
+        }
+
+        private void DrawWorkspaceSplitters(
+            Rect workspace,
+            Rect authoring,
+            Rect inspector)
+        {
+            if (showAuthoringPanel)
+            {
+                Rect splitter = CreateSplitterRect(
+                    authoring.xMax,
+                    workspace);
+                DrawWorkspaceSplitter(
+                    workspace,
+                    splitter,
+                    k_authoringSplitter);
+            }
+
+            if (showInspectorPanel)
+            {
+                Rect splitter = CreateSplitterRect(
+                    inspector.xMin,
+                    workspace);
+                DrawWorkspaceSplitter(
+                    workspace,
+                    splitter,
+                    k_inspectorSplitter);
+            }
+        }
+
+        private Rect CreateSplitterRect(float x, Rect workspace)
+        {
+            return new Rect(
+                x - (k_splitterWidth * 0.5f),
+                workspace.y,
+                k_splitterWidth,
+                workspace.height);
+        }
+
+        private void DrawWorkspaceSplitter(
+            Rect workspace,
+            Rect splitter,
+            int splitterId)
+        {
+            int controlId = GUIUtility.GetControlID(
+                splitterId,
+                FocusType.Passive,
+                splitter);
+            EditorGUIUtility.AddCursorRect(
+                splitter,
+                MouseCursor.ResizeHorizontal,
+                controlId);
+            HandleWorkspaceSplitterEvent(
+                workspace,
+                splitter,
+                splitterId,
+                controlId);
+            DrawWorkspaceSplitterVisual(splitter, controlId);
+        }
+
+        private void HandleWorkspaceSplitterEvent(
+            Rect workspace,
+            Rect splitter,
+            int splitterId,
+            int controlId)
+        {
+            Event current = Event.current;
+            EventType type = current.GetTypeForControl(controlId);
+            if (type == EventType.MouseDown &&
+                current.button == 0 &&
+                splitter.Contains(current.mousePosition))
+            {
+                GUIUtility.hotControl = controlId;
+                current.Use();
+                return;
+            }
+
+            if (type == EventType.MouseDrag &&
+                GUIUtility.hotControl == controlId)
+            {
+                ResizePanelFromPointer(
+                    workspace,
+                    current.mousePosition.x,
+                    splitterId);
+                current.Use();
+                Repaint();
+                return;
+            }
+
+            if (type == EventType.MouseUp &&
+                GUIUtility.hotControl == controlId)
+            {
+                GUIUtility.hotControl = 0;
+                current.Use();
+            }
+        }
+
+        private void ResizePanelFromPointer(
+            Rect workspace,
+            float pointerX,
+            int splitterId)
+        {
+            if (splitterId == k_authoringSplitter)
+            {
+                float requested = pointerX - workspace.x;
+                detailWidth = ClampDraggedPanelWidth(
+                    requested,
+                    workspace.width,
+                    showInspectorPanel ? inspectorWidth : 0f);
+                return;
+            }
+
+            float inspectorRequested = workspace.xMax - pointerX;
+            inspectorWidth = ClampDraggedPanelWidth(
+                inspectorRequested,
+                workspace.width,
+                showAuthoringPanel ? detailWidth : 0f);
+        }
+
+        private static float ClampDraggedPanelWidth(
+            float requestedWidth,
+            float workspaceWidth,
+            float otherPanelWidth)
+        {
+            float maximum = Mathf.Max(
+                0f,
+                workspaceWidth -
+                k_minBoardWidth -
+                otherPanelWidth);
+            float minimum = Mathf.Min(
+                k_minSidePanelWidth,
+                maximum);
+            return Mathf.Clamp(
+                requestedWidth,
+                minimum,
+                maximum);
+        }
+
+        private void DrawWorkspaceSplitterVisual(
+            Rect splitter,
+            int controlId)
+        {
+            if (Event.current.type != EventType.Repaint)
+            {
+                return;
+            }
+
+            bool active = GUIUtility.hotControl == controlId;
+            bool hovered = splitter.Contains(Event.current.mousePosition);
+            Color color = active || hovered
+                ? new Color(0.20f, 0.55f, 0.90f, 0.85f)
+                : new Color(0f, 0f, 0f, 0.28f);
+            EditorGUI.DrawRect(splitter, color);
         }
 
         private static void DrawPanel(
@@ -374,18 +610,44 @@ namespace Scaffold.VisualScripting.Editor
             out Rect board,
             out Rect inspector)
         {
-            float sideWidth = ClampSidePanelWidth(
+            CalculateWorkspaceRects(
+                workspace,
                 requestedSideWidth,
-                workspace.width);
+                requestedSideWidth,
+                true,
+                true,
+                out authoring,
+                out board,
+                out inspector);
+        }
+
+        public static void CalculateWorkspaceRects(
+            Rect workspace,
+            float requestedAuthoringWidth,
+            float requestedInspectorWidth,
+            bool showAuthoring,
+            bool showInspector,
+            out Rect authoring,
+            out Rect board,
+            out Rect inspector)
+        {
+            CalculateSidePanelWidths(
+                workspace.width,
+                requestedAuthoringWidth,
+                requestedInspectorWidth,
+                showAuthoring,
+                showInspector,
+                out float authoringWidth,
+                out float inspectorPanelWidth);
             authoring = new Rect(
                 workspace.x,
                 workspace.y,
-                sideWidth,
+                authoringWidth,
                 workspace.height);
             inspector = new Rect(
-                workspace.xMax - sideWidth,
+                workspace.xMax - inspectorPanelWidth,
                 workspace.y,
-                sideWidth,
+                inspectorPanelWidth,
                 workspace.height);
             board = new Rect(
                 authoring.xMax,
@@ -394,6 +656,72 @@ namespace Scaffold.VisualScripting.Editor
                     0f,
                     inspector.xMin - authoring.xMax),
                 workspace.height);
+        }
+
+        private static void CalculateSidePanelWidths(
+            float workspaceWidth,
+            float requestedAuthoringWidth,
+            float requestedInspectorWidth,
+            bool showAuthoring,
+            bool showInspector,
+            out float authoringWidth,
+            out float inspectorPanelWidth)
+        {
+            float available = Mathf.Max(
+                0f,
+                workspaceWidth - k_minBoardWidth);
+            int visibleCount =
+                (showAuthoring ? 1 : 0) +
+                (showInspector ? 1 : 0);
+            float minimum = visibleCount == 0
+                ? 0f
+                : Mathf.Min(
+                    k_minSidePanelWidth,
+                    available / visibleCount);
+            authoringWidth = showAuthoring
+                ? Mathf.Max(minimum, requestedAuthoringWidth)
+                : 0f;
+            inspectorPanelWidth = showInspector
+                ? Mathf.Max(minimum, requestedInspectorWidth)
+                : 0f;
+            FitSidePanelWidths(
+                available,
+                minimum,
+                ref authoringWidth,
+                ref inspectorPanelWidth);
+        }
+
+        private static void FitSidePanelWidths(
+            float available,
+            float minimum,
+            ref float authoringWidth,
+            ref float inspectorPanelWidth)
+        {
+            float requestedTotal =
+                authoringWidth + inspectorPanelWidth;
+            if (requestedTotal <= available)
+            {
+                return;
+            }
+
+            float flexibleTotal =
+                (authoringWidth - minimum) +
+                (inspectorPanelWidth - minimum);
+            float overflow = requestedTotal - available;
+            if (flexibleTotal <= 0f)
+            {
+                authoringWidth = Mathf.Min(authoringWidth, available);
+                inspectorPanelWidth = Mathf.Max(
+                    0f,
+                    available - authoringWidth);
+                return;
+            }
+
+            authoringWidth -= overflow *
+                ((authoringWidth - minimum) / flexibleTotal);
+            inspectorPanelWidth = Mathf.Max(
+                0f,
+                available - authoringWidth);
         }
 
         public static float ClampSidePanelWidth(
