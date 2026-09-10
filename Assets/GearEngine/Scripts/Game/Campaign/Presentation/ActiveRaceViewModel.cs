@@ -22,12 +22,14 @@ using Scaffold.Analytics;
 using GearEngine.Campaign.Analytics;
 using GearEngine.Core.Config.Events;
 using Scaffold.Events.Contracts;
+using GearEngine.GearEngine.Nodes;
+using GearEngine.GearEngine.Abilities;
 
 namespace GearEngine.Campaign.Presentation
 {
     public partial class ActiveRaceViewModel : ViewModel
     {
-        private const float ResultPopupDelaySeconds = 2f;
+        private const float k_resultPopupDelaySeconds = 2f;
 
         [ObservableProperty]
         private TrackViewModel track;
@@ -50,7 +52,7 @@ namespace GearEngine.Campaign.Presentation
         protected override void Initialize()
         {
             base.Initialize();
-            
+
             eventBus.AddListener<GearEngine.Events.CombatTextCollectedEvent>(OnCombatTextCollected);
 
             RaceSessionConfig sessionConfig = raceSessionDefaults.CreateForTrack(trackService.CurrentTrack);
@@ -59,10 +61,14 @@ namespace GearEngine.Campaign.Presentation
 
             if (engineService != null)
             {
-                foreach (var node in engineService.GetAllNodes())
+                foreach (IGridNode node in engineService.GetAllNodes())
                 {
-                    if (node == null) continue;
-                    foreach (var ability in node.GetAbilities())
+                    if (node == null)
+                    {
+                        continue;
+                    }
+
+                    foreach (GearAbilitySO ability in node.GetAbilities())
                     {
                         if (ability is ActiveRaceGearAbilitySO activeGear)
                         {
@@ -163,23 +169,26 @@ namespace GearEngine.Campaign.Presentation
                 ));
 
                 // Wait for the cinematic finish (Akira slide) to play out before covering the screen
-                await Task.Delay(TimeSpan.FromSeconds(ResultPopupDelaySeconds));
+                await Task.Delay(TimeSpan.FromSeconds(k_resultPopupDelaySeconds));
 
-                eventBus?.Raise(new GlobalLoadingEvent(true));
-                try
-                {
-                    await trackService.RecordResultAsync(result);
-                }
-                finally
-                {
-                    eventBus?.Raise(new GlobalLoadingEvent(false));
-                }
-                
                 navigation.Open(new ResultPopupViewModel(result));
+                await PersistRaceResultAsync(result);
             }
             catch (Exception ex)
             {
                 Debug.LogError($"[ActiveRaceViewModel] OnRaceCompleted failed: {ex.Message}\n{ex.StackTrace}");
+            }
+        }
+
+        private async Task PersistRaceResultAsync(RaceResultModel result)
+        {
+            try
+            {
+                await trackService.RecordResultAsync(result);
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"[ActiveRaceViewModel] Race result persistence failed after opening the result screen: {ex.Message}\n{ex.StackTrace}");
             }
         }
 
