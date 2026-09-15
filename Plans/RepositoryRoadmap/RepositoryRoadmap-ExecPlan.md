@@ -35,13 +35,13 @@ The user can see the principal behavior by finishing a campaign race and opening
 - [x] Update `Docs/Game/Campaign.md` with the result-popup presentation behavior.
 - [x] Run focused C# lint and source-structure verification for the result popup.
 - [ ] Reinstall Unity 6000.5.9f1 or provide its executable, then complete project compilation, analyzer validation, prefab import, and visual verification for the result popup.
-- [ ] Commit the production result-screen celebration as one focused feature commit.
-- [ ] Create the Git-maintenance report and preserve each useful stash or unmerged branch before local pruning.
-- [ ] Stop for explicit approval before pushing archive tags, closing pull requests, or deleting remote branches.
+- [x] Commit the production result-screen celebration as one focused feature commit (`66ede040`).
+- [x] Create the Git-maintenance report and preserve each useful stash or unmerged branch before local pruning.
+- [x] Reach the explicit approval checkpoint with archive-tag pushes, pull-request closures, and remote-branch deletions still unexecuted.
 - [ ] Add the static-only validation mode and credential-free CI workflow.
 - [ ] Move the submission exporter's default WebGL build path to `Builds/GearEngineWebGL` and document artifact policy and the later licensed Unity CI phase.
 - [ ] Validate and commit the CI and artifact-policy milestone.
-- [ ] Complete repository integrity checks and record final outcomes.
+- [x] Complete the local repository integrity checks; record final roadmap outcomes after the remaining milestones and external-state decision.
 
 ## Surprises & Discoveries
 
@@ -77,6 +77,12 @@ The user can see the principal behavior by finishing a campaign race and opening
 
 - Observation: Focused lint and source-structure checks pass, but the repository compile/analyzer gate cannot run cleanly without the removed Unity installation and generated dependency outputs. The analyzer unit tests themselves pass and the pragma gate remains clean.
   Evidence: The Unity C# lint skill completed `fix`, `check`, and file-structure verification successfully. `validate-changes.ps1 -SkipTests` reported Unity 6000.5.9f1 as unresolved, the 16 pre-existing asmdef issues, and missing generated `Temp/Bin` metadata; it also reported `Scaffold.Analyzers.Tests` passing and `TOTAL:0` analyzer diagnostics.
+
+- Observation: Seven annotated local archive tags preserve four former stashes and three unmerged local branches. All four stashes, the three archived branch refs, and 40 fully merged local branches were then removed locally.
+  Evidence: Each archive tag peels to its recorded original commit; `git stash list` is empty; the remaining local branches are `main` plus the three focused roadmap branches.
+
+- Observation: Local object and LFS integrity remain healthy after pruning. `git fsck --full` reports expected dangling objects left by deleted refs, while `git lfs fsck` reports no missing or corrupt LFS objects.
+  Evidence: Both commands completed successfully on 2026-09-15; no garbage collection was run.
 
 ## Decision Log
 
@@ -114,6 +120,10 @@ The user can see the principal behavior by finishing a campaign race and opening
 
 - Decision: Require a separate explicit approval before changing external GitHub state.
   Rationale: Closing pull requests, deleting remote branches, and pushing archive tags affect shared collaborators and cannot be inferred from local cleanup authorization.
+  Date: 2026-09-15
+
+- Decision: Preserve all ten remote branches that are not ancestors of `origin/main`, including the result-screen experiment, until their individual value is reviewed.
+  Rationale: Local cleanup does not establish that unfinished shared work is obsolete. The maintenance report separates merged deletion candidates from unmerged review candidates.
   Date: 2026-09-15
 
 ## Outcomes & Retrospective
@@ -290,3 +300,4 @@ Revision history:
 
 - 2026-09-15: Initial roadmap created from the repository audit and approved implementation decisions; recorded completion of the recoverable baseline cleanup.
 - 2026-09-15: Recorded the two focused hygiene commits and the pre-existing assembly-definition audit baseline.
+- 2026-09-15: Recorded the result-screen feature commit, verified local archive tags, removal of four stashes and 43 local branches, integrity checks, and the prepared external-state approval gate.
