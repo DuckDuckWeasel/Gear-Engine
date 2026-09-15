@@ -28,6 +28,12 @@ Stub prefabs are under `Assets/GearEngine/Prefabs/Campaign/`. View-only configs 
 
 Sample catalogs: `CampaignGearCatalog.asset`, `CampaignRaceSessionDefaults.asset`, `CampaignRoguelikeGearPool.asset` (see Addressables and `TrackDefinition` assets under `Data/Track/Tracks/` for tracks).
 
+## Result popup presentation
+
+`Campaign_ResultPopupView.prefab` owns the result-screen celebration. A low-opacity `RawImage` tiles `T_RacingFlagPattern.png` behind the result content, and `ResultPopupView` advances its UV offset with `Time.unscaledDeltaTime` so the pattern continues while gameplay time is paused.
+
+The popup also contains a nested instance of `Confetti_directional_multicolor.prefab`. Its particle systems do not play on awake and use unscaled time. Each view binding stops and clears any previous particle state before playing one burst; unbinding or disabling the view stops and clears the hierarchy again. Keep both serialized celebration references assigned when editing the prefab.
+
 ## LiveOps coupling
 
 Campaign progression, gold, gear inventory, board loadout, and card unlocks are backed by LiveOps modules inside the layered bootstrap (`ILiveOpsService` is registered before the Campaign layer). **`ITrackService`** is **`TracksClientModule` only** (cloud). `LocalGearLoadoutService` may remain for isolated gear tests where noted.

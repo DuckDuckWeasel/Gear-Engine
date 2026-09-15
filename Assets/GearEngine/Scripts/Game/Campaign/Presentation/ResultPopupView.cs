@@ -3,6 +3,7 @@ using DG.Tweening;
 using Scaffold.MVVM;
 using UnityEngine;
 using UnityEngine.UI;
+
 namespace GearEngine.Campaign.Presentation
 {
     public sealed class ResultPopupView : View<ResultPopupViewModel>
@@ -15,16 +16,25 @@ namespace GearEngine.Campaign.Presentation
         [SerializeField] private Button upgradeButton;
         [SerializeField] private Button continueButton;
         [SerializeField] private TMPro.TMP_Text raceTimeText;
+        [SerializeField] private RawImage celebrationPattern;
+        [SerializeField] private Vector2 celebrationPatternSpeed = new Vector2(0.08f, 0.04f);
+        [SerializeField] private ParticleSystem celebrationParticles;
 
         private Sequence statsSequence;
+        private bool celebrationActive;
 
         protected override void OnBind()
         {
             ValidateHierarchy();
+            ResetCelebrationPattern();
+            PlayCelebration();
+            celebrationActive = true;
+
             if (raceTimeText != null)
             {
                 raceTimeText.text = viewModel.FormattedRaceTime;
             }
+
             RebuildStatSlots();
             upgradeButton.onClick.AddListener(OnUpgradeClicked);
             continueButton.onClick.AddListener(OnContinueClicked);
@@ -36,12 +46,29 @@ namespace GearEngine.Campaign.Presentation
             continueButton.onClick.RemoveListener(OnContinueClicked);
             KillStatsSequence();
             ClearStatSlots();
+            StopCelebration();
+            celebrationActive = false;
             base.OnUnbind();
         }
 
         private void OnDisable()
         {
             KillStatsSequence();
+            StopCelebration();
+            celebrationActive = false;
+        }
+
+        private void Update()
+        {
+            if (!celebrationActive)
+            {
+                return;
+            }
+
+            Rect uvRect = celebrationPattern.uvRect;
+            Vector2 offset = uvRect.position + celebrationPatternSpeed * Time.unscaledDeltaTime;
+            uvRect.position = new Vector2(Mathf.Repeat(offset.x, 1f), Mathf.Repeat(offset.y, 1f));
+            celebrationPattern.uvRect = uvRect;
         }
 
         private void RebuildStatSlots()
@@ -128,10 +155,35 @@ namespace GearEngine.Campaign.Presentation
             }
         }
 
+        private void ResetCelebrationPattern()
+        {
+            Rect uvRect = celebrationPattern.uvRect;
+            uvRect.position = Vector2.zero;
+            celebrationPattern.uvRect = uvRect;
+        }
+
+        private void PlayCelebration()
+        {
+            celebrationParticles.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+            celebrationParticles.Play(true);
+        }
+
+        private void StopCelebration()
+        {
+            if (celebrationParticles == null)
+            {
+                return;
+            }
+
+            celebrationParticles.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+        }
+
         private void ValidateHierarchy()
         {
             RequireReference(upgradeButton, nameof(upgradeButton));
             RequireReference(continueButton, nameof(continueButton));
+            RequireReference(celebrationPattern, nameof(celebrationPattern));
+            RequireReference(celebrationParticles, nameof(celebrationParticles));
         }
 
         private void RequireReference(UnityEngine.Object field, string name)

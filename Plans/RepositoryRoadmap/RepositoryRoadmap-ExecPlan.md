@@ -27,13 +27,14 @@ The user can see the principal behavior by finishing a campaign race and opening
 - [x] Create the `codex/repository-hygiene` implementation branch from refreshed `main`.
 - [x] Commit this ExecPlan as a focused documentation commit (`cf654e34`).
 - [x] Add and commit ignore rules for recurring Python, Firebase, temporary PDF, and media-marker output (`1fd49953`).
-- [ ] Create `codex/result-screen-celebration` from the completed hygiene branch.
-- [ ] Register Unity 6000.5.9f1 with the Unity CLI and install the Pipeline package so the running Editor can be driven safely.
-- [ ] Import only the approved racing-flag texture from `origin/feature/result-screen-vfx`, using repository naming conventions and retaining its Unity metadata.
-- [ ] Configure the production campaign result popup with the racing-flag pattern and the existing production confetti prefab.
-- [ ] Update `ResultPopupView` so the confetti plays once per binding and is stopped and cleared on unbind or disable.
-- [ ] Update `Docs/Game/Campaign.md` with the result-popup presentation behavior.
-- [ ] Run focused C# lint, structure verification, project compilation/analyzer validation, and visual verification for the result popup.
+- [x] Create `codex/result-screen-celebration` from the completed hygiene branch.
+- [x] Re-check Unity availability and confirm that no installed or running Editor is currently available; record the direct-asset fallback.
+- [x] Import only the approved racing-flag texture from `origin/feature/result-screen-vfx`, using repository naming conventions and retaining its Unity metadata.
+- [x] Configure the production campaign result popup with a tiled racing-flag pattern and the existing production confetti prefab.
+- [x] Update `ResultPopupView` so the flag pattern advances in unscaled time, confetti plays once per binding, and particle state is cleared on unbind or disable.
+- [x] Update `Docs/Game/Campaign.md` with the result-popup presentation behavior.
+- [x] Run focused C# lint and source-structure verification for the result popup.
+- [ ] Reinstall Unity 6000.5.9f1 or provide its executable, then complete project compilation, analyzer validation, prefab import, and visual verification for the result popup.
 - [ ] Commit the production result-screen celebration as one focused feature commit.
 - [ ] Create the Git-maintenance report and preserve each useful stash or unmerged branch before local pruning.
 - [ ] Stop for explicit approval before pushing archive tags, closing pull requests, or deleting remote branches.
@@ -65,6 +66,18 @@ The user can see the principal behavior by finishing a campaign race and opening
 - Observation: The hygiene milestone passes the pragma gate and ignore-behavior checks, while the assembly-definition audit reports 16 pre-existing missing-reference issues in package and vendored assemblies.
   Evidence: `check-pragma-warning-suppressions.ps1` returned `TOTAL:0`; `git check-ignore -v` matched all four new patterns; `check-scripts-asmdef-references.ps1` reported the same package-level baseline independently of the hygiene files.
 
+- Observation: The Unity installation discovered during the audit no longer exists. `/Applications/Unity/Hub/Editor` is empty, no Unity Editor process is running, and the CLI's apparent running-project entry is stale project metadata.
+  Evidence: `unity status --format json`, `unity editors running --format json`, the filesystem, and process lookup all report no live or installed Editor; registering the former 6000.5.9f1 path returned `ERROR.FILE_NOT_FOUND`.
+
+- Observation: UIEffect pattern-layer motion is driven in the shader by Unity's `_Time.y`; it does not expose the required unscaled-time control. `UIEffectTweener` supports unscaled time but animates effect rates, not pattern UV offset.
+  Evidence: `Assets/3rdParty/UIEffect/Shaders/UIEffect.cginc`, `PatternLayer.cs`, and `UIEffectTweener.cs`.
+
+- Observation: Reinstalling the required Unity Editor is a 5,118,710,854-byte download, so it is not an incidental verification dependency.
+  Evidence: `unity install 6000.5.9f1 --dry-run --format json`.
+
+- Observation: Focused lint and source-structure checks pass, but the repository compile/analyzer gate cannot run cleanly without the removed Unity installation and generated dependency outputs. The analyzer unit tests themselves pass and the pragma gate remains clean.
+  Evidence: The Unity C# lint skill completed `fix`, `check`, and file-structure verification successfully. `validate-changes.ps1 -SkipTests` reported Unity 6000.5.9f1 as unresolved, the 16 pre-existing asmdef issues, and missing generated `Temp/Bin` metadata; it also reported `Scaffold.Analyzers.Tests` passing and `TOTAL:0` analyzer diagnostics.
+
 ## Decision Log
 
 - Decision: Execute the roadmap in focused milestones and commits without rewriting existing history.
@@ -87,8 +100,8 @@ The user can see the principal behavior by finishing a campaign race and opening
   Rationale: This delivers the selected celebration while keeping result content legible and the production change small.
   Date: 2026-09-15
 
-- Decision: Configure the UIEffect presentation in the prefab and keep C# responsible only for the `ParticleSystem` lifecycle.
-  Rationale: `Game.Campaign.asmdef` does not reference Coffee UIEffect. Prefab-only configuration avoids coupling campaign runtime code to the effect package.
+- Decision: Render the flag as a low-opacity `RawImage` and advance its UV offset from `ResultPopupView` with `Time.unscaledDeltaTime`; do not add a Coffee UIEffect dependency.
+  Rationale: UIEffect's pattern shader uses scaled global shader time, while the selected result flow requires motion during paused gameplay. `RawImage` provides deterministic unscaled motion with the existing `UnityEngine.UI` dependency and keeps the campaign assembly decoupled from UIEffect.
   Date: 2026-09-15
 
 - Decision: Add phased CI: static and analyzer-oriented validation without Unity credentials now, then a licensed Unity compile/test job later.
@@ -131,13 +144,13 @@ Commit this ExecPlan separately from `.gitignore`. Validate the documentation an
 
 ### Milestone 2: Production result-screen celebration
 
-Create `codex/result-screen-celebration` from the completed hygiene branch. Register `/Applications/Unity/Hub/Editor/6000.5.9f1/Unity.app` with the Unity CLI, install the Pipeline package into the project, and wait until the running Editor exposes its live command surface. Use live Unity commands for prefab and asset mutations because a Unity Editor is already open.
+Create `codex/result-screen-celebration` from the completed hygiene branch. Check for a live Unity Editor before asset work. If Unity 6000.5.9f1 is installed and reachable, use the Pipeline command surface; otherwise use the repository-approved direct-asset fallback and leave compilation and visual acceptance explicitly pending until the Editor is available.
 
 Recover only the flag-pattern texture and metadata from `origin/feature/result-screen-vfx`. Rename it to a convention-compliant texture name such as `T_RacingFlagPattern.png` through Unity's `AssetDatabase`, preserving the asset GUID. Do not import demo scenes, recovery folders, root animation controllers, mask-transition assets, DOTween changes, or full vendor packs.
 
-Edit `Campaign_ResultPopupView.prefab` through the running Editor. Add the UIEffect components needed for a looping, unscaled-time pattern on the existing background image. Keep opacity low enough that result labels and buttons remain readable. Instantiate the existing confetti prefab as a child of the popup, preserve it as a prefab instance, configure all particle systems as non-looping and not `playOnAwake`, and assign the root particle system to the view's serialized field.
+Edit `Campaign_ResultPopupView.prefab` through the running Editor when available, or use direct Unity YAML only after the required live-Editor and Safe Mode checks prove that no Editor is reachable. Add a tiled `RawImage` between the existing background and result content. Keep opacity low enough that result labels and buttons remain readable. Instantiate the existing confetti prefab as a child of the popup, preserve it as a prefab instance, configure all particle systems as non-looping, unscaled, and not `playOnAwake`, and assign the root particle system to the view's serialized field.
 
-Update `ResultPopupView.cs` with a serialized `ParticleSystem`. When binding begins, stop and clear any previous state and play the hierarchy once. On unbind and disable, stop and clear the hierarchy. Include the particle reference in existing hierarchy validation. Do not add a dependency on Coffee UIEffect to the campaign C# assembly.
+Update `ResultPopupView.cs` with serialized `RawImage`, pattern-speed, and `ParticleSystem` fields. Advance the pattern UV offset only while the view is bound, using `Time.unscaledDeltaTime`. When binding begins, reset the pattern, stop and clear any previous particle state, and play the hierarchy once. On unbind and disable, stop and clear the hierarchy. Include both object references in existing hierarchy validation. Do not add a dependency on Coffee UIEffect to the campaign C# assembly.
 
 Update `Docs/Game/Campaign.md` to describe the flag-pattern background, one-shot confetti lifecycle, and prefab ownership. Run the Unity C# lint skill in fix and check modes only against the changed C# file, then run its structure verifier. Run the repository validation gate without broad tests unless a real regression or deterministic domain-logic change is discovered. Use live Play Mode and screenshot evidence for the four visual scenarios listed under Validation and Acceptance.
 
@@ -180,14 +193,14 @@ Run commands from the repository root unless a command names another working dir
 
        git switch -c codex/result-screen-celebration
 
-5. Register and connect the installed Editor:
+5. Register and connect the installed Editor when available:
 
        unity editors add /Applications/Unity/Hub/Editor/6000.5.9f1/Unity.app
        unity pipeline install --project-path "/Users/leonardosilva/Documents/MatheusCohen/Gear Engine"
        unity status --format json
        unity command --project-path "/Users/leonardosilva/Documents/MatheusCohen/Gear Engine" --format json
 
-6. Use the connected Editor's command catalog and `AssetDatabase` APIs to rename/import the pattern and modify the prefab. Do not hand-edit Unity YAML while the Editor is reachable.
+6. Use the connected Editor's command catalog and `AssetDatabase` APIs to rename/import the pattern and modify the prefab. Do not hand-edit Unity YAML while the Editor is reachable. When the checks prove that no Editor exists, use the direct-asset fallback and record the missing compile/visual gate.
 
 7. Patch `ResultPopupView.cs` and `Docs/Game/Campaign.md`, recompile through the running Editor, then run focused lint and validation.
 
