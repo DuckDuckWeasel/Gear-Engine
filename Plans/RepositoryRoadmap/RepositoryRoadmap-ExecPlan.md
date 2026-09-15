@@ -25,8 +25,8 @@ The user can see the principal behavior by finishing a campaign race and opening
 - [x] Confirm that `main` matches `origin/main` and that the only tracked local edit was whitespace-only serialization churn in `ProjectSettings/ProjectSettings.asset`.
 - [x] Restore the whitespace-only project-settings edit and move the approved generated directories to a recoverable Trash location.
 - [x] Create the `codex/repository-hygiene` implementation branch from refreshed `main`.
-- [ ] Commit this ExecPlan as a focused documentation commit.
-- [ ] Add and commit ignore rules for recurring Python, Firebase, temporary PDF, and media-marker output.
+- [x] Commit this ExecPlan as a focused documentation commit (`cf654e34`).
+- [x] Add and commit ignore rules for recurring Python, Firebase, temporary PDF, and media-marker output (`1fd49953`).
 - [ ] Create `codex/result-screen-celebration` from the completed hygiene branch.
 - [ ] Register Unity 6000.5.9f1 with the Unity CLI and install the Pipeline package so the running Editor can be driven safely.
 - [ ] Import only the approved racing-flag texture from `origin/feature/result-screen-vfx`, using repository naming conventions and retaining its Unity metadata.
@@ -61,6 +61,9 @@ The user can see the principal behavior by finishing a campaign race and opening
 
 - Observation: There is no existing `.github` workflow and no observed workflow history for `main`. The repository's current validation script always attempts Unity compilation even when tests are skipped.
   Evidence: tracked-file inspection, `gh run list --branch main`, and `.agents/scripts/validate-changes.ps1`.
+
+- Observation: The hygiene milestone passes the pragma gate and ignore-behavior checks, while the assembly-definition audit reports 16 pre-existing missing-reference issues in package and vendored assemblies.
+  Evidence: `check-pragma-warning-suppressions.ps1` returned `TOTAL:0`; `git check-ignore -v` matched all four new patterns; `check-scripts-asmdef-references.ps1` reported the same package-level baseline independently of the hygiene files.
 
 ## Decision Log
 
@@ -273,3 +276,4 @@ External dependencies remain the vendored UIEffect package, the existing confett
 Revision history:
 
 - 2026-09-15: Initial roadmap created from the repository audit and approved implementation decisions; recorded completion of the recoverable baseline cleanup.
+- 2026-09-15: Recorded the two focused hygiene commits and the pre-existing assembly-definition audit baseline.
