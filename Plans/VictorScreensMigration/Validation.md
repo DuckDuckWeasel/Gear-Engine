@@ -69,3 +69,6 @@ compilation and analyzer build with zero diagnostics or blockers. The wrapper sk
 EditMode and PlayMode suites as requested; the focused tests above ran separately.
 
 Correction commit: `0e84aec6` (`feat(campaign): restore Victor post-race flow`).
+Local main integration: `4901bd3e` (`merge: correct Victor post-race flow`). The merge applied
+without conflicts, and local main had not moved from the verified `035e42af` baseline. No remote
+push was performed.

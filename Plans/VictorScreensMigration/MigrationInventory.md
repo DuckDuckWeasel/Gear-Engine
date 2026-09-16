@@ -61,4 +61,5 @@ See `Validation.md` for actual evidence, remaining limitations and integration s
 Validation commit `70079efe` records tests and final captures for both implementation batches. Local main integration: `611bc227`. No remote push.
 
 The post-race correction is implemented in `0e84aec6` on
-`codex/victor-victory-flow-fix`. No remote push is authorized.
+`codex/victor-victory-flow-fix` and merged into local main in `4901bd3e`.
+No remote push is authorized.
