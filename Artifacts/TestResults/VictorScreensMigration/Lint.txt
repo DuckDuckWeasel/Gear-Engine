@@ -1,0 +1,43 @@
+{
+  "commands": [
+    [
+      "dotnet",
+      "format",
+      "whitespace",
+      "/Users/leonardosilva/Documents/MatheusCohen/VictorScreensMigration/VictorScreensMigration.sln",
+      "--no-restore",
+      "--verbosity",
+      "minimal",
+      "--include",
+      "Assets/GearEngine/Scripts/Game/Campaign/Presentation/ActiveRaceView.cs",
+      "Assets/GearEngine/Scripts/Game/Campaign/Tests/Editor/CampaignScreenReferenceTests.cs",
+      "--verify-no-changes"
+    ],
+    [
+      "dotnet",
+      "format",
+      "style",
+      "/Users/leonardosilva/Documents/MatheusCohen/VictorScreensMigration/VictorScreensMigration.sln",
+      "--no-restore",
+      "--severity",
+      "warn",
+      "--verbosity",
+      "minimal",
+      "--include",
+      "Assets/GearEngine/Scripts/Game/Campaign/Presentation/ActiveRaceView.cs",
+      "Assets/GearEngine/Scripts/Game/Campaign/Tests/Editor/CampaignScreenReferenceTests.cs",
+      "--verify-no-changes"
+    ]
+  ],
+  "editorconfig": "/Users/leonardosilva/Documents/MatheusCohen/VictorScreensMigration/.editorconfig",
+  "files": [
+    "Assets/GearEngine/Scripts/Game/Campaign/Presentation/ActiveRaceView.cs",
+    "Assets/GearEngine/Scripts/Game/Campaign/Tests/Editor/CampaignScreenReferenceTests.cs"
+  ],
+  "no_op": false,
+  "repo": "/Users/leonardosilva/Documents/MatheusCohen/VictorScreensMigration",
+  "scope": "explicit",
+  "workspace": "/Users/leonardosilva/Documents/MatheusCohen/VictorScreensMigration/VictorScreensMigration.sln"
+}
+Warnings were encountered while loading the workspace. Set the verbosity option to the 'diagnostic' level to log warnings.
+Warnings were encountered while loading the workspace. Set the verbosity option to the 'diagnostic' level to log warnings.

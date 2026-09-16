@@ -1,0 +1,5 @@
+activeBoards=1; events=1; boardId=568105584918942708; interaction=False
+activeBoards=1; events=1; boardId=568105584918942708; interaction=True
+activeBoards=1; events=1; boardId=568105584918946484; interaction=True
+activeBoards=1; events=1; boardId=568105584918946484; interaction=False
+boardDragStarted=True; stoppedAfterRejectedDrop=True

@@ -11,6 +11,7 @@ using TMPro;
 using UnityEngine;
 using Ami.BroAudio;
 using DG.Tweening;
+using UnityEngine.UI;
 
 namespace GearEngine.Campaign.Presentation
 {
@@ -34,6 +35,7 @@ namespace GearEngine.Campaign.Presentation
         [SerializeField] private TMP_Text currentLapText;
         [SerializeField] private TMP_Text currentRpmText;
         [SerializeField] private TMP_Text currentGearText;
+        [SerializeField] private Image[] rpmSegments = Array.Empty<Image>();
 
         [Header("Roguelike Stats UI")]
         [SerializeField] private TMP_Text speedCapabilityText;
@@ -46,6 +48,9 @@ namespace GearEngine.Campaign.Presentation
         private bool raceStartPending;
         private float displayedRpm;
         private float displayedSpeed;
+        private RectTransform raceBoardRect;
+        private Vector2 boardAnchorMin;
+        private Vector2 boardAnchorMax;
         private int lastDisplayedLap = 0;
         private int currentSimulatedGear = 1;
         private SimulationLifecycleState lastTrackState = SimulationLifecycleState.Created;
@@ -140,6 +145,19 @@ namespace GearEngine.Campaign.Presentation
 
             UpdateStatsUI();
             UpdateFakeRpmUI();
+            UpdateRpmSegments();
+        }
+
+        private void UpdateRpmSegments()
+        {
+            float progress = Mathf.Clamp01(displayedRpm / 8000f) * rpmSegments.Length;
+            for (int i = 0; i < rpmSegments.Length; i++)
+            {
+                if (rpmSegments[i] != null)
+                {
+                    rpmSegments[i].fillAmount = Mathf.Clamp01(progress - i);
+                }
+            }
         }
 
         private void UpdateFakeRpmUI()
@@ -365,12 +383,44 @@ namespace GearEngine.Campaign.Presentation
         protected override void OnOpen(bool wasHidden)
         {
             base.OnOpen(wasHidden);
+            ApplyRaceBoardLayout();
             SetRaceSceneRootsActive(true);
             if (board != null)
             {
                 board.Board.SetAllGearsRapidSpin(true);
             }
             PlayFrustumTransitionThenStartRace();
+        }
+
+        private void ApplyRaceBoardLayout()
+        {
+            if (raceBoardRect != null || board == null || board.Board == null)
+            {
+                return;
+            }
+
+            raceBoardRect = board.Board.transform as RectTransform;
+            if (raceBoardRect == null)
+            {
+                return;
+            }
+
+            boardAnchorMin = raceBoardRect.anchorMin;
+            boardAnchorMax = raceBoardRect.anchorMax;
+            raceBoardRect.anchorMin = new Vector2(boardAnchorMin.x, 0.2f);
+            raceBoardRect.anchorMax = new Vector2(boardAnchorMax.x, 0.5f);
+        }
+
+        private void RestoreBoardLayout()
+        {
+            if (raceBoardRect == null)
+            {
+                return;
+            }
+
+            raceBoardRect.anchorMin = boardAnchorMin;
+            raceBoardRect.anchorMax = boardAnchorMax;
+            raceBoardRect = null;
         }
 
         /// <summary>
@@ -439,10 +489,12 @@ namespace GearEngine.Campaign.Presentation
             }
 
             SetRaceSceneRootsActive(false);
+            RestoreBoardLayout();
         }
 
         protected override void OnUnbind()
         {
+            RestoreBoardLayout();
             raceStartPending = false;
             DestroySpawnedCars();
             if (track != null)

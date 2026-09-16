@@ -1,0 +1,1 @@
+Verified 2 C# file(s): one top-level type per file.

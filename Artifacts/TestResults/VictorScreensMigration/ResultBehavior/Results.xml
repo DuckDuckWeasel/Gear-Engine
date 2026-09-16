@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Failed(Child)" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-16 00:53:12Z" end-time="2026-09-16 00:53:12Z" duration="0.0274835">
+  <test-suite type="TestSuite" id="1569" name="Scaffold" fullname="Scaffold" runstate="Runnable" testcasecount="401" result="Failed" site="Child" start-time="2026-09-16 00:53:12Z" end-time="2026-09-16 00:53:12Z" duration="0.027484" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1105" name="Game.Campaign.Tests.dll" fullname="/Users/leonardosilva/Documents/MatheusCohen/VictorScreensMigration/Library/ScriptAssemblies/Game.Campaign.Tests.dll" runstate="Runnable" testcasecount="54" result="Failed" site="Child" start-time="2026-09-16 00:53:12Z" end-time="2026-09-16 00:53:12Z" duration="0.026437" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="68920" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1106" name="GearEngine" fullname="GearEngine" runstate="Runnable" testcasecount="54" result="Failed" site="Child" start-time="2026-09-16 00:53:12Z" end-time="2026-09-16 00:53:12Z" duration="0.026169" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1110" name="Campaign" fullname="GearEngine.Campaign" runstate="Runnable" testcasecount="53" result="Failed" site="Child" start-time="2026-09-16 00:53:12Z" end-time="2026-09-16 00:53:12Z" duration="0.025988" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="1111" name="Tests" fullname="GearEngine.Campaign.Tests" runstate="Runnable" testcasecount="53" result="Failed" site="Child" start-time="2026-09-16 00:53:12Z" end-time="2026-09-16 00:53:12Z" duration="0.025733" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestSuite" id="1112" name="Editor" fullname="GearEngine.Campaign.Tests.Editor" runstate="Runnable" testcasecount="53" result="Failed" site="Child" start-time="2026-09-16 00:53:12Z" end-time="2026-09-16 00:53:12Z" duration="0.025362" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-suite type="TestFixture" id="1081" name="ResultPopupViewModelTests" fullname="GearEngine.Campaign.Tests.Editor.ResultPopupViewModelTests" classname="GearEngine.Campaign.Tests.Editor.ResultPopupViewModelTests" runstate="Runnable" testcasecount="3" result="Failed" site="Child" start-time="2026-09-16 00:53:12Z" end-time="2026-09-16 00:53:12Z" duration="0.024948" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <failure>
+                  <message><![CDATA[One or more child tests had errors]]></message>
+                </failure>
+                <test-case id="1082" name="Continue_WhenGoodResult_OpensMain" fullname="GearEngine.Campaign.Tests.Editor.ResultPopupViewModelTests.Continue_WhenGoodResult_OpensMain" methodname="Continue_WhenGoodResult_OpensMain" classname="GearEngine.Campaign.Tests.Editor.ResultPopupViewModelTests" runstate="Runnable" seed="385589906" result="Failed" label="Error" start-time="2026-09-16 00:53:12Z" end-time="2026-09-16 00:53:12Z" duration="0.022436" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[VContainer.VContainerException : Failed to resolve GearEngine.Currency.CurrencyClientModule : No such registration of type: Scaffold.Analytics.IAnalyticsService with Key: ]]></message>
+                    <stack-trace><![CDATA[  at VContainer.Internal.ReflectionInjector.CreateInstance (VContainer.IObjectResolver resolver, System.Collections.Generic.IReadOnlyList`1[T] parameters) [0x0009c] in ./Packages/jp.hadashikick.vcontainer/Runtime/Internal/ReflectionInjector.cs:56 
+  at VContainer.Internal.InstanceProvider.SpawnInstance (VContainer.IObjectResolver resolver) [0x00000] in ./Packages/jp.hadashikick.vcontainer/Runtime/Internal/InstanceProviders/InstanceProvider.cs:21 
+  at VContainer.Registration.SpawnInstance (VContainer.IObjectResolver resolver) [0x00000] in ./Packages/jp.hadashikick.vcontainer/Runtime/Registration.cs:37 
+  at VContainer.Container+<>c__DisplayClass12_0.<.ctor>b__1 () [0x00000] in ./Packages/jp.hadashikick.vcontainer/Runtime/Container.cs:222 
+  at System.Lazy`1[T].ViaFactory (System.Threading.LazyThreadSafetyMode mode) [0x00043] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Lazy`1[T].ExecutionAndPublication (System.LazyHelper executionAndPublication, System.Boolean useDefaultConstructor) [0x00022] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Lazy`1[T].CreateValue () [0x00074] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Lazy`1[T].get_Value () [0x0000a] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at VContainer.Container.ResolveCore (VContainer.Registration registration) [0x00029] in ./Packages/jp.hadashikick.vcontainer/Runtime/Container.cs:295 
+  at VContainer.Container.Resolve (VContainer.Registration registration) [0x0002a] in ./Packages/jp.hadashikick.vcontainer/Runtime/Container.cs:258 
+  at VContainer.Container.Resolve (System.Type type, System.Object key) [0x00010] in ./Packages/jp.hadashikick.vcontainer/Runtime/Container.cs:233 
+  at VContainer.IObjectResolverExtensions.Resolve[T] (VContainer.IObjectResolver resolver, System.Object key) [0x00000] in ./Packages/jp.hadashikick.vcontainer/Runtime/IObjectResolverExtensions.cs:10 
+  at GearEngine.Campaign.Tests.Editor.ResultPopupViewModelTests.Continue_WhenGoodResult_OpensMain () [0x00063] in /Users/leonardosilva/Documents/MatheusCohen/VictorScreensMigration/Assets/GearEngine/Scripts/Game/Campaign/Tests/Editor/ResultPopupViewModelTests.cs:35 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <299d5c9ae27b4d27af003e5f456f4b13>:0 ]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="1083" name="Continue_WhenPoorResult_OpensMain" fullname="GearEngine.Campaign.Tests.Editor.ResultPopupViewModelTests.Continue_WhenPoorResult_OpensMain" methodname="Continue_WhenPoorResult_OpensMain" classname="GearEngine.Campaign.Tests.Editor.ResultPopupViewModelTests" runstate="Runnable" seed="830552656" result="Failed" label="Error" start-time="2026-09-16 00:53:12Z" end-time="2026-09-16 00:53:12Z" duration="0.000852" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[VContainer.VContainerException : Failed to resolve GearEngine.Currency.CurrencyClientModule : No such registration of type: Scaffold.Analytics.IAnalyticsService with Key: ]]></message>
+                    <stack-trace><![CDATA[  at VContainer.Internal.ReflectionInjector.CreateInstance (VContainer.IObjectResolver resolver, System.Collections.Generic.IReadOnlyList`1[T] parameters) [0x0009c] in ./Packages/jp.hadashikick.vcontainer/Runtime/Internal/ReflectionInjector.cs:56 
+  at VContainer.Internal.InstanceProvider.SpawnInstance (VContainer.IObjectResolver resolver) [0x00000] in ./Packages/jp.hadashikick.vcontainer/Runtime/Internal/InstanceProviders/InstanceProvider.cs:21 
+  at VContainer.Registration.SpawnInstance (VContainer.IObjectResolver resolver) [0x00000] in ./Packages/jp.hadashikick.vcontainer/Runtime/Registration.cs:37 
+  at VContainer.Container+<>c__DisplayClass12_0.<.ctor>b__1 () [0x00000] in ./Packages/jp.hadashikick.vcontainer/Runtime/Container.cs:222 
+  at System.Lazy`1[T].ViaFactory (System.Threading.LazyThreadSafetyMode mode) [0x00043] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Lazy`1[T].ExecutionAndPublication (System.LazyHelper executionAndPublication, System.Boolean useDefaultConstructor) [0x00022] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Lazy`1[T].CreateValue () [0x00074] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Lazy`1[T].get_Value () [0x0000a] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at VContainer.Container.ResolveCore (VContainer.Registration registration) [0x00029] in ./Packages/jp.hadashikick.vcontainer/Runtime/Container.cs:295 
+  at VContainer.Container.Resolve (VContainer.Registration registration) [0x0002a] in ./Packages/jp.hadashikick.vcontainer/Runtime/Container.cs:258 
+  at VContainer.Container.Resolve (System.Type type, System.Object key) [0x00010] in ./Packages/jp.hadashikick.vcontainer/Runtime/Container.cs:233 
+  at VContainer.IObjectResolverExtensions.Resolve[T] (VContainer.IObjectResolver resolver, System.Object key) [0x00000] in ./Packages/jp.hadashikick.vcontainer/Runtime/IObjectResolverExtensions.cs:10 
+  at GearEngine.Campaign.Tests.Editor.ResultPopupViewModelTests.Continue_WhenPoorResult_OpensMain () [0x00079] in /Users/leonardosilva/Documents/MatheusCohen/VictorScreensMigration/Assets/GearEngine/Scripts/Game/Campaign/Tests/Editor/ResultPopupViewModelTests.cs:65 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <299d5c9ae27b4d27af003e5f456f4b13>:0 ]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="1084" name="Upgrade_OpensRoguelikeViewModel" fullname="GearEngine.Campaign.Tests.Editor.ResultPopupViewModelTests.Upgrade_OpensRoguelikeViewModel" methodname="Upgrade_OpensRoguelikeViewModel" classname="GearEngine.Campaign.Tests.Editor.ResultPopupViewModelTests" runstate="Runnable" seed="205137974" result="Failed" label="Error" start-time="2026-09-16 00:53:12Z" end-time="2026-09-16 00:53:12Z" duration="0.000465" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[VContainer.VContainerException : Failed to resolve GearEngine.Currency.CurrencyClientModule : No such registration of type: Scaffold.Analytics.IAnalyticsService with Key: ]]></message>
+                    <stack-trace><![CDATA[  at VContainer.Internal.ReflectionInjector.CreateInstance (VContainer.IObjectResolver resolver, System.Collections.Generic.IReadOnlyList`1[T] parameters) [0x0009c] in ./Packages/jp.hadashikick.vcontainer/Runtime/Internal/ReflectionInjector.cs:56 
+  at VContainer.Internal.InstanceProvider.SpawnInstance (VContainer.IObjectResolver resolver) [0x00000] in ./Packages/jp.hadashikick.vcontainer/Runtime/Internal/InstanceProviders/InstanceProvider.cs:21 
+  at VContainer.Registration.SpawnInstance (VContainer.IObjectResolver resolver) [0x00000] in ./Packages/jp.hadashikick.vcontainer/Runtime/Registration.cs:37 
+  at VContainer.Container+<>c__DisplayClass12_0.<.ctor>b__1 () [0x00000] in ./Packages/jp.hadashikick.vcontainer/Runtime/Container.cs:222 
+  at System.Lazy`1[T].ViaFactory (System.Threading.LazyThreadSafetyMode mode) [0x00043] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Lazy`1[T].ExecutionAndPublication (System.LazyHelper executionAndPublication, System.Boolean useDefaultConstructor) [0x00022] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Lazy`1[T].CreateValue () [0x00074] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at System.Lazy`1[T].get_Value () [0x0000a] in <299d5c9ae27b4d27af003e5f456f4b13>:0 
+  at VContainer.Container.ResolveCore (VContainer.Registration registration) [0x00029] in ./Packages/jp.hadashikick.vcontainer/Runtime/Container.cs:295 
+  at VContainer.Container.Resolve (VContainer.Registration registration) [0x0002a] in ./Packages/jp.hadashikick.vcontainer/Runtime/Container.cs:258 
+  at VContainer.Container.Resolve (System.Type type, System.Object key) [0x00010] in ./Packages/jp.hadashikick.vcontainer/Runtime/Container.cs:233 
+  at VContainer.IObjectResolverExtensions.Resolve[T] (VContainer.IObjectResolver resolver, System.Object key) [0x00000] in ./Packages/jp.hadashikick.vcontainer/Runtime/IObjectResolverExtensions.cs:10 
+  at GearEngine.Campaign.Tests.Editor.ResultPopupViewModelTests.Upgrade_OpensRoguelikeViewModel () [0x00051] in /Users/leonardosilva/Documents/MatheusCohen/VictorScreensMigration/Assets/GearEngine/Scripts/Game/Campaign/Tests/Editor/ResultPopupViewModelTests.cs:92 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <299d5c9ae27b4d27af003e5f456f4b13>:0 ]]></stack-trace>
+                  </failure>
+                  <output><![CDATA[Saving results to: /Users/leonardosilva/Library/Application Support/DDW/Scaffold/TestResults.xml
+]]></output>
+                </test-case>
+              </test-suite>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

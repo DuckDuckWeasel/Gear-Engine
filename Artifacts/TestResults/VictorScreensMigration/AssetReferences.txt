@@ -1,0 +1,41 @@
+New external asset GUIDs: 20; resolved: 20; unresolved: 0
+03bcc7ccd7350004f924876a1a766378: Assets/GearEngine/Art/UI/Panel&Bars/ScorePanel.png.meta
+  Assets/GearEngine/Prefabs/Campaign/Race View.prefab
+0c5993a00cb02264b82fb358929c9b5b: Assets/GearEngine/Art/UI/Panel&Bars/Speed&Gear_panel_2.png.meta
+  Assets/GearEngine/Prefabs/Campaign/Race View.prefab
+1d37ce3d7797387419fe480232440032: Assets/GearEngine/Art/UI/Panel&Bars/rpm_bar_2_on.png.meta
+  Assets/GearEngine/Prefabs/Campaign/Race View.prefab
+26d2365f5af550041b6255e4fd741cb7: Assets/GearEngine/Art/UI/Panel&Bars/rpm_bar_3_on.png.meta
+  Assets/GearEngine/Prefabs/Campaign/Race View.prefab
+2b5ff342cc2b5a84f8955ae2d3d55d01: Assets/GearEngine/Art/UI/Background&Pattern/Pattern_TrophyandCogWhite.png.meta
+  Assets/GearEngine/Prefabs/Campaign/Campaign_ResultPopupView.prefab
+30649d3a9faa99c48a7b1166b86bf2a0: Library/PackageCache/com.unity.ugui@1c4864518158/Runtime/UGUI/UI/Core/Layout/HorizontalLayoutGroup.cs.meta
+  Assets/GearEngine/Prefabs/Campaign/Race View.prefab
+375e90bb4498e43f9a11b81a2ee2d9fe: Assets/3rdParty/UIEffect/UIEffectPresets/Textures/Pattern-Diamond.png.meta
+  Assets/GearEngine/Prefabs/Campaign/Campaign_ResultPopupView.prefab, Assets/GearEngine/Prefabs/Campaign/Items View.prefab
+3894488e9107cd745ad01c6073f8a527: Assets/GearEngine/Art/UI/Cards&Rewards/icon_reward_commum_1.png.meta
+  Assets/GearEngine/Prefabs/Campaign/Campaign_ResultPopupView.prefab
+4360f712d4587384292e225fd1a61c21: Assets/GearEngine/Art/UI/Panel&Bars/rpm_bar_1_0ff.png.meta
+  Assets/GearEngine/Prefabs/Campaign/Race View.prefab
+51cf4ae69d327428fbac4ee73e8587fe: Assets/3rdParty/UIEffect/UIEffectPresets/Textures/Pattern-Dot.png.meta
+  Assets/GearEngine/Prefabs/Campaign/Campaign_ResultPopupView.prefab
+55f010b82f24ef845ae9b27699457854: Assets/GearEngine/Art/Audio/Default/SFX_whoosh_cartoon.asset.meta
+  Assets/GearEngine/Prefabs/Campaign/Campaign_ResultPopupView.prefab
+6da917c79bd7a1247b76b2efcd2ec473: Assets/GearEngine/Art/UI/Group 86.png.meta
+  Assets/GearEngine/Prefabs/Campaign/ItemPopup View.prefab
+8403b954e0aa74b7794a4509efbf5e12: Assets/GearEngine/Art/Fonts/BricolageGrotesque-VariableFont_opsz,wdth,wght Atlas Material Variant - Outline 1.mat.meta
+  Assets/GearEngine/Prefabs/Campaign/Campaign_ResultPopupView.prefab, Assets/GearEngine/Prefabs/Campaign/Race View.prefab
+938fce054c42f40a3969e27a88d9bdd8: Assets/3rdParty/UIEffect/Runtime/UIEffect.cs.meta
+  Assets/GearEngine/Prefabs/Campaign/Campaign_ResultPopupView.prefab, Assets/GearEngine/Prefabs/Campaign/ItemPopup View.prefab, Assets/GearEngine/Prefabs/Campaign/Items View.prefab
+9408612c7c058f44b8ee3c0985e35bea: Assets/GearEngine/Art/UI/Cards&Rewards/Background_Resize.png.meta
+  Assets/GearEngine/Prefabs/Campaign/Campaign_ResultPopupView.prefab
+a1ba8e28a813b8a489b6f7bb85e72937: Assets/GearEngine/Art/UI/Panel&Bars/rpm_bar_1_on.png.meta
+  Assets/GearEngine/Prefabs/Campaign/Race View.prefab
+ad7f3d58247ad494e87668675d24a640: Assets/GearEngine/Art/UI/Panel&Bars/rpm_bar_3_off.png.meta
+  Assets/GearEngine/Prefabs/Campaign/Race View.prefab
+bfc03c5e2b175cc47a6a928a0f624aee: Assets/GearEngine/Art/UI/Panel&Bars/Panel_commum_multiplier.png.meta
+  Assets/GearEngine/Prefabs/Campaign/Race View.prefab
+f19c629eb8cdf415db2ed8e23be0d0f4: Assets/GearEngine/Art/Sprites/GearIcons/VAR_Rotation Power.png.meta
+  Assets/GearEngine/Prefabs/Campaign/ItemPopup View.prefab
+f1fe3d76bb81dad47adc6a866645a5f6: Assets/GearEngine/Art/UI/Group 87.png.meta
+  Assets/GearEngine/Prefabs/Campaign/ItemPopup View.prefab

@@ -557,6 +557,7 @@ Canvas:
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_VertexColorAlwaysGammaSpace: 0
+  m_UseReflectionProbes: 0
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
@@ -1414,39 +1415,13 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 8577524891781176608, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 581343404065357284}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
 --- !u!224 &970745957896709106 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 791381848691240434, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
   m_PrefabInstance: {fileID: 541353170060348928}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &8109356366894371616 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 8577524891781176608, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
-  m_PrefabInstance: {fileID: 541353170060348928}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &581343404065357284
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8109356366894371616}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 471a6f36fb0c84273965321f132ab249, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::GearEngine.Core.ViewUtility.Audio.UIAudioEventTrigger
-  _triggers:
-  - eventID: 4
-    sound:
-      _entity: {fileID: 11400000, guid: 0680a3fa16bfe944b91aaa167171683e, type: 2}
-      ID: 0
-      <DebugObject>k__BackingField: {fileID: 8109356366894371616}
 --- !u!1001 &628702673721182999
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1542,39 +1517,13 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 8577524891781176608, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 366062162096649475}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
 --- !u!224 &162714909100189413 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 791381848691240434, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
   m_PrefabInstance: {fileID: 628702673721182999}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &9201105490578069047 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 8577524891781176608, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
-  m_PrefabInstance: {fileID: 628702673721182999}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &366062162096649475
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9201105490578069047}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 471a6f36fb0c84273965321f132ab249, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::GearEngine.Core.ViewUtility.Audio.UIAudioEventTrigger
-  _triggers:
-  - eventID: 4
-    sound:
-      _entity: {fileID: 11400000, guid: 0680a3fa16bfe944b91aaa167171683e, type: 2}
-      ID: 0
-      <DebugObject>k__BackingField: {fileID: 9201105490578069047}
 --- !u!1001 &2024903254569539330
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1670,39 +1619,13 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 8577524891781176608, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 7609412837020234763}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
 --- !u!224 &1648998409975675632 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 791381848691240434, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
   m_PrefabInstance: {fileID: 2024903254569539330}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &7714837383167232546 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 8577524891781176608, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
-  m_PrefabInstance: {fileID: 2024903254569539330}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &7609412837020234763
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7714837383167232546}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 471a6f36fb0c84273965321f132ab249, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::GearEngine.Core.ViewUtility.Audio.UIAudioEventTrigger
-  _triggers:
-  - eventID: 4
-    sound:
-      _entity: {fileID: 11400000, guid: 0680a3fa16bfe944b91aaa167171683e, type: 2}
-      ID: 0
-      <DebugObject>k__BackingField: {fileID: 7714837383167232546}
 --- !u!1001 &3264297407622712341
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1798,39 +1721,13 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 8577524891781176608, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 5989559135676849158}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
 --- !u!224 &2861633678603870695 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 791381848691240434, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
   m_PrefabInstance: {fileID: 3264297407622712341}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &6504429606939169077 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 8577524891781176608, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
-  m_PrefabInstance: {fileID: 3264297407622712341}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &5989559135676849158
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6504429606939169077}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 471a6f36fb0c84273965321f132ab249, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::GearEngine.Core.ViewUtility.Audio.UIAudioEventTrigger
-  _triggers:
-  - eventID: 4
-    sound:
-      _entity: {fileID: 11400000, guid: 0680a3fa16bfe944b91aaa167171683e, type: 2}
-      ID: 0
-      <DebugObject>k__BackingField: {fileID: 6504429606939169077}
 --- !u!1001 &3501543713124337535
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1926,39 +1823,13 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 8577524891781176608, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 7070527977221926294}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
 --- !u!224 &4209870515028470413 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 791381848691240434, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
   m_PrefabInstance: {fileID: 3501543713124337535}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &5160709579062336095 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 8577524891781176608, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
-  m_PrefabInstance: {fileID: 3501543713124337535}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &7070527977221926294
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5160709579062336095}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 471a6f36fb0c84273965321f132ab249, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::GearEngine.Core.ViewUtility.Audio.UIAudioEventTrigger
-  _triggers:
-  - eventID: 4
-    sound:
-      _entity: {fileID: 11400000, guid: 0680a3fa16bfe944b91aaa167171683e, type: 2}
-      ID: 0
-      <DebugObject>k__BackingField: {fileID: 5160709579062336095}
 --- !u!1001 &4226467304446671918
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2054,39 +1925,13 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 8577524891781176608, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 4713142189142765430}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
 --- !u!224 &3484906535916032476 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 791381848691240434, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
   m_PrefabInstance: {fileID: 4226467304446671918}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &5597430007210746126 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 8577524891781176608, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
-  m_PrefabInstance: {fileID: 4226467304446671918}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &4713142189142765430
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5597430007210746126}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 471a6f36fb0c84273965321f132ab249, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::GearEngine.Core.ViewUtility.Audio.UIAudioEventTrigger
-  _triggers:
-  - eventID: 4
-    sound:
-      _entity: {fileID: 11400000, guid: 0680a3fa16bfe944b91aaa167171683e, type: 2}
-      ID: 0
-      <DebugObject>k__BackingField: {fileID: 5597430007210746126}
 --- !u!1001 &5509130629365361710
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2218,34 +2063,8 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 8577524891781176608, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 3419318224133146026}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
---- !u!1 &4286618085369835790 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 8577524891781176608, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
-  m_PrefabInstance: {fileID: 5509130629365361710}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &3419318224133146026
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4286618085369835790}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 471a6f36fb0c84273965321f132ab249, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::GearEngine.Core.ViewUtility.Audio.UIAudioEventTrigger
-  _triggers:
-  - eventID: 4
-    sound:
-      _entity: {fileID: 11400000, guid: 0680a3fa16bfe944b91aaa167171683e, type: 2}
-      ID: 0
-      <DebugObject>k__BackingField: {fileID: 4286618085369835790}
 --- !u!224 &5084511784113865180 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 791381848691240434, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
@@ -2456,7 +2275,7 @@ PrefabInstance:
       addedObject: {fileID: 2210767801442929318}
     - targetCorrespondingSourceObject: {fileID: 7833259013974841860, guid: ba79c7db93477e641ac2b9a2c3a5ce18, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 876974344712465692}
+      addedObject: {fileID: 3930464641952806782}
   m_SourcePrefab: {fileID: 100100000, guid: ba79c7db93477e641ac2b9a2c3a5ce18, type: 3}
 --- !u!114 &1142326330621535829 stripped
 MonoBehaviour:
@@ -2496,7 +2315,7 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &876974344712465692
+--- !u!114 &3930464641952806782
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2505,15 +2324,230 @@ MonoBehaviour:
   m_GameObject: {fileID: 2471449431197120787}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 471a6f36fb0c84273965321f132ab249, type: 3}
+  m_Script: {fileID: 11500000, guid: 938fce054c42f40a3969e27a88d9bdd8, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::GearEngine.Core.ViewUtility.Audio.UIAudioEventTrigger
-  _triggers:
-  - eventID: 4
-    sound:
-      _entity: {fileID: 11400000, guid: 9c17d2afd4a4e5c4b95bc3c4f9c27a02, type: 2}
-      ID: 0
-      <DebugObject>k__BackingField: {fileID: 2471449431197120787}
+  m_EditorClassIdentifier: Coffee.UIEffect::Coffee.UIEffects.UIEffect
+  m_ToneFilter: 0
+  m_ToneIntensity: 0.875
+  m_ColorFilter: 0
+  m_ColorIntensity: 0.213
+  m_Color: {r: 0.16862746, g: 0, b: 0.12038653, a: 1}
+  m_ColorGlow: 0
+  m_SamplingFilter: 0
+  m_SamplingIntensity: 0.622
+  m_SamplingWidth: 1
+  m_SamplingScale: 0.7
+  m_TransitionFilter: 8
+  m_TransitionRate: 0
+  m_TransitionReverse: 0
+  m_TransitionTex: {fileID: 2800000, guid: 375e90bb4498e43f9a11b81a2ee2d9fe, type: 3}
+  m_TransitionTexScale: {x: 0.5, y: 0.5}
+  m_TransitionTexOffset: {x: 0, y: 0}
+  m_TransitionTexSpeed: {x: 0.4, y: 0.4}
+  m_TransitionRotation: 45
+  m_TransitionKeepAspectRatio: 1
+  m_TransitionWidth: 0.5
+  m_TransitionSoftness: 0.475
+  m_TransitionRange:
+    m_Min: 0.5
+    m_Max: 0.85
+  m_TransitionColorFilter: 1
+  m_TransitionColor: {r: 0.2735849, g: 0.058072276, b: 0.058072276, a: 0.39215687}
+  m_TransitionColorGlow: 0
+  m_TransitionPatternReverse: 0
+  m_TransitionAutoPlaySpeed: -0.3
+  m_TransitionGradient:
+    serializedVersion: 2
+    key0: {r: 1, g: 1, b: 1, a: 1}
+    key1: {r: 1, g: 1, b: 1, a: 1}
+    key2: {r: 0, g: 0, b: 0, a: 0}
+    key3: {r: 0, g: 0, b: 0, a: 0}
+    key4: {r: 0, g: 0, b: 0, a: 0}
+    key5: {r: 0, g: 0, b: 0, a: 0}
+    key6: {r: 0, g: 0, b: 0, a: 0}
+    key7: {r: 0, g: 0, b: 0, a: 0}
+    ctime0: 0
+    ctime1: 65535
+    ctime2: 0
+    ctime3: 0
+    ctime4: 0
+    ctime5: 0
+    ctime6: 0
+    ctime7: 0
+    atime0: 0
+    atime1: 65535
+    atime2: 0
+    atime3: 0
+    atime4: 0
+    atime5: 0
+    atime6: 0
+    atime7: 0
+    m_Mode: 0
+    m_ColorSpace: -1
+    m_NumColorKeys: 2
+    m_NumAlphaKeys: 2
+  m_PatternLayerVersion: 1
+  m_PatternLayers:
+  - m_Enabled: 1
+    m_Texture: {fileID: 2800000, guid: 375e90bb4498e43f9a11b81a2ee2d9fe, type: 3}
+    m_Opacity: 1
+    m_TextureScale: {x: 0.5, y: 0.5}
+    m_TextureOffset: {x: 0, y: 0}
+    m_TextureSpeed: {x: 0.4, y: 0.4}
+    m_Rotation: 45
+    m_KeepAspectRatio: 1
+    m_Rate: 0
+    m_TextureReverse: 0
+    m_Width: 0.5
+    m_Range:
+      m_Min: 0.5
+      m_Max: 0.85
+    m_PatternReverse: 0
+    m_AutoPlaySpeed: -0.3
+    m_ColorFilter: 1
+    m_Color: {r: 0.2735849, g: 0.058072276, b: 0.058072276, a: 0.39215687}
+    m_ColorGlow: 0
+    m_Area: 1
+  - m_Enabled: 0
+    m_Texture: {fileID: 0}
+    m_Opacity: 1
+    m_TextureScale: {x: 1, y: 1}
+    m_TextureOffset: {x: 0, y: 0}
+    m_TextureSpeed: {x: 0, y: 0}
+    m_Rotation: 0
+    m_KeepAspectRatio: 1
+    m_Rate: 0.5
+    m_TextureReverse: 0
+    m_Width: 0.2
+    m_Range:
+      m_Min: 0
+      m_Max: 1
+    m_PatternReverse: 0
+    m_AutoPlaySpeed: 0
+    m_ColorFilter: 6
+    m_Color: {r: 0, g: 0.5, b: 1, a: 1}
+    m_ColorGlow: 0
+    m_Area: 1
+  - m_Enabled: 0
+    m_Texture: {fileID: 0}
+    m_Opacity: 1
+    m_TextureScale: {x: 1, y: 1}
+    m_TextureOffset: {x: 0, y: 0}
+    m_TextureSpeed: {x: 0, y: 0}
+    m_Rotation: 0
+    m_KeepAspectRatio: 1
+    m_Rate: 0.5
+    m_TextureReverse: 0
+    m_Width: 0.2
+    m_Range:
+      m_Min: 0
+      m_Max: 1
+    m_PatternReverse: 0
+    m_AutoPlaySpeed: 0
+    m_ColorFilter: 6
+    m_Color: {r: 0, g: 0.5, b: 1, a: 1}
+    m_ColorGlow: 0
+    m_Area: 1
+  - m_Enabled: 0
+    m_Texture: {fileID: 0}
+    m_Opacity: 1
+    m_TextureScale: {x: 1, y: 1}
+    m_TextureOffset: {x: 0, y: 0}
+    m_TextureSpeed: {x: 0, y: 0}
+    m_Rotation: 0
+    m_KeepAspectRatio: 1
+    m_Rate: 0.5
+    m_TextureReverse: 0
+    m_Width: 0.2
+    m_Range:
+      m_Min: 0
+      m_Max: 1
+    m_PatternReverse: 0
+    m_AutoPlaySpeed: 0
+    m_ColorFilter: 6
+    m_Color: {r: 0, g: 0.5, b: 1, a: 1}
+    m_ColorGlow: 0
+    m_Area: 1
+  m_TargetMode: 0
+  m_TargetColor: {r: 1, g: 1, b: 1, a: 1}
+  m_TargetRange: 1
+  m_TargetSoftness: 0.5
+  m_BlendType: 1
+  m_SrcBlendMode: 1
+  m_DstBlendMode: 10
+  m_ShadowMode: 4
+  m_ShadowDistance: {x: 1, y: -1}
+  m_ShadowIteration: 1
+  m_ShadowFade: 0.9
+  m_ShadowMirrorScale: 0.5
+  m_ShadowBlurIntensity: 1
+  m_ShadowColorFilter: 4
+  m_ShadowColor: {r: 1, g: 1, b: 1, a: 1}
+  m_ShadowColorGlow: 0
+  m_GradationMode: 0
+  m_GradationIntensity: 1
+  m_GradationColorFilter: 1
+  m_GradationColor1: {r: 1, g: 1, b: 1, a: 1}
+  m_GradationColor2: {r: 1, g: 1, b: 1, a: 1}
+  m_GradationColor3: {r: 1, g: 1, b: 1, a: 1}
+  m_GradationColor4: {r: 1, g: 1, b: 1, a: 1}
+  m_GradationGradient:
+    serializedVersion: 2
+    key0: {r: 1, g: 1, b: 1, a: 1}
+    key1: {r: 1, g: 1, b: 1, a: 1}
+    key2: {r: 0, g: 0, b: 0, a: 0}
+    key3: {r: 0, g: 0, b: 0, a: 0}
+    key4: {r: 0, g: 0, b: 0, a: 0}
+    key5: {r: 0, g: 0, b: 0, a: 0}
+    key6: {r: 0, g: 0, b: 0, a: 0}
+    key7: {r: 0, g: 0, b: 0, a: 0}
+    ctime0: 0
+    ctime1: 65535
+    ctime2: 0
+    ctime3: 0
+    ctime4: 0
+    ctime5: 0
+    ctime6: 0
+    ctime7: 0
+    atime0: 0
+    atime1: 65535
+    atime2: 0
+    atime3: 0
+    atime4: 0
+    atime5: 0
+    atime6: 0
+    atime7: 0
+    m_Mode: 0
+    m_ColorSpace: -1
+    m_NumColorKeys: 2
+    m_NumAlphaKeys: 2
+  m_GradationOffset: 0
+  m_GradationScale: 1
+  m_GradationRotation: 0
+  m_GradationWrapMode: 0
+  m_GradationReverse: 0
+  m_AllowToModifyMeshShape: 1
+  m_EdgeMode: 0
+  m_EdgeWidth: 0.4
+  m_EdgeColorFilter: 4
+  m_EdgeColor: {r: 1, g: 0.6556604, b: 0.6556604, a: 1}
+  m_EdgeColorGlow: 0
+  m_EdgeShinyRate: 0.5
+  m_EdgeShinyWidth: 0.5
+  m_EdgeShinyAutoPlaySpeed: 0.75
+  m_PatternArea: 1
+  m_DetailFilter: 0
+  m_DetailIntensity: 1
+  m_DetailThreshold:
+    m_Min: 0
+    m_Max: 1
+  m_DetailColor: {r: 1, g: 1, b: 1, a: 1}
+  m_DetailTex: {fileID: 0}
+  m_DetailTexScale: {x: 1, y: 1}
+  m_DetailTexOffset: {x: 0, y: 0}
+  m_DetailTexSpeed: {x: 0, y: 0}
+  m_CustomRoot: {fileID: 0}
+  m_Flip: 0
 --- !u!114 &2899648106442934651 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 7405209907058371180, guid: ba79c7db93477e641ac2b9a2c3a5ce18, type: 3}
@@ -2875,34 +2909,8 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 8577524891781176608, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 2942454188545779649}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
---- !u!1 &1479523179907274619 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 8577524891781176608, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
-  m_PrefabInstance: {fileID: 7170063826541627995}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &2942454188545779649
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1479523179907274619}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 471a6f36fb0c84273965321f132ab249, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::GearEngine.Core.ViewUtility.Audio.UIAudioEventTrigger
-  _triggers:
-  - eventID: 4
-    sound:
-      _entity: {fileID: 11400000, guid: 0680a3fa16bfe944b91aaa167171683e, type: 2}
-      ID: 0
-      <DebugObject>k__BackingField: {fileID: 1479523179907274619}
 --- !u!224 &7600566090313934761 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 791381848691240434, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
@@ -3003,34 +3011,8 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 8577524891781176608, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1530578597962348216}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
---- !u!1 &1851253382458099630 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 8577524891781176608, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
-  m_PrefabInstance: {fileID: 7978553715874847374}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1530578597962348216
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1851253382458099630}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 471a6f36fb0c84273965321f132ab249, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::GearEngine.Core.ViewUtility.Audio.UIAudioEventTrigger
-  _triggers:
-  - eventID: 4
-    sound:
-      _entity: {fileID: 11400000, guid: 0680a3fa16bfe944b91aaa167171683e, type: 2}
-      ID: 0
-      <DebugObject>k__BackingField: {fileID: 1851253382458099630}
 --- !u!224 &7224347524788205436 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 791381848691240434, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
@@ -3131,34 +3113,8 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 8577524891781176608, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 8414397847179338708}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
---- !u!1 &341296170642230753 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 8577524891781176608, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
-  m_PrefabInstance: {fileID: 8337845706717188289}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &8414397847179338708
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 341296170642230753}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 471a6f36fb0c84273965321f132ab249, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::GearEngine.Core.ViewUtility.Audio.UIAudioEventTrigger
-  _triggers:
-  - eventID: 4
-    sound:
-      _entity: {fileID: 11400000, guid: 0680a3fa16bfe944b91aaa167171683e, type: 2}
-      ID: 0
-      <DebugObject>k__BackingField: {fileID: 341296170642230753}
 --- !u!224 &8741055763478887731 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 791381848691240434, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
@@ -3259,34 +3215,8 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 8577524891781176608, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 2674987062593700418}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
---- !u!1 &138649854062136689 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 8577524891781176608, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
-  m_PrefabInstance: {fileID: 8567509224517046353}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &2674987062593700418
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 138649854062136689}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 471a6f36fb0c84273965321f132ab249, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::GearEngine.Core.ViewUtility.Audio.UIAudioEventTrigger
-  _triggers:
-  - eventID: 4
-    sound:
-      _entity: {fileID: 11400000, guid: 0680a3fa16bfe944b91aaa167171683e, type: 2}
-      ID: 0
-      <DebugObject>k__BackingField: {fileID: 138649854062136689}
 --- !u!224 &8943697675620351395 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 791381848691240434, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
