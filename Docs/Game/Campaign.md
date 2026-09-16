@@ -1,6 +1,6 @@
 # Campaign (Game.Campaign)
 
-The **Game.Campaign** assembly implements the campaign flow in a single scene: **Main → Setup → Active race → Results → Rewards → Progress → Main**. Choosing Upgrade on Results inserts the existing Roguelike card pick before Rewards. Root view models resolve shared services from VContainer (`ITrackService`, `CurrencyClientModule` / LiveOps gold, **`IInventoryService`** (via `InventoryClientModule`), gear engine, car simulation) instead of passing a hand-built data bag between screens.
+The **Game.Campaign** assembly implements the campaign flow in a single scene: **Main → Setup → Active race → Results → Rewards → Progress → Main**. An eligible gear reward offers Upgrade within Rewards and opens the existing Roguelike card pick. Root view models resolve shared services from VContainer (`ITrackService`, `CurrencyClientModule` / LiveOps gold, **`IInventoryService`** (via `InventoryClientModule`), gear engine, car simulation) instead of passing a hand-built data bag between screens.
 
 ## Responsibilities
 
@@ -34,8 +34,20 @@ Campaign progression, gold, gear inventory, board loadout, and card unlocks are 
 
 ## Post-race presentation
 
-Results, Rewards, and Progress use separate `View<T>`/ViewModel pairs and Addressable ViewConfigs. `ResultPopupViewModel` remains the race-completion entry point; its existing prefab GUID is preserved. Results opens before persistence completes, and Continue/Upgrade waits for `RaceResultModel.PersistenceCompleted`.
+Results, Rewards, and Progress use separate `View<T>`/ViewModel pairs and Addressable ViewConfigs. `ResultPopupViewModel` remains the race-completion entry point; its existing prefab GUID is preserved. Results opens before persistence completes, and Continue waits for `RaceResultModel.PersistenceCompleted`. Results has no Upgrade action.
 
-Rewards presents the recorded gold and, after Roguelike selection, the awarded gear in sequence. It does not grant currency or inventory a second time. Progress displays the race's tier snapshot and resolves the server's next-track identifier through `ITrackService`; it does not infer a newly unlocked track. Continue returns through `ToolbarController`.
+Rewards presents recorded gold, then one gear selection when the player finishes first OR earns at least one star. Meeting both criteria still offers one selection. Upgrade appears only on this gear reward page. Returning from a gear pick shows the awarded gear without repeating gold; skipping proceeds to Progress. It does not grant currency or inventory a second time. Progress displays the race's tier snapshot and resolves the server's next-track identifier through `ITrackService`; it does not infer a newly unlocked track. Continue returns through `ToolbarController`.
 
 `PostRaceAnimation` owns Animora playback at view open/close. The migrated clips use direct local targets, manual playback, nonzero Z scale, and a single player per animated object. Views remove button listeners on close, detach property subscriptions on unbind/destruction, and restart animations on reopening.
+
+## Standings and score stars
+
+`RaceStandingsModel` ranks three synthetic rivals and the player by ascending race time. `TrackDefinition.Opponents` optionally supplies rival names/times; fallback rivals are NOVA, AXEL, and BLAZE at 1.00, 1.12, and 1.24 times the track target. Exact ties favor the existing rival. These rows are local synthetic competition, not online player records.
+
+Results shows the top three and an additional player row only when outside the podium. The opening rank comes from the previous persisted best time (fourth for a first run). `ResultStandingsView` swaps adjacent rows toward this run's rank, stops on close, and resets on reopen. An unchanged third place has three rows and no movement. It alone owns row positions; Animora owns the surrounding presentation.
+
+Stars use score thresholds only, ordered from lowest to highest. Time never grants stars, so fourth place with three stars is valid. The reward queue is owned by its ViewModel, and views only bind values/actions and clean up subscriptions.
+
+**Planned follow-up:** unlocking the next track will require first place; stars will affect rewards only. The current backend time-band gold/unlock contract remains authoritative until that server change is implemented. See [Race standings ExecPlan](../../Plans/RaceStandings/ExecPlan.md) for the migration and reward-policy work still required.
+
+The installed Scaffold View package attaches its own property-change handler during binding. `PostRaceViewBindings` provides the corresponding detach operation for Results/Rewards destruction and unbinding; value updates still use the standard Bind APIs. Analyzer-required extraction keeps race setup, result persistence, ad availability, and reward navigation in named methods without changing their sequence.

@@ -13,12 +13,6 @@ namespace GearEngine.Campaign.Presentation
 {
     public sealed class RaceProgressViewModel : ViewModel
     {
-        private readonly RaceResultModel result;
-        private bool hasContinued;
-        [Inject] private ITrackService trackService;
-        [Inject] private ToolbarController toolbarController;
-        [Inject] private InterstitialAdManager interstitialAdManager;
-
         public RaceProgressViewModel(RaceResultModel result)
         {
             this.result = result ?? throw new ArgumentNullException(nameof(result));
@@ -27,10 +21,17 @@ namespace GearEngine.Campaign.Presentation
         public string TrackName => result.TrackName;
         public int HighestAchievedTier => result.HighestAchievedTier;
         public string Summary => HighestAchievedTier > 0 ? $"{HighestAchievedTier} / {result.Tiers.Count} STARS EARNED" : "KEEP RACING TO EARN A STAR";
-        public IReadOnlyList<string> TierTargets => result.Tiers.Select(tier => $"{tier.TargetTimeSeconds:0.#}s OR {tier.TargetScore} PTS").ToArray();
+        public IReadOnlyList<string> TierTargets => result.Tiers.Select(tier => $"{tier.TargetScore} PTS").ToArray();
         public string NextTrackName => trackService?.GetOrderedTracks()?
             .FirstOrDefault(entry => entry.TrackId == result.ServerOutcome?.NextTrackId)?.Track?.GetDisplayName() ?? string.Empty;
         public string NextTrackMessage => string.IsNullOrEmpty(NextTrackName) ? "CONTINUE YOUR CAMPAIGN" : $"NEXT TRACK · {NextTrackName}";
+
+        private readonly RaceResultModel result;
+        private bool hasContinued;
+        [Inject] private ITrackService trackService;
+        [Inject] private ToolbarController toolbarController;
+        [Inject] private InterstitialAdManager interstitialAdManager;
+
 
         public async void Continue()
         {
@@ -43,14 +44,7 @@ namespace GearEngine.Campaign.Presentation
             try
             {
                 await ShowInterstitialIfAvailableAsync();
-                if (toolbarController != null)
-                {
-                    toolbarController.OpenMainView();
-                }
-                else
-                {
-                    navigation.Open(new MainViewModel(), true, new NavigationOptions { CloseAllViews = true });
-                }
+                OpenHome();
             }
             catch (Exception ex)
             {
@@ -58,6 +52,7 @@ namespace GearEngine.Campaign.Presentation
                 Debug.LogError($"[RaceProgressViewModel] Continue failed: {ex.Message}\n{ex.StackTrace}");
             }
         }
+
         private async Task ShowInterstitialIfAvailableAsync()
         {
             if (interstitialAdManager == null || !await interstitialAdManager.CanShowAd())
@@ -65,6 +60,11 @@ namespace GearEngine.Campaign.Presentation
                 return;
             }
 
+            await WaitForInterstitialAsync();
+        }
+
+        private async Task WaitForInterstitialAsync()
+        {
             TaskCompletionSource<bool> completion = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
             void OnAdCompleted(bool success, string _) => completion.TrySetResult(success);
 
@@ -78,6 +78,16 @@ namespace GearEngine.Campaign.Presentation
             {
                 interstitialAdManager.AdSuccessfullyCompleted -= OnAdCompleted;
             }
+        }
+
+        private void OpenHome()
+        {
+            if (toolbarController != null)
+            {
+                toolbarController.OpenMainView();
+                return;
+            }
+            navigation.Open(new MainViewModel(), true, new NavigationOptions { CloseAllViews = true });
         }
 
     }

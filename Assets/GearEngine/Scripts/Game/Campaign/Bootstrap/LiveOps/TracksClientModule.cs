@@ -60,6 +60,13 @@ namespace GearEngine.Campaign.Bootstrap.LiveOps
 
         protected override Task OnInitializedAsync(TrackGameData moduleData)
         {
+            if (moduleData.BestTimeSec != null)
+            {
+                foreach (KeyValuePair<string, float> best in moduleData.BestTimeSec)
+                {
+                    progress.RecordBestTime(best.Key, best.Value);
+                }
+            }
             RepairCurrentTrackIdIfNotInCatalog(moduleData);
             WarnWhenOrderedIdsMissingFromCatalog(moduleData.OrderedTrackIds);
             progress.CurrentTrackIndex = Math.Max(0, GetProgressIndexForTrack(moduleData));
@@ -158,6 +165,7 @@ namespace GearEngine.Campaign.Bootstrap.LiveOps
             result.ServerOutcome = resp;
             ApplyCurrencySideEffectsFromResponse(resp);
             data.BestTimeSec[trackId] = resp.NewBestTimeSec;
+            progress.RecordBestTime(trackId, resp.NewBestTimeSec);
             ApplyAdvanceToNextTrackIfNeeded(resp);
         }
 

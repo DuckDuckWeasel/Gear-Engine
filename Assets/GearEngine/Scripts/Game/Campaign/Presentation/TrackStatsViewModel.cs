@@ -50,6 +50,7 @@ namespace GearEngine.Campaign.Presentation
 
             return track.Tiers
                 .Where(t => t != null)
+                .OrderBy(t => t.TargetScore)
                 .Select((tier, idx) => new TrackTierViewModel(idx + 1, tier))
                 .ToList();
         }

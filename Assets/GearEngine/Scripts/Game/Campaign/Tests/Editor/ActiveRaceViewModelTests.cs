@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using GearEngine.CarSimulation.PhysicsSimulation;
 using System.Threading;
 using System.Threading.Tasks;
@@ -134,7 +135,7 @@ namespace GearEngine.Campaign.Tests.Editor
         }
 
         [Test]
-        public void Initialize_CreatesSessionRegistersRunnerAndStartsEngine()
+        public void Initialize_CreatesSessionAndWaitsForCarBeforeStartingEngine()
         {
             CarDefinition carDef = ScriptableObject.CreateInstance<CarDefinition>();
             TrackDefinition trackDef = ScriptableObject.CreateInstance<TrackDefinition>();
@@ -169,8 +170,10 @@ namespace GearEngine.Campaign.Tests.Editor
                 ViewModelTestInject.InjectPrivateField(vm, "eventBus", new EventController());
                 ViewModelTestInject.InjectNavigation(vm, navigation);
 
-                ViewModelTestInject.InvokeInitialize(vm);
+                vm.Bind(navigation);
 
+                Assert.That(engine.IsRunning, Is.False);
+                vm.StartRaceAfterCarReady();
                 Assert.That(engine.IsRunning, Is.True);
                 Assert.That(raceManager.GetFirstRaceForDebug(), Is.SameAs(vm.Track.Session));
                 Assert.That(vm.Track.Session, Is.Not.SameAs(initialSession));
@@ -181,8 +184,8 @@ namespace GearEngine.Campaign.Tests.Editor
             Object.DestroyImmediate(carRunnerConfig);
         }
 
-        [Test]
-        public void WhenTrackCompletes_OpensResultPopupAndCreditsCurrency()
+        [UnityTest]
+        public IEnumerator WhenTrackCompletes_OpensResultPopupAndCreditsCurrency()
         {
             CarDefinition carDef = ScriptableObject.CreateInstance<CarDefinition>();
             TrackDefinition trackDef = ScriptableObject.CreateInstance<TrackDefinition>();
@@ -226,13 +229,13 @@ namespace GearEngine.Campaign.Tests.Editor
                 ViewModelTestInject.InjectPrivateField(vm, "eventBus", new EventController());
                 ViewModelTestInject.InjectNavigation(vm, navigation);
 
-                ViewModelTestInject.InvokeInitialize(vm);
+                vm.Bind(navigation);
                 vm.Track.Complete();
 
-                DateTime deadline = DateTime.UtcNow.AddSeconds(2);
+                DateTime deadline = DateTime.UtcNow.AddSeconds(5);
                 while (DateTime.UtcNow < deadline && navigation.OpenedControllers.Count == 0)
                 {
-                    Thread.Sleep(10);
+                    yield return null;
                 }
 
                 Assert.That(engine.IsRunning, Is.False);
@@ -276,7 +279,7 @@ namespace GearEngine.Campaign.Tests.Editor
             ViewModelTestInject.InjectPrivateField(vm, "eventBus", new EventController());
             ViewModelTestInject.InjectNavigation(vm, navigation);
 
-            ViewModelTestInject.InvokeInitialize(vm);
+            vm.Bind(navigation);
             InvokeRaceCompleted(vm);
 
             float deadline = Time.realtimeSinceStartup + 3f;
@@ -327,8 +330,20 @@ namespace GearEngine.Campaign.Tests.Editor
 
             ContainerBuilder builder = new ContainerBuilder();
             builder.RegisterInstance<ILiveOpsService>(fake);
+            builder.RegisterInstance<Scaffold.Analytics.IAnalyticsService>(new RecordingAnalytics());
+            builder.RegisterInstance<Scaffold.Events.Contracts.IEventBus>(new EventController());
             builder.Register<CurrencyClientModule>(Lifetime.Singleton);
             return builder.Build();
+        }
+
+        private sealed class RecordingAnalytics : Scaffold.Analytics.IAnalyticsService
+        {
+            public readonly List<Scaffold.Analytics.AnalyticsEvent> Events = new List<Scaffold.Analytics.AnalyticsEvent>();
+
+            public void Record<T>(T evt) where T : Scaffold.Analytics.AnalyticsEvent
+            {
+                Events.Add(evt);
+            }
         }
 
         private sealed class FakeLiveOpsService : ILiveOpsService

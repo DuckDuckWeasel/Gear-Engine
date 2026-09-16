@@ -29,14 +29,15 @@ namespace GearEngine.Campaign.Presentation
 {
     public partial class ActiveRaceViewModel : ViewModel
     {
-        private const float k_resultPopupDelaySeconds = 2f;
-
-        [ObservableProperty]
-        private TrackViewModel track;
+        private static float ResultPopupDelaySeconds => 2f;
 
         public CarViewModel Car { get; private set; }
         public RaceDriftScoreViewModel DriftScore { get; private set; }
         public BoardViewModel Board { get; private set; }
+
+        [ObservableProperty]
+        private TrackViewModel track;
+
 
         [Inject] private ITrackService trackService;
         [Inject] private IGearEngineService engineService;
@@ -49,60 +50,11 @@ namespace GearEngine.Campaign.Presentation
         [Inject] private IAnalyticsService analyticsService;
         [Inject] private IEventBus eventBus;
 
-        protected override void Initialize()
-        {
-            base.Initialize();
-
-            eventBus.AddListener<GearEngine.Events.CombatTextCollectedEvent>(OnCombatTextCollected);
-
-            RaceSessionConfig sessionConfig = raceSessionDefaults.CreateForTrack(trackService.CurrentTrack);
-            RaceState freshSession = trackFactory.Create(trackService.CurrentCar, trackService.CurrentTrack, sessionConfig);
-            raceManager.RegisterRace(freshSession);
-
-            if (engineService != null)
-            {
-                foreach (IGridNode node in engineService.GetAllNodes())
-                {
-                    if (node == null)
-                    {
-                        continue;
-                    }
-
-                    foreach (GearAbilitySO ability in node.GetAbilities())
-                    {
-                        if (ability is ActiveRaceGearAbilitySO activeGear)
-                        {
-                            activeGear.Initialize(freshSession, engineService);
-                        }
-                    }
-                }
-            }
-
-            engineService.ResetGridSimulationState();
-
-            Track = new TrackViewModel(freshSession, raceManager, aiRunner, trackFactory);
-            BindChildViewModel(Track);
-
-            Car = new CarViewModel(freshSession, aiRunner, attachRunnerOnBind: false);
-            BindChildViewModel(Car);
-
-            DriftScore = new RaceDriftScoreViewModel(freshSession, Car);
-            BindChildViewModel(DriftScore);
-
-            Board = new BoardViewModel(boardService, engineService, inventoryService, eventBus);
-            Board.Interactable = false;
-            BindChildViewModel(Board);
-
-            Bind<SimulationLifecycleState, SimulationLifecycleState>(() => Track.State, OnTrackStateChanged);
-            analyticsService?.Record(new RaceStartedEvent(trackService.CurrentTrack.name, trackService.CurrentCar.name));
-        }
-
         public void Tick(float deltaTime)
         {
             DriftScore?.Tick(deltaTime);
         }
 
-        /// <summary>Called from <see cref="ActiveRaceView"/> after the car is spawned and <see cref="CarView.AttachRunner"/> runs.</summary>
         public void StartRaceAfterCarReady()
         {
             try
@@ -156,35 +108,44 @@ namespace GearEngine.Campaign.Presentation
             try
             {
                 engineService.ResetGridSimulationState();
-
-                RaceState session = Track.Session;
-                RaceResultModel result = new RaceResultModel(session.RaceTime, session.CurrentLap, trackService.CurrentTrack, session.TotalDriftScore);
-                analyticsService?.Record(new RaceFinishedEvent(
-                    trackService.CurrentTrack.name,
-                    trackService.CurrentCar.name,
-                    result.RaceTime,
-                    result.LapCount,
-                    result.Score,
-                    result.IsGoodResult
-                ));
-
-                // Wait for the cinematic finish (Akira slide) to play out before covering the screen
-                await Task.Delay(TimeSpan.FromSeconds(k_resultPopupDelaySeconds));
-
-                result.BeginPersistence();
-                navigation.Open(new ResultPopupViewModel(result));
-                try
-                {
-                    await PersistRaceResultAsync(result);
-                }
-                finally
-                {
-                    result.CompletePersistence();
-                }
+                RaceResultModel result = CreateRaceResult();
+                await Task.Delay(TimeSpan.FromSeconds(ResultPopupDelaySeconds));
+                await OpenAndPersistResultAsync(result);
             }
             catch (Exception ex)
             {
                 Debug.LogError($"[ActiveRaceViewModel] OnRaceCompleted failed: {ex.Message}\n{ex.StackTrace}");
+            }
+        }
+
+        private void OnCombatTextCollected(GearEngine.Events.CombatTextCollectedEvent evt)
+        {
+            if (DriftScore != null)
+            {
+                DriftScore.CurrentPoints += evt.Score;
+                DriftScore.IsDisplayingScore = true;
+            }
+        }
+
+        private RaceResultModel CreateRaceResult()
+        {
+            RaceState session = Track.Session;
+            RaceResultModel result = new RaceResultModel(session.RaceTime, session.CurrentLap, trackService.CurrentTrack, session.TotalDriftScore, trackService.GetTrackProgress()?.GetBestTimeSeconds(trackService.CurrentTrack.name));
+            analyticsService?.Record(new RaceFinishedEvent(trackService.CurrentTrack.name, trackService.CurrentCar.name, result.RaceTime, result.LapCount, result.Score, result.IsGoodResult));
+            return result;
+        }
+
+        private async Task OpenAndPersistResultAsync(RaceResultModel result)
+        {
+            result.BeginPersistence();
+            navigation.Open(new ResultPopupViewModel(result));
+            try
+            {
+                await PersistRaceResultAsync(result);
+            }
+            finally
+            {
+                result.CompletePersistence();
             }
         }
 
@@ -200,13 +161,68 @@ namespace GearEngine.Campaign.Presentation
             }
         }
 
-        private void OnCombatTextCollected(GearEngine.Events.CombatTextCollectedEvent evt)
+        protected override void Initialize()
         {
-            if (DriftScore != null)
+            base.Initialize();
+
+            eventBus.AddListener<GearEngine.Events.CombatTextCollectedEvent>(OnCombatTextCollected);
+
+            RaceSessionConfig sessionConfig = raceSessionDefaults.CreateForTrack(trackService.CurrentTrack);
+            RaceState freshSession = trackFactory.Create(trackService.CurrentCar, trackService.CurrentTrack, sessionConfig);
+            raceManager.RegisterRace(freshSession);
+
+            InitializeGearAbilities(freshSession);
+            engineService.ResetGridSimulationState();
+
+            BindRaceViews(freshSession);
+
+            Bind<SimulationLifecycleState, SimulationLifecycleState>(() => Track.State, OnTrackStateChanged);
+            analyticsService?.Record(new RaceStartedEvent(trackService.CurrentTrack.name, trackService.CurrentCar.name));
+        }
+
+        private void InitializeGearAbilities(RaceState session)
+        {
+            if (engineService == null)
             {
-                DriftScore.CurrentPoints += evt.Score;
-                DriftScore.IsDisplayingScore = true;
+                return;
+            }
+
+            foreach (IGridNode node in engineService.GetAllNodes())
+            {
+                if (node != null)
+                {
+                    InitializeNodeAbilities(node, session);
+                }
             }
         }
+
+        private void InitializeNodeAbilities(IGridNode node, RaceState session)
+        {
+            foreach (GearAbilitySO ability in node.GetAbilities())
+            {
+                if (ability is ActiveRaceGearAbilitySO activeGear)
+                {
+                    activeGear.Initialize(session, engineService);
+                }
+            }
+        }
+
+        private void BindRaceViews(RaceState freshSession)
+        {
+            Track = new TrackViewModel(freshSession, raceManager, aiRunner, trackFactory);
+            BindChildViewModel(Track);
+
+            Car = new CarViewModel(freshSession, aiRunner, attachRunnerOnBind: false);
+            BindChildViewModel(Car);
+
+            DriftScore = new RaceDriftScoreViewModel(freshSession, Car);
+            BindChildViewModel(DriftScore);
+
+            Board = new BoardViewModel(boardService, engineService, inventoryService, eventBus);
+            Board.Interactable = false;
+            BindChildViewModel(Board);
+
+        }
+
     }
 }

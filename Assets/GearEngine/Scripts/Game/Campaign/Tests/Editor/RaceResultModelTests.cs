@@ -7,6 +7,23 @@ namespace GearEngine.Campaign.Tests.Editor
     public sealed class RaceResultModelTests
     {
         [Test]
+        public void FastRunWithoutScore_DoesNotEarnStars()
+        {
+            TrackDefinition track = CampaignTestUtilities.CreateTrackWithTiersForTests(
+                new TrackTierConfig(60f, 1000, 100),
+                new TrackTierConfig(50f, 3000, 200),
+                new TrackTierConfig(40f, 5000, 300));
+            try
+            {
+                Assert.That(new RaceResultModel(1f, 3, track, 0).HighestAchievedTier, Is.Zero);
+            }
+            finally
+            {
+                Object.DestroyImmediate(track);
+            }
+        }
+
+        [Test]
         public void WhenTrackHasTiers_ScoreAndGoldMatchTierReward()
         {
             TrackDefinition track = CampaignTestUtilities.CreateTrackWithTiersForTests(
