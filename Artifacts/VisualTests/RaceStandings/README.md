@@ -1,5 +1,7 @@
 # Corrected race results and rewards
 
+**Superseded navigation:** the separate Progress screen shown below is no longer part of the flow. Use the [current app-entry walkthrough](../RewardsFlow/README.md): Results → rewards → Home. These captures remain as historical evidence.
+
 These Unity runtime captures supersede the earlier Results time/laps/gold rows. They use the existing Circle track, stable synthetic rivals, real ViewModel bindings, and the authored Victor screen assets. They are isolated rendering/navigation checks, not a live-server session or physical-device safe-area certification.
 
 ## Representative states

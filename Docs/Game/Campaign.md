@@ -1,6 +1,6 @@
 # Campaign (Game.Campaign)
 
-The **Game.Campaign** assembly implements the campaign flow in a single scene: **Main → Setup → Active race → Results → Rewards → Progress → Main**. An eligible gear reward offers Upgrade within Rewards and opens the existing Roguelike card pick. Root view models resolve shared services from VContainer (`ITrackService`, `CurrencyClientModule` / LiveOps gold, **`IInventoryService`** (via `InventoryClientModule`), gear engine, car simulation) instead of passing a hand-built data bag between screens.
+The **Game.Campaign** assembly implements the campaign flow in a single scene: **Main → Setup → Active race → Results → Rewards → Main**. An eligible gear reward offers Upgrade within Rewards and opens the existing Roguelike card pick. Root view models resolve shared services from VContainer (`ITrackService`, `CurrencyClientModule` / LiveOps gold, **`IInventoryService`** (via `InventoryClientModule`), gear engine, car simulation) instead of passing a hand-built data bag between screens.
 
 ## Responsibilities
 
@@ -36,7 +36,7 @@ Campaign progression, gold, gear inventory, board loadout, and card unlocks are 
 
 Results, Rewards, and Progress use separate `View<T>`/ViewModel pairs and Addressable ViewConfigs. `ResultPopupViewModel` remains the race-completion entry point; its existing prefab GUID is preserved. Results opens before persistence completes, and Continue waits for `RaceResultModel.PersistenceCompleted`. Results has no Upgrade action.
 
-Rewards presents recorded gold, then one gear selection when the player finishes first OR earns at least one star. Meeting both criteria still offers one selection. Upgrade appears only on this gear reward page. Returning from a gear pick shows the awarded gear without repeating gold; skipping proceeds to Progress. It does not grant currency or inventory a second time. Progress displays the race's tier snapshot and resolves the server's next-track identifier through `ITrackService`; it does not infer a newly unlocked track. Continue returns through `ToolbarController`.
+Rewards presents recorded gold, then one gear selection when the player finishes first OR earns at least one star. Meeting both criteria still offers one selection. Upgrade appears only on this gear reward page. Returning from a gear pick shows the awarded gear without repeating gold; skipping returns Home. It does not grant currency or inventory a second time. The final reward returns Home through `ToolbarController`. The old Progress view remains registered for compatibility but is absent from this flow; Results already displays score and stars.
 
 `PostRaceAnimation` owns Animora playback at view open/close. The migrated clips use direct local targets, manual playback, nonzero Z scale, and a single player per animated object. Views remove button listeners on close, detach property subscriptions on unbind/destruction, and restart animations on reopening.
 

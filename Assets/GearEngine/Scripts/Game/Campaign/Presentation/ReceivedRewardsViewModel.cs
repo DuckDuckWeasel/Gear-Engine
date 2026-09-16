@@ -35,6 +35,7 @@ namespace GearEngine.Campaign.Presentation
         private int index;
         private bool hasContinued;
         [Inject] private InterstitialAdManager interstitialAdManager;
+        [Inject] private ToolbarController toolbarController;
 
 
         public async void Continue()
@@ -86,7 +87,18 @@ namespace GearEngine.Campaign.Presentation
                 navigation.Open(new RoguelikeViewModel(result), true, new NavigationOptions { CloseAllViews = true });
                 return;
             }
-            navigation.Open(new RaceProgressViewModel(result), true, new NavigationOptions { CloseAllViews = true });
+            await ShowInterstitialIfAvailableAsync();
+            OpenHome();
+        }
+
+        private void OpenHome()
+        {
+            if (toolbarController != null)
+            {
+                toolbarController.OpenMainView();
+                return;
+            }
+            navigation.Open(new MainViewModel(), true, new NavigationOptions { CloseAllViews = true });
         }
 
         private async Task ShowInterstitialIfAvailableAsync()

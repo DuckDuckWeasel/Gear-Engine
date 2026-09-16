@@ -351,9 +351,9 @@ namespace GearEngine.Campaign.Presentation
 
         private void OpenPostRaceDestination(IItem reward)
         {
-            if (postRaceResult != null)
+            if (postRaceResult != null && reward != null)
             {
-                navigation.Open(reward == null ? (Scaffold.MVVM.ViewModel)new RaceProgressViewModel(postRaceResult) : new ReceivedRewardsViewModel(postRaceResult, reward), true, new NavigationOptions { CloseAllViews = true });
+                navigation.Open(new ReceivedRewardsViewModel(postRaceResult, reward), true, new NavigationOptions { CloseAllViews = true });
                 return;
             }
 

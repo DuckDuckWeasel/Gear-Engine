@@ -23,7 +23,7 @@ namespace GearEngine.Campaign.Tests.Editor
         public void NavigationSettings_RegisterSeparatePostRaceControllers()
         {
             NavigationSettings settings = AssetDatabase.LoadAssetAtPath<NavigationSettings>("Assets/Navigation/Navigation Settings.asset");
-            foreach (Type type in new[] { typeof(ResultPopupViewModel), typeof(ReceivedRewardsViewModel), typeof(RaceProgressViewModel) })
+            foreach (Type type in new[] { typeof(ResultPopupViewModel), typeof(ReceivedRewardsViewModel) })
             {
                 ViewConfig config = settings.GetViewConfig(type);
                 Assert.That(config.ControllerType, Is.EqualTo(type));
@@ -41,7 +41,7 @@ namespace GearEngine.Campaign.Tests.Editor
                 .Select(guid => AssetDatabase.LoadAssetAtPath<TrackDefinition>(AssetDatabase.GUIDToAssetPath(guid)))
                 .First(candidate => candidate.HasConfiguredTiers && candidate.Tiers.Count == 3);
             RaceResultModel result = new RaceResultModel(track.TimeToBeatSeconds * 1.18f, 3, track, 5438, track.TimeToBeatSeconds * 1.3f);
-            string[] names = { "Campaign_ResultPopupView", "PFB_ReceivedRewardsView", "PFB_RaceProgressView" };
+            string[] names = { "Campaign_ResultPopupView", "PFB_ReceivedRewardsView" };
             for (int i = 0; i < names.Length; i++)
             {
                 GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>($"Assets/GearEngine/Prefabs/Campaign/{names[i]}.prefab");
@@ -176,7 +176,7 @@ namespace GearEngine.Campaign.Tests.Editor
         private static IEnumerator Capture(GameObject instance, string scenario, int height)
         {
             const int width = 1080;
-            string output = Path.GetFullPath("Artifacts/VisualTests/RaceStandings/Runtime");
+            string output = Path.GetFullPath("Artifacts/VisualTests/RewardsFlow/Portrait");
             Directory.CreateDirectory(output);
             GameObject cameraObject = new GameObject("PostRaceCaptureCamera", typeof(Camera));
             Camera camera = cameraObject.GetComponent<Camera>();

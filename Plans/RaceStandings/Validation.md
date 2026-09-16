@@ -1,5 +1,7 @@
 # Race standings and gear reward validation
 
+**Follow-up:** the user removed the redundant Progress step. The [current live walkthrough](../../Artifacts/VisualTests/RewardsFlow/README.md) shows rewards returning directly Home. The results below describe the earlier standings milestone.
+
 Date: 2026-09-16. Base: `e19f520e`; implementation branch: `codex/race-standings-rewards`.
 
 ## Result

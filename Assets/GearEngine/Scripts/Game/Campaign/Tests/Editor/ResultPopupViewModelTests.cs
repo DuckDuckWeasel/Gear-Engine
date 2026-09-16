@@ -73,7 +73,7 @@ namespace GearEngine.Campaign.Tests.Editor
                 }
                 else
                 {
-                    Assert.That(navigation.OpenedControllers[0], Is.InstanceOf<RaceProgressViewModel>());
+                    Assert.That(navigation.OpenedControllers[0], Is.InstanceOf<MainViewModel>());
                 }
 
                 Assert.That(navigation.OpenedControllers, Has.Count.EqualTo(1));
@@ -100,19 +100,19 @@ namespace GearEngine.Campaign.Tests.Editor
                 Assert.That(rewards.NeedsGearSelection, Is.False);
                 ViewModelTestInject.InjectNavigation(rewards, navigation);
                 rewards.Continue();
-                Assert.That(navigation.OpenedControllers[1], Is.InstanceOf<RaceProgressViewModel>());
+                Assert.That(navigation.OpenedControllers[1], Is.InstanceOf<MainViewModel>());
             }
             else
             {
-                Assert.That(navigation.OpenedControllers[0], Is.InstanceOf<RaceProgressViewModel>());
+                Assert.That(navigation.OpenedControllers[0], Is.InstanceOf<MainViewModel>());
             }
         }
 
         [Test]
-        public void Progress_ReturnsHomeOnce()
+        public void FinalReward_ReturnsHomeOnce()
         {
             RecordingNavigation navigation = new RecordingNavigation();
-            RaceProgressViewModel vm = new RaceProgressViewModel(new RaceResultModel(80f, 3, null));
+            ReceivedRewardsViewModel vm = new ReceivedRewardsViewModel(new RaceResultModel(80f, 3, null));
             ViewModelTestInject.InjectNavigation(vm, navigation);
             vm.Continue(); vm.Continue();
             Assert.That(navigation.OpenedControllers, Has.Count.EqualTo(1));
