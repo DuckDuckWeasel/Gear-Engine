@@ -1388,7 +1388,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
   m_Color: {r: 0.9843137, g: 0.96862745, b: 0.9411765, a: 1}
@@ -1552,7 +1552,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 938fce054c42f40a3969e27a88d9bdd8, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Coffee.UIEffect::Coffee.UIEffects.UIEffect
   m_ToneFilter: 0
   m_ToneIntensity: 1
@@ -3174,7 +3174,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3800728472566347162, guid: 005f318bca9f8494caf073a84645acfc, type: 3}
       propertyPath: m_Camera
-      value:
+      value: 
       objectReference: {fileID: 1196090827}
     - target: {fileID: 3800728472566347162, guid: 005f318bca9f8494caf073a84645acfc, type: 3}
       propertyPath: m_SortingOrder
@@ -3222,7 +3222,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5029919411786356402, guid: 005f318bca9f8494caf073a84645acfc, type: 3}
       propertyPath: m_Sprite
-      value:
+      value: 
       objectReference: {fileID: 3049273829435696635, guid: a83844f25c112764c92f68c0403d549a, type: 3}
     - target: {fileID: 5029919411786356402, guid: 005f318bca9f8494caf073a84645acfc, type: 3}
       propertyPath: m_Color.a
@@ -3355,7 +3355,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5c6d4a53caab4acdafdc4eff3fe57ff1, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Presentation.UI.BoardView
 --- !u!1 &632666304
 GameObject:
@@ -10396,7 +10396,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3132813776942460015, guid: d9b2bf9ad3d2d21439a807add8a1c39e, type: 3}
       propertyPath: m_fontAsset
-      value:
+      value: 
       objectReference: {fileID: 11400000, guid: 3f182bccd6815e546801663f21300cdb, type: 2}
     - target: {fileID: 3132813776942460015, guid: d9b2bf9ad3d2d21439a807add8a1c39e, type: 3}
       propertyPath: m_fontStyle
@@ -10428,7 +10428,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3132813776942460015, guid: d9b2bf9ad3d2d21439a807add8a1c39e, type: 3}
       propertyPath: m_sharedMaterial
-      value:
+      value: 
       objectReference: {fileID: 8067483209966327803, guid: 3f182bccd6815e546801663f21300cdb, type: 2}
     - target: {fileID: 3132813776942460015, guid: d9b2bf9ad3d2d21439a807add8a1c39e, type: 3}
       propertyPath: m_characterSpacing
@@ -10476,7 +10476,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3543018418784105771, guid: d9b2bf9ad3d2d21439a807add8a1c39e, type: 3}
       propertyPath: m_Sprite
-      value:
+      value: 
       objectReference: {fileID: 3049273829435696635, guid: a83844f25c112764c92f68c0403d549a, type: 3}
     - target: {fileID: 3543018418784105771, guid: d9b2bf9ad3d2d21439a807add8a1c39e, type: 3}
       propertyPath: m_Color.a
@@ -10512,7 +10512,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6050457339286446209, guid: d9b2bf9ad3d2d21439a807add8a1c39e, type: 3}
       propertyPath: m_Sprite
-      value:
+      value: 
       objectReference: {fileID: 3049273829435696635, guid: a83844f25c112764c92f68c0403d549a, type: 3}
     - target: {fileID: 6050457339286446209, guid: d9b2bf9ad3d2d21439a807add8a1c39e, type: 3}
       propertyPath: m_Color.b
@@ -10540,7 +10540,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7152065938838269516, guid: d9b2bf9ad3d2d21439a807add8a1c39e, type: 3}
       propertyPath: m_Sprite
-      value:
+      value: 
       objectReference: {fileID: 3049273829435696635, guid: a83844f25c112764c92f68c0403d549a, type: 3}
     - target: {fileID: 7152065938838269516, guid: d9b2bf9ad3d2d21439a807add8a1c39e, type: 3}
       propertyPath: m_Color.a
@@ -12046,15 +12046,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8444378636596998314, guid: 689dcd40046774c4b80166058bccaf5f, type: 3}
       propertyPath: board
-      value:
+      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 8444378636596998314, guid: 689dcd40046774c4b80166058bccaf5f, type: 3}
       propertyPath: trash
-      value:
+      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 8444378636596998314, guid: 689dcd40046774c4b80166058bccaf5f, type: 3}
       propertyPath: inventory
-      value:
+      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 8531254204867508646, guid: 689dcd40046774c4b80166058bccaf5f, type: 3}
       propertyPath: m_Pivot.x
@@ -12238,22 +12238,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 661299471}
     m_Modifications:
-    - target: {fileID: 82608934587586976, guid: 7fc0f6df20b58de419af0dc0a0b99674, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 82608934587586976, guid: 7fc0f6df20b58de419af0dc0a0b99674, type: 3}
-      propertyPath: m_AnchorMin.y
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 82608934587586976, guid: 7fc0f6df20b58de419af0dc0a0b99674, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 511.523
-      objectReference: {fileID: 0}
-    - target: {fileID: 82608934587586976, guid: 7fc0f6df20b58de419af0dc0a0b99674, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: -860.7832
-      objectReference: {fileID: 0}
     - target: {fileID: 2132008815724287526, guid: 7fc0f6df20b58de419af0dc0a0b99674, type: 3}
       propertyPath: m_IsActive
       value: 1
@@ -12282,22 +12266,6 @@ PrefabInstance:
       propertyPath: parentAnimoraPlayer
       value: 
       objectReference: {fileID: 488276883}
-    - target: {fileID: 2952876747183614833, guid: 7fc0f6df20b58de419af0dc0a0b99674, type: 3}
-      propertyPath: m_Color.a
-      value: 0.9098039
-      objectReference: {fileID: 0}
-    - target: {fileID: 2952876747183614833, guid: 7fc0f6df20b58de419af0dc0a0b99674, type: 3}
-      propertyPath: m_Color.b
-      value: 0.101960786
-      objectReference: {fileID: 0}
-    - target: {fileID: 2952876747183614833, guid: 7fc0f6df20b58de419af0dc0a0b99674, type: 3}
-      propertyPath: m_Color.g
-      value: 0.101960786
-      objectReference: {fileID: 0}
-    - target: {fileID: 2952876747183614833, guid: 7fc0f6df20b58de419af0dc0a0b99674, type: 3}
-      propertyPath: m_Color.r
-      value: 0.101960786
-      objectReference: {fileID: 0}
     - target: {fileID: 3557760724773374193, guid: 7fc0f6df20b58de419af0dc0a0b99674, type: 3}
       propertyPath: selectedClipIndex
       value: 4
@@ -12354,10 +12322,6 @@ PrefabInstance:
       propertyPath: positionText
       value: 
       objectReference: {fileID: 992010931}
-    - target: {fileID: 6342649612423169511, guid: 7fc0f6df20b58de419af0dc0a0b99674, type: 3}
-      propertyPath: raceTimeText
-      value: 
-      objectReference: {fileID: 90824485}
     - target: {fileID: 6342649612423169511, guid: 7fc0f6df20b58de419af0dc0a0b99674, type: 3}
       propertyPath: totalTimeText
       value: 
