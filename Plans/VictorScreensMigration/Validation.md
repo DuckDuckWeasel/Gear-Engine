@@ -41,3 +41,31 @@ Local main integrated the migration in merge commit `611bc227` without conflicts
 The original checkout stays on `codex/repository-maintenance` at `c5c438a4`, untouched and clean at the integration check. The migration worktree now checks out main. Remote main remains `bcda1ccf`; no push was performed.
 
 Implementation and local integration are complete. Full acceptance remains qualified by the runtime finding and coverage limitations above. Recovery after integration is `git revert -m 1 611bc227`; do not reset shared history.
+
+## Post-race flow correction
+
+The corrected playable flow is Victory → Reward → Progress → Home. Choosing Upgrade inserts the
+existing Roguelike selection between Victory and Reward, then rejoins the same Reward → Progress →
+Home path. Victory still opens before persistence completes; later stages wait for persistence.
+
+Visual evidence is under `Artifacts/VisualTests/VictorVictoryFlow/` at 1080×1680, 1080×1920,
+1080×2280 and 1080×2400. Victory uses Victor's clean Photo Finish labels and live race data;
+Reward uses a representative Echo gear icon; Progress uses representative server progression data.
+
+Focused checks passed in both the live Editor and the reproducible Unity CLI wrapper:
+
+- `ResultPopupViewModelTests`: 5 passed, including Victory → Reward → Progress → Home, Roguelike's
+  return through Reward, and the persistence barrier.
+- `CampaignScreenReferenceTests`: 9 passed, including all stage references and missing-script checks.
+- `ActiveRaceViewModelTests.WhenResultPersistenceStalls_StillOpensResultPopup`: 1 passed.
+
+The final NUnit XML, Editor logs and reports are retained under
+`Artifacts/TestResults/VictorVictoryFlow/`. The aggregate result is 15 passed, 0 failed,
+0 skipped. Unity logs contain no relevant compilation errors, exceptions or capture failures.
+
+Scoped C# lint fix/check and the nine-file structure check passed. The final repository wrapper
+`validate-changes.ps1 -SkipTests` passed its 114-assembly reference audit, pragma gate, Unity
+compilation and analyzer build with zero diagnostics or blockers. The wrapper skipped its broad
+EditMode and PlayMode suites as requested; the focused tests above ran separately.
+
+Correction commit: `0e84aec6` (`feat(campaign): restore Victor post-race flow`).

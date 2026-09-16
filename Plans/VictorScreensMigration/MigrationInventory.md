@@ -11,7 +11,9 @@ The `68afa7e4` → `d92a04a0` → `46ec514c` sequence is one effective change.
 | `e47af5a4` | `Container_PanelRace_new`: speed, gear, RPM and score design in source Main Scene | Race View HUD | Migrated: original speed/gear/RPM/score bindings target Victor’s HUD; segmented RPM follows the existing simulated RPM |
 | `e47af5a4` | `Container_Points`: drift points/multiplier design in source Main Scene | RaceDriftScoreView presentation | Migrated: existing RaceDriftScoreView owns the new points/multiplier labels |
 | `46ec514c`, `574764b9`, `e47af5a4` | AnimationAnimora BuildScreen header and panels | Setup View presentation | Already applied: header chips, title/subtitle typography and Race button match reference; current engine wording and board placement retained |
-| `46ec514c`, `574764b9`, `e47af5a4` | Results canvas and `Campaign_ReceivedRewards_new` | ResultPopupView presentation | Migrated: new reward header/card composition displays existing tier/time/laps/score/gold rows; Continue and Upgrade preserved |
+| `46ec514c`, `574764b9`, `e47af5a4` | `Results_Canvas` Photo Finish modal | ResultPopupView victory stage | Corrected: Victor's clean `PhotoFinish`/`1stPlace` labels, stats and reward panel display live time, score, laps and gold; Continue and Upgrade preserved |
+| `46ec514c`, `574764b9`, `e47af5a4` | `Campaign_ReceivedRewards_new` | ResultPopupView reward stage | Corrected: dedicated received-reward screen binds gold or the selected Roguelike item's name and icon |
+| `46ec514c`, `574764b9`, `e47af5a4` | `Campaign_ResultPopupView (1)` | ResultPopupView progress stage | Corrected: dedicated star/track progress screen binds achieved tier, score, time and the next unlocked track when supplied by the server |
 | `bd3f8930` | UIEffect on result background, component `132848062` in AnimationAnimora | Result popup background | Migrated: patterned UIEffect copied; opening color tween now ends at the reference cream color |
 | `e47af5a4` | Item_View: icon 360→260, live name Label hidden in demo, UIEffect component | Item_View prefab | Migrated: 260px icons; live labels intentionally retained; neutral UIEffect omitted |
 | `e47af5a4` | Items View: card label/size overrides and component additions | Items View / Store and Garage | Migrated: 260px icons; live labels intentionally retained; neutral UIEffect omitted |
@@ -32,7 +34,12 @@ The `68afa7e4` → `d92a04a0` → `46ec514c` sequence is one effective change.
 ## Adaptations and ownership
 
 - Setup’s reference demo grid and static “5/5” data are excluded. Current runtime capacity and shared board remain authoritative.
-- Results uses the explicitly named `Campaign_ReceivedRewards_new` header/card, adapted to actual result rows. “COG ITEM” and “REWARD 1/1” are demo data, not new rewards.
+- Results is a staged flow inside the existing popup: Victory → Reward → Progress → Home.
+  Upgrade opens Roguelike selection and rejoins at Reward before Progress. Demo labels are replaced
+  by the actual race result or selected item.
+- Victory opens before remote persistence completes, preserving current feedback timing. Continue
+  and Upgrade await that persistence task before leaving Victory, so Reward and Progress never show
+  stale server progression.
 - Result stats-container binding was null in main; it is now assigned. Legacy scene overrides for buttons, background color and standalone time text are removed.
 - Animora owns header/card entry and background color. DOTween still owns individual result rows and drift score. Popup action-button playback has one parent schedule.
 - The race view temporarily reserves 20–50% of screen height for the shared board, restores its prior anchors on close/unbind, and leaves gameplay/drag ownership unchanged.
@@ -49,5 +56,9 @@ See `Validation.md` for actual evidence, remaining limitations and integration s
 | `ec497ff8` | Inventory, existing Main/Setup disposition and source/baseline captures | `46ec514c`, `574764b9`, `5a4a8fe6`, `e47af5a4`, `bd3f8930` |
 | `90548be3` | Race HUD, drift labels, new reward composition, patterned background and scene bindings | `46ec514c`, `574764b9`, `e47af5a4`, `bd3f8930` |
 | `855b4ba5` | Item icons, Store/Garage card presentation, item popup and missing-script cleanup | `5a4a8fe6`, `e47af5a4` |
+| `0e84aec6` | Correct Victor victory modal and add Reward → Progress → Home routing | `46ec514c`, `574764b9`, `e47af5a4` |
 
 Validation commit `70079efe` records tests and final captures for both implementation batches. Local main integration: `611bc227`. No remote push.
+
+The post-race correction is implemented in `0e84aec6` on
+`codex/victor-victory-flow-fix`. No remote push is authorized.

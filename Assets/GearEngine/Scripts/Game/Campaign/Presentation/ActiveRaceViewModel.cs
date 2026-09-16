@@ -171,8 +171,16 @@ namespace GearEngine.Campaign.Presentation
                 // Wait for the cinematic finish (Akira slide) to play out before covering the screen
                 await Task.Delay(TimeSpan.FromSeconds(k_resultPopupDelaySeconds));
 
+                result.BeginPersistence();
                 navigation.Open(new ResultPopupViewModel(result));
-                await PersistRaceResultAsync(result);
+                try
+                {
+                    await PersistRaceResultAsync(result);
+                }
+                finally
+                {
+                    result.CompletePersistence();
+                }
             }
             catch (Exception ex)
             {

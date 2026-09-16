@@ -1,107 +1,153 @@
 using System;
 using DG.Tweening;
 using Scaffold.MVVM;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+
 namespace GearEngine.Campaign.Presentation
 {
     public sealed class ResultPopupView : View<ResultPopupViewModel>
     {
-        [SerializeField] private RectTransform statsContainer;
-        [SerializeField] private ResultStatSlotView statSlotPrefab;
-        [SerializeField] private float popDuration = 0.25f;
-        [SerializeField] private float stagger = 0.08f;
-        [SerializeField] private Ease popEase = Ease.OutBack;
-        [SerializeField] private Button upgradeButton;
-        [SerializeField] private Button continueButton;
-        [SerializeField] private TMPro.TMP_Text raceTimeText;
+        [Header("Stages")]
+        [SerializeField] private GameObject victoryStage;
+        [SerializeField] private GameObject rewardStage;
+        [SerializeField] private GameObject progressStage;
 
-        private Sequence statsSequence;
+        [Header("Victory")]
+        [SerializeField] private TMP_Text victoryEyebrowText;
+        [SerializeField] private TMP_Text victoryTitleText;
+        [SerializeField] private TMP_Text victoryMessageText;
+        [SerializeField] private TMP_Text victoryRaceTimeText;
+        [SerializeField] private TMP_Text victoryScoreText;
+        [SerializeField] private TMP_Text victoryLapText;
+        [SerializeField] private TMP_Text victoryRewardText;
+        [SerializeField] private Button victoryContinueButton;
+        [SerializeField] private Button victoryUpgradeButton;
+
+        [Header("Reward")]
+        [SerializeField] private TMP_Text rewardNameText;
+        [SerializeField] private TMP_Text rewardCountText;
+        [SerializeField] private Image rewardIconImage;
+        [SerializeField] private Button rewardContinueButton;
+
+        [Header("Progress")]
+        [SerializeField] private TMP_Text progressTitleText;
+        [SerializeField] private TMP_Text progressTrackText;
+        [SerializeField] private TMP_Text progressSummaryText;
+        [SerializeField] private TMP_Text progressScoreText;
+        [SerializeField] private TMP_Text progressTimeText;
+        [SerializeField] private Image[] progressStars;
+        [SerializeField] private Button progressContinueButton;
+
+        [Header("Animation")]
+        [SerializeField] private float stageDuration = 0.25f;
+        [SerializeField] private Ease stageEase = Ease.OutBack;
+
+        private Sequence stageSequence;
 
         protected override void OnBind()
         {
             ValidateHierarchy();
-            if (raceTimeText != null)
-            {
-                raceTimeText.text = viewModel.FormattedRaceTime;
-            }
-            RebuildStatSlots();
-            upgradeButton.onClick.AddListener(OnUpgradeClicked);
-            continueButton.onClick.AddListener(OnContinueClicked);
+            viewModel.StageChanged += ShowStage;
+            victoryContinueButton.onClick.AddListener(OnContinueClicked);
+            victoryUpgradeButton.onClick.AddListener(OnUpgradeClicked);
+            rewardContinueButton.onClick.AddListener(OnContinueClicked);
+            progressContinueButton.onClick.AddListener(OnContinueClicked);
+            ShowStage(viewModel.CurrentStage);
         }
 
         protected override void OnUnbind()
         {
-            upgradeButton.onClick.RemoveListener(OnUpgradeClicked);
-            continueButton.onClick.RemoveListener(OnContinueClicked);
-            KillStatsSequence();
-            ClearStatSlots();
+            viewModel.StageChanged -= ShowStage;
+            victoryContinueButton.onClick.RemoveListener(OnContinueClicked);
+            victoryUpgradeButton.onClick.RemoveListener(OnUpgradeClicked);
+            rewardContinueButton.onClick.RemoveListener(OnContinueClicked);
+            progressContinueButton.onClick.RemoveListener(OnContinueClicked);
+            KillStageSequence();
             base.OnUnbind();
         }
 
         private void OnDisable()
         {
-            KillStatsSequence();
+            KillStageSequence();
         }
 
-        private void RebuildStatSlots()
+        private void ShowStage(ResultFlowStage stage)
         {
-            if (statsContainer == null || statSlotPrefab == null)
+            ApplyRuntimeData();
+            victoryStage.SetActive(stage == ResultFlowStage.Victory);
+            rewardStage.SetActive(stage == ResultFlowStage.Reward);
+            progressStage.SetActive(stage == ResultFlowStage.Progress);
+
+            GameObject activeStage = stage switch
             {
-                return;
+                ResultFlowStage.Victory => victoryStage,
+                ResultFlowStage.Reward => rewardStage,
+                ResultFlowStage.Progress => progressStage,
+                _ => throw new ArgumentOutOfRangeException(nameof(stage), stage, null),
+            };
+            PlayStageAnimation(activeStage);
+        }
+
+        private void ApplyRuntimeData()
+        {
+            victoryEyebrowText.text = viewModel.VictoryEyebrow;
+            victoryTitleText.text = viewModel.VictoryTitle;
+            victoryMessageText.text = viewModel.VictoryMessage;
+            victoryRaceTimeText.text = viewModel.FormattedRaceTime;
+            victoryScoreText.text = viewModel.Score.ToString("N0");
+            victoryLapText.text = viewModel.LapCount.ToString();
+            victoryRewardText.text = $"+{viewModel.GoldAmount} GOLD";
+
+            rewardNameText.text = viewModel.RewardName;
+            rewardCountText.text = viewModel.RewardCountText;
+            rewardIconImage.sprite = viewModel.RewardIcon;
+            rewardIconImage.gameObject.SetActive(viewModel.RewardIcon != null);
+
+            progressTitleText.text = viewModel.ProgressTitle;
+            progressTrackText.text = viewModel.ProgressTrackName;
+            progressSummaryText.text = viewModel.ProgressSummary;
+            progressScoreText.text = $"SCORE\n{viewModel.Score:N0}";
+            progressTimeText.text = $"RACE TIME\n{viewModel.FormattedRaceTime}";
+            ApplyProgressStars();
+        }
+
+        private void ApplyProgressStars()
+        {
+            Color earnedColor = new Color32(255, 210, 63, 255);
+            Color unearnedColor = new Color32(73, 92, 108, 255);
+            for (int i = 0; i < progressStars.Length; i++)
+            {
+                progressStars[i].color = i < viewModel.HighestAchievedTier ? earnedColor : unearnedColor;
+            }
+        }
+
+        private void PlayStageAnimation(GameObject activeStage)
+        {
+            KillStageSequence();
+            CanvasGroup canvasGroup = activeStage.GetComponent<CanvasGroup>();
+            if (canvasGroup == null)
+            {
+                canvasGroup = activeStage.AddComponent<CanvasGroup>();
             }
 
-            ClearStatSlots();
-            KillStatsSequence();
-            statsSequence = DOTween.Sequence();
-            RunSpawnStatTweens();
+            RectTransform rectTransform = activeStage.transform as RectTransform;
+            canvasGroup.alpha = 0f;
+            rectTransform.localScale = Vector3.one * 0.96f;
+            stageSequence = DOTween.Sequence();
+            stageSequence.Join(DOTween.To(() => canvasGroup.alpha, value => canvasGroup.alpha = value, 1f, stageDuration));
+            stageSequence.Join(rectTransform.DOScale(Vector3.one, stageDuration).SetEase(stageEase));
         }
 
-        private void ClearStatSlots()
+        private void KillStageSequence()
         {
-            if (statsContainer == null) return;
-
-            for (int i = statsContainer.childCount - 1; i >= 0; i--)
+            if (stageSequence != null && stageSequence.IsActive())
             {
-                Transform child = statsContainer.GetChild(i);
-                if (Application.isPlaying)
-                {
-                    Destroy(child.gameObject);
-                }
-                else
-                {
-                    DestroyImmediate(child.gameObject);
-                }
+                stageSequence.Kill();
             }
-        }
 
-        private void KillStatsSequence()
-        {
-            if (statsSequence != null && statsSequence.IsActive())
-            {
-                statsSequence.Kill();
-                statsSequence = null;
-            }
-        }
-
-        private void RunSpawnStatTweens()
-        {
-            int index = 0;
-            foreach (ResultStatSlotViewModel row in viewModel.Stats)
-            {
-                AddStatSlotTween(row, index++);
-            }
-        }
-
-        private void AddStatSlotTween(ResultStatSlotViewModel rowVm, int slotIndex)
-        {
-            ResultStatSlotView slot = Instantiate(statSlotPrefab, statsContainer);
-            slot.gameObject.name = $"StatSlot_{slotIndex}";
-            slot.transform.localScale = Vector3.zero;
-            slot.Bind(rowVm);
-            statsSequence.Insert(
-                slotIndex * stagger,
-                slot.transform.DOScale(Vector3.one, popDuration).SetEase(popEase));
+            stageSequence = null;
         }
 
         private void OnUpgradeClicked()
@@ -130,11 +176,16 @@ namespace GearEngine.Campaign.Presentation
 
         private void ValidateHierarchy()
         {
-            RequireReference(upgradeButton, nameof(upgradeButton));
-            RequireReference(continueButton, nameof(continueButton));
+            RequireReference(victoryStage, nameof(victoryStage));
+            RequireReference(rewardStage, nameof(rewardStage));
+            RequireReference(progressStage, nameof(progressStage));
+            RequireReference(victoryContinueButton, nameof(victoryContinueButton));
+            RequireReference(victoryUpgradeButton, nameof(victoryUpgradeButton));
+            RequireReference(rewardContinueButton, nameof(rewardContinueButton));
+            RequireReference(progressContinueButton, nameof(progressContinueButton));
         }
 
-        private void RequireReference(UnityEngine.Object field, string name)
+        private static void RequireReference(UnityEngine.Object field, string name)
         {
             if (field == null)
             {

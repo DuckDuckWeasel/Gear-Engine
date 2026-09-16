@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="9" result="Passed" total="9" passed="9" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-16 02:25:13Z" end-time="2026-09-16 02:25:13Z" duration="0.2391082">
+  <test-suite type="TestSuite" id="1000" name="Scaffold" fullname="Scaffold" runstate="Runnable" testcasecount="403" result="Passed" start-time="2026-09-16 02:25:13Z" end-time="2026-09-16 02:25:13Z" duration="0.239108" total="9" passed="9" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="1107" name="Game.Campaign.Tests.dll" fullname="/Users/leonardosilva/Documents/MatheusCohen/VictorScreensMigration/Library/ScriptAssemblies/Game.Campaign.Tests.dll" runstate="Runnable" testcasecount="56" result="Passed" start-time="2026-09-16 02:25:13Z" end-time="2026-09-16 02:25:13Z" duration="0.190366" total="9" passed="9" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="88941" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="1108" name="GearEngine" fullname="GearEngine" runstate="Runnable" testcasecount="56" result="Passed" start-time="2026-09-16 02:25:13Z" end-time="2026-09-16 02:25:13Z" duration="0.189605" total="9" passed="9" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1112" name="Campaign" fullname="GearEngine.Campaign" runstate="Runnable" testcasecount="55" result="Passed" start-time="2026-09-16 02:25:13Z" end-time="2026-09-16 02:25:13Z" duration="0.188967" total="9" passed="9" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestSuite" id="1113" name="Tests" fullname="GearEngine.Campaign.Tests" runstate="Runnable" testcasecount="55" result="Passed" start-time="2026-09-16 02:25:13Z" end-time="2026-09-16 02:25:13Z" duration="0.188548" total="9" passed="9" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="TestSuite" id="1114" name="Editor" fullname="GearEngine.Campaign.Tests.Editor" runstate="Runnable" testcasecount="55" result="Passed" start-time="2026-09-16 02:25:13Z" end-time="2026-09-16 02:25:13Z" duration="0.188099" total="9" passed="9" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-suite type="TestFixture" id="1042" name="CampaignScreenReferenceTests" fullname="GearEngine.Campaign.Tests.Editor.CampaignScreenReferenceTests" classname="GearEngine.Campaign.Tests.Editor.CampaignScreenReferenceTests" runstate="Runnable" testcasecount="9" result="Passed" start-time="2026-09-16 02:25:13Z" end-time="2026-09-16 02:25:13Z" duration="0.185777" total="9" passed="9" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="1043" name="RaceBoardLayout_ReservesHudSpaceAndRestoresSharedBoard" fullname="GearEngine.Campaign.Tests.Editor.CampaignScreenReferenceTests.RaceBoardLayout_ReservesHudSpaceAndRestoresSharedBoard" methodname="RaceBoardLayout_ReservesHudSpaceAndRestoresSharedBoard" classname="GearEngine.Campaign.Tests.Editor.CampaignScreenReferenceTests" runstate="Runnable" seed="1349336656" result="Passed" start-time="2026-09-16 02:25:13Z" end-time="2026-09-16 02:25:13Z" duration="0.017154" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1044" name="ResultPrefab_HasCompletePostRaceFlow" fullname="GearEngine.Campaign.Tests.Editor.CampaignScreenReferenceTests.ResultPrefab_HasCompletePostRaceFlow" methodname="ResultPrefab_HasCompletePostRaceFlow" classname="GearEngine.Campaign.Tests.Editor.CampaignScreenReferenceTests" runstate="Runnable" seed="848363213" result="Passed" start-time="2026-09-16 02:25:13Z" end-time="2026-09-16 02:25:13Z" duration="0.066103" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-suite type="ParameterizedMethod" id="1052" name="ScreenPrefab_HasNoMissingScripts" fullname="GearEngine.Campaign.Tests.Editor.CampaignScreenReferenceTests.ScreenPrefab_HasNoMissingScripts" classname="GearEngine.Campaign.Tests.Editor.CampaignScreenReferenceTests" runstate="Runnable" testcasecount="7" result="Passed" start-time="2026-09-16 02:25:13Z" end-time="2026-09-16 02:25:13Z" duration="0.091139" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+                  <properties />
+                  <test-case id="1045" name="ScreenPrefab_HasNoMissingScripts(&quot;Main View&quot;)" fullname="GearEngine.Campaign.Tests.Editor.CampaignScreenReferenceTests.ScreenPrefab_HasNoMissingScripts(&quot;Main View&quot;)" methodname="ScreenPrefab_HasNoMissingScripts" classname="GearEngine.Campaign.Tests.Editor.CampaignScreenReferenceTests" runstate="Runnable" seed="2085158443" result="Passed" start-time="2026-09-16 02:25:13Z" end-time="2026-09-16 02:25:13Z" duration="0.023220" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                  </test-case>
+                  <test-case id="1046" name="ScreenPrefab_HasNoMissingScripts(&quot;Setup View&quot;)" fullname="GearEngine.Campaign.Tests.Editor.CampaignScreenReferenceTests.ScreenPrefab_HasNoMissingScripts(&quot;Setup View&quot;)" methodname="ScreenPrefab_HasNoMissingScripts" classname="GearEngine.Campaign.Tests.Editor.CampaignScreenReferenceTests" runstate="Runnable" seed="1319306825" result="Passed" start-time="2026-09-16 02:25:13Z" end-time="2026-09-16 02:25:13Z" duration="0.019302" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                  </test-case>
+                  <test-case id="1047" name="ScreenPrefab_HasNoMissingScripts(&quot;Race View&quot;)" fullname="GearEngine.Campaign.Tests.Editor.CampaignScreenReferenceTests.ScreenPrefab_HasNoMissingScripts(&quot;Race View&quot;)" methodname="ScreenPrefab_HasNoMissingScripts" classname="GearEngine.Campaign.Tests.Editor.CampaignScreenReferenceTests" runstate="Runnable" seed="169141596" result="Passed" start-time="2026-09-16 02:25:13Z" end-time="2026-09-16 02:25:13Z" duration="0.012803" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                  </test-case>
+                  <test-case id="1048" name="ScreenPrefab_HasNoMissingScripts(&quot;Campaign_ResultPopupView&quot;)" fullname="GearEngine.Campaign.Tests.Editor.CampaignScreenReferenceTests.ScreenPrefab_HasNoMissingScripts(&quot;Campaign_ResultPopupView&quot;)" methodname="ScreenPrefab_HasNoMissingScripts" classname="GearEngine.Campaign.Tests.Editor.CampaignScreenReferenceTests" runstate="Runnable" seed="669524972" result="Passed" start-time="2026-09-16 02:25:13Z" end-time="2026-09-16 02:25:13Z" duration="0.000570" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                  </test-case>
+                  <test-case id="1049" name="ScreenPrefab_HasNoMissingScripts(&quot;Campaign_RoguelikeView&quot;)" fullname="GearEngine.Campaign.Tests.Editor.CampaignScreenReferenceTests.ScreenPrefab_HasNoMissingScripts(&quot;Campaign_RoguelikeView&quot;)" methodname="ScreenPrefab_HasNoMissingScripts" classname="GearEngine.Campaign.Tests.Editor.CampaignScreenReferenceTests" runstate="Runnable" seed="332937055" result="Passed" start-time="2026-09-16 02:25:13Z" end-time="2026-09-16 02:25:13Z" duration="0.015521" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                  </test-case>
+                  <test-case id="1050" name="ScreenPrefab_HasNoMissingScripts(&quot;Items View&quot;)" fullname="GearEngine.Campaign.Tests.Editor.CampaignScreenReferenceTests.ScreenPrefab_HasNoMissingScripts(&quot;Items View&quot;)" methodname="ScreenPrefab_HasNoMissingScripts" classname="GearEngine.Campaign.Tests.Editor.CampaignScreenReferenceTests" runstate="Runnable" seed="933875407" result="Passed" start-time="2026-09-16 02:25:13Z" end-time="2026-09-16 02:25:13Z" duration="0.009633" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                  </test-case>
+                  <test-case id="1051" name="ScreenPrefab_HasNoMissingScripts(&quot;ItemPopup View&quot;)" fullname="GearEngine.Campaign.Tests.Editor.CampaignScreenReferenceTests.ScreenPrefab_HasNoMissingScripts(&quot;ItemPopup View&quot;)" methodname="ScreenPrefab_HasNoMissingScripts" classname="GearEngine.Campaign.Tests.Editor.CampaignScreenReferenceTests" runstate="Runnable" seed="400672583" result="Passed" start-time="2026-09-16 02:25:13Z" end-time="2026-09-16 02:25:13Z" duration="0.006616" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                    <output><![CDATA[Saving results to: /Users/leonardosilva/Library/Application Support/DDW/Scaffold/TestResults.xml
+]]></output>
+                  </test-case>
+                </test-suite>
+              </test-suite>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

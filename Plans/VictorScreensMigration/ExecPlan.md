@@ -21,6 +21,8 @@ its GUID is the stable identity used by serialized references.
 - [x] Run repository gate and scoped checks; commit both implementation batches.
 - [ ] Complete remaining acceptance coverage: device safe-area behavior, accepted pointer reposition and baseline investigation of the VariableSO finding.
 - [x] Integrate migration into local main without conflicts (`611bc227`); retain documented acceptance limits.
+- [x] Correct the playable post-race sequence to Victor's Victory → Reward → Progress → Home flow.
+- [x] Replace the generic result composition with Victor's clean Photo Finish labels and live race values.
 
 ## Surprises & Discoveries
 
@@ -34,6 +36,11 @@ its GUID is the stable identity used by serialized references.
 - The shared board has its own screen-space canvas. Its race layout must be reserved/restored at the view lifecycle boundary; the legacy viewport does not move it.
 - `75fdfa3f` merged `9e56d673` but preserved the playable scene and campaign prefabs.
   An ancestry check alone cannot prove visual integration.
+- The original migration treated `Campaign_ReceivedRewards_new` as the result screen. Victor's
+  reference defines three distinct post-race states: the `Results_Canvas` victory modal,
+  `Campaign_ReceivedRewards_new`, and `Campaign_ResultPopupView (1)` progress composition.
+- The outlined alternate victory title produced glyph-edge artifacts after runtime text updates.
+  Victor's clean `1stPlace` and `PhotoFinish` labels are the correct runtime pair.
 
 ## Decision Log
 
@@ -47,7 +54,10 @@ its GUID is the stable identity used by serialized references.
 
 ## Outcomes & Retrospective
 
-Presentation migration is implemented and integrated into local main (`611bc227`). The repository wrapper, scoped lint, compilation and nine focused regression checks passed. One hundred PNGs document references, before/after composition and real runtime screens. Device safe-area behavior, successful pointer reposition, and the unresolved VariableSO runtime finding prevent claiming complete acceptance. See Validation.md for the exact coverage.
+Presentation migration is implemented and integrated into local main (`611bc227`). A correction
+branch replaces the result presentation with the complete Victory → Reward → Progress → Home
+sequence and records all three states at the four acceptance heights. The correction is merged
+into local main after its focused checks pass. See Validation.md for the exact coverage.
 
 ## Context and Orientation
 
@@ -62,8 +72,8 @@ Results and Roguelike; Items serves the Store/Garage variants.
 1. Record every source object, destination, source commit and migration disposition in
    `MigrationInventory.md`. Compare matching runtime data before applying changes.
 2. Apply shared headers/backgrounds and changed Main/Setup visuals.
-3. Apply Race HUD, score and Results/reward presentation. Preserve result availability
-   before persistence completes and preserve existing celebration when included.
+3. Apply Race HUD, score and the distinct Victory, Reward and Progress presentations. Preserve
+   result availability before persistence completes; block later stages until persistence finishes.
 4. Apply changed cards, Items/Store layout and item popup. Keep real data bindings.
 5. Validate bounded batches and integrate into main only after acceptance checks.
 

@@ -45,13 +45,51 @@ namespace GearEngine.Campaign.Tests.Editor
         }
 
         [Test]
-        public void ResultPrefab_HasLiveStatsContainer()
+        public void ResultPrefab_HasCompletePostRaceFlow()
         {
             GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(
                 "Assets/GearEngine/Prefabs/Campaign/Campaign_ResultPopupView.prefab");
             ResultPopupView view = prefab.GetComponent<Presentation.ResultPopupView>();
             SerializedObject data = new SerializedObject(view);
-            Assert.That(data.FindProperty("statsContainer").objectReferenceValue, Is.Not.Null);
+            string[] requiredReferences =
+            {
+                "victoryStage",
+                "rewardStage",
+                "progressStage",
+                "victoryEyebrowText",
+                "victoryTitleText",
+                "victoryMessageText",
+                "victoryRaceTimeText",
+                "victoryScoreText",
+                "victoryLapText",
+                "victoryRewardText",
+                "victoryContinueButton",
+                "victoryUpgradeButton",
+                "rewardNameText",
+                "rewardCountText",
+                "rewardIconImage",
+                "rewardContinueButton",
+                "progressTitleText",
+                "progressTrackText",
+                "progressSummaryText",
+                "progressScoreText",
+                "progressTimeText",
+                "progressStars",
+                "progressContinueButton",
+            };
+
+            foreach (string propertyName in requiredReferences)
+            {
+                SerializedProperty property = data.FindProperty(propertyName);
+                Assert.That(property, Is.Not.Null, $"Missing serialized property: {propertyName}");
+                if (property.isArray)
+                {
+                    Assert.That(property.arraySize, Is.GreaterThan(0), $"{propertyName} must contain entries.");
+                    continue;
+                }
+
+                Assert.That(property.objectReferenceValue, Is.Not.Null, $"{propertyName} is not wired.");
+            }
         }
 
         [TestCase("Main View")]
