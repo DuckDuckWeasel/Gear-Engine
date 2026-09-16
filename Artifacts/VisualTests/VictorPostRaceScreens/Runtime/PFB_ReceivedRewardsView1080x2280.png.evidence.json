@@ -1,0 +1,1 @@
+{"test":"GearEngine.Campaign.Tests.Editor.PostRaceScreenTests.PostRaceScreens_OpenCloseAndRenderBoundData","artifact":"PFB_ReceivedRewardsView1080x2280.png","scenario":"PFB_ReceivedRewardsView after reopening","criteria":["Runtime ViewModel bindings","Rendered text inside viewport","Animation restart","No invented placement"]}

@@ -63,3 +63,19 @@ Validation commit `70079efe` records tests and final captures for both implement
 The post-race correction is implemented in `0e84aec6` on
 `codex/victor-victory-flow-fix` and merged into local main in `4901bd3e`.
 No remote push is authorized.
+
+## Superseding correction: standalone post-race screens
+
+The previous VictoryStage/RewardStage/ProgressStage mapping was rejected by the user. These rows supersede that mapping and its completion claim.
+
+| Source object and provenance | Destination | Status | Adaptation |
+|---|---|---|---|
+| `9e56d673:Assets/Lana Studio/AnimationAnimora.unity`, `Campaign_ResultPopupView/Container` (effective `46ec514c`, `574764b9`, `5a4a8fe6`, `bd3f8930`) | Existing `Campaign_ResultPopupView.prefab` and ResultPopup View/VM | Already applied; validated | Full-screen Results header, stars, score, patterned background. Real time/laps/gold replace demo ranking. No first-place claim. |
+| Same source, `Campaign_ResultPopupView (1)/Container/Container_panel` | Result metric panel | Already applied; validated | Preserve authored row art, bind single-player metrics, remove demo players. |
+| Same source, `Campaign_ReceivedRewards_new` | `PFB_ReceivedRewardsView`, ReceivedRewards View/VM, ViewConfig | Already applied; validated | Actual gold then optional selected gear; correct current/total count; currency/item icons. |
+| Same source Results header/stars/panel; current TrackDefinition tier catalog | `PFB_RaceProgressView`, RaceProgress View/VM, ViewConfig | Already applied; validated adaptation | Separate Progress screen shows earned tiers, targets, and catalog display names. No XP or unlock transaction is fabricated. |
+| `Results_Canvas`, `Campaign_ReceivedRewards_old`, alternate four-item demo | No runtime destination | Intentionally excluded | Superseded demo variants, not extra game states. |
+
+Recovery note: source scene instances reference the campaign prefab. Recover original prefab dependencies alongside the source scene before capture; using current main dependencies contaminates the reference. Temporary snapshots are removed before commit. Authored per-object Animora clips remain; nested demo playback links are replaced by explicit screen lifecycle ownership to avoid hidden panels and competing owners.
+
+Standalone correction implementation: `ea615d32` (`fix(campaign): implement Victor standalone post-race screens`). All superseding rows above are accounted for; the screenshot matrix and final gates accompany the evidence commit.

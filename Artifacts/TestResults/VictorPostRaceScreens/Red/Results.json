@@ -1,0 +1,86 @@
+{
+  "success": true,
+  "command": "command run_tests",
+  "data": {
+    "command": "run_tests",
+    "parameters": {
+      "mode": "editor",
+      "filter": "ResultPopupViewModelTests",
+      "format": "json"
+    },
+    "result": {
+      "Summary": {
+        "Total": 7,
+        "Passed": 5,
+        "Failed": 2,
+        "Skipped": 0,
+        "Inconclusive": 0
+      },
+      "Results": [
+        {
+          "FullName": "GearEngine.Campaign.Tests.Editor.ResultPopupViewModelTests.Continue_OpensSeparateRewardScreen",
+          "Status": "Failed",
+          "Duration": 0.0112962,
+          "Message": "  Expected: property Count equal to 1\n  But was:  0\n",
+          "StackTrace": "at GearEngine.Campaign.Tests.Editor.ResultPopupViewModelTests.Continue_OpensSeparateRewardScreen () [0x0002f] in /Users/leonardosilva/Documents/MatheusCohen/VictorScreensMigration/Assets/GearEngine/Scripts/Game/Campaign/Tests/Editor/ResultPopupViewModelTests.cs:36\n"
+        },
+        {
+          "FullName": "GearEngine.Campaign.Tests.Editor.ResultPopupViewModelTests.Continue_WhenGoodResult_AdvancesRewardAndProgressBeforeMain",
+          "Status": "Passed",
+          "Duration": 0.0097619,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "GearEngine.Campaign.Tests.Editor.ResultPopupViewModelTests.Continue_WhenPersistenceIsPending_WaitsBeforeAdvancing",
+          "Status": "Passed",
+          "Duration": 0.007281,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "GearEngine.Campaign.Tests.Editor.ResultPopupViewModelTests.Continue_WhenPoorResult_AdvancesRewardAndProgressBeforeMain",
+          "Status": "Passed",
+          "Duration": 0.0005183,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "GearEngine.Campaign.Tests.Editor.ResultPopupViewModelTests.RoguelikePostRaceDestination_OpensRewardStage",
+          "Status": "Passed",
+          "Duration": 0.0010975,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "GearEngine.Campaign.Tests.Editor.ResultPopupViewModelTests.Upgrade_OpensRoguelikeViewModel",
+          "Status": "Passed",
+          "Duration": 0.0006198,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "GearEngine.Campaign.Tests.Editor.ResultPopupViewModelTests.Victory_DoesNotInventRacePlacement",
+          "Status": "Failed",
+          "Duration": 0.0013541,
+          "Message": "  Expected string length 7 but was 9. Strings differ at index 0.\n  Expected: \"RESULTS\"\n  But was:  \"1st place\"\n  -----------^\n",
+          "StackTrace": "at GearEngine.Campaign.Tests.Editor.ResultPopupViewModelTests.Victory_DoesNotInventRacePlacement () [0x0001a] in /Users/leonardosilva/Documents/MatheusCohen/VictorScreensMigration/Assets/GearEngine/Scripts/Game/Campaign/Tests/Editor/ResultPopupViewModelTests.cs:26\n"
+        }
+      ],
+      "Duration": 0.97,
+      "StatusPath": null,
+      "Mode": "EditMode",
+      "FilterApplied": "testname: ResultPopupViewModelTests",
+      "success": true,
+      "result": null
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7800,
+      "projectPath": "/Users/leonardosilva/Documents/MatheusCohen/VictorScreensMigration"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}
