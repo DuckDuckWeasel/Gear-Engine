@@ -9,7 +9,10 @@ namespace GearEngine.Campaign.Presentation
     {
         public TrackTierViewModel(int tierNumber, TrackTierConfig config)
         {
-            if (config == null) throw new ArgumentNullException(nameof(config));
+            if (config == null)
+            {
+                throw new ArgumentNullException(nameof(config));
+            }
 
             TierNumber = tierNumber;
             TargetTimeSeconds = config.TargetTimeSeconds;
@@ -22,7 +25,7 @@ namespace GearEngine.Campaign.Presentation
         public int TargetScore { get; }
         public int GoldReward { get; }
 
-        public string TargetDescription => $"< {TargetTimeSeconds:F1}s OR > {TargetScore} pts";
+        public string TargetDescription => $"{TargetScore} pts";
         public string RewardDescription => $"{GoldReward} Gold";
     }
 }

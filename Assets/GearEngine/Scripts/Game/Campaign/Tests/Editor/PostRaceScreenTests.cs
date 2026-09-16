@@ -40,7 +40,7 @@ namespace GearEngine.Campaign.Tests.Editor
             TrackDefinition track = AssetDatabase.FindAssets("t:TrackDefinition")
                 .Select(guid => AssetDatabase.LoadAssetAtPath<TrackDefinition>(AssetDatabase.GUIDToAssetPath(guid)))
                 .First(candidate => candidate.HasConfiguredTiers && candidate.Tiers.Count == 3);
-            RaceResultModel result = new RaceResultModel(48.32f, 3, track, 5438);
+            RaceResultModel result = new RaceResultModel(track.TimeToBeatSeconds * 1.18f, 3, track, 5438, track.TimeToBeatSeconds * 1.3f);
             string[] names = { "Campaign_ResultPopupView", "PFB_ReceivedRewardsView", "PFB_RaceProgressView" };
             for (int i = 0; i < names.Length; i++)
             {
@@ -53,12 +53,30 @@ namespace GearEngine.Campaign.Tests.Editor
                 element.Bind(vm);
                 IView view = instance.GetComponent<IView>();
                 view.Open();
+                if (i == 0)
+                {
+                    ResultStandingsView standings = instance.GetComponentInChildren<ResultStandingsView>();
+                    Assert.That(standings.DisplayedPlayerPosition, Is.EqualTo(4));
+                    yield return Capture(instance, "FourthBeforePromotion", 2280);
+                    view.Close();
+                    Assert.That(standings.IsAnimating, Is.False, "Closing must stop an unfinished rank animation.");
+                    view.Open();
+                    Assert.That(standings.DisplayedPlayerPosition, Is.EqualTo(4), "Reopening must reset the starting rank.");
+                }
                 yield return new WaitForSecondsRealtime(5f);
                 view.Close();
                 Assert.That(instance.activeSelf, Is.False);
                 view.Open();
                 yield return new WaitForSecondsRealtime(5f);
                 Assert.That(instance.activeSelf, Is.True);
+                if (i == 0)
+                {
+                    ResultStandingsView standings = instance.GetComponentInChildren<ResultStandingsView>();
+                    Assert.That(standings.DisplayedPlayerPosition, Is.EqualTo(3));
+                    Assert.That(standings.IsAnimating, Is.False);
+                    Assert.That(instance.GetComponentsInChildren<ResultStandingRowView>().Length, Is.EqualTo(3));
+                    Assert.That(instance.GetComponentsInChildren<Button>().Length, Is.EqualTo(1));
+                }
                 TMP_Text[] visibleTexts = instance.GetComponentsInChildren<TMP_Text>();
                 foreach (TMP_Text text in visibleTexts)
                 {
@@ -79,7 +97,7 @@ namespace GearEngine.Campaign.Tests.Editor
                 }
 
                 string visibleContent = string.Join(" ", visibleTexts.Select(text => text.text));
-                Assert.That(visibleContent, Does.Not.Contain("1st place").And.Not.Contain("PLAYER NAME"));
+                Assert.That(visibleContent, Does.Not.Contain("RACE TIME").And.Not.Contain("LAPS COMPLETED").And.Not.Contain("GOLD EARNED"));
                 Assert.That(visibleContent, Does.Contain(i == 0 ? "5438" : i == 1 ? "GOLD" : track.GetDisplayName()));
                 foreach (int height in new[] { 2280, 1920, 2400, 1680 })
                 {
@@ -88,8 +106,51 @@ namespace GearEngine.Campaign.Tests.Editor
 
                 Button button = (Button)new SerializedObject(element).FindProperty("continueButton").objectReferenceValue;
                 button.onClick.Invoke();
+                if (i == 1)
+                {
+                    Assert.That(((ReceivedRewardsViewModel)vm).NeedsGearSelection, Is.True);
+                    Assert.That(string.Join(" ", instance.GetComponentsInChildren<TMP_Text>().Select(text => text.text)), Does.Contain("UPGRADE"));
+                    yield return Capture(instance, "GearReward", 2280);
+                }
                 button.onClick.Invoke();
                 Assert.That(navigation.OpenedControllers, Has.Count.EqualTo(1), "Repeated clicks must open one destination.");
+                view.Close();
+                Object.Destroy(instance);
+                yield return null;
+            }
+            yield return new ExitPlayMode();
+        }
+
+        [UnityTest]
+        public IEnumerator Standings_ShowPoorPlacementWithThreeStarsAndUnchangedThird()
+        {
+            UnityEditor.SceneManagement.EditorSceneManager.NewScene(UnityEditor.SceneManagement.NewSceneSetup.EmptyScene,
+                UnityEditor.SceneManagement.NewSceneMode.Single);
+            yield return new EnterPlayMode();
+            TrackDefinition track = AssetDatabase.FindAssets("t:TrackDefinition")
+                .Select(guid => AssetDatabase.LoadAssetAtPath<TrackDefinition>(AssetDatabase.GUIDToAssetPath(guid)))
+                .First(candidate => candidate.HasConfiguredTiers && candidate.Tiers.Count == 3);
+            int maximumScore = track.Tiers.Max(tier => tier.TargetScore);
+            foreach (bool fourth in new[] { true, false })
+            {
+                float raceTime = track.TimeToBeatSeconds * (fourth ? 1.35f : 1.18f);
+                RaceResultModel result = new RaceResultModel(raceTime, 3, track, maximumScore, raceTime);
+                GameObject instance = Object.Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>(
+                    "Assets/GearEngine/Prefabs/Campaign/Campaign_ResultPopupView.prefab"));
+                ResultPopupViewModel vm = new ResultPopupViewModel(result);
+                vm.Bind(new RecordingNavigation());
+                instance.GetComponent<ViewElement>().Bind(vm);
+                IView view = instance.GetComponent<IView>();
+                view.Open();
+                ResultStandingsView standings = instance.GetComponentInChildren<ResultStandingsView>();
+                Assert.That(standings.IsAnimating, Is.False);
+                Assert.That(standings.DisplayedPlayerPosition, Is.EqualTo(fourth ? 4 : 3));
+                Assert.That(result.HighestAchievedTier, Is.EqualTo(3));
+                Assert.That(instance.GetComponentsInChildren<ResultStandingRowView>().Length, Is.EqualTo(fourth ? 4 : 3));
+                yield return new WaitForSecondsRealtime(4f);
+                RectTransform header = (RectTransform)instance.transform.Find("Container/Labels_Title&Sub");
+                Assert.That(header.anchoredPosition.y, Is.EqualTo(-340f).Within(0.1f), "First opening must settle the header inside the screen.");
+                yield return Capture(instance, fourth ? "FourthPlaceThreeStars" : "UnchangedThirdPlace", 2280);
                 view.Close();
                 Object.Destroy(instance);
                 yield return null;
@@ -115,7 +176,7 @@ namespace GearEngine.Campaign.Tests.Editor
         private static IEnumerator Capture(GameObject instance, string scenario, int height)
         {
             const int width = 1080;
-            string output = Path.GetFullPath("Artifacts/VisualTests/VictorPostRaceScreens/Runtime");
+            string output = Path.GetFullPath("Artifacts/VisualTests/RaceStandings/Runtime");
             Directory.CreateDirectory(output);
             GameObject cameraObject = new GameObject("PostRaceCaptureCamera", typeof(Camera));
             Camera camera = cameraObject.GetComponent<Camera>();
@@ -157,9 +218,9 @@ namespace GearEngine.Campaign.Tests.Editor
                 string file = $"{scenario}{width}x{height}.png";
                 File.WriteAllBytes(Path.Combine(output, file), image.EncodeToPNG());
                 File.WriteAllText(Path.Combine(output, file + ".evidence.json"),
-                    "{\"test\":\"GearEngine.Campaign.Tests.Editor.PostRaceScreenTests.PostRaceScreens_OpenCloseAndRenderBoundData\"," +
-                    $"\"artifact\":\"{file}\",\"scenario\":\"{scenario} after reopening\"," +
-                    "\"criteria\":[\"Runtime ViewModel bindings\",\"Rendered text inside viewport\",\"Animation restart\",\"No invented placement\"]}");
+                    "{\"test\":\"" + NUnit.Framework.TestContext.CurrentContext.Test.FullName + "\"," +
+                    $"\"artifact\":\"{file}\",\"scenario\":\"{scenario}\"," +
+                    "\"criteria\":[\"Runtime ViewModel bindings\",\"Rendered text inside viewport\",\"Animation restart\",\"Time-based standings and score-only stars\"]}");
             }
             finally
             {

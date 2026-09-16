@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Splines;
 
@@ -11,6 +12,9 @@ namespace GearEngine.CarSimulation.Definitions
         public string TrackName => trackName;
 
         [SerializeField] private string trackName;
+
+        public IReadOnlyList<RaceOpponentConfig> Opponents => opponents;
+        [SerializeField] private RaceOpponentConfig[] opponents = Array.Empty<RaceOpponentConfig>();
 
         public float Scale => scale;
 
@@ -47,6 +51,19 @@ namespace GearEngine.CarSimulation.Definitions
             return string.IsNullOrEmpty(trackName) ? name : trackName;
         }
 
+        public int EvaluateTotalGoldReward(float finalRaceTimeSeconds, int finalScore)
+        {
+            int gold = BaseGoldReward;
+            int highestTier = EvaluateHighestAchievedTier(finalRaceTimeSeconds, finalScore);
+
+            if (highestTier > 0 && highestTier <= tiers.Length)
+            {
+                gold += tiers.Where(tier => tier != null).OrderBy(tier => tier.TargetScore).ElementAt(highestTier - 1).GoldReward;
+            }
+
+            return gold;
+        }
+
         public int EvaluateHighestAchievedTier(float finalRaceTimeSeconds, int finalScore)
         {
             if (!HasConfiguredTiers)
@@ -54,36 +71,10 @@ namespace GearEngine.CarSimulation.Definitions
                 return 0;
             }
 
-            // Tiers should be ordered 1 to N, assume index 0 is Tier 1, index 1 is Tier 2, etc.
-            int highestTier = 0;
-            for (int i = 0; i < tiers.Length; i++)
-            {
-                TrackTierConfig tier = tiers[i];
-                if (finalRaceTimeSeconds <= tier.TargetTimeSeconds || finalScore >= tier.TargetScore)
-                {
-                    highestTier = i + 1;
-                }
-                else
-                {
-                    // If we didn't achieve this tier, we don't achieve higher tiers either
-                    break;
-                }
-            }
+            // Score alone awards stars. Sort thresholds because older assets store them in reverse order.
+            int highestTier = tiers.Where(tier => tier != null).Count(tier => finalScore >= tier.TargetScore);
 
             return highestTier;
-        }
-
-        public int EvaluateTotalGoldReward(float finalRaceTimeSeconds, int finalScore)
-        {
-            int gold = BaseGoldReward;
-            int highestTier = EvaluateHighestAchievedTier(finalRaceTimeSeconds, finalScore);
-            
-            if (highestTier > 0 && highestTier <= tiers.Length)
-            {
-                gold += tiers[highestTier - 1].GoldReward;
-            }
-
-            return gold;
         }
 
         internal void SetTotalLapsForTests(int value)
@@ -95,5 +86,6 @@ namespace GearEngine.CarSimulation.Definitions
         {
             tiers = testTiers ?? Array.Empty<TrackTierConfig>();
         }
+
     }
 }

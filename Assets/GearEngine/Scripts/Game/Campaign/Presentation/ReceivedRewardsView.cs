@@ -11,11 +11,15 @@ namespace GearEngine.Campaign.Presentation
         [SerializeField] private TMP_Text rewardCountText;
         [SerializeField] private Image rewardIcon;
         [SerializeField] private Sprite goldIcon;
+        [SerializeField] private Sprite gearIcon;
+        [SerializeField] private TMP_Text continueText;
         [SerializeField] private Button continueButton;
         [SerializeField] private PostRaceAnimation screenAnimation;
 
         protected override void OnBind()
         {
+            Bind<string, string>(() => viewModel.ContinueLabel, value => continueText.text = value);
+            Bind<bool, bool>(() => viewModel.NeedsGearSelection, _ => UpdateIcon());
             Bind<string, string>(() => viewModel.RewardName, value => rewardNameText.text = value);
             Bind<string, string>(() => viewModel.RewardCountText, value => rewardCountText.text = value);
             Bind<Sprite, Sprite>(() => viewModel.RewardIcon, _ => UpdateIcon());
@@ -27,17 +31,14 @@ namespace GearEngine.Campaign.Presentation
         {
             continueButton.onClick.RemoveListener(viewModel.Continue);
             screenAnimation.Stop();
-            if (viewModel is System.ComponentModel.INotifyPropertyChanged observable)
-            {
-                observable.PropertyChanged -= OnViewModelChanged;
-            }
+            PostRaceViewBindings.Detach(viewModel, OnViewModelChanged);
 
             base.OnUnbind();
         }
 
         private void UpdateIcon()
         {
-            rewardIcon.sprite = viewModel.IsGold ? goldIcon : viewModel.RewardIcon;
+            rewardIcon.sprite = viewModel.IsGold ? goldIcon : viewModel.NeedsGearSelection ? gearIcon : viewModel.RewardIcon;
             rewardIcon.enabled = rewardIcon.sprite != null;
         }
 
@@ -56,10 +57,7 @@ namespace GearEngine.Campaign.Presentation
 
         private void OnDestroy()
         {
-            if (viewModel is System.ComponentModel.INotifyPropertyChanged observable)
-            {
-                observable.PropertyChanged -= OnViewModelChanged;
-            }
+            PostRaceViewBindings.Detach(viewModel, OnViewModelChanged);
         }
     }
 }

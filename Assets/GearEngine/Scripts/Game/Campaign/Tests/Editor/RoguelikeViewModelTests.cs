@@ -22,14 +22,17 @@ namespace GearEngine.Campaign.Tests.Editor
             GearItem g2 = CampaignTestUtilities.CreateGearConfigWithData("g2");
             try
             {
-                var roll = new FakeRoguelikeRollService { ToReturn = new[] { g1.CreateRuntimeData(), g2.CreateRuntimeData() } };
-                var boardConfig = ScriptableObject.CreateInstance<BoardRulesSO>();
+                FakeRoguelikeRollService roll = new FakeRoguelikeRollService { ToReturn = new[] { g1.CreateRuntimeData(), g2.CreateRuntimeData() } };
+                BoardRulesSO boardConfig = ScriptableObject.CreateInstance<BoardRulesSO>();
                 boardConfig.GridWidth = 5;
                 boardConfig.GridHeight = 5;
 
-                using (var gear = new GearMechanicsTestContext(boardConfig))
+                using (GearMechanicsTestContext gear = new GearMechanicsTestContext(boardConfig))
                 {
-                    var vm = new RoguelikeViewModel();
+                    using Scaffold.Ads.RewardedAdManager ads = new Scaffold.Ads.RewardedAdManager();
+                    using RoguelikeViewModel vm = new RoguelikeViewModel();
+                    ViewModelTestInject.InjectPrivateField(vm, "adManager", ads);
+                    ViewModelTestInject.InjectPrivateField(vm, "eventBus", gear.EventBus);
                     ViewModelTestInject.InjectPrivateField(vm, "rollService", roll);
                     ViewModelTestInject.InjectPrivateField(vm, "engineService", gear.Engine);
                     ViewModelTestInject.InjectPrivateField(vm, "boardService", gear.BoardService);
@@ -60,15 +63,18 @@ namespace GearEngine.Campaign.Tests.Editor
             GearItem g1 = CampaignTestUtilities.CreateGearConfigWithData("g1");
             try
             {
-                var roll = new FakeRoguelikeRollService { ToReturn = new[] { g1.CreateRuntimeData() } };
-                var navigation = new RecordingNavigation();
-                var boardConfig = ScriptableObject.CreateInstance<BoardRulesSO>();
+                FakeRoguelikeRollService roll = new FakeRoguelikeRollService { ToReturn = new[] { g1.CreateRuntimeData() } };
+                RecordingNavigation navigation = new RecordingNavigation();
+                BoardRulesSO boardConfig = ScriptableObject.CreateInstance<BoardRulesSO>();
                 boardConfig.GridWidth = 5;
                 boardConfig.GridHeight = 5;
 
-                using (var gear = new GearMechanicsTestContext(boardConfig))
+                using (GearMechanicsTestContext gear = new GearMechanicsTestContext(boardConfig))
                 {
-                    var vm = new RoguelikeViewModel();
+                    using Scaffold.Ads.RewardedAdManager ads = new Scaffold.Ads.RewardedAdManager();
+                    using RoguelikeViewModel vm = new RoguelikeViewModel();
+                    ViewModelTestInject.InjectPrivateField(vm, "adManager", ads);
+                    ViewModelTestInject.InjectPrivateField(vm, "eventBus", gear.EventBus);
                     ViewModelTestInject.InjectPrivateField(vm, "rollService", roll);
                     ViewModelTestInject.InjectPrivateField(vm, "engineService", gear.Engine);
                     ViewModelTestInject.InjectPrivateField(vm, "boardService", gear.BoardService);
@@ -80,8 +86,8 @@ namespace GearEngine.Campaign.Tests.Editor
 
                     ViewModelTestInject.InvokeInitialize(vm);
 
-                    var confirmMethod = typeof(RoguelikeViewModel).GetMethod("ConfirmPickAsync", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-                    var task = (Task<bool>)confirmMethod.Invoke(vm, new object[] { vm.PerkOptions[0].Item.Id });
+                    System.Reflection.MethodInfo confirmMethod = typeof(RoguelikeViewModel).GetMethod("ConfirmPickAsync", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+                    Task<bool> task = (Task<bool>)confirmMethod.Invoke(vm, new object[] { vm.PerkOptions[0].Item.Id });
                     task.GetAwaiter().GetResult();
 
                     Assert.That(gear.InventoryService.Owned.Count, Is.EqualTo(1));

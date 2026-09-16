@@ -10,10 +10,10 @@ namespace GearEngine.Campaign
 {
     public sealed class RaceResultModel
     {
-        private const int k_scoreThresholdToAdvance = 500;
-        private const int k_legacyGoldPerScorePoint = 5;
+        private static int ScoreThresholdToAdvance => 500;
+        private static int LegacyGoldPerScorePoint => 5;
 
-        public RaceResultModel(float raceTime, int lapCount, TrackDefinition track, int driftScore = 0)
+        public RaceResultModel(float raceTime, int lapCount, TrackDefinition track, int driftScore = 0, float? previousRaceTime = null)
         {
             if (raceTime < 0f)
             {
@@ -24,7 +24,8 @@ namespace GearEngine.Campaign
             LapCount = lapCount;
             Score = driftScore; // Score is now strictly drift score
             TrackName = track != null ? track.GetDisplayName() : string.Empty;
-            Tiers = track != null ? track.Tiers.ToArray() : Array.Empty<TrackTierConfig>();
+            Tiers = track != null ? track.Tiers.Where(tier => tier != null).OrderBy(tier => tier.TargetScore).ToArray() : Array.Empty<TrackTierConfig>();
+            Standings = new RaceStandingsModel(raceTime, track, previousRaceTime);
 
             if (track != null && track.HasConfiguredTiers)
             {
@@ -37,10 +38,13 @@ namespace GearEngine.Campaign
             {
                 HighestAchievedTier = 0;
                 int legacyScore = ComputeLegacyScore(raceTime, lapCount) + driftScore;
-                Gold = new GoldReward(legacyScore * k_legacyGoldPerScorePoint);
-                IsGoodResult = legacyScore >= k_scoreThresholdToAdvance;
+                Gold = new GoldReward(legacyScore * LegacyGoldPerScorePoint);
+                IsGoodResult = legacyScore >= ScoreThresholdToAdvance;
             }
         }
+
+        public RaceStandingsModel Standings { get; }
+        public bool HasGearReward => Standings.PlayerPosition == 1 || HighestAchievedTier > 0;
 
         public float RaceTime { get; }
         public int LapCount { get; }
@@ -54,16 +58,11 @@ namespace GearEngine.Campaign
 
         public Task PersistenceCompleted { get; private set; } = Task.CompletedTask;
 
-        /// <summary>Populated after <see cref="Services.ITrackService.RecordResultAsync"/> when using LiveOps.</summary>
         public RecordRaceResultResponse ServerOutcome { get; set; }
 
         private TaskCompletionSource<bool> persistenceCompletion;
 
-        private static int ComputeLegacyScore(float raceTime, int lapCount)
-        {
-            float perLap = lapCount > 0 ? raceTime / lapCount : raceTime;
-            return Mathf.Max(0, 1000 - Mathf.RoundToInt(perLap * 10f));
-        }
+
 
         internal void BeginPersistence()
         {
@@ -74,6 +73,11 @@ namespace GearEngine.Campaign
         internal void CompletePersistence()
         {
             persistenceCompletion?.TrySetResult(true);
+        }
+        private int ComputeLegacyScore(float raceTime, int lapCount)
+        {
+            float perLap = lapCount > 0 ? raceTime / lapCount : raceTime;
+            return Mathf.Max(0, 1000 - Mathf.RoundToInt(perLap * 10f));
         }
     }
 }

@@ -13,8 +13,7 @@ namespace GearEngine.Campaign.Presentation
 {
     public sealed class ResultPopupViewModel : ViewModel
     {
-        public ResultPopupViewModel(
-            RaceResultModel result)
+        public ResultPopupViewModel(RaceResultModel result)
         {
             this.result = result ?? throw new ArgumentNullException(nameof(result));
         }
@@ -46,6 +45,7 @@ namespace GearEngine.Campaign.Presentation
         public string VictoryTitle => "RESULTS";
 
         public string TrackName => result.TrackName;
+        public RaceStandingsModel Standings => result.Standings;
 
         private readonly RaceResultModel result;
 
@@ -53,7 +53,7 @@ namespace GearEngine.Campaign.Presentation
         private bool isProcessingAction;
 
         [Inject] private CurrencyClientModule currencyClient;
-        [Inject] private InterstitialAdManager interstitialAdManager;
+
 
         protected override void Initialize()
         {
@@ -62,30 +62,6 @@ namespace GearEngine.Campaign.Presentation
             foreach (ResultStatSlotViewModel row in stats)
             {
                 BindChildViewModel(row);
-            }
-        }
-
-        public async void Upgrade()
-        {
-            if (isProcessingAction)
-            {
-                return;
-            }
-
-            isProcessingAction = true;
-            try
-            {
-                await result.PersistenceCompleted;
-                await ShowInterstitialIfAvailableAsync();
-                navigation.Open(
-                    new RoguelikeViewModel(result),
-                    true,
-                    new NavigationOptions { CloseAllViews = true });
-            }
-            catch (Exception ex)
-            {
-                isProcessingAction = false;
-                Debug.LogError($"[ResultPopupViewModel] Upgrade failed: {ex.Message}\n{ex.StackTrace}");
             }
         }
 
@@ -100,35 +76,12 @@ namespace GearEngine.Campaign.Presentation
             try
             {
                 await result.PersistenceCompleted;
-                navigation.Open(new ReceivedRewardsViewModel(result), true,
-                    new NavigationOptions { CloseAllViews = true });
+                navigation.Open(new ReceivedRewardsViewModel(result), true, new NavigationOptions { CloseAllViews = true });
             }
             catch (Exception ex)
             {
                 isProcessingAction = false;
                 Debug.LogError($"[ResultPopupViewModel] Continue failed: {ex.Message}\n{ex.StackTrace}");
-            }
-        }
-
-        private async Task ShowInterstitialIfAvailableAsync()
-        {
-            if (interstitialAdManager == null || !await interstitialAdManager.CanShowAd())
-            {
-                return;
-            }
-
-            TaskCompletionSource<bool> completion = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
-            void OnAdCompleted(bool success, string _) => completion.TrySetResult(success);
-
-            interstitialAdManager.AdSuccessfullyCompleted += OnAdCompleted;
-            try
-            {
-                interstitialAdManager.ShowInterstitial();
-                await completion.Task;
-            }
-            finally
-            {
-                interstitialAdManager.AdSuccessfullyCompleted -= OnAdCompleted;
             }
         }
 
