@@ -101,3 +101,11 @@ The Results rows show actual time/laps/gold instead of demo leaderboard position
 - The scoped run isolates network, ads, and navigation destinations. It does not replace a complete live-backend campaign or physical-device safe-area check. Earlier migration acceptance limits above remain open. Existing catalog thresholds sometimes run from harder to easier; Progress reports that catalog as stored. Changing gameplay tier definitions is outside this visual correction.
 
 Implementation commit: `ea615d32`. Integration direction: local `main` ← `codex/victor-post-race-screens`, based on `3df8b90e`; the integration merge records its two parents. Remote push is not authorized. Recover a completed integration with `git revert -m 1 <integration-merge>`, preserving shared history.
+
+## Standings and gear eligibility correction — 2026-09-16
+
+The [race standings correction](../RaceStandings/ExecPlan.md) supersedes the invented time/laps/gold rows and Results Upgrade action described above. Results now presents time-ranked synthetic rivals, the player's position, score-only stars, and Continue. Upgrade belongs to the gear reward page and is eligible for first place OR at least one star, with one pick even when both apply. New evidence is under `Artifacts/VisualTests/RaceStandings/Runtime/`; prior post-race screenshots document earlier iterations only.
+
+Next-track unlocking by first place is recorded as future server work. Current backend grants/unlocks are preserved.
+
+Final correction checks and limits: [Race standings validation](../RaceStandings/Validation.md). The original migration evidence remains historical; use the corrected capture index above for the current Results/Rewards/Progress behavior.

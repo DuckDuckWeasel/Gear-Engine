@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Passed" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-16 18:37:00Z" end-time="2026-09-16 18:37:00Z" duration="0.0881106">
+  <test-suite type="TestSuite" id="1000" name="Scaffold" fullname="Scaffold" runstate="Runnable" testcasecount="428" result="Passed" start-time="2026-09-16 18:37:00Z" end-time="2026-09-16 18:37:00Z" duration="0.088111" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="1140" name="Game.Campaign.Tests.dll" fullname="/Users/leonardosilva/Documents/MatheusCohen/VictorScreensMigration/Library/ScriptAssemblies/Game.Campaign.Tests.dll" runstate="Runnable" testcasecount="81" result="Passed" start-time="2026-09-16 18:37:00Z" end-time="2026-09-16 18:37:00Z" duration="0.073968" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="61685" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="1141" name="GearEngine" fullname="GearEngine" runstate="Runnable" testcasecount="81" result="Passed" start-time="2026-09-16 18:37:00Z" end-time="2026-09-16 18:37:00Z" duration="0.071894" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1145" name="Campaign" fullname="GearEngine.Campaign" runstate="Runnable" testcasecount="80" result="Passed" start-time="2026-09-16 18:37:00Z" end-time="2026-09-16 18:37:00Z" duration="0.069995" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestSuite" id="1146" name="Tests" fullname="GearEngine.Campaign.Tests" runstate="Runnable" testcasecount="80" result="Passed" start-time="2026-09-16 18:37:00Z" end-time="2026-09-16 18:37:00Z" duration="0.068273" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="TestSuite" id="1147" name="Editor" fullname="GearEngine.Campaign.Tests.Editor" runstate="Runnable" testcasecount="80" result="Passed" start-time="2026-09-16 18:37:00Z" end-time="2026-09-16 18:37:00Z" duration="0.066621" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-suite type="TestFixture" id="1126" name="RoguelikeViewModelTests" fullname="GearEngine.Campaign.Tests.Editor.RoguelikeViewModelTests" classname="GearEngine.Campaign.Tests.Editor.RoguelikeViewModelTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-09-16 18:37:00Z" end-time="2026-09-16 18:37:00Z" duration="0.063110" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="1127" name="LoadRoll_PopulatesPerkOptions" fullname="GearEngine.Campaign.Tests.Editor.RoguelikeViewModelTests.LoadRoll_PopulatesPerkOptions" methodname="LoadRoll_PopulatesPerkOptions" classname="GearEngine.Campaign.Tests.Editor.RoguelikeViewModelTests" runstate="Runnable" seed="1069326097" result="Passed" start-time="2026-09-16 18:37:00Z" end-time="2026-09-16 18:37:00Z" duration="0.043448" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <output><![CDATA[RewardedAdManager not initialized
+]]></output>
+                </test-case>
+                <test-case id="1128" name="PickPerk_AddsItem_ConsumesRoll_OpensMain" fullname="GearEngine.Campaign.Tests.Editor.RoguelikeViewModelTests.PickPerk_AddsItem_ConsumesRoll_OpensMain" methodname="PickPerk_AddsItem_ConsumesRoll_OpensMain" classname="GearEngine.Campaign.Tests.Editor.RoguelikeViewModelTests" runstate="Runnable" seed="1749557297" result="Passed" start-time="2026-09-16 18:37:00Z" end-time="2026-09-16 18:37:00Z" duration="0.008406" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <output><![CDATA[RewardedAdManager not initialized
+[RoguelikeViewModel] ConfirmPickAsync called with itemId: g1
+[RoguelikeViewModel] ConfirmPickAsync found perk, awaiting PickPerkAsync...
+[RoguelikeViewModel] PickPerkAsync called for perk: g1
+[RoguelikeViewModel] Adding g1 to inventory.
+[RoguelikeViewModel] Consuming pick from rollService.
+[RoguelikeViewModel] Opening the post-race reward flow.
+Saving results to: /Users/leonardosilva/Library/Application Support/DDW/Scaffold/TestResults.xml
+]]></output>
+                </test-case>
+              </test-suite>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>
