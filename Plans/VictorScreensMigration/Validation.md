@@ -67,3 +67,5 @@ Scoped C# lint fix/check and the nine-file structure check passed. The final rep
 `validate-changes.ps1 -SkipTests` passed its 114-assembly reference audit, pragma gate, Unity
 compilation and analyzer build with zero diagnostics or blockers. The wrapper skipped its broad
 EditMode and PlayMode suites as requested; the focused tests above ran separately.
+
+Correction commit: `0e84aec6` (`feat(campaign): restore Victor post-race flow`).

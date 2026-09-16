@@ -56,8 +56,9 @@ See `Validation.md` for actual evidence, remaining limitations and integration s
 | `ec497ff8` | Inventory, existing Main/Setup disposition and source/baseline captures | `46ec514c`, `574764b9`, `5a4a8fe6`, `e47af5a4`, `bd3f8930` |
 | `90548be3` | Race HUD, drift labels, new reward composition, patterned background and scene bindings | `46ec514c`, `574764b9`, `e47af5a4`, `bd3f8930` |
 | `855b4ba5` | Item icons, Store/Garage card presentation, item popup and missing-script cleanup | `5a4a8fe6`, `e47af5a4` |
+| `0e84aec6` | Correct Victor victory modal and add Reward → Progress → Home routing | `46ec514c`, `574764b9`, `e47af5a4` |
 
 Validation commit `70079efe` records tests and final captures for both implementation batches. Local main integration: `611bc227`. No remote push.
 
-The post-race correction is implemented on `codex/victor-victory-flow-fix`; its final commit and
-local-main merge are recorded after validation. No remote push is authorized.
+The post-race correction is implemented in `0e84aec6` on
+`codex/victor-victory-flow-fix`. No remote push is authorized.
