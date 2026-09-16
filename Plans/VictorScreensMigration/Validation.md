@@ -20,6 +20,7 @@ Unity 6000.5.9f1, macOS, dedicated headless Editor with graphics. The temporary 
 ## Final checks and limitations
 
 - Repository wrapper `validate-changes.ps1 -SkipTests` passed: 114 assembly definitions audited, zero pragma violations, compilation exit 0, analyzer build exit 0, zero diagnostics/blockers. Analyzer unit tests passed; Unity EditMode/PlayMode suites were skipped.
+- New external asset GUIDs were checked against available asset/package metadata; see `AssetReferences.txt`.
 - Scoped C# lint fix/check and the two-file structure check passed. Dotnet reported workspace-loading warnings but no formatting/style diagnostics. The live fixture run preceded the final explicit-type-only lint cleanup; the final source compiled in the wrapper.
 - Drag begin/move/rejected-drop handlers were exercised with pointer event data: the drag service started and stopped and the source returned. A successful accepted reposition with physical mouse/touch input and device safe-area/notch behavior remain unverified.
 - Existing `ResultPopupViewModelTests` could not exercise navigation: all three failed during container setup because `IAnalyticsService` is not registered by the existing test fixture. The production application did boot and its result buttons navigated successfully.

@@ -18,7 +18,8 @@ its GUID is the stable identity used by serialized references.
 - [x] Confirm shared Main/Setup visuals already applied; preserve current board layout.
 - [x] Migrate Race/Results presentation and fix result bindings/scene overrides.
 - [x] Migrate Items/Store and item popup changes.
-- [ ] Validate and commit each batch.
+- [x] Run repository gate and scoped checks; commit both implementation batches.
+- [ ] Complete remaining acceptance coverage: device safe-area behavior, accepted pointer reposition and baseline investigation of the VariableSO finding.
 - [ ] Integrate validated migration into local main.
 
 ## Surprises & Discoveries

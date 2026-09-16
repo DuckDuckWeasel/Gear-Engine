@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="7" result="Failed(Child)" total="7" passed="3" failed="4" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-16 00:19:38Z" end-time="2026-09-16 00:19:38Z" duration="0.0715721">
+  <test-suite type="TestSuite" id="1566" name="Scaffold" fullname="Scaffold" runstate="Runnable" testcasecount="399" result="Failed" site="Child" start-time="2026-09-16 00:19:38Z" end-time="2026-09-16 00:19:38Z" duration="0.071572" total="7" passed="3" failed="4" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1103" name="Game.Campaign.Tests.dll" fullname="/Users/leonardosilva/Documents/MatheusCohen/VictorScreensMigration/Library/ScriptAssemblies/Game.Campaign.Tests.dll" runstate="Runnable" testcasecount="52" result="Failed" site="Child" start-time="2026-09-16 00:19:38Z" end-time="2026-09-16 00:19:38Z" duration="0.065605" total="7" passed="3" failed="4" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="68920" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1104" name="GearEngine" fullname="GearEngine" runstate="Runnable" testcasecount="52" result="Failed" site="Child" start-time="2026-09-16 00:19:38Z" end-time="2026-09-16 00:19:38Z" duration="0.065208" total="7" passed="3" failed="4" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1108" name="Campaign" fullname="GearEngine.Campaign" runstate="Runnable" testcasecount="51" result="Failed" site="Child" start-time="2026-09-16 00:19:38Z" end-time="2026-09-16 00:19:38Z" duration="0.064924" total="7" passed="3" failed="4" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="1109" name="Tests" fullname="GearEngine.Campaign.Tests" runstate="Runnable" testcasecount="51" result="Failed" site="Child" start-time="2026-09-16 00:19:38Z" end-time="2026-09-16 00:19:38Z" duration="0.064700" total="7" passed="3" failed="4" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestSuite" id="1110" name="Editor" fullname="GearEngine.Campaign.Tests.Editor" runstate="Runnable" testcasecount="51" result="Failed" site="Child" start-time="2026-09-16 00:19:38Z" end-time="2026-09-16 00:19:38Z" duration="0.064439" total="7" passed="3" failed="4" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-suite type="TestFixture" id="1042" name="CampaignScreenReferenceTests" fullname="GearEngine.Campaign.Tests.Editor.CampaignScreenReferenceTests" classname="GearEngine.Campaign.Tests.Editor.CampaignScreenReferenceTests" runstate="Runnable" testcasecount="7" result="Failed" site="Child" start-time="2026-09-16 00:19:38Z" end-time="2026-09-16 00:19:38Z" duration="0.063495" total="7" passed="3" failed="4" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <failure>
+                  <message><![CDATA[One or more child tests had errors]]></message>
+                </failure>
+                <test-suite type="ParameterizedMethod" id="1050" name="ScreenPrefab_HasNoMissingScripts" fullname="GearEngine.Campaign.Tests.Editor.CampaignScreenReferenceTests.ScreenPrefab_HasNoMissingScripts" classname="GearEngine.Campaign.Tests.Editor.CampaignScreenReferenceTests" runstate="Runnable" testcasecount="7" result="Failed" site="Child" start-time="2026-09-16 00:19:38Z" end-time="2026-09-16 00:19:38Z" duration="0.060510" total="7" passed="3" failed="4" inconclusive="0" skipped="0" asserts="0">
+                  <properties />
+                  <failure>
+                    <message><![CDATA[One or more child tests had errors]]></message>
+                  </failure>
+                  <test-case id="1043" name="ScreenPrefab_HasNoMissingScripts(&quot;Main View&quot;)" fullname="GearEngine.Campaign.Tests.Editor.CampaignScreenReferenceTests.ScreenPrefab_HasNoMissingScripts(&quot;Main View&quot;)" methodname="ScreenPrefab_HasNoMissingScripts" classname="GearEngine.Campaign.Tests.Editor.CampaignScreenReferenceTests" runstate="Runnable" seed="1880792300" result="Passed" start-time="2026-09-16 00:19:38Z" end-time="2026-09-16 00:19:38Z" duration="0.015686" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                  </test-case>
+                  <test-case id="1044" name="ScreenPrefab_HasNoMissingScripts(&quot;Setup View&quot;)" fullname="GearEngine.Campaign.Tests.Editor.CampaignScreenReferenceTests.ScreenPrefab_HasNoMissingScripts(&quot;Setup View&quot;)" methodname="ScreenPrefab_HasNoMissingScripts" classname="GearEngine.Campaign.Tests.Editor.CampaignScreenReferenceTests" runstate="Runnable" seed="767987212" result="Passed" start-time="2026-09-16 00:19:38Z" end-time="2026-09-16 00:19:38Z" duration="0.005554" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                  </test-case>
+                  <test-case id="1045" name="ScreenPrefab_HasNoMissingScripts(&quot;Race View&quot;)" fullname="GearEngine.Campaign.Tests.Editor.CampaignScreenReferenceTests.ScreenPrefab_HasNoMissingScripts(&quot;Race View&quot;)" methodname="ScreenPrefab_HasNoMissingScripts" classname="GearEngine.Campaign.Tests.Editor.CampaignScreenReferenceTests" runstate="Runnable" seed="1956650663" result="Passed" start-time="2026-09-16 00:19:38Z" end-time="2026-09-16 00:19:38Z" duration="0.005663" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                  </test-case>
+                  <test-case id="1046" name="ScreenPrefab_HasNoMissingScripts(&quot;Campaign_ResultPopupView&quot;)" fullname="GearEngine.Campaign.Tests.Editor.CampaignScreenReferenceTests.ScreenPrefab_HasNoMissingScripts(&quot;Campaign_ResultPopupView&quot;)" methodname="ScreenPrefab_HasNoMissingScripts" classname="GearEngine.Campaign.Tests.Editor.CampaignScreenReferenceTests" runstate="Runnable" seed="1823391433" result="Failed" start-time="2026-09-16 00:19:38Z" end-time="2026-09-16 00:19:38Z" duration="0.008848" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                    <failure>
+                      <message><![CDATA[  Assets/GearEngine/Prefabs/Campaign/Campaign_ResultPopupView.prefab: Continue_Button has missing scripts.
+  Expected: 0
+  But was:  1
+]]></message>
+                      <stack-trace><![CDATA[at GearEngine.Campaign.Tests.Editor.CampaignScreenReferenceTests.ScreenPrefab_HasNoMissingScripts (System.String name) [0x00051] in /Users/leonardosilva/Documents/MatheusCohen/VictorScreensMigration/Assets/GearEngine/Scripts/Game/Campaign/Tests/Editor/CampaignScreenReferenceTests.cs:24
+]]></stack-trace>
+                    </failure>
+                  </test-case>
+                  <test-case id="1047" name="ScreenPrefab_HasNoMissingScripts(&quot;Campaign_RoguelikeView&quot;)" fullname="GearEngine.Campaign.Tests.Editor.CampaignScreenReferenceTests.ScreenPrefab_HasNoMissingScripts(&quot;Campaign_RoguelikeView&quot;)" methodname="ScreenPrefab_HasNoMissingScripts" classname="GearEngine.Campaign.Tests.Editor.CampaignScreenReferenceTests" runstate="Runnable" seed="1082118189" result="Failed" start-time="2026-09-16 00:19:38Z" end-time="2026-09-16 00:19:38Z" duration="0.004517" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                    <failure>
+                      <message><![CDATA[  Assets/GearEngine/Prefabs/Campaign/Campaign_RoguelikeView.prefab: Reroll_Button has missing scripts.
+  Expected: 0
+  But was:  1
+]]></message>
+                      <stack-trace><![CDATA[at GearEngine.Campaign.Tests.Editor.CampaignScreenReferenceTests.ScreenPrefab_HasNoMissingScripts (System.String name) [0x00051] in /Users/leonardosilva/Documents/MatheusCohen/VictorScreensMigration/Assets/GearEngine/Scripts/Game/Campaign/Tests/Editor/CampaignScreenReferenceTests.cs:24
+]]></stack-trace>
+                    </failure>
+                  </test-case>
+                  <test-case id="1048" name="ScreenPrefab_HasNoMissingScripts(&quot;Items View&quot;)" fullname="GearEngine.Campaign.Tests.Editor.CampaignScreenReferenceTests.ScreenPrefab_HasNoMissingScripts(&quot;Items View&quot;)" methodname="ScreenPrefab_HasNoMissingScripts" classname="GearEngine.Campaign.Tests.Editor.CampaignScreenReferenceTests" runstate="Runnable" seed="1887250209" result="Failed" start-time="2026-09-16 00:19:38Z" end-time="2026-09-16 00:19:38Z" duration="0.008840" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                    <failure>
+                      <message><![CDATA[  Assets/GearEngine/Prefabs/Campaign/Items View.prefab: Item_View has missing scripts.
+  Expected: 0
+  But was:  1
+]]></message>
+                      <stack-trace><![CDATA[at GearEngine.Campaign.Tests.Editor.CampaignScreenReferenceTests.ScreenPrefab_HasNoMissingScripts (System.String name) [0x00051] in /Users/leonardosilva/Documents/MatheusCohen/VictorScreensMigration/Assets/GearEngine/Scripts/Game/Campaign/Tests/Editor/CampaignScreenReferenceTests.cs:24
+]]></stack-trace>
+                    </failure>
+                  </test-case>
+                  <test-case id="1049" name="ScreenPrefab_HasNoMissingScripts(&quot;ItemPopup View&quot;)" fullname="GearEngine.Campaign.Tests.Editor.CampaignScreenReferenceTests.ScreenPrefab_HasNoMissingScripts(&quot;ItemPopup View&quot;)" methodname="ScreenPrefab_HasNoMissingScripts" classname="GearEngine.Campaign.Tests.Editor.CampaignScreenReferenceTests" runstate="Runnable" seed="101859041" result="Failed" start-time="2026-09-16 00:19:38Z" end-time="2026-09-16 00:19:38Z" duration="0.002267" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                    <failure>
+                      <message><![CDATA[  Assets/GearEngine/Prefabs/Campaign/ItemPopup View.prefab: Background Button has missing scripts.
+  Expected: 0
+  But was:  1
+]]></message>
+                      <stack-trace><![CDATA[at GearEngine.Campaign.Tests.Editor.CampaignScreenReferenceTests.ScreenPrefab_HasNoMissingScripts (System.String name) [0x00051] in /Users/leonardosilva/Documents/MatheusCohen/VictorScreensMigration/Assets/GearEngine/Scripts/Game/Campaign/Tests/Editor/CampaignScreenReferenceTests.cs:24
+]]></stack-trace>
+                    </failure>
+                    <output><![CDATA[Saving results to: /Users/leonardosilva/Library/Application Support/DDW/Scaffold/TestResults.xml
+]]></output>
+                  </test-case>
+                </test-suite>
+              </test-suite>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

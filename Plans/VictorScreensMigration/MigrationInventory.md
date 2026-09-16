@@ -41,3 +41,13 @@ The `68afa7e4` → `d92a04a0` → `46ec514c` sequence is one effective change.
 ## Acceptance record
 
 See `Validation.md` for actual evidence, remaining limitations and integration status. Visual provenance alone is not proof of functional acceptance.
+
+## Migration commits
+
+| Commit | Scope | Source provenance |
+| --- | --- | --- |
+| `ec497ff8` | Inventory, existing Main/Setup disposition and source/baseline captures | `46ec514c`, `574764b9`, `5a4a8fe6`, `e47af5a4`, `bd3f8930` |
+| `90548be3` | Race HUD, drift labels, new reward composition, patterned background and scene bindings | `46ec514c`, `574764b9`, `e47af5a4`, `bd3f8930` |
+| `855b4ba5` | Item icons, Store/Garage card presentation, item popup and missing-script cleanup | `5a4a8fe6`, `e47af5a4` |
+
+The following validation commit records tests and final captures for both implementation batches.
