@@ -5,42 +5,47 @@ using UnityEngine.UI;
 
 namespace GearEngine.Campaign.Presentation
 {
-    public sealed class ResultPopupView : View<ResultPopupViewModel>
+    public sealed class RaceProgressView : View<RaceProgressViewModel>
     {
-        [SerializeField] private TMP_Text titleText;
-        [SerializeField] private TMP_Text scoreText;
         [SerializeField] private TMP_Text trackText;
-        [SerializeField] private TMP_Text timeText;
-        [SerializeField] private TMP_Text lapsText;
-        [SerializeField] private TMP_Text goldText;
+        [SerializeField] private TMP_Text summaryText;
+        [SerializeField] private TMP_Text nextTrackText;
+        [SerializeField] private TMP_Text[] tierTargetTexts;
+        [SerializeField] private TMP_Text[] tierStateTexts;
         [SerializeField] private Image[] stars;
         [SerializeField] private Sprite earnedStar;
         [SerializeField] private Sprite emptyStar;
         [SerializeField] private Button continueButton;
-        [SerializeField] private Button upgradeButton;
         [SerializeField] private PostRaceAnimation screenAnimation;
 
         protected override void OnBind()
         {
-            titleText.text = viewModel.VictoryTitle;
-            scoreText.text = viewModel.Score.ToString();
             trackText.text = viewModel.TrackName;
-            timeText.text = viewModel.FormattedRaceTime;
-            lapsText.text = viewModel.LapCount.ToString();
-            goldText.text = viewModel.GoldAmount.ToString();
+            summaryText.text = viewModel.Summary;
+            nextTrackText.text = viewModel.NextTrackMessage;
+            for (int i = 0; i < tierTargetTexts.Length; i++)
+            {
+                bool hasTier = i < viewModel.TierTargets.Count;
+                tierTargetTexts[i].transform.parent.gameObject.SetActive(hasTier);
+                if (!hasTier)
+                {
+                    continue;
+                }
+
+                tierTargetTexts[i].text = viewModel.TierTargets[i];
+                tierStateTexts[i].text = i < viewModel.HighestAchievedTier ? "EARNED" : "TARGET";
+            }
             for (int i = 0; i < stars.Length; i++)
             {
                 stars[i].sprite = i < viewModel.HighestAchievedTier ? earnedStar : emptyStar;
             }
 
             continueButton.onClick.AddListener(viewModel.Continue);
-            upgradeButton.onClick.AddListener(viewModel.Upgrade);
         }
 
         protected override void OnUnbind()
         {
             continueButton.onClick.RemoveListener(viewModel.Continue);
-            upgradeButton.onClick.RemoveListener(viewModel.Upgrade);
             screenAnimation.Stop();
             if (viewModel is System.ComponentModel.INotifyPropertyChanged observable)
             {
@@ -53,16 +58,13 @@ namespace GearEngine.Campaign.Presentation
         protected override void OnOpen(bool wasHidden)
         {
             continueButton.onClick.RemoveListener(viewModel.Continue);
-            upgradeButton.onClick.RemoveListener(viewModel.Upgrade);
             continueButton.onClick.AddListener(viewModel.Continue);
-            upgradeButton.onClick.AddListener(viewModel.Upgrade);
             screenAnimation.Play();
         }
 
         protected override void OnClose(bool hiding)
         {
             continueButton.onClick.RemoveListener(viewModel.Continue);
-            upgradeButton.onClick.RemoveListener(viewModel.Upgrade);
             screenAnimation.Stop();
         }
 

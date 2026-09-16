@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using GearEngine.Campaign;
 using GearEngine.Currency;
-using GearEngine.GearEngine.Services.Inventory;
 using Scaffold.Ads;
 using Scaffold.MVVM;
 using Scaffold.Navigation.Contracts;
@@ -15,16 +14,11 @@ namespace GearEngine.Campaign.Presentation
     public sealed class ResultPopupViewModel : ViewModel
     {
         public ResultPopupViewModel(
-            RaceResultModel result,
-            ResultFlowStage initialStage = ResultFlowStage.Victory,
-            IItem receivedReward = null)
+            RaceResultModel result)
         {
             this.result = result ?? throw new ArgumentNullException(nameof(result));
-            CurrentStage = initialStage;
-            ReceivedReward = receivedReward;
         }
 
-        public event Action<ResultFlowStage> StageChanged;
 
         public float RaceTime => result.RaceTime;
 
@@ -37,43 +31,21 @@ namespace GearEngine.Campaign.Presentation
             get
             {
                 TimeSpan time = TimeSpan.FromSeconds(result.RaceTime);
-                return $"{(int)time.TotalSeconds:00}:{time:ff}";
+                return $"{(int)time.TotalMinutes:00}:{time.Seconds:00}.{time.Milliseconds / 10:00}";
             }
         }
 
         public int GoldAmount => result.ServerOutcome != null ? result.ServerOutcome.Reward : result.Gold.Amount;
 
-        public long CurrentGold => currencyClient.GetWallet("gold")?.Current ?? 0;
+        public long CurrentGold => currencyClient?.GetWallet("gold")?.Current ?? 0;
 
         public int HighestAchievedTier => result.HighestAchievedTier;
 
         public IReadOnlyList<ResultStatSlotViewModel> Stats => stats;
 
-        public ResultFlowStage CurrentStage { get; private set; }
+        public string VictoryTitle => "RESULTS";
 
-        public IItem ReceivedReward { get; }
-
-        public string VictoryTitle => result.IsGoodResult ? "1st place" : "Race finished";
-
-        public string VictoryEyebrow => result.IsGoodResult ? "P H O T O  F I N I S H" : "R U N  C O M P L E T E";
-
-        public string VictoryMessage => $"Finished {LapCount} laps in {FormattedRaceTime}.";
-
-        public string RewardName => ReceivedReward?.Name ?? $"{GoldAmount} GOLD";
-
-        public Sprite RewardIcon => ReceivedReward?.Icon;
-
-        public string RewardCountText => ReceivedReward == null ? "REWARD 1/1" : "REWARD 2/2";
-
-        public string ProgressTitle => HasUnlockedTrack ? "NEW TRACK UNLOCKED" : "RACE PROGRESS";
-
-        public string ProgressTrackName => HasUnlockedTrack ? result.ServerOutcome.NextTrackId : result.TrackName;
-
-        public string ProgressSummary => HighestAchievedTier > 0
-            ? $"TIER {HighestAchievedTier} COMPLETE"
-            : "KEEP RACING TO EARN A STAR";
-
-        private bool HasUnlockedTrack => !string.IsNullOrEmpty(result.ServerOutcome?.NextTrackId);
+        public string TrackName => result.TrackName;
 
         private readonly RaceResultModel result;
 
@@ -81,7 +53,6 @@ namespace GearEngine.Campaign.Presentation
         private bool isProcessingAction;
 
         [Inject] private CurrencyClientModule currencyClient;
-        [Inject] private ToolbarController toolbarController;
         [Inject] private InterstitialAdManager interstitialAdManager;
 
         protected override void Initialize()
@@ -113,11 +84,8 @@ namespace GearEngine.Campaign.Presentation
             }
             catch (Exception ex)
             {
-                Debug.LogError($"[ResultPopupViewModel] Upgrade failed: {ex.Message}\n{ex.StackTrace}");
-            }
-            finally
-            {
                 isProcessingAction = false;
+                Debug.LogError($"[ResultPopupViewModel] Upgrade failed: {ex.Message}\n{ex.StackTrace}");
             }
         }
 
@@ -132,36 +100,14 @@ namespace GearEngine.Campaign.Presentation
             try
             {
                 await result.PersistenceCompleted;
-                switch (CurrentStage)
-                {
-                    case ResultFlowStage.Victory:
-                        SetStage(ResultFlowStage.Reward);
-                        break;
-                    case ResultFlowStage.Reward:
-                        SetStage(ResultFlowStage.Progress);
-                        break;
-                    case ResultFlowStage.Progress:
-                        await ShowInterstitialIfAvailableAsync();
-                        OpenMainView();
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
+                navigation.Open(new ReceivedRewardsViewModel(result), true,
+                    new NavigationOptions { CloseAllViews = true });
             }
             catch (Exception ex)
             {
+                isProcessingAction = false;
                 Debug.LogError($"[ResultPopupViewModel] Continue failed: {ex.Message}\n{ex.StackTrace}");
             }
-            finally
-            {
-                isProcessingAction = false;
-            }
-        }
-
-        private void SetStage(ResultFlowStage stage)
-        {
-            CurrentStage = stage;
-            StageChanged?.Invoke(stage);
         }
 
         private async Task ShowInterstitialIfAvailableAsync()
@@ -184,20 +130,6 @@ namespace GearEngine.Campaign.Presentation
             {
                 interstitialAdManager.AdSuccessfullyCompleted -= OnAdCompleted;
             }
-        }
-
-        private void OpenMainView()
-        {
-            if (toolbarController != null)
-            {
-                toolbarController.OpenMainView();
-                return;
-            }
-
-            navigation.Open(
-                new MainViewModel(),
-                true,
-                new NavigationOptions { CloseAllViews = true });
         }
 
         private List<ResultStatSlotViewModel> BuildStatsRows()

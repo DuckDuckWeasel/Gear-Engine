@@ -1,6 +1,6 @@
 # Campaign (Game.Campaign)
 
-The **Game.Campaign** assembly implements a five-screen flow in a single scene: **Main → Setup → Active race → Result popup → Roguelike card pick → Main**. Root view models resolve shared services from VContainer (`ITrackService`, `CurrencyClientModule` / LiveOps gold, **`IInventoryService`** (via `InventoryClientModule`), gear engine, car simulation) instead of passing a hand-built data bag between screens.
+The **Game.Campaign** assembly implements the campaign flow in a single scene: **Main → Setup → Active race → Results → Rewards → Progress → Main**. Choosing Upgrade on Results inserts the existing Roguelike card pick before Rewards. Root view models resolve shared services from VContainer (`ITrackService`, `CurrencyClientModule` / LiveOps gold, **`IInventoryService`** (via `InventoryClientModule`), gear engine, car simulation) instead of passing a hand-built data bag between screens.
 
 ## Responsibilities
 
@@ -21,7 +21,7 @@ Edit Mode tests live under `Assets/GearEngine/Scripts/Game/Campaign/Tests/Editor
 
 1. Use **Main Scene** with a root **`CampaignApplicationBootstrap`** (see [`Main Scene.unity`](../../Assets/GearEngine/Scenes/Main%20Scene.unity)).
 2. Assign on the bootstrap component: **Navigation Settings**, **navigation view holder**, **`defaultRaceCar`**, **`layerAssetPublishers`** (rebaked `AssetPublisherDefinition` rows: label for tracks, singles for gear/roguelike pool), **Race Session Defaults** (`RaceSessionDefaultsSO`, base roguelike car stats template), **BoardRulesSO** (grid size + motor cell authoring), **GearEngineFeatureToggleSO** (required), and **SplineCarRunnerConfigSO**. See [`AddressableCatalogAddresses`](../../Assets/GearEngine/Scripts/App/Bootstrap/AddressableCatalogAddresses.cs) for legacy string keys; track assets use the `liveops.tracks` label. **`FoundationLayer`** registers these, then `CampaignLayer` ctor-injects into consumers.
-3. Register **ViewConfig** assets for `MainView`, `SetupView`, `ActiveRaceView`, `ResultPopupView`, and `RoguelikeView` in **Navigation Settings** (same pattern as `RaceViewConfig`).
+3. Register **ViewConfig** assets for `MainView`, `SetupView`, `ActiveRaceView`, `ResultPopupView`, `RoguelikeView`, `ReceivedRewardsView`, and `RaceProgressView` in **Navigation Settings** (same pattern as `RaceViewConfig`).
 4. Point each ViewConfig at a prefab that has the matching `View` component and wire serialized references (track, buttons, HUD, board, inventory, etc.).
 
 Stub prefabs are under `Assets/GearEngine/Prefabs/Campaign/`. View-only configs live in `Assets/GearEngine/Data/Campaign/ViewConfigs/`; catalogs and session/start data live in `Assets/GearEngine/Data/Campaign/Catalogs/`.
@@ -31,3 +31,11 @@ Sample catalogs: `CampaignGearCatalog.asset`, `CampaignRaceSessionDefaults.asset
 ## LiveOps coupling
 
 Campaign progression, gold, gear inventory, board loadout, and card unlocks are backed by LiveOps modules inside the layered bootstrap (`ILiveOpsService` is registered before the Campaign layer). **`ITrackService`** is **`TracksClientModule` only** (cloud). `LocalGearLoadoutService` may remain for isolated gear tests where noted.
+
+## Post-race presentation
+
+Results, Rewards, and Progress use separate `View<T>`/ViewModel pairs and Addressable ViewConfigs. `ResultPopupViewModel` remains the race-completion entry point; its existing prefab GUID is preserved. Results opens before persistence completes, and Continue/Upgrade waits for `RaceResultModel.PersistenceCompleted`.
+
+Rewards presents the recorded gold and, after Roguelike selection, the awarded gear in sequence. It does not grant currency or inventory a second time. Progress displays the race's tier snapshot and resolves the server's next-track identifier through `ITrackService`; it does not infer a newly unlocked track. Continue returns through `ToolbarController`.
+
+`PostRaceAnimation` owns Animora playback at view open/close. The migrated clips use direct local targets, manual playback, nonzero Z scale, and a single player per animated object. Views remove button listeners on close, detach property subscriptions on unbind/destruction, and restart animations on reopening.

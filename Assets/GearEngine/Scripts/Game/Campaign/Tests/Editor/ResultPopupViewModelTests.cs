@@ -20,6 +20,24 @@ namespace GearEngine.Campaign.Tests.Editor
     public sealed class ResultPopupViewModelTests
     {
         [Test]
+        public void Victory_DoesNotInventRacePlacement()
+        {
+            ResultPopupViewModel vm = new ResultPopupViewModel(new RaceResultModel(30f, 3, null, 1200));
+            Assert.That(vm.VictoryTitle, Is.EqualTo("RESULTS"));
+        }
+
+        [Test]
+        public void Continue_OpensSeparateRewardScreen()
+        {
+            RecordingNavigation navigation = new RecordingNavigation();
+            ResultPopupViewModel vm = new ResultPopupViewModel(new RaceResultModel(30f, 3, null, 1200));
+            ViewModelTestInject.InjectNavigation(vm, navigation);
+            vm.Continue();
+            Assert.That(navigation.OpenedControllers, Has.Count.EqualTo(1));
+            Assert.That(navigation.OpenedControllers[0].GetType().Name, Is.EqualTo("ReceivedRewardsViewModel"));
+        }
+
+        [Test]
         public void Continue_WhenGoodResult_AdvancesRewardAndProgressBeforeMain()
         {
             TrackDefinition track = CampaignTestUtilities.CreateTrackWithTiersForTests(
@@ -38,17 +56,18 @@ namespace GearEngine.Campaign.Tests.Editor
             ViewModelTestInject.InjectNavigation(vm, navigation);
 
             vm.Continue();
-            Assert.That(vm.CurrentStage, Is.EqualTo(ResultFlowStage.Reward));
-            Assert.That(navigation.OpenedControllers, Is.Empty);
+            Assert.That(navigation.OpenedControllers[0], Is.InstanceOf<ReceivedRewardsViewModel>());
+            ReceivedRewardsViewModel rewards = (ReceivedRewardsViewModel)navigation.OpenedControllers[0];
+            ViewModelTestInject.InjectNavigation(rewards, navigation);
 
-            vm.Continue();
-            Assert.That(vm.CurrentStage, Is.EqualTo(ResultFlowStage.Progress));
-            Assert.That(navigation.OpenedControllers, Is.Empty);
-
-            vm.Continue();
-
-            Assert.That(navigation.OpenedControllers.Count, Is.EqualTo(1));
-            Assert.That(navigation.OpenedControllers[0], Is.InstanceOf<MainViewModel>());
+            rewards.Continue();
+            RaceProgressViewModel progress = navigation.OpenedControllers[1] as RaceProgressViewModel;
+            Assert.That(progress, Is.Not.Null);
+            ViewModelTestInject.InjectNavigation(progress, navigation);
+            progress.Continue();
+            progress.Continue();
+            Assert.That(navigation.OpenedControllers.Count, Is.EqualTo(3));
+            Assert.That(navigation.OpenedControllers[2], Is.InstanceOf<MainViewModel>());
 
             UnityEngine.Object.DestroyImmediate(track);
         }
@@ -73,15 +92,15 @@ namespace GearEngine.Campaign.Tests.Editor
             ViewModelTestInject.InjectNavigation(vm, navigation);
 
             vm.Continue();
-            Assert.That(vm.CurrentStage, Is.EqualTo(ResultFlowStage.Reward));
-
-            vm.Continue();
-            Assert.That(vm.CurrentStage, Is.EqualTo(ResultFlowStage.Progress));
-
-            vm.Continue();
-
-            Assert.That(navigation.OpenedControllers.Count, Is.EqualTo(1));
-            Assert.That(navigation.OpenedControllers[0], Is.InstanceOf<MainViewModel>());
+            Assert.That(navigation.OpenedControllers[0], Is.InstanceOf<ReceivedRewardsViewModel>());
+            ReceivedRewardsViewModel rewards = (ReceivedRewardsViewModel)navigation.OpenedControllers[0];
+            ViewModelTestInject.InjectNavigation(rewards, navigation);
+            rewards.Continue();
+            RaceProgressViewModel progress = navigation.OpenedControllers[1] as RaceProgressViewModel;
+            Assert.That(progress, Is.Not.Null);
+            ViewModelTestInject.InjectNavigation(progress, navigation);
+            progress.Continue();
+            Assert.That(navigation.OpenedControllers[2], Is.InstanceOf<MainViewModel>());
 
             UnityEngine.Object.DestroyImmediate(track);
         }
@@ -119,18 +138,20 @@ namespace GearEngine.Campaign.Tests.Editor
             RaceResultModel result = new RaceResultModel(raceTime: 0f, lapCount: 1, track);
             InvokePersistenceMethod(result, "BeginPersistence");
             ResultPopupViewModel vm = new ResultPopupViewModel(result);
+            RecordingNavigation navigation = new RecordingNavigation();
+            ViewModelTestInject.InjectNavigation(vm, navigation);
 
             try
             {
                 vm.Continue();
                 await Task.Yield();
 
-                Assert.That(vm.CurrentStage, Is.EqualTo(ResultFlowStage.Victory));
+                Assert.That(navigation.OpenedControllers, Is.Empty);
 
                 InvokePersistenceMethod(result, "CompletePersistence");
                 await Task.Yield();
 
-                Assert.That(vm.CurrentStage, Is.EqualTo(ResultFlowStage.Reward));
+                Assert.That(navigation.OpenedControllers[0], Is.InstanceOf<ReceivedRewardsViewModel>());
             }
             finally
             {
@@ -160,9 +181,14 @@ namespace GearEngine.Campaign.Tests.Editor
                 method.Invoke(vm, new object[] { reward });
 
                 Assert.That(navigation.OpenedControllers, Has.Count.EqualTo(1));
-                ResultPopupViewModel rewardViewModel = navigation.OpenedControllers[0] as ResultPopupViewModel;
+                ReceivedRewardsViewModel rewardViewModel = navigation.OpenedControllers[0] as ReceivedRewardsViewModel;
                 Assert.That(rewardViewModel, Is.Not.Null);
-                Assert.That(rewardViewModel.CurrentStage, Is.EqualTo(ResultFlowStage.Reward));
+                Assert.That(rewardViewModel.RewardCount, Is.EqualTo(2));
+                Assert.That(rewardViewModel.RewardCountText, Is.EqualTo("REWARD 1/2"));
+                ViewModelTestInject.InjectNavigation(rewardViewModel, navigation);
+                rewardViewModel.Continue();
+                Assert.That(rewardViewModel.RewardName, Is.EqualTo("Echo Gear"));
+                Assert.That(rewardViewModel.RewardCountText, Is.EqualTo("REWARD 2/2"));
                 Assert.That(rewardViewModel.ReceivedReward, Is.SameAs(reward));
             }
             finally

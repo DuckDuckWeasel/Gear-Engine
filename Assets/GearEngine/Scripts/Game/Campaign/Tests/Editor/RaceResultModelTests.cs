@@ -11,7 +11,7 @@ namespace GearEngine.Campaign.Tests.Editor
         {
             TrackDefinition track = CampaignTestUtilities.CreateTrackWithTiersForTests(
                 new TrackTierConfig(30f, 1000, 900),
-                new TrackTierConfig(9999f, 0, 100));
+                new TrackTierConfig(15f, 2000, 100));
 
             try
             {

@@ -22,7 +22,10 @@
         "Scaffold.Events.Container",
         "Scaffold.MVVM",
         "Scaffold.MVVM.View",
-        "GearEngine.Core.Config"
+        "GearEngine.Core.Config",
+        "Unity.TextMeshPro",
+        "Unity.ugui",
+        "Unity.Addressables"
     ],
     "includePlatforms": [
         "Editor"

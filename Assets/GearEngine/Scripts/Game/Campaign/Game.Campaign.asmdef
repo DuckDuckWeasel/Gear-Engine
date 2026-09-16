@@ -32,7 +32,8 @@
         "Unity.Mathematics",
         "BroAudio",
         "Scaffold.Variables",
-        "Scaffold.Tutorial"
+        "Scaffold.Tutorial",
+        "AnimoraRuntime"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
