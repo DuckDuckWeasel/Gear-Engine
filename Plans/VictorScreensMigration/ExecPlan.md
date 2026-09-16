@@ -20,7 +20,7 @@ its GUID is the stable identity used by serialized references.
 - [x] Migrate Items/Store and item popup changes.
 - [x] Run repository gate and scoped checks; commit both implementation batches.
 - [ ] Complete remaining acceptance coverage: device safe-area behavior, accepted pointer reposition and baseline investigation of the VariableSO finding.
-- [ ] Integrate validated migration into local main.
+- [x] Integrate migration into local main without conflicts (`611bc227`); retain documented acceptance limits.
 
 ## Surprises & Discoveries
 
@@ -47,7 +47,7 @@ its GUID is the stable identity used by serialized references.
 
 ## Outcomes & Retrospective
 
-Presentation migration is implemented. The repository wrapper, scoped lint, compilation and nine focused regression checks passed. One hundred PNGs document references, before/after composition and real runtime screens. Device safe-area behavior, successful pointer reposition, and the unresolved VariableSO runtime finding prevent claiming complete acceptance. See Validation.md for the exact coverage.
+Presentation migration is implemented and integrated into local main (`611bc227`). The repository wrapper, scoped lint, compilation and nine focused regression checks passed. One hundred PNGs document references, before/after composition and real runtime screens. Device safe-area behavior, successful pointer reposition, and the unresolved VariableSO runtime finding prevent claiming complete acceptance. See Validation.md for the exact coverage.
 
 ## Context and Orientation
 

@@ -36,4 +36,8 @@ Unity 6000.5.9f1, macOS, dedicated headless Editor with graphics. The temporary 
 
 ## Final integration
 
-Pending final validation and local integration. No remote push is authorized.
+Local main integrated the migration in merge commit `611bc227` without conflicts. Its tree exactly matched validated migration tip `70079efe` before this documentation update. Main had not moved from `bcda1ccf`; no code checks needed repeating for integration.
+
+The original checkout stays on `codex/repository-maintenance` at `c5c438a4`, untouched and clean at the integration check. The migration worktree now checks out main. Remote main remains `bcda1ccf`; no push was performed.
+
+Implementation and local integration are complete. Full acceptance remains qualified by the runtime finding and coverage limitations above. Recovery after integration is `git revert -m 1 611bc227`; do not reset shared history.

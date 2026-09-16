@@ -50,4 +50,4 @@ See `Validation.md` for actual evidence, remaining limitations and integration s
 | `90548be3` | Race HUD, drift labels, new reward composition, patterned background and scene bindings | `46ec514c`, `574764b9`, `e47af5a4`, `bd3f8930` |
 | `855b4ba5` | Item icons, Store/Garage card presentation, item popup and missing-script cleanup | `5a4a8fe6`, `e47af5a4` |
 
-The following validation commit records tests and final captures for both implementation batches.
+Validation commit `70079efe` records tests and final captures for both implementation batches. Local main integration: `611bc227`. No remote push.
