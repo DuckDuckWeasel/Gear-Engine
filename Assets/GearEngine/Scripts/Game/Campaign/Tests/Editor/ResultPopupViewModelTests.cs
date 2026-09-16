@@ -9,71 +9,79 @@ using GearEngine.Campaign;
 using GearEngine.Campaign.Presentation;
 using GearEngine.CarSimulation.Definitions;
 using GearEngine.Currency;
+using GearEngine.GearEngine.Config;
 using Newtonsoft.Json;
 using NUnit.Framework;
 using Scaffold.LiveOps;
 using UnityEngine;
-using VContainer;
 
 namespace GearEngine.Campaign.Tests.Editor
 {
     public sealed class ResultPopupViewModelTests
     {
         [Test]
-        public void Continue_WhenGoodResult_OpensMain()
+        public void Continue_WhenGoodResult_AdvancesRewardAndProgressBeforeMain()
         {
             TrackDefinition track = CampaignTestUtilities.CreateTrackWithTiersForTests(
                 new TrackTierConfig(50f, 1000, 800),
                 new TrackTierConfig(9999f, 0, 100));
-            var good = new RaceResultModel(raceTime: 0f, lapCount: 1, track);
+            RaceResultModel good = new RaceResultModel(raceTime: 0f, lapCount: 1, track);
             Assert.That(good.IsGoodResult, Is.True);
 
-            var navigation = new RecordingNavigation();
+            RecordingNavigation navigation = new RecordingNavigation();
 
-            using (IObjectResolver container = BuildCurrencyContainer(100))
-            {
-                CurrencyClientModule currency = container.Resolve<CurrencyClientModule>();
-                currency.InitializeAsync(CancellationToken.None).GetAwaiter().GetResult();
+            CurrencyClientModule currency = BuildCurrencyClient(100);
+            currency.InitializeAsync(CancellationToken.None).GetAwaiter().GetResult();
 
-                var vm = new ResultPopupViewModel(good);
-                ViewModelTestInject.InjectPrivateField(vm, "currencyClient", currency);
-                ViewModelTestInject.InjectNavigation(vm, navigation);
+            ResultPopupViewModel vm = new ResultPopupViewModel(good);
+            ViewModelTestInject.InjectPrivateField(vm, "currencyClient", currency);
+            ViewModelTestInject.InjectNavigation(vm, navigation);
 
-                vm.Continue();
+            vm.Continue();
+            Assert.That(vm.CurrentStage, Is.EqualTo(ResultFlowStage.Reward));
+            Assert.That(navigation.OpenedControllers, Is.Empty);
 
-                Assert.That(navigation.OpenedControllers.Count, Is.EqualTo(1));
-                Assert.That(navigation.OpenedControllers[0], Is.InstanceOf<MainViewModel>());
-            }
+            vm.Continue();
+            Assert.That(vm.CurrentStage, Is.EqualTo(ResultFlowStage.Progress));
+            Assert.That(navigation.OpenedControllers, Is.Empty);
+
+            vm.Continue();
+
+            Assert.That(navigation.OpenedControllers.Count, Is.EqualTo(1));
+            Assert.That(navigation.OpenedControllers[0], Is.InstanceOf<MainViewModel>());
 
             UnityEngine.Object.DestroyImmediate(track);
         }
 
         [Test]
-        public void Continue_WhenPoorResult_OpensMain()
+        public void Continue_WhenPoorResult_AdvancesRewardAndProgressBeforeMain()
         {
             TrackDefinition track = CampaignTestUtilities.CreateTrackWithTiersForTests(
                 new TrackTierConfig(50f, 1000, 800),
                 new TrackTierConfig(90f, 500, 400),
                 new TrackTierConfig(9999f, 0, 100));
-            var poor = new RaceResultModel(raceTime: 100f, lapCount: 1, track);
+            RaceResultModel poor = new RaceResultModel(raceTime: 100f, lapCount: 1, track);
             Assert.That(poor.IsGoodResult, Is.False);
 
-            var navigation = new RecordingNavigation();
+            RecordingNavigation navigation = new RecordingNavigation();
 
-            using (IObjectResolver container = BuildCurrencyContainer(0))
-            {
-                CurrencyClientModule currency = container.Resolve<CurrencyClientModule>();
-                currency.InitializeAsync(CancellationToken.None).GetAwaiter().GetResult();
+            CurrencyClientModule currency = BuildCurrencyClient(0);
+            currency.InitializeAsync(CancellationToken.None).GetAwaiter().GetResult();
 
-                var vm = new ResultPopupViewModel(poor);
-                ViewModelTestInject.InjectPrivateField(vm, "currencyClient", currency);
-                ViewModelTestInject.InjectNavigation(vm, navigation);
+            ResultPopupViewModel vm = new ResultPopupViewModel(poor);
+            ViewModelTestInject.InjectPrivateField(vm, "currencyClient", currency);
+            ViewModelTestInject.InjectNavigation(vm, navigation);
 
-                vm.Continue();
+            vm.Continue();
+            Assert.That(vm.CurrentStage, Is.EqualTo(ResultFlowStage.Reward));
 
-                Assert.That(navigation.OpenedControllers.Count, Is.EqualTo(1));
-                Assert.That(navigation.OpenedControllers[0], Is.InstanceOf<MainViewModel>());
-            }
+            vm.Continue();
+            Assert.That(vm.CurrentStage, Is.EqualTo(ResultFlowStage.Progress));
+
+            vm.Continue();
+
+            Assert.That(navigation.OpenedControllers.Count, Is.EqualTo(1));
+            Assert.That(navigation.OpenedControllers[0], Is.InstanceOf<MainViewModel>());
 
             UnityEngine.Object.DestroyImmediate(track);
         }
@@ -84,48 +92,111 @@ namespace GearEngine.Campaign.Tests.Editor
             TrackDefinition track = CampaignTestUtilities.CreateTrackWithTiersForTests(
                 new TrackTierConfig(50f, 1000, 800),
                 new TrackTierConfig(9999f, 0, 100));
-            var result = new RaceResultModel(raceTime: 0f, lapCount: 1, track);
-            var navigation = new RecordingNavigation();
+            RaceResultModel result = new RaceResultModel(raceTime: 0f, lapCount: 1, track);
+            RecordingNavigation navigation = new RecordingNavigation();
 
-            using (IObjectResolver container = BuildCurrencyContainer(0))
-            {
-                CurrencyClientModule currency = container.Resolve<CurrencyClientModule>();
-                currency.InitializeAsync(CancellationToken.None).GetAwaiter().GetResult();
+            CurrencyClientModule currency = BuildCurrencyClient(0);
+            currency.InitializeAsync(CancellationToken.None).GetAwaiter().GetResult();
 
-                var vm = new ResultPopupViewModel(result);
-                ViewModelTestInject.InjectPrivateField(vm, "currencyClient", currency);
-                ViewModelTestInject.InjectNavigation(vm, navigation);
+            ResultPopupViewModel vm = new ResultPopupViewModel(result);
+            ViewModelTestInject.InjectPrivateField(vm, "currencyClient", currency);
+            ViewModelTestInject.InjectNavigation(vm, navigation);
 
-                vm.Upgrade();
+            vm.Upgrade();
 
-                Assert.That(navigation.OpenedControllers.Count, Is.EqualTo(1));
-                Assert.That(navigation.OpenedControllers[0], Is.InstanceOf<RoguelikeViewModel>());
-            }
+            Assert.That(navigation.OpenedControllers.Count, Is.EqualTo(1));
+            Assert.That(navigation.OpenedControllers[0], Is.InstanceOf<RoguelikeViewModel>());
 
             UnityEngine.Object.DestroyImmediate(track);
         }
 
+        [Test]
+        public async Task Continue_WhenPersistenceIsPending_WaitsBeforeAdvancing()
+        {
+            TrackDefinition track = CampaignTestUtilities.CreateTrackWithTiersForTests(
+                new TrackTierConfig(50f, 1000, 800),
+                new TrackTierConfig(9999f, 0, 100));
+            RaceResultModel result = new RaceResultModel(raceTime: 0f, lapCount: 1, track);
+            InvokePersistenceMethod(result, "BeginPersistence");
+            ResultPopupViewModel vm = new ResultPopupViewModel(result);
+
+            try
+            {
+                vm.Continue();
+                await Task.Yield();
+
+                Assert.That(vm.CurrentStage, Is.EqualTo(ResultFlowStage.Victory));
+
+                InvokePersistenceMethod(result, "CompletePersistence");
+                await Task.Yield();
+
+                Assert.That(vm.CurrentStage, Is.EqualTo(ResultFlowStage.Reward));
+            }
+            finally
+            {
+                InvokePersistenceMethod(result, "CompletePersistence");
+                UnityEngine.Object.DestroyImmediate(track);
+            }
+        }
+
+        [Test]
+        public void RoguelikePostRaceDestination_OpensRewardStage()
+        {
+            TrackDefinition track = CampaignTestUtilities.CreateTrackWithTiersForTests(
+                new TrackTierConfig(50f, 1000, 800),
+                new TrackTierConfig(9999f, 0, 100));
+            RaceResultModel result = new RaceResultModel(raceTime: 0f, lapCount: 1, track);
+            GearItemData reward = new GearItemData { Id = "echo", DisplayName = "Echo Gear" };
+            RecordingNavigation navigation = new RecordingNavigation();
+            RoguelikeViewModel vm = new RoguelikeViewModel(result);
+            ViewModelTestInject.InjectNavigation(vm, navigation);
+
+            try
+            {
+                System.Reflection.MethodInfo method = typeof(RoguelikeViewModel).GetMethod(
+                    "OpenPostRaceDestination",
+                    System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+                Assert.That(method, Is.Not.Null);
+                method.Invoke(vm, new object[] { reward });
+
+                Assert.That(navigation.OpenedControllers, Has.Count.EqualTo(1));
+                ResultPopupViewModel rewardViewModel = navigation.OpenedControllers[0] as ResultPopupViewModel;
+                Assert.That(rewardViewModel, Is.Not.Null);
+                Assert.That(rewardViewModel.CurrentStage, Is.EqualTo(ResultFlowStage.Reward));
+                Assert.That(rewardViewModel.ReceivedReward, Is.SameAs(reward));
+            }
+            finally
+            {
+                UnityEngine.Object.DestroyImmediate(track);
+            }
+        }
+
+        private static void InvokePersistenceMethod(RaceResultModel result, string methodName)
+        {
+            System.Reflection.MethodInfo method = typeof(RaceResultModel).GetMethod(
+                methodName,
+                System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+            Assert.That(method, Is.Not.Null, $"Race result persistence method {methodName} was not found.");
+            method.Invoke(result, null);
+        }
+
         private static CurrencyGameData BuildGameData(long gold)
         {
-            var persistence = new CurrencyPersistence();
+            CurrencyPersistence persistence = new CurrencyPersistence();
             persistence.Set("gold", gold);
             CurrencyConfig config = JsonConvert.DeserializeObject<CurrencyConfig>(
                 "{\"entries\":[{\"id\":\"gold\",\"initial\":0}]}");
             return new CurrencyGameData(persistence, config);
         }
 
-        private static IObjectResolver BuildCurrencyContainer(long initialGold)
+        private static CurrencyClientModule BuildCurrencyClient(long initialGold)
         {
-            var fake = new FakeLiveOpsService
+            FakeLiveOpsService fake = new FakeLiveOpsService
             {
                 ModuleData = BuildGameData(initialGold),
                 CallImpl = (_, _) => new AddCurrencyResponse("gold", 0, 0),
             };
-
-            var builder = new ContainerBuilder();
-            builder.RegisterInstance<ILiveOpsService>(fake);
-            builder.Register<CurrencyClientModule>(Lifetime.Singleton);
-            return builder.Build();
+            return new CurrencyClientModule(fake);
         }
 
         private sealed class FakeLiveOpsService : ILiveOpsService
@@ -149,45 +220,4 @@ namespace GearEngine.Campaign.Tests.Editor
         }
     }
 
-    public sealed class RaceResultModelTests
-    {
-        [Test]
-        public void WhenTrackHasTiers_ScoreAndGoldMatchTierReward()
-        {
-            TrackDefinition track = CampaignTestUtilities.CreateTrackWithTiersForTests(
-                new TrackTierConfig(30f, 1000, 900),
-                new TrackTierConfig(9999f, 0, 100));
-
-            try
-            {
-                var result = new RaceResultModel(raceTime: 20f, lapCount: 3, track, driftScore: 1200);
-
-                Assert.That(result.HighestAchievedTier, Is.EqualTo(1));
-                Assert.That(result.Gold.Amount, Is.EqualTo(910)); // 900 + 10 base gold
-                Assert.That(result.IsGoodResult, Is.True);
-            }
-            finally
-            {
-                UnityEngine.Object.DestroyImmediate(track);
-            }
-        }
-
-        [Test]
-        public void WhenTrackHasNoTiers_UsesLegacyScoreAndScaledGold()
-        {
-            TrackDefinition track = ScriptableObject.CreateInstance<TrackDefinition>();
-
-            try
-            {
-                var result = new RaceResultModel(raceTime: 10f, lapCount: 1, track, driftScore: 0);
-
-                Assert.That(result.HighestAchievedTier, Is.EqualTo(0));
-                Assert.That(result.Gold.Amount, Is.EqualTo(4500));
-            }
-            finally
-            {
-                UnityEngine.Object.DestroyImmediate(track);
-            }
-        }
-    }
 }

@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using GearEngine.Campaign;
 using GearEngine.Currency;
+using GearEngine.GearEngine.Services.Inventory;
 using Scaffold.Ads;
 using Scaffold.MVVM;
 using Scaffold.Navigation.Contracts;
@@ -12,18 +14,25 @@ namespace GearEngine.Campaign.Presentation
 {
     public sealed class ResultPopupViewModel : ViewModel
     {
-        public ResultPopupViewModel(RaceResultModel result)
+        public ResultPopupViewModel(
+            RaceResultModel result,
+            ResultFlowStage initialStage = ResultFlowStage.Victory,
+            IItem receivedReward = null)
         {
             this.result = result ?? throw new ArgumentNullException(nameof(result));
+            CurrentStage = initialStage;
+            ReceivedReward = receivedReward;
         }
+
+        public event Action<ResultFlowStage> StageChanged;
 
         public float RaceTime => result.RaceTime;
 
         public int LapCount => result.LapCount;
 
         public int Score => result.Score;
-        
-        public string FormattedRaceTime 
+
+        public string FormattedRaceTime
         {
             get
             {
@@ -32,7 +41,6 @@ namespace GearEngine.Campaign.Presentation
             }
         }
 
-        /// <summary>Server band reward (gold) when LiveOps completed the race; otherwise local estimate.</summary>
         public int GoldAmount => result.ServerOutcome != null ? result.ServerOutcome.Reward : result.Gold.Amount;
 
         public long CurrentGold => currencyClient.GetWallet("gold")?.Current ?? 0;
@@ -40,6 +48,32 @@ namespace GearEngine.Campaign.Presentation
         public int HighestAchievedTier => result.HighestAchievedTier;
 
         public IReadOnlyList<ResultStatSlotViewModel> Stats => stats;
+
+        public ResultFlowStage CurrentStage { get; private set; }
+
+        public IItem ReceivedReward { get; }
+
+        public string VictoryTitle => result.IsGoodResult ? "1st place" : "Race finished";
+
+        public string VictoryEyebrow => result.IsGoodResult ? "P H O T O  F I N I S H" : "R U N  C O M P L E T E";
+
+        public string VictoryMessage => $"Finished {LapCount} laps in {FormattedRaceTime}.";
+
+        public string RewardName => ReceivedReward?.Name ?? $"{GoldAmount} GOLD";
+
+        public Sprite RewardIcon => ReceivedReward?.Icon;
+
+        public string RewardCountText => ReceivedReward == null ? "REWARD 1/1" : "REWARD 2/2";
+
+        public string ProgressTitle => HasUnlockedTrack ? "NEW TRACK UNLOCKED" : "RACE PROGRESS";
+
+        public string ProgressTrackName => HasUnlockedTrack ? result.ServerOutcome.NextTrackId : result.TrackName;
+
+        public string ProgressSummary => HighestAchievedTier > 0
+            ? $"TIER {HighestAchievedTier} COMPLETE"
+            : "KEEP RACING TO EARN A STAR";
+
+        private bool HasUnlockedTrack => !string.IsNullOrEmpty(result.ServerOutcome?.NextTrackId);
 
         private readonly RaceResultModel result;
 
@@ -62,22 +96,20 @@ namespace GearEngine.Campaign.Presentation
 
         public async void Upgrade()
         {
-            if (isProcessingAction) return;
+            if (isProcessingAction)
+            {
+                return;
+            }
+
             isProcessingAction = true;
             try
             {
-                if (interstitialAdManager != null && await interstitialAdManager.CanShowAd())
-                {
-                    var tcs = new System.Threading.Tasks.TaskCompletionSource<bool>();
-                    void OnAdCompleted(bool success, string p) => tcs.TrySetResult(true);
-                    
-                    interstitialAdManager.AdSuccessfullyCompleted += OnAdCompleted;
-                    interstitialAdManager.ShowInterstitial();
-                    
-                    await tcs.Task;
-                    interstitialAdManager.AdSuccessfullyCompleted -= OnAdCompleted;
-                }
-                navigation.Open(new RoguelikeViewModel(), true, new NavigationOptions() { CloseAllViews = true });
+                await result.PersistenceCompleted;
+                await ShowInterstitialIfAvailableAsync();
+                navigation.Open(
+                    new RoguelikeViewModel(result),
+                    true,
+                    new NavigationOptions { CloseAllViews = true });
             }
             catch (Exception ex)
             {
@@ -91,29 +123,29 @@ namespace GearEngine.Campaign.Presentation
 
         public async void Continue()
         {
-            if (isProcessingAction) return;
+            if (isProcessingAction)
+            {
+                return;
+            }
+
             isProcessingAction = true;
             try
             {
-                if (interstitialAdManager != null && await interstitialAdManager.CanShowAd())
+                await result.PersistenceCompleted;
+                switch (CurrentStage)
                 {
-                    var tcs = new System.Threading.Tasks.TaskCompletionSource<bool>();
-                    void OnAdCompleted(bool success, string p) => tcs.TrySetResult(true);
-                    
-                    interstitialAdManager.AdSuccessfullyCompleted += OnAdCompleted;
-                    interstitialAdManager.ShowInterstitial();
-                    
-                    await tcs.Task;
-                    interstitialAdManager.AdSuccessfullyCompleted -= OnAdCompleted;
-                }
-
-                if (toolbarController != null) 
-                {
-                    toolbarController.OpenMainView();
-                }
-                else
-                {
-                    navigation.Open(new MainViewModel(), true, new NavigationOptions() { CloseAllViews = true });
+                    case ResultFlowStage.Victory:
+                        SetStage(ResultFlowStage.Reward);
+                        break;
+                    case ResultFlowStage.Reward:
+                        SetStage(ResultFlowStage.Progress);
+                        break;
+                    case ResultFlowStage.Progress:
+                        await ShowInterstitialIfAvailableAsync();
+                        OpenMainView();
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
                 }
             }
             catch (Exception ex)
@@ -124,6 +156,48 @@ namespace GearEngine.Campaign.Presentation
             {
                 isProcessingAction = false;
             }
+        }
+
+        private void SetStage(ResultFlowStage stage)
+        {
+            CurrentStage = stage;
+            StageChanged?.Invoke(stage);
+        }
+
+        private async Task ShowInterstitialIfAvailableAsync()
+        {
+            if (interstitialAdManager == null || !await interstitialAdManager.CanShowAd())
+            {
+                return;
+            }
+
+            TaskCompletionSource<bool> completion = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+            void OnAdCompleted(bool success, string _) => completion.TrySetResult(success);
+
+            interstitialAdManager.AdSuccessfullyCompleted += OnAdCompleted;
+            try
+            {
+                interstitialAdManager.ShowInterstitial();
+                await completion.Task;
+            }
+            finally
+            {
+                interstitialAdManager.AdSuccessfullyCompleted -= OnAdCompleted;
+            }
+        }
+
+        private void OpenMainView()
+        {
+            if (toolbarController != null)
+            {
+                toolbarController.OpenMainView();
+                return;
+            }
+
+            navigation.Open(
+                new MainViewModel(),
+                true,
+                new NavigationOptions { CloseAllViews = true });
         }
 
         private List<ResultStatSlotViewModel> BuildStatsRows()

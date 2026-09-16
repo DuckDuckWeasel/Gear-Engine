@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="5" result="Passed" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-16 02:17:44Z" end-time="2026-09-16 02:17:44Z" duration="0.0680021">
+  <test-suite type="TestSuite" id="1000" name="Scaffold" fullname="Scaffold" runstate="Runnable" testcasecount="403" result="Passed" start-time="2026-09-16 02:17:44Z" end-time="2026-09-16 02:17:44Z" duration="0.068002" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="1107" name="Game.Campaign.Tests.dll" fullname="/Users/leonardosilva/Documents/MatheusCohen/VictorScreensMigration/Library/ScriptAssemblies/Game.Campaign.Tests.dll" runstate="Runnable" testcasecount="56" result="Passed" start-time="2026-09-16 02:17:44Z" end-time="2026-09-16 02:17:44Z" duration="0.056008" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="82358" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="1108" name="GearEngine" fullname="GearEngine" runstate="Runnable" testcasecount="56" result="Passed" start-time="2026-09-16 02:17:44Z" end-time="2026-09-16 02:17:44Z" duration="0.054875" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1112" name="Campaign" fullname="GearEngine.Campaign" runstate="Runnable" testcasecount="55" result="Passed" start-time="2026-09-16 02:17:44Z" end-time="2026-09-16 02:17:44Z" duration="0.053851" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestSuite" id="1113" name="Tests" fullname="GearEngine.Campaign.Tests" runstate="Runnable" testcasecount="55" result="Passed" start-time="2026-09-16 02:17:44Z" end-time="2026-09-16 02:17:44Z" duration="0.052887" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="TestSuite" id="1114" name="Editor" fullname="GearEngine.Campaign.Tests.Editor" runstate="Runnable" testcasecount="55" result="Passed" start-time="2026-09-16 02:17:44Z" end-time="2026-09-16 02:17:44Z" duration="0.052020" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-suite type="TestFixture" id="1084" name="ResultPopupViewModelTests" fullname="GearEngine.Campaign.Tests.Editor.ResultPopupViewModelTests" classname="GearEngine.Campaign.Tests.Editor.ResultPopupViewModelTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-09-16 02:17:44Z" end-time="2026-09-16 02:17:44Z" duration="0.049459" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="1085" name="Continue_WhenGoodResult_AdvancesRewardAndProgressBeforeMain" fullname="GearEngine.Campaign.Tests.Editor.ResultPopupViewModelTests.Continue_WhenGoodResult_AdvancesRewardAndProgressBeforeMain" methodname="Continue_WhenGoodResult_AdvancesRewardAndProgressBeforeMain" classname="GearEngine.Campaign.Tests.Editor.ResultPopupViewModelTests" runstate="Runnable" seed="403170366" result="Passed" start-time="2026-09-16 02:17:44Z" end-time="2026-09-16 02:17:44Z" duration="0.021602" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1088" name="Continue_WhenPersistenceIsPending_WaitsBeforeAdvancing" fullname="GearEngine.Campaign.Tests.Editor.ResultPopupViewModelTests.Continue_WhenPersistenceIsPending_WaitsBeforeAdvancing" methodname="Continue_WhenPersistenceIsPending_WaitsBeforeAdvancing" classname="GearEngine.Campaign.Tests.Editor.ResultPopupViewModelTests" runstate="Runnable" seed="710548192" result="Passed" start-time="2026-09-16 02:17:44Z" end-time="2026-09-16 02:17:44Z" duration="0.015235" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1086" name="Continue_WhenPoorResult_AdvancesRewardAndProgressBeforeMain" fullname="GearEngine.Campaign.Tests.Editor.ResultPopupViewModelTests.Continue_WhenPoorResult_AdvancesRewardAndProgressBeforeMain" methodname="Continue_WhenPoorResult_AdvancesRewardAndProgressBeforeMain" classname="GearEngine.Campaign.Tests.Editor.ResultPopupViewModelTests" runstate="Runnable" seed="502027962" result="Passed" start-time="2026-09-16 02:17:44Z" end-time="2026-09-16 02:17:44Z" duration="0.000651" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1089" name="RoguelikePostRaceDestination_OpensRewardStage" fullname="GearEngine.Campaign.Tests.Editor.ResultPopupViewModelTests.RoguelikePostRaceDestination_OpensRewardStage" methodname="RoguelikePostRaceDestination_OpensRewardStage" classname="GearEngine.Campaign.Tests.Editor.ResultPopupViewModelTests" runstate="Runnable" seed="709354474" result="Passed" start-time="2026-09-16 02:17:44Z" end-time="2026-09-16 02:17:44Z" duration="0.001584" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1087" name="Upgrade_OpensRoguelikeViewModel" fullname="GearEngine.Campaign.Tests.Editor.ResultPopupViewModelTests.Upgrade_OpensRoguelikeViewModel" methodname="Upgrade_OpensRoguelikeViewModel" classname="GearEngine.Campaign.Tests.Editor.ResultPopupViewModelTests" runstate="Runnable" seed="1410145009" result="Passed" start-time="2026-09-16 02:17:44Z" end-time="2026-09-16 02:17:44Z" duration="0.000575" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <output><![CDATA[Saving results to: /Users/leonardosilva/Library/Application Support/DDW/Scaffold/TestResults.xml
+]]></output>
+                </test-case>
+              </test-suite>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

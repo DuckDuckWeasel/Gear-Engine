@@ -21,7 +21,12 @@ namespace GearEngine.Campaign.Presentation
 {
     public sealed partial class RoguelikeViewModel : ViewModel, IDisposable
     {
-        private const int MaxInventoryCapacity = 10; // TODO: Move to config
+        private const int k_maxInventoryCapacity = 10; // TODO: Move to config
+
+        public RoguelikeViewModel(RaceResultModel postRaceResult = null)
+        {
+            this.postRaceResult = postRaceResult;
+        }
 
         public BoardViewModel Board { get; private set; }
         public GearInventoryViewModel Inventory { get; private set; }
@@ -38,6 +43,7 @@ namespace GearEngine.Campaign.Presentation
 
         private readonly List<ItemSlotViewModel> perkOptions = new List<ItemSlotViewModel>();
         private readonly CancellationTokenSource cts = new CancellationTokenSource();
+        private readonly RaceResultModel postRaceResult;
         private bool disposed;
 
         [Inject]
@@ -84,7 +90,7 @@ namespace GearEngine.Campaign.Presentation
             IsProcessingAction = false;
             hasRerolled = false;
             CanReroll = false;
-            
+
             adManager.AdAvailable += OnAdAvailable;
             _ = CheckInitialAdStateAsync();
 
@@ -103,7 +109,7 @@ namespace GearEngine.Campaign.Presentation
             disposed = true;
             inventoryService.InventoryChanged -= UpdatePerkOptionsInteractability;
             adManager.AdAvailable -= OnAdAvailable;
-            
+
             if (Board != null)
             {
                 Board.OnBoardClicked -= ShowItemPreview;
@@ -141,7 +147,7 @@ namespace GearEngine.Campaign.Presentation
 
         private void UpdatePerkOptionsInteractability()
         {
-            bool hasSpace = inventoryService.Owned.Count < MaxInventoryCapacity;
+            bool hasSpace = inventoryService.Owned.Count < k_maxInventoryCapacity;
             foreach (ItemSlotViewModel perk in perkOptions)
             {
                 perk.CanPick = hasSpace;
@@ -157,7 +163,7 @@ namespace GearEngine.Campaign.Presentation
                 return;
             }
 
-            if (inventoryService.Owned.Count >= MaxInventoryCapacity)
+            if (inventoryService.Owned.Count >= k_maxInventoryCapacity)
             {
                 Debug.LogWarning("TODO: Show visual warning - Inventory Full");
                 return;
@@ -180,15 +186,8 @@ namespace GearEngine.Campaign.Presentation
 
                 Debug.Log($"[RoguelikeViewModel] Consuming pick from rollService.");
                 await rollService.ConsumePickAsync(config.Id, cts.Token);
-                Debug.Log($"[RoguelikeViewModel] Opening MainViewModel.");
-                if (toolbarController != null) 
-                {
-                    toolbarController.OpenMainView();
-                }
-                else
-                {
-                    navigation.Open(new MainViewModel(), true, new NavigationOptions { CloseAllViews = true });
-                }
+                Debug.Log("[RoguelikeViewModel] Opening the post-race reward flow.");
+                OpenPostRaceDestination(gearData);
             }
             catch (Exception ex)
             {
@@ -199,7 +198,11 @@ namespace GearEngine.Campaign.Presentation
 
         public async void Continue()
         {
-            if (IsProcessingAction) return;
+            if (IsProcessingAction)
+            {
+                return;
+            }
+
             IsProcessingAction = true;
 
             try
@@ -215,7 +218,11 @@ namespace GearEngine.Campaign.Presentation
 
         public async void Reroll()
         {
-            if (IsProcessingAction || !CanReroll) return;
+            if (IsProcessingAction || !CanReroll)
+            {
+                return;
+            }
+
             IsProcessingAction = true;
 
             string placementId = rerollPlacementKey != null ? (string)rerollPlacementKey : "reroll";
@@ -245,7 +252,7 @@ namespace GearEngine.Campaign.Presentation
         private async void OnAdCompleted(bool success, string placement)
         {
             adManager.AdSuccessfullyCompleted -= OnAdCompleted;
-            
+
             if (success)
             {
                 try
@@ -261,7 +268,7 @@ namespace GearEngine.Campaign.Presentation
             {
                 Debug.LogWarning("[RoguelikeViewModel] Ad failed or was cancelled. Reroll aborted and button removed.");
             }
-            
+
             IsProcessingAction = false;
         }
 
@@ -289,8 +296,11 @@ namespace GearEngine.Campaign.Presentation
         private void ShowItemPreview(GearItemData gearData)
         {
             Debug.Log($"[RoguelikeViewModel] ShowItemPreview called for GearItemData '{gearData?.Id}'. isProcessingAction: {IsProcessingAction}");
-            if (IsProcessingAction || gearData == null) return;
-            
+            if (IsProcessingAction || gearData == null)
+            {
+                return;
+            }
+
             ItemSlotViewModel tempSlot = new ItemSlotViewModel(gearData, _ => { }, 1);
             ItemPopupViewModel popup = new ItemPopupViewModel(new[] { tempSlot }, 0, null);
             navigation.Open(popup);
@@ -313,16 +323,32 @@ namespace GearEngine.Campaign.Presentation
         private async Task SkipPickAsync()
         {
             await rollService.SkipPickAsync(cts.Token);
-            if (toolbarController != null) 
+            OpenPostRaceDestination(null);
+        }
+
+        private void OpenPostRaceDestination(IItem reward)
+        {
+            if (postRaceResult != null)
+            {
+                navigation.Open(
+                    new ResultPopupViewModel(postRaceResult, ResultFlowStage.Reward, reward),
+                    true,
+                    new NavigationOptions { CloseAllViews = true });
+                return;
+            }
+
+            if (toolbarController != null)
             {
                 toolbarController.OpenMainView();
+                return;
             }
-            else
-            {
-                navigation.Open(new MainViewModel(), true, new NavigationOptions { CloseAllViews = true });
-            }
+
+            navigation.Open(
+                new MainViewModel(),
+                true,
+                new NavigationOptions { CloseAllViews = true });
         }
-        
+
         private async Task ReRerollAsync()
         {
             hasRerolled = true;
@@ -357,17 +383,23 @@ namespace GearEngine.Campaign.Presentation
             }
 
             ItemSlotViewModel perk = new ItemSlotViewModel(config, OpenPerkPreview);
-            perk.CanPick = inventoryService.Owned.Count < MaxInventoryCapacity;
+            perk.CanPick = inventoryService.Owned.Count < k_maxInventoryCapacity;
             BindChildViewModel(perk);
             perkOptions.Add(perk);
         }
 
         private void OpenPerkPreview(ItemSlotViewModel perk)
         {
-            if (IsProcessingAction || perk == null) return;
-            
+            if (IsProcessingAction || perk == null)
+            {
+                return;
+            }
+
             int index = perkOptions.IndexOf(perk);
-            if (index < 0) index = 0;
+            if (index < 0)
+            {
+                index = 0;
+            }
 
             ItemPopupViewModel popup = new ItemPopupViewModel(perkOptions, index, ConfirmPickAsync, "Select", false);
             navigation.Open(popup);
@@ -377,7 +409,7 @@ namespace GearEngine.Campaign.Presentation
         {
             Debug.Log($"[RoguelikeViewModel] ConfirmPickAsync called with itemId: {itemId}");
             ItemSlotViewModel perk = null;
-            foreach (var p in perkOptions)
+            foreach (ItemSlotViewModel p in perkOptions)
             {
                 if (p.Item.Id == itemId)
                 {
@@ -386,7 +418,7 @@ namespace GearEngine.Campaign.Presentation
                 }
             }
 
-            if (perk == null) 
+            if (perk == null)
             {
                 Debug.LogWarning($"[RoguelikeViewModel] ConfirmPickAsync failed: perk '{itemId}' not found in perkOptions.");
                 return false;
