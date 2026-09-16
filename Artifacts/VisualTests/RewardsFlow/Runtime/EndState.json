@@ -1,0 +1,5 @@
+{
+  "controller": "MainViewModel",
+  "eventSystems": 1,
+  "progressViews": 0
+}

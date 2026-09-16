@@ -78,3 +78,16 @@ This section records future work, not behavior implemented by this correction.
 - `602d147b` — time-ranked standings, score-only stars, one conditional gear selection, prefab wiring, scoped regressions, and module documentation.
 - `df6d361b` — corrected screenshots, NUnit evidence, validation report, and future unlock/reward plan.
 - Local integration: `main <- codex/race-standings-rewards`, rechecked against `e19f520e`; no conflicts or code changes during integration. The merge commit adds only this completion record beyond the validated branch tree. No push.
+
+## Follow-up: rewards directly back home (2026-09-16)
+
+The user removed the redundant Progress screen because Results already displays score/stars. Starting at `65a7ecc6`, branch `codex/rewards-return-home` changes the sequence to app entry → Home → Setup → Race → Results → Gold → eligible gear reward → existing gear selection → awarded gear → Home. Skipping the gear selection returns Home. No gear reward means Gold → Home. Preserve the one-pick first-place OR at-least-one-star rule. Keep the old Progress assets registered for compatibility but never navigate to them in this flow.
+
+- [x] Update the reward completion/skip destinations and affected navigation assertions.
+- [x] Capture app-entry-through-home evidence including Gold and gear. [Live walkthrough](../../Artifacts/VisualTests/RewardsFlow/README.md) completed without injected results; visible legacy issues and two gear-ability exceptions are documented.
+- [x] Run scoped lint and compilation/repository gate; 12/12 affected checks passed. [Validation](RewardsFlowValidation.md).
+- [ ] Commit the navigation change and evidence, then integrate locally into main.
+
+Capture the running campaign from its normal `Main Scene` entry when possible; distinguish live navigation from any representative-data staging or external service blocker. Do not describe isolated prefab captures as an app startup walkthrough.
+
+Follow-up implementation commit: `42824f93` — return directly Home after the final reward or skipped gear selection.
