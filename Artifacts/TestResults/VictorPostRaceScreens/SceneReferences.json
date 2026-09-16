@@ -1,0 +1,7 @@
+{
+  "scene": "Assets/GearEngine/Scenes/Main Scene.unity",
+  "prefab": "Assets/GearEngine/Prefabs/Campaign/Campaign_ResultPopupView.prefab",
+  "resultPrefabSourceIds": 2,
+  "missingSourceIds": [],
+  "removedObsoleteNestedPlayerOverrides": 24
+}

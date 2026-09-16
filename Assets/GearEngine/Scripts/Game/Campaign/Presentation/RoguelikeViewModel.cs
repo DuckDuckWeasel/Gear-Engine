@@ -331,7 +331,7 @@ namespace GearEngine.Campaign.Presentation
             if (postRaceResult != null)
             {
                 navigation.Open(
-                    new ResultPopupViewModel(postRaceResult, ResultFlowStage.Reward, reward),
+                    new ReceivedRewardsViewModel(postRaceResult, reward),
                     true,
                     new NavigationOptions { CloseAllViews = true });
                 return;

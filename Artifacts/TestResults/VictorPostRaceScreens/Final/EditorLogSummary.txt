@@ -1,0 +1,4 @@
+Unity 6000.5.9f1
+Compiler errors and exception entries: 0
+No relevant errors or exceptions detected.
+Full local Editor log: EditMode.log (ignored generated artifact).

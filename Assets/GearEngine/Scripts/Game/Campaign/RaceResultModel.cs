@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using LiveOps.Modules.DTO.ModuleRequests;
 using GearEngine.CarSimulation.Definitions;
@@ -21,7 +23,8 @@ namespace GearEngine.Campaign
             RaceTime = raceTime;
             LapCount = lapCount;
             Score = driftScore; // Score is now strictly drift score
-            TrackName = track != null ? track.name : string.Empty;
+            TrackName = track != null ? track.GetDisplayName() : string.Empty;
+            Tiers = track != null ? track.Tiers.ToArray() : Array.Empty<TrackTierConfig>();
 
             if (track != null && track.HasConfiguredTiers)
             {
@@ -47,6 +50,7 @@ namespace GearEngine.Campaign
         public bool IsGoodResult { get; }
 
         public string TrackName { get; }
+        public IReadOnlyList<TrackTierConfig> Tiers { get; }
 
         public Task PersistenceCompleted { get; private set; } = Task.CompletedTask;
 

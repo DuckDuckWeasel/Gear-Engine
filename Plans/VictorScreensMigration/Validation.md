@@ -72,3 +72,32 @@ Correction commit: `0e84aec6` (`feat(campaign): restore Victor post-race flow`).
 Local main integration: `4901bd3e` (`merge: correct Victor post-race flow`). The merge applied
 without conflicts, and local main had not moved from the verified `035e42af` baseline. No remote
 push was performed.
+
+## Superseding standalone-screen correction — 2026-09-16
+
+This section supersedes the prior Photo Finish/stage-based correction and its screenshots. The user rejected that interpretation. Results now uses Victor's full-screen stars/score composition, followed by separate Rewards and Progress Views/ViewModels registered through Addressables and NavigationSettings. Continue returns to Main; Upgrade inserts Roguelike and then rejoins Rewards.
+
+### Verification
+
+- Final scoped Unity run: **25 passed, 0 failed, 0 skipped**. Includes ResultPopupViewModelTests (7), CampaignScreenReferenceTests (13), PostRaceScreenTests (2), RaceResultModelTests (2), and the existing result-before-persistence regression (1). NUnit XML, contextual report and Editor-log summary: `Artifacts/TestResults/VictorPostRaceScreens/Final/`. Full generated logs remain available locally and ignored by Git.
+- The rendering coroutine enters Play mode, binds the actual three prefab Views, closes/reopens each, checks text opacity/nondegenerate scale, reward-counter contrast, viewport bounds, and single navigation after repeated clicks. It creates **12 runtime PNGs** at 1080×2280, 1080×1920, 1080×2400, and 1080×1680. Representative inspected captures include all three screens and the shortest/tallest layouts.
+- Initial gate: 24 passed, 1 failed. The old RaceResultModel test used a second tier easier than the first but expected only one tier. Corrected that fixture to 15 seconds/2000 score after 30 seconds/1000 score; production scoring and reward calculations are unchanged. Initial failure evidence is retained in `InitialGate/`.
+- Earlier red navigation/placement checks failed before implementation: `Red/Results.json` (live Editor result, not NUnit XML).
+- Scoped C# lint fix/check passed for 13 changed C# files; structure check passed. Dotnet reports existing workspace-loading warnings, with no style diagnostics.
+- Repository `validate-changes.ps1 -SkipTests`: passed 114-assembly reference audit, pragma gate, Unity compilation (exit 0), analyzer build and analyzer unit tests, zero diagnostics/blockers. Broad Unity suites were skipped. `ValidationGate.txt` records the exact output.
+- Removed 24 obsolete nested-player overrides from the scene after replacing demo playback ownership. `SceneReferences.json` confirms all remaining Results prefab source IDs exist. Temporary source snapshots, Pipeline package changes, generated font atlas changes, and analyzer binary output are excluded from commits.
+
+### Visual provenance and adaptation
+
+Original references were recovered from `9e56d673:Assets/Lana Studio/AnimationAnimora.unity` together with the original prefab dependencies. The reference includes authored demo data; runtime screenshots use an existing three-tier track, 48.32 seconds, three laps, and 5438 score. This is a composition comparison, not a claim of identical data. See `Artifacts/VisualTests/VictorPostRaceScreens/README.md` for the screenshot matrix.
+
+The Results rows show actual time/laps/gold instead of demo leaderboard positions. Rewards uses the named `new` composition, actual gold and optional selected item, with a live count. Progress adapts Victor's header/stars/panel to the catalog's tier targets. No placement, XP, unlock transaction, or additional reward grant is invented.
+
+### Architecture and remaining limits
+
+- **MVVM/navigation:** separate ViewModels own actions and runtime values; existing navigation and VContainer ownership remain in use.
+- **Observer/lifecycle:** buttons detach on close; property subscriptions detach on unbind/destruction. Animora resets on opening and stops on closing. One player owns each animated object; stale nested demo links and competing Animator components are removed.
+- **Shared gameplay:** board ownership, inventory/drag behavior, persistence and reward grants are unchanged.
+- The scoped run isolates network, ads, and navigation destinations. It does not replace a complete live-backend campaign or physical-device safe-area check. Earlier migration acceptance limits above remain open. Existing catalog thresholds sometimes run from harder to easier; Progress reports that catalog as stored. Changing gameplay tier definitions is outside this visual correction.
+
+Implementation commit: `ea615d32`. Integration direction: local `main` ← `codex/victor-post-race-screens`, based on `3df8b90e`; the integration merge records its two parents. Remote push is not authorized. Recover a completed integration with `git revert -m 1 <integration-merge>`, preserving shared history.

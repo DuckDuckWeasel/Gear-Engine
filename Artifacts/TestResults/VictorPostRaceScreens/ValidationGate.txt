@@ -1,0 +1,39 @@
+Change validation started...
+
+[1/6] Running scripts asmdef reference audit
+SCRIPTS_ASMDEF_COUNT:114
+TOTAL:0
+
+[2/6] Running pragma warning suppression gate
+TOTAL:0
+
+[3/6] Running compilation precheck
+Running Unity compilation precheck...
+Project: /Users/leonardosilva/Documents/MatheusCohen/VictorScreensMigration
+Unity:   /Applications/Unity/Hub/Editor/6000.5.9f1/Unity.app/Contents/MacOS/Unity
+
+Compilation Check Report
+------------------------
+Status:  PASS
+
+[4/6] EditMode tests skipped (-SkipTests)
+
+[5/6] PlayMode tests skipped (-SkipTests)
+
+[6/6] Running analyzer check (includes analyzer unit tests)
+NOTE:Analyzer tests passed (Scaffold.Analyzers.Tests).
+NOTE:Building 4 configured project(s) without transitive project rebuilds.
+NOTE:Synced 10 Unity ScriptAssemblies dependency output(s).
+NOTE:Excluding diagnostics from test assemblies (use -IncludeTestAssemblies to include them).
+BUILD_EXIT:0
+TOTAL:0
+
+Change Validation Summary
+----------------------------
+Scripts asmdef audit: PASS (TOTAL:0)
+Pragma suppression gate: PASS (TOTAL:0)
+Compilation: PASS (exit code 0)
+Tests: PASS
+Analyzers: PASS (TOTAL:0, BLOCKERS:0)
+
+Quality gates are clean. Changes are ready to commit.

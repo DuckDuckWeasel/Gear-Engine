@@ -44,51 +44,23 @@ namespace GearEngine.Campaign.Tests.Editor
             }
         }
 
-        [Test]
-        public void ResultPrefab_HasCompletePostRaceFlow()
+        [TestCase("Campaign_ResultPopupView", "ResultPopupView")]
+        [TestCase("PFB_ReceivedRewardsView", "ReceivedRewardsView")]
+        [TestCase("PFB_RaceProgressView", "RaceProgressView")]
+        public void PostRacePrefab_HasWiredScreenReferences(string name, string viewType)
         {
             GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(
-                "Assets/GearEngine/Prefabs/Campaign/Campaign_ResultPopupView.prefab");
-            ResultPopupView view = prefab.GetComponent<Presentation.ResultPopupView>();
+                $"Assets/GearEngine/Prefabs/Campaign/{name}.prefab");
+            Component view = System.Array.Find(prefab.GetComponents<Component>(), c => c.GetType().Name == viewType);
+            Assert.That(view, Is.Not.Null);
             SerializedObject data = new SerializedObject(view);
-            string[] requiredReferences =
+            SerializedProperty property = data.GetIterator();
+            while (property.NextVisible(true))
             {
-                "victoryStage",
-                "rewardStage",
-                "progressStage",
-                "victoryEyebrowText",
-                "victoryTitleText",
-                "victoryMessageText",
-                "victoryRaceTimeText",
-                "victoryScoreText",
-                "victoryLapText",
-                "victoryRewardText",
-                "victoryContinueButton",
-                "victoryUpgradeButton",
-                "rewardNameText",
-                "rewardCountText",
-                "rewardIconImage",
-                "rewardContinueButton",
-                "progressTitleText",
-                "progressTrackText",
-                "progressSummaryText",
-                "progressScoreText",
-                "progressTimeText",
-                "progressStars",
-                "progressContinueButton",
-            };
-
-            foreach (string propertyName in requiredReferences)
-            {
-                SerializedProperty property = data.FindProperty(propertyName);
-                Assert.That(property, Is.Not.Null, $"Missing serialized property: {propertyName}");
-                if (property.isArray)
+                if (property.propertyType == SerializedPropertyType.ObjectReference)
                 {
-                    Assert.That(property.arraySize, Is.GreaterThan(0), $"{propertyName} must contain entries.");
-                    continue;
+                    Assert.That(property.objectReferenceValue, Is.Not.Null, $"{name}: {property.propertyPath}");
                 }
-
-                Assert.That(property.objectReferenceValue, Is.Not.Null, $"{propertyName} is not wired.");
             }
         }
 
@@ -96,6 +68,8 @@ namespace GearEngine.Campaign.Tests.Editor
         [TestCase("Setup View")]
         [TestCase("Race View")]
         [TestCase("Campaign_ResultPopupView")]
+        [TestCase("PFB_ReceivedRewardsView")]
+        [TestCase("PFB_RaceProgressView")]
         [TestCase("Campaign_RoguelikeView")]
         [TestCase("Items View")]
         [TestCase("ItemPopup View")]

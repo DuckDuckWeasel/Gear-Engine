@@ -21,8 +21,12 @@ its GUID is the stable identity used by serialized references.
 - [x] Run repository gate and scoped checks; commit both implementation batches.
 - [ ] Complete remaining acceptance coverage: device safe-area behavior, accepted pointer reposition and baseline investigation of the VariableSO finding.
 - [x] Integrate migration into local main without conflicts (`611bc227`); retain documented acceptance limits.
-- [x] Correct the playable post-race sequence to Victor's Victory → Reward → Progress → Home flow.
-- [x] Replace the generic result composition with Victor's clean Photo Finish labels and live race values.
+- [x] Revalidate the corrected post-race sequence with scoped ViewModel navigation and Play-mode rendering checks to Victor's Victory → Reward → Progress → Home flow.
+- [x] Replace the rejected Photo Finish popup with Victor's full-screen Results composition.
+- [x] Implement separate Rewards and Progress Views, ViewModels, prefabs, and navigation configs.
+- [x] Validate runtime lifecycle, bindings, and four display sizes (25 focused tests passed).
+- [x] Commit the standalone correction (`ea615d32`) and its evidence.
+- Local integration: merge `codex/victor-post-race-screens` into verified `main` at `3df8b90e`; final disposition is recorded in the integration merge.
 
 ## Surprises & Discoveries
 
@@ -36,11 +40,9 @@ its GUID is the stable identity used by serialized references.
 - The shared board has its own screen-space canvas. Its race layout must be reserved/restored at the view lifecycle boundary; the legacy viewport does not move it.
 - `75fdfa3f` merged `9e56d673` but preserved the playable scene and campaign prefabs.
   An ancestry check alone cannot prove visual integration.
-- The original migration treated `Campaign_ReceivedRewards_new` as the result screen. Victor's
-  reference defines three distinct post-race states: the `Results_Canvas` victory modal,
-  `Campaign_ReceivedRewards_new`, and `Campaign_ResultPopupView (1)` progress composition.
+- The original migration treated `Campaign_ReceivedRewards_new` as the result screen. The initial interpretation of the reference was rejected. The reference scene depends on campaign prefabs; migration edits contaminated earlier reference captures. Recover original objects from `9e56d673` with isolated temporary identities before comparison.
 - The outlined alternate victory title produced glyph-edge artifacts after runtime text updates.
-  Victor's clean `1stPlace` and `PhotoFinish` labels are the correct runtime pair.
+  Neither alternate title proves race placement; the game supplies tier achievements, not a finishing rank.
 
 ## Decision Log
 
@@ -54,10 +56,7 @@ its GUID is the stable identity used by serialized references.
 
 ## Outcomes & Retrospective
 
-Presentation migration is implemented and integrated into local main (`611bc227`). A correction
-branch replaces the result presentation with the complete Victory → Reward → Progress → Home
-sequence and records all three states at the four acceptance heights. The correction is merged
-into local main after its focused checks pass. See Validation.md for the exact coverage.
+The original migration is on local main. The standalone correction restores Victor's full-screen Results and adds separate Rewards and Progress screens using the existing MVVM/navigation pattern. All 25 focused tests and the repository `-SkipTests` gate passed. Runtime captures cover four portrait heights after reopening. The completed correction is prepared for the authorized local merge; see Validation.md for exact coverage and retained acceptance limits.
 
 ## Context and Orientation
 
@@ -115,3 +114,21 @@ not final deliverables. Final documentation will identify commits and unverified
 
 Public gameplay/navigation APIs remain unchanged. Any additional adapter belongs to
 presentation with explicit assembly references. Keep pinned Unity/package versions.
+
+## Current correction (2026-09-15)
+
+Starting ref: clean local main `3df8b90e`, branch `codex/victor-post-race-screens` in the existing registered migration worktree. Original maintenance checkout remains untouched. No remote push.
+
+The user rejected the compact victory popup and requested new screens following project examples. Use `View<T>`, separate ViewModels, Addressable prefabs and `NavigationSettings`, as used by Items and Roguelike. Results retains its prefab GUID and gameplay entry API. Rewards enumerates actual gold and optional selected gear before opening Progress. Progress shows real tier targets and earned stars, resolves next-track display names from the catalog, and returns through the toolbar. No invented leaderboard entries or first place.
+
+Regression evidence: before implementation the new placement and navigation assertions failed (2 failed, 5 existing passed). Preserve persistence-before-advance and existing result-before-persistence behavior. Animora owns presentation animations at Open/Close; remove competing Animator components. Repeat opening and reject duplicate continuation.
+
+Visual evidence is now under `Artifacts/VisualTests/VictorPostRaceScreens/`. Original references are recovered from Victor's git objects; runtime evidence must come from the actual bound view components after reopening. The earlier Photo Finish captures and completion claims are superseded.
+
+
+### Runtime discoveries during the standalone correction
+
+- Static rendering hid an authored scale problem: zero Z scale in animation endpoints made TMP text disappear in Play mode. The migrated endpoints now keep Z at one while preserving the 2D animation; the runtime test rejects a degenerate transform.
+- The reward-counter fade animated dark text to white on a white strip. Its fade now retains the authored dark ink; a contrast assertion covers reopening.
+- Opening the old source scene could regenerate nested-player references. Temporary source assets are removed, and stale Results scene overrides are cleared before final integration.
+- Progress displays the tier order in the existing track catalog. Some catalog thresholds run from harder to easier; changing those gameplay definitions is outside this visual migration.

@@ -15,6 +15,11 @@ MonoBehaviour:
   m_GroupName: Default Local Group
   m_GUID: 0bdbf61a5d37c41ee95db94752ea759c
   m_SerializeEntries:
+  - m_GUID: 009bc3d5193a54a2cb32d5f210e1042a
+    m_Address: PFB_RaceProgressView
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 0677328e8b18d4e128a78ed05e8f4169
     m_Address: SCurveTrack
     m_ReadOnly: 0
@@ -163,6 +168,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels:
     - liveops.tracks
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: df031c43f2c0340f283eb20cc4f2e845
+    m_Address: PFB_ReceivedRewardsView
+    m_ReadOnly: 0
+    m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: e4b10721f441ba24b8253dd37e8e32b3
     m_Address: InfinityTrack
