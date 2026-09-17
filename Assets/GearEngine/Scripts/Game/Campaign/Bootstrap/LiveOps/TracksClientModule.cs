@@ -21,13 +21,15 @@ namespace GearEngine.Campaign.Bootstrap.LiveOps
             this.index = index ?? throw new ArgumentNullException(nameof(index));
         }
 
-        public TrackDefinition CurrentTrack => index.GetTrack(data?.CurrentTrackId ?? string.Empty);
+        public TrackDefinition CurrentTrack => index.GetTrack(selectedTrackId ?? data?.CurrentTrackId ?? string.Empty);
 
         public CarDefinition CurrentCar => index.DefaultCar;
 
         private readonly CurrencyClientModule currencyClient;
         private readonly TrackAssetIndex index;
         private readonly TrackProgressModel progress = new TrackProgressModel();
+        private readonly HashSet<string> unlockedTrackIds = new HashSet<string>(StringComparer.Ordinal);
+        private string selectedTrackId;
 
         public TrackProgressModel GetTrackProgress()
         {
@@ -38,6 +40,24 @@ namespace GearEngine.Campaign.Bootstrap.LiveOps
         {
             IReadOnlyList<string> ids = data?.OrderedTrackIds;
             return index.OrderedEntries(ids ?? Array.Empty<string>());
+        }
+
+        public bool IsTrackUnlocked(string trackId)
+        {
+            return !string.IsNullOrEmpty(trackId)
+                && unlockedTrackIds.Contains(trackId)
+                && index.GetTrack(trackId) != null;
+        }
+
+        public bool TrySelectTrack(string trackId)
+        {
+            if (!IsTrackUnlocked(trackId))
+            {
+                return false;
+            }
+
+            selectedTrackId = trackId;
+            return true;
         }
 
         public async Task RecordResultAsync(RaceResultModel result)
@@ -76,13 +96,48 @@ namespace GearEngine.Campaign.Bootstrap.LiveOps
             }
             RepairCurrentTrackIdIfNotInCatalog(moduleData);
             WarnWhenOrderedIdsMissingFromCatalog(moduleData.OrderedTrackIds);
+            RestoreUnlockedTracks(moduleData);
+            selectedTrackId = null;
             progress.CurrentTrackIndex = Math.Max(0, GetProgressIndexForTrack(moduleData));
             return Task.CompletedTask;
         }
 
+        private void RestoreUnlockedTracks(TrackGameData moduleData)
+        {
+            unlockedTrackIds.Clear();
+            List<string> ordered = moduleData.OrderedTrackIds;
+            if (ordered == null || ordered.Count == 0)
+            {
+                return;
+            }
+
+            int lastUnlocked = FindLastUnlockedIndex(moduleData);
+            for (int i = 0; i <= lastUnlocked && i < ordered.Count; i++)
+            {
+                unlockedTrackIds.Add(ordered[i]);
+            }
+        }
+
+        private static int FindLastUnlockedIndex(TrackGameData moduleData)
+        {
+            List<string> ordered = moduleData.OrderedTrackIds;
+            int lastUnlocked = ordered.IndexOf(moduleData.CurrentTrackId);
+            for (int i = 0; i < ordered.Count; i++)
+            {
+                if (moduleData.BestTimeSec != null && moduleData.BestTimeSec.ContainsKey(ordered[i]))
+                {
+                    lastUnlocked = Math.Max(lastUnlocked, i + 1);
+                }
+            }
+
+            return lastUnlocked;
+        }
+
         private void RepairCurrentTrackIdIfNotInCatalog(TrackGameData trackData)
         {
-            if (index.GetTrack(trackData.CurrentTrackId) != null)
+            List<string> ordered = trackData.OrderedTrackIds;
+            bool isConfigured = ordered == null || ordered.Count == 0 || ordered.Contains(trackData.CurrentTrackId);
+            if (isConfigured && index.GetTrack(trackData.CurrentTrackId) != null)
             {
                 return;
             }
@@ -157,7 +212,7 @@ namespace GearEngine.Campaign.Bootstrap.LiveOps
 
         private async Task ApplyRecordedRaceOutcomeAsync(RaceResultModel result)
         {
-            string trackId = data?.CurrentTrackId ?? string.Empty;
+            string trackId = selectedTrackId ?? data?.CurrentTrackId ?? string.Empty;
             if (string.IsNullOrEmpty(trackId))
             {
                 return;
@@ -205,6 +260,8 @@ namespace GearEngine.Campaign.Bootstrap.LiveOps
             }
 
             data.CurrentTrackId = resp.NextTrackId;
+            unlockedTrackIds.Add(resp.NextTrackId);
+            selectedTrackId = null;
             progress.CurrentTrackIndex = Math.Max(0, data.OrderedTrackIds.IndexOf(resp.NextTrackId));
         }
     }

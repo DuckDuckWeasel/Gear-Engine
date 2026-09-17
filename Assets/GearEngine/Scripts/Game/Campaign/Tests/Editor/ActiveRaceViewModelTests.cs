@@ -66,6 +66,10 @@ namespace GearEngine.Campaign.Tests.Editor
 
             public System.Collections.Generic.IReadOnlyList<TrackEntry> GetOrderedTracks() => Array.Empty<TrackEntry>();
 
+            public bool IsTrackUnlocked(string trackId) => CurrentTrack != null && CurrentTrack.name == trackId;
+
+            public bool TrySelectTrack(string trackId) => IsTrackUnlocked(trackId);
+
             public Task RecordResultAsync(RaceResultModel result)
             {
                 if (result == null)

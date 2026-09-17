@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="4" result="Passed" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-17 01:04:03Z" end-time="2026-09-17 01:04:03Z" duration="0.0668836">
+  <test-suite type="TestSuite" id="1000" name="Scaffold" fullname="Scaffold" runstate="Runnable" testcasecount="439" result="Passed" start-time="2026-09-17 01:04:03Z" end-time="2026-09-17 01:04:03Z" duration="0.066884" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="1154" name="Game.Campaign.Tests.dll" fullname="/Users/leonardosilva/Documents/MatheusCohen/VictorScreensMigration/Library/ScriptAssemblies/Game.Campaign.Tests.dll" runstate="Runnable" testcasecount="92" result="Passed" start-time="2026-09-17 01:04:03Z" end-time="2026-09-17 01:04:03Z" duration="0.055515" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="36074" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="1155" name="GearEngine" fullname="GearEngine" runstate="Runnable" testcasecount="92" result="Passed" start-time="2026-09-17 01:04:03Z" end-time="2026-09-17 01:04:03Z" duration="0.054404" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1159" name="Campaign" fullname="GearEngine.Campaign" runstate="Runnable" testcasecount="91" result="Passed" start-time="2026-09-17 01:04:03Z" end-time="2026-09-17 01:04:03Z" duration="0.053444" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestSuite" id="1160" name="Tests" fullname="GearEngine.Campaign.Tests" runstate="Runnable" testcasecount="91" result="Passed" start-time="2026-09-17 01:04:03Z" end-time="2026-09-17 01:04:03Z" duration="0.052615" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="TestSuite" id="1161" name="Editor" fullname="GearEngine.Campaign.Tests.Editor" runstate="Runnable" testcasecount="91" result="Passed" start-time="2026-09-17 01:04:03Z" end-time="2026-09-17 01:04:03Z" duration="0.051748" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-suite type="TestFixture" id="1088" name="MainTrackNavigationTests" fullname="GearEngine.Campaign.Tests.Editor.MainTrackNavigationTests" classname="GearEngine.Campaign.Tests.Editor.MainTrackNavigationTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-09-17 01:04:03Z" end-time="2026-09-17 01:04:03Z" duration="0.048303" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="1090" name="AvailableTracks_WrapBothDirectionsAndUpdateStats" fullname="GearEngine.Campaign.Tests.Editor.MainTrackNavigationTests.AvailableTracks_WrapBothDirectionsAndUpdateStats" methodname="AvailableTracks_WrapBothDirectionsAndUpdateStats" classname="GearEngine.Campaign.Tests.Editor.MainTrackNavigationTests" runstate="Runnable" seed="787078792" result="Passed" start-time="2026-09-17 01:04:03Z" end-time="2026-09-17 01:04:03Z" duration="0.029539" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1089" name="FreshPlayer_ShowsOnlyFirstConfiguredTrack" fullname="GearEngine.Campaign.Tests.Editor.MainTrackNavigationTests.FreshPlayer_ShowsOnlyFirstConfiguredTrack" methodname="FreshPlayer_ShowsOnlyFirstConfiguredTrack" classname="GearEngine.Campaign.Tests.Editor.MainTrackNavigationTests" runstate="Runnable" seed="906005934" result="Passed" start-time="2026-09-17 01:04:03Z" end-time="2026-09-17 01:04:03Z" duration="0.001522" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1092" name="NewlyUnlockedTrack_AppearsAfterHomeRefresh" fullname="GearEngine.Campaign.Tests.Editor.MainTrackNavigationTests.NewlyUnlockedTrack_AppearsAfterHomeRefresh" methodname="NewlyUnlockedTrack_AppearsAfterHomeRefresh" classname="GearEngine.Campaign.Tests.Editor.MainTrackNavigationTests" runstate="Runnable" seed="399165082" result="Passed" start-time="2026-09-17 01:04:03Z" end-time="2026-09-17 01:04:03Z" duration="0.003692" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1091" name="PlayEarlierTrack_SelectsItForSetupAndResultSubmission" fullname="GearEngine.Campaign.Tests.Editor.MainTrackNavigationTests.PlayEarlierTrack_SelectsItForSetupAndResultSubmission" methodname="PlayEarlierTrack_SelectsItForSetupAndResultSubmission" classname="GearEngine.Campaign.Tests.Editor.MainTrackNavigationTests" runstate="Runnable" seed="1770814921" result="Passed" start-time="2026-09-17 01:04:03Z" end-time="2026-09-17 01:04:03Z" duration="0.004221" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <output><![CDATA[Saving results to: /Users/leonardosilva/Library/Application Support/DDW/Scaffold/TestResults.xml
+]]></output>
+                </test-case>
+              </test-suite>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

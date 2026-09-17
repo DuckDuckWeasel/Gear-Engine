@@ -32,6 +32,19 @@ Sample catalogs: `CampaignGearCatalog.asset`, `CampaignRaceSessionDefaults.asset
 
 Campaign progression, gold, gear inventory, board loadout, and card unlocks are backed by LiveOps modules inside the layered bootstrap (`ILiveOpsService` is registered before the Campaign layer). **`ITrackService`** is **`TracksClientModule` only** (cloud). `LocalGearLoadoutService` may remain for isolated gear tests where noted.
 
+## Home track navigation
+
+The Home screen exposes previous and next controls around the track preview. The
+controls cycle through unlocked tracks in Remote Config order and wrap at both
+ends. They stay hidden while only one track is available. The track counter,
+preview, saved stars, best-time standings, and track name update together.
+
+Browsing does not change the active race. Pressing Play selects the displayed
+track for Setup, Race, and result submission. `TracksClientModule` restores
+unlocks from the current campaign position and saved race history, so previously
+available tracks remain selectable after replaying an earlier race or wrapping
+the campaign.
+
 ## Post-race presentation
 
 Results, Rewards, and Progress use separate `View<T>`/ViewModel pairs and Addressable ViewConfigs. `ResultPopupViewModel` remains the race-completion entry point; its existing prefab GUID is preserved. Results opens before persistence completes, and Continue waits for `RaceResultModel.PersistenceCompleted`. Results has no Upgrade action.

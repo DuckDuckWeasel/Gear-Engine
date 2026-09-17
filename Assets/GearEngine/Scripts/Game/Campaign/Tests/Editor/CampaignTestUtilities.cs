@@ -28,7 +28,7 @@ namespace GearEngine.Campaign.Tests.Editor
     {
         public GearMechanicsTestContext(BoardRulesSO boardRules)
         {
-            var builder = new ContainerBuilder();
+            ContainerBuilder builder = new ContainerBuilder();
             new EventsInstaller().Install(builder);
             builder.RegisterInstance<IInventoryService>(new RecordingInventoryService());
             builder.RegisterInstance<IBoardSlotCapacityProvider>(new UnlimitedBoardSlotCapacityProvider());
@@ -75,8 +75,8 @@ namespace GearEngine.Campaign.Tests.Editor
     {
         public static GearItem CreateGearConfigWithData(string id)
         {
-            var config = ScriptableObject.CreateInstance<GearItem>();
-            var data = new GearItemData { Id = id };
+            GearItem config = ScriptableObject.CreateInstance<GearItem>();
+            GearItemData data = new GearItemData { Id = id };
             FieldInfo field = typeof(GearItem).GetField("data", BindingFlags.Instance | BindingFlags.NonPublic);
             AssertFieldFound(field);
             field.SetValue(config, data);
@@ -85,13 +85,13 @@ namespace GearEngine.Campaign.Tests.Editor
 
         public static RaceState CreateMinimalSession(CarDefinition carDef, TrackDefinition trackDef)
         {
-            var factory = new TrackSimulationFactory();
+            TrackSimulationFactory factory = new TrackSimulationFactory();
             return factory.Create(carDef, trackDef, null);
         }
 
         public static TrackDefinition CreateTrackWithTiersForTests(params TrackTierConfig[] tiers)
         {
-            var track = ScriptableObject.CreateInstance<TrackDefinition>();
+            TrackDefinition track = ScriptableObject.CreateInstance<TrackDefinition>();
             track.SetTiersForTests(tiers);
             return track;
         }
@@ -136,6 +136,10 @@ namespace GearEngine.Campaign.Tests.Editor
         public TrackProgressModel GetTrackProgress() => trackProgress;
 
         public IReadOnlyList<TrackEntry> GetOrderedTracks() => Array.Empty<TrackEntry>();
+
+        public bool IsTrackUnlocked(string trackId) => CurrentTrack != null && CurrentTrack.name == trackId;
+
+        public bool TrySelectTrack(string trackId) => IsTrackUnlocked(trackId);
 
         public System.Threading.Tasks.Task RecordResultAsync(RaceResultModel result)
         {
@@ -186,7 +190,7 @@ namespace GearEngine.Campaign.Tests.Editor
             }
 
             AddedGearConfigs.Add(gear);
-            var o = new OwnedGear { InstanceId = Guid.NewGuid().ToString("N"), Config = gear };
+            OwnedGear o = new OwnedGear { InstanceId = Guid.NewGuid().ToString("N"), Config = gear };
             owned.Add(o);
             InventoryChanged?.Invoke();
             return o;
