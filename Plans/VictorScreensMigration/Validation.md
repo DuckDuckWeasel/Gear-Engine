@@ -189,3 +189,31 @@ Implementation commit: `8bcdb33a`. Local `main` integration: `bc523bd3` (clean m
 from verified `5cfa1b9a`). NUnit XML, the validation transcript, and the contextual
 report are under `Artifacts/TestResults/HomeHeaderCleanup/`. No remote push was
 performed.
+
+## Results standings panel fit — 2026-09-16
+
+Results now resizes the visible `tablescore_img` card rather than the sibling `Score`
+container. The final three-row state ends immediately below the third row. The card
+retains its authored height while the four-row rank-promotion state is visible.
+
+Verification:
+
+- Red regression: **0 passed, 1 failed** because the selected panel was `Score` instead
+  of `tablescore_img`.
+- Final Results regression: **1 passed, 0 failed, 0 skipped**. It covers the expanded
+  four-row state, final three-row fit, repeated opening, rank animation completion,
+  bindings, and viewport bounds.
+- Runtime captures were regenerated and inspected at 1080x1680, 1080x1920,
+  1080x2280, and 1080x2400. A separate 1080x2280 pre-promotion capture confirms that
+  all four rows remain visible without clipping.
+- Scoped C# lint `fix` and `check` passed for the presentation and regression files.
+- `Game.Campaign.Tests.csproj` built with **0 errors**. The generated Unity workspace
+  retained its existing assembly-conflict warnings.
+- `validate-changes.ps1 -SkipTests` exited 0 with zero assembly-reference, pragma, or
+  analyzer findings. Its separate batch Editor could not start while the worktree was
+  open in Unity; the live Editor regression and scoped project build provide the
+  compilation evidence.
+
+Implementation commit: `171f7ac1`. NUnit XML, the validation transcript, contextual
+report, and capture index are under `Artifacts/TestResults/ResultsStandingsFit/` and
+`Artifacts/VisualTests/RewardsFlow/Portrait/`. No remote push was performed.

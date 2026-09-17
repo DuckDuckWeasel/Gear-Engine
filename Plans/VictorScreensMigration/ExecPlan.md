@@ -31,6 +31,7 @@ its GUID is the stable identity used by serialized references.
 - [x] Remove the unused white area below the final visible Home standings row while preserving the unraced fourth-row state (`3d4aa546`).
 - [x] Remove the `Laps` and `Target` metadata from the Home track header while preserving track selection and runtime standings (`8bcdb33a`).
 - [x] Integrate the Home header cleanup into local `main` without conflicts (`bc523bd3`).
+- [x] Remove the unused white area below the final visible Results standings row while preserving the four-row promotion state (`171f7ac1`).
 - Local integration: merge `codex/victor-post-race-screens` into verified `main` at `3df8b90e`; final disposition is recorded in the integration merge.
 
 ## Surprises & Discoveries
