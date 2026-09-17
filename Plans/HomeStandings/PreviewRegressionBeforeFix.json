@@ -1,0 +1,20 @@
+{
+  "status": "completed",
+  "duration": 1.7,
+  "summary": {
+    "total": 1,
+    "passed": 0,
+    "failed": 1,
+    "skipped": 0,
+    "inconclusive": 0
+  },
+  "results": [
+    {
+      "FullName": "GearEngine.Campaign.Tests.Editor.HomePresentationTests.HomePreview_RestoresSharedTrackWhenLeavingOrInterrupted",
+      "Status": "Failed",
+      "Duration": 9.1695616,
+      "Message": "  Expected: (1.00, 2.00, 3.00)\n  But was:  (0.00, 2.42, 10.00)\n",
+      "StackTrace": "at GearEngine.Campaign.Tests.Editor.HomePresentationTests+<HomePreview_RestoresSharedTrackWhenLeavingOrInterrupted>d__2.MoveNext () [0x0022b] in /Users/leonardosilva/Documents/MatheusCohen/VictorScreensMigration/Assets/GearEngine/Scripts/Game/Campaign/Tests/Editor/HomePresentationTests.cs:101\nat UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0004e] in ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/NUnitExtensions/Attributes/TestEnumerator.cs:44\n"
+    }
+  ]
+}

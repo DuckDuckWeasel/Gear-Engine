@@ -1,0 +1,1 @@
+{"test":"GearEngine.Campaign.Tests.Editor.HomePresentationTests.GearPopup_ShowsSelectedCardOnOpenAndReopen","artifact":"GearPopupQuantumLink1080x2280.png","scenario":"GearPopupQuantumLink","criteria":["Runtime ViewModel bindings","Rendered text inside viewport","Animation restart","Selected gear card visibility and rarity"]}

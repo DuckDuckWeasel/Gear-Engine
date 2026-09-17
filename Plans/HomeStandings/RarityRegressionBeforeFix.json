@@ -1,0 +1,44 @@
+{
+  "success": true,
+  "command": "command run_tests",
+  "data": {
+    "command": "run_tests",
+    "parameters": {
+      "mode": "editor",
+      "filter": "GearPopup_BindsRarityStars",
+      "format": "json"
+    },
+    "result": {
+      "Summary": {
+        "Total": 1,
+        "Passed": 0,
+        "Failed": 1,
+        "Skipped": 0,
+        "Inconclusive": 0
+      },
+      "Results": [
+        {
+          "FullName": "GearEngine.Campaign.Tests.Editor.HomePresentationTests.GearPopup_BindsRarityStars",
+          "Status": "Failed",
+          "Duration": 0.0534753,
+          "Message": "  Gear rarity stars must be data-bound, not a two-star design sample.\n  Expected: 5\n  But was:  0\n",
+          "StackTrace": "at GearEngine.Campaign.Tests.Editor.HomePresentationTests.GearPopup_BindsRarityStars () [0x00014] in /Users/leonardosilva/Documents/MatheusCohen/VictorScreensMigration/Assets/GearEngine/Scripts/Game/Campaign/Tests/Editor/HomePresentationTests.cs:25\n"
+        }
+      ],
+      "Duration": 1.23,
+      "StatusPath": null,
+      "Mode": "EditMode",
+      "FilterApplied": "testname: GearPopup_BindsRarityStars",
+      "success": true,
+      "result": null
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7800,
+      "projectPath": "/Users/leonardosilva/Documents/MatheusCohen/VictorScreensMigration"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

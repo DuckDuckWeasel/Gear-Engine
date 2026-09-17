@@ -51,3 +51,13 @@ Stars use score thresholds only, ordered from lowest to highest. Time never gran
 **Planned follow-up:** unlocking the next track will require first place; stars will affect rewards only. The current backend time-band gold/unlock contract remains authoritative until that server change is implemented. See [Race standings ExecPlan](../../Plans/RaceStandings/ExecPlan.md) for the migration and reward-policy work still required.
 
 The installed Scaffold View package attaches its own property-change handler during binding. `PostRaceViewBindings` provides the corresponding detach operation for Results/Rewards destruction and unbinding; value updates still use the standard Bind APIs. Analyzer-required extraction keeps race setup, result persistence, ad availability, and reward navigation in named methods without changing their sequence.
+
+## Home best times and item details
+
+Home reuses the Results standing rows with the same rival time table. It renders the saved personal best in its final position, with the top three rows or all three rivals plus the player outside the podium. An unraced player shows `--:--.--`. Home does not replay the result promotion animation.
+
+The three Home stars show the highest score-star count earned for that track, independently of best time. `TracksClientModule` records stars only after an accepted race response; `TrackProgressModel` retains the maximum. Stars currently persist on this device in PlayerPrefs (`GearEngine.TrackStars.V1.<trackId>`). The existing cloud contract only persists times: older runs without locally saved stars show zero, and stars do not sync between devices or accounts. Cloud/account-scoped star persistence remains a follow-up.
+
+Item details bind artwork, title, description and five rarity slots from the selected gear: Common through Legendary fill one through five slots. These are gear rarity indicators, distinct from the track's three score stars. The popup owns its manual Animora opening/closing lifecycle through `PostRaceAnimation`; its content has nondegenerate transforms and updates when selecting the next/previous item.
+
+Home's `TrackViewport` fits the scene's shared track after canvas layout. `MainView` owns the transition coroutine/tween and restores the original track pose on close, hide, or disable. Cancelling the transition prevents a late tween from moving/scaling the track after Setup or Race takes ownership.

@@ -1,0 +1,13 @@
+{
+  "captureMode": "interactive commands in resident headless Editor",
+  "scene": "Assets/GearEngine/Scenes/Main Scene.unity",
+  "artifact": "SetupRuntime1080x2280.png",
+  "scenario": "SetupRuntime1080x2280",
+  "data": "Existing runtime profile; best times loaded from LiveOps. No historical score stars were available on this device.",
+  "criteria": [
+    "Best Times uses Results standings",
+    "Home preview fits below header",
+    "Home to Setup restores shared track position (0,0,45) and scale (1,1,1)",
+    "Setup returns Home through its existing button"
+  ]
+}

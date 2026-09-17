@@ -1,0 +1,73 @@
+{
+  "commands": [
+    [
+      "dotnet",
+      "format",
+      "whitespace",
+      "/Users/leonardosilva/Documents/MatheusCohen/VictorScreensMigration/VictorScreensMigration.sln",
+      "--no-restore",
+      "--verbosity",
+      "minimal",
+      "--include",
+      "Assets/GearEngine/Scripts/Game/Campaign/Bootstrap/LiveOps/TracksClientModule.cs",
+      "Assets/GearEngine/Scripts/Game/Campaign/Presentation/ItemPopupView.cs",
+      "Assets/GearEngine/Scripts/Game/Campaign/Presentation/ItemSlotView.cs",
+      "Assets/GearEngine/Scripts/Game/Campaign/Presentation/MainView.cs",
+      "Assets/GearEngine/Scripts/Game/Campaign/Presentation/ResultStandingsView.cs",
+      "Assets/GearEngine/Scripts/Game/Campaign/Presentation/TrackStatsViewComponent.cs",
+      "Assets/GearEngine/Scripts/Game/Campaign/Presentation/TrackStatsViewModel.cs",
+      "Assets/GearEngine/Scripts/Game/Campaign/RaceStandingEntry.cs",
+      "Assets/GearEngine/Scripts/Game/Campaign/RaceStandingsModel.cs",
+      "Assets/GearEngine/Scripts/Game/Campaign/Services/TrackProgressModel.cs",
+      "Assets/GearEngine/Scripts/Game/Campaign/Tests/Editor/HomePresentationTests.cs",
+      "Assets/GearEngine/Scripts/Game/Campaign/Tests/Editor/TrackGameDataTests.cs",
+      "--verify-no-changes"
+    ],
+    [
+      "dotnet",
+      "format",
+      "style",
+      "/Users/leonardosilva/Documents/MatheusCohen/VictorScreensMigration/VictorScreensMigration.sln",
+      "--no-restore",
+      "--severity",
+      "warn",
+      "--verbosity",
+      "minimal",
+      "--include",
+      "Assets/GearEngine/Scripts/Game/Campaign/Bootstrap/LiveOps/TracksClientModule.cs",
+      "Assets/GearEngine/Scripts/Game/Campaign/Presentation/ItemPopupView.cs",
+      "Assets/GearEngine/Scripts/Game/Campaign/Presentation/ItemSlotView.cs",
+      "Assets/GearEngine/Scripts/Game/Campaign/Presentation/MainView.cs",
+      "Assets/GearEngine/Scripts/Game/Campaign/Presentation/ResultStandingsView.cs",
+      "Assets/GearEngine/Scripts/Game/Campaign/Presentation/TrackStatsViewComponent.cs",
+      "Assets/GearEngine/Scripts/Game/Campaign/Presentation/TrackStatsViewModel.cs",
+      "Assets/GearEngine/Scripts/Game/Campaign/RaceStandingEntry.cs",
+      "Assets/GearEngine/Scripts/Game/Campaign/RaceStandingsModel.cs",
+      "Assets/GearEngine/Scripts/Game/Campaign/Services/TrackProgressModel.cs",
+      "Assets/GearEngine/Scripts/Game/Campaign/Tests/Editor/HomePresentationTests.cs",
+      "Assets/GearEngine/Scripts/Game/Campaign/Tests/Editor/TrackGameDataTests.cs",
+      "--verify-no-changes"
+    ]
+  ],
+  "editorconfig": "/Users/leonardosilva/Documents/MatheusCohen/VictorScreensMigration/.editorconfig",
+  "files": [
+    "Assets/GearEngine/Scripts/Game/Campaign/Bootstrap/LiveOps/TracksClientModule.cs",
+    "Assets/GearEngine/Scripts/Game/Campaign/Presentation/ItemPopupView.cs",
+    "Assets/GearEngine/Scripts/Game/Campaign/Presentation/ItemSlotView.cs",
+    "Assets/GearEngine/Scripts/Game/Campaign/Presentation/MainView.cs",
+    "Assets/GearEngine/Scripts/Game/Campaign/Presentation/ResultStandingsView.cs",
+    "Assets/GearEngine/Scripts/Game/Campaign/Presentation/TrackStatsViewComponent.cs",
+    "Assets/GearEngine/Scripts/Game/Campaign/Presentation/TrackStatsViewModel.cs",
+    "Assets/GearEngine/Scripts/Game/Campaign/RaceStandingEntry.cs",
+    "Assets/GearEngine/Scripts/Game/Campaign/RaceStandingsModel.cs",
+    "Assets/GearEngine/Scripts/Game/Campaign/Services/TrackProgressModel.cs",
+    "Assets/GearEngine/Scripts/Game/Campaign/Tests/Editor/HomePresentationTests.cs",
+    "Assets/GearEngine/Scripts/Game/Campaign/Tests/Editor/TrackGameDataTests.cs"
+  ],
+  "no_op": false,
+  "repo": "/Users/leonardosilva/Documents/MatheusCohen/VictorScreensMigration",
+  "scope": "git-changed",
+  "workspace": "/Users/leonardosilva/Documents/MatheusCohen/VictorScreensMigration/VictorScreensMigration.sln"
+}
+Warnings were encountered while loading the workspace. Set the verbosity option to the 'diagnostic' level to log warnings.
+Warnings were encountered while loading the workspace. Set the verbosity option to the 'diagnostic' level to log warnings.
