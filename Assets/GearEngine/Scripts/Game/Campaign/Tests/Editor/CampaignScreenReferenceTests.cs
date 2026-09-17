@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using GearEngine.CarSimulation;
 using GearEngine.CarSimulation.Definitions;
 using GearEngine.CarSimulation.Entity;
@@ -8,7 +9,9 @@ using GearEngine.Campaign.Presentation;
 using NUnit.Framework;
 using TMPro;
 using UnityEditor;
+using UnityEditor.SceneManagement;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.Splines;
 using Object = UnityEngine.Object;
 
@@ -16,6 +19,37 @@ namespace GearEngine.Campaign.Tests.Editor
 {
     public sealed class CampaignScreenReferenceTests
     {
+        [Test]
+        public void MainScene_HasOneTrackNavigationControl()
+        {
+            const string scenePath = "Assets/GearEngine/Scenes/Main Scene.unity";
+            Scene scene = SceneManager.GetSceneByPath(scenePath);
+            bool wasAlreadyLoaded = scene.isLoaded;
+            if (!wasAlreadyLoaded)
+            {
+                scene = EditorSceneManager.OpenScene(scenePath, OpenSceneMode.Additive);
+            }
+
+            try
+            {
+                MainView mainView = scene.GetRootGameObjects()
+                    .SelectMany(root => root.GetComponentsInChildren<MainView>(true))
+                    .Single();
+                int navigationRootCount = mainView.GetComponentsInChildren<Transform>(true)
+                    .Count(child => child.name == "TrackNavigation" || child.name == "select_track");
+
+                Assert.That(navigationRootCount, Is.EqualTo(1),
+                    "Home must render one previous/next track navigation control.");
+            }
+            finally
+            {
+                if (!wasAlreadyLoaded)
+                {
+                    EditorSceneManager.CloseScene(scene, true);
+                }
+            }
+        }
+
         [Test]
         public void RaceBoardLayout_ReservesHudSpaceAndRestoresSharedBoard()
         {
