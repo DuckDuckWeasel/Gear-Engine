@@ -48,6 +48,10 @@ namespace GearEngine.Campaign.Tests.Editor
             GameObject instance = Object.Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>("Assets/GearEngine/Prefabs/Campaign/Main View.prefab"));
             instance.SetActive(true);
             TrackStatsViewComponent stats = instance.GetComponentInChildren<TrackStatsViewComponent>();
+            ResultStandingsView standings = instance.GetComponentInChildren<ResultStandingsView>();
+            RectTransform panel = (RectTransform)standings.transform.parent;
+            float expandedHeight = panel.sizeDelta.y;
+            float rowSpacing = new SerializedObject(standings).FindProperty("rowSpacing").floatValue;
             foreach (bool saved in new[] { false, true })
             {
                 Services.TrackProgressModel progress = new Services.TrackProgressModel();
@@ -59,10 +63,12 @@ namespace GearEngine.Campaign.Tests.Editor
                 TrackStatsViewModel model = new TrackStatsViewModel(track, progress);
                 stats.Bind(model);
                 yield return new WaitForSecondsRealtime(2f);
-                ResultStandingsView standings = instance.GetComponentInChildren<ResultStandingsView>();
                 Assert.That(standings.DisplayedPlayerPosition, Is.EqualTo(saved ? 3 : 4));
                 Assert.That(standings.IsAnimating, Is.False);
                 Assert.That(standings.GetComponentsInChildren<ResultStandingRowView>().Length, Is.EqualTo(saved ? 3 : 4));
+                float expectedHeight = saved ? expandedHeight - rowSpacing : expandedHeight;
+                Assert.That(panel.sizeDelta.y, Is.EqualTo(expectedHeight).Within(0.1f),
+                    "The standings panel must end after the last visible row.");
                 Assert.That(model.Standings.Player.FormattedTime, saved ? Does.Not.Contain("--") : Is.EqualTo("--:--.--"));
                 foreach (int height in new[] { 2280, 1680 })
                 {
@@ -221,10 +227,13 @@ namespace GearEngine.Campaign.Tests.Editor
                 image.Apply();
                 string file = $"{scenario}{width}x{height}.png";
                 File.WriteAllBytes(Path.Combine(output, file), image.EncodeToPNG());
+                string criteria = scenario.StartsWith("Home", System.StringComparison.Ordinal)
+                    ? "[\"Runtime ViewModel bindings\",\"Rendered text inside viewport\",\"Standings panel fits visible rows\",\"Four-row unraced state retained\"]"
+                    : "[\"Runtime ViewModel bindings\",\"Rendered text inside viewport\",\"Animation restart\",\"Selected gear card visibility and rarity\"]";
                 File.WriteAllText(Path.Combine(output, file + ".evidence.json"),
                     "{\"test\":\"" + NUnit.Framework.TestContext.CurrentContext.Test.FullName + "\"," +
                     $"\"artifact\":\"{file}\",\"scenario\":\"{scenario}\"," +
-                    "\"criteria\":[\"Runtime ViewModel bindings\",\"Rendered text inside viewport\",\"Animation restart\",\"Selected gear card visibility and rarity\"]}");
+                    $"\"criteria\":{criteria}}}");
                 ItemSlotView card = instance.GetComponentInChildren<ItemSlotView>();
                 if (card != null)
                 {

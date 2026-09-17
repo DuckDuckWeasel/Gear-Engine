@@ -16,6 +16,19 @@ namespace GearEngine.Campaign.Presentation
         private RaceStandingsModel standings;
         private List<ResultStandingRowView> order;
         private Coroutine animation;
+        private RectTransform panel;
+        private float expandedHeight;
+        private Vector2 expandedPosition;
+
+        private void Awake()
+        {
+            RectTransform parent = transform.parent as RectTransform;
+            panel = parent != null && parent.GetComponent<UnityEngine.UI.Graphic>() != null
+                ? parent
+                : (RectTransform)transform;
+            expandedHeight = panel.sizeDelta.y;
+            expandedPosition = panel.anchoredPosition;
+        }
 
         public void Bind(RaceStandingsModel model)
         {
@@ -68,6 +81,7 @@ namespace GearEngine.Campaign.Presentation
             List<RaceStandingEntry> initial = standings.Entries.Where(entry => !entry.IsPlayer).ToList();
             initial.Insert(standings.PreviousPosition - 1, standings.Player);
             order = rows.ToList();
+            ResizePanel(rows.Length);
             for (int i = 0; i < rows.Length; i++)
             {
                 rows[i].gameObject.SetActive(true);
@@ -123,10 +137,20 @@ namespace GearEngine.Campaign.Presentation
 
         private void ShowFinalRows()
         {
+            int visibleRowCount = Mathf.Clamp(standings.VisibleRowCount, 0, rows.Length);
             for (int i = 0; i < order.Count; i++)
             {
-                order[i].gameObject.SetActive(i < standings.VisibleRowCount);
+                order[i].gameObject.SetActive(i < visibleRowCount);
             }
+
+            ResizePanel(visibleRowCount);
+        }
+
+        private void ResizePanel(int visibleRowCount)
+        {
+            float height = expandedHeight - (rows.Length - visibleRowCount) * rowSpacing;
+            panel.sizeDelta = new Vector2(panel.sizeDelta.x, height);
+            panel.anchoredPosition = expandedPosition + Vector2.up * ((expandedHeight - height) * (1f - panel.pivot.y));
         }
     }
 }
