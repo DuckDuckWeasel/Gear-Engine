@@ -7,13 +7,13 @@ namespace GearEngine.Campaign.Presentation
 {
     public class ToolbarController : MonoBehaviour
     {
-        [Header("Botões")]
+        [Header("Buttons")]
         [SerializeField] private Button storeButton;
         [SerializeField] private Button raceButton;
         [SerializeField] private Button garageButton;
 
-        [Header("Configuração de Estado (Distinguir Telas)")]
-        [Tooltip("ScriptableObject usado para definir o que o ItemsView vai exibir")]
+        [Header("Screen State")]
+        [Tooltip("Defines which content the Items view displays.")]
         [SerializeField] private ItemsScreenState itemsState;
 
         private INavigation navigation;
@@ -26,16 +26,38 @@ namespace GearEngine.Campaign.Presentation
 
         private void OnEnable()
         {
-            if (storeButton != null) storeButton.onClick.AddListener(OnStoreClicked);
-            if (raceButton != null) raceButton.onClick.AddListener(OnRaceClicked);
-            if (garageButton != null) garageButton.onClick.AddListener(OnGarageClicked);
+            if (storeButton != null)
+            {
+                storeButton.onClick.AddListener(OnStoreClicked);
+            }
+
+            if (raceButton != null)
+            {
+                raceButton.onClick.AddListener(OnRaceClicked);
+            }
+
+            if (garageButton != null)
+            {
+                garageButton.onClick.AddListener(OnGarageClicked);
+            }
         }
 
         private void OnDisable()
         {
-            if (storeButton != null) storeButton.onClick.RemoveListener(OnStoreClicked);
-            if (raceButton != null) raceButton.onClick.RemoveListener(OnRaceClicked);
-            if (garageButton != null) garageButton.onClick.RemoveListener(OnGarageClicked);
+            if (storeButton != null)
+            {
+                storeButton.onClick.RemoveListener(OnStoreClicked);
+            }
+
+            if (raceButton != null)
+            {
+                raceButton.onClick.RemoveListener(OnRaceClicked);
+            }
+
+            if (garageButton != null)
+            {
+                garageButton.onClick.RemoveListener(OnGarageClicked);
+            }
         }
 
         private void EnsureItemsState()
@@ -66,9 +88,20 @@ namespace GearEngine.Campaign.Presentation
 
         private void UpdateRadioButtons(Button activeBtn)
         {
-            if (storeButton != null) storeButton.interactable = (storeButton != activeBtn);
-            if (raceButton != null) raceButton.interactable = (raceButton != activeBtn);
-            if (garageButton != null) garageButton.interactable = (garageButton != activeBtn);
+            if (storeButton != null)
+            {
+                storeButton.interactable = (storeButton != activeBtn);
+            }
+
+            if (raceButton != null)
+            {
+                raceButton.interactable = (raceButton != activeBtn);
+            }
+
+            if (garageButton != null)
+            {
+                garageButton.interactable = (garageButton != activeBtn);
+            }
         }
 
         private void OpenItemsView(ItemScreenType screenType, bool showBuyButton, string title, string subtitle)
@@ -76,30 +109,19 @@ namespace GearEngine.Campaign.Presentation
             EnsureItemsState();
             bool showUnownedItems = screenType == ItemScreenType.Perks;
 
-            // Desativa a MainView manualmente sempre que formos para a ItemsView
-            MainView mainView = FindObjectOfType<MainView>(true);
-            if (mainView != null && mainView.gameObject.activeSelf) 
-            {
-                mainView.gameObject.SetActive(false);
-            }
-
-            // Se já estivermos na tela de itens, apenas atualizamos o estado e damos refresh
             if (navigation != null && navigation.CurrentController is ItemsViewModel currentVm)
             {
                 if (currentVm.Config.TypeToDisplay == screenType)
                 {
-                    // Já está aberto neste exato estado, não fazemos nada
                     return;
                 }
 
-                // Muda o tipo da tela e atualiza a View sem abrir uma nova na pilha de navegação
                 currentVm.Config.TypeToDisplay = screenType;
                 currentVm.Config.ShowBuyButton = showBuyButton;
                 currentVm.Config.ShowUnownedItems = showUnownedItems;
                 currentVm.Config.Title = title;
                 currentVm.Config.Subtitle = subtitle;
-                
-                // Mantém o estado interno do Toolbar atualizado também
+
                 itemsState.TypeToDisplay = screenType;
                 itemsState.ShowBuyButton = showBuyButton;
                 itemsState.ShowUnownedItems = showUnownedItems;
@@ -110,39 +132,31 @@ namespace GearEngine.Campaign.Presentation
                 return;
             }
 
-            // Se não estiver aberta, configuramos e abrimos normalmente
             itemsState.TypeToDisplay = screenType;
             itemsState.ShowBuyButton = showBuyButton;
             itemsState.ShowUnownedItems = showUnownedItems;
             itemsState.Title = title;
             itemsState.Subtitle = subtitle;
 
-            // Destrói e cria o ItemsView usando o Navigation System do Scaffold
             if (navigation != null)
             {
-                // Se a arquitetura usar um método diferente de Open (ex: Push, Pop), basta ajustar aqui.
-                // O Navigation cuidará de instanciar o ItemsView associado a este ViewModel!
-                navigation.Open(new ItemsViewModel(itemsState), true, new NavigationOptions() { CloseAllViews = false });
+                navigation.Open(new ItemsViewModel(itemsState), true, new NavigationOptions() { CloseAllViews = true });
             }
             else
             {
-                Debug.LogError("[ToolbarController] INavigation não foi injetado! O ItemsView não pôde ser criado.");
+                Debug.LogError("[ToolbarController] Navigation is required to open the Items view.");
             }
         }
 
         public void OpenMainView()
         {
-            this.gameObject.SetActive(true);
-
-            // Ativa o MainView
-            MainView mainView = FindObjectOfType<MainView>(true);
-            if (mainView != null) 
+            if (navigation == null)
             {
-                mainView.gameObject.SetActive(true);
+                Debug.LogError("[ToolbarController] Navigation is required to open the Main view.");
+                return;
             }
 
-            // Usa o sistema de navegação para retornar e limpar as views antigas
-            if (navigation != null && !(navigation.CurrentController is MainViewModel))
+            if (!(navigation.CurrentController is MainViewModel))
             {
                 navigation.Open(new MainViewModel(), true, new NavigationOptions() { CloseAllViews = true });
             }

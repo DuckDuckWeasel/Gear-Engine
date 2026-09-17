@@ -44,15 +44,40 @@ namespace GearEngine.Campaign.Tests.Editor
         }
 
         [Test]
-        public async Task FreshPlayer_ShowsOnlyFirstConfiguredTrack()
+        public async Task FreshPlayer_CanPreviewNextLockedTrackWithoutStartingIt()
         {
             await InitializeTracks(3, 0);
 
             MainViewModel model = CreateViewModel();
 
             Assert.That(model.Track.Track, Is.SameAs(tracks[0]));
+            Assert.That(model.TrackPosition, Is.EqualTo("1 / 2"));
+            Assert.That(model.CanNavigateTracks, Is.True);
+            Assert.That(model.IsTrackLocked, Is.False);
+
+            model.NextTrack();
+
+            Assert.That(model.Track.Track, Is.SameAs(tracks[1]));
+            Assert.That(model.TrackPosition, Is.EqualTo("2 / 2"));
+            Assert.That(model.IsTrackLocked, Is.True);
+            model.ClickedPlay();
+            Assert.That(navigation.OpenedControllers, Is.Empty);
+
+            model.NextTrack();
+            Assert.That(model.Track.Track, Is.SameAs(tracks[0]));
+            Assert.That(model.IsTrackLocked, Is.False);
+        }
+
+        [Test]
+        public async Task SingleConfiguredTrack_HidesNavigation()
+        {
+            await InitializeTracks(1, 0);
+
+            MainViewModel model = CreateViewModel();
+
             Assert.That(model.TrackPosition, Is.EqualTo("1 / 1"));
             Assert.That(model.CanNavigateTracks, Is.False);
+            Assert.That(model.IsTrackLocked, Is.False);
         }
 
         [Test]
@@ -98,7 +123,7 @@ namespace GearEngine.Campaign.Tests.Editor
             model.RefreshTracks();
 
             Assert.That(model.Track.Track, Is.SameAs(tracks[1]));
-            Assert.That(model.TrackPosition, Is.EqualTo("2 / 2"));
+            Assert.That(model.TrackPosition, Is.EqualTo("2 / 3"));
             Assert.That(model.CanNavigateTracks, Is.True);
         }
 
@@ -148,6 +173,38 @@ namespace GearEngine.Campaign.Tests.Editor
                     Object.DestroyImmediate(items.Config);
                 }
 
+                Object.DestroyImmediate(toolbarObject);
+            }
+        }
+
+        [Test]
+        public void StoreToRace_LeavesMainViewActivationToNavigation()
+        {
+            GameObject toolbarObject = new GameObject("ToolbarTest");
+            GameObject mainObject = new GameObject("InactiveMainViewTest");
+            ItemsScreenState config = ScriptableObject.CreateInstance<ItemsScreenState>();
+
+            try
+            {
+                ToolbarController toolbar = toolbarObject.AddComponent<ToolbarController>();
+                mainObject.AddComponent<MainView>();
+                mainObject.SetActive(false);
+                navigation = new RecordingNavigation
+                {
+                    CurrentController = new ItemsViewModel(config),
+                };
+                toolbar.Construct(navigation);
+
+                toolbar.OpenMainView();
+
+                Assert.That(mainObject.activeSelf, Is.False, "Navigation must own MainView activation and binding.");
+                Assert.That(navigation.OpenedControllers, Has.Count.EqualTo(1));
+                Assert.That(navigation.OpenedControllers[0], Is.InstanceOf<MainViewModel>());
+            }
+            finally
+            {
+                Object.DestroyImmediate(config);
+                Object.DestroyImmediate(mainObject);
                 Object.DestroyImmediate(toolbarObject);
             }
         }

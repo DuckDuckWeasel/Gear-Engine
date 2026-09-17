@@ -35,9 +35,11 @@ Campaign progression, gold, gear inventory, board loadout, and card unlocks are 
 ## Home track navigation
 
 The Home screen exposes previous and next controls around the track preview. The
-controls cycle through unlocked tracks in Remote Config order and wrap at both
-ends. They stay hidden while only one track is available. The track counter,
-preview, saved stars, best-time standings, and track name update together.
+controls cycle through unlocked tracks plus the next locked track in Remote
+Config order and wrap at both ends. The locked preview keeps Play disabled and
+marks the track name as locked. The controls stay hidden when the catalog has
+only one track. The track counter, preview, saved stars, best-time standings,
+and track name update together.
 
 Browsing does not change the active race. Pressing Play selects the displayed
 track for Setup, Race, and result submission. `TracksClientModule` restores

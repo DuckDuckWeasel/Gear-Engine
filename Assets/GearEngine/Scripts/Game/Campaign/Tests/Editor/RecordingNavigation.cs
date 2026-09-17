@@ -9,7 +9,7 @@ namespace GearEngine.Campaign.Tests.Editor
 
         public int ReturnCallCount { get; private set; }
 
-        public IViewController CurrentController => null;
+        public IViewController CurrentController { get; set; }
 
         public void Open<TViewController>(TViewController controller, bool closeCurrent = false, NavigationOptions options = null)
             where TViewController : IViewController
@@ -17,6 +17,7 @@ namespace GearEngine.Campaign.Tests.Editor
             if (controller != null)
             {
                 OpenedControllers.Add(controller);
+                CurrentController = controller;
             }
         }
 
@@ -25,6 +26,7 @@ namespace GearEngine.Campaign.Tests.Editor
             if (controller != null)
             {
                 OpenedControllers.Add(controller);
+                CurrentController = controller;
             }
         }
 

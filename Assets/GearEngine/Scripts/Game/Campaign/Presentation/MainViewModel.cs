@@ -13,11 +13,13 @@ namespace GearEngine.Campaign.Presentation
         public CampaignTrackPreviewViewModel Track { get; private set; }
         public TrackStatsViewModel Stats { get; private set; }
 
-        public bool CanNavigateTracks => availableTracks.Count > 1;
-        public string TrackPosition => selectedIndex < 0 ? "0 / 0" : $"{selectedIndex + 1} / {availableTracks.Count}";
+        public bool CanNavigateTracks => tracks.Count > 1 && unlockedCount > 0;
+        public bool IsTrackLocked => selectedIndex < 0 || !trackService.IsTrackUnlocked(tracks[selectedIndex].TrackId);
+        public string TrackPosition => selectedIndex < 0 ? "0 / 0" : $"{selectedIndex + 1} / {tracks.Count}";
 
-        private readonly List<TrackEntry> availableTracks = new List<TrackEntry>();
+        private readonly List<TrackEntry> tracks = new List<TrackEntry>();
         private int selectedIndex = -1;
+        private int unlockedCount;
 
         [Inject] private ITrackService trackService;
 
@@ -35,17 +37,34 @@ namespace GearEngine.Campaign.Presentation
 
         public void RefreshTracks()
         {
-            availableTracks.Clear();
+            tracks.Clear();
+            unlockedCount = 0;
+            TrackEntry lockedPreview = null;
             foreach (TrackEntry entry in trackService.GetOrderedTracks())
             {
-                if (entry?.Track != null && trackService.IsTrackUnlocked(entry.TrackId))
+                if (entry?.Track == null)
                 {
-                    availableTracks.Add(entry);
+                    continue;
+                }
+
+                if (trackService.IsTrackUnlocked(entry.TrackId))
+                {
+                    tracks.Add(entry);
+                    unlockedCount++;
+                }
+                else if (lockedPreview == null)
+                {
+                    lockedPreview = entry;
                 }
             }
 
-            selectedIndex = availableTracks.FindIndex(entry => entry.Track == trackService.CurrentTrack);
-            if (selectedIndex < 0 && availableTracks.Count > 0)
+            if (lockedPreview != null)
+            {
+                tracks.Add(lockedPreview);
+            }
+
+            selectedIndex = tracks.FindIndex(entry => entry.Track == trackService.CurrentTrack);
+            if (selectedIndex < 0 && tracks.Count > 0)
             {
                 selectedIndex = 0;
             }
@@ -70,13 +89,13 @@ namespace GearEngine.Campaign.Presentation
                 return;
             }
 
-            selectedIndex = (selectedIndex + direction + availableTracks.Count) % availableTracks.Count;
+            selectedIndex = (selectedIndex + direction + tracks.Count) % tracks.Count;
             UpdateSelectedTrack();
         }
 
         private void UpdateSelectedTrack()
         {
-            Track = selectedIndex < 0 ? null : new CampaignTrackPreviewViewModel(availableTracks[selectedIndex].Track);
+            Track = selectedIndex < 0 ? null : new CampaignTrackPreviewViewModel(tracks[selectedIndex].Track);
             Stats = Track == null ? null : new TrackStatsViewModel(Track.Track, trackService.GetTrackProgress());
             if (Track != null)
             {
@@ -91,6 +110,7 @@ namespace GearEngine.Campaign.Presentation
             OnPropertyChanged(nameof(Track));
             OnPropertyChanged(nameof(Stats));
             OnPropertyChanged(nameof(CanNavigateTracks));
+            OnPropertyChanged(nameof(IsTrackLocked));
             OnPropertyChanged(nameof(TrackPosition));
         }
 
@@ -98,7 +118,7 @@ namespace GearEngine.Campaign.Presentation
         {
             try
             {
-                if (selectedIndex < 0 || !trackService.TrySelectTrack(availableTracks[selectedIndex].TrackId))
+                if (IsTrackLocked || !trackService.TrySelectTrack(tracks[selectedIndex].TrackId))
                 {
                     return;
                 }

@@ -39,30 +39,18 @@ namespace GearEngine.Campaign.Presentation
                     "[MainView] Track must be assigned on the scene instance (not baked into the prefab).");
             }
 
-            previousTrackButton.onClick.AddListener(viewModel.PreviousTrack);
-            nextTrackButton.onClick.AddListener(viewModel.NextTrack);
             Bind<CampaignTrackPreviewViewModel, CampaignTrackPreviewViewModel>(() => viewModel.Track, UpdateTrackPreview);
             Bind<TrackStatsViewModel, TrackStatsViewModel>(() => viewModel.Stats, UpdateTrackStats);
             Bind<bool, bool>(() => viewModel.CanNavigateTracks, UpdateTrackNavigation);
             Bind<string, string>(() => viewModel.TrackPosition, value => trackPositionLabel.text = value);
+            Bind<bool, bool>(() => viewModel.IsTrackLocked, UpdateTrackLock);
         }
 
         protected override void OnOpen(bool wasHidden)
         {
             base.OnOpen(wasHidden);
             viewModel.RefreshTracks();
-            playButton.onClick.RemoveListener(OnPlayClicked);
-            playButton.onClick.AddListener(OnPlayClicked);
-            if (talentPerksButton != null)
-            {
-                talentPerksButton.onClick.RemoveListener(OnTalentPerksClicked);
-                talentPerksButton.onClick.AddListener(OnTalentPerksClicked);
-            }
-            if (gearsButton != null)
-            {
-                gearsButton.onClick.RemoveListener(OnGearsClicked);
-                gearsButton.onClick.AddListener(OnGearsClicked);
-            }
+            RegisterButtonListeners();
             track.gameObject.SetActive(true);
         }
 
@@ -70,19 +58,10 @@ namespace GearEngine.Campaign.Presentation
         {
             base.OnClose(hiding);
             RestoreTrackPose();
+            UnregisterButtonListeners();
             if (hiding)
             {
                 return;
-            }
-
-            playButton.onClick.RemoveListener(OnPlayClicked);
-            if (talentPerksButton != null)
-            {
-                talentPerksButton.onClick.RemoveListener(OnTalentPerksClicked);
-            }
-            if (gearsButton != null)
-            {
-                gearsButton.onClick.RemoveListener(OnGearsClicked);
             }
 
             if (track != null)
@@ -93,8 +72,7 @@ namespace GearEngine.Campaign.Presentation
 
         protected override void OnUnbind()
         {
-            previousTrackButton.onClick.RemoveListener(viewModel.PreviousTrack);
-            nextTrackButton.onClick.RemoveListener(viewModel.NextTrack);
+            UnregisterButtonListeners();
             RestoreTrackPose();
             track.Unbind();
             base.OnUnbind();
@@ -122,6 +100,7 @@ namespace GearEngine.Campaign.Presentation
             if (stats != null)
             {
                 statsPanel.Bind(stats);
+                statsPanel.SetLocked(viewModel.IsTrackLocked);
             }
         }
 
@@ -130,6 +109,31 @@ namespace GearEngine.Campaign.Presentation
             previousTrackButton.gameObject.SetActive(canNavigate);
             nextTrackButton.gameObject.SetActive(canNavigate);
             trackPositionLabel.gameObject.SetActive(canNavigate);
+        }
+
+        private void UpdateTrackLock(bool isLocked)
+        {
+            playButton.interactable = !isLocked && viewModel.Track != null;
+            statsPanel.SetLocked(isLocked);
+        }
+
+        private void RegisterButtonListeners()
+        {
+            UnregisterButtonListeners();
+            playButton.onClick.AddListener(OnPlayClicked);
+            previousTrackButton.onClick.AddListener(viewModel.PreviousTrack);
+            nextTrackButton.onClick.AddListener(viewModel.NextTrack);
+            talentPerksButton?.onClick.AddListener(OnTalentPerksClicked);
+            gearsButton?.onClick.AddListener(OnGearsClicked);
+        }
+
+        private void UnregisterButtonListeners()
+        {
+            playButton.onClick.RemoveListener(OnPlayClicked);
+            previousTrackButton.onClick.RemoveListener(viewModel.PreviousTrack);
+            nextTrackButton.onClick.RemoveListener(viewModel.NextTrack);
+            talentPerksButton?.onClick.RemoveListener(OnTalentPerksClicked);
+            gearsButton?.onClick.RemoveListener(OnGearsClicked);
         }
 
         private void StartTrackPreview()

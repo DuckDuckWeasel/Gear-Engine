@@ -62,6 +62,24 @@ namespace GearEngine.Campaign.Presentation
             RebuildTierSlots();
         }
 
+        public void SetLocked(bool isLocked)
+        {
+            if (viewModel == null)
+            {
+                return;
+            }
+
+            if (trackNameLabel != null)
+            {
+                trackNameLabel.text = isLocked ? $"{viewModel.TrackName} · LOCKED" : viewModel.TrackName;
+            }
+
+            for (int i = 0; i < earnedStars.Length; i++)
+            {
+                earnedStars[i].sprite = !isLocked && i < viewModel.EarnedStars ? earnedStar : emptyStar;
+            }
+        }
+
         private void OnDisable()
         {
             if (tiersSequence != null && tiersSequence.IsActive())
