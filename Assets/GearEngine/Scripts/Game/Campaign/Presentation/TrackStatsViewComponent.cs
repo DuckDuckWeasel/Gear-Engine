@@ -30,10 +30,12 @@ namespace GearEngine.Campaign.Presentation
         [SerializeField] private Sprite emptyStar;
 
         private Sequence tiersSequence;
+        private RectTransform earnedStarsContainer;
 
         protected override void OnBind()
         {
             base.OnBind();
+            PositionEarnedStarsInTrackHeader();
 
             if (trackNameLabel != null)
             {
@@ -62,7 +64,7 @@ namespace GearEngine.Campaign.Presentation
             RebuildTierSlots();
         }
 
-        public void SetLocked(bool isLocked)
+        public void SetLocked(bool _)
         {
             if (viewModel == null)
             {
@@ -71,13 +73,40 @@ namespace GearEngine.Campaign.Presentation
 
             if (trackNameLabel != null)
             {
-                trackNameLabel.text = isLocked ? $"{viewModel.TrackName} · LOCKED" : viewModel.TrackName;
+                trackNameLabel.text = viewModel.TrackName;
             }
 
             for (int i = 0; i < earnedStars.Length; i++)
             {
-                earnedStars[i].sprite = !isLocked && i < viewModel.EarnedStars ? earnedStar : emptyStar;
+                earnedStars[i].sprite = i < viewModel.EarnedStars ? earnedStar : emptyStar;
             }
+        }
+
+        private void PositionEarnedStarsInTrackHeader()
+        {
+            if (earnedStars.Length == 0 || earnedStars[0] == null)
+            {
+                return;
+            }
+
+            earnedStarsContainer ??= earnedStars[0].rectTransform.parent as RectTransform;
+            RectTransform headerRoot = transform as RectTransform;
+            if (earnedStarsContainer == null || headerRoot == null)
+            {
+                return;
+            }
+
+            if (earnedStarsContainer.parent != headerRoot)
+            {
+                earnedStarsContainer.SetParent(headerRoot, false);
+            }
+
+            earnedStarsContainer.anchorMin = new Vector2(0.5f, 1f);
+            earnedStarsContainer.anchorMax = earnedStarsContainer.anchorMin;
+            earnedStarsContainer.anchoredPosition = new Vector2(0f, -310f);
+            earnedStarsContainer.sizeDelta = new Vector2(320f, 90f);
+            earnedStarsContainer.localScale = Vector3.one;
+            earnedStarsContainer.SetAsLastSibling();
         }
 
         private void OnDisable()

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using GearEngine.Campaign.Services;
+using GearEngine.CarSimulation.Definitions;
 using Scaffold.MVVM;
 using Scaffold.Navigation.Contracts;
 using UnityEngine;
@@ -15,7 +16,7 @@ namespace GearEngine.Campaign.Presentation
 
         public bool CanNavigateTracks => tracks.Count > 1 && unlockedCount > 0;
         public bool IsTrackLocked => selectedIndex < 0 || !trackService.IsTrackUnlocked(tracks[selectedIndex].TrackId);
-        public string TrackPosition => selectedIndex < 0 ? "0 / 0" : $"{selectedIndex + 1} / {tracks.Count}";
+        public string TrackPosition => GetTrackStatus();
 
         private readonly List<TrackEntry> tracks = new List<TrackEntry>();
         private int selectedIndex = -1;
@@ -112,6 +113,24 @@ namespace GearEngine.Campaign.Presentation
             OnPropertyChanged(nameof(CanNavigateTracks));
             OnPropertyChanged(nameof(IsTrackLocked));
             OnPropertyChanged(nameof(TrackPosition));
+        }
+
+        private string GetTrackStatus()
+        {
+            if (selectedIndex < 0)
+            {
+                return "0 / 0";
+            }
+
+            if (!IsTrackLocked)
+            {
+                return $"{selectedIndex + 1} / {tracks.Count}";
+            }
+
+            string prerequisite = selectedIndex > 0
+                ? tracks[selectedIndex - 1].Track.GetDisplayName().ToUpperInvariant()
+                : "PREVIOUS TRACK";
+            return $"TRACK LOCKED\nWIN 1ST ON {prerequisite} TO UNLOCK";
         }
 
         public void ClickedPlay()

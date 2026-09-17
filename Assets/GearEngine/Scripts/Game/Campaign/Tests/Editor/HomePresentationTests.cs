@@ -52,6 +52,7 @@ namespace GearEngine.Campaign.Tests.Editor
             SerializedObject serializedStats = new SerializedObject(stats);
             TMP_Text lapsLabel = (TMP_Text)serializedStats.FindProperty("targetLapsLabel").objectReferenceValue;
             TMP_Text targetLabel = (TMP_Text)serializedStats.FindProperty("targetTimeLabel").objectReferenceValue;
+            Image firstEarnedStar = (Image)serializedStats.FindProperty("earnedStars").GetArrayElementAtIndex(0).objectReferenceValue;
             RectTransform panel = (RectTransform)standings.transform.parent;
             float expandedHeight = panel.sizeDelta.y;
             float rowSpacing = new SerializedObject(standings).FindProperty("rowSpacing").floatValue;
@@ -66,6 +67,12 @@ namespace GearEngine.Campaign.Tests.Editor
                 TrackStatsViewModel model = new TrackStatsViewModel(track, progress);
                 stats.Bind(model);
                 yield return new WaitForSecondsRealtime(2f);
+                RectTransform starsContainer = (RectTransform)firstEarnedStar.transform.parent;
+                Assert.That(starsContainer.parent, Is.SameAs(instance.transform),
+                    "Earned stars must be in the track header, outside the best-times panel.");
+                Assert.That(starsContainer.anchorMin, Is.EqualTo(new Vector2(0.5f, 1f)));
+                Assert.That(starsContainer.anchoredPosition.y, Is.EqualTo(-310f).Within(0.1f),
+                    "Earned stars must sit below the track name and above the track preview.");
                 Assert.That(lapsLabel.gameObject.activeSelf, Is.False, "Home must not show lap metadata.");
                 Assert.That(targetLabel.gameObject.activeSelf, Is.False, "Home must not show target-time metadata.");
                 Assert.That(standings.DisplayedPlayerPosition, Is.EqualTo(saved ? 3 : 4));

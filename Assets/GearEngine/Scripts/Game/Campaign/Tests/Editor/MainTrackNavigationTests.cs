@@ -58,13 +58,14 @@ namespace GearEngine.Campaign.Tests.Editor
             model.NextTrack();
 
             Assert.That(model.Track.Track, Is.SameAs(tracks[1]));
-            Assert.That(model.TrackPosition, Is.EqualTo("2 / 2"));
+            Assert.That(model.TrackPosition, Is.EqualTo("TRACK LOCKED\nWIN 1ST ON TRACK0 TO UNLOCK"));
             Assert.That(model.IsTrackLocked, Is.True);
             model.ClickedPlay();
             Assert.That(navigation.OpenedControllers, Is.Empty);
 
             model.NextTrack();
             Assert.That(model.Track.Track, Is.SameAs(tracks[0]));
+            Assert.That(model.TrackPosition, Is.EqualTo("1 / 2"));
             Assert.That(model.IsTrackLocked, Is.False);
         }
 

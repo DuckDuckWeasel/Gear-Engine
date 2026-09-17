@@ -29,6 +29,7 @@ namespace GearEngine.Campaign.Presentation
         private Quaternion originalTrackRotation;
         private Vector3 originalTrackScale;
         private bool hasTrackSnapshot;
+        private TextMeshProUGUI playButtonLabel;
 
         protected override void OnBind()
         {
@@ -114,6 +115,7 @@ namespace GearEngine.Campaign.Presentation
         private void UpdateTrackLock(bool isLocked)
         {
             playButton.interactable = !isLocked && viewModel.Track != null;
+            playButtonLabel.text = isLocked ? "LOCKED" : "RACE";
             statsPanel.SetLocked(isLocked);
         }
 
@@ -218,6 +220,23 @@ namespace GearEngine.Campaign.Presentation
             RequireReference(previousTrackButton, nameof(previousTrackButton));
             RequireReference(nextTrackButton, nameof(nextTrackButton));
             RequireReference(trackPositionLabel, nameof(trackPositionLabel));
+
+            playButtonLabel = playButton.GetComponentInChildren<TextMeshProUGUI>(true);
+            RequireReference(playButtonLabel, nameof(playButtonLabel));
+            ConfigureTrackStatusLabel();
+        }
+
+        private void ConfigureTrackStatusLabel()
+        {
+            RectTransform statusRect = trackPositionLabel.rectTransform;
+            statusRect.anchorMin = new Vector2(0.5f, 0.585f);
+            statusRect.anchorMax = statusRect.anchorMin;
+            statusRect.anchoredPosition = Vector2.zero;
+            statusRect.sizeDelta = new Vector2(760f, 96f);
+            trackPositionLabel.enableAutoSizing = true;
+            trackPositionLabel.fontSizeMin = 22f;
+            trackPositionLabel.fontSizeMax = 34f;
+            trackPositionLabel.alignment = TextAlignmentOptions.Center;
         }
 
         private void RequireReference(UnityEngine.Object field, string name)
