@@ -242,5 +242,5 @@ Verification:
   evidence.
 
 Implementation commit: `1bdf88b1`. NUnit XML, the wrapper transcript, and contextual
-report are under `Artifacts/TestResults/RaceHudLayout/`. Local integration is recorded
-after the branch merge. No remote push was performed.
+report are under `Artifacts/TestResults/RaceHudLayout/`. Local `main` integration:
+`de2c1537` (clean merge from verified `dc9c1876`). No remote push was performed.

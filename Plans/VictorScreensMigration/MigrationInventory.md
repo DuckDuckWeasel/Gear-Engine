@@ -78,8 +78,8 @@ The Results standings panel fit was integrated into local `main` in merge commit
 The Race telemetry layout correction is implemented in `1bdf88b1` on
 `codex/race-hud-layout`. It preserves the shared board and existing simulation bindings,
 adds an explicit RPM label, resets telemetry on bind, and includes active drift points
-in the displayed score. Local integration is recorded after the branch merge. No remote
-push is authorized.
+in the displayed score. It was integrated into local `main` in merge commit `de2c1537`.
+No remote push was performed.
 
 Validation commit `70079efe` records tests and final captures for both implementation batches. Local main integration: `611bc227`. No remote push.
 

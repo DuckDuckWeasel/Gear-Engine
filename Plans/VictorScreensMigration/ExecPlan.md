@@ -34,6 +34,7 @@ its GUID is the stable identity used by serialized references.
 - [x] Remove the unused white area below the final visible Results standings row while preserving the four-row promotion state (`171f7ac1`).
 - [x] Integrate the Results standings panel fit into local `main` without conflicts (`7d0adf50`).
 - [x] Center the Race telemetry HUD below the track and above the gear board, label RPM, and update live score/telemetry (`1bdf88b1`).
+- [x] Integrate the Race telemetry correction into local `main` without conflicts (`de2c1537`).
 - Local integration: merge `codex/victor-post-race-screens` into verified `main` at `3df8b90e`; final disposition is recorded in the integration merge.
 
 ## Surprises & Discoveries
