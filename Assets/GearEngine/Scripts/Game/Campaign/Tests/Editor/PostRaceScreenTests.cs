@@ -227,7 +227,7 @@ namespace GearEngine.Campaign.Tests.Editor
                 string file = $"{scenario}{width}x{height}.png";
                 File.WriteAllBytes(Path.Combine(output, file), image.EncodeToPNG());
                 string criteria = scenario == "FourthBeforePromotion" || scenario.StartsWith("Campaign_ResultPopupView", StringComparison.Ordinal)
-                    ? "[\"Runtime ViewModel bindings\",\"Rendered text inside viewport\",\"Animation restart\",\"Time-based standings and score-only stars\",\"Standings card fits visible rows\"]"
+                    ? "[\"Runtime ViewModel bindings\",\"Rendered text inside viewport\",\"Animation restart\",\"Time-based standings and score-only stars\",\"Four-position standings retained\"]"
                     : "[\"Runtime ViewModel bindings\",\"Rendered text inside viewport\",\"Animation restart\",\"Time-based standings and score-only stars\"]";
                 File.WriteAllText(Path.Combine(output, file + ".evidence.json"),
                     "{\"test\":\"" + NUnit.Framework.TestContext.CurrentContext.Test.FullName + "\"," +

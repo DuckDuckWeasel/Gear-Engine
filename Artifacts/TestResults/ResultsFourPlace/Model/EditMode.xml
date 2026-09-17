@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="13" result="Passed" total="13" passed="13" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-17 02:58:33Z" end-time="2026-09-17 02:58:33Z" duration="0.053644">
+  <test-suite type="TestSuite" id="1000" name="Scaffold" fullname="Scaffold" runstate="Runnable" testcasecount="441" result="Passed" start-time="2026-09-17 02:58:33Z" end-time="2026-09-17 02:58:33Z" duration="0.053644" total="13" passed="13" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="1156" name="Game.Campaign.Tests.dll" fullname="/Users/leonardosilva/Documents/MatheusCohen/VictorResultsFourPlaceTests/Library/ScriptAssemblies/Game.Campaign.Tests.dll" runstate="Runnable" testcasecount="94" result="Passed" start-time="2026-09-17 02:58:33Z" end-time="2026-09-17 02:58:33Z" duration="0.040577" total="13" passed="13" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="33837" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="1157" name="GearEngine" fullname="GearEngine" runstate="Runnable" testcasecount="94" result="Passed" start-time="2026-09-17 02:58:33Z" end-time="2026-09-17 02:58:33Z" duration="0.039152" total="13" passed="13" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1161" name="Campaign" fullname="GearEngine.Campaign" runstate="Runnable" testcasecount="93" result="Passed" start-time="2026-09-17 02:58:33Z" end-time="2026-09-17 02:58:33Z" duration="0.037733" total="13" passed="13" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestSuite" id="1162" name="Tests" fullname="GearEngine.Campaign.Tests" runstate="Runnable" testcasecount="93" result="Passed" start-time="2026-09-17 02:58:33Z" end-time="2026-09-17 02:58:33Z" duration="0.036512" total="13" passed="13" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="TestSuite" id="1163" name="Editor" fullname="GearEngine.Campaign.Tests.Editor" runstate="Runnable" testcasecount="93" result="Passed" start-time="2026-09-17 02:58:33Z" end-time="2026-09-17 02:58:33Z" duration="0.035246" total="13" passed="13" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-suite type="TestFixture" id="1103" name="RaceStandingsTests" fullname="GearEngine.Campaign.Tests.Editor.RaceStandingsTests" classname="GearEngine.Campaign.Tests.Editor.RaceStandingsTests" runstate="Runnable" testcasecount="13" result="Passed" start-time="2026-09-17 02:58:33Z" end-time="2026-09-17 02:58:33Z" duration="0.031901" total="13" passed="13" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-suite type="ParameterizedMethod" id="1113" name="PreviousTimeDefinesAnimationStart" fullname="GearEngine.Campaign.Tests.Editor.RaceStandingsTests.PreviousTimeDefinesAnimationStart" classname="GearEngine.Campaign.Tests.Editor.RaceStandingsTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-09-17 02:58:33Z" end-time="2026-09-17 02:58:33Z" duration="0.015970" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+                  <properties />
+                  <test-case id="1110" name="PreviousTimeDefinesAnimationStart(80.0f,70.0f,4,3)" fullname="GearEngine.Campaign.Tests.Editor.RaceStandingsTests.PreviousTimeDefinesAnimationStart(80.0f,70.0f,4,3)" methodname="PreviousTimeDefinesAnimationStart" classname="GearEngine.Campaign.Tests.Editor.RaceStandingsTests" runstate="Runnable" seed="1077598095" result="Passed" start-time="2026-09-17 02:58:33Z" end-time="2026-09-17 02:58:33Z" duration="0.010530" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                  </test-case>
+                  <test-case id="1111" name="PreviousTimeDefinesAnimationStart(71.0f,70.0f,3,3)" fullname="GearEngine.Campaign.Tests.Editor.RaceStandingsTests.PreviousTimeDefinesAnimationStart(71.0f,70.0f,3,3)" methodname="PreviousTimeDefinesAnimationStart" classname="GearEngine.Campaign.Tests.Editor.RaceStandingsTests" runstate="Runnable" seed="1253412304" result="Passed" start-time="2026-09-17 02:58:33Z" end-time="2026-09-17 02:58:33Z" duration="0.000081" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                  </test-case>
+                  <test-case id="1112" name="PreviousTimeDefinesAnimationStart(80.0f,50.0f,4,1)" fullname="GearEngine.Campaign.Tests.Editor.RaceStandingsTests.PreviousTimeDefinesAnimationStart(80.0f,50.0f,4,1)" methodname="PreviousTimeDefinesAnimationStart" classname="GearEngine.Campaign.Tests.Editor.RaceStandingsTests" runstate="Runnable" seed="1777474924" result="Passed" start-time="2026-09-17 02:58:33Z" end-time="2026-09-17 02:58:33Z" duration="0.000058" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                  </test-case>
+                </test-suite>
+                <test-case id="1119" name="RivalsAreStableAcrossRuns" fullname="GearEngine.Campaign.Tests.Editor.RaceStandingsTests.RivalsAreStableAcrossRuns" methodname="RivalsAreStableAcrossRuns" classname="GearEngine.Campaign.Tests.Editor.RaceStandingsTests" runstate="Runnable" seed="988616070" result="Passed" start-time="2026-09-17 02:58:33Z" end-time="2026-09-17 02:58:33Z" duration="0.002443" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-suite type="ParameterizedMethod" id="1118" name="StarsAndGearEligibilityAreIndependentOfPlacement" fullname="GearEngine.Campaign.Tests.Editor.RaceStandingsTests.StarsAndGearEligibilityAreIndependentOfPlacement" classname="GearEngine.Campaign.Tests.Editor.RaceStandingsTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-09-17 02:58:33Z" end-time="2026-09-17 02:58:33Z" duration="0.006778" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+                  <properties />
+                  <test-case id="1114" name="StarsAndGearEligibilityAreIndependentOfPlacement(80.0f,5000,4,3,True)" fullname="GearEngine.Campaign.Tests.Editor.RaceStandingsTests.StarsAndGearEligibilityAreIndependentOfPlacement(80.0f,5000,4,3,True)" methodname="StarsAndGearEligibilityAreIndependentOfPlacement" classname="GearEngine.Campaign.Tests.Editor.RaceStandingsTests" runstate="Runnable" seed="603755145" result="Passed" start-time="2026-09-17 02:58:33Z" end-time="2026-09-17 02:58:33Z" duration="0.005483" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                  </test-case>
+                  <test-case id="1115" name="StarsAndGearEligibilityAreIndependentOfPlacement(50.0f,0,1,0,True)" fullname="GearEngine.Campaign.Tests.Editor.RaceStandingsTests.StarsAndGearEligibilityAreIndependentOfPlacement(50.0f,0,1,0,True)" methodname="StarsAndGearEligibilityAreIndependentOfPlacement" classname="GearEngine.Campaign.Tests.Editor.RaceStandingsTests" runstate="Runnable" seed="979138678" result="Passed" start-time="2026-09-17 02:58:33Z" end-time="2026-09-17 02:58:33Z" duration="0.000102" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                  </test-case>
+                  <test-case id="1116" name="StarsAndGearEligibilityAreIndependentOfPlacement(80.0f,0,4,0,False)" fullname="GearEngine.Campaign.Tests.Editor.RaceStandingsTests.StarsAndGearEligibilityAreIndependentOfPlacement(80.0f,0,4,0,False)" methodname="StarsAndGearEligibilityAreIndependentOfPlacement" classname="GearEngine.Campaign.Tests.Editor.RaceStandingsTests" runstate="Runnable" seed="1044066337" result="Passed" start-time="2026-09-17 02:58:33Z" end-time="2026-09-17 02:58:33Z" duration="0.000084" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                  </test-case>
+                  <test-case id="1117" name="StarsAndGearEligibilityAreIndependentOfPlacement(50.0f,5000,1,3,True)" fullname="GearEngine.Campaign.Tests.Editor.RaceStandingsTests.StarsAndGearEligibilityAreIndependentOfPlacement(50.0f,5000,1,3,True)" methodname="StarsAndGearEligibilityAreIndependentOfPlacement" classname="GearEngine.Campaign.Tests.Editor.RaceStandingsTests" runstate="Runnable" seed="263262887" result="Passed" start-time="2026-09-17 02:58:33Z" end-time="2026-09-17 02:58:33Z" duration="0.000079" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                  </test-case>
+                </test-suite>
+                <test-suite type="ParameterizedMethod" id="1109" name="TimeDeterminesPositionAndVisibleRows" fullname="GearEngine.Campaign.Tests.Editor.RaceStandingsTests.TimeDeterminesPositionAndVisibleRows" classname="GearEngine.Campaign.Tests.Editor.RaceStandingsTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-09-17 02:58:33Z" end-time="2026-09-17 02:58:33Z" duration="0.001393" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+                  <properties />
+                  <test-case id="1104" name="TimeDeterminesPositionAndVisibleRows(50.0f,1,3)" fullname="GearEngine.Campaign.Tests.Editor.RaceStandingsTests.TimeDeterminesPositionAndVisibleRows(50.0f,1,3)" methodname="TimeDeterminesPositionAndVisibleRows" classname="GearEngine.Campaign.Tests.Editor.RaceStandingsTests" runstate="Runnable" seed="1482876928" result="Passed" start-time="2026-09-17 02:58:33Z" end-time="2026-09-17 02:58:33Z" duration="0.000442" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                  </test-case>
+                  <test-case id="1105" name="TimeDeterminesPositionAndVisibleRows(63.0f,2,3)" fullname="GearEngine.Campaign.Tests.Editor.RaceStandingsTests.TimeDeterminesPositionAndVisibleRows(63.0f,2,3)" methodname="TimeDeterminesPositionAndVisibleRows" classname="GearEngine.Campaign.Tests.Editor.RaceStandingsTests" runstate="Runnable" seed="1773165247" result="Passed" start-time="2026-09-17 02:58:33Z" end-time="2026-09-17 02:58:33Z" duration="0.000055" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                  </test-case>
+                  <test-case id="1106" name="TimeDeterminesPositionAndVisibleRows(70.0f,3,3)" fullname="GearEngine.Campaign.Tests.Editor.RaceStandingsTests.TimeDeterminesPositionAndVisibleRows(70.0f,3,3)" methodname="TimeDeterminesPositionAndVisibleRows" classname="GearEngine.Campaign.Tests.Editor.RaceStandingsTests" runstate="Runnable" seed="436038845" result="Passed" start-time="2026-09-17 02:58:33Z" end-time="2026-09-17 02:58:33Z" duration="0.000054" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                  </test-case>
+                  <test-case id="1107" name="TimeDeterminesPositionAndVisibleRows(80.0f,4,4)" fullname="GearEngine.Campaign.Tests.Editor.RaceStandingsTests.TimeDeterminesPositionAndVisibleRows(80.0f,4,4)" methodname="TimeDeterminesPositionAndVisibleRows" classname="GearEngine.Campaign.Tests.Editor.RaceStandingsTests" runstate="Runnable" seed="5311761" result="Passed" start-time="2026-09-17 02:58:33Z" end-time="2026-09-17 02:58:33Z" duration="0.000051" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                  </test-case>
+                  <test-case id="1108" name="TimeDeterminesPositionAndVisibleRows(60.0f,2,3)" fullname="GearEngine.Campaign.Tests.Editor.RaceStandingsTests.TimeDeterminesPositionAndVisibleRows(60.0f,2,3)" methodname="TimeDeterminesPositionAndVisibleRows" classname="GearEngine.Campaign.Tests.Editor.RaceStandingsTests" runstate="Runnable" seed="1416007223" result="Passed" start-time="2026-09-17 02:58:33Z" end-time="2026-09-17 02:58:33Z" duration="0.000051" asserts="0">
+                    <properties>
+                      <property name="retryIteration" value="0" />
+                      <property name="repeatIteration" value="0" />
+                    </properties>
+                    <output><![CDATA[Saving results to: /Users/leonardosilva/Library/Application Support/DDW/Scaffold/TestResults.xml
+]]></output>
+                  </test-case>
+                </test-suite>
+              </test-suite>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -65,6 +65,7 @@ See `Validation.md` for actual evidence, remaining limitations and integration s
 | `3d4aa546` | Fit the Home Best Times card to its visible rows | User-directed correction using the migrated standings composition |
 | `8bcdb33a` | Remove Home lap and target metadata | User-directed correction retaining the migrated track-name composition |
 | `171f7ac1` | Fit the Results standings card to visible rows | User-directed correction using the migrated standings composition |
+| `835cfe1e` | Restore four Results positions and preserve fourth-to-current rank animation | User-directed correction superseding the three-row Results fit |
 | `1bdf88b1` | Center the live Race telemetry panel, label RPM, and move the shared board below it | User-directed correction using Victor's Race HUD composition |
 
 Home track navigation was integrated into local `main` in merge commit `a10adb73`. No remote push was performed.
@@ -74,6 +75,12 @@ The Home standings panel fit was integrated into local `main` in merge commit `b
 The Home header cleanup was integrated into local `main` in merge commit `bc523bd3`. No remote push was performed.
 
 The Results standings panel fit was integrated into local `main` in merge commit `7d0adf50`. No remote push was performed.
+
+The three-row Results fit is superseded by `835cfe1e`. Results retains four positions
+after the animation. Without a previous placement, the player starts in fourth and
+swaps to the current time-ranked position. Home keeps its separate compact saved-times
+layout. Local integration is recorded after the branch merge. No remote push is
+authorized.
 
 The Race telemetry layout correction is implemented in `1bdf88b1` on
 `codex/race-hud-layout`. It preserves the shared board and existing simulation bindings,

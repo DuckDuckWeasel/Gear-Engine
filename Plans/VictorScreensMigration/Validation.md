@@ -219,6 +219,33 @@ from verified `8873a234`). NUnit XML, the validation transcript, contextual repo
 capture index are under `Artifacts/TestResults/ResultsStandingsFit/` and
 `Artifacts/VisualTests/RewardsFlow/Portrait/`. No remote push was performed.
 
+## Four-position Results correction — 2026-09-17
+
+This correction supersedes the final three-row Results state above. Results now keeps
+all four positions visible before and after the rank animation. A player without a
+previous result starts in fourth and swaps upward until reaching the current position
+calculated from race time. Home continues to collapse saved Best Times to three rows.
+
+Verification:
+
+- `PostRaceScreenTests`: **3 passed, 0 failed, 0 skipped**. The fixture checks the
+  fourth-place start, final rank, four active rows, expanded card height, close/reopen
+  reset, navigation, and viewport bounds.
+- `RaceStandingsTests`: **13 passed, 0 failed, 0 skipped**. The fixture checks current
+  and previous time ranking and the fourth-place default when no prior time exists.
+- Results captures were regenerated at 1080×1680, 1080×1920, 1080×2280, and
+  1080×2400. The inspected before/after 1080×2280 captures show the player moving from
+  fourth to third while the displaced rival remains visible in fourth.
+- Scoped C# lint `fix` and `check` passed. `Game.Campaign.Tests.csproj` built with
+  **0 errors**; existing Unity assembly-version warnings remain unchanged.
+- `validate-changes.ps1 -SkipTests` exited 0 with zero assembly-reference, pragma, or
+  analyzer findings. Its batch compile could not open the already-running primary
+  worktree; the isolated registered worktree completed both focused Unity fixtures.
+
+Implementation commit: `835cfe1e`. NUnit XML, reports, and the validation transcript
+are under `Artifacts/TestResults/ResultsFourPlace/`. Local integration is recorded
+after the branch merge. No remote push was performed.
+
 ## Race telemetry layout and live values — 2026-09-16
 
 The Race telemetry panel now renders between the track and shared gear board. The red
