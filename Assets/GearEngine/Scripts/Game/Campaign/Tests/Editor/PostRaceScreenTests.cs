@@ -40,11 +40,10 @@ namespace GearEngine.Campaign.Tests.Editor
             TrackDefinition track = AssetDatabase.FindAssets("t:TrackDefinition")
                 .Select(guid => AssetDatabase.LoadAssetAtPath<TrackDefinition>(AssetDatabase.GUIDToAssetPath(guid)))
                 .First(candidate => candidate.HasConfiguredTiers && candidate.Tiers.Count == 3);
-            RaceResultModel result = new RaceResultModel(track.TimeToBeatSeconds * 1.18f, 3, track, 5438, track.TimeToBeatSeconds * 1.3f);
+            RaceResultModel result = new RaceResultModel(track.TimeToBeatSeconds * 1.18f, 3, track, 5438);
             string[] names = { "Campaign_ResultPopupView", "PFB_ReceivedRewardsView" };
             RectTransform resultsPanel = null;
             float expandedResultsPanelHeight = 0f;
-            float resultsRowSpacing = 0f;
             for (int i = 0; i < names.Length; i++)
             {
                 GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>($"Assets/GearEngine/Prefabs/Campaign/{names[i]}.prefab");
@@ -62,8 +61,7 @@ namespace GearEngine.Campaign.Tests.Editor
                     SerializedObject serializedStandings = new SerializedObject(standings);
                     resultsPanel = (RectTransform)serializedStandings.FindProperty("panel").objectReferenceValue;
                     expandedResultsPanelHeight = resultsPanel.sizeDelta.y;
-                    resultsRowSpacing = serializedStandings.FindProperty("rowSpacing").floatValue;
-                    Assert.That(resultsPanel.name, Is.EqualTo("tablescore_img"), "Results must resize the visible standings card.");
+                    Assert.That(resultsPanel.name, Is.EqualTo("tablescore_img"));
                     Assert.That(standings.DisplayedPlayerPosition, Is.EqualTo(4));
                     yield return Capture(instance, "FourthBeforePromotion", 2280);
                     view.Close();
@@ -82,9 +80,10 @@ namespace GearEngine.Campaign.Tests.Editor
                     ResultStandingsView standings = instance.GetComponentInChildren<ResultStandingsView>();
                     Assert.That(standings.DisplayedPlayerPosition, Is.EqualTo(3));
                     Assert.That(standings.IsAnimating, Is.False);
-                    Assert.That(instance.GetComponentsInChildren<ResultStandingRowView>().Length, Is.EqualTo(3));
-                    Assert.That(resultsPanel.sizeDelta.y, Is.EqualTo(expandedResultsPanelHeight - resultsRowSpacing).Within(0.1f),
-                        "The Results card must end after its third visible row.");
+                    Assert.That(instance.GetComponentsInChildren<ResultStandingRowView>().Length, Is.EqualTo(4),
+                        "Results must retain all four positions after promotion.");
+                    Assert.That(resultsPanel.sizeDelta.y, Is.EqualTo(expandedResultsPanelHeight).Within(0.1f),
+                        "The Results card must retain its four-position height.");
                     Assert.That(instance.GetComponentsInChildren<Button>().Length, Is.EqualTo(1));
                 }
                 TMP_Text[] visibleTexts = instance.GetComponentsInChildren<TMP_Text>();
@@ -156,7 +155,7 @@ namespace GearEngine.Campaign.Tests.Editor
                 Assert.That(standings.IsAnimating, Is.False);
                 Assert.That(standings.DisplayedPlayerPosition, Is.EqualTo(fourth ? 4 : 3));
                 Assert.That(result.HighestAchievedTier, Is.EqualTo(3));
-                Assert.That(instance.GetComponentsInChildren<ResultStandingRowView>().Length, Is.EqualTo(fourth ? 4 : 3));
+                Assert.That(instance.GetComponentsInChildren<ResultStandingRowView>().Length, Is.EqualTo(4));
                 yield return new WaitForSecondsRealtime(4f);
                 RectTransform header = (RectTransform)instance.transform.Find("Container/Labels_Title&Sub");
                 Assert.That(header.anchoredPosition.y, Is.EqualTo(-340f).Within(0.1f), "First opening must settle the header inside the screen.");
@@ -228,7 +227,7 @@ namespace GearEngine.Campaign.Tests.Editor
                 string file = $"{scenario}{width}x{height}.png";
                 File.WriteAllBytes(Path.Combine(output, file), image.EncodeToPNG());
                 string criteria = scenario == "FourthBeforePromotion" || scenario.StartsWith("Campaign_ResultPopupView", StringComparison.Ordinal)
-                    ? "[\"Runtime ViewModel bindings\",\"Rendered text inside viewport\",\"Animation restart\",\"Time-based standings and score-only stars\",\"Standings card fits visible rows\"]"
+                    ? "[\"Runtime ViewModel bindings\",\"Rendered text inside viewport\",\"Animation restart\",\"Time-based standings and score-only stars\",\"Four-position standings retained\"]"
                     : "[\"Runtime ViewModel bindings\",\"Rendered text inside viewport\",\"Animation restart\",\"Time-based standings and score-only stars\"]";
                 File.WriteAllText(Path.Combine(output, file + ".evidence.json"),
                     "{\"test\":\"" + NUnit.Framework.TestContext.CurrentContext.Test.FullName + "\"," +
