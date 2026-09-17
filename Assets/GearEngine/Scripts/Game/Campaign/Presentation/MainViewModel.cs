@@ -130,7 +130,7 @@ namespace GearEngine.Campaign.Presentation
             string prerequisite = selectedIndex > 0
                 ? tracks[selectedIndex - 1].Track.GetDisplayName().ToUpperInvariant()
                 : "PREVIOUS TRACK";
-            return $"TRACK LOCKED\nWIN 1ST ON {prerequisite} TO UNLOCK";
+            return $"TRACK LOCKED\nFINISH 1ST ON {prerequisite}";
         }
 
         public void ClickedPlay()

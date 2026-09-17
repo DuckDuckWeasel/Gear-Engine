@@ -223,6 +223,10 @@ namespace GearEngine.Campaign.Presentation
 
             playButtonLabel = playButton.GetComponentInChildren<TextMeshProUGUI>(true);
             RequireReference(playButtonLabel, nameof(playButtonLabel));
+            playButtonLabel.enableAutoSizing = true;
+            playButtonLabel.fontSizeMin = 20f;
+            playButtonLabel.fontSizeMax = 42f;
+            playButtonLabel.textWrappingMode = TextWrappingModes.NoWrap;
             ConfigureTrackStatusLabel();
         }
 
@@ -234,8 +238,8 @@ namespace GearEngine.Campaign.Presentation
             statusRect.anchoredPosition = Vector2.zero;
             statusRect.sizeDelta = new Vector2(760f, 96f);
             trackPositionLabel.enableAutoSizing = true;
-            trackPositionLabel.fontSizeMin = 22f;
-            trackPositionLabel.fontSizeMax = 34f;
+            trackPositionLabel.fontSizeMin = 24f;
+            trackPositionLabel.fontSizeMax = 40f;
             trackPositionLabel.alignment = TextAlignmentOptions.Center;
         }
 
