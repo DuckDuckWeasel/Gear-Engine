@@ -79,6 +79,15 @@
       #loading-video {
         z-index: -2;
         background: #080b10;
+        pointer-events: none;
+      }
+
+      #loading-video::-webkit-media-controls,
+      #loading-video::-webkit-media-controls-enclosure,
+      #loading-video::-webkit-media-controls-panel,
+      #loading-video::-webkit-media-controls-start-playback-button {
+        display: none !important;
+        -webkit-appearance: none;
       }
 
       #loading-fallback {
@@ -227,7 +236,8 @@
       <canvas id="unity-canvas" width={{{ WIDTH }}} height={{{ HEIGHT }}} tabindex="-1" aria-label="Tela do jogo {{{ PRODUCT_NAME }}}"></canvas>
       <section id="loading-overlay" aria-live="polite" aria-busy="true">
         <div id="loading-fallback" aria-hidden="true"></div>
-        <video id="loading-video" autoplay muted loop playsinline preload="auto" aria-hidden="true">
+        <video id="loading-video" autoplay muted loop playsinline webkit-playsinline preload="auto"
+          disablepictureinpicture disableremoteplayback x-webkit-airplay="deny" tabindex="-1" aria-hidden="true">
           <source src="StreamingAssets/GearEngineLoadingLoop.mp4" type="video/mp4">
         </video>
         <div class="loading-panel">
@@ -262,6 +272,13 @@
       var lastProgressAt = performance.now();
       var loadingComplete = false;
       var unityStarted = false;
+
+      loadingVideo.controls = false;
+      loadingVideo.defaultMuted = true;
+      loadingVideo.muted = true;
+      loadingVideo.playsInline = true;
+      loadingVideo.disablePictureInPicture = true;
+      loadingVideo.disableRemotePlayback = true;
 
       function unityShowBanner(message, type) {
         var warningBanner = document.querySelector("#unity-warning");
