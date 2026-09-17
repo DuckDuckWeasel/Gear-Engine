@@ -10,18 +10,26 @@ namespace GearEngine.Campaign.Presentation
     public sealed class TrackStatsViewModel : ViewModel
     {
         public TrackStatsViewModel(ITrackService trackService)
+            : this(trackService?.CurrentTrack ?? throw new ArgumentNullException(nameof(trackService)), trackService.GetTrackProgress())
         {
-            if (trackService == null)
-            {
-                throw new ArgumentNullException(nameof(trackService));
-            }
+        }
 
-            TrackDefinition track = trackService.CurrentTrack;
+        public TrackStatsViewModel(TrackDefinition track, TrackProgressModel progress = null)
+        {
+            if (track == null)
+            {
+                throw new ArgumentNullException(nameof(track));
+            }
+            Standings = RaceStandingsModel.FromBestTime(progress?.GetBestTimeSeconds(track.name), track);
+            EarnedStars = progress?.GetEarnedStars(track.name) ?? 0;
             TrackName = track.GetDisplayName();
             TargetLaps = track.TotalLaps;
             TargetTime = track.TimeToBeatSeconds;
             Tiers = BuildOrderedTiers(track);
         }
+
+        public RaceStandingsModel Standings { get; }
+        public int EarnedStars { get; }
 
         public string TrackName { get; }
 

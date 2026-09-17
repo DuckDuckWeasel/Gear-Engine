@@ -67,6 +67,13 @@ namespace GearEngine.Campaign.Bootstrap.LiveOps
                     progress.RecordBestTime(best.Key, best.Value);
                 }
             }
+            foreach (TrackDefinition track in index.All)
+            {
+                if (track != null)
+                {
+                    progress.RecordEarnedStars(track.name, PlayerPrefs.GetInt(StarStorageKey(track.name), 0));
+                }
+            }
             RepairCurrentTrackIdIfNotInCatalog(moduleData);
             WarnWhenOrderedIdsMissingFromCatalog(moduleData.OrderedTrackIds);
             progress.CurrentTrackIndex = Math.Max(0, GetProgressIndexForTrack(moduleData));
@@ -166,8 +173,13 @@ namespace GearEngine.Campaign.Bootstrap.LiveOps
             ApplyCurrencySideEffectsFromResponse(resp);
             data.BestTimeSec[trackId] = resp.NewBestTimeSec;
             progress.RecordBestTime(trackId, resp.NewBestTimeSec);
+            progress.RecordEarnedStars(trackId, result.HighestAchievedTier);
+            PlayerPrefs.SetInt(StarStorageKey(trackId), progress.GetEarnedStars(trackId));
+            PlayerPrefs.Save();
             ApplyAdvanceToNextTrackIfNeeded(resp);
         }
+
+        private static string StarStorageKey(string trackId) => $"GearEngine.TrackStars.V1.{trackId}";
 
         private void ApplyCurrencySideEffectsFromResponse(RecordRaceResultResponse resp)
         {

@@ -26,9 +26,9 @@ namespace GearEngine.Campaign.Tests.Editor
         {
             TrackConfig config = JsonConvert.DeserializeObject<TrackConfig>(
                 "{\"entries\":[{\"id\":\"a\",\"baseReward\":0,\"bands\":[]},{\"id\":\"b\",\"baseReward\":0,\"bands\":[]}]}");
-            var persistence = new TrackPersistence { CurrentTrackId = "a" };
+            TrackPersistence persistence = new TrackPersistence { CurrentTrackId = "a" };
 
-            var data = new TrackGameData(persistence, config);
+            TrackGameData data = new TrackGameData(persistence, config);
 
             Assert.That(data.OrderedTrackIds.Count, Is.EqualTo(2));
             Assert.That(data.OrderedTrackIds[0], Is.EqualTo("a"));
@@ -38,27 +38,29 @@ namespace GearEngine.Campaign.Tests.Editor
         [Test]
         public async Task TracksClientModule_InitializeAsync_WhenCurrentTrackIdEmpty_RepairsToFirstOrderedTrackInCatalog()
         {
-            var trackDef = ScriptableObject.CreateInstance<TrackDefinition>();
+            TrackDefinition trackDef = ScriptableObject.CreateInstance<TrackDefinition>();
             trackDef.name = "track_alpha";
-            var carDef = ScriptableObject.CreateInstance<CarDefinition>();
+            CarDefinition carDef = ScriptableObject.CreateInstance<CarDefinition>();
 
-            var index = new TrackAssetIndex(
+            TrackAssetIndex index = new TrackAssetIndex(
                 new List<TrackDefinition> { trackDef },
                 carDef);
 
-            var persistence = new TrackPersistence { CurrentTrackId = string.Empty };
+            TrackPersistence persistence = new TrackPersistence { CurrentTrackId = string.Empty };
             TrackConfig config = JsonConvert.DeserializeObject<TrackConfig>(
                 "{\"entries\":[{\"id\":\"track_alpha\",\"baseReward\":0,\"bands\":[]}]}");
-            var gameData = new TrackGameData(persistence, config);
+            TrackGameData gameData = new TrackGameData(persistence, config);
 
-            var liveOps = new StubLiveOps(gameData);
-            var builder = new ContainerBuilder();
+            StubLiveOps liveOps = new StubLiveOps(gameData);
+            ContainerBuilder builder = new ContainerBuilder();
             builder.RegisterInstance<ILiveOpsService>(liveOps);
+            builder.RegisterInstance<Scaffold.Analytics.IAnalyticsService>(new RecordingAnalytics());
+            builder.RegisterInstance<Scaffold.Events.Contracts.IEventBus>(new Scaffold.Events.EventController());
             builder.Register<CurrencyClientModule>(Lifetime.Singleton);
             using IObjectResolver resolver = builder.Build();
 
             CurrencyClientModule currency = resolver.Resolve<CurrencyClientModule>();
-            var module = new TracksClientModule(liveOps, currency, index);
+            TracksClientModule module = new TracksClientModule(liveOps, currency, index);
             await module.InitializeAsync(CancellationToken.None);
 
             Assert.That(module.CurrentTrack, Is.SameAs(trackDef));
@@ -72,27 +74,29 @@ namespace GearEngine.Campaign.Tests.Editor
         [Test]
         public async Task TracksClientModule_InitializeAsync_WhenRemoteTrackListEmpty_RepairsToFirstCatalogTrack()
         {
-            var trackDef = ScriptableObject.CreateInstance<TrackDefinition>();
+            TrackDefinition trackDef = ScriptableObject.CreateInstance<TrackDefinition>();
             trackDef.name = "local_only";
-            var carDef = ScriptableObject.CreateInstance<CarDefinition>();
+            CarDefinition carDef = ScriptableObject.CreateInstance<CarDefinition>();
 
-            var index = new TrackAssetIndex(
+            TrackAssetIndex index = new TrackAssetIndex(
                 new List<TrackDefinition> { trackDef },
                 carDef);
 
-            var persistence = new TrackPersistence { CurrentTrackId = string.Empty };
+            TrackPersistence persistence = new TrackPersistence { CurrentTrackId = string.Empty };
             TrackConfig config = JsonConvert.DeserializeObject<TrackConfig>(
                 "{\"entries\":[]}");
-            var gameData = new TrackGameData(persistence, config);
+            TrackGameData gameData = new TrackGameData(persistence, config);
 
-            var liveOps = new StubLiveOps(gameData);
-            var builder = new ContainerBuilder();
+            StubLiveOps liveOps = new StubLiveOps(gameData);
+            ContainerBuilder builder = new ContainerBuilder();
             builder.RegisterInstance<ILiveOpsService>(liveOps);
+            builder.RegisterInstance<Scaffold.Analytics.IAnalyticsService>(new RecordingAnalytics());
+            builder.RegisterInstance<Scaffold.Events.Contracts.IEventBus>(new Scaffold.Events.EventController());
             builder.Register<CurrencyClientModule>(Lifetime.Singleton);
             using IObjectResolver resolver = builder.Build();
 
             CurrencyClientModule currency = resolver.Resolve<CurrencyClientModule>();
-            var module = new TracksClientModule(liveOps, currency, index);
+            TracksClientModule module = new TracksClientModule(liveOps, currency, index);
             await module.InitializeAsync(CancellationToken.None);
 
             Assert.That(module.CurrentTrack, Is.SameAs(trackDef));
@@ -106,10 +110,10 @@ namespace GearEngine.Campaign.Tests.Editor
         [Test]
         public void TrackAssetIndex_GetFirstResolvableTrackId_ReturnsFirstValidEntryId()
         {
-            var trackDef = ScriptableObject.CreateInstance<TrackDefinition>();
+            TrackDefinition trackDef = ScriptableObject.CreateInstance<TrackDefinition>();
             trackDef.name = "only_track";
-            var carDef = ScriptableObject.CreateInstance<CarDefinition>();
-            var index = new TrackAssetIndex(
+            CarDefinition carDef = ScriptableObject.CreateInstance<CarDefinition>();
+            TrackAssetIndex index = new TrackAssetIndex(
                 new List<TrackDefinition> { trackDef },
                 carDef);
 
@@ -119,9 +123,65 @@ namespace GearEngine.Campaign.Tests.Editor
             Object.DestroyImmediate(carDef);
         }
 
+        [Test]
+        public async Task TracksClientModule_RetainsBestScoreStarsAcrossReloadAndSlowerResults()
+        {
+            const string trackId = "HomeStarsPersistenceRegression";
+            const string key = "GearEngine.TrackStars.V1." + trackId;
+            TrackDefinition track = CampaignTestUtilities.CreateTrackWithTiersForTests(
+                new TrackTierConfig(1f, 1000, 10), new TrackTierConfig(1f, 2000, 20), new TrackTierConfig(1f, 3000, 30));
+            track.name = trackId;
+            CarDefinition car = ScriptableObject.CreateInstance<CarDefinition>();
+            try
+            {
+                PlayerPrefs.DeleteKey(key);
+                TrackConfig config = JsonConvert.DeserializeObject<TrackConfig>(
+                    "{\"entries\":[{\"id\":\"" + trackId + "\",\"baseReward\":0,\"bands\":[]}]}");
+                TrackGameData data = new TrackGameData(new TrackPersistence { CurrentTrackId = trackId }, config);
+                StubLiveOps liveOps = new StubLiveOps(data);
+                ContainerBuilder builder = new ContainerBuilder();
+                builder.RegisterInstance<ILiveOpsService>(liveOps);
+                builder.RegisterInstance<Scaffold.Analytics.IAnalyticsService>(new RecordingAnalytics());
+                builder.RegisterInstance<Scaffold.Events.Contracts.IEventBus>(new Scaffold.Events.EventController());
+                builder.Register<CurrencyClientModule>(Lifetime.Singleton);
+                using IObjectResolver resolver = builder.Build();
+                TrackAssetIndex index = new TrackAssetIndex(new[] { track }, car);
+                TracksClientModule module = new TracksClientModule(liveOps, resolver.Resolve<CurrencyClientModule>(), index);
+                await module.InitializeAsync(CancellationToken.None);
+                RaceResultModel result = new RaceResultModel(30f, 1, track, 3000);
+                await module.RecordResultAsync(result);
+                Assert.That(module.GetTrackProgress().GetEarnedStars(trackId), Is.Zero, "An absent server response must not save stars.");
+                liveOps.RaceResponse = new RecordRaceResultResponse { NewBestTimeSec = 30f };
+                await module.RecordResultAsync(result);
+                await module.RecordResultAsync(new RaceResultModel(40f, 1, track, 1000));
+                TracksClientModule reloaded = new TracksClientModule(liveOps, resolver.Resolve<CurrencyClientModule>(), index);
+                await reloaded.InitializeAsync(CancellationToken.None);
+                Assert.That(reloaded.GetTrackProgress().GetEarnedStars(trackId), Is.EqualTo(3));
+                Assert.That(reloaded.GetTrackProgress().GetBestTimeSeconds(trackId), Is.EqualTo(30f));
+            }
+            finally
+            {
+                PlayerPrefs.DeleteKey(key);
+                PlayerPrefs.Save();
+                Object.DestroyImmediate(track);
+                Object.DestroyImmediate(car);
+            }
+        }
+
+        private sealed class RecordingAnalytics : Scaffold.Analytics.IAnalyticsService
+        {
+            public readonly List<Scaffold.Analytics.AnalyticsEvent> Events = new List<Scaffold.Analytics.AnalyticsEvent>();
+
+            public void Record<T>(T evt) where T : Scaffold.Analytics.AnalyticsEvent
+            {
+                Events.Add(evt);
+            }
+        }
+
         private sealed class StubLiveOps : ILiveOpsService
         {
             private readonly IGameModuleData slice;
+            public RecordRaceResultResponse RaceResponse { get; set; }
 
             public StubLiveOps(IGameModuleData slice)
             {
@@ -136,7 +196,7 @@ namespace GearEngine.Campaign.Tests.Editor
             public Task<TResponse> CallAsync<TResponse>(ModuleRequest<TResponse> request, CancellationToken cancellationToken = default)
                 where TResponse : ModuleResponse
             {
-                return Task.FromResult<TResponse>(null);
+                return Task.FromResult(RaceResponse as TResponse);
             }
         }
     }

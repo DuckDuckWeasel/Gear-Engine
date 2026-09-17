@@ -4,6 +4,7 @@ using DG.Tweening;
 using Scaffold.MVVM;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace GearEngine.Campaign.Presentation
 {
@@ -21,6 +22,12 @@ namespace GearEngine.Campaign.Presentation
         [SerializeField] private float popDuration = 0.25f;
         [SerializeField] private float stagger = 0.08f;
         [SerializeField] private Ease popEase = Ease.OutBack;
+
+        [Header("Best Times")]
+        [SerializeField] private ResultStandingsView standings;
+        [SerializeField] private Image[] earnedStars = Array.Empty<Image>();
+        [SerializeField] private Sprite earnedStar;
+        [SerializeField] private Sprite emptyStar;
 
         private Sequence tiersSequence;
 
@@ -45,6 +52,15 @@ namespace GearEngine.Campaign.Presentation
                 targetTimeLabel.text = $"Target: {(int)time.TotalSeconds:00}:{time:ff}";
             }
 
+            if (standings != null)
+            {
+                standings.Bind(viewModel.Standings);
+                standings.ShowCurrentPlacement();
+            }
+            for (int i = 0; i < earnedStars.Length; i++)
+            {
+                earnedStars[i].sprite = i < viewModel.EarnedStars ? earnedStar : emptyStar;
+            }
             RebuildTierSlots();
         }
 
@@ -112,7 +128,7 @@ namespace GearEngine.Campaign.Presentation
             TrackTierSlotView prefabToInstantiate = defaultTierSlotPrefab;
             if (tierSlotPrefabs != null)
             {
-                foreach (var config in tierSlotPrefabs)
+                foreach (TierSlotPrefabConfig config in tierSlotPrefabs)
                 {
                     if (config.Contains(tierVm.TierNumber))
                     {

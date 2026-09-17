@@ -36,6 +36,156 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 300, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &1205483714609471207
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3590277297658120518}
+  - component: {fileID: 6455994863255459629}
+  - component: {fileID: 6394215694142764771}
+  m_Layer: 0
+  m_Name: RarityStar2
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &3590277297658120518
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1205483714609471207}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4413019085640635646}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: -35, y: 0}
+  m_SizeDelta: {x: 28, y: 28}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!222 &6455994863255459629
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1205483714609471207}
+  m_CullTransparentMesh: 1
+--- !u!114 &6394215694142764771
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1205483714609471207}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 0
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 2160096023051070127, guid: 77dd0a84a38f94846be3e702d4062977, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!1 &2409465496427258086
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6562821659762268776}
+  - component: {fileID: 1886508849306564158}
+  - component: {fileID: 7045326104600862025}
+  m_Layer: 0
+  m_Name: RarityStar3
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &6562821659762268776
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2409465496427258086}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4413019085640635646}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 28, y: 28}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!222 &1886508849306564158
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2409465496427258086}
+  m_CullTransparentMesh: 1
+--- !u!114 &7045326104600862025
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2409465496427258086}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 0
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 2160096023051070127, guid: 77dd0a84a38f94846be3e702d4062977, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
 --- !u!1 &2601467652589751917
 GameObject:
   m_ObjectHideFlags: 0
@@ -93,7 +243,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
   m_Color: {r: 0.33333334, g: 0.32156864, b: 0.3019608, a: 0.9411765}
@@ -123,7 +273,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
   m_Navigation:
     m_Mode: 3
@@ -167,12 +317,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a1534cbac729494f945c90efe327e10a, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: AnimoraRuntime::OM.Animora.Runtime.AnimoraPlayer
   playerUniqueID: AnimoraPlayer
   selectedClipIndex: 0
-  playMode: 3
-  timeMode: 1
+  playMode: 2
+  timeMode: 0
   defaultPlayDirection: 0
   playLoopType: 2
   debugFlags: 0
@@ -312,6 +462,81 @@ MonoBehaviour:
           randomValue1: {r: 0, g: 0, b: 0, a: 0}
           randomValue2: {r: 0, g: 0, b: 0, a: 0}
           targetTransform: {fileID: 0}
+--- !u!1 &2974341606203430561
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3164258285014667525}
+  - component: {fileID: 3559469457908269199}
+  - component: {fileID: 1573808341648726815}
+  m_Layer: 0
+  m_Name: RarityStar5
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &3164258285014667525
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2974341606203430561}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4413019085640635646}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 70, y: 0}
+  m_SizeDelta: {x: 28, y: 28}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!222 &3559469457908269199
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2974341606203430561}
+  m_CullTransparentMesh: 1
+--- !u!114 &1573808341648726815
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2974341606203430561}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 0
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 2160096023051070127, guid: 77dd0a84a38f94846be3e702d4062977, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
 --- !u!1 &3463668329858124846
 GameObject:
   m_ObjectHideFlags: 0
@@ -361,7 +586,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 30649d3a9faa99c48a7b1166b86bf2a0, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.HorizontalLayoutGroup
   m_Padding:
     m_Left: 0
@@ -391,6 +616,7 @@ GameObject:
   - component: {fileID: 5332262979486977894}
   - component: {fileID: 5384969765635034848}
   - component: {fileID: 6568319558586146708}
+  - component: {fileID: 4883310280018254778}
   m_Layer: 0
   m_Name: ItemPopup View
   m_TagString: Untagged
@@ -407,7 +633,7 @@ RectTransform:
   m_GameObject: {fileID: 3795459667440567417}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6084053738776661278}
@@ -453,7 +679,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.CanvasScaler
   m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
@@ -476,7 +702,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dc42784cf147c0c48a680349fa168899, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.GraphicRaycaster
   m_IgnoreReversedGraphics: 1
   m_BlockingObjects: 0
@@ -493,11 +719,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: aef334bfd584246be816694db99e2365, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Game.Campaign::GearEngine.Campaign.Presentation.ItemPopupView
   type: 1
   itemView: {fileID: 1157799839768660316}
   descriptionText: {fileID: 5166477078213184557}
+  screenAnimation: {fileID: 4883310280018254778}
   nextButton: {fileID: 3219681218593717353}
   previousButton: {fileID: 2972054045389745223}
   closeButton: {fileID: 6276573705305555821}
@@ -513,12 +740,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a1534cbac729494f945c90efe327e10a, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: AnimoraRuntime::OM.Animora.Runtime.AnimoraPlayer
   playerUniqueID: AnimoraPlayer
   selectedClipIndex: -1
-  playMode: 1
-  timeMode: 1
+  playMode: 2
+  timeMode: 0
   defaultPlayDirection: 0
   playLoopType: 2
   debugFlags: 0
@@ -550,11 +777,9 @@ MonoBehaviour:
         m_Calls: []
   clipsManager:
     clips:
-    - rid: 8490313441434927250
     - rid: 8490313728363856024
     - rid: 8490313728363856027
     - rid: 2891885309521821823
-    - rid: 9011605504682098952
   parentAnimoraPlayer: {fileID: 0}
   references:
     version: 2
@@ -634,7 +859,7 @@ MonoBehaviour:
           zero:
             valueType: 0
             vector3Type: 5
-            value: {x: 0, y: 0, z: 0}
+            value: {x: 0, y: 0, z: 1}
             randomValue1: {x: 0, y: 0, z: 0}
             randomValue2: {x: 0, y: 0, z: 0}
             targetTransform: {fileID: 0}
@@ -662,42 +887,6 @@ MonoBehaviour:
           randomValue1: {x: 0, y: 0, z: 0}
           randomValue2: {x: 0, y: 0, z: 0}
           targetTransform: {fileID: 0}
-    - rid: 8490313441434927250
-      type: {class: AnimoraClipNestedPlayer, ns: OM.Animora.Modules, asm: Assembly-CSharp}
-      data:
-        clipName: BackgroundButton
-        clipDescription: Plays a nested player
-        highlightColor: {r: 0.39, g: 0.38, b: 0.8, a: 1}
-        isActive: 1
-        startTime: 0
-        duration: 0.3
-        orderIndex: 0
-        debugFlags: 0
-        playChance: 100
-        events:
-          isEnabled: 0
-          onStartPlaying:
-            m_PersistentCalls:
-              m_Calls: []
-          onCompletePlaying:
-            m_PersistentCalls:
-              m_Calls: []
-          onStartOneLoop:
-            m_PersistentCalls:
-              m_Calls: []
-          onCompleteOneLoop:
-            m_PersistentCalls:
-              m_Calls: []
-          onEnter:
-            m_PersistentCalls:
-              m_Calls: []
-          onUpdate:
-            m_PersistentCalls:
-              m_Calls: []
-          onExit:
-            m_PersistentCalls:
-              m_Calls: []
-        nestedPlayer: {fileID: 1249163456367679800}
     - rid: 8490313728363856024
       type: {class: AnimoraClipBroAudio, ns: OM.Animora.Modules, asm: Assembly-CSharp}
       data:
@@ -780,42 +969,178 @@ MonoBehaviour:
           <DebugObject>k__BackingField: {fileID: 3795459667440567417}
         stopOnExit: 0
         fadeOut: -1
-    - rid: 9011605504682098952
-      type: {class: AnimoraClipNestedPlayer, ns: OM.Animora.Modules, asm: Assembly-CSharp}
-      data:
-        clipName: Container
-        clipDescription: Plays a nested player
-        highlightColor: {r: 0.39, g: 0.38, b: 0.8, a: 1}
-        isActive: 1
-        startTime: 0.3
-        duration: 0.56
-        orderIndex: 3
-        debugFlags: 0
-        playChance: 100
-        events:
-          isEnabled: 0
-          onStartPlaying:
-            m_PersistentCalls:
-              m_Calls: []
-          onCompletePlaying:
-            m_PersistentCalls:
-              m_Calls: []
-          onStartOneLoop:
-            m_PersistentCalls:
-              m_Calls: []
-          onCompleteOneLoop:
-            m_PersistentCalls:
-              m_Calls: []
-          onEnter:
-            m_PersistentCalls:
-              m_Calls: []
-          onUpdate:
-            m_PersistentCalls:
-              m_Calls: []
-          onExit:
-            m_PersistentCalls:
-              m_Calls: []
-        nestedPlayer: {fileID: 2252382437888253672}
+--- !u!114 &4883310280018254778
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3795459667440567417}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1a96d82c7232c45e5bd6b203e88c7518, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Game.Campaign::GearEngine.Campaign.Presentation.PostRaceAnimation
+  players:
+  - {fileID: 1249163456367679800}
+  - {fileID: 9103148333966436517}
+  - {fileID: 2979104323142026204}
+  - {fileID: 7836286442379760897}
+  - {fileID: 7221786535302853407}
+  - {fileID: 330565627941400798}
+  - {fileID: 132166748466806613}
+  - {fileID: 7624212275047533844}
+  - {fileID: 6568319558586146708}
+--- !u!1 &4904130981628500508
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5932846820181918889}
+  - component: {fileID: 7263119459845298837}
+  - component: {fileID: 4197916493032386466}
+  m_Layer: 0
+  m_Name: RarityStar4
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &5932846820181918889
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4904130981628500508}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4413019085640635646}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 35, y: 0}
+  m_SizeDelta: {x: 28, y: 28}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!222 &7263119459845298837
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4904130981628500508}
+  m_CullTransparentMesh: 1
+--- !u!114 &4197916493032386466
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4904130981628500508}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 0
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 2160096023051070127, guid: 77dd0a84a38f94846be3e702d4062977, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!1 &5514631365524636403
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3637380805229892332}
+  - component: {fileID: 7726327614837849289}
+  - component: {fileID: 4772554257680544854}
+  m_Layer: 0
+  m_Name: RarityStar1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &3637380805229892332
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5514631365524636403}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4413019085640635646}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: -70, y: 0}
+  m_SizeDelta: {x: 28, y: 28}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!222 &7726327614837849289
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5514631365524636403}
+  m_CullTransparentMesh: 1
+--- !u!114 &4772554257680544854
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5514631365524636403}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 0
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 2160096023051070127, guid: 77dd0a84a38f94846be3e702d4062977, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
 --- !u!1 &6042939649565444965
 GameObject:
   m_ObjectHideFlags: 0
@@ -825,7 +1150,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1406866008566991343}
-  - component: {fileID: 2252382437888253672}
   m_Layer: 0
   m_Name: Container
   m_TagString: Untagged
@@ -854,353 +1178,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &2252382437888253672
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6042939649565444965}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a1534cbac729494f945c90efe327e10a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: AnimoraRuntime::OM.Animora.Runtime.AnimoraPlayer
-  playerUniqueID: AnimoraPlayer
-  selectedClipIndex: 7
-  playMode: 3
-  timeMode: 1
-  defaultPlayDirection: 0
-  playLoopType: 2
-  debugFlags: 0
-  timelineDuration: 0.56
-  playbackSpeed: 1
-  loopCount: 0
-  animoraPlayerEvents:
-    enabled: 0
-    onStartPlaying:
-      m_PersistentCalls:
-        m_Calls: []
-    onCompletePlaying:
-      m_PersistentCalls:
-        m_Calls: []
-    onStartLoop:
-      m_PersistentCalls:
-        m_Calls: []
-    onCompleteLoop:
-      m_PersistentCalls:
-        m_Calls: []
-    onPause:
-      m_PersistentCalls:
-        m_Calls: []
-    onResume:
-      m_PersistentCalls:
-        m_Calls: []
-    onStop:
-      m_PersistentCalls:
-        m_Calls: []
-  clipsManager:
-    clips:
-    - rid: 9011605504682098945
-    - rid: 9011605504682098946
-    - rid: 9011605504682098947
-    - rid: 9011605504682098948
-    - rid: 9011605504682098951
-    - rid: 9011605504682098953
-    - rid: 9011605504682098966
-    - rid: 9011605529027936258
-  parentAnimoraPlayer: {fileID: 0}
-  references:
-    version: 2
-    RefIds:
-    - rid: 9011605504682098945
-      type: {class: AnimoraClipNestedPlayer, ns: OM.Animora.Modules, asm: Assembly-CSharp}
-      data:
-        clipName: PreviousArrow
-        clipDescription: Plays a nested player
-        highlightColor: {r: 0.8, g: 0.49, b: 0.8, a: 1}
-        isActive: 1
-        startTime: 0
-        duration: 0.3
-        orderIndex: 0
-        debugFlags: 0
-        playChance: 100
-        events:
-          isEnabled: 0
-          onStartPlaying:
-            m_PersistentCalls:
-              m_Calls: []
-          onCompletePlaying:
-            m_PersistentCalls:
-              m_Calls: []
-          onStartOneLoop:
-            m_PersistentCalls:
-              m_Calls: []
-          onCompleteOneLoop:
-            m_PersistentCalls:
-              m_Calls: []
-          onEnter:
-            m_PersistentCalls:
-              m_Calls: []
-          onUpdate:
-            m_PersistentCalls:
-              m_Calls: []
-          onExit:
-            m_PersistentCalls:
-              m_Calls: []
-        nestedPlayer: {fileID: 9103148333966436517}
-    - rid: 9011605504682098946
-      type: {class: AnimoraClipNestedPlayer, ns: OM.Animora.Modules, asm: Assembly-CSharp}
-      data:
-        clipName: NextArrow
-        clipDescription: Plays a nested player
-        highlightColor: {r: 0.8, g: 0.49, b: 0.8, a: 1}
-        isActive: 1
-        startTime: 0
-        duration: 0.3
-        orderIndex: 1
-        debugFlags: 0
-        playChance: 100
-        events:
-          isEnabled: 0
-          onStartPlaying:
-            m_PersistentCalls:
-              m_Calls: []
-          onCompletePlaying:
-            m_PersistentCalls:
-              m_Calls: []
-          onStartOneLoop:
-            m_PersistentCalls:
-              m_Calls: []
-          onCompleteOneLoop:
-            m_PersistentCalls:
-              m_Calls: []
-          onEnter:
-            m_PersistentCalls:
-              m_Calls: []
-          onUpdate:
-            m_PersistentCalls:
-              m_Calls: []
-          onExit:
-            m_PersistentCalls:
-              m_Calls: []
-        nestedPlayer: {fileID: 132166748466806613}
-    - rid: 9011605504682098947
-      type: {class: AnimoraClipNestedPlayer, ns: OM.Animora.Modules, asm: Assembly-CSharp}
-      data:
-        clipName: View
-        clipDescription: Plays a nested player
-        highlightColor: {r: 0.38, g: 0.78, b: 0.8, a: 1}
-        isActive: 1
-        startTime: 0.06
-        duration: 0.502984
-        orderIndex: 2
-        debugFlags: 0
-        playChance: 100
-        events:
-          isEnabled: 0
-          onStartPlaying:
-            m_PersistentCalls:
-              m_Calls: []
-          onCompletePlaying:
-            m_PersistentCalls:
-              m_Calls: []
-          onStartOneLoop:
-            m_PersistentCalls:
-              m_Calls: []
-          onCompleteOneLoop:
-            m_PersistentCalls:
-              m_Calls: []
-          onEnter:
-            m_PersistentCalls:
-              m_Calls: []
-          onUpdate:
-            m_PersistentCalls:
-              m_Calls: []
-          onExit:
-            m_PersistentCalls:
-              m_Calls: []
-        nestedPlayer: {fileID: 2979104323142026204}
-    - rid: 9011605504682098948
-      type: {class: AnimoraClipNestedPlayer, ns: OM.Animora.Modules, asm: Assembly-CSharp}
-      data:
-        clipName: Text
-        clipDescription: Plays a nested player
-        highlightColor: {r: 0.8, g: 0.33, b: 0.41, a: 1}
-        isActive: 1
-        startTime: 0.06
-        duration: 0.3
-        orderIndex: 3
-        debugFlags: 0
-        playChance: 100
-        events:
-          isEnabled: 0
-          onStartPlaying:
-            m_PersistentCalls:
-              m_Calls: []
-          onCompletePlaying:
-            m_PersistentCalls:
-              m_Calls: []
-          onStartOneLoop:
-            m_PersistentCalls:
-              m_Calls: []
-          onCompleteOneLoop:
-            m_PersistentCalls:
-              m_Calls: []
-          onEnter:
-            m_PersistentCalls:
-              m_Calls: []
-          onUpdate:
-            m_PersistentCalls:
-              m_Calls: []
-          onExit:
-            m_PersistentCalls:
-              m_Calls: []
-        nestedPlayer: {fileID: 330565627941400798}
-    - rid: 9011605504682098951
-      type: {class: AnimoraClipNestedPlayer, ns: OM.Animora.Modules, asm: Assembly-CSharp}
-      data:
-        clipName: Continue Button
-        clipDescription: Plays a nested player
-        highlightColor: {r: 0.4, g: 0.8, b: 0.41, a: 1}
-        isActive: 1
-        startTime: 0.25952727
-        duration: 0.3
-        orderIndex: 4
-        debugFlags: 0
-        playChance: 100
-        events:
-          isEnabled: 0
-          onStartPlaying:
-            m_PersistentCalls:
-              m_Calls: []
-          onCompletePlaying:
-            m_PersistentCalls:
-              m_Calls: []
-          onStartOneLoop:
-            m_PersistentCalls:
-              m_Calls: []
-          onCompleteOneLoop:
-            m_PersistentCalls:
-              m_Calls: []
-          onEnter:
-            m_PersistentCalls:
-              m_Calls: []
-          onUpdate:
-            m_PersistentCalls:
-              m_Calls: []
-          onExit:
-            m_PersistentCalls:
-              m_Calls: []
-        nestedPlayer: {fileID: 7624212275047533844}
-    - rid: 9011605504682098953
-      type: {class: AnimoraClipNestedPlayer, ns: OM.Animora.Modules, asm: Assembly-CSharp}
-      data:
-        clipName: Label
-        clipDescription: Plays a nested player
-        highlightColor: {r: 0.8, g: 0.78, b: 0.51, a: 1}
-        isActive: 1
-        startTime: 0.12218182
-        duration: 0.28
-        orderIndex: 5
-        debugFlags: 0
-        playChance: 100
-        events:
-          isEnabled: 0
-          onStartPlaying:
-            m_PersistentCalls:
-              m_Calls: []
-          onCompletePlaying:
-            m_PersistentCalls:
-              m_Calls: []
-          onStartOneLoop:
-            m_PersistentCalls:
-              m_Calls: []
-          onCompleteOneLoop:
-            m_PersistentCalls:
-              m_Calls: []
-          onEnter:
-            m_PersistentCalls:
-              m_Calls: []
-          onUpdate:
-            m_PersistentCalls:
-              m_Calls: []
-          onExit:
-            m_PersistentCalls:
-              m_Calls: []
-        nestedPlayer: {fileID: 7836286442379760897}
-    - rid: 9011605504682098966
-      type: {class: AnimoraClipNestedPlayer, ns: OM.Animora.Modules, asm: Assembly-CSharp}
-      data:
-        clipName: CardRank
-        clipDescription: Plays a nested player
-        highlightColor: {r: 0.8, g: 0.33, b: 0.41, a: 1}
-        isActive: 1
-        startTime: 0.22399999
-        duration: 0.28
-        orderIndex: 6
-        debugFlags: 0
-        playChance: 100
-        events:
-          isEnabled: 0
-          onStartPlaying:
-            m_PersistentCalls:
-              m_Calls: []
-          onCompletePlaying:
-            m_PersistentCalls:
-              m_Calls: []
-          onStartOneLoop:
-            m_PersistentCalls:
-              m_Calls: []
-          onCompleteOneLoop:
-            m_PersistentCalls:
-              m_Calls: []
-          onEnter:
-            m_PersistentCalls:
-              m_Calls: []
-          onUpdate:
-            m_PersistentCalls:
-              m_Calls: []
-          onExit:
-            m_PersistentCalls:
-              m_Calls: []
-        nestedPlayer: {fileID: 3096586985900049039}
-    - rid: 9011605529027936258
-      type: {class: AnimoraClipNestedPlayer, ns: OM.Animora.Modules, asm: Assembly-CSharp}
-      data:
-        clipName: Icon
-        clipDescription: Plays a nested player
-        highlightColor: {r: 0.39, g: 0.38, b: 0.8, a: 1}
-        isActive: 1
-        startTime: 0.115652174
-        duration: 0.3
-        orderIndex: 7
-        debugFlags: 0
-        playChance: 100
-        events:
-          isEnabled: 0
-          onStartPlaying:
-            m_PersistentCalls:
-              m_Calls: []
-          onCompletePlaying:
-            m_PersistentCalls:
-              m_Calls: []
-          onStartOneLoop:
-            m_PersistentCalls:
-              m_Calls: []
-          onCompleteOneLoop:
-            m_PersistentCalls:
-              m_Calls: []
-          onEnter:
-            m_PersistentCalls:
-              m_Calls: []
-          onUpdate:
-            m_PersistentCalls:
-              m_Calls: []
-          onExit:
-            m_PersistentCalls:
-              m_Calls: []
-        nestedPlayer: {fileID: 7221786535302853407}
 --- !u!1001 &3215949595064566227
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1235,7 +1212,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2410525076694245155, guid: e53f6acbb10c744a5ad0ade98e1fd921, type: 3}
       propertyPath: m_Sprite
-      value: 
+      value:
       objectReference: {fileID: 1688699239661243921, guid: a83844f25c112764c92f68c0403d549a, type: 3}
     - target: {fileID: 2418124224098415956, guid: e53f6acbb10c744a5ad0ade98e1fd921, type: 3}
       propertyPath: m_Name
@@ -1335,7 +1312,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5003496666859506887, guid: e53f6acbb10c744a5ad0ade98e1fd921, type: 3}
       propertyPath: playMode
-      value: 3
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5003496666859506887, guid: e53f6acbb10c744a5ad0ade98e1fd921, type: 3}
+      propertyPath: timeMode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5003496666859506887, guid: e53f6acbb10c744a5ad0ade98e1fd921, type: 3}
+      propertyPath: managedReferences[8490313441434927253].scale.zero.value.z
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1356,7 +1341,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
 --- !u!114 &3400235014946368928 stripped
 MonoBehaviour:
@@ -1367,7 +1352,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
 --- !u!114 &7624212275047533844 stripped
 MonoBehaviour:
@@ -1378,7 +1363,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a1534cbac729494f945c90efe327e10a, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: AnimoraRuntime::OM.Animora.Runtime.AnimoraPlayer
 --- !u!1001 &7504816562907546330
 PrefabInstance:
@@ -1506,7 +1491,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7478342818664142611, guid: e249138c3e8c145ffa512ae23cae2438, type: 3}
       propertyPath: m_Sprite
-      value: 
+      value:
       objectReference: {fileID: 2666845500136164236, guid: 6da917c79bd7a1247b76b2efcd2ec473, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1525,7 +1510,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
 --- !u!1 &3180264292250992748 stripped
 GameObject:
@@ -1542,12 +1527,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a1534cbac729494f945c90efe327e10a, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: AnimoraRuntime::OM.Animora.Runtime.AnimoraPlayer
   playerUniqueID: AnimoraPlayer
   selectedClipIndex: 0
-  playMode: 3
-  timeMode: 1
+  playMode: 2
+  timeMode: 0
   defaultPlayDirection: 0
   playLoopType: 2
   debugFlags: 0
@@ -1659,7 +1644,7 @@ MonoBehaviour:
           zero:
             valueType: 0
             vector3Type: 5
-            value: {x: 0, y: 0, z: 0}
+            value: {x: 0, y: 0, z: 1}
             randomValue1: {x: 0, y: 0, z: 0}
             randomValue2: {x: 0, y: 0, z: 0}
             targetTransform: {fileID: 0}
@@ -1814,7 +1799,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7478342818664142611, guid: e249138c3e8c145ffa512ae23cae2438, type: 3}
       propertyPath: m_Sprite
-      value: 
+      value:
       objectReference: {fileID: 5826329469782705028, guid: f1fe3d76bb81dad47adc6a866645a5f6, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1839,12 +1824,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a1534cbac729494f945c90efe327e10a, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: AnimoraRuntime::OM.Animora.Runtime.AnimoraPlayer
   playerUniqueID: AnimoraPlayer
   selectedClipIndex: 0
-  playMode: 3
-  timeMode: 1
+  playMode: 2
+  timeMode: 0
   defaultPlayDirection: 0
   playLoopType: 2
   debugFlags: 0
@@ -1956,7 +1941,7 @@ MonoBehaviour:
           zero:
             valueType: 0
             vector3Type: 5
-            value: {x: 0, y: 0, z: 0}
+            value: {x: 0, y: 0, z: 1}
             randomValue1: {x: 0, y: 0, z: 0}
             randomValue2: {x: 0, y: 0, z: 0}
             targetTransform: {fileID: 0}
@@ -1993,7 +1978,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
 --- !u!224 &3531403490349453223 stripped
 RectTransform:
@@ -2042,15 +2027,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 791381848691240434, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
       propertyPath: m_LocalScale.x
-      value: 1.5
+      value: 1.8
       objectReference: {fileID: 0}
     - target: {fileID: 791381848691240434, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
       propertyPath: m_LocalScale.y
-      value: 1.5
+      value: 1.8
       objectReference: {fileID: 0}
     - target: {fileID: 791381848691240434, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
       propertyPath: m_LocalScale.z
-      value: 1.5
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 791381848691240434, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
       propertyPath: m_LocalPosition.x
@@ -2086,7 +2071,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 791381848691240434, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 150
+      value: 180
       objectReference: {fileID: 0}
     - target: {fileID: 791381848691240434, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -2102,8 +2087,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1259234722648596006, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
       propertyPath: m_Sprite
-      value: 
+      value:
       objectReference: {fileID: 21300000, guid: f19c629eb8cdf415db2ed8e23be0d0f4, type: 3}
+    - target: {fileID: 1259234722648596006, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
+      propertyPath: m_PreserveAspect
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1458914235821702288, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
       propertyPath: m_IsActive
       value: 1
@@ -2114,11 +2103,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2806751471807342945, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
       propertyPath: m_fontSizeMax
-      value: 50
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 2806751471807342945, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
       propertyPath: m_fontSizeMin
-      value: 24
+      value: 18
       objectReference: {fileID: 0}
     - target: {fileID: 3685162079972473300, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
       propertyPath: m_text
@@ -2183,11 +2172,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4764992845997630898, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 220
+      value: 185
       objectReference: {fileID: 0}
     - target: {fileID: 4764992845997630898, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 220
+      value: 185
       objectReference: {fileID: 0}
     - target: {fileID: 4764992845997630898, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
       propertyPath: m_LocalScale.x
@@ -2207,7 +2196,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4764992845997630898, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -50
+      value: -25
       objectReference: {fileID: 0}
     - target: {fileID: 4968145166921576578, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
       propertyPath: m_Name
@@ -2261,6 +2250,42 @@ PrefabInstance:
       propertyPath: m_LocalScale.z
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 7243481678181416101, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
+      propertyPath: useRarityTextColor
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7243481678181416101, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
+      propertyPath: emptyRarityStar
+      value:
+      objectReference: {fileID: 2160096023051070127, guid: 77dd0a84a38f94846be3e702d4062977, type: 3}
+    - target: {fileID: 7243481678181416101, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
+      propertyPath: filledRarityStar
+      value:
+      objectReference: {fileID: -765930273514264058, guid: ec286fda576d4cb46a07ea882dfa84d1, type: 3}
+    - target: {fileID: 7243481678181416101, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
+      propertyPath: rarityStars.Array.size
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7243481678181416101, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
+      propertyPath: 'rarityStars.Array.data[0]'
+      value:
+      objectReference: {fileID: 4772554257680544854}
+    - target: {fileID: 7243481678181416101, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
+      propertyPath: 'rarityStars.Array.data[1]'
+      value:
+      objectReference: {fileID: 6394215694142764771}
+    - target: {fileID: 7243481678181416101, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
+      propertyPath: 'rarityStars.Array.data[2]'
+      value:
+      objectReference: {fileID: 7045326104600862025}
+    - target: {fileID: 7243481678181416101, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
+      propertyPath: 'rarityStars.Array.data[3]'
+      value:
+      objectReference: {fileID: 4197916493032386466}
+    - target: {fileID: 7243481678181416101, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
+      propertyPath: 'rarityStars.Array.data[4]'
+      value:
+      objectReference: {fileID: 1573808341648726815}
     - target: {fileID: 7388326146735716970, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
       propertyPath: m_LocalScale.x
       value: 1
@@ -2314,8 +2339,26 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 4968145166921576578, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
+    - {fileID: 8414302336313763179, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
+    - {fileID: 1230953024846954537, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 5307880969981059335, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 3637380805229892332}
+    - targetCorrespondingSourceObject: {fileID: 5307880969981059335, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 3590277297658120518}
+    - targetCorrespondingSourceObject: {fileID: 5307880969981059335, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6562821659762268776}
+    - targetCorrespondingSourceObject: {fileID: 5307880969981059335, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5932846820181918889}
+    - targetCorrespondingSourceObject: {fileID: 5307880969981059335, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 3164258285014667525}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 5596629810602851211, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
       insertIndex: -1
@@ -2332,189 +2375,7 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 2516029253250060897, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
       insertIndex: -1
       addedObject: {fileID: 330565627941400798}
-    - targetCorrespondingSourceObject: {fileID: 3882536163260423931, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 3096586985900049039}
-    - targetCorrespondingSourceObject: {fileID: 4968145166921576578, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1954366150529872007}
-    - targetCorrespondingSourceObject: {fileID: 8414302336313763179, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 7278218649427379675}
-    - targetCorrespondingSourceObject: {fileID: 1230953024846954537, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 8726869399937265808}
   m_SourcePrefab: {fileID: 100100000, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
---- !u!1 &23304700247888018 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 8414302336313763179, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
-  m_PrefabInstance: {fileID: 8401272572337452537}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &7278218649427379675
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 23304700247888018}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a1534cbac729494f945c90efe327e10a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: AnimoraRuntime::OM.Animora.Runtime.AnimoraPlayer
-  playerUniqueID: AnimoraPlayer
-  selectedClipIndex: 0
-  playMode: 3
-  timeMode: 1
-  defaultPlayDirection: 0
-  playLoopType: 2
-  debugFlags: 0
-  timelineDuration: 0.3
-  playbackSpeed: 1
-  loopCount: 0
-  animoraPlayerEvents:
-    enabled: 0
-    onStartPlaying:
-      m_PersistentCalls:
-        m_Calls: []
-    onCompletePlaying:
-      m_PersistentCalls:
-        m_Calls: []
-    onStartLoop:
-      m_PersistentCalls:
-        m_Calls: []
-    onCompleteLoop:
-      m_PersistentCalls:
-        m_Calls: []
-    onPause:
-      m_PersistentCalls:
-        m_Calls: []
-    onResume:
-      m_PersistentCalls:
-        m_Calls: []
-    onStop:
-      m_PersistentCalls:
-        m_Calls: []
-  clipsManager:
-    clips:
-    - rid: 9011605504682098959
-  parentAnimoraPlayer: {fileID: 0}
-  references:
-    version: 2
-    RefIds:
-    - rid: 9011605504682098959
-      type: {class: AnimoraClipScale, ns: OM.Animora.Modules, asm: Assembly-CSharp}
-      data:
-        clipName: Scale
-        clipDescription: This is a scale action
-        highlightColor: {r: 0.8, g: 0.49, b: 0.8, a: 1}
-        isActive: 1
-        startTime: 0
-        duration: 0.3
-        orderIndex: 0
-        debugFlags: 0
-        playChance: 100
-        events:
-          isEnabled: 0
-          onStartPlaying:
-            m_PersistentCalls:
-              m_Calls: []
-          onCompletePlaying:
-            m_PersistentCalls:
-              m_Calls: []
-          onStartOneLoop:
-            m_PersistentCalls:
-              m_Calls: []
-          onCompleteOneLoop:
-            m_PersistentCalls:
-              m_Calls: []
-          onEnter:
-            m_PersistentCalls:
-              m_Calls: []
-          onUpdate:
-            m_PersistentCalls:
-              m_Calls: []
-          onExit:
-            m_PersistentCalls:
-              m_Calls: []
-        targets:
-          directTargets:
-          - {fileID: 133222668601557636}
-        actionsManager:
-          actions:
-          - rid: 9011605504682098960
-        scale:
-          enabled: 1
-          interpolationType: 0
-          ease:
-            easeDataType: 0
-            animationCurve:
-              serializedVersion: 2
-              m_Curve:
-              - serializedVersion: 3
-                time: 0
-                value: 0
-                inSlope: 0
-                outSlope: 0
-                tangentMode: 0
-                weightedMode: 0
-                inWeight: 0
-                outWeight: 0
-              - serializedVersion: 3
-                time: 1
-                value: 1
-                inSlope: 0
-                outSlope: 0
-                tangentMode: 0
-                weightedMode: 0
-                inWeight: 0
-                outWeight: 0
-              m_PreInfinity: 2
-              m_PostInfinity: 2
-              m_RotationOrder: 4
-            easeType: 26
-          randomizeForEach: 0
-          zero:
-            valueType: 0
-            vector3Type: 5
-            value: {x: 0, y: 0, z: 0}
-            randomValue1: {x: 0, y: 0, z: 0}
-            randomValue2: {x: 0, y: 0, z: 0}
-            targetTransform: {fileID: 0}
-          one:
-            valueType: 0
-            vector3Type: 5
-            value: {x: 1, y: 1, z: 1}
-            randomValue1: {x: 0, y: 0, z: 0}
-            randomValue2: {x: 0, y: 0, z: 0}
-            targetTransform: {fileID: 0}
-    - rid: 9011605504682098960
-      type: {class: AnimoraActionSetScale, ns: OM.Animora.Modules, asm: Assembly-CSharp}
-      data:
-        actionName: Set Scale
-        actionGroup: 0
-        isEnabled: 0
-        orderIndex: 0
-        playDirection: 2
-        useCustomTargets: 0
-        customTargets: []
-        scale:
-          valueType: 0
-          vector3Type: 0
-          value: {x: 0, y: 0, z: 0}
-          randomValue1: {x: 0, y: 0, z: 0}
-          randomValue2: {x: 0, y: 0, z: 0}
-          targetTransform: {fileID: 0}
---- !u!224 &133222668601557636 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 8452726171591866237, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
-  m_PrefabInstance: {fileID: 8401272572337452537}
-  m_PrefabAsset: {fileID: 0}
---- !u!224 &827920739502382239 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 9217194302651771238, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
-  m_PrefabInstance: {fileID: 8401272572337452537}
-  m_PrefabAsset: {fileID: 0}
 --- !u!114 &1157799839768660316 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 7243481678181416101, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
@@ -2524,7 +2385,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7d24e883d345347ac94e8ca8632ba3b3, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Game.Campaign::GearEngine.Campaign.Presentation.ItemSlotView
 --- !u!224 &1305986273937084307 stripped
 RectTransform:
@@ -2546,12 +2407,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a1534cbac729494f945c90efe327e10a, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: AnimoraRuntime::OM.Animora.Runtime.AnimoraPlayer
   playerUniqueID: AnimoraPlayer
   selectedClipIndex: 0
-  playMode: 3
-  timeMode: 1
+  playMode: 2
+  timeMode: 0
   defaultPlayDirection: 0
   playLoopType: 2
   debugFlags: 0
@@ -2663,7 +2524,7 @@ MonoBehaviour:
           zero:
             valueType: 0
             vector3Type: 5
-            value: {x: 0, y: 0, z: 0}
+            value: {x: 0, y: 0, z: 1}
             randomValue1: {x: 0, y: 0, z: 0}
             randomValue2: {x: 0, y: 0, z: 0}
             targetTransform: {fileID: 0}
@@ -2701,171 +2562,6 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 6052519529062482123, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
   m_PrefabInstance: {fileID: 8401272572337452537}
   m_PrefabAsset: {fileID: 0}
---- !u!224 &3314239956550236609 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 6442921856192400440, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
-  m_PrefabInstance: {fileID: 8401272572337452537}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &3487252106288088443 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 4968145166921576578, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
-  m_PrefabInstance: {fileID: 8401272572337452537}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1954366150529872007
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3487252106288088443}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a1534cbac729494f945c90efe327e10a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: AnimoraRuntime::OM.Animora.Runtime.AnimoraPlayer
-  playerUniqueID: AnimoraPlayer
-  selectedClipIndex: 0
-  playMode: 3
-  timeMode: 1
-  defaultPlayDirection: 0
-  playLoopType: 2
-  debugFlags: 0
-  timelineDuration: 0.3
-  playbackSpeed: 1
-  loopCount: 0
-  animoraPlayerEvents:
-    enabled: 0
-    onStartPlaying:
-      m_PersistentCalls:
-        m_Calls: []
-    onCompletePlaying:
-      m_PersistentCalls:
-        m_Calls: []
-    onStartLoop:
-      m_PersistentCalls:
-        m_Calls: []
-    onCompleteLoop:
-      m_PersistentCalls:
-        m_Calls: []
-    onPause:
-      m_PersistentCalls:
-        m_Calls: []
-    onResume:
-      m_PersistentCalls:
-        m_Calls: []
-    onStop:
-      m_PersistentCalls:
-        m_Calls: []
-  clipsManager:
-    clips:
-    - rid: 9011605504682098957
-  parentAnimoraPlayer: {fileID: 0}
-  references:
-    version: 2
-    RefIds:
-    - rid: 9011605504682098957
-      type: {class: AnimoraClipScale, ns: OM.Animora.Modules, asm: Assembly-CSharp}
-      data:
-        clipName: Scale
-        clipDescription: This is a scale action
-        highlightColor: {r: 0.8, g: 0.49, b: 0.8, a: 1}
-        isActive: 1
-        startTime: 0
-        duration: 0.3
-        orderIndex: 0
-        debugFlags: 0
-        playChance: 100
-        events:
-          isEnabled: 0
-          onStartPlaying:
-            m_PersistentCalls:
-              m_Calls: []
-          onCompletePlaying:
-            m_PersistentCalls:
-              m_Calls: []
-          onStartOneLoop:
-            m_PersistentCalls:
-              m_Calls: []
-          onCompleteOneLoop:
-            m_PersistentCalls:
-              m_Calls: []
-          onEnter:
-            m_PersistentCalls:
-              m_Calls: []
-          onUpdate:
-            m_PersistentCalls:
-              m_Calls: []
-          onExit:
-            m_PersistentCalls:
-              m_Calls: []
-        targets:
-          directTargets:
-          - {fileID: 827920739502382239}
-        actionsManager:
-          actions:
-          - rid: 9011605504682098958
-        scale:
-          enabled: 1
-          interpolationType: 0
-          ease:
-            easeDataType: 0
-            animationCurve:
-              serializedVersion: 2
-              m_Curve:
-              - serializedVersion: 3
-                time: 0
-                value: 0
-                inSlope: 0
-                outSlope: 0
-                tangentMode: 0
-                weightedMode: 0
-                inWeight: 0
-                outWeight: 0
-              - serializedVersion: 3
-                time: 1
-                value: 1
-                inSlope: 0
-                outSlope: 0
-                tangentMode: 0
-                weightedMode: 0
-                inWeight: 0
-                outWeight: 0
-              m_PreInfinity: 2
-              m_PostInfinity: 2
-              m_RotationOrder: 4
-            easeType: 26
-          randomizeForEach: 0
-          zero:
-            valueType: 0
-            vector3Type: 5
-            value: {x: 0, y: 0, z: 0}
-            randomValue1: {x: 0, y: 0, z: 0}
-            randomValue2: {x: 0, y: 0, z: 0}
-            targetTransform: {fileID: 0}
-          one:
-            valueType: 0
-            vector3Type: 5
-            value: {x: 1, y: 1, z: 1}
-            randomValue1: {x: 0, y: 0, z: 0}
-            randomValue2: {x: 0, y: 0, z: 0}
-            targetTransform: {fileID: 0}
-    - rid: 9011605504682098958
-      type: {class: AnimoraActionSetScale, ns: OM.Animora.Modules, asm: Assembly-CSharp}
-      data:
-        actionName: Set Scale
-        actionGroup: 0
-        isEnabled: 0
-        orderIndex: 0
-        playDirection: 2
-        useCustomTargets: 0
-        customTargets: []
-        scale:
-          valueType: 0
-          vector3Type: 0
-          value: {x: 0, y: 0, z: 0}
-          randomValue1: {x: 0, y: 0, z: 0}
-          randomValue2: {x: 0, y: 0, z: 0}
-          targetTransform: {fileID: 0}
 --- !u!224 &3942891972516155467 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 4764992845997630898, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
@@ -2886,12 +2582,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a1534cbac729494f945c90efe327e10a, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: AnimoraRuntime::OM.Animora.Runtime.AnimoraPlayer
   playerUniqueID: AnimoraPlayer
   selectedClipIndex: 0
-  playMode: 3
-  timeMode: 1
+  playMode: 2
+  timeMode: 0
   defaultPlayDirection: 0
   playLoopType: 2
   debugFlags: 0
@@ -3041,7 +2737,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 938fce054c42f40a3969e27a88d9bdd8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Coffee.UIEffect::Coffee.UIEffects.UIEffect
   m_ToneFilter: 0
   m_ToneIntensity: 1
@@ -3264,173 +2960,11 @@ MonoBehaviour:
   m_DetailTexSpeed: {x: 0, y: 0}
   m_CustomRoot: {fileID: 0}
   m_Flip: 0
---- !u!1 &4717198407160638210 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 3882536163260423931, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
+--- !u!224 &4413019085640635646 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 5307880969981059335, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
   m_PrefabInstance: {fileID: 8401272572337452537}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &3096586985900049039
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4717198407160638210}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a1534cbac729494f945c90efe327e10a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: AnimoraRuntime::OM.Animora.Runtime.AnimoraPlayer
-  playerUniqueID: AnimoraPlayer
-  selectedClipIndex: 1
-  playMode: 3
-  timeMode: 1
-  defaultPlayDirection: 0
-  playLoopType: 2
-  debugFlags: 0
-  timelineDuration: 0.6
-  playbackSpeed: 1
-  loopCount: 0
-  animoraPlayerEvents:
-    enabled: 0
-    onStartPlaying:
-      m_PersistentCalls:
-        m_Calls: []
-    onCompletePlaying:
-      m_PersistentCalls:
-        m_Calls: []
-    onStartLoop:
-      m_PersistentCalls:
-        m_Calls: []
-    onCompleteLoop:
-      m_PersistentCalls:
-        m_Calls: []
-    onPause:
-      m_PersistentCalls:
-        m_Calls: []
-    onResume:
-      m_PersistentCalls:
-        m_Calls: []
-    onStop:
-      m_PersistentCalls:
-        m_Calls: []
-  clipsManager:
-    clips:
-    - rid: 9011605504682098963
-    - rid: 9011605504682098964
-    - rid: 9011605504682098965
-  parentAnimoraPlayer: {fileID: 0}
-  references:
-    version: 2
-    RefIds:
-    - rid: 9011605504682098963
-      type: {class: AnimoraClipNestedPlayer, ns: OM.Animora.Modules, asm: Assembly-CSharp}
-      data:
-        clipName: Star_2
-        clipDescription: Plays a nested player
-        highlightColor: {r: 0.8, g: 0.33, b: 0.41, a: 1}
-        isActive: 1
-        startTime: 0.15
-        duration: 0.3
-        orderIndex: 1
-        debugFlags: 0
-        playChance: 100
-        events:
-          isEnabled: 0
-          onStartPlaying:
-            m_PersistentCalls:
-              m_Calls: []
-          onCompletePlaying:
-            m_PersistentCalls:
-              m_Calls: []
-          onStartOneLoop:
-            m_PersistentCalls:
-              m_Calls: []
-          onCompleteOneLoop:
-            m_PersistentCalls:
-              m_Calls: []
-          onEnter:
-            m_PersistentCalls:
-              m_Calls: []
-          onUpdate:
-            m_PersistentCalls:
-              m_Calls: []
-          onExit:
-            m_PersistentCalls:
-              m_Calls: []
-        nestedPlayer: {fileID: 1954366150529872007}
-    - rid: 9011605504682098964
-      type: {class: AnimoraClipNestedPlayer, ns: OM.Animora.Modules, asm: Assembly-CSharp}
-      data:
-        clipName: Star_1
-        clipDescription: Plays a nested player
-        highlightColor: {r: 0.8, g: 0.33, b: 0.41, a: 1}
-        isActive: 1
-        startTime: 0
-        duration: 0.3
-        orderIndex: 0
-        debugFlags: 0
-        playChance: 100
-        events:
-          isEnabled: 0
-          onStartPlaying:
-            m_PersistentCalls:
-              m_Calls: []
-          onCompletePlaying:
-            m_PersistentCalls:
-              m_Calls: []
-          onStartOneLoop:
-            m_PersistentCalls:
-              m_Calls: []
-          onCompleteOneLoop:
-            m_PersistentCalls:
-              m_Calls: []
-          onEnter:
-            m_PersistentCalls:
-              m_Calls: []
-          onUpdate:
-            m_PersistentCalls:
-              m_Calls: []
-          onExit:
-            m_PersistentCalls:
-              m_Calls: []
-        nestedPlayer: {fileID: 7278218649427379675}
-    - rid: 9011605504682098965
-      type: {class: AnimoraClipNestedPlayer, ns: OM.Animora.Modules, asm: Assembly-CSharp}
-      data:
-        clipName: Star_3
-        clipDescription: Plays a nested player
-        highlightColor: {r: 0.8, g: 0.33, b: 0.41, a: 1}
-        isActive: 1
-        startTime: 0.3
-        duration: 0.3
-        orderIndex: 2
-        debugFlags: 0
-        playChance: 100
-        events:
-          isEnabled: 0
-          onStartPlaying:
-            m_PersistentCalls:
-              m_Calls: []
-          onCompletePlaying:
-            m_PersistentCalls:
-              m_Calls: []
-          onStartOneLoop:
-            m_PersistentCalls:
-              m_Calls: []
-          onCompleteOneLoop:
-            m_PersistentCalls:
-              m_Calls: []
-          onEnter:
-            m_PersistentCalls:
-              m_Calls: []
-          onUpdate:
-            m_PersistentCalls:
-              m_Calls: []
-          onExit:
-            m_PersistentCalls:
-              m_Calls: []
-        nestedPlayer: {fileID: 8726869399937265808}
 --- !u!114 &5166477078213184557 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 3685162079972473300, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
@@ -3440,7 +2974,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
 --- !u!1 &6232396544580118424 stripped
 GameObject:
@@ -3457,12 +2991,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a1534cbac729494f945c90efe327e10a, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: AnimoraRuntime::OM.Animora.Runtime.AnimoraPlayer
   playerUniqueID: AnimoraPlayer
   selectedClipIndex: 0
-  playMode: 3
-  timeMode: 1
+  playMode: 2
+  timeMode: 0
   defaultPlayDirection: 0
   playLoopType: 2
   debugFlags: 0
@@ -3825,12 +3359,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a1534cbac729494f945c90efe327e10a, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: AnimoraRuntime::OM.Animora.Runtime.AnimoraPlayer
   playerUniqueID: AnimoraPlayer
   selectedClipIndex: 0
-  playMode: 3
-  timeMode: 1
+  playMode: 2
+  timeMode: 0
   defaultPlayDirection: 0
   playLoopType: 2
   debugFlags: 0
@@ -3954,166 +3488,6 @@ MonoBehaviour:
             randomValue2: {x: 0, y: 0, z: 0}
             targetTransform: {fileID: 0}
     - rid: 9011605504682098940
-      type: {class: AnimoraActionSetScale, ns: OM.Animora.Modules, asm: Assembly-CSharp}
-      data:
-        actionName: Set Scale
-        actionGroup: 0
-        isEnabled: 0
-        orderIndex: 0
-        playDirection: 2
-        useCustomTargets: 0
-        customTargets: []
-        scale:
-          valueType: 0
-          vector3Type: 0
-          value: {x: 0, y: 0, z: 0}
-          randomValue1: {x: 0, y: 0, z: 0}
-          randomValue2: {x: 0, y: 0, z: 0}
-          targetTransform: {fileID: 0}
---- !u!1 &7314524904648734160 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1230953024846954537, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
-  m_PrefabInstance: {fileID: 8401272572337452537}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &8726869399937265808
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7314524904648734160}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a1534cbac729494f945c90efe327e10a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: AnimoraRuntime::OM.Animora.Runtime.AnimoraPlayer
-  playerUniqueID: AnimoraPlayer
-  selectedClipIndex: 0
-  playMode: 3
-  timeMode: 1
-  defaultPlayDirection: 0
-  playLoopType: 2
-  debugFlags: 0
-  timelineDuration: 0.3
-  playbackSpeed: 1
-  loopCount: 0
-  animoraPlayerEvents:
-    enabled: 0
-    onStartPlaying:
-      m_PersistentCalls:
-        m_Calls: []
-    onCompletePlaying:
-      m_PersistentCalls:
-        m_Calls: []
-    onStartLoop:
-      m_PersistentCalls:
-        m_Calls: []
-    onCompleteLoop:
-      m_PersistentCalls:
-        m_Calls: []
-    onPause:
-      m_PersistentCalls:
-        m_Calls: []
-    onResume:
-      m_PersistentCalls:
-        m_Calls: []
-    onStop:
-      m_PersistentCalls:
-        m_Calls: []
-  clipsManager:
-    clips:
-    - rid: 9011605504682098961
-  parentAnimoraPlayer: {fileID: 0}
-  references:
-    version: 2
-    RefIds:
-    - rid: 9011605504682098961
-      type: {class: AnimoraClipScale, ns: OM.Animora.Modules, asm: Assembly-CSharp}
-      data:
-        clipName: Scale
-        clipDescription: This is a scale action
-        highlightColor: {r: 0.8, g: 0.49, b: 0.8, a: 1}
-        isActive: 1
-        startTime: 0
-        duration: 0.3
-        orderIndex: 0
-        debugFlags: 0
-        playChance: 100
-        events:
-          isEnabled: 0
-          onStartPlaying:
-            m_PersistentCalls:
-              m_Calls: []
-          onCompletePlaying:
-            m_PersistentCalls:
-              m_Calls: []
-          onStartOneLoop:
-            m_PersistentCalls:
-              m_Calls: []
-          onCompleteOneLoop:
-            m_PersistentCalls:
-              m_Calls: []
-          onEnter:
-            m_PersistentCalls:
-              m_Calls: []
-          onUpdate:
-            m_PersistentCalls:
-              m_Calls: []
-          onExit:
-            m_PersistentCalls:
-              m_Calls: []
-        targets:
-          directTargets:
-          - {fileID: 3314239956550236609}
-        actionsManager:
-          actions:
-          - rid: 9011605504682098962
-        scale:
-          enabled: 1
-          interpolationType: 0
-          ease:
-            easeDataType: 0
-            animationCurve:
-              serializedVersion: 2
-              m_Curve:
-              - serializedVersion: 3
-                time: 0
-                value: 0
-                inSlope: 0
-                outSlope: 0
-                tangentMode: 0
-                weightedMode: 0
-                inWeight: 0
-                outWeight: 0
-              - serializedVersion: 3
-                time: 1
-                value: 1
-                inSlope: 0
-                outSlope: 0
-                tangentMode: 0
-                weightedMode: 0
-                inWeight: 0
-                outWeight: 0
-              m_PreInfinity: 2
-              m_PostInfinity: 2
-              m_RotationOrder: 4
-            easeType: 26
-          randomizeForEach: 0
-          zero:
-            valueType: 0
-            vector3Type: 5
-            value: {x: 0, y: 0, z: 0}
-            randomValue1: {x: 0, y: 0, z: 0}
-            randomValue2: {x: 0, y: 0, z: 0}
-            targetTransform: {fileID: 0}
-          one:
-            valueType: 0
-            vector3Type: 5
-            value: {x: 1, y: 1, z: 1}
-            randomValue1: {x: 0, y: 0, z: 0}
-            randomValue2: {x: 0, y: 0, z: 0}
-            targetTransform: {fileID: 0}
-    - rid: 9011605504682098962
       type: {class: AnimoraActionSetScale, ns: OM.Animora.Modules, asm: Assembly-CSharp}
       data:
         actionName: Set Scale

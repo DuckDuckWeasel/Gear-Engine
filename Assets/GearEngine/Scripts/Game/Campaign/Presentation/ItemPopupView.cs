@@ -10,6 +10,8 @@ namespace GearEngine.Campaign.Presentation
         [SerializeField] private ItemSlotView itemView;
         [SerializeField] private TMPro.TMP_Text descriptionText;
 
+        [SerializeField] private PostRaceAnimation screenAnimation;
+
         [Header("Navigation")]
         [SerializeField] private Button nextButton;
         [SerializeField] private Button previousButton;
@@ -21,25 +23,47 @@ namespace GearEngine.Campaign.Presentation
 
         protected override void OnBind()
         {
-            if (nextButton != null) nextButton.onClick.AddListener(viewModel.Next);
-            if (previousButton != null) previousButton.onClick.AddListener(viewModel.Previous);
-            if (closeButton != null) closeButton.onClick.AddListener(viewModel.Close);
-            if (actionButton != null) actionButton.onClick.AddListener(viewModel.ExecuteAction);
+            if (nextButton != null)
+            {
+                nextButton.onClick.AddListener(viewModel.Next);
+            }
+
+            if (previousButton != null)
+            {
+                previousButton.onClick.AddListener(viewModel.Previous);
+            }
+
+            if (closeButton != null)
+            {
+                closeButton.onClick.AddListener(viewModel.Close);
+            }
+
+            if (actionButton != null)
+            {
+                actionButton.onClick.AddListener(viewModel.ExecuteAction);
+            }
 
             Bind<ItemSlotViewModel, ItemSlotViewModel>(() => viewModel.CurrentItem, UpdateItemView);
-            Bind<bool, bool>(() => viewModel.CanExecuteAction, canExecute => 
+            Bind<bool, bool>(() => viewModel.CanExecuteAction, canExecute =>
             {
                 if (actionButton != null)
                 {
                     actionButton.gameObject.SetActive(canExecute);
                 }
             });
-            Bind<bool, bool>(() => viewModel.HasMultipleItems, hasMultiple => 
+            Bind<bool, bool>(() => viewModel.HasMultipleItems, hasMultiple =>
             {
-                if (nextButton != null) nextButton.gameObject.SetActive(hasMultiple);
-                if (previousButton != null) previousButton.gameObject.SetActive(hasMultiple);
+                if (nextButton != null)
+                {
+                    nextButton.gameObject.SetActive(hasMultiple);
+                }
+
+                if (previousButton != null)
+                {
+                    previousButton.gameObject.SetActive(hasMultiple);
+                }
             });
-            
+
             if (actionButtonText != null && viewModel != null)
             {
                 actionButtonText.text = viewModel.ActionName;
@@ -48,12 +72,38 @@ namespace GearEngine.Campaign.Presentation
 
         protected override void OnUnbind()
         {
-            if (nextButton != null) nextButton.onClick.RemoveListener(viewModel.Next);
-            if (previousButton != null) previousButton.onClick.RemoveListener(viewModel.Previous);
-            if (closeButton != null) closeButton.onClick.RemoveListener(viewModel.Close);
-            if (actionButton != null) actionButton.onClick.RemoveListener(viewModel.ExecuteAction);
+            if (nextButton != null)
+            {
+                nextButton.onClick.RemoveListener(viewModel.Next);
+            }
 
+            if (previousButton != null)
+            {
+                previousButton.onClick.RemoveListener(viewModel.Previous);
+            }
+
+            if (closeButton != null)
+            {
+                closeButton.onClick.RemoveListener(viewModel.Close);
+            }
+
+            if (actionButton != null)
+            {
+                actionButton.onClick.RemoveListener(viewModel.ExecuteAction);
+            }
+
+            screenAnimation?.Stop();
             base.OnUnbind();
+        }
+
+        protected override void OnOpen(bool wasHidden)
+        {
+            screenAnimation?.Play();
+        }
+
+        protected override void OnClose(bool hiding)
+        {
+            screenAnimation?.Stop();
         }
 
         private void UpdateItemView(ItemSlotViewModel itemVm)
@@ -62,7 +112,7 @@ namespace GearEngine.Campaign.Presentation
             {
                 itemView.Bind(itemVm);
             }
-            
+
             if (descriptionText != null)
             {
                 descriptionText.text = itemVm?.Item?.Description ?? string.Empty;
