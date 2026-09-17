@@ -185,6 +185,7 @@ Verification:
   was open in Unity; the live Editor regression and scoped project build provide the
   compilation evidence.
 
-Implementation commit: `8bcdb33a`. NUnit XML, the validation transcript, and the
-contextual report are under `Artifacts/TestResults/HomeHeaderCleanup/`. No remote push
-was performed.
+Implementation commit: `8bcdb33a`. Local `main` integration: `bc523bd3` (clean merge
+from verified `5cfa1b9a`). NUnit XML, the validation transcript, and the contextual
+report are under `Artifacts/TestResults/HomeHeaderCleanup/`. No remote push was
+performed.
