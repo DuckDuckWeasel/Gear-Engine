@@ -161,6 +161,17 @@
         line-height: 1.5;
       }
 
+      #loading-version {
+        display: block;
+        margin-top: 8px;
+        color: rgb(255 247 232 / 58%);
+        font-size: 0.68rem;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        text-align: right;
+        text-transform: uppercase;
+      }
+
       #retry-button {
         display: none;
         min-width: 44px;
@@ -229,6 +240,7 @@
             <div id="loading-progress"></div>
           </div>
           <p id="loading-detail">Baixando os arquivos do jogo…</p>
+          <span id="loading-version" aria-label="Version {{{ PRODUCT_VERSION }}}">v{{{ PRODUCT_VERSION }}}</span>
           <button id="retry-button" type="button">Tentar novamente</button>
         </div>
       </section>
