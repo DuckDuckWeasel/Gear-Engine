@@ -161,3 +161,30 @@ Verification:
 
 Implementation commit: `3d4aa546`. Local `main` integration: `b58c2425` (clean merge
 from verified `2c333254`). No remote push was performed.
+
+## Home header metadata cleanup — 2026-09-16
+
+Home now shows the selected track name without the `Laps` and `Target` labels. Both
+serialized metadata objects are deactivated whenever track data is rebound, so carousel
+navigation, saved-progress refreshes, and unraced states cannot restore them.
+
+Verification:
+
+- `HomeBestTimes_ShowsSavedAndUnracedStandings`: **1 passed, 0 failed, 0 skipped**.
+  The regression binds saved and unraced track progress and asserts both metadata objects
+  remain inactive after each bind.
+- Runtime captures were regenerated and inspected at 1080×1680 and 1080×2280 for both
+  saved and unraced states. The track name, carousel controls, Race button, stars, and
+  standings remain visible and inside the viewport. Evidence:
+  `Artifacts/VisualTests/HomeStandings/Home*`.
+- Scoped C# lint `fix` and `check` passed for both changed files.
+- `Game.Campaign.Tests.csproj` built with **0 errors**. The generated Unity workspace
+  retained its existing assembly-conflict warnings.
+- `validate-changes.ps1 -SkipTests` exited 0 with zero assembly-reference, pragma, or
+  analyzer findings. Its separate batch Editor could not start while the same worktree
+  was open in Unity; the live Editor regression and scoped project build provide the
+  compilation evidence.
+
+Implementation commit: `8bcdb33a`. NUnit XML, the validation transcript, and the
+contextual report are under `Artifacts/TestResults/HomeHeaderCleanup/`. No remote push
+was performed.
