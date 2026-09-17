@@ -109,3 +109,28 @@ The [race standings correction](../RaceStandings/ExecPlan.md) supersedes the inv
 Next-track unlocking by first place is recorded as future server work. Current backend grants/unlocks are preserved.
 
 Final correction checks and limits: [Race standings validation](../RaceStandings/Validation.md). The original migration evidence remains historical; use the corrected capture index above for the current Results/Rewards/Progress behavior.
+
+## Home track carousel correction — 2026-09-16
+
+Home now uses the existing left/right selector art to cycle through unlocked tracks in
+Remote Config order. Navigation wraps in both directions. The displayed track updates
+the preview, name, saved score stars, and best-time standings together. Browsing alone
+does not change the race; Play commits the displayed track for Setup, Race, and result
+submission. Controls and the counter hide when only one track is available.
+
+Verification:
+
+- `MainTrackNavigationTests`: **4 passed, 0 failed**. Coverage includes first-track-only
+  availability, bidirectional wrapping, selecting an earlier track for result submission,
+  and refreshing Home after an unlock. Evidence: `Artifacts/TestResults/20260916-220334/`.
+- Home presentation capture: **1 passed, 0 failed**, producing the updated saved and
+  unraced fixtures at 1080×2280 and 1080×1680. The controls remain inside the viewport,
+  and the counter no longer overlaps the RACE button. Evidence:
+  `Artifacts/TestResults/20260916-220557/` and
+  `Artifacts/VisualTests/HomeStandings/Home*`.
+- Scoped C# lint fix/check passed for seven changed C# files.
+- `validate-changes.ps1 -SkipTests` passed the 114-assembly reference audit, pragma gate,
+  Unity compilation, analyzer build, and analyzer unit tests with zero diagnostics or
+  blockers. Broad suites were skipped; the focused tests above ran separately.
+
+Implementation commit: `b1049ea6`. Remote push remains unauthorized.

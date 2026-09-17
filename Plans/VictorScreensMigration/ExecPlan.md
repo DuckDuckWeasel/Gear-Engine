@@ -26,6 +26,7 @@ its GUID is the stable identity used by serialized references.
 - [x] Implement separate Rewards and Progress Views, ViewModels, prefabs, and navigation configs.
 - [x] Validate runtime lifecycle, bindings, and four display sizes (25 focused tests passed).
 - [x] Commit the standalone correction (`ea615d32`) and its evidence.
+- [x] Add Home previous/next track controls that cycle only through unlocked tracks, update the preview and saved results, and select the displayed track for play (`b1049ea6`).
 - Local integration: merge `codex/victor-post-race-screens` into verified `main` at `3df8b90e`; final disposition is recorded in the integration merge.
 
 ## Surprises & Discoveries
@@ -56,7 +57,7 @@ its GUID is the stable identity used by serialized references.
 
 ## Outcomes & Retrospective
 
-The original migration is on local main. The standalone correction restores Victor's full-screen Results and adds separate Rewards and Progress screens using the existing MVVM/navigation pattern. All 25 focused tests and the repository `-SkipTests` gate passed. Runtime captures cover four portrait heights after reopening. The completed correction is prepared for the authorized local merge; see Validation.md for exact coverage and retained acceptance limits.
+The original migration is on local main. The standalone correction restores Victor's full-screen Results and adds separate Rewards and Progress screens using the existing MVVM/navigation pattern. Home now cycles through unlocked tracks with the existing selector art and carries the displayed selection into Setup, Race, and result submission. Scoped tests and the repository `-SkipTests` gate passed; see Validation.md for exact coverage and retained acceptance limits.
 
 ## Context and Orientation
 

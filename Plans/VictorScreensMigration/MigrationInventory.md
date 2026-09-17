@@ -6,6 +6,7 @@ The `68afa7e4` → `d92a04a0` → `46ec514c` sequence is one effective change.
 | Source | Source object / change | Playable destination | Disposition |
 | --- | --- | --- | --- |
 | `46ec514c` | Main View header, track labels and opening animation | Main View prefab | Already applied: current prefab equals `9e56d673` |
+| User-directed Home correction; existing `select_track.prefab` control | Main track selection | Migrated in `b1049ea6`: previous/next controls wrap through unlocked tracks only, refresh preview/results together, and select the displayed track when Play is pressed |
 | `574764b9` | Continue button and track selection label changes | Shared button prefabs | Already applied in shared source prefabs; reused existing button roots and callbacks |
 | `5a4a8fe6` | Card artwork, stars, icon size and score panel assets | Existing Art/UI and shared UI prefabs | Already applied artwork/stars; missing item and HUD instance overrides migrated below |
 | `e47af5a4` | `Container_PanelRace_new`: speed, gear, RPM and score design in source Main Scene | Race View HUD | Migrated: original speed/gear/RPM/score bindings target Victor’s HUD; segmented RPM follows the existing simulated RPM |
@@ -57,6 +58,7 @@ See `Validation.md` for actual evidence, remaining limitations and integration s
 | `90548be3` | Race HUD, drift labels, new reward composition, patterned background and scene bindings | `46ec514c`, `574764b9`, `e47af5a4`, `bd3f8930` |
 | `855b4ba5` | Item icons, Store/Garage card presentation, item popup and missing-script cleanup | `5a4a8fe6`, `e47af5a4` |
 | `0e84aec6` | Correct Victor victory modal and add Reward → Progress → Home routing | `46ec514c`, `574764b9`, `e47af5a4` |
+| `b1049ea6` | Add unlocked-track navigation to Home | User-directed correction using the existing selector control |
 
 Validation commit `70079efe` records tests and final captures for both implementation batches. Local main integration: `611bc227`. No remote push.
 
