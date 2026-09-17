@@ -64,6 +64,8 @@ See `Validation.md` for actual evidence, remaining limitations and integration s
 
 Home track navigation was integrated into local `main` in merge commit `a10adb73`. No remote push was performed.
 
+The Home standings panel fit was integrated into local `main` in merge commit `b58c2425`. No remote push was performed.
+
 Validation commit `70079efe` records tests and final captures for both implementation batches. Local main integration: `611bc227`. No remote push.
 
 The post-race correction is implemented in `0e84aec6` on

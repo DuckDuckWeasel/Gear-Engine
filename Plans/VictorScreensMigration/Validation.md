@@ -159,4 +159,5 @@ Verification:
   was open in Unity; the live Editor compile and focused test runs validate the gameplay
   change.
 
-Implementation commit: `3d4aa546`. Remote push remains unauthorized.
+Implementation commit: `3d4aa546`. Local `main` integration: `b58c2425` (clean merge
+from verified `2c333254`). No remote push was performed.
