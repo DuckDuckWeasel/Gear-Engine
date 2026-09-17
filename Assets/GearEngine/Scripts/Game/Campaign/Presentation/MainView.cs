@@ -4,6 +4,7 @@ using DG.Tweening;
 using GearEngine.CarSimulation.Tracks;
 using GearEngine.FrustumFit;
 using Scaffold.MVVM;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -13,6 +14,9 @@ namespace GearEngine.Campaign.Presentation
     {
         [SerializeField] private TrackViewComponent track;
         [SerializeField] private Button playButton;
+        [SerializeField] private Button previousTrackButton;
+        [SerializeField] private Button nextTrackButton;
+        [SerializeField] private TextMeshProUGUI trackPositionLabel;
         [SerializeField] private Button talentPerksButton;
         [SerializeField] private Button gearsButton;
         [SerializeField] private TrackStatsViewComponent statsPanel;
@@ -35,13 +39,18 @@ namespace GearEngine.Campaign.Presentation
                     "[MainView] Track must be assigned on the scene instance (not baked into the prefab).");
             }
 
-            track.Bind(viewModel.Track);
-            statsPanel.Bind(viewModel.Stats);
+            previousTrackButton.onClick.AddListener(viewModel.PreviousTrack);
+            nextTrackButton.onClick.AddListener(viewModel.NextTrack);
+            Bind<CampaignTrackPreviewViewModel, CampaignTrackPreviewViewModel>(() => viewModel.Track, UpdateTrackPreview);
+            Bind<TrackStatsViewModel, TrackStatsViewModel>(() => viewModel.Stats, UpdateTrackStats);
+            Bind<bool, bool>(() => viewModel.CanNavigateTracks, UpdateTrackNavigation);
+            Bind<string, string>(() => viewModel.TrackPosition, value => trackPositionLabel.text = value);
         }
 
         protected override void OnOpen(bool wasHidden)
         {
             base.OnOpen(wasHidden);
+            viewModel.RefreshTracks();
             playButton.onClick.RemoveListener(OnPlayClicked);
             playButton.onClick.AddListener(OnPlayClicked);
             if (talentPerksButton != null)
@@ -55,7 +64,6 @@ namespace GearEngine.Campaign.Presentation
                 gearsButton.onClick.AddListener(OnGearsClicked);
             }
             track.gameObject.SetActive(true);
-            StartTrackPreview();
         }
 
         protected override void OnClose(bool hiding)
@@ -81,6 +89,47 @@ namespace GearEngine.Campaign.Presentation
             {
                 track.gameObject.SetActive(false);
             }
+        }
+
+        protected override void OnUnbind()
+        {
+            previousTrackButton.onClick.RemoveListener(viewModel.PreviousTrack);
+            nextTrackButton.onClick.RemoveListener(viewModel.NextTrack);
+            RestoreTrackPose();
+            track.Unbind();
+            base.OnUnbind();
+        }
+
+        private void UpdateTrackPreview(CampaignTrackPreviewViewModel preview)
+        {
+            RestoreTrackPose();
+            if (preview == null)
+            {
+                track.gameObject.SetActive(false);
+                return;
+            }
+
+            track.gameObject.SetActive(true);
+            track.Bind(preview);
+            if (isActiveAndEnabled)
+            {
+                StartTrackPreview();
+            }
+        }
+
+        private void UpdateTrackStats(TrackStatsViewModel stats)
+        {
+            if (stats != null)
+            {
+                statsPanel.Bind(stats);
+            }
+        }
+
+        private void UpdateTrackNavigation(bool canNavigate)
+        {
+            previousTrackButton.gameObject.SetActive(canNavigate);
+            nextTrackButton.gameObject.SetActive(canNavigate);
+            trackPositionLabel.gameObject.SetActive(canNavigate);
         }
 
         private void StartTrackPreview()
@@ -162,6 +211,9 @@ namespace GearEngine.Campaign.Presentation
         {
             RequireReference(playButton, nameof(playButton));
             RequireReference(statsPanel, nameof(statsPanel));
+            RequireReference(previousTrackButton, nameof(previousTrackButton));
+            RequireReference(nextTrackButton, nameof(nextTrackButton));
+            RequireReference(trackPositionLabel, nameof(trackPositionLabel));
         }
 
         private void RequireReference(UnityEngine.Object field, string name)
