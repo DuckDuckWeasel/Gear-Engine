@@ -79,8 +79,8 @@ The Results standings panel fit was integrated into local `main` in merge commit
 The three-row Results fit is superseded by `835cfe1e`. Results retains four positions
 after the animation. Without a previous placement, the player starts in fourth and
 swaps to the current time-ranked position. Home keeps its separate compact saved-times
-layout. Local integration is recorded after the branch merge. No remote push is
-authorized.
+layout. It was integrated into local `main` in merge commit `ca129c0a`. No remote push
+was performed.
 
 The Race telemetry layout correction is implemented in `1bdf88b1` on
 `codex/race-hud-layout`. It preserves the shared board and existing simulation bindings,

@@ -243,8 +243,8 @@ Verification:
   worktree; the isolated registered worktree completed both focused Unity fixtures.
 
 Implementation commit: `835cfe1e`. NUnit XML, reports, and the validation transcript
-are under `Artifacts/TestResults/ResultsFourPlace/`. Local integration is recorded
-after the branch merge. No remote push was performed.
+are under `Artifacts/TestResults/ResultsFourPlace/`. Local `main` integration:
+`ca129c0a` (clean merge from verified `207327b3`). No remote push was performed.
 
 ## Race telemetry layout and live values — 2026-09-16
 
