@@ -218,3 +218,29 @@ Implementation commit: `171f7ac1`. Local `main` integration: `7d0adf50` (clean m
 from verified `8873a234`). NUnit XML, the validation transcript, contextual report, and
 capture index are under `Artifacts/TestResults/ResultsStandingsFit/` and
 `Artifacts/VisualTests/RewardsFlow/Portrait/`. No remote push was performed.
+
+## Race telemetry layout and live values — 2026-09-16
+
+The Race telemetry panel now renders between the track and shared gear board. The red
+bar's numeric value is labeled `RPM`. Speed, gear, and RPM reset when a race binds and
+continue to follow live simulation data. The visible score now includes active drift
+points before they are banked.
+
+Verification:
+
+- `CampaignScreenReferenceTests`: **15 passed, 0 failed, 0 skipped** in the open Unity
+  Editor. The new checks cover the HUD/board hierarchy, RPM label, board restoration,
+  and live score accumulation.
+- Main → Setup → Race was exercised in Play mode. The track, telemetry, and gear board
+  appeared in the requested vertical order while speed, gear, RPM, and score changed.
+- Scoped C# lint `fix` and `check` passed for all three changed C# files.
+- `Game.Campaign.Tests.csproj` built with **0 errors**. Existing Unity assembly-version
+  conflict warnings remain unchanged.
+- `validate-changes.ps1 -SkipTests` exited 0 with zero assembly-reference, pragma, or
+  analyzer findings. Its separate batch Editor could not open while the same worktree
+  was already open; the live Editor fixture and scoped project build provide compilation
+  evidence.
+
+Implementation commit: `1bdf88b1`. NUnit XML, the wrapper transcript, and contextual
+report are under `Artifacts/TestResults/RaceHudLayout/`. Local integration is recorded
+after the branch merge. No remote push was performed.
