@@ -11,21 +11,24 @@ namespace GearEngine.Campaign.Presentation
         public bool IsAnimating => animation != null;
 
         [SerializeField] private ResultStandingRowView[] rows;
+        [SerializeField] private RectTransform panel;
         [SerializeField] private float rowSpacing = 187f;
         [SerializeField] private float swapDuration = 0.4f;
         private RaceStandingsModel standings;
         private List<ResultStandingRowView> order;
         private Coroutine animation;
-        private RectTransform panel;
         private float expandedHeight;
         private Vector2 expandedPosition;
 
         private void Awake()
         {
-            RectTransform parent = transform.parent as RectTransform;
-            panel = parent != null && parent.GetComponent<UnityEngine.UI.Graphic>() != null
-                ? parent
-                : (RectTransform)transform;
+            if (panel == null)
+            {
+                RectTransform parent = transform.parent as RectTransform;
+                panel = parent != null && parent.GetComponent<UnityEngine.UI.Graphic>() != null
+                    ? parent
+                    : (RectTransform)transform;
+            }
             expandedHeight = panel.sizeDelta.y;
             expandedPosition = panel.anchoredPosition;
         }

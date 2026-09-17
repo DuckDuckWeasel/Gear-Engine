@@ -42,6 +42,9 @@ namespace GearEngine.Campaign.Tests.Editor
                 .First(candidate => candidate.HasConfiguredTiers && candidate.Tiers.Count == 3);
             RaceResultModel result = new RaceResultModel(track.TimeToBeatSeconds * 1.18f, 3, track, 5438, track.TimeToBeatSeconds * 1.3f);
             string[] names = { "Campaign_ResultPopupView", "PFB_ReceivedRewardsView" };
+            RectTransform resultsPanel = null;
+            float expandedResultsPanelHeight = 0f;
+            float resultsRowSpacing = 0f;
             for (int i = 0; i < names.Length; i++)
             {
                 GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>($"Assets/GearEngine/Prefabs/Campaign/{names[i]}.prefab");
@@ -56,6 +59,11 @@ namespace GearEngine.Campaign.Tests.Editor
                 if (i == 0)
                 {
                     ResultStandingsView standings = instance.GetComponentInChildren<ResultStandingsView>();
+                    SerializedObject serializedStandings = new SerializedObject(standings);
+                    resultsPanel = (RectTransform)serializedStandings.FindProperty("panel").objectReferenceValue;
+                    expandedResultsPanelHeight = resultsPanel.sizeDelta.y;
+                    resultsRowSpacing = serializedStandings.FindProperty("rowSpacing").floatValue;
+                    Assert.That(resultsPanel.name, Is.EqualTo("tablescore_img"), "Results must resize the visible standings card.");
                     Assert.That(standings.DisplayedPlayerPosition, Is.EqualTo(4));
                     yield return Capture(instance, "FourthBeforePromotion", 2280);
                     view.Close();
@@ -75,6 +83,8 @@ namespace GearEngine.Campaign.Tests.Editor
                     Assert.That(standings.DisplayedPlayerPosition, Is.EqualTo(3));
                     Assert.That(standings.IsAnimating, Is.False);
                     Assert.That(instance.GetComponentsInChildren<ResultStandingRowView>().Length, Is.EqualTo(3));
+                    Assert.That(resultsPanel.sizeDelta.y, Is.EqualTo(expandedResultsPanelHeight - resultsRowSpacing).Within(0.1f),
+                        "The Results card must end after its third visible row.");
                     Assert.That(instance.GetComponentsInChildren<Button>().Length, Is.EqualTo(1));
                 }
                 TMP_Text[] visibleTexts = instance.GetComponentsInChildren<TMP_Text>();
@@ -217,10 +227,13 @@ namespace GearEngine.Campaign.Tests.Editor
                 image.Apply();
                 string file = $"{scenario}{width}x{height}.png";
                 File.WriteAllBytes(Path.Combine(output, file), image.EncodeToPNG());
+                string criteria = scenario == "FourthBeforePromotion" || scenario.StartsWith("Campaign_ResultPopupView", StringComparison.Ordinal)
+                    ? "[\"Runtime ViewModel bindings\",\"Rendered text inside viewport\",\"Animation restart\",\"Time-based standings and score-only stars\",\"Standings card fits visible rows\"]"
+                    : "[\"Runtime ViewModel bindings\",\"Rendered text inside viewport\",\"Animation restart\",\"Time-based standings and score-only stars\"]";
                 File.WriteAllText(Path.Combine(output, file + ".evidence.json"),
                     "{\"test\":\"" + NUnit.Framework.TestContext.CurrentContext.Test.FullName + "\"," +
                     $"\"artifact\":\"{file}\",\"scenario\":\"{scenario}\"," +
-                    "\"criteria\":[\"Runtime ViewModel bindings\",\"Rendered text inside viewport\",\"Animation restart\",\"Time-based standings and score-only stars\"]}");
+                    $"\"criteria\":{criteria}}}");
             }
             finally
             {
