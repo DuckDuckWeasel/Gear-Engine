@@ -16,6 +16,8 @@ namespace GearEngine.Campaign.Tests.Editor
         {
             RaceStandingsModel standings = new RaceStandingsModel(time, null);
             Assert.That(standings.PlayerPosition, Is.EqualTo(position));
+            Assert.That(standings.PreviousPosition, Is.EqualTo(4),
+                "A player without a previous placement must animate from fourth place.");
             Assert.That(standings.VisibleRowCount, Is.EqualTo(visible));
             Assert.That(standings.Entries.Count(entry => entry.IsPlayer), Is.EqualTo(1));
             Assert.That(standings.Entries.Take(visible).Count(entry => entry.IsPlayer), Is.EqualTo(1));

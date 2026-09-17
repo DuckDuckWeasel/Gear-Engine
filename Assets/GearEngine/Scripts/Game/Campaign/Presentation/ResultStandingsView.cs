@@ -45,7 +45,7 @@ namespace GearEngine.Campaign.Presentation
             DisplayedPlayerPosition = standings.PreviousPosition;
             if (DisplayedPlayerPosition == standings.PlayerPosition)
             {
-                ShowFinalRows();
+                ShowFinalRows(true);
                 return;
             }
             animation = StartCoroutine(AnimatePlacement());
@@ -61,7 +61,7 @@ namespace GearEngine.Campaign.Presentation
                 rows[i].Rect.anchoredPosition = Position(i);
             }
             DisplayedPlayerPosition = standings.PlayerPosition;
-            ShowFinalRows();
+            ShowFinalRows(false);
         }
 
         private void OnDisable()
@@ -103,7 +103,7 @@ namespace GearEngine.Campaign.Presentation
                 yield return AnimateSwap(from, to);
                 CompleteSwap(from, to);
             }
-            ShowFinalRows();
+            ShowFinalRows(true);
             animation = null;
         }
 
@@ -138,9 +138,11 @@ namespace GearEngine.Campaign.Presentation
             return new Vector2(0f, -83.5f - index * rowSpacing);
         }
 
-        private void ShowFinalRows()
+        private void ShowFinalRows(bool keepAllRowsVisible)
         {
-            int visibleRowCount = Mathf.Clamp(standings.VisibleRowCount, 0, rows.Length);
+            int visibleRowCount = keepAllRowsVisible
+                ? rows.Length
+                : Mathf.Clamp(standings.VisibleRowCount, 0, rows.Length);
             for (int i = 0; i < order.Count; i++)
             {
                 order[i].gameObject.SetActive(i < visibleRowCount);
