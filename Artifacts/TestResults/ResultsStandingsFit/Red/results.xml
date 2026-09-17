@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-17 02:04:00Z" end-time="2026-09-17 02:04:01Z" duration="1.298306">
+  <test-suite type="TestSuite" id="1000" name="Scaffold" fullname="Scaffold" runstate="Runnable" testcasecount="439" result="Failed" site="Child" start-time="2026-09-17 02:04:00Z" end-time="2026-09-17 02:04:01Z" duration="1.298306" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1154" name="Game.Campaign.Tests.dll" fullname="/Users/leonardosilva/Documents/MatheusCohen/VictorScreensMigration/Library/ScriptAssemblies/Game.Campaign.Tests.dll" runstate="Runnable" testcasecount="92" result="Failed" site="Child" start-time="2026-09-17 02:04:00Z" end-time="2026-09-17 02:04:01Z" duration="1.031262" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="45401" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1155" name="GearEngine" fullname="GearEngine" runstate="Runnable" testcasecount="92" result="Failed" site="Child" start-time="2026-09-17 02:04:00Z" end-time="2026-09-17 02:04:01Z" duration="1.005676" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1159" name="Campaign" fullname="GearEngine.Campaign" runstate="Runnable" testcasecount="91" result="Failed" site="Child" start-time="2026-09-17 02:04:00Z" end-time="2026-09-17 02:04:01Z" duration="1.002201" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="1160" name="Tests" fullname="GearEngine.Campaign.Tests" runstate="Runnable" testcasecount="91" result="Failed" site="Child" start-time="2026-09-17 02:04:00Z" end-time="2026-09-17 02:04:01Z" duration="0.997384" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestSuite" id="1161" name="Editor" fullname="GearEngine.Campaign.Tests.Editor" runstate="Runnable" testcasecount="91" result="Failed" site="Child" start-time="2026-09-17 02:04:01Z" end-time="2026-09-17 02:04:01Z" duration="0.994669" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-suite type="TestFixture" id="1093" name="PostRaceScreenTests" fullname="GearEngine.Campaign.Tests.Editor.PostRaceScreenTests" classname="GearEngine.Campaign.Tests.Editor.PostRaceScreenTests" runstate="Runnable" testcasecount="3" result="Failed" site="Child" start-time="2026-09-17 02:04:01Z" end-time="2026-09-17 02:04:01Z" duration="0.991680" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <failure>
+                  <message><![CDATA[One or more child tests had errors]]></message>
+                </failure>
+                <test-case id="1095" name="PostRaceScreens_OpenCloseAndRenderBoundData" fullname="GearEngine.Campaign.Tests.Editor.PostRaceScreenTests.PostRaceScreens_OpenCloseAndRenderBoundData" methodname="PostRaceScreens_OpenCloseAndRenderBoundData" classname="GearEngine.Campaign.Tests.Editor.PostRaceScreenTests" runstate="Runnable" seed="819327018" result="Failed" start-time="2026-09-17 02:03:54Z" end-time="2026-09-17 02:04:01Z" duration="7.618564" asserts="0">
+                  <properties>
+                    <property name="_JOINTYPE" value="UnityCombinatorial" />
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  Results must resize the visible standings card.
+  Expected string length 14 but was 5. Strings differ at index 0.
+  Expected: "tablescore_img"
+  But was:  "Score"
+  -----------^
+]]></message>
+                    <stack-trace><![CDATA[at GearEngine.Campaign.Tests.Editor.PostRaceScreenTests+<PostRaceScreens_OpenCloseAndRenderBoundData>d__1.MoveNext () [0x00294] in /Users/leonardosilva/Documents/MatheusCohen/VictorScreensMigration/Assets/GearEngine/Scripts/Game/Campaign/Tests/Editor/PostRaceScreenTests.cs:66
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0004e] in ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/NUnitExtensions/Attributes/TestEnumerator.cs:44
+]]></stack-trace>
+                  </failure>
+                  <output><![CDATA[Registering view model ResultPopupView - ResultPopupViewModel
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+Saving results to: /Users/leonardosilva/Library/Application Support/DDW/Scaffold/TestResults.xml
+]]></output>
+                </test-case>
+              </test-suite>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -1562,6 +1562,7 @@ MonoBehaviour:
   - {fileID: 7595870033943433354}
   - {fileID: 1150305613967738623}
   - {fileID: 6448071770250564473}
+  panel: {fileID: 5559770211458666885}
   rowSpacing: 187
   swapDuration: 0.4
 --- !u!1 &922187989638888436
