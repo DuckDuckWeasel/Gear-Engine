@@ -118,7 +118,7 @@ namespace GearEngine.Campaign.Presentation
                 ItemsScreenState config = ScriptableObject.CreateInstance<ItemsScreenState>();
                 config.TypeToDisplay = ItemScreenType.Perks;
                 config.ShowBuyButton = true;
-                config.ShowUnownedItems = false;
+                config.ShowUnownedItems = true;
                 config.Title = "Storage";
                 config.Subtitle = "MAX OUT YOUR GEAR";
 

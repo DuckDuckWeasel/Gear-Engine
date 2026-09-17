@@ -102,6 +102,56 @@ namespace GearEngine.Campaign.Tests.Editor
             Assert.That(model.CanNavigateTracks, Is.True);
         }
 
+        [Test]
+        public void OpenStorage_ShowsCatalogWhenPlayerOwnsNoPerks()
+        {
+            MainViewModel model = new MainViewModel();
+            navigation = new RecordingNavigation();
+            ViewModelTestInject.InjectNavigation(model, navigation);
+
+            model.ClickedTalentPerks();
+
+            Assert.That(navigation.OpenedControllers, Has.Count.EqualTo(1));
+            ItemsViewModel items = navigation.OpenedControllers[0] as ItemsViewModel;
+            Assert.That(items, Is.Not.Null);
+            Assert.That(items.Config.ShowUnownedItems, Is.True);
+            Object.DestroyImmediate(items.Config);
+        }
+
+        [Test]
+        public void StoreToolbar_ShowsCatalogWhenPlayerOwnsNoPerks()
+        {
+            GameObject toolbarObject = new GameObject("ToolbarTest");
+            ItemsViewModel items = null;
+
+            try
+            {
+                ToolbarController toolbar = toolbarObject.AddComponent<ToolbarController>();
+                navigation = new RecordingNavigation();
+                toolbar.Construct(navigation);
+                System.Reflection.MethodInfo openItemsView = typeof(ToolbarController).GetMethod(
+                    "OpenItemsView",
+                    System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+
+                Assert.That(openItemsView, Is.Not.Null);
+                openItemsView.Invoke(toolbar, new object[] { ItemScreenType.Perks, true, "Storage", "MAX OUT YOUR GEAR" });
+
+                Assert.That(navigation.OpenedControllers, Has.Count.EqualTo(1));
+                items = navigation.OpenedControllers[0] as ItemsViewModel;
+                Assert.That(items, Is.Not.Null);
+                Assert.That(items.Config.ShowUnownedItems, Is.True);
+            }
+            finally
+            {
+                if (items != null)
+                {
+                    Object.DestroyImmediate(items.Config);
+                }
+
+                Object.DestroyImmediate(toolbarObject);
+            }
+        }
+
         private async Task InitializeTracks(int count, int currentIndex)
         {
             car = ScriptableObject.CreateInstance<CarDefinition>();
