@@ -2186,10 +2186,10 @@ RectTransform:
   - {fileID: 5280050938192882625}
   m_Father: {fileID: 7239538978525548220}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0}
-  m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: 0, y: 200}
-  m_SizeDelta: {x: 1000, y: 415.5716}
+  m_AnchorMin: {x: 0.5, y: 0.48}
+  m_AnchorMax: {x: 0.5, y: 0.48}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 1000, y: 320}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &5127815443894768240
 GameObject:
@@ -2325,7 +2325,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 415.57}
+  m_SizeDelta: {x: 0, y: 320}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &5565171743786389158
 GameObject:
@@ -2392,7 +2392,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 0
+  m_text: RPM 0
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 3f182bccd6815e546801663f21300cdb, type: 2}
   m_sharedMaterial: {fileID: 8067483209966327803, guid: 3f182bccd6815e546801663f21300cdb, type: 2}
