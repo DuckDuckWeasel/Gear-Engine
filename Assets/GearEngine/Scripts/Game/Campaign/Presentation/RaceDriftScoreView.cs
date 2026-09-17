@@ -30,7 +30,7 @@ namespace GearEngine.Campaign.Presentation
         protected override void OnBind()
         {
             base.OnBind();
-            
+
             viewModel.MultiplierIncreased += OnMultiplierIncreased;
             viewModel.ScoreBanked += OnScoreBanked;
             viewModel.PropertyChanged += OnViewModelPropertyChanged;
@@ -38,11 +38,7 @@ namespace GearEngine.Campaign.Presentation
             UpdateVisibility(false, false);
             UpdateMultiplierTextAndColor();
             pointsText.text = $"{viewModel.DisplayPoints}";
-            
-            if (totalScoreText != null)
-            {
-                totalScoreText.text = $"{viewModel.TotalDriftScore}";
-            }
+            UpdateTotalScoreText();
         }
 
         protected override void OnUnbind()
@@ -67,17 +63,30 @@ namespace GearEngine.Campaign.Presentation
             else if (e.PropertyName == nameof(viewModel.DisplayPoints))
             {
                 pointsText.text = $"{viewModel.DisplayPoints}";
+                UpdateTotalScoreText();
             }
             else if (e.PropertyName == nameof(viewModel.CurrentMultiplier))
             {
                 UpdateMultiplierTextAndColor();
+                UpdateTotalScoreText();
             }
+        }
+
+        private void UpdateTotalScoreText()
+        {
+            if (totalScoreText == null)
+            {
+                return;
+            }
+
+            int displayedTotal = viewModel.TotalDriftScore + (viewModel.DisplayPoints * viewModel.CurrentMultiplier);
+            totalScoreText.text = $"{displayedTotal}";
         }
 
         private void UpdateMultiplierTextAndColor()
         {
             multiplierText.text = $"{viewModel.CurrentMultiplier}x";
-            
+
             // Multiplier 1 = Tier 0 (Common), Multiplier 2 = Tier 1 (Uncommon), etc.
             int tierIndex = Mathf.Max(0, viewModel.CurrentMultiplier - 1);
             multiplierText.color = RarityPalette.GetColorByTier(tierIndex);
@@ -87,8 +96,11 @@ namespace GearEngine.Campaign.Presentation
         {
             if (visible)
             {
-                if (canvasGroup.alpha > 0f && fadeTween == null) return;
-                
+                if (canvasGroup.alpha > 0f && fadeTween == null)
+                {
+                    return;
+                }
+
                 fadeTween?.Kill();
                 if (animate)
                 {
@@ -103,8 +115,11 @@ namespace GearEngine.Campaign.Presentation
             }
             else
             {
-                if (canvasGroup.alpha <= 0f && fadeTween == null) return;
-                
+                if (canvasGroup.alpha <= 0f && fadeTween == null)
+                {
+                    return;
+                }
+
                 StopPointsAnimation();
                 StopMultiplierLoop();
                 fadeTween?.Kill();
@@ -123,21 +138,21 @@ namespace GearEngine.Campaign.Presentation
         {
             multiplierPunchTween?.Kill();
             StopMultiplierLoop();
-            
+
             multiplierText.transform.localScale = Vector3.one;
-            
+
             float scaleMultiplier = 1f + (Mathf.Max(0, viewModel.CurrentMultiplier - 1) * punchScalePerTier);
             Vector3 actualPunchScale = multiplierPunchScale * scaleMultiplier;
-            
+
             multiplierPunchTween = multiplierText.transform.DOPunchScale(actualPunchScale, punchDuration, 5, 1f)
-                .OnComplete(() => 
+                .OnComplete(() =>
                 {
                     if (viewModel.CurrentMultiplier >= 5)
                     {
                         StartMultiplierLoop();
                     }
                 });
-            
+
             UpdateMultiplierTextAndColor();
             pointsText.text = $"{viewModel.DisplayPoints}";
         }
@@ -148,14 +163,14 @@ namespace GearEngine.Campaign.Presentation
             canvasGroup.alpha = 1f;
             UpdateMultiplierTextAndColor();
             pointsText.text = $"{viewModel.DisplayPoints}";
-            
+
             if (totalScoreText != null)
             {
                 int startScore = 0;
                 int.TryParse(totalScoreText.text, out startScore);
                 int endScore = viewModel.TotalDriftScore;
-                
-                DOTween.To(() => startScore, x => 
+
+                DOTween.To(() => startScore, x =>
                 {
                     startScore = x;
                     totalScoreText.text = $"{startScore}";
@@ -164,14 +179,17 @@ namespace GearEngine.Campaign.Presentation
                 totalScoreText.transform.DOKill(true);
                 totalScoreText.transform.DOPunchScale(Vector3.one * 0.2f, 0.3f, 5, 1f);
             }
-            
+
             fadeTween = DOTween.To(() => canvasGroup.alpha, x => canvasGroup.alpha = x, 0f, 0.5f).SetDelay(1f);
         }
 
         private void StartPointsAnimation()
         {
-            if (pointsTween != null && pointsTween.IsActive()) return;
-            
+            if (pointsTween != null && pointsTween.IsActive())
+            {
+                return;
+            }
+
             pointsText.transform.localScale = Vector3.one;
             pointsTween = pointsText.transform.DOScale(pointScalePingPong, pointPingPongDuration)
                 .SetEase(Ease.InOutSine)
@@ -186,8 +204,11 @@ namespace GearEngine.Campaign.Presentation
 
         private void StartMultiplierLoop()
         {
-            if (multiplierLoopTween != null && multiplierLoopTween.IsActive()) return;
-            
+            if (multiplierLoopTween != null && multiplierLoopTween.IsActive())
+            {
+                return;
+            }
+
             multiplierText.transform.localScale = Vector3.one;
             multiplierLoopTween = multiplierText.transform.DOScale(1.15f, 0.25f)
                 .SetEase(Ease.InOutSine)

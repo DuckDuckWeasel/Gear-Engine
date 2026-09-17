@@ -17,6 +17,9 @@ namespace GearEngine.Campaign.Presentation
 {
     public class ActiveRaceView : View<ActiveRaceViewModel>
     {
+        private const float k_raceBoardAnchorMinY = 0.08f;
+        private const float k_raceBoardAnchorMaxY = 0.38f;
+
         [SerializeField] private TrackViewComponent track;
         [SerializeField] private BoardView board;
         [SerializeField] private TrackTelemetryViewComponent telemetry;
@@ -72,6 +75,7 @@ namespace GearEngine.Campaign.Presentation
 
             lastDisplayedLap = 0;
             lastTrackState = viewModel.Track?.State ?? SimulationLifecycleState.Created;
+            ResetTelemetryUI();
 
             // Defer race start (and prop generation) until after the FrustumFit
             // open transition has positioned the track at its final screen location.
@@ -171,7 +175,7 @@ namespace GearEngine.Campaign.Presentation
             {
                 float lerpSpeedDown = 5f;
                 displayedRpm = Mathf.Lerp(displayedRpm, 0f, Time.deltaTime * lerpSpeedDown);
-                currentRpmText.text = $"{displayedRpm:F0}";
+                currentRpmText.text = FormatRpm(displayedRpm);
                 UpdateGearText("N");
                 return;
             }
@@ -255,8 +259,34 @@ namespace GearEngine.Campaign.Presentation
 
             // Diegetic RPM rounding (nearest 50)
             float diegeticRpm = Mathf.Round(displayedRpm / 50f) * 50f;
-            currentRpmText.text = $"{diegeticRpm:F0}";
+            currentRpmText.text = FormatRpm(diegeticRpm);
             UpdateGearText(gearString);
+        }
+
+        private static string FormatRpm(float rpm)
+        {
+            return $"RPM {rpm:F0}";
+        }
+
+        private void ResetTelemetryUI()
+        {
+            displayedRpm = 0f;
+            displayedSpeed = 0f;
+            currentSimulatedGear = 1;
+            lastDisplayedGear = string.Empty;
+
+            if (currentVelocityText != null)
+            {
+                currentVelocityText.text = "0";
+            }
+
+            if (currentRpmText != null)
+            {
+                currentRpmText.text = FormatRpm(0f);
+            }
+
+            UpdateGearText("N");
+            UpdateRpmSegments();
         }
 
         private void UpdateGearText(string gearString)
@@ -407,8 +437,8 @@ namespace GearEngine.Campaign.Presentation
 
             boardAnchorMin = raceBoardRect.anchorMin;
             boardAnchorMax = raceBoardRect.anchorMax;
-            raceBoardRect.anchorMin = new Vector2(boardAnchorMin.x, 0.2f);
-            raceBoardRect.anchorMax = new Vector2(boardAnchorMax.x, 0.5f);
+            raceBoardRect.anchorMin = new Vector2(boardAnchorMin.x, k_raceBoardAnchorMinY);
+            raceBoardRect.anchorMax = new Vector2(boardAnchorMax.x, k_raceBoardAnchorMaxY);
         }
 
         private void RestoreBoardLayout()

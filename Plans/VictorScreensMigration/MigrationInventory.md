@@ -65,6 +65,7 @@ See `Validation.md` for actual evidence, remaining limitations and integration s
 | `3d4aa546` | Fit the Home Best Times card to its visible rows | User-directed correction using the migrated standings composition |
 | `8bcdb33a` | Remove Home lap and target metadata | User-directed correction retaining the migrated track-name composition |
 | `171f7ac1` | Fit the Results standings card to visible rows | User-directed correction using the migrated standings composition |
+| `1bdf88b1` | Center the live Race telemetry panel, label RPM, and move the shared board below it | User-directed correction using Victor's Race HUD composition |
 
 Home track navigation was integrated into local `main` in merge commit `a10adb73`. No remote push was performed.
 
@@ -73,6 +74,12 @@ The Home standings panel fit was integrated into local `main` in merge commit `b
 The Home header cleanup was integrated into local `main` in merge commit `bc523bd3`. No remote push was performed.
 
 The Results standings panel fit was integrated into local `main` in merge commit `7d0adf50`. No remote push was performed.
+
+The Race telemetry layout correction is implemented in `1bdf88b1` on
+`codex/race-hud-layout`. It preserves the shared board and existing simulation bindings,
+adds an explicit RPM label, resets telemetry on bind, and includes active drift points
+in the displayed score. Local integration is recorded after the branch merge. No remote
+push is authorized.
 
 Validation commit `70079efe` records tests and final captures for both implementation batches. Local main integration: `611bc227`. No remote push.
 

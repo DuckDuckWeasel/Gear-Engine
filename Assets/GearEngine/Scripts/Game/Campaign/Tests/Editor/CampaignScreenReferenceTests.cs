@@ -1,7 +1,16 @@
+using System;
+using GearEngine.CarSimulation;
+using GearEngine.CarSimulation.Definitions;
+using GearEngine.CarSimulation.Entity;
+using GearEngine.CarSimulation.Presentation;
+using GearEngine.CarSimulation.Simulation;
 using GearEngine.Campaign.Presentation;
 using NUnit.Framework;
+using TMPro;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Splines;
+using Object = UnityEngine.Object;
 
 namespace GearEngine.Campaign.Tests.Editor
 {
@@ -32,7 +41,8 @@ namespace GearEngine.Campaign.Tests.Editor
             try
             {
                 typeof(Presentation.ActiveRaceView).GetMethod("ApplyRaceBoardLayout", flags).Invoke(view, null);
-                Assert.That(rect.anchorMin.y, Is.GreaterThanOrEqualTo(0.2f));
+                Assert.That(rect.anchorMin.y, Is.EqualTo(0.08f).Within(0.001f));
+                Assert.That(rect.anchorMax.y, Is.EqualTo(0.38f).Within(0.001f));
                 typeof(Presentation.ActiveRaceView).GetMethod("ApplyRaceBoardLayout", flags).Invoke(view, null);
                 typeof(Presentation.ActiveRaceView).GetMethod("RestoreBoardLayout", flags).Invoke(view, null);
                 Assert.That(rect.anchorMin, Is.EqualTo(new Vector2(0.1f, 0.1f)));
@@ -41,6 +51,71 @@ namespace GearEngine.Campaign.Tests.Editor
             finally
             {
                 Object.DestroyImmediate(root);
+            }
+        }
+
+        [Test]
+        public void RaceHud_SitsBetweenTrackAndGearBoardAndLabelsRpm()
+        {
+            const float referenceHeight = 1920f;
+            const float boardTop = 0.38f * referenceHeight;
+            GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(
+                "Assets/GearEngine/Prefabs/Campaign/Race View.prefab");
+            RectTransform trackViewport = prefab.transform.Find("TrackViewport") as RectTransform;
+            RectTransform hud = prefab.transform.Find("Container/CarStatusHud") as RectTransform;
+            ActiveRaceView view = prefab.GetComponent<ActiveRaceView>();
+            SerializedObject serializedView = new SerializedObject(view);
+            TMP_Text rpmText = (TMP_Text)serializedView.FindProperty("currentRpmText").objectReferenceValue;
+
+            Assert.That(trackViewport, Is.Not.Null);
+            Assert.That(hud, Is.Not.Null);
+            Assert.That(hud.anchorMin.y, Is.EqualTo(0.48f).Within(0.001f));
+            Assert.That(hud.anchorMin.y, Is.LessThan(trackViewport.anchorMin.y),
+                "HUD anchor must remain below the track region.");
+
+            float hudBottom = (hud.anchorMin.y * referenceHeight) + hud.anchoredPosition.y -
+                (hud.sizeDelta.y * hud.pivot.y);
+            Assert.That(hudBottom, Is.GreaterThan(boardTop), "HUD must remain above the gear board.");
+            Assert.That(rpmText.text, Does.StartWith("RPM "));
+            Assert.That(serializedView.FindProperty("currentVelocityText").objectReferenceValue, Is.Not.Null);
+            Assert.That(serializedView.FindProperty("currentGearText").objectReferenceValue, Is.Not.Null);
+            Assert.That(serializedView.FindProperty("rpmSegments").arraySize, Is.EqualTo(3));
+        }
+
+        [Test]
+        public void RaceScore_UpdatesWhileDriftPointsAccumulate()
+        {
+            CarDefinition carDefinition = ScriptableObject.CreateInstance<CarDefinition>();
+            TrackDefinition trackDefinition = ScriptableObject.CreateInstance<TrackDefinition>();
+            RaceState session = new RaceState(new CarEntity(carDefinition), trackDefinition, new RaceSessionConfig())
+            {
+                Phase = SimulationLifecycleState.Running,
+                TotalDriftScore = 40,
+            };
+            CarViewModel car = new CarViewModel(session, new StubSimulationRunner(), false)
+            {
+                IsDrifting = true,
+            };
+            RaceDriftScoreViewModel viewModel = new RaceDriftScoreViewModel(session, car, 100f, 0.1f);
+            GameObject racePrefab = AssetDatabase.LoadAssetAtPath<GameObject>(
+                "Assets/GearEngine/Prefabs/Campaign/Race View.prefab");
+            GameObject instance = Object.Instantiate(racePrefab);
+            RaceDriftScoreView view = instance.GetComponentInChildren<RaceDriftScoreView>(true);
+            TMP_Text totalScore = (TMP_Text)new SerializedObject(view)
+                .FindProperty("totalScoreText").objectReferenceValue;
+
+            try
+            {
+                view.Bind(viewModel);
+                viewModel.Tick(0.5f);
+                Assert.That(totalScore.text, Is.EqualTo("90"),
+                    "The score panel must include unbanked drift points while the value changes.");
+            }
+            finally
+            {
+                Object.DestroyImmediate(instance);
+                Object.DestroyImmediate(trackDefinition);
+                Object.DestroyImmediate(carDefinition);
             }
         }
 
@@ -83,6 +158,33 @@ namespace GearEngine.Campaign.Tests.Editor
                 int missing = GameObjectUtility.GetMonoBehavioursWithMissingScriptCount(child.gameObject);
                 Assert.That(missing, Is.Zero, $"{path}: {child.name} has missing scripts.");
             }
+        }
+
+        private sealed class StubSimulationRunner : ISimulationRunnerService
+        {
+            public event Action<CarEntity> OnLapCompleted
+            {
+                add { }
+                remove { }
+            }
+
+            public void InitializeRun(ISimulationInitParams initParams) { }
+
+            public void SetPaused(CarEntity entity, bool paused) { }
+
+            public bool GetTelemetry(CarEntity entity, out CarTelemetryData data)
+            {
+                data = default;
+                return false;
+            }
+
+            public void ApplyJerk(CarEntity entity, float severity) { }
+
+            public void RemoveDriver(CarEntity entity) { }
+
+            public void TriggerCinematicFinish(CarEntity entity) { }
+
+            public void Tick() { }
         }
     }
 }
