@@ -72,6 +72,8 @@ The Home standings panel fit was integrated into local `main` in merge commit `b
 
 The Home header cleanup was integrated into local `main` in merge commit `bc523bd3`. No remote push was performed.
 
+The Results standings panel fit was integrated into local `main` in merge commit `7d0adf50`. No remote push was performed.
+
 Validation commit `70079efe` records tests and final captures for both implementation batches. Local main integration: `611bc227`. No remote push.
 
 The post-race correction is implemented in `0e84aec6` on

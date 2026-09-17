@@ -214,6 +214,7 @@ Verification:
   open in Unity; the live Editor regression and scoped project build provide the
   compilation evidence.
 
-Implementation commit: `171f7ac1`. NUnit XML, the validation transcript, contextual
-report, and capture index are under `Artifacts/TestResults/ResultsStandingsFit/` and
+Implementation commit: `171f7ac1`. Local `main` integration: `7d0adf50` (clean merge
+from verified `8873a234`). NUnit XML, the validation transcript, contextual report, and
+capture index are under `Artifacts/TestResults/ResultsStandingsFit/` and
 `Artifacts/VisualTests/RewardsFlow/Portrait/`. No remote push was performed.
