@@ -29,6 +29,7 @@ its GUID is the stable identity used by serialized references.
 - [x] Add Home previous/next track controls that cycle only through unlocked tracks, update the preview and saved results, and select the displayed track for play (`b1049ea6`).
 - [x] Integrate the Home track carousel into local `main` without conflicts (`a10adb73`).
 - [x] Remove the unused white area below the final visible Home standings row while preserving the unraced fourth-row state (`3d4aa546`).
+- [x] Remove the `Laps` and `Target` metadata from the Home track header while preserving track selection and runtime standings (`8bcdb33a`).
 - Local integration: merge `codex/victor-post-race-screens` into verified `main` at `3df8b90e`; final disposition is recorded in the integration merge.
 
 ## Surprises & Discoveries
@@ -59,7 +60,7 @@ its GUID is the stable identity used by serialized references.
 
 ## Outcomes & Retrospective
 
-The original migration is on local main. The standalone correction restores Victor's full-screen Results and adds separate Rewards and Progress screens using the existing MVVM/navigation pattern. Home now cycles through unlocked tracks with the existing selector art and carries the displayed selection into Setup, Race, and result submission. Scoped tests and the repository `-SkipTests` gate passed; see Validation.md for exact coverage and retained acceptance limits.
+The original migration is on local main. The standalone correction restores Victor's full-screen Results and adds separate Rewards and Progress screens using the existing MVVM/navigation pattern. Home now cycles through unlocked tracks with the existing selector art, carries the displayed selection into Setup, Race, and result submission, and presents only the selected track name above that composition. Scoped tests and the repository `-SkipTests` gate passed; see Validation.md for exact coverage and retained acceptance limits.
 
 ## Context and Orientation
 

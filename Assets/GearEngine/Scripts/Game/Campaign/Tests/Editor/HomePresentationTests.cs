@@ -49,6 +49,9 @@ namespace GearEngine.Campaign.Tests.Editor
             instance.SetActive(true);
             TrackStatsViewComponent stats = instance.GetComponentInChildren<TrackStatsViewComponent>();
             ResultStandingsView standings = instance.GetComponentInChildren<ResultStandingsView>();
+            SerializedObject serializedStats = new SerializedObject(stats);
+            TMP_Text lapsLabel = (TMP_Text)serializedStats.FindProperty("targetLapsLabel").objectReferenceValue;
+            TMP_Text targetLabel = (TMP_Text)serializedStats.FindProperty("targetTimeLabel").objectReferenceValue;
             RectTransform panel = (RectTransform)standings.transform.parent;
             float expandedHeight = panel.sizeDelta.y;
             float rowSpacing = new SerializedObject(standings).FindProperty("rowSpacing").floatValue;
@@ -63,6 +66,8 @@ namespace GearEngine.Campaign.Tests.Editor
                 TrackStatsViewModel model = new TrackStatsViewModel(track, progress);
                 stats.Bind(model);
                 yield return new WaitForSecondsRealtime(2f);
+                Assert.That(lapsLabel.gameObject.activeSelf, Is.False, "Home must not show lap metadata.");
+                Assert.That(targetLabel.gameObject.activeSelf, Is.False, "Home must not show target-time metadata.");
                 Assert.That(standings.DisplayedPlayerPosition, Is.EqualTo(saved ? 3 : 4));
                 Assert.That(standings.IsAnimating, Is.False);
                 Assert.That(standings.GetComponentsInChildren<ResultStandingRowView>().Length, Is.EqualTo(saved ? 3 : 4));
@@ -228,7 +233,7 @@ namespace GearEngine.Campaign.Tests.Editor
                 string file = $"{scenario}{width}x{height}.png";
                 File.WriteAllBytes(Path.Combine(output, file), image.EncodeToPNG());
                 string criteria = scenario.StartsWith("Home", System.StringComparison.Ordinal)
-                    ? "[\"Runtime ViewModel bindings\",\"Rendered text inside viewport\",\"Standings panel fits visible rows\",\"Four-row unraced state retained\"]"
+                    ? "[\"Runtime ViewModel bindings\",\"Track name shown without laps or target\",\"Rendered text inside viewport\",\"Standings panel fits visible rows\",\"Four-row unraced state retained\"]"
                     : "[\"Runtime ViewModel bindings\",\"Rendered text inside viewport\",\"Animation restart\",\"Selected gear card visibility and rarity\"]";
                 File.WriteAllText(Path.Combine(output, file + ".evidence.json"),
                     "{\"test\":\"" + NUnit.Framework.TestContext.CurrentContext.Test.FullName + "\"," +

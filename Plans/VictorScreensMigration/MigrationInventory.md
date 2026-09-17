@@ -8,6 +8,7 @@ The `68afa7e4` → `d92a04a0` → `46ec514c` sequence is one effective change.
 | `46ec514c` | Main View header, track labels and opening animation | Main View prefab | Already applied: current prefab equals `9e56d673` |
 | User-directed Home correction; existing `select_track.prefab` control | Main track selection | Migrated in `b1049ea6`: previous/next controls wrap through unlocked tracks only, refresh preview/results together, and select the displayed track when Play is pressed |
 | User-directed Home correction; existing Best Times composition | Main Best Times panel | Migrated in `3d4aa546`: the visual card now fits the three visible standings rows and restores its full height for the unraced fourth row |
+| User-directed Home correction; existing track header | Main selected-track header | Migrated in `8bcdb33a`: Home keeps the selected track name and deactivates the `Laps` and `Target` metadata on every bind |
 | `574764b9` | Continue button and track selection label changes | Shared button prefabs | Already applied in shared source prefabs; reused existing button roots and callbacks |
 | `5a4a8fe6` | Card artwork, stars, icon size and score panel assets | Existing Art/UI and shared UI prefabs | Already applied artwork/stars; missing item and HUD instance overrides migrated below |
 | `e47af5a4` | `Container_PanelRace_new`: speed, gear, RPM and score design in source Main Scene | Race View HUD | Migrated: original speed/gear/RPM/score bindings target Victor’s HUD; segmented RPM follows the existing simulated RPM |
@@ -61,6 +62,7 @@ See `Validation.md` for actual evidence, remaining limitations and integration s
 | `0e84aec6` | Correct Victor victory modal and add Reward → Progress → Home routing | `46ec514c`, `574764b9`, `e47af5a4` |
 | `b1049ea6` | Add unlocked-track navigation to Home | User-directed correction using the existing selector control |
 | `3d4aa546` | Fit the Home Best Times card to its visible rows | User-directed correction using the migrated standings composition |
+| `8bcdb33a` | Remove Home lap and target metadata | User-directed correction retaining the migrated track-name composition |
 
 Home track navigation was integrated into local `main` in merge commit `a10adb73`. No remote push was performed.
 

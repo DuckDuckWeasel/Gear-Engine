@@ -42,14 +42,12 @@ namespace GearEngine.Campaign.Presentation
 
             if (targetLapsLabel != null)
             {
-                string lapsText = viewModel.TargetLaps < 0 ? "Laps: —" : $"Laps: {viewModel.TargetLaps}";
-                targetLapsLabel.text = lapsText;
+                targetLapsLabel.gameObject.SetActive(false);
             }
 
             if (targetTimeLabel != null)
             {
-                System.TimeSpan time = System.TimeSpan.FromSeconds(viewModel.TargetTime);
-                targetTimeLabel.text = $"Target: {(int)time.TotalSeconds:00}:{time:ff}";
+                targetTimeLabel.gameObject.SetActive(false);
             }
 
             if (standings != null)
