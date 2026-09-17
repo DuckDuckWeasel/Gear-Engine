@@ -5,6 +5,7 @@
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner",
         "Game.Campaign",
+        "Game.GearEngine.FrustumFit",
         "Game.Perks",
         "Game.CarSimulation",
         "Game.GearEngine",

@@ -15,11 +15,25 @@ namespace GearEngine.Campaign.Presentation
         [SerializeField] private Button selectButton;
         [SerializeField] private Material grayscaleMaterial;
         [SerializeField] private Image rarityBackgroundImage;
+        [SerializeField] private bool useRarityTextColor = true;
+
+        [SerializeField] private Image[] rarityStars = Array.Empty<Image>();
+        [SerializeField] private Sprite filledRarityStar;
+        [SerializeField] private Sprite emptyRarityStar;
 
         protected override void OnBind()
         {
             base.OnBind();
+            if (viewModel?.Item == null)
+            {
+                return;
+            }
+
             ApplyPerkData();
+            for (int i = 0; i < rarityStars.Length; i++)
+            {
+                rarityStars[i].sprite = i <= (int)viewModel.Item.Rarity ? filledRarityStar : emptyRarityStar;
+            }
             SubscribeSelectButton();
         }
 
@@ -34,25 +48,34 @@ namespace GearEngine.Campaign.Presentation
 
         private void ApplyPerkData()
         {
-            if (viewModel?.Item == null) return;
+            if (viewModel?.Item == null)
+            {
+                return;
+            }
 
             RarityConfigSO visualConfig = viewModel.Item.RarityConfig;
 
             if (nameLabel != null)
             {
-                if (visualConfig != null)
+                if (useRarityTextColor && visualConfig != null)
                 {
                     nameLabel.color = visualConfig.TextColor;
                 }
 
                 if (viewModel.Amount > 1)
+                {
                     nameLabel.text = $"x{viewModel.Amount} {viewModel.Item.Name}";
+                }
                 else
+                {
                     nameLabel.text = viewModel.Item.Name;
+                }
             }
 
             if (descriptionLabel != null)
+            {
                 descriptionLabel.text = viewModel.Item.Description;
+            }
 
             if (iconImage != null && viewModel.Item.Icon != null)
             {
@@ -74,7 +97,7 @@ namespace GearEngine.Campaign.Presentation
             }
 
             Image[] allImages = GetComponentsInChildren<Image>(true);
-            foreach (var img in allImages)
+            foreach (Image img in allImages)
             {
                 if (viewModel.IsOwned)
                 {

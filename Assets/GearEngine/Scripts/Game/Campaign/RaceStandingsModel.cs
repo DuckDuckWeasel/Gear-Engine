@@ -22,6 +22,20 @@ namespace GearEngine.Campaign
             Entries = rivals.AsReadOnly();
         }
 
+        private RaceStandingsModel(TrackDefinition track)
+        {
+            List<RaceStandingEntry> rivals = BuildRivals(track);
+            Player = new RaceStandingEntry("YOU", 0f, true, false);
+            PlayerPosition = PreviousPosition = 4;
+            rivals.Add(Player);
+            Entries = rivals.AsReadOnly();
+        }
+
+        public static RaceStandingsModel FromBestTime(float? bestTime, TrackDefinition track)
+        {
+            return bestTime.HasValue ? new RaceStandingsModel(bestTime.Value, track, bestTime) : new RaceStandingsModel(track);
+        }
+
         public IReadOnlyList<RaceStandingEntry> Entries { get; }
         public RaceStandingEntry Player { get; }
         public int PlayerPosition { get; }

@@ -35,6 +35,19 @@ namespace GearEngine.Campaign.Presentation
             animation = StartCoroutine(AnimatePlacement());
         }
 
+        public void ShowCurrentPlacement()
+        {
+            Stop();
+            order = rows.ToList();
+            for (int i = 0; i < rows.Length; i++)
+            {
+                rows[i].Bind(standings.Entries[i], i + 1);
+                rows[i].Rect.anchoredPosition = Position(i);
+            }
+            DisplayedPlayerPosition = standings.PlayerPosition;
+            ShowFinalRows();
+        }
+
         private void OnDisable()
         {
             Stop();

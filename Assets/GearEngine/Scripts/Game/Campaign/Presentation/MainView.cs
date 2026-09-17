@@ -1,4 +1,6 @@
 using System;
+using System.Collections;
+using DG.Tweening;
 using GearEngine.CarSimulation.Tracks;
 using GearEngine.FrustumFit;
 using Scaffold.MVVM;
@@ -16,6 +18,13 @@ namespace GearEngine.Campaign.Presentation
         [SerializeField] private TrackStatsViewComponent statsPanel;
         [SerializeField] private FrustumFitAnchor[] openTransitionAnchors;
         [SerializeField] private float openTransitionDurationSeconds = 0.35f;
+
+        private Coroutine previewRoutine;
+        private Tween previewTween;
+        private Vector3 originalTrackPosition;
+        private Quaternion originalTrackRotation;
+        private Vector3 originalTrackScale;
+        private bool hasTrackSnapshot;
 
         protected override void OnBind()
         {
@@ -46,12 +55,13 @@ namespace GearEngine.Campaign.Presentation
                 gearsButton.onClick.AddListener(OnGearsClicked);
             }
             track.gameObject.SetActive(true);
-            FrustumFitAnchorOpenTransition.PlayAfterCanvasLayout(this, openTransitionAnchors, openTransitionDurationSeconds);
+            StartTrackPreview();
         }
 
         protected override void OnClose(bool hiding)
         {
             base.OnClose(hiding);
+            RestoreTrackPose();
             if (hiding)
             {
                 return;
@@ -72,6 +82,45 @@ namespace GearEngine.Campaign.Presentation
                 track.gameObject.SetActive(false);
             }
         }
+
+        private void StartTrackPreview()
+        {
+            RestoreTrackPose();
+            originalTrackPosition = track.transform.position;
+            originalTrackRotation = track.transform.rotation;
+            originalTrackScale = track.transform.localScale;
+            hasTrackSnapshot = true;
+            previewRoutine = StartCoroutine(FitTrackAfterLayout());
+        }
+
+        private IEnumerator FitTrackAfterLayout()
+        {
+            Canvas.ForceUpdateCanvases();
+            yield return null;
+            previewTween = FrustumFitAnchorOpenTransition.Play(openTransitionAnchors, openTransitionDurationSeconds);
+            previewRoutine = null;
+        }
+
+        private void RestoreTrackPose()
+        {
+            if (previewRoutine != null)
+            {
+                StopCoroutine(previewRoutine);
+                previewRoutine = null;
+            }
+            previewTween?.Kill();
+            previewTween = null;
+            if (!hasTrackSnapshot || track == null)
+            {
+                return;
+            }
+            // The track is shared with Setup and Race; Home fitting must not change their world scale.
+            track.transform.SetPositionAndRotation(originalTrackPosition, originalTrackRotation);
+            track.transform.localScale = originalTrackScale;
+            hasTrackSnapshot = false;
+        }
+
+        private void OnDisable() => RestoreTrackPose();
 
         private void OnPlayClicked()
         {
