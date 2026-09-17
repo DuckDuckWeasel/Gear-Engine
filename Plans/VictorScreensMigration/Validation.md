@@ -133,4 +133,5 @@ Verification:
   Unity compilation, analyzer build, and analyzer unit tests with zero diagnostics or
   blockers. Broad suites were skipped; the focused tests above ran separately.
 
-Implementation commit: `b1049ea6`. Remote push remains unauthorized.
+Implementation commit: `b1049ea6`. Local `main` integration: `a10adb73` (clean merge,
+parents `66d15c1f` and `0f5bece7`). No remote push was performed.

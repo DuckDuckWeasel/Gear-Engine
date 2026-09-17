@@ -60,6 +60,8 @@ See `Validation.md` for actual evidence, remaining limitations and integration s
 | `0e84aec6` | Correct Victor victory modal and add Reward → Progress → Home routing | `46ec514c`, `574764b9`, `e47af5a4` |
 | `b1049ea6` | Add unlocked-track navigation to Home | User-directed correction using the existing selector control |
 
+Home track navigation was integrated into local `main` in merge commit `a10adb73`. No remote push was performed.
+
 Validation commit `70079efe` records tests and final captures for both implementation batches. Local main integration: `611bc227`. No remote push.
 
 The post-race correction is implemented in `0e84aec6` on
