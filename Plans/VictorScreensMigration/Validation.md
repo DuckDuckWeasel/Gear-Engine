@@ -135,3 +135,28 @@ Verification:
 
 Implementation commit: `b1049ea6`. Local `main` integration: `a10adb73` (clean merge,
 parents `66d15c1f` and `0f5bece7`). No remote push was performed.
+
+## Home standings panel fit — 2026-09-16
+
+Home's three-row Best Times state now reduces the visual card by one configured row
+spacing, keeping the card's top edge fixed and ending it immediately below the player
+row. An unraced track still shows the player in fourth place and retains the complete
+four-row card.
+
+Verification:
+
+- Red regression: **1 failed** with the old 714 px card height.
+- Final Home regression: **1 passed, 0 failed** after fitting the visual panel.
+- Shared `PostRaceScreenTests`: **3 passed, 0 failed**.
+- Runtime captures inspected at 1080×1680 and 1080×2280 for both saved and unraced
+  states. Evidence and NUnit XML: `Artifacts/TestResults/HomeStandingsFit/` and
+  `Artifacts/VisualTests/HomeStandings/Home*`.
+- Scoped C# lint fix/check passed for the presentation and regression files. A complete
+  `Game.Campaign.Tests.csproj` build finished with 0 errors after the final metadata-only
+  test edit.
+- `validate-changes.ps1 -SkipTests` exited 0 with zero assembly-reference, pragma, or
+  analyzer findings. Its batch compilation process could not start while the same project
+  was open in Unity; the live Editor compile and focused test runs validate the gameplay
+  change.
+
+Implementation commit: `3d4aa546`. Remote push remains unauthorized.

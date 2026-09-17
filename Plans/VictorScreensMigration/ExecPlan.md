@@ -28,6 +28,7 @@ its GUID is the stable identity used by serialized references.
 - [x] Commit the standalone correction (`ea615d32`) and its evidence.
 - [x] Add Home previous/next track controls that cycle only through unlocked tracks, update the preview and saved results, and select the displayed track for play (`b1049ea6`).
 - [x] Integrate the Home track carousel into local `main` without conflicts (`a10adb73`).
+- [x] Remove the unused white area below the final visible Home standings row while preserving the unraced fourth-row state (`3d4aa546`).
 - Local integration: merge `codex/victor-post-race-screens` into verified `main` at `3df8b90e`; final disposition is recorded in the integration merge.
 
 ## Surprises & Discoveries
