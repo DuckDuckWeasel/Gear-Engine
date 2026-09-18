@@ -1,7 +1,9 @@
 using System;
+using System.Collections.Generic;
 using GearEngine.CarSimulation.Tracks;
 using GearEngine.FrustumFit;
 using Scaffold.MVVM;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -11,6 +13,10 @@ namespace GearEngine.Campaign.Presentation
     {
         [SerializeField] private TrackViewComponent track;
         [SerializeField] private Button playButton;
+        [SerializeField] private Button previousTrackButton;
+        [SerializeField] private Button nextTrackButton;
+        [SerializeField] private TextMeshProUGUI trackPositionLabel;
+        private readonly Dictionary<Renderer, MaterialPropertyBlock> originalTrackProperties = new Dictionary<Renderer, MaterialPropertyBlock>();
         [SerializeField] private Button talentPerksButton;
         [SerializeField] private Button gearsButton;
         [SerializeField] private TrackStatsViewComponent statsPanel;
@@ -26,13 +32,19 @@ namespace GearEngine.Campaign.Presentation
                     "[MainView] Track must be assigned on the scene instance (not baked into the prefab).");
             }
 
-            track.Bind(viewModel.Track);
-            statsPanel.Bind(viewModel.Stats);
+            previousTrackButton.onClick.AddListener(viewModel.PreviousTrack);
+            nextTrackButton.onClick.AddListener(viewModel.NextTrack);
+            Bind<CampaignTrackPreviewViewModel, CampaignTrackPreviewViewModel>(() => viewModel.Track, UpdateTrackPreview);
+            Bind<TrackStatsViewModel, TrackStatsViewModel>(() => viewModel.Stats, UpdateTrackStats);
+            Bind<bool, bool>(() => viewModel.CanNavigateTracks, UpdateTrackNavigation);
+            Bind<string, string>(() => viewModel.TrackPosition, value => trackPositionLabel.text = value);
+            Bind<bool, bool>(() => viewModel.IsTrackLocked, UpdateTrackLock);
         }
 
         protected override void OnOpen(bool wasHidden)
         {
             base.OnOpen(wasHidden);
+            viewModel.RefreshTracks();
             playButton.onClick.RemoveListener(OnPlayClicked);
             playButton.onClick.AddListener(OnPlayClicked);
             if (talentPerksButton != null)
@@ -67,10 +79,92 @@ namespace GearEngine.Campaign.Presentation
                 gearsButton.onClick.RemoveListener(OnGearsClicked);
             }
 
+            RestoreTrackAppearance();
             if (track != null)
             {
                 track.gameObject.SetActive(false);
             }
+        }
+
+        protected override void OnUnbind()
+        {
+            previousTrackButton.onClick.RemoveListener(viewModel.PreviousTrack);
+            nextTrackButton.onClick.RemoveListener(viewModel.NextTrack);
+            RestoreTrackAppearance();
+            track.Unbind();
+            base.OnUnbind();
+        }
+
+        private void UpdateTrackPreview(CampaignTrackPreviewViewModel preview)
+        {
+            RestoreTrackAppearance();
+            if (preview != null)
+            {
+                track.Bind(preview);
+            }
+
+            UpdateTrackLock(viewModel.IsTrackLocked);
+        }
+
+        private void UpdateTrackStats(TrackStatsViewModel stats)
+        {
+            if (stats != null)
+            {
+                statsPanel.Bind(stats);
+            }
+
+            if (viewModel.IsTrackLocked)
+            {
+                statsPanel.ShowLockedTrack();
+            }
+        }
+
+        private void UpdateTrackNavigation(bool canNavigate)
+        {
+            previousTrackButton.gameObject.SetActive(canNavigate);
+            nextTrackButton.gameObject.SetActive(canNavigate);
+        }
+
+        private void UpdateTrackLock(bool isLocked)
+        {
+            playButton.interactable = !isLocked;
+            RestoreTrackAppearance();
+            if (!isLocked)
+            {
+                return;
+            }
+
+            statsPanel.ShowLockedTrack();
+            foreach (Renderer renderer in track.GetComponentsInChildren<Renderer>(true))
+            {
+                SetTrackRendererBlack(renderer);
+            }
+        }
+
+        private void SetTrackRendererBlack(Renderer renderer)
+        {
+            MaterialPropertyBlock original = new MaterialPropertyBlock();
+            renderer.GetPropertyBlock(original);
+            originalTrackProperties[renderer] = original;
+            MaterialPropertyBlock black = new MaterialPropertyBlock();
+            renderer.GetPropertyBlock(black);
+            black.SetColor("_BaseColor", Color.black);
+            black.SetColor("_Color", Color.black);
+            black.SetColor("_EmissionColor", Color.black);
+            renderer.SetPropertyBlock(black);
+        }
+
+        private void RestoreTrackAppearance()
+        {
+            foreach (KeyValuePair<Renderer, MaterialPropertyBlock> entry in originalTrackProperties)
+            {
+                if (entry.Key != null)
+                {
+                    entry.Key.SetPropertyBlock(entry.Value);
+                }
+            }
+
+            originalTrackProperties.Clear();
         }
 
         private void OnPlayClicked()
@@ -113,6 +207,9 @@ namespace GearEngine.Campaign.Presentation
         {
             RequireReference(playButton, nameof(playButton));
             RequireReference(statsPanel, nameof(statsPanel));
+            RequireReference(previousTrackButton, nameof(previousTrackButton));
+            RequireReference(nextTrackButton, nameof(nextTrackButton));
+            RequireReference(trackPositionLabel, nameof(trackPositionLabel));
         }
 
         private void RequireReference(UnityEngine.Object field, string name)

@@ -37,3 +37,28 @@ The popup also contains a nested instance of `Confetti_directional_multicolor.pr
 ## LiveOps coupling
 
 Campaign progression, gold, gear inventory, board loadout, and card unlocks are backed by LiveOps modules inside the layered bootstrap (`ILiveOpsService` is registered before the Campaign layer). **`ITrackService`** is **`TracksClientModule` only** (cloud). `LocalGearLoadoutService` may remain for isolated gear tests where noted.
+
+## Home track navigation
+
+The first configured track starts unlocked and playable without a completed race.
+An empty or outdated saved track ID is repaired to the first configured track that
+has a local asset.
+
+The home carousel contains the unlocked tracks in Remote Config order, followed by
+one black preview of the next locked track. Previous/next wrap around, the counter
+shows the selected position within this carousel (including the locked preview),
+and both arrows hide if no tracks are unlocked or only one entry is available.
+Locked previews cannot open setup. An empty catalog displays `0 of 0` and disables Play.
+
+`TracksClientModule` keeps the chosen race track separate from the server's current
+campaign track. Browsing only updates the home view model; Play selects an unlocked
+track for setup, simulation, and result submission. Unlocks are restored from the
+current campaign position and saved race history, including the successor of a
+previously raced track, matching the server's existing advance-after-race behavior.
+This retains earlier tracks after replaying a race or wrapping the campaign.
+Returning home refreshes the carousel, preview, and statistics after new unlocks.
+
+The Main View prefab owns `PreviousTrackButton`, `NextTrackButton`, and
+`TrackPosition`. The view binds presentation state through MVVM, removes its arrow
+listeners on unbind, and restores renderer property blocks before leaving the preview.
+Focused EditMode coverage: `GearEngine.Campaign.Tests.Editor.MainTrackNavigationTests`.

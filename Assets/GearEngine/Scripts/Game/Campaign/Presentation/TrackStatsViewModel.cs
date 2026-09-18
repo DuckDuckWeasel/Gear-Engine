@@ -10,13 +10,17 @@ namespace GearEngine.Campaign.Presentation
     public sealed class TrackStatsViewModel : ViewModel
     {
         public TrackStatsViewModel(ITrackService trackService)
+            : this(trackService?.CurrentTrack ?? throw new ArgumentNullException(nameof(trackService)))
         {
-            if (trackService == null)
+        }
+
+        public TrackStatsViewModel(TrackDefinition track)
+        {
+            if (track == null)
             {
-                throw new ArgumentNullException(nameof(trackService));
+                throw new ArgumentNullException(nameof(track));
             }
 
-            TrackDefinition track = trackService.CurrentTrack;
             TrackName = track.GetDisplayName();
             TargetLaps = track.TotalLaps;
             TargetTime = track.TimeToBeatSeconds;

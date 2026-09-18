@@ -48,6 +48,30 @@ namespace GearEngine.Campaign.Presentation
             RebuildTierSlots();
         }
 
+        public void ShowLockedTrack()
+        {
+            if (trackNameLabel != null)
+            {
+                trackNameLabel.text = "Locked track";
+            }
+
+            if (targetLapsLabel != null)
+            {
+                targetLapsLabel.text = string.Empty;
+            }
+
+            if (targetTimeLabel != null)
+            {
+                targetTimeLabel.text = string.Empty;
+            }
+
+            TryKillTiersSequence();
+            if (tiersContainer != null)
+            {
+                ClearTierSlots();
+            }
+        }
+
         private void OnDisable()
         {
             if (tiersSequence != null && tiersSequence.IsActive())
@@ -112,7 +136,7 @@ namespace GearEngine.Campaign.Presentation
             TrackTierSlotView prefabToInstantiate = defaultTierSlotPrefab;
             if (tierSlotPrefabs != null)
             {
-                foreach (var config in tierSlotPrefabs)
+                foreach (TierSlotPrefabConfig config in tierSlotPrefabs)
                 {
                     if (config.Contains(tierVm.TierNumber))
                     {

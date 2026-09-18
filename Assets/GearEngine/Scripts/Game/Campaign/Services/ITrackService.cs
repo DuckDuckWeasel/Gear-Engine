@@ -15,7 +15,10 @@ namespace GearEngine.Campaign.Services
 
         IReadOnlyList<TrackEntry> GetOrderedTracks();
 
+        bool IsTrackUnlocked(string trackId);
+
+        bool TrySelectTrack(string trackId);
+
         Task RecordResultAsync(RaceResultModel result);
     }
 }
-
