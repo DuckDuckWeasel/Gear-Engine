@@ -50,6 +50,9 @@ namespace GearEngine.Campaign.Presentation
         [Inject] private IAnalyticsService analyticsService;
         [Inject] private IEventBus eventBus;
 
+        private RaceState activeSession;
+        private bool resultFlowStarted;
+
         public void Tick(float deltaTime)
         {
             DriftScore?.Tick(deltaTime);
@@ -74,28 +77,43 @@ namespace GearEngine.Campaign.Presentation
         protected override void OnClosed()
         {
             eventBus.RemoveListener<GearEngine.Events.CombatTextCollectedEvent>(OnCombatTextCollected);
+            UnsubscribeFromRaceCompletion();
+            UnregisterActiveRace();
+            base.OnClosed();
+        }
 
+        private void UnsubscribeFromRaceCompletion()
+        {
+            if (activeSession != null)
+            {
+                activeSession.PresentationChanged -= OnSessionPresentationChanged;
+            }
+        }
+
+        private void UnregisterActiveRace()
+        {
             try
             {
-                if (Track?.Session != null)
+                if (activeSession != null)
                 {
-                    raceManager.UnregisterRace(Track.Session);
+                    raceManager.UnregisterRace(activeSession);
                 }
             }
             catch (Exception ex)
             {
                 Debug.LogError($"[ActiveRaceViewModel] OnClosed failed: {ex.Message}\n{ex.StackTrace}");
             }
-
-            base.OnClosed();
         }
 
-        private void OnTrackStateChanged(SimulationLifecycleState state)
+        private void OnSessionPresentationChanged()
         {
-            if (state == SimulationLifecycleState.Completed)
+            if (resultFlowStarted || activeSession?.Phase != SimulationLifecycleState.Completed)
             {
-                OnRaceCompleted();
+                return;
             }
+
+            resultFlowStarted = true;
+            OnRaceCompleted();
         }
 
         private void OnRaceCompleted()
@@ -176,7 +194,8 @@ namespace GearEngine.Campaign.Presentation
 
             BindRaceViews(freshSession);
 
-            Bind<SimulationLifecycleState, SimulationLifecycleState>(() => Track.State, OnTrackStateChanged);
+            activeSession = freshSession;
+            activeSession.PresentationChanged += OnSessionPresentationChanged;
             analyticsService?.Record(new RaceStartedEvent(trackService.CurrentTrack.name, trackService.CurrentCar.name));
         }
 

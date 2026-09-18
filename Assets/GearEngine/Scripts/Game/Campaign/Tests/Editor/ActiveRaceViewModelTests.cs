@@ -234,7 +234,9 @@ namespace GearEngine.Campaign.Tests.Editor
                 ViewModelTestInject.InjectNavigation(vm, navigation);
 
                 vm.Bind(navigation);
-                vm.Track.Complete();
+                vm.Track.Session.Phase = SimulationLifecycleState.Completed;
+                vm.Track.Session.TriggerPresentationChanged();
+                vm.Track.Session.TriggerPresentationChanged();
 
                 DateTime deadline = DateTime.UtcNow.AddSeconds(5);
                 while (DateTime.UtcNow < deadline && navigation.OpenedControllers.Count == 0)
