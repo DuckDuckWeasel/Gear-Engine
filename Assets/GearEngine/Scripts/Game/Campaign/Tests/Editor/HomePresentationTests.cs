@@ -56,6 +56,16 @@ namespace GearEngine.Campaign.Tests.Editor
             RectTransform panel = (RectTransform)standings.transform.parent;
             float expandedHeight = panel.sizeDelta.y;
             float rowSpacing = new SerializedObject(standings).FindProperty("rowSpacing").floatValue;
+            RectTransform standingsRect = (RectTransform)standings.transform;
+            RectTransform trackViewport = (RectTransform)instance.transform.Find("TrackViewport");
+            Assert.That(expandedHeight, Is.EqualTo(760f).Within(0.1f),
+                "The best-times panel must end directly below its four standings rows.");
+            Assert.That(standingsRect.anchoredPosition.y, Is.EqualTo(-140f).Within(0.1f),
+                "The standings rows must sit directly below the Best Times heading.");
+            Assert.That(trackViewport.anchorMin, Is.EqualTo(new Vector2(0.155f, 0.585f)),
+                "The home track viewport must use the expanded lower-left bounds.");
+            Assert.That(trackViewport.anchorMax, Is.EqualTo(new Vector2(0.845f, 0.83f)),
+                "The home track viewport must use the expanded upper-right bounds.");
             foreach (bool saved in new[] { false, true })
             {
                 Services.TrackProgressModel progress = new Services.TrackProgressModel();
