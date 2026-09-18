@@ -241,6 +241,7 @@ namespace GearEngine.Campaign.Tests.Editor
                 DateTime deadline = DateTime.UtcNow.AddSeconds(5);
                 while (DateTime.UtcNow < deadline && navigation.OpenedControllers.Count == 0)
                 {
+                    vm.Tick(0.1f);
                     yield return null;
                 }
 
@@ -291,6 +292,7 @@ namespace GearEngine.Campaign.Tests.Editor
             float deadline = Time.realtimeSinceStartup + 3f;
             while (Time.realtimeSinceStartup < deadline && navigation.OpenedControllers.Count == 0)
             {
+                vm.Tick(0.1f);
                 yield return null;
             }
 

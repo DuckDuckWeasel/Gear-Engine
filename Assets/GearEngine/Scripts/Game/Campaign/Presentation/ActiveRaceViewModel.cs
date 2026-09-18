@@ -52,10 +52,13 @@ namespace GearEngine.Campaign.Presentation
 
         private RaceState activeSession;
         private bool resultFlowStarted;
+        private RaceResultModel pendingResult;
+        private float resultPopupDelayRemaining;
 
         public void Tick(float deltaTime)
         {
             DriftScore?.Tick(deltaTime);
+            TickResultPopupDelay(deltaTime);
         }
 
         public void StartRaceAfterCarReady()
@@ -77,6 +80,7 @@ namespace GearEngine.Campaign.Presentation
         protected override void OnClosed()
         {
             eventBus.RemoveListener<GearEngine.Events.CombatTextCollectedEvent>(OnCombatTextCollected);
+            pendingResult = null;
             UnsubscribeFromRaceCompletion();
             UnregisterActiveRace();
             base.OnClosed();
@@ -118,22 +122,34 @@ namespace GearEngine.Campaign.Presentation
 
         private void OnRaceCompleted()
         {
-            _ = OnRaceCompletedAsync();
-        }
-
-        private async Task OnRaceCompletedAsync()
-        {
             try
             {
                 engineService.ResetGridSimulationState();
-                RaceResultModel result = CreateRaceResult();
-                await Task.Delay(TimeSpan.FromSeconds(ResultPopupDelaySeconds));
-                await OpenAndPersistResultAsync(result);
+                pendingResult = CreateRaceResult();
+                resultPopupDelayRemaining = ResultPopupDelaySeconds;
             }
             catch (Exception ex)
             {
                 Debug.LogError($"[ActiveRaceViewModel] OnRaceCompleted failed: {ex.Message}\n{ex.StackTrace}");
             }
+        }
+
+        private void TickResultPopupDelay(float deltaTime)
+        {
+            if (pendingResult == null)
+            {
+                return;
+            }
+
+            resultPopupDelayRemaining -= Mathf.Max(0f, deltaTime);
+            if (resultPopupDelayRemaining > 0f)
+            {
+                return;
+            }
+
+            RaceResultModel result = pendingResult;
+            pendingResult = null;
+            _ = OpenAndPersistResultAsync(result);
         }
 
         private void OnCombatTextCollected(GearEngine.Events.CombatTextCollectedEvent evt)
