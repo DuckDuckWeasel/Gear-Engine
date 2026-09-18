@@ -17,6 +17,7 @@
         "Scaffold.Entities",
         "Scaffold.MVVM.ViewModel",
         "Scaffold.Navigation",
+        "Scaffold.Schemas",
         "Unity.Mathematics",
         "Unity.Splines",
         "VContainer",

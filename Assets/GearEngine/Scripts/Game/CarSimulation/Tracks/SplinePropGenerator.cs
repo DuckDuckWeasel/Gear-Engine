@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.Splines;
+using UnityEngine.Scripting;
 using Unity.Mathematics;
 using System.Collections.Generic;
 using TriInspector;
@@ -35,6 +36,7 @@ namespace GearEngine.CarSimulation.Tracks
         // ──────────────────────────────────────────────
 
         [System.Serializable]
+        [Preserve]
         public abstract class PropRule
         {
             [Tooltip("Uncheck to disable this rule from generating.")]
@@ -75,6 +77,7 @@ namespace GearEngine.CarSimulation.Tracks
         // ──────────────────────────────────────────────
 
         [System.Serializable]
+        [Preserve]
         public class All : PropRule
         {
             [Title("Placement Settings")]
@@ -108,6 +111,7 @@ namespace GearEngine.CarSimulation.Tracks
         }
 
         [System.Serializable]
+        [Preserve]
         public class Curves : PropRule
         {
             [Title("Curve Settings")]
@@ -146,6 +150,7 @@ namespace GearEngine.CarSimulation.Tracks
         }
 
         [System.Serializable]
+        [Preserve]
         public class Straights : PropRule
         {
             [Title("Straight Settings")]
@@ -184,6 +189,7 @@ namespace GearEngine.CarSimulation.Tracks
         }
 
         [System.Serializable]
+        [Preserve]
         public class Inside : PropRule
         {
             [Title("Inside Fill Settings")]
@@ -195,6 +201,7 @@ namespace GearEngine.CarSimulation.Tracks
         }
 
         [System.Serializable]
+        [Preserve]
         public class Outside : PropRule
         {
             [Title("Outside Fill Settings")]

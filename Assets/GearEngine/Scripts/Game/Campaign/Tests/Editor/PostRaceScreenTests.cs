@@ -20,6 +20,23 @@ namespace GearEngine.Campaign.Tests.Editor
     public sealed class PostRaceScreenTests
     {
         [Test]
+        public void CampaignViewConfigs_UseDirectPrefabs()
+        {
+            string[] configGuids = AssetDatabase.FindAssets(
+                "t:ViewConfig",
+                new[] { "Assets/GearEngine/Data/Campaign/ViewConfigs" });
+
+            Assert.That(configGuids, Is.Not.Empty);
+            foreach (string guid in configGuids)
+            {
+                string path = AssetDatabase.GUIDToAssetPath(guid);
+                ViewConfig config = AssetDatabase.LoadAssetAtPath<ViewConfig>(path);
+                Assert.That(config.AssetSource, Is.EqualTo(ViewAssetSource.DirectPrefab), path);
+                Assert.That(config.DirectPrefab, Is.Not.Null, path);
+            }
+        }
+
+        [Test]
         public void NavigationSettings_RegisterSeparatePostRaceControllers()
         {
             NavigationSettings settings = AssetDatabase.LoadAssetAtPath<NavigationSettings>("Assets/Navigation/Navigation Settings.asset");
@@ -27,7 +44,8 @@ namespace GearEngine.Campaign.Tests.Editor
             {
                 ViewConfig config = settings.GetViewConfig(type);
                 Assert.That(config.ControllerType, Is.EqualTo(type));
-                Assert.That(config.Asset.editorAsset, Is.Not.Null);
+                Assert.That(config.AssetSource, Is.EqualTo(ViewAssetSource.DirectPrefab));
+                Assert.That(config.DirectPrefab, Is.Not.Null);
             }
         }
 

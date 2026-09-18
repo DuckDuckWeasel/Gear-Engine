@@ -29,6 +29,33 @@ namespace GearEngine.App.Bootstrap.Tests.Editor
         }
 
         [Test]
+        public void SubmissionBuild_BuildsOfflineAddressablesContent()
+        {
+            string exporter = ReadProjectFile(
+                "Assets/GearEngine/Scripts/Game/GearEngine/Editor/SubmissionBuildExporter.cs");
+            string settings = ReadProjectFile(
+                "Assets/AddressableAssetsData/AddressableAssetSettings.asset");
+
+            Assert.That(exporter, Does.Contain("BuildPlayerContent"));
+            Assert.That(exporter, Does.Contain("BuildRemoteCatalog"));
+            Assert.That(exporter, Does.Not.Contain("Directory.Delete(addressablesPath, true)"));
+            Assert.That(settings, Does.Contain("m_BuildRemoteCatalog: 0"));
+            Assert.That(settings, Does.Contain("m_DisableCatalogUpdateOnStart: 1"));
+        }
+
+        [Test]
+        public void RuntimeBootstrap_InstallsAddressablesRuntime()
+        {
+            string foundationLayer = ReadProjectFile(
+                "Assets/GearEngine/Scripts/App/Bootstrap/Layers/FoundationLayer.cs");
+            string sceneFoundation = ReadProjectFile(
+                "Assets/GearEngine/Scripts/Core/SceneFoundation/Bootstrap/SceneFoundationScope.cs");
+
+            Assert.That(foundationLayer, Does.Contain("new AddressablesInstaller"));
+            Assert.That(sceneFoundation, Does.Contain("new AddressablesInstaller"));
+        }
+
+        [Test]
         public void UgsLayer_InitializesAnalyticsAfterUnityServices()
         {
             string layer = ReadProjectFile("Assets/GearEngine/Scripts/App/Bootstrap/Layers/UgsLayer.cs");

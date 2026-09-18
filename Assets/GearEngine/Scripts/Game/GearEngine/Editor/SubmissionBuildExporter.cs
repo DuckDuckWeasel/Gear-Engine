@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using UnityEditor;
+using UnityEditor.AddressableAssets;
 using UnityEditor.AddressableAssets.Build;
 using UnityEditor.AddressableAssets.Settings;
 using UnityEditor.Build.Reporting;
@@ -10,8 +11,6 @@ namespace GearEngine.GearEngine.Editor
 {
     public static class SubmissionBuildExporter
     {
-        private const string k_buildAddressablesMenuPath = "Tools/Gear Engine/Build Settings/Build Addressables With Submission";
-        private const string k_buildAddressablesPreferenceKey = "GearEngine.SubmissionBuild.BuildAddressables";
         private const string k_buildPathEnvironmentVariable = "GEAR_ENGINE_BUILD_PATH";
         private const string k_mainScenePath = "Assets/GearEngine/Scenes/Main Scene.unity";
         private const string k_submissionProductName = "Gear Engine";
@@ -24,14 +23,7 @@ namespace GearEngine.GearEngine.Editor
             {
                 string buildPath = ResolveBuildPath();
                 Directory.CreateDirectory(buildPath);
-                if (ShouldBuildAddressables())
-                {
-                    BuildAddressableContent();
-                }
-                else
-                {
-                    Debug.Log("[SubmissionBuild] Addressables content build skipped by the editor toggle.");
-                }
+                BuildOfflineAddressableContent();
 
                 BuildPlayerOptions options = new BuildPlayerOptions
                 {
@@ -57,30 +49,28 @@ namespace GearEngine.GearEngine.Editor
             }
         }
 
-        [MenuItem(k_buildAddressablesMenuPath)]
-        private static void ToggleBuildAddressables()
+        private static void BuildOfflineAddressableContent()
         {
-            bool enabled = !ShouldBuildAddressables();
-            EditorPrefs.SetBool(k_buildAddressablesPreferenceKey, enabled);
-            Menu.SetChecked(k_buildAddressablesMenuPath, enabled);
-        }
+            AddressableAssetSettings settings = AddressableAssetSettingsDefaultObject.Settings;
+            if (settings == null)
+            {
+                throw new InvalidOperationException("Addressables settings are missing.");
+            }
 
-        [MenuItem(k_buildAddressablesMenuPath, true)]
-        private static bool ValidateBuildAddressablesToggle()
-        {
-            Menu.SetChecked(k_buildAddressablesMenuPath, ShouldBuildAddressables());
-            return true;
-        }
+            if (settings.BuildRemoteCatalog)
+            {
+                throw new InvalidOperationException(
+                    "WebGL submission builds require a local Addressables catalog. Disable Build Remote Catalog.");
+            }
 
-        private static void BuildAddressableContent()
-        {
             AddressableAssetSettings.BuildPlayerContent(out AddressablesPlayerBuildResult result);
             if (!string.IsNullOrWhiteSpace(result.Error))
             {
                 throw new InvalidOperationException($"Addressables build failed: {result.Error}");
             }
 
-            Debug.Log($"[SubmissionBuild] Addressables content built with {result.LocationCount} locations in {result.Duration:F2} seconds.");
+            Debug.Log(
+                $"[SubmissionBuild] Local Addressables content built with {result.LocationCount} locations in {result.Duration:F2} seconds.");
         }
 
         private static BuildReport BuildWithSubmissionSettings(BuildPlayerOptions options)
@@ -110,11 +100,6 @@ namespace GearEngine.GearEngine.Editor
                 PlayerSettings.WebGL.nameFilesAsHashes = previousNameFilesAsHashes;
                 PlayerSettings.WebGL.template = previousTemplate;
             }
-        }
-
-        private static bool ShouldBuildAddressables()
-        {
-            return EditorPrefs.GetBool(k_buildAddressablesPreferenceKey, true);
         }
 
         private static string ResolveBuildPath()

@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Scaffold.Navigation::Scaffold.Navigation.ViewConfig
   schemas:
     rid: 4306785200000000123
-  viewAssetSource: 0
-  directPrefab: {fileID: 0}
+  viewAssetSource: 1
+  directPrefab: {fileID: 3795459667440567417, guid: 2e7fb10914d4448eebd5ebf3b37d4661, type: 3}
   asset:
     m_AssetGUID: 2e7fb10914d4448eebd5ebf3b37d4661
     m_SubObjectName: 

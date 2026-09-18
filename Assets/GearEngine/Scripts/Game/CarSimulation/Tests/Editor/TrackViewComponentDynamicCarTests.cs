@@ -6,6 +6,7 @@ using GearEngine.CarSimulation.Tracks;
 using NUnit.Framework;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Scripting;
 using UnityEngine.Splines;
 using Object = UnityEngine.Object;
 
@@ -13,10 +14,23 @@ namespace GearEngine.CarSimulation.Tests
 {
     public sealed class TrackViewComponentDynamicCarTests
     {
+        [TestCase(typeof(SplinePropGenerator.All))]
+        [TestCase(typeof(SplinePropGenerator.Curves))]
+        [TestCase(typeof(SplinePropGenerator.Straights))]
+        [TestCase(typeof(SplinePropGenerator.Inside))]
+        [TestCase(typeof(SplinePropGenerator.Outside))]
+        public void PropRuleType_IsPreservedForPlayerSerialization(System.Type ruleType)
+        {
+            Assert.That(
+                System.Attribute.IsDefined(ruleType, typeof(PreserveAttribute)),
+                Is.True,
+                $"{ruleType.Name} must survive IL2CPP stripping for SerializeReference theme rules.");
+        }
+
         [Test]
         public void Bind_WithTrackViewModel_InitializesSplineFromTrackDefinition()
         {
-            var trackGo = new GameObject("TrackHarnessBind");
+            GameObject trackGo = new GameObject("TrackHarnessBind");
             try
             {
                 trackGo.AddComponent<SplineContainer>();
@@ -27,14 +41,14 @@ namespace GearEngine.CarSimulation.Tests
                 {
                     SeedOpenSpline(trackDef);
 
-                    var carRunnerConfig = ScriptableObject.CreateInstance<PhysicsSimulationConfig>();
-                    var carRunner = new SplineCarRunnerService(carRunnerConfig);
-                    var raceManager = new RaceManagerService(carRunner);
-                    var factory = new TrackSimulationFactory();
+                    PhysicsSimulationConfig carRunnerConfig = ScriptableObject.CreateInstance<PhysicsSimulationConfig>();
+                    SplineCarRunnerService carRunner = new SplineCarRunnerService(carRunnerConfig);
+                    RaceManagerService raceManager = new RaceManagerService(carRunner);
+                    TrackSimulationFactory factory = new TrackSimulationFactory();
 
                     RaceState session = factory.Create(carDef, trackDef, null);
                     raceManager.RegisterRace(session);
-                    var trackVm = new TrackViewModel(session, raceManager, carRunner, factory);
+                    TrackViewModel trackVm = new TrackViewModel(session, raceManager, carRunner, factory);
                     track.Bind(trackVm);
 
                     Assert.That(trackGo.GetComponent<SplineContainer>().Spline.Count, Is.GreaterThan(0));
