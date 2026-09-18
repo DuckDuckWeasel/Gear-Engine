@@ -60,6 +60,7 @@
     <type fullname="GearEngine.CarSimulation.Definitions.TrackTierConfig" preserve="nothing" serialized="true" />
     <type fullname="GearEngine.CarSimulation.Tracks.SplinePropGenerator/All" preserve="nothing" serialized="true" />
     <type fullname="GearEngine.CarSimulation.Tracks.SplinePropGenerator/Inside" preserve="nothing" serialized="true" />
+    <type fullname="GearEngine.CarSimulation.Tracks.SplinePropGenerator/Straights" preserve="nothing" serialized="true" />
   </assembly>
   <assembly fullname="Game.GearEngine, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
     <type fullname="GearEngine.GearEngine.Abilities.ScoreAbility" preserve="all" />
@@ -160,6 +161,7 @@
   </assembly>
   <assembly fullname="UnityEngine.PhysicsModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
     <type fullname="UnityEngine.MeshCollider" preserve="all" />
+    <type fullname="UnityEngine.PhysicsMaterial" preserve="all" />
     <type fullname="UnityEngine.Rigidbody" preserve="all" />
   </assembly>
   <assembly fullname="UnityEngine.TextRenderingModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
