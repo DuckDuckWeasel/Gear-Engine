@@ -3,12 +3,13 @@ using TMPro;
 using DG.Tweening;
 using Scaffold.MVVM;
 using System.ComponentModel;
-using GearEngine.GearEngine.Config;
 
 namespace GearEngine.Campaign.Presentation
 {
     public sealed class RaceDriftScoreView : ViewComponent<RaceDriftScoreViewModel>
     {
+        private static readonly Color HudTextColor = new Color32(44, 57, 69, 255);
+
         [Header("References")]
         [SerializeField] private TMP_Text multiplierText;
         [SerializeField] private TMP_Text pointsText;
@@ -37,7 +38,7 @@ namespace GearEngine.Campaign.Presentation
 
             UpdateVisibility(false, false);
             UpdateMultiplierTextAndColor();
-            pointsText.text = $"{viewModel.DisplayPoints}";
+            UpdatePointsText();
             UpdateTotalScoreText();
         }
 
@@ -62,7 +63,7 @@ namespace GearEngine.Campaign.Presentation
             }
             else if (e.PropertyName == nameof(viewModel.DisplayPoints))
             {
-                pointsText.text = $"{viewModel.DisplayPoints}";
+                UpdatePointsText();
                 UpdateTotalScoreText();
             }
             else if (e.PropertyName == nameof(viewModel.CurrentMultiplier))
@@ -86,10 +87,13 @@ namespace GearEngine.Campaign.Presentation
         private void UpdateMultiplierTextAndColor()
         {
             multiplierText.text = $"{viewModel.CurrentMultiplier}x";
+            multiplierText.color = HudTextColor;
+        }
 
-            // Multiplier 1 = Tier 0 (Common), Multiplier 2 = Tier 1 (Uncommon), etc.
-            int tierIndex = Mathf.Max(0, viewModel.CurrentMultiplier - 1);
-            multiplierText.color = RarityPalette.GetColorByTier(tierIndex);
+        private void UpdatePointsText()
+        {
+            pointsText.text = $"+{viewModel.DisplayPoints} SCORE";
+            pointsText.color = HudTextColor;
         }
 
         private void UpdateVisibility(bool visible, bool animate = true)
@@ -154,7 +158,7 @@ namespace GearEngine.Campaign.Presentation
                 });
 
             UpdateMultiplierTextAndColor();
-            pointsText.text = $"{viewModel.DisplayPoints}";
+            UpdatePointsText();
         }
 
         private void OnScoreBanked()
@@ -162,7 +166,7 @@ namespace GearEngine.Campaign.Presentation
             KillTweens();
             canvasGroup.alpha = 1f;
             UpdateMultiplierTextAndColor();
-            pointsText.text = $"{viewModel.DisplayPoints}";
+            UpdatePointsText();
 
             if (totalScoreText != null)
             {

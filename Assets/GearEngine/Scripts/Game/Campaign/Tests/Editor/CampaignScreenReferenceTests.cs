@@ -13,6 +13,7 @@ using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.Splines;
+using UnityEngine.UI;
 using Object = UnityEngine.Object;
 
 namespace GearEngine.Campaign.Tests.Editor
@@ -135,8 +136,18 @@ namespace GearEngine.Campaign.Tests.Editor
                 "Assets/GearEngine/Prefabs/Campaign/Race View.prefab");
             GameObject instance = Object.Instantiate(racePrefab);
             RaceDriftScoreView view = instance.GetComponentInChildren<RaceDriftScoreView>(true);
-            TMP_Text totalScore = (TMP_Text)new SerializedObject(view)
-                .FindProperty("totalScoreText").objectReferenceValue;
+            SerializedObject serializedView = new SerializedObject(view);
+            TMP_Text totalScore = (TMP_Text)serializedView.FindProperty("totalScoreText").objectReferenceValue;
+            TMP_Text points = (TMP_Text)serializedView.FindProperty("pointsText").objectReferenceValue;
+            TMP_Text multiplier = (TMP_Text)serializedView.FindProperty("multiplierText").objectReferenceValue;
+            RectTransform driftPoints = view.transform.Find("DriftPoints") as RectTransform;
+            Assert.That(driftPoints, Is.Not.Null);
+            RectTransform score = driftPoints.Find("Score") as RectTransform;
+            RectTransform multiplierBackground = driftPoints.Find("bg_multiplier") as RectTransform;
+            HorizontalLayoutGroup obsoleteLayout = driftPoints.GetComponent<HorizontalLayoutGroup>();
+            Assert.That(score, Is.Not.Null);
+            Assert.That(multiplierBackground, Is.Not.Null);
+            Assert.That(obsoleteLayout, Is.Not.Null);
 
             try
             {
@@ -144,6 +155,18 @@ namespace GearEngine.Campaign.Tests.Editor
                 viewModel.Tick(0.5f);
                 Assert.That(totalScore.text, Is.EqualTo("90"),
                     "The score panel must include unbanked drift points while the value changes.");
+                Assert.That(points.text, Is.EqualTo("+50 SCORE"));
+                Assert.That(multiplier.text, Is.EqualTo("1x"));
+                Color expectedHudColor = new Color32(44, 57, 69, 255);
+                Assert.That(points.color, Is.EqualTo(expectedHudColor));
+                Assert.That(multiplier.color, Is.EqualTo(expectedHudColor));
+                Assert.That(driftPoints.sizeDelta, Is.EqualTo(new Vector2(-650f, 150f)));
+                Assert.That(score.sizeDelta, Is.EqualTo(new Vector2(255f, 105f)));
+                Assert.That(multiplierBackground.sizeDelta, Is.EqualTo(new Vector2(430f, 150f)));
+                Assert.That(multiplierBackground.GetSiblingIndex(), Is.LessThan(score.GetSiblingIndex()),
+                    "The shared badge must render behind both score labels.");
+                Assert.That(obsoleteLayout.enabled, Is.False,
+                    "The score and multiplier use explicit compact positions inside one badge.");
             }
             finally
             {
