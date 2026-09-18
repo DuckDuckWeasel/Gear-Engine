@@ -272,28 +272,28 @@ namespace GearEngine.Campaign.Presentation
             }
 
             Debug.Log($"[RoguelikeViewModel] ConfirmPickAsync found perk, awaiting PickPerkAsync...");
-            await PickPerkAsync(perk);
-            return true;
+            return await PickPerkAsync(perk);
         }
 
-        private async Task PickPerkAsync(ItemSlotViewModel perk)
+        private async Task<bool> PickPerkAsync(ItemSlotViewModel perk)
         {
             Debug.Log($"[RoguelikeViewModel] PickPerkAsync called for perk: {perk?.Item?.Id}");
             if (!CanPickPerk(perk))
             {
-                return;
+                return false;
             }
 
             IsProcessingAction = true;
 
             try
             {
-                await AddAndConsumeGearAsync(perk);
+                return await AddAndConsumeGearAsync(perk);
             }
             catch (Exception ex)
             {
                 IsProcessingAction = false;
                 Debug.LogError($"[RoguelikeViewModel] PickPerk failed: {ex.Message}\n{ex.StackTrace}");
+                return false;
             }
         }
 
@@ -330,7 +330,7 @@ namespace GearEngine.Campaign.Presentation
             return true;
         }
 
-        private async Task AddAndConsumeGearAsync(ItemSlotViewModel perk)
+        private async Task<bool> AddAndConsumeGearAsync(ItemSlotViewModel perk)
         {
             GearItemData gearData = (GearItemData)perk.Item;
             GearItem config = gearData.SourceGearConfig;
@@ -340,13 +340,23 @@ namespace GearEngine.Campaign.Presentation
             {
                 Debug.LogWarning($"[RoguelikeViewModel] Failed to add {config.Id} to inventory.");
                 IsProcessingAction = false;
-                return;
+                return false;
             }
 
             Debug.Log($"[RoguelikeViewModel] Consuming pick from rollService.");
-            await rollService.ConsumePickAsync(config.Id, cts.Token);
+            try
+            {
+                await rollService.ConsumePickAsync(config.Id, cts.Token);
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError(
+                    $"[RoguelikeViewModel] Remote pick consumption failed after granting {config.Id}: {ex.Message}\n{ex.StackTrace}");
+            }
+
             Debug.Log("[RoguelikeViewModel] Opening the post-race reward flow.");
             OpenPostRaceDestination(gearData);
+            return true;
         }
 
         private void OpenPostRaceDestination(IItem reward)

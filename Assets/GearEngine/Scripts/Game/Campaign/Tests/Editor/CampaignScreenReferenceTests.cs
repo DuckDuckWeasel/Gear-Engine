@@ -177,16 +177,17 @@ namespace GearEngine.Campaign.Tests.Editor
                 viewModel.Tick(0.5f);
                 Assert.That(totalScore.text, Is.EqualTo("90"),
                     "The score panel must include unbanked drift points while the value changes.");
-                Assert.That(points.text, Is.EqualTo("+50 SCORE"));
+                Assert.That(points.text, Is.EqualTo("+50"));
                 Assert.That(multiplier.text, Is.EqualTo("1x"));
                 Color expectedHudColor = new Color32(44, 57, 69, 255);
                 Assert.That(points.color, Is.EqualTo(expectedHudColor));
                 Assert.That(multiplier.color, Is.EqualTo(expectedHudColor));
                 Assert.That(driftPoints.sizeDelta, Is.EqualTo(new Vector2(-650f, 150f)));
                 Assert.That(score.sizeDelta, Is.EqualTo(new Vector2(255f, 105f)));
-                Assert.That(multiplierBackground.sizeDelta, Is.EqualTo(new Vector2(430f, 150f)));
+                Assert.That(multiplierBackground.sizeDelta, Is.EqualTo(new Vector2(170f, 150f)));
+                Assert.That(multiplierBackground.anchoredPosition, Is.EqualTo(new Vector2(130f, 0f)));
                 Assert.That(multiplierBackground.GetSiblingIndex(), Is.LessThan(score.GetSiblingIndex()),
-                    "The shared badge must render behind both score labels.");
+                    "The multiplier badge must render behind the multiplier without covering the score.");
                 Assert.That(obsoleteLayout.enabled, Is.False,
                     "The score and multiplier use explicit compact positions inside one badge.");
             }

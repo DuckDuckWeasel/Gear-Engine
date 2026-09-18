@@ -2251,10 +2251,6 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7243481678181416101, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
-      propertyPath: useRarityTextColor
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7243481678181416101, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
       propertyPath: emptyRarityStar
       value:
       objectReference: {fileID: 2160096023051070127, guid: 77dd0a84a38f94846be3e702d4062977, type: 3}
@@ -2262,6 +2258,10 @@ PrefabInstance:
       propertyPath: filledRarityStar
       value:
       objectReference: {fileID: -765930273514264058, guid: ec286fda576d4cb46a07ea882dfa84d1, type: 3}
+    - target: {fileID: 7243481678181416101, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
+      propertyPath: useRarityTextColor
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7243481678181416101, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
       propertyPath: rarityStars.Array.size
       value: 5
@@ -2343,6 +2343,8 @@ PrefabInstance:
     - {fileID: 4968145166921576578, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
     - {fileID: 8414302336313763179, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
     - {fileID: 1230953024846954537, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
+    - {fileID: 5192964086426170033, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
+    - {fileID: 5285510925883890736, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: 5307880969981059335, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
       insertIndex: -1

@@ -12,6 +12,10 @@ namespace GearEngine.Campaign.Presentation
 {
     public sealed class MainView : View<MainViewModel>
     {
+        private static readonly Color s_lockedButtonColor = new Color32(151, 158, 164, 255);
+        private static readonly Color s_lockedStatusColor = new Color32(112, 120, 128, 255);
+        private static readonly Color s_statusOutlineColor = new Color32(44, 57, 69, 255);
+
         [SerializeField] private TrackViewComponent track;
         [SerializeField] private Button playButton;
         [SerializeField] private Button previousTrackButton;
@@ -30,6 +34,10 @@ namespace GearEngine.Campaign.Presentation
         private Vector3 originalTrackScale;
         private bool hasTrackSnapshot;
         private TextMeshProUGUI playButtonLabel;
+        private Color unlockedButtonColor;
+        private Color unlockedButtonLabelColor;
+        private Color unlockedStatusColor;
+        private ColorBlock unlockedButtonColors;
 
         protected override void OnBind()
         {
@@ -43,7 +51,7 @@ namespace GearEngine.Campaign.Presentation
             Bind<CampaignTrackPreviewViewModel, CampaignTrackPreviewViewModel>(() => viewModel.Track, UpdateTrackPreview);
             Bind<TrackStatsViewModel, TrackStatsViewModel>(() => viewModel.Stats, UpdateTrackStats);
             Bind<bool, bool>(() => viewModel.CanNavigateTracks, UpdateTrackNavigation);
-            Bind<string, string>(() => viewModel.TrackPosition, value => trackPositionLabel.text = value);
+            Bind<string, string>(() => viewModel.TrackPosition, UpdateTrackStatus);
             Bind<bool, bool>(() => viewModel.IsTrackLocked, UpdateTrackLock);
         }
 
@@ -116,7 +124,24 @@ namespace GearEngine.Campaign.Presentation
         {
             playButton.interactable = !isLocked && viewModel.Track != null;
             playButtonLabel.text = isLocked ? "LOCKED" : "RACE";
+            playButton.targetGraphic.color = isLocked ? s_lockedButtonColor : unlockedButtonColor;
+            playButtonLabel.color = isLocked ? Color.white : unlockedButtonLabelColor;
+            trackPositionLabel.color = isLocked ? s_lockedStatusColor : unlockedStatusColor;
+
+            ColorBlock colors = unlockedButtonColors;
+            if (isLocked)
+            {
+                colors.disabledColor = Color.white;
+            }
+
+            playButton.colors = colors;
             statsPanel.SetLocked(isLocked);
+        }
+
+        private void UpdateTrackStatus(string status)
+        {
+            trackPositionLabel.text = status;
+            trackPositionLabel.color = viewModel.IsTrackLocked ? s_lockedStatusColor : unlockedStatusColor;
         }
 
         private void RegisterButtonListeners()
@@ -220,6 +245,7 @@ namespace GearEngine.Campaign.Presentation
             RequireReference(previousTrackButton, nameof(previousTrackButton));
             RequireReference(nextTrackButton, nameof(nextTrackButton));
             RequireReference(trackPositionLabel, nameof(trackPositionLabel));
+            RequireReference(playButton.targetGraphic, "playButton target graphic");
 
             playButtonLabel = playButton.GetComponentInChildren<TextMeshProUGUI>(true);
             RequireReference(playButtonLabel, nameof(playButtonLabel));
@@ -227,7 +253,12 @@ namespace GearEngine.Campaign.Presentation
             playButtonLabel.fontSizeMin = 20f;
             playButtonLabel.fontSizeMax = 42f;
             playButtonLabel.textWrappingMode = TextWrappingModes.NoWrap;
+            unlockedButtonColor = playButton.targetGraphic.color;
+            unlockedButtonLabelColor = playButtonLabel.color;
+            unlockedStatusColor = trackPositionLabel.color;
+            unlockedButtonColors = playButton.colors;
             ConfigureTrackStatusLabel();
+            ConfigureTrackPreviewLayout();
         }
 
         private void ConfigureTrackStatusLabel()
@@ -241,6 +272,23 @@ namespace GearEngine.Campaign.Presentation
             trackPositionLabel.fontSizeMin = 24f;
             trackPositionLabel.fontSizeMax = 40f;
             trackPositionLabel.alignment = TextAlignmentOptions.Center;
+            trackPositionLabel.outlineWidth = 0.18f;
+            trackPositionLabel.outlineColor = s_statusOutlineColor;
+        }
+
+        private void ConfigureTrackPreviewLayout()
+        {
+            RectTransform viewport = transform.Find("TrackViewport") as RectTransform;
+            if (viewport == null)
+            {
+                Debug.LogError("[MainView] TrackViewport is missing.");
+                return;
+            }
+
+            viewport.anchorMin = new Vector2(0.06f, 0.48f);
+            viewport.anchorMax = new Vector2(0.94f, 0.76f);
+            viewport.anchoredPosition = Vector2.zero;
+            viewport.sizeDelta = Vector2.zero;
         }
 
         private void RequireReference(UnityEngine.Object field, string name)

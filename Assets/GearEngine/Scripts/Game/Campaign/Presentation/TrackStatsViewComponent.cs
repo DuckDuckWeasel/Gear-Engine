@@ -10,6 +10,8 @@ namespace GearEngine.Campaign.Presentation
 {
     public sealed class TrackStatsViewComponent : ViewComponent<TrackStatsViewModel>
     {
+        private static readonly Color s_starScoreColor = new Color32(44, 57, 69, 255);
+
         [SerializeField] private TextMeshProUGUI trackNameLabel;
         [SerializeField] private TextMeshProUGUI targetLapsLabel;
         [SerializeField] private TextMeshProUGUI targetTimeLabel;
@@ -31,6 +33,7 @@ namespace GearEngine.Campaign.Presentation
 
         private Sequence tiersSequence;
         private RectTransform earnedStarsContainer;
+        private TextMeshProUGUI[] starTargetLabels = Array.Empty<TextMeshProUGUI>();
 
         protected override void OnBind()
         {
@@ -61,6 +64,7 @@ namespace GearEngine.Campaign.Presentation
             {
                 earnedStars[i].sprite = i < viewModel.EarnedStars ? earnedStar : emptyStar;
             }
+            UpdateStarTargetScores();
             RebuildTierSlots();
         }
 
@@ -80,6 +84,8 @@ namespace GearEngine.Campaign.Presentation
             {
                 earnedStars[i].sprite = i < viewModel.EarnedStars ? earnedStar : emptyStar;
             }
+
+            UpdateStarTargetScores();
         }
 
         private void PositionEarnedStarsInTrackHeader()
@@ -103,10 +109,67 @@ namespace GearEngine.Campaign.Presentation
 
             earnedStarsContainer.anchorMin = new Vector2(0.5f, 1f);
             earnedStarsContainer.anchorMax = earnedStarsContainer.anchorMin;
-            earnedStarsContainer.anchoredPosition = new Vector2(0f, -310f);
-            earnedStarsContainer.sizeDelta = new Vector2(320f, 90f);
+            earnedStarsContainer.anchoredPosition = new Vector2(0f, -450f);
+            earnedStarsContainer.sizeDelta = new Vector2(360f, 140f);
             earnedStarsContainer.localScale = Vector3.one;
             earnedStarsContainer.SetAsLastSibling();
+
+            if (trackNameLabel != null)
+            {
+                RectTransform title = trackNameLabel.rectTransform;
+                title.anchoredPosition = new Vector2(title.anchoredPosition.x, -100f);
+            }
+        }
+
+        private void UpdateStarTargetScores()
+        {
+            EnsureStarTargetLabels();
+            for (int i = 0; i < starTargetLabels.Length; i++)
+            {
+                bool hasTarget = i < viewModel.StarTargetScores.Count;
+                starTargetLabels[i].gameObject.SetActive(hasTarget);
+                starTargetLabels[i].text = hasTarget ? viewModel.StarTargetScores[i].ToString() : string.Empty;
+            }
+        }
+
+        private void EnsureStarTargetLabels()
+        {
+            if (starTargetLabels.Length == earnedStars.Length)
+            {
+                return;
+            }
+
+            starTargetLabels = new TextMeshProUGUI[earnedStars.Length];
+            for (int i = 0; i < earnedStars.Length; i++)
+            {
+                starTargetLabels[i] = CreateStarTargetLabel(earnedStars[i], i + 1);
+            }
+        }
+
+        private TextMeshProUGUI CreateStarTargetLabel(Image star, int starNumber)
+        {
+            GameObject labelObject = new GameObject(
+                $"Star{starNumber}TargetScore",
+                typeof(RectTransform),
+                typeof(CanvasRenderer),
+                typeof(TextMeshProUGUI));
+            RectTransform rect = labelObject.GetComponent<RectTransform>();
+            rect.SetParent(star.rectTransform, false);
+            rect.anchorMin = new Vector2(0.5f, 0f);
+            rect.anchorMax = rect.anchorMin;
+            rect.pivot = new Vector2(0.5f, 0.5f);
+            rect.anchoredPosition = new Vector2(0f, -36f);
+            rect.sizeDelta = new Vector2(120f, 40f);
+
+            TextMeshProUGUI label = labelObject.GetComponent<TextMeshProUGUI>();
+            label.font = trackNameLabel.font;
+            label.fontSize = 24f;
+            label.fontStyle = FontStyles.Bold;
+            label.alignment = TextAlignmentOptions.Center;
+            label.textWrappingMode = TextWrappingModes.NoWrap;
+            label.color = s_starScoreColor;
+            label.raycastTarget = false;
+            return label;
         }
 
         private void OnDisable()

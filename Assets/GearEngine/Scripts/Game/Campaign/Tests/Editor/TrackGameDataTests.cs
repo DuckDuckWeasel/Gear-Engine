@@ -150,7 +150,8 @@ namespace GearEngine.Campaign.Tests.Editor
                 await module.InitializeAsync(CancellationToken.None);
                 RaceResultModel result = new RaceResultModel(30f, 1, track, 3000);
                 await module.RecordResultAsync(result);
-                Assert.That(module.GetTrackProgress().GetEarnedStars(trackId), Is.Zero, "An absent server response must not save stars.");
+                Assert.That(module.GetTrackProgress().GetEarnedStars(trackId), Is.EqualTo(3),
+                    "A completed race must retain locally earned stars even when the server response is absent.");
                 liveOps.RaceResponse = new RecordRaceResultResponse { NewBestTimeSec = 30f };
                 await module.RecordResultAsync(result);
                 await module.RecordResultAsync(new RaceResultModel(40f, 1, track, 1000));

@@ -26,6 +26,7 @@ namespace GearEngine.Campaign.Presentation
             TargetLaps = track.TotalLaps;
             TargetTime = track.TimeToBeatSeconds;
             Tiers = BuildOrderedTiers(track);
+            StarTargetScores = Tiers.Select(tier => tier.TargetScore).ToArray();
         }
 
         public RaceStandingsModel Standings { get; }
@@ -38,6 +39,8 @@ namespace GearEngine.Campaign.Presentation
         public float TargetTime { get; }
 
         public IReadOnlyList<TrackTierViewModel> Tiers { get; }
+
+        public IReadOnlyList<int> StarTargetScores { get; }
 
         protected override void Initialize()
         {

@@ -33,6 +33,7 @@ namespace GearEngine.Campaign.Tests.Editor
             TrackStatsViewModel model = new TrackStatsViewModel(track, progress);
             Assert.That(model.Standings.PlayerPosition, Is.EqualTo(position));
             Assert.That(model.EarnedStars, Is.EqualTo(stars));
+            Assert.That(model.StarTargetScores, Is.EqualTo(track.Tiers.OrderBy(tier => tier.TargetScore).Select(tier => tier.TargetScore)));
         }
 
         [UnityTest]
@@ -58,14 +59,18 @@ namespace GearEngine.Campaign.Tests.Editor
             float rowSpacing = new SerializedObject(standings).FindProperty("rowSpacing").floatValue;
             RectTransform standingsRect = (RectTransform)standings.transform;
             RectTransform trackViewport = (RectTransform)instance.transform.Find("TrackViewport");
+            typeof(MainView).GetMethod(
+                    "ConfigureTrackPreviewLayout",
+                    System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)
+                .Invoke(instance.GetComponent<MainView>(), null);
             Assert.That(expandedHeight, Is.EqualTo(760f).Within(0.1f),
                 "The best-times panel must end directly below its four standings rows.");
             Assert.That(standingsRect.anchoredPosition.y, Is.EqualTo(-140f).Within(0.1f),
                 "The standings rows must sit directly below the Best Times heading.");
-            Assert.That(trackViewport.anchorMin, Is.EqualTo(new Vector2(0.155f, 0.585f)),
-                "The home track viewport must use the expanded lower-left bounds.");
-            Assert.That(trackViewport.anchorMax, Is.EqualTo(new Vector2(0.845f, 0.83f)),
-                "The home track viewport must use the expanded upper-right bounds.");
+            Assert.That(trackViewport.anchorMin, Is.EqualTo(new Vector2(0.06f, 0.48f)),
+                "The home track viewport must use the enlarged lower-left bounds.");
+            Assert.That(trackViewport.anchorMax, Is.EqualTo(new Vector2(0.94f, 0.76f)),
+                "The home track viewport must use the enlarged upper-right bounds.");
             foreach (bool saved in new[] { false, true })
             {
                 Services.TrackProgressModel progress = new Services.TrackProgressModel();
@@ -81,14 +86,21 @@ namespace GearEngine.Campaign.Tests.Editor
                 Assert.That(starsContainer.parent, Is.SameAs(instance.transform),
                     "Earned stars must be in the track header, outside the best-times panel.");
                 Assert.That(starsContainer.anchorMin, Is.EqualTo(new Vector2(0.5f, 1f)));
-                Assert.That(starsContainer.anchoredPosition.y, Is.EqualTo(-310f).Within(0.1f),
+                Assert.That(starsContainer.anchoredPosition.y, Is.EqualTo(-450f).Within(0.1f),
                     "Earned stars must sit below the track name and above the track preview.");
+                TMP_Text[] targetScores = starsContainer.GetComponentsInChildren<TMP_Text>(true);
+                Assert.That(targetScores.Select(label => label.text),
+                    Is.EquivalentTo(model.StarTargetScores.Select(score => score.ToString())),
+                    "Each star must show the score required for that track.");
                 Assert.That(lapsLabel.gameObject.activeSelf, Is.False, "Home must not show lap metadata.");
                 Assert.That(targetLabel.gameObject.activeSelf, Is.False, "Home must not show target-time metadata.");
                 Assert.That(standings.DisplayedPlayerPosition, Is.EqualTo(saved ? 3 : 4));
                 Assert.That(standings.IsAnimating, Is.False);
-                Assert.That(standings.GetComponentsInChildren<ResultStandingRowView>().Length, Is.EqualTo(saved ? 3 : 4));
-                float expectedHeight = saved ? expandedHeight - rowSpacing : expandedHeight;
+                ResultStandingRowView[] visibleRows = standings.GetComponentsInChildren<ResultStandingRowView>();
+                Assert.That(visibleRows.Length, Is.EqualTo(3));
+                Assert.That(visibleRows.Any(row => row.Entry.IsPlayer), Is.EqualTo(saved),
+                    "YOU must remain hidden until the saved time reaches the top three.");
+                float expectedHeight = expandedHeight - rowSpacing;
                 Assert.That(panel.sizeDelta.y, Is.EqualTo(expectedHeight).Within(0.1f),
                     "The standings panel must end after the last visible row.");
                 Assert.That(model.Standings.Player.FormattedTime, saved ? Does.Not.Contain("--") : Is.EqualTo("--:--.--"));
@@ -147,6 +159,46 @@ namespace GearEngine.Campaign.Tests.Editor
             GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/GearEngine/Prefabs/Campaign/ItemPopup View.prefab");
             ItemSlotView slot = prefab.GetComponentInChildren<ItemSlotView>(true);
             Assert.That(new SerializedObject(slot).FindProperty("rarityStars").arraySize, Is.EqualTo(5), "Gear rarity stars must be data-bound, not a two-star design sample.");
+        }
+
+        [UnityTest]
+        public IEnumerator GearCard_UsesItemRarityInsteadOfTwoStarDesignSample()
+        {
+            GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/GearEngine/Prefabs/Campaign/Item_View.prefab");
+            GameObject canvasObject = new GameObject(
+                "GearCardCaptureCanvas",
+                typeof(RectTransform),
+                typeof(Canvas),
+                typeof(CanvasScaler),
+                typeof(GraphicRaycaster));
+            GameObject instance = Object.Instantiate(prefab);
+            try
+            {
+                instance.transform.SetParent(canvasObject.transform, false);
+                RectTransform cardRect = (RectTransform)instance.transform;
+                cardRect.anchoredPosition = Vector2.zero;
+                cardRect.localScale = Vector3.one * 2.2f;
+                ItemSlotView slot = instance.GetComponent<ItemSlotView>();
+                GearItemData gear = AssetDatabase.LoadAssetAtPath<GearItem>(
+                    "Assets/GearEngine/Scriptables/GeneratedGears/QuantumLink/QuantumLink_Tier4_Config.asset").CreateRuntimeData();
+                slot.Bind(new ItemSlotViewModel(gear, null));
+
+                SerializedObject serialized = new SerializedObject(slot);
+                SerializedProperty stars = serialized.FindProperty("rarityStars");
+                Sprite filled = (Sprite)serialized.FindProperty("filledRarityStar").objectReferenceValue;
+
+                Assert.That(stars.arraySize, Is.EqualTo(5), "Grid cards must represent all five rarity levels.");
+                Assert.That(filled, Is.Not.Null, "Grid cards must have a configured filled rarity star.");
+                Assert.That(Enumerable.Range(0, stars.arraySize)
+                    .Count(i => ((Image)stars.GetArrayElementAtIndex(i).objectReferenceValue).sprite == filled), Is.EqualTo(4),
+                    "An epic grid card must show four filled stars, matching its popup.");
+                yield return Capture(canvasObject, "GearCardQuantumLink", 1680);
+            }
+            finally
+            {
+                Object.DestroyImmediate(instance);
+                Object.DestroyImmediate(canvasObject);
+            }
         }
 
         [UnityTest]
@@ -250,7 +302,7 @@ namespace GearEngine.Campaign.Tests.Editor
                 string file = $"{scenario}{width}x{height}.png";
                 File.WriteAllBytes(Path.Combine(output, file), image.EncodeToPNG());
                 string criteria = scenario.StartsWith("Home", System.StringComparison.Ordinal)
-                    ? "[\"Runtime ViewModel bindings\",\"Track name shown without laps or target\",\"Rendered text inside viewport\",\"Standings panel fits visible rows\",\"Four-row unraced state retained\"]"
+                    ? "[\"Runtime ViewModel bindings\",\"Track name shown without laps or target\",\"Rendered text inside viewport\",\"Standings panel fits three rows\",\"Unranked player hidden until reaching the top three\"]"
                     : "[\"Runtime ViewModel bindings\",\"Rendered text inside viewport\",\"Animation restart\",\"Selected gear card visibility and rarity\"]";
                 File.WriteAllText(Path.Combine(output, file + ".evidence.json"),
                     "{\"test\":\"" + NUnit.Framework.TestContext.CurrentContext.Test.FullName + "\"," +

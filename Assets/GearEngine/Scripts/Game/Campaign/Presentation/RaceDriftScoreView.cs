@@ -8,7 +8,9 @@ namespace GearEngine.Campaign.Presentation
 {
     public sealed class RaceDriftScoreView : ViewComponent<RaceDriftScoreViewModel>
     {
-        private static readonly Color HudTextColor = new Color32(44, 57, 69, 255);
+        private static readonly Color s_hudTextColor = new Color32(44, 57, 69, 255);
+        private static readonly Vector2 s_multiplierBadgeSize = new Vector2(170f, 150f);
+        private static readonly Vector2 s_multiplierBadgePosition = new Vector2(130f, 0f);
 
         [Header("References")]
         [SerializeField] private TMP_Text multiplierText;
@@ -40,6 +42,7 @@ namespace GearEngine.Campaign.Presentation
             UpdateMultiplierTextAndColor();
             UpdatePointsText();
             UpdateTotalScoreText();
+            ConfigureMultiplierBadge();
         }
 
         protected override void OnUnbind()
@@ -87,13 +90,25 @@ namespace GearEngine.Campaign.Presentation
         private void UpdateMultiplierTextAndColor()
         {
             multiplierText.text = $"{viewModel.CurrentMultiplier}x";
-            multiplierText.color = HudTextColor;
+            multiplierText.color = s_hudTextColor;
         }
 
         private void UpdatePointsText()
         {
-            pointsText.text = $"+{viewModel.DisplayPoints} SCORE";
-            pointsText.color = HudTextColor;
+            pointsText.text = $"+{viewModel.DisplayPoints}";
+            pointsText.color = s_hudTextColor;
+        }
+
+        private void ConfigureMultiplierBadge()
+        {
+            RectTransform badge = multiplierText.rectTransform.parent as RectTransform;
+            if (badge == null || badge.name != "bg_multiplier")
+            {
+                return;
+            }
+
+            badge.sizeDelta = s_multiplierBadgeSize;
+            badge.anchoredPosition = s_multiplierBadgePosition;
         }
 
         private void UpdateVisibility(bool visible, bool animate = true)
