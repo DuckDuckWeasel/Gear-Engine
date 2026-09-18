@@ -10,6 +10,8 @@ namespace GearEngine.GearEngine.Editor
 {
     public static class SubmissionBuildExporter
     {
+        private const string k_buildAddressablesMenuPath = "Tools/Gear Engine/Build Settings/Build Addressables With Submission";
+        private const string k_buildAddressablesPreferenceKey = "GearEngine.SubmissionBuild.BuildAddressables";
         private const string k_buildPathEnvironmentVariable = "GEAR_ENGINE_BUILD_PATH";
         private const string k_mainScenePath = "Assets/GearEngine/Scenes/Main Scene.unity";
         private const string k_submissionProductName = "Gear Engine";
@@ -22,7 +24,14 @@ namespace GearEngine.GearEngine.Editor
             {
                 string buildPath = ResolveBuildPath();
                 Directory.CreateDirectory(buildPath);
-                BuildAddressableContent();
+                if (ShouldBuildAddressables())
+                {
+                    BuildAddressableContent();
+                }
+                else
+                {
+                    Debug.Log("[SubmissionBuild] Addressables content build skipped by the editor toggle.");
+                }
 
                 BuildPlayerOptions options = new BuildPlayerOptions
                 {
@@ -46,6 +55,21 @@ namespace GearEngine.GearEngine.Editor
                 Debug.LogError($"[SubmissionBuild] Failed to create the WebGL submission build. {exception}");
                 throw;
             }
+        }
+
+        [MenuItem(k_buildAddressablesMenuPath)]
+        private static void ToggleBuildAddressables()
+        {
+            bool enabled = !ShouldBuildAddressables();
+            EditorPrefs.SetBool(k_buildAddressablesPreferenceKey, enabled);
+            Menu.SetChecked(k_buildAddressablesMenuPath, enabled);
+        }
+
+        [MenuItem(k_buildAddressablesMenuPath, true)]
+        private static bool ValidateBuildAddressablesToggle()
+        {
+            Menu.SetChecked(k_buildAddressablesMenuPath, ShouldBuildAddressables());
+            return true;
         }
 
         private static void BuildAddressableContent()
@@ -86,6 +110,11 @@ namespace GearEngine.GearEngine.Editor
                 PlayerSettings.WebGL.nameFilesAsHashes = previousNameFilesAsHashes;
                 PlayerSettings.WebGL.template = previousTemplate;
             }
+        }
+
+        private static bool ShouldBuildAddressables()
+        {
+            return EditorPrefs.GetBool(k_buildAddressablesPreferenceKey, true);
         }
 
         private static string ResolveBuildPath()

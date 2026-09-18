@@ -15,7 +15,7 @@ MonoBehaviour:
   m_DefaultGroup: 0bdbf61a5d37c41ee95db94752ea759c
   m_currentHash:
     serializedVersion: 2
-    Hash: 7cd787242ab09ce4ba94822242c0fc43
+    Hash: 00000000000000000000000000000000
   m_ExtractTypeTreeData: 0
   m_OptimizeCatalogSize: 0
   m_BuildRemoteCatalog: 0
@@ -62,7 +62,7 @@ MonoBehaviour:
   m_ContentStateBuildPathProfileVariableName: <default settings path>
   m_CustomContentStateBuildPath: 
   m_ContentStateBuildPath: 
-  m_BuildAddressablesWithPlayerBuild: 0
+  m_BuildAddressablesWithPlayerBuild: 2
   m_overridePlayerVersion: '[UnityEditor.PlayerSettings.bundleVersion]'
   m_GroupAssets:
   - {fileID: 11400000, guid: 13eca024c63e04991a651d397b1d914a, type: 2}
@@ -80,9 +80,9 @@ MonoBehaviour:
       - m_Id: 3d88a9965944b4d72ae417497b65a539
         m_Value: production
       - m_Id: a0ce97f5e9aa9417794090cb354d54a0
-        m_Value: CCDBuildData/ManagedEnvironment/ManagedBucket/ManagedBadge
+        m_Value: '[UnityEngine.AddressableAssets.Addressables.BuildPath]/[BuildTarget]'
       - m_Id: b5736cff6af3f4d3ea0301db2798e30a
-        m_Value: https://ddc3d2dc-f829-400d-a1dc-c3ca5623c761.client-api.unity3dusercontent.com/client_api/v1/environments/{CcdManager.EnvironmentName}/buckets/{CcdManager.BucketId}/release_by_badge/{CcdManager.Badge}/entry_by_path/content/?path=
+        m_Value: '{UnityEngine.AddressableAssets.Addressables.RuntimePath}/[BuildTarget]'
       - m_Id: d582cc3cf1e0145d1b70f31f1bb1b8e8
         m_Value: '[UnityEngine.AddressableAssets.Addressables.BuildPath]/[BuildTarget]'
       - m_Id: fa003ed5ee2c94a3b8e9cae56f548ce8

@@ -79,6 +79,15 @@
       #loading-video {
         z-index: -2;
         background: #080b10;
+        pointer-events: none;
+      }
+
+      #loading-video::-webkit-media-controls,
+      #loading-video::-webkit-media-controls-enclosure,
+      #loading-video::-webkit-media-controls-panel,
+      #loading-video::-webkit-media-controls-start-playback-button {
+        display: none !important;
+        -webkit-appearance: none;
       }
 
       #loading-fallback {
@@ -161,6 +170,17 @@
         line-height: 1.5;
       }
 
+      #loading-version {
+        display: block;
+        margin-top: 8px;
+        color: rgb(255 247 232 / 58%);
+        font-size: 0.68rem;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        text-align: right;
+        text-transform: uppercase;
+      }
+
       #retry-button {
         display: none;
         min-width: 44px;
@@ -216,7 +236,8 @@
       <canvas id="unity-canvas" width=960 height=600 tabindex="-1" aria-label="Tela do jogo Gear Engine"></canvas>
       <section id="loading-overlay" aria-live="polite" aria-busy="true">
         <div id="loading-fallback" aria-hidden="true"></div>
-        <video id="loading-video" autoplay muted loop playsinline preload="auto" aria-hidden="true">
+        <video id="loading-video" autoplay muted loop playsinline webkit-playsinline preload="auto"
+          disablepictureinpicture disableremoteplayback x-webkit-airplay="deny" tabindex="-1" aria-hidden="true">
           <source src="StreamingAssets/GearEngineLoadingLoop.mp4" type="video/mp4">
         </video>
         <div class="loading-panel">
@@ -229,6 +250,7 @@
             <div id="loading-progress"></div>
           </div>
           <p id="loading-detail">Baixando os arquivos do jogo…</p>
+          <span id="loading-version" aria-label="Version 0.1">v0.1</span>
           <button id="retry-button" type="button">Tentar novamente</button>
         </div>
       </section>
@@ -250,6 +272,13 @@
       var lastProgressAt = performance.now();
       var loadingComplete = false;
       var unityStarted = false;
+
+      loadingVideo.controls = false;
+      loadingVideo.defaultMuted = true;
+      loadingVideo.muted = true;
+      loadingVideo.playsInline = true;
+      loadingVideo.disablePictureInPicture = true;
+      loadingVideo.disableRemotePlayback = true;
 
       function unityShowBanner(message, type) {
         var warningBanner = document.querySelector("#unity-warning");
@@ -342,12 +371,12 @@
       window.requestAnimationFrame(renderProgress);
 
       var buildUrl = "Build";
-      var loaderUrl = buildUrl + "/d53bb00d13d2d1c33f30980cdbde856f.loader.js";
+      var loaderUrl = buildUrl + "/82941b891231bd177f391aba4141838f.loader.js";
       var config = {
         arguments: [],
-        dataUrl: buildUrl + "/4ea10fe1a4961dad3de6d3f16123e479.data.unityweb",
-        frameworkUrl: buildUrl + "/668dfb0f4fa7d1a475d717d921f65590.framework.js.unityweb",
-        codeUrl: buildUrl + "/d182a13d3a7dc2df00be8c3148ebc503.wasm.unityweb",
+        dataUrl: buildUrl + "/4dc519881da2b031a04bc91dc0101d23.data.unityweb",
+        frameworkUrl: buildUrl + "/e7e3429e52474900b23849c92397893e.framework.js.unityweb",
+        codeUrl: buildUrl + "/132938a4bf0a4c6f6506302d56c71a90.wasm.unityweb",
         streamingAssetsUrl: "StreamingAssets",
         companyName: "DDW",
         productName: "Gear Engine",

@@ -15,6 +15,11 @@
     <type fullname="Ami.BroAudio.MaxPlayableCountRule" preserve="nothing" serialized="true" />
     <type fullname="Ami.BroAudio.SoundID" preserve="nothing" serialized="true" />
   </assembly>
+  <assembly fullname="Coffee.UIEffect, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+    <type fullname="Coffee.UIEffects.UIEffect" preserve="all" />
+    <type fullname="Coffee.UIEffectInternal.MinMax01" preserve="nothing" serialized="true" />
+    <type fullname="Coffee.UIEffects.PatternLayer" preserve="nothing" serialized="true" />
+  </assembly>
   <assembly fullname="Game.App.Bootstrap, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
     <type fullname="GearEngine.App.Bootstrap.Presentation.MetaLoadedView" preserve="all" />
   </assembly>
@@ -34,9 +39,13 @@
     <type fullname="GearEngine.Campaign.Presentation.ItemSlotView" preserve="all" />
     <type fullname="GearEngine.Campaign.Presentation.ItemsView" preserve="all" />
     <type fullname="GearEngine.Campaign.Presentation.MainView" preserve="all" />
+    <type fullname="GearEngine.Campaign.Presentation.PostRaceAnimation" preserve="all" />
     <type fullname="GearEngine.Campaign.Presentation.RaceDriftScoreView" preserve="all" />
+    <type fullname="GearEngine.Campaign.Presentation.RaceProgressView" preserve="all" />
+    <type fullname="GearEngine.Campaign.Presentation.ReceivedRewardsView" preserve="all" />
     <type fullname="GearEngine.Campaign.Presentation.ResultPopupView" preserve="all" />
-    <type fullname="GearEngine.Campaign.Presentation.ResultStatSlotView" preserve="all" />
+    <type fullname="GearEngine.Campaign.Presentation.ResultStandingRowView" preserve="all" />
+    <type fullname="GearEngine.Campaign.Presentation.ResultStandingsView" preserve="all" />
     <type fullname="GearEngine.Campaign.Presentation.RoguelikeView" preserve="all" />
     <type fullname="GearEngine.Campaign.Presentation.SetupView" preserve="all" />
     <type fullname="GearEngine.Campaign.Presentation.TrackStatsViewComponent" preserve="all" />
@@ -45,9 +54,12 @@
   </assembly>
   <assembly fullname="Game.CarSimulation, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
     <type fullname="GearEngine.CarSimulation.Definitions.TrackDefinition" preserve="all" />
+    <type fullname="GearEngine.CarSimulation.Definitions.TrackThemeDefinition" preserve="all" />
     <type fullname="GearEngine.CarSimulation.Presentation.CarTrackTestView" preserve="all" />
     <type fullname="GearEngine.CarSimulation.Presentation.TrackTelemetryViewComponent" preserve="all" />
     <type fullname="GearEngine.CarSimulation.Definitions.TrackTierConfig" preserve="nothing" serialized="true" />
+    <type fullname="GearEngine.CarSimulation.Tracks.SplinePropGenerator/All" preserve="nothing" serialized="true" />
+    <type fullname="GearEngine.CarSimulation.Tracks.SplinePropGenerator/Inside" preserve="nothing" serialized="true" />
   </assembly>
   <assembly fullname="Game.GearEngine, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
     <type fullname="GearEngine.GearEngine.Abilities.ScoreAbility" preserve="all" />
@@ -124,6 +136,9 @@
   <assembly fullname="UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
     <type fullname="UnityEngine.GameObject" preserve="all" />
     <type fullname="UnityEngine.Material" preserve="all" />
+    <type fullname="UnityEngine.Mesh" preserve="all" />
+    <type fullname="UnityEngine.MeshFilter" preserve="all" />
+    <type fullname="UnityEngine.MeshRenderer" preserve="all" />
     <type fullname="UnityEngine.MonoBehaviour" preserve="all" />
     <type fullname="UnityEngine.Object" preserve="all" />
     <type fullname="UnityEngine.RectTransform" preserve="all" />
@@ -142,6 +157,10 @@
     <type fullname="UnityEngine.Vector2" preserve="nothing" serialized="true" />
     <type fullname="UnityEngine.Vector3" preserve="nothing" serialized="true" />
     <type fullname="UnityEngine.Vector4" preserve="nothing" serialized="true" />
+  </assembly>
+  <assembly fullname="UnityEngine.PhysicsModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+    <type fullname="UnityEngine.MeshCollider" preserve="all" />
+    <type fullname="UnityEngine.Rigidbody" preserve="all" />
   </assembly>
   <assembly fullname="UnityEngine.TextRenderingModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
     <type fullname="UnityEngine.Font" preserve="all" />
