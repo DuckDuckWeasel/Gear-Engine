@@ -13,7 +13,7 @@ This document describes how the **Cloud Code backend**, **shared DTO DLL**, **Un
 | Meta harness | [Assets/GearEngine/Scenes/Meta.unity](../../Assets/GearEngine/Scenes/Meta.unity) + [`MetaApplicationBootstrap`](../../Assets/GearEngine/Scripts/App/Bootstrap/MetaApplicationBootstrap.cs) | Standalone **UGS → Cloud Code → LiveOps** init via **LayeredScope** (see [Meta bootstrap](../Meta/Bootstrap.md)) |
 | Build order (Editor) | [ProjectSettings/EditorBuildSettings.asset](../../ProjectSettings/EditorBuildSettings.asset) | `Meta.unity` is **enabled** at index **0** for backend smoke tests |
 
-**Campaign (Main scene):** `ITrackService` is **`TracksClientModule` only**. Expect **UGS** + **Cloud Code** + deployed **Remote Config** (`TrackConfig` entry ids must match `TrackDefinition` asset names) for track progression and race rewards.
+**Campaign (Main scene):** `ITrackService` is **`TracksClientModule` only**. When online, **UGS** + **Cloud Code** + deployed **Remote Config** remain authoritative (`TrackConfig` entry ids must match `TrackDefinition` asset names). When connectivity or service initialization fails, the client boots with local module defaults and request calls return local responses without blocking gameplay.
 
 ## Flow (Meta scene)
 
@@ -37,9 +37,9 @@ blackboard LR
     sln --> csdto
     ccmr -.->|modulePath| sln
     meta --> host
-    host --> Ugs[UgsInstaller / Ugs layer]
-    host --> Cc[CloudCodeInstaller]
-    host --> Lo[LiveOpsInstaller / LiveOps layer]
+    host --> Ugs[Resilient UGS layer]
+    host --> Cc[LazyCloudCodeService]
+    host --> Lo[ResilientLiveOpsService / LiveOps layer]
 ```
 
 ```mermaid
@@ -56,10 +56,14 @@ sequenceDiagram
     Meta->>Boot: Start / InstallAllAsync
     Boot->>Found: Push (Addressables, Nav, Events)
     Boot->>UGS: Push + Ugs IAsyncInitializable
-    UGS->>UGS: UnityServices + anonymous sign-in
+    UGS->>UGS: Try UnityServices + anonymous sign-in
     Boot->>Lo: Push + LiveOps IAsyncInitializable
-    Lo->>Server: GameDataRequest via LiveOpsService
-    Server-->>Lo: GameDataResponse
+    alt Online services available
+        Lo->>Server: GameDataRequest via ResilientLiveOpsService
+        Server-->>Lo: GameDataResponse
+    else Offline or service request failed
+        Lo->>Lo: Build local GameData fallback
+    end
     Boot->>Boot: OnReadyAsync (log Currency / Tracks / Loadout probe)
 ```
 
@@ -83,14 +87,14 @@ Publish to your UGS Cloud Code environment using the Unity **Services → Cloud 
 
 [Packages/manifest.json](../../Packages/manifest.json) pulls `com.scaffold.layeredscope`, `com.scaffold.cloudcode`, `com.scaffold.liveops`, `com.scaffold.ugs`, and `com.scaffold.navigation` from the [Scaffold](https://github.com/MgCohen/Scaffold) UPM git URLs (resolved under `Library/PackageCache` in this project). `com.scaffold.scope`, `com.unity.services.cloudcode`, `com.unity.remote-config`, `com.unity.services.deployment`, and other dependencies are listed there as well.
 
-[`CloudCodeSdkCallHandler`](https://github.com/MgCohen/Scaffold/blob/main/Assets/Packages/com.scaffold.cloudcode/Runtime/Handlers/CloudCodeSdkCallHandler.cs) binds to `Unity.Services.CloudCode.CloudCodeService.Instance` by default. That static instance is `null` until `UnityServices.InitializeAsync()` finishes, so [`UgsLayer`](../../Assets/GearEngine/Scripts/App/Bootstrap/Layers/UgsLayer.cs) is pushed **before** [`LiveOpsLayer`](../../Assets/GearEngine/Scripts/App/Bootstrap/Layers/LiveOpsLayer.cs): the UGS layer's `IAsyncInitializable` completes first, then `LiveOpsLayer.Install` runs `CloudCodeInstaller` (which dereferences `CloudCodeService.Instance` synchronously) and `LiveOpsInstaller`. [`SequentialInLayerScheduler`](../../Assets/GearEngine/Scripts/App/Bootstrap/SequentialInLayerScheduler.cs) keeps in-layer `IAsyncInitializable` order deterministic. [`FoundationLayer`](../../Assets/GearEngine/Scripts/App/Bootstrap/Layers/FoundationLayer.cs) registers **`IAddressablesAssetClient`**, **`IAddressablesGateway`**, and **catalog Addressables** via rebaked [`AddressableScriptableObjectPublisherSO`](../../Assets/GearEngine/Scripts/App/Bootstrap/Publishers/DataDriven/AddressableScriptableObjectPublisherSO.cs) entries on [`GearAppFlowRoot`](../../Assets/GearEngine/Scripts/App/Bootstrap/GearAppFlowRoot.cs) subclasses; publishers derive from [`AssetPublisherBase<T>`](https://github.com/MgCohen/Scaffold/blob/main/Packages/com.scaffold.appflow/Runtime/AssetPublisherBase.cs) and publish loaded assets to **descendant** layers via `ILayerPublisher`.
+[`UgsLayer`](../../Assets/GearEngine/Scripts/App/Bootstrap/Layers/UgsLayer.cs) is pushed **before** [`LiveOpsLayer`](../../Assets/GearEngine/Scripts/App/Bootstrap/Layers/LiveOpsLayer.cs). Its initializer records an offline session instead of aborting startup when Unity Services or anonymous sign-in fails. `LiveOpsLayer` registers `LazyCloudCodeService`, which reads `Unity.Services.CloudCode.CloudCodeService.Instance` only when a real request is made; it therefore does not dereference an unavailable SDK singleton while the offline fallback is being composed. `ResilientLiveOpsService` uses server `GameData` when available, otherwise builds local Currency, Inventory, Loadout, Perks, Roguelike, and Tracks data from the Foundation catalogs. Action requests return local typed responses immediately and reconcile online requests in the background. [`SequentialInLayerScheduler`](../../Assets/GearEngine/Scripts/App/Bootstrap/SequentialInLayerScheduler.cs) keeps in-layer `IAsyncInitializable` order deterministic. [`FoundationLayer`](../../Assets/GearEngine/Scripts/App/Bootstrap/Layers/FoundationLayer.cs) registers **`IAddressablesAssetClient`**, **`IAddressablesGateway`**, and **catalog Addressables** via rebaked [`AddressableScriptableObjectPublisherSO`](../../Assets/GearEngine/Scripts/App/Bootstrap/Publishers/DataDriven/AddressableScriptableObjectPublisherSO.cs) entries on [`GearAppFlowRoot`](../../Assets/GearEngine/Scripts/App/Bootstrap/GearAppFlowRoot.cs) subclasses; publishers derive from [`AssetPublisherBase<T>`](https://github.com/MgCohen/Scaffold/blob/main/Packages/com.scaffold.appflow/Runtime/AssetPublisherBase.cs) and publish loaded assets to **descendant** layers via `ILayerPublisher`.
 
 ## Meta scene prerequisites (Play Mode)
 
 - Project linked to a **Unity Gaming Services** project / environment.
 - **Cloud Code** module built from [LiveOps/LiveOps.sln](../../LiveOps/LiveOps.sln) and deployed to that environment.
 - **Remote Config** keys for LiveOps (see [RemoteConfig.md](RemoteConfig.md) — e.g. `CurrencyConfig`, `TrackConfig`, `CardConfig`, `LoadoutConfig`, `InventoryConfig`) authored under [Assets/LiveOps/RemoteConfig/](../../Assets/LiveOps/RemoteConfig/) and deployed to that environment from **Window → LiveOps → Configs** (or `ugs deploy`).
-- Without a deployed module, the initial `GameDataRequest` from `LiveOpsService` will fail (expected).
+- Without a deployed module or internet connection, the client uses local fallback data and continues. This mode keeps the current session playable; server reconciliation is best-effort and is not a durable offline upload queue.
 
 On success, the console should show `[Meta] LiveOps raw payloads: …` with `CurrencyGameData`, `TrackGameData`, and other active modules (exact payloads depend on server `ModuleConfig` and Remote Config).
 
@@ -100,6 +104,7 @@ To return to another default scene, open **File → Build Settings**, disable **
 
 ## Changelog
 
+- 2026-09-18: Added resilient offline startup and local LiveOps request responses. UGS, Cloud Code, analytics, and ads failures no longer halt the game; online mutations reconcile in the background when the session is connected.
 - 2026-04-19: Initial LiveOps `.sln` / `.csproj`, `LiveOps.ccmr`, `Game.App.Bootstrap` + `MetaScope`, `Meta.unity` as first enabled build scene.
 - 2026-04-19: Moved `Meta.unity` to `Assets/GearEngine/Scenes/` (same GUID) so it appears with other Gear Engine scenes in the Project window.
 - 2026-04-19: Register Unity `ICloudCodeService` in `MetaScope` so Scaffold `CloudCodeSdkCallHandler` resolves under VContainer.

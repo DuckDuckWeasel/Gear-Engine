@@ -1,6 +1,5 @@
 using Scaffold.AppFlow;
-using Scaffold.CloudCode.Container;
-using Scaffold.LiveOps.Container;
+using Scaffold.CloudCode;
 using VContainer;
 
 namespace GearEngine.App.Bootstrap.Layers
@@ -10,8 +9,8 @@ namespace GearEngine.App.Bootstrap.Layers
     {
         public void Install(IContainerBuilder builder)
         {
-            new CloudCodeInstaller().Install(builder);
-            new LiveOpsInstaller().Install(builder);
+            builder.Register<LazyCloudCodeService>(Lifetime.Singleton).As<ICloudCodeService>();
+            new ResilientLiveOpsInstaller().Install(builder);
         }
     }
 }
