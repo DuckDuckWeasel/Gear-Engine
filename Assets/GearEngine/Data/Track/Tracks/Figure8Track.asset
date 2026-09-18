@@ -15,8 +15,8 @@ MonoBehaviour:
   trackName: Figure8
   scale: 0.5
   offset: {x: 0, y: 0, z: 0}
-  totalLaps: 4
-  timeToBeatSeconds: 70.332756
+  totalLaps: 3
+  timeToBeatSeconds: 52.749567
   spline:
     m_EditModeType: 1
     m_Knots:
@@ -192,12 +192,12 @@ MonoBehaviour:
       m_Data: []
   baseGoldReward: 40
   tiers:
-  - targetTimeSeconds: 56.266205
-    targetScore: 5000
+  - targetTimeSeconds: 42.199654
+    targetScore: 3750
     goldReward: 1000
-  - targetTimeSeconds: 73.84939
-    targetScore: 3000
+  - targetTimeSeconds: 55.387042
+    targetScore: 2250
     goldReward: 500
-  - targetTimeSeconds: 91.43258
-    targetScore: 1000
+  - targetTimeSeconds: 68.574435
+    targetScore: 750
     goldReward: 200

@@ -15,8 +15,8 @@ MonoBehaviour:
   trackName: Peanut
   scale: 0.75
   offset: {x: 0, y: 0, z: 0}
-  totalLaps: 5
-  timeToBeatSeconds: 76.37942
+  totalLaps: 4
+  timeToBeatSeconds: 61.103536
   spline:
     m_EditModeType: 1
     m_Knots:
@@ -152,12 +152,12 @@ MonoBehaviour:
       m_Data: []
   baseGoldReward: 50
   tiers:
-  - targetTimeSeconds: 61.103535
-    targetScore: 5000
+  - targetTimeSeconds: 48.882828
+    targetScore: 4000
     goldReward: 1000
-  - targetTimeSeconds: 80.19839
-    targetScore: 3000
+  - targetTimeSeconds: 64.158712
+    targetScore: 2400
     goldReward: 500
-  - targetTimeSeconds: 99.293236
-    targetScore: 1000
+  - targetTimeSeconds: 79.434589
+    targetScore: 800
     goldReward: 200

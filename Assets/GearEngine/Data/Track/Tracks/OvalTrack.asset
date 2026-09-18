@@ -15,8 +15,8 @@ MonoBehaviour:
   trackName: Oval
   scale: 1
   offset: {x: 0, y: 0, z: 0}
-  totalLaps: 5
-  timeToBeatSeconds: 34.277657
+  totalLaps: 4
+  timeToBeatSeconds: 27.422126
   spline:
     m_EditModeType: 1
     m_Knots:
@@ -152,12 +152,12 @@ MonoBehaviour:
       m_Data: []
   baseGoldReward: 50
   tiers:
-  - targetTimeSeconds: 27.422125
-    targetScore: 5000
+  - targetTimeSeconds: 21.9377
+    targetScore: 4000
     goldReward: 1000
-  - targetTimeSeconds: 35.99154
-    targetScore: 3000
+  - targetTimeSeconds: 28.793232
+    targetScore: 2400
     goldReward: 500
-  - targetTimeSeconds: 44.56095
-    targetScore: 1000
+  - targetTimeSeconds: 35.64876
+    targetScore: 800
     goldReward: 200

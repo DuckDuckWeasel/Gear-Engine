@@ -15,8 +15,8 @@ MonoBehaviour:
   trackName: RoundedSquare
   scale: 1
   offset: {x: 0, y: 0, z: 0}
-  totalLaps: 5
-  timeToBeatSeconds: 37.71106
+  totalLaps: 4
+  timeToBeatSeconds: 30.168848
   spline:
     m_EditModeType: 1
     m_Knots:
@@ -192,12 +192,12 @@ MonoBehaviour:
       m_Data: []
   baseGoldReward: 50
   tiers:
-  - targetTimeSeconds: 30.168848
-    targetScore: 5000
+  - targetTimeSeconds: 24.135078
+    targetScore: 4000
     goldReward: 1000
-  - targetTimeSeconds: 39.59661
-    targetScore: 3000
+  - targetTimeSeconds: 31.677288
+    targetScore: 2400
     goldReward: 500
-  - targetTimeSeconds: 49.024376
-    targetScore: 1000
+  - targetTimeSeconds: 39.219501
+    targetScore: 800
     goldReward: 200

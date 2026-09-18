@@ -15,8 +15,8 @@ MonoBehaviour:
   trackName: Hairpin
   scale: 0.65
   offset: {x: 0, y: 0, z: 0}
-  totalLaps: 5
-  timeToBeatSeconds: 52.17581
+  totalLaps: 3
+  timeToBeatSeconds: 31.305486
   spline:
     m_EditModeType: 1
     m_Knots:
@@ -152,12 +152,12 @@ MonoBehaviour:
       m_Data: []
   baseGoldReward: 50
   tiers:
-  - targetTimeSeconds: 41.74065
-    targetScore: 5000
-    goldReward: 1000
-  - targetTimeSeconds: 54.7846
+  - targetTimeSeconds: 25.04439
     targetScore: 3000
+    goldReward: 1000
+  - targetTimeSeconds: 32.87076
+    targetScore: 1800
     goldReward: 500
-  - targetTimeSeconds: 67.82855
-    targetScore: 1000
+  - targetTimeSeconds: 40.69713
+    targetScore: 600
     goldReward: 200

@@ -15,8 +15,8 @@ MonoBehaviour:
   trackName: DShape
   scale: 0.8
   offset: {x: 0, y: 0, z: 0}
-  totalLaps: 5
-  timeToBeatSeconds: 43.233192
+  totalLaps: 3
+  timeToBeatSeconds: 25.939915
   spline:
     m_EditModeType: 1
     m_Knots:
@@ -132,12 +132,12 @@ MonoBehaviour:
       m_Data: []
   baseGoldReward: 50
   tiers:
-  - targetTimeSeconds: 34.586555
-    targetScore: 5000
-    goldReward: 1000
-  - targetTimeSeconds: 45.39485
+  - targetTimeSeconds: 20.751933
     targetScore: 3000
+    goldReward: 1000
+  - targetTimeSeconds: 27.23691
+    targetScore: 1800
     goldReward: 500
-  - targetTimeSeconds: 56.203148
-    targetScore: 1000
+  - targetTimeSeconds: 33.721889
+    targetScore: 600
     goldReward: 200

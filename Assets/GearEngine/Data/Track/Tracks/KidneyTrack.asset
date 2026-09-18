@@ -15,8 +15,8 @@ MonoBehaviour:
   trackName: Kidney
   scale: 0.6
   offset: {x: 0, y: 0, z: 0}
-  totalLaps: 5
-  timeToBeatSeconds: 67.41785
+  totalLaps: 4
+  timeToBeatSeconds: 53.93428
   spline:
     m_EditModeType: 1
     m_Knots:
@@ -172,12 +172,12 @@ MonoBehaviour:
       m_Data: []
   baseGoldReward: 50
   tiers:
-  - targetTimeSeconds: 53.934277
-    targetScore: 5000
+  - targetTimeSeconds: 43.147422
+    targetScore: 4000
     goldReward: 1000
-  - targetTimeSeconds: 70.788734
-    targetScore: 3000
+  - targetTimeSeconds: 56.630987
+    targetScore: 2400
     goldReward: 500
-  - targetTimeSeconds: 87.643196
-    targetScore: 1000
+  - targetTimeSeconds: 70.114557
+    targetScore: 800
     goldReward: 200

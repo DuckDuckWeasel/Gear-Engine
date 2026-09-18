@@ -15,8 +15,8 @@ MonoBehaviour:
   trackName: Infinity
   scale: 0.8
   offset: {x: 0, y: 0, z: 0}
-  totalLaps: 5
-  timeToBeatSeconds: 47.94933
+  totalLaps: 4
+  timeToBeatSeconds: 38.359464
   spline:
     m_EditModeType: 1
     m_Knots:
@@ -992,12 +992,12 @@ MonoBehaviour:
       m_Data: []
   baseGoldReward: 50
   tiers:
-  - targetTimeSeconds: 38.359463
-    targetScore: 5000
+  - targetTimeSeconds: 30.68757
+    targetScore: 4000
     goldReward: 1000
-  - targetTimeSeconds: 50.346794
-    targetScore: 3000
+  - targetTimeSeconds: 40.277435
+    targetScore: 2400
     goldReward: 500
-  - targetTimeSeconds: 62.334126
-    targetScore: 1000
+  - targetTimeSeconds: 49.867301
+    targetScore: 800
     goldReward: 200
