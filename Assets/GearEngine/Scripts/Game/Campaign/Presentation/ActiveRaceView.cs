@@ -19,6 +19,8 @@ namespace GearEngine.Campaign.Presentation
     {
         private const float k_raceBoardAnchorMinY = 0.08f;
         private const float k_raceBoardAnchorMaxY = 0.38f;
+        private const float k_hudLabelOutlineWidth = 0.12f;
+        private static readonly Color32 s_hudLabelOutlineColor = new Color32(245, 239, 226, 255);
 
         [SerializeField] private TrackViewComponent track;
         [SerializeField] private BoardView board;
@@ -38,6 +40,8 @@ namespace GearEngine.Campaign.Presentation
         [SerializeField] private TMP_Text currentLapText;
         [SerializeField] private TMP_Text currentRpmText;
         [SerializeField] private TMP_Text currentGearText;
+        [SerializeField] private TMP_Text rpmLabelText;
+        [SerializeField] private TMP_Text scoreLabelText;
         [SerializeField] private Image[] rpmSegments = Array.Empty<Image>();
 
         [Header("Roguelike Stats UI")]
@@ -58,6 +62,11 @@ namespace GearEngine.Campaign.Presentation
         private int currentSimulatedGear = 1;
         private SimulationLifecycleState lastTrackState = SimulationLifecycleState.Created;
         private string lastDisplayedGear = "";
+
+        private void Awake()
+        {
+            ConfigureHudLabels();
+        }
 
         protected override void OnBind()
         {
@@ -175,7 +184,7 @@ namespace GearEngine.Campaign.Presentation
             {
                 float lerpSpeedDown = 5f;
                 displayedRpm = Mathf.Lerp(displayedRpm, 0f, Time.deltaTime * lerpSpeedDown);
-                currentRpmText.text = FormatRpm(displayedRpm);
+                currentRpmText.text = ToRpmText(displayedRpm);
                 UpdateGearText("N");
                 return;
             }
@@ -259,13 +268,30 @@ namespace GearEngine.Campaign.Presentation
 
             // Diegetic RPM rounding (nearest 50)
             float diegeticRpm = Mathf.Round(displayedRpm / 50f) * 50f;
-            currentRpmText.text = FormatRpm(diegeticRpm);
+            currentRpmText.text = ToRpmText(diegeticRpm);
             UpdateGearText(gearString);
         }
 
-        private static string FormatRpm(float rpm)
+        private string ToRpmText(float rpm)
         {
-            return $"RPM {rpm:F0}";
+            return $"{rpm:F0}";
+        }
+
+        private void ConfigureHudLabels()
+        {
+            ConfigureHudLabel(rpmLabelText);
+            ConfigureHudLabel(scoreLabelText);
+        }
+
+        private void ConfigureHudLabel(TMP_Text label)
+        {
+            if (label == null)
+            {
+                return;
+            }
+
+            label.outlineColor = s_hudLabelOutlineColor;
+            label.outlineWidth = k_hudLabelOutlineWidth;
         }
 
         private void ResetTelemetryUI()
@@ -282,7 +308,7 @@ namespace GearEngine.Campaign.Presentation
 
             if (currentRpmText != null)
             {
-                currentRpmText.text = FormatRpm(0f);
+                currentRpmText.text = ToRpmText(0f);
             }
 
             UpdateGearText("N");

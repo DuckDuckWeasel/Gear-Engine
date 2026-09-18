@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Reflection;
 using GearEngine.CarSimulation;
 using GearEngine.CarSimulation.Definitions;
 using GearEngine.CarSimulation.Entity;
@@ -101,6 +102,10 @@ namespace GearEngine.Campaign.Tests.Editor
             ActiveRaceView view = prefab.GetComponent<ActiveRaceView>();
             SerializedObject serializedView = new SerializedObject(view);
             TMP_Text rpmText = (TMP_Text)serializedView.FindProperty("currentRpmText").objectReferenceValue;
+            TMP_Text rpmLabel = (TMP_Text)serializedView.FindProperty("rpmLabelText").objectReferenceValue;
+            TMP_Text scoreLabel = (TMP_Text)serializedView.FindProperty("scoreLabelText").objectReferenceValue;
+            RectTransform rpmPanel = rpmText.transform.parent as RectTransform;
+            RectTransform scorePanel = prefab.transform.Find("Container/CarStatusHud/Score_PanelRace") as RectTransform;
 
             Assert.That(trackViewport, Is.Not.Null);
             Assert.That(hud, Is.Not.Null);
@@ -111,10 +116,27 @@ namespace GearEngine.Campaign.Tests.Editor
             float hudBottom = (hud.anchorMin.y * referenceHeight) + hud.anchoredPosition.y -
                 (hud.sizeDelta.y * hud.pivot.y);
             Assert.That(hudBottom, Is.GreaterThan(boardTop), "HUD must remain above the gear board.");
-            Assert.That(rpmText.text, Does.StartWith("RPM "));
+            Assert.That(rpmLabel.gameObject.activeSelf, Is.True);
+            Assert.That(rpmLabel.text, Is.EqualTo("RPM"));
+            Assert.That(rpmLabel.rectTransform.anchoredPosition.y,
+                Is.GreaterThan(rpmText.rectTransform.anchoredPosition.y));
+            Assert.That(rpmText.text, Is.EqualTo("0"));
+            Assert.That(rpmPanel.sizeDelta.x, Is.GreaterThanOrEqualTo(680f));
+            Assert.That(scorePanel.sizeDelta.x, Is.GreaterThanOrEqualTo(680f));
+            AssertHudLabelOutline(view, rpmLabel);
+            AssertHudLabelOutline(view, scoreLabel);
             Assert.That(serializedView.FindProperty("currentVelocityText").objectReferenceValue, Is.Not.Null);
             Assert.That(serializedView.FindProperty("currentGearText").objectReferenceValue, Is.Not.Null);
             Assert.That(serializedView.FindProperty("rpmSegments").arraySize, Is.EqualTo(3));
+        }
+
+        private static void AssertHudLabelOutline(ActiveRaceView view, TMP_Text label)
+        {
+            const BindingFlags flags = BindingFlags.Instance | BindingFlags.NonPublic;
+            typeof(ActiveRaceView).GetMethod("ConfigureHudLabels", flags).Invoke(view, null);
+            Assert.That(label, Is.Not.Null);
+            Assert.That(label.outlineWidth, Is.GreaterThan(0f));
+            Assert.That(label.outlineColor, Is.EqualTo(new Color32(245, 239, 226, 255)));
         }
 
         [Test]
