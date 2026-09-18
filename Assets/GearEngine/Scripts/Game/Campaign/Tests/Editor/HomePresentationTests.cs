@@ -19,6 +19,19 @@ namespace GearEngine.Campaign.Tests.Editor
 {
     public sealed class HomePresentationTests
     {
+        [Test]
+        public void MainViewPrefab_HasVisibleRootScale()
+        {
+            GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(
+                "Assets/GearEngine/Prefabs/Campaign/Main View.prefab");
+
+            Assert.That(prefab.transform.localScale.x, Is.GreaterThan(0f));
+            Assert.That(prefab.transform.localScale.y, Is.GreaterThan(0f));
+            Canvas canvas = prefab.GetComponent<Canvas>();
+            Assert.That(canvas.renderMode, Is.EqualTo(RenderMode.ScreenSpaceOverlay));
+            Assert.That(canvas.sortingOrder, Is.GreaterThanOrEqualTo(9));
+        }
+
         [TestCase(1.35f, 3, 4)]
         [TestCase(0.9f, 0, 1)]
         public void HomeStats_SeparatesSavedStarsFromBestTime(float timeMultiplier, int stars, int position)
