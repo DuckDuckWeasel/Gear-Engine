@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="8" result="Passed" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-16 18:22:14Z" end-time="2026-09-16 18:22:15Z" duration="0.0875205">
+  <test-suite type="TestSuite" id="1000" name="Scaffold" fullname="Scaffold" runstate="Runnable" testcasecount="400" result="Passed" start-time="2026-09-16 18:22:14Z" end-time="2026-09-16 18:22:15Z" duration="0.087521" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="1103" name="Game.Campaign.Tests.dll" fullname="/Users/leonardosilva/Documents/MatheusCohen/Gear Engine/Library/ScriptAssemblies/Game.Campaign.Tests.dll" runstate="Runnable" testcasecount="53" result="Passed" start-time="2026-09-16 18:22:14Z" end-time="2026-09-16 18:22:15Z" duration="0.072297" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="40059" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="1104" name="GearEngine" fullname="GearEngine" runstate="Runnable" testcasecount="53" result="Passed" start-time="2026-09-16 18:22:14Z" end-time="2026-09-16 18:22:15Z" duration="0.071205" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1108" name="Campaign" fullname="GearEngine.Campaign" runstate="Runnable" testcasecount="52" result="Passed" start-time="2026-09-16 18:22:14Z" end-time="2026-09-16 18:22:15Z" duration="0.070105" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestSuite" id="1109" name="Tests" fullname="GearEngine.Campaign.Tests" runstate="Runnable" testcasecount="52" result="Passed" start-time="2026-09-16 18:22:14Z" end-time="2026-09-16 18:22:15Z" duration="0.069197" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="TestSuite" id="1110" name="Editor" fullname="GearEngine.Campaign.Tests.Editor" runstate="Runnable" testcasecount="52" result="Passed" start-time="2026-09-16 18:22:14Z" end-time="2026-09-16 18:22:15Z" duration="0.068319" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-suite type="TestFixture" id="1064" name="MainTrackNavigationTests" fullname="GearEngine.Campaign.Tests.Editor.MainTrackNavigationTests" classname="GearEngine.Campaign.Tests.Editor.MainTrackNavigationTests" runstate="Runnable" testcasecount="8" result="Passed" start-time="2026-09-16 18:22:14Z" end-time="2026-09-16 18:22:15Z" duration="0.065238" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="1065" name="AllUnlocked_WrapsBothDirectionsAndUpdatesCounterAndStats" fullname="GearEngine.Campaign.Tests.Editor.MainTrackNavigationTests.AllUnlocked_WrapsBothDirectionsAndUpdatesCounterAndStats" methodname="AllUnlocked_WrapsBothDirectionsAndUpdatesCounterAndStats" classname="GearEngine.Campaign.Tests.Editor.MainTrackNavigationTests" runstate="Runnable" seed="200734470" result="Passed" start-time="2026-09-16 18:22:14Z" end-time="2026-09-16 18:22:15Z" duration="0.034691" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1071" name="CompletedLastTrack_RestoresAllUnlocksAfterCampaignWraps" fullname="GearEngine.Campaign.Tests.Editor.MainTrackNavigationTests.CompletedLastTrack_RestoresAllUnlocksAfterCampaignWraps" methodname="CompletedLastTrack_RestoresAllUnlocksAfterCampaignWraps" classname="GearEngine.Campaign.Tests.Editor.MainTrackNavigationTests" runstate="Runnable" seed="1401832145" result="Passed" start-time="2026-09-16 18:22:15Z" end-time="2026-09-16 18:22:15Z" duration="0.002258" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1068" name="EmptyCatalog_HidesNavigationAndPreventsPlay" fullname="GearEngine.Campaign.Tests.Editor.MainTrackNavigationTests.EmptyCatalog_HidesNavigationAndPreventsPlay" methodname="EmptyCatalog_HidesNavigationAndPreventsPlay" classname="GearEngine.Campaign.Tests.Editor.MainTrackNavigationTests" runstate="Runnable" seed="1358954710" result="Passed" start-time="2026-09-16 18:22:15Z" end-time="2026-09-16 18:22:15Z" duration="0.002110" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1067" name="NextLockedTrack_IsPreviewOnlyAndCanReturnToUnlockedTrack" fullname="GearEngine.Campaign.Tests.Editor.MainTrackNavigationTests.NextLockedTrack_IsPreviewOnlyAndCanReturnToUnlockedTrack" methodname="NextLockedTrack_IsPreviewOnlyAndCanReturnToUnlockedTrack" classname="GearEngine.Campaign.Tests.Editor.MainTrackNavigationTests" runstate="Runnable" seed="1992190514" result="Passed" start-time="2026-09-16 18:22:15Z" end-time="2026-09-16 18:22:15Z" duration="0.001879" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1069" name="NoResolvableUnlockedTrack_ShowsOnlyLockedPreview" fullname="GearEngine.Campaign.Tests.Editor.MainTrackNavigationTests.NoResolvableUnlockedTrack_ShowsOnlyLockedPreview" methodname="NoResolvableUnlockedTrack_ShowsOnlyLockedPreview" classname="GearEngine.Campaign.Tests.Editor.MainTrackNavigationTests" runstate="Runnable" seed="423205805" result="Passed" start-time="2026-09-16 18:22:15Z" end-time="2026-09-16 18:22:15Z" duration="0.001531" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1070" name="PlayEarlierTrack_SubmitsSelectedIdAndKeepsUnlocksAfterReload" fullname="GearEngine.Campaign.Tests.Editor.MainTrackNavigationTests.PlayEarlierTrack_SubmitsSelectedIdAndKeepsUnlocksAfterReload" methodname="PlayEarlierTrack_SubmitsSelectedIdAndKeepsUnlocksAfterReload" classname="GearEngine.Campaign.Tests.Editor.MainTrackNavigationTests" runstate="Runnable" seed="982481412" result="Passed" start-time="2026-09-16 18:22:15Z" end-time="2026-09-16 18:22:15Z" duration="0.005837" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1072" name="RaceUnlock_RefreshesCarouselAndSelectsNewTrack" fullname="GearEngine.Campaign.Tests.Editor.MainTrackNavigationTests.RaceUnlock_RefreshesCarouselAndSelectsNewTrack" methodname="RaceUnlock_RefreshesCarouselAndSelectsNewTrack" classname="GearEngine.Campaign.Tests.Editor.MainTrackNavigationTests" runstate="Runnable" seed="363135562" result="Passed" start-time="2026-09-16 18:22:15Z" end-time="2026-09-16 18:22:15Z" duration="0.001625" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1066" name="SingleUnlockedTrackWithoutLockedPreview_HidesNavigation" fullname="GearEngine.Campaign.Tests.Editor.MainTrackNavigationTests.SingleUnlockedTrackWithoutLockedPreview_HidesNavigation" methodname="SingleUnlockedTrackWithoutLockedPreview_HidesNavigation" classname="GearEngine.Campaign.Tests.Editor.MainTrackNavigationTests" runstate="Runnable" seed="1709814819" result="Passed" start-time="2026-09-16 18:22:15Z" end-time="2026-09-16 18:22:15Z" duration="0.001185" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <output><![CDATA[Saving results to: /Users/leonardosilva/Library/Application Support/DDW/Scaffold/TestResults.xml
+Saving results to: /Users/leonardosilva/Library/Application Support/DDW/Scaffold/TestResults.xml
+]]></output>
+                </test-case>
+              </test-suite>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>
