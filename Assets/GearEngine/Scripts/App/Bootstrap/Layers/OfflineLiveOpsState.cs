@@ -39,6 +39,8 @@ namespace GearEngine.App.Bootstrap.Layers
         private readonly ILayerResolver layerResolver;
         private readonly List<string> perkCatalogIds = new List<string>();
         private readonly List<string> roguelikeGearIds = new List<string>();
+        private readonly List<string> shuffledRoguelikeGearIds = new List<string>();
+        private readonly System.Random random = new System.Random();
         private GameData gameData;
         private int rollOffset;
 
@@ -211,6 +213,8 @@ namespace GearEngine.App.Bootstrap.Layers
                     .Where(item => item != null && item.Id != "gear_core")
                     .Select(item => item.Id));
             }
+
+            ShuffleRoguelikeDeck();
         }
 
         private AddCurrencyResponse CreateAddCurrencyResponse(AddCurrencyRequest request)
@@ -312,18 +316,33 @@ namespace GearEngine.App.Bootstrap.Layers
         private List<string> CreateNextRoll()
         {
             List<string> result = new List<string>();
-            int count = Math.Min(3, roguelikeGearIds.Count);
+            int count = Math.Min(3, shuffledRoguelikeGearIds.Count);
+            if (rollOffset + count > shuffledRoguelikeGearIds.Count)
+            {
+                ShuffleRoguelikeDeck();
+            }
+
             for (int i = 0; i < count; i++)
             {
-                result.Add(roguelikeGearIds[(rollOffset + i) % roguelikeGearIds.Count]);
+                result.Add(shuffledRoguelikeGearIds[rollOffset + i]);
             }
 
-            if (roguelikeGearIds.Count > 0)
-            {
-                rollOffset = (rollOffset + count) % roguelikeGearIds.Count;
-            }
-
+            rollOffset += count;
             return result;
+        }
+
+        private void ShuffleRoguelikeDeck()
+        {
+            shuffledRoguelikeGearIds.Clear();
+            shuffledRoguelikeGearIds.AddRange(roguelikeGearIds.Distinct(StringComparer.Ordinal));
+            for (int i = shuffledRoguelikeGearIds.Count - 1; i > 0; i--)
+            {
+                int swapIndex = random.Next(i + 1);
+                (shuffledRoguelikeGearIds[i], shuffledRoguelikeGearIds[swapIndex]) =
+                    (shuffledRoguelikeGearIds[swapIndex], shuffledRoguelikeGearIds[i]);
+            }
+
+            rollOffset = 0;
         }
 
         private RecordRaceResultResponse CreateRecordRaceResultResponse(RecordRaceResultRequest request)
