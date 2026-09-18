@@ -504,7 +504,7 @@ namespace GearEngine.Campaign.Presentation
             // Generate props now that the track is at its final position.
             if (track != null)
             {
-                track.BroadcastMessage("Generate", SendMessageOptions.DontRequireReceiver);
+                track.GenerateProps();
             }
 
             if (startRaceSound.IsValid())

@@ -1,0 +1,86 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2e4bb67dd8c249ff952791b65c3dc89f, type: 3}
+  m_Name: MountainTrackTheme
+  m_EditorClassIdentifier: Game.CarSimulation::GearEngine.CarSimulation.Definitions.TrackThemeDefinition
+  displayName: Mountain
+  environmentPrefab: {fileID: 5692933926979935231, guid: 934fafdb11577434ea5dad0584dd2c71, type: 3}
+  environmentLocalPosition: {x: 0, y: 0, z: 0}
+  environmentLocalEulerAngles: {x: 0, y: 0, z: 0}
+  environmentLocalScale: {x: 1, y: 1, z: 1}
+  roadMaterial: {fileID: 2100000, guid: dbbc9380c1961437a87d3724106c67c2, type: 2}
+  groundMaterial: {fileID: 2100000, guid: cffd4e7a0722a4d77bb7e25fd061a053, type: 2}
+  hideBaseGround: 0
+  useDefaultProps: 0
+  propRules:
+  - rid: 5890521816240750598
+  - rid: 5890521816240750599
+  - rid: 5890521816240750600
+  references:
+    version: 2
+    RefIds:
+    - rid: 5890521816240750598
+      type: {class: SplinePropGenerator/All, ns: GearEngine.CarSimulation.Tracks, asm: Game.CarSimulation}
+      data:
+        enabled: 1
+        prefabs:
+        - {fileID: 4811488725504791448, guid: 71f887738d1dc494084e95fb53f7a61e, type: 3}
+        - {fileID: 2364900770435555557, guid: fdeeb73295f0a4a13924e64c8331f645, type: 3}
+        chancePerSegment: 0.92
+        minAmount: 3
+        maxAmount: 5
+        randomOffsetRange: {x: 0.5, y: 1.5}
+        randomYRotation: 1
+        minSeparation: 5
+        minimumSplineClearance: 8.5
+        side: 2
+        leftDistance: 11
+        rightDistance: 11
+        insideMaxDistance: 20
+        outsideMaxDistance: 20
+        minSplineDistance: 1.5
+    - rid: 5890521816240750599
+      type: {class: SplinePropGenerator/Inside, ns: GearEngine.CarSimulation.Tracks, asm: Game.CarSimulation}
+      data:
+        enabled: 1
+        prefabs:
+        - {fileID: 4811488725504791448, guid: 71f887738d1dc494084e95fb53f7a61e, type: 3}
+        - {fileID: 2364900770435555557, guid: fdeeb73295f0a4a13924e64c8331f645, type: 3}
+        chancePerSegment: 0.55
+        minAmount: 2
+        maxAmount: 4
+        randomOffsetRange: {x: 1, y: 2}
+        randomYRotation: 1
+        minSeparation: 5
+        minimumSplineClearance: 8.5
+        maxDistance: 28
+        minSplineDistance: 12
+    - rid: 5890521816240750600
+      type: {class: SplinePropGenerator/Straights, ns: GearEngine.CarSimulation.Tracks, asm: Game.CarSimulation}
+      data:
+        enabled: 1
+        prefabs:
+        - {fileID: 3302560854305310127, guid: 95e7b55a3e0414d3d868e6d82afc5126, type: 3}
+        chancePerSegment: 0.28
+        minAmount: 1
+        maxAmount: 2
+        randomOffsetRange: {x: 0.2, y: 0.75}
+        randomYRotation: 1
+        minSeparation: 8
+        minimumSplineClearance: 3.8
+        curvatureThreshold: 8
+        side: 2
+        leftDistance: 4.8
+        rightDistance: 4.8
+        insideMaxDistance: 20
+        outsideMaxDistance: 20
+        minSplineDistance: 1.5

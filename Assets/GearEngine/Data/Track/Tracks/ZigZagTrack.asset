@@ -13,6 +13,8 @@ MonoBehaviour:
   m_Name: ZigZagTrack
   m_EditorClassIdentifier: Game.CarSimulation::GearEngine.CarSimulation.Definitions.TrackDefinition
   trackName: ZigZag
+  theme: {fileID: 11400000, guid: a7ea4ae7452ed4fe895e1e5f9e7ef918, type: 2}
+  opponents: []
   scale: 1
   offset: {x: 0, y: 0, z: 0}
   totalLaps: 4

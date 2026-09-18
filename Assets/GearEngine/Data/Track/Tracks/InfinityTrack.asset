@@ -13,10 +13,12 @@ MonoBehaviour:
   m_Name: InfinityTrack
   m_EditorClassIdentifier: Game.CarSimulation::GearEngine.CarSimulation.Definitions.TrackDefinition
   trackName: Infinity
+  theme: {fileID: 11400000, guid: ed9522bf2ae4b49c99c19f22742e937f, type: 2}
+  opponents: []
   scale: 0.8
   offset: {x: 0, y: 0, z: 0}
   totalLaps: 4
-  timeToBeatSeconds: 38.359464
+  timeToBeatSeconds: 38.359463
   spline:
     m_EditModeType: 1
     m_Knots:
@@ -998,6 +1000,6 @@ MonoBehaviour:
   - targetTimeSeconds: 40.277435
     targetScore: 2400
     goldReward: 500
-  - targetTimeSeconds: 49.867301
+  - targetTimeSeconds: 49.867302
     targetScore: 800
     goldReward: 200

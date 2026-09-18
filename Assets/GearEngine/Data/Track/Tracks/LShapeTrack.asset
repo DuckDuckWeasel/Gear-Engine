@@ -13,10 +13,12 @@ MonoBehaviour:
   m_Name: LShapeTrack
   m_EditorClassIdentifier: Game.CarSimulation::GearEngine.CarSimulation.Definitions.TrackDefinition
   trackName: LShape
+  theme: {fileID: 11400000, guid: 35464e5f6e4ea4cecaf6de1f69eb155b, type: 2}
+  opponents: []
   scale: 1.2
   offset: {x: -20, y: 0, z: -25}
   totalLaps: 4
-  timeToBeatSeconds: 25.016786
+  timeToBeatSeconds: 25.016787
   spline:
     m_EditModeType: 1
     m_Knots:

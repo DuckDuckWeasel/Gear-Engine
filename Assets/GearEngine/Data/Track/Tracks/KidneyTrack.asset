@@ -13,6 +13,8 @@ MonoBehaviour:
   m_Name: KidneyTrack
   m_EditorClassIdentifier: Game.CarSimulation::GearEngine.CarSimulation.Definitions.TrackDefinition
   trackName: Kidney
+  theme: {fileID: 11400000, guid: ed9522bf2ae4b49c99c19f22742e937f, type: 2}
+  opponents: []
   scale: 0.6
   offset: {x: 0, y: 0, z: 0}
   totalLaps: 4
@@ -172,12 +174,12 @@ MonoBehaviour:
       m_Data: []
   baseGoldReward: 50
   tiers:
-  - targetTimeSeconds: 43.147422
+  - targetTimeSeconds: 43.147423
     targetScore: 4000
     goldReward: 1000
-  - targetTimeSeconds: 56.630987
+  - targetTimeSeconds: 56.630985
     targetScore: 2400
     goldReward: 500
-  - targetTimeSeconds: 70.114557
+  - targetTimeSeconds: 70.114555
     targetScore: 800
     goldReward: 200

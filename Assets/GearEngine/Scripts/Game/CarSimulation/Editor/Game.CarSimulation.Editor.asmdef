@@ -5,6 +5,7 @@
         "Game.CarSimulation",
         "Game.SceneFoundation",
         "Scaffold.Entities",
+        "Scaffold.MVVM.View",
         "VContainer",
         "Unity.Splines",
         "Unity.Mathematics"

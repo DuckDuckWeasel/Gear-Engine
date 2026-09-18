@@ -13,10 +13,12 @@ MonoBehaviour:
   m_Name: CircleTrack
   m_EditorClassIdentifier: Game.CarSimulation::GearEngine.CarSimulation.Definitions.TrackDefinition
   trackName: Circle
+  theme: {fileID: 11400000, guid: 40e1baabd9a174b7f840221bdcf554a0, type: 2}
+  opponents: []
   scale: 1
   offset: {x: 0, y: 0, z: 0}
   totalLaps: 3
-  timeToBeatSeconds: 18.849891
+  timeToBeatSeconds: 18.849892
   spline:
     m_EditModeType: 1
     m_Knots:
@@ -115,7 +117,7 @@ MonoBehaviour:
   - targetTimeSeconds: 15.079913
     targetScore: 3000
     goldReward: 1000
-  - targetTimeSeconds: 19.792386
+  - targetTimeSeconds: 19.792385
     targetScore: 1800
     goldReward: 500
   - targetTimeSeconds: 24.504858

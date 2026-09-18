@@ -13,10 +13,12 @@ MonoBehaviour:
   m_Name: OvalTrack
   m_EditorClassIdentifier: Game.CarSimulation::GearEngine.CarSimulation.Definitions.TrackDefinition
   trackName: Oval
+  theme: {fileID: 11400000, guid: 40e1baabd9a174b7f840221bdcf554a0, type: 2}
+  opponents: []
   scale: 1
   offset: {x: 0, y: 0, z: 0}
   totalLaps: 4
-  timeToBeatSeconds: 27.422126
+  timeToBeatSeconds: 27.422127
   spline:
     m_EditModeType: 1
     m_Knots:

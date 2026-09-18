@@ -12,16 +12,26 @@ namespace GearEngine.CarSimulation.Tracks
     [DisallowMultipleComponent]
     public sealed class TrackViewComponent : ViewComponent<ViewModel>
     {
-        private const string pathChildName = "Path";
-
         public SplineContainer SplineContainer => splineContainer;
 
         [SerializeField] private SplineContainer splineContainer;
         [SerializeField] private SplineExtrude splineExtrude;
 
+        [Header("Theme")]
+        [SerializeField] private MeshRenderer roadRenderer;
+        [SerializeField] private MeshRenderer groundRenderer;
+        [SerializeField] private SplinePropGenerator propGenerator;
+
         [Header("Props")]
         [SerializeField] private GameObject startFinishLinePrefab;
         private GameObject startFinishLineInstance;
+        private GameObject environmentInstance;
+        private TrackThemeDefinition activeTheme;
+        private Material baseRoadMaterial;
+        private Material baseGroundMaterial;
+        private bool baseGroundEnabled;
+        private bool hasCachedRoadMaterial;
+        private bool hasCachedGroundAppearance;
 
         public new void Unbind()
         {
@@ -32,6 +42,8 @@ namespace GearEngine.CarSimulation.Tracks
         {
             EnsureSplineContainerReference();
             EnsureSplineExtrudeReference();
+            EnsureThemeReferences();
+            CacheBaseAppearance();
         }
 
         protected override void OnBind()
@@ -71,7 +83,7 @@ namespace GearEngine.CarSimulation.Tracks
             base.OnUnbind();
         }
 
-        private void InitializeTrack(TrackDefinition data)
+        public void InitializeTrack(TrackDefinition data)
         {
             if (data == null)
             {
@@ -92,7 +104,26 @@ namespace GearEngine.CarSimulation.Tracks
 
             CopySplineIntoContainer(data, splineContainer);
             RebuildVisualSplineExtrude(data);
+            ApplyTheme(data.Theme);
             SpawnStartFinishLine();
+        }
+
+        public void GenerateProps()
+        {
+            EnsureThemeReferences();
+            if (propGenerator == null)
+            {
+                return;
+            }
+
+            propGenerator.track = splineContainer;
+            if (activeTheme == null || activeTheme.UsesDefaultProps)
+            {
+                propGenerator.Generate();
+                return;
+            }
+
+            propGenerator.Generate(activeTheme.PropRules);
         }
 
         private bool HasSplineContainerOrLog()
@@ -132,7 +163,7 @@ namespace GearEngine.CarSimulation.Tracks
                 return;
             }
 
-            Transform path = transform.Find(pathChildName);
+            Transform path = transform.Find("Path");
             if (path != null)
             {
                 splineExtrude = path.GetComponent<SplineExtrude>();
@@ -142,6 +173,143 @@ namespace GearEngine.CarSimulation.Tracks
             {
                 splineExtrude = GetComponent<SplineExtrude>();
             }
+        }
+
+        private void ApplyTheme(TrackThemeDefinition theme)
+        {
+            EnsureThemeReferences();
+            CacheBaseAppearance();
+            propGenerator?.ClearProps();
+            ClearEnvironment();
+            RestoreBaseAppearance();
+            activeTheme = theme;
+
+            if (theme == null)
+            {
+                return;
+            }
+
+            ApplyThemeMaterials(theme);
+            SpawnEnvironment(theme);
+        }
+
+        private void EnsureThemeReferences()
+        {
+            if (roadRenderer == null)
+            {
+                Transform path = transform.Find("Track/Path");
+                roadRenderer = path == null ? null : path.GetComponent<MeshRenderer>();
+            }
+
+            if (groundRenderer == null)
+            {
+                Transform floor = transform.Find("Floor");
+                groundRenderer = floor == null ? null : floor.GetComponent<MeshRenderer>();
+            }
+
+            if (propGenerator == null)
+            {
+                propGenerator = GetComponentInChildren<SplinePropGenerator>(true);
+            }
+        }
+
+        private void CacheBaseAppearance()
+        {
+            if (!hasCachedRoadMaterial && roadRenderer != null)
+            {
+                baseRoadMaterial = roadRenderer.sharedMaterial;
+                hasCachedRoadMaterial = true;
+            }
+
+            if (!hasCachedGroundAppearance && groundRenderer != null)
+            {
+                baseGroundMaterial = groundRenderer.sharedMaterial;
+                baseGroundEnabled = groundRenderer.enabled;
+                hasCachedGroundAppearance = true;
+            }
+        }
+
+        private void RestoreBaseAppearance()
+        {
+            if (hasCachedRoadMaterial && roadRenderer != null)
+            {
+                roadRenderer.sharedMaterial = baseRoadMaterial;
+            }
+
+            if (hasCachedGroundAppearance && groundRenderer != null)
+            {
+                groundRenderer.sharedMaterial = baseGroundMaterial;
+                groundRenderer.enabled = baseGroundEnabled;
+            }
+        }
+
+        private void ApplyThemeMaterials(TrackThemeDefinition theme)
+        {
+            if (roadRenderer != null && theme.RoadMaterial != null)
+            {
+                roadRenderer.sharedMaterial = theme.RoadMaterial;
+            }
+
+            if (groundRenderer == null)
+            {
+                return;
+            }
+
+            if (theme.GroundMaterial != null)
+            {
+                groundRenderer.sharedMaterial = theme.GroundMaterial;
+            }
+
+            groundRenderer.enabled = !theme.HidesBaseGround;
+        }
+
+        private void SpawnEnvironment(TrackThemeDefinition theme)
+        {
+            if (theme.EnvironmentPrefab == null)
+            {
+                return;
+            }
+
+            Transform themeRoot = GetOrCreateThemeRoot();
+            environmentInstance = Instantiate(theme.EnvironmentPrefab, themeRoot);
+            Transform environmentTransform = environmentInstance.transform;
+            environmentTransform.localPosition = theme.EnvironmentLocalPosition;
+            environmentTransform.localRotation = Quaternion.Euler(theme.EnvironmentLocalEulerAngles);
+            environmentTransform.localScale = theme.EnvironmentLocalScale;
+        }
+
+        private Transform GetOrCreateThemeRoot()
+        {
+            Transform themeRoot = transform.Find("Track Theme");
+            if (themeRoot != null)
+            {
+                return themeRoot;
+            }
+
+            GameObject root = new GameObject("Track Theme");
+            themeRoot = root.transform;
+            themeRoot.SetParent(transform, false);
+            return themeRoot;
+        }
+
+        private void ClearEnvironment()
+        {
+            if (environmentInstance == null)
+            {
+                return;
+            }
+
+            environmentInstance.SetActive(false);
+            if (Application.isPlaying)
+            {
+                Destroy(environmentInstance);
+            }
+            else
+            {
+                DestroyImmediate(environmentInstance);
+            }
+
+            environmentInstance = null;
         }
 
         private void LogSplineContainerMissing()
@@ -186,20 +354,20 @@ namespace GearEngine.CarSimulation.Tracks
             Spline target = targetContainer.Spline;
             target.Closed = source.Closed;
             target.Clear();
-            foreach (var knot in source.Knots)
+            foreach (BezierKnot knot in source.Knots)
             {
                 BezierKnot k = knot;
                 k.Position = new Unity.Mathematics.float3(
-                    k.Position.x * data.Scale + data.Offset.x, 
-                    k.Position.y * data.Scale + data.Offset.y, 
+                    k.Position.x * data.Scale + data.Offset.x,
+                    k.Position.y * data.Scale + data.Offset.y,
                     k.Position.z * data.Scale + data.Offset.z);
                 k.TangentIn = new Unity.Mathematics.float3(
-                    k.TangentIn.x * data.Scale, 
-                    k.TangentIn.y * data.Scale, 
+                    k.TangentIn.x * data.Scale,
+                    k.TangentIn.y * data.Scale,
                     k.TangentIn.z * data.Scale);
                 k.TangentOut = new Unity.Mathematics.float3(
-                    k.TangentOut.x * data.Scale, 
-                    k.TangentOut.y * data.Scale, 
+                    k.TangentOut.x * data.Scale,
+                    k.TangentOut.y * data.Scale,
                     k.TangentOut.z * data.Scale);
                 target.Add(k, TangentMode.AutoSmooth);
             }
@@ -211,11 +379,17 @@ namespace GearEngine.CarSimulation.Tracks
             {
                 return;
             }
-            
+
             if (startFinishLineInstance != null)
             {
-                if (Application.isPlaying) Destroy(startFinishLineInstance);
-                else DestroyImmediate(startFinishLineInstance);
+                if (Application.isPlaying)
+                {
+                    Destroy(startFinishLineInstance);
+                }
+                else
+                {
+                    DestroyImmediate(startFinishLineInstance);
+                }
             }
 
             if (splineContainer.Spline == null || splineContainer.Spline.Count == 0)
@@ -226,7 +400,7 @@ namespace GearEngine.CarSimulation.Tracks
             Vector3 position = splineContainer.transform.TransformPoint(SplineUtility.EvaluatePosition(splineContainer.Spline, 0f));
             Vector3 forward = splineContainer.transform.TransformDirection(SplineUtility.EvaluateTangent(splineContainer.Spline, 0f));
             Vector3 up = splineContainer.transform.TransformDirection(SplineUtility.EvaluateUpVector(splineContainer.Spline, 0f));
-            
+
             Quaternion rotation = Quaternion.LookRotation(forward, up);
 
             startFinishLineInstance = Instantiate(startFinishLinePrefab, position, rotation, this.transform);

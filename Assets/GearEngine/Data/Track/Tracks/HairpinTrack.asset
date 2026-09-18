@@ -13,10 +13,12 @@ MonoBehaviour:
   m_Name: HairpinTrack
   m_EditorClassIdentifier: Game.CarSimulation::GearEngine.CarSimulation.Definitions.TrackDefinition
   trackName: Hairpin
+  theme: {fileID: 11400000, guid: 35464e5f6e4ea4cecaf6de1f69eb155b, type: 2}
+  opponents: []
   scale: 0.65
   offset: {x: 0, y: 0, z: 0}
   totalLaps: 3
-  timeToBeatSeconds: 31.305486
+  timeToBeatSeconds: 31.305487
   spline:
     m_EditModeType: 1
     m_Knots:

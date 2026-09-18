@@ -13,6 +13,8 @@ MonoBehaviour:
   m_Name: DShapeTrack
   m_EditorClassIdentifier: Game.CarSimulation::GearEngine.CarSimulation.Definitions.TrackDefinition
   trackName: DShape
+  theme: {fileID: 11400000, guid: 40e1baabd9a174b7f840221bdcf554a0, type: 2}
+  opponents: []
   scale: 0.8
   offset: {x: 0, y: 0, z: 0}
   totalLaps: 3
@@ -132,12 +134,12 @@ MonoBehaviour:
       m_Data: []
   baseGoldReward: 50
   tiers:
-  - targetTimeSeconds: 20.751933
+  - targetTimeSeconds: 20.751932
     targetScore: 3000
     goldReward: 1000
   - targetTimeSeconds: 27.23691
     targetScore: 1800
     goldReward: 500
-  - targetTimeSeconds: 33.721889
+  - targetTimeSeconds: 33.72189
     targetScore: 600
     goldReward: 200
