@@ -14,6 +14,8 @@ namespace GearEngine.GearEngine.Services.Board
 {
     public sealed class BoardService : IBoardService
     {
+        public const int k_maxSupportedBoardGears = 12;
+
         public BoardService(
             IGridManager gridManager,
             IGearNodeFactory nodeFactory,
@@ -68,7 +70,7 @@ namespace GearEngine.GearEngine.Services.Board
 
                 int fromLoadout = boardSlotCapacity.BoardSlotCapacity;
                 int cap = fromLoadout > 0 ? fromLoadout : boardRules.MaxBoardGears;
-                return Math.Min(cap, boardRules.MaxBoardGears);
+                return Math.Min(k_maxSupportedBoardGears, Math.Min(cap, boardRules.MaxBoardGears));
             }
         }
 
@@ -317,7 +319,10 @@ namespace GearEngine.GearEngine.Services.Board
 
         public bool TryRemoveBoardGear(IGridNode node)
         {
-            if (node == null)
+            GearItemData gear = node?.ConfigData;
+            if (gear == null || !gear.IsReturnable ||
+                (!string.IsNullOrEmpty(inventoryService.MotorCogGearId) &&
+                 gear.Id == inventoryService.MotorCogGearId))
             {
                 return false;
             }

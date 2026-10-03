@@ -189,7 +189,7 @@ namespace GearEngine.Campaign.Tests.Editor
         }
 
         [UnityTest]
-        public IEnumerator WhenTrackCompletes_OpensResultPopupAndCreditsCurrency()
+        public IEnumerator WhenTrackCompletes_WaitsForEveryCarBeforeOpeningResultPopup()
         {
             CarDefinition carDef = ScriptableObject.CreateInstance<CarDefinition>();
             TrackDefinition trackDef = ScriptableObject.CreateInstance<TrackDefinition>();
@@ -234,20 +234,31 @@ namespace GearEngine.Campaign.Tests.Editor
                 ViewModelTestInject.InjectNavigation(vm, navigation);
 
                 vm.Bind(navigation);
+                SetRaceFinishPresentationReady(vm, false);
                 vm.Track.Session.Phase = SimulationLifecycleState.Completed;
                 vm.Track.Session.TriggerPresentationChanged();
                 vm.Track.Session.TriggerPresentationChanged();
 
-                DateTime deadline = DateTime.UtcNow.AddSeconds(5);
-                while (DateTime.UtcNow < deadline && navigation.OpenedControllers.Count == 0)
+                for (int i = 0; i < 30; i++)
                 {
                     vm.Tick(0.1f);
                     yield return null;
                 }
 
+                Assert.That(navigation.OpenedControllers, Is.Empty,
+                    "Results must wait while another car is still completing its run.");
+
+                SetRaceFinishPresentationReady(vm, true);
+                vm.Tick(0.1f);
+                yield return null;
+
                 Assert.That(engine.IsRunning, Is.False);
                 Assert.That(navigation.OpenedControllers.Count, Is.EqualTo(1));
                 Assert.That(navigation.OpenedControllers[0], Is.InstanceOf<ResultPopupViewModel>());
+                Assert.That(navigation.OpenedCloseCurrent[0], Is.True,
+                    "Opening results must close the completed race view and release its WebGL resources.");
+                Assert.That(navigation.OpenedOptions[0]?.CloseAllViews, Is.True,
+                    "Opening results must remove every race-layer view below the results screen.");
                 Assert.That(currency.GetWallet("gold")?.Current ?? 0, Is.GreaterThan(0));
                 Assert.That(trackService.RecordResultCallCount, Is.EqualTo(1));
             }
@@ -304,6 +315,8 @@ namespace GearEngine.Campaign.Tests.Editor
             Assert.That(openedBeforePersistenceCompleted, Is.True,
                 "The result popup must not wait for remote persistence to complete.");
             Assert.That(navigation.OpenedControllers[0], Is.InstanceOf<ResultPopupViewModel>());
+            Assert.That(navigation.OpenedCloseCurrent[0], Is.True);
+            Assert.That(navigation.OpenedOptions[0]?.CloseAllViews, Is.True);
 
             Object.DestroyImmediate(carDef);
             Object.DestroyImmediate(trackDef);
@@ -317,6 +330,16 @@ namespace GearEngine.Campaign.Tests.Editor
                 System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
             Assert.That(method, Is.Not.Null, "The race completion handler must remain available for the regression test.");
             method.Invoke(viewModel, null);
+        }
+
+        private static void SetRaceFinishPresentationReady(ActiveRaceViewModel viewModel, bool ready)
+        {
+            System.Reflection.MethodInfo method = typeof(ActiveRaceViewModel).GetMethod(
+                "SetRaceFinishPresentationReady",
+                System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public);
+            Assert.That(method, Is.Not.Null,
+                "The race view model must expose a finish-presentation hold for the remaining cars.");
+            method.Invoke(viewModel, new object[] { ready });
         }
 
         private static CurrencyGameData BuildGameData(long gold)
@@ -351,6 +374,10 @@ namespace GearEngine.Campaign.Tests.Editor
             public void Record<T>(T evt) where T : Scaffold.Analytics.AnalyticsEvent
             {
                 Events.Add(evt);
+            }
+
+            public void Flush()
+            {
             }
         }
 

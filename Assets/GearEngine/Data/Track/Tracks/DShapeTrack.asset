@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Game.CarSimulation::GearEngine.CarSimulation.Definitions.TrackDefinition
   trackName: DShape
   theme: {fileID: 11400000, guid: 40e1baabd9a174b7f840221bdcf554a0, type: 2}
+  visualVariant: 1
   opponents: []
   scale: 0.8
   offset: {x: 0, y: 0, z: 0}

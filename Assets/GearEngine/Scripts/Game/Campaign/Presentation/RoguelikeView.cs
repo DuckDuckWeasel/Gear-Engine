@@ -15,6 +15,9 @@ namespace GearEngine.Campaign.Presentation
         private GearInventoryViewComponent inventory;
 
         [SerializeField]
+        private BoardCapacityChipView boardCapacityChip;
+
+        [SerializeField]
         private ItemSlotView[] perkOptionViews;
 
         [SerializeField]
@@ -26,6 +29,9 @@ namespace GearEngine.Campaign.Presentation
         {
             ValidateHierarchy();
             BindGearSubtree();
+            boardCapacityChip.Bind(viewModel.Board);
+            boardCapacityChip.PlaceAtGridTopLeft(boardView.Board.transform as RectTransform);
+            boardCapacityChip.SetVisible(true);
             Bind<int, int>(() => viewModel.PerkOptionsRevision, _ => RebuildPerkSelection());
             Bind<bool, bool>(() => viewModel.IsProcessingAction, isProcessing => ToggleGearPanels(!isProcessing));
             BindActionUi();
@@ -33,6 +39,7 @@ namespace GearEngine.Campaign.Presentation
 
         protected override void OnUnbind()
         {
+            boardCapacityChip?.Unbind();
             continueButton.onClick.RemoveListener(OnContinueClicked);
             if (rerollButton != null)
             {
@@ -121,6 +128,7 @@ namespace GearEngine.Campaign.Presentation
             }
 
             RequireReference(inventory, nameof(inventory));
+            RequireReference(boardCapacityChip, nameof(boardCapacityChip));
             RequireReference(continueButton, nameof(continueButton));
             if (perkOptionViews == null)
             {

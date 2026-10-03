@@ -61,7 +61,7 @@ namespace GearEngine.Campaign.Presentation
                 rows[i].Rect.anchoredPosition = Position(i);
             }
             DisplayedPlayerPosition = standings.PlayerPosition;
-            ShowFinalRows(false);
+            ShowFinalRows(true);
         }
 
         private void OnDisable()

@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Config.GearConfig
   nextLevel: {fileID: 11400000, guid: 2041a4001e820411eaab82ede5e5bc9f, type: 2}
   data:
+    biomeAffinity: 3
     id: braketoburn_tier4
     rarity: 3
     rarityConfig: {fileID: 11400000, guid: c0000000000000000000000000000003, type: 2}

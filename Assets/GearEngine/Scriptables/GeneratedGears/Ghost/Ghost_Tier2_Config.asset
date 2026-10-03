@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Config.GearConfig
   nextLevel: {fileID: 11400000, guid: 16481f59638f545cda79777a5359d88f, type: 2}
   data:
+    biomeAffinity: 2
     id: ghost_tier2
     rarity: 0
     rarityConfig: {fileID: 11400000, guid: c0000000000000000000000000000000, type: 2}
@@ -22,6 +23,7 @@ MonoBehaviour:
     BaseRotationSpeed: 0
     ViewPrefab: {fileID: 8811223344556677001, guid: 16426345c7f1e4cfcbe7499d444b3f6d, type: 3}
     UIIcon: {fileID: 21300000, guid: d28d26fb447147d7bc8911a9f789b72e, type: 3}
+    UIIconScaleMultiplier: 0.8
     RelativeScaleMultiplier: 1
     TriggerPattern: 4
     IsInteractable: 1

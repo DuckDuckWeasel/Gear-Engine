@@ -46,6 +46,10 @@ namespace GearEngine.FrustumFit
         [SerializeField]
         private FrustumFitAnchorRotationMode rotationMode = FrustumFitAnchorRotationMode.PreserveTarget;
 
+        [Tooltip("Center the resolved renderer or collider bounds in the source rectangle instead of centering the target transform pivot.")]
+        [SerializeField]
+        private bool centerResolvedBounds;
+
         [Header("Update Timing")]
         [SerializeField]
         private bool applyOnStart = true;
@@ -56,6 +60,11 @@ namespace GearEngine.FrustumFit
         public void SetWorldCamera(Camera camera)
         {
             worldCamera = camera;
+        }
+
+        public void SetTargetTransform(Transform target)
+        {
+            targetTransform = target;
         }
 
         /// <summary>Serialized auto-apply on <c>Start()</c>; exposed for snapshot/restore around transitions.</summary>
@@ -137,17 +146,166 @@ namespace GearEngine.FrustumFit
             }
 
             Vector3 baseline = targetTransform != null ? targetTransform.localScale : Vector3.one;
-            return FrustumFitPlacementFactory.TryCreate(sourceRect, canvas, worldCamera, depth, targetTransform, effectiveMeshSize, fillMode, fitAxes, rotationMode, baseline, out placement);
+            if (!FrustumFitPlacementFactory.TryCreate(
+                    sourceRect,
+                    canvas,
+                    worldCamera,
+                    depth,
+                    targetTransform,
+                    effectiveMeshSize,
+                    fillMode,
+                    fitAxes,
+                    rotationMode,
+                    baseline,
+                    out placement))
+            {
+                return false;
+            }
+
+            if (centerResolvedBounds && TryResolveBoundsCenter(out Vector3 worldBoundsCenter))
+            {
+                placement = CenterPlacementOnBounds(targetTransform, worldBoundsCenter, placement);
+            }
+
+            return true;
+        }
+
+        private bool TryResolveBoundsCenter(out Vector3 worldCenter)
+        {
+            return boundsMode switch
+            {
+                FrustumFitBoundsMode.DirectRenderer => TryGetDirectRendererCenter(targetTransform, out worldCenter),
+                FrustumFitBoundsMode.CombineChildBounds => TryGetCombinedRendererCenter(targetTransform, out worldCenter),
+                FrustumFitBoundsMode.DirectCollider => TryGetDirectColliderCenter(targetTransform, out worldCenter),
+                FrustumFitBoundsMode.CombineChildColliders => TryGetCombinedColliderCenter(targetTransform, out worldCenter),
+                _ => throw new ArgumentOutOfRangeException(nameof(boundsMode), boundsMode, null),
+            };
+        }
+
+        private static FrustumFitAnchorPlacement CenterPlacementOnBounds(
+            Transform target,
+            Vector3 currentWorldBoundsCenter,
+            FrustumFitAnchorPlacement placement)
+        {
+            Vector3 localBoundsCenter = target.InverseTransformPoint(currentWorldBoundsCenter);
+            Quaternion worldRotation = placement.HasWorldRotation ? placement.WorldRotation : target.rotation;
+            Quaternion localRotation = target.parent != null
+                ? Quaternion.Inverse(target.parent.rotation) * worldRotation
+                : worldRotation;
+            Vector3 parentSpaceOffset = localRotation * Vector3.Scale(localBoundsCenter, placement.LocalScale);
+            Vector3 worldOffset = target.parent != null
+                ? target.parent.TransformVector(parentSpaceOffset)
+                : parentSpaceOffset;
+            return new FrustumFitAnchorPlacement(
+                placement.WorldPosition - worldOffset,
+                placement.LocalScale,
+                placement.HasWorldRotation,
+                placement.WorldRotation);
+        }
+
+        private static bool TryGetDirectRendererCenter(Transform target, out Vector3 center)
+        {
+            Renderer renderer = target != null ? target.GetComponentInChildren<Renderer>(true) : null;
+            center = renderer != null ? renderer.bounds.center : default;
+            return renderer != null;
+        }
+
+        private static bool TryGetCombinedRendererCenter(Transform target, out Vector3 center)
+        {
+            Renderer[] renderers = target != null
+                ? target.GetComponentsInChildren<Renderer>(true)
+                : Array.Empty<Renderer>();
+            return TryCombineRendererCenters(renderers, out center);
+        }
+
+        private static bool TryCombineRendererCenters(Renderer[] renderers, out Vector3 center)
+        {
+            Bounds combined = default;
+            bool found = false;
+            for (int i = 0; i < renderers.Length; i++)
+            {
+                Bounds bounds = renderers[i].bounds;
+                if (bounds.size.sqrMagnitude <= 0f)
+                {
+                    continue;
+                }
+
+                combined = found ? Encapsulate(combined, bounds) : bounds;
+                found = true;
+            }
+
+            center = found ? combined.center : default;
+            return found;
+        }
+
+        private static bool TryGetDirectColliderCenter(Transform target, out Vector3 center)
+        {
+            Collider collider = target != null ? target.GetComponentInChildren<Collider>(true) : null;
+            center = collider != null ? collider.bounds.center : default;
+            return collider != null;
+        }
+
+        private static bool TryGetCombinedColliderCenter(Transform target, out Vector3 center)
+        {
+            Collider[] colliders = target != null
+                ? target.GetComponentsInChildren<Collider>(true)
+                : Array.Empty<Collider>();
+            Bounds combined = default;
+            bool found = false;
+            for (int i = 0; i < colliders.Length; i++)
+            {
+                Bounds bounds = colliders[i].bounds;
+                if (bounds.size.sqrMagnitude <= 0f)
+                {
+                    continue;
+                }
+
+                combined = found ? Encapsulate(combined, bounds) : bounds;
+                found = true;
+            }
+
+            center = found ? combined.center : default;
+            return found;
+        }
+
+        private static Bounds Encapsulate(Bounds combined, Bounds addition)
+        {
+            combined.Encapsulate(addition);
+            return combined;
         }
 
         private void LogApplySkipped()
         {
-            if (LogIfSourceRectMissing()) return;
-            if (LogIfCanvasMissing()) return;
-            if (LogIfCameraMissing()) return;
-            if (LogIfTargetMissing()) return;
-            if (LogIfBoundsInvalid()) return;
-            if (LogIfDepthInvalid()) return;
+            if (LogIfSourceRectMissing())
+            {
+                return;
+            }
+
+            if (LogIfCanvasMissing())
+            {
+                return;
+            }
+
+            if (LogIfCameraMissing())
+            {
+                return;
+            }
+
+            if (LogIfTargetMissing())
+            {
+                return;
+            }
+
+            if (LogIfBoundsInvalid())
+            {
+                return;
+            }
+
+            if (LogIfDepthInvalid())
+            {
+                return;
+            }
+
             Debug.LogError($"[FrustumFitAnchor] Could not compute placement on '{name}' (degenerate viewport or invalid inputs).");
         }
 

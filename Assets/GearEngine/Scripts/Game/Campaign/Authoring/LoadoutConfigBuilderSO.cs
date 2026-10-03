@@ -8,7 +8,7 @@ namespace GearEngine.Campaign.Authoring
     public sealed class LoadoutConfigBuilderSO : ConfigBuilderSO<LoadoutConfig>
     {
         [SerializeField]
-        private int baseSlots = 6;
+        private int baseSlots = 12;
 
         [SerializeField]
         private int motorCogStartX = 2;

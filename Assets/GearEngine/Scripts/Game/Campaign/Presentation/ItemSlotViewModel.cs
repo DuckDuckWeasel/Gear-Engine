@@ -1,4 +1,5 @@
 using System;
+using GearEngine.GearEngine.Config;
 using GearEngine.GearEngine.Services.Inventory;
 using Scaffold.MVVM;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -18,6 +19,7 @@ namespace GearEngine.Campaign.Presentation
 
         public IItem Item { get; }
         public int Amount { get; }
+        public float IconScale => Item is GearItemData gear ? gear.UIIconScaleMultiplier : 1f;
 
         public bool IsOwned => Amount > 0;
 

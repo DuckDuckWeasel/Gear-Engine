@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: GlacialTrackTheme
   m_EditorClassIdentifier: Game.CarSimulation::GearEngine.CarSimulation.Definitions.TrackThemeDefinition
   displayName: Glacial
+  biome: 4
   environmentPrefab: {fileID: 7402409076408380607, guid: a3fad2475058842c884b94f31d7e08ac, type: 3}
   environmentLocalPosition: {x: 0, y: 0, z: 0}
   environmentLocalEulerAngles: {x: 0, y: 0, z: 0}
@@ -22,13 +23,22 @@ MonoBehaviour:
   hideBaseGround: 0
   useDefaultProps: 0
   propRules:
-  - rid: 5890521816240750601
-  - rid: 5890521816240750602
-  - rid: 5890521816240750603
+  - rid: 5890521828574887945
+  - rid: 5890521828574887946
+  - rid: 5890521828574887947
+  ambientVfxPrefab: {fileID: 7892241250669096882, guid: 9e64f28da72094fa8952578e7f52100c, type: 3}
+  surfaceZones:
+  - name: Ice Slick
+    normalizedPosition: 0.3
+    normalizedHalfLength: 0.018
+    width: 5
+    speedMultiplier: 0.92
+    lateralPush: -0.7
+    material: {fileID: 2100000, guid: 9fcc12acd85f34742aff46f33384cf64, type: 2}
   references:
     version: 2
     RefIds:
-    - rid: 5890521816240750601
+    - rid: 5890521828574887945
       type: {class: SplinePropGenerator/All, ns: GearEngine.CarSimulation.Tracks, asm: Game.CarSimulation}
       data:
         enabled: 1
@@ -48,7 +58,7 @@ MonoBehaviour:
         insideMaxDistance: 20
         outsideMaxDistance: 20
         minSplineDistance: 1.5
-    - rid: 5890521816240750602
+    - rid: 5890521828574887946
       type: {class: SplinePropGenerator/Inside, ns: GearEngine.CarSimulation.Tracks, asm: Game.CarSimulation}
       data:
         enabled: 1
@@ -64,7 +74,7 @@ MonoBehaviour:
         minimumSplineClearance: 8.5
         maxDistance: 28
         minSplineDistance: 12
-    - rid: 5890521816240750603
+    - rid: 5890521828574887947
       type: {class: SplinePropGenerator/Straights, ns: GearEngine.CarSimulation.Tracks, asm: Game.CarSimulation}
       data:
         enabled: 1

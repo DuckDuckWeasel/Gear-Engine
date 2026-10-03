@@ -1,4 +1,5 @@
 using System;
+using GearEngine.CarSimulation.PhysicsSimulation;
 using UnityEngine;
 
 namespace GearEngine.CarSimulation.SplineSimulation
@@ -36,5 +37,35 @@ namespace GearEngine.CarSimulation.SplineSimulation
             Precision = 50f,
             Smoothness = 50f
         };
+
+        public static DriverPersonality FromStats(RoguelikeCarStats stats)
+        {
+            return new DriverPersonality
+            {
+                SpeedCapability = Mathf.Clamp(stats.SpeedCapability, 0f, 100f),
+                CorneringSkill = Mathf.Clamp(stats.CorneringSkill, 0f, 100f),
+                Drift = Mathf.Clamp(stats.Drift, 0f, 100f),
+                Precision = Mathf.Clamp(stats.Precision, 0f, 100f),
+                Smoothness = Mathf.Clamp(stats.Smoothness, 0f, 100f)
+            };
+        }
+
+        public static DriverPersonality CreateOpponent(int index, int seed)
+        {
+            if (index < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(index));
+            }
+
+            System.Random random = new System.Random(seed);
+            return new DriverPersonality
+            {
+                SpeedCapability = Mathf.Clamp(42f + index * 8f + random.Next(-3, 4), 0f, 100f),
+                CorneringSkill = 50f + random.Next(-10, 11),
+                Drift = 50f + random.Next(-10, 11),
+                Precision = 50f + random.Next(-10, 11),
+                Smoothness = 50f + random.Next(-10, 11)
+            };
+        }
     }
 }

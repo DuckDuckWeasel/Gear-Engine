@@ -6,6 +6,8 @@ namespace GearEngine.Campaign.Tests.Editor
     internal sealed class RecordingNavigation : INavigation
     {
         public readonly List<object> OpenedControllers = new List<object>();
+        public readonly List<bool> OpenedCloseCurrent = new List<bool>();
+        public readonly List<NavigationOptions> OpenedOptions = new List<NavigationOptions>();
 
         public int ReturnCallCount { get; private set; }
 
@@ -17,6 +19,8 @@ namespace GearEngine.Campaign.Tests.Editor
             if (controller != null)
             {
                 OpenedControllers.Add(controller);
+                OpenedCloseCurrent.Add(closeCurrent);
+                OpenedOptions.Add(options);
                 CurrentController = controller;
             }
         }
@@ -26,6 +30,8 @@ namespace GearEngine.Campaign.Tests.Editor
             if (controller != null)
             {
                 OpenedControllers.Add(controller);
+                OpenedCloseCurrent.Add(false);
+                OpenedOptions.Add(options);
                 CurrentController = controller;
             }
         }

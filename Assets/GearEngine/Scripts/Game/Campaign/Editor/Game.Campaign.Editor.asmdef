@@ -1,0 +1,6 @@
+{
+  "name": "Game.Campaign.Editor",
+  "references": ["Game.Campaign", "Scaffold.MVVM.View", "Unity.TextMeshPro", "Unity.ugui"],
+  "includePlatforms": ["Editor"],
+  "autoReferenced": true
+}

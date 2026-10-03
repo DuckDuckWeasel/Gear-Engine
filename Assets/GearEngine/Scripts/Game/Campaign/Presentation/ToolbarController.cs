@@ -160,6 +160,10 @@ namespace GearEngine.Campaign.Presentation
             {
                 navigation.Open(new MainViewModel(), true, new NavigationOptions() { CloseAllViews = true });
             }
+
+            // Setup hides this persistent toolbar; navigation only restores the main view itself.
+            gameObject.SetActive(true);
+            UpdateRadioButtons(raceButton);
         }
     }
 }

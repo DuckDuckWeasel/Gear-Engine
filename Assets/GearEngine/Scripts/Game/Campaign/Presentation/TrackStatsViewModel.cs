@@ -25,6 +25,21 @@ namespace GearEngine.Campaign.Presentation
             TrackName = track.GetDisplayName();
             TargetLaps = track.TotalLaps;
             TargetTime = track.TimeToBeatSeconds;
+            TrackThemeDefinition theme = track.Theme;
+            if (theme == null || theme.Biome == TrackBiome.None)
+            {
+                BiomeLabel = "CLASSIC CIRCUIT";
+            }
+            else
+            {
+                string biome = theme.DisplayName.ToUpperInvariant();
+                string surface = theme.SurfaceZones != null && theme.SurfaceZones.Count > 0
+                    ? theme.SurfaceZones[0]?.Name
+                    : null;
+                BiomeLabel = string.IsNullOrWhiteSpace(surface)
+                    ? biome
+                    : $"{biome} · {surface.ToUpperInvariant()}";
+            }
             Tiers = BuildOrderedTiers(track);
             StarTargetScores = Tiers.Select(tier => tier.TargetScore).ToArray();
         }
@@ -37,6 +52,8 @@ namespace GearEngine.Campaign.Presentation
         public int TargetLaps { get; }
 
         public float TargetTime { get; }
+
+        public string BiomeLabel { get; }
 
         public IReadOnlyList<TrackTierViewModel> Tiers { get; }
 

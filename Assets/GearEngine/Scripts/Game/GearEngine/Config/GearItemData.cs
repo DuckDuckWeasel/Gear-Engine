@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
+using GearEngine.CarSimulation.Definitions;
 using UnityEngine;
 using GearEngine.GearEngine.Services;
 using GearEngine.GearEngine.Services.Inventory;
@@ -11,12 +11,14 @@ namespace GearEngine.GearEngine.Config
     [Serializable]
     public class GearItemData : IItem
     {
+        public const string k_coreGearId = "gear_core";
+
         [SerializeField] private string id;
         public string Id { get => id; set => id = value; }
-        
+
         [SerializeField] private ItemRarity rarity = ItemRarity.Common;
         public ItemRarity Rarity { get => rarity; set => rarity = value; }
-        
+
         [SerializeField] private RarityConfigSO rarityConfig;
         public RarityConfigSO RarityConfig { get => rarityConfig; set => rarityConfig = value; }
 
@@ -25,42 +27,62 @@ namespace GearEngine.GearEngine.Config
 
         public string Name => !string.IsNullOrEmpty(displayName) ? displayName : (SourceGearConfig != null ? SourceGearConfig.name : Id);
 
-        [SerializeField] [TextArea] private string description;
+        [SerializeField][TextArea] private string description;
+        [SerializeField] private TrackBiome biomeAffinity;
+        public TrackBiome BiomeAffinity { get => biomeAffinity; set => biomeAffinity = value; }
+
+        public const int k_biomeSpeedBonusPerGear = 8;
+        public const int k_maxBiomeBonusGears = 3;
+
         public string Description
         {
             get
             {
-                if (Abilities == null || Abilities.Count == 0) return description;
-                
-                string values = "";
-                foreach (var ability in Abilities)
+                string abilityDescriptions = "";
+                if (Abilities != null)
                 {
-                    if (ability is IDescribable describable)
+                    foreach (GearAbilitySO ability in Abilities)
                     {
-                        string val = describable.GetRichTextDescription();
-                        if (!string.IsNullOrEmpty(val))
+                        if (ability is IDescribable describable)
                         {
-                            if (values.Length > 0) values += "\n";
-                            values += val;
+                            string val = describable.GetRichTextDescription();
+                            if (!string.IsNullOrEmpty(val))
+                            {
+                                if (abilityDescriptions.Length > 0)
+                                {
+                                    abilityDescriptions += "\n";
+                                }
+
+                                abilityDescriptions += val;
+                            }
                         }
                     }
                 }
-                
-                if (values.Length > 0)
+
+                string values = string.IsNullOrEmpty(abilityDescriptions)
+                    ? description
+                    : string.IsNullOrEmpty(description) ? abilityDescriptions : $"{description}\n\n{abilityDescriptions}";
+
+                if (biomeAffinity != TrackBiome.None)
                 {
-                    return string.IsNullOrEmpty(description) ? values : $"{description}\n\n{values}";
+                    string affinity = $"{biomeAffinity} affinity: +{k_biomeSpeedBonusPerGear} Speed in {biomeAffinity} races (up to {k_maxBiomeBonusGears} matching gears).";
+                    values = string.IsNullOrEmpty(values) ? affinity : $"{values}\n\n{affinity}";
                 }
-                return description;
+
+                return values;
             }
             set => description = value;
         }
 
-        
+
         public GearCategory Category = GearCategory.Base;
         public float BaseRotationSpeed;
         public GearView ViewPrefab;
         public Sprite UIIcon;
         public Sprite Icon => UIIcon;
+        [Tooltip("Scale applied to this gear's icon on boards, cards, popups, and rewards. Use a smaller value for composite artwork.")]
+        [Range(0.5f, 1.25f)]
+        public float UIIconScaleMultiplier = 1.0f;
         [Tooltip("Relative size modifier for this specific gear (1.0 is default), applied to the GearVisual child of ViewPrefab.")]
         public float RelativeScaleMultiplier = 1.0f;
         [Tooltip("Initial visual and trigger phase in degrees. Used by the Core Gear to keep contact timing aligned with its sprite.")]
@@ -111,12 +133,14 @@ namespace GearEngine.GearEngine.Config
                 Id = Id,
                 DisplayName = DisplayName,
                 Description = description,
+                BiomeAffinity = BiomeAffinity,
                 Rarity = Rarity,
                 RarityConfig = RarityConfig,
                 Category = Category,
                 BaseRotationSpeed = BaseRotationSpeed,
                 ViewPrefab = ViewPrefab,
                 UIIcon = UIIcon,
+                UIIconScaleMultiplier = UIIconScaleMultiplier,
                 RelativeScaleMultiplier = RelativeScaleMultiplier,
                 InitialRotationOffset = InitialRotationOffset,
                 TriggerPattern = TriggerPattern,
@@ -138,6 +162,11 @@ namespace GearEngine.GearEngine.Config
                 SourceGearConfig = SourceGearConfig,
                 Owner = Owner
             };
+        }
+
+        public static bool IsCoreGear(string gearId)
+        {
+            return string.Equals(gearId, k_coreGearId, StringComparison.Ordinal);
         }
     }
 }

@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Config.GearConfig
   nextLevel: {fileID: 11400000, guid: 5847090af8ec0492c9cbaa70c055baa7, type: 2}
   data:
+    biomeAffinity: 2
     id: racestartbuff_handling_tier4
     rarity: 3
     rarityConfig: {fileID: 11400000, guid: c0000000000000000000000000000003, type: 2}

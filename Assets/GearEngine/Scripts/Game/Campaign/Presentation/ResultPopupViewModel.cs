@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using GearEngine.Campaign;
 using GearEngine.Currency;
@@ -16,6 +17,7 @@ namespace GearEngine.Campaign.Presentation
         public ResultPopupViewModel(RaceResultModel result)
         {
             this.result = result ?? throw new ArgumentNullException(nameof(result));
+            StarTargetScores = result.Tiers.Select(tier => tier.TargetScore).ToArray();
         }
 
 
@@ -39,6 +41,8 @@ namespace GearEngine.Campaign.Presentation
         public long CurrentGold => currencyClient?.GetWallet("gold")?.Current ?? 0;
 
         public int HighestAchievedTier => result.HighestAchievedTier;
+
+        public IReadOnlyList<int> StarTargetScores { get; }
 
         public IReadOnlyList<ResultStatSlotViewModel> Stats => stats;
 

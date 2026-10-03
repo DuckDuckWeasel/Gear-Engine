@@ -17,6 +17,11 @@ namespace GearEngine.CarSimulation.SplineSimulation
     /// </summary>
     public sealed class SplineEvaluateRunnerService : ISimulationRunnerService, ITickable
     {
+        private const float k_collisionHalfWidth = 1.1f;
+        private const float k_collisionHalfLength = 2.2f;
+        private const float k_collisionLateralSpeed = 3f;
+        private const float k_collisionMaxFrameShift = 0.08f;
+
         /// <summary>Fired when a car completes a lap — mirrors <see cref="SplineCarRunnerService.OnLapCompleted"/>.</summary>
         public event Action<CarEntity> OnLapCompleted;
 
@@ -73,7 +78,7 @@ namespace GearEngine.CarSimulation.SplineSimulation
             }
 
             LaneProfile profile = laneProfile != null ? laneProfile : defaultLaneProfile;
-            var driver = new SplineEvaluateDriver(config, profile);
+            SplineEvaluateDriver driver = new SplineEvaluateDriver(config, profile);
             driver.Initialize(trackContainer, carTransform, carEntity, personality);
             driver.OnLapCompleted += HandleLapCompleted;
             activeDrivers.Add(driver);
@@ -157,8 +162,11 @@ namespace GearEngine.CarSimulation.SplineSimulation
 
         public void Tick()
         {
-            float dt = Time.deltaTime;
+            Tick(Time.deltaTime);
+        }
 
+        public void Tick(float dt)
+        {
             for (int i = activeDrivers.Count - 1; i >= 0; i--)
             {
                 SplineEvaluateDriver driver = activeDrivers[i];
@@ -175,6 +183,66 @@ namespace GearEngine.CarSimulation.SplineSimulation
                 catch (Exception ex)
                 {
                     Debug.LogError($"[SplineEvaluateRunnerService] Tick failed for driver {i}: {ex.Message}\n{ex.StackTrace}");
+                }
+            }
+
+            ResolveCollisions(dt);
+        }
+
+        private void ResolveCollisions(float dt)
+        {
+            float contactDt = Mathf.Clamp(dt, 0f, 0.1f);
+            if (contactDt <= 0f)
+            {
+                return;
+            }
+
+            for (int i = 0; i < activeDrivers.Count; i++)
+            {
+                SplineEvaluateDriver first = activeDrivers[i];
+                if (!first.IsValid || first.IsPaused || first.IsInStartingGrid)
+                {
+                    continue;
+                }
+
+                for (int j = i + 1; j < activeDrivers.Count; j++)
+                {
+                    SplineEvaluateDriver second = activeDrivers[j];
+                    if (!second.IsValid || second.IsPaused || second.IsInStartingGrid ||
+                        first.TrackTransform != second.TrackTransform)
+                    {
+                        continue;
+                    }
+
+                    Transform trackTransform = first.TrackTransform;
+                    Vector3 separation = trackTransform.InverseTransformVector(
+                        second.CarTransform.position - first.CarTransform.position);
+                    Vector3 localRight = trackTransform.InverseTransformDirection(first.CarTransform.right).normalized;
+                    Vector3 localForward = trackTransform.InverseTransformDirection(first.CarTransform.forward).normalized;
+                    Vector3 secondForward = trackTransform.InverseTransformDirection(second.CarTransform.forward).normalized;
+                    if (Vector3.Dot(localForward, secondForward) < 0.7f)
+                    {
+                        continue;
+                    }
+
+                    float lateral = Vector3.Dot(separation, localRight);
+                    float longitudinal = Vector3.Dot(separation, localForward);
+                    float lateralOverlap = k_collisionHalfWidth * 2f - Mathf.Abs(lateral);
+                    float longitudinalOverlap = k_collisionHalfLength * 2f - Mathf.Abs(longitudinal);
+                    if (lateralOverlap <= 0f || longitudinalOverlap <= 0f || Mathf.Abs(separation.y) > 2f)
+                    {
+                        continue;
+                    }
+
+                    float direction = lateral < -0.01f ? -1f : 1f;
+                    float displacement = Mathf.Min(lateralOverlap * 0.5f,
+                        k_collisionLateralSpeed * contactDt, k_collisionMaxFrameShift);
+                    float speedLoss = Mathf.Clamp01(longitudinalOverlap / (k_collisionHalfLength * 2f)) *
+                        0.6f * contactDt;
+                    first.ApplyCollisionImpact(-direction * displacement,
+                        longitudinal >= 0f ? speedLoss : speedLoss * 0.2f);
+                    second.ApplyCollisionImpact(direction * displacement,
+                        longitudinal < 0f ? speedLoss : speedLoss * 0.2f);
                 }
             }
         }
@@ -195,7 +263,10 @@ namespace GearEngine.CarSimulation.SplineSimulation
         {
             for (int i = 0; i < activeDrivers.Count; i++)
             {
-                if (activeDrivers[i].CarEntity == entity) return activeDrivers[i];
+                if (activeDrivers[i].CarEntity == entity)
+                {
+                    return activeDrivers[i];
+                }
             }
             return null;
         }

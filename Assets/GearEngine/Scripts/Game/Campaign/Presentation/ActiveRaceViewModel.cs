@@ -52,6 +52,7 @@ namespace GearEngine.Campaign.Presentation
 
         private RaceState activeSession;
         private bool resultFlowStarted;
+        private bool raceFinishPresentationReady = true;
         private RaceResultModel pendingResult;
         private float resultPopupDelayRemaining;
 
@@ -77,10 +78,16 @@ namespace GearEngine.Campaign.Presentation
             }
         }
 
+        public void SetRaceFinishPresentationReady(bool ready)
+        {
+            raceFinishPresentationReady = ready;
+        }
+
         protected override void OnClosed()
         {
             eventBus.RemoveListener<GearEngine.Events.CombatTextCollectedEvent>(OnCombatTextCollected);
             pendingResult = null;
+            raceFinishPresentationReady = true;
             UnsubscribeFromRaceCompletion();
             UnregisterActiveRace();
             base.OnClosed();
@@ -142,7 +149,7 @@ namespace GearEngine.Campaign.Presentation
             }
 
             resultPopupDelayRemaining -= Mathf.Max(0f, deltaTime);
-            if (resultPopupDelayRemaining > 0f)
+            if (resultPopupDelayRemaining > 0f || !raceFinishPresentationReady)
             {
                 return;
             }
@@ -172,7 +179,10 @@ namespace GearEngine.Campaign.Presentation
         private async Task OpenAndPersistResultAsync(RaceResultModel result)
         {
             result.BeginPersistence();
-            navigation.Open(new ResultPopupViewModel(result));
+            navigation.Open(
+                new ResultPopupViewModel(result),
+                true,
+                new NavigationOptions { CloseAllViews = true });
             try
             {
                 await PersistRaceResultAsync(result);

@@ -29,7 +29,8 @@
         "GearEngine.Core.Config",
         "Unity.TextMeshPro",
         "Unity.ugui",
-        "Unity.Addressables"
+        "Unity.Addressables",
+        "StompyRobot.SRF"
     ],
     "includePlatforms": [
         "Editor"

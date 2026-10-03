@@ -10,6 +10,7 @@ using GearEngine.GearEngine.Services;
 using GearEngine.GearEngine.Services.Board;
 using NUnit.Framework;
 using Scaffold.Events.Contracts;
+using TMPro;
 using UnityEditor;
 using UnityEngine;
 
@@ -94,6 +95,67 @@ namespace GearEngine.GearEngine.Tests.Editor
             Assert.That(viewModel.CapacityFeedbackRevision, Is.Zero);
         }
 
+        [TestCase("gear_core", true, 0)]
+        [TestCase("gear_other", false, 0)]
+        [TestCase("gear_other", true, 1)]
+        public void ReturnToInventory_OnlyRemovesReturnableNonCoreGear(
+            string gearId,
+            bool isReturnable,
+            int expectedRemoveCalls)
+        {
+            StubBoardService board = new StubBoardService();
+            BoardViewModel viewModel = CreateViewModel(board, "gear_core");
+            StubNode node = new StubNode(new GearItemData
+            {
+                Id = gearId,
+                IsReturnable = isReturnable,
+            });
+
+            viewModel.CompleteBoardGearReturnToInventory(node, node.ConfigData);
+
+            Assert.That(board.TryRemoveCalls, Is.EqualTo(expectedRemoveCalls));
+        }
+
+        [Test]
+        public void UpgradePrefab_RendersInventoryAboveBackground()
+        {
+            GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(
+                "Assets/GearEngine/Prefabs/Campaign/Campaign_RoguelikeView.prefab");
+
+            Assert.IsNotNull(prefab);
+            Transform inventory = prefab.transform.Find("GearInventoryViewComponent");
+            Transform background = prefab.transform.Find("Background");
+            Assert.IsNotNull(inventory);
+            Assert.IsNotNull(background);
+            Assert.That(inventory.GetSiblingIndex(), Is.GreaterThan(background.GetSiblingIndex()));
+        }
+
+        [Test]
+        public void CapacityChip_SetVisibleControlsReparentedChip()
+        {
+            GameObject root = new GameObject("CapacityChipTest", typeof(RectTransform),
+                typeof(BoardCapacityChipView));
+            GameObject chip = new GameObject("chips_cogs", typeof(RectTransform));
+            chip.transform.SetParent(root.transform, false);
+            GameObject label = new GameObject("Capacity", typeof(RectTransform),
+                typeof(CanvasRenderer), typeof(TextMeshProUGUI));
+            label.transform.SetParent(chip.transform, false);
+            BoardCapacityChipView view = root.GetComponent<BoardCapacityChipView>();
+
+            try
+            {
+                view.SetVisible(false);
+                Assert.That(chip.activeSelf, Is.False);
+
+                view.SetVisible(true);
+                Assert.That(chip.activeSelf, Is.True);
+            }
+            finally
+            {
+                UnityEngine.Object.DestroyImmediate(root);
+            }
+        }
+
         [Test]
         public void SetupPrefab_WiresCapacityChipToCogLabel()
         {
@@ -139,12 +201,12 @@ namespace GearEngine.GearEngine.Tests.Editor
                 $"{prefabPath}: {string.Join(", ", objectsWithMissingScripts)}");
         }
 
-        private static BoardViewModel CreateViewModel(StubBoardService board)
+        private static BoardViewModel CreateViewModel(StubBoardService board, string motorCogGearId = "")
         {
             return new BoardViewModel(
                 board,
                 new StubEngineService(),
-                new StubInventoryService(),
+                new StubInventoryService(motorCogGearId),
                 new StubEventBus());
         }
 
@@ -159,6 +221,7 @@ namespace GearEngine.GearEngine.Tests.Editor
             public IGridNode Occupant { get; set; }
             public bool TryPlaceResult { get; set; }
             public int TryPlaceCalls { get; private set; }
+            public int TryRemoveCalls { get; private set; }
 
             public BoardModel GetBoard() => null;
             public BoardRulesSO BoardRules => null;
@@ -171,7 +234,11 @@ namespace GearEngine.GearEngine.Tests.Editor
             public void ToggleSimulation() { }
             public void LoadLayout(BoardLayoutData layout) { }
             public bool TryMoveBoardGear(IGridNode node, Vector2Int toPos, Vector2Int fromPos) => false;
-            public bool TryRemoveBoardGear(IGridNode node) => false;
+            public bool TryRemoveBoardGear(IGridNode node)
+            {
+                TryRemoveCalls++;
+                return true;
+            }
             public bool TryDeleteBoardGear(IGridNode node) => false;
             public void SnapNodeBackToOriginal(IGridNode node, Vector2Int originalPos) { }
 
@@ -197,7 +264,12 @@ namespace GearEngine.GearEngine.Tests.Editor
 
         private sealed class StubInventoryService : IInventoryService
         {
-            public string MotorCogGearId => string.Empty;
+            public StubInventoryService(string motorCogGearId)
+            {
+                MotorCogGearId = motorCogGearId;
+            }
+
+            public string MotorCogGearId { get; }
             public bool HasSavedInventory => false;
             public IReadOnlyList<OwnedGear> Owned => Array.Empty<OwnedGear>();
             public event Action InventoryChanged
@@ -222,9 +294,14 @@ namespace GearEngine.GearEngine.Tests.Editor
 
         private sealed class StubNode : IGridNode
         {
+            public StubNode(GearItemData configData = null)
+            {
+                ConfigData = configData;
+            }
+
             public Vector2Int Position => Vector2Int.zero;
             public float CurrentRotation => 0f;
-            public GearItemData ConfigData => null;
+            public GearItemData ConfigData { get; }
             public float LocalSpeedMultiplier { get; set; }
             public bool IsActive { get; set; }
             public bool IsInteractable => true;

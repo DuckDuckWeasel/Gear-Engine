@@ -685,7 +685,7 @@ MonoBehaviour:
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
   m_ReferenceResolution: {x: 1080, y: 1920}
-  m_ScreenMatchMode: 0
+  m_ScreenMatchMode: 1
   m_MatchWidthOrHeight: 0
   m_PhysicalUnit: 3
   m_FallbackScreenDPI: 96
@@ -2172,11 +2172,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4764992845997630898, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 185
+      value: 225
       objectReference: {fileID: 0}
     - target: {fileID: 4764992845997630898, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 185
+      value: 225
       objectReference: {fileID: 0}
     - target: {fileID: 4764992845997630898, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
       propertyPath: m_LocalScale.x
@@ -2258,6 +2258,10 @@ PrefabInstance:
       propertyPath: filledRarityStar
       value:
       objectReference: {fileID: -765930273514264058, guid: ec286fda576d4cb46a07ea882dfa84d1, type: 3}
+    - target: {fileID: 7243481678181416101, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
+      propertyPath: useAuthoredTitleLayout
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7243481678181416101, guid: 64eaa022ac01d4b9a84ced7abea86934, type: 3}
       propertyPath: useRarityTextColor
       value: 0

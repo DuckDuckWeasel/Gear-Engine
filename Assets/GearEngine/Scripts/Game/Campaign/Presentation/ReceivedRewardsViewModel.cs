@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using Scaffold.Ads;
 using VContainer;
+using GearEngine.GearEngine.Config;
 using GearEngine.GearEngine.Services.Inventory;
 using Scaffold.MVVM;
 using Scaffold.Navigation.Contracts;
@@ -29,6 +30,7 @@ namespace GearEngine.Campaign.Presentation
         public string ContinueLabel => NeedsGearSelection ? "UPGRADE" : "CONTINUE";
         public string RewardName => RewardCount == 0 ? "NO REWARDS THIS RUN" : IsGold ? $"{GoldAmount} GOLD" : NeedsGearSelection ? "GEAR UPGRADE" : ReceivedReward.Name;
         public Sprite RewardIcon => IsGold ? null : ReceivedReward?.Icon;
+        public float RewardIconScale => IsGold || ReceivedReward is not GearItemData gear ? 1f : gear.UIIconScaleMultiplier;
         public string RewardCountText => RewardCount == 0 ? "KEEP RACING" : $"REWARD {index + 1}/{RewardCount}";
 
         private readonly RaceResultModel result;
@@ -73,6 +75,7 @@ namespace GearEngine.Campaign.Presentation
         {
             OnPropertyChanged(nameof(RewardName));
             OnPropertyChanged(nameof(RewardIcon));
+            OnPropertyChanged(nameof(RewardIconScale));
             OnPropertyChanged(nameof(IsGold));
             OnPropertyChanged(nameof(RewardCountText));
             OnPropertyChanged(nameof(NeedsGearSelection));

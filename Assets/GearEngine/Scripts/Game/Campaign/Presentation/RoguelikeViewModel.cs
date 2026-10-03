@@ -426,7 +426,7 @@ namespace GearEngine.Campaign.Presentation
 
         private void AddPerkOption(IItem config)
         {
-            if (config == null)
+            if (config == null || GearItemData.IsCoreGear(config.Id))
             {
                 return;
             }

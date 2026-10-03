@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Game.CarSimulation::GearEngine.CarSimulation.Definitions.TrackDefinition
   trackName: Hairpin
   theme: {fileID: 11400000, guid: 35464e5f6e4ea4cecaf6de1f69eb155b, type: 2}
+  visualVariant: 0
   opponents: []
   scale: 0.65
   offset: {x: 0, y: 0, z: 0}

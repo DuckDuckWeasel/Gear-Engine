@@ -113,6 +113,13 @@ namespace GearEngine.GearEngine.Presentation.UI
             _ = config;
             try
             {
+                GearItemData gear = node?.ConfigData;
+                if (gear == null || !gear.IsReturnable ||
+                    (!string.IsNullOrEmpty(MotorCogGearId) && gear.Id == MotorCogGearId))
+                {
+                    return;
+                }
+
                 boardService.TryRemoveBoardGear(node);
             }
             catch (Exception ex)

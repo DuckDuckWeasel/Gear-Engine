@@ -18,6 +18,7 @@ namespace GearEngine.Campaign.Presentation
         [SerializeField] private Button returnToMainButton;
         [SerializeField] private FrustumFitAnchor[] openTransitionAnchors;
         [SerializeField] private float openTransitionDurationSeconds = 0.35f;
+        private readonly ClubSportBoardLayout clubSportBoard = new ClubSportBoardLayout();
 
         protected override void OnBind()
         {
@@ -29,14 +30,17 @@ namespace GearEngine.Campaign.Presentation
             }
 
             track.Bind(viewModel.Track);
+            ConfigureTrackViewport();
             boardView.BindInteractive(
                 viewModel.Board,
                 viewModel.TrashZone,
                 viewModel.DragService);
+            clubSportBoard.ApplyToCurrentRegion(boardView.Board);
             inventory.SetDragContext(viewModel.DragService, boardView.DragOverlay);
             inventory.Bind(viewModel.Inventory);
             inventory.RebuildAndFit();
             boardCapacityChip.Bind(viewModel.Board);
+            boardCapacityChip.PlaceAtGridTopLeft(boardView.Board.transform as RectTransform);
         }
 
         protected override void OnOpen(bool wasHidden)
@@ -44,6 +48,9 @@ namespace GearEngine.Campaign.Presentation
             base.OnOpen(wasHidden);
             track.gameObject.SetActive(true);
             boardView.SetVisible(true);
+            clubSportBoard.ApplyToCurrentRegion(boardView.Board);
+            inventory.gameObject.SetActive(true);
+            boardCapacityChip.SetVisible(true);
 
             raceButton.onClick.RemoveListener(OnRaceClicked);
             raceButton.onClick.AddListener(OnRaceClicked);
@@ -62,7 +69,10 @@ namespace GearEngine.Campaign.Presentation
 
         protected override void OnClose(bool hiding)
         {
+            clubSportBoard.Restore();
             base.OnClose(hiding);
+            inventory?.gameObject.SetActive(false);
+            boardCapacityChip?.SetVisible(false);
             if (hiding)
             {
                 return;
@@ -79,6 +89,7 @@ namespace GearEngine.Campaign.Presentation
 
         protected override void OnUnbind()
         {
+            clubSportBoard.Restore();
             boardCapacityChip?.Unbind();
             base.OnUnbind();
         }
@@ -92,6 +103,19 @@ namespace GearEngine.Campaign.Presentation
             catch (Exception ex)
             {
                 Debug.LogError($"[SetupView] OnRaceClicked failed: {ex.Message}\n{ex.StackTrace}");
+            }
+        }
+
+        private void ConfigureTrackViewport()
+        {
+            if (openTransitionAnchors == null)
+            {
+                return;
+            }
+
+            for (int i = 0; i < openTransitionAnchors.Length; i++)
+            {
+                openTransitionAnchors[i]?.SetTargetTransform(track.transform);
             }
         }
 

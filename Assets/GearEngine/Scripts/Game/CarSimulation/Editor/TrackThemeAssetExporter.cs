@@ -16,6 +16,7 @@ namespace GearEngine.CarSimulation.Editor
         private sealed class ThemeSpec
         {
             public string Name { get; set; }
+            public TrackBiome Biome { get; set; }
             public string RepresentativeTrack { get; set; }
             public string BackgroundModelPath { get; set; }
             public string GroundTexturePath { get; set; }
@@ -23,16 +24,24 @@ namespace GearEngine.CarSimulation.Editor
             public string[] PropTexturePaths { get; set; }
             public string[] PreparedPropPrefabPaths { get; set; }
             public Color GroundTint { get; set; }
+            public Color EnvironmentTint { get; set; }
             public Color RoadColor { get; set; }
             public Color PropTint { get; set; }
             public Color SkyColor { get; set; }
+            public Vector2 TextureTiling { get; set; } = Vector2.one;
             public float PropHeight { get; set; }
             public bool UseDefaultProps { get; set; }
+            public string SurfaceName { get; set; }
+            public Color SurfaceColor { get; set; }
+            public float SurfaceSpeedMultiplier { get; set; } = 1f;
+            public float SurfaceLateralPush { get; set; }
+            public Color AmbientVfxColor { get; set; }
         }
 
         private static string MaterialsFolder => "Assets/GearEngine/Art/Materials/TrackThemes";
         private static string PrefabsFolder => "Assets/GearEngine/Prefabs/Tracks/Themes";
         private static string ThemesFolder => "Assets/GearEngine/Data/Track/Themes";
+        private static string TexturesFolder => "Assets/GearEngine/Art/Textures/TrackThemes";
         private static string TracksFolder => "Assets/GearEngine/Data/Track/Tracks";
         private static string TrackViewPrefabPath => "Assets/GearEngine/Prefabs/Tracks/TrackViewComponent.prefab";
         private static string ConePrefabPath => "Assets/PROMETEO - Car Controller/Prefabs/Cone.prefab";
@@ -50,7 +59,7 @@ namespace GearEngine.CarSimulation.Editor
                 AssetDatabase.Refresh();
                 ExportVisuals(specs);
                 ExportUnityPackage();
-                Debug.Log("[TrackThemes] Built four themes, assigned all tracks, and exported visual evidence.");
+                Debug.Log("[TrackThemes] Built four biome themes with level variants and effects, then exported visual evidence.");
             }
             catch (Exception exception)
             {
@@ -66,33 +75,33 @@ namespace GearEngine.CarSimulation.Editor
                 new ThemeSpec
                 {
                     Name = "Desert",
+                    Biome = TrackBiome.Desert,
                     RepresentativeTrack = "Figure8Track",
+                    GroundTexturePath = "Assets/GearEngine/Art/Textures/TrackThemes/T_DesertGroundSoft.png",
                     PropModelPaths = new[]
                     {
                         "Assets/GearEngine/Art/ModelsTextures/AssetsBackground/Desert/Cactus/FBX/cactus_mesh.fbx",
-                        "Assets/GearEngine/Art/ModelsTextures/AssetsBackground/Desert/Rock3/FBX/rock3_mesh.fbx",
                     },
                     PropTexturePaths = new[]
                     {
                         "Assets/GearEngine/Art/ModelsTextures/AssetsBackground/Desert/Cactus/Textures/T_Cactus_BaseColor.png",
-                        "Assets/GearEngine/Art/ModelsTextures/AssetsBackground/Desert/Rock3/Texture/T_Rock3_BaseColor.png",
-                    },
-                    PreparedPropPrefabPaths = new[]
-                    {
-                        "Assets/GearEngine/Art/ModelsTextures/AssetsBackground/Desert/Cactus/Prefab/cactus_mesh.prefab",
-                        "Assets/GearEngine/Art/ModelsTextures/AssetsBackground/Desert/Cactus/Prefab/cactus_mesh Variant 1.prefab",
-                        "Assets/GearEngine/Art/ModelsTextures/AssetsBackground/Desert/Rock3/Prefab/rock3_mesh.prefab",
-                        "Assets/GearEngine/Art/ModelsTextures/AssetsBackground/Desert/Rock3/Prefab/rock3_mesh Variant 1.prefab",
                     },
                     GroundTint = new Color(1f, 0.86f, 0.58f),
-                    RoadColor = new Color(0.07f, 0.05f, 0.03f),
+                    EnvironmentTint = Color.white,
+                    RoadColor = new Color(0.18f, 0.16f, 0.13f),
                     PropTint = Color.white,
                     SkyColor = new Color(0.96f, 0.79f, 0.49f),
+                    TextureTiling = Vector2.one * 4f,
                     PropHeight = 6f,
+                    SurfaceName = "Quicksand",
+                    SurfaceColor = new Color(0.9f, 0.61f, 0.29f),
+                    SurfaceSpeedMultiplier = 0.73f,
+                    AmbientVfxColor = new Color(0.95f, 0.77f, 0.49f, 0.18f),
                 },
                 new ThemeSpec
                 {
                     Name = "Forest",
+                    Biome = TrackBiome.Forest,
                     RepresentativeTrack = "RoundedSquareTrack",
                     BackgroundModelPath = "Assets/GearEngine/Art/ModelsTextures/Background/Forest/FBX/background_mesh.fbx",
                     GroundTexturePath = "Assets/GearEngine/Art/ModelsTextures/Background/Forest/Texture/T_Forest_BaseColor.png",
@@ -107,14 +116,22 @@ namespace GearEngine.CarSimulation.Editor
                         "Assets/GearEngine/Art/ModelsTextures/AssetsBackground/Forest/Tree2/Texture/T_Tree2_BaseColor.png",
                     },
                     GroundTint = new Color(0.70f, 0.88f, 0.57f),
+                    EnvironmentTint = new Color(0.92f, 1f, 0.88f),
                     RoadColor = new Color(0.10f, 0.19f, 0.13f),
                     PropTint = Color.white,
                     SkyColor = new Color(0.62f, 0.82f, 0.65f),
+                    TextureTiling = Vector2.one * 6f,
                     PropHeight = 8f,
+                    SurfaceName = "Tall Grass",
+                    SurfaceColor = new Color(0.52f, 0.84f, 0.33f),
+                    SurfaceSpeedMultiplier = 0.9f,
+                    SurfaceLateralPush = 0f,
+                    AmbientVfxColor = new Color(0.78f, 0.93f, 0.54f, 0.16f),
                 },
                 new ThemeSpec
                 {
                     Name = "Mountain",
+                    Biome = TrackBiome.Mountain,
                     RepresentativeTrack = "HairpinTrack",
                     BackgroundModelPath = "Assets/GearEngine/Art/ModelsTextures/Background/Rock/FBX/background_mesh.fbx",
                     GroundTexturePath = "Assets/GearEngine/Art/ModelsTextures/Background/Rock/Textures/T_Rock_BaseColor.png",
@@ -128,15 +145,23 @@ namespace GearEngine.CarSimulation.Editor
                         "Assets/GearEngine/Art/ModelsTextures/AssetsBackground/Rock/Rock/Texture/T_Rock_BaseColor.png",
                         "Assets/GearEngine/Art/ModelsTextures/AssetsBackground/Rock/Rock2/Texture/T_Rock2_BaseColor.png",
                     },
-                    GroundTint = new Color(0.72f, 0.70f, 0.67f),
-                    RoadColor = new Color(0.17f, 0.19f, 0.22f),
-                    PropTint = Color.white,
+                    GroundTint = new Color(0.70f, 0.50f, 0.32f),
+                    EnvironmentTint = new Color(0.95f, 0.76f, 0.58f),
+                    RoadColor = new Color(0.19f, 0.10f, 0.05f),
+                    PropTint = new Color(0.98f, 0.82f, 0.66f),
                     SkyColor = new Color(0.65f, 0.68f, 0.73f),
+                    TextureTiling = Vector2.one * 6f,
                     PropHeight = 5f,
+                    SurfaceName = "Mud",
+                    SurfaceColor = new Color(0.58f, 0.35f, 0.2f),
+                    SurfaceSpeedMultiplier = 0.82f,
+                    SurfaceLateralPush = 0f,
+                    AmbientVfxColor = new Color(0.79f, 0.67f, 0.55f, 0.2f),
                 },
                 new ThemeSpec
                 {
                     Name = "Glacial",
+                    Biome = TrackBiome.Glacial,
                     RepresentativeTrack = "StarTrack",
                     BackgroundModelPath = "Assets/GearEngine/Art/ModelsTextures/Background/Glacial/FBX/background_mesh.fbx",
                     GroundTexturePath = "Assets/GearEngine/Art/ModelsTextures/Background/Glacial/Textures/T_Glacial_BaseColor.png",
@@ -151,10 +176,17 @@ namespace GearEngine.CarSimulation.Editor
                         "Assets/GearEngine/Art/ModelsTextures/AssetsBackground/Glacial/Crystal2/Texture/T_Crystal2_BaseColor.png",
                     },
                     GroundTint = new Color(0.79f, 0.94f, 1f),
+                    EnvironmentTint = Color.white,
                     RoadColor = new Color(0.07f, 0.24f, 0.33f),
                     PropTint = new Color(0.82f, 0.96f, 1f),
                     SkyColor = new Color(0.70f, 0.88f, 0.96f),
+                    TextureTiling = Vector2.one * 6f,
                     PropHeight = 6f,
+                    SurfaceName = "Ice Slick",
+                    SurfaceColor = new Color(0.66f, 0.93f, 1f),
+                    SurfaceSpeedMultiplier = 0.92f,
+                    SurfaceLateralPush = -0.7f,
+                    AmbientVfxColor = new Color(0.9f, 0.98f, 1f, 0.3f),
                 },
             };
         }
@@ -164,6 +196,7 @@ namespace GearEngine.CarSimulation.Editor
             EnsureAssetFolder(MaterialsFolder);
             EnsureAssetFolder(PrefabsFolder);
             EnsureAssetFolder(ThemesFolder);
+            EnsureAssetFolder(TexturesFolder);
             Directory.CreateDirectory(GetArtifactFolder("VisualTests/TrackThemes"));
             Directory.CreateDirectory(GetArtifactFolder("Exports/TrackThemes"));
         }
@@ -187,6 +220,7 @@ namespace GearEngine.CarSimulation.Editor
         private static Dictionary<string, TrackThemeDefinition> BuildThemeAssets(IReadOnlyList<ThemeSpec> specs)
         {
             Dictionary<string, TrackThemeDefinition> themes = new Dictionary<string, TrackThemeDefinition>(StringComparer.Ordinal);
+            Texture2D effectTexture = CreateOrUpdateEffectTexture();
             GameObject conePrefab = CreateOrUpdatePreparedPrefab(
                 ConePrefabPath,
                 $"{PrefabsFolder}/PFB_ThemeConeObstacle.prefab",
@@ -198,28 +232,153 @@ namespace GearEngine.CarSimulation.Editor
                     spec.GroundTexturePath,
                     spec.GroundTint,
                     0.12f,
+                    spec.TextureTiling,
                     spec.Name == "Desert");
                 Material roadMaterial = CreateOrUpdateMaterial(
                     $"{MaterialsFolder}/M_Theme{spec.Name}Road.mat",
                     null,
                     spec.RoadColor,
                     0.32f,
+                    Vector2.one,
                     true);
                 Material environmentMaterial = CreateOrUpdateMaterial(
                     $"{MaterialsFolder}/M_Theme{spec.Name}Environment.mat",
                     spec.GroundTexturePath,
-                    Color.white,
-                    0.08f);
+                    spec.EnvironmentTint,
+                    0.08f,
+                    spec.TextureTiling);
 
                 GameObject environmentPrefab = BuildEnvironmentPrefab(spec, environmentMaterial);
                 List<GameObject> propPrefabs = BuildPropPrefabs(spec);
-                DeleteUnusedGeneratedProps(spec);
+                DeleteUnusedGeneratedProps(spec, propPrefabs.Count);
+                Material surfaceMaterial = CreateOrUpdateMaterial(
+                    $"{MaterialsFolder}/M_Theme{spec.Name}Surface.mat",
+                    null,
+                    spec.SurfaceColor,
+                    0.12f,
+                    Vector2.one,
+                    true);
+                Material ambientMaterial = CreateOrUpdateEffectMaterial(
+                    $"{MaterialsFolder}/M_Theme{spec.Name}AmbientVfx.mat",
+                    "Universal Render Pipeline/Particles/Unlit",
+                    effectTexture,
+                    spec.AmbientVfxColor);
+                GameObject ambientPrefab = CreateOrUpdateAmbientVfxPrefab(spec, ambientMaterial);
                 themes.Add(
                     spec.Name,
-                    CreateOrUpdateTheme(spec, environmentPrefab, roadMaterial, groundMaterial, propPrefabs, conePrefab));
+                    CreateOrUpdateTheme(spec, environmentPrefab, roadMaterial, groundMaterial, propPrefabs, conePrefab, surfaceMaterial, ambientPrefab));
             }
 
             return themes;
+        }
+
+        private static Texture2D CreateOrUpdateEffectTexture()
+        {
+            string path = $"{TexturesFolder}/T_ThemeSoftParticle.png";
+            const int size = 64;
+            Texture2D image = new Texture2D(size, size, TextureFormat.RGBA32, false);
+            try
+            {
+                for (int y = 0; y < size; y++)
+                {
+                    for (int x = 0; x < size; x++)
+                    {
+                        float distance = Vector2.Distance(new Vector2(x, y), new Vector2(31.5f, 31.5f)) / 31.5f;
+                        float alpha = Mathf.Pow(Mathf.Clamp01(1f - distance), 1.6f);
+                        image.SetPixel(x, y, new Color(1f, 1f, 1f, alpha));
+                    }
+                }
+
+                image.Apply();
+                File.WriteAllBytes(path, image.EncodeToPNG());
+            }
+            finally
+            {
+                UnityEngine.Object.DestroyImmediate(image);
+            }
+
+            AssetDatabase.ImportAsset(path, ImportAssetOptions.ForceUpdate);
+            TextureImporter importer = AssetImporter.GetAtPath(path) as TextureImporter;
+            if (importer != null)
+            {
+                importer.alphaIsTransparency = true;
+                importer.wrapMode = TextureWrapMode.Clamp;
+                importer.SaveAndReimport();
+            }
+
+            return LoadRequiredAsset<Texture2D>(path);
+        }
+
+        private static Material CreateOrUpdateEffectMaterial(string path, string shaderName, Texture2D texture, Color color)
+        {
+            Shader shader = Shader.Find(shaderName);
+            if (shader == null)
+            {
+                throw new InvalidOperationException($"Shader '{shaderName}' was not found.");
+            }
+
+            Material material = AssetDatabase.LoadAssetAtPath<Material>(path);
+            if (material == null)
+            {
+                material = new Material(shader);
+                AssetDatabase.CreateAsset(material, path);
+            }
+            else
+            {
+                material.shader = shader;
+            }
+
+            material.SetTexture("_BaseMap", texture);
+            material.SetColor("_BaseColor", color);
+            material.SetFloat("_Surface", 1f);
+            material.SetOverrideTag("RenderType", "Transparent");
+            material.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
+            material.SetInt("_SrcBlend", (int)BlendMode.SrcAlpha);
+            material.SetInt("_DstBlend", (int)BlendMode.OneMinusSrcAlpha);
+            material.SetInt("_ZWrite", 0);
+            material.renderQueue = (int)RenderQueue.Transparent;
+            EditorUtility.SetDirty(material);
+            return material;
+        }
+
+        private static GameObject CreateOrUpdateAmbientVfxPrefab(ThemeSpec spec, Material material)
+        {
+            string path = $"{PrefabsFolder}/PFB_Theme{spec.Name}AmbientVfx.prefab";
+            GameObject root = new GameObject(Path.GetFileNameWithoutExtension(path));
+            try
+            {
+                ParticleSystem particles = root.AddComponent<ParticleSystem>();
+                particles.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+                ParticleSystem.MainModule main = particles.main;
+                main.duration = 6f;
+                main.loop = true;
+                main.startLifetime = 5f;
+                main.startSpeed = 0f;
+                main.startSize = new ParticleSystem.MinMaxCurve(0.5f, 1.5f);
+                main.maxParticles = 80;
+                main.simulationSpace = ParticleSystemSimulationSpace.World;
+                main.playOnAwake = true;
+
+                ParticleSystem.EmissionModule emission = particles.emission;
+                emission.rateOverTime = 7f;
+                ParticleSystem.ShapeModule shape = particles.shape;
+                shape.shapeType = ParticleSystemShapeType.Box;
+                shape.scale = new Vector3(190f, 0.5f, 190f);
+                shape.position = new Vector3(0f, 7f, 0f);
+                ParticleSystem.VelocityOverLifetimeModule velocity = particles.velocityOverLifetime;
+                velocity.enabled = true;
+                velocity.x = new ParticleSystem.MinMaxCurve(0.45f);
+                velocity.z = new ParticleSystem.MinMaxCurve(0.25f);
+
+                ParticleSystemRenderer renderer = root.GetComponent<ParticleSystemRenderer>();
+                renderer.renderMode = ParticleSystemRenderMode.Billboard;
+                renderer.sharedMaterial = material;
+                return PrefabUtility.SaveAsPrefabAsset(root, path);
+            }
+            finally
+            {
+                UnityEngine.Object.DestroyImmediate(root);
+            }
         }
 
         private static GameObject BuildEnvironmentPrefab(ThemeSpec spec, Material environmentMaterial)
@@ -262,7 +421,8 @@ namespace GearEngine.CarSimulation.Editor
                     $"{MaterialsFolder}/M_Theme{spec.Name}Prop{index + 1}.mat",
                     spec.PropTexturePaths[index],
                     spec.PropTint,
-                    spec.Name == "Glacial" ? 0.65f : 0.18f);
+                    spec.Name == "Glacial" ? 0.65f : 0.18f,
+                    Vector2.one);
                 prefabs.Add(CreateOrUpdateModelPrefab(
                     spec.PropModelPaths[index],
                     material,
@@ -313,16 +473,13 @@ namespace GearEngine.CarSimulation.Editor
             model.transform.position += new Vector3(-bounds.center.x, -bounds.min.y, -bounds.center.z);
         }
 
-        private static void DeleteUnusedGeneratedProps(ThemeSpec spec)
+        private static void DeleteUnusedGeneratedProps(ThemeSpec spec, int expectedCount)
         {
-            if (!spec.UseDefaultProps)
-            {
-                return;
-            }
-
-            for (int index = 0; index < spec.PropModelPaths.Length; index++)
+            const int maxGeneratedPropCount = 8;
+            for (int index = expectedCount; index < maxGeneratedPropCount; index++)
             {
                 AssetDatabase.DeleteAsset($"{PrefabsFolder}/PFB_Theme{spec.Name}Prop{index + 1}.prefab");
+                AssetDatabase.DeleteAsset($"{MaterialsFolder}/M_Theme{spec.Name}Prop{index + 1}.mat");
             }
         }
 
@@ -331,6 +488,7 @@ namespace GearEngine.CarSimulation.Editor
             string texturePath,
             Color color,
             float smoothness,
+            Vector2 textureTiling,
             bool unlit = false)
         {
             string shaderName = unlit
@@ -353,10 +511,12 @@ namespace GearEngine.CarSimulation.Editor
                 material.shader = shader;
             }
 
+            ConfigureTextureTiling(texturePath, textureTiling);
             Texture2D texture = string.IsNullOrEmpty(texturePath)
                 ? null
                 : LoadRequiredAsset<Texture2D>(texturePath);
             material.SetTexture("_BaseMap", texture);
+            material.SetTextureScale("_BaseMap", texture == null ? Vector2.one : textureTiling);
             material.SetColor("_BaseColor", color);
             if (material.HasProperty("_Smoothness"))
             {
@@ -365,6 +525,23 @@ namespace GearEngine.CarSimulation.Editor
             material.enableInstancing = true;
             EditorUtility.SetDirty(material);
             return material;
+        }
+
+        private static void ConfigureTextureTiling(string texturePath, Vector2 textureTiling)
+        {
+            if (string.IsNullOrEmpty(texturePath) || textureTiling == Vector2.one)
+            {
+                return;
+            }
+
+            TextureImporter textureImporter = AssetImporter.GetAtPath(texturePath) as TextureImporter;
+            if (textureImporter == null || textureImporter.wrapMode == TextureWrapMode.Mirror)
+            {
+                return;
+            }
+
+            textureImporter.wrapMode = TextureWrapMode.Mirror;
+            textureImporter.SaveAndReimport();
         }
 
         private static GameObject CreateOrUpdateModelPrefab(
@@ -456,7 +633,9 @@ namespace GearEngine.CarSimulation.Editor
             Material roadMaterial,
             Material groundMaterial,
             IReadOnlyList<GameObject> propPrefabs,
-            GameObject conePrefab)
+            GameObject conePrefab,
+            Material surfaceMaterial,
+            GameObject ambientPrefab)
         {
             string assetPath = $"{ThemesFolder}/{spec.Name}TrackTheme.asset";
             TrackThemeDefinition theme = AssetDatabase.LoadAssetAtPath<TrackThemeDefinition>(assetPath);
@@ -468,6 +647,7 @@ namespace GearEngine.CarSimulation.Editor
 
             SerializedObject serializedTheme = new SerializedObject(theme);
             serializedTheme.FindProperty("displayName").stringValue = spec.Name;
+            serializedTheme.FindProperty("biome").enumValueIndex = (int)spec.Biome;
             serializedTheme.FindProperty("environmentPrefab").objectReferenceValue = environmentPrefab;
             serializedTheme.FindProperty("environmentLocalPosition").vector3Value = Vector3.zero;
             serializedTheme.FindProperty("environmentLocalEulerAngles").vector3Value = Vector3.zero;
@@ -477,9 +657,24 @@ namespace GearEngine.CarSimulation.Editor
             serializedTheme.FindProperty("hideBaseGround").boolValue = false;
             serializedTheme.FindProperty("useDefaultProps").boolValue = spec.UseDefaultProps;
             PopulatePropRules(serializedTheme.FindProperty("propRules"), propPrefabs, conePrefab);
+            serializedTheme.FindProperty("ambientVfxPrefab").objectReferenceValue = ambientPrefab;
+            PopulateSurfaceZone(serializedTheme.FindProperty("surfaceZones"), spec, surfaceMaterial);
             serializedTheme.ApplyModifiedPropertiesWithoutUndo();
             EditorUtility.SetDirty(theme);
             return theme;
+        }
+
+        private static void PopulateSurfaceZone(SerializedProperty property, ThemeSpec spec, Material surfaceMaterial)
+        {
+            property.arraySize = 1;
+            SerializedProperty zone = property.GetArrayElementAtIndex(0);
+            zone.FindPropertyRelative("name").stringValue = spec.SurfaceName;
+            zone.FindPropertyRelative("normalizedPosition").floatValue = 0.3f;
+            zone.FindPropertyRelative("normalizedHalfLength").floatValue = 0.018f;
+            zone.FindPropertyRelative("width").floatValue = 5f;
+            zone.FindPropertyRelative("speedMultiplier").floatValue = spec.SurfaceSpeedMultiplier;
+            zone.FindPropertyRelative("lateralPush").floatValue = spec.SurfaceLateralPush;
+            zone.FindPropertyRelative("material").objectReferenceValue = surfaceMaterial;
         }
 
         private static void PopulatePropRules(
@@ -552,12 +747,16 @@ namespace GearEngine.CarSimulation.Editor
         private static void AssignThemesToTracks(IReadOnlyDictionary<string, TrackThemeDefinition> themes)
         {
             IReadOnlyDictionary<string, string> assignments = CreateTrackAssignments();
-            foreach ((string trackName, string themeName) in assignments)
+            Dictionary<string, int> variantCounts = new Dictionary<string, int>(StringComparer.Ordinal);
+            foreach ((string trackName, string themeName) in assignments.OrderBy(pair => pair.Key))
             {
                 string trackPath = $"{TracksFolder}/{trackName}.asset";
                 TrackDefinition track = LoadRequiredAsset<TrackDefinition>(trackPath);
                 SerializedObject serializedTrack = new SerializedObject(track);
                 serializedTrack.FindProperty("theme").objectReferenceValue = themes[themeName];
+                variantCounts.TryGetValue(themeName, out int variant);
+                serializedTrack.FindProperty("visualVariant").intValue = variant % 4;
+                variantCounts[themeName] = variant + 1;
                 serializedTrack.ApplyModifiedPropertiesWithoutUndo();
                 EditorUtility.SetDirty(track);
             }
@@ -595,11 +794,14 @@ namespace GearEngine.CarSimulation.Editor
         {
             for (int index = 0; index < specs.Count; index++)
             {
-                ExportThemeVisual(specs[index], index);
+                for (int variant = 0; variant < 4; variant++)
+                {
+                    ExportThemeVisual(specs[index], index * 4 + variant, variant);
+                }
             }
         }
 
-        private static void ExportThemeVisual(ThemeSpec spec, int seedOffset)
+        private static void ExportThemeVisual(ThemeSpec spec, int seedOffset, int visualVariant)
         {
             EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
             UnityEngine.Random.InitState(8300 + seedOffset);
@@ -620,16 +822,19 @@ namespace GearEngine.CarSimulation.Editor
             }
 
             TrackViewComponent trackView = trackObject.GetComponent<TrackViewComponent>();
-            trackView.InitializeTrack(track);
+            trackView.InitializeTrack(track, visualVariant);
             ValidateAppliedTheme(trackObject, track.Theme);
-            trackView.GenerateProps();
+            foreach (ParticleSystem particles in trackObject.GetComponentsInChildren<ParticleSystem>(true))
+            {
+                particles.Simulate(4f, true, true, true);
+            }
 
             Bounds bounds = CalculateTrackBounds(trackObject);
             Camera camera = CreateCamera(bounds, spec.SkyColor);
             CreateDirectionalLight();
             string outputPath = Path.Combine(
                 GetArtifactFolder("VisualTests/TrackThemes"),
-                $"{spec.Name}{track.GetDisplayName()}1200x900.png");
+                $"{spec.Name}Variant{visualVariant + 1}{track.GetDisplayName()}1200x900.png");
             RenderCamera(camera, outputPath, 1200, 900);
         }
 
@@ -722,6 +927,7 @@ namespace GearEngine.CarSimulation.Editor
             string[] assetPaths =
             {
                 MaterialsFolder,
+                TexturesFolder,
                 PrefabsFolder,
                 ThemesFolder,
                 TracksFolder,

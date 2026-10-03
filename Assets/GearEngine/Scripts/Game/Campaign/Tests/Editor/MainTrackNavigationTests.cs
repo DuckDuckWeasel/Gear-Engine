@@ -210,6 +210,35 @@ namespace GearEngine.Campaign.Tests.Editor
             }
         }
 
+        [TestCase(false)]
+        [TestCase(true)]
+        public void ReturnFromRepeatedRaces_RestoresBottomToolbar(bool alreadyOnHome)
+        {
+            GameObject toolbarObject = new GameObject("ToolbarReturnTest");
+            try
+            {
+                ToolbarController toolbar = toolbarObject.AddComponent<ToolbarController>();
+                RecordingNavigation returningNavigation = new RecordingNavigation();
+                toolbar.Construct(returningNavigation);
+                for (int race = 0; race < 3; race++)
+                {
+                    // The scene's setup button hides the persistent toolbar before racing.
+                    toolbarObject.SetActive(false);
+                    returningNavigation.CurrentController = alreadyOnHome ? new MainViewModel() : null;
+                    toolbar.OpenMainView();
+                    Assert.That(toolbarObject.activeInHierarchy, Is.True,
+                        $"The bottom navigation must return after race {race + 1}.");
+                    Assert.That(returningNavigation.CurrentController, Is.InstanceOf<MainViewModel>());
+                }
+                Assert.That(returningNavigation.OpenedControllers.Count, Is.EqualTo(alreadyOnHome ? 0 : 3),
+                    "Restoring the toolbar must not open duplicate home screens.");
+            }
+            finally
+            {
+                Object.DestroyImmediate(toolbarObject);
+            }
+        }
+
         private async Task InitializeTracks(int count, int currentIndex)
         {
             car = ScriptableObject.CreateInstance<CarDefinition>();

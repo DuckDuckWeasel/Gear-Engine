@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: ForestTrackTheme
   m_EditorClassIdentifier: Game.CarSimulation::GearEngine.CarSimulation.Definitions.TrackThemeDefinition
   displayName: Forest
+  biome: 2
   environmentPrefab: {fileID: 1421617052326328031, guid: 4414bdd55e6cc449289691441e973ab6, type: 3}
   environmentLocalPosition: {x: 0, y: 0, z: 0}
   environmentLocalEulerAngles: {x: 0, y: 0, z: 0}
@@ -22,13 +23,22 @@ MonoBehaviour:
   hideBaseGround: 0
   useDefaultProps: 0
   propRules:
-  - rid: 5890521816240750595
-  - rid: 5890521816240750596
-  - rid: 5890521816240750597
+  - rid: 5890521828574887939
+  - rid: 5890521828574887940
+  - rid: 5890521828574887941
+  ambientVfxPrefab: {fileID: 6893699878314041664, guid: 9e2f7e08f12f44367832d1fdf2b8a15f, type: 3}
+  surfaceZones:
+  - name: Tall Grass
+    normalizedPosition: 0.3
+    normalizedHalfLength: 0.018
+    width: 5
+    speedMultiplier: 0.9
+    lateralPush: 0
+    material: {fileID: 2100000, guid: b075e1c7eb812458c9d0d0b752425e1b, type: 2}
   references:
     version: 2
     RefIds:
-    - rid: 5890521816240750595
+    - rid: 5890521828574887939
       type: {class: SplinePropGenerator/All, ns: GearEngine.CarSimulation.Tracks, asm: Game.CarSimulation}
       data:
         enabled: 1
@@ -48,7 +58,7 @@ MonoBehaviour:
         insideMaxDistance: 20
         outsideMaxDistance: 20
         minSplineDistance: 1.5
-    - rid: 5890521816240750596
+    - rid: 5890521828574887940
       type: {class: SplinePropGenerator/Inside, ns: GearEngine.CarSimulation.Tracks, asm: Game.CarSimulation}
       data:
         enabled: 1
@@ -64,7 +74,7 @@ MonoBehaviour:
         minimumSplineClearance: 8.5
         maxDistance: 28
         minSplineDistance: 12
-    - rid: 5890521816240750597
+    - rid: 5890521828574887941
       type: {class: SplinePropGenerator/Straights, ns: GearEngine.CarSimulation.Tracks, asm: Game.CarSimulation}
       data:
         enabled: 1

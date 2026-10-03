@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Game.CarSimulation::GearEngine.CarSimulation.Definitions.TrackDefinition
   trackName: Peanut
   theme: {fileID: 11400000, guid: ed9522bf2ae4b49c99c19f22742e937f, type: 2}
+  visualVariant: 2
   opponents: []
   scale: 0.75
   offset: {x: 0, y: 0, z: 0}

@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: MountainTrackTheme
   m_EditorClassIdentifier: Game.CarSimulation::GearEngine.CarSimulation.Definitions.TrackThemeDefinition
   displayName: Mountain
+  biome: 3
   environmentPrefab: {fileID: 5692933926979935231, guid: 934fafdb11577434ea5dad0584dd2c71, type: 3}
   environmentLocalPosition: {x: 0, y: 0, z: 0}
   environmentLocalEulerAngles: {x: 0, y: 0, z: 0}
@@ -22,13 +23,22 @@ MonoBehaviour:
   hideBaseGround: 0
   useDefaultProps: 0
   propRules:
-  - rid: 5890521816240750598
-  - rid: 5890521816240750599
-  - rid: 5890521816240750600
+  - rid: 5890521828574887942
+  - rid: 5890521828574887943
+  - rid: 5890521828574887944
+  ambientVfxPrefab: {fileID: 5874716603225778995, guid: 294296dffd26d45b8a5ecb3c09574ddb, type: 3}
+  surfaceZones:
+  - name: Mud
+    normalizedPosition: 0.3
+    normalizedHalfLength: 0.018
+    width: 5
+    speedMultiplier: 0.82
+    lateralPush: 0
+    material: {fileID: 2100000, guid: b718eba2097cc46958941cf717da5760, type: 2}
   references:
     version: 2
     RefIds:
-    - rid: 5890521816240750598
+    - rid: 5890521828574887942
       type: {class: SplinePropGenerator/All, ns: GearEngine.CarSimulation.Tracks, asm: Game.CarSimulation}
       data:
         enabled: 1
@@ -48,7 +58,7 @@ MonoBehaviour:
         insideMaxDistance: 20
         outsideMaxDistance: 20
         minSplineDistance: 1.5
-    - rid: 5890521816240750599
+    - rid: 5890521828574887943
       type: {class: SplinePropGenerator/Inside, ns: GearEngine.CarSimulation.Tracks, asm: Game.CarSimulation}
       data:
         enabled: 1
@@ -64,7 +74,7 @@ MonoBehaviour:
         minimumSplineClearance: 8.5
         maxDistance: 28
         minSplineDistance: 12
-    - rid: 5890521816240750600
+    - rid: 5890521828574887944
       type: {class: SplinePropGenerator/Straights, ns: GearEngine.CarSimulation.Tracks, asm: Game.CarSimulation}
       data:
         enabled: 1

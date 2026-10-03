@@ -49,6 +49,24 @@ namespace GearEngine.Campaign.Tests.Editor
             }
         }
 
+        [Test]
+        public void ResultsScore_UsesFlatGameplayTreatmentWithoutUnderlay()
+        {
+            GameObject resultsPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(
+                "Assets/GearEngine/Prefabs/Campaign/Campaign_ResultPopupView.prefab");
+            ResultPopupView resultsView = resultsPrefab.GetComponent<ResultPopupView>();
+            TMP_Text resultsScore = (TMP_Text)new SerializedObject(resultsView).FindProperty("scoreText").objectReferenceValue;
+
+            GameObject gameplayPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(
+                "Assets/GearEngine/Prefabs/Campaign/PFB_ClubSportHud.prefab");
+            ClubSportHudView gameplayView = gameplayPrefab.GetComponent<ClubSportHudView>();
+            TMP_Text gameplayScore = (TMP_Text)new SerializedObject(gameplayView).FindProperty("totalText").objectReferenceValue;
+
+            Assert.That(gameplayScore.fontSharedMaterial.IsKeywordEnabled("UNDERLAY_ON"), Is.False);
+            Assert.That(resultsScore.fontSharedMaterial.IsKeywordEnabled("UNDERLAY_ON"), Is.False,
+                "The results score must not add the pale rim that is absent from the gameplay score.");
+        }
+
         [UnityTest]
         public IEnumerator PostRaceScreens_OpenCloseAndRenderBoundData()
         {
@@ -137,6 +155,8 @@ namespace GearEngine.Campaign.Tests.Editor
                 {
                     Assert.That(((ReceivedRewardsViewModel)vm).NeedsGearSelection, Is.True);
                     Assert.That(string.Join(" ", instance.GetComponentsInChildren<TMP_Text>().Select(text => text.text)), Does.Contain("UPGRADE"));
+                    Assert.That(IsAnyPostRaceAnimationPlaying(instance), Is.True,
+                        "Advancing to the next reward must replay the rewards entrance animation.");
                     yield return Capture(instance, "GearReward", 2280);
                 }
                 button.onClick.Invoke();
@@ -198,6 +218,23 @@ namespace GearEngine.Campaign.Tests.Editor
             }
 
             return new RaceProgressViewModel(result);
+        }
+
+        private static bool IsAnyPostRaceAnimationPlaying(GameObject instance)
+        {
+            PostRaceAnimation animation = instance.GetComponent<PostRaceAnimation>();
+            SerializedProperty players = new SerializedObject(animation).FindProperty("players");
+            for (int i = 0; i < players.arraySize; i++)
+            {
+                Component player = players.GetArrayElementAtIndex(i).objectReferenceValue as Component;
+                object playState = player?.GetType().GetProperty("PlayState")?.GetValue(player);
+                if (playState?.ToString() == "Playing")
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         private static IEnumerator Capture(GameObject instance, string scenario, int height)

@@ -30,7 +30,7 @@ namespace GearEngine.App.Bootstrap.Layers
 
         private static readonly string[] s_preferredStartingGearIds =
         {
-            "gear_core",
+            GearItemData.k_coreGearId,
             "gear_base_1",
             "gear_score",
             "gear_speed",
@@ -63,7 +63,7 @@ namespace GearEngine.App.Bootstrap.Layers
             gameData.AddModuleData(CreateInventoryData());
             gameData.AddModuleData(new LoadoutGameData(
                 new LoadoutPersistence(),
-                new LoadoutConfig { BaseSlots = 6, MotorCogStartX = 2, MotorCogStartY = 2 }));
+                new LoadoutConfig { BaseSlots = 12, MotorCogStartX = 2, MotorCogStartY = 2 }));
             gameData.AddModuleData(CreatePerkData());
             gameData.AddModuleData(CreateRoguelikeData());
             gameData.AddModuleData(CreateTrackData());
@@ -204,13 +204,15 @@ namespace GearEngine.App.Bootstrap.Layers
             roguelikeGearIds.Clear();
             if (layerResolver.TryResolve(out RoguelikeGearPoolSO pool) && pool != null)
             {
-                roguelikeGearIds.AddRange(pool.All.Where(item => item != null).Select(item => item.Id));
+                roguelikeGearIds.AddRange(pool.All
+                    .Where(item => item != null && !GearItemData.IsCoreGear(item.Id))
+                    .Select(item => item.Id));
             }
 
             if (roguelikeGearIds.Count == 0 && layerResolver.TryResolve(out GearCatalogSO gears) && gears != null)
             {
                 roguelikeGearIds.AddRange(gears.All
-                    .Where(item => item != null && item.Id != "gear_core")
+                    .Where(item => item != null && !GearItemData.IsCoreGear(item.Id))
                     .Select(item => item.Id));
             }
 

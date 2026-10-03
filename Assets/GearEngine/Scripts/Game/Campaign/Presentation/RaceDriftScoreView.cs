@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 using TMPro;
 using DG.Tweening;
 using Scaffold.MVVM;
@@ -9,11 +10,13 @@ namespace GearEngine.Campaign.Presentation
     public sealed class RaceDriftScoreView : ViewComponent<RaceDriftScoreViewModel>
     {
         private static readonly Color s_hudTextColor = new Color32(44, 57, 69, 255);
+        private static readonly Color s_lightTextColor = new Color32(245, 239, 226, 255);
         private static readonly Vector2 s_multiplierBadgeSize = new Vector2(170f, 150f);
         private static readonly Vector2 s_multiplierBadgePosition = new Vector2(130f, 0f);
 
         [Header("References")]
         [SerializeField] private TMP_Text multiplierText;
+        [SerializeField] private Sprite[] multiplierTierSprites;
         [SerializeField] private TMP_Text pointsText;
         [SerializeField] private TMP_Text totalScoreText;
         [SerializeField] private CanvasGroup canvasGroup;
@@ -29,6 +32,7 @@ namespace GearEngine.Campaign.Presentation
         private Tween fadeTween;
         private Tween multiplierPunchTween;
         private Tween multiplierLoopTween;
+        private Image multiplierBadgeImage;
 
         protected override void OnBind()
         {
@@ -39,10 +43,10 @@ namespace GearEngine.Campaign.Presentation
             viewModel.PropertyChanged += OnViewModelPropertyChanged;
 
             UpdateVisibility(false, false);
+            ConfigureMultiplierBadge();
             UpdateMultiplierTextAndColor();
             UpdatePointsText();
             UpdateTotalScoreText();
-            ConfigureMultiplierBadge();
         }
 
         protected override void OnUnbind()
@@ -91,6 +95,24 @@ namespace GearEngine.Campaign.Presentation
         {
             multiplierText.text = $"{viewModel.CurrentMultiplier}x";
             multiplierText.color = s_hudTextColor;
+
+            if (multiplierBadgeImage == null || multiplierTierSprites == null || multiplierTierSprites.Length == 0)
+            {
+                return;
+            }
+
+            int tierIndex = Mathf.Clamp(viewModel.CurrentMultiplier - 1, 0, multiplierTierSprites.Length - 1);
+            Sprite tierSprite = multiplierTierSprites[tierIndex];
+            if (tierSprite == null)
+            {
+                return;
+            }
+
+            multiplierBadgeImage.sprite = tierSprite;
+            if (tierIndex == 0 || tierIndex == 2 || tierIndex == 3)
+            {
+                multiplierText.color = s_lightTextColor;
+            }
         }
 
         private void UpdatePointsText()
@@ -109,6 +131,7 @@ namespace GearEngine.Campaign.Presentation
 
             badge.sizeDelta = s_multiplierBadgeSize;
             badge.anchoredPosition = s_multiplierBadgePosition;
+            multiplierBadgeImage = badge.GetComponent<Image>();
         }
 
         private void UpdateVisibility(bool visible, bool animate = true)

@@ -87,6 +87,28 @@ namespace GearEngine.GearEngine.Tests.Editor
             Object.DestroyImmediate(iconTexture);
         }
 
+        [TestCase("Clone")]
+        [TestCase("Echo")]
+        [TestCase("Ghost")]
+        [TestCase("Mirage")]
+        [TestCase("QuantumLink")]
+        public void ApplyConfig_CompositeIconScale_RespectsConfiguredSafeZone(string family)
+        {
+            GearItem item = AssetDatabase.LoadAssetAtPath<GearItem>(
+                $"Assets/GearEngine/Scriptables/GeneratedGears/{family}/{family}_Tier1_Config.asset");
+            Assert.IsNotNull(item);
+            GearItemData config = item.CreateRuntimeData();
+            GearView view = CreateViewWithChargeImage(source: null, out Image chargeImage);
+
+            view.ApplyConfig(config);
+
+            Assert.That(config.UIIconScaleMultiplier, Is.EqualTo(0.8f).Within(0.001f));
+            Assert.That(chargeImage.rectTransform.localScale.x, Is.EqualTo(0.92f).Within(0.001f));
+            Assert.That(chargeImage.rectTransform.localScale.y, Is.EqualTo(0.92f).Within(0.001f));
+
+            Object.DestroyImmediate(view.gameObject);
+        }
+
         [Test]
         public void BasePrefab_EnlargesGearBodyAndIconWithinSlot()
         {

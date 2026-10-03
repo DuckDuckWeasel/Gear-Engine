@@ -177,6 +177,10 @@ namespace GearEngine.Campaign.Tests.Editor
             {
                 Events.Add(evt);
             }
+
+            public void Flush()
+            {
+            }
         }
 
         private sealed class StubLiveOps : ILiveOpsService

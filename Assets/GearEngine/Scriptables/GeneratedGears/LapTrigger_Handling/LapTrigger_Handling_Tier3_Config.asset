@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Config.GearConfig
   nextLevel: {fileID: 11400000, guid: efce0a9d043244345af2e90dcc629b29, type: 2}
   data:
+    biomeAffinity: 4
     id: laptrigger_handling_tier3
     rarity: 2
     rarityConfig: {fileID: 11400000, guid: c0000000000000000000000000000002, type: 2}

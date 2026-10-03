@@ -123,7 +123,7 @@ namespace GearEngine.Campaign.Presentation
         private void UpdateTrackLock(bool isLocked)
         {
             playButton.interactable = !isLocked && viewModel.Track != null;
-            playButtonLabel.text = isLocked ? "LOCKED" : "RACE";
+            playButtonLabel.text = isLocked ? "LOCKED" : "SET UP";
             playButton.targetGraphic.color = isLocked ? s_lockedButtonColor : unlockedButtonColor;
             playButtonLabel.color = isLocked ? Color.white : unlockedButtonLabelColor;
             trackPositionLabel.color = isLocked ? s_lockedStatusColor : unlockedStatusColor;
@@ -264,7 +264,7 @@ namespace GearEngine.Campaign.Presentation
         private void ConfigureTrackStatusLabel()
         {
             RectTransform statusRect = trackPositionLabel.rectTransform;
-            statusRect.anchorMin = new Vector2(0.5f, 0.585f);
+            statusRect.anchorMin = new Vector2(0.5f, 0.59f);
             statusRect.anchorMax = statusRect.anchorMin;
             statusRect.anchoredPosition = Vector2.zero;
             statusRect.sizeDelta = new Vector2(760f, 96f);
@@ -285,10 +285,24 @@ namespace GearEngine.Campaign.Presentation
                 return;
             }
 
-            viewport.anchorMin = new Vector2(0.06f, 0.48f);
-            viewport.anchorMax = new Vector2(0.94f, 0.76f);
+            viewport.anchorMin = new Vector2(0.06f, 0.51f);
+            viewport.anchorMax = new Vector2(0.94f, 0.79f);
             viewport.anchoredPosition = Vector2.zero;
             viewport.sizeDelta = Vector2.zero;
+
+            SetVerticalAnchor(previousTrackButton.transform as RectTransform, 0.725f);
+            SetVerticalAnchor(nextTrackButton.transform as RectTransform, 0.725f);
+        }
+
+        private static void SetVerticalAnchor(RectTransform rect, float anchorY)
+        {
+            if (rect == null)
+            {
+                return;
+            }
+
+            rect.anchorMin = new Vector2(rect.anchorMin.x, anchorY);
+            rect.anchorMax = new Vector2(rect.anchorMax.x, anchorY);
         }
 
         private void RequireReference(UnityEngine.Object field, string name)
