@@ -54,3 +54,12 @@ Cloudflare retains Worker deployment versions. Roll back by selecting the preced
 ## Firebase retirement
 
 Firebase Hosting is disabled only after Cloudflare production acceptance. The Firebase project itself remains intact so unrelated project services and historical deployment metadata are not deleted. Once disabled, remove active Firebase Hosting configuration from this repository and verify that the former `web.app` URL no longer serves the game.
+
+### Retirement record
+
+- Retired site: `gear-engine-gorn-2026`
+- Disabled: 2026-10-05
+- Former URL: `https://gear-engine-gorn-2026.web.app/`
+- Verification: HTTP 404 after `firebase hosting:disable`
+- Replacement production deployment: Cloudflare version `92990f56-64d4-4da5-bd7f-c310889954d2`
+- Firebase project: preserved; only Hosting was disabled
