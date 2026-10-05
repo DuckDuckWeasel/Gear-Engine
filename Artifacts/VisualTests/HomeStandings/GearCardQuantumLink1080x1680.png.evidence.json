@@ -1,0 +1,1 @@
+{"test":"GearEngine.Campaign.Tests.Editor.HomePresentationTests.GearCard_UsesItemRarityInsteadOfTwoStarDesignSample","artifact":"GearCardQuantumLink1080x1680.png","scenario":"GearCardQuantumLink","criteria":["Runtime ViewModel bindings","Rendered text inside viewport","Animation restart","Selected gear card visibility and rarity"]}

@@ -1,3 +1,4 @@
+using System;
 using DG.Tweening;
 using Scaffold.MVVM;
 using TMPro;
@@ -16,6 +17,55 @@ namespace GearEngine.GearEngine.Presentation.UI
         private bool isInitializingBindings;
         private Transform animationTarget;
         private Vector3 baseScale;
+        private RectTransform chipRect;
+        private Transform originalParent;
+        private int originalSiblingIndex;
+        private Vector2 originalAnchorMin;
+        private Vector2 originalAnchorMax;
+        private Vector2 originalPivot;
+        private Vector2 originalAnchoredPosition;
+        private Vector2 originalSizeDelta;
+
+        public void PlaceAtGridTopLeft(RectTransform gridRect)
+        {
+            if (gridRect == null)
+            {
+                throw new ArgumentNullException(nameof(gridRect));
+            }
+
+            chipRect = CapacityLabel?.transform.parent as RectTransform;
+            if (chipRect == null)
+            {
+                throw new InvalidOperationException("[BoardCapacityChipView] Capacity chip is missing.");
+            }
+
+            if (originalParent == null)
+            {
+                originalParent = chipRect.parent;
+                originalSiblingIndex = chipRect.GetSiblingIndex();
+                originalAnchorMin = chipRect.anchorMin;
+                originalAnchorMax = chipRect.anchorMax;
+                originalPivot = chipRect.pivot;
+                originalAnchoredPosition = chipRect.anchoredPosition;
+                originalSizeDelta = chipRect.sizeDelta;
+            }
+
+            chipRect.SetParent(gridRect, false);
+            chipRect.SetAsLastSibling();
+            chipRect.anchorMin = new Vector2(0f, 1f);
+            chipRect.anchorMax = chipRect.anchorMin;
+            chipRect.pivot = new Vector2(0f, 0f);
+            chipRect.anchoredPosition = new Vector2(24f, 12f);
+        }
+
+        public void SetVisible(bool visible)
+        {
+            RectTransform target = ResolveCapacityLabel()?.transform.parent as RectTransform;
+            if (target != null)
+            {
+                target.gameObject.SetActive(visible);
+            }
+        }
 
         public new void Unbind()
         {
@@ -47,7 +97,28 @@ namespace GearEngine.GearEngine.Presentation.UI
             {
                 animationTarget.localScale = baseScale;
             }
+
+            SetVisible(false);
+            RestoreHeaderPlacement();
             base.OnUnbind();
+        }
+
+        private void RestoreHeaderPlacement()
+        {
+            if (chipRect == null || originalParent == null)
+            {
+                return;
+            }
+
+            chipRect.SetParent(originalParent, false);
+            chipRect.SetSiblingIndex(originalSiblingIndex);
+            chipRect.anchorMin = originalAnchorMin;
+            chipRect.anchorMax = originalAnchorMax;
+            chipRect.pivot = originalPivot;
+            chipRect.anchoredPosition = originalAnchoredPosition;
+            chipRect.sizeDelta = originalSizeDelta;
+            originalParent = null;
+            chipRect = null;
         }
 
         private void UpdateCapacityText(string value)

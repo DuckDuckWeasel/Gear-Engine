@@ -127,10 +127,7 @@ namespace GearEngine.Campaign.Presentation
                 return $"{selectedIndex + 1} / {tracks.Count}";
             }
 
-            string prerequisite = selectedIndex > 0
-                ? tracks[selectedIndex - 1].Track.GetDisplayName().ToUpperInvariant()
-                : "PREVIOUS TRACK";
-            return $"TRACK LOCKED\nFINISH 1ST ON {prerequisite}";
+            return "TRACK LOCKED";
         }
 
         public void ClickedPlay()

@@ -1,3 +1,5 @@
+using GearEngine.CarSimulation.PhysicsSimulation;
+using GearEngine.CarSimulation.SplineSimulation;
 using Scaffold.MVVM;
 using UnityEngine;
 using UnityEngine.Splines;
@@ -14,6 +16,7 @@ namespace GearEngine.CarSimulation.Presentation
         private bool runnerAttached;
 
         public float CurrentSpeed => viewModel != null ? viewModel.Speed : 0f;
+        public Transform DrivenTransform => prometeoController != null ? prometeoController.transform : null;
 
         protected override void OnBind()
         {
@@ -61,7 +64,7 @@ namespace GearEngine.CarSimulation.Presentation
             {
                 if (viewModel.RunnerService is GearEngine.CarSimulation.PhysicsSimulation.SplineCarRunnerService)
                 {
-                    var initParams = new GearEngine.CarSimulation.PhysicsSimulation.PhysicsInitParams
+                    PhysicsInitParams initParams = new GearEngine.CarSimulation.PhysicsSimulation.PhysicsInitParams
                     {
                         Entity = viewModel.Car,
                         Track = SplineContainer,
@@ -73,12 +76,13 @@ namespace GearEngine.CarSimulation.Presentation
                 }
                 else if (viewModel.RunnerService is GearEngine.CarSimulation.SplineSimulation.SplineEvaluateRunnerService)
                 {
-                    var initParams = new GearEngine.CarSimulation.SplineSimulation.SplineInitParams
+                    PrepareForSplineSimulation();
+                    SplineInitParams initParams = new GearEngine.CarSimulation.SplineSimulation.SplineInitParams
                     {
                         Entity = viewModel.Car,
                         Track = SplineContainer,
                         CarTransform = prometeoController.transform,
-                        Personality = GearEngine.CarSimulation.SplineSimulation.DriverPersonality.Default,
+                        Personality = DriverPersonality.FromStats(viewModel.Session.Config.RoguelikeStats),
                         LaneProfile = null
                     };
                     viewModel.RunnerService.InitializeRun(initParams);
@@ -93,6 +97,21 @@ namespace GearEngine.CarSimulation.Presentation
             TrySetupEditorDebug();
         }
 
+        public void PrepareForSplineSimulation()
+        {
+            prometeoController.enabled = false;
+            foreach (Rigidbody body in GetComponentsInChildren<Rigidbody>(true))
+            {
+                body.useGravity = false;
+                body.isKinematic = true;
+            }
+
+            foreach (Collider collider in GetComponentsInChildren<Collider>(true))
+            {
+                collider.enabled = false;
+            }
+        }
+
         private void Update()
         {
             if (viewModel != null)
@@ -105,7 +124,7 @@ namespace GearEngine.CarSimulation.Presentation
         {
             if (SplineContainer != null && SplineContainer.Spline != null && SplineContainer.Spline.Count > 0)
             {
-                var startParam = 0f;
+                float startParam = 0f;
                 Vector3 startPos = SplineContainer.transform.TransformPoint(
                     UnityEngine.Splines.SplineUtility.EvaluatePosition(SplineContainer.Spline, startParam));
 
@@ -129,11 +148,11 @@ namespace GearEngine.CarSimulation.Presentation
             System.Type debugType = System.Type.GetType("GearEngine.CarSimulation.Debug.CarSimulationDebug, Game.CarSimulation.Debug");
             if (debugType != null)
             {
-                var debugComponent = gameObject.GetComponent(debugType) ?? gameObject.AddComponent(debugType);
+                Component debugComponent = gameObject.GetComponent(debugType) ?? gameObject.AddComponent(debugType);
                 System.Reflection.MethodInfo setupMethod = debugType.GetMethod("Setup", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
                 if (setupMethod != null)
                 {
-                    var parameters = setupMethod.GetParameters();
+                    System.Reflection.ParameterInfo[] parameters = setupMethod.GetParameters();
                     if (parameters.Length == 2 && parameters[1].ParameterType.IsInstanceOfType(viewModel.RunnerService))
                     {
                         setupMethod.Invoke(debugComponent, new object[] { viewModel.Session, viewModel.RunnerService });

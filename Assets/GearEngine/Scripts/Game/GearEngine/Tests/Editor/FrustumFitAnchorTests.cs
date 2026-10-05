@@ -1,5 +1,6 @@
 using GearEngine.FrustumFit;
 using NUnit.Framework;
+using UnityEditor;
 using UnityEngine;
 
 namespace GearEngine.GearEngine.Tests.Editor
@@ -10,15 +11,15 @@ namespace GearEngine.GearEngine.Tests.Editor
     [TestFixture]
     public sealed class FrustumFitAnchorTests
     {
-        private GameObject _root;
+        private GameObject root;
 
         [TearDown]
         public void TearDown()
         {
-            if (_root != null)
+            if (root != null)
             {
-                Object.DestroyImmediate(_root);
-                _root = null;
+                Object.DestroyImmediate(root);
+                root = null;
             }
         }
 
@@ -27,9 +28,9 @@ namespace GearEngine.GearEngine.Tests.Editor
         [Test]
         public void DirectRenderer_RendererOnSelf_ReturnsEffectiveMeshSize()
         {
-            _root = new GameObject("Root");
+            root = new GameObject("Root");
             GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            cube.transform.SetParent(_root.transform);
+            cube.transform.SetParent(root.transform);
 
             bool ok = DirectRendererBoundsStrategy.TryGetEffectiveMeshSize(cube.transform, out Vector3 meshSize);
 
@@ -41,9 +42,9 @@ namespace GearEngine.GearEngine.Tests.Editor
         [Test]
         public void DirectRenderer_RendererOnChild_ReturnsEffectiveMeshSize()
         {
-            _root = new GameObject("Root");
+            root = new GameObject("Root");
             GameObject parent = new GameObject("Parent");
-            parent.transform.SetParent(_root.transform);
+            parent.transform.SetParent(root.transform);
             GameObject childCube = GameObject.CreatePrimitive(PrimitiveType.Cube);
             childCube.transform.SetParent(parent.transform);
 
@@ -56,9 +57,9 @@ namespace GearEngine.GearEngine.Tests.Editor
         [Test]
         public void DirectRenderer_NoRendererAnywhere_ReturnsFalse()
         {
-            _root = new GameObject("Root");
+            root = new GameObject("Root");
             GameObject empty = new GameObject("Empty");
-            empty.transform.SetParent(_root.transform);
+            empty.transform.SetParent(root.transform);
             new GameObject("AlsoEmpty").transform.SetParent(empty.transform);
 
             bool ok = DirectRendererBoundsStrategy.TryGetEffectiveMeshSize(empty.transform, out _);
@@ -74,10 +75,10 @@ namespace GearEngine.GearEngine.Tests.Editor
         [Test]
         public void DirectRenderer_ParentHasRenderer_ReturnsFalse()
         {
-            _root = new GameObject("Root");
+            root = new GameObject("Root");
             GameObject parentWithRenderer = GameObject.CreatePrimitive(PrimitiveType.Cube);
             parentWithRenderer.name = "ParentCube";
-            parentWithRenderer.transform.SetParent(_root.transform);
+            parentWithRenderer.transform.SetParent(root.transform);
             // A child with NO children of its own — DirectRenderer searching up would wrongly
             // return the parent's renderer.
             GameObject childEmpty = new GameObject("ChildEmpty");
@@ -93,9 +94,9 @@ namespace GearEngine.GearEngine.Tests.Editor
         [Test]
         public void CombineChildBounds_SingleChildRenderer_ReturnsEffectiveMeshSize()
         {
-            _root = new GameObject("Root");
+            root = new GameObject("Root");
             GameObject parent = new GameObject("Parent");
-            parent.transform.SetParent(_root.transform);
+            parent.transform.SetParent(root.transform);
             GameObject childCube = GameObject.CreatePrimitive(PrimitiveType.Cube);
             childCube.transform.SetParent(parent.transform);
 
@@ -109,9 +110,9 @@ namespace GearEngine.GearEngine.Tests.Editor
         [Test]
         public void CombineChildBounds_NoRenderers_ReturnsFalse()
         {
-            _root = new GameObject("Root");
+            root = new GameObject("Root");
             GameObject empty = new GameObject("Empty");
-            empty.transform.SetParent(_root.transform);
+            empty.transform.SetParent(root.transform);
 
             bool ok = CombineChildBoundsStrategy.TryGetEffectiveMeshSize(empty.transform, out _);
 
@@ -121,9 +122,9 @@ namespace GearEngine.GearEngine.Tests.Editor
         [Test]
         public void CombineChildBounds_MultipleChildren_EncapsulatesAllBounds()
         {
-            _root = new GameObject("Root");
+            root = new GameObject("Root");
             GameObject parent = new GameObject("Parent");
-            parent.transform.SetParent(_root.transform);
+            parent.transform.SetParent(root.transform);
 
             GameObject a = GameObject.CreatePrimitive(PrimitiveType.Cube);
             a.transform.SetParent(parent.transform);
@@ -145,12 +146,12 @@ namespace GearEngine.GearEngine.Tests.Editor
         [Test]
         public void Factory_ZeroExtentOnFittedAxes_ReturnsFalse()
         {
-            _root = new GameObject("Root");
-            SetupCanvas(_root, out _, out RectTransform uiRt);
-            Camera cam = CreateCamera(_root);
+            root = new GameObject("Root");
+            SetupCanvas(root, out _, out RectTransform uiRt);
+            Camera cam = CreateCamera(root);
 
             GameObject plane = GameObject.CreatePrimitive(PrimitiveType.Plane);
-            plane.transform.SetParent(_root.transform);
+            plane.transform.SetParent(root.transform);
 
             // Plane has no Y extent; XY fit must fail.
             DirectRendererBoundsStrategy.TryGetEffectiveMeshSize(plane.transform, out Vector3 meshSize);
@@ -167,12 +168,12 @@ namespace GearEngine.GearEngine.Tests.Editor
         [Test]
         public void Factory_PlaneWithXZAxes_ReturnsValidPlacement()
         {
-            _root = new GameObject("Root");
-            SetupCanvas(_root, out _, out RectTransform uiRt);
-            Camera cam = CreateCamera(_root);
+            root = new GameObject("Root");
+            SetupCanvas(root, out _, out RectTransform uiRt);
+            Camera cam = CreateCamera(root);
 
             GameObject plane = GameObject.CreatePrimitive(PrimitiveType.Plane);
-            plane.transform.SetParent(_root.transform);
+            plane.transform.SetParent(root.transform);
 
             DirectRendererBoundsStrategy.TryGetEffectiveMeshSize(plane.transform, out Vector3 meshSize);
             bool ok = FrustumFitPlacementFactory.TryCreate(
@@ -187,6 +188,44 @@ namespace GearEngine.GearEngine.Tests.Editor
             Assert.That(placement.LocalScale.z, Is.GreaterThan(0f));
         }
 
+        [Test]
+        public void Anchor_BoundsCentering_AlignsOffsetRendererWithViewportCenter()
+        {
+            root = new GameObject("Root");
+            SetupCanvas(root, out Canvas canvas, out RectTransform uiRt);
+            Camera camera = CreateCamera(root);
+            camera.orthographic = true;
+            camera.orthographicSize = 5f;
+            camera.transform.position = new Vector3(0f, 0f, -10f);
+
+            GameObject target = new GameObject("OffsetTarget");
+            target.transform.SetParent(root.transform);
+            GameObject rendererObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            rendererObject.transform.SetParent(target.transform);
+            rendererObject.transform.localPosition = new Vector3(2f, 1f, 0f);
+            Renderer renderer = rendererObject.GetComponent<Renderer>();
+
+            FrustumFitAnchor anchor = uiRt.gameObject.AddComponent<FrustumFitAnchor>();
+            ConfigureAnchor(anchor, uiRt, camera, target.transform);
+            Canvas.ForceUpdateCanvases();
+
+            bool success = anchor.TryComputePlacement(out FrustumFitAnchorPlacement placement);
+            RectTransformScreenBoxUtility.GetViewportBounds(
+                uiRt,
+                canvas,
+                camera,
+                out Vector2 viewportMin,
+                out Vector2 viewportMax);
+            Vector2 viewportCenter = (viewportMin + viewportMax) * 0.5f;
+            Vector3 expectedCenter = camera.ViewportToWorldPoint(
+                new Vector3(viewportCenter.x, viewportCenter.y, 10f));
+            placement.ApplyTo(target.transform);
+
+            Assert.That(success, Is.True);
+            Assert.That(renderer.bounds.center.x, Is.EqualTo(expectedCenter.x).Within(0.001f));
+            Assert.That(renderer.bounds.center.y, Is.EqualTo(expectedCenter.y).Within(0.001f));
+        }
+
         /// <summary>
         /// Regression: the old code used renderer.localBounds.size without accounting for
         /// intermediate child scale, causing the target to be scaled incorrectly.
@@ -196,13 +235,13 @@ namespace GearEngine.GearEngine.Tests.Editor
         [Test]
         public void CombineChildBounds_ChildRendererWithNonUnitScale_ProducesCorrectLocalScale()
         {
-            _root = new GameObject("Root");
-            SetupCanvas(_root, out Canvas canvas, out RectTransform uiRt);
-            Camera cam = CreateCamera(_root);
+            root = new GameObject("Root");
+            SetupCanvas(root, out Canvas canvas, out RectTransform uiRt);
+            Camera cam = CreateCamera(root);
 
             // Reference: cube directly on target, localScale 1.
             GameObject targetDirect = new GameObject("TargetDirect");
-            targetDirect.transform.SetParent(_root.transform);
+            targetDirect.transform.SetParent(root.transform);
             GameObject directMesh = GameObject.CreatePrimitive(PrimitiveType.Cube);
             directMesh.transform.SetParent(targetDirect.transform);
             directMesh.transform.localScale = Vector3.one;
@@ -216,7 +255,7 @@ namespace GearEngine.GearEngine.Tests.Editor
 
             // Case: cube child has 2× local scale — effective mesh is 2× larger.
             GameObject targetChild = new GameObject("TargetChild");
-            targetChild.transform.SetParent(_root.transform);
+            targetChild.transform.SetParent(root.transform);
             GameObject childMesh = GameObject.CreatePrimitive(PrimitiveType.Cube);
             childMesh.transform.SetParent(targetChild.transform);
             childMesh.transform.localScale = new Vector3(2f, 2f, 2f);
@@ -239,9 +278,9 @@ namespace GearEngine.GearEngine.Tests.Editor
         [Test]
         public void DirectCollider_ColliderOnSelf_ReturnsEffectiveMeshSize()
         {
-            _root = new GameObject("Root");
+            root = new GameObject("Root");
             GameObject go = new GameObject("WithCollider");
-            go.transform.SetParent(_root.transform);
+            go.transform.SetParent(root.transform);
             BoxCollider col = go.AddComponent<BoxCollider>();
             col.size = new Vector3(5.5f, 4f, 0.5f);
 
@@ -255,9 +294,9 @@ namespace GearEngine.GearEngine.Tests.Editor
         [Test]
         public void DirectCollider_ColliderOnChild_ReturnsEffectiveMeshSize()
         {
-            _root = new GameObject("Root");
+            root = new GameObject("Root");
             GameObject parent = new GameObject("Parent");
-            parent.transform.SetParent(_root.transform);
+            parent.transform.SetParent(root.transform);
             GameObject child = new GameObject("Child");
             child.transform.SetParent(parent.transform);
             child.AddComponent<BoxCollider>().size = Vector3.one;
@@ -271,9 +310,9 @@ namespace GearEngine.GearEngine.Tests.Editor
         [Test]
         public void DirectCollider_NoColliderAnywhere_ReturnsFalse()
         {
-            _root = new GameObject("Root");
+            root = new GameObject("Root");
             GameObject empty = new GameObject("Empty");
-            empty.transform.SetParent(_root.transform);
+            empty.transform.SetParent(root.transform);
 
             bool ok = DirectColliderBoundsStrategy.TryGetEffectiveMeshSize(empty.transform, out _);
 
@@ -283,9 +322,9 @@ namespace GearEngine.GearEngine.Tests.Editor
         [Test]
         public void DirectCollider_ParentHasCollider_ReturnsFalse()
         {
-            _root = new GameObject("Root");
+            root = new GameObject("Root");
             GameObject parentWithCollider = new GameObject("ParentWithCollider");
-            parentWithCollider.transform.SetParent(_root.transform);
+            parentWithCollider.transform.SetParent(root.transform);
             parentWithCollider.AddComponent<BoxCollider>().size = Vector3.one;
             GameObject childEmpty = new GameObject("ChildEmpty");
             childEmpty.transform.SetParent(parentWithCollider.transform);
@@ -300,9 +339,9 @@ namespace GearEngine.GearEngine.Tests.Editor
         [Test]
         public void CombineChildColliders_SingleChildCollider_ReturnsEffectiveMeshSize()
         {
-            _root = new GameObject("Root");
+            root = new GameObject("Root");
             GameObject parent = new GameObject("Parent");
-            parent.transform.SetParent(_root.transform);
+            parent.transform.SetParent(root.transform);
             GameObject child = new GameObject("Child");
             child.transform.SetParent(parent.transform);
             child.AddComponent<BoxCollider>().size = new Vector3(5.5f, 4f, 0.5f);
@@ -317,9 +356,9 @@ namespace GearEngine.GearEngine.Tests.Editor
         [Test]
         public void CombineChildColliders_NoColliders_ReturnsFalse()
         {
-            _root = new GameObject("Root");
+            root = new GameObject("Root");
             GameObject empty = new GameObject("Empty");
-            empty.transform.SetParent(_root.transform);
+            empty.transform.SetParent(root.transform);
 
             bool ok = CombineChildCollidersStrategy.TryGetEffectiveMeshSize(empty.transform, out _);
 
@@ -329,9 +368,9 @@ namespace GearEngine.GearEngine.Tests.Editor
         [Test]
         public void CombineChildColliders_MultipleChildren_EncapsulatesAllBounds()
         {
-            _root = new GameObject("Root");
+            root = new GameObject("Root");
             GameObject parent = new GameObject("Parent");
-            parent.transform.SetParent(_root.transform);
+            parent.transform.SetParent(root.transform);
 
             GameObject a = new GameObject("A");
             a.transform.SetParent(parent.transform);
@@ -353,8 +392,8 @@ namespace GearEngine.GearEngine.Tests.Editor
         [Test]
         public void FrustumFitAnchor_ConfigureAutoApply_ExposedFlagsMatch()
         {
-            _root = new GameObject("Root");
-            FrustumFitAnchor anchor = _root.AddComponent<FrustumFitAnchor>();
+            root = new GameObject("Root");
+            FrustumFitAnchor anchor = root.AddComponent<FrustumFitAnchor>();
             anchor.ConfigureAutoApply(true, false);
             Assert.IsTrue(anchor.ApplyOnStart);
             Assert.IsFalse(anchor.ApplyEveryFrame);
@@ -383,6 +422,20 @@ namespace GearEngine.GearEngine.Tests.Editor
             GameObject camGo = new GameObject("Camera");
             camGo.transform.SetParent(root.transform);
             return camGo.AddComponent<Camera>();
+        }
+
+        private static void ConfigureAnchor(
+            FrustumFitAnchor anchor,
+            RectTransform sourceRect,
+            Camera camera,
+            Transform target)
+        {
+            SerializedObject serializedAnchor = new SerializedObject(anchor);
+            serializedAnchor.FindProperty("sourceRect").objectReferenceValue = sourceRect;
+            serializedAnchor.FindProperty("worldCamera").objectReferenceValue = camera;
+            serializedAnchor.FindProperty("targetTransform").objectReferenceValue = target;
+            serializedAnchor.FindProperty("centerResolvedBounds").boolValue = true;
+            serializedAnchor.ApplyModifiedPropertiesWithoutUndo();
         }
     }
 }

@@ -23,7 +23,7 @@ namespace GearEngine.Campaign.Bootstrap.LiveOps
 
         public bool HasSavedLoadout => true;
 
-        public int BoardSlotCapacity => data?.BaseSlots ?? 0;
+        public int BoardSlotCapacity => Math.Max(data?.BaseSlots ?? 0, BoardService.k_maxSupportedBoardGears);
 
         private readonly IInventoryService inventoryService;
 
@@ -52,7 +52,7 @@ namespace GearEngine.Campaign.Bootstrap.LiveOps
         private Dictionary<string, OwnedGear> BuildOwnedByInstanceId()
         {
             Dictionary<string, OwnedGear> dict = new Dictionary<string, OwnedGear>(StringComparer.Ordinal);
-            foreach (var o in inventoryService.Owned)
+            foreach (OwnedGear o in inventoryService.Owned)
             {
                 if (o != null && !string.IsNullOrEmpty(o.InstanceId))
                 {

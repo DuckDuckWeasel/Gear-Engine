@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Config.GearConfig
   nextLevel: {fileID: 11400000, guid: 2858a6296b59a4f9b9e7a51e4db5019e, type: 2}
   data:
+    biomeAffinity: 4
     id: martyr_handling_tier3
     rarity: 2
     rarityConfig: {fileID: 11400000, guid: c0000000000000000000000000000002, type: 2}

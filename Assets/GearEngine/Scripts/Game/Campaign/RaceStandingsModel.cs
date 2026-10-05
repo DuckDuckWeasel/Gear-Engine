@@ -40,7 +40,7 @@ namespace GearEngine.Campaign
         public RaceStandingEntry Player { get; }
         public int PlayerPosition { get; }
         public int PreviousPosition { get; }
-        public int VisibleRowCount => PlayerPosition <= 3 ? 3 : 4;
+        public int VisibleRowCount => 3;
 
         private int PositionFor(IEnumerable<RaceStandingEntry> rivals, float time)
         {

@@ -25,7 +25,7 @@ namespace GearEngine.Campaign.Services
 
             if (statsService != null)
             {
-                config.SetRoguelikeStats(statsService.GetCalculatedStats());
+                config.SetRoguelikeStats(statsService.GetCalculatedStats(track));
             }
 
             return config;

@@ -10,7 +10,7 @@ namespace GearEngine.Campaign.Tests.Editor
         [TestCase(50f, 1, 3)]
         [TestCase(63f, 2, 3)]
         [TestCase(70f, 3, 3)]
-        [TestCase(80f, 4, 4)]
+        [TestCase(80f, 4, 3)]
         [TestCase(60f, 2, 3)]
         public void TimeDeterminesPositionAndVisibleRows(float time, int position, int visible)
         {
@@ -20,7 +20,8 @@ namespace GearEngine.Campaign.Tests.Editor
                 "A player without a previous placement must animate from fourth place.");
             Assert.That(standings.VisibleRowCount, Is.EqualTo(visible));
             Assert.That(standings.Entries.Count(entry => entry.IsPlayer), Is.EqualTo(1));
-            Assert.That(standings.Entries.Take(visible).Count(entry => entry.IsPlayer), Is.EqualTo(1));
+            int expectedVisiblePlayers = position <= 3 ? 1 : 0;
+            Assert.That(standings.Entries.Take(visible).Count(entry => entry.IsPlayer), Is.EqualTo(expectedVisiblePlayers));
         }
 
         [TestCase(80f, 70f, 4, 3)]

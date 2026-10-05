@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Game.GearEngine::GearEngine.GearEngine.Config.GearConfig
   nextLevel: {fileID: 11400000, guid: 72c1be01ac5324d6da3373b2bbd7ba82, type: 2}
   data:
+    biomeAffinity: 1
     id: temporaryboost_speed_tier1
     rarity: 0
     rarityConfig: {fileID: 11400000, guid: c0000000000000000000000000000000, type: 2}

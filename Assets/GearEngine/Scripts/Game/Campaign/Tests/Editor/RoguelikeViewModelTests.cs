@@ -1,14 +1,21 @@
 using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using GearEngine.Campaign.Bootstrap.LiveOps;
 using GearEngine.Campaign.Presentation;
 using GearEngine.Campaign.Services;
 using GearEngine.GearEngine;
 using GearEngine.GearEngine.Config;
 using GearEngine.GearEngine.Services.Inventory;
+using LiveOps.DTO.GameModule;
+using LiveOps.DTO.ModuleRequest;
+using LiveOps.Modules.DTO.Roguelike;
 using NUnit.Framework;
+using Scaffold.LiveOps;
 using UnityEngine;
+using UnityEngine.TestTools;
 using Object = UnityEngine.Object;
 
 namespace GearEngine.Campaign.Tests.Editor
@@ -54,6 +61,87 @@ namespace GearEngine.Campaign.Tests.Editor
             {
                 CampaignTestUtilities.DestroyGearConfig(g1);
                 CampaignTestUtilities.DestroyGearConfig(g2);
+            }
+        }
+
+        [Test]
+        public void LoadRoll_WhenCoreEngineIsReturned_FiltersCoreFromPerkOptions()
+        {
+            GearItem core = CampaignTestUtilities.CreateGearConfigWithData(GearItemData.k_coreGearId);
+            GearItem reward = CampaignTestUtilities.CreateGearConfigWithData("reward");
+            try
+            {
+                FakeRoguelikeRollService roll = new FakeRoguelikeRollService
+                {
+                    ToReturn = new[] { core.CreateRuntimeData(), reward.CreateRuntimeData() },
+                };
+                BoardRulesSO boardConfig = ScriptableObject.CreateInstance<BoardRulesSO>();
+                boardConfig.GridWidth = 5;
+                boardConfig.GridHeight = 5;
+
+                using (GearMechanicsTestContext gear = new GearMechanicsTestContext(boardConfig))
+                {
+                    using Scaffold.Ads.RewardedAdManager ads = new Scaffold.Ads.RewardedAdManager();
+                    using RoguelikeViewModel vm = new RoguelikeViewModel();
+                    ViewModelTestInject.InjectPrivateField(vm, "adManager", ads);
+                    ViewModelTestInject.InjectPrivateField(vm, "eventBus", gear.EventBus);
+                    ViewModelTestInject.InjectPrivateField(vm, "rollService", roll);
+                    ViewModelTestInject.InjectPrivateField(vm, "engineService", gear.Engine);
+                    ViewModelTestInject.InjectPrivateField(vm, "boardService", gear.BoardService);
+                    ViewModelTestInject.InjectPrivateField(vm, "featureToggle", gear.FeatureToggle);
+                    ViewModelTestInject.InjectPrivateField(vm, "dragService", gear.DragService);
+                    ViewModelTestInject.InjectPrivateField(vm, "inventoryService", gear.InventoryService);
+                    ViewModelTestInject.InjectPrivateField(vm, "presentationTransferService", gear.PresentationTransfer);
+                    ViewModelTestInject.InjectNavigation(vm, new RecordingNavigation());
+
+                    ViewModelTestInject.InvokeInitialize(vm);
+
+                    Assert.That(vm.PerkOptions, Has.Count.EqualTo(1));
+                    Assert.That(vm.PerkOptions[0].Item.Id, Is.EqualTo(reward.Id));
+                }
+
+                Object.DestroyImmediate(boardConfig);
+            }
+            finally
+            {
+                CampaignTestUtilities.DestroyGearConfig(core);
+                CampaignTestUtilities.DestroyGearConfig(reward);
+            }
+        }
+
+        [Test]
+        public void GetCurrentRoll_WhenCoreEngineIsReturned_FiltersAndBackfillsRewardOptions()
+        {
+            GearItem core = CampaignTestUtilities.CreateGearConfigWithData(GearItemData.k_coreGearId);
+            GearItem g1 = CampaignTestUtilities.CreateGearConfigWithData("g1");
+            GearItem g2 = CampaignTestUtilities.CreateGearConfigWithData("g2");
+            GearItem g3 = CampaignTestUtilities.CreateGearConfigWithData("g3");
+            GearCatalogSO catalog = ScriptableObject.CreateInstance<GearCatalogSO>();
+            try
+            {
+                catalog.SetRuntimeEntries(new[] { core, g1, g2, g3 });
+                RoguelikeGameData gameData = BuildRoguelikeData(GearItemData.k_coreGearId, g1.Id, g2.Id);
+                RoguelikeClientModule module = new RoguelikeClientModule(new FakeLiveOpsService(gameData));
+                module.InitializeAsync(CancellationToken.None).GetAwaiter().GetResult();
+                RoguelikeRollService service = new RoguelikeRollService(module, catalog, null, null);
+
+                LogAssert.Expect(
+                    LogType.Warning,
+                    $"[RoguelikeRollService] Ignored Core Engine gearId '{GearItemData.k_coreGearId}' in reward roll.");
+                IReadOnlyList<IItem> rewards = service.GetCurrentRollAsync().GetAwaiter().GetResult();
+
+                Assert.That(rewards, Has.Count.EqualTo(3));
+                CollectionAssert.AreEquivalent(
+                    new[] { g1.Id, g2.Id, g3.Id },
+                    new[] { rewards[0].Id, rewards[1].Id, rewards[2].Id });
+            }
+            finally
+            {
+                Object.DestroyImmediate(catalog);
+                CampaignTestUtilities.DestroyGearConfig(core);
+                CampaignTestUtilities.DestroyGearConfig(g1);
+                CampaignTestUtilities.DestroyGearConfig(g2);
+                CampaignTestUtilities.DestroyGearConfig(g3);
             }
         }
 
@@ -105,11 +193,67 @@ namespace GearEngine.Campaign.Tests.Editor
             }
         }
 
+        [Test]
+        public void PickPerk_WhenRemoteClaimFails_StillOpensReceivedReward()
+        {
+            GearItem gearConfig = CampaignTestUtilities.CreateGearConfigWithData("offline_reward");
+            RaceResultModel raceResult = new RaceResultModel(50f, 3, null);
+            try
+            {
+                FakeRoguelikeRollService roll = new FakeRoguelikeRollService
+                {
+                    ToReturn = new[] { gearConfig.CreateRuntimeData() },
+                    ConsumeException = new InvalidOperationException("Remote claim unavailable"),
+                };
+                RecordingNavigation navigation = new RecordingNavigation();
+                BoardRulesSO boardConfig = ScriptableObject.CreateInstance<BoardRulesSO>();
+                boardConfig.GridWidth = 5;
+                boardConfig.GridHeight = 5;
+
+                using (GearMechanicsTestContext gear = new GearMechanicsTestContext(boardConfig))
+                {
+                    using Scaffold.Ads.RewardedAdManager ads = new Scaffold.Ads.RewardedAdManager();
+                    using RoguelikeViewModel vm = new RoguelikeViewModel(raceResult);
+                    ViewModelTestInject.InjectPrivateField(vm, "adManager", ads);
+                    ViewModelTestInject.InjectPrivateField(vm, "eventBus", gear.EventBus);
+                    ViewModelTestInject.InjectPrivateField(vm, "rollService", roll);
+                    ViewModelTestInject.InjectPrivateField(vm, "engineService", gear.Engine);
+                    ViewModelTestInject.InjectPrivateField(vm, "boardService", gear.BoardService);
+                    ViewModelTestInject.InjectPrivateField(vm, "featureToggle", gear.FeatureToggle);
+                    ViewModelTestInject.InjectPrivateField(vm, "dragService", gear.DragService);
+                    ViewModelTestInject.InjectPrivateField(vm, "inventoryService", gear.InventoryService);
+                    ViewModelTestInject.InjectPrivateField(vm, "presentationTransferService", gear.PresentationTransfer);
+                    ViewModelTestInject.InjectNavigation(vm, navigation);
+
+                    ViewModelTestInject.InvokeInitialize(vm);
+
+                    System.Reflection.MethodInfo confirmMethod = typeof(RoguelikeViewModel).GetMethod(
+                        "ConfirmPickAsync",
+                        System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+                    LogAssert.Expect(LogType.Error, new Regex("Remote pick consumption failed after granting offline_reward"));
+                    Task<bool> task = (Task<bool>)confirmMethod.Invoke(vm, new object[] { vm.PerkOptions[0].Item.Id });
+
+                    Assert.That(task.GetAwaiter().GetResult(), Is.True);
+                    Assert.That(gear.InventoryService.Owned.Count, Is.EqualTo(1));
+                    Assert.That(navigation.OpenedControllers, Has.Count.EqualTo(1));
+                    Assert.That(navigation.OpenedControllers[0], Is.InstanceOf<ReceivedRewardsViewModel>());
+                }
+
+                Object.DestroyImmediate(boardConfig);
+            }
+            finally
+            {
+                CampaignTestUtilities.DestroyGearConfig(gearConfig);
+            }
+        }
+
         private sealed class FakeRoguelikeRollService : IRoguelikeRollService
         {
             public IReadOnlyList<IItem> ToReturn = Array.Empty<IItem>();
 
             public List<string> Consumed { get; } = new List<string>();
+
+            public Exception ConsumeException { get; set; }
 
             public Task<IReadOnlyList<IItem>> GetCurrentRollAsync(CancellationToken cancellationToken = default)
             {
@@ -118,6 +262,11 @@ namespace GearEngine.Campaign.Tests.Editor
 
             public Task ConsumePickAsync(string pickedId, CancellationToken cancellationToken = default)
             {
+                if (ConsumeException != null)
+                {
+                    return Task.FromException(ConsumeException);
+                }
+
                 Consumed.Add(pickedId);
                 return Task.CompletedTask;
             }
@@ -130,6 +279,37 @@ namespace GearEngine.Campaign.Tests.Editor
             public Task<IReadOnlyList<IItem>> RerollAsync(CancellationToken cancellationToken = default)
             {
                 return Task.FromResult(ToReturn);
+            }
+        }
+
+        private static RoguelikeGameData BuildRoguelikeData(params string[] ids)
+        {
+            RoguelikePersistence persistence = new RoguelikePersistence();
+            persistence.CurrentRollIds.AddRange(ids);
+            return new RoguelikeGameData(persistence, new RoguelikeConfig { OptionsPerRoll = 3 });
+        }
+
+        private sealed class FakeLiveOpsService : ILiveOpsService
+        {
+            public FakeLiveOpsService(RoguelikeGameData gameData)
+            {
+                this.gameData = gameData;
+            }
+
+            private readonly RoguelikeGameData gameData;
+
+            public T GetModuleData<T>()
+                where T : class, IGameModuleData
+            {
+                return gameData as T;
+            }
+
+            public Task<TResponse> CallAsync<TResponse>(
+                ModuleRequest<TResponse> request,
+                CancellationToken cancellationToken = default)
+                where TResponse : ModuleResponse
+            {
+                throw new InvalidOperationException($"Unexpected LiveOps request {request?.GetType().Name}.");
             }
         }
     }

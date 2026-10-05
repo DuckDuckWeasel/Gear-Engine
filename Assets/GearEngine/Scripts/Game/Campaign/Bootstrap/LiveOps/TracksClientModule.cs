@@ -218,6 +218,8 @@ namespace GearEngine.Campaign.Bootstrap.LiveOps
                 return;
             }
 
+            RecordLocalStars(trackId, result.HighestAchievedTier);
+
             RecordRaceResultResponse resp = await liveOps.CallAsync(new RecordRaceResultRequest(trackId, result.RaceTime));
             if (resp == null || data == null)
             {
@@ -228,10 +230,14 @@ namespace GearEngine.Campaign.Bootstrap.LiveOps
             ApplyCurrencySideEffectsFromResponse(resp);
             data.BestTimeSec[trackId] = resp.NewBestTimeSec;
             progress.RecordBestTime(trackId, resp.NewBestTimeSec);
-            progress.RecordEarnedStars(trackId, result.HighestAchievedTier);
+            ApplyAdvanceToNextTrackIfNeeded(resp);
+        }
+
+        private void RecordLocalStars(string trackId, int earnedStars)
+        {
+            progress.RecordEarnedStars(trackId, earnedStars);
             PlayerPrefs.SetInt(StarStorageKey(trackId), progress.GetEarnedStars(trackId));
             PlayerPrefs.Save();
-            ApplyAdvanceToNextTrackIfNeeded(resp);
         }
 
         private static string StarStorageKey(string trackId) => $"GearEngine.TrackStars.V1.{trackId}";

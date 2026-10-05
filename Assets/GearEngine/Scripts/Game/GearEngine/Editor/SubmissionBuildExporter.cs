@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using UnityEditor;
+using UnityEditor.AddressableAssets;
 using UnityEditor.AddressableAssets.Build;
 using UnityEditor.AddressableAssets.Settings;
 using UnityEditor.Build.Reporting;
@@ -22,7 +23,7 @@ namespace GearEngine.GearEngine.Editor
             {
                 string buildPath = ResolveBuildPath();
                 Directory.CreateDirectory(buildPath);
-                BuildAddressableContent();
+                BuildOfflineAddressableContent();
 
                 BuildPlayerOptions options = new BuildPlayerOptions
                 {
@@ -48,15 +49,28 @@ namespace GearEngine.GearEngine.Editor
             }
         }
 
-        private static void BuildAddressableContent()
+        private static void BuildOfflineAddressableContent()
         {
+            AddressableAssetSettings settings = AddressableAssetSettingsDefaultObject.Settings;
+            if (settings == null)
+            {
+                throw new InvalidOperationException("Addressables settings are missing.");
+            }
+
+            if (settings.BuildRemoteCatalog)
+            {
+                throw new InvalidOperationException(
+                    "WebGL submission builds require a local Addressables catalog. Disable Build Remote Catalog.");
+            }
+
             AddressableAssetSettings.BuildPlayerContent(out AddressablesPlayerBuildResult result);
             if (!string.IsNullOrWhiteSpace(result.Error))
             {
                 throw new InvalidOperationException($"Addressables build failed: {result.Error}");
             }
 
-            Debug.Log($"[SubmissionBuild] Addressables content built with {result.LocationCount} locations in {result.Duration:F2} seconds.");
+            Debug.Log(
+                $"[SubmissionBuild] Local Addressables content built with {result.LocationCount} locations in {result.Duration:F2} seconds.");
         }
 
         private static BuildReport BuildWithSubmissionSettings(BuildPlayerOptions options)

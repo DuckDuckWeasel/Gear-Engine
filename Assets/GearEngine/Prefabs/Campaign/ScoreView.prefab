@@ -91,7 +91,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -247,7 +247,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.CanvasScaler
   m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
@@ -270,7 +270,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dc42784cf147c0c48a680349fa168899, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.GraphicRaycaster
   m_IgnoreReversedGraphics: 1
   m_BlockingObjects: 0
@@ -287,9 +287,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c4c83410da1d949abaa8c3e774447131, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Game.Campaign::GearEngine.Campaign.Presentation.RaceDriftScoreView
   multiplierText: {fileID: 2263036603704186089}
+  multiplierTierSprites:
+  - {fileID: 8936636285095955216, guid: b72fc2f7974130c4eb0116232cce5cbd, type: 3}
+  - {fileID: -2264208712154650808, guid: bfc03c5e2b175cc47a6a928a0f624aee, type: 3}
+  - {fileID: 5864622732033136032, guid: 59bbc4f071e5ff84493a91c88fad25ca, type: 3}
+  - {fileID: 4095485120199972693, guid: 06cdd7f4a47cad440bc5b7154bffbafd, type: 3}
+  - {fileID: -3139223520409667456, guid: 83d329363ef7d244f8659826ed695109, type: 3}
   pointsText: {fileID: 3628713272769203656}
   canvasGroup: {fileID: 8934503535668718343}
   multiplierPunchScale: {x: 0.5, y: 0.5, z: 0}
@@ -357,7 +363,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 30649d3a9faa99c48a7b1166b86bf2a0, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.HorizontalLayoutGroup
   m_Padding:
     m_Left: 0
@@ -428,7 +434,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}

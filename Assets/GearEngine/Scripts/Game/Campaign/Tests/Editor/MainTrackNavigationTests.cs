@@ -58,7 +58,7 @@ namespace GearEngine.Campaign.Tests.Editor
             model.NextTrack();
 
             Assert.That(model.Track.Track, Is.SameAs(tracks[1]));
-            Assert.That(model.TrackPosition, Is.EqualTo("TRACK LOCKED\nFINISH 1ST ON TRACK0"));
+            Assert.That(model.TrackPosition, Is.EqualTo("TRACK LOCKED"));
             Assert.That(model.IsTrackLocked, Is.True);
             model.ClickedPlay();
             Assert.That(navigation.OpenedControllers, Is.Empty);
@@ -206,6 +206,35 @@ namespace GearEngine.Campaign.Tests.Editor
             {
                 Object.DestroyImmediate(config);
                 Object.DestroyImmediate(mainObject);
+                Object.DestroyImmediate(toolbarObject);
+            }
+        }
+
+        [TestCase(false)]
+        [TestCase(true)]
+        public void ReturnFromRepeatedRaces_RestoresBottomToolbar(bool alreadyOnHome)
+        {
+            GameObject toolbarObject = new GameObject("ToolbarReturnTest");
+            try
+            {
+                ToolbarController toolbar = toolbarObject.AddComponent<ToolbarController>();
+                RecordingNavigation returningNavigation = new RecordingNavigation();
+                toolbar.Construct(returningNavigation);
+                for (int race = 0; race < 3; race++)
+                {
+                    // The scene's setup button hides the persistent toolbar before racing.
+                    toolbarObject.SetActive(false);
+                    returningNavigation.CurrentController = alreadyOnHome ? new MainViewModel() : null;
+                    toolbar.OpenMainView();
+                    Assert.That(toolbarObject.activeInHierarchy, Is.True,
+                        $"The bottom navigation must return after race {race + 1}.");
+                    Assert.That(returningNavigation.CurrentController, Is.InstanceOf<MainViewModel>());
+                }
+                Assert.That(returningNavigation.OpenedControllers.Count, Is.EqualTo(alreadyOnHome ? 0 : 3),
+                    "Restoring the toolbar must not open duplicate home screens.");
+            }
+            finally
+            {
                 Object.DestroyImmediate(toolbarObject);
             }
         }

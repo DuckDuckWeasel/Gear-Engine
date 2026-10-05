@@ -19,6 +19,19 @@ namespace GearEngine.Campaign.Tests.Editor
 {
     public sealed class HomePresentationTests
     {
+        [Test]
+        public void MainViewPrefab_HasVisibleRootScale()
+        {
+            GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(
+                "Assets/GearEngine/Prefabs/Campaign/Main View.prefab");
+
+            Assert.That(prefab.transform.localScale.x, Is.GreaterThan(0f));
+            Assert.That(prefab.transform.localScale.y, Is.GreaterThan(0f));
+            Canvas canvas = prefab.GetComponent<Canvas>();
+            Assert.That(canvas.renderMode, Is.EqualTo(RenderMode.ScreenSpaceOverlay));
+            Assert.That(canvas.sortingOrder, Is.GreaterThanOrEqualTo(9));
+        }
+
         [TestCase(1.35f, 3, 4)]
         [TestCase(0.9f, 0, 1)]
         public void HomeStats_SeparatesSavedStarsFromBestTime(float timeMultiplier, int stars, int position)
@@ -33,6 +46,7 @@ namespace GearEngine.Campaign.Tests.Editor
             TrackStatsViewModel model = new TrackStatsViewModel(track, progress);
             Assert.That(model.Standings.PlayerPosition, Is.EqualTo(position));
             Assert.That(model.EarnedStars, Is.EqualTo(stars));
+            Assert.That(model.StarTargetScores, Is.EqualTo(track.Tiers.OrderBy(tier => tier.TargetScore).Select(tier => tier.TargetScore)));
         }
 
         [UnityTest]
@@ -50,22 +64,48 @@ namespace GearEngine.Campaign.Tests.Editor
             TrackStatsViewComponent stats = instance.GetComponentInChildren<TrackStatsViewComponent>();
             ResultStandingsView standings = instance.GetComponentInChildren<ResultStandingsView>();
             SerializedObject serializedStats = new SerializedObject(stats);
+            SerializedObject serializedMain = new SerializedObject(instance.GetComponent<MainView>());
+            TMP_Text trackTitleLabel = (TMP_Text)serializedStats.FindProperty("trackNameLabel").objectReferenceValue;
             TMP_Text lapsLabel = (TMP_Text)serializedStats.FindProperty("targetLapsLabel").objectReferenceValue;
             TMP_Text targetLabel = (TMP_Text)serializedStats.FindProperty("targetTimeLabel").objectReferenceValue;
+            TMP_Text trackPositionLabel = (TMP_Text)serializedMain.FindProperty("trackPositionLabel").objectReferenceValue;
+            Button previousButton = (Button)serializedMain.FindProperty("previousTrackButton").objectReferenceValue;
+            Button nextButton = (Button)serializedMain.FindProperty("nextTrackButton").objectReferenceValue;
+            Button playButton = (Button)serializedMain.FindProperty("playButton").objectReferenceValue;
             Image firstEarnedStar = (Image)serializedStats.FindProperty("earnedStars").GetArrayElementAtIndex(0).objectReferenceValue;
             RectTransform panel = (RectTransform)standings.transform.parent;
             float expandedHeight = panel.sizeDelta.y;
             float rowSpacing = new SerializedObject(standings).FindProperty("rowSpacing").floatValue;
             RectTransform standingsRect = (RectTransform)standings.transform;
             RectTransform trackViewport = (RectTransform)instance.transform.Find("TrackViewport");
-            Assert.That(expandedHeight, Is.EqualTo(760f).Within(0.1f),
-                "The best-times panel must end directly below its four standings rows.");
+            RectTransform trackTitle = trackTitleLabel.rectTransform;
+            RectTransform previousTrackButton = (RectTransform)previousButton.transform;
+            RectTransform nextTrackButton = (RectTransform)nextButton.transform;
+            RectTransform playButtonRect = (RectTransform)playButton.transform;
+            typeof(MainView).GetMethod(
+                    "ConfigureTrackStatusLabel",
+                    System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)
+                .Invoke(instance.GetComponent<MainView>(), null);
+            typeof(MainView).GetMethod(
+                    "ConfigureTrackPreviewLayout",
+                    System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)
+                .Invoke(instance.GetComponent<MainView>(), null);
+            Assert.That(expandedHeight, Is.EqualTo(850f).Within(0.1f),
+                "The best-times panel must fit all four standings rows.");
+            Assert.That(rowSpacing, Is.EqualTo(210f).Within(0.1f));
             Assert.That(standingsRect.anchoredPosition.y, Is.EqualTo(-140f).Within(0.1f),
                 "The standings rows must sit directly below the Best Times heading.");
-            Assert.That(trackViewport.anchorMin, Is.EqualTo(new Vector2(0.155f, 0.585f)),
-                "The home track viewport must use the expanded lower-left bounds.");
-            Assert.That(trackViewport.anchorMax, Is.EqualTo(new Vector2(0.845f, 0.83f)),
-                "The home track viewport must use the expanded upper-right bounds.");
+            Assert.That(trackViewport.anchorMin, Is.EqualTo(new Vector2(0.06f, 0.51f)),
+                "The home track viewport must sit directly below the track header.");
+            Assert.That(trackViewport.anchorMax, Is.EqualTo(new Vector2(0.94f, 0.79f)),
+                "The home track viewport must preserve its height when moved upward.");
+            Assert.That(trackPositionLabel.rectTransform.anchorMin.y, Is.EqualTo(0.59f).Within(0.001f));
+            Assert.That(previousTrackButton.anchorMin.y, Is.EqualTo(0.725f).Within(0.001f));
+            Assert.That(nextTrackButton.anchorMin.y, Is.EqualTo(0.725f).Within(0.001f));
+            Assert.That(playButtonRect.anchorMin.y, Is.EqualTo(0.545f).Within(0.001f),
+                "SET UP must sit close to the leaderboard while leaving a clear visual gap.");
+            Assert.That(playButtonRect.sizeDelta, Is.EqualTo(new Vector2(300f, 124f)),
+                "SET UP should remain visually secondary to the larger RACE action.");
             foreach (bool saved in new[] { false, true })
             {
                 Services.TrackProgressModel progress = new Services.TrackProgressModel();
@@ -81,16 +121,37 @@ namespace GearEngine.Campaign.Tests.Editor
                 Assert.That(starsContainer.parent, Is.SameAs(instance.transform),
                     "Earned stars must be in the track header, outside the best-times panel.");
                 Assert.That(starsContainer.anchorMin, Is.EqualTo(new Vector2(0.5f, 1f)));
-                Assert.That(starsContainer.anchoredPosition.y, Is.EqualTo(-310f).Within(0.1f),
+                Assert.That(starsContainer.anchoredPosition.y, Is.EqualTo(-340f).Within(0.1f),
                     "Earned stars must sit below the track name and above the track preview.");
-                Assert.That(lapsLabel.gameObject.activeSelf, Is.False, "Home must not show lap metadata.");
+                Assert.That(starsContainer.sizeDelta, Is.EqualTo(new Vector2(440f, 180f)));
+                Assert.That(firstEarnedStar.rectTransform.sizeDelta, Is.EqualTo(new Vector2(120f, 120f)),
+                    "Track stars must remain legible in a narrow portrait viewport.");
+                Assert.That(trackTitle.anchoredPosition.y, Is.EqualTo(-18f).Within(0.1f),
+                    "The track name must sit directly below the biome label.");
+                TMP_Text[] targetScores = starsContainer.GetComponentsInChildren<TMP_Text>(true);
+                Assert.That(targetScores.Select(label => label.text),
+                    Is.EquivalentTo(model.StarTargetScores.Select(score => score.ToString())),
+                    "Each star must show the score required for that track.");
+                Assert.That(targetScores.All(label => label.fontSize >= 38f), Is.True,
+                    "Star target scores must be readable in a narrow portrait viewport.");
+                Assert.That(targetScores.All(label => label.outlineWidth >= 0.22f), Is.True,
+                    "Star target scores need a dark outline over textured biome backgrounds.");
+                Assert.That(lapsLabel.gameObject.activeSelf, Is.True, "Home must show the selected biome.");
+                Assert.That(lapsLabel.text, Is.EqualTo(model.BiomeLabel));
                 Assert.That(targetLabel.gameObject.activeSelf, Is.False, "Home must not show target-time metadata.");
                 Assert.That(standings.DisplayedPlayerPosition, Is.EqualTo(saved ? 3 : 4));
                 Assert.That(standings.IsAnimating, Is.False);
-                Assert.That(standings.GetComponentsInChildren<ResultStandingRowView>().Length, Is.EqualTo(saved ? 3 : 4));
-                float expectedHeight = saved ? expandedHeight - rowSpacing : expandedHeight;
-                Assert.That(panel.sizeDelta.y, Is.EqualTo(expectedHeight).Within(0.1f),
-                    "The standings panel must end after the last visible row.");
+                ResultStandingRowView[] visibleRows = standings.GetComponentsInChildren<ResultStandingRowView>();
+                Assert.That(visibleRows.Length, Is.EqualTo(4));
+                Assert.That(visibleRows.Count(row => row.Entry.IsPlayer), Is.EqualTo(1),
+                    "YOU must remain visible even before the first race.");
+                Assert.That(panel.sizeDelta.y, Is.EqualTo(expandedHeight).Within(0.1f));
+                Vector3[] panelCorners = new Vector3[4];
+                Vector3[] lastRowCorners = new Vector3[4];
+                panel.GetWorldCorners(panelCorners);
+                visibleRows[3].Rect.GetWorldCorners(lastRowCorners);
+                Assert.That(lastRowCorners[0].y, Is.GreaterThan(panelCorners[0].y),
+                    "The fourth row must sit inside the best-times card.");
                 Assert.That(model.Standings.Player.FormattedTime, saved ? Does.Not.Contain("--") : Is.EqualTo("--:--.--"));
                 foreach (int height in new[] { 2280, 1680 })
                 {
@@ -150,6 +211,49 @@ namespace GearEngine.Campaign.Tests.Editor
         }
 
         [UnityTest]
+        public IEnumerator GearCard_UsesItemRarityInsteadOfTwoStarDesignSample()
+        {
+            GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/GearEngine/Prefabs/Campaign/Item_View.prefab");
+            GameObject canvasObject = new GameObject(
+                "GearCardCaptureCanvas",
+                typeof(RectTransform),
+                typeof(Canvas),
+                typeof(CanvasScaler),
+                typeof(GraphicRaycaster));
+            GameObject instance = Object.Instantiate(prefab);
+            try
+            {
+                instance.transform.SetParent(canvasObject.transform, false);
+                RectTransform cardRect = (RectTransform)instance.transform;
+                cardRect.anchoredPosition = Vector2.zero;
+                cardRect.localScale = Vector3.one * 2.2f;
+                ItemSlotView slot = instance.GetComponent<ItemSlotView>();
+                GearItemData gear = AssetDatabase.LoadAssetAtPath<GearItem>(
+                    "Assets/GearEngine/Scriptables/GeneratedGears/QuantumLink/QuantumLink_Tier4_Config.asset").CreateRuntimeData();
+                slot.Bind(new ItemSlotViewModel(gear, null));
+
+                SerializedObject serialized = new SerializedObject(slot);
+                SerializedProperty stars = serialized.FindProperty("rarityStars");
+                Sprite filled = (Sprite)serialized.FindProperty("filledRarityStar").objectReferenceValue;
+                Image icon = (Image)serialized.FindProperty("iconImage").objectReferenceValue;
+
+                Assert.That(stars.arraySize, Is.EqualTo(5), "Grid cards must represent all five rarity levels.");
+                Assert.That(filled, Is.Not.Null, "Grid cards must have a configured filled rarity star.");
+                Assert.That(icon.rectTransform.localScale.x, Is.EqualTo(0.8f).Within(0.001f),
+                    "Composite gear artwork must use the configured icon safe zone.");
+                Assert.That(Enumerable.Range(0, stars.arraySize)
+                    .Count(i => ((Image)stars.GetArrayElementAtIndex(i).objectReferenceValue).sprite == filled), Is.EqualTo(4),
+                    "An epic grid card must show four filled stars, matching its popup.");
+                yield return Capture(canvasObject, "GearCardQuantumLink", 1680);
+            }
+            finally
+            {
+                Object.DestroyImmediate(instance);
+                Object.DestroyImmediate(canvasObject);
+            }
+        }
+
+        [UnityTest]
         public IEnumerator GearPopup_ShowsSelectedCardOnOpenAndReopen()
         {
             UnityEditor.SceneManagement.EditorSceneManager.NewScene(UnityEditor.SceneManagement.NewSceneSetup.EmptyScene,
@@ -181,6 +285,8 @@ namespace GearEngine.Campaign.Tests.Editor
                 Assert.That(name.text, Is.EqualTo(gear.Name));
                 Assert.That(name.color.grayscale, Is.LessThan(0.35f), "Popup titles must contrast with the rarity card background.");
                 Assert.That(icon.sprite, Is.SameAs(gear.Icon));
+                Assert.That(icon.rectTransform.localScale.x, Is.EqualTo(0.8f).Within(0.001f),
+                    "Composite gear artwork must keep its safe zone in the detail popup.");
                 Assert.That(name.transform.lossyScale.x, Is.GreaterThan(0.1f), "Selected gear title remains hidden.");
                 Assert.That(name.transform.lossyScale.z, Is.GreaterThan(0.1f), "Selected gear title has a degenerate transform.");
                 Assert.That(icon.transform.lossyScale.x, Is.GreaterThan(0.1f), "Selected gear artwork remains hidden.");
@@ -250,7 +356,7 @@ namespace GearEngine.Campaign.Tests.Editor
                 string file = $"{scenario}{width}x{height}.png";
                 File.WriteAllBytes(Path.Combine(output, file), image.EncodeToPNG());
                 string criteria = scenario.StartsWith("Home", System.StringComparison.Ordinal)
-                    ? "[\"Runtime ViewModel bindings\",\"Track name shown without laps or target\",\"Rendered text inside viewport\",\"Standings panel fits visible rows\",\"Four-row unraced state retained\"]"
+                    ? "[\"Runtime ViewModel bindings\",\"Track name and biome shown without laps or target\",\"Rendered text inside viewport\",\"Standings panel fits four rows\",\"Unranked player visible in fourth place\"]"
                     : "[\"Runtime ViewModel bindings\",\"Rendered text inside viewport\",\"Animation restart\",\"Selected gear card visibility and rarity\"]";
                 File.WriteAllText(Path.Combine(output, file + ".evidence.json"),
                     "{\"test\":\"" + NUnit.Framework.TestContext.CurrentContext.Test.FullName + "\"," +

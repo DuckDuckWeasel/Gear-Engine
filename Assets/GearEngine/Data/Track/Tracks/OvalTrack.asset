@@ -13,10 +13,13 @@ MonoBehaviour:
   m_Name: OvalTrack
   m_EditorClassIdentifier: Game.CarSimulation::GearEngine.CarSimulation.Definitions.TrackDefinition
   trackName: Oval
+  theme: {fileID: 11400000, guid: 40e1baabd9a174b7f840221bdcf554a0, type: 2}
+  visualVariant: 3
+  opponents: []
   scale: 1
   offset: {x: 0, y: 0, z: 0}
-  totalLaps: 5
-  timeToBeatSeconds: 34.277657
+  totalLaps: 4
+  timeToBeatSeconds: 27.422127
   spline:
     m_EditModeType: 1
     m_Knots:
@@ -152,12 +155,12 @@ MonoBehaviour:
       m_Data: []
   baseGoldReward: 50
   tiers:
-  - targetTimeSeconds: 27.422125
-    targetScore: 5000
+  - targetTimeSeconds: 21.9377
+    targetScore: 4000
     goldReward: 1000
-  - targetTimeSeconds: 35.99154
-    targetScore: 3000
+  - targetTimeSeconds: 28.793232
+    targetScore: 2400
     goldReward: 500
-  - targetTimeSeconds: 44.56095
-    targetScore: 1000
+  - targetTimeSeconds: 35.64876
+    targetScore: 800
     goldReward: 200

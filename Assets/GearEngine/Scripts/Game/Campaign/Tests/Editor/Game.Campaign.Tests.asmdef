@@ -17,6 +17,7 @@
         "Scaffold.Entities",
         "Scaffold.MVVM.ViewModel",
         "Scaffold.Navigation",
+        "Scaffold.Schemas",
         "Unity.Mathematics",
         "Unity.Splines",
         "VContainer",
@@ -28,7 +29,8 @@
         "GearEngine.Core.Config",
         "Unity.TextMeshPro",
         "Unity.ugui",
-        "Unity.Addressables"
+        "Unity.Addressables",
+        "StompyRobot.SRF"
     ],
     "includePlatforms": [
         "Editor"

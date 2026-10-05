@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 304eb38e3db6bb6488b9a6d7ed815f8a, type: 3}
   m_Name: LoadoutConfigBuilder
   m_EditorClassIdentifier: Game.Campaign::GearEngine.Campaign.Authoring.LoadoutConfigBuilderSO
-  baseSlots: 6
+  baseSlots: 12
   motorCogStartX: 2
   motorCogStartY: 2

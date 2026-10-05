@@ -13,6 +13,14 @@ namespace GearEngine.CarSimulation.Definitions
 
         [SerializeField] private string trackName;
 
+        public TrackThemeDefinition Theme => theme;
+
+        [SerializeField] private TrackThemeDefinition theme;
+
+        public int VisualVariant => Mathf.Clamp(visualVariant, 0, 3);
+
+        [SerializeField, Range(0, 3)] private int visualVariant;
+
         public IReadOnlyList<RaceOpponentConfig> Opponents => opponents;
         [SerializeField] private RaceOpponentConfig[] opponents = Array.Empty<RaceOpponentConfig>();
 

@@ -13,10 +13,13 @@ MonoBehaviour:
   m_Name: StarTrack
   m_EditorClassIdentifier: Game.CarSimulation::GearEngine.CarSimulation.Definitions.TrackDefinition
   trackName: Star
+  theme: {fileID: 11400000, guid: a7ea4ae7452ed4fe895e1e5f9e7ef918, type: 2}
+  visualVariant: 0
+  opponents: []
   scale: 1
   offset: {x: 0, y: 0, z: 0}
-  totalLaps: 5
-  timeToBeatSeconds: 56.58602
+  totalLaps: 4
+  timeToBeatSeconds: 45.268818
   spline:
     m_EditModeType: 1
     m_Knots:
@@ -232,12 +235,12 @@ MonoBehaviour:
       m_Data: []
   baseGoldReward: 50
   tiers:
-  - targetTimeSeconds: 45.268818
-    targetScore: 5000
+  - targetTimeSeconds: 36.215054
+    targetScore: 4000
     goldReward: 1000
-  - targetTimeSeconds: 59.41532
-    targetScore: 3000
+  - targetTimeSeconds: 47.532257
+    targetScore: 2400
     goldReward: 500
-  - targetTimeSeconds: 73.56183
-    targetScore: 1000
+  - targetTimeSeconds: 58.849464
+    targetScore: 800
     goldReward: 200

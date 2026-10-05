@@ -61,7 +61,7 @@ namespace GearEngine.GearEngine.Visuals
                 return;
             }
 
-            ApplyScale(config.RelativeScaleMultiplier);
+            ApplyScale(config.RelativeScaleMultiplier, config.UIIconScaleMultiplier);
             ApplyIcon(config.UIIcon);
         }
 
@@ -134,7 +134,7 @@ namespace GearEngine.GearEngine.Visuals
             UpdateChargeFill();
         }
 
-        private void ApplyScale(float scale)
+        private void ApplyScale(float scale, float uiIconScale)
         {
             if (gearVisual == null)
             {
@@ -144,8 +144,9 @@ namespace GearEngine.GearEngine.Visuals
             gearVisual.localScale = new Vector3(baseScale, baseScale, baseScale);
             if (chargeFillImage != null)
             {
+                float appliedIconScale = iconScaleMultiplier * Mathf.Max(0.01f, uiIconScale);
                 chargeFillImage.rectTransform.localScale =
-                    new Vector3(iconScaleMultiplier, iconScaleMultiplier, iconScaleMultiplier);
+                    new Vector3(appliedIconScale, appliedIconScale, appliedIconScale);
             }
         }
 

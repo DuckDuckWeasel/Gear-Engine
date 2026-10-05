@@ -15,6 +15,8 @@ namespace GearEngine.Campaign.Services
 {
     public sealed class RoguelikeRollService : IRoguelikeRollService
     {
+        private const int k_rollSize = 3;
+
         public RoguelikeRollService(RoguelikeClientModule module, GearCatalogSO catalog, IAnalyticsService analytics, IEventBus eventBus)
         {
             this.module = module ?? throw new ArgumentNullException(nameof(module));
@@ -50,7 +52,7 @@ namespace GearEngine.Campaign.Services
             }
 
             analytics?.Record(new RoguelikeRollEvent());
-            
+
             eventBus?.Raise(new GlobalLoadingEvent(true));
             try
             {
@@ -78,7 +80,7 @@ namespace GearEngine.Campaign.Services
         public async Task<IReadOnlyList<IItem>> RerollAsync(CancellationToken cancellationToken = default)
         {
             analytics?.Record(new RoguelikeRollEvent());
-            
+
             eventBus?.Raise(new GlobalLoadingEvent(true));
             try
             {
@@ -93,50 +95,62 @@ namespace GearEngine.Campaign.Services
 
         private IReadOnlyList<IItem> GenerateFallbackIfNeeded(IReadOnlyList<string> ids)
         {
-            if (ids == null || ids.Count == 0)
+            List<IItem> result = new List<IItem>(k_rollSize);
+            HashSet<string> selectedIds = new HashSet<string>(StringComparer.Ordinal);
+            if (ids != null)
             {
-                // Fallback: mock a random roll locally.
-                List<GearItem> validConfigs = new List<GearItem>();
-                foreach (GearItem gear in catalog.All)
+                for (int i = 0; i < ids.Count; i++)
                 {
-                    if (gear != null && !string.IsNullOrEmpty(gear.Id))
-                    {
-                        validConfigs.Add(gear);
-                    }
-                }
-
-                if (validConfigs.Count > 0)
-                {
-                    List<IItem> fallbackRoll = new List<IItem>(3);
-                    System.Random rng = new System.Random();
-                    for (int i = 0; i < 3; i++)
-                    {
-                        fallbackRoll.Add(validConfigs[rng.Next(validConfigs.Count)].CreateRuntimeData());
-                    }
-                    return fallbackRoll;
+                    TryAddConfig(ids[i], result, selectedIds);
                 }
             }
 
-            return MapIdsToConfigs(ids);
-        }
-
-        private List<IItem> MapIdsToConfigs(IReadOnlyList<string> ids)
-        {
-            List<IItem> result = new List<IItem>(ids.Count);
-            for (int i = 0; i < ids.Count; i++)
-            {
-                TryAddConfig(ids[i], result);
-            }
-
+            FillMissingOptions(result, selectedIds);
             return result;
         }
 
-        private void TryAddConfig(string id, List<IItem> result)
+        private void FillMissingOptions(List<IItem> result, HashSet<string> selectedIds)
         {
+            List<GearItem> validConfigs = new List<GearItem>();
+            foreach (GearItem gear in catalog.All)
+            {
+                if (gear != null
+                    && !string.IsNullOrEmpty(gear.Id)
+                    && !GearItemData.IsCoreGear(gear.Id)
+                    && !selectedIds.Contains(gear.Id))
+                {
+                    validConfigs.Add(gear);
+                }
+            }
+
+            System.Random rng = new System.Random();
+            while (result.Count < k_rollSize && validConfigs.Count > 0)
+            {
+                int index = rng.Next(validConfigs.Count);
+                GearItem gear = validConfigs[index];
+                validConfigs.RemoveAt(index);
+                selectedIds.Add(gear.Id);
+                result.Add(gear.CreateRuntimeData());
+            }
+        }
+
+        private void TryAddConfig(string id, List<IItem> result, HashSet<string> selectedIds)
+        {
+            if (GearItemData.IsCoreGear(id))
+            {
+                Debug.LogWarning($"[RoguelikeRollService] Ignored Core Engine gearId '{id}' in reward roll.");
+                return;
+            }
+
             GearItem g = catalog.Get(id);
             if (g == null)
             {
                 Debug.LogError($"[RoguelikeRollService] Roll referenced unknown gearId '{id}'.");
+                return;
+            }
+
+            if (!selectedIds.Add(id))
+            {
                 return;
             }
 

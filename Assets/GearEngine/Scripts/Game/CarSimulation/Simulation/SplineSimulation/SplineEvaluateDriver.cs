@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using GearEngine.CarSimulation.Entity;
+using GearEngine.CarSimulation.Definitions;
 using GearEngine.CarSimulation.SplineSimulation;
+using GearEngine.CarSimulation.Tracks;
 using UnityEngine;
 using UnityEngine.Splines;
 using VContainer.Unity;
@@ -19,22 +21,29 @@ namespace GearEngine.CarSimulation.SplineSimulation
     /// <see cref="Transform"/> reference each tick.
     /// </para>
     /// <para>
-    /// [OUTLIER JUSTIFICATION] 
-    /// This class is intentionally kept as a monolithic God Object (1000+ lines) to ensure perfectly 
-    /// deterministic, frame-tight execution order for the entire spline simulation pipeline 
-    /// (Speed -> T Advancement -> Lateral Offset -> Visuals -> Transform). Splitting this into multiple 
+    /// [OUTLIER JUSTIFICATION]
+    /// This class is intentionally kept as a monolithic God Object (1000+ lines) to ensure perfectly
+    /// deterministic, frame-tight execution order for the entire spline simulation pipeline
+    /// (Speed -> T Advancement -> Lateral Offset -> Visuals -> Transform). Splitting this into multiple
     /// observers or components would introduce state synchronization complexities and performance overhead,
     /// which goes against the requirement of having a lightweight, pure-C# procedural simulation.
     /// </para>
     /// </summary>
     public sealed class SplineEvaluateDriver
     {
+        private const float k_cinematicSnapDuration = 0.4f;
+        private const float k_cinematicDecayDuration = 0.8f;
+
         /// <summary>Fired when the car's <c>t</c> wraps past 1.0 (one lap completed).</summary>
         public event Action<CarEntity> OnLapCompleted;
 
         private readonly SplineDriverConfig config;
         private readonly LaneProfile laneProfile;
-        private readonly float noiseSeed;
+        private int curveDecisionSeed;
+        private IReadOnlyList<TrackThemeDefinition.SurfaceZone> surfaceZones;
+        private float surfaceLateralPush;
+        private float collisionLateralOffset;
+        private bool startLineCrossingPending;
 
         private Spline spline;
         private Transform splineTransform;
@@ -86,13 +95,20 @@ namespace GearEngine.CarSimulation.SplineSimulation
         public bool IsInitialized => isInitialized;
         public bool IsValid => isInitialized && carTransform != null;
         public bool IsPaused => isPaused;
+        public bool IsInStartingGrid => startLineCrossingPending;
+        public bool IsCinematicFinishComplete =>
+            isDoingCinematicFinish && cinematicTimer >= CinematicFinishDurationSeconds;
+        public static float CinematicFinishDurationSeconds =>
+            k_cinematicSnapDuration + k_cinematicDecayDuration;
         public CarEntity CarEntity => carEntity;
+        public Transform CarTransform => carTransform;
+        public Transform TrackTransform => splineTransform;
 
         public SplineEvaluateDriver(SplineDriverConfig config, LaneProfile laneProfile)
         {
             this.config = config ?? throw new ArgumentNullException(nameof(config));
             this.laneProfile = laneProfile;
-            noiseSeed = UnityEngine.Random.Range(0f, 1000f);
+            curveDecisionSeed = UnityEngine.Random.Range(1, int.MaxValue);
         }
 
         public struct TrackCurveEvent
@@ -119,21 +135,36 @@ namespace GearEngine.CarSimulation.SplineSimulation
             CarEntity carEntity,
             DriverPersonality personality)
         {
-            if (splineContainer == null) throw new ArgumentNullException(nameof(splineContainer));
+            if (splineContainer == null)
+            {
+                throw new ArgumentNullException(nameof(splineContainer));
+            }
+
             if (splineContainer.Spline == null || splineContainer.Spline.Count < 2)
             {
                 throw new ArgumentException("[SplineEvaluateDriver] Spline must have at least 2 knots.");
             }
-            if (carTransform == null) throw new ArgumentNullException(nameof(carTransform));
-            if (carEntity == null) throw new ArgumentNullException(nameof(carEntity));
+            if (carTransform == null)
+            {
+                throw new ArgumentNullException(nameof(carTransform));
+            }
+
+            if (carEntity == null)
+            {
+                throw new ArgumentNullException(nameof(carEntity));
+            }
 
             spline = splineContainer.Spline;
             splineTransform = splineContainer.transform;
+            surfaceZones = splineContainer.GetComponentInParent<TrackViewComponent>()?.ActiveTheme?.SurfaceZones;
+            surfaceLateralPush = 0f;
+            collisionLateralOffset = 0f;
+            startLineCrossingPending = false;
             this.carTransform = carTransform;
             this.carEntity = carEntity;
             this.personality = personality;
             splineLength = spline.GetLength();
-            
+
             baseScale = carTransform.localScale;
             smoothedBaseRot = carTransform.rotation;
 
@@ -147,7 +178,7 @@ namespace GearEngine.CarSimulation.SplineSimulation
             if (carTransform != null)
             {
                 System.Type prometeoType = null;
-                foreach (var comp in carTransform.GetComponentsInChildren<MonoBehaviour>(true))
+                foreach (MonoBehaviour comp in carTransform.GetComponentsInChildren<MonoBehaviour>(true))
                 {
                     if (comp != null && comp.GetType().Name == "PrometeoCarController")
                     {
@@ -159,59 +190,82 @@ namespace GearEngine.CarSimulation.SplineSimulation
 
                 if (prometeoType != null && prometeoComponent != null)
                 {
-                        // Ignore the 'useEffects' boolean on the original script, we force VFX if the references exist
-                        hasPrometeoEffects = true;
-                        rlParticle = prometeoType.GetField("RLWParticleSystem")?.GetValue(prometeoComponent) as ParticleSystem;
-                        rrParticle = prometeoType.GetField("RRWParticleSystem")?.GetValue(prometeoComponent) as ParticleSystem;
-                        rlSkid = prometeoType.GetField("RLWTireSkid")?.GetValue(prometeoComponent) as TrailRenderer;
-                        rrSkid = prometeoType.GetField("RRWTireSkid")?.GetValue(prometeoComponent) as TrailRenderer;
-                        
-                        var flObj = prometeoType.GetField("frontLeftMesh")?.GetValue(prometeoComponent) as GameObject;
-                        if (flObj != null) frontLeftWheelTr = flObj.transform;
-                        
-                        var frObj = prometeoType.GetField("frontRightMesh")?.GetValue(prometeoComponent) as GameObject;
-                        
-                        // We need front right wheel correctly
-                        if (frObj != null) frontRightWheelTr = frObj.transform;
+                    // Ignore the 'useEffects' boolean on the original script, we force VFX if the references exist
+                    hasPrometeoEffects = true;
+                    rlParticle = prometeoType.GetField("RLWParticleSystem")?.GetValue(prometeoComponent) as ParticleSystem;
+                    rrParticle = prometeoType.GetField("RRWParticleSystem")?.GetValue(prometeoComponent) as ParticleSystem;
+                    rlSkid = prometeoType.GetField("RLWTireSkid")?.GetValue(prometeoComponent) as TrailRenderer;
+                    rrSkid = prometeoType.GetField("RRWTireSkid")?.GetValue(prometeoComponent) as TrailRenderer;
 
-                        var rlObj = prometeoType.GetField("rearLeftMesh")?.GetValue(prometeoComponent) as GameObject;
-                        if (rlObj != null) rearLeftWheelTr = rlObj.transform;
-                        var rrObj = prometeoType.GetField("rearRightMesh")?.GetValue(prometeoComponent) as GameObject;
-                        if (rrObj != null) rearRightWheelTr = rrObj.transform;
+                    GameObject flObj = prometeoType.GetField("frontLeftMesh")?.GetValue(prometeoComponent) as GameObject;
+                    if (flObj != null)
+                    {
+                        frontLeftWheelTr = flObj.transform;
+                    }
 
-                        // Create front particles for the celebration spin if they don't exist
-                        if (rlParticle != null && frontLeftWheelTr != null)
-                        {
-                            flParticle = UnityEngine.Object.Instantiate(rlParticle.gameObject, carTransform).GetComponent<ParticleSystem>();
-                            flParticle.transform.position = frontLeftWheelTr.position;
-                            // Keep it slightly above ground like the rear ones usually are
-                            flParticle.transform.localPosition = new Vector3(flParticle.transform.localPosition.x, rlParticle.transform.localPosition.y, flParticle.transform.localPosition.z);
-                        }
-                        if (rrParticle != null && frontRightWheelTr != null)
-                        {
-                            frParticle = UnityEngine.Object.Instantiate(rrParticle.gameObject, carTransform).GetComponent<ParticleSystem>();
-                            frParticle.transform.position = frontRightWheelTr.position;
-                            frParticle.transform.localPosition = new Vector3(frParticle.transform.localPosition.x, rrParticle.transform.localPosition.y, frParticle.transform.localPosition.z);
-                        }
-                        
-                        var swObj = prometeoType.GetField("steeringWheel")?.GetValue(prometeoComponent) as GameObject;
-                        if (swObj != null) steeringWheelTr = swObj.transform;
+                    GameObject frObj = prometeoType.GetField("frontRightMesh")?.GetValue(prometeoComponent) as GameObject;
 
-                        // Disable Prometeo so it stops fighting our VFX and wheel rotations!
-                        var prometeoBehaviour = prometeoComponent as Behaviour;
-                        if (prometeoBehaviour != null) prometeoBehaviour.enabled = false;
+                    // We need front right wheel correctly
+                    if (frObj != null)
+                    {
+                        frontRightWheelTr = frObj.transform;
+                    }
 
-                        var rb = prometeoComponent.GetComponent<Rigidbody>();
-                        if (rb == null) rb = carTransform.GetComponentInChildren<Rigidbody>();
-                        if (rb != null)
-                        {
-                            rb.isKinematic = true;
-                        }
+                    GameObject rlObj = prometeoType.GetField("rearLeftMesh")?.GetValue(prometeoComponent) as GameObject;
+                    if (rlObj != null)
+                    {
+                        rearLeftWheelTr = rlObj.transform;
+                    }
+
+                    GameObject rrObj = prometeoType.GetField("rearRightMesh")?.GetValue(prometeoComponent) as GameObject;
+                    if (rrObj != null)
+                    {
+                        rearRightWheelTr = rrObj.transform;
+                    }
+
+                    // Create front particles for the celebration spin if they don't exist
+                    if (rlParticle != null && frontLeftWheelTr != null)
+                    {
+                        flParticle = UnityEngine.Object.Instantiate(rlParticle.gameObject, carTransform).GetComponent<ParticleSystem>();
+                        flParticle.transform.position = frontLeftWheelTr.position;
+                        // Keep it slightly above ground like the rear ones usually are
+                        flParticle.transform.localPosition = new Vector3(flParticle.transform.localPosition.x, rlParticle.transform.localPosition.y, flParticle.transform.localPosition.z);
+                    }
+                    if (rrParticle != null && frontRightWheelTr != null)
+                    {
+                        frParticle = UnityEngine.Object.Instantiate(rrParticle.gameObject, carTransform).GetComponent<ParticleSystem>();
+                        frParticle.transform.position = frontRightWheelTr.position;
+                        frParticle.transform.localPosition = new Vector3(frParticle.transform.localPosition.x, rrParticle.transform.localPosition.y, frParticle.transform.localPosition.z);
+                    }
+
+                    GameObject swObj = prometeoType.GetField("steeringWheel")?.GetValue(prometeoComponent) as GameObject;
+                    if (swObj != null)
+                    {
+                        steeringWheelTr = swObj.transform;
+                    }
+
+                    // Disable Prometeo so it stops fighting our VFX and wheel rotations!
+                    Behaviour prometeoBehaviour = prometeoComponent as Behaviour;
+                    if (prometeoBehaviour != null)
+                    {
+                        prometeoBehaviour.enabled = false;
+                    }
+
+                    Rigidbody rb = prometeoComponent.GetComponent<Rigidbody>();
+                    if (rb == null)
+                    {
+                        rb = carTransform.GetComponentInChildren<Rigidbody>();
+                    }
+
+                    if (rb != null)
+                    {
+                        rb.isKinematic = true;
                     }
                 }
+            }
 
-                isInitialized = true;
-            
+            isInitialized = true;
+
             GenerateTrackPlan();
         }
         /// <summary>Updates the personality stats at runtime (e.g. from UI sliders).</summary>
@@ -221,10 +275,23 @@ namespace GearEngine.CarSimulation.SplineSimulation
             GenerateTrackPlan(); // Regenerate curve strategies based on new personality
         }
 
+        public void SetCurveDecisionSeed(int seed)
+        {
+            if (!isPaused)
+            {
+                throw new InvalidOperationException("[SplineEvaluateDriver] Curve decisions cannot change during a race.");
+            }
+
+            curveDecisionSeed = seed;
+        }
+
         private void GenerateTrackPlan()
         {
             precalculatedCurves.Clear();
-            if (splineLength <= 0f) return;
+            if (splineLength <= 0f)
+            {
+                return;
+            }
 
             float step = 0.005f;
             bool inCurve = false;
@@ -259,7 +326,10 @@ namespace GearEngine.CarSimulation.SplineSimulation
                     currentPeak = 0f;
                 }
             }
-            if (inCurve) AddCurveEvent(peakT, peakSign, curveIndex++, startT, 1f, currentPeak);
+            if (inCurve)
+            {
+                AddCurveEvent(peakT, peakSign, curveIndex++, startT, 1f, currentPeak);
+            }
         }
 
         private void AddCurveEvent(float t, float sign, int curveIndex, float startT, float endT, float peakCurvature)
@@ -272,18 +342,24 @@ namespace GearEngine.CarSimulation.SplineSimulation
 
             // Calculate physical distance from start of curve to apex, and apex to end
             float distStart = t - startT;
-            if (distStart < 0f) distStart += 1f;
-            
+            if (distStart < 0f)
+            {
+                distStart += 1f;
+            }
+
             float distEnd = endT - t;
-            if (distEnd < 0f) distEnd += 1f;
+            if (distEnd < 0f)
+            {
+                distEnd += 1f;
+            }
 
             // Apply risk multiplier to lookahead based on CorneringSkill (100 skill = 0 risk = x mult, 0 skill = 100 risk = y mult)
             float riskMult = Mathf.Lerp(config.riskLookaheadMultiplier.x, config.riskLookaheadMultiplier.y, (100f - personality.CorneringSkill) / 100f);
             float effectiveLookahead = config.curvatureLookaheadMeters * riskMult;
 
             // The preparation distance is relative to the curve's actual entry size + dynamic lookahead based on risk
-            ev.DynamicEntryDist = Mathf.Max((distStart * splineLength) + (effectiveLookahead * 0.5f), effectiveLookahead * 0.8f); 
-            
+            ev.DynamicEntryDist = Mathf.Max((distStart * splineLength) + (effectiveLookahead * 0.5f), effectiveLookahead * 0.8f);
+
             // The exit distance ensures we don't snap back instantly
             ev.DynamicExitDist = Mathf.Max(distEnd * splineLength, effectiveLookahead * 0.2f);
 
@@ -305,28 +381,29 @@ namespace GearEngine.CarSimulation.SplineSimulation
         public TrackCurveEvent EvaluateCurveForLap(TrackCurveEvent baseCurve, float currentT, int currentLap)
         {
             int evaluateLap = currentLap;
-            if (baseCurve.T < 0.2f && currentT > 0.8f) evaluateLap++;
-            else if (baseCurve.T > 0.8f && currentT < 0.2f) evaluateLap--;
-            
-            int seed = baseCurve.CurveIndex * 1337 + evaluateLap * 73;
-            
-            // Use Unity's Random generator for high-quality, perfectly deterministic rolls
-            UnityEngine.Random.State oldState = UnityEngine.Random.state;
-            UnityEngine.Random.InitState(seed);
-            float rollPerfect = UnityEngine.Random.value;
-            float rollMode = UnityEngine.Random.value;
-            float rollDrift = UnityEngine.Random.value;
-            UnityEngine.Random.state = oldState;
+            if (baseCurve.T < 0.2f && currentT > 0.8f)
+            {
+                evaluateLap++;
+            }
+            else if (baseCurve.T > 0.8f && currentT < 0.2f)
+            {
+                evaluateLap--;
+            }
+
+            int seed = unchecked(baseCurve.CurveIndex * 1337 + evaluateLap * 73 + curveDecisionSeed);
+            float rollPerfect = Hash(seed);
+            float rollMode = Hash(unchecked(seed + 719));
+            float rollDrift = Hash(unchecked(seed + 1438));
 
             float perfectChance = personality.CorneringSkill / 100f;
-            
+
             TrackCurveEvent ev = baseCurve;
-            ev.ActiveMode = (rollPerfect <= perfectChance) ? 
-                (CurveMode)Mathf.Clamp(Mathf.FloorToInt(rollMode * 5), 0, 4) : 
+            ev.ActiveMode = (rollPerfect <= perfectChance) ?
+                (CurveMode)Mathf.Clamp(Mathf.FloorToInt(rollMode * 5), 0, 4) :
                 (CurveMode)Mathf.Clamp(5 + Mathf.FloorToInt(rollMode * 5), 5, 9);
-            
+
             float drift = personality.Drift / 100f;
-            float maxDriftChance = 1.0f; 
+            float maxDriftChance = 1.0f;
             ev.WillDrift = rollDrift <= drift * maxDriftChance;
 
             return ev;
@@ -334,14 +411,21 @@ namespace GearEngine.CarSimulation.SplineSimulation
 
         public TrackCurveEvent GetActiveCurve(float currentT, int currentLap)
         {
-            if (precalculatedCurves.Count == 0) return default;
-            
+            if (precalculatedCurves.Count == 0)
+            {
+                return default;
+            }
+
             TrackCurveEvent best = precalculatedCurves[0];
             float minDist = float.MaxValue;
-            foreach (var c in precalculatedCurves)
+            foreach (TrackCurveEvent c in precalculatedCurves)
             {
                 float dist = Mathf.Abs(c.T - currentT);
-                if (dist > 0.5f) dist = 1f - dist; // wrap around loop
+                if (dist > 0.5f)
+                {
+                    dist = 1f - dist; // wrap around loop
+                }
+
                 if (dist < minDist)
                 {
                     minDist = dist;
@@ -354,19 +438,27 @@ namespace GearEngine.CarSimulation.SplineSimulation
         public void CalculateCurveSeverities(float t, TrackCurveEvent activeCurve, out float currentSeverity, out float upcomingSeverity, out float exitSeverity)
         {
             float signedDistToPeak = (activeCurve.T - t);
-            if (signedDistToPeak > 0.5f) signedDistToPeak -= 1f;
-            if (signedDistToPeak < -0.5f) signedDistToPeak += 1f;
+            if (signedDistToPeak > 0.5f)
+            {
+                signedDistToPeak -= 1f;
+            }
+
+            if (signedDistToPeak < -0.5f)
+            {
+                signedDistToPeak += 1f;
+            }
+
             float distMetersToPeak = signedDistToPeak * splineLength;
 
             // Calculate ONE time for the entire curve (entry to exit) to prevent overlapping bumps
             float totalRadius = (distMetersToPeak > 0f) ? activeCurve.DynamicEntryDist : activeCurve.DynamicExitDist;
-            
+
             // Normalize the distance based on the physical size of the curve side (1 = edge, 0 = apex)
             float normalizedDist = Mathf.Clamp(Mathf.Abs(distMetersToPeak) / totalRadius, 0f, 1f);
-            
+
             // Calculate a single perfect curve. 1 at the apex, 0 at the extreme edges.
             float baseSeverity = 1f - normalizedDist;
-            
+
             // "Dá um smooth dos 80% pro fim porque tá dando uma batidinha"
             // SmoothStep guarantees that the curve approaches 0 perfectly horizontally, preventing any hard snaps or bumps at the edges!
             currentSeverity = Mathf.SmoothStep(0f, 1f, baseSeverity);
@@ -381,9 +473,66 @@ namespace GearEngine.CarSimulation.SplineSimulation
             isPaused = paused;
         }
 
+        public void StopImmediately()
+        {
+            isPaused = true;
+            isDoingCinematicFinish = false;
+            State.Speed = 0f;
+            State.TargetSpeed = 0f;
+            State.IsAccelerating = false;
+            State.IsBraking = false;
+            State.IsDrifting = false;
+        }
+
         public void ApplyJerk(float severity)
         {
             State.Speed *= (1f - severity);
+        }
+
+        public void SetStartProgress(float progress)
+        {
+            if (!isInitialized || !isPaused)
+            {
+                throw new InvalidOperationException("[SplineEvaluateDriver] Start progress can only be set before the car starts.");
+            }
+
+            State.T = SplineCurvatureHelper.WrapT(progress);
+            State.PreviousT = State.T;
+            startLineCrossingPending = false;
+            ApplyTransform(0f);
+        }
+
+        public void SetStartGridPosition(float progress, float lateralOffset)
+        {
+            if (progress >= 0f)
+            {
+                throw new ArgumentOutOfRangeException(nameof(progress), "The grid must start behind the finish line.");
+            }
+
+            SetStartProgress(progress);
+            collisionLateralOffset = Mathf.Clamp(lateralOffset, -config.maxLateralOffset, config.maxLateralOffset);
+            State.LateralOffset = collisionLateralOffset;
+            startLineCrossingPending = true;
+            ApplyTransform(0f);
+        }
+
+        public void ApplyCollisionImpact(float lateralDisplacement, float speedLoss)
+        {
+            if (!IsValid || isPaused)
+            {
+                return;
+            }
+
+            collisionLateralOffset = Mathf.Clamp(
+                collisionLateralOffset + lateralDisplacement,
+                -config.maxLateralOffset,
+                config.maxLateralOffset);
+            State.LateralOffset = Mathf.Clamp(
+                State.LateralOffset + lateralDisplacement,
+                -config.maxLateralOffset * 1.5f,
+                config.maxLateralOffset * 1.5f);
+            State.Speed = Mathf.Max(0f, State.Speed * (1f - Mathf.Clamp01(speedLoss)));
+            ApplyTransform(0f);
         }
 
         /// <summary>
@@ -393,7 +542,10 @@ namespace GearEngine.CarSimulation.SplineSimulation
         /// </summary>
         public void Tick(float dt)
         {
-            if (!isInitialized || dt <= 0f) return;
+            if (!isInitialized || dt <= 0f)
+            {
+                return;
+            }
 
             if (isDoingCinematicFinish)
             {
@@ -438,26 +590,37 @@ namespace GearEngine.CarSimulation.SplineSimulation
 
             // Sample current curvature
             State.Curvature = SplineCurvatureHelper.SampleCurvatureAt(spline, splineLength, State.T, out State.SignedCurvature);
-            
+
             // Get the planned curve and calculate severities
             TrackCurveEvent activeCurve = GetActiveCurve(State.T, State.CompletedLaps);
             CalculateCurveSeverities(State.T, activeCurve, out float currentSeverity, out float upcomingSeverity, out float exitSeverity);
-            
+
             float speedSeverity = Mathf.Max(currentSeverity, upcomingSeverity);
-            
+
             // Perfect curves drop speed smoothly, bottoming out at minCurveSpeed for sharpest curves
             float safeCurveSpeed = Mathf.Max(config.minCurveSpeed, maxSpeed * 0.6f);
             State.TargetSpeed = Mathf.Lerp(maxSpeed, safeCurveSpeed, speedSeverity);
-            
+
             float signedDistToPeak = (activeCurve.T - State.T);
-            if (signedDistToPeak > 0.5f) signedDistToPeak -= 1f;
-            if (signedDistToPeak < -0.5f) signedDistToPeak += 1f;
-            
+            if (signedDistToPeak > 0.5f)
+            {
+                signedDistToPeak -= 1f;
+            }
+
+            if (signedDistToPeak < -0.5f)
+            {
+                signedDistToPeak += 1f;
+            }
+
             if (State.IsInCurveSequence && (int)State.ActiveCurveMode >= 5)
             {
                 // Failed curves force a hard brake down to the minimum speed limits!
                 State.TargetSpeed = Mathf.Lerp(maxSpeed, config.minCurveSpeed, currentSeverity);
             }
+
+            GetSurfaceModifiers(State.T, out float surfaceSpeedMultiplier, out float lateralPush);
+            State.TargetSpeed *= surfaceSpeedMultiplier;
+            surfaceLateralPush = Mathf.MoveTowards(surfaceLateralPush, lateralPush, dt * 2f);
 
             // ── DELAYED EXIT EFFECTS (PENALTY) ──
             if (signedDistToPeak > 0f && currentSeverity < 0.2f)
@@ -473,11 +636,11 @@ namespace GearEngine.CarSimulation.SplineSimulation
             if (isAtEndOfExit)
             {
                 bool isFailure = (int)State.ActiveCurveMode >= 5;
-                
+
                 if (isFailure && !State.HasFailedThisCurve)
                 {
                     // "perder um pouco mais de velocidade" -> 10% speed drop at the physical exit!
-                    State.Speed *= 0.90f; 
+                    State.Speed *= 0.90f;
                     State.HasFailedThisCurve = true;
                 }
             }
@@ -497,13 +660,39 @@ namespace GearEngine.CarSimulation.SplineSimulation
             }
         }
 
+        private void GetSurfaceModifiers(float normalizedPosition, out float speedMultiplier, out float lateralPush)
+        {
+            speedMultiplier = 1f;
+            lateralPush = 0f;
+            if (surfaceZones == null)
+            {
+                return;
+            }
+
+            foreach (TrackThemeDefinition.SurfaceZone zone in surfaceZones)
+            {
+                if (zone == null || !zone.Contains(normalizedPosition) || Mathf.Abs(State.LateralOffset) > zone.Width * 0.5f)
+                {
+                    continue;
+                }
+
+                speedMultiplier = Mathf.Min(speedMultiplier, zone.SpeedMultiplier);
+                lateralPush += zone.LateralPush;
+            }
+
+            lateralPush = Mathf.Clamp(lateralPush, -1f, 1f);
+        }
+
         // ====================================================================
         // T Advancement (M2)
         // ====================================================================
 
         private void AdvanceT(float dt)
         {
-            if (splineLength <= 0f) return;
+            if (splineLength <= 0f)
+            {
+                return;
+            }
 
             float distanceThisFrame = State.Speed * dt;
             State.T += distanceThisFrame / splineLength;
@@ -512,6 +701,12 @@ namespace GearEngine.CarSimulation.SplineSimulation
             if (State.T >= 1f)
             {
                 State.T -= 1f;
+                if (startLineCrossingPending)
+                {
+                    startLineCrossingPending = false;
+                    return;
+                }
+
                 State.CompletedLaps++;
 
                 try
@@ -536,8 +731,16 @@ namespace GearEngine.CarSimulation.SplineSimulation
             float line = 0f;
 
             float signedDistToPeak = (curve.T - t);
-            if (signedDistToPeak > 0.5f) signedDistToPeak -= 1f;
-            if (signedDistToPeak < -0.5f) signedDistToPeak += 1f;
+            if (signedDistToPeak > 0.5f)
+            {
+                signedDistToPeak -= 1f;
+            }
+
+            if (signedDistToPeak < -0.5f)
+            {
+                signedDistToPeak += 1f;
+            }
+
             float distMetersToPeak = signedDistToPeak * splineLength;
 
             float totalRadius = (distMetersToPeak > 0f) ? curve.DynamicEntryDist : curve.DynamicExitDist;
@@ -547,54 +750,75 @@ namespace GearEngine.CarSimulation.SplineSimulation
             switch (curve.ActiveMode)
             {
                 // Hug Inside: dives to the inside at the apex.
-                case CurveMode.PerfectHugInside: 
-                    line = inside * cur; 
+                case CurveMode.PerfectHugInside:
+                    line = inside * cur;
                     break;
-                
+
                 // Out-In-Out: Starts center, goes heavily outside during entry, dives inside at apex, heavily outside during exit.
-                case CurveMode.PerfectOutInOut: 
-                    line = inside * cur + outsd * (n * n * cur * 5f); 
+                case CurveMode.PerfectOutInOut:
+                    line = inside * cur + outsd * (n * n * cur * 5f);
                     break;
 
                 // Late Apex: Exaggerated outside line during entry, cuts inside.
                 case CurveMode.PerfectLateApex:
-                    if (n > 0f) line = outsd * cur * n * 4f;
-                    else line = inside * cur * -n * 4f;
+                    if (n > 0f)
+                    {
+                        line = outsd * cur * n * 4f;
+                    }
+                    else
+                    {
+                        line = inside * cur * -n * 4f;
+                    }
+
                     break;
 
                 // Early Apex: Exaggerated inside dive during entry, drifts outside.
                 case CurveMode.PerfectEarlyApex:
-                    if (n > 0f) line = inside * cur * n * 4f;
-                    else line = outsd * cur * -n * 4f;
+                    if (n > 0f)
+                    {
+                        line = inside * cur * n * 4f;
+                    }
+                    else
+                    {
+                        line = outsd * cur * -n * 4f;
+                    }
+
                     break;
 
-                case CurveMode.PerfectCenter: 
-                    line = 0f; 
+                case CurveMode.PerfectCenter:
+                    line = 0f;
                     break;
 
                 // Failed Modes
-                case CurveMode.FailedInOutIn: 
+                case CurveMode.FailedInOutIn:
                     line = inside * cur + outsd * (n * n * cur * 6f);
                     break;
-                
-                case CurveMode.FailedHugOutside: 
-                    line = outsd * cur * 2f; 
+
+                case CurveMode.FailedHugOutside:
+                    line = outsd * cur * 2f;
                     break;
-                
-                case CurveMode.FailedWobble: 
+
+                case CurveMode.FailedWobble:
                     // Wobble rapidly between inside and outside heavily
-                    line = Mathf.Sin(n * Mathf.PI * 4f) * cur * outsd * 3f; 
+                    line = Mathf.Sin(n * Mathf.PI * 4f) * cur * outsd * 3f;
                     break;
-                
-                case CurveMode.FailedBalk: 
+
+                case CurveMode.FailedBalk:
                     // Sudden violent jerk outside precisely at the apex
-                    line = outsd * Mathf.Pow(cur, 3f) * 3f; 
+                    line = outsd * Mathf.Pow(cur, 3f) * 3f;
                     break;
-                
-                case CurveMode.FailedOvershoot: 
+
+                case CurveMode.FailedOvershoot:
                     // Misses the apex entirely and drifts massively outside during the exit
-                    if (n < 0f) line = outsd * cur * -n * 6f;
-                    else line = outsd * cur * n * 2f;
+                    if (n < 0f)
+                    {
+                        line = outsd * cur * -n * 6f;
+                    }
+                    else
+                    {
+                        line = outsd * cur * n * 2f;
+                    }
+
                     break;
             }
             return line * config.maxLateralOffset;
@@ -602,27 +826,33 @@ namespace GearEngine.CarSimulation.SplineSimulation
 
         public float GetPredictedLateralOffset(float t, int currentLap)
         {
-            if (precalculatedCurves == null || precalculatedCurves.Count == 0) return 0f;
-            
+            if (precalculatedCurves == null || precalculatedCurves.Count == 0)
+            {
+                return 0f;
+            }
+
             float totalDynamicOffset = 0f;
-            foreach (var baseCurve in precalculatedCurves)
+            foreach (TrackCurveEvent baseCurve in precalculatedCurves)
             {
                 TrackCurveEvent evaluatedCurve = EvaluateCurveForLap(baseCurve, t, currentLap);
                 CalculateCurveSeverities(t, evaluatedCurve, out float cur, out float up, out float ex);
-                
+
                 float severitySum = cur + up + ex;
-                if (severitySum <= 0f) continue;
+                if (severitySum <= 0f)
+                {
+                    continue;
+                }
 
                 float line = GetRacingLineOffset(t, evaluatedCurve, cur);
-                
+
                 float lineMultiplier = 1f;
-                if ((int)evaluatedCurve.ActiveMode >= 5) 
+                if ((int)evaluatedCurve.ActiveMode >= 5)
                 {
                     float errorMagnitude = 1f - (personality.Precision / 100f);
                     // "sair um pouquinho mais da curva ao errar"
-                    lineMultiplier = 1f + (errorMagnitude * 4f); 
+                    lineMultiplier = 1f + (errorMagnitude * 4f);
                 }
-                
+
                 totalDynamicOffset += line * lineMultiplier;
             }
 
@@ -631,38 +861,53 @@ namespace GearEngine.CarSimulation.SplineSimulation
 
         private void TickLateralOffset(float dt)
         {
+            if (startLineCrossingPending)
+            {
+                // Hold the assigned grid lane until the car crosses the line. Curve and
+                // surface offsets must not steer a stationary or launching car sideways.
+                smoothedRacingLine = 0f;
+                State.IsInCurveSequence = false;
+                State.WillDriftCurrentCurve = false;
+                State.RawLateralOffset = collisionLateralOffset;
+                State.LateralOffset = collisionLateralOffset;
+                return;
+            }
+
             float t = State.T;
-            
+
             // Blend all overlapping curves smoothly instead of snapping when the closest curve changes
             float totalDynamicOffset = 0f;
             State.IsInCurveSequence = false;
             State.WillDriftCurrentCurve = false;
-            
+
             float maxSeverity = 0f;
             TrackCurveEvent dominantCurve = default;
 
-            foreach (var baseCurve in precalculatedCurves)
+            foreach (TrackCurveEvent baseCurve in precalculatedCurves)
             {
                 TrackCurveEvent evaluatedCurve = EvaluateCurveForLap(baseCurve, t, State.CompletedLaps);
                 CalculateCurveSeverities(t, evaluatedCurve, out float cur, out float up, out float ex);
-                
+
                 float severitySum = cur + up + ex;
-                if (severitySum <= 0f) continue;
+                if (severitySum <= 0f)
+                {
+                    continue;
+                }
 
                 State.IsInCurveSequence = true;
-                
+
                 float line = GetRacingLineOffset(t, evaluatedCurve, cur);
-                
+
                 float lineMultiplier = 1f;
                 if ((int)evaluatedCurve.ActiveMode >= 5) // Failed modes
                 {
                     float errorMagnitude = 1f - (personality.Precision / 100f);
                     // "sair um pouquinho mais da curva ao errar"
-                    lineMultiplier = 1f + (errorMagnitude * 4f); 
+                    lineMultiplier = 1f + (errorMagnitude * 4f);
                 }
-                
+
                 totalDynamicOffset += line * lineMultiplier;
-                
+
                 if (severitySum > maxSeverity)
                 {
                     maxSeverity = severitySum;
@@ -680,7 +925,8 @@ namespace GearEngine.CarSimulation.SplineSimulation
             // Smooth the racing line calculation.
             smoothedRacingLine = Mathf.MoveTowards(smoothedRacingLine, totalDynamicOffset, dt * 10f); // Max 10m/s lateral shift
 
-            float rawOffset = smoothedRacingLine;
+            collisionLateralOffset = Mathf.MoveTowards(collisionLateralOffset, 0f, dt * 1.5f);
+            float rawOffset = smoothedRacingLine + surfaceLateralPush + collisionLateralOffset;
 
             // ── Authored Lane Profile ───────────────────────────────────────────
             if (State.IsInCurveSequence && laneProfile != null)
@@ -694,7 +940,10 @@ namespace GearEngine.CarSimulation.SplineSimulation
 
             // Clamp the offset. If they failed the curve, allow them to slide up to 50% OUTSIDE the track bounds!
             float maxBounds = config.maxLateralOffset;
-            if ((int)State.ActiveCurveMode >= 5) maxBounds *= 1.5f; 
+            if ((int)State.ActiveCurveMode >= 5)
+            {
+                maxBounds *= 1.5f;
+            }
 
             State.RawLateralOffset = Mathf.Clamp(rawOffset, -maxBounds, maxBounds);
 
@@ -702,7 +951,7 @@ namespace GearEngine.CarSimulation.SplineSimulation
             if (!State.IsInCurveSequence)
             {
                 // When we are on a straight, we recover much more slowly (85% slower) for a very smooth and natural recentering
-                targetSmoothRate = config.lateralSmoothRate * 0.15f; 
+                targetSmoothRate = config.lateralSmoothRate * 0.15f;
             }
             else
             {
@@ -717,7 +966,7 @@ namespace GearEngine.CarSimulation.SplineSimulation
         // ====================================================================
         // Visuals (M5)
         // ====================================================================
-        
+
         private void TickVisuals(float dt)
         {
             if (State.IsDrifting)
@@ -742,10 +991,10 @@ namespace GearEngine.CarSimulation.SplineSimulation
             float offsetRate = (dt > 0f)
                 ? (State.LateralOffset - State.PreviousLateralOffset) / dt
                 : 0f;
-                
+
             // Calculate the true velocity heading angle relative to the spline tangent
             float velocityAngle = Mathf.Atan2(offsetRate, Mathf.Max(State.Speed, 5f)) * Mathf.Rad2Deg;
-            
+
             // Apply natural heading + config scaling
             float targetSlip = velocityAngle * config.slipAngleScale;
 
@@ -756,22 +1005,22 @@ namespace GearEngine.CarSimulation.SplineSimulation
             {
                 TrackCurveEvent activeCurve = GetActiveCurve(State.T, State.CompletedLaps);
                 CalculateCurveSeverities(State.T, activeCurve, out float currentSeverity, out float upcomingSeverity, out float exitSeverity);
-                
+
                 // ── NATURAL CURVE INCLINATION ──
                 // Naturally leans the car into the corner even when not shifting laterally or explicitly drifting.
                 // Gives the visual impression of "taking a curve".
-                targetSlip += activeCurve.Sign * (currentSeverity + upcomingSeverity * 0.5f) * 15f; 
+                targetSlip += activeCurve.Sign * (currentSeverity + upcomingSeverity * 0.5f) * 15f;
 
                 // ── EXPLICIT DRIFT ──
                 if (State.WillDriftCurrentCurve)
                 {
                     // Maximize severity so the drift angle sets up BEFORE the apex.
                     driftSeverityForVFX = Mathf.Max(currentSeverity, upcomingSeverity);
-                    
+
                     // In Mario Kart, the car twists sideways MID-AIR during the hop!
                     float explicitDrift = activeCurve.Sign * driftSeverityForVFX * 45f;
                     targetSlip += explicitDrift;
-                    
+
                     maxAllowedSlip = 60f;
                 }
             }
@@ -783,21 +1032,25 @@ namespace GearEngine.CarSimulation.SplineSimulation
             if (State.DriftAnticipationTimer > 0f)
             {
                 State.DriftAnticipationTimer -= dt;
-                
+
                 // Parabola: y = 4 * h * (t / d) * (1 - t / d)
                 float jumpDuration = totalJumpDuration > 0f ? totalJumpDuration : 0.35f;
                 float tJump = jumpDuration - State.DriftAnticipationTimer;
                 float normalizedT = Mathf.Clamp01(tJump / jumpDuration);
-                
+
                 float jumpHeight = 1.2f * State.JumpHeightMultiplier; // Exaggerated arcade hop height in meters
                 State.JumpOffset = 4f * jumpHeight * normalizedT * (1f - normalizedT);
-                
+
                 if (visualDriftCombo > 1 && !isDoingCinematicFinish && canCelebrateCurrentJump)
                 {
                     float easedT = normalizedT * (2f - normalizedT); // Ease Out Quad
                     float totalSpins = 1f; // User requested EXACTLY ONE spin falling into drift position
                     float spinSign = Mathf.Sign(State.CurrentCurveSign);
-                    if (spinSign == 0f) spinSign = 1f;
+                    if (spinSign == 0f)
+                    {
+                        spinSign = 1f;
+                    }
+
                     State.CelebrationSpinAngle = easedT * totalSpins * 360f * spinSign;
                 }
                 else
@@ -820,33 +1073,36 @@ namespace GearEngine.CarSimulation.SplineSimulation
                 if (driftSeverityForVFX > 0.02f && !State.HasJumpedThisCurve && !isDoingCinematicFinish)
                 {
                     State.HasJumpedThisCurve = true;
-                    
+
                     TrackCurveEvent activeCurveForJump = GetActiveCurve(State.T, State.CompletedLaps);
-                    
+
                     // The correct physical length of the curve is Entry + Exit distance
                     float driftLength = activeCurveForJump.DynamicEntryDist + activeCurveForJump.DynamicExitDist;
-                    
+
                     // Em baixa velocidade (-100 km/h) ou curvas muito curtas, não pula!
                     float speedKmh = State.Speed * 3.6f;
                     if (speedKmh >= 100f && driftLength > 15f)
                     {
-                        if (visualDriftGraceTimer > 0f) {
+                        if (visualDriftGraceTimer > 0f)
+                        {
                             visualDriftCombo++;
-                        } else {
+                        }
+                        else
+                        {
                             visualDriftCombo = 1;
                         }
-                        
+
                         // Limit height combo to avoid jumps getting too high
                         float comboBonus = Mathf.Min((visualDriftCombo - 1) * 0.02f, 0.1f);
                         State.JumpHeightMultiplier = 1f + comboBonus;
                         totalJumpDuration = 0.35f + Mathf.Min((visualDriftCombo - 1) * 0.1f, 0.4f);
                         totalJumpDuration = Mathf.Min(totalJumpDuration, 0.8f);
-                        
-                        State.DriftAnticipationTimer = totalJumpDuration; 
-                        
+
+                        State.DriftAnticipationTimer = totalJumpDuration;
+
                         // Curvas muito íngremes (fechadas) pulam menos (0.1), curvas abertas pulam mais (0.3).
                         float curveMildness = Mathf.InverseLerp(0.20f, 0.04f, activeCurveForJump.PeakCurvature);
-                        
+
                         State.JumpScaleIntensity = Mathf.Lerp(0.1f, 0.3f, curveMildness) + comboBonus;
 
                         // Só faz o giro em combos e se o drift não for muito curto (mas já filtramos curvas menores que 15m)
@@ -859,8 +1115,8 @@ namespace GearEngine.CarSimulation.SplineSimulation
                         State.JumpHeightMultiplier = 1f;
                         totalJumpDuration = 0f;
                         canCelebrateCurrentJump = false;
-                        
-                        // Se a curva é minúscula ou o carro está devagar, apenas ignora o pulo. 
+
+                        // Se a curva é minúscula ou o carro está devagar, apenas ignora o pulo.
                         // O combo não incrementa nem zera.
                     }
                 }
@@ -868,7 +1124,7 @@ namespace GearEngine.CarSimulation.SplineSimulation
                 // Actually drift only after the jump finishes!
                 if (State.DriftAnticipationTimer <= 0f)
                 {
-                    State.IsDrifting = driftSeverityForVFX > 0.05f; 
+                    State.IsDrifting = driftSeverityForVFX > 0.05f;
                 }
             }
 
@@ -882,34 +1138,41 @@ namespace GearEngine.CarSimulation.SplineSimulation
                 // Particle Systems (Rear wheels always on drift, all 4 wheels on spin)
                 if (rlParticle != null)
                 {
-                    var em = rlParticle.emission;
-                    if (showDriftVfx || isSpinning) { if (!rlParticle.isPlaying) rlParticle.Play(); em.enabled = true; }
-                    else { if (rlParticle.isPlaying) rlParticle.Stop(); em.enabled = false; }
+                    ParticleSystem.EmissionModule em = rlParticle.emission;
+                    if (showDriftVfx || isSpinning) { if (!rlParticle.isPlaying) { rlParticle.Play(); } em.enabled = true; }
+                    else { if (rlParticle.isPlaying) { rlParticle.Stop(); } em.enabled = false; }
                 }
                 if (rrParticle != null)
                 {
-                    var em = rrParticle.emission;
-                    if (showDriftVfx || isSpinning) { if (!rrParticle.isPlaying) rrParticle.Play(); em.enabled = true; }
-                    else { if (rrParticle.isPlaying) rrParticle.Stop(); em.enabled = false; }
+                    ParticleSystem.EmissionModule em = rrParticle.emission;
+                    if (showDriftVfx || isSpinning) { if (!rrParticle.isPlaying) { rrParticle.Play(); } em.enabled = true; }
+                    else { if (rrParticle.isPlaying) { rrParticle.Stop(); } em.enabled = false; }
                 }
-                
+
                 // Front wheels ONLY during the spin celebration
                 if (flParticle != null)
                 {
-                    var em = flParticle.emission;
-                    if (isSpinning) { if (!flParticle.isPlaying) flParticle.Play(); em.enabled = true; }
-                    else { if (flParticle.isPlaying) flParticle.Stop(); em.enabled = false; }
+                    ParticleSystem.EmissionModule em = flParticle.emission;
+                    if (isSpinning) { if (!flParticle.isPlaying) { flParticle.Play(); } em.enabled = true; }
+                    else { if (flParticle.isPlaying) { flParticle.Stop(); } em.enabled = false; }
                 }
                 if (frParticle != null)
                 {
-                    var em = frParticle.emission;
-                    if (isSpinning) { if (!frParticle.isPlaying) frParticle.Play(); em.enabled = true; }
-                    else { if (frParticle.isPlaying) frParticle.Stop(); em.enabled = false; }
+                    ParticleSystem.EmissionModule em = frParticle.emission;
+                    if (isSpinning) { if (!frParticle.isPlaying) { frParticle.Play(); } em.enabled = true; }
+                    else { if (frParticle.isPlaying) { frParticle.Stop(); } em.enabled = false; }
                 }
 
                 // Skid Trails
-                if (rlSkid != null) rlSkid.emitting = showDriftVfx;
-                if (rrSkid != null) rrSkid.emitting = showDriftVfx;
+                if (rlSkid != null)
+                {
+                    rlSkid.emitting = showDriftVfx;
+                }
+
+                if (rrSkid != null)
+                {
+                    rrSkid.emitting = showDriftVfx;
+                }
             }
 
             // Calculate Steer Angle (Visual Only)
@@ -918,15 +1181,15 @@ namespace GearEngine.CarSimulation.SplineSimulation
             {
                 // Normal steering into curve
                 targetSteerAngle = State.SignedCurvature * 200f;
-                
+
                 // If drifting, counter-steer! The wheels must point opposite to the car's body yaw (SlipAngle).
                 if (State.IsDrifting && State.WillDriftCurrentCurve)
                 {
                     // Counter-steer aligns wheels with the velocity tangent by turning inverse to the body yaw.
-                    targetSteerAngle = -State.SlipAngle * 0.85f; 
+                    targetSteerAngle = -State.SlipAngle * 0.85f;
                 }
             }
-            
+
             targetSteerAngle = Mathf.Clamp(targetSteerAngle, -45f, 45f);
             visualSteerAngle = Mathf.Lerp(visualSteerAngle, targetSteerAngle, dt * 15f);
 
@@ -969,7 +1232,7 @@ namespace GearEngine.CarSimulation.SplineSimulation
             float speedNorm = State.Speed / maxSpeed;
             float recklessness = 1f - (personality.Smoothness / 100f);
             float bounceMult = 1f + (recklessness * 5f);
-            
+
             State.SuspensionOffset = Mathf.Sin(Time.time * config.suspensionBobFrequency * bounceMult * Mathf.Max(speedNorm, 0.1f))
                                      * config.suspensionBobAmplitude * speedNorm * bounceMult;
 
@@ -979,19 +1242,19 @@ namespace GearEngine.CarSimulation.SplineSimulation
             {
                 TrackCurveEvent activeCurve = GetActiveCurve(State.T, State.CompletedLaps);
                 CalculateCurveSeverities(State.T, activeCurve, out float currentSeverity, out float upcomingSeverity, out float _);
-                
+
                 float severity = Mathf.Max(currentSeverity, upcomingSeverity);
-                
+
                 // Base inclination (subtle but noticeable)
-                targetBodyRoll = activeCurve.Sign * severity * 4f; 
-                
+                targetBodyRoll = activeCurve.Sign * severity * 4f;
+
                 // Amplify significantly during drift
                 if (State.IsDrifting)
                 {
                     targetBodyRoll = activeCurve.Sign * severity * 20f;
                 }
             }
-            
+
             // Smoothly interpolate current body roll towards the target
             State.BodyRoll = Mathf.Lerp(State.BodyRoll, targetBodyRoll, dt * 8f);
 
@@ -1000,7 +1263,7 @@ namespace GearEngine.CarSimulation.SplineSimulation
             {
                 TrackCurveEvent activeCurve = GetActiveCurve(State.T, State.CompletedLaps);
                 CalculateCurveSeverities(State.T, activeCurve, out float currentSeverity, out float _, out float _);
-                
+
                 // Add violent un-smoothed jitter to instantly readable variables to show loss of control
                 State.BodyRoll += Mathf.Sin(Time.time * 60f) * (currentSeverity * 12f);
                 State.SuspensionOffset += Mathf.Cos(Time.time * 75f) * (currentSeverity * 0.3f);
@@ -1038,13 +1301,13 @@ namespace GearEngine.CarSimulation.SplineSimulation
             Quaternion baseTargetRot = slipRot * rollRot * baseRot;
 
             carTransform.position = finalPos;
-            
+
             // In Orthographic cameras, Y-axis translation is barely visible.
             // We scale the car up during a jump to create a faux perspective "pop".
             // Since JumpOffset peaks at 1.2, we divide by 1.2 to normalize it, then multiply by the calculated intensity (0.1 to 0.4).
-            float scaleMultiplier = 1f + (State.JumpScaleIntensity * (State.JumpOffset / 1.2f)); 
+            float scaleMultiplier = 1f + (State.JumpScaleIntensity * (State.JumpOffset / 1.2f));
             carTransform.localScale = baseScale * scaleMultiplier;
-            
+
             if (isDoingCinematicFinish)
             {
                 cinematicTrackRot = baseTargetRot;
@@ -1077,11 +1340,16 @@ namespace GearEngine.CarSimulation.SplineSimulation
 
         public void TriggerCinematicFinish()
         {
+            if (isDoingCinematicFinish)
+            {
+                return;
+            }
+
             isDoingCinematicFinish = true;
             cinematicTimer = 0f;
             cinematicSpeed = State.Speed;
             cinematicInitialRot = carTransform.rotation;
-            
+
             TrackCurveEvent nextCurve = GetActiveCurve(State.T, State.CompletedLaps);
             cinematicSlideDir = nextCurve.Sign != 0 ? Mathf.Sign(nextCurve.Sign) : 1f;
 
@@ -1091,20 +1359,17 @@ namespace GearEngine.CarSimulation.SplineSimulation
         private void TickCinematicFinish(float dt)
         {
             cinematicTimer += dt;
-            
-            float snapDuration = 0.4f;
-            float totalDuration = 0.8f; // 20% shorter (originally decay was 1.0f, now 0.8f)
-            
-            if (cinematicTimer <= snapDuration)
+
+            if (cinematicTimer <= k_cinematicSnapDuration)
             {
-                float t = cinematicTimer / snapDuration;
+                float t = cinematicTimer / k_cinematicSnapDuration;
                 t = 1f - Mathf.Pow(1f - t, 3f);
                 State.Speed = Mathf.Lerp(cinematicSpeed, cinematicSpeed * 0.8f, t);
             }
             else
             {
-                float timeSinceSnap = cinematicTimer - snapDuration;
-                float decayFactor = Mathf.Clamp01(timeSinceSnap / totalDuration);
+                float timeSinceSnap = cinematicTimer - k_cinematicSnapDuration;
+                float decayFactor = Mathf.Clamp01(timeSinceSnap / k_cinematicDecayDuration);
                 State.Speed = Mathf.Lerp(cinematicSpeed * 0.8f, 0f, decayFactor);
             }
 
@@ -1117,32 +1382,62 @@ namespace GearEngine.CarSimulation.SplineSimulation
             float driftAngle = 80f * cinematicSlideDir;
             Quaternion akiraRot = cinematicTrackRot * Quaternion.Euler(0, driftAngle, 0);
 
-            if (cinematicTimer <= snapDuration)
+            if (cinematicTimer <= k_cinematicSnapDuration)
             {
-                float t = cinematicTimer / snapDuration;
+                float t = cinematicTimer / k_cinematicSnapDuration;
                 t = 1f - Mathf.Pow(1f - t, 3f);
-                
+
                 carTransform.rotation = Quaternion.Slerp(cinematicInitialRot, akiraRot, t);
             }
             else
             {
-                float timeSinceSnap = cinematicTimer - snapDuration;
-                float decayFactor = Mathf.Clamp01(timeSinceSnap / totalDuration);
-                
+                float timeSinceSnap = cinematicTimer - k_cinematicSnapDuration;
+                float decayFactor = Mathf.Clamp01(timeSinceSnap / k_cinematicDecayDuration);
+
                 float wobbleFrequency = 15f;
-                float wobbleAmplitude = Mathf.Lerp(3f, 0f, decayFactor); 
+                float wobbleAmplitude = Mathf.Lerp(3f, 0f, decayFactor);
                 float wobbleAngle = Mathf.Sin(timeSinceSnap * wobbleFrequency) * wobbleAmplitude;
-                
+
                 carTransform.rotation = akiraRot * Quaternion.Euler(wobbleAngle, 0, wobbleAngle * cinematicSlideDir);
             }
 
-            // VFX
-            if (hasPrometeoEffects)
+            UpdateCinematicFinishEffects(!IsCinematicFinishComplete);
+        }
+
+        private void UpdateCinematicFinishEffects(bool active)
+        {
+            if (!hasPrometeoEffects)
             {
-                if (rlParticle != null && !rlParticle.isPlaying) rlParticle.Play();
-                if (rrParticle != null && !rrParticle.isPlaying) rrParticle.Play();
-                if (rlSkid != null) rlSkid.emitting = true;
-                if (rrSkid != null) rrSkid.emitting = true;
+                return;
+            }
+
+            SetParticlePlaying(rlParticle, active);
+            SetParticlePlaying(rrParticle, active);
+            if (rlSkid != null)
+            {
+                rlSkid.emitting = active;
+            }
+
+            if (rrSkid != null)
+            {
+                rrSkid.emitting = active;
+            }
+        }
+
+        private void SetParticlePlaying(ParticleSystem particle, bool active)
+        {
+            if (particle == null || particle.isPlaying == active)
+            {
+                return;
+            }
+
+            if (active)
+            {
+                particle.Play();
+            }
+            else
+            {
+                particle.Stop();
             }
         }
 

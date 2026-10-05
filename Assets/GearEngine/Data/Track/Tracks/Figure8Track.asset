@@ -13,10 +13,13 @@ MonoBehaviour:
   m_Name: Figure8Track
   m_EditorClassIdentifier: Game.CarSimulation::GearEngine.CarSimulation.Definitions.TrackDefinition
   trackName: Figure8
+  theme: {fileID: 11400000, guid: 40e1baabd9a174b7f840221bdcf554a0, type: 2}
+  visualVariant: 2
+  opponents: []
   scale: 0.5
   offset: {x: 0, y: 0, z: 0}
-  totalLaps: 4
-  timeToBeatSeconds: 70.332756
+  totalLaps: 3
+  timeToBeatSeconds: 52.749565
   spline:
     m_EditModeType: 1
     m_Knots:
@@ -192,12 +195,12 @@ MonoBehaviour:
       m_Data: []
   baseGoldReward: 40
   tiers:
-  - targetTimeSeconds: 56.266205
-    targetScore: 5000
+  - targetTimeSeconds: 42.199654
+    targetScore: 3750
     goldReward: 1000
-  - targetTimeSeconds: 73.84939
-    targetScore: 3000
+  - targetTimeSeconds: 55.387043
+    targetScore: 2250
     goldReward: 500
-  - targetTimeSeconds: 91.43258
-    targetScore: 1000
+  - targetTimeSeconds: 68.57443
+    targetScore: 750
     goldReward: 200

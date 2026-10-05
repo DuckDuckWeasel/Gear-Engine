@@ -3,7 +3,10 @@ using GearEngine.Campaign.Presentation;
 using GearEngine.CarSimulation.Definitions;
 using GearEngine.GearEngine.Config;
 using NUnit.Framework;
+using Scaffold.MVVM;
+using UnityEditor;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace GearEngine.Campaign.Tests.Editor
 {
@@ -46,6 +49,41 @@ namespace GearEngine.Campaign.Tests.Editor
                 Assert.That(navigation.OpenedControllers[0], Is.InstanceOf<ReceivedRewardsViewModel>());
             }
             finally { InvokePersistence(result, "CompletePersistence"); }
+        }
+
+        [Test]
+        public void ResultStars_FillHorizontallyFromFinalBankedScore()
+        {
+            TrackDefinition track = CampaignTestUtilities.CreateTrackWithTiersForTests(
+                new TrackTierConfig(1f, 600, 100),
+                new TrackTierConfig(1f, 1800, 100),
+                new TrackTierConfig(1f, 3000, 100));
+            GameObject instance = Object.Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>(
+                "Assets/GearEngine/Prefabs/Campaign/Campaign_ResultPopupView.prefab"));
+            try
+            {
+                ResultPopupView view = instance.GetComponent<ResultPopupView>();
+                ResultPopupViewModel vm = new ResultPopupViewModel(new RaceResultModel(80f, 3, track, 900));
+                vm.Bind(new RecordingNavigation());
+                instance.GetComponent<ViewElement>().Bind(vm);
+
+                SerializedProperty stars = new SerializedObject(view).FindProperty("stars");
+                float[] expected = { 1f, .25f, 0f };
+                for (int i = 0; i < expected.Length; i++)
+                {
+                    Image star = (Image)stars.GetArrayElementAtIndex(i).objectReferenceValue;
+                    Image fill = star.transform.Find("ProgressFill").GetComponent<Image>();
+                    Assert.That(fill.type, Is.EqualTo(Image.Type.Filled));
+                    Assert.That(fill.fillMethod, Is.EqualTo(Image.FillMethod.Horizontal));
+                    Assert.That(fill.fillOrigin, Is.EqualTo((int)Image.OriginHorizontal.Left));
+                    Assert.That(fill.fillAmount, Is.EqualTo(expected[i]).Within(.001f));
+                }
+            }
+            finally
+            {
+                Object.DestroyImmediate(instance);
+                Object.DestroyImmediate(track);
+            }
         }
 
         [TestCase(50f, 0, true)]
@@ -106,6 +144,22 @@ namespace GearEngine.Campaign.Tests.Editor
             {
                 Assert.That(navigation.OpenedControllers[0], Is.InstanceOf<MainViewModel>());
             }
+        }
+
+        [Test]
+        public void GearReward_UsesConfiguredCompositeIconScale()
+        {
+            GearItemData gear = new GearItemData
+            {
+                Id = "quantum_link",
+                DisplayName = "Quantum Link",
+                UIIconScaleMultiplier = 0.8f
+            };
+            ReceivedRewardsViewModel vm = new ReceivedRewardsViewModel(
+                new RaceResultModel(50f, 3, null),
+                gear);
+
+            Assert.That(vm.RewardIconScale, Is.EqualTo(0.8f).Within(0.001f));
         }
 
         [Test]

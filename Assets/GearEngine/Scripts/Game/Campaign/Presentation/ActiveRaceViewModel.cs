@@ -50,9 +50,16 @@ namespace GearEngine.Campaign.Presentation
         [Inject] private IAnalyticsService analyticsService;
         [Inject] private IEventBus eventBus;
 
+        private RaceState activeSession;
+        private bool resultFlowStarted;
+        private bool raceFinishPresentationReady = true;
+        private RaceResultModel pendingResult;
+        private float resultPopupDelayRemaining;
+
         public void Tick(float deltaTime)
         {
             DriftScore?.Tick(deltaTime);
+            TickResultPopupDelay(deltaTime);
         }
 
         public void StartRaceAfterCarReady()
@@ -71,51 +78,85 @@ namespace GearEngine.Campaign.Presentation
             }
         }
 
+        public void SetRaceFinishPresentationReady(bool ready)
+        {
+            raceFinishPresentationReady = ready;
+        }
+
         protected override void OnClosed()
         {
             eventBus.RemoveListener<GearEngine.Events.CombatTextCollectedEvent>(OnCombatTextCollected);
+            pendingResult = null;
+            raceFinishPresentationReady = true;
+            UnsubscribeFromRaceCompletion();
+            UnregisterActiveRace();
+            base.OnClosed();
+        }
 
+        private void UnsubscribeFromRaceCompletion()
+        {
+            if (activeSession != null)
+            {
+                activeSession.PresentationChanged -= OnSessionPresentationChanged;
+            }
+        }
+
+        private void UnregisterActiveRace()
+        {
             try
             {
-                if (Track?.Session != null)
+                if (activeSession != null)
                 {
-                    raceManager.UnregisterRace(Track.Session);
+                    raceManager.UnregisterRace(activeSession);
                 }
             }
             catch (Exception ex)
             {
                 Debug.LogError($"[ActiveRaceViewModel] OnClosed failed: {ex.Message}\n{ex.StackTrace}");
             }
-
-            base.OnClosed();
         }
 
-        private void OnTrackStateChanged(SimulationLifecycleState state)
+        private void OnSessionPresentationChanged()
         {
-            if (state == SimulationLifecycleState.Completed)
+            if (resultFlowStarted || activeSession?.Phase != SimulationLifecycleState.Completed)
             {
-                OnRaceCompleted();
+                return;
             }
+
+            resultFlowStarted = true;
+            OnRaceCompleted();
         }
 
         private void OnRaceCompleted()
         {
-            _ = OnRaceCompletedAsync();
-        }
-
-        private async Task OnRaceCompletedAsync()
-        {
             try
             {
                 engineService.ResetGridSimulationState();
-                RaceResultModel result = CreateRaceResult();
-                await Task.Delay(TimeSpan.FromSeconds(ResultPopupDelaySeconds));
-                await OpenAndPersistResultAsync(result);
+                pendingResult = CreateRaceResult();
+                resultPopupDelayRemaining = ResultPopupDelaySeconds;
             }
             catch (Exception ex)
             {
                 Debug.LogError($"[ActiveRaceViewModel] OnRaceCompleted failed: {ex.Message}\n{ex.StackTrace}");
             }
+        }
+
+        private void TickResultPopupDelay(float deltaTime)
+        {
+            if (pendingResult == null)
+            {
+                return;
+            }
+
+            resultPopupDelayRemaining -= Mathf.Max(0f, deltaTime);
+            if (resultPopupDelayRemaining > 0f || !raceFinishPresentationReady)
+            {
+                return;
+            }
+
+            RaceResultModel result = pendingResult;
+            pendingResult = null;
+            _ = OpenAndPersistResultAsync(result);
         }
 
         private void OnCombatTextCollected(GearEngine.Events.CombatTextCollectedEvent evt)
@@ -138,7 +179,10 @@ namespace GearEngine.Campaign.Presentation
         private async Task OpenAndPersistResultAsync(RaceResultModel result)
         {
             result.BeginPersistence();
-            navigation.Open(new ResultPopupViewModel(result));
+            navigation.Open(
+                new ResultPopupViewModel(result),
+                true,
+                new NavigationOptions { CloseAllViews = true });
             try
             {
                 await PersistRaceResultAsync(result);
@@ -176,7 +220,8 @@ namespace GearEngine.Campaign.Presentation
 
             BindRaceViews(freshSession);
 
-            Bind<SimulationLifecycleState, SimulationLifecycleState>(() => Track.State, OnTrackStateChanged);
+            activeSession = freshSession;
+            activeSession.PresentationChanged += OnSessionPresentationChanged;
             analyticsService?.Record(new RaceStartedEvent(trackService.CurrentTrack.name, trackService.CurrentCar.name));
         }
 
