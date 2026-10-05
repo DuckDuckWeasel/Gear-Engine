@@ -1,0 +1,23 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "gear-engine-web",
+  "compatibility_date": "2026-10-05",
+  "workers_dev": true,
+  "preview_urls": true,
+  "routes": [
+    {
+      "pattern": "leonardolycan.com/games/gear-engine",
+      "zone_name": "leonardolycan.com"
+    },
+    {
+      "pattern": "leonardolycan.com/games/gear-engine/*",
+      "zone_name": "leonardolycan.com"
+    }
+  ],
+  "assets": {
+    "directory": "./CloudflareDeploy",
+    "html_handling": "auto-trailing-slash",
+    "not_found_handling": "none"
+  },
+  "previews": {}
+}

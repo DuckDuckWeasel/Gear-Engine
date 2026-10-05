@@ -7,16 +7,16 @@ date: 2026-08-29
 # Unity Error Check Report
 
 The Portuguese WebGL release is live at
-[gear-engine-gorn-2026.web.app](https://gear-engine-gorn-2026.web.app). The public
+[leonardolycan.com/games/gear-engine](https://leonardolycan.com/games/gear-engine/). The public
 loader plays its video, reaches the Race screen, and the end-of-match regression
 test passes when remote result persistence never completes.
 
 ## Portuguese WebGL Deployment and Match-End Check
 
 - Timestamp: 2026-08-29 19:38:00 -0300
-- Live site: `https://gear-engine-gorn-2026.web.app`
+- Live site: `https://leonardolycan.com/games/gear-engine/`
 - Firebase deployment: passed; 66 hosted files released to site
-  `gear-engine-gorn-2026`.
+  Cloudflare Workers Static Assets under the `leonardolycan.com` zone.
 - Production WebGL build: passed and produced a 35,485,822-byte package at
   `Artifacts/Submission/Build/GearEngineWebGLPortuguese`.
 - Build log: `Artifacts/Submission/Build/WebGLBuildPortuguese.log`.

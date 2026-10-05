@@ -20,5 +20,12 @@
       "Existing missing-script warnings remain on tutorial and legacy button objects."
     ]
   },
-  "sourceBuild": "Created from an isolated temporary project copy to preserve the open Unity project and unrelated working-tree changes."
+  "sourceBuild": "Created from an isolated temporary project copy to preserve the open Unity project and unrelated working-tree changes.",
+  "hosting": {
+    "provider": "Cloudflare Workers Static Assets",
+    "canonicalUrl": "https://leonardolycan.com/games/gear-engine/",
+    "pressKitUrl": "https://leonardolycan.com/games/gear-engine/PressKit/",
+    "productionBranch": "main",
+    "previewBranch": "develop"
+  }
 }

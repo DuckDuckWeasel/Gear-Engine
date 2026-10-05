@@ -1,0 +1,56 @@
+# Cloudflare Hosting
+
+Gear Engine is published as static WebGL content through Cloudflare Workers Static Assets.
+
+## Public endpoints
+
+- Game: `https://leonardolycan.com/games/gear-engine/`
+- Press kit: `https://leonardolycan.com/games/gear-engine/PressKit/`
+- Production branch: `main`
+- Preview branch: `develop`
+
+The Worker owns only `/games/gear-engine` and `/games/gear-engine/*`. Other paths on the domain remain with their existing Cloudflare origin and routing rules.
+
+## Release workflow
+
+The workflow at `.github/workflows/CloudflareHosting.yml` validates every relevant pull request. A push to `develop` publishes a Cloudflare preview deployment. A push to `main` publishes the production route.
+
+The GitHub repository requires these Actions secrets:
+
+- `CLOUDFLARE_ACCOUNT_ID`
+- `CLOUDFLARE_API_TOKEN`
+
+The API token needs permission to edit Workers scripts and Workers routes for the `leonardolycan.com` zone.
+
+From `Artifacts/Submission/GORn2026/CloudflareHosting`, run:
+
+```text
+npm ci
+npm run prepare
+npm run validate
+npm run dry-run
+```
+
+`prepare` stages the committed WebGL release at the canonical subpath and generates Cloudflare header and redirect rules. `validate` checks the 25 MiB asset limit, WebAssembly and Brotli headers, press-kit archive integrity, and retired Firebase references.
+
+## Press-kit optimization
+
+Run `npm run optimize:presskit` after changing source press-kit files. The script keeps every category, converts art to high-quality WebP, transcodes video to 720 by 1280 at 30 fps, and writes a complete ZIP below the 24 MiB safety target. The archive remains downloadable from the public press-kit page.
+
+## Production acceptance
+
+Before retiring the previous host, verify:
+
+1. The game and press-kit pages return HTTP 200 at their canonical URLs.
+2. Unity `.unityweb` files return Brotli encoding and correct MIME types.
+3. The press-kit ZIP downloads, stays below 24 MiB, and extracts without errors.
+4. A clean browser session reaches the menu, starts gameplay, and displays the result and reward screens.
+5. The layout works in representative desktop and mobile portrait viewports.
+
+## Rollback
+
+Cloudflare retains Worker deployment versions. Roll back by selecting the preceding healthy deployment in the Cloudflare dashboard, or by redeploying the preceding Git commit from `main`. Keep the route scoped to the game path during rollback.
+
+## Firebase retirement
+
+Firebase Hosting is disabled only after Cloudflare production acceptance. The Firebase project itself remains intact so unrelated project services and historical deployment metadata are not deleted. Once disabled, remove active Firebase Hosting configuration from this repository and verify that the former `web.app` URL no longer serves the game.

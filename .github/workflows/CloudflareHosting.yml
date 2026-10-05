@@ -1,0 +1,94 @@
+name: Cloudflare Hosting
+
+on:
+  pull_request:
+    paths:
+      - "Artifacts/Submission/GORn2026/GearEngineWebGL/**"
+      - "Artifacts/Submission/GORn2026/CloudflareHosting/**"
+      - ".github/workflows/CloudflareHosting.yml"
+  push:
+    branches:
+      - develop
+      - main
+    paths:
+      - "Artifacts/Submission/GORn2026/GearEngineWebGL/**"
+      - "Artifacts/Submission/GORn2026/CloudflareHosting/**"
+      - ".github/workflows/CloudflareHosting.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cloudflare-hosting-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: Artifacts/Submission/GORn2026/CloudflareHosting
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          lfs: true
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: Artifacts/Submission/GORn2026/CloudflareHosting/package-lock.json
+      - run: npm ci
+      - run: npm run prepare
+      - run: npm run validate
+      - run: npm run dry-run
+
+  deploy-preview:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/develop'
+    needs: validate
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: Artifacts/Submission/GORn2026/CloudflareHosting
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          lfs: true
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+      - run: npm ci
+      - run: npm run prepare
+      - name: Deploy develop preview
+        uses: cloudflare/wrangler-action@v4
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: Artifacts/Submission/GORn2026/CloudflareHosting
+          command: preview --name develop
+
+  deploy-production:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: validate
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: Artifacts/Submission/GORn2026/CloudflareHosting
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          lfs: true
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+      - run: npm ci
+      - run: npm run prepare
+      - name: Deploy production
+        uses: cloudflare/wrangler-action@v4
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: Artifacts/Submission/GORn2026/CloudflareHosting
+          command: deploy

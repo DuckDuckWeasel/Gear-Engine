@@ -1,0 +1,16 @@
+{
+  "name": "gear-engine-cloudflare-hosting",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "optimize:presskit": "python3 OptimizePressKit.py",
+    "prepare": "python3 PrepareRelease.py",
+    "validate": "python3 ValidateRelease.py",
+    "preview": "npm run prepare && npm run validate && wrangler preview --name develop",
+    "deploy": "npm run prepare && npm run validate && wrangler deploy",
+    "dry-run": "npm run prepare && npm run validate && wrangler deploy --dry-run"
+  },
+  "devDependencies": {
+    "wrangler": "4.147.0"
+  }
+}
