@@ -201,6 +201,85 @@
         outline-offset: 3px;
       }
 
+      #diagnostics-intro,
+      #diagnostics-report,
+      #diagnostics-actions {
+        display: none;
+      }
+
+      #loading-overlay.diagnostics-mode {
+        align-items: start;
+        overflow-y: auto;
+        background: #080b10;
+      }
+
+      #loading-overlay.diagnostics-mode #loading-video {
+        display: none;
+      }
+
+      #loading-overlay.diagnostics-mode::after {
+        background: radial-gradient(circle at 50% 0%, #273447 0%, #080b10 68%);
+      }
+
+      #loading-overlay.diagnostics-mode .loading-panel {
+        width: auto;
+        margin: max(20px, env(safe-area-inset-top)) 16px max(20px, env(safe-area-inset-bottom));
+        padding: 22px;
+        border: 1px solid rgb(255 255 255 / 12%);
+        border-radius: 24px;
+        background: rgb(11 16 24 / 94%);
+        box-shadow: 0 18px 48px rgb(0 0 0 / 48%);
+        text-shadow: none;
+      }
+
+      #loading-overlay.diagnostics-mode #diagnostics-intro,
+      #loading-overlay.diagnostics-mode #diagnostics-report,
+      #loading-overlay.diagnostics-mode #diagnostics-actions {
+        display: block;
+      }
+
+      #diagnostics-intro {
+        margin: 10px 0 16px;
+        color: rgb(255 247 232 / 78%);
+        font-size: 0.9rem;
+        line-height: 1.45;
+      }
+
+      #diagnostics-report {
+        max-height: 58vh;
+        margin: 0;
+        padding: 14px;
+        overflow: auto;
+        border: 1px solid rgb(255 255 255 / 10%);
+        border-radius: 14px;
+        color: #dbe8f8;
+        background: #05080d;
+        font: 0.72rem/1.45 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+        white-space: pre-wrap;
+        word-break: break-word;
+      }
+
+      #diagnostics-actions {
+        margin-top: 16px;
+      }
+
+      #diagnostics-open-game {
+        display: block;
+        min-height: 48px;
+        padding: 13px 20px;
+        border-radius: 999px;
+        color: #14100a;
+        background: #ffd15a;
+        font-weight: 850;
+        text-align: center;
+        text-decoration: none;
+      }
+
+      #diagnostics-open-game:focus-visible {
+        outline: 3px solid #ffffff;
+        outline-offset: 3px;
+      }
+
       #unity-warning {
         position: absolute;
         top: 0;
@@ -250,6 +329,11 @@
             <div id="loading-progress"></div>
           </div>
           <p id="loading-detail">Baixando os arquivos do jogo…</p>
+          <p id="diagnostics-intro">This page only displays diagnostic data and does not start the game.</p>
+          <pre id="diagnostics-report" aria-label="WebGL diagnostic report"></pre>
+          <div id="diagnostics-actions">
+            <a id="diagnostics-open-game" href="/">Open game</a>
+          </div>
           <span id="loading-version" aria-label="Version 0.1">v0.1</span>
           <button id="retry-button" type="button">Tentar novamente</button>
         </div>
@@ -263,6 +347,7 @@
       var loadingVideo = document.querySelector("#loading-video");
       var loadingStatus = document.querySelector("#loading-status");
       var loadingDetail = document.querySelector("#loading-detail");
+      var diagnosticsReport = document.querySelector("#diagnostics-report");
       var loadingPercentage = document.querySelector("#loading-percentage");
       var loadingProgress = document.querySelector("#loading-progress");
       var loadingMeter = document.querySelector("#loading-meter");
@@ -272,6 +357,145 @@
       var lastProgressAt = performance.now();
       var loadingComplete = false;
       var unityStarted = false;
+      var diagnosticsMode = new URLSearchParams(window.location.search).has("diagnostics");
+      var diagnosticsStorageKey = "gearEngine.webgl.session.v1";
+      var previousDiagnosticSession = readDiagnosticSession();
+      var diagnosticSession = {
+        sessionId: createDiagnosticSessionId(),
+        startedAt: Date.now(),
+        updatedAt: Date.now(),
+        phase: "document_loaded",
+        cleanExit: false,
+        runtimeReady: false,
+        events: [],
+        environment: collectDiagnosticEnvironment()
+      };
+
+      function createDiagnosticSessionId() {
+        return Date.now().toString(36) + "-" + Math.random().toString(36).slice(2, 10);
+      }
+
+      function readDiagnosticSession() {
+        try {
+          var serialized = window.localStorage.getItem(diagnosticsStorageKey);
+          return serialized ? JSON.parse(serialized) : null;
+        } catch (error) {
+          console.warn("[GearEngineDiagnostics] Could not read the previous session.", error);
+          return null;
+        }
+      }
+
+      function collectDiagnosticEnvironment() {
+        var wasmHeapBytes = null;
+        try {
+          var module = window.unityInstance && window.unityInstance.Module;
+          var heap = module && (module.HEAPU8 || module.HEAP8);
+          wasmHeapBytes = heap && heap.buffer ? heap.buffer.byteLength : null;
+        } catch (error) {
+          wasmHeapBytes = null;
+        }
+        var jsMemory = performance.memory
+          ? {
+              usedBytes: performance.memory.usedJSHeapSize,
+              totalBytes: performance.memory.totalJSHeapSize,
+              limitBytes: performance.memory.jsHeapSizeLimit
+            }
+          : null;
+        return {
+          userAgent: navigator.userAgent,
+          platform: navigator.platform,
+          deviceMemoryGb: navigator.deviceMemory || null,
+          hardwareConcurrency: navigator.hardwareConcurrency || null,
+          screen: window.screen.width + "x" + window.screen.height,
+          viewport: window.innerWidth + "x" + window.innerHeight,
+          devicePixelRatio: window.devicePixelRatio || 1,
+          wasmHeapBytes: wasmHeapBytes,
+          jsMemory: jsMemory
+        };
+      }
+
+      function persistDiagnosticPhase(phase, details) {
+        diagnosticSession.phase = phase;
+        diagnosticSession.updatedAt = Date.now();
+        diagnosticSession.environment = collectDiagnosticEnvironment();
+        diagnosticSession.events.push({
+          at: diagnosticSession.updatedAt,
+          phase: phase,
+          details: details || null
+        });
+        if (diagnosticSession.events.length > 24) {
+          diagnosticSession.events.shift();
+        }
+
+        try {
+          window.localStorage.setItem(diagnosticsStorageKey, JSON.stringify(diagnosticSession));
+        } catch (error) {
+          console.warn("[GearEngineDiagnostics] Could not persist the current session.", error);
+        }
+      }
+
+      function buildDiagnosticReport() {
+        return {
+          current: diagnosticSession,
+          previous: previousDiagnosticSession,
+          previousEndedAbruptly: Boolean(
+            previousDiagnosticSession &&
+            !previousDiagnosticSession.cleanExit &&
+            Date.now() - previousDiagnosticSession.updatedAt < 86400000)
+        };
+      }
+
+      window.gearEngineDiagnostics = {
+        getReport: buildDiagnosticReport,
+        markPhase: persistDiagnosticPhase
+      };
+
+      if (previousDiagnosticSession && !previousDiagnosticSession.cleanExit &&
+          Date.now() - previousDiagnosticSession.updatedAt < 86400000) {
+        console.warn("[GearEngineDiagnostics] Previous session ended abruptly.", previousDiagnosticSession);
+      }
+
+      window.addEventListener("error", function (event) {
+        persistDiagnosticPhase("javascript_error", {
+          message: event.message,
+          source: event.filename,
+          line: event.lineno,
+          column: event.colno,
+          stack: event.error && event.error.stack ? String(event.error.stack) : null
+        });
+      });
+      window.addEventListener("unhandledrejection", function (event) {
+        var reason = event.reason;
+        persistDiagnosticPhase("unhandled_rejection", {
+          message: reason && reason.message ? reason.message : String(reason),
+          stack: reason && reason.stack ? String(reason.stack) : null
+        });
+      });
+      window.addEventListener("pagehide", function () {
+        diagnosticSession.cleanExit = true;
+        persistDiagnosticPhase("page_hidden");
+      });
+      canvas.addEventListener("webglcontextlost", function (event) {
+        persistDiagnosticPhase("webgl_context_lost", { statusMessage: event.statusMessage || null });
+      });
+      var originalConsoleError = console.error.bind(console);
+      console.error = function () {
+        var message = Array.prototype.map.call(arguments, function (value) {
+          return value instanceof Error ? value.stack || value.message : String(value);
+        }).join(" ");
+        persistDiagnosticPhase("console_error", { message: message.slice(0, 4000) });
+        originalConsoleError.apply(console, arguments);
+      };
+      window.setInterval(function () {
+        diagnosticSession.updatedAt = Date.now();
+        diagnosticSession.environment = collectDiagnosticEnvironment();
+        try {
+          window.localStorage.setItem(diagnosticsStorageKey, JSON.stringify(diagnosticSession));
+        } catch (error) {
+          console.warn("[GearEngineDiagnostics] Could not persist a heartbeat.", error);
+        }
+      }, 15000);
+      persistDiagnosticPhase("document_loaded");
 
       loadingVideo.controls = false;
       loadingVideo.defaultMuted = true;
@@ -338,6 +562,8 @@
         }
 
         loadingComplete = true;
+        diagnosticSession.runtimeReady = true;
+        persistDiagnosticPhase("unity_runtime_ready");
         targetProgress = 1;
         displayedProgress = 1;
         loadingStatus.textContent = "Tudo pronto";
@@ -351,6 +577,7 @@
       }
 
       function showLoadingError(message) {
+        persistDiagnosticPhase("unity_loading_error", { message: String(message || "Unknown loading error") });
         loadingStatus.textContent = "Não foi possível iniciar o jogo";
         loadingDetail.textContent = String(message || "Verifique sua conexão e tente novamente.");
         retryButton.style.display = "inline-block";
@@ -360,7 +587,9 @@
       window.gearEngineLoadingReady = completeLoading;
       retryButton.addEventListener("click", function () { window.location.reload(); });
 
-      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      if (diagnosticsMode) {
+        loadingVideo.pause();
+      } else if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
         loadingVideo.addEventListener("loadeddata", function () { loadingVideo.pause(); }, { once: true });
       } else {
         loadingVideo.play().catch(function () {
@@ -368,20 +597,22 @@
         });
       }
 
-      window.requestAnimationFrame(renderProgress);
+      if (!diagnosticsMode) {
+        window.requestAnimationFrame(renderProgress);
+      }
 
       var buildUrl = "Build";
-      var loaderUrl = buildUrl + "/4bcf4a06eb3713184fa716de4e29078d.loader.js";
+      var loaderUrl = buildUrl + "/bfb3ce7910cf93e9facbd02eeeef0505.loader.js";
       var config = {
         arguments: [],
-        dataUrl: buildUrl + "/fa81dc9132f08a875e76f1af6b97fb00.data.unityweb",
-        frameworkUrl: buildUrl + "/c93397e0013b067ea4091701e33aff3a.framework.js.unityweb",
-        codeUrl: buildUrl + "/aa0350dc31fe6598a29700703e5cebbe.wasm.unityweb",
+        dataUrl: buildUrl + "/32dacc64f3a6537de415d560babaa7c9.data.unityweb",
+        frameworkUrl: buildUrl + "/fa1ba5480fbd1c08eea36d94cb3288d.framework.js.unityweb",
+        codeUrl: buildUrl + "/a07f8a1d05bfa95411ac00a211a8ef7.wasm.unityweb",
         streamingAssetsUrl: "StreamingAssets",
         companyName: "DDW",
         productName: "Gear Engine",
         productVersion: "0.1",
-        devicePixelRatio: 1,
+        devicePixelRatio: Math.min(window.devicePixelRatio || 1, 2),
         autoSyncPersistentDataPath: true,
         showBanner: unityShowBanner,
       };
@@ -390,11 +621,13 @@
       var loaderScript = document.createElement("script");
       loaderScript.src = loaderUrl;
       loaderScript.onload = function () {
+        persistDiagnosticPhase("unity_loader_ready");
         createUnityInstance(canvas, config, reportProgress).then(function (unityInstance) {
           unityStarted = true;
           targetProgress = Math.max(targetProgress, 0.98);
           setLoadingCopy();
           window.unityInstance = unityInstance;
+          persistDiagnosticPhase("unity_instance_created");
           window.setTimeout(function () {
             if (!overlay.classList.contains("is-complete")) {
               completeLoading();
@@ -403,9 +636,21 @@
         }).catch(showLoadingError);
       };
       loaderScript.onerror = function () {
+        persistDiagnosticPhase("unity_loader_download_failed", { loaderUrl: loaderUrl });
         showLoadingError("The game loader could not be downloaded. Check your connection and try again.");
       };
-      document.body.appendChild(loaderScript);
+      if (diagnosticsMode) {
+        overlay.classList.add("diagnostics-mode");
+        loadingStatus.textContent = "WebGL diagnostics";
+        loadingDetail.style.display = "none";
+        diagnosticsReport.textContent = JSON.stringify(buildDiagnosticReport(), null, 2);
+        loadingPercentage.style.display = "none";
+        loadingMeter.style.display = "none";
+        document.querySelector("#loading-version").style.display = "none";
+        overlay.setAttribute("aria-busy", "false");
+      } else {
+        document.body.appendChild(loaderScript);
+      }
     </script>
   </body>
 </html>

@@ -30,10 +30,10 @@ HEADERS = """/games/gear-engine
 /games/gear-engine/*.json
   Cache-Control: no-cache, no-store, must-revalidate
 
-/games/gear-engine/*catalog*.bin
+/games/gear-engine/StreamingAssets/aa/catalog.bin
   Cache-Control: no-cache, no-store, must-revalidate
 
-/games/gear-engine/*catalog*.hash
+/games/gear-engine/StreamingAssets/aa/catalog.hash
   Cache-Control: no-cache, no-store, must-revalidate
 
 /games/gear-engine/Build/*.unityweb

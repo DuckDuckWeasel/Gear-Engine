@@ -34,6 +34,9 @@
     <type fullname="GearEngine.Campaign.Gear.TemporaryBoostGearAbilitySO" preserve="all" />
     <type fullname="GearEngine.Campaign.Gear.VampiricEngineGearAbilitySO" preserve="all" />
     <type fullname="GearEngine.Campaign.Presentation.ActiveRaceView" preserve="all" />
+    <type fullname="GearEngine.Campaign.Presentation.ClubSportHudLayout" preserve="all" />
+    <type fullname="GearEngine.Campaign.Presentation.ClubSportHudView" preserve="all" />
+    <type fullname="GearEngine.Campaign.Presentation.ClubSportStarView" preserve="all" />
     <type fullname="GearEngine.Campaign.Presentation.CurrencyDisplayWidget" preserve="all" />
     <type fullname="GearEngine.Campaign.Presentation.ItemPopupView" preserve="all" />
     <type fullname="GearEngine.Campaign.Presentation.ItemSlotView" preserve="all" />
@@ -49,6 +52,7 @@
     <type fullname="GearEngine.Campaign.Presentation.RoguelikeView" preserve="all" />
     <type fullname="GearEngine.Campaign.Presentation.SetupView" preserve="all" />
     <type fullname="GearEngine.Campaign.Presentation.TrackStatsViewComponent" preserve="all" />
+    <type fullname="GearEngine.Campaign.Presentation.UiPatternParallax" preserve="all" />
     <type fullname="GearEngine.Campaign.Services.RoguelikeGearPoolSO" preserve="all" />
     <type fullname="GearEngine.Campaign.Gear.PassiveStatModifier" preserve="nothing" serialized="true" />
   </assembly>
@@ -57,6 +61,7 @@
     <type fullname="GearEngine.CarSimulation.Definitions.TrackThemeDefinition" preserve="all" />
     <type fullname="GearEngine.CarSimulation.Presentation.CarTrackTestView" preserve="all" />
     <type fullname="GearEngine.CarSimulation.Presentation.TrackTelemetryViewComponent" preserve="all" />
+    <type fullname="GearEngine.CarSimulation.Definitions.TrackThemeDefinition/SurfaceZone" preserve="nothing" serialized="true" />
     <type fullname="GearEngine.CarSimulation.Definitions.TrackTierConfig" preserve="nothing" serialized="true" />
     <type fullname="GearEngine.CarSimulation.Tracks.SplinePropGenerator/All" preserve="nothing" serialized="true" />
     <type fullname="GearEngine.CarSimulation.Tracks.SplinePropGenerator/Inside" preserve="nothing" serialized="true" />
@@ -159,6 +164,10 @@
     <type fullname="UnityEngine.Vector3" preserve="nothing" serialized="true" />
     <type fullname="UnityEngine.Vector4" preserve="nothing" serialized="true" />
   </assembly>
+  <assembly fullname="UnityEngine.ParticleSystemModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+    <type fullname="UnityEngine.ParticleSystem" preserve="all" />
+    <type fullname="UnityEngine.ParticleSystemRenderer" preserve="all" />
+  </assembly>
   <assembly fullname="UnityEngine.PhysicsModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
     <type fullname="UnityEngine.MeshCollider" preserve="all" />
     <type fullname="UnityEngine.PhysicsMaterial" preserve="all" />
@@ -177,7 +186,9 @@
     <type fullname="UnityEngine.UI.Image" preserve="all" />
     <type fullname="UnityEngine.UI.LayoutElement" preserve="all" />
     <type fullname="UnityEngine.UI.Mask" preserve="all" />
+    <type fullname="UnityEngine.UI.Outline" preserve="all" />
     <type fullname="UnityEngine.UI.ScrollRect" preserve="all" />
+    <type fullname="UnityEngine.UI.Shadow" preserve="all" />
     <type fullname="UnityEngine.UI.VerticalLayoutGroup" preserve="all" />
     <type fullname="UnityEngine.UI.AnimationTriggers" preserve="nothing" serialized="true" />
     <type fullname="UnityEngine.UI.Button/ButtonClickedEvent" preserve="nothing" serialized="true" />

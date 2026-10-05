@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import re
 import sys
 import zipfile
 from pathlib import Path
@@ -65,6 +66,36 @@ def main() -> None:
     for required_header in ("Content-Encoding: br", "Content-Type: application/wasm"):
         if required_header not in headers:
             fail(f"Required WebGL header is missing: {required_header}")
+
+    index = (CANONICAL_DIR / "index.html").read_text(encoding="utf-8")
+    for required_asset in (
+        ".data.unityweb",
+        ".framework.js.unityweb",
+        ".wasm.unityweb",
+    ):
+        if required_asset not in index:
+            fail(f"WebGL index does not reference the compressed asset: {required_asset}")
+
+    uncompressed_build_files = [
+        path
+        for path in (CANONICAL_DIR / "Build").iterdir()
+        if path.is_file() and path.suffix in {".data", ".wasm"}
+    ]
+    if uncompressed_build_files:
+        fail(
+            "Uncompressed WebGL payloads remain in the release: "
+            + ", ".join(map(str, uncompressed_build_files))
+        )
+
+    loader_match = re.search(r'loaderUrl = buildUrl \+ "/([^\"]+\.loader\.js)"', index)
+    if not loader_match:
+        fail("WebGL index does not declare a loader file.")
+    loader = CANONICAL_DIR / "Build" / loader_match.group(1)
+    if not loader.is_file():
+        fail(f"WebGL loader referenced by the index is missing: {loader}")
+    loader_source = loader.read_text(encoding="utf-8")
+    if "hasUnityMarker:function(e){return!0}" not in loader_source:
+        fail("WebGL loader is missing the Cloudflare Brotli fallback patch.")
 
     print(
         f"Validated {sum(1 for path in DEPLOY_DIR.rglob('*') if path.is_file())} files; "

@@ -213,4 +213,5 @@ Utility/Utility/bin/Release/netstandard2.1/Utility.dll
 # Cloudflare hosting dependencies and generated deployment staging
 /Artifacts/Submission/GORn2026/CloudflareHosting/node_modules/
 /Artifacts/Submission/GORn2026/CloudflareHosting/CloudflareDeploy/
+/Artifacts/Submission/GORn2026/CloudflareHosting/.wrangler/
 /Artifacts/Submission/GORn2026/CloudflareHosting/__pycache__/
