@@ -1,0 +1,14 @@
+{
+  "archive": "GearEnginePublicPressKit.zip",
+  "archiveSizeBytes": 21659838,
+  "archiveLimitBytes": 25165824,
+  "archiveSha256": "ac21a90eac2630d4edc071545ccb0e0b61b90007c6e4d04622a45979dc554d26",
+  "sourceFileCount": 65,
+  "archiveFileCount": 66,
+  "profile": {
+    "video": "H.264, maximum 720x1280, 30 fps, CRF 32, AAC 96 kbps",
+    "art": "WebP quality 80-84, maximum 1920x1920",
+    "logos": "Original PNG and SVG",
+    "factsheet": "Original documents with palette-optimized embedded PNG files"
+  }
+}
