@@ -15,7 +15,7 @@ Publish Gear Engine at `https://leonardolycan.com/games/gear-engine/`, preserve 
 - [x] Publish and accept the `develop` preview.
 - [x] Publish and accept the `main` production route.
 - [x] Disable Firebase Hosting and remove active Firebase Hosting configuration.
-- [ ] Verify the final branches, public URLs, and retirement state.
+- [x] Verify the final branches, public URLs, and retirement state.
 
 ## Surprises & Discoveries
 
@@ -32,7 +32,7 @@ Publish Gear Engine at `https://leonardolycan.com/games/gear-engine/`, preserve 
 
 ## Outcomes & Retrospective
 
-The optimized 20.66 MiB press-kit archive retained every category and passed public download and extraction checks. The Cloudflare preview completed startup, gameplay, results, and rewards. Production version `92990f56-64d4-4da5-bd7f-c310889954d2` served the canonical game, press kit, Brotli WebAssembly, and archive endpoints correctly. Firebase Hosting was disabled on 2026-10-05 and its former URL returned HTTP 404; the Firebase project was preserved.
+The optimized 20.66 MiB press-kit archive retained every category and passed public download and extraction checks. The Cloudflare preview completed startup, gameplay, results, and rewards. Production version `92990f56-64d4-4da5-bd7f-c310889954d2` served the canonical game, press kit, Brotli WebAssembly, and archive endpoints correctly. GitHub Actions runs `37336885358` (`develop`) and `37337338476` (`main`) both completed validation and deployment successfully from migration commit `852fb868806bf3841878ecf18fc4e14f38b2f76a`. Firebase Hosting was disabled on 2026-10-05 and its former URL returned HTTP 404; the Firebase project was preserved.
 
 ## Context and Orientation
 
