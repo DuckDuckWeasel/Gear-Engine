@@ -248,13 +248,16 @@ namespace GearEngine.Campaign.Tests.Editor
                 Assert.That(navigation.OpenedControllers, Is.Empty,
                     "Results must wait while another car is still completing its run.");
 
-                SetRaceFinishPresentationReady(vm, true);
+                SetRaceFinishPresentationReady(vm, true, 4);
                 vm.Tick(0.1f);
                 yield return null;
 
                 Assert.That(engine.IsRunning, Is.False);
                 Assert.That(navigation.OpenedControllers.Count, Is.EqualTo(1));
                 Assert.That(navigation.OpenedControllers[0], Is.InstanceOf<ResultPopupViewModel>());
+                ResultPopupViewModel resultViewModel = (ResultPopupViewModel)navigation.OpenedControllers[0];
+                Assert.That(resultViewModel.Standings.PlayerPosition, Is.EqualTo(4),
+                    "Results must preserve the player's locked gameplay finish position.");
                 Assert.That(navigation.OpenedCloseCurrent[0], Is.True,
                     "Opening results must close the completed race view and release its WebGL resources.");
                 Assert.That(navigation.OpenedOptions[0]?.CloseAllViews, Is.True,
@@ -332,14 +335,17 @@ namespace GearEngine.Campaign.Tests.Editor
             method.Invoke(viewModel, null);
         }
 
-        private static void SetRaceFinishPresentationReady(ActiveRaceViewModel viewModel, bool ready)
+        private static void SetRaceFinishPresentationReady(
+            ActiveRaceViewModel viewModel,
+            bool ready,
+            int playerPosition = 0)
         {
             System.Reflection.MethodInfo method = typeof(ActiveRaceViewModel).GetMethod(
                 "SetRaceFinishPresentationReady",
                 System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public);
             Assert.That(method, Is.Not.Null,
                 "The race view model must expose a finish-presentation hold for the remaining cars.");
-            method.Invoke(viewModel, new object[] { ready });
+            method.Invoke(viewModel, new object[] { ready, playerPosition });
         }
 
         private static CurrencyGameData BuildGameData(long gold)

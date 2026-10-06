@@ -862,10 +862,11 @@ namespace GearEngine.Campaign.Presentation
             Transform arrow = markerObject.transform.Find("PositionArrow");
             Image leftArrowFill = arrow != null ? arrow.Find("LeftFill").GetComponent<Image>() : null;
             Image rightArrowFill = arrow != null ? arrow.Find("RightFill").GetComponent<Image>() : null;
+            Renderer[] carRenderers = carView.GetComponentsInChildren<Renderer>(true);
 
             positionMarkers.Add(new RacePositionMarker(
                 markerObject, carView.DrivenTransform, driver, label,
-                leftArrowFill, rightArrowFill, gridPosition, isPlayer));
+                leftArrowFill, rightArrowFill, carRenderers, gridPosition, isPlayer));
         }
 
         private static GameObject CreatePositionMarkerVisual(
@@ -998,6 +999,7 @@ namespace GearEngine.Campaign.Presentation
                     continue;
                 }
 
+                targetScreenPoint3D.y = ToHighestVisibleScreenY(marker.CarRenderers, worldCamera, targetScreenPoint3D.y);
                 RectTransformUtility.ScreenPointToLocalPointInRectangle(
                     markerLayer, targetScreenPoint3D, uiCamera, out Vector2 carAnchor);
                 marker.CarAnchoredPosition = carAnchor;
@@ -1053,7 +1055,47 @@ namespace GearEngine.Campaign.Presentation
             Vector2 carAnchor, Vector2 markerSize, Vector2 pivot, Rect containerBounds)
         {
             Vector2 desired = carAnchor + Vector2.up * k_positionMarkerScreenOffset;
-            return ClampPositionMarkerAnchor(desired, markerSize, pivot, containerBounds);
+            Vector2 clamped = ClampPositionMarkerAnchor(desired, markerSize, pivot, containerBounds);
+            clamped.y = Mathf.Max(clamped.y, desired.y);
+            return clamped;
+        }
+
+        private static float ToHighestVisibleScreenY(IReadOnlyList<Renderer> renderers, Camera worldCamera, float fallbackScreenY)
+        {
+            float highestScreenY = fallbackScreenY;
+            for (int i = 0; i < renderers.Count; i++)
+            {
+                Renderer renderer = renderers[i];
+                if (!ToVisibleCarBodyRenderer(renderer))
+                {
+                    continue;
+                }
+
+                highestScreenY = Mathf.Max(highestScreenY,
+                    ToHighestRendererScreenY(renderer.bounds, worldCamera, fallbackScreenY));
+            }
+
+            return highestScreenY;
+        }
+
+        private static bool ToVisibleCarBodyRenderer(Renderer renderer)
+        {
+            return renderer != null && renderer.enabled && renderer.gameObject.activeInHierarchy &&
+                !(renderer is ParticleSystemRenderer) && !(renderer is TrailRenderer) && !(renderer is LineRenderer);
+        }
+
+        private static float ToHighestRendererScreenY(Bounds bounds, Camera worldCamera, float fallbackScreenY)
+        {
+            float highestScreenY = fallbackScreenY;
+            for (int corner = 0; corner < 8; corner++)
+            {
+                Vector3 worldCorner = new Vector3((corner & 1) == 0 ? bounds.min.x : bounds.max.x,
+                    (corner & 2) == 0 ? bounds.min.y : bounds.max.y, (corner & 4) == 0 ? bounds.min.z : bounds.max.z);
+                Vector3 screenCorner = worldCamera.WorldToScreenPoint(worldCorner);
+                highestScreenY = screenCorner.z > 0f ? Mathf.Max(highestScreenY, screenCorner.y) : highestScreenY;
+            }
+
+            return highestScreenY;
         }
 
         private void UpdatePositionStandings(int totalLaps)
@@ -1167,7 +1209,20 @@ namespace GearEngine.Campaign.Presentation
         private void ReleaseRaceFinishPresentation()
         {
             raceFinishPresentationReleased = true;
-            viewModel.SetRaceFinishPresentationReady(true);
+            viewModel.SetRaceFinishPresentationReady(true, GetRecordedPlayerPosition());
+        }
+
+        private int GetRecordedPlayerPosition()
+        {
+            foreach (RacePositionMarker marker in positionMarkers)
+            {
+                if (marker.IsPlayer)
+                {
+                    return marker.FinishedPosition;
+                }
+            }
+
+            return 0;
         }
 
         private static int CompareRacePosition(RacePositionMarker left, RacePositionMarker right)
@@ -1596,7 +1651,7 @@ namespace GearEngine.Campaign.Presentation
             public RacePositionMarker(
                 GameObject root, Transform target, SplineEvaluateDriver driver,
                 TextMeshProUGUI label, Image leftArrowFill, Image rightArrowFill,
-                int gridPosition, bool isPlayer)
+                Renderer[] carRenderers, int gridPosition, bool isPlayer)
             {
                 Root = root;
                 Target = target;
@@ -1605,6 +1660,7 @@ namespace GearEngine.Campaign.Presentation
                 LeftArrowFill = leftArrowFill;
                 RightArrowFill = rightArrowFill;
                 Arrow = leftArrowFill != null ? leftArrowFill.transform.parent as RectTransform : null;
+                CarRenderers = carRenderers ?? Array.Empty<Renderer>();
                 GridPosition = gridPosition;
                 IsPlayer = isPlayer;
             }
@@ -1616,6 +1672,7 @@ namespace GearEngine.Campaign.Presentation
             public Image LeftArrowFill { get; }
             public Image RightArrowFill { get; }
             public RectTransform Arrow { get; }
+            public Renderer[] CarRenderers { get; }
             public Vector2 CarAnchoredPosition { get; set; }
             public int GridPosition { get; }
             public bool IsPlayer { get; }

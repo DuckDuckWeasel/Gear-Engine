@@ -7,7 +7,11 @@ namespace GearEngine.Campaign
 {
     public sealed class RaceStandingsModel
     {
-        public RaceStandingsModel(float raceTime, TrackDefinition track, float? previousRaceTime = null)
+        public RaceStandingsModel(
+            float raceTime,
+            TrackDefinition track,
+            float? previousRaceTime = null,
+            int? recordedPlayerPosition = null)
         {
             if (float.IsNaN(raceTime) || float.IsInfinity(raceTime) || raceTime < 0f)
             {
@@ -15,7 +19,13 @@ namespace GearEngine.Campaign
             }
 
             List<RaceStandingEntry> rivals = BuildRivals(track);
-            PlayerPosition = PositionFor(rivals, raceTime);
+            if (recordedPlayerPosition.HasValue &&
+                (recordedPlayerPosition.Value < 1 || recordedPlayerPosition.Value > rivals.Count + 1))
+            {
+                throw new ArgumentOutOfRangeException(nameof(recordedPlayerPosition));
+            }
+
+            PlayerPosition = recordedPlayerPosition ?? PositionFor(rivals, raceTime);
             PreviousPosition = previousRaceTime.HasValue ? PositionFor(rivals, previousRaceTime.Value) : 4;
             Player = new RaceStandingEntry("YOU", raceTime, true);
             rivals.Insert(PlayerPosition - 1, Player);

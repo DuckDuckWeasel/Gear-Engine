@@ -52,8 +52,9 @@ namespace GearEngine.Campaign.Presentation
 
         private RaceState activeSession;
         private bool resultFlowStarted;
+        private bool resultPending;
         private bool raceFinishPresentationReady = true;
-        private RaceResultModel pendingResult;
+        private int recordedPlayerPosition;
         private float resultPopupDelayRemaining;
 
         public void Tick(float deltaTime)
@@ -78,15 +79,24 @@ namespace GearEngine.Campaign.Presentation
             }
         }
 
-        public void SetRaceFinishPresentationReady(bool ready)
+        public void SetRaceFinishPresentationReady(bool ready, int playerPosition = 0)
         {
             raceFinishPresentationReady = ready;
+            if (!ready)
+            {
+                recordedPlayerPosition = 0;
+            }
+            else if (playerPosition > 0)
+            {
+                recordedPlayerPosition = playerPosition;
+            }
         }
 
         protected override void OnClosed()
         {
             eventBus.RemoveListener<GearEngine.Events.CombatTextCollectedEvent>(OnCombatTextCollected);
-            pendingResult = null;
+            resultPending = false;
+            recordedPlayerPosition = 0;
             raceFinishPresentationReady = true;
             UnsubscribeFromRaceCompletion();
             UnregisterActiveRace();
@@ -132,7 +142,7 @@ namespace GearEngine.Campaign.Presentation
             try
             {
                 engineService.ResetGridSimulationState();
-                pendingResult = CreateRaceResult();
+                resultPending = true;
                 resultPopupDelayRemaining = ResultPopupDelaySeconds;
             }
             catch (Exception ex)
@@ -143,7 +153,7 @@ namespace GearEngine.Campaign.Presentation
 
         private void TickResultPopupDelay(float deltaTime)
         {
-            if (pendingResult == null)
+            if (!resultPending)
             {
                 return;
             }
@@ -154,9 +164,17 @@ namespace GearEngine.Campaign.Presentation
                 return;
             }
 
-            RaceResultModel result = pendingResult;
-            pendingResult = null;
-            _ = OpenAndPersistResultAsync(result);
+            try
+            {
+                resultPending = false;
+                RaceResultModel result = CreateRaceResult();
+                _ = OpenAndPersistResultAsync(result);
+            }
+            catch (Exception ex)
+            {
+                resultPending = false;
+                Debug.LogError($"[ActiveRaceViewModel] Failed to open race results: {ex.Message}\n{ex.StackTrace}");
+            }
         }
 
         private void OnCombatTextCollected(GearEngine.Events.CombatTextCollectedEvent evt)
@@ -171,7 +189,13 @@ namespace GearEngine.Campaign.Presentation
         private RaceResultModel CreateRaceResult()
         {
             RaceState session = Track.Session;
-            RaceResultModel result = new RaceResultModel(session.RaceTime, session.CurrentLap, trackService.CurrentTrack, session.TotalDriftScore, trackService.GetTrackProgress()?.GetBestTimeSeconds(trackService.CurrentTrack.name));
+            RaceResultModel result = new RaceResultModel(
+                session.RaceTime,
+                session.CurrentLap,
+                trackService.CurrentTrack,
+                session.TotalDriftScore,
+                trackService.GetTrackProgress()?.GetBestTimeSeconds(trackService.CurrentTrack.name),
+                recordedPlayerPosition > 0 ? recordedPlayerPosition : null);
             analyticsService?.Record(new RaceFinishedEvent(trackService.CurrentTrack.name, trackService.CurrentCar.name, result.RaceTime, result.LapCount, result.Score, result.IsGoodResult));
             return result;
         }

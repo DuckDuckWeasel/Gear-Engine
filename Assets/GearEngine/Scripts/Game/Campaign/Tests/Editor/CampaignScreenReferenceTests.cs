@@ -490,8 +490,14 @@ namespace GearEngine.Campaign.Tests.Editor
                     .GetField("rankedPositionMarkers", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(view);
                 SplineEvaluateDriver first = new global::GearEngine.CarSimulation.SplineSimulation.SplineEvaluateDriver(config, null);
                 SplineEvaluateDriver second = new global::GearEngine.CarSimulation.SplineSimulation.SplineEvaluateDriver(config, null);
-                object firstMarker = Activator.CreateInstance(markerType, new object[] { root, root.transform, first, null, null, null, 4, true });
-                object secondMarker = Activator.CreateInstance(markerType, new object[] { root, root.transform, second, null, null, null, 1, false });
+                object firstMarker = Activator.CreateInstance(markerType, new object[]
+                {
+                    root, root.transform, first, null, null, null, Array.Empty<Renderer>(), 4, true
+                });
+                object secondMarker = Activator.CreateInstance(markerType, new object[]
+                {
+                    root, root.transform, second, null, null, null, Array.Empty<Renderer>(), 1, false
+                });
                 markers.Add(secondMarker);
                 markers.Add(firstMarker);
                 first.State.CompletedLaps = 3;
@@ -543,6 +549,59 @@ namespace GearEngine.Campaign.Tests.Editor
         }
 
         [Test]
+        public void RacePositionMarker_RemainsAboveCarWhenRoadTopCannotContainFullMarker()
+        {
+            const BindingFlags flags = BindingFlags.Static | BindingFlags.NonPublic;
+            Type viewType = typeof(ActiveRaceView);
+            MethodInfo anchorMethod = viewType.GetMethod("CalculatePositionMarkerAnchor", flags);
+            float offset = (float)viewType.GetField("k_positionMarkerScreenOffset", flags).GetRawConstantValue();
+            Vector2 carTopAnchor = new Vector2(0f, 80f);
+
+            Vector2 markerAnchor = (Vector2)anchorMethod.Invoke(null, new object[]
+            {
+                carTopAnchor,
+                new Vector2(112f, 90f),
+                new Vector2(0.5f, 0f),
+                new Rect(-100f, -100f, 200f, 200f)
+            });
+
+            Assert.That(markerAnchor.y, Is.GreaterThanOrEqualTo(carTopAnchor.y + offset));
+        }
+
+        [Test]
+        public void RacePositionMarker_UsesRenderedCarTopAsScreenAnchor()
+        {
+            MethodInfo highestYMethod = typeof(ActiveRaceView).GetMethod(
+                "ToHighestVisibleScreenY", BindingFlags.Static | BindingFlags.NonPublic);
+            GameObject cameraObject = new GameObject("RaceCamera", typeof(Camera));
+            GameObject car = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            try
+            {
+                Camera camera = cameraObject.GetComponent<Camera>();
+                camera.orthographic = true;
+                camera.orthographicSize = 5f;
+                camera.aspect = 1f;
+                camera.pixelRect = new Rect(0f, 0f, 1000f, 1000f);
+                camera.transform.position = new Vector3(0f, 0f, -10f);
+                Renderer renderer = car.GetComponent<Renderer>();
+                float centerScreenY = camera.WorldToScreenPoint(car.transform.position).y;
+
+                float highestScreenY = (float)highestYMethod.Invoke(null, new object[]
+                {
+                    new[] { renderer }, camera, centerScreenY
+                });
+
+                Assert.That(highestScreenY, Is.GreaterThan(centerScreenY));
+                Assert.That(highestScreenY, Is.EqualTo(camera.WorldToScreenPoint(renderer.bounds.max).y).Within(0.01f));
+            }
+            finally
+            {
+                Object.DestroyImmediate(car);
+                Object.DestroyImmediate(cameraObject);
+            }
+        }
+
+        [Test]
         public void RacePositionMarker_PlayerArrowRemainsFixedWhenCarRotates()
         {
             Type markerType = typeof(ActiveRaceView).GetNestedType("RacePositionMarker", BindingFlags.NonPublic);
@@ -572,6 +631,7 @@ namespace GearEngine.Campaign.Tests.Editor
                     visual.GetComponentInChildren<TextMeshProUGUI>(),
                     arrow.Find("LeftFill").GetComponent<Image>(),
                     arrow.Find("RightFill").GetComponent<Image>(),
+                    Array.Empty<Renderer>(),
                     1,
                     true
                 });

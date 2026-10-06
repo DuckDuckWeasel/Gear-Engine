@@ -13,7 +13,13 @@ namespace GearEngine.Campaign
         private static int ScoreThresholdToAdvance => 500;
         private static int LegacyGoldPerScorePoint => 5;
 
-        public RaceResultModel(float raceTime, int lapCount, TrackDefinition track, int driftScore = 0, float? previousRaceTime = null)
+        public RaceResultModel(
+            float raceTime,
+            int lapCount,
+            TrackDefinition track,
+            int driftScore = 0,
+            float? previousRaceTime = null,
+            int? recordedPlayerPosition = null)
         {
             if (raceTime < 0f)
             {
@@ -25,7 +31,7 @@ namespace GearEngine.Campaign
             Score = driftScore; // Score is now strictly drift score
             TrackName = track != null ? track.GetDisplayName() : string.Empty;
             Tiers = track != null ? track.Tiers.Where(tier => tier != null).OrderBy(tier => tier.TargetScore).ToArray() : Array.Empty<TrackTierConfig>();
-            Standings = new RaceStandingsModel(raceTime, track, previousRaceTime);
+            Standings = new RaceStandingsModel(raceTime, track, previousRaceTime, recordedPlayerPosition);
 
             if (track != null && track.HasConfiguredTiers)
             {
