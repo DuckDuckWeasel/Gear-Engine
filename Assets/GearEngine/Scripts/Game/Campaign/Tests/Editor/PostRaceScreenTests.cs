@@ -115,9 +115,12 @@ namespace GearEngine.Campaign.Tests.Editor
                 if (i == 0)
                 {
                     TMP_Text score = visibleTexts.Single(text => text.name == "NumberScore_text");
-                    Assert.That(score.fontSize, Is.GreaterThanOrEqualTo(150f));
-                    Assert.That(score.outlineWidth, Is.GreaterThanOrEqualTo(0.12f));
-                    Assert.That(score.outlineColor, Is.EqualTo(new Color32(44, 57, 69, 255)));
+                    Assert.That(score.fontSize, Is.GreaterThanOrEqualTo(180f));
+                    Assert.That(score.outlineWidth, Is.Zero);
+                    Shadow scoreShadow = score.GetComponent<Shadow>();
+                    Assert.That(scoreShadow, Is.Not.Null);
+                    Assert.That((Color32)scoreShadow.effectColor, Is.EqualTo(new Color32(36, 45, 52, 220)));
+                    Assert.That(scoreShadow.effectDistance, Is.EqualTo(new Vector2(0f, -6f)));
                     ResultStandingsView standings = instance.GetComponentInChildren<ResultStandingsView>();
                     Assert.That(standings.DisplayedPlayerPosition, Is.EqualTo(3));
                     Assert.That(standings.IsAnimating, Is.False);

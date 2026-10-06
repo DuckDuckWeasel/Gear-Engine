@@ -7,10 +7,10 @@ namespace GearEngine.Campaign.Presentation
 {
     public sealed class ResultPopupView : View<ResultPopupViewModel>
     {
-        private const float k_scoreFontSize = 154f;
-        private const float k_scoreOutlineWidth = 0.14f;
+        private const float k_scoreFontSize = 180f;
         private const string k_starFillName = "ProgressFill";
-        private static readonly Color32 s_scoreOutlineColor = new Color32(44, 57, 69, 255);
+        private static readonly Color32 s_scoreShadowColor = new Color32(36, 45, 52, 220);
+        private static readonly Vector2 s_scoreShadowDistance = new Vector2(0f, -6f);
 
         [SerializeField] private TMP_Text titleText;
         [SerializeField] private TMP_Text scoreText;
@@ -83,8 +83,17 @@ namespace GearEngine.Campaign.Presentation
         private void ConfigureScorePresentation()
         {
             scoreText.fontSize = k_scoreFontSize;
-            scoreText.outlineColor = s_scoreOutlineColor;
-            scoreText.outlineWidth = k_scoreOutlineWidth;
+            scoreText.outlineWidth = 0f;
+
+            Shadow shadow = scoreText.GetComponent<Shadow>();
+            if (shadow == null)
+            {
+                shadow = scoreText.gameObject.AddComponent<Shadow>();
+            }
+
+            shadow.effectColor = s_scoreShadowColor;
+            shadow.effectDistance = s_scoreShadowDistance;
+            shadow.useGraphicAlpha = true;
         }
 
         private void UpdateStarTargetScores()
