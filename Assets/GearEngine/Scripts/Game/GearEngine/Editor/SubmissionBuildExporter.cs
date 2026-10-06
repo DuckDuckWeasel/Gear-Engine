@@ -15,6 +15,8 @@ namespace GearEngine.GearEngine.Editor
         private const string k_mainScenePath = "Assets/GearEngine/Scenes/Main Scene.unity";
         private const string k_submissionProductName = "Gear Engine";
         private const string k_webGlTemplate = "PROJECT:GearEngine";
+        private const int k_webGlInitialMemoryMb = 256;
+        private const int k_webGlMaximumMemoryMb = 512;
 
         [MenuItem("Tools/Gear Engine/Build WebGL Submission")]
         public static void BuildWebGl()
@@ -80,6 +82,8 @@ namespace GearEngine.GearEngine.Editor
             bool previousDecompressionFallback = PlayerSettings.WebGL.decompressionFallback;
             bool previousDataCaching = PlayerSettings.WebGL.dataCaching;
             bool previousNameFilesAsHashes = PlayerSettings.WebGL.nameFilesAsHashes;
+            int previousInitialMemorySize = PlayerSettings.WebGL.initialMemorySize;
+            int previousMaximumMemorySize = PlayerSettings.WebGL.maximumMemorySize;
             string previousTemplate = PlayerSettings.WebGL.template;
             try
             {
@@ -88,6 +92,8 @@ namespace GearEngine.GearEngine.Editor
                 PlayerSettings.WebGL.decompressionFallback = true;
                 PlayerSettings.WebGL.dataCaching = true;
                 PlayerSettings.WebGL.nameFilesAsHashes = true;
+                PlayerSettings.WebGL.initialMemorySize = k_webGlInitialMemoryMb;
+                PlayerSettings.WebGL.maximumMemorySize = k_webGlMaximumMemoryMb;
                 PlayerSettings.WebGL.template = k_webGlTemplate;
                 return BuildPipeline.BuildPlayer(options);
             }
@@ -98,6 +104,8 @@ namespace GearEngine.GearEngine.Editor
                 PlayerSettings.WebGL.decompressionFallback = previousDecompressionFallback;
                 PlayerSettings.WebGL.dataCaching = previousDataCaching;
                 PlayerSettings.WebGL.nameFilesAsHashes = previousNameFilesAsHashes;
+                PlayerSettings.WebGL.initialMemorySize = previousInitialMemorySize;
+                PlayerSettings.WebGL.maximumMemorySize = previousMaximumMemorySize;
                 PlayerSettings.WebGL.template = previousTemplate;
             }
         }
