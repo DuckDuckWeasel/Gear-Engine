@@ -7,7 +7,10 @@ namespace GearEngine.Campaign.Presentation
 {
     public sealed class ResultPopupView : View<ResultPopupViewModel>
     {
+        private const float k_scoreFontSize = 154f;
+        private const float k_scoreOutlineWidth = 0.14f;
         private const string k_starFillName = "ProgressFill";
+        private static readonly Color32 s_scoreOutlineColor = new Color32(44, 57, 69, 255);
 
         [SerializeField] private TMP_Text titleText;
         [SerializeField] private TMP_Text scoreText;
@@ -24,6 +27,7 @@ namespace GearEngine.Campaign.Presentation
         protected override void OnBind()
         {
             titleText.text = viewModel.VictoryTitle;
+            ConfigureScorePresentation();
             scoreText.text = viewModel.Score.ToString();
             trackText.text = "FINAL POSITIONS";
             standings.Bind(viewModel.Standings);
@@ -74,6 +78,13 @@ namespace GearEngine.Campaign.Presentation
         private void OnDestroy()
         {
             PostRaceViewBindings.Detach(viewModel, OnViewModelChanged);
+        }
+
+        private void ConfigureScorePresentation()
+        {
+            scoreText.fontSize = k_scoreFontSize;
+            scoreText.outlineColor = s_scoreOutlineColor;
+            scoreText.outlineWidth = k_scoreOutlineWidth;
         }
 
         private void UpdateStarTargetScores()

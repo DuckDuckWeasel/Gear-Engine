@@ -111,8 +111,13 @@ namespace GearEngine.Campaign.Tests.Editor
                 view.Open();
                 yield return new WaitForSecondsRealtime(5f);
                 Assert.That(instance.activeSelf, Is.True);
+                TMP_Text[] visibleTexts = instance.GetComponentsInChildren<TMP_Text>();
                 if (i == 0)
                 {
+                    TMP_Text score = visibleTexts.Single(text => text.name == "NumberScore_text");
+                    Assert.That(score.fontSize, Is.GreaterThanOrEqualTo(150f));
+                    Assert.That(score.outlineWidth, Is.GreaterThanOrEqualTo(0.12f));
+                    Assert.That(score.outlineColor, Is.EqualTo(new Color32(44, 57, 69, 255)));
                     ResultStandingsView standings = instance.GetComponentInChildren<ResultStandingsView>();
                     Assert.That(standings.DisplayedPlayerPosition, Is.EqualTo(3));
                     Assert.That(standings.IsAnimating, Is.False);
@@ -122,7 +127,6 @@ namespace GearEngine.Campaign.Tests.Editor
                         "The Results card must retain its four-position height.");
                     Assert.That(instance.GetComponentsInChildren<Button>().Length, Is.EqualTo(1));
                 }
-                TMP_Text[] visibleTexts = instance.GetComponentsInChildren<TMP_Text>();
                 foreach (TMP_Text text in visibleTexts)
                 {
                     float alpha = text.color.a;
