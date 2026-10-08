@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import re
 import shutil
 from pathlib import Path
 
@@ -30,26 +31,33 @@ HEADERS = """/games/gear-engine
 /games/gear-engine/*.json
   Cache-Control: no-cache, no-store, must-revalidate
 
-/games/gear-engine/StreamingAssets/aa/catalog.bin
+/games/gear-engine/play
   Cache-Control: no-cache, no-store, must-revalidate
 
-/games/gear-engine/StreamingAssets/aa/catalog.hash
+/games/gear-engine/play/
+  Cache-Control: no-cache, no-store, must-revalidate
+  X-Content-Type-Options: nosniff
+
+/games/gear-engine/play/StreamingAssets/aa/catalog.bin
   Cache-Control: no-cache, no-store, must-revalidate
 
-/games/gear-engine/Build/*.unityweb
+/games/gear-engine/play/StreamingAssets/aa/catalog.hash
+  Cache-Control: no-cache, no-store, must-revalidate
+
+/games/gear-engine/play/Build/*.unityweb
   Content-Encoding: br
   Cache-Control: public, max-age=31536000, immutable
 
-/games/gear-engine/Build/*.wasm.unityweb
+/games/gear-engine/play/Build/*.wasm.unityweb
   Content-Type: application/wasm
 
-/games/gear-engine/Build/*.js.unityweb
+/games/gear-engine/play/Build/*.js.unityweb
   Content-Type: application/javascript
 
-/games/gear-engine/Build/*.data.unityweb
+/games/gear-engine/play/Build/*.data.unityweb
   Content-Type: application/octet-stream
 
-/games/gear-engine/StreamingAssets/aa/WebGL/*.bundle
+/games/gear-engine/play/StreamingAssets/aa/WebGL/*.bundle
   Cache-Control: public, max-age=31536000, immutable
 
 /games/gear-engine/PressKit/*
@@ -57,7 +65,21 @@ HEADERS = """/games/gear-engine
   X-Content-Type-Options: nosniff
 """
 
-REDIRECTS = "/games/gear-engine /games/gear-engine/ 301\n"
+REDIRECTS = """/games/gear-engine /games/gear-engine/ 301
+/games/gear-engine/PressKit /games/gear-engine/ 301
+/games/gear-engine/PressKit/ /games/gear-engine/ 301
+/games/gear-engine/PressKit/index.html /games/gear-engine/ 301
+"""
+
+
+def landing_html(source: Path) -> str:
+    """Keep page anchors local while resolving press-kit resources from the root."""
+    html = source.read_text(encoding="utf-8")
+    html = re.sub(
+        r'((?:src|href|poster)=[\"\'])(Media/|Fonts/|BrandKit\.html|GearEnginePublicPressKit\.zip)',
+        r'\1PressKit/\2', html,
+    )
+    return re.sub(r'(url\([\"\']?)(Fonts/|Media/)', r'\1PressKit/\2', html)
 
 
 def sha256(path: Path) -> str:
@@ -74,19 +96,26 @@ def main() -> None:
 
     if DEPLOY_DIR.exists():
         shutil.rmtree(DEPLOY_DIR)
-    CANONICAL_DIR.parent.mkdir(parents=True, exist_ok=True)
+    CANONICAL_DIR.mkdir(parents=True, exist_ok=True)
     shutil.copytree(
         SOURCE_DIR,
-        CANONICAL_DIR,
-        ignore=shutil.ignore_patterns(".DS_Store", "*.command", "*.py", "*.sh", "*.bat"),
+        CANONICAL_DIR / "play",
+        ignore=shutil.ignore_patterns("PressKit", ".DS_Store", "*.command", "*.py", "*.sh", "*.bat"),
     )
+    shutil.copytree(
+        SOURCE_DIR / "PressKit", CANONICAL_DIR / "PressKit",
+        ignore=shutil.ignore_patterns("index.html", ".DS_Store"),
+    )
+    (CANONICAL_DIR / "index.html").write_text(
+        landing_html(SOURCE_DIR / "PressKit" / "index.html"), encoding="utf-8")
     (DEPLOY_DIR / "_headers").write_text(HEADERS, encoding="utf-8")
     (DEPLOY_DIR / "_redirects").write_text(REDIRECTS, encoding="utf-8")
 
     files = sorted(path for path in CANONICAL_DIR.rglob("*") if path.is_file())
     manifest = {
-        "canonicalUrl": "https://leonardolycan.com/games/gear-engine/",
-        "pressKitUrl": "https://leonardolycan.com/games/gear-engine/PressKit/",
+        "canonicalUrl": "https://leonardolycan.com/games/gear-engine/play",
+        "landingPageUrl": "https://leonardolycan.com/games/gear-engine/",
+        "pressKitUrl": "https://leonardolycan.com/games/gear-engine/",
         "fileCount": len(files),
         "totalBytes": sum(path.stat().st_size for path in files),
         "files": [

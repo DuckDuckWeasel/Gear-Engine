@@ -1,10 +1,10 @@
 GEAR ENGINE — PUBLIC PRESS KIT
 
 Play in the browser:
-https://leonardolycan.com/games/gear-engine/
+https://leonardolycan.com/games/gear-engine/play
 
 Browse the public press kit:
-https://leonardolycan.com/games/gear-engine/PressKit/
+https://leonardolycan.com/games/gear-engine/
 
 Screenshots contains unedited frames from the current release.
 Logos contains the identity derived from the original splash screen.

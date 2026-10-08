@@ -3,6 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "scripts": {
+    "test:routing": "python3 -m unittest discover -s Tests -p 'Test*.py'",
     "optimize:presskit": "python3 OptimizePressKit.py",
     "prepare": "python3 PrepareRelease.py",
     "validate": "python3 ValidateRelease.py",

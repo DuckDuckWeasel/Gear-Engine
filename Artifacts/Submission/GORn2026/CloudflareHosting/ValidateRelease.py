@@ -12,6 +12,7 @@ from pathlib import Path
 SCRIPT_DIR = Path(__file__).resolve().parent
 DEPLOY_DIR = SCRIPT_DIR / "CloudflareDeploy"
 CANONICAL_DIR = DEPLOY_DIR / "games" / "gear-engine"
+PLAY_DIR = CANONICAL_DIR / "play"
 CLOUDFLARE_FILE_LIMIT = 25 * 1024 * 1024
 PRESS_KIT_LIMIT = 24 * 1024 * 1024
 OLD_HOST = "gear-engine-gorn-2026.web.app"
@@ -27,7 +28,7 @@ def main() -> None:
         DEPLOY_DIR / "_headers",
         DEPLOY_DIR / "_redirects",
         CANONICAL_DIR / "index.html",
-        CANONICAL_DIR / "PressKit" / "index.html",
+        PLAY_DIR / "index.html",
         CANONICAL_DIR / "PressKit" / "GearEnginePublicPressKit.zip",
     ]
     for path in required:
@@ -67,7 +68,16 @@ def main() -> None:
         if required_header not in headers:
             fail(f"Required WebGL header is missing: {required_header}")
 
-    index = (CANONICAL_DIR / "index.html").read_text(encoding="utf-8")
+    landing = (CANONICAL_DIR / "index.html").read_text(encoding="utf-8")
+    if 'href="/games/gear-engine/play"' not in landing:
+        fail("Landing page does not link to the canonical playable game.")
+    if 'src="PressKit/Media/' not in landing:
+        fail("Landing-page media does not resolve from the canonical root.")
+    redirects = (DEPLOY_DIR / "_redirects").read_text(encoding="utf-8")
+    if '/games/gear-engine/PressKit/ /games/gear-engine/ 301' not in redirects:
+        fail("Legacy press-kit page does not redirect to the landing page.")
+
+    index = (PLAY_DIR / "index.html").read_text(encoding="utf-8")
     for required_asset in (
         ".data.unityweb",
         ".framework.js.unityweb",
@@ -78,7 +88,7 @@ def main() -> None:
 
     uncompressed_build_files = [
         path
-        for path in (CANONICAL_DIR / "Build").iterdir()
+        for path in (PLAY_DIR / "Build").iterdir()
         if path.is_file() and path.suffix in {".data", ".wasm"}
     ]
     if uncompressed_build_files:
@@ -90,7 +100,7 @@ def main() -> None:
     loader_match = re.search(r'loaderUrl = buildUrl \+ "/([^\"]+\.loader\.js)"', index)
     if not loader_match:
         fail("WebGL index does not declare a loader file.")
-    loader = CANONICAL_DIR / "Build" / loader_match.group(1)
+    loader = PLAY_DIR / "Build" / loader_match.group(1)
     if not loader.is_file():
         fail(f"WebGL loader referenced by the index is missing: {loader}")
     loader_source = loader.read_text(encoding="utf-8")

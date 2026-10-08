@@ -6,9 +6,11 @@ The repository is also a working integration host for the modular Scaffold archi
 
 > **Maturity:** active vertical-slice prototype. The main campaign loop is implemented and reproducible in the configured development environment. Online services, monetization, and some content are environment-dependent; production identity, onboarding persistence, platform release gates, maps, and ranking are not complete.
 
-**Play the current WebGL build:** [gear-engine-gorn-2026.web.app](https://gear-engine-gorn-2026.web.app/) — version **0.1**.
+**Landing page:** [https://leonardolycan.com/games/gear-engine/](https://leonardolycan.com/games/gear-engine/)
 
-Last verified against `main` and the public WebGL deployment: **2026-09-17**.
+**Play the current WebGL build:** [Gear Engine](https://leonardolycan.com/games/gear-engine/play) — version **0.1**.
+
+Public routes updated on **2026-10-08**. Earlier gameplay verification dates remain attached to their evidence.
 
 ## Contents
 
@@ -76,14 +78,14 @@ These are first-party captures registered as current-build evidence in the repos
 | Ads and analytics | **Working / environment-dependent** | Editor mock paths and runtime service integrations exist; production behavior depends on LevelPlay and UGS configuration. |
 | Blackboard visual scripting | **Working** | Managed authoring, a plain C# runtime, VContainer composition, persistence adapters, and Play Mode execution controls exist under [`Assets/3rdParty/ScaffoldVisualScripting`](Assets/3rdParty/ScaffoldVisualScripting). |
 | UI transition scenes | **Experimental** | Gallery and destination scenes exercise Fade, Burn, Dissolve, Square, Diamond, Stripe, Melt, and Blaze effects. They are samples, not a verified campaign-wide transition coordinator. |
-| WebGL export | **Working / deployed** | The deterministic exporter builds Addressables and the main scene with the project WebGL template. Version 0.1 was built with Unity 6000.5.9f1 and deployed to [Firebase Hosting](https://gear-engine-gorn-2026.web.app/). |
+| WebGL export | **Working / deployed** | The deterministic exporter builds Addressables and the main scene with the project WebGL template. Version 0.1 was built with Unity 6000.5.9f1 and deployed to [Cloudflare Workers Static Assets](https://leonardolycan.com/games/gear-engine/play). |
 | Cloud verification | **Partial** | Report-only and blocking scripts exist, but a complete verified Unity Build Automation configuration is not established by repository evidence. |
 | Maps and ranking | **Planned** | Marketing and flow materials describe them, but no complete player-facing runtime was verified. |
 | Legacy Cloud Code manifest path | **Unavailable** | Some older documentation refers to `Assets/CloudCode/LiveOps.ccmr` and `LiveOps/LiveOps.sln`; neither is the current deployment source. Use `LiveOps/LiveOps.Deploy.sln` for the backend build and verify deployment in the target environment. |
 
 ## Live WebGL build
 
-The public build is available at [https://gear-engine-gorn-2026.web.app/](https://gear-engine-gorn-2026.web.app/). The loading screen displays the Unity `bundleVersion` as **V0.1**, so the running release can be identified before gameplay begins.
+The public build is available at [https://leonardolycan.com/games/gear-engine/play](https://leonardolycan.com/games/gear-engine/play). The loading screen displays the Unity `bundleVersion` as **V0.1**, so the running release can be identified before gameplay begins.
 
 The 2026-09-17 release was verified through a clean isolated Unity worktree, a complete Addressables and WebGL build, and a live browser smoke check. The player reached the track-selection screen without browser console errors, the four-position Best Times panel rendered, the Press Kit remained reachable, and the root game shell was configured with no-cache headers.
 
@@ -106,7 +108,7 @@ The 2026-09-17 release was verified through a clean isolated Unity worktree, a c
 - **Remote configuration:** six `.rc` definitions describe Currency, Inventory, Loadout, Perk, Roguelike, and Track data.
 - **Cloud Code:** the deployable .NET solution is [`LiveOps/LiveOps.Deploy.sln`](LiveOps/LiveOps.Deploy.sln).
 - **WebGL submission build:** [`SubmissionBuildExporter.cs`](Assets/GearEngine/Scripts/Game/GearEngine/Editor/SubmissionBuildExporter.cs) builds Addressables first, applies Brotli fallback/data caching/hash naming, builds the enabled main scene, and restores the previous Player Settings afterward.
-- **Firebase Hosting:** [`Artifacts/Submission/GORn2026/firebase.json`](Artifacts/Submission/GORn2026/firebase.json) defines the public directory, Brotli MIME headers, and no-cache behavior for the game shell.
+- **Cloudflare hosting:** [`Docs/HostingMigration.md`](Docs/HostingMigration.md) documents the landing page, playable route, Brotli MIME headers, release staging, and retired Firebase host.
 - **Quality tooling:** repository analyzers, source generators, change validation, and optional cloud-verification scripts live under [`Analyzers`](Analyzers), [`Generators`](Generators), and [`.agents/scripts`](.agents/scripts).
 - **Git LFS:** large media and generated evidence are tracked through LFS rules; a source clone without its LFS objects is incomplete.
 
@@ -165,7 +167,7 @@ Required only for specific workflows:
 
 - Unity CLI `unity` for the commands below. The repository was inspected with CLI `1.0.0-beta.5`.
 - WebGL Build Support for the submission build.
-- Firebase CLI access to `gear-engine-gorn-2026` only when an authorized hosting deployment is required.
+- Cloudflare Workers access only when an authorized hosting deployment is required.
 - PowerShell 7+ (`pwsh`) for the full cross-platform validation scripts.
 - A .NET SDK compatible with [`LiveOps/LiveOps.Deploy.sln`](LiveOps/LiveOps.Deploy.sln) for backend compilation.
 - Unity Gaming Services CLI credentials only when an authorized deployment workflow explicitly requires them.
@@ -309,18 +311,22 @@ unity build . \
 
 ### Publish the verified WebGL build
 
-Publishing is an external write. Confirm the Firebase account and target project before running these commands:
+Publishing is an external write. Confirm the Cloudflare account and scoped Worker route before deploying. Keep the committed source layout: the player remains in `GearEngineWebGL/` and the landing source and resources remain in `GearEngineWebGL/PressKit/`. Release preparation publishes them at the canonical root and `play/` routes:
 
 ```bash
 rsync -a --delete --exclude PressKit/ \
   "$GEAR_ENGINE_BUILD_PATH/" \
   Artifacts/Submission/GORn2026/GearEngineWebGL/
 
-cd Artifacts/Submission/GORn2026
-firebase deploy --only hosting --project gear-engine-gorn-2026
+cd Artifacts/Submission/GORn2026/CloudflareHosting
+npm ci
+npm run test:routing
+npm run prepare
+npm run validate
+npm run deploy
 ```
 
-The `PressKit/` exclusion preserves the existing public press kit while replacing stale player files. After deployment, load the root URL without a query string, confirm the loading screen reports the expected version, wait for the game to become interactive, and check that the browser console has no errors.
+The `PressKit/` exclusion preserves the existing public press kit while replacing stale player files. After deployment, open the [landing page](https://leonardolycan.com/games/gear-engine/) and follow its play button to the [playable game](https://leonardolycan.com/games/gear-engine/play); there, confirm the loading screen reports the expected version, wait for the game to become interactive, and check that the browser console has no errors.
 
 ## Operational cheat sheet
 
@@ -460,7 +466,7 @@ Run `unity projects clean .` only after reviewing the dry run and confirming the
 
 ## Brand
 
-The existing Gear Engine identity belongs to the portfolio and public press-kit work. Its current guide is [`Docs/BrandKit.md`](Docs/BrandKit.md), its canonical machine-readable values are in [`Artifacts/Marketing/Brand/BrandTokens.json`](Artifacts/Marketing/Brand/BrandTokens.json), and its browser-ready presentation is available in the repository at [`Artifacts/Submission/GORn2026/GearEngineWebGL/PressKit/BrandKit.html`](Artifacts/Submission/GORn2026/GearEngineWebGL/PressKit/BrandKit.html) and on the [public site](https://gear-engine-gorn-2026.web.app/PressKit/BrandKit.html).
+The existing Gear Engine identity belongs to the portfolio and public press-kit work. Its current guide is [`Docs/BrandKit.md`](Docs/BrandKit.md), its canonical machine-readable values are in [`Artifacts/Marketing/Brand/BrandTokens.json`](Artifacts/Marketing/Brand/BrandTokens.json), and its browser-ready presentation is available in the repository at [`Artifacts/Submission/GORn2026/GearEngineWebGL/PressKit/BrandKit.html`](Artifacts/Submission/GORn2026/GearEngineWebGL/PressKit/BrandKit.html) and on the [public site](https://leonardolycan.com/games/gear-engine/PressKit/BrandKit.html).
 
 The game identity uses Asphalt `#0B0F14`, Pit Wall `#151C24`, Race White `#FFF8E8`, Racing Red `#EF3E2F`, Victory Yellow `#FFD43B`, Track Blue `#18AEEA`, and Grass Green `#43B649`, with Oswald Variable for display text and Inter Variable for body text. The source invariant is [`Assets/GearEngine/Art/Splash Screen/Game Icon.png`](Assets/GearEngine/Art/Splash%20Screen/Game%20Icon.png); the approved racing-logo applications are preserved under [`Artifacts/Submission/GORn2026/GearEnginePublicPressKit/Logos`](Artifacts/Submission/GORn2026/GearEnginePublicPressKit/Logos).
 

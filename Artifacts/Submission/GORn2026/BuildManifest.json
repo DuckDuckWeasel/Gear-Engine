@@ -23,8 +23,9 @@
   "sourceBuild": "Created from an isolated temporary project copy to preserve the open Unity project and unrelated working-tree changes.",
   "hosting": {
     "provider": "Cloudflare Workers Static Assets",
-    "canonicalUrl": "https://leonardolycan.com/games/gear-engine/",
-    "pressKitUrl": "https://leonardolycan.com/games/gear-engine/PressKit/",
+    "canonicalUrl": "https://leonardolycan.com/games/gear-engine/play",
+    "landingPageUrl": "https://leonardolycan.com/games/gear-engine/",
+    "pressKitUrl": "https://leonardolycan.com/games/gear-engine/",
     "productionBranch": "main",
     "previewBranch": "develop"
   }

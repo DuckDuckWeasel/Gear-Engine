@@ -39,6 +39,7 @@ jobs:
           cache: npm
           cache-dependency-path: Artifacts/Submission/GORn2026/CloudflareHosting/package-lock.json
       - run: npm ci
+      - run: npm run test:routing
       - run: npm run prepare
       - run: npm run validate
       - run: npm run dry-run

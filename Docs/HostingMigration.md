@@ -4,8 +4,9 @@ Gear Engine is published as static WebGL content through Cloudflare Workers Stat
 
 ## Public endpoints
 
-- Game: `https://leonardolycan.com/games/gear-engine/`
-- Press kit: `https://leonardolycan.com/games/gear-engine/PressKit/`
+- Landing page: `https://leonardolycan.com/games/gear-engine/`
+- Playable game: `https://leonardolycan.com/games/gear-engine/play`
+- Press-kit download: `https://leonardolycan.com/games/gear-engine/PressKit/GearEnginePublicPressKit.zip`
 - Production branch: `main`
 - Preview branch: `develop`
 
@@ -26,12 +27,15 @@ From `Artifacts/Submission/GORn2026/CloudflareHosting`, run:
 
 ```text
 npm ci
+npm run test:routing
 npm run prepare
 npm run validate
 npm run dry-run
 ```
 
-`prepare` stages the committed WebGL release at the canonical subpath and generates Cloudflare header and redirect rules. `validate` checks the 25 MiB asset limit, WebAssembly and Brotli headers, press-kit archive integrity, and retired Firebase references.
+`prepare` stages the landing page at the canonical root, the committed WebGL release under `play/`, and press-kit resources under `PressKit/` and generates Cloudflare header and redirect rules. `validate` checks the 25 MiB asset limit, WebAssembly and Brotli headers, press-kit archive integrity, and retired Firebase references.
+
+The root landing page references media and fonts under `PressKit/` and links all play buttons to `/games/gear-engine/play`. The player retains relative build and StreamingAssets paths under `play/`. Legacy `/PressKit` page URLs redirect to the landing page; media, the brand kit and the ZIP retain their existing resource paths.
 
 ## Press-kit optimization
 
@@ -41,7 +45,7 @@ Run `npm run optimize:presskit` after changing source press-kit files. The scrip
 
 Before retiring the previous host, verify:
 
-1. The game and press-kit pages return HTTP 200 at their canonical URLs.
+1. The landing page and game return HTTP 200 at their canonical URLs (the game may normalize `/play` to `/play/`). The previous `/PressKit/` page redirects to the landing page.
 2. Unity `.unityweb` files return Brotli encoding and correct MIME types.
 3. The press-kit ZIP downloads, stays below 24 MiB, and extracts without errors.
 4. A clean browser session reaches the menu, starts gameplay, and displays the result and reward screens.
